@@ -17,6 +17,7 @@ data class Operation(
     val type: OperationType,
     val occurredAt: Long,
     val createdAt: Long,
+    val updatedAt: Long = createdAt,
     val amount: String? = null,
     val currency: String? = null,
     val personOrEntity: String? = null,
@@ -136,7 +137,7 @@ class SaveOperationUseCase(private val repository: OperationRepository) {
 }
 
 class UpdateOperationUseCase(private val repository: OperationRepository) {
-    suspend operator fun invoke(operation: Operation) = repository.update(operation)
+    suspend operator fun invoke(operation: Operation) = repository.update(operation.copy(updatedAt = nowMillis()))
 }
 
 class DeleteOperationUseCase(private val repository: OperationRepository) {
