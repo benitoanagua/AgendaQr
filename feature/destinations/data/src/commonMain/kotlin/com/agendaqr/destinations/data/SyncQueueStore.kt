@@ -74,3 +74,5 @@ class LocalSyncQueue(private val store: SyncQueueStore = platformSyncQueueStore(
 fun encodeSyncQueue(items: List<PendingSyncMutation>) = queueJson.encodeToString(items)
 fun decodeSyncQueue(value: String): List<PendingSyncMutation> =
     runCatching { queueJson.decodeFromString<List<PendingSyncMutation>>(value) }.getOrDefault(emptyList())
+
+// Queue invariants are intentionally covered at repository level before platform integration.
