@@ -29,6 +29,7 @@ import com.agendaqr.destinations.domain.Destination
 fun DestinationsScreen(
     state: DestinationsUiState,
     onAction: (DestinationAction) -> Unit,
+    onOpenOperations: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Xxl),
@@ -36,7 +37,10 @@ fun DestinationsScreen(
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Agenda QR", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
-            XauxaPrimaryButton("Add QR", onClick = { onAction(DestinationAction.Edit(null)) })
+            Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                XauxaSecondaryButton("Operaciones", onClick = onOpenOperations)
+                XauxaPrimaryButton("Add QR", onClick = { onAction(DestinationAction.Edit(null)) })
+            }
         }
 
         OutlinedTextField(

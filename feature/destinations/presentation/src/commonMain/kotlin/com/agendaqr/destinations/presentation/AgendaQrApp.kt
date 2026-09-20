@@ -4,18 +4,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
 import com.agendaqr.destinations.data.createDestinationRepository
-import com.agendaqr.destinations.domain.DeleteDestinationUseCase
-import com.agendaqr.destinations.domain.GetDestinationUseCase
-import com.agendaqr.destinations.domain.ObserveDestinationsUseCase
-import com.agendaqr.destinations.domain.MarkDestinationUsedUseCase
-import com.agendaqr.destinations.domain.SaveDestinationUseCase
-import com.agendaqr.destinations.domain.ToggleFavoriteUseCase
-import com.agendaqr.destinations.domain.UpdateDestinationUseCase
+import com.agendaqr.destinations.data.createOperationRepository
+import com.agendaqr.destinations.data.createComprobanteRepository
+import com.agendaqr.destinations.data.createComprobanteFileStore
+import com.agendaqr.destinations.data.createDeletedOperationHistoryRepository
+import com.agendaqr.destinations.domain.*
 import com.agendaqr.core.ui.theme.AgendaQrTheme
 
 @Composable
 fun AgendaQrApp() {
+    var showOperations by remember { mutableStateOf(false) }
     val repository = remember { createDestinationRepository() }
     val viewModel = remember(repository) {
         DestinationsViewModel(
@@ -29,10 +29,31 @@ fun AgendaQrApp() {
         )
     }
     val state by viewModel.state.collectAsState()
+    val operationRepository = remember { createOperationRepository() }
+    val comprobanteRepository = remember { createComprobanteRepository() }
+    val fileStore = remember { createComprobanteFileStore() }
+    val historyRepository = remember { createDeletedOperationHistoryRepository() }
+    val operationsViewModel = remember(operationRepository, comprobanteRepository, fileStore, historyRepository) {
+        OperationsViewModel(
+            observeOperations = ObserveOperationsUseCase(operationRepository),
+            observeUnassociated = ObserveUnassociatedComprobantesUseCase(comprobanteRepository),
+            observeOperationComprobantes = ObserveOperationComprobantesUseCase(comprobanteRepository),
+            getOperation = GetOperationUseCase(operationRepository),
+            saveOperation = SaveOperationUseCase(operationRepository),
+            deleteOperation = DeleteOperationWithHistoryUseCase(operationRepository, comprobanteRepository, fileStore, historyRepository),
+            associate = AssociateComprobanteToOperationUseCase(operationRepository, comprobanteRepository),
+            saveComprobante = SaveComprobanteUseCase(comprobanteRepository, fileStore),
+            findDuplicates = FindDuplicateComprobantesUseCase(comprobanteRepository, fileStore),
+        )
+    }
+
+    val operationState by operationsViewModel.state.collectAsState()
 
     AgendaQrTheme {
-        when (val route = state.route) {
-            DestinationRoute.List -> DestinationsScreen(state, viewModel::onAction)
+        if (showOperations) {
+            OperationsScreen(operationState, operationsViewModel, onBack = { showOperations = false })
+        } else when (val route = state.route) {
+            DestinationRoute.List -> DestinationsScreen(state, viewModel::onAction, onOpenOperations = { showOperations = true })
             is DestinationRoute.Edit -> DestinationEditorScreen(
                 existing = route.id?.let(viewModel::destination),
                 onSave = { destination ->

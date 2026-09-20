@@ -11,8 +11,10 @@ object AgendaQrAndroidShareLauncher {
         this.activity = activity
     }
 
+    fun requireActivity(): Activity = requireNotNull(activity) { "AgendaQrAndroidShareLauncher must be initialized by the host." }
+
     fun share(asset: QrAsset) {
-        val current = requireNotNull(activity) { "AgendaQrAndroidShareLauncher must be initialized by the host." }
+        val current = requireActivity()
         val uri = asset.toShareUri(current)
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = asset.mimeType
