@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schemas.example.invalid/xauxa-design-tokens.schema.json",
+  "name": "Xauxa Design System",
+  "version": "8",
+  "product": "AgendaQr",
+  "color": {
+    "primitive": {
+      "purple70": "#4A1F7A", "purple30": "#DAB9FF",
+      "teal60": "#0E7D6E", "teal30": "#7FD9C9",
+      "green50": "#3DA35D", "green10": "#163521",
+      "amber60": "#B5790A", "amber10": "#3A2B0B",
+      "red60": "#D9534F", "red10": "#3A1E1D",
+      "blue55": "#3A7BD5", "blue10": "#17263D",
+      "black": "#0E0E11", "gray95": "#17171B", "gray90": "#1F1F24", "gray85": "#26262C", "gray80": "#2A2A30", "gray60": "#6C6C76", "gray40": "#9C9CA6", "gray05": "#F4F4F6", "white": "#FFFFFF"
+    },
+    "semantic": {
+      "brand": "{color.primitive.teal60}", "onBrand": "{color.primitive.white}", "brandAccent": "{color.primitive.teal30}",
+      "success": "{color.primitive.green50}", "danger": "{color.primitive.red60}", "warning": "{color.primitive.amber60}", "info": "{color.primitive.blue55}"
+    }
+  },
+  "radius": { "value": "0px" },
+  "elevation": { "value": "none" },
+  "spacing": { "s1": "4px", "s2": "8px", "s3": "12px", "s4": "16px", "s5": "20px", "s6": "24px", "s8": "32px", "s10": "40px" },
+  "motion": {
+    "durationShort": "150ms", "durationMedium": "300ms", "durationLong": "600ms",
+    "easingStandard": "cubic-bezier(.4,0,.2,1)", "easingEmphasized": "cubic-bezier(.2,0,0,1)", "easingDecelerate": "cubic-bezier(0,0,.2,1)"
+  },
+  "accessibility": { "minTouch": "48dp", "focusWidth": "2dp", "focusOffset": "2dp" },
+  "typography": { "display": "Archivo", "ui": "Roboto" }
+}

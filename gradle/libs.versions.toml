@@ -1,0 +1,26 @@
+[versions]
+agp = "8.11.1"
+kotlin = "2.2.20"
+compose = "1.8.2"
+serialization = "1.9.0"
+coroutines = "1.10.2"
+activity = "1.10.1"
+zxing = "3.5.3"
+coreKtx = "1.16.0"
+
+[plugins]
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+kotlinCompose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+
+[libraries]
+serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
+coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
