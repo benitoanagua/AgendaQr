@@ -73,7 +73,9 @@ fun createSyncedComprobanteRepository(
     fileStore: ComprobanteFileStore,
 ): ComprobanteRepository =
     SyncComprobanteRepository(
-        local = LocalComprobanteRepository(),
+        local = LocalComprobanteRepository(storageKey = userScopedKey("agendaqr.comprobantes.v1")),
         remote = createRemoteComprobanteRepository(),
         fileStore = fileStore,
     )
+
+private fun userScopedKey(prefix: String): String = prefix + "." + (AgendaQrSupabase.client.auth.currentUserOrNull()?.id ?: error("Authentication required"))
