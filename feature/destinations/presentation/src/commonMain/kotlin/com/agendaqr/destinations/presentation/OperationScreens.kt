@@ -1,0 +1,234 @@
+package com.agendaqr.destinations.presentation
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import com.agendaqr.core.ui.components.*
+import com.agendaqr.core.ui.theme.*
+import com.agendaqr.destinations.domain.*
+
+@Composable
+fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel) {
+    when (state.route) {
+        OperationRoute.List -> OperationListScreen(state, viewModel)
+        OperationRoute.Unassociated -> UnassociatedScreen(state, viewModel)
+        OperationRoute.New -> NewOperationScreen(viewModel)
+        is OperationRoute.Detail -> OperationDetailScreen(state, viewModel)
+    }
+    state.pendingIncoming?.let { incoming ->
+        AlertDialog(
+            onDismissRequest = { viewModel.onAction(OperationAction.ClearIncoming) },
+            title = { Text("Comprobante recibido") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                    Text("Guardado en tu bandeja de respaldos sin asociar.")
+                    Text("Archivo: " + incoming.extension, color = XauxaColor.TextSecondary)
+                    if (state.pendingDuplicates.isNotEmpty()) {
+                        XauxaStatusBanner("Ya existe un comprobante igual. Puedes guardarlo de todos modos.")
+                    }
+                }
+            },
+            confirmButton = {
+                XauxaPrimaryButton(
+                    if (state.isSavingReceipt) "Guardando…" else "LISTO / OK",
+                    { viewModel.onAction(OperationAction.SaveIncoming) },
+                    enabled = !state.isSavingReceipt,
+                )
+            },
+            dismissButton = {
+                XauxaTextAction("ASOCIAR AHORA (Opcional)") {
+                    viewModel.onAction(OperationAction.SaveIncoming)
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsViewModel) {
+    val operations = viewModel.visibleOperations()
+    Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text("Operaciones", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            XauxaPrimaryButton("Nuevo") { viewModel.onAction(OperationAction.New) }
+        }
+        OutlinedTextField(state.query, { viewModel.onAction(OperationAction.Search(it)) }, Modifier.fillMaxWidth(), label = { Text("Buscar") }, singleLine = true)
+        if (state.unassociated.isNotEmpty()) {
+            XauxaStatusBanner("Comprobantes sin asociar: " + state.unassociated.size)
+            XauxaSecondaryButton("Ver bandeja de respaldos") { viewModel.onAction(OperationAction.OpenUnassociated) }
+        }
+        state.error?.let { XauxaStatusBanner(it, danger = true) }
+        if (operations.isEmpty()) {
+            XauxaEmptyState(
+                if (state.query.isBlank()) "Aún no hay operaciones" else "No hay coincidencias",
+                if (state.query.isBlank()) "Registrar operación" else "Limpiar búsqueda",
+            ) {
+                if (state.query.isBlank()) viewModel.onAction(OperationAction.New)
+                else viewModel.onAction(OperationAction.Search(""))
+            }
+        } else {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                items(operations, key = { it.id }) { operation ->
+                    XauxaTile(onClick = { viewModel.onAction(OperationAction.Open(operation.id)) }) {
+                        Row(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                                Text(formatDate(operation.occurredAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                                Text(operation.type.name, fontWeight = FontWeight.SemiBold,
+                                    color = if (operation.type == OperationType.COBRO) XauxaColor.Success else XauxaColor.Brand)
+                            }
+                            Column(horizontalAlignment = Alignment.End) {
+                                Text(operation.amount.orEmpty().ifBlank { "—" }, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
+                                operation.personOrEntity?.let { Text(it, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary) }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsViewModel) {
+    var selectedReceipt by remember { mutableStateOf<Comprobante?>(null) }
+    Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text("Comprobantes sin asociar", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            XauxaTextAction("Volver") { viewModel.onAction(OperationAction.Back) }
+        }
+        if (state.unassociated.isEmpty()) {
+            XauxaEmptyState("No hay comprobantes sin asociar", "Volver") { viewModel.onAction(OperationAction.Back) }
+        } else {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                items(state.unassociated, key = { it.id }) { receipt ->
+                    XauxaTile {
+                        Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                            Text("Comprobante recibido", fontWeight = FontWeight.SemiBold)
+                            Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                            Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                                XauxaPrimaryButton("ASOCIAR A OPERACIÓN EXISTENTE") { selectedReceipt = receipt }
+                                XauxaSecondaryButton("CREAR NUEVA OPERACIÓN CON ESTO") {
+                                    viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    selectedReceipt?.let { receipt ->
+        AlertDialog(
+            onDismissRequest = { selectedReceipt = null },
+            title = { Text("Elegir operación") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                    state.operations.take(8).forEach { operation ->
+                        XauxaTile(onClick = {
+                            viewModel.onAction(OperationAction.Associate(receipt.id, operation.id))
+                            selectedReceipt = null
+                        }) {
+                            Row(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), horizontalArrangement = Arrangement.SpaceBetween) {
+                                Text(operation.type.name + " · " + formatDate(operation.occurredAt))
+                                Text(operation.amount.orEmpty().ifBlank { "—" })
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = { XauxaTextAction("CANCELAR") { selectedReceipt = null } },
+        )
+    }
+}
+
+@Composable
+private fun NewOperationScreen(viewModel: OperationsViewModel) {
+    var type by remember { mutableStateOf(OperationType.PAGO) }
+    var amount by remember { mutableStateOf("") }
+    var currency by remember { mutableStateOf("") }
+    var person by remember { mutableStateOf("") }
+    var destination by remember { mutableStateOf("") }
+    var concept by remember { mutableStateOf("") }
+    var note by remember { mutableStateOf("") }
+
+    Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text("Registrar operación", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            XauxaTextAction("Volver") { viewModel.onAction(OperationAction.Back) }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+            if (type == OperationType.PAGO) XauxaPrimaryButton("PAGO") { type = OperationType.PAGO }
+            else XauxaSecondaryButton("PAGO") { type = OperationType.PAGO }
+            if (type == OperationType.COBRO) XauxaPrimaryButton("COBRO") { type = OperationType.COBRO }
+            else XauxaSecondaryButton("COBRO") { type = OperationType.COBRO }
+        }
+        OutlinedTextField(amount, { amount = it }, Modifier.fillMaxWidth(), label = { Text("Monto (opcional)") }, singleLine = true)
+        OutlinedTextField(currency, { currency = it }, Modifier.fillMaxWidth(), label = { Text("Moneda (opcional)") }, singleLine = true)
+        OutlinedTextField(person, { person = it }, Modifier.fillMaxWidth(), label = { Text("Persona o entidad (opcional)") }, singleLine = true)
+        OutlinedTextField(destination, { destination = it }, Modifier.fillMaxWidth(), label = { Text("Destino QR (opcional)") }, singleLine = true)
+        OutlinedTextField(concept, { concept = it }, Modifier.fillMaxWidth(), label = { Text("Concepto (opcional)") }, singleLine = true)
+        OutlinedTextField(note, { note = it }, Modifier.fillMaxWidth(), label = { Text("Nota (opcional)") }, singleLine = true)
+        Text("Podrás adjuntar comprobantes más adelante", color = XauxaColor.TextSecondary, fontSize = XauxaType.Label)
+        XauxaPrimaryButton("Guardar") {
+            viewModel.onAction(OperationAction.SaveNew(type, nowMillis(), amount, currency, person, destination, concept, note))
+        }
+    }
+}
+
+@Composable
+private fun OperationDetailScreen(state: OperationsUiState, viewModel: OperationsViewModel) {
+    val operation = viewModel.selectedOperation() ?: return
+    Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text("Detalle", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            XauxaTextAction("Volver") { viewModel.onAction(OperationAction.Back) }
+        }
+        XauxaStatusBanner(
+            operation.type.name + " · " + formatDate(operation.occurredAt) + " · " +
+                operation.amount.orEmpty().ifBlank { "sin monto" }
+        )
+        operation.personOrEntity?.let { Text("Persona o entidad: " + it) }
+        operation.currency?.let { Text("Moneda: " + it) }
+        operation.destinationId?.let { Text("Destino: " + it) }
+        operation.concept?.let { Text("Concepto: " + it) }
+        operation.note?.let { Text("Nota: " + it, color = XauxaColor.TextSecondary) }
+
+        XauxaSection("Comprobantes") {
+            if (state.operationComprobantes.isEmpty()) {
+                Text("Sin comprobante adjunto", color = XauxaColor.TextSecondary)
+                XauxaTextAction("ADJUNTAR COMPROBANTE AHORA") { viewModel.onAction(OperationAction.OpenUnassociated) }
+            } else {
+                state.operationComprobantes.forEach { receipt ->
+                    XauxaTile {
+                        Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg)) {
+                            Text("Comprobante " + receipt.provenance?.name.orEmpty(), fontWeight = FontWeight.SemiBold)
+                            Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                        }
+                    }
+                }
+            }
+        }
+        XauxaSecondaryButton("Compartir") { shareOperation(operation) }
+        XauxaTextAction("Eliminar operación") { viewModel.onAction(OperationAction.Delete(operation.id)) }
+    }
+}
+
+private fun formatDate(millis: Long): String {
+    val z = millis / 86_400_000L + 719468
+    val era = if (z >= 0) z / 146097 else (z - 146096) / 146097
+    val doe = z - era * 146097
+    val yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365
+    val y = yoe + era * 400
+    val doy = doe - (365 * yoe + yoe / 4 - yoe / 100)
+    val mp = (5 * doy + 2) / 153
+    val day = doy - (153 * mp + 2) / 5 + 1
+    val month = mp + if (mp < 10) 3 else -9
+    val year = y + if (month <= 2) 1 else 0
+    fun two(value: Long) = if (value < 10) "0" + value else value.toString()
+    return two(day) + "/" + two(month) + "/" + year
+}
