@@ -55,7 +55,7 @@ class SyncComprobanteRepository(
                 resource = SyncResource.COMPROBANTE,
                 mutation = mutation,
                 entityId = id,
-                enqueuedAt = kotlinx.datetime.Clock.System.now().toEpochMilliseconds(),
+                enqueuedAt = kotlin.time.Clock.System.now().toEpochMilliseconds(),
                 nextAttemptAt = kotlinx.datetime.Clock.System.now().toEpochMilliseconds(),
             ),
         )
