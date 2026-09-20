@@ -41,7 +41,7 @@ sealed interface OperationAction {
     data class Associate(val comprobanteId: String, val operationId: String) : OperationAction
     data class CreateOperationFromReceipt(val comprobanteId: String) : OperationAction
     data object ClearIncoming : OperationAction
-    data object SaveIncoming : OperationAction
+    data class SaveIncoming(val openInbox: Boolean = false) : OperationAction
     data object DismissDuplicateWarning : OperationAction
     data object OpenUnassociated : OperationAction
     data object Back : OperationAction
@@ -96,8 +96,8 @@ class OperationsViewModel(
                 runCatching { associate(action.comprobanteId, action.operationId) }.onFailure(::showError)
             }
             is OperationAction.CreateOperationFromReceipt -> createOperationFromReceipt(action.comprobanteId)
-            OperationAction.ClearIncoming -> _state.update { it.copy(pendingIncoming = null, pendingDuplicates = emptyList()) }
-            OperationAction.SaveIncoming -> saveIncoming()
+            OperationAction.ClearIncoming -> _state.update { it.copy(pendingIncoming = null, pendingDuplicates = emptyList(), route = if (openInbox) OperationRoute.Unassociated else OperationRoute.List) }
+            is OperationAction.SaveIncoming -> saveIncoming(action.openInbox)
             OperationAction.DismissDuplicateWarning -> _state.update { it.copy(pendingDuplicates = emptyList()) }
             OperationAction.OpenUnassociated -> _state.update { it.copy(route = OperationRoute.Unassociated, error = null) }
             OperationAction.Back -> back()
@@ -139,7 +139,7 @@ class OperationsViewModel(
         }
     }
 
-    private fun saveIncoming() {
+    private fun saveIncoming(openInbox: Boolean) {
         val incoming = state.value.pendingIncoming ?: return
         scope.launch {
             _state.update { it.copy(isSavingReceipt = true) }
