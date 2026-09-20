@@ -1,6 +1,6 @@
-# Plan de implementación
+# Plan de implementación derivado de V1
 
-## Fase 1 — Base
+## Fase 1 — Base ya existente
 
 - estructura KMP;
 - `androidApp` e `iosApp`;
@@ -9,53 +9,54 @@
 - version catalog;
 - gates.
 
-## Fase 2 — Núcleo funcional
+## Fase 2 — Destinos QR
 
 - Destination;
 - persistencia local;
 - búsqueda;
 - categorías;
 - favoritos;
-- recientes;
-- crear/editar/eliminar/reemplazar.
+- recuperación;
+- importación y revisión;
+- mostrar/compartir;
+- reemplazo y eliminación.
 
-## Fase 3 — QR
+## Fase 3 — Operaciones
 
-- cámara Android;
-- galería Android;
-- múltiples imágenes;
-- decodificación QR;
-- revisión antes de guardar;
-- QR fullscreen;
-- share inbound/outbound.
+- Operation;
+- PAGO/COBRO;
+- `occurredAt` y `createdAt`;
+- atributos opcionales;
+- persistencia local;
+- búsqueda por fecha/tipo/importe/persona-entidad.
 
-## Fase 4 — Xauxa
+## Fase 4 — Comprobantes
 
-- tokens;
-- componentes;
-- estados;
-- patterns;
-- accesibilidad;
-- motion;
-- verificación visual.
+- Comprobante first-class;
+- guardar sin operación;
+- provenance;
+- asociación reversible;
+- múltiples comprobantes;
+- almacenamiento de archivos;
+- compartir;
+- eliminación;
+- detección de duplicados no bloqueante.
 
-## Fase 5 — Validación Android
+## Fase 5 — Integridad
 
-- build;
-- emulador/dispositivo;
-- cámara;
-- picker;
-- share;
-- persistencia;
-- offline.
+- advertencia de cambios sensibles;
+- eliminación de comprobantes al eliminar operación;
+- histórico mínimo;
+- preservación de contexto histórico de destino.
 
-## Fase 6 — iOS
+## Fase 6 — Protección y validación
 
-- integración del framework KMP;
-- boundaries nativos;
-- cámara/Photos/share/protección;
-- validación mediante Xcode.
+- biometría/PIN opcional;
+- pruebas funcionales;
+- validación Android;
+- boundaries iOS;
+- validación iOS mediante Xcode.
 
 ## Regla
 
-No se adelanta una capacidad únicamente para cerrar una lista. Cada fase debe respetar la precedencia de fuentes y el alcance confirmado.
+No se implementa fuera del alcance V1 para completar listas de trabajo. Cada cambio debe rastrearse a la especificación aprobada.
