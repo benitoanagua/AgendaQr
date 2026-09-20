@@ -66,6 +66,8 @@ class SyncDestinationRepository(
 
 fun createSyncedDestinationRepository(): DestinationRepository =
     SyncDestinationRepository(
-        local = LocalDestinationRepository(),
+        local = LocalDestinationRepository(storageKey = userScopedKey("agendaqr.destinations.v1")),
         remote = createRemoteDestinationRepository(),
     )
+
+private fun userScopedKey(prefix: String): String = prefix + "." + (AgendaQrSupabase.client.auth.currentUserOrNull()?.id ?: error("Authentication required"))
