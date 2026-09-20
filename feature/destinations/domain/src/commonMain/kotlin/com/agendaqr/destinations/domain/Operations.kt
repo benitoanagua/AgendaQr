@@ -62,3 +62,68 @@ interface ComprobanteRepository {
     suspend fun update(comprobante: Comprobante)
     suspend fun delete(id: String)
 }
+
+interface ComprobanteFileStore {
+    suspend fun save(id: String, bytes: ByteArray, extension: String): String
+    suspend fun read(file: String): ByteArray?
+    suspend fun delete(file: String)
+}
+
+class ObserveOperationsUseCase(private val repository: OperationRepository) {
+    operator fun invoke(): Flow<List<Operation>> = repository.observe()
+}
+
+class GetOperationUseCase(private val repository: OperationRepository) {
+    suspend operator fun invoke(id: String): Operation? = repository.get(id)
+}
+
+class SaveOperationUseCase(private val repository: OperationRepository) {
+    suspend operator fun invoke(operation: Operation) = repository.save(operation)
+}
+
+class UpdateOperationUseCase(private val repository: OperationRepository) {
+    suspend operator fun invoke(operation: Operation) = repository.update(operation)
+}
+
+class DeleteOperationUseCase(private val repository: OperationRepository) {
+    suspend operator fun invoke(id: String) = repository.delete(id)
+}
+
+class ObserveComprobantesUseCase(private val repository: ComprobanteRepository) {
+    operator fun invoke(): Flow<List<Comprobante>> = repository.observe()
+}
+
+class GetComprobanteUseCase(private val repository: ComprobanteRepository) {
+    suspend operator fun invoke(id: String): Comprobante? = repository.get(id)
+}
+
+class SaveComprobanteUseCase(
+    private val repository: ComprobanteRepository,
+    private val fileStore: ComprobanteFileStore,
+) {
+    suspend operator fun invoke(
+        comprobante: Comprobante,
+        bytes: ByteArray,
+        extension: String,
+    ): Comprobante {
+        val file = fileStore.save(comprobante.id, bytes, extension)
+        return comprobante.copy(file = file).also { repository.save(it) }
+    }
+}
+
+class UpdateComprobanteUseCase(private val repository: ComprobanteRepository) {
+    suspend operator fun invoke(comprobante: Comprobante) = repository.update(comprobante)
+}
+
+class DeleteComprobanteUseCase(
+    private val repository: ComprobanteRepository,
+    private val fileStore: ComprobanteFileStore,
+) {
+    suspend operator fun invoke(comprobante: Comprobante) {
+        repository.delete(comprobante.id)
+        fileStore.delete(comprobante.file)
+    }
+}
+
+expect fun nowMillis(): Long
+
