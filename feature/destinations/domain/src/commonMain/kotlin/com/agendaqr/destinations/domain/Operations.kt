@@ -107,7 +107,12 @@ class SaveComprobanteUseCase(
         extension: String,
     ): Comprobante {
         val file = fileStore.save(comprobante.id, bytes, extension)
-        return comprobante.copy(file = file).also { repository.save(it) }
+        return try {
+            comprobante.copy(file = file).also { repository.save(it) }
+        } catch (error: Throwable) {
+            fileStore.delete(file)
+            throw error
+        }
     }
 }
 
