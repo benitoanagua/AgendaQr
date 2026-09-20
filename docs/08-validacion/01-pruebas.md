@@ -1,19 +1,45 @@
-# Validación — Pruebas
+# Validación — Pruebas V1
 
-La validación trabajada se centra en comparar la recuperación y reutilización de QR mediante Agenda QR frente al método que el usuario utiliza normalmente.
+La validación funcional cubre destinos QR, operaciones y comprobantes.
 
-## Áreas evaluadas
+## Destinos
 
-- encontrar un QR conocido;
-- incorporar/guardar un QR;
-- recuperar un QR recibido por mensajería;
-- recuperar desde galería;
-- distinguir destinos similares;
-- mostrar QR;
+- incorporar desde cámara;
+- incorporar desde galería;
+- incorporar múltiples imágenes;
+- incorporar desde compartir;
+- detectar/leer QR;
+- revisar candidato;
+- guardar destino;
+- buscar;
+- mostrar;
 - compartir;
 - reemplazar;
+- eliminar;
 - recuperar sin conexión.
 
-Estas pruebas sirven para validar el flujo y descubrir problemas.
+## Operaciones
 
-Una observación de prueba no se convierte automáticamente en requisito.
+- crear PAGO mínimo;
+- crear COBRO mínimo;
+- crear operación sin comprobante;
+- adjuntar comprobante después.
+
+## Comprobantes
+
+- guardar comprobante sin operación;
+- asociar después;
+- desasociar;
+- reasociar;
+- múltiples comprobantes;
+- duplicado detectado;
+- compartir;
+- eliminar comprobante.
+
+## Integridad
+
+- editar campo sensible con comprobante;
+- editar campo no sensible;
+- eliminar operación con comprobantes;
+- consultar histórico mínimo tras eliminación;
+- cambiar QR del destino y verificar que la historia no se reescribe.

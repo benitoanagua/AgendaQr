@@ -1,24 +1,77 @@
-# UX — Flujos confirmados
+# UX — Flujos confirmados V1
 
-## Flujo principal
+La UI visual está bajo el contrato de Xauxa y permanece congelada.
 
-**Guardar → organizar → buscar → mostrar → compartir/reutilizar**
+## Destinos
 
-## Incorporación
+### Captura
 
-El usuario puede incorporar un QR desde:
+```text
+Cámara / Galería / Múltiples imágenes / Compartir
+                    ↓
+               detectar QR
+                    ↓
+                leer/clasificar
+                    ↓
+              revisar candidato
+                    ↓
+              guardar destino
+```
 
-- cámara;
-- galería;
-- múltiples imágenes;
-- compartir desde otra aplicación.
+Un candidato QR no se persiste automáticamente como destino solo por ser detectado.
 
-## Recuperación
+### Reutilización
 
-El usuario busca o selecciona un destino y puede mostrar su QR a pantalla completa.
+```text
+Buscar destino
+     ↓
+Abrir
+     ↓
+Mostrar QR
+     ↓
+Reutilizar / Compartir
+```
 
-## Uso externo
+## Operación primero
 
-El QR se utiliza posteriormente fuera de Agenda QR.
+```text
+Registrar PAGO/COBRO
+        ↓
+Operación
+        ↓
+Adjuntar comprobante después
+```
 
-El pago se realiza en la aplicación bancaria o billetera correspondiente.
+## Comprobante primero
+
+```text
+Compartir/recibir comprobante
+           ↓
+        Guardar
+           ↓
+      asociar después
+```
+
+Guardar primero minimiza la interacción.
+
+## Eliminación
+
+Eliminar operación con comprobantes:
+
+```text
+Advertencia contextual
+        ↓
+Confirmar
+        ↓
+Eliminar archivos asociados
+        ↓
+Conservar histórico mínimo
+```
+
+Eliminar comprobante:
+
+```text
+Eliminar archivo
+        ↓
+Operación permanece
+```

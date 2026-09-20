@@ -1,28 +1,97 @@
-# Modelo de dominio
+# Modelo de dominio — V1
 
-## Entidad central
+## QR
 
-### Destination / Destino
+Representa el instrumento QR que puede ser detectado, leído y clasificado.
 
-Representa un destino QR reutilizable dentro de Agenda QR.
+```text
+QrAsset
+├── encoded
+└── mimeType
+```
 
-## Modelo conceptual
+La clasificación describe qué contiene técnicamente el QR. No define cómo el usuario lo organiza.
+
+## Destination / Destino
+
+Representa un lugar o cuenta reutilizable asociado a un QR.
 
 ```text
 Destination
 ├── id
 ├── name
 ├── qr
-├── category
-├── note
-├── favorite
-├── createdAt
-├── updatedAt
-└── lastUsedAt
+└── organization
 ```
 
-## Significado
+La organización puede conservar los metadatos aprobados para el destino, como categoría, nota y favorito.
 
-El destino es el objeto que permite identificar, organizar y recuperar un QR reutilizable.
+Un destino puede existir sin operaciones.
 
-Los campos temporales forman parte del modelo conceptual, pero sus reglas exactas de actualización no están definidas en el material y por tanto no se inventan aquí.
+## Operation / Operación
+
+Representa el hecho que el usuario registra como ocurrido.
+
+```text
+Operation
+├── id
+├── type
+├── occurredAt
+├── createdAt
+├── amount?
+├── currency?
+├── personOrEntity?
+├── destination?
+├── concept?
+└── note?
+```
+
+Tipos:
+
+```text
+PAGO
+COBRO
+```
+
+El único conjunto obligatorio para crear una operación es:
+
+```text
+id + type + occurredAt
+```
+
+## Comprobante
+
+Es evidencia retenida por el usuario.
+
+```text
+Comprobante
+├── id
+├── file
+├── createdAt
+├── provenance?
+└── operation?
+```
+
+La proveniencia es:
+
+```text
+ENVIADO
+RECIBIDO
+DESCONOCIDO
+```
+
+La proveniencia no representa el sentido financiero del dinero.
+
+## Reglas temporales
+
+`occurredAt` y `createdAt` tienen semánticas diferentes.
+
+## Independencia
+
+Un comprobante puede existir sin operación.
+
+Una operación puede existir sin comprobante.
+
+Una operación puede tener múltiples comprobantes.
+
+Un comprobante pertenece a cero o una operación.

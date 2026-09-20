@@ -13,7 +13,6 @@ data class Destination(
     val favorite: Boolean = false,
     val createdAt: Long,
     val updatedAt: Long,
-    val lastUsedAt: Long? = null,
 )
 
 @Serializable
@@ -59,18 +58,6 @@ class ToggleFavoriteUseCase(private val repository: DestinationRepository) {
                 updatedAt = nowMillis(),
             )
         )
-    }
-}
-
-/**
- * Recent destinations are derived from explicit QR use: the moment the user opens the
- * full-screen QR for reuse. This is an implementation detail of the existing "recentes"
- * capability; it does not add a new business rule.
- */
-class MarkDestinationUsedUseCase(private val repository: DestinationRepository) {
-    suspend operator fun invoke(destination: Destination) {
-        val now = nowMillis()
-        repository.update(destination.copy(lastUsedAt = now, updatedAt = now))
     }
 }
 
