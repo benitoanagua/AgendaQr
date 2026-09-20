@@ -66,6 +66,7 @@ class SyncDestinationRepository(
 
 fun createSyncedDestinationRepository(): DestinationRepository =
     SyncDestinationRepository(
-        local = LocalDestinationRepository(),
+        local = LocalDestinationRepository(storageKey = userScopedKey("agendaqr.destinations.v1")),
         remote = createRemoteDestinationRepository(),
     )
+

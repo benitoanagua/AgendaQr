@@ -58,6 +58,7 @@ class SyncOperationRepository(
 
 fun createSyncedOperationRepository(): OperationRepository =
     SyncOperationRepository(
-        local = LocalOperationRepository(),
+        local = LocalOperationRepository(storageKey = userScopedKey("agendaqr.operations.v1")),
         remote = createRemoteOperationRepository(),
     )
+

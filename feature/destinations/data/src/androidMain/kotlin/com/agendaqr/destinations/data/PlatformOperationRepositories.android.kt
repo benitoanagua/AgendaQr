@@ -4,4 +4,4 @@ import com.agendaqr.destinations.domain.ComprobanteRepository
 import com.agendaqr.destinations.domain.OperationRepository
 
 actual fun createOperationRepository(): OperationRepository = createSyncedOperationRepository()
-actual fun createComprobanteRepository(): ComprobanteRepository = LocalComprobanteRepository()
+actual fun createComprobanteRepository(): ComprobanteRepository = createSyncedComprobanteRepository(platformComprobanteFileStore())

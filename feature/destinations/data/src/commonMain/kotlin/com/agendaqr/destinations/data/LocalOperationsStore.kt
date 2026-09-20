@@ -12,8 +12,8 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
-private const val OPERATIONS_STORAGE_KEY = "agendaqr.operations.v1"
-private const val RECEIPTS_STORAGE_KEY = "agendaqr.comprobantes.v1"
+private const val OPERATIONS_STORAGE_KEY_PREFIX = "agendaqr.operations.v1."
+private const val RECEIPTS_STORAGE_KEY_PREFIX = "agendaqr.comprobantes.v1."
 
 private val operationsJson = Json {
     encodeDefaults = true
@@ -34,6 +34,7 @@ fun operationsStore(): OperationsStore = object : OperationsStore {
 
 class LocalOperationRepository(
     private val store: OperationsStore = operationsStore(),
+    private val storageKey: String = OPERATIONS_STORAGE_KEY_PREFIX + "legacy",
 ) : OperationRepository {
     private val mutex = Mutex()
     private val state = MutableStateFlow(load())
@@ -61,7 +62,7 @@ class LocalOperationRepository(
     }
 
     private fun load(): List<Operation> =
-        store.read(OPERATIONS_STORAGE_KEY)?.let {
+        store.read(storageKey)?.let {
             runCatching {
                 operationsJson.decodeFromString<OperationList>(it).items
             }.getOrDefault(emptyList())
@@ -69,12 +70,13 @@ class LocalOperationRepository(
 
     private fun persist(value: List<Operation>) {
         state.value = value
-        store.write(OPERATIONS_STORAGE_KEY, operationsJson.encodeToString(OperationList(value)))
+        store.write(storageKey, operationsJson.encodeToString(OperationList(value)))
     }
 }
 
 class LocalComprobanteRepository(
     private val store: OperationsStore = operationsStore(),
+    private val storageKey: String = RECEIPTS_STORAGE_KEY_PREFIX + "legacy",
 ) : ComprobanteRepository {
     private val mutex = Mutex()
     private val state = MutableStateFlow(load())
@@ -102,7 +104,7 @@ class LocalComprobanteRepository(
     }
 
     private fun load(): List<Comprobante> =
-        store.read(RECEIPTS_STORAGE_KEY)?.let {
+        store.read(storageKey)?.let {
             runCatching {
                 operationsJson.decodeFromString<ComprobanteList>(it).items
             }.getOrDefault(emptyList())
@@ -110,7 +112,7 @@ class LocalComprobanteRepository(
 
     private fun persist(value: List<Comprobante>) {
         state.value = value
-        store.write(RECEIPTS_STORAGE_KEY, operationsJson.encodeToString(ComprobanteList(value)))
+        store.write(storageKey, operationsJson.encodeToString(ComprobanteList(value)))
     }
 }
 
