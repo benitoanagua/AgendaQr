@@ -8,6 +8,7 @@ private object AndroidComprobanteFileStore : ComprobanteFileStore {
         File(AgendaQrAndroidStorage.requireFilesDir(), "comprobantes").apply { mkdirs() }
 
     override suspend fun save(id: String, bytes: ByteArray, extension: String): String {
+        require(bytes.isNotEmpty()) { "Receipt file cannot be empty." }
         val file = File(directory(), "$id.$extension")
         file.writeBytes(bytes)
         return file.toURI().toString()
