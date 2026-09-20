@@ -1,38 +1,37 @@
-# Estado de implementación
+# Estado de implementación — alineación V1
 
-## Plataforma
+## Situación
 
-| Plataforma | Estado | Criterio |
-|---|---|---|
-| Android | Validación inicial | debe probarse en emulador/dispositivo |
-| iOS | Soporte arquitectónico | no se declara validado hasta Xcode |
+La especificación V1 está aprobada y pasa a ser el contrato para la implementación.
 
-## Implementado en la base
+El repositorio ya contiene la base KMP de destinos QR, pero su implementación todavía no representa todas las entidades y reglas V1.
 
-- Kotlin Multiplatform con Android e iOS.
-- `androidApp` como host Android.
-- `iosApp` como host iOS/Xcode.
-- Dominio aislado de Compose y APIs de plataforma.
-- Repository + use cases + `StateFlow`.
-- Persistencia local Android/iOS.
-- Búsqueda, favoritos, recientes y categorías.
-- Crear, editar, eliminar y reemplazar QR.
-- QR fullscreen.
-- Share outbound como imagen.
-- Share inbound Android mediante `ACTION_SEND` / `ACTION_SEND_MULTIPLE`.
-- Cámara, galería y selección múltiple Android con decodificación QR.
-- Tokens semánticos Xauxa y gates visuales/arquitectónicos.
+## Base existente
 
-## Pendiente de validación real
+- KMP Android/iOS;
+- `androidApp` e `iosApp`;
+- módulos domain/data/presentation;
+- persistencia local de destinos;
+- búsqueda, favoritos y categorías;
+- importación QR;
+- QR fullscreen;
+- share inbound/outbound;
+- contrato visual Xauxa.
 
-- Build Gradle completo cuando el entorno pueda resolver el Gradle Wrapper y dependencias.
-- Ejecución Android en emulador/dispositivo.
-- Cámara y picker en hardware Android.
-- Share inbound/outbound con aplicaciones reales.
-- Ejecución iOS mediante Xcode.
-- Validación visual por screenshots/Roborazzi.
-- Integraciones nativas iOS de cámara, Photos, share y protección local.
+## Pendiente de alineación V1
+
+- modelo de `Operation`;
+- repositorio/persistencia de operaciones;
+- modelo de `Comprobante`;
+- almacenamiento de archivos;
+- asociación reversible comprobante ↔ operación;
+- múltiples comprobantes;
+- búsqueda de operaciones;
+- histórico mínimo;
+- eliminación coordinada de archivos;
+- confirmación de edición sensible;
+- detección de duplicados no bloqueante.
 
 ## Regla
 
-Código implementado no equivale a capacidad validada. La implementación compartida y la validación de cada plataforma se registran por separado.
+Código existente no equivale a capacidad validada en plataforma.
