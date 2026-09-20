@@ -32,19 +32,33 @@ class SyncComprobanteRepository(
             val bytes = fileStore.read(comprobante.file)
                 ?: error("Local receipt file not found: " + comprobante.file)
             remote.save(comprobante, bytes)
-        }
+        }.onFailure { enqueue(SyncMutationType.UPSERT, comprobante.id) }
     }
 
     override suspend fun update(comprobante: Comprobante) {
         local.update(comprobante)
         runCatching { remote.update(comprobante) }
+            .onFailure { enqueue(SyncMutationType.UPSERT, comprobante.id) }
     }
 
     override suspend fun delete(id: String) {
         local.delete(id)
         runCatching {
             remote.observe().firstOrNull { it.comprobante.id == id }?.let(remote::delete)
-        }
+        }.onFailure { enqueue(SyncMutationType.DELETE, id) }
+    }
+
+    private suspend fun enqueue(mutation: SyncMutationType, id: String) {
+        LocalSyncQueue().enqueue(
+            PendingSyncMutation(
+                id = "comprobante-$id-${mutation.name}",
+                resource = SyncResource.COMPROBANTE,
+                mutation = mutation,
+                entityId = id,
+                enqueuedAt = kotlinx.datetime.Clock.System.now().toEpochMilliseconds(),
+                nextAttemptAt = kotlinx.datetime.Clock.System.now().toEpochMilliseconds(),
+            ),
+        )
     }
 
     suspend fun syncFromRemote() {
