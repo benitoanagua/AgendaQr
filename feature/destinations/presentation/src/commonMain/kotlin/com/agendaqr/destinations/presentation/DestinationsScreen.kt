@@ -30,6 +30,7 @@ fun DestinationsScreen(
     state: DestinationsUiState,
     onAction: (DestinationAction) -> Unit,
     onOpenOperations: () -> Unit = {},
+    onSignOut: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Xxl),
@@ -38,74 +39,39 @@ fun DestinationsScreen(
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Agenda QR", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                XauxaTextAction("Cerrar sesión", onClick = onSignOut)
                 XauxaSecondaryButton("Operaciones", onClick = onOpenOperations)
                 XauxaPrimaryButton("Add QR", onClick = { onAction(DestinationAction.Edit(null)) })
             }
         }
-
-        OutlinedTextField(
-            value = state.query,
-            onValueChange = { onAction(DestinationAction.Search(it)) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Search") },
-            shape = androidx.compose.foundation.shape.RectangleShape,
-            singleLine = true,
-        )
-
+        OutlinedTextField(value = state.query, onValueChange = { onAction(DestinationAction.Search(it)) }, modifier = Modifier.fillMaxWidth(), label = { Text("Search") }, shape = androidx.compose.foundation.shape.RectangleShape, singleLine = true)
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-            if (state.favoriteOnly) {
-                XauxaPrimaryButton("Favorites", onClick = { onAction(DestinationAction.ToggleFavorites) })
-            } else {
-                XauxaSecondaryButton("Favorites", onClick = { onAction(DestinationAction.ToggleFavorites) })
-            }
-            if (state.recentOnly) {
-                XauxaPrimaryButton("Recent", onClick = { onAction(DestinationAction.ToggleRecent) })
-            } else {
-                XauxaSecondaryButton("Recent", onClick = { onAction(DestinationAction.ToggleRecent) })
-            }
-            if (state.category != null) {
-                XauxaTextAction(state.category) { onAction(DestinationAction.SelectCategory(null)) }
-            }
+            if (state.favoriteOnly) XauxaPrimaryButton("Favorites", onClick = { onAction(DestinationAction.ToggleFavorites) }) else XauxaSecondaryButton("Favorites", onClick = { onAction(DestinationAction.ToggleFavorites) })
+            if (state.recentOnly) XauxaPrimaryButton("Recent", onClick = { onAction(DestinationAction.ToggleRecent) }) else XauxaSecondaryButton("Recent", onClick = { onAction(DestinationAction.ToggleRecent) })
+            if (state.category != null) XauxaTextAction(state.category) { onAction(DestinationAction.SelectCategory(null)) }
         }
-
-        state.error?.let { error ->
-            XauxaStatusBanner(error, danger = true)
-        }
-
+        state.error?.let { XauxaStatusBanner(it, danger = true) }
         when {
             state.isLoading -> XauxaLoading()
             state.visibleDestinations.isEmpty() -> XauxaEmptyState(
                 title = if (state.destinations.isEmpty()) "No destinations" else "No matching destinations",
                 actionLabel = if (state.destinations.isEmpty()) "Add QR" else "Clear search",
-                onAction = {
-                    if (state.destinations.isEmpty()) onAction(DestinationAction.Edit(null))
-                    else onAction(DestinationAction.Search(""))
-                },
+                onAction = { if (state.destinations.isEmpty()) onAction(DestinationAction.Edit(null)) else onAction(DestinationAction.Search("")) },
             )
             else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                items(state.visibleDestinations, key = { it.id }) { destination ->
-                    DestinationRow(destination, onAction)
-                }
+                items(state.visibleDestinations, key = { it.id }) { destination -> DestinationRow(destination, onAction) }
             }
         }
     }
 }
 
 @Composable
-private fun DestinationRow(
-    destination: Destination,
-    onAction: (DestinationAction) -> Unit,
-) {
+private fun DestinationRow(destination: Destination, onAction: (DestinationAction) -> Unit) {
     XauxaTile(onClick = { onAction(DestinationAction.Open(destination.id)) }) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(XauxaSpacing.Lg),
-            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
-        ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(destination.name.ifBlank { "Unnamed destination" }, fontSize = XauxaType.Title, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
-                XauxaTextAction(if (destination.favorite) "Favorite" else "Mark favorite") {
-                    onAction(DestinationAction.ToggleFavorite(destination))
-                }
+                XauxaTextAction(if (destination.favorite) "Favorite" else "Mark favorite") { onAction(DestinationAction.ToggleFavorite(destination)) }
             }
             destination.category?.let { Text(it, color = XauxaColor.TextSecondary, fontSize = XauxaType.Label) }
             destination.note?.takeIf { it.isNotBlank() }?.let { Text(it, color = XauxaColor.TextSecondary, fontSize = XauxaType.Label) }
