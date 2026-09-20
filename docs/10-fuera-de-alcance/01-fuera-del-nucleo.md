@@ -1,35 +1,30 @@
-# Fuera del núcleo actual
+# Fuera de alcance — V1
 
-Quedan fuera:
+Quedan fuera de V1:
 
-- ejecutar pagos;
+- ejecución de pagos;
 - transferencias;
 - billetera;
 - saldos;
 - custodia de dinero;
-- integraciones bancarias;
-- detección universal automática de expiración;
+- verificación bancaria;
+- integración bancaria;
+- CRM;
+- módulo de clientes;
+- obligaciones;
+- cuentas por cobrar;
+- pagos parciales;
+- flujos especializados de devolución/reintegro;
+- recordatorios;
+- contabilidad;
+- conciliación bancaria;
+- OCR de comprobantes;
 - IA;
-- OCR complejo;
-- historial/versionado avanzado;
-- sincronización cloud;
-- cuentas familiares;
-- estadísticas;
+- sincronización cloud compleja;
 - marketplace;
 - publicidad;
-- tarjetas de pago personalizadas avanzadas.
+- estadísticas de negocio;
+- cuentas familiares;
+- infraestructura financiera externa.
 
-## Tecnologías no aprobadas como requisitos
-
-Tampoco forman parte de los requisitos vigentes, mientras no exista aprobación explícita:
-
-- OAuth/OIDC;
-- Supabase;
-- Push;
-- APIs obligatorias;
-- stack tecnológico específico;
-- cifrado/protocolos concretos;
-- roadmap artificial;
-- objetivos técnicos inventados.
-
-Que algo esté fuera del núcleo actual no implica que sea imposible en el futuro; significa que no es un requisito aprobado actualmente.
+Estas capacidades pueden existir en una evolución futura, pero no son parte del contrato V1.
