@@ -70,4 +70,3 @@ fun createSyncedDestinationRepository(): DestinationRepository =
         remote = createRemoteDestinationRepository(),
     )
 
-private fun userScopedKey(prefix: String): String = prefix + "." + (AgendaQrSupabase.client.auth.currentUserOrNull()?.id ?: error("Authentication required"))
