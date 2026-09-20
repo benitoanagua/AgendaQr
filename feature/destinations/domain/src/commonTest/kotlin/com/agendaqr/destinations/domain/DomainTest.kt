@@ -197,3 +197,30 @@ class OperationUseCaseTest {
         }
     }
 }
+
+
+class OperationIntegrityTest {
+    @Test
+    fun sensitive_changes_are_detected_without_treating_notes_as_sensitive() {
+        val original = Operation(
+            id = "op-1",
+            type = OperationType.PAGO,
+            occurredAt = 100,
+            createdAt = 101,
+            amount = "850",
+            currency = "BOB",
+            personOrEntity = "Colegio",
+            destinationId = "dest-1",
+            note = "nota original",
+        )
+
+        assertTrue(original.copy(note = "nota nueva").hasSensitiveChangesComparedTo(original))
+            .not()
+        assertTrue(
+            original.copy(amount = "900").hasSensitiveChangesComparedTo(original)
+        )
+        assertTrue(
+            original.copy(type = OperationType.COBRO).hasSensitiveChangesComparedTo(original)
+        )
+    }
+}
