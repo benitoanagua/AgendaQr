@@ -36,13 +36,13 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
             confirmButton = {
                 XauxaPrimaryButton(
                     if (state.isSavingReceipt) "Guardando…" else "LISTO / OK",
-                    { viewModel.onAction(OperationAction.SaveIncoming) },
+                    { viewModel.onAction(OperationAction.SaveIncoming(false)) },
                     enabled = !state.isSavingReceipt,
                 )
             },
             dismissButton = {
                 XauxaTextAction("ASOCIAR AHORA (Opcional)") {
-                    viewModel.onAction(OperationAction.SaveIncoming)
+                    viewModel.onAction(OperationAction.SaveIncoming(true))
                 }
             },
         )
