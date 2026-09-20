@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -11,6 +12,15 @@ import com.agendaqr.destinations.data.createComprobanteRepository
 import com.agendaqr.destinations.data.createComprobanteFileStore
 import com.agendaqr.destinations.data.createDeletedOperationHistoryRepository
 import com.agendaqr.destinations.data.createAuthRepository
+import com.agendaqr.destinations.data.LocalSyncQueue
+import com.agendaqr.destinations.data.SyncMutationProcessor
+import com.agendaqr.destinations.data.SyncRecoveryCoordinator
+import com.agendaqr.destinations.data.createRemoteDestinationRepository
+import com.agendaqr.destinations.data.createRemoteOperationRepository
+import com.agendaqr.destinations.data.createRemoteComprobanteRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import com.agendaqr.destinations.domain.*
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.theme.AgendaQrTheme
@@ -45,8 +55,36 @@ fun AgendaQrApp() {
 
 @Composable
 private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
+    val syncScope = remember { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
+    val syncQueue = remember { LocalSyncQueue() }
+    val destinationRepository = remember { createDestinationRepository() }
+    val operationRepository = remember { createOperationRepository() }
+    val comprobanteRepository = remember { createComprobanteRepository() }
+    val fileStore = remember { createComprobanteFileStore() }
+    val syncProcessor = remember(syncQueue, destinationRepository, operationRepository, comprobanteRepository, fileStore) {
+        SyncMutationProcessor(
+            queue = syncQueue,
+            destinations = destinationRepository,
+            operations = operationRepository,
+            comprobantes = comprobanteRepository,
+            remoteDestinations = createRemoteDestinationRepository(),
+            remoteOperations = createRemoteOperationRepository(),
+            remoteComprobantes = createRemoteComprobanteRepository(),
+            fileStore = fileStore,
+        )
+    }
+    val recovery = remember(syncProcessor, syncScope) {
+        SyncRecoveryCoordinator(syncProcessor, syncScope)
+    }
+    DisposableEffect(recovery) {
+        recovery.start()
+        onDispose {
+            recovery.stop()
+            syncScope.coroutineContext.cancel()
+        }
+    }
     var showOperations by remember { mutableStateOf(false) }
-    val repository = remember { createDestinationRepository() }
+    val repository = destinationRepository
     val viewModel = remember(repository) { DestinationsViewModel(
             observe = ObserveDestinationsUseCase(repository),
             get = GetDestinationUseCase(repository),
@@ -57,10 +95,7 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
             markUsed = MarkDestinationUsedUseCase(repository),
         ) }
     val state by viewModel.state.collectAsState()
-    val operationRepository = remember { createOperationRepository() }
-    val comprobanteRepository = remember { createComprobanteRepository() }
-    val fileStore = remember { createComprobanteFileStore() }
-    val historyRepository = remember { createDeletedOperationHistoryRepository() }
+    val historyRepository = remember = remember { createDeletedOperationHistoryRepository() }
     val operationsViewModel = remember(operationRepository, comprobanteRepository, fileStore, historyRepository) {
         OperationsViewModel(
             observeOperations = ObserveOperationsUseCase(operationRepository),
