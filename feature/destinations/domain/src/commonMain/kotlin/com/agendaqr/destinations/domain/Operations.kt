@@ -137,7 +137,7 @@ class SaveOperationUseCase(private val repository: OperationRepository) {
 }
 
 class UpdateOperationUseCase(private val repository: OperationRepository) {
-    suspend operator fun invoke(operation: Operation) = repository.update(operation)
+    suspend operator fun invoke(operation: Operation) = repository.update(operation.copy(updatedAt = nowMillis()))
 }
 
 class DeleteOperationUseCase(private val repository: OperationRepository) {
