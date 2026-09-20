@@ -1,6 +1,8 @@
 plugins { id("agendaqr.android-application") }
 
-android { namespace = "com.agendaqr.android" }
+android {
+    namespace = "com.agendaqr.android"
+}
 
 dependencies {
     implementation(project(":shared"))
