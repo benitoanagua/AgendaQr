@@ -47,7 +47,7 @@ class SyncOperationRepository(
                     val localItem = local.get(remoteItem.id)
                     if (localItem == null) {
                         local.save(remoteItem)
-                    } else if (remoteItem.createdAt >= localItem.createdAt && remoteItem.occurredAt >= localItem.occurredAt) {
+                    } else if (remoteItem.updatedAt >= localItem.updatedAt) {
                         local.update(remoteItem)
                     }
                 }
