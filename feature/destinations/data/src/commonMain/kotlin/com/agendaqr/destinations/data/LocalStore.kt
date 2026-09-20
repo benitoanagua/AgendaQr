@@ -11,7 +11,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
-private const val STORAGE_KEY = "agendaqr.destinations.v1"
+private const val STORAGE_KEY_PREFIX = "agendaqr.destinations.v1."
 
 private val json = Json {
     encodeDefaults = true
@@ -27,6 +27,7 @@ expect fun platformDestinationStore(): DestinationStore
 
 class LocalDestinationRepository(
     private val store: DestinationStore = platformDestinationStore(),
+    private val storageKey: String = STORAGE_KEY_PREFIX + "legacy",
 ) : DestinationRepository {
     private val mutex = Mutex()
     private val state = MutableStateFlow(load())
@@ -54,13 +55,13 @@ class LocalDestinationRepository(
         mutex.withLock { persist(state.value.filterNot { it.id == id }) }
     }
 
-    private fun load(): List<Destination> = store.read(STORAGE_KEY)
+    private fun load(): List<Destination> = store.read(storageKey)
         ?.let { runCatching { json.decodeFromString<DestinationList>(it).items }.getOrDefault(emptyList()) }
         ?: emptyList()
 
     private fun persist(value: List<Destination>) {
         state.value = value
-        store.write(STORAGE_KEY, json.encodeToString(DestinationList(value)))
+        store.write(storageKey, json.encodeToString(DestinationList(value)))
     }
 }
 
