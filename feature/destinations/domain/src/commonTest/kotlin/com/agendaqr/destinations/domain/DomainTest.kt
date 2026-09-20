@@ -23,7 +23,6 @@ class DomainTest {
         assertEquals("Shopping", destination.category)
         assertEquals("Reusable", destination.note)
         assertTrue(destination.favorite)
-        assertNull(destination.lastUsedAtOrNull())
     }
 
     @Test
@@ -100,5 +99,3 @@ class DomainTest {
         assertEquals("Colegio San José", history.personOrEntity)
     }
 }
-
-private fun Destination.lastUsedAtOrNull(): Long? = null
