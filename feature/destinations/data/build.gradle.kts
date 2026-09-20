@@ -21,6 +21,7 @@ kotlin {
             implementation("io.github.jan-tennert.supabase:storage-kt")
             implementation(project(":feature:destinations:domain"))
             implementation(libs.serialization.json)
+            implementation(libs.kotlinx.datetime)
             implementation(libs.coroutines.core)
         }
         commonTest.dependencies { implementation(libs.coroutines.test) }

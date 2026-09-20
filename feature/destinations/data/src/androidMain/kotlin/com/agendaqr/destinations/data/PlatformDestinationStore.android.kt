@@ -31,4 +31,4 @@ private object AndroidDestinationStore : DestinationStore {
 
 actual fun platformDestinationStore(): DestinationStore = AndroidDestinationStore
 
-actual fun createDestinationRepository(): com.agendaqr.destinations.domain.DestinationRepository = LocalDestinationRepository()
+actual fun createDestinationRepository(): com.agendaqr.destinations.domain.DestinationRepository = createSyncedDestinationRepository()
