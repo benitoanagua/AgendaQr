@@ -2,33 +2,37 @@
 
 ## Definición
 
-Agenda QR es una **agenda de destinos QR**.
+**Agenda QR guarda tus destinos de pago/cobro y conserva el respaldo de tus operaciones para que puedas encontrarlo y compartirlo cuando lo necesites.**
 
-El propósito central es:
+El producto combina dos necesidades relacionadas:
 
-**Guardar → organizar → buscar → mostrar → compartir/reutilizar**
+- conservar destinos QR reutilizables;
+- conservar evidencia de operaciones y recuperarla rápidamente.
 
-El objeto central es el **destino QR**, no una simple colección de imágenes.
+Principio de uso:
+
+**Capturar rápido. Organizar cuando sea necesario. Recuperar siempre.**
 
 ## Problema
 
-Los QR reutilizables pueden encontrarse dispersos en:
+Los destinos QR y los comprobantes suelen quedar dispersos entre mensajería, galería, correo, notas y otras aplicaciones. Cuando una persona necesita reutilizar un destino o demostrar una operación, debe volver a buscar entre esos lugares.
 
-- WhatsApp
-- Telegram
-- galería
-- capturas
-- correo
-- notas
-- carpetas
-- otras ubicaciones
+Agenda QR centraliza ese respaldo sin ejecutar el pago ni convertirse en un sistema financiero.
 
-Agenda QR concentra esos destinos para facilitar su recuperación y reutilización.
+## Flujo central
 
-## Operación
+### Destino QR
 
-Agenda QR no ejecuta el pago.
+**Incorporar → guardar → organizar → buscar → mostrar → reutilizar/compartir**
 
-Flujo conceptual:
+### Operación
 
-**Agenda QR → encontrar destino → mostrar QR → banco/billetera externa → pago externo**
+**Registrar PAGO/COBRO → adjuntar comprobante cuando exista → recuperar → compartir**
+
+### Comprobante
+
+**Guardar con mínimo esfuerzo → asociar después cuando sea necesario**
+
+## Frontera del producto
+
+Agenda QR registra y conserva información proporcionada por el usuario. No confirma que el dinero haya llegado, no mueve dinero y no sustituye al banco, billetera, comercio o sistema contable.
