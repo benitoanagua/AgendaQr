@@ -4,8 +4,6 @@ fun userScopedKey(prefix: String): String =
     prefix + "." + (AgendaQrSupabase.client.auth.currentUserOrNull()?.id
         ?: error("Authentication required"))
 
-package com.agendaqr.destinations.data
-
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
