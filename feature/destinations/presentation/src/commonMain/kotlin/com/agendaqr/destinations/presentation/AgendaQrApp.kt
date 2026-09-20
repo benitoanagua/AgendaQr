@@ -47,9 +47,11 @@ fun AgendaQrApp() {
         )
     }
 
+    val operationState by operationsViewModel.state.collectAsState()
+
     AgendaQrTheme {
         if (showOperations) {
-            OperationsScreen(operationsViewModel, onBack = { showOperations = false })
+            OperationsScreen(operationState, operationsViewModel, onBack = { showOperations = false })
         } else when (val route = state.route) {
             DestinationRoute.List -> DestinationsScreen(state, viewModel::onAction, onOpenOperations = { showOperations = true })
             is DestinationRoute.Edit -> DestinationEditorScreen(
