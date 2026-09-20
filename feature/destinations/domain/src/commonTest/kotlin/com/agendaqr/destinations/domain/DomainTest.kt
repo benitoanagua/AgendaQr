@@ -214,8 +214,7 @@ class OperationIntegrityTest {
             note = "nota original",
         )
 
-        assertTrue(original.copy(note = "nota nueva").hasSensitiveChangesComparedTo(original))
-            .not()
+        assertTrue(!original.copy(note = "nota nueva").hasSensitiveChangesComparedTo(original))
         assertTrue(
             original.copy(amount = "900").hasSensitiveChangesComparedTo(original)
         )
