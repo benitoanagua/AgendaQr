@@ -17,9 +17,9 @@ object AgendaQrAndroidStorage {
         requireNotNull(preferences) { "AgendaQrAndroidStorage must be initialized before creating the repository." }
 
     internal fun requireFilesDir(): java.io.File =
-        requireNotNull(preferences) {
+        requireNotNull(applicationFilesDir) {
             "AgendaQrAndroidStorage must be initialized before creating the repository."
-        }.let { requireNotNull(applicationFilesDir) }
+        }
 
 
 }
