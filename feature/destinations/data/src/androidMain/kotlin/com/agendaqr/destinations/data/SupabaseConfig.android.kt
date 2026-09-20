@@ -1,6 +1,6 @@
 package com.agendaqr.destinations.data
 
-import com.agendaqr.android.BuildConfig
+import com.agendaqr.destinations.data.BuildConfig
 
 actual fun supabaseConfig(): SupabaseConfig =
     SupabaseConfig(
