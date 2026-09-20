@@ -1,12 +1,13 @@
 package com.agendaqr.destinations.data
 
 import com.agendaqr.destinations.domain.ComprobanteFileStore
+import kotlinx.cinterop.refTo
 import platform.Foundation.NSData
-import platform.Foundation.NSFileManager
+import platform.Foundation.NSDataWritingAtomic
 import platform.Foundation.NSDocumentDirectory
+import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
-import platform.Foundation.NSDataWritingAtomic
 
 private object IosComprobanteFileStore : ComprobanteFileStore {
     private fun directory(): NSURL {
@@ -26,7 +27,7 @@ private object IosComprobanteFileStore : ComprobanteFileStore {
 
     override suspend fun save(id: String, bytes: ByteArray, extension: String): String {
         val file = directory().URLByAppendingPathComponent("$id.$extension")!!
-        NSData.create(bytes = bytes, length = bytes.size.toULong())
+        NSData.create(bytes = bytes.refTo(0), length = bytes.size.toULong())
             .writeToURL(file, NSDataWritingAtomic)
         return file.absoluteString!!
     }
