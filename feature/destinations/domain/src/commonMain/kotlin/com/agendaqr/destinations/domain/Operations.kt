@@ -199,6 +199,18 @@ class UnassociateComprobanteUseCase(
     }
 }
 
+class FindDuplicateComprobantesUseCase(
+    private val repository: ComprobanteRepository,
+    private val fileStore: ComprobanteFileStore,
+) {
+    suspend operator fun invoke(bytes: ByteArray): List<Comprobante> {
+        if (bytes.isEmpty()) return emptyList()
+        return repository.observe().first().filter { receipt ->
+            fileStore.read(receipt.file)?.contentEquals(bytes) == true
+        }
+    }
+}
+
 class SaveComprobanteUseCase(
     private val repository: ComprobanteRepository,
     private val fileStore: ComprobanteFileStore,
