@@ -1,15 +1,57 @@
-# Modelo — Relaciones
+# Modelo de dominio — Relaciones V1
 
-La relación conceptual principal es:
+```text
+Usuario
+ ├── administra → Destination*
+ ├── registra   → Operation*
+ └── conserva   → Comprobante*
 
-**Usuario → administra → Destinos QR**
+Destination
+ └── utiliza → QrAsset
 
-Cada destino contiene un QR y metadatos que permiten:
+Operation
+ ├── contextualiza → Destination?
+ └── tiene → Comprobante* (0..N)
 
-- identificarlo;
-- organizarlo;
-- recuperarlo.
+Comprobante
+ └── pertenece a → Operation? (0..1)
+```
 
-No se agregan entidades ni relaciones con bancos, billeteras o proveedores de pago.
+## Asociación reversible
 
-La razón es que el pago es externo a Agenda QR y no forma parte del núcleo.
+```text
+Comprobante → Operation A
+      ↓ desasociar
+Comprobante → sin operación
+      ↓ asociar
+Comprobante → Operation B
+```
+
+Desasociar no elimina el archivo.
+
+## Historial de eliminación
+
+Cuando una operación se elimina, sus comprobantes asociados se eliminan como recursos. La operación deja solamente una huella histórica mínima:
+
+```text
+date
+type
+amount
+person/entity
+status = operación eliminada
+```
+
+No se conserva el archivo del comprobante.
+
+## Contexto histórico de destino
+
+Cambiar el QR actual de un destino no sustituye el contexto histórico de una operación ya registrada.
+
+Ejemplo conceptual:
+
+```text
+Enero → QR A
+Marzo → QR B
+```
+
+La operación de enero no debe pasar a mostrar QR B por el simple hecho de que el destino actual haya cambiado.
