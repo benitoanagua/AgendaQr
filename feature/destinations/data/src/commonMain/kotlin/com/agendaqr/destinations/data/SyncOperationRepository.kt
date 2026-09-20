@@ -62,4 +62,3 @@ fun createSyncedOperationRepository(): OperationRepository =
         remote = createRemoteOperationRepository(),
     )
 
-private fun userScopedKey(prefix: String): String = prefix + "." + (AgendaQrSupabase.client.auth.currentUserOrNull()?.id ?: error("Authentication required"))
