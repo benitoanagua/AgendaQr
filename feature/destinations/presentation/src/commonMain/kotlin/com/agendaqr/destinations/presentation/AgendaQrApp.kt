@@ -47,7 +47,15 @@ fun AgendaQrApp() {
 private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
     var showOperations by remember { mutableStateOf(false) }
     val repository = remember { createDestinationRepository() }
-    val viewModel = remember(repository) { DestinationsViewModel(ObserveDestinationsUseCase(repository), GetDestinationUseCase(repository), SaveDestinationUseCase(repository), UpdateDestinationUseCase(repository), DeleteDestinationUseCase(repository), ToggleFavoriteUseCase(repository), MarkDestinationUsedUseCase(repository)) }
+    val viewModel = remember(repository) { DestinationsViewModel(
+            observe = ObserveDestinationsUseCase(repository),
+            get = GetDestinationUseCase(repository),
+            save = SaveDestinationUseCase(repository),
+            update = UpdateDestinationUseCase(repository),
+            delete = DeleteDestinationUseCase(repository),
+            toggleFavorite = ToggleFavoriteUseCase(repository),
+            markUsed = MarkDestinationUsedUseCase(repository),
+        ) }
     val state by viewModel.state.collectAsState()
     val operationRepository = remember { createOperationRepository() }
     val comprobanteRepository = remember { createComprobanteRepository() }
