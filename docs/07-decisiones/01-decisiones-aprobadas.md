@@ -1,23 +1,65 @@
-# Decisiones aprobadas
+# Decisiones aprobadas — V1
 
-## Producto
+## D-01 — Propósito
 
-- Agenda QR administra destinos QR.
-- El objeto central es el destino, no una galería de imágenes.
-- El flujo central es guardar, organizar, buscar, mostrar y compartir/reutilizar.
-- El pago se realiza fuera de Agenda QR.
-- El núcleo no depende de una integración bancaria o de pagos.
+Agenda QR conserva destinos QR y respaldo de operaciones para poder recuperarlos y compartirlos.
 
-## Operación
+## D-02 — Operaciones V1
 
-- La persistencia local forma parte del núcleo.
-- La recuperación principal debe estar disponible sin conexión.
-- Cámara, galería, múltiples imágenes y compartir desde otras aplicaciones son vías de incorporación.
-- Nombre, categoría, nota y favorito forman parte de la organización del destino.
+Los tipos de operación son exclusivamente `PAGO` y `COBRO`.
 
-## Criterio documental
+## D-03 — Operación mínima
 
-- No se incorporan requisitos inventados.
-- Las simulaciones se identifican como sintéticas.
-- Las hipótesis no confirmadas no se presentan como certezas.
-- Las decisiones técnicas no aprobadas no forman parte de los requisitos vigentes.
+Una operación requiere únicamente `id`, `type` y `occurredAt`. Todo el resto es opcional.
+
+## D-04 — Dos timestamps
+
+`occurredAt` y `createdAt` representan eventos diferentes.
+
+## D-05 — Comprobantes first-class
+
+El comprobante es una entidad propia, independiente de la operación.
+
+## D-06 — Asociación flexible
+
+Un comprobante puede estar sin operación o asociado a una operación. La asociación es reversible.
+
+## D-07 — Múltiples comprobantes
+
+Una operación puede tener múltiples comprobantes.
+
+## D-08 — Proveniencia
+
+La proveniencia se limita a `ENVIADO`, `RECIBIDO` y `DESCONOCIDO`.
+
+## D-09 — Guardar primero
+
+Guardar un comprobante debe requerir el mínimo absoluto de interacción.
+
+## D-10 — Duplicados
+
+Se alerta sobre posible duplicado, pero no se bloquea el guardado.
+
+## D-11 — Ediciones sensibles
+
+Solo los cambios sensibles de una operación que ya tiene comprobantes requieren confirmación contextual.
+
+## D-12 — Eliminación
+
+Eliminar una operación elimina sus comprobantes asociados y conserva únicamente un histórico mínimo.
+
+## D-13 — Destinos históricos
+
+Cambiar el QR actual de un destino no reescribe operaciones históricas.
+
+## D-14 — No verificación bancaria
+
+Agenda QR no afirma que un comprobante recibido implique que el dinero fue verificado.
+
+## D-15 — No V1
+
+CRM, obligaciones, saldos, pagos parciales, reembolsos especializados, contabilidad, conciliación bancaria, OCR de comprobantes, IA y cloud complejo quedan fuera de V1.
+
+## D-16 — UX
+
+La UI/UX permanece bajo Xauxa Design System; esta consolidación no crea un sistema visual paralelo.
