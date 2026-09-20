@@ -1,16 +1,26 @@
-# Trazabilidad
+# Trazabilidad — V1
 
-| Especificación Agenda QR | Implementación | Estado |
+| Requisito | Área | Estado |
 |---|---|---|
-| RF-01 Incorporar QR | `QrAsset` + boundaries de adquisición de plataforma | implementado/base |
-| RF-02 Guardar destino | `SaveDestinationUseCase` + editor | implementado/base |
-| RF-03 Organizar | categoría, favorito y orden de recientes | implementado/base |
-| RF-04 Buscar | estado de búsqueda + filtrado | implementado/base |
-| RF-05 Mostrar QR | detalle + ruta fullscreen | implementado/base |
-| RF-06 Compartir QR | boundary de share del sistema | implementado/base |
-| RF-07 Mantener | editar, reemplazar, eliminar y favorito | implementado/base |
-| RF-08 Persistencia | repositorio local por plataforma | implementado/base |
-| RF-09 Sin conexión | repositorio local sin dependencia de red | implementado/base |
-| RF-10 Protección opcional | boundary reservado para plataforma | preparado; sin comportamiento inventado |
+| RF-01 incorporar QR | destinations/import | base existente |
+| RF-02 leer/clasificar QR | QR pipeline | base parcial |
+| RF-03 guardar destino | destination domain/data/presentation | base existente |
+| RF-04 buscar destino | destination presentation/data | base existente |
+| RF-05 mostrar/compartir destino | destination presentation/platform | base existente |
+| RF-06 mantener destino | destination domain/data | base existente |
+| RF-07 persistencia/offline | destination data | base existente |
+| RF-08 registrar operación | operation domain/data/presentation | pendiente de alineación |
+| RF-09 occurredAt/createdAt | operation domain | pendiente de alineación |
+| RF-10 guardar comprobante | receipt data | pendiente de alineación |
+| RF-11 proveniencia | receipt domain | pendiente de alineación |
+| RF-12 asociación | operation/receipt domain | pendiente de alineación |
+| RF-13 comprobante independiente | receipt data/presentation | pendiente de alineación |
+| RF-14 duplicados | receipt workflow | pendiente de alineación |
+| RF-15 editar operación | operation presentation/domain | pendiente de alineación |
+| RF-16 eliminar operación/histórico | operation/receipt data | pendiente de alineación |
+| RF-17 eliminar comprobante | receipt data | pendiente de alineación |
+| RF-18 buscar operaciones | operation search | pendiente de alineación |
+| RF-19 compartir comprobante | receipt/platform | pendiente de alineación |
+| RF-20 protección | platform | opcional/base no validada |
 
-La columna de estado no implica validación en hardware.
+`base existente` significa soporte relacionado en el repositorio; no implica validación en hardware.
