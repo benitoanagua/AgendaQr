@@ -71,9 +71,13 @@ object AgendaQrAndroidImportLauncher {
 
     private fun decodeMultiple(uris: List<Uri>, sourceActivity: Activity) {
         scope.launch {
-            val assets = uris.mapNotNull { uri ->
-                val bytes = sourceActivity.contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: return@mapNotNull null
-                decodeQrAsset(bytes, sourceActivity.contentResolver.getType(uri) ?: "image/png")
+            val assets = mutableListOf<QrAsset>()
+            uris.forEach { uri ->
+                val bytes = sourceActivity.contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: return@forEach
+                val mime = sourceActivity.contentResolver.getType(uri) ?: "image/png"
+                val asset = decodeQrAsset(bytes, mime)
+                if (asset != null) assets += asset
+                else _receiptResults.emit(IncomingComprobante(bytes, mime, extensionFor(mime)))
             }
             if (assets.isNotEmpty()) _results.emit(QrImportResult(assets))
         }
