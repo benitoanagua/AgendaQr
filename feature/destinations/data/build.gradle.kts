@@ -3,7 +3,14 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
 }
 
-android { namespace = "com.agendaqr.destinations.data" }
+android {
+    namespace = "com.agendaqr.destinations.data"
+    buildFeatures { buildConfig = true }
+    defaultConfig {
+        buildConfigField("String", "SUPABASE_URL", "\"" + "${providers.gradleProperty("SUPABASE_URL").orNull ?: ""}" + "\"")
+        buildConfigField("String", "SUPABASE_PUBLISHABLE_KEY", "\"" + "${providers.gradleProperty("SUPABASE_PUBLISHABLE_KEY").orNull ?: ""}" + "\"")
+    }
+}
 
 kotlin {
     sourceSets {
