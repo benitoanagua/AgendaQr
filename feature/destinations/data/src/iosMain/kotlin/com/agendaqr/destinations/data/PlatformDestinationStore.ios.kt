@@ -14,12 +14,12 @@ actual fun platformDestinationStore(): DestinationStore = IosDestinationStore
 actual fun createDestinationRepository(): DestinationRepository = createSyncedDestinationRepository()
 
 
-private const val SYNC_QUEUE_KEY = "agendaqr.sync.queue.v1"
+private const val SYNC_QUEUE_KEY = "agendaqr.sync.queue.v1."
 
 private class PlatformSyncQueueStore : SyncQueueStore {
     private val delegate = platformDestinationStore()
-    override fun read(): List<PendingSyncMutation> = decodeSyncQueue(delegate.read(SYNC_QUEUE_KEY) ?: "[]")
-    override fun write(items: List<PendingSyncMutation>) { delegate.write(SYNC_QUEUE_KEY, encodeSyncQueue(items)) }
+    override fun read(): List<PendingSyncMutation> = decodeSyncQueue(delegate.read(SYNC_QUEUE_KEY + (AgendaQrSupabase.client.auth.currentUserOrNull()?.id ?: "anonymous")) ?: "[]")
+    override fun write(items: List<PendingSyncMutation>) { delegate.write(SYNC_QUEUE_KEY + (AgendaQrSupabase.client.auth.currentUserOrNull()?.id ?: "anonymous"), encodeSyncQueue(items)) }
 }
 
 actual fun platformSyncQueueStore(): SyncQueueStore = PlatformSyncQueueStore()
