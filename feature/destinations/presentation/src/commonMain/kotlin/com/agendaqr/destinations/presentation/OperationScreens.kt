@@ -13,7 +13,7 @@ import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.domain.*
 
 @Composable
-fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel) {
+fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, onBack: () -> Unit) {
     when (state.route) {
         OperationRoute.List -> OperationListScreen(state, viewModel)
         OperationRoute.Unassociated -> UnassociatedScreen(state, viewModel)
@@ -55,7 +55,10 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
     Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Operaciones", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
-            XauxaPrimaryButton("Nuevo") { viewModel.onAction(OperationAction.New) }
+            Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                XauxaTextAction("Destinos", onBack)
+                XauxaPrimaryButton("Nuevo") { viewModel.onAction(OperationAction.New) }
+        }
         }
         OutlinedTextField(state.query, { viewModel.onAction(OperationAction.Search(it)) }, Modifier.fillMaxWidth(), label = { Text("Buscar") }, singleLine = true)
         if (state.unassociated.isNotEmpty()) {
