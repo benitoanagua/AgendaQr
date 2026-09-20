@@ -1,6 +1,6 @@
 package com.agendaqr.destinations.data
 
-import com.agendaqr.destinations.domain.Destination
+import com.agendaqr.destinations.domain.ComprobanteFileStore
 import com.agendaqr.destinations.domain.DestinationRepository
 import com.agendaqr.destinations.domain.OperationRepository
 import com.agendaqr.destinations.domain.ComprobanteRepository
@@ -16,6 +16,7 @@ class SyncMutationProcessor(
     private val remoteDestinations: RemoteDestinationRepository,
     private val remoteOperations: RemoteOperationRepository,
     private val remoteComprobantes: RemoteComprobanteRepository,
+    private val fileStore: ComprobanteFileStore,
 ) {
     private val mutex = Mutex()
 
@@ -37,14 +38,7 @@ class SyncMutationProcessor(
                                 ?: error("Operation not found: " + mutation.entityId)
                         } else remoteOperations.delete(mutation.entityId)
                     }
-                    SyncResource.COMPROBANTE -> {
-                        if (mutation.mutation == SyncMutationType.DELETE) {
-                            remoteComprobantes.observe().firstOrNull { it.comprobante.id == mutation.entityId }
-                                ?.let(remoteComprobantes::delete)
-                        } else {
-                            error("Receipt upload requires the Storage-aware sync adapter")
-                        }
-                    }
+                    SyncResource.COMPROBANTE -> processComprobante(mutation)
                 }
             }.onSuccess {
                 queue.complete(mutation.id)
@@ -54,5 +48,22 @@ class SyncMutationProcessor(
             }
         }
         processed
+    }
+
+    private suspend fun processComprobante(mutation: PendingSyncMutation) {
+        when (mutation.mutation) {
+            SyncMutationType.UPSERT -> {
+                val receipt = comprobantes.get(mutation.entityId)
+                    ?: error("Receipt not found: " + mutation.entityId)
+                val bytes = fileStore.read(receipt.file)
+                    ?: error("Local receipt file not found: " + receipt.file)
+                remoteComprobantes.save(receipt, bytes)
+            }
+            SyncMutationType.DELETE -> {
+                remoteComprobantes.observe()
+                    .firstOrNull { it.comprobante.id == mutation.entityId }
+                    ?.let(remoteComprobantes::delete)
+            }
+        }
     }
 }
