@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.domain
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -77,6 +78,36 @@ class GetOperationUseCase(private val repository: OperationRepository) {
     suspend operator fun invoke(id: String): Operation? = repository.get(id)
 }
 
+data class OperationSearchQuery(
+    val text: String = "",
+    val type: OperationType? = null,
+    val occurredFrom: Long? = null,
+    val occurredTo: Long? = null,
+)
+
+class SearchOperationsUseCase(private val repository: OperationRepository) {
+    operator fun invoke(query: OperationSearchQuery): Flow<List<Operation>> =
+        repository.observe().map { operations ->
+            val text = query.text.trim().lowercase()
+            operations
+                .asSequence()
+                .filter { operation -> query.type == null || operation.type == query.type }
+                .filter { operation -> query.occurredFrom == null || operation.occurredAt >= query.occurredFrom }
+                .filter { operation -> query.occurredTo == null || operation.occurredAt <= query.occurredTo }
+                .filter { operation ->
+                    text.isEmpty() || listOfNotNull(
+                        operation.amount,
+                        operation.currency,
+                        operation.personOrEntity,
+                        operation.concept,
+                        operation.note,
+                    ).any { it.lowercase().contains(text) }
+                }
+                .sortedByDescending { it.occurredAt }
+                .toList()
+        }
+}
+
 class SaveOperationUseCase(private val repository: OperationRepository) {
     suspend operator fun invoke(operation: Operation) = repository.save(operation)
 }
@@ -95,6 +126,54 @@ class ObserveComprobantesUseCase(private val repository: ComprobanteRepository) 
 
 class GetComprobanteUseCase(private val repository: ComprobanteRepository) {
     suspend operator fun invoke(id: String): Comprobante? = repository.get(id)
+}
+
+class ObserveUnassociatedComprobantesUseCase(
+    private val repository: ComprobanteRepository,
+) {
+    operator fun invoke(): Flow<List<Comprobante>> =
+        repository.observe().map { receipts ->
+            receipts.filter { it.operationId == null }
+        }
+}
+
+class ObserveOperationComprobantesUseCase(
+    private val repository: ComprobanteRepository,
+) {
+    operator fun invoke(operationId: String): Flow<List<Comprobante>> =
+        repository.observe().map { receipts ->
+            receipts.filter { it.operationId == operationId }
+        }
+}
+
+class AssociateComprobanteToOperationUseCase(
+    private val operationRepository: OperationRepository,
+    private val comprobanteRepository: ComprobanteRepository,
+) {
+    suspend operator fun invoke(comprobanteId: String, operationId: String): Comprobante {
+        requireNotNull(operationRepository.get(operationId)) {
+            "Operation not found: $operationId"
+        }
+        val comprobante = requireNotNull(comprobanteRepository.get(comprobanteId)) {
+            "Comprobante not found: $comprobanteId"
+        }
+        return comprobante.copy(operationId = operationId).also {
+            comprobanteRepository.update(it)
+        }
+    }
+}
+
+class UnassociateComprobanteUseCase(
+    private val repository: ComprobanteRepository,
+) {
+    suspend operator fun invoke(comprobanteId: String): Comprobante {
+        val comprobante = requireNotNull(repository.get(comprobanteId)) {
+            "Comprobante not found: $comprobanteId"
+        }
+        return comprobante.copy(operationId = null).also {
+            repository.update(it)
+        }
+    }
 }
 
 class SaveComprobanteUseCase(
