@@ -1,14 +1,18 @@
-# Producto — Límites
+# Producto — Límites de V1
 
 Agenda QR no es:
 
-- un procesador de pagos;
+- un banco;
 - una billetera;
+- un procesador de pagos;
 - un sistema de transferencias;
 - un sistema de custodia de dinero;
-- un sistema de saldos;
-- una integración bancaria necesaria para el núcleo.
+- un verificador bancario;
+- un sistema contable;
+- un CRM en V1.
 
-El núcleo no requiere ejecutar pagos ni mover dinero.
+Un comprobante recibido **no significa que el dinero haya sido verificado**.
 
-El pago se realiza fuera de Agenda QR, en la aplicación bancaria o billetera correspondiente.
+Agenda QR conserva evidencia y registros introducidos por el usuario. El pago o cobro financiero ocurre fuera de la aplicación.
+
+La V1 tampoco resuelve obligaciones, saldos, pagos parciales ni flujos especializados de devolución/reintegro.
