@@ -79,6 +79,7 @@ private data class OperationRow(
     val type: String,
     val occurredAt: Instant,
     val createdAt: Instant,
+    val updatedAt: Instant,
     val amount: String? = null,
     val currency: String? = null,
     val personOrEntity: String? = null,
