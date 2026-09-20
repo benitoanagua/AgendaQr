@@ -58,6 +58,8 @@ class SyncOperationRepository(
 
 fun createSyncedOperationRepository(): OperationRepository =
     SyncOperationRepository(
-        local = LocalOperationRepository(),
+        local = LocalOperationRepository(storageKey = userScopedKey("agendaqr.operations.v1")),
         remote = createRemoteOperationRepository(),
     )
+
+private fun userScopedKey(prefix: String): String = prefix + "." + (AgendaQrSupabase.client.auth.currentUserOrNull()?.id ?: error("Authentication required"))
