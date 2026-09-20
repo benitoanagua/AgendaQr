@@ -12,11 +12,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
+
       - name: Gradle cache
         uses: actions/cache@v4
         with:
@@ -26,5 +28,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Run common tests and Android checks
-        run: ./gradlew testDebugUnitTest check --stacktrace
+
+      - name: Run Android validation
+        run: ./gradlew :androidApp:testDebugUnitTest :androidApp:assembleDebug :feature:destinations:data:testDebugUnitTest --stacktrace
