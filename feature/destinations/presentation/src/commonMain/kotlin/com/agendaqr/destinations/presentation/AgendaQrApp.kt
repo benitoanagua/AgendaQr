@@ -21,6 +21,7 @@ import com.agendaqr.destinations.data.createRemoteComprobanteRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import com.agendaqr.destinations.domain.*
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.theme.AgendaQrTheme
@@ -95,7 +96,7 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
             markUsed = MarkDestinationUsedUseCase(repository),
         ) }
     val state by viewModel.state.collectAsState()
-    val historyRepository = remember = remember { createDeletedOperationHistoryRepository() }
+    val historyRepository = remember { createDeletedOperationHistoryRepository() }
     val operationsViewModel = remember(operationRepository, comprobanteRepository, fileStore, historyRepository) {
         OperationsViewModel(
             observeOperations = ObserveOperationsUseCase(operationRepository),
