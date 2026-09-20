@@ -1,28 +1,27 @@
-# Requisitos no funcionales confirmados
+# Requisitos no funcionales confirmados — V1
 
-## Persistencia local
+## Local-first
 
-La información principal de Agenda QR se mantiene localmente.
+Los datos principales de Agenda QR se conservan localmente.
 
-## Disponibilidad sin conexión
+## Offline
 
-La recuperación y visualización principal de destinos QR debe estar disponible sin conexión.
+La recuperación y visualización principal de destinos y registros locales no depende de una conexión de red.
 
-## Protección local
+## Evidencia
 
-La protección mediante biometría/PIN existe como capacidad opcional.
+El archivo del comprobante debe conservarse como recurso independiente del texto de la operación.
 
-## Restricción documental
+## Integridad histórica
 
-No se establecen aquí:
+Cambiar un destino no debe reescribir el contexto de operaciones históricas.
 
-- tecnología concreta;
-- proveedor cloud;
-- API;
-- protocolo;
-- algoritmo criptográfico;
-- objetivo de rendimiento;
-- objetivo de disponibilidad;
-- arquitectura de software.
+Eliminar una operación elimina sus comprobantes asociados y deja un registro histórico mínimo de la operación eliminada.
 
-Esos elementos no están definidos como requisitos aprobados en el material utilizado.
+## Protección
+
+La protección por biometría/PIN es opcional y local.
+
+## No se fija
+
+Este documento no fija proveedores cloud, APIs bancarias, protocolos financieros, objetivos de rendimiento ni tecnologías concretas no aprobadas.
