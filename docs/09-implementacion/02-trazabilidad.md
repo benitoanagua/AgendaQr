@@ -9,16 +9,16 @@
 | RF-05 mostrar/compartir destino | destination presentation/platform | base existente |
 | RF-06 mantener destino | destination domain/data | base existente |
 | RF-07 persistencia/offline | destination data | base existente |
-| RF-08 registrar operación | operation domain/data/presentation | pendiente de alineación |
-| RF-09 occurredAt/createdAt | operation domain | pendiente de alineación |
-| RF-10 guardar comprobante | receipt data | pendiente de alineación |
-| RF-11 proveniencia | receipt domain | pendiente de alineación |
-| RF-12 asociación | operation/receipt domain | pendiente de alineación |
-| RF-13 comprobante independiente | receipt data/presentation | pendiente de alineación |
+| RF-08 registrar operación | operation domain/data | implementado parcialmente |
+| RF-09 occurredAt/createdAt | operation domain | implementado |
+| RF-10 guardar comprobante | receipt domain/data | implementado parcialmente |
+| RF-11 proveniencia | receipt domain/data | implementado |
+| RF-12 asociación | operation/receipt domain/data | implementado parcialmente |
+| RF-13 comprobante independiente | receipt data | implementado |
 | RF-14 duplicados | receipt workflow | pendiente de alineación |
 | RF-15 editar operación | operation presentation/domain | pendiente de alineación |
 | RF-16 eliminar operación/histórico | operation/receipt data | pendiente de alineación |
-| RF-17 eliminar comprobante | receipt data | pendiente de alineación |
+| RF-17 eliminar comprobante | receipt data | implementado parcialmente |
 | RF-18 buscar operaciones | operation search | pendiente de alineación |
 | RF-19 compartir comprobante | receipt/platform | pendiente de alineación |
 | RF-20 protección | platform | opcional/base no validada |
