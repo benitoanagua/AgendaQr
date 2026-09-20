@@ -96,7 +96,7 @@ class OperationsViewModel(
                 runCatching { associate(action.comprobanteId, action.operationId) }.onFailure(::showError)
             }
             is OperationAction.CreateOperationFromReceipt -> createOperationFromReceipt(action.comprobanteId)
-            OperationAction.ClearIncoming -> _state.update { it.copy(pendingIncoming = null, pendingDuplicates = emptyList(), route = if (openInbox) OperationRoute.Unassociated else OperationRoute.List) }
+            OperationAction.ClearIncoming -> _state.update { it.copy(pendingIncoming = null, pendingDuplicates = emptyList()) }
             is OperationAction.SaveIncoming -> saveIncoming(action.openInbox)
             OperationAction.DismissDuplicateWarning -> _state.update { it.copy(pendingDuplicates = emptyList()) }
             OperationAction.OpenUnassociated -> _state.update { it.copy(route = OperationRoute.Unassociated, error = null) }
