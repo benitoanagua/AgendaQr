@@ -11,4 +11,4 @@ private object IosDestinationStore : DestinationStore {
 
 actual fun platformDestinationStore(): DestinationStore = IosDestinationStore
 
-actual fun createDestinationRepository(): DestinationRepository = LocalDestinationRepository()
+actual fun createDestinationRepository(): DestinationRepository = createSyncedDestinationRepository()
