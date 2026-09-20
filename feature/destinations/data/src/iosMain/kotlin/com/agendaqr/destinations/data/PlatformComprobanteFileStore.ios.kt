@@ -26,6 +26,7 @@ private object IosComprobanteFileStore : ComprobanteFileStore {
     }
 
     override suspend fun save(id: String, bytes: ByteArray, extension: String): String {
+        require(bytes.isNotEmpty()) { "Receipt file cannot be empty." }
         val file = directory().URLByAppendingPathComponent("$id.$extension")!!
         NSData.create(bytes = bytes.refTo(0), length = bytes.size.toULong())
             .writeToURL(file, NSDataWritingAtomic)
