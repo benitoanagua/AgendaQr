@@ -15,6 +15,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import com.agendaqr.destinations.presentation.IncomingComprobante
 
 object AgendaQrAndroidImportLauncher {
     private lateinit var camera: ActivityResultLauncher<Void?>
@@ -24,7 +25,9 @@ object AgendaQrAndroidImportLauncher {
     private lateinit var activity: Activity
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val _results = MutableSharedFlow<QrImportResult>(extraBufferCapacity = 16)
+    private val _receiptResults = MutableSharedFlow<IncomingComprobante>(extraBufferCapacity = 16)
     val results = _results.asSharedFlow()
+    val receiptResults = _receiptResults.asSharedFlow()
 
     fun initialize(activity: Activity) {
         this.activity = activity
@@ -81,8 +84,18 @@ object AgendaQrAndroidImportLauncher {
     private fun decodeAndEmit(uri: Uri, sourceActivity: Activity) {
         scope.launch {
             val bytes = sourceActivity.contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: return@launch
-            decodeQrAsset(bytes, sourceActivity.contentResolver.getType(uri) ?: "image/png")?.let { _results.emit(QrImportResult(listOf(it))) }
+            val mime = sourceActivity.contentResolver.getType(uri) ?: "image/png"
+            val asset = decodeQrAsset(bytes, mime)
+            if (asset != null) _results.emit(QrImportResult(listOf(asset)))
+            else _receiptResults.emit(IncomingComprobante(bytes, mime, extensionFor(mime)))
         }
+    }
+
+    private fun extensionFor(mime: String): String = when (mime.lowercase()) {
+        "image/jpeg", "image/jpg" -> "jpg"
+        "application/pdf" -> "pdf"
+        "image/webp" -> "webp"
+        else -> "png"
     }
 
     private fun decodeAndEmit(bitmap: Bitmap) {
