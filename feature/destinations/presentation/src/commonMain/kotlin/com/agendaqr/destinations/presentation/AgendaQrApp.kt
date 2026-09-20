@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
 import com.agendaqr.destinations.data.createDestinationRepository
 import com.agendaqr.destinations.data.createOperationRepository
 import com.agendaqr.destinations.data.createComprobanteRepository
@@ -48,7 +49,7 @@ fun AgendaQrApp() {
 
     AgendaQrTheme {
         when (val route = state.route) {
-            DestinationRoute.List -> DestinationsScreen(state, viewModel::onAction)
+            DestinationRoute.List -> DestinationsScreen(state, viewModel::onAction, onOpenOperations = { showOperations = true })
             is DestinationRoute.Edit -> DestinationEditorScreen(
                 existing = route.id?.let(viewModel::destination),
                 onSave = { destination ->
