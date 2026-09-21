@@ -13,7 +13,7 @@ class LocalOperationRepositoryTest {
     @Test
     fun save_update_get_and_delete_work() = runTest {
         val repository = LocalOperationRepository(MemoryOperationsStore())
-        val operation = Operation("op-1", OperationType.PAGO, 100, 110, "850", "BOB", "Colegio San José")
+        val operation = Operation(id = "op-1", type = OperationType.PAGO, occurredAt = 100, createdAt = 110, updatedAt = 110, amount = "850", currency = "BOB", personOrEntity = "Colegio San José")
 
         repository.save(operation)
         assertEquals(operation, repository.get("op-1"))

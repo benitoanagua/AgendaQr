@@ -7,6 +7,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":feature:destinations:domain"))
             implementation(project(":feature:destinations:data"))
+            implementation(project(":core:ui"))
             implementation(compose.material3)
         }
         androidMain.dependencies {

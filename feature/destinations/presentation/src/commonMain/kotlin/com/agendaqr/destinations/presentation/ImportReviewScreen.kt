@@ -3,13 +3,13 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.weight
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaQrPreview
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
@@ -30,7 +30,7 @@ fun ImportReviewScreen(
     ) {
         Text("Imported QR", fontSize = XauxaType.Headline, color = XauxaColor.TextPrimary)
         Text("${assets.size} destination(s)", fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm), modifier = Modifier.weight(1f)) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm), modifier = Modifier.fillMaxWidth()) {
             itemsIndexed(assets) { _, asset ->
                 XauxaQrPreview(asset.encoded)
             }

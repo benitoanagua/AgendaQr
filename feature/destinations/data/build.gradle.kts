@@ -15,10 +15,9 @@ android {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(platform("io.github.jan-tennert.supabase:bom:${libs.versions.supabase.get()}"))
-            implementation("io.github.jan-tennert.supabase:postgrest-kt")
-            implementation("io.github.jan-tennert.supabase:auth-kt")
-            implementation("io.github.jan-tennert.supabase:storage-kt")
+            implementation("io.github.jan-tennert.supabase:postgrest-kt:${libs.versions.supabase.get()}")
+            implementation("io.github.jan-tennert.supabase:auth-kt:${libs.versions.supabase.get()}")
+            implementation("io.github.jan-tennert.supabase:storage-kt:${libs.versions.supabase.get()}")
             implementation(project(":feature:destinations:domain"))
             implementation(libs.serialization.json)
             implementation(libs.kotlinx.datetime)
@@ -31,6 +30,5 @@ kotlin {
         iosMain.dependencies {
             implementation("io.ktor:ktor-client-darwin:${libs.versions.ktor.get()}")
         }
-        iosMain.dependencies { }
     }
 }

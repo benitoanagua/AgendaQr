@@ -3,10 +3,12 @@ package com.agendaqr.destinations.data
 import com.agendaqr.destinations.domain.Comprobante
 import com.agendaqr.destinations.domain.ComprobanteFileStore
 import com.agendaqr.destinations.domain.ComprobanteRepository
+import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -44,10 +46,11 @@ class SyncComprobanteRepository(
     override suspend fun delete(id: String) {
         local.delete(id)
         runCatching {
-            remote.observe().firstOrNull { it.comprobante.id == id }?.let(remote::delete)
+            remote.observe().firstOrNull { it.comprobante.id == id }?.let { remote.delete(it) }
         }.onFailure { enqueue(SyncMutationType.DELETE, id) }
     }
 
+    @OptIn(kotlin.time.ExperimentalTime::class)
     private suspend fun enqueue(mutation: SyncMutationType, id: String) {
         LocalSyncQueue().enqueue(
             PendingSyncMutation(
@@ -56,7 +59,7 @@ class SyncComprobanteRepository(
                 mutation = mutation,
                 entityId = id,
                 enqueuedAt = kotlin.time.Clock.System.now().toEpochMilliseconds(),
-                nextAttemptAt = kotlinx.datetime.Clock.System.now().toEpochMilliseconds(),
+                nextAttemptAt = kotlin.time.Clock.System.now().toEpochMilliseconds(),
             ),
         )
     }

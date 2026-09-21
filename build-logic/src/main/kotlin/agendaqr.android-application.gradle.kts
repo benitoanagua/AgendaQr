@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         applicationId = "com.agendaqr.app"
         minSdk = 26
