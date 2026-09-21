@@ -4,7 +4,8 @@ import com.agendaqr.destinations.domain.AuthRepository
 import com.agendaqr.destinations.domain.AuthState
 import com.agendaqr.destinations.domain.AuthUser
 import com.agendaqr.destinations.domain.SignUpResult
-import io.github.jan.supabase.auth.providers.Email
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.status.SessionStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.agendaqr.destinations.data.createDestinationRepository
 import com.agendaqr.destinations.data.createOperationRepository
 import com.agendaqr.destinations.data.createComprobanteRepository
@@ -93,7 +94,6 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
             update = UpdateDestinationUseCase(repository),
             delete = DeleteDestinationUseCase(repository),
             toggleFavorite = ToggleFavoriteUseCase(repository),
-            markUsed = MarkDestinationUsedUseCase(repository),
         ) }
     val state by viewModel.state.collectAsState()
     val historyRepository = remember { createDeletedOperationHistoryRepository() }

@@ -4,9 +4,13 @@ import com.agendaqr.destinations.domain.Operation
 import com.agendaqr.destinations.domain.OperationRepository
 import com.agendaqr.destinations.domain.OperationType
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.postgrest.from
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import kotlin.time.Instant
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 interface RemoteOperationRepository {
     suspend fun observe(): List<Operation>
     suspend fun save(operation: Operation)
@@ -79,7 +83,7 @@ private data class OperationRow(
     val type: String,
     val occurredAt: Instant,
     val createdAt: Instant,
-    val updatedAt: Instant,
+    val updatedAt: Instant? = null,
     val amount: String? = null,
     val currency: String? = null,
     val personOrEntity: String? = null,

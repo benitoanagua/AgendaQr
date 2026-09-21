@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.data
 
 import com.agendaqr.destinations.domain.DestinationRepository
+import io.github.jan.supabase.auth.auth
 import platform.Foundation.NSUserDefaults
 
 private object IosDestinationStore : DestinationStore {

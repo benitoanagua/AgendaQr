@@ -2,6 +2,7 @@ package com.agendaqr.destinations.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import io.github.jan.supabase.auth.auth
 
 object AgendaQrAndroidStorage {
     private var preferences: SharedPreferences? = null

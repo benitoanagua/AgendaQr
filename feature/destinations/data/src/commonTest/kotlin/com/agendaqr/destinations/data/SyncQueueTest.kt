@@ -1,5 +1,6 @@
 package com.agendaqr.destinations.data
 
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -72,6 +73,3 @@ private class FakeQueueStore : SyncQueueStore {
         this.items = items
     }
 }
-
-private fun <T> runTest(block: suspend () -> T): T =
-    kotlinx.coroutines.test.runTest { block() }

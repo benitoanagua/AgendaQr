@@ -4,9 +4,13 @@ import com.agendaqr.destinations.domain.Destination
 import com.agendaqr.destinations.domain.DestinationRepository
 import com.agendaqr.destinations.domain.QrAsset
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.postgrest.from
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import kotlin.time.Instant
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 interface RemoteDestinationRepository {
     suspend fun observe(): List<Destination>
     suspend fun save(destination: Destination)

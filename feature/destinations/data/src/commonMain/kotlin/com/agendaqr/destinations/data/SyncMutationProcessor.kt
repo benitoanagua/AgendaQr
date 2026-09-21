@@ -7,8 +7,9 @@ import com.agendaqr.destinations.domain.ComprobanteRepository
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
-class SyncMutationProcessor(
+class SyncMutationProcessor @OptIn(ExperimentalTime::class) constructor(
     private val queue: LocalSyncQueue,
     private val destinations: DestinationRepository,
     private val operations: OperationRepository,
@@ -28,13 +29,13 @@ class SyncMutationProcessor(
                 when (mutation.resource) {
                     SyncResource.DESTINATION -> {
                         if (mutation.mutation == SyncMutationType.UPSERT) {
-                            destinations.get(mutation.entityId)?.let(remoteDestinations::save)
+                            destinations.get(mutation.entityId)?.let { remoteDestinations.save(it) }
                                 ?: error("Destination not found: " + mutation.entityId)
                         } else remoteDestinations.delete(mutation.entityId)
                     }
                     SyncResource.OPERATION -> {
                         if (mutation.mutation == SyncMutationType.UPSERT) {
-                            operations.get(mutation.entityId)?.let(remoteOperations::save)
+                            operations.get(mutation.entityId)?.let { remoteOperations.save(it) }
                                 ?: error("Operation not found: " + mutation.entityId)
                         } else remoteOperations.delete(mutation.entityId)
                     }
@@ -62,7 +63,7 @@ class SyncMutationProcessor(
             SyncMutationType.DELETE -> {
                 remoteComprobantes.observe()
                     .firstOrNull { it.comprobante.id == mutation.entityId }
-                    ?.let(remoteComprobantes::delete)
+                    ?.let { remoteComprobantes.delete(it) }
             }
         }
     }

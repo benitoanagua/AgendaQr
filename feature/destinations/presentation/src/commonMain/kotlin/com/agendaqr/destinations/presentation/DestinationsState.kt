@@ -3,7 +3,6 @@ package com.agendaqr.destinations.presentation
 import com.agendaqr.destinations.domain.Destination
 import com.agendaqr.destinations.domain.DeleteDestinationUseCase
 import com.agendaqr.destinations.domain.GetDestinationUseCase
-import com.agendaqr.destinations.domain.MarkDestinationUsedUseCase
 import com.agendaqr.destinations.domain.ObserveDestinationsUseCase
 import com.agendaqr.destinations.domain.SaveDestinationUseCase
 import com.agendaqr.destinations.domain.ToggleFavoriteUseCase
@@ -41,9 +40,8 @@ data class DestinationsUiState(
             .asSequence()
             .filter { query.isBlank() || it.name.contains(query, ignoreCase = true) || it.category.orEmpty().contains(query, ignoreCase = true) }
             .filter { !favoriteOnly || it.favorite }
-            .filter { !recentOnly || it.lastUsedAt != null }
             .filter { category == null || it.category == category }
-            .sortedWith(compareByDescending<Destination> { it.lastUsedAt ?: Long.MIN_VALUE }.thenBy { it.name.lowercase() })
+            .sortedWith(compareBy<Destination> { it.name.lowercase() })
             .toList()
 }
 
@@ -71,7 +69,6 @@ class DestinationsViewModel(
     private val update: UpdateDestinationUseCase,
     private val delete: DeleteDestinationUseCase,
     private val toggleFavorite: ToggleFavoriteUseCase,
-    private val markUsed: MarkDestinationUsedUseCase,
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
 ) {
     private val _state = MutableStateFlow(DestinationsUiState())
@@ -96,7 +93,6 @@ class DestinationsViewModel(
             is DestinationAction.Edit -> _state.update { it.copy(route = DestinationRoute.Edit(action.id)) }
             is DestinationAction.ShowQr -> scope.launch {
                 get(action.id)?.let { destination ->
-                    runCatching { markUsed(destination) }.onFailure(::showError)
                     _state.update { state -> state.copy(route = DestinationRoute.FullscreenQr(action.id)) }
                 }
             }

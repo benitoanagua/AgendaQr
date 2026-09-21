@@ -1,7 +1,9 @@
 package com.agendaqr.destinations.data
 
 import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 class SyncMutationEnqueuer(
     private val queue: LocalSyncQueue,
     private val idFactory: () -> String = { Clock.System.now().toEpochMilliseconds().toString() },

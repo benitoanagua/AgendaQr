@@ -2,11 +2,16 @@ package com.agendaqr.destinations.presentation
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Base64
+import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.core.app.ActivityCompat
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import com.agendaqr.destinations.domain.QrAsset
 import kotlinx.coroutines.CoroutineScope
@@ -15,46 +20,75 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import com.agendaqr.destinations.presentation.IncomingComprobante
+import java.io.ByteArrayOutputStream
+import java.io.File
+
+fun QrAsset.toShareUri(context: Context): Uri {
+    val bytes = Base64.decode(encoded, Base64.DEFAULT)
+    val ext = when (mimeType.lowercase()) {
+        "image/jpeg", "image/jpg" -> "jpg"
+        "application/pdf" -> "pdf"
+        "image/webp" -> "webp"
+        else -> "png"
+    }
+    val file = File(context.cacheDir, "shared_qr.$ext")
+    file.writeBytes(bytes)
+    return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+}
+
+fun decodeQrAsset(bytes: ByteArray, mimeType: String): QrAsset? {
+    val encoded = Base64.encodeToString(bytes, Base64.NO_WRAP)
+    return QrAsset(encoded = encoded, mimeType = mimeType)
+}
+
+fun decodeQrBitmap(bitmap: Bitmap): QrAsset? {
+    val outputStream = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+    val bytes = outputStream.toByteArray()
+    return decodeQrAsset(bytes, "image/png")
+}
+
+fun bitmapToAsset(asset: QrAsset, mimeType: String): QrAsset = asset
 
 object AgendaQrAndroidImportLauncher {
-    private lateinit var camera: ActivityResultLauncher<Void?>
-    private lateinit var gallery: ActivityResultLauncher<String>
-    private lateinit var multiple: ActivityResultLauncher<String>
-    private lateinit var cameraPermission: ActivityResultLauncher<String>
-    private lateinit var activity: Activity
+    private var camera: ActivityResultLauncher<Void?>? = null
+    private var gallery: ActivityResultLauncher<String>? = null
+    private var multiple: ActivityResultLauncher<String>? = null
+    private var cameraPermission: ActivityResultLauncher<String>? = null
+    private var activity: Activity? = null
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val _results = MutableSharedFlow<QrImportResult>(extraBufferCapacity = 16)
     private val _receiptResults = MutableSharedFlow<IncomingComprobante>(extraBufferCapacity = 16)
     val results = _results.asSharedFlow()
     val receiptResults = _receiptResults.asSharedFlow()
 
-    fun initialize(activity: Activity) {
-        this.activity = activity
-        cameraPermission = activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            if (granted) camera.launch(null)
+    fun initialize(compActivity: ComponentActivity) {
+        this.activity = compActivity
+        cameraPermission = compActivity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) camera?.launch(null)
         }
-        camera = activity.registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+        camera = compActivity.registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
             bitmap?.let { decodeAndEmit(it) }
         }
-        gallery = activity.registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            uri?.let(::decodeAndEmit)
+        gallery = compActivity.registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let { decodeAndEmit(it) }
         }
-        multiple = activity.registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
+        multiple = compActivity.registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
             decodeMultiple(uris)
         }
     }
 
     fun camera() {
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            camera.launch(null)
+        val current = activity ?: return
+        if (ActivityCompat.checkSelfPermission(current, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            camera?.launch(null)
         } else {
-            cameraPermission.launch(Manifest.permission.CAMERA)
+            cameraPermission?.launch(Manifest.permission.CAMERA)
         }
     }
 
-    fun gallery() = gallery.launch("image/*")
-    fun multiple() = multiple.launch("image/*")
+    fun gallery() { gallery?.launch("image/*") }
+    fun multiple() { multiple?.launch("image/*") }
 
     fun handleShare(activity: Activity, intent: android.content.Intent?) {
         when (intent?.action) {
@@ -67,7 +101,9 @@ object AgendaQrAndroidImportLauncher {
         }
     }
 
-    private fun decodeMultiple(uris: List<Uri>) = decodeMultiple(uris, activity)
+    private fun decodeMultiple(uris: List<Uri>) {
+        activity?.let { decodeMultiple(uris, it) }
+    }
 
     private fun decodeMultiple(uris: List<Uri>, sourceActivity: Activity) {
         scope.launch {
@@ -83,7 +119,9 @@ object AgendaQrAndroidImportLauncher {
         }
     }
 
-    private fun decodeAndEmit(uri: Uri) = decodeAndEmit(uri, activity)
+    private fun decodeAndEmit(uri: Uri) {
+        activity?.let { decodeAndEmit(uri, it) }
+    }
 
     private fun decodeAndEmit(uri: Uri, sourceActivity: Activity) {
         scope.launch {
@@ -104,7 +142,7 @@ object AgendaQrAndroidImportLauncher {
 
     private fun decodeAndEmit(bitmap: Bitmap) {
         scope.launch {
-            decodeQrBitmap(bitmap)?.let { bitmapToAsset(it, "image/png") }?.let { _results.emit(QrImportResult(listOf(it))) }
+            decodeQrBitmap(bitmap)?.let { _results.emit(QrImportResult(listOf(it))) }
         }
     }
 }

@@ -3,9 +3,14 @@ package com.agendaqr.destinations.data
 import com.agendaqr.destinations.domain.Comprobante
 import com.agendaqr.destinations.domain.ReceiptProvenance
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.storage.storage
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import kotlin.time.Instant
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 data class RemoteComprobanteRecord(
     val comprobante: Comprobante,
     val remoteFilePath: String,
