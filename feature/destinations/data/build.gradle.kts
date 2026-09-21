@@ -7,8 +7,24 @@ android {
     namespace = "com.agendaqr.destinations.data"
     buildFeatures { buildConfig = true }
     defaultConfig {
-        buildConfigField("String", "SUPABASE_URL", "\"" + "${providers.gradleProperty("SUPABASE_URL").orNull ?: ""}" + "\"")
-        buildConfigField("String", "SUPABASE_PUBLISHABLE_KEY", "\"" + "${providers.gradleProperty("SUPABASE_PUBLISHABLE_KEY").orNull ?: ""}" + "\"")
+        buildConfigField(
+            "String",
+            "SUPABASE_URL",
+            "\"" + (
+                providers.gradleProperty("SUPABASE_URL")
+                    .orElse(providers.environmentVariable("SUPABASE_URL"))
+                    .orNull ?: ""
+            ) + "\"",
+        )
+        buildConfigField(
+            "String",
+            "SUPABASE_PUBLISHABLE_KEY",
+            "\"" + (
+                providers.gradleProperty("SUPABASE_PUBLISHABLE_KEY")
+                    .orElse(providers.environmentVariable("SUPABASE_PUBLISHABLE_KEY"))
+                    .orNull ?: ""
+            ) + "\"",
+        )
     }
 }
 
