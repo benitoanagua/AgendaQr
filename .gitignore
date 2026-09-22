@@ -6,3 +6,6 @@ local.properties
 .DS_Store
 app/*.apk
 app/google-services.json
+
+# Supabase CLI temporary files
+supabase/.temp/
