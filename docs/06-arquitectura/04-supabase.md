@@ -32,14 +32,14 @@ Los comprobantes se almacenan en el bucket privado `comprobantes`, bajo una ruta
 
 El cliente móvil usa la publishable key. La autorización real de los datos depende de Auth + RLS.
 
-## Migración gradual
+## Evolución local-first
 
 1. Cliente Supabase y configuración.
-2. Auth.
+2. Auth como identidad del usuario.
 3. Destinations remoto.
 4. Operations remoto.
 5. Comprobantes: metadata + Storage.
-6. Estrategia de sincronización/local-first.
-7. Retiro de persistencia local solo cuando la paridad funcional esté validada.
+6. Cola durable y recuperación de sincronización.
+7. Validación end-to-end offline/online.
 
-No se elimina todavía el backend local: el core offline existente sigue siendo necesario mientras la sincronización no esté implementada.
+La persistencia local no se retira después de alcanzar paridad: es parte de la arquitectura V1 local-first. Supabase complementa la experiencia con identidad, respaldo y sincronización.
