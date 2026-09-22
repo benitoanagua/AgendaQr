@@ -10,7 +10,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
-private const val STORAGE_KEY = "agendaqr.deleted_operations.v1"
+private const val STORAGE_KEY_PREFIX = "agendaqr.deleted_operations.v1"
 
 private val historyJson = Json {
     encodeDefaults = true
@@ -19,6 +19,7 @@ private val historyJson = Json {
 
 class LocalDeletedOperationHistoryRepository(
     private val store: OperationsStore = operationsStore(),
+    private val storageKey: String = userScopedKey(STORAGE_KEY_PREFIX),
 ) : DeletedOperationHistoryRepository {
     private val mutex = Mutex()
     private val state = MutableStateFlow(load())
@@ -32,7 +33,7 @@ class LocalDeletedOperationHistoryRepository(
     }
 
     private fun load(): List<DeletedOperationHistory> =
-        store.read(STORAGE_KEY)?.let {
+        store.read(storageKey)?.let {
             runCatching {
                 historyJson.decodeFromString<DeletedOperationHistoryList>(it).items
             }.getOrDefault(emptyList())
@@ -40,7 +41,7 @@ class LocalDeletedOperationHistoryRepository(
 
     private fun persist(value: List<DeletedOperationHistory>) {
         state.value = value
-        store.write(STORAGE_KEY, historyJson.encodeToString(DeletedOperationHistoryList(value)))
+        store.write(storageKey, historyJson.encodeToString(DeletedOperationHistoryList(value)))
     }
 }
 

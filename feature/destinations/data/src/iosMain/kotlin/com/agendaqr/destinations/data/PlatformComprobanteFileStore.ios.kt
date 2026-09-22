@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.data
 
 import com.agendaqr.destinations.domain.ComprobanteFileStore
+import io.github.jan.supabase.auth.auth
 import kotlinx.cinterop.refTo
 import platform.Foundation.NSData
 import platform.Foundation.NSDataWritingAtomic
@@ -11,11 +12,14 @@ import platform.Foundation.NSUserDomainMask
 
 private object IosComprobanteFileStore : ComprobanteFileStore {
     private fun directory(): NSURL {
+        val userId = AgendaQrSupabase.client.auth.currentUserOrNull()?.id
+            ?: error("Authentication required for receipt storage")
         val documents = NSFileManager.defaultManager.URLsForDirectory(
             NSDocumentDirectory,
             NSUserDomainMask,
         ).firstOrNull() as NSURL
-        val directory = documents.URLByAppendingPathComponent("comprobantes")!!
+        val comprobantes = documents.URLByAppendingPathComponent("comprobantes")!!
+        val directory = comprobantes.URLByAppendingPathComponent(userId)!!
         NSFileManager.defaultManager.createDirectoryAtURL(
             directory,
             withIntermediateDirectories = true,

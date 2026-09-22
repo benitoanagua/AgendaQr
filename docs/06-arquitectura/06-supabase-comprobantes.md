@@ -9,6 +9,10 @@ La ruta remota es:
 
 `<user_id>/<comprobante_id>.<extension>`
 
+La ruta local sigue la misma convención por usuario:
+
+`.../comprobantes/<user_id>/<comprobante_id>.<extension>`
+
 El acceso queda restringido por las policies de Storage y por RLS de la tabla.
 
 ## Flujo

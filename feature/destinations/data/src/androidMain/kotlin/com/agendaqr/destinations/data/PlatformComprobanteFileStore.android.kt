@@ -1,11 +1,16 @@
 package com.agendaqr.destinations.data
 
 import com.agendaqr.destinations.domain.ComprobanteFileStore
+import io.github.jan.supabase.auth.auth
 import java.io.File
 
 private object AndroidComprobanteFileStore : ComprobanteFileStore {
-    private fun directory(): File =
-        File(AgendaQrAndroidStorage.requireFilesDir(), "comprobantes").apply { mkdirs() }
+    private fun directory(): File {
+        val userId = AgendaQrSupabase.client.auth.currentUserOrNull()?.id
+            ?: error("Authentication required for receipt storage")
+        return File(File(AgendaQrAndroidStorage.requireFilesDir(), "comprobantes"), userId)
+            .apply { mkdirs() }
+    }
 
     override suspend fun save(id: String, bytes: ByteArray, extension: String): String {
         require(bytes.isNotEmpty()) { "Receipt file cannot be empty." }
