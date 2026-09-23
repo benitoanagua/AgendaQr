@@ -2,6 +2,7 @@ package com.agendaqr.destinations.domain
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -93,8 +94,8 @@ class ImportBatchPersistenceTest {
         assertEquals(0, second.savedQr)
         assertEquals(0, second.savedComprobantes)
         assertEquals(2, second.skipped)
-        assertEquals(1, destinations.observe().value.size)
-        assertEquals(1, receipts.observe().value.size)
+        assertEquals(1, destinations.observe().first().size)
+        assertEquals(1, receipts.observe().first().size)
     }
 
     private class MemoryDestinationRepository : DestinationRepository {
