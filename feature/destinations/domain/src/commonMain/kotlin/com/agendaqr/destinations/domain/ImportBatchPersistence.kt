@@ -36,16 +36,22 @@ class SaveImportBatchUseCase(
                     if (asset == null) {
                         skipped++
                     } else {
-                        destinations.save(
-                            Destination(
-                                id = candidate.id,
-                                name = "",
-                                qr = asset,
-                                createdAt = nowMillis(),
-                                updatedAt = nowMillis(),
+                        val alreadyExists = destinations.observe().first().any { it.qr == asset }
+                        if (alreadyExists || destinations.get(candidate.id) != null) {
+                            skipped++
+                        } else {
+                            val now = nowMillis()
+                            destinations.save(
+                                Destination(
+                                    id = candidate.id,
+                                    name = "",
+                                    qr = asset,
+                                    createdAt = now,
+                                    updatedAt = now,
+                                )
                             )
-                        )
-                        savedQr++
+                            savedQr++
+                        }
                     }
                 }
 
@@ -55,23 +61,32 @@ class SaveImportBatchUseCase(
                     if (bytes == null || bytes.isEmpty()) {
                         skipped++
                     } else {
-                        SaveComprobanteUseCase(
+                        val duplicate = FindDuplicateComprobantesUseCase(
                             comprobantes,
                             comprobanteFileStore,
-                        )(
-                            Comprobante(
-                                id = candidate.id,
-                                file = "",
-                                createdAt = nowMillis(),
-                                updatedAt = nowMillis(),
-                                provenance = ReceiptProvenance.RECIBIDO,
-                            ),
-                            bytes,
-                            candidate.extension ?: "bin",
-                            candidate.mimeType ?: "application/octet-stream",
-                        )
-                        payloadStore.delete(reference)
-                        savedComprobantes++
+                        )(bytes).isNotEmpty()
+                        if (duplicate || comprobantes.get(candidate.id) != null) {
+                            payloadStore.delete(reference)
+                            skipped++
+                        } else {
+                            SaveComprobanteUseCase(
+                                comprobantes,
+                                comprobanteFileStore,
+                            )(
+                                Comprobante(
+                                    id = candidate.id,
+                                    file = "",
+                                    createdAt = nowMillis(),
+                                    updatedAt = nowMillis(),
+                                    provenance = ReceiptProvenance.RECIBIDO,
+                                ),
+                                bytes,
+                                candidate.extension ?: "bin",
+                                candidate.mimeType ?: "application/octet-stream",
+                            )
+                            payloadStore.delete(reference)
+                            savedComprobantes++
+                        }
                     }
                 }
 
