@@ -24,6 +24,7 @@ sealed interface OperationRoute {
 
 data class OperationsUiState(
     val operations: List<Operation> = emptyList(),
+    val contexts: List<Context> = emptyList(),
     val unassociated: List<Comprobante> = emptyList(),
     val operationComprobantes: List<Comprobante> = emptyList(),
     val query: String = "",
@@ -63,6 +64,7 @@ sealed interface OperationAction {
 
 class OperationsViewModel(
     observeOperations: ObserveOperationsUseCase,
+    observeContexts: ObserveContextsUseCase,
     observeUnassociated: ObserveUnassociatedComprobantesUseCase,
     private val observeOperationComprobantes: ObserveOperationComprobantesUseCase,
     private val getOperation: GetOperationUseCase,
@@ -78,6 +80,9 @@ class OperationsViewModel(
     private var selectedOperationId: String? = null
 
     init {
+        scope.launch { observeContexts().collect { contexts ->
+            _state.update { it.copy(contexts = contexts) }
+        } }
         scope.launch { observeOperations().collect { operations ->
             _state.update { it.copy(operations = operations.sortedByDescending { operation -> operation.occurredAt }) }
         } }
