@@ -59,7 +59,7 @@ class SaveImportBatchUseCase(
 
                 ImportKind.COMPROBANTE -> {
                     val reference = candidate.payloadRef
-                    val bytes = reference?.let(payloadStore::read)
+                    val bytes = reference?.let { payloadStore.read(it) }
                     if (bytes == null || bytes.isEmpty()) {
                         skipped++
                     } else {
