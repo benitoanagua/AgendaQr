@@ -77,3 +77,17 @@ Se añadió la primera capa de presentación alineada con el contrato UX/UI cong
 - clasificación Android de imágenes mediante ZXing antes de tratarlas como QR.
 
 La validación de compilación/runtime permanece pendiente de la pasada local de Gradle.
+
+## Fase bulk import + comprobantes
+
+- Agregado `ImportBatch` como contrato común de análisis: `QR / COMPROBANTE / DESCONOCIDO`.
+- Un elemento desconocido no invalida los elementos reconocidos.
+- Duplicados por huella estable quedan en revisión; la primera ocurrencia reconocida puede guardarse una sola vez.
+- Agregado `SuggestReceiptAssociationUseCase`:
+  - asociación existente se conserva;
+  - un único candidato dentro del contexto se propone;
+  - varios candidatos producen estado de ambigüedad;
+  - sin candidato de alta confianza se permite guardar sin asociar.
+- Tests de dominio agregados para clasificación, duplicados y asociación/ambigüedad.
+- La UI completa de lote (`IMPORTANDO → ANALIZANDO → RESULTADO → REVISAR → GUARDAR`) y la persistencia de bytes de comprobantes por lote quedan para la siguiente integración de presentación/Android.
+- Gradle todavía no se ejecuta; la validación local se hará al cerrar este bloque de implementación.
