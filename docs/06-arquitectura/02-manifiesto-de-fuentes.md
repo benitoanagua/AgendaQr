@@ -4,7 +4,11 @@
 
 `AgendaQr-main/docs/` es la fuente de verdad para producto, dominio, requisitos, alcance, decisiones y comportamiento aprobado.
 
-## UI/UX
+## UX funcional
+
+La especificación UX/UI V1 congelada en `docs/04-ux/02-especificacion-ux-ui-v1.md` define el comportamiento de interacción aprobado para V1.
+
+## UI/UX visual
 
 - `Xauxa Design System` — especificación normativa.
 - `XauxaXcan-main/` — implementación de referencia de componentes y patrones.
@@ -20,3 +24,7 @@ WaraWerse no es dependencia de runtime ni fuente de negocio de Agenda QR.
 ## Proyecto destino
 
 El resultado final vive en `AgendaQr-main/`.
+
+## Regla de implementación
+
+La implementación debe satisfacer el contrato UX/UI congelado sin reinterpretarlo como una nueva fuente de negocio. Si la implementación encuentra una contradicción real con dominio/requisitos, debe documentarse antes de cambiar la UX.

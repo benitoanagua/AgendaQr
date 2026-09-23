@@ -63,3 +63,23 @@ CRM, obligaciones, saldos, pagos parciales, reembolsos especializados, contabili
 ## D-16 — UX
 
 La UI/UX permanece bajo Xauxa Design System; esta consolidación no crea un sistema visual paralelo.
+
+## D-17 — UX/UI V1 congelada
+
+La especificación `docs/04-ux/02-especificacion-ux-ui-v1.md` es el contrato UX/UI V1 congelado.
+
+Quedan consolidados, sin alterar las reglas de negocio existentes:
+
+- una intención principal por pantalla;
+- búsqueda global;
+- Galería → Desde otra app → Cámara como jerarquía de entrada;
+- registro sin contexto obligatorio;
+- comprobantes independientes y asociación reversible;
+- importación automática y revisión solo cuando sea necesaria;
+- importación masiva tolerante a fallos parciales;
+- guardado local y sincronización como estados distintos;
+- errores recuperables;
+- preservación de intención/draft;
+- invariantes de idempotencia y recuperación.
+
+La implementación debe adaptarse al contrato UX/UI; un fallo de implementación no modifica automáticamente la especificación.

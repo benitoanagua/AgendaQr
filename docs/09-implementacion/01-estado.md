@@ -2,62 +2,49 @@
 
 ## Situación
 
-La especificación V1 está aprobada y pasa a ser el contrato para la implementación.
+La especificación funcional V1 y el contrato UX/UI V1 están aprobados. La UX/UI está congelada y pasa a ser el contrato para la implementación.
 
-El repositorio ya contiene la base KMP de destinos QR y ahora incorpora la primera etapa de implementación de operaciones y comprobantes.
-
-## Base existente
-
-- KMP Android/iOS;
-- `androidApp` e `iosApp`;
-- módulos domain/data/presentation;
-- persistencia local de destinos;
-- búsqueda, favoritos y categorías;
-- importación QR;
-- QR fullscreen;
-- share inbound/outbound;
-- contrato visual Xauxa.
-
-## Implementado en esta etapa
-
-- modelo de `Operation`;
-- modelo de `Comprobante`;
-- `OperationRepository`;
-- `ComprobanteRepository`;
-- persistencia local serializada de operaciones;
-- persistencia local serializada de comprobantes;
-- repositorios locales Android/iOS;
-- soporte para comprobantes sin operación;
-- asociación y desasociación mediante `operationId`;
-- pruebas unitarias de guardar, actualizar, recuperar, eliminar y recargar desde el mismo store;
-- rechazo de IDs duplicados.
+El repositorio contiene la base KMP de destinos QR, operaciones y comprobantes, además de persistencia local, Supabase y sincronización local-first.
 
 ## Estado tras auditoría V1 (2026-09)
 
-- autenticación Supabase (signIn/signUp/signOut, SessionStatus, JWT);
-- RLS por `user_id` en destinations/operations/comprobantes/deleted_operation_history;
-- Storage privado `comprobantes` con prefijo `<user_id>/`;
-- persistencia local user-scoped: `agendaqr.destinations.v1.<user_id>`, `agendaqr.operations.v1.<user_id>`, `agendaqr.comprobantes.v1.<user_id>`, `agendaqr.deleted_operations.v1.<user_id>`;
-- archivos comprobantes aislados `comprobantes/<user_id>/`;
-- cola durable user-scoped `agendaqr.sync.queue.v1.<user_id>` con estados PENDING/PROCESSING/FAILED, backoff exponencial, deduplicación por recurso+entityId, recuperación tras restart;
-- repositorios Sync* con local-first + encolado en fallo remoto, `updatedAt` para resolución de conflictos (last-write-wins);
-- flujo comprobante: guardar local → Storage upload (upsert) → metadata upsert con rollback de archivo si falla;
-- asociación reversible comprobante↔operación y múltiples comprobantes por operación;
-- búsqueda operaciones por texto/tipo/rango de fechas;
-- detección de duplicados no bloqueante por hash de bytes;
-- eliminación operación con historial mínimo (date/type/amount/person) y borrado coordinado de comprobantes+archivos;
-- UI: destinos, operaciones, bandeja de comprobantes sin asociar, detalle con comprobantes adjuntos, compartir;
-- Android validado: `testDebugUnitTest` + `assembleDebug` + `verifyAgendaQrArchitecture` PASS;
-- iOS: arquitectura KMP actual/actual lista, sin validación funcional en dispositivo (UNTESTED).
+- autenticación Supabase y aislamiento por usuario;
+- RLS en recursos propios;
+- Storage privado por usuario;
+- persistencia local user-scoped;
+- cola durable user-scoped con backoff, deduplicación y recuperación;
+- repositorios Sync* con local-first + encolado en fallo remoto;
+- comprobantes independientes, asociación reversible y múltiples comprobantes por operación;
+- detección de duplicados no bloqueante;
+- eliminación con histórico mínimo;
+- indicadores offline/sync pending documentados en la auditoría;
+- Android validado según la auditoría V1;
+- iOS arquitectónicamente preparado pero funcionalmente UNTESTED.
+
+## UX/UI
+
+La especificación congelada está en:
+
+`docs/04-ux/02-especificacion-ux-ui-v1.md`
+
+La suite de estados/eventos está en:
+
+`docs/08-validacion/02-suite-estados-eventos-v1.md`
+
+La implementación debe satisfacer esos contratos. Estos documentos no autorizan crear un segundo modelo de negocio ni modificar silenciosamente la UX.
 
 ## Pendiente / Fuera de V1
 
-- indicador offline y sync pending en UI;
-- paginación de listas;
-- realtime / suscripción remota continua;
-- biometría/PIN opcional;
-- OCR, contabilidad, facturación, CRM, wallet, roles multiempresa.
+- validación UI real de todos los estados;
+- E2E offline↔online con kill/restart;
+- validación runtime de accesibilidad;
+- validación de latencia extrema;
+- validación iOS funcional;
+- paginación/realtime/biometría según alcance documentado;
+- OCR, contabilidad, facturación, CRM, wallet y roles multiempresa.
 
 ## Regla
 
 Código existente no equivale a capacidad validada en plataforma.
+
+Una prueba UX conceptual PASS tampoco equivale a una validación runtime. La evidencia de implementación debe conservar esta distinción.
