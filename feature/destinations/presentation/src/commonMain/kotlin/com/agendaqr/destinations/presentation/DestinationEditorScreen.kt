@@ -30,6 +30,7 @@ fun DestinationEditorScreen(
     existing: Destination?,
     onSave: (Destination) -> Unit,
     onImportMany: (List<QrAsset>) -> Unit,
+    contexts: List<Context> = emptyList(),
     onBack: () -> Unit,
 ) {
     val initial = remember(existing) {
@@ -41,7 +42,7 @@ fun DestinationEditorScreen(
             updatedAt = com.agendaqr.destinations.domain.nowMillis(),
         )
     }
-    varName(initial, existing, onSave, onImportMany, onBack)
+    varName(initial, existing, onSave, onImportMany, contexts, onBack)
 }
 
 @Composable
@@ -50,12 +51,15 @@ private fun varName(
     existing: Destination?,
     onSave: (Destination) -> Unit,
     onImportMany: (List<QrAsset>) -> Unit,
+    contexts: List<Context>,
     onBack: () -> Unit,
 ) {
     var name by remember(initial.name) { mutableStateOf(initial.name) }
     var category by remember(existing?.category) { mutableStateOf(existing?.category.orEmpty()) }
     var note by remember(existing?.note) { mutableStateOf(existing?.note.orEmpty()) }
     var qr by remember(existing?.qr) { mutableStateOf(existing?.qr ?: QrAsset(encoded = "")) }
+    var contextId by remember(existing?.contextId) { mutableStateOf(existing?.contextId) }
+    var showContextPicker by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Xxl),
@@ -65,6 +69,7 @@ private fun varName(
         OutlinedTextField(name, { name = it }, modifier = Modifier.fillMaxWidth(), label = { Text("Name") }, shape = RectangleShape)
         OutlinedTextField(category, { category = it }, modifier = Modifier.fillMaxWidth(), label = { Text("Category") }, shape = RectangleShape)
         OutlinedTextField(note, { note = it }, modifier = Modifier.fillMaxWidth(), label = { Text("Note") }, shape = RectangleShape, minLines = 3)
+        XauxaSecondaryButton(label = contextId?.let { id -> "Para: " + (contexts.firstOrNull { it.id == id }?.name ?: "Contexto") } ?: "Para: elegir contexto (opcional)", onClick = { showContextPicker = true })
         QrImportControls { result ->
             when {
                 result.assets.size > 1 -> onImportMany(result.assets)
@@ -81,6 +86,7 @@ private fun varName(
                     category = category.trim().ifBlank { null },
                     note = note.trim().ifBlank { null },
                     qr = qr,
+                    contextId = contextId,
                     updatedAt = now,
                 ))
             })
