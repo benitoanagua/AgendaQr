@@ -22,6 +22,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.security.MessageDigest
+import com.agendaqr.destinations.domain.ImportCandidate
+import com.agendaqr.destinations.domain.ImportKind
+import com.agendaqr.destinations.domain.ImportBatch
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.MultiFormatReader
 import com.google.zxing.ReaderException
@@ -75,8 +79,10 @@ object AgendaQrAndroidImportLauncher {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val _results = MutableSharedFlow<QrImportResult>(extraBufferCapacity = 16)
     private val _receiptResults = MutableSharedFlow<IncomingComprobante>(extraBufferCapacity = 16)
+    private val _batchResults = MutableSharedFlow<ImportBatch>(extraBufferCapacity = 16)
     val results = _results.asSharedFlow()
     val receiptResults = _receiptResults.asSharedFlow()
+    val batchResults = _batchResults.asSharedFlow()
 
     fun initialize(compActivity: ComponentActivity) {
         this.activity = compActivity
@@ -124,14 +130,36 @@ object AgendaQrAndroidImportLauncher {
     private fun decodeMultiple(uris: List<Uri>, sourceActivity: Activity) {
         scope.launch {
             val assets = mutableListOf<QrAsset>()
+            val candidates = mutableListOf<ImportCandidate>()
             uris.forEach { uri ->
                 val bytes = sourceActivity.contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: return@forEach
                 val mime = sourceActivity.contentResolver.getType(uri) ?: "image/png"
+                val fingerprint = sha256(bytes)
                 val asset = decodeQrAsset(bytes, mime)
-                if (asset != null) assets += asset
-                else _receiptResults.emit(IncomingComprobante(bytes, mime, extensionFor(mime)))
+                if (asset != null) {
+                    assets += asset
+                    candidates += ImportCandidate(
+                        id = "import-$fingerprint",
+                        kind = ImportKind.QR,
+                        fingerprint = fingerprint,
+                        mimeType = mime,
+                        extension = extensionFor(mime),
+                        qrAsset = asset,
+                    )
+                } else {
+                    val extension = extensionFor(mime)
+                    _receiptResults.emit(IncomingComprobante(bytes, mime, extension))
+                    candidates += ImportCandidate(
+                        id = "import-$fingerprint",
+                        kind = ImportKind.COMPROBANTE,
+                        fingerprint = fingerprint,
+                        mimeType = mime,
+                        extension = extension,
+                    )
+                }
             }
             if (assets.isNotEmpty()) _results.emit(QrImportResult(assets))
+            if (candidates.isNotEmpty()) _batchResults.emit(ImportBatch(candidates))
         }
     }
 
@@ -144,10 +172,45 @@ object AgendaQrAndroidImportLauncher {
             val bytes = sourceActivity.contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: return@launch
             val mime = sourceActivity.contentResolver.getType(uri) ?: "image/png"
             val asset = decodeQrAsset(bytes, mime)
-            if (asset != null) _results.emit(QrImportResult(listOf(asset)))
-            else _receiptResults.emit(IncomingComprobante(bytes, mime, extensionFor(mime)))
+            val fingerprint = sha256(bytes)
+            if (asset != null) {
+                _results.emit(QrImportResult(listOf(asset)))
+                _batchResults.emit(
+                    ImportBatch(
+                        listOf(
+                            ImportCandidate(
+                                id = "import-$fingerprint",
+                                kind = ImportKind.QR,
+                                fingerprint = fingerprint,
+                                mimeType = mime,
+                                extension = extensionFor(mime),
+                                qrAsset = asset,
+                            )
+                        )
+                    )
+                )
+            } else {
+                val extension = extensionFor(mime)
+                _receiptResults.emit(IncomingComprobante(bytes, mime, extension))
+                _batchResults.emit(
+                    ImportBatch(
+                        listOf(
+                            ImportCandidate(
+                                id = "import-$fingerprint",
+                                kind = ImportKind.COMPROBANTE,
+                                fingerprint = fingerprint,
+                                mimeType = mime,
+                                extension = extension,
+                            )
+                        )
+                    )
+                )
+            }
         }
     }
+
+    private fun sha256(bytes: ByteArray): String =
+        MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
 
     private fun extensionFor(mime: String): String = when (mime.lowercase()) {
         "image/jpeg", "image/jpg" -> "jpg"
