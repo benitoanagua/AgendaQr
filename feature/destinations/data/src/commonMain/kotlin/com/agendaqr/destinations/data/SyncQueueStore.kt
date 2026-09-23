@@ -5,7 +5,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
-enum class SyncResource { DESTINATION, OPERATION, COMPROBANTE }
+enum class SyncResource { CONTEXT, DESTINATION, OPERATION, COMPROBANTE }
 enum class SyncMutationType { UPSERT, DELETE }
 enum class SyncMutationState { PENDING, PROCESSING, FAILED }
 
