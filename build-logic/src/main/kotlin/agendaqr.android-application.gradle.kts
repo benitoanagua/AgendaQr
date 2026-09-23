@@ -14,12 +14,6 @@ android {
         versionName = "0.1.0"
     }
     signingConfigs {
-        getByName("debug") {
-            storeFile = file(System.getProperty("user.home") + "/.android/debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
-        }
         create("release") {
             val prodKeystore = providers.environmentVariable("ANDROID_KEYSTORE_FILE").orNull
             val prodStorePassword = providers.environmentVariable("ANDROID_KEYSTORE_PASSWORD").orNull
@@ -31,14 +25,14 @@ android {
                 keyAlias = prodKeyAlias
                 keyPassword = prodKeyPassword
             } else {
-                // RC fallback: debug keystore. Production Play release must provide ANDROID_KEYSTORE_* env vars.
                 if (prodKeystore != null) {
-                    logger.warn("Production keystore not found at $prodKeystore, falling back to debug keystore for RC")
+                    logger.warn("Production keystore not found at $prodKeystore, using debug signing configuration for RC")
                 }
-                storeFile = file(System.getProperty("user.home") + "/.android/debug.keystore")
-                storePassword = "android"
-                keyAlias = "androiddebugkey"
-                keyPassword = "android"
+                val debugConfig = signingConfigs.getByName("debug")
+                storeFile = debugConfig.storeFile
+                storePassword = debugConfig.storePassword
+                keyAlias = debugConfig.keyAlias
+                keyPassword = debugConfig.keyPassword
             }
         }
     }
