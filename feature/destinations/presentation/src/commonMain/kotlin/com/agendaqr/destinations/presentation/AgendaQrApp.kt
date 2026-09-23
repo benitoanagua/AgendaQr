@@ -16,9 +16,11 @@ import com.agendaqr.destinations.data.LocalSyncQueue
 import com.agendaqr.destinations.data.SyncMutationEnqueuer
 import com.agendaqr.destinations.data.SyncMutationProcessor
 import com.agendaqr.destinations.data.SyncRecoveryCoordinator
+import com.agendaqr.destinations.data.createRemoteContextRepository
 import com.agendaqr.destinations.data.createRemoteDestinationRepository
 import com.agendaqr.destinations.data.createRemoteOperationRepository
 import com.agendaqr.destinations.data.createRemoteComprobanteRepository
+import com.agendaqr.destinations.data.createSyncedContextRepository
 import com.agendaqr.destinations.data.createSyncedComprobanteRepository
 import com.agendaqr.destinations.data.createSyncedDestinationRepository
 import com.agendaqr.destinations.data.createSyncedOperationRepository
@@ -65,16 +67,19 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
     val syncScope = remember { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
     val syncQueue = remember { LocalSyncQueue() }
     val syncEnqueuer = remember(syncQueue) { SyncMutationEnqueuer(syncQueue) }
+    val contextRepository = remember(syncQueue) { createSyncedContextRepository(syncQueue) }
     val destinationRepository = remember(syncEnqueuer) { createSyncedDestinationRepository(syncEnqueuer) }
     val operationRepository = remember(syncEnqueuer) { createSyncedOperationRepository(syncEnqueuer) }
     val fileStore = remember { createComprobanteFileStore() }
     val comprobanteRepository = remember(syncEnqueuer, fileStore) { createSyncedComprobanteRepository(fileStore, syncEnqueuer) }
-    val syncProcessor = remember(syncQueue, destinationRepository, operationRepository, comprobanteRepository, fileStore) {
+    val syncProcessor = remember(syncQueue, contextRepository, destinationRepository, operationRepository, comprobanteRepository, fileStore) {
         SyncMutationProcessor(
             queue = syncQueue,
+            contexts = contextRepository,
             destinations = destinationRepository,
             operations = operationRepository,
             comprobantes = comprobanteRepository,
+            remoteContexts = createRemoteContextRepository(),
             remoteDestinations = createRemoteDestinationRepository(),
             remoteOperations = createRemoteOperationRepository(),
             remoteComprobantes = createRemoteComprobanteRepository(),
