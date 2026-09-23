@@ -7,10 +7,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 data class GlobalSearchUiState(
@@ -47,20 +49,30 @@ class GlobalSearchViewModel(
                 }
                 if (action.value.isBlank()) return
                 searchJob = scope.launch {
-                    runCatching { search(AgendaSearchQuery(action.value)) }
-                        .onSuccess { flow ->
-                            flow.collect { results ->
-                                _state.update { it.copy(results = results, isSearching = false) }
+                    try {
+                        search(AgendaSearchQuery(action.value)).collect { results ->
+                            _state.update { current ->
+                                if (current.query == action.value) {
+                                    current.copy(results = results, isSearching = false)
+                                } else {
+                                    current
+                                }
                             }
                         }
-                        .onFailure { error ->
-                            _state.update {
-                                it.copy(
-                                    isSearching = false,
-                                    error = error.message ?: "No se pudo buscar",
-                                )
+                    } catch (error: Throwable) {
+                        if (currentCoroutineContext().isActive) {
+                            _state.update { current ->
+                                if (current.query == action.value) {
+                                    current.copy(
+                                        isSearching = false,
+                                        error = error.message ?: "No se pudo buscar",
+                                    )
+                                } else {
+                                    current
+                                }
                             }
                         }
+                    }
                 }
             }
             GlobalSearchAction.Clear -> {
