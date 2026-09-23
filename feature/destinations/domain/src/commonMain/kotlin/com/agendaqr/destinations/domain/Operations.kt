@@ -37,7 +37,10 @@ enum class ReceiptProvenance {
 data class Comprobante(
     val id: String,
     val file: String,
+    val mimeType: String? = null,
+    val extension: String? = null,
     val createdAt: Long,
+    val updatedAt: Long,
     val provenance: ReceiptProvenance? = null,
     val operationId: String? = null,
 )
@@ -220,10 +223,17 @@ class SaveComprobanteUseCase(
         comprobante: Comprobante,
         bytes: ByteArray,
         extension: String,
+        mimeType: String = "application/octet-stream",
     ): Comprobante {
         val file = fileStore.save(comprobante.id, bytes, extension)
+        val now = nowMillis()
         return try {
-            comprobante.copy(file = file).also { repository.save(it) }
+            comprobante.copy(
+                file = file,
+                extension = extension,
+                mimeType = mimeType,
+                updatedAt = now,
+            ).also { repository.save(it) }
         } catch (error: Throwable) {
             fileStore.delete(file)
             throw error

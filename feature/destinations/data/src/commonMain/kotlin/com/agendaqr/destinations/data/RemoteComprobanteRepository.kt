@@ -79,9 +79,10 @@ class SupabaseComprobanteRepository(
         id = id,
         userId = currentUserId(),
         filePath = remotePath,
-        mimeType = "application/octet-stream",
-        extension = extensionFromFile(file),
+        mimeType = mimeType ?: "application/octet-stream",
+        extension = extension,
         createdAt = Instant.fromEpochMilliseconds(createdAt),
+        updatedAt = Instant.fromEpochMilliseconds(updatedAt),
         provenance = provenance?.name,
         operationId = operationId,
     )
@@ -90,7 +91,10 @@ class SupabaseComprobanteRepository(
         comprobante = Comprobante(
             id = id,
             file = filePath,
+            mimeType = mimeType,
+            extension = extension,
             createdAt = createdAt.toEpochMilliseconds(),
+            updatedAt = updatedAt.toEpochMilliseconds(),
             provenance = provenance?.let { ReceiptProvenance.valueOf(it) },
             operationId = operationId,
         ),
@@ -106,6 +110,7 @@ private data class ComprobanteRow(
     val mimeType: String? = null,
     val extension: String? = null,
     val createdAt: Instant,
+    val updatedAt: Instant,
     val provenance: String? = null,
     val operationId: String? = null,
 )

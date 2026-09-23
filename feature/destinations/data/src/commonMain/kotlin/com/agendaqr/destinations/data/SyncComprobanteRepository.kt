@@ -16,6 +16,7 @@ class SyncComprobanteRepository(
     private val local: ComprobanteRepository,
     private val remote: RemoteComprobanteRepository,
     private val fileStore: ComprobanteFileStore,
+    private val enqueuer: SyncMutationEnqueuer,
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
 ) : ComprobanteRepository {
 
@@ -34,34 +35,20 @@ class SyncComprobanteRepository(
             val bytes = fileStore.read(comprobante.file)
                 ?: error("Local receipt file not found: " + comprobante.file)
             remote.save(comprobante, bytes)
-        }.onFailure { enqueue(SyncMutationType.UPSERT, comprobante.id) }
+        }.onFailure { enqueuer.upsert(SyncResource.COMPROBANTE, comprobante.id) }
     }
 
     override suspend fun update(comprobante: Comprobante) {
         local.update(comprobante)
         runCatching { remote.update(comprobante) }
-            .onFailure { enqueue(SyncMutationType.UPSERT, comprobante.id) }
+            .onFailure { enqueuer.upsert(SyncResource.COMPROBANTE, comprobante.id) }
     }
 
     override suspend fun delete(id: String) {
         local.delete(id)
         runCatching {
             remote.observe().firstOrNull { it.comprobante.id == id }?.let { remote.delete(it) }
-        }.onFailure { enqueue(SyncMutationType.DELETE, id) }
-    }
-
-    @OptIn(kotlin.time.ExperimentalTime::class)
-    private suspend fun enqueue(mutation: SyncMutationType, id: String) {
-        LocalSyncQueue().enqueue(
-            PendingSyncMutation(
-                id = "comprobante-$id-${mutation.name}",
-                resource = SyncResource.COMPROBANTE,
-                mutation = mutation,
-                entityId = id,
-                enqueuedAt = kotlin.time.Clock.System.now().toEpochMilliseconds(),
-                nextAttemptAt = kotlin.time.Clock.System.now().toEpochMilliseconds(),
-            ),
-        )
+        }.onFailure { enqueuer.delete(SyncResource.COMPROBANTE, id) }
     }
 
     suspend fun syncFromRemote() {
@@ -74,12 +61,12 @@ class SyncComprobanteRepository(
                     val localFile = fileStore.save(
                         record.comprobante.id,
                         bytes,
-                        record.comprobante.file.substringAfterLast('.', "bin"),
+                        record.comprobante.extension ?: record.comprobante.file.substringAfterLast('.', "bin"),
                     )
                     val localReceipt = record.comprobante.copy(file = localFile)
                     val existing = local.get(localReceipt.id)
                     if (existing == null) local.save(localReceipt)
-                    else local.update(localReceipt)
+                    else if (localReceipt.updatedAt >= existing.updatedAt) local.update(localReceipt)
                 }
             }
         }
@@ -93,5 +80,6 @@ fun createSyncedComprobanteRepository(
         local = LocalComprobanteRepository(storageKey = userScopedKey("agendaqr.comprobantes.v1")),
         remote = createRemoteComprobanteRepository(),
         fileStore = fileStore,
+        enqueuer = SyncMutationEnqueuer(LocalSyncQueue()),
     )
 

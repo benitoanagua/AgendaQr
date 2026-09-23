@@ -53,19 +53,19 @@ class LocalComprobanteRepositoryTest {
     @Test
     fun receipt_can_be_saved_unassociated_and_associated_later() = runTest {
         val repository = LocalComprobanteRepository(MemoryOperationsStore())
-        val receipt = Comprobante("r-1", "local://receipt-1.jpg", 100)
+        val receipt = Comprobante("r-1", "local://receipt-1.jpg", createdAt = 100, updatedAt = 100)
 
         repository.save(receipt)
         assertNull(repository.get("r-1")?.operationId)
 
-        repository.update(receipt.copy(operationId = "op-1"))
+        repository.update(receipt.copy(operationId = "op-1", updatedAt = 101))
         assertEquals("op-1", repository.get("r-1")?.operationId)
     }
 
     @Test
     fun duplicate_ids_are_rejected() = runTest {
         val repository = LocalComprobanteRepository(MemoryOperationsStore())
-        val receipt = Comprobante("r-1", "local://a", 1)
+        val receipt = Comprobante("r-1", "local://a", createdAt = 1, updatedAt = 1)
 
         repository.save(receipt)
 

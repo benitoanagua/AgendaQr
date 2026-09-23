@@ -1,11 +1,10 @@
-alter table public.operations
+alter table public.comprobantes
     add column if not exists updated_at timestamptz;
 
-update public.operations
+update public.comprobantes
 set updated_at = created_at
 where updated_at is null;
 
-alter table public.operations
+alter table public.comprobantes
     alter column updated_at set not null,
     alter column updated_at set default now();
-

@@ -145,11 +145,13 @@ class OperationsViewModel(
         scope.launch {
             _state.update { it.copy(isSavingReceipt = true) }
             runCatching {
+                val now = nowMillis()
                 saveComprobante(
                     Comprobante(
-                        id = "comprobante-${nowMillis()}",
+                        id = "comprobante-${now}",
                         file = "",
-                        createdAt = nowMillis(),
+                        createdAt = now,
+                        updatedAt = now,
                         provenance = ReceiptProvenance.RECIBIDO,
                     ),
                     incoming.bytes,

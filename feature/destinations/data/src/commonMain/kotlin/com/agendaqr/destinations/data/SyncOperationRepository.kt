@@ -13,6 +13,7 @@ import kotlinx.coroutines.sync.withLock
 class SyncOperationRepository(
     private val local: OperationRepository,
     private val remote: RemoteOperationRepository,
+    private val enqueuer: SyncMutationEnqueuer,
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
 ) : OperationRepository {
 
@@ -29,16 +30,19 @@ class SyncOperationRepository(
     override suspend fun save(operation: Operation) {
         local.save(operation)
         runCatching { remote.save(operation) }
+            .onFailure { enqueuer.upsert(SyncResource.OPERATION, operation.id) }
     }
 
     override suspend fun update(operation: Operation) {
         local.update(operation)
         runCatching { remote.update(operation) }
+            .onFailure { enqueuer.upsert(SyncResource.OPERATION, operation.id) }
     }
 
     override suspend fun delete(id: String) {
         local.delete(id)
         runCatching { remote.delete(id) }
+            .onFailure { enqueuer.delete(SyncResource.OPERATION, id) }
     }
 
     suspend fun syncFromRemote() {
@@ -61,5 +65,6 @@ fun createSyncedOperationRepository(): OperationRepository =
     SyncOperationRepository(
         local = LocalOperationRepository(storageKey = userScopedKey("agendaqr.operations.v1")),
         remote = createRemoteOperationRepository(),
+        enqueuer = SyncMutationEnqueuer(LocalSyncQueue()),
     )
 
