@@ -24,6 +24,8 @@ data class Operation(
     val destinationId: String? = null,
     val concept: String? = null,
     val note: String? = null,
+    /** Context containing this activity. Nullable to preserve legacy activities. */
+    val contextId: String? = null,
 )
 
 @Serializable
@@ -43,6 +45,8 @@ data class Comprobante(
     val updatedAt: Long,
     val provenance: ReceiptProvenance? = null,
     val operationId: String? = null,
+    /** Context containing this receipt; optional because receipts may remain unassociated. */
+    val contextId: String? = null,
 )
 
 @Serializable
@@ -184,7 +188,11 @@ class AssociateComprobanteToOperationUseCase(
         val comprobante = requireNotNull(comprobanteRepository.get(comprobanteId)) {
             "Comprobante not found: $comprobanteId"
         }
-        return comprobante.copy(operationId = operationId).also {
+        val operation = requireNotNull(operationRepository.get(operationId))
+        return comprobante.copy(
+            operationId = operationId,
+            contextId = comprobante.contextId ?: operation.contextId,
+        ).also {
             comprobanteRepository.update(it)
         }
     }
@@ -283,4 +291,3 @@ class DeleteOperationWithHistoryUseCase(
         return history
     }
 }
-
