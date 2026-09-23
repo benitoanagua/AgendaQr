@@ -116,6 +116,9 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
     var showOperations by remember { mutableStateOf(false) }
     var showSearch by remember { mutableStateOf(false) }
     var showContexts by remember { mutableStateOf(false) }
+    var showImportBatch by remember { mutableStateOf(false) }
+    var importBatchState by remember { mutableStateOf<ImportBatchUiState>(ImportBatchUiState.Idle) }
+    val importBatchReducer = remember { ImportBatchReducer() }
     val repository = destinationRepository
     val viewModel = remember(repository) { DestinationsViewModel(
             observe = ObserveDestinationsUseCase(repository),
@@ -167,6 +170,11 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
     }
     val globalSearchState by globalSearchViewModel.state.collectAsState()
 
+    ImportBatchControls { batch ->
+        importBatchState = importBatchReducer.reduce(importBatchState, ImportBatchAction.Analyzed(batch))
+        showImportBatch = true
+    }
+
     androidx.compose.foundation.layout.Column {
         if (isOffline) {
             XauxaStatusBanner("Sin conexión — los cambios se guardan localmente y se sincronizarán al recuperar conectividad.", danger = false)
@@ -185,6 +193,30 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
         }
     }
     when {
+        showImportBatch -> ImportBatchScreen(
+            state = importBatchState,
+            onAction = { action ->
+                when (action) {
+                    ImportBatchAction.Back -> {
+                        importBatchState = importBatchReducer.reduce(importBatchState, action)
+                        showImportBatch = false
+                    }
+                    ImportBatchAction.SaveRecognized -> {
+                        val batch = (importBatchState as? ImportBatchUiState.Result)?.batch
+                            ?: (importBatchState as? ImportBatchUiState.Review)?.batch
+                        if (batch == null) {
+                            importBatchState = importBatchReducer.reduce(importBatchState, ImportBatchAction.Failed("No hay lote para guardar"))
+                        } else {
+                            importBatchState = importBatchReducer.reduce(importBatchState, action)
+                            viewModel.onAction(DestinationAction.ImportAssets(batch.uniqueRecognized.mapNotNull { it.qrAsset }))
+                            viewModel.saveImportedAssets()
+                            importBatchState = importBatchReducer.reduce(importBatchState, ImportBatchAction.Saved)
+                        }
+                    }
+                    else -> importBatchState = importBatchReducer.reduce(importBatchState, action)
+                }
+            },
+        )
         showSearch -> GlobalSearchScreen(
             state = globalSearchState,
             onAction = globalSearchViewModel::onAction,
