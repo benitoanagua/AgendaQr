@@ -24,7 +24,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.MultiFormatReader
-import com.google.zxing.NotFoundException
+import com.google.zxing.ReaderException
 import com.google.zxing.RGBLuminanceSource
 import com.google.zxing.common.HybridBinarizer
 
@@ -50,7 +50,7 @@ fun decodeQrAsset(bytes: ByteArray, mimeType: String): QrAsset? {
     return try {
         MultiFormatReader().decode(binary)
         QrAsset(encoded = Base64.encodeToString(bytes, Base64.NO_WRAP), mimeType = mimeType)
-    } catch (_: NotFoundException) {
+    } catch (_: ReaderException) {
         null
     } finally {
         bitmap.recycle()
