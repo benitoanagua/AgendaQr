@@ -13,6 +13,13 @@ data class Destination(
     val favorite: Boolean = false,
     val createdAt: Long,
     val updatedAt: Long,
+    /**
+     * Human-facing context that this QR belongs to.
+     *
+     * Nullable during migration so existing QRs remain valid until the user
+     * explicitly or safely associates them with a context.
+     */
+    val contextId: String? = null,
 )
 
 @Serializable

@@ -59,6 +59,7 @@ class SupabaseDestinationRepository(
         favorite = favorite,
         createdAt = Instant.fromEpochMilliseconds(createdAt),
         updatedAt = Instant.fromEpochMilliseconds(updatedAt),
+        contextId = contextId,
     )
 
     private fun DestinationRow.toDomain() = Destination(
@@ -70,6 +71,7 @@ class SupabaseDestinationRepository(
         favorite = favorite,
         createdAt = createdAt.toEpochMilliseconds(),
         updatedAt = updatedAt.toEpochMilliseconds(),
+        contextId = contextId,
     )
 }
 
@@ -85,6 +87,7 @@ private data class DestinationRow(
     val favorite: Boolean = false,
     val createdAt: Instant,
     val updatedAt: Instant,
+    val contextId: String? = null,
 )
 
 fun createRemoteDestinationRepository(): RemoteDestinationRepository =

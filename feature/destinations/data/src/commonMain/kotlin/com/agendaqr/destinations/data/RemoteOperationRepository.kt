@@ -61,6 +61,7 @@ class SupabaseOperationRepository(
         destinationId = destinationId,
         concept = concept,
         note = note,
+        contextId = contextId,
     )
 
     private fun OperationRow.toDomain() = Operation(
@@ -75,6 +76,7 @@ class SupabaseOperationRepository(
         destinationId = destinationId,
         concept = concept,
         note = note,
+        contextId = contextId,
     )
 }
 
@@ -92,6 +94,7 @@ private data class OperationRow(
     val destinationId: String? = null,
     val concept: String? = null,
     val note: String? = null,
+    val contextId: String? = null,
 )
 
 fun createRemoteOperationRepository(): RemoteOperationRepository =

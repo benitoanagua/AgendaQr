@@ -48,3 +48,16 @@ La implementación debe satisfacer esos contratos. Estos documentos no autorizan
 Código existente no equivale a capacidad validada en plataforma.
 
 Una prueba UX conceptual PASS tampoco equivale a una validación runtime. La evidencia de implementación debe conservar esta distinción.
+
+
+## Fundación de Contexto implementada
+
+- `Context` con persistencia local-first y Supabase.
+- `contextId?` en QR/Destination, Activity/Operation y Comprobante.
+- migración `005_context_relations.sql` con integridad por usuario.
+- casos de uso para asociación reversible a contexto.
+- agregación `ContextContents` para la pantalla de contexto.
+- búsqueda global sobre Context, QR, Activity y Comprobante.
+- tests de dominio para relaciones, asociación y búsqueda.
+
+La siguiente fase adapta estas capacidades al estado/presentación UX/UI V1 sin cambiar el contrato congelado.

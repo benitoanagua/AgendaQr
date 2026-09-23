@@ -55,3 +55,17 @@ Marzo → QR B
 ```
 
 La operación de enero no debe pasar a mostrar QR B por el simple hecho de que el destino actual haya cambiado.
+
+
+## Contexto
+
+El modelo objetivo agrega una frontera de organización humana:
+
+```text
+Context
+├── Destination / QR *
+├── Operation / Actividad *
+└── Comprobante *
+```
+
+La migración inicial es aditiva: `context_id` es nullable y al eliminar un contexto las relaciones quedan en `null` (`ON DELETE SET NULL`). La integridad remota usa `(context_id, user_id)` para evitar asociaciones entre usuarios.

@@ -95,3 +95,17 @@ Una operación puede existir sin comprobante.
 Una operación puede tener múltiples comprobantes.
 
 Un comprobante pertenece a cero o una operación.
+
+
+## Evolución V1 hacia Context
+
+La implementación ahora añade `Context` como frontera humana y `contextId?` en `Destination`, `Operation` y `Comprobante`. Las relaciones son opcionales durante la migración para preservar datos existentes.
+
+```text
+Context
+├── Destination / QR *
+├── Operation / Actividad *
+└── Comprobante *
+```
+
+Un comprobante puede tener contexto sin operación. Una operación puede tener contexto sin QR. Un contexto no necesita hijos para existir.
