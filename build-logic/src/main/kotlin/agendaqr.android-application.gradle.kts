@@ -21,11 +21,25 @@ android {
             keyPassword = "android"
         }
         create("release") {
-            // V1 uses debug keystore for internal RC; replace with production keystore before Play Store.
-            storeFile = file(System.getProperty("user.home") + "/.android/debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
+            val prodKeystore = providers.environmentVariable("ANDROID_KEYSTORE_FILE").orNull
+            val prodStorePassword = providers.environmentVariable("ANDROID_KEYSTORE_PASSWORD").orNull
+            val prodKeyAlias = providers.environmentVariable("ANDROID_KEY_ALIAS").orNull
+            val prodKeyPassword = providers.environmentVariable("ANDROID_KEY_PASSWORD").orNull
+            if (prodKeystore != null && prodStorePassword != null && prodKeyAlias != null && prodKeyPassword != null && file(prodKeystore).exists()) {
+                storeFile = file(prodKeystore)
+                storePassword = prodStorePassword
+                keyAlias = prodKeyAlias
+                keyPassword = prodKeyPassword
+            } else {
+                // RC fallback: debug keystore. Production Play release must provide ANDROID_KEYSTORE_* env vars.
+                if (prodKeystore != null) {
+                    logger.warn("Production keystore not found at $prodKeystore, falling back to debug keystore for RC")
+                }
+                storeFile = file(System.getProperty("user.home") + "/.android/debug.keystore")
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
         }
     }
     buildTypes {
