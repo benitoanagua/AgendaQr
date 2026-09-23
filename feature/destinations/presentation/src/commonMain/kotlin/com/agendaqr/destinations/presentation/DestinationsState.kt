@@ -33,6 +33,7 @@ data class DestinationsUiState(
     val category: String? = null,
     val route: DestinationRoute = DestinationRoute.List,
     val isLoading: Boolean = true,
+    val isSaving: Boolean = false,
     val error: String? = null,
 ) {
     val visibleDestinations: List<Destination>
@@ -96,9 +97,9 @@ class DestinationsViewModel(
                     _state.update { state -> state.copy(route = DestinationRoute.FullscreenQr(action.id)) }
                 }
             }
-            is DestinationAction.Save -> scope.launch { runCatching { save(action.destination) }.onFailure(::showError).onSuccess { back() } }
-            is DestinationAction.ImportAssets -> _state.update { it.copy(route = DestinationRoute.ImportReview, error = null) }.also { importedAssets = action.assets }
-            is DestinationAction.Update -> scope.launch { runCatching { update(action.destination) }.onFailure(::showError).onSuccess { back() } }
+            is DestinationAction.Save -> { if (!state.value.isSaving) scope.launch { _state.update { it.copy(isSaving = true, error = null) }; runCatching { save(action.destination) }.onFailure(::showError).onSuccess { back() }; _state.update { it.copy(isSaving = false) } } }
+            is DestinationAction.ImportAssets -> { importedAssets = action.assets; _state.update { it.copy(route = DestinationRoute.ImportReview, error = null) } }
+            is DestinationAction.Update -> { if (!state.value.isSaving) scope.launch { _state.update { it.copy(isSaving = true, error = null) }; runCatching { update(action.destination) }.onFailure(::showError).onSuccess { back() }; _state.update { it.copy(isSaving = false) } } }
             is DestinationAction.Delete -> scope.launch { runCatching { delete(action.id) }.onFailure(::showError).onSuccess { back() } }
             is DestinationAction.ToggleFavorite -> scope.launch { runCatching { toggleFavorite(action.destination) }.onFailure(::showError) }
             DestinationAction.Back -> back()
@@ -114,6 +115,7 @@ class DestinationsViewModel(
         val assets = importedAssets
         if (assets.isEmpty()) { back(); return }
         scope.launch {
+            _state.update { it.copy(isSaving = true, error = null) }
             runCatching {
                 assets.forEach { asset ->
                     val now = com.agendaqr.destinations.domain.nowMillis()
@@ -126,6 +128,7 @@ class DestinationsViewModel(
                     ))
                 }
             }.onFailure(::showError).onSuccess { importedAssets = emptyList(); back() }
+            _state.update { it.copy(isSaving = false) }
         }
     }
 
