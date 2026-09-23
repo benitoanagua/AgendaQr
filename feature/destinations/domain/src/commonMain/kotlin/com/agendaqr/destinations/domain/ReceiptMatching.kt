@@ -35,11 +35,26 @@ class SuggestReceiptAssociationUseCase(
             )
         }
 
-        val candidates = operations.observe().first()
+        val contextCandidates = operations.observe().first()
             .asSequence()
             .filter { operation ->
-                receipt.contextId == null || operation.contextId == receipt.contextId
+                receipt.contextId != null && operation.contextId == receipt.contextId
             }
+            .sortedByDescending { it.occurredAt }
+            .map { it.id }
+            .distinct()
+            .toList()
+
+        if (contextCandidates.isNotEmpty()) {
+            return when (contextCandidates.size) {
+                1 -> ReceiptAssociationSuggestion(ReceiptMatchKind.SINGLE, comprobanteId, contextCandidates)
+                else -> ReceiptAssociationSuggestion(ReceiptMatchKind.MULTIPLE, comprobanteId, contextCandidates)
+            }
+        }
+
+        val receiptName = receipt.file.substringAfterLast('/').substringBeforeLast('.')
+        val filenameCandidates = operations.observe().first()
+            .asSequence()
             .filter { operation ->
                 val haystack = listOfNotNull(
                     operation.personOrEntity,
@@ -48,13 +63,14 @@ class SuggestReceiptAssociationUseCase(
                     operation.amount,
                     operation.currency,
                 ).joinToString(" ")
-                val receiptName = receipt.file.substringAfterLast('/').substringBeforeLast('.')
                 receiptName.isNotBlank() && haystack.contains(receiptName, ignoreCase = true)
             }
             .sortedByDescending { it.occurredAt }
             .map { it.id }
             .distinct()
             .toList()
+
+        val candidates = filenameCandidates
 
         return when (candidates.size) {
             0 -> ReceiptAssociationSuggestion(ReceiptMatchKind.NONE, comprobanteId, emptyList())
