@@ -130,6 +130,7 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
     val operationsViewModel = remember(operationRepository, comprobanteRepository, fileStore, historyRepository) {
         OperationsViewModel(
             observeOperations = ObserveOperationsUseCase(operationRepository),
+            observeContexts = ObserveContextsUseCase(contextRepository),
             observeUnassociated = ObserveUnassociatedComprobantesUseCase(comprobanteRepository),
             observeOperationComprobantes = ObserveOperationComprobantesUseCase(comprobanteRepository),
             getOperation = GetOperationUseCase(operationRepository),
