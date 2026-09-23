@@ -55,7 +55,7 @@ class SyncQueueIdempotencyTest {
         assertTrue(queue.claim(2).isEmpty())
         assertEquals(SyncMutationState.FAILED, queue.all().single().state)
 
-        val claimed = queue.claim(3)
+        val claimed = queue.claim(3001)
         assertEquals(listOf("1"), claimed.map { it.id })
         assertEquals(SyncMutationState.PROCESSING, queue.all().single().state)
     }
