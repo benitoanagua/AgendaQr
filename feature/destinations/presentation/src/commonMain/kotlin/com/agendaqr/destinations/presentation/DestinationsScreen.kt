@@ -11,6 +11,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
@@ -59,8 +63,20 @@ fun DestinationsScreen(
                 actionLabel = if (state.destinations.isEmpty()) "Add QR" else "Clear search",
                 onAction = { if (state.destinations.isEmpty()) onAction(DestinationAction.Edit(null)) else onAction(DestinationAction.Search("")) },
             )
-            else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                items(state.visibleDestinations, key = { it.id }) { destination -> DestinationRow(destination, onAction) }
+            else -> {
+                var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
+                val paged = state.visibleDestinations.take(visibleCount)
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                    items(paged, key = { it.id }) { destination -> DestinationRow(destination, onAction) }
+                    if (paged.size < state.visibleDestinations.size) {
+                        item {
+                            XauxaSecondaryButton(
+                                label = "Cargar más (${state.visibleDestinations.size - paged.size} restantes)",
+                                onClick = { visibleCount = (visibleCount + 50).coerceAtMost(state.visibleDestinations.size) },
+                            )
+                        }
+                    }
+                }
             }
         }
     }

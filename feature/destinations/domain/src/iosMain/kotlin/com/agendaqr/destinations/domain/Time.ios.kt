@@ -1,5 +1,7 @@
 package com.agendaqr.destinations.domain
 
-import platform.Foundation.NSDate
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
-actual fun nowMillis(): Long = (NSDate().timeIntervalSince1970 * 1000.0).toLong()
+@OptIn(ExperimentalTime::class)
+actual fun nowMillis(): Long = Clock.System.now().toEpochMilliseconds()
