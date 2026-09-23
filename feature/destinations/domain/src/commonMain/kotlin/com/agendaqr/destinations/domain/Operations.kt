@@ -251,7 +251,7 @@ class DeleteComprobanteUseCase(
 ) {
     suspend operator fun invoke(comprobante: Comprobante) {
         repository.delete(comprobante.id)
-        fileStore.delete(comprobante.file)
+        runCatching { fileStore.delete(comprobante.file) }
     }
 }
 
@@ -264,20 +264,23 @@ class DeleteOperationWithHistoryUseCase(
     suspend operator fun invoke(operationId: String): DeletedOperationHistory? {
         val operation = operationRepository.get(operationId) ?: return null
         val receipts = comprobanteRepository.observe().first().filter { it.operationId == operationId }
-
-        receipts.forEach { receipt ->
-            comprobanteRepository.delete(receipt.id)
-            fileStore.delete(receipt.file)
-        }
-
-        operationRepository.delete(operationId)
-
-        return DeletedOperationHistory(
+        val history = DeletedOperationHistory(
             date = operation.occurredAt,
             type = operation.type,
             amount = operation.amount,
             personOrEntity = operation.personOrEntity,
-        ).also { historyRepository.save(it) }
+        )
+        // Persist history first so audit trail survives even if subsequent deletes partially fail.
+        historyRepository.save(history)
+
+        receipts.forEach { receipt ->
+            comprobanteRepository.delete(receipt.id)
+            runCatching { fileStore.delete(receipt.file) }
+        }
+
+        operationRepository.delete(operationId)
+
+        return history
     }
 }
 
