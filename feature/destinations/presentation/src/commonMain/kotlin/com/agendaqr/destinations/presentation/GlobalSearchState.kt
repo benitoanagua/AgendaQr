@@ -5,6 +5,7 @@ import com.agendaqr.destinations.domain.AgendaSearchResult
 import com.agendaqr.destinations.domain.SearchAgendaQrUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,13 +30,23 @@ class GlobalSearchViewModel(
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
 ) {
     private val _state = MutableStateFlow(GlobalSearchUiState())
+    private var searchJob: Job? = null
     val state: StateFlow<GlobalSearchUiState> = _state.asStateFlow()
 
     fun onAction(action: GlobalSearchAction) {
         when (action) {
             is GlobalSearchAction.QueryChanged -> {
-                _state.update { it.copy(query = action.value, isSearching = action.value.isNotBlank(), error = null) }
-                scope.launch {
+                searchJob?.cancel()
+                _state.update {
+                    it.copy(
+                        query = action.value,
+                        results = emptyList(),
+                        isSearching = action.value.isNotBlank(),
+                        error = null,
+                    )
+                }
+                if (action.value.isBlank()) return
+                searchJob = scope.launch {
                     runCatching { search(AgendaSearchQuery(action.value)) }
                         .onSuccess { flow ->
                             flow.collect { results ->
@@ -43,11 +54,19 @@ class GlobalSearchViewModel(
                             }
                         }
                         .onFailure { error ->
-                            _state.update { it.copy(isSearching = false, error = error.message ?: "No se pudo buscar") }
+                            _state.update {
+                                it.copy(
+                                    isSearching = false,
+                                    error = error.message ?: "No se pudo buscar",
+                                )
+                            }
                         }
                 }
             }
-            GlobalSearchAction.Clear -> _state.value = GlobalSearchUiState()
+            GlobalSearchAction.Clear -> {
+                searchJob?.cancel()
+                _state.value = GlobalSearchUiState()
+            }
         }
     }
 }
