@@ -17,7 +17,7 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
     when (state.route) {
         OperationRoute.List -> OperationListScreen(state, viewModel, onBack)
         OperationRoute.Unassociated -> UnassociatedScreen(state, viewModel)
-        OperationRoute.New -> NewOperationScreen(viewModel)
+        OperationRoute.New -> NewOperationScreen(state, viewModel)
         is OperationRoute.Detail -> OperationDetailScreen(state, viewModel)
     }
     state.pendingIncoming?.let { incoming ->
@@ -161,7 +161,7 @@ private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsVi
 }
 
 @Composable
-private fun NewOperationScreen(viewModel: OperationsViewModel) {
+private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsViewModel) {
     var type by remember { mutableStateOf(OperationType.PAGO) }
     var amount by remember { mutableStateOf("") }
     var currency by remember { mutableStateOf("") }
@@ -169,6 +169,9 @@ private fun NewOperationScreen(viewModel: OperationsViewModel) {
     var destination by remember { mutableStateOf("") }
     var concept by remember { mutableStateOf("") }
     var note by remember { mutableStateOf("") }
+    var selectedContextId by remember { mutableStateOf<String?>(null) }
+    val draftOperationId = remember { newEntityId("operation") }
+    var showContextPicker by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -185,13 +188,32 @@ private fun NewOperationScreen(viewModel: OperationsViewModel) {
         OutlinedTextField(currency, { currency = it }, Modifier.fillMaxWidth(), label = { Text("Moneda (opcional)") }, singleLine = true)
         OutlinedTextField(person, { person = it }, Modifier.fillMaxWidth(), label = { Text("Persona o entidad (opcional)") }, singleLine = true)
         OutlinedTextField(destination, { destination = it }, Modifier.fillMaxWidth(), label = { Text("Destino QR (opcional)") }, singleLine = true)
+        XauxaSecondaryButton(label = selectedContextId?.let { id -> "Para: " + (state.contexts.firstOrNull { it.id == id }?.name ?: "Contexto") } ?: "Para: elegir contexto (opcional)", onClick = { showContextPicker = true })
         OutlinedTextField(concept, { concept = it }, Modifier.fillMaxWidth(), label = { Text("Concepto (opcional)") }, singleLine = true)
         OutlinedTextField(note, { note = it }, Modifier.fillMaxWidth(), label = { Text("Nota (opcional)") }, singleLine = true)
         Text("Podrás adjuntar comprobantes más adelante", color = XauxaColor.TextSecondary, fontSize = XauxaType.Label)
         XauxaPrimaryButton(label = "Guardar", onClick = {
-            viewModel.onAction(OperationAction.SaveNew(type, nowMillis(), amount, currency, person, destination, concept, note))
+            viewModel.onAction(OperationAction.SaveNew(type, nowMillis(), amount, currency, person, destination, concept, note, selectedContextId, draftOperationId))
         })
     }
+    if (showContextPicker) {
+        AlertDialog(
+            onDismissRequest = { showContextPicker = false },
+            title = { Text("¿A cuál corresponde?") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                    XauxaTextAction(label = "Sin contexto", onClick = { selectedContextId = null; showContextPicker = false })
+                    state.contexts.forEach { context ->
+                        XauxaTile(onClick = { selectedContextId = context.id; showContextPicker = false }) {
+                            Text(context.name, modifier = Modifier.padding(XauxaSpacing.Lg))
+                        }
+                    }
+                }
+            },
+            confirmButton = { XauxaTextAction(label = "CANCELAR", onClick = { showContextPicker = false }) },
+        )
+    }
+
 }
 
 @Composable

@@ -22,6 +22,11 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import java.io.ByteArrayOutputStream
 import java.io.File
+import com.google.zxing.BinaryBitmap
+import com.google.zxing.MultiFormatReader
+import com.google.zxing.ReaderException
+import com.google.zxing.RGBLuminanceSource
+import com.google.zxing.common.HybridBinarizer
 
 fun QrAsset.toShareUri(context: Context): Uri {
     val bytes = Base64.decode(encoded, Base64.DEFAULT)
@@ -37,8 +42,19 @@ fun QrAsset.toShareUri(context: Context): Uri {
 }
 
 fun decodeQrAsset(bytes: ByteArray, mimeType: String): QrAsset? {
-    val encoded = Base64.encodeToString(bytes, Base64.NO_WRAP)
-    return QrAsset(encoded = encoded, mimeType = mimeType)
+    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: return null
+    val pixels = IntArray(bitmap.width * bitmap.height)
+    bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+    val source = RGBLuminanceSource(bitmap.width, bitmap.height, pixels)
+    val binary = BinaryBitmap(HybridBinarizer(source))
+    return try {
+        MultiFormatReader().decode(binary)
+        QrAsset(encoded = Base64.encodeToString(bytes, Base64.NO_WRAP), mimeType = mimeType)
+    } catch (_: ReaderException) {
+        null
+    } finally {
+        bitmap.recycle()
+    }
 }
 
 fun decodeQrBitmap(bitmap: Bitmap): QrAsset? {

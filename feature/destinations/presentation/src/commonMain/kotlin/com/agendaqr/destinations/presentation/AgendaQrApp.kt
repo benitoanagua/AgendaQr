@@ -114,6 +114,8 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
         }
     }
     var showOperations by remember { mutableStateOf(false) }
+    var showSearch by remember { mutableStateOf(false) }
+    var showContexts by remember { mutableStateOf(false) }
     val repository = destinationRepository
     val viewModel = remember(repository) { DestinationsViewModel(
             observe = ObserveDestinationsUseCase(repository),
@@ -128,6 +130,7 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
     val operationsViewModel = remember(operationRepository, comprobanteRepository, fileStore, historyRepository) {
         OperationsViewModel(
             observeOperations = ObserveOperationsUseCase(operationRepository),
+            observeContexts = ObserveContextsUseCase(contextRepository),
             observeUnassociated = ObserveUnassociatedComprobantesUseCase(comprobanteRepository),
             observeOperationComprobantes = ObserveOperationComprobantesUseCase(comprobanteRepository),
             getOperation = GetOperationUseCase(operationRepository),
@@ -139,6 +142,31 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
         )
     }
     val operationState by operationsViewModel.state.collectAsState()
+    val contextViewModel = remember(contextRepository, destinationRepository, operationRepository, comprobanteRepository) {
+        ContextsViewModel(
+            observe = ObserveContextsUseCase(contextRepository),
+            observeContents = ObserveContextContentsUseCase(
+                contextRepository,
+                destinationRepository,
+                operationRepository,
+                comprobanteRepository,
+            ),
+            get = GetContextUseCase(contextRepository),
+        )
+    }
+    val contextState by contextViewModel.state.collectAsState()
+    val globalSearchViewModel = remember(contextRepository, destinationRepository, operationRepository, comprobanteRepository) {
+        GlobalSearchViewModel(
+            search = SearchAgendaQrUseCase(
+                contextRepository,
+                destinationRepository,
+                operationRepository,
+                comprobanteRepository,
+            ),
+        )
+    }
+    val globalSearchState by globalSearchViewModel.state.collectAsState()
+
     androidx.compose.foundation.layout.Column {
         if (isOffline) {
             XauxaStatusBanner("Sin conexión — los cambios se guardan localmente y se sincronizarán al recuperar conectividad.", danger = false)
@@ -156,13 +184,36 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
             }
         }
     }
-    if (showOperations) {
-        OperationsScreen(operationState, operationsViewModel, onBack = { showOperations = false })
-    } else when (val route = state.route) {
-        DestinationRoute.List -> DestinationsScreen(state, viewModel::onAction, onOpenOperations = { showOperations = true }, onSignOut = onSignOut)
-        is DestinationRoute.Edit -> DestinationEditorScreen(existing = route.id?.let(viewModel::destination), onSave = { destination -> viewModel.onAction(if (route.id == null) DestinationAction.Save(destination) else DestinationAction.Update(destination)) }, onImportMany = { assets -> viewModel.onAction(DestinationAction.ImportAssets(assets)) }, onBack = { viewModel.onAction(DestinationAction.Back) })
-        is DestinationRoute.Detail -> route.id.let(viewModel::destination)?.let { destination -> DestinationDetailScreen(destination = destination, onShowQr = { viewModel.onAction(DestinationAction.ShowQr(destination.id)) }, onEdit = { viewModel.onAction(DestinationAction.Edit(destination.id)) }, onDelete = { viewModel.onAction(DestinationAction.Delete(destination.id)) }, onShare = { shareQr(destination.qr) }, onBack = { viewModel.onAction(DestinationAction.Back) }) }
-        is DestinationRoute.FullscreenQr -> route.id.let(viewModel::destination)?.let { destination -> QrFullscreenPattern(destination.qr.encoded) { viewModel.onAction(DestinationAction.Back) } }
-        DestinationRoute.ImportReview -> ImportReviewScreen(assets = viewModel.importedAssets(), onSaveAll = viewModel::saveImportedAssets, onBack = { viewModel.onAction(DestinationAction.Back) })
+    when {
+        showSearch -> GlobalSearchScreen(
+            state = globalSearchState,
+            onAction = globalSearchViewModel::onAction,
+            onSelect = { result ->
+                showSearch = false
+                when (result.type) {
+                    AgendaSearchResultType.CONTEXT -> result.contextId?.let { contextViewModel.onAction(ContextAction.Open(it)); showContexts = true }
+                    AgendaSearchResultType.QR -> result.destinationId?.let { viewModel.onAction(DestinationAction.Open(it)) }
+                    AgendaSearchResultType.ACTIVITY -> result.operationId?.let { operationsViewModel.onAction(OperationAction.Open(it)); showOperations = true }
+                    AgendaSearchResultType.COMPROBANTE -> if (result.operationId != null) { operationsViewModel.onAction(OperationAction.Open(result.operationId)); showOperations = true } else { operationsViewModel.onAction(OperationAction.OpenUnassociated); showOperations = true }
+                }
+            },
+            onBack = { showSearch = false },
+        )
+        showContexts -> ContextsScreen(contextState, contextViewModel::onAction)
+        showOperations -> OperationsScreen(operationState, operationsViewModel, onBack = { showOperations = false })
+        else -> when (val route = state.route) {
+            DestinationRoute.List -> DestinationsScreen(
+                state,
+                viewModel::onAction,
+                onOpenOperations = { showOperations = true },
+                onOpenSearch = { showSearch = true },
+                onOpenContexts = { showContexts = true },
+                onSignOut = onSignOut,
+            )
+            is DestinationRoute.Edit -> DestinationEditorScreen(existing = route.id?.let(viewModel::destination), onSave = { destination -> viewModel.onAction(if (route.id == null) DestinationAction.Save(destination) else DestinationAction.Update(destination)) }, onImportMany = { assets -> viewModel.onAction(DestinationAction.ImportAssets(assets)) }, contexts = contextState.contexts, onBack = { viewModel.onAction(DestinationAction.Back) })
+            is DestinationRoute.Detail -> route.id.let(viewModel::destination)?.let { destination -> DestinationDetailScreen(destination = destination, onShowQr = { viewModel.onAction(DestinationAction.ShowQr(destination.id)) }, onEdit = { viewModel.onAction(DestinationAction.Edit(destination.id)) }, onDelete = { viewModel.onAction(DestinationAction.Delete(destination.id)) }, onShare = { shareQr(destination.qr) }, onBack = { viewModel.onAction(DestinationAction.Back) }) }
+            is DestinationRoute.FullscreenQr -> route.id.let(viewModel::destination)?.let { destination -> QrFullscreenPattern(destination.qr.encoded) { viewModel.onAction(DestinationAction.Back) } }
+            DestinationRoute.ImportReview -> ImportReviewScreen(assets = viewModel.importedAssets(), onSaveAll = viewModel::saveImportedAssets, onBack = { viewModel.onAction(DestinationAction.Back) })
+        }
     }
 }

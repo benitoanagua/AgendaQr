@@ -35,6 +35,8 @@ fun DestinationsScreen(
     state: DestinationsUiState,
     onAction: (DestinationAction) -> Unit,
     onOpenOperations: () -> Unit = {},
+    onOpenSearch: () -> Unit = {},
+    onOpenContexts: () -> Unit = {},
     onSignOut: () -> Unit = {},
 ) {
     Column(
@@ -45,7 +47,9 @@ fun DestinationsScreen(
             Text("Agenda QR", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 XauxaTextAction(label = "Cerrar sesión", onClick = onSignOut)
+                XauxaSecondaryButton(label = "Contextos", onClick = onOpenContexts)
                 XauxaSecondaryButton(label = "Operaciones", onClick = onOpenOperations)
+                XauxaPrimaryButton(label = "Buscar", onClick = onOpenSearch)
                 XauxaPrimaryButton(label = "Add QR", onClick = { onAction(DestinationAction.Edit(null)) })
             }
         }
