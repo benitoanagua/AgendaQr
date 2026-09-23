@@ -91,3 +91,12 @@ La validación de compilación/runtime permanece pendiente de la pasada local de
 - Tests de dominio agregados para clasificación, duplicados y asociación/ambigüedad.
 - La UI completa de lote (`IMPORTANDO → ANALIZANDO → RESULTADO → REVISAR → GUARDAR`) y la persistencia de bytes de comprobantes por lote quedan para la siguiente integración de presentación/Android.
 - Gradle todavía no se ejecuta; la validación local se hará al cerrar este bloque de implementación.
+
+
+## Fase idempotencia + estados de importación
+
+- Se reforzó la suite de la cola de sincronización: última mutación gana, DELETE sustituye UPSERT, backoff respeta la ventana y el estado sobrevive al round-trip JSON.
+- La cola mantiene deduplicación por `(resource, entityId)` y recuperación de `PROCESSING` tras reinicio.
+- Se agregó un reducer Kotlin puro para el flujo de importación V1: `IMPORTANDO → ANALIZANDO → RESULTADO → REVISAR → GUARDAR → GUARDADO`, con error recuperable.
+- Esta fase no introduce JavaScript, TypeScript, Python ni Bash en el código de aplicación.
+- Falta integrar el reducer con la UI Compose y conectar la persistencia del lote de comprobantes; después se ejecutará la validación Gradle completa.
