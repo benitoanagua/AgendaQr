@@ -75,11 +75,23 @@ class SyncComprobanteRepository(
 
 fun createSyncedComprobanteRepository(
     fileStore: ComprobanteFileStore,
+    queue: LocalSyncQueue = LocalSyncQueue(),
 ): ComprobanteRepository =
     SyncComprobanteRepository(
         local = LocalComprobanteRepository(storageKey = userScopedKey("agendaqr.comprobantes.v1")),
         remote = createRemoteComprobanteRepository(),
         fileStore = fileStore,
-        enqueuer = SyncMutationEnqueuer(LocalSyncQueue()),
+        enqueuer = SyncMutationEnqueuer(queue),
+    )
+
+fun createSyncedComprobanteRepository(
+    fileStore: ComprobanteFileStore,
+    enqueuer: SyncMutationEnqueuer,
+): ComprobanteRepository =
+    SyncComprobanteRepository(
+        local = LocalComprobanteRepository(storageKey = userScopedKey("agendaqr.comprobantes.v1")),
+        remote = createRemoteComprobanteRepository(),
+        fileStore = fileStore,
+        enqueuer = enqueuer,
     )
 

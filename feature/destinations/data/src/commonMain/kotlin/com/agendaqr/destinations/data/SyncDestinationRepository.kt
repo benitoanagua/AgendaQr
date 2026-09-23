@@ -68,10 +68,21 @@ class SyncDestinationRepository(
     }
 }
 
-fun createSyncedDestinationRepository(): DestinationRepository =
+fun createSyncedDestinationRepository(
+    queue: LocalSyncQueue = LocalSyncQueue(),
+): DestinationRepository =
     SyncDestinationRepository(
         local = LocalDestinationRepository(storageKey = userScopedKey("agendaqr.destinations.v1")),
         remote = createRemoteDestinationRepository(),
-        enqueuer = SyncMutationEnqueuer(LocalSyncQueue()),
+        enqueuer = SyncMutationEnqueuer(queue),
+    )
+
+fun createSyncedDestinationRepository(
+    enqueuer: SyncMutationEnqueuer,
+): DestinationRepository =
+    SyncDestinationRepository(
+        local = LocalDestinationRepository(storageKey = userScopedKey("agendaqr.destinations.v1")),
+        remote = createRemoteDestinationRepository(),
+        enqueuer = enqueuer,
     )
 

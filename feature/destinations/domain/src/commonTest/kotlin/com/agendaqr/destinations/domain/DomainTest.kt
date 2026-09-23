@@ -55,6 +55,7 @@ class DomainTest {
             id = "receipt-1",
             file = "local://receipt.png",
             createdAt = 300,
+            updatedAt = 300,
             provenance = ReceiptProvenance.RECIBIDO,
         )
 
@@ -68,6 +69,7 @@ class DomainTest {
             id = "receipt-1",
             file = "local://receipt.png",
             createdAt = 300,
+            updatedAt = 300,
             provenance = ReceiptProvenance.DESCONOCIDO,
             operationId = "op-a",
         )
@@ -81,8 +83,8 @@ class DomainTest {
     @Test
     fun one_operation_can_have_multiple_receipts() {
         val receipts = listOf(
-            Comprobante("r1", "local://a.png", 1, operationId = "op-1"),
-            Comprobante("r2", "local://b.png", 2, operationId = "op-1"),
+            Comprobante("r1", "local://a.png", createdAt = 1, updatedAt = 1, operationId = "op-1"),
+            Comprobante("r2", "local://b.png", createdAt = 2, updatedAt = 2, operationId = "op-1"),
         )
 
         assertEquals(2, receipts.count { it.operationId == "op-1" })
@@ -109,9 +111,9 @@ class OperationUseCaseTest {
     fun search_matches_entity_or_amount_and_orders_newest_first() = runTest {
         val repository = FakeOperationRepository(
             listOf(
-                Operation("old", OperationType.PAGO, 100, 101, "120", "BOB", "Mercado"),
-                Operation("new", OperationType.PAGO, 200, 201, "850", "BOB", "Colegio San José"),
-                Operation("other", OperationType.COBRO, 300, 301, "50", "USD", "Juan"),
+                Operation("old", OperationType.PAGO, occurredAt = 100, createdAt = 101, amount = "120", currency = "BOB", personOrEntity = "Mercado"),
+                Operation("new", OperationType.PAGO, occurredAt = 200, createdAt = 201, amount = "850", currency = "BOB", personOrEntity = "Colegio San José"),
+                Operation("other", OperationType.COBRO, occurredAt = 300, createdAt = 301, amount = "50", currency = "USD", personOrEntity = "Juan"),
             )
         )
 
@@ -149,7 +151,7 @@ class OperationUseCaseTest {
             listOf(Operation("op-1", OperationType.PAGO, 100, 101))
         )
         val receipts = FakeComprobanteRepository(
-            listOf(Comprobante("r-1", "local://receipt.png", 102))
+            listOf(Comprobante("r-1", "local://receipt.png", createdAt = 102, updatedAt = 102))
         )
 
         AssociateComprobanteToOperationUseCase(operations, receipts)("r-1", "op-1")
