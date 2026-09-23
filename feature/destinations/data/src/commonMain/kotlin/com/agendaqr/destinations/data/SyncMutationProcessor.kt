@@ -1,5 +1,6 @@
 package com.agendaqr.destinations.data
 
+import com.agendaqr.destinations.domain.ContextRepository
 import com.agendaqr.destinations.domain.ComprobanteFileStore
 import com.agendaqr.destinations.domain.DestinationRepository
 import com.agendaqr.destinations.domain.OperationRepository
@@ -11,9 +12,11 @@ import kotlin.time.ExperimentalTime
 
 class SyncMutationProcessor @OptIn(ExperimentalTime::class) constructor(
     private val queue: LocalSyncQueue,
+    private val contexts: ContextRepository,
     private val destinations: DestinationRepository,
     private val operations: OperationRepository,
     private val comprobantes: ComprobanteRepository,
+    private val remoteContexts: RemoteContextRepository,
     private val remoteDestinations: RemoteDestinationRepository,
     private val remoteOperations: RemoteOperationRepository,
     private val remoteComprobantes: RemoteComprobanteRepository,
@@ -27,6 +30,12 @@ class SyncMutationProcessor @OptIn(ExperimentalTime::class) constructor(
         queue.claim(now).forEach { mutation ->
             runCatching {
                 when (mutation.resource) {
+                    SyncResource.CONTEXT -> {
+                        if (mutation.mutation == SyncMutationType.UPSERT) {
+                            contexts.get(mutation.entityId)?.let { remoteContexts.save(it) }
+                                ?: error("Context not found: " + mutation.entityId)
+                        } else remoteContexts.delete(mutation.entityId)
+                    }
                     SyncResource.DESTINATION -> {
                         if (mutation.mutation == SyncMutationType.UPSERT) {
                             destinations.get(mutation.entityId)?.let { remoteDestinations.save(it) }
