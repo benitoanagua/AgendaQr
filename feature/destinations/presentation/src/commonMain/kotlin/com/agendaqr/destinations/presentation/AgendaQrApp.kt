@@ -203,21 +203,25 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
             onAction = { action ->
                 when (action) {
                     ImportBatchAction.Back -> {
-                        val batch = when (val current = importBatchState) {
-                            is ImportBatchUiState.Result -> current.batch
-                            is ImportBatchUiState.Review -> current.batch
-                            is ImportBatchUiState.Error -> current.batch
-                            else -> null
-                        }
-                        batch?.let { pending ->
-                            syncScope.launch {
-                                pending.candidates.mapNotNull { it.payloadRef }
-                                    .distinct()
-                                    .forEach { importPayloadStore.delete(it) }
+                        if (importBatchState is ImportBatchUiState.Review) {
+                            importBatchState = importBatchReducer.reduce(importBatchState, action)
+                        } else {
+                            val batch = when (val current = importBatchState) {
+                                is ImportBatchUiState.Result -> current.batch
+                                is ImportBatchUiState.Error -> current.batch
+                                is ImportBatchUiState.Saved -> current.batch
+                                else -> null
                             }
+                            batch?.let { pending ->
+                                syncScope.launch {
+                                    pending.candidates.mapNotNull { it.payloadRef }
+                                        .distinct()
+                                        .forEach { importPayloadStore.delete(it) }
+                                }
+                            }
+                            importBatchState = importBatchReducer.reduce(importBatchState, action)
+                            showImportBatch = false
                         }
-                        importBatchState = importBatchReducer.reduce(importBatchState, action)
-                        showImportBatch = false
                     }
                     ImportBatchAction.SaveRecognized -> {
                         val batch = (importBatchState as? ImportBatchUiState.Result)?.batch
