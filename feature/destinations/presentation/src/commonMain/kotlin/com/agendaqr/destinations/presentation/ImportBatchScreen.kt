@@ -80,5 +80,8 @@ private fun BatchReviewContent(
             color = XauxaColor.TextSecondary,
         )
     }
+    if (batch.canSaveRecognized()) {
+        XauxaPrimaryButton("Guardar reconocidos", onClick = { onAction(ImportBatchAction.SaveRecognized) })
+    }
     XauxaSecondaryButton("Volver a resultado", onClick = { onAction(ImportBatchAction.Back) })
 }

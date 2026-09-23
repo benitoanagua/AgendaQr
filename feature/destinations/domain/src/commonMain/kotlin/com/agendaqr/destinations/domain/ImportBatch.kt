@@ -23,6 +23,8 @@ data class ImportCandidate(
     val mimeType: String? = null,
     val extension: String? = null,
     val qrAsset: QrAsset? = null,
+    /** Reference to transient raw bytes; never stores bytes in UI/domain state. */
+    val payloadRef: String? = null,
     val error: String? = null,
 )
 

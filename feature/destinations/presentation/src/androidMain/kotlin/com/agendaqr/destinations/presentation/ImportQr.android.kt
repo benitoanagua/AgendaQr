@@ -26,6 +26,7 @@ import java.security.MessageDigest
 import com.agendaqr.destinations.domain.ImportCandidate
 import com.agendaqr.destinations.domain.ImportKind
 import com.agendaqr.destinations.domain.ImportBatch
+import com.agendaqr.destinations.data.createImportPayloadStore
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.MultiFormatReader
 import com.google.zxing.ReaderException
@@ -77,6 +78,7 @@ object AgendaQrAndroidImportLauncher {
     private var cameraPermission: ActivityResultLauncher<String>? = null
     private var activity: Activity? = null
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val payloadStore = createImportPayloadStore()
     private val _results = MutableSharedFlow<QrImportResult>(extraBufferCapacity = 16)
     private val _receiptResults = MutableSharedFlow<IncomingComprobante>(extraBufferCapacity = 16)
     private val _batchResults = MutableSharedFlow<ImportBatch>(extraBufferCapacity = 16)
@@ -148,13 +150,16 @@ object AgendaQrAndroidImportLauncher {
                     )
                 } else {
                     val extension = extensionFor(mime)
+                    val payloadRef = "import-payload-$fingerprint"
+                    payloadStore.put(payloadRef, bytes)
                     _receiptResults.emit(IncomingComprobante(bytes, mime, extension))
                     candidates += ImportCandidate(
                         id = "import-$fingerprint",
-                        kind = ImportKind.COMPROBANTE,
+                        kind = classifyNonQr(mime),
                         fingerprint = fingerprint,
                         mimeType = mime,
                         extension = extension,
+                        payloadRef = payloadRef,
                     )
                 }
             }
@@ -191,16 +196,19 @@ object AgendaQrAndroidImportLauncher {
                 )
             } else {
                 val extension = extensionFor(mime)
+                val payloadRef = "import-payload-$fingerprint"
+                payloadStore.put(payloadRef, bytes)
                 _receiptResults.emit(IncomingComprobante(bytes, mime, extension))
                 _batchResults.emit(
                     ImportBatch(
                         listOf(
                             ImportCandidate(
                                 id = "import-$fingerprint",
-                                kind = ImportKind.COMPROBANTE,
+                                kind = classifyNonQr(mime),
                                 fingerprint = fingerprint,
                                 mimeType = mime,
                                 extension = extension,
+                                payloadRef = payloadRef,
                             )
                         )
                     )
@@ -217,6 +225,12 @@ object AgendaQrAndroidImportLauncher {
         "application/pdf" -> "pdf"
         "image/webp" -> "webp"
         else -> "png"
+    }
+
+    private fun classifyNonQr(mime: String): ImportKind = when {
+        mime.equals("application/pdf", ignoreCase = true) -> ImportKind.COMPROBANTE
+        mime.startsWith("image/", ignoreCase = true) -> ImportKind.COMPROBANTE
+        else -> ImportKind.DESCONOCIDO
     }
 
     private fun decodeAndEmit(bitmap: Bitmap) {

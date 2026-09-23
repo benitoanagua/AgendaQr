@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.agendaqr.destinations.data.SyncQueueObserver
 import com.agendaqr.destinations.data.createComprobanteFileStore
+import com.agendaqr.destinations.data.createImportPayloadStore
 import com.agendaqr.destinations.data.createDeletedOperationHistoryRepository
 import com.agendaqr.destinations.data.createAuthRepository
 import com.agendaqr.destinations.data.LocalSyncQueue
@@ -71,6 +72,7 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
     val destinationRepository = remember(syncEnqueuer) { createSyncedDestinationRepository(syncEnqueuer) }
     val operationRepository = remember(syncEnqueuer) { createSyncedOperationRepository(syncEnqueuer) }
     val fileStore = remember { createComprobanteFileStore() }
+    val importPayloadStore = remember { createImportPayloadStore() }
     val comprobanteRepository = remember(syncEnqueuer, fileStore) { createSyncedComprobanteRepository(fileStore, syncEnqueuer) }
     val syncProcessor = remember(syncQueue, contextRepository, destinationRepository, operationRepository, comprobanteRepository, fileStore) {
         SyncMutationProcessor(
@@ -119,6 +121,9 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
     var showImportBatch by remember { mutableStateOf(false) }
     var importBatchState by remember { mutableStateOf<ImportBatchUiState>(ImportBatchUiState.Idle) }
     val importBatchReducer = remember { ImportBatchReducer() }
+    val saveImportBatch = remember(destinationRepository, comprobanteRepository, fileStore, importPayloadStore) {
+        SaveImportBatchUseCase(destinationRepository, comprobanteRepository, fileStore, importPayloadStore)
+    }
     val repository = destinationRepository
     val viewModel = remember(repository) { DestinationsViewModel(
             observe = ObserveDestinationsUseCase(repository),
@@ -198,19 +203,53 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
             onAction = { action ->
                 when (action) {
                     ImportBatchAction.Back -> {
-                        importBatchState = importBatchReducer.reduce(importBatchState, action)
-                        showImportBatch = false
+                        if (importBatchState is ImportBatchUiState.Review) {
+                            importBatchState = importBatchReducer.reduce(importBatchState, action)
+                        } else {
+                            val batch = when (val current = importBatchState) {
+                                is ImportBatchUiState.Result -> current.batch
+                                is ImportBatchUiState.Error -> current.batch
+                                is ImportBatchUiState.Saved -> current.batch
+                                else -> null
+                            }
+                            batch?.let { pending ->
+                                syncScope.launch {
+                                    pending.candidates.mapNotNull { it.payloadRef }
+                                        .distinct()
+                                        .forEach { importPayloadStore.delete(it) }
+                                }
+                            }
+                            importBatchState = importBatchReducer.reduce(importBatchState, action)
+                            showImportBatch = false
+                        }
                     }
                     ImportBatchAction.SaveRecognized -> {
                         val batch = (importBatchState as? ImportBatchUiState.Result)?.batch
                             ?: (importBatchState as? ImportBatchUiState.Review)?.batch
                         if (batch == null) {
-                            importBatchState = importBatchReducer.reduce(importBatchState, ImportBatchAction.Failed("No hay lote para guardar"))
+                            importBatchState = importBatchReducer.reduce(
+                                importBatchState,
+                                ImportBatchAction.Failed("No hay lote para guardar"),
+                            )
                         } else {
                             importBatchState = importBatchReducer.reduce(importBatchState, action)
-                            viewModel.onAction(DestinationAction.ImportAssets(batch.uniqueRecognized.mapNotNull { it.qrAsset }))
-                            viewModel.saveImportedAssets()
-                            importBatchState = importBatchReducer.reduce(importBatchState, ImportBatchAction.Saved)
+                            syncScope.launch {
+                                runCatching { saveImportBatch(batch) }
+                                    .onSuccess {
+                                        importBatchState = importBatchReducer.reduce(
+                                            importBatchState,
+                                            ImportBatchAction.Saved,
+                                        )
+                                    }
+                                    .onFailure { error ->
+                                        importBatchState = importBatchReducer.reduce(
+                                            importBatchState,
+                                            ImportBatchAction.Failed(
+                                                error.message ?: "No se pudo guardar la importación",
+                                            ),
+                                        )
+                                    }
+                            }
                         }
                     }
                     else -> importBatchState = importBatchReducer.reduce(importBatchState, action)
