@@ -61,3 +61,19 @@ Una prueba UX conceptual PASS tampoco equivale a una validación runtime. La evi
 - tests de dominio para relaciones, asociación y búsqueda.
 
 La siguiente fase adapta estas capacidades al estado/presentación UX/UI V1 sin cambiar el contrato congelado.
+
+
+## Presentación de Contexto y búsqueda — en implementación
+
+Se añadió la primera capa de presentación alineada con el contrato UX/UI congelado:
+
+- navegación a Contextos desde la superficie existente;
+- detalle de Contexto agregando QR, actividades y comprobantes;
+- búsqueda global sobre Context/QR/Activity/Comprobante;
+- selección de contexto al registrar una actividad;
+- selección de contexto al editar/importar un QR;
+- IDs de entidad resistentes a colisiones de milisegundos;
+- guardas contra doble acción de guardado;
+- clasificación Android de imágenes mediante ZXing antes de tratarlas como QR.
+
+La validación de compilación/runtime permanece pendiente de la pasada local de Gradle.
