@@ -59,6 +59,7 @@ sealed interface OperationAction {
         val concept: String?,
         val note: String?,
         val contextId: String? = null,
+        val id: String? = null,
     ) : OperationAction
 }
 
@@ -195,7 +196,7 @@ class OperationsViewModel(
         scope.launch {
             _state.update { it.copy(isSavingOperation = true, error = null) }
             val operation = Operation(
-                id = newEntityId("operation"),
+                id = action.id ?: newEntityId("operation"),
                 type = action.type,
                 occurredAt = action.occurredAt,
                 createdAt = nowMillis(),
