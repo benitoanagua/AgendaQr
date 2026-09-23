@@ -31,6 +31,7 @@ data class OperationsUiState(
     val pendingIncoming: IncomingComprobante? = null,
     val pendingDuplicates: List<Comprobante> = emptyList(),
     val isSavingReceipt: Boolean = false,
+    val isSavingOperation: Boolean = false,
     val error: String? = null,
 )
 
@@ -104,7 +105,7 @@ class OperationsViewModel(
             OperationAction.OpenUnassociated -> _state.update { it.copy(route = OperationRoute.Unassociated, error = null) }
             OperationAction.Back -> back()
             OperationAction.ClearError -> _state.update { it.copy(error = null) }
-            is OperationAction.SaveNew -> saveNew(action)
+            is OperationAction.SaveNew -> if (!state.value.isSavingOperation) saveNew(action)
         }
     }
 
@@ -181,11 +182,13 @@ class OperationsViewModel(
                 selectedOperationId = operation.id
                 _state.update { it.copy(route = OperationRoute.Detail(operation.id)) }
             }
+            _state.update { it.copy(isSavingOperation = false) }
         }
     }
 
     private fun saveNew(action: OperationAction.SaveNew) {
         scope.launch {
+            _state.update { it.copy(isSavingOperation = true, error = null) }
             val operation = Operation(
                 id = newEntityId("operation"),
                 type = action.type,
