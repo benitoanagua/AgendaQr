@@ -23,12 +23,12 @@ private class AndroidNetworkMonitor : NetworkMonitor {
             return@callbackFlow
         }
         val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        fun isOnline(): Boolean {
-            val network = manager.activeNetwork ?: return false
-            val caps = manager.getNetworkCapabilities(network) ?: return false
-            return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+        fun isOnline(): Boolean = runCatching {
+            val network = manager.activeNetwork ?: return@runCatching false
+            val caps = manager.getNetworkCapabilities(network) ?: return@runCatching false
+            caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
                 caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-        }
+        }.getOrDefault(true)
         trySend(isOnline())
         val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) { trySend(true) }
