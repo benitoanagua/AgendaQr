@@ -210,7 +210,7 @@ object AgendaQrAndroidImportLauncher {
     }
 
     private fun sha256(bytes: ByteArray): String =
-        MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
+        MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it.toInt() and 0xff) }
 
     private fun extensionFor(mime: String): String = when (mime.lowercase()) {
         "image/jpeg", "image/jpg" -> "jpg"
