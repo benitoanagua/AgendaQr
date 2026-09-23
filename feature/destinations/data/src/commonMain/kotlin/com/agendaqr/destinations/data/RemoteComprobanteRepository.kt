@@ -85,6 +85,7 @@ class SupabaseComprobanteRepository(
         updatedAt = Instant.fromEpochMilliseconds(updatedAt),
         provenance = provenance?.name,
         operationId = operationId,
+        contextId = contextId,
     )
 
     private fun ComprobanteRow.toRecord() = RemoteComprobanteRecord(
@@ -97,6 +98,7 @@ class SupabaseComprobanteRepository(
             updatedAt = updatedAt.toEpochMilliseconds(),
             provenance = provenance?.let { ReceiptProvenance.valueOf(it) },
             operationId = operationId,
+            contextId = contextId,
         ),
         remoteFilePath = filePath,
     )
@@ -113,6 +115,7 @@ private data class ComprobanteRow(
     val updatedAt: Instant,
     val provenance: String? = null,
     val operationId: String? = null,
+    val contextId: String? = null,
 )
 
 fun createRemoteComprobanteRepository(): RemoteComprobanteRepository =
