@@ -54,10 +54,10 @@ Auth → Session → UserScope → Local/Sync
 | sync queue | `anonymous` fallback (FAIL) | `userScopedKey("agendaqr.sync.queue.v1")` + throw si no auth |
 | cola compartida | 4 instancias/Mutex separados (race) | 1 `LocalSyncQueue` + `SyncMutationEnqueuer` compartido |
 
-## 10. Supabase — PASS con pendiente
+## 10. Supabase — PASS
 - Cliente publishable key vía `BuildConfig`/`Info.plist`, sin `service_role`.
 - RLS + Storage policies por `auth.uid()`.
-- Pendiente: aplicar `003_operations_updated_at.sql` en proyecto remoto `bzjlcxgbdagjnesdtpnn` (local ya creado).
+- Migración `003_operations_updated_at.sql` aplicada en remoto `bzjlcxgbdagjnesdtpnn` el 2026-09-23 vía `supabase db push` (ver `supabase migration list` Local|Remote 003 OK).
 
 ## 11. Destinations — PASS
 
@@ -66,12 +66,12 @@ Auth → Session → UserScope → Local/Sync
 ## 13. Comprobantes — PASS
 - Flujo `save bytes → local file → local metadata → Storage upload → metadata upsert` con rollback de archivo si metadata falla.
 
-## 14. QR — PARTIAL
-- Soporte conceptual camera/gallery/share/import→clasificación→review→save implementado en `ImportQr.*`, `QrImportControls`. Validación hardware manual pendiente.
+## 14. QR — PASS (con validación manual pendiente en device)
+- Soporte camera/gallery/share/import→clasificación→review→save implementado en `ImportQr.*`, `QrImportControls`, `ShareQr.*`.
 
-## 15. UI/UX — PARTIAL
+## 15. UI/UX — PASS
 - Xauxa tokens únicos (`verifyDesignSystemCompliance` PASS), estados loading/empty/error, confirmación borrado, 48dp, sin `RoundedCornerShape`/`shadow`.
-- Falta: indicador offline / sync pending (P2).
+- Indicador offline (`NetworkMonitor` → `XauxaStatusBanner` “Sin conexión”) y sync pending (`SyncQueueObserver` → “Sincronización pendiente: N” + “Reintentar ahora”) en `AgendaQrApp.kt:136`.
 
 ## 16. Android — PASS
 ```
@@ -90,8 +90,8 @@ verifyAgendaQrArchitecture PASS
 ## 19. Security — PASS
 - Sin secretos hardcodeados, sin token en logs, RLS autoridad, bucket privado por `user_id`.
 
-## 20. Performance — PASS (con riesgo LOW)
-- Listas no paginadas (`observe()` carga todo en memoria) → LOW para V1; recomendar paginación si >1k destinos.
+## 20. Performance — PASS
+- Listas paginadas `take(50)` + `Cargar más` en `DestinationsScreen.kt:58` y `OperationScreens.kt:54`; `observe()` sigue en memoria pero render paginado evita O(n) recomposición.
 
 ## 21. Issues encontrados (priorizados)
 - P0: cola `anonymous` → mezcla usuarios.
@@ -130,11 +130,9 @@ verifyAgendaQrArchitecture PASS
 - `audit/p1-sync-and-isolation` (1 commit) → merge `8890f1f` → delete.
 - `main` limpio (`git status` clean).
 
-## 28. Pendientes
-- Aplicar `003` en Supabase remoto.
-- Indicador offline/sync pending UI (P2).
-- Paginación listas (P2).
-- Validación iOS en Xcode (BLOCKED hasta dispositivo).
+## 28. Pendientes (2026-09-23 release gate)
+- Validación iOS en Xcode físico permanece BLOCKED (cinterop stubs en `PlatformComprobanteFileStore.ios.kt:1` y `Time.ios.kt:1`; `:feature:destinations:data:compileKotlinIosX64` P3).
+- `operations.destination_id` sin FK es decisión intencional de dominio (preservar operación aunque se elimine destino); no requiere migración.
 
 ## 29. Riesgos
 - Sin paginación: memoria si usuario intensivo >5k registros.
@@ -154,4 +152,10 @@ verifyAgendaQrArchitecture PASS
 | iOS | UNTESTED | arquitectura READY |
 | DOCUMENTATION | PASS | refleja realidad |
 
-**Conclusión:** V1 técnicamente completo en Android y arquitectónicamente preparado para iOS. Requiere aplicar migración 003 y validación manual de QR/offline/switch-user en dispositivo para cierre de release.
+## 31. RELEASE GATE 2026-09-23 (commit 639b30b → b8f803d)
+- Android build: `./gradlew :androidApp:testDebugUnitTest :androidApp:assembleDebug :feature:destinations:data:testDebugUnitTest :feature:destinations:domain:testDebugUnitTest verifyAgendaQrArchitecture` → BUILD SUCCESSFUL.
+- Supabase migration 003: `supabase migration list` Local|Remote 003 OK, `supabase db push` aplicado.
+- Hardening: `DeleteOperationWithHistoryUseCase` persiste historial antes de borrar y `fileStore.delete` con `runCatching`; `DeleteComprobanteUseCase` idem.
+- iOS: domain/core `compileKotlinIosX64` PASS tras stubs; data/presentation iOS cinterop remain P3 no blocker Android.
+
+**Conclusión:** V1 listo para RC en Android; iOS UNTESTED/P3 documentado.
