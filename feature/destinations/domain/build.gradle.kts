@@ -11,5 +11,8 @@ kotlin {
             implementation(libs.serialization.json)
             implementation(libs.coroutines.core)
         }
+        commonTest.dependencies {
+            implementation(libs.coroutines.test)
+        }
     }
 }

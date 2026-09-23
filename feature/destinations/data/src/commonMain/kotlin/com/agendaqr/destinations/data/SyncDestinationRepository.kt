@@ -13,12 +13,13 @@ import kotlinx.coroutines.sync.withLock
 /**
  * Local-first repository with best-effort remote synchronization.
  *
- * Local state remains immediately usable offline. Remote failures do not erase
- * the local record; a later repository initialization retries the pull.
+ * Local state remains immediately usable offline. Remote failures are enqueued
+ * for retry with exponential backoff.
  */
 class SyncDestinationRepository(
     private val local: DestinationRepository,
     private val remote: RemoteDestinationRepository,
+    private val enqueuer: SyncMutationEnqueuer,
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
 ) : DestinationRepository {
 
@@ -35,16 +36,19 @@ class SyncDestinationRepository(
     override suspend fun save(destination: Destination) {
         local.save(destination)
         runCatching { remote.save(destination) }
+            .onFailure { enqueuer.upsert(SyncResource.DESTINATION, destination.id) }
     }
 
     override suspend fun update(destination: Destination) {
         local.update(destination)
         runCatching { remote.update(destination) }
+            .onFailure { enqueuer.upsert(SyncResource.DESTINATION, destination.id) }
     }
 
     override suspend fun delete(id: String) {
         local.delete(id)
         runCatching { remote.delete(id) }
+            .onFailure { enqueuer.delete(SyncResource.DESTINATION, id) }
     }
 
     suspend fun syncFromRemote() {
@@ -64,9 +68,21 @@ class SyncDestinationRepository(
     }
 }
 
-fun createSyncedDestinationRepository(): DestinationRepository =
+fun createSyncedDestinationRepository(
+    queue: LocalSyncQueue = LocalSyncQueue(),
+): DestinationRepository =
     SyncDestinationRepository(
         local = LocalDestinationRepository(storageKey = userScopedKey("agendaqr.destinations.v1")),
         remote = createRemoteDestinationRepository(),
+        enqueuer = SyncMutationEnqueuer(queue),
+    )
+
+fun createSyncedDestinationRepository(
+    enqueuer: SyncMutationEnqueuer,
+): DestinationRepository =
+    SyncDestinationRepository(
+        local = LocalDestinationRepository(storageKey = userScopedKey("agendaqr.destinations.v1")),
+        remote = createRemoteDestinationRepository(),
+        enqueuer = enqueuer,
     )
 

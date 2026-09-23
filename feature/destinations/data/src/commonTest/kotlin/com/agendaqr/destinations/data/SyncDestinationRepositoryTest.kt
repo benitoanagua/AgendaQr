@@ -20,6 +20,7 @@ class SyncDestinationRepositoryTest {
         val repository = SyncDestinationRepository(
             local = FakeDestinationRepository(),
             remote = remote,
+            enqueuer = SyncMutationEnqueuer(LocalSyncQueue(MemorySyncQueueStore())),
         )
 
         repository.syncFromRemote()
@@ -33,6 +34,7 @@ class SyncDestinationRepositoryTest {
         val repository = SyncDestinationRepository(
             local = FakeDestinationRepository(),
             remote = remote,
+            enqueuer = SyncMutationEnqueuer(LocalSyncQueue(MemorySyncQueueStore())),
         )
 
         repository.save(destination("local", updatedAt = 10))
@@ -47,7 +49,11 @@ class SyncDestinationRepositoryTest {
         val remote = FakeRemoteDestinationRepository()
         remote.items += destination("same", updatedAt = 20)
 
-        val repository = SyncDestinationRepository(local, remote)
+        val repository = SyncDestinationRepository(
+            local,
+            remote,
+            enqueuer = SyncMutationEnqueuer(LocalSyncQueue(MemorySyncQueueStore())),
+        )
         repository.syncFromRemote()
 
         assertEquals(20, repository.get("same")?.updatedAt)

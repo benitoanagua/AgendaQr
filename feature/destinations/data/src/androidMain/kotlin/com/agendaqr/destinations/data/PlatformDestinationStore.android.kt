@@ -2,7 +2,6 @@ package com.agendaqr.destinations.data
 
 import android.content.Context
 import android.content.SharedPreferences
-import io.github.jan.supabase.auth.auth
 
 object AgendaQrAndroidStorage {
     private var preferences: SharedPreferences? = null
@@ -35,12 +34,13 @@ actual fun platformDestinationStore(): DestinationStore = AndroidDestinationStor
 actual fun createDestinationRepository(): com.agendaqr.destinations.domain.DestinationRepository = createSyncedDestinationRepository()
 
 
-private const val SYNC_QUEUE_KEY = "agendaqr.sync.queue.v1."
+private const val SYNC_QUEUE_PREFIX = "agendaqr.sync.queue.v1"
 
 private class PlatformSyncQueueStore : SyncQueueStore {
     private val delegate = platformDestinationStore()
-    override fun read(): List<PendingSyncMutation> = decodeSyncQueue(delegate.read(SYNC_QUEUE_KEY + (AgendaQrSupabase.client.auth.currentUserOrNull()?.id ?: "anonymous")) ?: "[]")
-    override fun write(items: List<PendingSyncMutation>) { delegate.write(SYNC_QUEUE_KEY + (AgendaQrSupabase.client.auth.currentUserOrNull()?.id ?: "anonymous"), encodeSyncQueue(items)) }
+    private fun key(): String = userScopedKey(SYNC_QUEUE_PREFIX)
+    override fun read(): List<PendingSyncMutation> = decodeSyncQueue(delegate.read(key()) ?: "[]")
+    override fun write(items: List<PendingSyncMutation>) { delegate.write(key(), encodeSyncQueue(items)) }
 }
 
 actual fun platformSyncQueueStore(): SyncQueueStore = PlatformSyncQueueStore()

@@ -1,7 +1,6 @@
 package com.agendaqr.destinations.data
 
 import com.agendaqr.destinations.domain.DestinationRepository
-import io.github.jan.supabase.auth.auth
 import platform.Foundation.NSUserDefaults
 
 private object IosDestinationStore : DestinationStore {
@@ -15,12 +14,13 @@ actual fun platformDestinationStore(): DestinationStore = IosDestinationStore
 actual fun createDestinationRepository(): DestinationRepository = createSyncedDestinationRepository()
 
 
-private const val SYNC_QUEUE_KEY = "agendaqr.sync.queue.v1."
+private const val SYNC_QUEUE_PREFIX = "agendaqr.sync.queue.v1"
 
 private class PlatformSyncQueueStore : SyncQueueStore {
     private val delegate = platformDestinationStore()
-    override fun read(): List<PendingSyncMutation> = decodeSyncQueue(delegate.read(SYNC_QUEUE_KEY + (AgendaQrSupabase.client.auth.currentUserOrNull()?.id ?: "anonymous")) ?: "[]")
-    override fun write(items: List<PendingSyncMutation>) { delegate.write(SYNC_QUEUE_KEY + (AgendaQrSupabase.client.auth.currentUserOrNull()?.id ?: "anonymous"), encodeSyncQueue(items)) }
+    private fun key(): String = userScopedKey(SYNC_QUEUE_PREFIX)
+    override fun read(): List<PendingSyncMutation> = decodeSyncQueue(delegate.read(key()) ?: "[]")
+    override fun write(items: List<PendingSyncMutation>) { delegate.write(key(), encodeSyncQueue(items)) }
 }
 
 actual fun platformSyncQueueStore(): SyncQueueStore = PlatformSyncQueueStore()

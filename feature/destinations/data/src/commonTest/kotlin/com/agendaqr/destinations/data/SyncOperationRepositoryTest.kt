@@ -17,7 +17,11 @@ class SyncOperationRepositoryTest {
     fun pullsRemoteRecordsIntoLocalState() = runTest {
         val remote = FakeRemoteOperationRepository()
         remote.items += operation("remote", 20)
-        val repository = SyncOperationRepository(FakeOperationRepository(), remote)
+        val repository = SyncOperationRepository(
+            FakeOperationRepository(),
+            remote,
+            enqueuer = SyncMutationEnqueuer(LocalSyncQueue(MemorySyncQueueStore())),
+        )
 
         repository.syncFromRemote()
 
@@ -29,6 +33,7 @@ class SyncOperationRepositoryTest {
         val repository = SyncOperationRepository(
             FakeOperationRepository(),
             FakeRemoteOperationRepository(failWrites = true),
+            enqueuer = SyncMutationEnqueuer(LocalSyncQueue(MemorySyncQueueStore())),
         )
 
         repository.save(operation("local", 10))

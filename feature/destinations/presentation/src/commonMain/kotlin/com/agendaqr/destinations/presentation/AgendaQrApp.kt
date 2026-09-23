@@ -7,18 +7,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.agendaqr.destinations.data.createDestinationRepository
-import com.agendaqr.destinations.data.createOperationRepository
-import com.agendaqr.destinations.data.createComprobanteRepository
 import com.agendaqr.destinations.data.createComprobanteFileStore
 import com.agendaqr.destinations.data.createDeletedOperationHistoryRepository
 import com.agendaqr.destinations.data.createAuthRepository
 import com.agendaqr.destinations.data.LocalSyncQueue
+import com.agendaqr.destinations.data.SyncMutationEnqueuer
 import com.agendaqr.destinations.data.SyncMutationProcessor
 import com.agendaqr.destinations.data.SyncRecoveryCoordinator
 import com.agendaqr.destinations.data.createRemoteDestinationRepository
 import com.agendaqr.destinations.data.createRemoteOperationRepository
 import com.agendaqr.destinations.data.createRemoteComprobanteRepository
+import com.agendaqr.destinations.data.createSyncedComprobanteRepository
+import com.agendaqr.destinations.data.createSyncedDestinationRepository
+import com.agendaqr.destinations.data.createSyncedOperationRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -59,10 +60,11 @@ fun AgendaQrApp() {
 private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
     val syncScope = remember { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
     val syncQueue = remember { LocalSyncQueue() }
-    val destinationRepository = remember { createDestinationRepository() }
-    val operationRepository = remember { createOperationRepository() }
-    val comprobanteRepository = remember { createComprobanteRepository() }
+    val syncEnqueuer = remember(syncQueue) { SyncMutationEnqueuer(syncQueue) }
+    val destinationRepository = remember(syncEnqueuer) { createSyncedDestinationRepository(syncEnqueuer) }
+    val operationRepository = remember(syncEnqueuer) { createSyncedOperationRepository(syncEnqueuer) }
     val fileStore = remember { createComprobanteFileStore() }
+    val comprobanteRepository = remember(syncEnqueuer, fileStore) { createSyncedComprobanteRepository(fileStore, syncEnqueuer) }
     val syncProcessor = remember(syncQueue, destinationRepository, operationRepository, comprobanteRepository, fileStore) {
         SyncMutationProcessor(
             queue = syncQueue,

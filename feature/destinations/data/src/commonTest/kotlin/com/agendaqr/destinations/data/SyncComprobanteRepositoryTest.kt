@@ -18,7 +18,7 @@ class SyncComprobanteRepositoryTest {
         val local = FakeComprobanteRepository()
         val files = FakeComprobanteFileStore()
         remote.items += RemoteComprobanteRecord(
-            Comprobante("receipt", "remote.png", 1),
+            Comprobante("receipt", "remote.png", createdAt = 1, updatedAt = 1),
             "user/receipt.png",
         )
         files.remoteBytes["user/receipt.png"] = byteArrayOf(1, 2, 3)
@@ -42,7 +42,7 @@ private class TestSyncComprobanteRepository(
         remote.items.forEach { record ->
             val bytes = files.remoteBytes.getValue(record.remoteFilePath)
             val localFile = files.save(record.comprobante.id, bytes, "png")
-            local.save(record.comprobante.copy(file = localFile))
+            local.save(record.comprobante.copy(file = localFile, updatedAt = record.comprobante.updatedAt))
         }
     }
 }
