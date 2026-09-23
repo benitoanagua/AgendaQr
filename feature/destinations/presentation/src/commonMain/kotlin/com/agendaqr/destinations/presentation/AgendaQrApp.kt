@@ -2,11 +2,13 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.agendaqr.destinations.data.SyncQueueObserver
 import com.agendaqr.destinations.data.createComprobanteFileStore
 import com.agendaqr.destinations.data.createDeletedOperationHistoryRepository
 import com.agendaqr.destinations.data.createAuthRepository
@@ -20,10 +22,12 @@ import com.agendaqr.destinations.data.createRemoteComprobanteRepository
 import com.agendaqr.destinations.data.createSyncedComprobanteRepository
 import com.agendaqr.destinations.data.createSyncedDestinationRepository
 import com.agendaqr.destinations.data.createSyncedOperationRepository
+import com.agendaqr.core.ui.components.XauxaStatusBanner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import com.agendaqr.destinations.domain.*
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.theme.AgendaQrTheme
@@ -87,6 +91,23 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
             syncScope.coroutineContext.cancel()
         }
     }
+    val queueObserver = remember(syncQueue) { SyncQueueObserver(syncQueue) }
+    var pendingCount by remember { mutableStateOf(0) }
+    var isOffline by remember { mutableStateOf(false) }
+    var hasFailed by remember { mutableStateOf(false) }
+    LaunchedEffect(queueObserver) {
+        queueObserver.observeQueue().collect { items ->
+            pendingCount = items.count { it.state != com.agendaqr.destinations.data.SyncMutationState.FAILED } + items.count { it.state == com.agendaqr.destinations.data.SyncMutationState.FAILED }
+            hasFailed = items.any { it.state == com.agendaqr.destinations.data.SyncMutationState.FAILED }
+            // failed count kept separate for banner
+            pendingCount = items.size
+        }
+    }
+    LaunchedEffect(queueObserver) {
+        queueObserver.observeNetwork().collect { online ->
+            isOffline = !online
+        }
+    }
     var showOperations by remember { mutableStateOf(false) }
     val repository = destinationRepository
     val viewModel = remember(repository) { DestinationsViewModel(
@@ -113,6 +134,23 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
         )
     }
     val operationState by operationsViewModel.state.collectAsState()
+    androidx.compose.foundation.layout.Column {
+        if (isOffline) {
+            XauxaStatusBanner("Sin conexión — los cambios se guardan localmente y se sincronizarán al recuperar conectividad.", danger = false)
+        }
+        if (pendingCount > 0) {
+            XauxaStatusBanner(
+                if (hasFailed) "Sincronización pendiente: $pendingCount · reintentando…"
+                else "Sincronización pendiente: $pendingCount",
+                danger = hasFailed,
+            )
+            if (hasFailed) {
+                androidx.compose.material3.TextButton(onClick = { syncScope.launch { syncProcessor.drain() } }) {
+                    androidx.compose.material3.Text("Reintentar ahora")
+                }
+            }
+        }
+    }
     if (showOperations) {
         OperationsScreen(operationState, operationsViewModel, onBack = { showOperations = false })
     } else when (val route = state.route) {

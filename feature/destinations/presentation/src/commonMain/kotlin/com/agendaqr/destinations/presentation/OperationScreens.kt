@@ -52,6 +52,8 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
 @Composable
 private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsViewModel, onBack: () -> Unit = {}) {
     val operations = viewModel.visibleOperations()
+    var visibleCount by remember(operations.size) { mutableStateOf(50) }
+    val paged = operations.take(visibleCount)
     Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Operaciones", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
@@ -77,7 +79,7 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
             )
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                items(operations, key = { it.id }) { operation ->
+                items(paged, key = { it.id }) { operation ->
                     XauxaTile(onClick = { viewModel.onAction(OperationAction.Open(operation.id)) }) {
                         Row(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), horizontalArrangement = Arrangement.SpaceBetween) {
                             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
@@ -90,6 +92,14 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
                                 operation.personOrEntity?.let { Text(it, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary) }
                             }
                         }
+                    }
+                }
+                if (paged.size < operations.size) {
+                    item {
+                        XauxaSecondaryButton(
+                            label = "Cargar más (${operations.size - paged.size} restantes)",
+                            onClick = { visibleCount = (visibleCount + 50).coerceAtMost(operations.size) },
+                        )
                     }
                 }
             }
