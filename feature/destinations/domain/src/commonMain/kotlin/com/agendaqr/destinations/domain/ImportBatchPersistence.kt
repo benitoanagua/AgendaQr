@@ -1,5 +1,7 @@
 package com.agendaqr.destinations.domain
 
+import kotlinx.coroutines.flow.first
+
 /**
  * Transient storage for import payloads.
  *
