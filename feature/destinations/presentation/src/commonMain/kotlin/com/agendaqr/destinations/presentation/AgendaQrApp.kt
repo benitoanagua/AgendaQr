@@ -203,6 +203,19 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
             onAction = { action ->
                 when (action) {
                     ImportBatchAction.Back -> {
+                        val batch = when (val current = importBatchState) {
+                            is ImportBatchUiState.Result -> current.batch
+                            is ImportBatchUiState.Review -> current.batch
+                            is ImportBatchUiState.Error -> current.batch
+                            else -> null
+                        }
+                        batch?.let { pending ->
+                            syncScope.launch {
+                                pending.candidates.mapNotNull { it.payloadRef }
+                                    .distinct()
+                                    .forEach { importPayloadStore.delete(it) }
+                            }
+                        }
                         importBatchState = importBatchReducer.reduce(importBatchState, action)
                         showImportBatch = false
                     }
