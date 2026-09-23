@@ -20,12 +20,14 @@ class DomainTest {
             favorite = true,
             createdAt = 10,
             updatedAt = 20,
+            contextId = "context-1",
         )
 
         assertEquals("Store", destination.name)
         assertEquals("Shopping", destination.category)
         assertEquals("Reusable", destination.note)
         assertTrue(destination.favorite)
+        assertEquals("context-1", destination.contextId)
     }
 
     @Test
@@ -40,6 +42,21 @@ class DomainTest {
         assertEquals(OperationType.PAGO, operation.type)
         assertNull(operation.amount)
         assertNull(operation.personOrEntity)
+        assertNull(operation.destinationId)
+        assertNull(operation.contextId)
+    }
+
+    @Test
+    fun operation_can_belong_to_context_without_requiring_a_qr() {
+        val operation = Operation(
+            id = "op-1",
+            type = OperationType.PAGO,
+            occurredAt = 100,
+            createdAt = 200,
+            contextId = "context-1",
+        )
+
+        assertEquals("context-1", operation.contextId)
         assertNull(operation.destinationId)
     }
 
@@ -60,7 +77,23 @@ class DomainTest {
         )
 
         assertNull(receipt.operationId)
+        assertNull(receipt.contextId)
         assertEquals(ReceiptProvenance.RECIBIDO, receipt.provenance)
+    }
+
+    @Test
+    fun receipt_can_belong_to_context_without_operation() {
+        val receipt = Comprobante(
+            id = "receipt-1",
+            file = "local://receipt.png",
+            createdAt = 300,
+            updatedAt = 300,
+            provenance = ReceiptProvenance.RECIBIDO,
+            contextId = "context-1",
+        )
+
+        assertNull(receipt.operationId)
+        assertEquals("context-1", receipt.contextId)
     }
 
     @Test
@@ -72,12 +105,14 @@ class DomainTest {
             updatedAt = 300,
             provenance = ReceiptProvenance.DESCONOCIDO,
             operationId = "op-a",
+            contextId = "context-a",
         )
 
         val reassociated = receipt.copy(operationId = "op-b")
 
         assertEquals(receipt.file, reassociated.file)
         assertEquals("op-b", reassociated.operationId)
+        assertEquals("context-a", reassociated.contextId)
     }
 
     @Test
@@ -148,7 +183,7 @@ class OperationUseCaseTest {
     @Test
     fun association_is_reversible_and_does_not_change_file() = runTest {
         val operations = FakeOperationRepository(
-            listOf(Operation("op-1", OperationType.PAGO, 100, 101))
+            listOf(Operation("op-1", OperationType.PAGO, 100, 101, contextId = "context-1"))
         )
         val receipts = FakeComprobanteRepository(
             listOf(Comprobante("r-1", "local://receipt.png", createdAt = 102, updatedAt = 102))
@@ -156,10 +191,12 @@ class OperationUseCaseTest {
 
         AssociateComprobanteToOperationUseCase(operations, receipts)("r-1", "op-1")
         assertEquals("op-1", receipts.get("r-1")?.operationId)
+        assertEquals("context-1", receipts.get("r-1")?.contextId)
 
         UnassociateComprobanteUseCase(receipts)("r-1")
         val result = receipts.get("r-1")!!
         assertNull(result.operationId)
+        assertEquals("context-1", result.contextId)
         assertEquals("local://receipt.png", result.file)
     }
 
