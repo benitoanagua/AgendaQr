@@ -170,6 +170,7 @@ private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsVi
     var concept by remember { mutableStateOf("") }
     var note by remember { mutableStateOf("") }
     var selectedContextId by remember { mutableStateOf<String?>(null) }
+    val draftOperationId = remember { newEntityId("operation") }
     var showContextPicker by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
@@ -192,7 +193,7 @@ private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsVi
         OutlinedTextField(note, { note = it }, Modifier.fillMaxWidth(), label = { Text("Nota (opcional)") }, singleLine = true)
         Text("Podrás adjuntar comprobantes más adelante", color = XauxaColor.TextSecondary, fontSize = XauxaType.Label)
         XauxaPrimaryButton(label = "Guardar", onClick = {
-            viewModel.onAction(OperationAction.SaveNew(type, nowMillis(), amount, currency, person, destination, concept, note, selectedContextId))
+            viewModel.onAction(OperationAction.SaveNew(type, nowMillis(), amount, currency, person, destination, concept, note, selectedContextId, draftOperationId))
         })
     }
     if (showContextPicker) {
