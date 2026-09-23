@@ -7,5 +7,12 @@ local.properties
 app/*.apk
 app/google-services.json
 
+# Android signing
+*.jks
+*.keystore
+*.p12
+keystore.properties
+release.keystore
+
 # Supabase CLI temporary files
 supabase/.temp/
