@@ -38,7 +38,7 @@ fun DestinationEditorScreen(
 ) {
     val initial = remember(existing) {
         existing ?: Destination(
-            id = "destination-${com.agendaqr.destinations.domain.nowMillis()}",
+            id = com.agendaqr.destinations.domain.newEntityId("destination"),
             name = "",
             qr = QrAsset(encoded = ""),
             createdAt = com.agendaqr.destinations.domain.nowMillis(),
@@ -93,6 +93,23 @@ private fun varName(
                     updatedAt = now,
                 ))
             })
+        }
+        if (showContextPicker) {
+            AlertDialog(
+                onDismissRequest = { showContextPicker = false },
+                title = { Text("¿A cuál corresponde?") },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                        XauxaTextAction(label = "Sin contexto", onClick = { contextId = null; showContextPicker = false })
+                        contexts.forEach { context ->
+                            XauxaTile(onClick = { contextId = context.id; showContextPicker = false }) {
+                                Text(context.name, modifier = Modifier.padding(XauxaSpacing.Lg))
+                            }
+                        }
+                    }
+                },
+                confirmButton = { XauxaTextAction(label = "CANCELAR", onClick = { showContextPicker = false }) },
+            )
         }
     }
 }
