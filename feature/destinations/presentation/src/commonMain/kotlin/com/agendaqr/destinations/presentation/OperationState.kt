@@ -56,6 +56,7 @@ sealed interface OperationAction {
         val destinationId: String?,
         val concept: String?,
         val note: String?,
+        val contextId: String? = null,
     ) : OperationAction
 }
 
@@ -148,7 +149,7 @@ class OperationsViewModel(
                 val now = nowMillis()
                 saveComprobante(
                     Comprobante(
-                        id = "comprobante-${now}",
+                        id = newEntityId("comprobante"),
                         file = "",
                         createdAt = now,
                         updatedAt = now,
@@ -168,7 +169,7 @@ class OperationsViewModel(
         scope.launch {
             val now = nowMillis()
             val operation = Operation(
-                id = "operation-${now}",
+                id = newEntityId("operation"),
                 type = OperationType.PAGO,
                 occurredAt = now,
                 createdAt = now,
@@ -186,7 +187,7 @@ class OperationsViewModel(
     private fun saveNew(action: OperationAction.SaveNew) {
         scope.launch {
             val operation = Operation(
-                id = "operation-${nowMillis()}",
+                id = newEntityId("operation"),
                 type = action.type,
                 occurredAt = action.occurredAt,
                 createdAt = nowMillis(),
@@ -196,6 +197,7 @@ class OperationsViewModel(
                 destinationId = action.destinationId?.trim()?.takeIf(String::isNotBlank),
                 concept = action.concept?.trim()?.takeIf(String::isNotBlank),
                 note = action.note?.trim()?.takeIf(String::isNotBlank),
+                contextId = action.contextId,
             )
             runCatching { saveOperation(operation) }.onFailure(::showError).onSuccess {
                 selectedOperationId = operation.id
