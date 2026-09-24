@@ -19,6 +19,7 @@ import com.agendaqr.core.ui.components.XauxaTile
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.destinations.domain.AgendaSearchResult
 
 @Composable
 fun GlobalSearchScreen(
