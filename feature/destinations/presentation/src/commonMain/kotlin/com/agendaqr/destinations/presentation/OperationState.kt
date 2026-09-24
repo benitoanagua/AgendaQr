@@ -104,7 +104,9 @@ class OperationsViewModel(
             is OperationAction.Associate -> scope.launch {
                 runCatching { associate(action.comprobanteId, action.operationId) }.onFailure(::showError)
             }
-            is OperationAction.CreateOperationFromReceipt -> createOperationFromReceipt(action.comprobanteId)
+            is OperationAction.CreateOperationFromReceipt -> {
+                if (!state.value.isSavingOperation) createOperationFromReceipt(action.comprobanteId)
+            }
             OperationAction.ClearIncoming -> _state.update { it.copy(pendingIncoming = null, pendingDuplicates = emptyList()) }
             is OperationAction.SaveIncoming -> saveIncoming(action.openInbox)
             OperationAction.DismissDuplicateWarning -> _state.update { it.copy(pendingDuplicates = emptyList()) }
@@ -183,6 +185,7 @@ class OperationsViewModel(
     }
 
     private fun createOperationFromReceipt(comprobanteId: String) {
+        _state.update { it.copy(isSavingOperation = true, error = null) }
         scope.launch {
             val now = nowMillis()
             val operation = Operation(
