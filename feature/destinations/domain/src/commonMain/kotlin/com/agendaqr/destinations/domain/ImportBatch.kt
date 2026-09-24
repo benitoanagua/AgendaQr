@@ -49,16 +49,34 @@ data class ImportBatch(
             .filterValues { it > 1 }
             .keys
 
+    private val firstRecognizedByFingerprint: Map<String, String>
+        get() = candidates
+            .asSequence()
+            .filter { it.kind != ImportKind.DESCONOCIDO }
+            .groupBy { it.fingerprint }
+            .mapValues { (_, items) -> items.first().id }
+
     val duplicates: List<ImportCandidate>
-        get() = candidates.filter { it.fingerprint in duplicateFingerprints }
+        get() = candidates.filter { candidate ->
+            candidate.kind != ImportKind.DESCONOCIDO &&
+                candidate.fingerprint in duplicateFingerprints &&
+                firstRecognizedByFingerprint[candidate.fingerprint] != candidate.id
+        }
 
     val pendingReview: List<ImportCandidate>
-        get() = candidates.filter {
-            it.kind == ImportKind.DESCONOCIDO || it.fingerprint in duplicateFingerprints
+        get() = candidates.filter { candidate ->
+            candidate.kind == ImportKind.DESCONOCIDO ||
+                (
+                    candidate.kind != ImportKind.DESCONOCIDO &&
+                        candidate.fingerprint in duplicateFingerprints &&
+                        firstRecognizedByFingerprint[candidate.fingerprint] != candidate.id
+                    )
         }
 
     val uniqueRecognized: List<ImportCandidate>
-        get() = recognized.filter { it.fingerprint !in duplicateFingerprints }
+        get() = recognized.filter { candidate ->
+            firstRecognizedByFingerprint[candidate.fingerprint] == candidate.id
+        }
 }
 
 /**
