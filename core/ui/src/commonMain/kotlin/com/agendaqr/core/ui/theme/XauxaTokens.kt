@@ -47,6 +47,14 @@ object XauxaMetrics {
     val ContentMaxWidth = 720.dp
     val QrPreviewSize = 240.dp
     val FavoriteIndicatorSize = 24.dp
+
+    /**
+     * Adaptive breakpoints documented by Xauxa (§07: 480px and 640px are the
+     * behavior-change widths of the design system). Product and lab code must
+     * consume these tokens instead of raw dp values.
+     */
+    val BreakpointCompact = 480.dp
+    val BreakpointMedium = 640.dp
 }
 
 object XauxaType {

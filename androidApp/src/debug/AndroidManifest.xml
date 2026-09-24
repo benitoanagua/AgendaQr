@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- Debug-only host for the component lab; merged out of release builds. -->
+        <activity
+            android:name=".lab.ComponentLabActivity"
+            android:exported="false"
+            android:label="AgendaQr · Lab" />
+    </application>
+</manifest>
