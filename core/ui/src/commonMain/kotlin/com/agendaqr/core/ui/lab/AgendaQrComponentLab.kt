@@ -26,18 +26,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 /**
- * Development-only gallery for reviewing core Material 3 component states.
+ * Development-only AgendaQr component gallery.
  *
- * Keep this composable out of production navigation until the visual contract
- * and the Xauxa token-backed theme are wired into the host application.
+ * Product-shaped sample content is local and fictional. This is a component
+ * review surface, not a production screen and not connected to repositories,
+ * navigation, notifications, contacts, camera, or storage.
  */
 @Composable
 fun AgendaQrComponentLab(
     modifier: Modifier = Modifier,
 ) {
-    var sampleText by remember { mutableStateOf("Pago de mensualidad") }
-    var selected by remember { mutableStateOf(false) }
-    var lastAction by remember { mutableStateOf("Ninguna acción todavía") }
+    var search by remember { mutableStateOf("") }
+    var paymentName by remember { mutableStateOf("Mensualidad escolar") }
+    var reminderEnabled by remember { mutableStateOf(true) }
+    var activeFilter by remember { mutableStateOf("Todos") }
+    var lastAction by remember { mutableStateOf("Selecciona una acción para probar su estado.") }
 
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -50,69 +53,100 @@ fun AgendaQrComponentLab(
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            Text("AgendaQr · Laboratorio de componentes", style = MaterialTheme.typography.headlineSmall)
             Text(
-                text = "Laboratorio UI",
-                style = MaterialTheme.typography.headlineMedium,
-            )
-            Text(
-                text = "Muestras de desarrollo · sin datos ni servicios de producto",
+                "Muestras de interfaz con datos ficticios. El estilo debe venir del tema Xauxa.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
-            LabSection(title = "Acciones") {
+            LabSection(title = "Acciones principales") {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Button(onClick = { lastAction = "Acción primaria activada" }) {
-                        Text("Acción primaria")
+                    Button(onClick = { lastAction = "Añadir QR: acción activada" }) {
+                        Text("Añadir QR")
                     }
-                    OutlinedButton(onClick = { lastAction = "Acción secundaria activada" }) {
-                        Text("Secundaria")
+                    OutlinedButton(onClick = { lastAction = "Escanear QR: acción activada" }) {
+                        Text("Escanear")
                     }
                 }
-                Text(text = lastAction, style = MaterialTheme.typography.bodySmall)
+                Text(lastAction, style = MaterialTheme.typography.bodySmall)
             }
 
-            LabSection(title = "Entrada de texto") {
+            LabSection(title = "Búsqueda y filtros") {
                 OutlinedTextField(
-                    value = sampleText,
-                    onValueChange = { sampleText = it },
+                    value = search,
+                    onValueChange = { search = it },
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Descripción de muestra") },
-                    supportingText = { Text("Campo local; no se guarda.") },
+                    label = { Text("Buscar QR, persona u obligación") },
                     singleLine = true,
                 )
-            }
-
-            LabSection(title = "Selección y estado") {
-                OutlinedButton(onClick = { selected = !selected }) {
-                    Text(if (selected) "Seleccionado ✓" else "Seleccionar muestra")
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf("Todos", "Por vencer", "Vencidos").forEach { filter ->
+                        if (activeFilter == filter) {
+                            Button(onClick = { activeFilter = filter }) { Text(filter) }
+                        } else {
+                            OutlinedButton(onClick = { activeFilter = filter }) { Text(filter) }
+                        }
+                    }
                 }
-                Text(
-                    text = if (selected) "Estado: seleccionado" else "Estado: sin seleccionar",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
             }
 
-            LabSection(title = "Superficie / tarjeta") {
+            LabSection(title = "Elemento de lista · obligación") {
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(
                         modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        Text("Comprobante de ejemplo", style = MaterialTheme.typography.titleMedium)
-                        Text("Vence el 30 de septiembre", style = MaterialTheme.typography.bodyMedium)
-                        Text(
-                            "Contenido ficticio para revisar jerarquía y espaciado.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                        Text("Mensualidad escolar", style = MaterialTheme.typography.titleMedium)
+                        Text("Contacto: María López", style = MaterialTheme.typography.bodyMedium)
+                        Text("Vence: 30 sep 2026 · Bs 450", style = MaterialTheme.typography.bodyMedium)
+                        Text("Por vencer", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(onClick = { lastAction = "Abrir detalle de obligación" }) { Text("Ver detalle") }
+                            Button(onClick = { lastAction = "Registrar comprobante" }) { Text("Comprobante") }
+                        }
+                    }
+                }
+            }
+
+            LabSection(title = "Formulario · crear o editar obligación") {
+                OutlinedTextField(
+                    value = paymentName,
+                    onValueChange = { paymentName = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Nombre de la obligación") },
+                    singleLine = true,
+                )
+                OutlinedButton(onClick = { reminderEnabled = !reminderEnabled }) {
+                    Text(if (reminderEnabled) "Recordatorio: activado" else "Recordatorio: desactivado")
+                }
+                Text(
+                    "El recordatorio es una muestra de estado local; no programa notificaciones.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Button(onClick = { lastAction = "Guardar muestra: $paymentName" }) { Text("Guardar") }
+            }
+
+            LabSection(title = "QR y comprobante") {
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        Text("QR asociado", style = MaterialTheme.typography.titleMedium)
+                        Text("Titular: Colegio Los Pinos", style = MaterialTheme.typography.bodyMedium)
+                        Text("Tipo: Pago · Estado: Guardado", style = MaterialTheme.typography.bodyMedium)
+                        OutlinedButton(onClick = { lastAction = "Vista previa del QR" }) { Text("Ver QR") }
+                        Text("Comprobante reciente: pago-septiembre.pdf", style = MaterialTheme.typography.bodySmall)
+                        OutlinedButton(onClick = { lastAction = "Abrir comprobante de ejemplo" }) { Text("Ver comprobante") }
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Nota: el tema y los tokens Xauxa deben conectarse desde el tema compartido antes de considerar esta galería una validación visual final.",
+                "Sin lógica de juego. La galería prueba patrones de AgendaQr con contenido de demostración; no conecta servicios ni guarda datos.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
