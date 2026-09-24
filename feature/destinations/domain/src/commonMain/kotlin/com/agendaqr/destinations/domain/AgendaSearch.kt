@@ -113,7 +113,8 @@ class SearchAgendaQrUseCase(
         listOfNotNull(name, note).any { it.contains(text, ignoreCase = true) }
 
     private fun Destination.matches(text: String): Boolean =
-        listOfNotNull(name, category, note).any { it.contains(text, ignoreCase = true) }
+        listOfNotNull(name, category, note, qr.encoded, qr.mimeType)
+            .any { it.contains(text, ignoreCase = true) }
 
     private fun Operation.matches(text: String): Boolean =
         listOfNotNull(
