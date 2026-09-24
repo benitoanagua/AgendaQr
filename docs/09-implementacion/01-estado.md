@@ -14,8 +14,8 @@ No se introducen cambios de UX fuera del contrato congelado.
 - Context con persistencia local-first y Supabase.
 - contextId? en QR/Destination, Operation y Comprobante.
 - relaciones de contexto reversibles.
-- búsqueda global sobre Context, QR, Activity y Comprobante.
-- operaciones PAGO/COBRO con histórico mínimo al eliminar.
+- búsqueda global sobre Context, QR, Activity y Comprobante; un QR también es encontrable a través del contexto asociado.
+- operaciones PAGO/COBRO con histórico mínimo al eliminar (los comprobantes asociados y sus archivos se eliminan junto a la operación; el resto queda intacto).
 - comprobantes asociados o independientes.
 - asociación/desasociación reversible.
 - detección de comprobantes duplicados.
@@ -38,18 +38,20 @@ No se introducen cambios de UX fuera del contrato congelado.
 - flujo IMPORTANDO → ANALIZANDO → RESULTADO → REVISAR → GUARDAR → GUARDADO.
 - QR / COMPROBANTE / DESCONOCIDO.
 - elementos inválidos o desconocidos no bloquean los válidos.
-- duplicados quedan para revisión.
+- deduplicación por huella de contenido: la primera ocurrencia válida se conserva; solo las ocurrencias posteriores quedan como duplicado en revisión. Un elemento DESCONOCIDO nunca convierte a un elemento válido en duplicado.
+- duplicados quedan para revisión con su payload disponible para reintento.
 - QR y comprobantes se persisten de forma independiente.
 - payload temporal eliminado después de persistencia exitosa.
 - fallos aislados por candidato y recuperables.
-- doble guardado protegido.
-- la clasificación no-QR es deliberadamente conservadora.
+- doble guardado protegido (idempotente a nivel de lote, repositorio y UI).
+- la clasificación no-QR es deliberadamente conservadora (Android: QR demostrado por decodificación ZXing; el resto entra como DESCONOCIDO sin importar el MIME).
 
 ### Matching de comprobantes
 - asociación existente se conserva.
 - un único candidato fuerte puede proponerse.
+- la señal de "mismo día" compara días de calendario en la zona horaria del dispositivo (inyectable para tests); una ventana rodante de 24 h no es "mismo día".
 - candidatos débiles no se convierten en asociación automática.
-- múltiples candidatos se presentan como ambigüedad.
+- múltiples candidatos se presentan como ambigüedad conservando candidatos razonables.
 - ausencia de evidencia suficiente deja el comprobante sin asociar.
 
 ### Presentation / Compose
@@ -67,11 +69,35 @@ No se introducen cambios de UX fuera del contrato congelado.
 
 ## CI
 
-PR #42 y PR #44 dejaron el workflow dividido en tareas independientes: domain, data, presentation, androidApp unit tests y assembleDebug.
+PR #42 y PR #44 dejaron el workflow dividido en tareas independientes: domain, data, presentation, androidApp unit tests y assembleDebug. Los `continue-on-error` temporales de diagnosis (PR #51/#52) se retiraron: el gate vuelve a fallar si domain o presentation fallan, y los report-artifacts se conservan para diagnóstico.
 
 El último run de main antes de esta corrección (35941171336) falló en **Domain unit tests**; las tareas posteriores quedaron omitidas. Se invalidó la caché Gradle de CI en esta rama para descartar una caché inconsistente antes de volver a declarar PASS.
 
-No se declara PASS hasta que el workflow posterior a esta corrección finalice correctamente.
+### Validación local de esta corrección (Linux x86_64, JDK 17)
+
+- `./gradlew :feature:destinations:domain:testDebugUnitTest --stacktrace` → **PASS** (43 tests, 0 fallos).
+- `./gradlew :feature:destinations:data:testDebugUnitTest --stacktrace` → **PASS** (31 tests, 0 fallos).
+- `./gradlew :feature:destinations:presentation:testDebugUnitTest --stacktrace` → **PASS** (3 tests, 0 fallos).
+- `./gradlew :androidApp:testDebugUnitTest --stacktrace` → **PASS pero NO-SOURCE**: androidApp no declara unit tests propios. La cobertura unitaria Android real vive en los testDebugUnitTest de domain/data/presentation (variantes Android de los módulos KMP).
+- `./gradlew :androidApp:assembleDebug --stacktrace` → **PASS** (APK debug generado).
+
+No se declara PASS del workflow de CI hasta que el run posterior a esta corrección finalice correctamente.
+
+### Bugs corregidos en esta pasada
+
+1. Búsqueda global: un QR no aparecía al buscar por el nombre de su contexto (`SearchAgendaQrUseCase`).
+2. Deduplicación de importación: todas las ocurrencias de una huella duplicada se marcaban como duplicadas, bloqueando a la primera ocurrencia válida; un DESCONOCIDO con la misma huella convertía a un QR válido en duplicado (`ImportBatch`).
+3. Guardado de lote: los candidatos DESCONOCIDO/duplicados no se reportaban como omitidos (`SaveImportBatchUseCase`).
+4. Matching: "mismo día" usaba una ventana rodante de 24 h; dos instantes separados exactamente 24 h (días de calendario distintos) empataban y generaban ambigüedad falsa (`SuggestReceiptAssociationUseCase`). Los umbrales de decisión (señal fuerte y margen) no se modificaron.
+
+### Tests añadidos
+
+- `ReceiptMatchingTest.same_day_signal_uses_calendar_days_not_a_rolling_24h_window` (límite exacto de medianoche, zona horaria inyectada).
+- `ImportBatchTest.unknown_between_duplicate_occurrences_keeps_first_valid_as_original`.
+- `ImportBatchPersistenceTest.duplicate_occurrences_in_one_batch_are_not_persisted_twice` (payload del duplicado se conserva para reintento).
+- `AgendaSearchTest.qr_is_not_returned_when_neither_it_nor_its_context_match` (sin falsos positivos vía contexto).
+- `DeleteOperationWithHistoryTest` (eliminación con comprobantes: archivos, histórico mínimo, receipts ajenos intactos; operación inexistente sin efectos).
+- `SyncMutationProcessorTest` (offline → online: UPSERT de contexto, operación, comprobante con bytes locales, DELETE de destination, fallo con backoff y reintento).
 
 ## Pendientes reales
 
@@ -87,11 +113,11 @@ No se declara PASS hasta que el workflow posterior a esta corrección finalice c
 6. prueba de errores recuperables en Android.
 
 ### P2 — iOS
-- iOS sigue sin evidencia de compilación/ejecución real en Xcode.
+- iOS sigue sin evidencia de compilación/ejecución real en Xcode. La validación de esta pasada fue solo inspección estática en un host Linux (sin Kotlin/Native para targets Apple): los fuentes usan patrones interop conocidos (Foundation/Application Support con aislamiento por usuario, NWPathMonitor sobre callbackFlow/awaitClose, NSData.create/toByteArray), pero nada de esto sustituye una compilación real.
 - almacenamiento de comprobantes iOS migrado a Foundation/Application Support y aislado por usuario.
 - NetworkMonitor iOS implementado con NWPathMonitor; falta validación en Xcode.
-- completar adquisición iOS de importación bulk.
-- conectar Camera / Photos / Share mediante el boundary nativo existente.
+- puntos a verificar en Xcode al primer build: firma exacta de `NSSearchPathForDirectoriesInDomains`/enums ObjC en Kotlin 2.2, nulabilidad del bloque `pathUpdateHandler`, `options = 0u` en `NSData.create(base64EncodedString=...)`, y `keyWindow` (deprecado desde iOS 13) en `ShareQr.ios.kt` — si `keyWindow` devuelve nil en runtime, el share de QR no se presenta.
+- completar adquisición iOS de importación bulk (`ImportBatchControls.ios.kt` es stub; `IosQrImportController` es no-op). Camera / Gallery / Multiple / Share en iOS NO están implementados.
 - ejecutar compilación y pruebas en Xcode.
 
 ### P2 — pruebas de plataforma

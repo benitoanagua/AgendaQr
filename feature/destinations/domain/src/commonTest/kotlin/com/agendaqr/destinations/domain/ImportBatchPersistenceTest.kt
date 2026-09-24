@@ -98,6 +98,53 @@ class ImportBatchPersistenceTest {
         assertEquals(1, receipts.observe().first().size)
     }
 
+    @Test
+    fun duplicate_occurrences_in_one_batch_are_not_persisted_twice() = runTest {
+        val destinations = MemoryDestinationRepository()
+        val receipts = MemoryComprobanteRepository()
+        val files = MemoryFileStore()
+        val payloads = MemoryPayloadStore()
+        payloads.put("receipt-ref-1", byteArrayOf(1, 2, 3))
+        payloads.put("receipt-ref-2", byteArrayOf(1, 2, 3))
+
+        val result = SaveImportBatchUseCase(
+            destinations,
+            receipts,
+            files,
+            payloads,
+        )(
+            ImportBatch(
+                listOf(
+                    ImportCandidate(
+                        id = "receipt-1",
+                        kind = ImportKind.COMPROBANTE,
+                        fingerprint = "receipt-fp",
+                        mimeType = "image/png",
+                        extension = "png",
+                        payloadRef = "receipt-ref-1",
+                    ),
+                    ImportCandidate(
+                        id = "receipt-2",
+                        kind = ImportKind.COMPROBANTE,
+                        fingerprint = "receipt-fp",
+                        mimeType = "image/png",
+                        extension = "png",
+                        payloadRef = "receipt-ref-2",
+                    ),
+                ),
+            ),
+        )
+
+        assertEquals(0, result.savedQr)
+        assertEquals(1, result.savedComprobantes)
+        assertEquals(1, result.skipped)
+        assertEquals(1, receipts.observe().first().size)
+        // The persisted occurrence cleans its temporary payload; the duplicate
+        // occurrence keeps its payload available for review and retry.
+        assertNull(payloads.read("receipt-ref-1"))
+        assertNotNull(payloads.read("receipt-ref-2"))
+    }
+
     private class MemoryDestinationRepository : DestinationRepository {
         private val state = MutableStateFlow<List<Destination>>(emptyList())
         override fun observe(): Flow<List<Destination>> = state

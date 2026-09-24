@@ -43,22 +43,48 @@ data class ImportBatch(
     val unknown: List<ImportCandidate>
         get() = candidates.filter { it.kind == ImportKind.DESCONOCIDO }
 
+    /**
+     * Fingerprints that appear more than once among recognized candidates.
+     *
+     * An unrecognized item can never turn a valid occurrence into a
+     * duplicate: only content that can actually be persisted counts.
+     */
     val duplicateFingerprints: Set<String>
-        get() = candidates.groupingBy { it.fingerprint }
+        get() = recognized.groupingBy { it.fingerprint }
             .eachCount()
             .filterValues { it > 1 }
             .keys
 
+    /**
+     * Recognized occurrences beyond the first one of each fingerprint.
+     *
+     * The first valid occurrence is always kept; later repetitions are the
+     * ones held for review so a duplicate never blocks the original.
+     */
     val duplicates: List<ImportCandidate>
-        get() = candidates.filter { it.fingerprint in duplicateFingerprints }
+        get() {
+            val seen = mutableSetOf<String>()
+            val result = mutableListOf<ImportCandidate>()
+            for (candidate in candidates) {
+                if (candidate.kind == ImportKind.DESCONOCIDO) continue
+                if (!seen.add(candidate.fingerprint)) result.add(candidate)
+            }
+            return result
+        }
 
     val pendingReview: List<ImportCandidate>
-        get() = candidates.filter {
-            it.kind == ImportKind.DESCONOCIDO || it.fingerprint in duplicateFingerprints
+        get() {
+            val duplicateIds = duplicates.mapTo(mutableSetOf()) { it.id }
+            return candidates.filter {
+                it.kind == ImportKind.DESCONOCIDO || it.id in duplicateIds
+            }
         }
 
     val uniqueRecognized: List<ImportCandidate>
-        get() = recognized.filter { it.fingerprint !in duplicateFingerprints }
+        get() {
+            val duplicateIds = duplicates.mapTo(mutableSetOf()) { it.id }
+            return recognized.filter { it.id !in duplicateIds }
+        }
 }
 
 /**

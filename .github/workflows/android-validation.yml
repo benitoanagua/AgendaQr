@@ -39,7 +39,6 @@ jobs:
             ${{ runner.os }}-gradle-v2-
 
       - name: Domain unit tests
-        continue-on-error: true
         run: ./gradlew :feature:destinations:domain:testDebugUnitTest --stacktrace
 
       - name: Upload domain test reports
@@ -56,7 +55,6 @@ jobs:
         run: ./gradlew :feature:destinations:data:testDebugUnitTest --stacktrace
 
       - name: Presentation unit tests
-        continue-on-error: true
         run: ./gradlew :feature:destinations:presentation:testDebugUnitTest --stacktrace
 
       - name: Upload presentation test reports

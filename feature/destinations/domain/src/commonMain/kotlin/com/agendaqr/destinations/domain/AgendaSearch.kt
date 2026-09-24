@@ -41,6 +41,7 @@ class SearchAgendaQrUseCase(
             if (text.isEmpty()) {
                 emptyList()
             } else {
+                val contextsById = contextList.associateBy { it.id }
                 buildList {
                     contextList.forEach { context ->
                         if (context.matches(text)) {
@@ -57,7 +58,13 @@ class SearchAgendaQrUseCase(
                     }
 
                     destinationList.forEach { destination ->
-                        if (destination.matches(text)) {
+                        // A QR is findable both by its own text and through the
+                        // context it belongs to: searching a context name must
+                        // surface its QRs.
+                        val matchesThroughContext = destination.contextId
+                            ?.let { contextsById[it] }
+                            ?.matches(text) == true
+                        if (destination.matches(text) || matchesThroughContext) {
                             add(
                                 AgendaSearchResult(
                                     type = AgendaSearchResultType.QR,

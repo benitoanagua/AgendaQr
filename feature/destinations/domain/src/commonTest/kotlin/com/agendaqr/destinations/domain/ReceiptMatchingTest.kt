@@ -3,6 +3,7 @@ package com.agendaqr.destinations.domain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.TimeZone
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -143,6 +144,29 @@ class ReceiptMatchingTest {
 
         assertEquals(ReceiptMatchKind.MULTIPLE, result.kind)
         assertEquals(setOf("op1", "op2"), result.operationIds.toSet())
+    }
+
+    @Test
+    fun same_day_signal_uses_calendar_days_not_a_rolling_24h_window() = runBlocking {
+        // The receipt arrives at the start of day 1. op1 happens during day 1;
+        // op2 happened ten minutes before, at the end of day 0. A rolling 24h
+        // window would score op2 as same-day and leave the match ambiguous.
+        val receipt = receipt("r1", contextId = "ctx", createdAt = 86_400_000L)
+        val useCase = SuggestReceiptAssociationUseCase(
+            comprobantes = FakeComprobanteRepository(receipt),
+            operations = FakeOperationRepository(
+                listOf(
+                    operation("op1", "ctx", occurredAt = 86_400_000L),
+                    operation("op2", "ctx", occurredAt = 86_400_000L - 600_000L),
+                ),
+            ),
+            timeZone = TimeZone.UTC,
+        )
+
+        val result = useCase("r1")
+
+        assertEquals(ReceiptMatchKind.SINGLE, result.kind)
+        assertEquals("op1", result.proposedOperationId)
     }
 
     @Test

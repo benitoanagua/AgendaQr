@@ -103,6 +103,11 @@ class SaveImportBatchUseCase(
             }
         }
 
+        // Candidates that were never eligible for persistence (unknown or
+        // duplicate occurrences) remain in the batch for review with their
+        // payload intact; they are reported as skipped.
+        skipped += batch.pendingReview.size
+
         return ImportBatchSaveResult(savedQr, savedComprobantes, skipped)
     }
 }

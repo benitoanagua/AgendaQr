@@ -1,6 +1,9 @@
 package com.agendaqr.destinations.domain
 
 import kotlinx.coroutines.flow.first
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 enum class ReceiptMatchKind {
     NONE,
@@ -20,6 +23,11 @@ data class ReceiptAssociationSuggestion(
 class SuggestReceiptAssociationUseCase(
     private val comprobantes: ComprobanteRepository,
     private val operations: OperationRepository,
+    /**
+     * Timezone used to derive calendar days for the same-day signal.
+     * Defaults to the device timezone; injectable for deterministic tests.
+     */
+    private val timeZone: TimeZone = TimeZone.currentSystemDefault(),
 ) {
     suspend operator fun invoke(comprobanteId: String): ReceiptAssociationSuggestion {
         val receipt = requireNotNull(comprobantes.get(comprobanteId)) {
@@ -126,10 +134,12 @@ class SuggestReceiptAssociationUseCase(
             score += CONTEXT_SCORE
         }
 
-        val dayDistance = kotlin.math.abs(operation.occurredAt - receipt.createdAt)
+        val dayDistance = kotlin.math.abs(
+            calendarDay(operation.occurredAt) - calendarDay(receipt.createdAt)
+        )
         when {
-            dayDistance <= DAY_MILLIS -> score += SAME_DAY_SCORE
-            dayDistance <= THREE_DAYS_MILLIS -> score += NEAR_DATE_SCORE
+            dayDistance == 0L -> score += SAME_DAY_SCORE
+            dayDistance <= NEAR_DATE_DAYS -> score += NEAR_DATE_SCORE
         }
 
         val searchable = listOfNotNull(
@@ -154,9 +164,22 @@ class SuggestReceiptAssociationUseCase(
             .filter { it.isNotBlank() }
             .toSet()
 
+    /**
+     * Calendar day of an instant in the evaluation timezone.
+     *
+     * "Same day" is a calendar-day rule: a rolling 24h window would treat two
+     * instants exactly 24h apart as the same day even though they belong to
+     * consecutive days.
+     */
+    private fun calendarDay(epochMillis: Long): Long =
+        Instant.fromEpochMilliseconds(epochMillis)
+            .toLocalDateTime(timeZone)
+            .date
+            .toEpochDays()
+            .toLong()
+
     private companion object {
-        const val DAY_MILLIS = 86_400_000L
-        const val THREE_DAYS_MILLIS = DAY_MILLIS * 3
+        const val NEAR_DATE_DAYS = 3L
         const val CONTEXT_SCORE = 10
         const val SAME_DAY_SCORE = 5
         const val NEAR_DATE_SCORE = 2

@@ -82,6 +82,29 @@ class AgendaSearchTest {
         assertEquals(emptyList(), results)
     }
 
+    @Test
+    fun qr_is_not_returned_when_neither_it_nor_its_context_match() = runTest {
+        val results = SearchAgendaQrUseCase(
+            FakeContextRepository(listOf(Context("ctx-1", "Colegio de Mateo", createdAt = 1, updatedAt = 1))),
+            FakeDestinationRepository(
+                listOf(
+                    Destination(
+                        id = "qr-1",
+                        name = "QR mensualidad",
+                        qr = QrAsset("encoded"),
+                        contextId = "ctx-1",
+                        createdAt = 1,
+                        updatedAt = 1,
+                    )
+                )
+            ),
+            FakeOperationRepository(emptyList()),
+            FakeComprobanteRepository(emptyList()),
+        )(AgendaSearchQuery("farmacia")).first()
+
+        assertEquals(emptyList(), results)
+    }
+
     private class FakeContextRepository(initial: List<Context>) : ContextRepository {
         private val state = MutableStateFlow(initial)
         override fun observe(): Flow<List<Context>> = state

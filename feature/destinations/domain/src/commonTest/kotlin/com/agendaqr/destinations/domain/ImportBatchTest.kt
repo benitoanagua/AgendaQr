@@ -49,6 +49,21 @@ class ImportBatchTest {
         assertEquals(listOf("unknown"), batch.pendingReview.map { it.id })
     }
 
+    @Test
+    fun unknown_between_duplicate_occurrences_keeps_first_valid_as_original() {
+        val batch = ImportBatch(
+            listOf(
+                candidate("qr-1", ImportKind.QR, "same"),
+                candidate("unknown", ImportKind.DESCONOCIDO, "same"),
+                candidate("qr-2", ImportKind.QR, "same"),
+            )
+        )
+
+        assertEquals(listOf("qr-1"), batch.uniqueRecognized.map { it.id })
+        assertEquals(listOf("qr-2"), batch.duplicates.map { it.id })
+        assertEquals(listOf("unknown", "qr-2"), batch.pendingReview.map { it.id })
+    }
+
     private fun candidate(id: String, kind: ImportKind, fingerprint: String) =
         ImportCandidate(id = id, kind = kind, fingerprint = fingerprint)
 }

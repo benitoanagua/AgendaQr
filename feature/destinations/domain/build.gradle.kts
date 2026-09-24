@@ -9,6 +9,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.serialization.json)
+            implementation(libs.kotlinx.datetime)
             implementation(libs.coroutines.core)
         }
         commonTest.dependencies {
