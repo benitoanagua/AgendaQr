@@ -53,6 +53,65 @@ class ReceiptMatchingTest {
     }
 
     @Test
+    fun multiple_context_operations_are_resolved_by_unique_same_day_signal() = runBlocking {
+        val receipt = receipt("r1", contextId = "ctx", createdAt = 86_400_000L)
+        val useCase = SuggestReceiptAssociationUseCase(
+            comprobantes = FakeComprobanteRepository(receipt),
+            operations = FakeOperationRepository(
+                listOf(
+                    operation("op1", "ctx", occurredAt = 86_400_000L),
+                    operation("op2", "ctx", occurredAt = 10L),
+                ),
+            ),
+        )
+
+        val result = useCase("r1")
+
+        assertEquals(ReceiptMatchKind.SINGLE, result.kind)
+        assertEquals("op1", result.proposedOperationId)
+    }
+
+    @Test
+    fun filename_tokens_can_resolve_an_unassociated_receipt() = runBlocking {
+        val receipt = receipt(
+            id = "r1",
+            file = "local://pago-colegio-450-bob.png",
+        )
+        val operation = operation(
+            id = "op1",
+            contextId = null,
+            occurredAt = 100_000L,
+            amount = "450",
+            currency = "BOB",
+            personOrEntity = "Colegio",
+        )
+        val useCase = SuggestReceiptAssociationUseCase(
+            comprobantes = FakeComprobanteRepository(receipt),
+            operations = FakeOperationRepository(listOf(operation)),
+        )
+
+        val result = useCase("r1")
+
+        assertEquals(ReceiptMatchKind.SINGLE, result.kind)
+        assertEquals("op1", result.proposedOperationId)
+    }
+
+    @Test
+    fun weak_single_candidate_is_not_auto_associated() = runBlocking {
+        val receipt = receipt("r1", createdAt = 1_000_000L)
+        val operation = operation("op1", null, occurredAt = 10_000_000L)
+        val useCase = SuggestReceiptAssociationUseCase(
+            comprobantes = FakeComprobanteRepository(receipt),
+            operations = FakeOperationRepository(listOf(operation)),
+        )
+
+        val result = useCase("r1")
+
+        assertEquals(ReceiptMatchKind.NONE, result.kind)
+        assertEquals(emptyList(), result.operationIds)
+    }
+
+    @Test
     fun no_context_and_no_high_confidence_match_can_be_saved_unassociated() = runBlocking {
         val receipt = receipt("receipt", contextId = null)
         val useCase = SuggestReceiptAssociationUseCase(
@@ -70,24 +129,33 @@ class ReceiptMatchingTest {
         id: String,
         contextId: String? = null,
         operationId: String? = null,
+        file: String = "local://$id.png",
+        createdAt: Long = 1,
     ) = Comprobante(
         id = id,
-        file = "local://$id.png",
-        createdAt = 1,
-        updatedAt = 1,
+        file = file,
+        createdAt = createdAt,
+        updatedAt = createdAt,
         contextId = contextId,
         operationId = operationId,
     )
 
-    private fun operation(id: String, contextId: String?) = Operation(
+    private fun operation(
+        id: String,
+        contextId: String?,
+        occurredAt: Long = 1,
+        amount: String? = "100",
+        currency: String? = "BOB",
+        personOrEntity: String? = "Colegio",
+    ) = Operation(
         id = id,
         type = OperationType.PAGO,
-        occurredAt = 1,
-        createdAt = 1,
-        updatedAt = 1,
-        amount = "100",
-        currency = "BOB",
-        personOrEntity = "Colegio",
+        occurredAt = occurredAt,
+        createdAt = occurredAt,
+        updatedAt = occurredAt,
+        amount = amount,
+        currency = currency,
+        personOrEntity = personOrEntity,
         contextId = contextId,
     )
 }
