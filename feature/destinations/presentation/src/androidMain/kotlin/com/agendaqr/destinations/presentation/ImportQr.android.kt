@@ -227,10 +227,10 @@ object AgendaQrAndroidImportLauncher {
         else -> "png"
     }
 
-    private fun classifyNonQr(mime: String): ImportKind = when {
-        mime.equals("application/pdf", ignoreCase = true) -> ImportKind.COMPROBANTE
-        mime.startsWith("image/", ignoreCase = true) -> ImportKind.COMPROBANTE
-        else -> ImportKind.DESCONOCIDO
+    private fun classifyNonQr(mime: String): ImportKind {
+        // MIME alone cannot prove that an image/PDF is a receipt.
+        // Keep it pending review until actual receipt recognition exists.
+        return ImportKind.DESCONOCIDO
     }
 
     private fun decodeAndEmit(bitmap: Bitmap) {
