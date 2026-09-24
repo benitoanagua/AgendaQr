@@ -69,9 +69,10 @@ No se introducen cambios de UX fuera del contrato congelado.
 
 ### Laboratorio de componentes (herramienta de desarrollo)
 - Catálogo navegable de los componentes y tokens Xauxa reales de `core:ui` con inspector derivado de un modelo puro (`core/ui/.../lab/model/`), previews interactivos con datos ficticios, matriz de interacción con veredictos honestos y registro de eventos.
-- Host Android solo en builds debug (`ComponentLabActivity`, `debugImplementation`); el manifiesto mergeado de release no contiene el lab.
+- Host WebAssembly: el laboratorio se ejecuta en el navegador mediante el target `wasmJs` de `core:ui` (entrypoint `AgendaQrComponentLabWebMain.kt` + recursos web en `wasmJsMain/resources`). Se construye con `./gradlew componentLabWeb` y se sirve en `build/web/component-lab/`.
+- El host Android solo-debug fue retirado (`ComponentLabActivity`, su manifiesto y el `debugImplementation(project(":core:ui"))`); `androidApp` ya no tiene dependencia del lab en ningún build.
 - Aislado de navegación, repositorios y servicios de producción; documentación en `docs/04-ux/03-laboratorio-componentes-compose.md` y brechas Xauxa en `docs/05-design-system/03-xauxa-brechas-y-trazabilidad.md`.
-- Validación: `:core:ui:build` PASS (Android debug/release + targets iOS + lint), 26 pruebas unitarias del modelo PASS, compuertas `verifyAgendaQrArchitecture` PASS (ambas fallaban en main antes del cambio). Revisión visual manual y host iOS: pendientes.
+- Validación: 27 pruebas unitarias del modelo PASS (integridad, búsqueda, matriz de interacción, incluida la honestidad del render web del QR); compilación Wasm del host PASS y revisión en navegador según la evidencia registrada en el documento del laboratorio. Host iOS: pendiente.
 
 ## CI
 
@@ -118,7 +119,7 @@ El primer run de CI posterior al push del commit de cierre (`e3f45f6`, "Android 
 4. validación runtime de asociación de comprobantes.
 5. validación de accesibilidad en dispositivo.
 6. prueba de errores recuperables en Android.
-7. revisión visual manual del laboratorio de componentes (claro/oscuro, ancho estrecho/tablet) y de sus hallazgos de tema oscuro.
+7. revisión visual manual del laboratorio de componentes en el navegador (claro/oscuro con el toggle, anchos estrecho/medio/escritorio; comandos en `docs/04-ux/03-laboratorio-componentes-compose.md`) y de sus hallazgos de tema oscuro.
 
 ### P2 — iOS
 - iOS sigue sin evidencia de compilación/ejecución real en Xcode. La validación de esta pasada fue solo inspección estática en un host Linux (sin Kotlin/Native para targets Apple): los fuentes usan patrones interop conocidos (Foundation/Application Support con aislamiento por usuario, NWPathMonitor sobre callbackFlow/awaitClose, NSData.create/toByteArray), pero nada de esto sustituye una compilación real.

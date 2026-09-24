@@ -136,7 +136,7 @@ categoría.
 | `XauxaLoading` | ídem | C18 |
 | `XauxaEmptyState` | ídem | C15 |
 | `XauxaFavoriteIndicator` | ídem | C21 |
-| `XauxaQrPreview` | expect + actuals Android/iOS | C23/P3 (patrón QR) |
+| `XauxaQrPreview` | expect + actuals Android/iOS/Wasm (web muestra placeholder; PENDIENTE) | C23/P3 (patrón QR) |
 | `XauxaColor` / `XauxaSpacing` / `XauxaMetrics` / `XauxaType` | `XauxaTokens.kt` | §01 color, §04 spacing, §06 métricas, §02 tipografía, §07 breakpoints |
 
 Cada entrada del inspector enlaza los tokens que consume con `XauxaTokenIndex`
