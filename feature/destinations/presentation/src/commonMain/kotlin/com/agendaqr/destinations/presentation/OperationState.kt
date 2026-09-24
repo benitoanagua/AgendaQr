@@ -34,6 +34,7 @@ data class OperationsUiState(
     val isSavingReceipt: Boolean = false,
     val isSavingOperation: Boolean = false,
     val error: String? = null,
+    val receiptSuggestions: Map<String, ReceiptAssociationSuggestion> = emptyMap(),
 )
 
 sealed interface OperationAction {
@@ -74,6 +75,7 @@ class OperationsViewModel(
     private val associate: AssociateComprobanteToOperationUseCase,
     private val saveComprobante: SaveComprobanteUseCase,
     private val findDuplicates: FindDuplicateComprobantesUseCase,
+    private val suggestReceiptAssociation: SuggestReceiptAssociationUseCase,
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
 ) {
     private val _state = MutableStateFlow(OperationsUiState())
@@ -88,7 +90,18 @@ class OperationsViewModel(
             _state.update { it.copy(operations = operations.sortedByDescending { operation -> operation.occurredAt }) }
         } }
         scope.launch { observeUnassociated().collect { receipts ->
-            _state.update { it.copy(unassociated = receipts.sortedByDescending { receipt -> receipt.createdAt }) }
+            val sorted = receipts.sortedByDescending { receipt -> receipt.createdAt }
+            _state.update { it.copy(unassociated = sorted) }
+            sorted.forEach { receipt ->
+                scope.launch {
+                    runCatching { suggestReceiptAssociation(receipt.id) }
+                        .onSuccess { suggestion ->
+                            _state.update { state ->
+                                state.copy(receiptSuggestions = state.receiptSuggestions + (receipt.id to suggestion))
+                            }
+                        }
+                }
+            }
         } }
         scope.launch { observeIncomingComprobantes().collect { receiveIncoming(it) } }
     }
@@ -140,6 +153,9 @@ class OperationsViewModel(
             }
         }
     }
+
+    fun receiptSuggestion(receiptId: String): ReceiptAssociationSuggestion? =
+        state.value.receiptSuggestions[receiptId]
 
     private fun receiveIncoming(incoming: IncomingComprobante) {
         scope.launch {
