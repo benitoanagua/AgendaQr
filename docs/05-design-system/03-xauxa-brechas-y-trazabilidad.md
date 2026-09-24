@@ -13,7 +13,7 @@ muestra estas brechas en vivo, no las corrige.
 | `xauxa-design-system/tokens/tokens.json` (v13) | Fuente canónica de tokens: primitivos, semánticos dark-first, tema light, marca por producto, focus, motion, tipografía. |
 | `xauxa-design-system/docs/design-system.html` (v13) | Documento vivo: 9 foundations, 26 componentes (C01–C26 + C1b), 6 patterns, matriz de estados §10, auditoría de contraste, breakpoints §07. |
 | `xauxa-design-system/kotlin-compose/` (v13) | `XauxaLiveTile`, `XauxaCommandBar`, `XauxaTurnstileNav`, `ReducedMotion`: código escrito contra APIs reales, **no compilado contra ningún proyecto**. |
-| `design-tokens.json` (raíz del repo, v8) | Snapshot v8 reducido con el que se alineó la primera implementación. |
+| `design-tokens.json` (raíz del repo, v9) | Snapshot documentado ampliado: semánticos reales de AgendaQr (incluye `-bg` y `focusRing`), radio, elevación, espaciado, motion, accesibilidad y tipografía. La fuente canónica es `XauxaTokens.kt`; `verifyTokenSnapshot` exige que cada `Color` de Kotlin esté documentado aquí. |
 | `core/ui/.../theme/XauxaTokens.kt` | Tokens implementados que el código consume realmente. |
 
 ## 1. Deriva de valores entre Xauxa canónico y la implementación
@@ -52,12 +52,16 @@ dar por cerrada la paleta.
   Xauxa puede adaptarse y el `darkColorScheme` de `AgendaQrTheme` queda como
   infraestructura Material parcial (solo el chrome M3 del lab cambia).
 - **Contenedores de estado** `-bg`: `success-bg`, `danger-bg`, `warning-bg`,
-  `info-bg`. El banner actual aproxima danger-bg con `Danger.copy(alpha = 0.10f)`.
+  `info-bg`. **CERRADO en esta pasada**: existen como `SuccessBg/DangerBg/
+  WarningBg/InfoBg` en `XauxaTokens.kt`, documentados en `design-tokens.json`
+  v9 y consumidos por Toast, InlineResult y StatusBanner (peligro).
 - **Colores por tipo de QR**: `type-url`, `type-email`, `type-text` (usados por
   XauxaXcan para color-coding de listas; Agenda QR aún no los consume).
 - **Anillo de foco**: `focus.ring-color` (= brand-accent), `ring-offset` (2px).
-  `XauxaMetrics.Focus` (2dp) existe; falta el color semántico del anillo y el
-  offset. Xauxa §10 identifica el foco visible como el gap más serio contra
+  **CERRADO en esta pasada**: `XauxaColor.FocusRing` + modificador
+  `xauxaFocusRing` en clickables personalizados; offset documentado como
+  `accessibility.focusOffset` en el snapshot. El pixel-review manual del anillo
+  queda pendiente (ver documento del laboratorio).
   Material/Carbon.
 - **Motion**: `duration.short/medium/long` y `easing.standard/emphasized/
   decelerate` no existen como tokens Compose. Ningún componente los consume
@@ -71,31 +75,31 @@ dar por cerrada la paleta.
 |---|---|---|
 | C1 | Tile | `XauxaTile` — superficie plana con borde; sin regiones head/body/stats ni alto mínimo 92 del spec |
 | C1b | Tile tipográfico | No implementado |
-| C2 | Botón | `XauxaPrimaryButton`/`XauxaSecondaryButton`/`XauxaTextAction`; sin estado de carga (la matriz §10 lo exige) y sin `enabled` en el textual |
-| C3 | Fila de lista | No implementado |
-| C4 | Badge | No implementado |
-| C5 | Scanner viewport | No implementado en `core:ui` (el scanner vive en presentation) |
-| C6 | Upload zone | No implementado |
-| C7 | Notification / toast | No implementado |
-| C8 | Settings select / toggle | No implementado |
-| C9 | Stats block | No implementado |
-| C10 | Error page | Parcialmente cubierto por `XauxaEmptyState` (sin tono de error) |
-| C11 | Icon button | No implementado (los iconos Material están vetados por la compuerta) |
-| C12 | Botón de acción de tile | Parcialmente cubierto por `XauxaTextAction` |
-| C13 | Status badge | `XauxaStatusBanner` — solo neutro/peligro; sin tonos semánticos `-bg` |
-| C14 | Filter pills | No implementado (el chrome del lab usa M3 `FilterChip` como infraestructura) |
+| C2 | Botón | `XauxaPrimaryButton`/`XauxaSecondaryButton`/`XauxaDangerButton` con `isLoading`; sin `enabled` en el textual (brecha) |
+| C3 | Fila de lista | `XauxaListRow` ✓ (separador por borde + marcador de 2px) |
+| C4 | Badge | `XauxaBadge` ✓ (outline/sólido, rectangular) |
+| C5 | Scanner viewport | `XauxaScannerViewport` ✓ (preview real; escaneo real PENDING por plataforma) |
+| C6 | Upload zone | `XauxaFileUpload` ✓ (estados; picker real PENDING por plataforma) |
+| C7 | Notification / toast | `XauxaToast` ✓ (con acción y descarte) |
+| C8 | Settings select / toggle | `XauxaSettingRow` ✓ (toggle cuadrado + modo navegación) |
+| C9 | Stats block | `XauxaStatBlock` ✓ (centrado, patrón stats) |
+| C10 | Error page | `XauxaErrorPage` ✓ (pantalla completa con reintento) |
+| C11 | Icon button | `XauxaIconButton` ✓ (contentDescription + 48dp; sin iconos Material por la compuerta) |
+| C12 | Botón de acción de tile | `XauxaTextAction` + `XauxaIconButton` según peso visual |
+| C13 | Status badge | `XauxaStatusBanner` — neutro/peligro con `DangerBg`; tercer tono DOCUMENTED |
+| C14 | Filter pills | `XauxaFilterChip` ✓ (interactivo; `XauxaCategoryChip` para clasificación estática) |
 | C15 | Empty state | `XauxaEmptyState` ✓ |
-| C16 | Overflow footer | No implementado |
-| C17 | Inline result banner | Cubierto por `XauxaStatusBanner` (misma limitación de tonos) |
+| C16 | Overflow footer | `XauxaLoadMoreFooter` ✓ (la paginación se compone de él, sin duplicado) |
+| C17 | Inline result banner | `XauxaInlineResult` ✓ (tonos -bg); `XauxaStatusBanner` para estado persistente |
 | C18 | Loading spinner | `XauxaLoading` — indeterminado solo |
-| C19 | Search bar | No implementado (el chrome del lab usa M3 `OutlinedTextField`) |
-| C20 | Text input / Textarea | No implementado |
-| C21 | Favorite toggle | `XauxaFavoriteIndicator` — indicador de solo presentación, sin evento |
-| C22 | Category chip | No implementado |
-| C23 | Destination card | No implementado (hoy se compone con `XauxaTile`) |
-| C24 | Modal / Dialog | No implementado |
-| C25 | Skeleton loading | No implementado |
-| C26 | Load more / Paginación | No implementado |
+| C19 | Search bar | `XauxaSearchBar` ✓ |
+| C20 | Text input / Textarea | `XauxaTextInput` ✓ (textarea con singleLine=false) |
+| C21 | Favorite toggle | `XauxaFavoriteToggle` ✓ (control real; integración de producto pendiente, marcado demo) |
+| C22 | Category chip | `XauxaCategoryChip` ✓ (estático; distinto del filtro interactivo) |
+| C23 | Destination card | `XauxaHeroCard` ✓ (compone `XauxaTile`: número Display + footer) |
+| C24 | Modal / Dialog | `XauxaDialog` ✓ (dos acciones, confirmación danger) |
+| C25 | Skeleton loading | `XauxaSkeleton` ✓ (estático, sin movimiento decorativo) |
+| C26 | Load more / Paginación | `XauxaLoadMoreFooter` ✓ |
 
 ### Kotlin del ZIP no adoptado
 
@@ -121,7 +125,7 @@ categoría.
   (que sí consume `MaterialTheme`) y deja los componentes bajo inspección con
   su apariencia clara. El inspector lo marca explícitamente como la brecha
   real de tokens, no como un fallo del lab.
-- Soporte honesto por componente en el catálogo: `NOT_SUPPORTED` para los 11
+- Soporte honesto por componente en el catálogo: `NOT_SUPPORTED` para los 31
   componentes; `NOT_APPLICABLE` para fundamentos no cromáticos.
 
 ## 5. Trazabilidad del catálogo del laboratorio
@@ -131,13 +135,18 @@ categoría.
 | `XauxaScreen` | `core/ui/.../components/XauxaComponents.kt` | §03 superficies planas, regla 02/03 |
 | `XauxaSection` | ídem | §03, grid de página §08 |
 | `XauxaTile` | ídem | C1 |
-| `XauxaPrimaryButton` / `XauxaSecondaryButton` / `XauxaTextAction` | ídem | C2 (+§10 estados) |
-| `XauxaStatusBanner` | ídem | C13/C17 |
-| `XauxaLoading` | ídem | C18 |
-| `XauxaEmptyState` | ídem | C15 |
-| `XauxaFavoriteIndicator` | ídem | C21 |
+| `XauxaPrimaryButton` / `XauxaSecondaryButton` / `XauxaDangerButton` / `XauxaTextAction` / `XauxaIconButton` / `XauxaFilterChip` | `XauxaComponents.kt` + `XauxaExtendedComponents.kt` | C2 (+§10 estados) |
+| `XauxaTextInput` / `XauxaSearchBar` / `XauxaSettingRow` | `XauxaExtendedComponents.kt` | C19/C20, patrón settings |
+| `XauxaToast` / `XauxaInlineResult` | ídem | Notificaciones, C13/C17 |
+| `XauxaStatusBanner` | `XauxaComponents.kt` | C13/C17 |
+| `XauxaLoading` / `XauxaSkeleton` / `XauxaLoadMoreFooter` | ambos | C18/C25/C26 |
+| `XauxaEmptyState` / `XauxaErrorPage` | ambos | C15, error-page |
+| `XauxaListRow` / `XauxaStatBlock` / `XauxaBadge` / `XauxaCategoryChip` | `XauxaExtendedComponents.kt` | Filas, stats, badges, C14/C22 |
+| `XauxaHeroCard` / `XauxaDialog` | ídem | C23/C24 |
+| `XauxaFavoriteIndicator` / `XauxaFavoriteToggle` | ambos | C21 |
+| `XauxaScannerViewport` / `XauxaFileUpload` | `XauxaExtendedComponents.kt` | Scanner-viewport, uploader (PENDING plataforma) |
 | `XauxaQrPreview` | expect + actuals Android/iOS/Wasm (web muestra placeholder; PENDIENTE) | C23/P3 (patrón QR) |
-| `XauxaColor` / `XauxaSpacing` / `XauxaMetrics` / `XauxaType` | `XauxaTokens.kt` | §01 color, §04 spacing, §06 métricas, §02 tipografía, §07 breakpoints |
+| `XauxaColor` / `XauxaSpacing` / `XauxaMetrics` / `XauxaType` / `XauxaMotion` (`xauxa-focus` documenta el anillo) | `XauxaTokens.kt` | §01 color, §04 spacing, §06 métricas, §02 tipografía, §05 motion, §07 breakpoints, §10 foco |
 
 Cada entrada del inspector enlaza los tokens que consume con `XauxaTokenIndex`
 (modelo del lab), que valida contra la capa de tokens real en las pruebas.

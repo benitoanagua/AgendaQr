@@ -2,6 +2,7 @@ package com.agendaqr.core.ui.lab
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,8 @@ import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.lab.model.LabCatalogQuery
 import com.agendaqr.core.ui.lab.model.LabCategory
 import com.agendaqr.core.ui.lab.model.LabComponentContract
+import com.agendaqr.core.ui.lab.model.LabPattern
+import com.agendaqr.core.ui.lab.model.LabPatterns
 import com.agendaqr.core.ui.lab.model.categoryCounts
 import com.agendaqr.core.ui.lab.model.filterCatalog
 import com.agendaqr.core.ui.theme.XauxaMetrics
@@ -32,8 +35,18 @@ import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
 
 /**
- * Navigable catalog pane: free-text search, category filters with component
- * counts, selection indicator and an explicit empty-search state.
+ * Top-level lab sections. Foundations and Components browse the central
+ * inventory; Patterns browse the usage compositions (pure model, no UI).
+ */
+enum class LabSection(val label: String) {
+    FOUNDATIONS("Fundamentos"),
+    COMPONENTS("Componentes"),
+    PATTERNS("Patrones"),
+}
+
+/**
+ * Navigable catalog pane: section tabs, free-text search, category filters
+ * with component counts, selection indicator and an explicit empty state.
  *
  * [scrollable] keeps a single scroll owner in compact layouts: the pane is
  * content-sized there and the page scrolls as one unit, while in wide
@@ -49,16 +62,50 @@ internal fun LabCatalogPane(
     onComponentSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
     scrollable: Boolean = true,
+    section: LabSection = LabSection.COMPONENTS,
+    onSectionChange: (LabSection) -> Unit = {},
+    selectedPatternId: String = LabPatterns.all.first().id,
+    onPatternSelected: (String) -> Unit = {},
 ) {
-    val results = filterCatalog(catalog, query)
+    val visible = when (section) {
+        LabSection.FOUNDATIONS -> catalog.filter { it.category == LabCategory.FOUNDATIONS }
+        LabSection.COMPONENTS -> catalog.filter { it.category != LabCategory.FOUNDATIONS }
+        LabSection.PATTERNS -> catalog
+    }
+    val results = filterCatalog(visible, query)
     val counts = categoryCounts(catalog)
 
     LabPanel(
-        title = "Catálogo de componentes",
-        subtitle = "Inventario navegable; selecciona una entrada para inspeccionarla",
-        trailing = { LabBadge("${results.size} / ${catalog.size}") },
+        title = "Catálogo",
+        subtitle = "Fundamentos, componentes y patrones; selecciona una entrada para inspeccionarla",
+        trailing = { LabBadge("${results.size} / ${visible.size}") },
         modifier = modifier,
     ) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
+        ) {
+            LabSection.entries.forEach { entry ->
+                LabCategoryFilter(
+                    label = entry.label,
+                    count = when (entry) {
+                        LabSection.FOUNDATIONS -> catalog.count { it.category == LabCategory.FOUNDATIONS }
+                        LabSection.COMPONENTS -> catalog.count { it.category != LabCategory.FOUNDATIONS }
+                        LabSection.PATTERNS -> LabPatterns.all.size
+                    },
+                    selected = section == entry,
+                    onClick = { onSectionChange(entry) },
+                )
+            }
+        }
+        if (section == LabSection.PATTERNS) {
+            LabPatternList(
+                selectedId = selectedPatternId,
+                onSelected = onPatternSelected,
+                scrollable = scrollable,
+            )
+            return@LabPanel
+        }
         OutlinedTextField(
             value = query.text,
             onValueChange = { onQueryChange(query.copy(text = it)) },
@@ -114,6 +161,59 @@ internal fun LabCatalogPane(
 }
 
 @Composable
+private fun ColumnScope.LabPatternList(selectedId: String, onSelected: (String) -> Unit, scrollable: Boolean) {
+    val list: @Composable () -> Unit = {
+        Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs)) {
+            LabPatterns.all.forEach { pattern ->
+                LabPatternRow(pattern, selected = pattern.id == selectedId) { onSelected(pattern.id) }
+            }
+        }
+    }
+    if (scrollable) {
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
+        ) {
+            items(LabPatterns.all.size) { index ->
+                val pattern = LabPatterns.all[index]
+                LabPatternRow(pattern, selected = pattern.id == selectedId) { onSelected(pattern.id) }
+            }
+        }
+    } else {
+        list()
+    }
+}
+
+@Composable
+private fun LabPatternRow(pattern: LabPattern, selected: Boolean, onClick: () -> Unit) {
+    Surface(
+        modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
+        shape = RectangleShape,
+        color = if (selected) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
+        onClick = onClick,
+    ) {
+        Column(modifier = Modifier.padding(XauxaSpacing.Sm)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                Text(
+                    pattern.title,
+                    fontSize = XauxaType.Label,
+                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                )
+                if (pattern.demo) {
+                    Text("Demo", fontSize = XauxaType.Caption, color = MaterialTheme.colorScheme.primary)
+                }
+            }
+            Text(
+                pattern.description,
+                fontSize = XauxaType.Caption,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
 private fun LabCategoryFilter(label: String, count: Int, selected: Boolean, onClick: () -> Unit) {
     FilterChip(
         selected = selected,
@@ -124,7 +224,7 @@ private fun LabCategoryFilter(label: String, count: Int, selected: Boolean, onCl
 }
 
 @Composable
-private fun LabCatalogRow(component: LabComponentContract, selected: Boolean, onClick: () -> Unit) {
+internal fun LabCatalogRow(component: LabComponentContract, selected: Boolean, onClick: () -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         shape = RectangleShape,

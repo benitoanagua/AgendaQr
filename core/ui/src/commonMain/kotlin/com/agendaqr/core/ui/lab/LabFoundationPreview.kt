@@ -42,6 +42,8 @@ internal fun LabFoundationPreview(foundationId: String, modifier: Modifier = Mod
             "xauxa-spacing" -> SpacingSpecimen()
             "xauxa-metrics" -> MetricsSpecimen()
             "xauxa-type" -> TypeSpecimen()
+            "xauxa-motion" -> MotionSpecimen()
+            "xauxa-focus" -> FocusSpecimen()
         }
     }
 }
@@ -61,9 +63,14 @@ private val labColorEntries: List<LabColorEntry> = listOf(
     LabColorEntry("OnBrand", XauxaColor.OnBrand, "Contenido sobre marca"),
     LabColorEntry("White", XauxaColor.White, "Contenido sobre fondo de QR"),
     LabColorEntry("Success", XauxaColor.Success, "Semántica de éxito"),
+    LabColorEntry("SuccessBg", XauxaColor.SuccessBg, "Contenedor de éxito"),
     LabColorEntry("Danger", XauxaColor.Danger, "Semántica de error/peligro"),
+    LabColorEntry("DangerBg", XauxaColor.DangerBg, "Contenedor de peligro"),
     LabColorEntry("Warning", XauxaColor.Warning, "Semántica de advertencia"),
+    LabColorEntry("WarningBg", XauxaColor.WarningBg, "Contenedor de advertencia"),
     LabColorEntry("Info", XauxaColor.Info, "Semántica informativa"),
+    LabColorEntry("InfoBg", XauxaColor.InfoBg, "Contenedor informativo"),
+    LabColorEntry("FocusRing", XauxaColor.FocusRing, "Anillo de foco visible"),
 )
 
 @Composable
@@ -169,8 +176,7 @@ private val labTypeEntries: List<LabTypeEntry> = listOf(
 )
 
 @Composable
-private fun TypeSpecimen() {
-    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+private fun TypeSpecimen() {    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
         labTypeEntries.forEach { entry ->
             Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs)) {
                 Text(
@@ -190,5 +196,44 @@ private fun TypeSpecimen() {
             fontSize = XauxaType.Caption,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+    }
+}
+
+@Composable
+private fun MotionSpecimen() {
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+        LabLabelValue("DurationShortMs", "${com.agendaqr.core.ui.theme.XauxaMotion.DurationShortMs}ms")
+        LabLabelValue("DurationMediumMs", "${com.agendaqr.core.ui.theme.XauxaMotion.DurationMediumMs}ms")
+        LabLabelValue("DurationLongMs", "${com.agendaqr.core.ui.theme.XauxaMotion.DurationLongMs}ms")
+        LabLabelValue("EasingStandard", com.agendaqr.core.ui.theme.XauxaMotion.EasingStandard)
+        LabLabelValue("EasingEmphasized", com.agendaqr.core.ui.theme.XauxaMotion.EasingEmphasized)
+        LabLabelValue("EasingDecelerate", com.agendaqr.core.ui.theme.XauxaMotion.EasingDecelerate)
+        Text(
+            "Movimiento con propósito y sin loops; respetar prefers-reduced-motion del sistema.",
+            fontSize = XauxaType.Caption,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun FocusSpecimen() {
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+        LabLabelValue("XauxaColor.FocusRing", "Color del anillo (brand-accent)")
+        LabLabelValue("XauxaMetrics.Focus", "Grosor del anillo (2dp)")
+        LabLabelValue("XauxaMetrics.ControlMinSize", "Objetivo táctil mínimo (48dp)")
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(XauxaMetrics.Focus, XauxaColor.FocusRing, RectangleShape)
+                .background(XauxaColor.Surface)
+                .padding(XauxaSpacing.Md),
+        ) {
+            Text(
+                "Anillo de foco de ejemplo aplicado a un contenedor.",
+                fontSize = XauxaType.Label,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
     }
 }

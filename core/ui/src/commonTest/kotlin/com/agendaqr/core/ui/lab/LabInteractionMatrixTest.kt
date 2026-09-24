@@ -44,16 +44,25 @@ class LabInteractionMatrixTest {
     }
 
     @Test
-    fun loading_lens_is_real_for_the_loading_component_and_not_applicable_elsewhere() {
+    fun loading_lens_is_real_when_the_api_offers_it() {
         assertEquals(
             LabLensVerdict.REAL,
             LabInteractionMatrix.verdict(contract("xauxa-loading"), LabInteractionLens.LOADING),
         )
-        // PrimaryButton documents a Loading state as NOT_SUPPORTED (no
-        // isLoading parameter): the lens must not become applicable.
+        // Buttons expose isLoading: the declared Carga state is offered by
+        // the API and the lens is honestly real.
+        assertEquals(
+            LabLensVerdict.REAL,
+            LabInteractionMatrix.verdict(contract("xauxa-primary-button"), LabInteractionLens.LOADING),
+        )
+        assertEquals(
+            "Carga",
+            LabInteractionMatrix.exactStateFor(contract("xauxa-primary-button"), LabInteractionLens.LOADING)?.name,
+        )
+        // TextAction offers no loading state: the lens stays not applicable.
         assertEquals(
             LabLensVerdict.NOT_APPLICABLE,
-            LabInteractionMatrix.verdict(contract("xauxa-primary-button"), LabInteractionLens.LOADING),
+            LabInteractionMatrix.verdict(contract("xauxa-text-action"), LabInteractionLens.LOADING),
         )
     }
 

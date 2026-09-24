@@ -26,6 +26,11 @@ object XauxaTokenIndex {
         "XauxaColor.Danger",
         "XauxaColor.Warning",
         "XauxaColor.Info",
+        "XauxaColor.SuccessBg",
+        "XauxaColor.DangerBg",
+        "XauxaColor.WarningBg",
+        "XauxaColor.InfoBg",
+        "XauxaColor.FocusRing",
     )
 
     val spacing: Set<String> = setOf(
@@ -60,7 +65,16 @@ object XauxaTokenIndex {
         "XauxaType.Caption",
     )
 
-    val all: Set<String> = color + spacing + metrics + type
+    val motion: Set<String> = setOf(
+        "XauxaMotion.DurationShortMs",
+        "XauxaMotion.DurationMediumMs",
+        "XauxaMotion.DurationLongMs",
+        "XauxaMotion.EasingStandard",
+        "XauxaMotion.EasingEmphasized",
+        "XauxaMotion.EasingDecelerate",
+    )
+
+    val all: Set<String> = color + spacing + metrics + type + motion
 
     fun isValid(token: String): Boolean = token in all
 }

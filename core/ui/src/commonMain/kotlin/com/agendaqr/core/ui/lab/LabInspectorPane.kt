@@ -48,6 +48,9 @@ internal fun LabInspectorPane(
         { LabInteractionSection(contract) },
         { LabDeclaredStatesSection(contract) },
         { LabApiSection(contract) },
+        { LabGuidanceSection(contract) },
+        { LabPlatformsSection(contract) },
+        { LabGovernanceSection(contract) },
         { LabTokensSection(contract) },
         { LabUsageSection(contract) },
         { LabNotesSection(contract) },
@@ -56,7 +59,7 @@ internal fun LabInspectorPane(
 
     if (scrollable) {
         LazyColumn(
-            modifier = modifier.fillMaxWidth().fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md),
         ) {
             items(sections.size) { index -> sections[index]() }
@@ -205,6 +208,88 @@ private fun LabApiSection(contract: LabComponentContract) {
             } else {
                 contract.events.forEach { event ->
                     LabLabelValue(event.name, event.description)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LabGuidanceSection(contract: LabComponentContract) {
+    if (contract.whenToUse.isBlank()) return
+    LabPanel(title = "Cuándo usarlo", subtitle = "Guía de selección frente a otros componentes") {
+        Text(
+            contract.whenToUse,
+            fontSize = XauxaType.Label,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+    }
+}
+
+@Composable
+private fun LabPlatformsSection(contract: LabComponentContract) {
+    if (contract.androidMapping.isBlank() && contract.iosMapping.isBlank() && contract.platforms.isEmpty()) return
+    LabPanel(
+        title = "Mapeo nativo y plataformas",
+        subtitle = "Implementación real por plataforma, no solo documentación",
+        trailing = { LabBadge("${contract.platforms.count { it.implemented }} / ${contract.platforms.size} listas") },
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs)) {
+            if (contract.androidMapping.isNotBlank()) {
+                LabLabelValue("Compose/Android", contract.androidMapping)
+            }
+            if (contract.iosMapping.isNotBlank()) {
+                LabLabelValue("SwiftUI/iOS", contract.iosMapping)
+            }
+            contract.platforms.forEach { platform ->
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Column {
+                        Text(
+                            platform.platform,
+                            fontSize = XauxaType.Label,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        Text(
+                            platform.note,
+                            fontSize = XauxaType.Caption,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Text(
+                        if (platform.implemented) "Real" else "Pendiente",
+                        fontSize = XauxaType.Caption,
+                        color = if (platform.implemented) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LabGovernanceSection(contract: LabComponentContract) {
+    val gate = com.agendaqr.core.ui.lab.model.LabAccessibilityGate.evaluate(contract)
+    val issues = com.agendaqr.core.ui.lab.model.LabApiAudit.audit(contract)
+    LabPanel(
+        title = "Gobierno del contrato",
+        subtitle = "Puerta de accesibilidad y auditoría de API sobre el contrato declarado",
+        trailing = { LabBadge(if (gate.passed && issues.none { it.severity == com.agendaqr.core.ui.lab.model.LabApiAuditSeverity.Error }) "En regla" else "Revisar") },
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs)) {
+            LabLabelValue(
+                "Puerta de accesibilidad",
+                if (gate.passed) "PASS (${gate.checks.size} comprobaciones)" else "FAIL: ${gate.failures.joinToString("; ")}",
+            )
+            if (issues.isEmpty()) {
+                Text(
+                    "Auditoría de API sin observaciones.",
+                    fontSize = XauxaType.Caption,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            } else {
+                issues.forEach { issue ->
+                    LabLabelValue("${issue.code} · ${issue.severity}", issue.message)
                 }
             }
         }

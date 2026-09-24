@@ -25,6 +25,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -77,12 +79,14 @@ fun XauxaTile(
     onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
+    val interaction = remember { MutableInteractionSource() }
     val clickableModifier = if (onClick == null) modifier else modifier
-        .clickable(role = Role.Button, onClick = onClick)
-        .focusable()
+        .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onClick)
+        .focusable(interactionSource = interaction)
     Surface(
         modifier = clickableModifier
             .fillMaxWidth()
+            .xauxaFocusRing(interaction)
             .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape),
         shape = RectangleShape,
         color = XauxaColor.Surface,
@@ -97,11 +101,12 @@ fun XauxaPrimaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    isLoading: Boolean = false,
 ) {
     androidx.compose.material3.Button(
         modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         onClick = onClick,
-        enabled = enabled,
+        enabled = enabled && !isLoading,
         shape = RectangleShape,
         colors = ButtonDefaults.buttonColors(
             containerColor = XauxaColor.Brand,
@@ -109,7 +114,17 @@ fun XauxaPrimaryButton(
             disabledContainerColor = XauxaColor.Surface2,
             disabledContentColor = XauxaColor.TextTertiary,
         ),
-    ) { Text(label) }
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(XauxaSpacing.Lg),
+                color = XauxaColor.OnBrand,
+                strokeWidth = XauxaMetrics.Border,
+            )
+        } else {
+            Text(label)
+        }
+    }
 }
 
 @Composable
@@ -118,14 +133,25 @@ fun XauxaSecondaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    isLoading: Boolean = false,
 ) {
     OutlinedButton(
         modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         onClick = onClick,
-        enabled = enabled,
+        enabled = enabled && !isLoading,
         shape = RectangleShape,
         border = BorderStroke(XauxaMetrics.Border, XauxaColor.Border),
-    ) { Text(label, color = XauxaColor.TextPrimary) }
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(XauxaSpacing.Lg),
+                color = XauxaColor.Brand,
+                strokeWidth = XauxaMetrics.Border,
+            )
+        } else {
+            Text(label, color = XauxaColor.TextPrimary)
+        }
+    }
 }
 
 @Composable
@@ -143,7 +169,7 @@ fun XauxaStatusBanner(
     modifier: Modifier = Modifier,
     danger: Boolean = false,
 ) {
-    val background = if (danger) XauxaColor.Danger.copy(alpha = 0.10f) else XauxaColor.Surface2
+    val background = if (danger) XauxaColor.DangerBg else XauxaColor.Surface2
     val foreground = if (danger) XauxaColor.Danger else XauxaColor.TextSecondary
     Box(
         modifier = modifier

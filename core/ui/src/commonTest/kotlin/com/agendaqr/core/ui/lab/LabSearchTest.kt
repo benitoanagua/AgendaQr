@@ -22,7 +22,12 @@ class LabSearchTest {
     @Test
     fun search_matches_component_name_case_insensitively() {
         val results = filterCatalog(catalog, LabCatalogQuery(text = "xauxatile"))
-        assertEquals(listOf("xauxa-tile"), results.map { it.id })
+        // xauxa-tile matches by name; xauxa-hero-card matches because it
+        // honestly documents that it composes XauxaTile.
+        assertTrue(results.any { it.id == "xauxa-tile" })
+        assertTrue(results.all {
+            (it.id + it.name + it.purpose + it.description).contains("xauxatile", ignoreCase = true)
+        })
     }
 
     @Test
@@ -50,7 +55,7 @@ class LabSearchTest {
     @Test
     fun category_filter_keeps_only_that_category() {
         val results = filterCatalog(catalog, LabCatalogQuery(category = LabCategory.QR))
-        assertEquals(listOf("xauxa-qr-preview"), results.map { it.id })
+        assertEquals(listOf("xauxa-qr-preview", "xauxa-scanner-viewport", "xauxa-file-upload"), results.map { it.id })
     }
 
     @Test
@@ -65,10 +70,10 @@ class LabSearchTest {
         val counts = categoryCounts(catalog)
         assertEquals(catalog.size, counts.values.sum())
         assertEquals(LabComponentCatalog.foundations.size, counts[LabCategory.FOUNDATIONS])
-        assertEquals(3, counts[LabCategory.SURFACES])
-        assertEquals(3, counts[LabCategory.ACTIONS])
-        assertEquals(3, counts[LabCategory.FEEDBACK])
-        assertEquals(1, counts[LabCategory.DATA])
-        assertEquals(1, counts[LabCategory.QR])
+        assertEquals(5, counts[LabCategory.SURFACES])
+        assertEquals(10, counts[LabCategory.ACTIONS])
+        assertEquals(8, counts[LabCategory.FEEDBACK])
+        assertEquals(5, counts[LabCategory.DATA])
+        assertEquals(3, counts[LabCategory.QR])
     }
 }

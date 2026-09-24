@@ -1,8 +1,9 @@
 {
   "$schema": "https://schemas.example.invalid/xauxa-design-tokens.schema.json",
   "name": "Xauxa Design System",
-  "version": "8",
+  "version": "9",
   "product": "AgendaQr",
+  "note": "Snapshot documentado. La fuente canónica es core/ui XauxaTokens.kt; la tarea verifyTokenSnapshot comprueba que cada Color de Kotlin esté documentado aquí. Dónde AgendaQr diverge de xauxa-design-system v13 (dark-first) se indica en docs/05-design-system/03-xauxa-brechas-y-trazabilidad.md.",
   "color": {
     "primitive": {
       "purple70": "#4A1F7A", "purple30": "#DAB9FF",
@@ -14,8 +15,12 @@
       "black": "#0E0E11", "gray95": "#17171B", "gray90": "#1F1F24", "gray85": "#26262C", "gray80": "#2A2A30", "gray60": "#6C6C76", "gray40": "#9C9CA6", "gray05": "#F4F4F6", "white": "#FFFFFF"
     },
     "semantic": {
-      "brand": "{color.primitive.teal60}", "onBrand": "{color.primitive.white}", "brandAccent": "{color.primitive.teal30}",
-      "success": "{color.primitive.green50}", "danger": "{color.primitive.red60}", "warning": "{color.primitive.amber60}", "info": "{color.primitive.blue55}"
+      "brand": "#0E7D6E", "onBrand": "#FFFFFF", "brandAccent": "#7FD9C9",
+      "background": "#F8FAFA", "surface": "#FFFFFF", "surface2": "#F0F4F3", "border": "#D7DEDC",
+      "text1": "#17201E", "text2": "#4E5B57", "text3": "#6C7773",
+      "success": "#2E7D5B", "danger": "#B3261E", "warning": "#8A5A00", "info": "#245E9B",
+      "successBg": "#EAF2EF", "dangerBg": "#F7E9E8", "warningBg": "#F3EEE6", "infoBg": "#E9EFF5",
+      "focusRing": "#7FD9C9"
     }
   },
   "radius": { "value": "0px" },
@@ -25,6 +30,6 @@
     "durationShort": "150ms", "durationMedium": "300ms", "durationLong": "600ms",
     "easingStandard": "cubic-bezier(.4,0,.2,1)", "easingEmphasized": "cubic-bezier(.2,0,0,1)", "easingDecelerate": "cubic-bezier(0,0,.2,1)"
   },
-  "accessibility": { "minTouch": "48dp", "focusWidth": "2dp", "focusOffset": "2dp" },
+  "accessibility": { "minTouch": "48dp", "focusWidth": "2dp", "focusOffset": "2dp", "focusRing": "#7FD9C9" },
   "typography": { "display": "Archivo", "ui": "Roboto" }
 }

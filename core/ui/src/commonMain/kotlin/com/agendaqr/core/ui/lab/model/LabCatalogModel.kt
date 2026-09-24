@@ -81,6 +81,13 @@ data class LabTokenRef(
     val role: String,
 )
 
+/** Estado de implementación real por plataforma. */
+data class LabPlatformStatus(
+    val platform: String,
+    val implemented: Boolean,
+    val note: String,
+)
+
 /**
  * Contract of a catalog entry: the descriptive source of truth for the
  * inspector. It describes the public contract; it does not replace the
@@ -101,6 +108,14 @@ data class LabComponentContract(
     val tags: List<String> = emptyList(),
     val darkThemeSupport: LabDarkThemeSupport,
     val darkThemeNote: String,
+    /** Cuándo usarlo y cuándo preferir otro componente. */
+    val whenToUse: String = "",
+    /** Mapeo al componente nativo en Compose/Android. */
+    val androidMapping: String = "",
+    /** Mapeo al componente nativo en SwiftUI/iOS. */
+    val iosMapping: String = "",
+    /** Estado de implementación real por plataforma. */
+    val platforms: List<LabPlatformStatus> = emptyList(),
 ) {
     val isInteractive: Boolean get() = events.isNotEmpty()
 }

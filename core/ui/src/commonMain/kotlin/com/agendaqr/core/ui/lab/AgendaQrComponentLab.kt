@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.lab.model.LabCatalogIntegrity
 import com.agendaqr.core.ui.lab.model.LabCatalogQuery
 import com.agendaqr.core.ui.lab.model.LabComponentCatalog
+import com.agendaqr.core.ui.lab.model.LabPatterns
 import com.agendaqr.core.ui.theme.AgendaQrTheme
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
@@ -60,12 +62,15 @@ fun AgendaQrComponentLab(
     modifier: Modifier = Modifier,
 ) {
     var query by remember { mutableStateOf(LabCatalogQuery()) }
-    var selectedId by rememberSaveable { mutableStateOf(LabComponentCatalog.all.first().id) }
+    var section by rememberSaveable { mutableStateOf(LabSection.COMPONENTS) }
+    var selectedId by rememberSaveable { mutableStateOf(LabComponentCatalog.components.first().id) }
+    var selectedPatternId by rememberSaveable { mutableStateOf(LabPatterns.all.first().id) }
     var darkPreview by rememberSaveable { mutableStateOf(false) }
     val events = remember { mutableStateListOf<String>() }
     val integrityProblems = remember { LabCatalogIntegrity.validate() }
 
     val contract = LabComponentCatalog.find(selectedId) ?: LabComponentCatalog.all.first()
+    val pattern = LabPatterns.find(selectedPatternId) ?: LabPatterns.all.first()
 
     fun onEvent(event: String) {
         events.add(event)
@@ -89,49 +94,61 @@ fun AgendaQrComponentLab(
                         darkPreview = darkPreview,
                         onDarkPreviewChange = { darkPreview = it },
                     )
-                    if (compact) {
-                        Column(
-                            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-                            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
-                        ) {
-                            LabCatalogPane(
-                                catalog = LabComponentCatalog.all,
-                                query = query,
-                                onQueryChange = { query = it },
-                                selectedId = contract.id,
+
+                    @Composable
+                    fun catalogPane(modifier: Modifier, scrollable: Boolean) {
+                        LabCatalogPane(
+                            catalog = LabComponentCatalog.all,
+                            query = query,
+                            onQueryChange = { query = it },
+                            selectedId = contract.id,
+                            onComponentSelected = { selectedId = it },
+                            modifier = modifier,
+                            scrollable = scrollable,
+                            section = section,
+                            onSectionChange = { section = it },
+                            selectedPatternId = pattern.id,
+                            onPatternSelected = { selectedPatternId = it },
+                        )
+                    }
+
+                    @Composable
+                    fun inspectorPane(modifier: Modifier, scrollable: Boolean) {
+                        if (section == LabSection.PATTERNS) {
+                            LabPatternPane(
+                                pattern = pattern,
+                                modifier = modifier,
+                                scrollable = scrollable,
                                 onComponentSelected = { selectedId = it },
-                                scrollable = false,
+                                onSectionChange = { section = it },
                             )
+                        } else {
                             LabInspectorPane(
                                 contract = contract,
                                 darkPreviewActive = darkPreview,
                                 events = events,
                                 onEvent = ::onEvent,
-                                scrollable = false,
+                                modifier = modifier,
+                                scrollable = scrollable,
                             )
+                        }
+                    }
+
+                    if (compact) {
+                        Column(
+                            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
+                        ) {
+                            catalogPane(Modifier.fillMaxWidth(), false)
+                            inspectorPane(Modifier.fillMaxWidth(), false)
                         }
                     } else {
                         Row(
                             modifier = Modifier.fillMaxSize(),
                             horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
                         ) {
-                            LabCatalogPane(
-                                catalog = LabComponentCatalog.all,
-                                query = query,
-                                onQueryChange = { query = it },
-                                selectedId = contract.id,
-                                onComponentSelected = { selectedId = it },
-                                modifier = Modifier.weight(CATALOG_PANE_WEIGHT).fillMaxHeight(),
-                                scrollable = true,
-                            )
-                            LabInspectorPane(
-                                contract = contract,
-                                darkPreviewActive = darkPreview,
-                                events = events,
-                                onEvent = ::onEvent,
-                                modifier = Modifier.weight(INSPECTOR_PANE_WEIGHT).fillMaxHeight(),
-                                scrollable = true,
-                            )
+                            catalogPane(Modifier.weight(CATALOG_PANE_WEIGHT).fillMaxHeight(), true)
+                            inspectorPane(Modifier.weight(INSPECTOR_PANE_WEIGHT).fillMaxHeight(), true)
                         }
                     }
                 }

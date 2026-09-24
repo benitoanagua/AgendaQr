@@ -22,17 +22,38 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.agendaqr.core.ui.components.XauxaBadge
+import com.agendaqr.core.ui.components.XauxaCategoryChip
+import com.agendaqr.core.ui.components.XauxaDangerButton
+import com.agendaqr.core.ui.components.XauxaDialog
 import com.agendaqr.core.ui.components.XauxaEmptyState
+import com.agendaqr.core.ui.components.XauxaErrorPage
 import com.agendaqr.core.ui.components.XauxaFavoriteIndicator
+import com.agendaqr.core.ui.components.XauxaFavoriteToggle
+import com.agendaqr.core.ui.components.XauxaFileUpload
+import com.agendaqr.core.ui.components.XauxaFilterChip
+import com.agendaqr.core.ui.components.XauxaHeroCard
+import com.agendaqr.core.ui.components.XauxaIconButton
+import com.agendaqr.core.ui.components.XauxaInlineResult
+import com.agendaqr.core.ui.components.XauxaListRow
+import com.agendaqr.core.ui.components.XauxaLoadMoreFooter
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaQrPreview
+import com.agendaqr.core.ui.components.XauxaScannerViewport
 import com.agendaqr.core.ui.components.XauxaScreen
+import com.agendaqr.core.ui.components.XauxaSearchBar
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaSection
+import com.agendaqr.core.ui.components.XauxaSettingRow
+import com.agendaqr.core.ui.components.XauxaSkeleton
+import com.agendaqr.core.ui.components.XauxaStatBlock
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextAction
+import com.agendaqr.core.ui.components.XauxaTextInput
 import com.agendaqr.core.ui.components.XauxaTile
+import com.agendaqr.core.ui.components.XauxaToast
+import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.lab.model.LabComponentContract
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
@@ -83,14 +104,34 @@ internal fun LabComponentPreview(
                 "xauxa-screen" -> ScreenPreview()
                 "xauxa-section" -> SectionPreview(onEvent)
                 "xauxa-tile" -> TilePreview(onEvent)
+                "xauxa-hero-card" -> HeroCardPreview(onEvent)
+                "xauxa-dialog" -> DialogPreview(onEvent)
                 "xauxa-primary-button" -> PrimaryButtonPreview(onEvent)
                 "xauxa-secondary-button" -> SecondaryButtonPreview(onEvent)
+                "xauxa-danger-button" -> DangerButtonPreview(onEvent)
                 "xauxa-text-action" -> TextActionPreview(onEvent)
+                "xauxa-icon-button" -> IconButtonPreview(onEvent)
+                "xauxa-filter-chip" -> FilterChipPreview(onEvent)
+                "xauxa-text-input" -> TextInputPreview()
+                "xauxa-search-bar" -> SearchBarPreview(onEvent)
+                "xauxa-setting-row" -> SettingRowPreview(onEvent)
+                "xauxa-favorite-toggle" -> FavoriteTogglePreview(onEvent)
+                "xauxa-toast" -> ToastPreview(onEvent)
                 "xauxa-status-banner" -> StatusBannerPreview()
+                "xauxa-inline-result" -> InlineResultPreview(onEvent)
                 "xauxa-loading" -> LoadingPreview()
+                "xauxa-skeleton" -> SkeletonPreview()
                 "xauxa-empty-state" -> EmptyStatePreview(onEvent)
+                "xauxa-error-page" -> ErrorPagePreview(onEvent)
+                "xauxa-load-more" -> LoadMorePreview(onEvent)
+                "xauxa-list-row" -> ListRowPreview(onEvent)
+                "xauxa-stat-block" -> StatBlockPreview()
+                "xauxa-badge" -> BadgePreview()
+                "xauxa-category-chip" -> CategoryChipPreview()
                 "xauxa-favorite-indicator" -> FavoriteIndicatorPreview()
                 "xauxa-qr-preview" -> QrPreviewControls()
+                "xauxa-scanner-viewport" -> ScannerViewportPreview()
+                "xauxa-file-upload" -> FileUploadPreview(onEvent)
                 else -> Text(
                     "Este contrato es un grupo de tokens: revisa la especimen de la sección Fundamentos.",
                     fontSize = XauxaType.Label,
@@ -229,10 +270,12 @@ private fun TilePreview(onEvent: (String) -> Unit) {
 private fun PrimaryButtonPreview(onEvent: (String) -> Unit) {
     var label by rememberSaveable { mutableStateOf("Añadir QR") }
     var enabled by rememberSaveable { mutableStateOf(true) }
+    var loading by rememberSaveable { mutableStateOf(false) }
     var clicks by rememberSaveable { mutableStateOf(0) }
     Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
         LabTextInput("Texto de etiqueta", label) { label = it }
         LabControlRow("enabled") { LabToggle("enabled", enabled) { enabled = it } }
+        LabControlRow("isLoading") { LabToggle("cargando", loading) { loading = it } }
         XauxaPrimaryButton(
             label = label,
             onClick = {
@@ -240,6 +283,7 @@ private fun PrimaryButtonPreview(onEvent: (String) -> Unit) {
                 onEvent("XauxaPrimaryButton.onClick #$clicks")
             },
             enabled = enabled,
+            isLoading = loading,
         )
         Text(
             "Activaciones observadas: $clicks",
@@ -253,10 +297,12 @@ private fun PrimaryButtonPreview(onEvent: (String) -> Unit) {
 private fun SecondaryButtonPreview(onEvent: (String) -> Unit) {
     var label by rememberSaveable { mutableStateOf("Escanear QR") }
     var enabled by rememberSaveable { mutableStateOf(true) }
+    var loading by rememberSaveable { mutableStateOf(false) }
     var clicks by rememberSaveable { mutableStateOf(0) }
     Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
         LabTextInput("Texto de etiqueta", label) { label = it }
         LabControlRow("enabled") { LabToggle("enabled", enabled) { enabled = it } }
+        LabControlRow("isLoading") { LabToggle("cargando", loading) { loading = it } }
         XauxaSecondaryButton(
             label = label,
             onClick = {
@@ -264,9 +310,35 @@ private fun SecondaryButtonPreview(onEvent: (String) -> Unit) {
                 onEvent("XauxaSecondaryButton.onClick #$clicks")
             },
             enabled = enabled,
+            isLoading = loading,
         )
         Text(
             "Activaciones observadas: $clicks",
+            fontSize = XauxaType.Caption,
+            color = XauxaColor.TextSecondary,
+        )
+    }
+}
+
+@Composable
+private fun DangerButtonPreview(onEvent: (String) -> Unit) {
+    var enabled by rememberSaveable { mutableStateOf(true) }
+    var loading by rememberSaveable { mutableStateOf(false) }
+    var clicks by rememberSaveable { mutableStateOf(0) }
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
+        LabControlRow("enabled") { LabToggle("enabled", enabled) { enabled = it } }
+        LabControlRow("isLoading") { LabToggle("cargando", loading) { loading = it } }
+        XauxaDangerButton(
+            label = "Eliminar destino",
+            onClick = {
+                clicks++
+                onEvent("XauxaDangerButton.onClick #$clicks")
+            },
+            enabled = enabled,
+            isLoading = loading,
+        )
+        Text(
+            "Reservado a confirmaciones destructivas dentro de XauxaDialog. Activaciones: $clicks",
             fontSize = XauxaType.Caption,
             color = XauxaColor.TextSecondary,
         )
@@ -353,7 +425,7 @@ private fun FavoriteIndicatorPreview() {
             )
         }
         Text(
-            "Indicador de solo presentación: Xauxa documenta un toggle interactivo, aún no implementado.",
+            "Indicador de solo presentación. Para interacción usar XauxaFavoriteToggle.",
             fontSize = XauxaType.Caption,
             color = XauxaColor.TextSecondary,
         )
@@ -362,8 +434,7 @@ private fun FavoriteIndicatorPreview() {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun QrPreviewControls() {
-    var encodedQr by rememberSaveable { mutableStateOf(LAB_SAMPLE_QR_BASE64) }
+private fun QrPreviewControls() {    var encodedQr by rememberSaveable { mutableStateOf(LAB_SAMPLE_QR_BASE64) }
     Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
         LabTextInput("encodedQr (base64 del PNG)", encodedQr, singleLine = false) { encodedQr = it }
         FlowRow(
@@ -397,4 +468,345 @@ private fun QrPreviewControls() {
             color = XauxaColor.TextSecondary,
         )
     }
+}
+
+@Composable
+private fun HeroCardPreview(onEvent: (String) -> Unit) {
+    var withFooter by rememberSaveable { mutableStateOf(true) }
+    var clicks by rememberSaveable { mutableStateOf(0) }
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
+        LabControlRow("Footer") { LabToggle("footer", withFooter) { withFooter = it } }
+        XauxaHeroCard(
+            value = "Bs 1.250",
+            label = "Total de obligaciones",
+            footer = if (withFooter) "3 pendientes · 2 al día" else null,
+            onClick = {
+                clicks++
+                onEvent("XauxaHeroCard.onClick #$clicks")
+            },
+        )
+    }
+}
+
+@Composable
+private fun DialogPreview(onEvent: (String) -> Unit) {
+    var visible by rememberSaveable { mutableStateOf(false) }
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
+        XauxaPrimaryButton(label = "Eliminar destino…", onClick = { visible = true })
+        if (visible) {
+            XauxaDialog(
+                title = "Eliminar destino",
+                message = "Se eliminará el destino y sus comprobantes. Esta acción no se puede deshacer.",
+                confirmLabel = "Eliminar",
+                onConfirm = {
+                    visible = false
+                    onEvent("XauxaDialog.onConfirm")
+                },
+                dismissLabel = "Cancelar",
+                onDismiss = {
+                    visible = false
+                    onEvent("XauxaDialog.onDismiss")
+                },
+            )
+        }
+        Text(
+            "Diálogo con exactamente dos acciones; la destructiva es XauxaDangerButton.",
+            fontSize = XauxaType.Caption,
+            color = XauxaColor.TextSecondary,
+        )
+    }
+}
+
+@Composable
+private fun IconButtonPreview(onEvent: (String) -> Unit) {
+    var clicks by rememberSaveable { mutableStateOf(0) }
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        XauxaIconButton(
+            contentDescription = "Copiar resultado",
+            onClick = {
+                clicks++
+                onEvent("XauxaIconButton.onClick #$clicks")
+            },
+        ) {
+            Text("⧉", fontSize = XauxaType.Title, color = XauxaColor.TextPrimary)
+        }
+        Text(
+            "Área táctil de 48dp con etiqueta accesible. Activaciones: $clicks",
+            fontSize = XauxaType.Caption,
+            color = XauxaColor.TextSecondary,
+        )
+    }
+}
+
+@Composable
+private fun FilterChipPreview(onEvent: (String) -> Unit) {
+    var selected by rememberSaveable { mutableStateOf(false) }
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+            XauxaFilterChip(
+                label = "URL",
+                selected = selected,
+                onClick = {
+                    selected = !selected
+                    onEvent("XauxaFilterChip.onClick selected=$selected")
+                },
+            )
+            XauxaFilterChip(label = "Texto", selected = false, onClick = { onEvent("XauxaFilterChip.onClick Texto") })
+        }
+        Text(
+            "Filtra contenido; para clasificar en lectura usar XauxaCategoryChip.",
+            fontSize = XauxaType.Caption,
+            color = XauxaColor.TextSecondary,
+        )
+    }
+}
+
+@Composable
+private fun TextInputPreview() {
+    var value by rememberSaveable { mutableStateOf("") }
+    var error by rememberSaveable { mutableStateOf(false) }
+    var multiline by rememberSaveable { mutableStateOf(false) }
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
+        LabControlRow("Error") { LabToggle("error", error) { error = it } }
+        LabControlRow("Textarea") { LabToggle("multilínea", multiline) { multiline = it } }
+        XauxaTextInput(
+            label = "Nombre del destino",
+            value = value,
+            onValueChange = { value = it },
+            isError = error,
+            errorMessage = if (error) "El nombre es obligatorio" else null,
+            singleLine = !multiline,
+            minLines = if (multiline) 3 else 1,
+        )
+    }
+}
+
+@Composable
+private fun SearchBarPreview(onEvent: (String) -> Unit) {
+    var value by rememberSaveable { mutableStateOf("") }
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
+        XauxaSearchBar(
+            value = value,
+            onValueChange = { value = it },
+            onClear = {
+                value = ""
+                onEvent("XauxaSearchBar.onClear")
+            },
+        )
+        Text(
+            "Texto actual: “$value”",
+            fontSize = XauxaType.Caption,
+            color = XauxaColor.TextSecondary,
+        )
+    }
+}
+
+@Composable
+private fun SettingRowPreview(onEvent: (String) -> Unit) {
+    var checked by rememberSaveable { mutableStateOf(false) }
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
+        XauxaSettingRow(
+            title = "Sincronización automática",
+            description = "Sube los comprobantes al conectarse",
+            checked = checked,
+            onCheckedChange = {
+                checked = it
+                onEvent("XauxaSettingRow.onCheckedChange checked=$it")
+            },
+        )
+        XauxaSettingRow(
+            title = "Acerca de",
+            description = "Versión y licencias",
+            onClick = { onEvent("XauxaSettingRow.onClick Acerca de") },
+        )
+    }
+}
+
+@Composable
+private fun FavoriteTogglePreview(onEvent: (String) -> Unit) {
+    var favorite by rememberSaveable { mutableStateOf(false) }
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        XauxaFavoriteToggle(
+            favorite = favorite,
+            onCheckedChange = {
+                favorite = it
+                onEvent("XauxaFavoriteToggle.onCheckedChange favorite=$it")
+            },
+        )
+        Text(
+            if (favorite) "Marcado como favorito" else "Sin marcar",
+            fontSize = XauxaType.Label,
+            color = XauxaColor.TextPrimary,
+        )
+    }
+    Text(
+        "Control real sin integración de producto: demostración.",
+        fontSize = XauxaType.Caption,
+        color = XauxaColor.TextSecondary,
+    )
+}
+
+@Composable
+private fun ToastPreview(onEvent: (String) -> Unit) {
+    var tone by rememberSaveable { mutableStateOf(XauxaTone.Success) }
+    var dismissed by rememberSaveable { mutableStateOf(false) }
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs)) {
+            XauxaFilterChip(label = "Éxito", selected = tone == XauxaTone.Success, onClick = { tone = XauxaTone.Success })
+            XauxaFilterChip(label = "Error", selected = tone == XauxaTone.Danger, onClick = { tone = XauxaTone.Danger })
+        }
+        if (!dismissed) {
+            XauxaToast(
+                message = "Destino eliminado",
+                tone = tone,
+                actionLabel = "Deshacer",
+                onAction = { onEvent("XauxaToast.onAction Deshacer") },
+                onDismiss = {
+                    dismissed = true
+                    onEvent("XauxaToast.onDismiss")
+                },
+            )
+        } else {
+            XauxaTextAction(label = "Mostrar de nuevo", onClick = { dismissed = false })
+        }
+    }
+}
+
+@Composable
+private fun InlineResultPreview(onEvent: (String) -> Unit) {
+    XauxaInlineResult(
+        title = "https://ejemplo.bo/pago/123",
+        meta = "URL · hace 2 min",
+        tone = XauxaTone.Info,
+        actions = {
+            XauxaTextAction(label = "Copiar", onClick = { onEvent("XauxaInlineResult Copiar") })
+        },
+    )
+}
+
+@Composable
+private fun SkeletonPreview() {
+    XauxaSkeleton(lines = 3)
+}
+
+@Composable
+private fun ErrorPagePreview(onEvent: (String) -> Unit) {
+    XauxaErrorPage(
+        title = "No se pudo cargar",
+        message = "La sincronización falló. Revisa tu conexión e inténtalo de nuevo.",
+        actionLabel = "Reintentar",
+        onAction = { onEvent("XauxaErrorPage.onAction Reintentar") },
+        secondaryLabel = "Volver",
+        onSecondary = { onEvent("XauxaErrorPage.onSecondary Volver") },
+    )
+}
+
+@Composable
+private fun LoadMorePreview(onEvent: (String) -> Unit) {
+    var loading by rememberSaveable { mutableStateOf(false) }
+    var end by rememberSaveable { mutableStateOf(false) }
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
+        LabControlRow("Cargando") { LabToggle("cargando", loading) { loading = it } }
+        LabControlRow("Fin") { LabToggle("fin", end) { end = it } }
+        XauxaLoadMoreFooter(
+            isLoading = loading,
+            endReached = end,
+            onLoadMore = { onEvent("XauxaLoadMoreFooter.onLoadMore") },
+        )
+    }
+}
+
+@Composable
+private fun ListRowPreview(onEvent: (String) -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs)) {
+        XauxaListRow(
+            title = "Mensualidad escolar",
+            subtitle = "Vence el día 5 · Bs 450",
+            tone = XauxaTone.Warning,
+            onClick = { onEvent("XauxaListRow.onClick Mensualidad") },
+        )
+        XauxaListRow(
+            title = "Pago de luz",
+            subtitle = "Al día",
+            tone = XauxaTone.Success,
+        )
+    }
+}
+
+@Composable
+private fun StatBlockPreview() {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+        XauxaStatBlock(value = "24", label = "Escaneos")
+        XauxaStatBlock(value = "98%", label = "Éxito", tone = XauxaTone.Success)
+        XauxaStatBlock(value = "3", label = "Fallos", tone = XauxaTone.Danger)
+    }
+}
+
+@Composable
+private fun BadgePreview() {
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+            XauxaBadge(text = "Pendiente", tone = XauxaTone.Warning)
+            XauxaBadge(text = "Al día", tone = XauxaTone.Success, solid = true)
+            XauxaBadge(text = "URL", tone = XauxaTone.Info)
+        }
+        Text(
+            "Rectangulares por invariante 02 (XauxaXcan usa rounded-sm).",
+            fontSize = XauxaType.Caption,
+            color = XauxaColor.TextSecondary,
+        )
+    }
+}
+
+@Composable
+private fun CategoryChipPreview() {
+    Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+        XauxaCategoryChip(label = "Servicios")
+        XauxaCategoryChip(label = "Educación")
+    }
+}
+
+@Composable
+private fun ScannerViewportPreview() {
+    var scanning by rememberSaveable { mutableStateOf(false) }
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
+        LabControlRow("Escaneando") { LabToggle("scanning", scanning) { scanning = it } }
+        XauxaScannerViewport(scanning = scanning)
+        Text(
+            "Encuadre preview real; el escaneo real requiere cámara por plataforma.",
+            fontSize = XauxaType.Caption,
+            color = XauxaColor.TextSecondary,
+        )
+    }
+}
+
+@Composable
+private fun FileUploadPreview(onEvent: (String) -> Unit) {
+    var file by rememberSaveable { mutableStateOf<String?>(null) }
+    var loading by rememberSaveable { mutableStateOf(false) }
+    XauxaFileUpload(
+        fileName = file,
+        isLoading = loading,
+        onSelect = {
+            loading = true
+            file = "comprobante-042.png"
+            loading = false
+            onEvent("XauxaFileUpload.onSelect (simulado: picker pendiente)")
+        },
+        onClear = {
+            file = null
+            onEvent("XauxaFileUpload.onClear")
+        },
+    )
+    Text(
+        "Selección simulada: el picker nativo queda pendiente por plataforma.",
+        fontSize = XauxaType.Caption,
+        color = XauxaColor.TextSecondary,
+    )
 }

@@ -79,21 +79,41 @@ class LabCatalogIntegrityTest {
             "xauxa-screen",
             "xauxa-section",
             "xauxa-tile",
+            "xauxa-hero-card",
+            "xauxa-dialog",
             "xauxa-primary-button",
             "xauxa-secondary-button",
+            "xauxa-danger-button",
             "xauxa-text-action",
+            "xauxa-icon-button",
+            "xauxa-filter-chip",
+            "xauxa-text-input",
+            "xauxa-search-bar",
+            "xauxa-setting-row",
+            "xauxa-favorite-toggle",
+            "xauxa-toast",
             "xauxa-status-banner",
+            "xauxa-inline-result",
             "xauxa-loading",
+            "xauxa-skeleton",
             "xauxa-empty-state",
+            "xauxa-error-page",
+            "xauxa-load-more",
+            "xauxa-list-row",
+            "xauxa-stat-block",
+            "xauxa-badge",
+            "xauxa-category-chip",
             "xauxa-favorite-indicator",
             "xauxa-qr-preview",
+            "xauxa-scanner-viewport",
+            "xauxa-file-upload",
         )
         assertEquals(expected, LabComponentCatalog.components.map { it.id }.toSet())
     }
 
     @Test
     fun catalog_covers_every_real_foundation() {
-        val expected = setOf("xauxa-color", "xauxa-spacing", "xauxa-metrics", "xauxa-type")
+        val expected = setOf("xauxa-color", "xauxa-spacing", "xauxa-metrics", "xauxa-type", "xauxa-motion", "xauxa-focus")
         assertEquals(expected, LabComponentCatalog.foundations.map { it.id }.toSet())
     }
 
