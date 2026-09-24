@@ -1,102 +1,125 @@
-# Estado de implementación — alineación V1
+# Estado de implementación — V1 / Release Gate
 
-## Situación
+## Situación actual
 
-La especificación funcional V1 y el contrato UX/UI V1 están aprobados. La UX/UI está congelada y pasa a ser el contrato para la implementación.
+La especificación funcional V1 y el contrato UX/UI V1 están congelados y continúan siendo la fuente de verdad para producto, dominio e interacción.
 
-El repositorio contiene la base KMP de destinos QR, operaciones y comprobantes, además de persistencia local, Supabase y sincronización local-first.
+main contiene la fundación local-first, Supabase, Contextos, Operaciones, Comprobantes, búsqueda global, importación por lote y la integración de presentación correspondiente.
 
-## Estado tras auditoría V1 (2026-09)
+No se introducen cambios de UX fuera del contrato congelado.
 
-- autenticación Supabase y aislamiento por usuario;
-- RLS en recursos propios;
-- Storage privado por usuario;
-- persistencia local user-scoped;
-- cola durable user-scoped con backoff, deduplicación y recuperación;
-- repositorios Sync* con local-first + encolado en fallo remoto;
-- comprobantes independientes, asociación reversible y múltiples comprobantes por operación;
-- detección de duplicados no bloqueante;
-- eliminación con histórico mínimo;
-- indicadores offline/sync pending documentados en la auditoría;
-- Android validado según la auditoría V1;
-- iOS arquitectónicamente preparado pero funcionalmente UNTESTED.
+## Implementado y validado
 
-## UX/UI
-
-La especificación congelada está en:
-
-`docs/04-ux/02-especificacion-ux-ui-v1.md`
-
-La suite de estados/eventos está en:
-
-`docs/08-validacion/02-suite-estados-eventos-v1.md`
-
-La implementación debe satisfacer esos contratos. Estos documentos no autorizan crear un segundo modelo de negocio ni modificar silenciosamente la UX.
-
-## Pendiente / Fuera de V1
-
-- validación UI real de todos los estados;
-- E2E offline↔online con kill/restart;
-- validación runtime de accesibilidad;
-- validación de latencia extrema;
-- validación iOS funcional;
-- paginación/realtime/biometría según alcance documentado;
-- OCR, contabilidad, facturación, CRM, wallet y roles multiempresa.
-
-## Regla
-
-Código existente no equivale a capacidad validada en plataforma.
-
-Una prueba UX conceptual PASS tampoco equivale a una validación runtime. La evidencia de implementación debe conservar esta distinción.
-
-
-## Fundación de Contexto implementada
-
-- `Context` con persistencia local-first y Supabase.
-- `contextId?` en QR/Destination, Activity/Operation y Comprobante.
-- migración `005_context_relations.sql` con integridad por usuario.
-- casos de uso para asociación reversible a contexto.
-- agregación `ContextContents` para la pantalla de contexto.
+### Dominio y datos
+- Context con persistencia local-first y Supabase.
+- contextId? en QR/Destination, Operation y Comprobante.
+- relaciones de contexto reversibles.
 - búsqueda global sobre Context, QR, Activity y Comprobante.
-- tests de dominio para relaciones, asociación y búsqueda.
+- operaciones PAGO/COBRO con histórico mínimo al eliminar.
+- comprobantes asociados o independientes.
+- asociación/desasociación reversible.
+- detección de comprobantes duplicados.
+- almacenamiento de bytes separado del estado de UI.
+- aislamiento por usuario.
+- RLS y Storage privado por usuario.
 
-La siguiente fase adapta estas capacidades al estado/presentación UX/UI V1 sin cambiar el contrato congelado.
+### Sincronización
+- cola durable user-scoped.
+- deduplicación por (resource, entityId).
+- última mutación gana.
+- DELETE sustituye UPSERT pendiente.
+- estados PENDING / PROCESSING / FAILED.
+- backoff y nextAttemptAt.
+- recuperación de PROCESSING tras reinicio.
+- procesamiento de CONTEXT / DESTINATION / OPERATION / COMPROBANTE.
+- SyncMutationEnqueuer y LocalSyncQueue compartidos por sesión autenticada.
 
+### Importación
+- flujo IMPORTANDO → ANALIZANDO → RESULTADO → REVISAR → GUARDAR → GUARDADO.
+- QR / COMPROBANTE / DESCONOCIDO.
+- elementos inválidos o desconocidos no bloquean los válidos.
+- duplicados quedan para revisión.
+- QR y comprobantes se persisten de forma independiente.
+- payload temporal eliminado después de persistencia exitosa.
+- fallos aislados por candidato y recuperables.
+- doble guardado protegido.
+- la clasificación no-QR es deliberadamente conservadora.
 
-## Presentación de Contexto y búsqueda — en implementación
+### Matching de comprobantes
+- asociación existente se conserva.
+- un único candidato fuerte puede proponerse.
+- candidatos débiles no se convierten en asociación automática.
+- múltiples candidatos se presentan como ambigüedad.
+- ausencia de evidencia suficiente deja el comprobante sin asociar.
 
-Se añadió la primera capa de presentación alineada con el contrato UX/UI congelado:
+### Presentation / Compose
+- Context screen.
+- Global Search.
+- registro de Operation con contexto.
+- revisión de QR.
+- revisión de comprobante.
+- comprobante duplicado bloqueado.
+- sugerencia determinista de asociación.
+- importación bulk con estados y acciones.
+- guardas contra doble guardado.
+- routing de resultados globales.
+- Android QR classification mediante ZXing.
 
-- navegación a Contextos desde la superficie existente;
-- detalle de Contexto agregando QR, actividades y comprobantes;
-- búsqueda global sobre Context/QR/Activity/Comprobante;
-- selección de contexto al registrar una actividad;
-- selección de contexto al editar/importar un QR;
-- IDs de entidad resistentes a colisiones de milisegundos;
-- guardas contra doble acción de guardado;
-- clasificación Android de imágenes mediante ZXing antes de tratarlas como QR.
+## CI
 
-La validación de compilación/runtime permanece pendiente de la pasada local de Gradle.
+PR #42 amplió el workflow para ejecutar domain, data, presentation, androidApp unit tests y assembleDebug.
 
-## Fase bulk import + comprobantes
+El cambio está mergeado en main mediante a75a8cf996741c3a94ba5a3d97656653f1d20366.
 
-- Agregado `ImportBatch` como contrato común de análisis: `QR / COMPROBANTE / DESCONOCIDO`.
-- Un elemento desconocido no invalida los elementos reconocidos.
-- Duplicados por huella estable quedan en revisión; la primera ocurrencia reconocida puede guardarse una sola vez.
-- Agregado `SuggestReceiptAssociationUseCase`:
-  - asociación existente se conserva;
-  - un único candidato dentro del contexto se propone;
-  - varios candidatos producen estado de ambigüedad;
-  - sin candidato de alta confianza se permite guardar sin asociar.
-- Tests de dominio agregados para clasificación, duplicados y asociación/ambigüedad.
-- La UI completa de lote (`IMPORTANDO → ANALIZANDO → RESULTADO → REVISAR → GUARDAR`) y la persistencia de bytes de comprobantes por lote quedan para la siguiente integración de presentación/Android.
-- Gradle todavía no se ejecuta; la validación local se hará al cerrar este bloque de implementación.
+El run de main asociado es 35940764289; al momento de esta actualización seguía en ejecución. No se debe declarar PASS hasta que finalice.
 
+## Pendientes reales
 
-## Fase idempotencia + estados de importación
+### P0
+- ninguno conocido.
 
-- Se reforzó la suite de la cola de sincronización: última mutación gana, DELETE sustituye UPSERT, backoff respeta la ventana y el estado sobrevive al round-trip JSON.
-- La cola mantiene deduplicación por `(resource, entityId)` y recuperación de `PROCESSING` tras reinicio.
-- Se agregó un reducer Kotlin puro para el flujo de importación V1: `IMPORTANDO → ANALIZANDO → RESULTADO → REVISAR → GUARDAR → GUARDADO`, con error recuperable.
-- Esta fase no introduce JavaScript, TypeScript, Python ni Bash en el código de aplicación.
-- Falta integrar el reducer con la UI Compose y conectar la persistencia del lote de comprobantes; después se ejecutará la validación Gradle completa.
+### P1 — validación runtime
+1. E2E offline → online con kill/restart.
+2. cambio de usuario en dispositivo real.
+3. validación runtime de estados de importación.
+4. validación runtime de asociación de comprobantes.
+5. validación de accesibilidad en dispositivo.
+6. prueba de errores recuperables en Android.
+
+### P2 — iOS
+- iOS sigue arquitectónicamente preparado pero no está validado funcionalmente.
+- reemplazar IosComprobanteFileStore en memoria por almacenamiento persistente con Foundation.
+- implementar NWPathMonitor real en PlatformNetworkMonitor.ios.kt.
+- completar adquisición iOS de importación bulk.
+- conectar Camera / Photos / Share mediante el boundary nativo existente.
+- ejecutar compilación y pruebas en Xcode.
+
+### P2 — pruebas de plataforma
+- prueba manual de camera/gallery/share.
+- prueba de imágenes no-QR.
+- prueba de PDFs.
+- prueba de lote grande.
+- prueba de duplicados.
+- prueba de recuperación después de matar la aplicación durante sincronización.
+
+### P3 — capacidad futura
+- OCR.
+- contabilidad.
+- facturación.
+- CRM.
+- wallet.
+- roles multiempresa.
+- biometría.
+- realtime avanzado.
+- paginación de almacenamiento a gran escala.
+
+## Riesgos conocidos
+- nowMillis() puede producir colisiones teóricas en el mismo milisegundo; las guardas de persistencia reducen el impacto.
+- observe() mantiene colecciones en memoria; el render ya está limitado/paginado en UI, pero el almacenamiento completo seguirá siendo un riesgo a escalas muy grandes.
+- iOS no tiene todavía evidencia de ejecución real.
+
+## Regla de cierre
+
+Código presente no equivale a capacidad validada.
+Una prueba conceptual PASS no equivale a una prueba runtime PASS.
+La siguiente etapa debe cerrar primero evidencia de ejecución y recuperación; no agregar funcionalidades fuera del contrato V1.
