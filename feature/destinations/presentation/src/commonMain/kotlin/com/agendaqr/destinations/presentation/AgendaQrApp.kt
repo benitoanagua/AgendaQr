@@ -149,6 +149,7 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
             associate = AssociateComprobanteToOperationUseCase(operationRepository, comprobanteRepository),
             saveComprobante = SaveComprobanteUseCase(comprobanteRepository, fileStore),
             findDuplicates = FindDuplicateComprobantesUseCase(comprobanteRepository, fileStore),
+            suggestReceiptAssociation = SuggestReceiptAssociationUseCase(comprobanteRepository, operationRepository),
         )
     }
     val operationState by operationsViewModel.state.collectAsState()
