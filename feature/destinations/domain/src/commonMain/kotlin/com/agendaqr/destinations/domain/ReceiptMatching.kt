@@ -127,8 +127,10 @@ class SuggestReceiptAssociationUseCase(
         }
 
         val dayDistance = kotlin.math.abs(operation.occurredAt - receipt.createdAt)
+        val sameCalendarDay =
+            operation.occurredAt / DAY_MILLIS == receipt.createdAt / DAY_MILLIS
         when {
-            dayDistance <= DAY_MILLIS -> score += SAME_DAY_SCORE
+            sameCalendarDay -> score += SAME_DAY_SCORE
             dayDistance <= THREE_DAYS_MILLIS -> score += NEAR_DATE_SCORE
         }
 
