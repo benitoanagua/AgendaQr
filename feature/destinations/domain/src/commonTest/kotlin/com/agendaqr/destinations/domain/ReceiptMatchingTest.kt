@@ -112,6 +112,40 @@ class ReceiptMatchingTest {
     }
 
     @Test
+    fun weak_single_candidate_is_none_even_when_it_has_a_near_date_signal() = runBlocking {
+        val receipt = receipt("r1", createdAt = 1_000_000L)
+        val operation = operation("op1", null, occurredAt = 1_000_000L + 2 * 86_400_000L)
+        val useCase = SuggestReceiptAssociationUseCase(
+            comprobantes = FakeComprobanteRepository(receipt),
+            operations = FakeOperationRepository(listOf(operation)),
+        )
+
+        val result = useCase("r1")
+
+        assertEquals(ReceiptMatchKind.NONE, result.kind)
+        assertEquals(emptyList(), result.operationIds)
+    }
+
+    @Test
+    fun weak_multiple_candidates_remain_ambiguous() = runBlocking {
+        val receipt = receipt("r1", createdAt = 1_000_000L)
+        val useCase = SuggestReceiptAssociationUseCase(
+            comprobantes = FakeComprobanteRepository(receipt),
+            operations = FakeOperationRepository(
+                listOf(
+                    operation("op1", null, occurredAt = 1_000_000L + 2 * 86_400_000L),
+                    operation("op2", null, occurredAt = 1_000_000L + 2 * 86_400_000L),
+                ),
+            ),
+        )
+
+        val result = useCase("r1")
+
+        assertEquals(ReceiptMatchKind.MULTIPLE, result.kind)
+        assertEquals(setOf("op1", "op2"), result.operationIds.toSet())
+    }
+
+    @Test
     fun no_context_and_no_high_confidence_match_can_be_saved_unassociated() = runBlocking {
         val receipt = receipt("receipt", contextId = null)
         val useCase = SuggestReceiptAssociationUseCase(

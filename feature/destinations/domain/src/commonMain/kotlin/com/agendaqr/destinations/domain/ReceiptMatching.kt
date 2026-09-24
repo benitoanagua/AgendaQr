@@ -94,8 +94,17 @@ class SuggestReceiptAssociationUseCase(
             )
         }
 
+        if (second == null) {
+            return ReceiptAssociationSuggestion(
+                kind = ReceiptMatchKind.NONE,
+                receiptId = comprobanteId,
+                operationIds = emptyList(),
+            )
+        }
+
+        val ambiguityFloor = (top.second - MIN_SCORE_MARGIN + 1).coerceAtLeast(1)
         val ambiguousIds = scored
-            .takeWhile { (_, score) -> score == top.second || score >= top.second }
+            .takeWhile { (_, score) -> score >= ambiguityFloor }
             .take(MAX_AMBIGUOUS_CANDIDATES)
             .map { it.first.id }
 
