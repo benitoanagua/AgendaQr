@@ -21,29 +21,35 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
         is OperationRoute.Detail -> OperationDetailScreen(state, viewModel)
     }
     state.pendingIncoming?.let { incoming ->
+        val duplicate = state.pendingDuplicates.isNotEmpty()
         AlertDialog(
             onDismissRequest = { viewModel.onAction(OperationAction.ClearIncoming) },
-            title = { Text("Comprobante recibido") },
+            title = { Text(if (duplicate) "Comprobante duplicado" else "Comprobante recibido") },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                    Text("Guardado en tu bandeja de respaldos sin asociar.")
-                    Text("Archivo: " + incoming.extension, color = XauxaColor.TextSecondary)
-                    if (state.pendingDuplicates.isNotEmpty()) {
-                        XauxaStatusBanner("Ya existe un comprobante igual. Puedes guardarlo de todos modos.")
+                    if (duplicate) {
+                        Text("Ya existe un comprobante igual. No se guardará otra copia.")
+                    } else {
+                        Text("Se guardará en tu bandeja de respaldos sin asociar.")
                     }
+                    Text("Archivo: " + incoming.extension, color = XauxaColor.TextSecondary)
                 }
             },
             confirmButton = {
                 XauxaPrimaryButton(
-                    if (state.isSavingReceipt) "Guardando…" else "LISTO / OK",
-                    { viewModel.onAction(OperationAction.SaveIncoming(false)) },
+                    if (duplicate) "CERRAR" else if (state.isSavingReceipt) "Guardando…" else "LISTO / OK",
+                    { viewModel.onAction(OperationAction.ClearIncoming.takeIf { duplicate } ?: OperationAction.SaveIncoming(false)) },
                     enabled = !state.isSavingReceipt,
                 )
             },
-            dismissButton = {
-                XauxaTextAction(label = "ASOCIAR AHORA (Opcional)", onClick = {
-                    viewModel.onAction(OperationAction.SaveIncoming(true))
-                })
+            dismissButton = if (!duplicate) {
+                {
+                    XauxaTextAction(label = "ASOCIAR AHORA (Opcional)", onClick = {
+                        viewModel.onAction(OperationAction.SaveIncoming(true))
+                    })
+                }
+            } else {
+                null
             },
         )
     }
