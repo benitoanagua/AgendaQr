@@ -20,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaTile
@@ -79,7 +78,7 @@ fun AgendaQrComponentLab(
                     label = { Text("Buscar QR, persona u obligación") },
                     singleLine = true,
                 )
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                     listOf("Todos", "Por vencer", "Vencidos").forEach { filter ->
                         if (activeFilter == filter) {
                             XauxaPrimaryButton(label = filter, onClick = { activeFilter = filter })
@@ -93,7 +92,7 @@ fun AgendaQrComponentLab(
             LabSection(title = "Elemento de lista · obligación") {
                 XauxaTile {
                     Column(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(XauxaSpacing.Lg),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Text("Mensualidad escolar", style = MaterialTheme.typography.titleMedium)
@@ -129,7 +128,7 @@ fun AgendaQrComponentLab(
                 XauxaTile {
                     Column(
                         modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
                     ) {
                         Text("QR asociado", style = MaterialTheme.typography.titleMedium)
                         Text("Titular: Colegio Los Pinos", style = MaterialTheme.typography.bodyMedium)
@@ -141,7 +140,7 @@ fun AgendaQrComponentLab(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(XauxaSpacing.Sm))
             Text(
                 "Sin lógica de juego. La galería prueba patrones de AgendaQr con contenido de demostración; no conecta servicios ni guarda datos.",
                 style = MaterialTheme.typography.bodySmall,
