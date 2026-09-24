@@ -39,4 +39,4 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Run Android validation
-        run: ./gradlew :androidApp:testDebugUnitTest :androidApp:assembleDebug :feature:destinations:data:testDebugUnitTest --stacktrace
+        run: ./gradlew :feature:destinations:domain:testDebugUnitTest :feature:destinations:data:testDebugUnitTest :feature:destinations:presentation:testDebugUnitTest :androidApp:testDebugUnitTest :androidApp:assembleDebug --stacktrace
