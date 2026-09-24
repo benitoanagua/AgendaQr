@@ -80,8 +80,9 @@ El último run de main antes de esta corrección (35941171336) falló en **Domai
 - `./gradlew :feature:destinations:presentation:testDebugUnitTest --stacktrace` → **PASS** (3 tests, 0 fallos).
 - `./gradlew :androidApp:testDebugUnitTest --stacktrace` → **PASS pero NO-SOURCE**: androidApp no declara unit tests propios. La cobertura unitaria Android real vive en los testDebugUnitTest de domain/data/presentation (variantes Android de los módulos KMP).
 - `./gradlew :androidApp:assembleDebug --stacktrace` → **PASS** (APK debug generado).
+- Verificación de zona horaria (domain, re-ejecutado renovando el daemon de Gradle en cada corrida para que la `TZ` sea efectiva en la JVM de test): `TZ=UTC`, `TZ=America/La_Paz` (UTC−4), `TZ=Pacific/Kiritimati` (UTC+14) y `TZ=Pacific/Midway` (UTC−11) → **PASS (43 tests, 0 fallos) en todas**. Nota: `Asia/Kiritimati` no es una zona válida de tzdb (la JVM la resuelve como GMT); la zona real de Kiritimati (UTC+14) es `Pacific/Kiritimati`.
 
-No se declara PASS del workflow de CI hasta que el run posterior a esta corrección finalice correctamente.
+El primer run de CI posterior al push del commit de cierre (`e3f45f6`, "Android validation" run #108) completó con **success** bajo gate estricto: domain, data, presentation y androidApp tests más assembleDebug ejecutados y verdes (https://github.com/benitoanagua/AgendaQr/actions/runs/35947595021). Runs futuros deben mantenerse verdes; cualquier fallo vuelve a abrir el gate.
 
 ### Bugs corregidos en esta pasada
 
