@@ -32,67 +32,74 @@ class SaveImportBatchUseCase(
         var skipped = 0
 
         batch.uniqueRecognized.forEach { candidate ->
-            when (candidate.kind) {
-                ImportKind.QR -> {
-                    val asset = candidate.qrAsset
-                    if (asset == null) {
-                        skipped++
-                    } else {
-                        val alreadyExists = destinations.observe().first().any { it.qr == asset }
-                        if (alreadyExists || destinations.get(candidate.id) != null) {
+            try {
+                when (candidate.kind) {
+                    ImportKind.QR -> {
+                        val asset = candidate.qrAsset
+                        if (asset == null) {
                             skipped++
                         } else {
-                            val now = nowMillis()
-                            destinations.save(
-                                Destination(
-                                    id = candidate.id,
-                                    name = "",
-                                    qr = asset,
-                                    createdAt = now,
-                                    updatedAt = now,
+                            val alreadyExists = destinations.observe().first().any { it.qr == asset }
+                            if (alreadyExists || destinations.get(candidate.id) != null) {
+                                skipped++
+                            } else {
+                                val now = nowMillis()
+                                destinations.save(
+                                    Destination(
+                                        id = candidate.id,
+                                        name = "",
+                                        qr = asset,
+                                        createdAt = now,
+                                        updatedAt = now,
+                                    )
                                 )
-                            )
-                            savedQr++
+                                savedQr++
+                            }
                         }
                     }
-                }
 
-                ImportKind.COMPROBANTE -> {
-                    val reference = candidate.payloadRef
-                    val bytes = reference?.let { payloadStore.read(it) }
-                    if (bytes == null || bytes.isEmpty()) {
-                        skipped++
-                    } else {
-                        val duplicate = FindDuplicateComprobantesUseCase(
-                            comprobantes,
-                            comprobanteFileStore,
-                        )(bytes).isNotEmpty()
-                        if (duplicate || comprobantes.get(candidate.id) != null) {
-                            payloadStore.delete(reference)
+                    ImportKind.COMPROBANTE -> {
+                        val reference = candidate.payloadRef
+                        val bytes = reference?.let { payloadStore.read(it) }
+                        if (bytes == null || bytes.isEmpty()) {
                             skipped++
                         } else {
-                            SaveComprobanteUseCase(
+                            val duplicate = FindDuplicateComprobantesUseCase(
                                 comprobantes,
                                 comprobanteFileStore,
-                            )(
-                                Comprobante(
-                                    id = candidate.id,
-                                    file = "",
-                                    createdAt = nowMillis(),
-                                    updatedAt = nowMillis(),
-                                    provenance = ReceiptProvenance.RECIBIDO,
-                                ),
-                                bytes,
-                                candidate.extension ?: "bin",
-                                candidate.mimeType ?: "application/octet-stream",
-                            )
-                            payloadStore.delete(reference)
-                            savedComprobantes++
+                            )(bytes).isNotEmpty()
+                            if (duplicate || comprobantes.get(candidate.id) != null) {
+                                payloadStore.delete(reference)
+                                skipped++
+                            } else {
+                                SaveComprobanteUseCase(
+                                    comprobantes,
+                                    comprobanteFileStore,
+                                )(
+                                    Comprobante(
+                                        id = candidate.id,
+                                        file = "",
+                                        createdAt = nowMillis(),
+                                        updatedAt = nowMillis(),
+                                        provenance = ReceiptProvenance.RECIBIDO,
+                                    ),
+                                    bytes,
+                                    candidate.extension ?: "bin",
+                                    candidate.mimeType ?: "application/octet-stream",
+                                )
+                                payloadStore.delete(reference)
+                                savedComprobantes++
+                            }
                         }
                     }
-                }
 
-                ImportKind.DESCONOCIDO -> skipped++
+                    ImportKind.DESCONOCIDO -> skipped++
+                }
+            } catch (_: Throwable) {
+                // One failed candidate must not prevent independent candidates
+                // from being persisted. Keep its payload so the candidate can
+                // be retried after the underlying failure is fixed.
+                skipped++
             }
         }
 
