@@ -121,6 +121,7 @@ fun AgendaQrComponentLab(
                                 scrollable = scrollable,
                                 onComponentSelected = { selectedId = it },
                                 onSectionChange = { section = it },
+                                onEvent = ::onEvent,
                             )
                         } else {
                             LabInspectorPane(
@@ -172,11 +173,10 @@ private fun LabHeader(
         title = "AgendaQr · Laboratorio de componentes",
         subtitle = "Herramienta de desarrollo; aislada de la navegación y la lógica de producción",
         trailing = {
-            FilterChip(
+            LabChoiceChip(
+                label = if (darkPreview) "Preview: oscuro" else "Preview: claro",
                 selected = darkPreview,
                 onClick = { onDarkPreviewChange(!darkPreview) },
-                label = { Text(if (darkPreview) "Preview: oscuro" else "Preview: claro") },
-                modifier = Modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
             )
         },
     ) {

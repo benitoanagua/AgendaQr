@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -112,7 +113,12 @@ fun XauxaDangerButton(
                 strokeWidth = XauxaMetrics.Border,
             )
         } else {
-            Text(label)
+            Text(
+                label.uppercase(),
+                fontSize = XauxaType.Label,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = XauxaType.LetterSpacingWide,
+            )
         }
     }
 }
@@ -132,17 +138,31 @@ fun XauxaHeroCard(
 ) {
     XauxaTile(modifier = modifier, onClick = onClick) {
         Column(modifier = Modifier.padding(XauxaSpacing.Lg)) {
-            Text(value, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
-            Text(label, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+            Text(
+                value,
+                fontSize = XauxaType.Display,
+                fontWeight = FontWeight.Bold,
+                fontFamily = XauxaType.FamilyMono,
+                color = XauxaColor.TextPrimary,
+            )
+            Text(
+                label.uppercase(),
+                fontSize = XauxaType.Label,
+                letterSpacing = XauxaType.LetterSpacingWide,
+                color = XauxaColor.TextSecondary,
+            )
             if (footer != null) {
                 Box(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(top = XauxaSpacing.Md)
-                        .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape)
-                        .padding(XauxaSpacing.Sm),
-                ) {
-                    Text(footer, fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary)
-                }
+                    modifier = Modifier.fillMaxWidth().padding(top = XauxaSpacing.Md)
+                        .background(XauxaColor.Border)
+                        .height(XauxaMetrics.BorderStrong),
+                )
+                Text(
+                    footer,
+                    modifier = Modifier.padding(top = XauxaSpacing.Sm),
+                    fontSize = XauxaType.Caption,
+                    color = XauxaColor.TextSecondary,
+                )
             }
         }
     }
@@ -173,7 +193,13 @@ fun XauxaBadge(
             .padding(horizontal = XauxaSpacing.Sm, vertical = XauxaSpacing.Xs),
         contentAlignment = Alignment.Center,
     ) {
-        Text(text, fontSize = XauxaType.Caption, fontWeight = FontWeight.SemiBold, color = foreground)
+        Text(
+            text.uppercase(),
+            fontSize = XauxaType.Caption,
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = XauxaType.LetterSpacingWide,
+            color = foreground,
+        )
     }
 }
 
@@ -203,7 +229,7 @@ fun XauxaListRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
-            modifier = Modifier.width(XauxaMetrics.Focus).fillMaxHeight().background(tone.content()),
+            modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight().background(tone.content()),
         )
         Column(
             modifier = Modifier.weight(XauxaToneWeight).padding(XauxaSpacing.Sm),
@@ -262,7 +288,14 @@ fun XauxaFilterChip(
         selected = selected,
         onClick = onClick,
         enabled = enabled,
-        label = { Text(label, fontSize = XauxaType.Label) },
+        label = {
+            Text(
+                label.uppercase(),
+                fontSize = XauxaType.Label,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = XauxaType.LetterSpacingWide,
+            )
+        },
         shape = RectangleShape,
         border = FilterChipDefaults.filterChipBorder(
             enabled = enabled,
@@ -476,7 +509,7 @@ fun XauxaToast(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
-        Box(modifier = Modifier.width(XauxaMetrics.Focus).fillMaxHeight().background(tone.content()))
+        Box(modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight().background(tone.content()))
         Text(
             message,
             modifier = Modifier.weight(XauxaToneWeight),
@@ -512,7 +545,7 @@ fun XauxaInlineResult(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
-        Box(modifier = Modifier.width(XauxaMetrics.Focus).fillMaxHeight().background(tone.content()))
+        Box(modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight().background(tone.content()))
         Column(modifier = Modifier.weight(XauxaToneWeight)) {
             Text(title, fontSize = XauxaType.Body, color = XauxaColor.TextPrimary)
             if (meta != null) {
@@ -540,10 +573,17 @@ fun XauxaStatBlock(
             value,
             fontSize = XauxaType.Headline,
             fontWeight = FontWeight.Bold,
-            color = if (tone == XauxaTone.Neutral) XauxaColor.TextPrimary else tone.content(),
+            fontFamily = XauxaType.FamilyMono,
+            color = if (tone == XauxaTone.Neutral) XauxaColor.Brand else tone.content(),
             textAlign = TextAlign.Center,
         )
-        Text(label, fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary, textAlign = TextAlign.Center)
+        Text(
+            label.uppercase(),
+            fontSize = XauxaType.Caption,
+            letterSpacing = XauxaType.LetterSpacingWide,
+            color = XauxaColor.TextSecondary,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
@@ -659,6 +699,47 @@ fun XauxaFavoriteToggle(
 }
 
 /**
+ * Cabecera de tile con banda de marca (patrón tile-header de XauxaXcan:
+ * fondo Brand, título uppercase y slot de estado/acciones). Opt-in: las
+ * pantallas existentes que usan XauxaSection no cambian.
+ */
+@Composable
+fun XauxaTileHeader(
+    title: String,
+    modifier: Modifier = Modifier,
+    status: String? = null,
+    actions: (@Composable () -> Unit)? = null,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(XauxaColor.Brand)
+            .padding(XauxaSpacing.Lg),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+    ) {
+        Text(
+            title.uppercase(),
+            modifier = Modifier.weight(XauxaToneWeight),
+            fontSize = XauxaType.Title,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = XauxaType.LetterSpacingWide,
+            color = XauxaColor.OnBrand,
+        )
+        if (status != null) {
+            Text(
+                status.uppercase(),
+                fontSize = XauxaType.Caption,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = XauxaType.LetterSpacingWide,
+                color = XauxaColor.OnBrand,
+            )
+        }
+        actions?.invoke()
+    }
+}
+
+/**
  * Viewport de cámara/escáner. El encuadre es preview real; el escaneo real
  * requiere cámara y queda pendiente por plataforma (ver contrato).
  */
@@ -682,7 +763,7 @@ fun XauxaScannerViewport(
         ) {
             Box(
                 modifier = Modifier.size(XauxaMetrics.QrPreviewSize)
-                    .border(BorderStroke(XauxaMetrics.Focus, XauxaColor.Brand), RectangleShape),
+                    .border(BorderStroke(XauxaMetrics.BorderStrong, XauxaColor.Brand), RectangleShape),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(

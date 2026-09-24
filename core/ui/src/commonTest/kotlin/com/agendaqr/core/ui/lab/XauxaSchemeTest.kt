@@ -88,4 +88,45 @@ class XauxaSchemeTest {
         assertEquals(LightXauxaColorScheme.brand, DarkXauxaColorScheme.brand)
         assertEquals(LightXauxaColorScheme.focusRing, DarkXauxaColorScheme.focusRing)
     }
+
+    /**
+     * Required semantic fields per scheme. The data-class constructor makes
+     * a missing field a compile error; this test pins the required set so a
+     * silent rename/removal is caught in review, and proves no token is
+     * dark-only.
+     */
+    @Test
+    fun both_schemes_expose_the_same_required_semantic_fields() {
+        fun XauxaColorScheme.fields(): Map<String, Color> = mapOf(
+            "background" to background,
+            "surface" to surface,
+            "surface2" to surface2,
+            "surface3" to surface3,
+            "border" to border,
+            "textPrimary" to textPrimary,
+            "textSecondary" to textSecondary,
+            "textTertiary" to textTertiary,
+            "brand" to brand,
+            "brandAccent" to brandAccent,
+            "onBrand" to onBrand,
+            "white" to white,
+            "success" to success,
+            "successBg" to successBg,
+            "danger" to danger,
+            "dangerBg" to dangerBg,
+            "warning" to warning,
+            "warningBg" to warningBg,
+            "info" to info,
+            "infoBg" to infoBg,
+            "focusRing" to focusRing,
+        )
+        val light = LightXauxaColorScheme.fields()
+        val dark = DarkXauxaColorScheme.fields()
+        assertEquals(light.keys, dark.keys)
+        assertEquals(21, light.size)
+        // Every neutral role actually switches; shared accents stay put.
+        listOf("background", "surface", "surface2", "surface3", "border", "textPrimary", "successBg", "dangerBg").forEach { key ->
+            assertNotEquals(light.getValue(key), dark.getValue(key), "$key must switch with the theme")
+        }
+    }
 }

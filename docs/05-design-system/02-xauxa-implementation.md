@@ -63,7 +63,7 @@ ver historial Git). Estructura:
 - `LocalXauxaColorScheme` + fachada `XauxaColor`: los componentes consumen
   `XauxaColor.Surface` etc. y reciben el esquema vigente sin comprobar el
   tema a mano. Sin provider explícito rige el claro.
-- `XauxaSpacing`, `XauxaMetrics`, `XauxaType`, `XauxaMotion`: sin cambios.
+- `XauxaSpacing`, `XauxaMetrics` (`Border` 1px, `BorderStrong` 2px para marcadores/marcos/footers, `Focus` 2px, `ControlMinSize` 48dp), `XauxaType` (escala + `LetterSpacingWide` + `FamilyUi`/`FamilyMono`), `XauxaMotion`: sin cambios salvo extensiones documentadas.
 
 `AgendaQrTheme(darkTheme)` provee el esquema y mapea `MaterialTheme`. La
 producción no usa el wrapper y queda en claro, idéntica a antes.

@@ -79,6 +79,7 @@ class LabCatalogIntegrityTest {
             "xauxa-screen",
             "xauxa-section",
             "xauxa-tile",
+            "xauxa-tile-header",
             "xauxa-hero-card",
             "xauxa-dialog",
             "xauxa-primary-button",

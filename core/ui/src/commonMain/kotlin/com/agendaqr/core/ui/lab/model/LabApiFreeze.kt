@@ -17,6 +17,7 @@ object LabApiFreeze {
         "xauxa-screen",
         "xauxa-section",
         "xauxa-tile",
+        "xauxa-tile-header",
         "xauxa-hero-card",
         "xauxa-primary-button",
         "xauxa-secondary-button",

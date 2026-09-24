@@ -72,7 +72,7 @@ No se introducen cambios de UX fuera del contrato congelado.
 - Host WebAssembly: el laboratorio se ejecuta en el navegador mediante el target `wasmJs` de `core:ui` (entrypoint `AgendaQrComponentLabWebMain.kt` + recursos web en `wasmJsMain/resources`). Se construye con `./gradlew componentLabWeb` y se sirve en `build/web/component-lab/`.
 - El host Android solo-debug fue retirado (`ComponentLabActivity`, su manifiesto y el `debugImplementation(project(":core:ui"))`); `androidApp` ya no tiene dependencia del lab en ningún build.
 - Aislado de navegación, repositorios y servicios de producción; documentación en `docs/04-ux/03-laboratorio-componentes-compose.md` y brechas Xauxa en `docs/05-design-system/03-xauxa-brechas-y-trazabilidad.md`.
-- Validación: 39 pruebas unitarias del modelo PASS (integridad, búsqueda, matriz, gobierno, patrones, esquemas); compilación Wasm del host PASS y revisión en navegador headless (Chromium) con evidencia registrada en el documento del laboratorio. Host iOS: pendiente.
+- Validación: 40 pruebas unitarias del modelo PASS (integridad, búsqueda, matriz, gobierno, patrones, esquemas); features domain/data/presentation PASS sin cambios; compilación Wasm del host PASS y revisión en navegador headless (Chromium) con evidencia registrada en el documento del laboratorio; `assembleDebug` y `assembleRelease` PASS. Host iOS: pendiente.
 
 ## CI
 

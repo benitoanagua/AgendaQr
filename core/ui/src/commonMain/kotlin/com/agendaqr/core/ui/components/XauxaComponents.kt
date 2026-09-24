@@ -65,7 +65,13 @@ fun XauxaSection(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(title, fontSize = XauxaType.Title, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
+            Text(
+                title.uppercase(),
+                fontSize = XauxaType.Title,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = XauxaType.LetterSpacingWide,
+                color = XauxaColor.TextPrimary,
+            )
             trailing?.invoke()
         }
         Spacer(Modifier.height(XauxaSpacing.Md))
@@ -122,7 +128,12 @@ fun XauxaPrimaryButton(
                 strokeWidth = XauxaMetrics.Border,
             )
         } else {
-            Text(label)
+            Text(
+                label.uppercase(),
+                fontSize = XauxaType.Label,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = XauxaType.LetterSpacingWide,
+            )
         }
     }
 }
@@ -149,7 +160,13 @@ fun XauxaSecondaryButton(
                 strokeWidth = XauxaMetrics.Border,
             )
         } else {
-            Text(label, color = XauxaColor.TextPrimary)
+            Text(
+                label.uppercase(),
+                fontSize = XauxaType.Label,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = XauxaType.LetterSpacingWide,
+                color = XauxaColor.TextPrimary,
+            )
         }
     }
 }
@@ -160,7 +177,15 @@ fun XauxaTextAction(label: String, onClick: () -> Unit, modifier: Modifier = Mod
         modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         onClick = onClick,
         shape = RectangleShape,
-    ) { Text(label, color = XauxaColor.Brand) }
+    ) {
+        Text(
+            label.uppercase(),
+            fontSize = XauxaType.Label,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = XauxaType.LetterSpacingWide,
+            color = XauxaColor.Brand,
+        )
+    }
 }
 
 @Composable

@@ -8,7 +8,22 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.agendaqr.core.ui.components.XauxaDialog
+import com.agendaqr.core.ui.components.XauxaEmptyState
+import com.agendaqr.core.ui.components.XauxaErrorPage
+import com.agendaqr.core.ui.components.XauxaFileUpload
+import com.agendaqr.core.ui.components.XauxaHeroCard
+import com.agendaqr.core.ui.components.XauxaInlineResult
+import com.agendaqr.core.ui.components.XauxaScannerViewport
+import com.agendaqr.core.ui.components.XauxaSettingRow
+import com.agendaqr.core.ui.components.XauxaTextInput
+import com.agendaqr.core.ui.components.XauxaToast
+import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.lab.model.LabComponentCatalog
 import com.agendaqr.core.ui.lab.model.LabPattern
 import com.agendaqr.core.ui.theme.XauxaSpacing
@@ -26,6 +41,7 @@ internal fun LabPatternPane(
     scrollable: Boolean = true,
     onComponentSelected: (String) -> Unit = {},
     onSectionChange: (LabSection) -> Unit = {},
+    onEvent: (String) -> Unit = {},
 ) {
     val sections: List<@Composable () -> Unit> = listOf(
         {
@@ -48,6 +64,14 @@ internal fun LabPatternPane(
                         )
                     }
                 }
+            }
+        },
+        {
+            LabPanel(
+                title = "Escenario",
+                subtitle = "Composición real con datos ficticios" + if (pattern.demo) " · demostración" else "",
+            ) {
+                LabPatternScenario(pattern, onEvent)
             }
         },
         {
@@ -104,5 +128,84 @@ internal fun LabPatternPane(
         ) {
             sections.forEach { it() }
         }
+    }
+}
+
+/**
+ * Live scenario per pattern: the real contracts composed with fake local
+ * data. Interactive callbacks report to the lab event log; platform-bound
+ * steps (camera, picker) render their honest presentational state.
+ */
+@Composable
+private fun LabPatternScenario(pattern: LabPattern, onEvent: (String) -> Unit) {
+    when (pattern.id) {
+        "primera-vez" -> XauxaEmptyState(
+            title = "Sin destinos todavía",
+            actionLabel = "Añadir destino",
+            onAction = { onEvent("Patrón primera-vez: XauxaEmptyState.onAction") },
+        )
+        "fallo-puntual" -> XauxaToast(
+            message = "No se pudo sincronizar",
+            tone = XauxaTone.Danger,
+            actionLabel = "Reintentar",
+            onAction = { onEvent("Patrón fallo-puntual: XauxaToast.onAction") },
+            onDismiss = { onEvent("Patrón fallo-puntual: XauxaToast.onDismiss") },
+        )
+        "fallo-contenido" -> XauxaInlineResult(
+            title = "Comprobante ilegible",
+            meta = "IMG_042.png · reintenta la captura",
+            tone = XauxaTone.Danger,
+        )
+        "fallo-aplicacion" -> XauxaErrorPage(
+            title = "No se pudo cargar",
+            message = "La sincronización falló. Revisa tu conexión.",
+            actionLabel = "Reintentar",
+            onAction = { onEvent("Patrón fallo-aplicacion: XauxaErrorPage.onAction") },
+            secondaryLabel = "Volver",
+            onSecondary = { onEvent("Patrón fallo-aplicacion: XauxaErrorPage.onSecondary") },
+        )
+        "pantalla-completa" -> XauxaHeroCard(
+            value = "Bs 1.250",
+            label = "Total de obligaciones",
+            footer = "3 pendientes · 2 al día",
+        )
+        "incorporacion" -> Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
+            XauxaScannerViewport()
+            XauxaFileUpload(
+                onSelect = { onEvent("Patrón incorporacion: XauxaFileUpload.onSelect (simulado)") },
+                onClear = { onEvent("Patrón incorporacion: XauxaFileUpload.onClear") },
+            )
+            var manual by rememberSaveable { mutableStateOf("") }
+            XauxaTextInput(
+                label = "Pegar contenido",
+                value = manual,
+                onValueChange = { manual = it },
+            )
+        }
+        "bloqueo-opcional" -> {
+            var locked by rememberSaveable { mutableStateOf(false) }
+            XauxaSettingRow(
+                title = "Bloquear edición",
+                description = "Pide confirmación antes de modificar",
+                checked = locked,
+                onCheckedChange = {
+                    locked = it
+                    onEvent("Patrón bloqueo-opcional: checked=$it")
+                },
+            )
+        }
+        "confirmacion-destructiva" -> XauxaDialog(
+            title = "Eliminar destino",
+            message = "Se eliminará el destino y sus comprobantes. Esta acción no se puede deshacer.",
+            confirmLabel = "Eliminar",
+            onConfirm = { onEvent("Patrón confirmacion-destructiva: XauxaDialog.onConfirm (demo, sin reversión real)") },
+            dismissLabel = "Cancelar",
+            onDismiss = { onEvent("Patrón confirmacion-destructiva: XauxaDialog.onDismiss") },
+        )
+        else -> Text(
+            "Patrón sin escenario.",
+            fontSize = XauxaType.Label,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }

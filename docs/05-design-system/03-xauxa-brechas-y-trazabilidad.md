@@ -108,6 +108,22 @@ README advierte que no fueron compilados contra un proyecto real. No se
 copian a `core:ui` en esta pasada; quedan como candidatos cuando producto
 los requiera, previa compilación y validación en el laboratorio.
 
+### Decisiones de fidelidad visual (XauxaXcan → AgendaQr)
+
+Verificadas contra `wwwroot/assets/styles/*.css` y capturas del catálogo:
+
+| Referencia | Decisión en AgendaQr | Evidencia |
+|---|---|---|
+| Botones `uppercase bold tracking-wide` (`buttons.css`) | Etiquetas en mayúsculas con `LetterSpacingWide` en primary/secondary/danger/text-action | `XauxaSecondaryButton`, captura secondary |
+| Tile header `bg-primary` + h2 uppercase (`tiles.css`) | Nuevo `XauxaTileHeader` opt-in (banda Brand, sin `shadow-lg` por invariante); `XauxaSection` existente no cambia de estructura | Captura tileheader |
+| Filtros `uppercase bold` + activo `bg-primary` (`history.css`) | `XauxaFilterChip` en mayúsculas; activo Brand | Preview filter-chip |
+| Stats: valor `text-primary font-bold font-mono`, etiqueta `uppercase` (`stats.css`) | `XauxaStatBlock` valor Brand + `FamilyMono`, etiqueta en mayúsculas | Captura stat |
+| `tile-stats` footer con `border-t-2` | Footer de hero con separador `BorderStrong` (2px, dentro de la invariante 1–2px) | Captura hero |
+| Scan-frame 3px + badges `rounded-sm` | Marco y marcadores en `BorderStrong` (2px); radios fijados a 0 por invariante | Contrato + capturas |
+| Sin webfont (sans del sistema + `font-mono`) | `FamilyUi` = sistema, `FamilyMono` = monoespaciada; webfonts Archivo/Roboto pendientes por decisión de producto | Specimen de tipo |
+| Neutros con tinte púrpura (`#FFF7FF`, `#151218`) | Se conserva el tinte teal de AgendaQr (`brand` teal por `color.product.agendaqr` de la referencia complementaria y ADR-0002) | Esquemas |
+| Press `scale(0.96)`, `animate-pulse`, `slide-in-down` | Ripple de Material para pressed; sin loops (invariante 07); skeleton estático | Componentes |
+
 ### Decisión vigente que limita variantes
 
 ADR-0002 (v12) **rechazó** la variación de acento por categoría de tile: un
@@ -134,6 +150,7 @@ categoría.
 | `XauxaScreen` | `core/ui/.../components/XauxaComponents.kt` | §03 superficies planas, regla 02/03 |
 | `XauxaSection` | ídem | §03, grid de página §08 |
 | `XauxaTile` | ídem | C1 |
+| `XauxaTileHeader` | `XauxaExtendedComponents.kt` | tile-header (`tiles.css`): banda Brand sin sombra |
 | `XauxaPrimaryButton` / `XauxaSecondaryButton` / `XauxaDangerButton` / `XauxaTextAction` / `XauxaIconButton` / `XauxaFilterChip` | `XauxaComponents.kt` + `XauxaExtendedComponents.kt` | C2 (+§10 estados) |
 | `XauxaTextInput` / `XauxaSearchBar` / `XauxaSettingRow` | `XauxaExtendedComponents.kt` | C19/C20, patrón settings |
 | `XauxaToast` / `XauxaInlineResult` | ídem | Notificaciones, C13/C17 |

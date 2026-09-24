@@ -52,6 +52,7 @@ import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaTextInput
 import com.agendaqr.core.ui.components.XauxaTile
+import com.agendaqr.core.ui.components.XauxaTileHeader
 import com.agendaqr.core.ui.components.XauxaToast
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.lab.model.LabComponentContract
@@ -104,6 +105,7 @@ internal fun LabComponentPreview(
                 "xauxa-screen" -> ScreenPreview()
                 "xauxa-section" -> SectionPreview(onEvent)
                 "xauxa-tile" -> TilePreview(onEvent)
+                "xauxa-tile-header" -> TileHeaderPreview()
                 "xauxa-hero-card" -> HeroCardPreview(onEvent)
                 "xauxa-dialog" -> DialogPreview(onEvent)
                 "xauxa-primary-button" -> PrimaryButtonPreview(onEvent)
@@ -158,11 +160,10 @@ private fun LabControlRow(label: String, control: @Composable () -> Unit) {
 /** Toggle control: a selected-state chip with the minimum touch target. */
 @Composable
 private fun LabToggle(label: String, value: Boolean, onChange: (Boolean) -> Unit) {
-    FilterChip(
+    LabChoiceChip(
+        label = if (value) "$label: sí" else "$label: no",
         selected = value,
         onClick = { onChange(!value) },
-        label = { Text(if (value) "$label: sí" else "$label: no") },
-        modifier = Modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
     )
 }
 
@@ -441,29 +442,44 @@ private fun QrPreviewControls() {    var encodedQr by rememberSaveable { mutable
             horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
             verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
         ) {
-            FilterChip(
+            LabChoiceChip(
+                label = "QR de ejemplo",
                 selected = encodedQr == LAB_SAMPLE_QR_BASE64,
                 onClick = { encodedQr = LAB_SAMPLE_QR_BASE64 },
-                label = { Text("QR de ejemplo") },
-                modifier = Modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
             )
-            FilterChip(
+            LabChoiceChip(
+                label = "Dato inválido",
                 selected = encodedQr == "dato-no-png",
                 onClick = { encodedQr = "dato-no-png" },
-                label = { Text("Dato inválido") },
-                modifier = Modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
             )
-            FilterChip(
+            LabChoiceChip(
+                label = "Vacío",
                 selected = encodedQr.isEmpty(),
                 onClick = { encodedQr = "" },
-                label = { Text("Vacío") },
-                modifier = Modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
             )
         }
         XauxaQrPreview(encodedQr = encodedQr)
         Text(
             "En Android el QR de ejemplo se decodifica a bitmap; dato inválido o vacío muestra placeholder. " +
                 "En iOS y en el host web (Wasm) la implementación aún muestra placeholder.",
+            fontSize = XauxaType.Caption,
+            color = XauxaColor.TextSecondary,
+        )
+    }
+}
+
+@Composable
+private fun TileHeaderPreview() {
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
+        XauxaTileHeader(title = "Escáner", status = "Activo")
+        XauxaTileHeader(
+            title = "Historial",
+            actions = {
+                XauxaBadge(text = "24", tone = XauxaTone.Info, solid = true)
+            },
+        )
+        Text(
+            "Banda de marca con título en mayúsculas; sin sombra (la referencia usa shadow-lg, vetada por invariante).",
             fontSize = XauxaType.Caption,
             color = XauxaColor.TextSecondary,
         )

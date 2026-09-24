@@ -45,9 +45,9 @@ El host original era una actividad Android solo-debug (`ComponentLabActivity`). 
 | Archivo | Responsabilidad |
 |---|---|
 | `AgendaQrComponentLab.kt` | Entrada pública. Layout adaptable: por debajo de 640 dp (breakpoint documentado por Xauxa §07, expuesto como `XauxaMetrics.BreakpointMedium`) la página colapsa a una única columna con un solo dueño de scroll; por encima, catálogo e inspector en dos paneles con scroll independiente. Toggle de preview claro/oscuro. Navegación por secciones Fundamentos/Componentes/Patrones. |
-| `LabCatalogPane.kt` | Secciones (Fundamentos/Componentes/Patrones con conteos), búsqueda por nombre/propósito/uso/estados/tags, filtros por categoría con conteo de componentes, indicador de selección y estado vacío explícito de búsqueda. |
+| `LabCatalogPane.kt` | Secciones (Fundamentos/Componentes/Patrones con conteos), búsqueda por nombre/propósito/uso/estados/tags, filtros por categoría con conteo de componentes, indicador de selección y estado vacío explícito de búsqueda. Las selecciones usan tokens Xauxa (Brand), no el tinte Material. |
 | `LabInspectorPane.kt` | Inspector derivado 100 % del contrato: identidad, propósito, preview, matriz de interacción, estados declarados con su clasificación, API (props/eventos), guía de uso, mapeo nativo y plataformas, gobierno (puerta a11y + auditoría API), tokens Xauxa, uso en AgendaQr, restricciones y registro de eventos. |
-| `LabPatternPane.kt` | Detalle de patrón: pasos, contratos que compone (resueltos contra el inventario, con salto a su inspector) y nota explícita de demo cuando aplica. |
+| `LabPatternPane.kt` | Detalle de patrón: escenario vivo con los contratos reales compuestos y datos ficticios, pasos, contratos que compone (resueltos contra el inventario, con salto a su inspector) y nota explícita de demo cuando aplica. |
 | `LabComponentPreview.kt` | Previews interactivos del componente real con datos ficticios y estado local. Los callbacks producen respuesta visible (cambio de estado + entrada en el registro de eventos), nunca un callback vacío. |
 | `LabFoundationPreview.kt` | Especímenes de los token groups reales: paleta de color (incluye fondos `-bg` y anillo de foco), escala de espaciado, escala tipográfica, métricas, motion y foco. |
 | `LabChrome.kt` | Piezas compartidas del lab (paneles, badges con texto — nunca solo color, filas clave/valor, registro de eventos). |
@@ -97,7 +97,7 @@ Categorías reales tras inspección del código (no se registran componentes que
 | Categoría | Entradas |
 |---|---|
 | Fundamentos | `XauxaColor`, `XauxaSpacing`, `XauxaMetrics`, `XauxaType`, `XauxaMotion`, `XauxaFocus` |
-| Superficies | `XauxaScreen`, `XauxaSection`, `XauxaTile`, `XauxaHeroCard`, `XauxaDialog` |
+| Superficies | `XauxaScreen`, `XauxaSection`, `XauxaTile`, `XauxaTileHeader`, `XauxaHeroCard`, `XauxaDialog` |
 | Acciones | `XauxaPrimaryButton`, `XauxaSecondaryButton`, `XauxaDangerButton`, `XauxaTextAction`, `XauxaIconButton`, `XauxaFilterChip`, `XauxaTextInput`, `XauxaSearchBar`, `XauxaSettingRow`, `XauxaFavoriteToggle` |
 | Feedback | `XauxaToast`, `XauxaStatusBanner`, `XauxaInlineResult`, `XauxaLoading`, `XauxaSkeleton`, `XauxaEmptyState`, `XauxaErrorPage`, `XauxaLoadMoreFooter` |
 | Datos | `XauxaListRow`, `XauxaStatBlock`, `XauxaBadge`, `XauxaCategoryChip`, `XauxaFavoriteIndicator` |
@@ -132,12 +132,14 @@ El detalle token por token y componente documentado vs implementado está en `do
 
 | Comando | Resultado |
 |---|---|
-| `./gradlew :core:ui:testDebugUnitTest` (con `--rerun-tasks`) | **PASS** — 39 tests (12 integridad + 8 búsqueda + 7 matriz + 5 gobierno + 3 patrones + 4 esquemas), 0 fallos. |
+| `./gradlew :core:ui:testDebugUnitTest` (con `--rerun-tasks`) | **PASS** — 40 tests (12 integridad + 8 búsqueda + 7 matriz + 5 gobierno + 3 patrones + 5 esquemas), 0 fallos. |
+| `./gradlew :feature:destinations:domain/data/presentation:testDebugUnitTest` | **PASS** — 43 + 35 + 3 tests, 0 fallos (sin cambios de lógica; solo tipografía de componentes compartidos). |
+| `./gradlew :androidApp:assembleDebug` y `assembleRelease` | **PASS** — producción compila en ambas variantes con los componentes actualizados. |
 | `./gradlew componentLabWeb` | **PASS** — target Wasm compilado y empaquetado; `build/web/component-lab/` con `index.html`, `styles.css`, `agendaqr-component-lab.js` y los `.wasm`. |
 | `./gradlew verifyAgendaQrArchitecture` | **PASS** — compliance Kotlin, boundaries, CSS web (`verifyWebDesignSystem`) y autofixtures (`verifyDesignSystemFixtures`). |
 | `./gradlew :androidApp:assembleDebug` | **PASS** — producción sin el lab. |
 | `python3 -m http.server` + Chromium headless | **200 OK** — renderizado real revisado (ver «Revisión visual»): secciones, inspector completo, patrones, preview oscuro, layout 390px y foco por teclado en el chrome. |
-| Revisión visual en navegador | **EJECUTADA (headless)** — Chromium headless vía `chrome-headless-shell` + `puppeteer-core` (sin navegador de escritorio en la sesión). Evidencia: capturas en `/tmp/opencode/shots/` (no versionadas): `lab-components.png` (1280, sección Componentes), `lab-tall.png` (inspector completo), `lab-390.png` (compacto 390px), `lab-patterns.png` + `lab-pattern-detail.png` (navegación y detalle de patrones), `lab-dark.png` (preview oscuro con brecha honesta), `lab-focus.png` (foco por teclado en el chrome). Pendiente pixel-review manual del anillo teal sobre un componente y tab-through completo. |
+| Revisión visual en navegador | **EJECUTADA (headless)** — Chromium headless vía `chrome-headless-shell` + `puppeteer-core` sobre el build actual (verificado con `38 entradas` en el encabezado). Evidencia en `/tmp/opencode/shots/` (no versionadas): `v3-foundations` (sección Fundamentos), `v2/v3-button` (botones con toggles enabled/isLoading), `v2/v3-button→textinput` (campo con estados error/textarea), `v2-toast` + `v2-rowagg→stat` (feedback y stats mono), `v9-tileheader` (banda de marca), `v3-pattern(-tall)` (escenario vivo fallo-puntual), `v5/v3-dark*` (oscuro real), `lab-390` (compacto), `lab-focus` (foco por teclado). Pendiente: tab-through completo y pixel-review del anillo teal sobre un componente. |
 
 Pruebas del modelo (`core/ui/src/commonTest/kotlin/com/agendaqr/core/ui/lab/`):
 
@@ -146,7 +148,7 @@ Pruebas del modelo (`core/ui/src/commonTest/kotlin/com/agendaqr/core/ui/lab/`):
 - `LabInteractionMatrixTest` (7): Normal real para todo, Disabled real solo con `enabled` en API, la brecha de `XauxaTextAction` sin `enabled`, Loading real en `XauxaLoading` y en botones con `isLoading`, foco/presionado simulados solo en interactivos, los estados `NOT_SUPPORTED` nunca resuelven a estado real, fundamentos sin lentes transitorias.
 - `LabGovernanceTest` (5): congelado del inventario, auditoría sin errores, puerta de accesibilidad para todo el catálogo, token 48dp en acciones interactivas, guía/mapeos/plataformas documentados por componente.
 - `LabPatternsTest` (3): los patrones solo referencian contratos reales, cubren las 8 composiciones exigidas y las demos declaran su limitación.
-- `XauxaSchemeTest` (4): el esquema claro fija la apariencia de producción (sin cambios ciegos), `surface3` documenta la propuesta nueva, el esquema oscuro porta los valores de referencia y ambos esquemas están completos y conmutan.
+- `XauxaSchemeTest` (5): el esquema claro fija la apariencia de producción (sin cambios ciegos), `surface3` documenta la propuesta nueva, el esquema oscuro porta los valores de referencia, ambos esquemas están completos y conmutan, y ambos exponen el mismo conjunto de 21 campos semánticos requeridos (sin tokens solo-dark).
 
 ## Limitaciones conocidas
 

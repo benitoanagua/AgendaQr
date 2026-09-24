@@ -70,7 +70,7 @@ class LabSearchTest {
         val counts = categoryCounts(catalog)
         assertEquals(catalog.size, counts.values.sum())
         assertEquals(LabComponentCatalog.foundations.size, counts[LabCategory.FOUNDATIONS])
-        assertEquals(5, counts[LabCategory.SURFACES])
+        assertEquals(6, counts[LabCategory.SURFACES])
         assertEquals(10, counts[LabCategory.ACTIONS])
         assertEquals(8, counts[LabCategory.FEEDBACK])
         assertEquals(5, counts[LabCategory.DATA])

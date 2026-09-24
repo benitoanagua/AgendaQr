@@ -48,6 +48,7 @@ object XauxaTokenIndex {
 
     val metrics: Set<String> = setOf(
         "XauxaMetrics.Border",
+        "XauxaMetrics.BorderStrong",
         "XauxaMetrics.Focus",
         "XauxaMetrics.ControlMinSize",
         "XauxaMetrics.ContentMaxWidth",
@@ -64,6 +65,9 @@ object XauxaTokenIndex {
         "XauxaType.Body",
         "XauxaType.Label",
         "XauxaType.Caption",
+        "XauxaType.LetterSpacingWide",
+        "XauxaType.FamilyUi",
+        "XauxaType.FamilyMono",
     )
 
     val motion: Set<String> = setOf(

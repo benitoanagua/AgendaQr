@@ -3,6 +3,7 @@ package com.agendaqr.core.ui.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -190,6 +191,8 @@ object XauxaSpacing {
 
 object XauxaMetrics {
     val Border = 1.dp
+    /** Borde estructural fuerte de 2px: marcadores semánticos, marcos y separadores de footer (ref: border-t-2, scan-frame). */
+    val BorderStrong = 2.dp
     val Focus = 2.dp
     val ControlMinSize = 48.dp
     val ContentMaxWidth = 720.dp
@@ -212,6 +215,12 @@ object XauxaType {
     val Body: TextUnit = 16.sp
     val Label: TextUnit = 14.sp
     val Caption: TextUnit = 12.sp
+    /** Tracking amplio de etiquetas en mayúsculas (ref: tracking-wide/wider en botones, pills, badges y encabezados). */
+    val LetterSpacingWide: TextUnit = 0.5.sp
+    /** Familia UI: sistema por defecto, como XauxaXcan (sin webfont; Archivo/Roboto de la referencia complementaria siguen pendientes). */
+    val FamilyUi: FontFamily = FontFamily.Default
+    /** Familia monoespaciada para valores numéricos (ref: font-mono en stats y telemetría). */
+    val FamilyMono: FontFamily = FontFamily.Monospace
 }
 
 /**

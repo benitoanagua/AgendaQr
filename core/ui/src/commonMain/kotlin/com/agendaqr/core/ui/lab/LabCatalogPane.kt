@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -30,6 +29,7 @@ import com.agendaqr.core.ui.lab.model.LabPattern
 import com.agendaqr.core.ui.lab.model.LabPatterns
 import com.agendaqr.core.ui.lab.model.categoryCounts
 import com.agendaqr.core.ui.lab.model.filterCatalog
+import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -112,6 +112,15 @@ internal fun LabCatalogPane(
             modifier = Modifier.fillMaxWidth(),
             label = { Text("Buscar por nombre, uso, estado o tag") },
             singleLine = true,
+            shape = RectangleShape,
+            colors = androidx.compose.material3.TextFieldDefaults.colors(
+                focusedIndicatorColor = XauxaColor.Brand,
+                unfocusedIndicatorColor = MaterialTheme.colorScheme.outline,
+                focusedLabelColor = XauxaColor.Brand,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+            ),
         )
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
@@ -215,12 +224,7 @@ private fun LabPatternRow(pattern: LabPattern, selected: Boolean, onClick: () ->
 
 @Composable
 private fun LabCategoryFilter(label: String, count: Int, selected: Boolean, onClick: () -> Unit) {
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = { Text("$label ($count)") },
-        modifier = Modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
-    )
+    LabChoiceChip(label = "$label ($count)", selected = selected, onClick = onClick)
 }
 
 @Composable
@@ -228,7 +232,7 @@ internal fun LabCatalogRow(component: LabComponentContract, selected: Boolean, o
     Surface(
         modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         shape = RectangleShape,
-        color = if (selected) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
+        color = if (selected) XauxaColor.Surface2 else MaterialTheme.colorScheme.surface,
         onClick = onClick,
     ) {
         Column(
@@ -242,7 +246,7 @@ internal fun LabCatalogRow(component: LabComponentContract, selected: Boolean, o
                     fontSize = XauxaType.Label,
                     fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
                     color = if (selected) {
-                        MaterialTheme.colorScheme.primary
+                        XauxaColor.Brand
                     } else {
                         MaterialTheme.colorScheme.onSurface
                     },
@@ -251,7 +255,7 @@ internal fun LabCatalogRow(component: LabComponentContract, selected: Boolean, o
                     Text(
                         "Seleccionado",
                         fontSize = XauxaType.Caption,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = XauxaColor.Brand,
                     )
                 }
             }

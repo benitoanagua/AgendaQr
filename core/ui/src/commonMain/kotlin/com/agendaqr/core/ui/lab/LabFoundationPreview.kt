@@ -55,7 +55,8 @@ private fun labColorEntries(): List<LabColorEntry> = listOf(
     LabColorEntry("Background", XauxaColor.Background, "Fondo de pantalla"),
     LabColorEntry("Surface", XauxaColor.Surface, "Fondo de superficies"),
     LabColorEntry("Surface2", XauxaColor.Surface2, "Superficie secundaria y fondo de banner"),
-    LabColorEntry("Border", XauxaColor.Border, "Bordes estructurales"),
+    LabColorEntry("Surface3", XauxaColor.Surface3, "Tercera superficie (propuesta)"),
+    LabColorEntry("Border", XauxaColor.Border, "Bordes estructurales de 1px"),
     LabColorEntry("TextPrimary", XauxaColor.TextPrimary, "Texto principal"),
     LabColorEntry("TextSecondary", XauxaColor.TextSecondary, "Texto secundario"),
     LabColorEntry("TextTertiary", XauxaColor.TextTertiary, "Texto terciario y deshabilitado"),
@@ -154,7 +155,8 @@ private fun SpacingSpecimen() {
 @Composable
 private fun MetricsSpecimen() {
     Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs)) {
-        LabLabelValue("XauxaMetrics.Border", "Grosor de borde estructural")
+        LabLabelValue("XauxaMetrics.Border", "Grosor de borde estructural (1px)")
+        LabLabelValue("XauxaMetrics.BorderStrong", "Borde fuerte: marcadores, marcos y footers (2px)")
         LabLabelValue("XauxaMetrics.Focus", "Ancho del anillo de foco")
         LabLabelValue("XauxaMetrics.ControlMinSize", "Target táctil mínimo (invariante 09)")
         LabLabelValue("XauxaMetrics.ContentMaxWidth", "Ancho máximo de contenido")
@@ -193,7 +195,7 @@ private fun TypeSpecimen() {    Column(verticalArrangement = Arrangement.spacedB
             }
         }
         Text(
-            "Xauxa documenta Archivo (display) y Roboto (UI); la implementación aún no conecta familias de fuente.",
+            "Xauxa documenta Archivo (display) y Roboto (UI); la implementación usa la pila del sistema como XauxaXcan (FamilyUi) y monoespaciada para valores (FamilyMono). Tracking amplio en XauxaType.LetterSpacingWide.",
             fontSize = XauxaType.Caption,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

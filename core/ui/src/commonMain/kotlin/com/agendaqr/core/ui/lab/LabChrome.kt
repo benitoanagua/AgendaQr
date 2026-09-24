@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.lab.model.LabReviewStatus
+import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -82,8 +83,7 @@ internal fun LabPanel(
 
 /** Small metadata badge. Text carries the meaning; color only reinforces it. */
 @Composable
-internal fun LabBadge(text: String, modifier: Modifier = Modifier) {
-    Surface(
+internal fun LabBadge(text: String, modifier: Modifier = Modifier) {    Surface(
         modifier = modifier,
         shape = RectangleShape,
         color = MaterialTheme.colorScheme.surfaceVariant,
@@ -147,8 +147,7 @@ internal fun LabLabelValue(label: String, value: String, modifier: Modifier = Mo
 /**
  * Visible callback log: interactive previews report their events here so a
  * control is never wired to an empty callback.
- */
-@Composable
+ */@Composable
 internal fun LabEventLog(events: List<String>, modifier: Modifier = Modifier) {
     LabPanel(title = "Eventos observados", subtitle = "Callbacks reales capturados en esta sesión", modifier = modifier) {
         if (events.isEmpty()) {
@@ -167,4 +166,37 @@ internal fun LabEventLog(events: List<String>, modifier: Modifier = Modifier) {
             }
         }
     }
+}
+
+/**
+ * Choice chip of the lab chrome. Selections use Xauxa brand tokens (never
+ * the default Material tint), keep 48dp height and rectangular shape.
+ */
+@Composable
+internal fun LabChoiceChip(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    androidx.compose.material3.FilterChip(
+        selected = selected,
+        onClick = onClick,
+        label = { Text(label) },
+        modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
+        shape = RectangleShape,
+        border = androidx.compose.material3.FilterChipDefaults.filterChipBorder(
+            enabled = true,
+            selected = selected,
+            borderColor = MaterialTheme.colorScheme.outline,
+            selectedBorderColor = XauxaColor.Brand,
+            borderWidth = XauxaMetrics.Border,
+        ),
+        colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            labelColor = MaterialTheme.colorScheme.onSurface,
+            selectedContainerColor = XauxaColor.Brand,
+            selectedLabelColor = XauxaColor.OnBrand,
+        ),
+    )
 }

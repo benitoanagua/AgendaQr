@@ -147,12 +147,17 @@ object LabComponentCatalog {
                 ),
                 LabState(
                     "Familias tipográficas",
-                    "Xauxa documenta Archivo (display) y Roboto (UI); la implementación define tamaños " +
-                    "pero no conecta las familias de fuente.",
-                    LabReviewStatus.PENDING,
+                    "Como XauxaXcan: pila del sistema para UI (FamilyUi) y monoespaciada para " +
+                        "valores (FamilyMono). Las webfonts Archivo/Roboto de la referencia " +
+                        "complementaria siguen pendientes por decisión de producto.",
+                    LabReviewStatus.VERIFIED,
                 ),
             ),
-            tokens = listOf(LabTokenRef("XauxaType.Title", "Tamaño de título de sección y estado vacío.")),
+            tokens = listOf(
+                LabTokenRef("XauxaType.Title", "Tamaño de título de sección y estado vacío."),
+                LabTokenRef("XauxaType.LetterSpacingWide", "Tracking de etiquetas en mayúsculas."),
+                LabTokenRef("XauxaType.FamilyMono", "Valores numéricos monoespaciados."),
+            ),
             usage = listOf("Jerarquía textual de pantallas, secciones, etiquetas y metadatos."),
             tags = listOf("tipografía", "tokens"),
             darkThemeSupport = LabDarkThemeSupport.NOT_APPLICABLE,
@@ -254,8 +259,8 @@ object LabComponentCatalog {
             name = "XauxaSection",
             category = LabCategory.SURFACES,
             purpose = "Encabezado de sección con título y acción contextual opcional.",
-            description = "Columna con título XauxaType.Title en semibold, slot trailing alineado a la " +
-                "derecha y contenido debajo separado por XauxaSpacing.Md.",
+            description = "Columna con título XauxaType.Title en mayúsculas con tracking, slot trailing alineado a la " +
+                "derecha y contenido debajo separado por XauxaSpacing.Md (patrón tile h2 de XauxaXcan).",
             props = listOf(
                 LabProp("title", "String"),
                 LabProp("modifier", "Modifier"),
@@ -273,6 +278,7 @@ object LabComponentCatalog {
             tokens = listOf(
                 LabTokenRef("XauxaColor.TextPrimary", "Color del título."),
                 LabTokenRef("XauxaType.Title", "Tamaño del título."),
+                LabTokenRef("XauxaType.LetterSpacingWide", "Tracking del título en mayúsculas."),
                 LabTokenRef("XauxaSpacing.Md", "Separación entre título y contenido."),
             ),
             usage = listOf(
@@ -281,7 +287,7 @@ object LabComponentCatalog {
             tags = listOf("sección", "encabezado"),
             darkThemeSupport = LabDarkThemeSupport.PENDING,
             darkThemeNote = "Resuelve el esquema vía XauxaColor; el esquema oscuro aplica valores de referencia pendientes de validación visual.",
-            whenToUse = "Para agrupar contenido con título. Sin título preferir XauxaTile directamente.",
+            whenToUse = "Para agrupar contenido con título. Cabecera con banda de marca con XauxaTileHeader; sin título preferir XauxaTile directamente.",
             androidMapping = "Column + Row de encabezado (SpaceBetween) Material3 Text.",
             iosMapping = "SwiftUI VStack + HStack de encabezado.",
             platforms = commonPlatforms(),
@@ -314,6 +320,7 @@ object LabComponentCatalog {
             ),
             notes = listOf(
                 "El contenido debe aportar su propia semántica textual; el tile solo aporta rol Button.",
+                "Para cabecera con banda de marca componer XauxaTileHeader sobre el tile.",
             ),
             tags = listOf("superficie", "tarjeta", "tile"),
             darkThemeSupport = LabDarkThemeSupport.PENDING,
@@ -346,6 +353,8 @@ object LabComponentCatalog {
             tokens = listOf(
                 LabTokenRef("XauxaColor.Surface", "Fondo heredado del tile."),
                 LabTokenRef("XauxaType.Display", "Tamaño del número grande."),
+                LabTokenRef("XauxaType.FamilyMono", "Numerales monoespaciados."),
+                LabTokenRef("XauxaMetrics.BorderStrong", "Separador del footer (2px)."),
                 LabTokenRef("XauxaType.Caption", "Tamaño del footer."),
                 LabTokenRef("XauxaSpacing.Lg", "Padding interior."),
             ),
@@ -357,6 +366,41 @@ object LabComponentCatalog {
             whenToUse = "Números destacados con contexto. Para bloques sin número preferir XauxaTile.",
             androidMapping = "XauxaTile + Material3 Text Display/Caption.",
             iosMapping = "Tile SwiftUI + Text de jerarquía display/footnote.",
+            platforms = commonPlatforms(),
+        ),
+        LabComponentContract(
+            id = "xauxa-tile-header",
+            name = "XauxaTileHeader",
+            category = LabCategory.SURFACES,
+            purpose = "Cabecera de tile con banda de marca.",
+            description = "Banda XauxaColor.Brand a ancho completo con título en mayúsculas, estado " +
+                "opcional y slot de acciones (patrón tile-header de XauxaXcan, sin sombra).",
+            props = listOf(
+                LabProp("title", "String"),
+                LabProp("modifier", "Modifier"),
+                LabProp("status", "String?", "null"),
+                LabProp("actions", "(@Composable () -> Unit)?", "null"),
+            ),
+            states = listOf(
+                LabState("Default", "Banda con título.", LabReviewStatus.VERIFIED),
+                LabState("Con estado", "status no nulo: etiqueta de estado en la banda.", LabReviewStatus.VERIFIED),
+            ),
+            tokens = listOf(
+                LabTokenRef("XauxaColor.Brand", "Fondo de la banda."),
+                LabTokenRef("XauxaColor.OnBrand", "Título y estado."),
+                LabTokenRef("XauxaType.Title", "Tamaño del título."),
+                LabTokenRef("XauxaType.LetterSpacingWide", "Tracking del título."),
+                LabTokenRef("XauxaSpacing.Lg", "Padding de la banda."),
+            ),
+            usage = listOf(
+                "Cabeceras de tiles de dashboard (escáner, historial, resultados).",
+            ),
+            tags = listOf("cabecera", "tile", "marca", "dashboard"),
+            darkThemeSupport = LabDarkThemeSupport.PENDING,
+            darkThemeNote = "Resuelve el esquema vía XauxaColor; el esquema oscuro aplica valores de referencia pendientes de validación visual.",
+            whenToUse = "Cabeceras con banda de marca. Secciones de contenido con XauxaSection.",
+            androidMapping = "Row con fondo Brand a ancho completo.",
+            iosMapping = "SwiftUI HStack con fondo de marca.",
             platforms = commonPlatforms(),
         ),
         LabComponentContract(
@@ -432,6 +476,7 @@ object LabComponentCatalog {
                 LabTokenRef("XauxaColor.Surface2", "Contenedor deshabilitado."),
                 LabTokenRef("XauxaColor.TextTertiary", "Contenido deshabilitado."),
                 LabTokenRef("XauxaMetrics.ControlMinSize", "Altura mínima de 48dp."),
+                LabTokenRef("XauxaType.LetterSpacingWide", "Tracking de la etiqueta en mayúsculas."),
             ),
             usage = listOf(
                 "Añadir QR, guardar obligación, registrar comprobante, confirmar una acción.",
@@ -470,6 +515,7 @@ object LabComponentCatalog {
                 LabTokenRef("XauxaColor.TextPrimary", "Color del texto."),
                 LabTokenRef("XauxaMetrics.Border", "Grosor del borde."),
                 LabTokenRef("XauxaMetrics.ControlMinSize", "Altura mínima de 48dp."),
+                LabTokenRef("XauxaType.LetterSpacingWide", "Tracking de la etiqueta en mayúsculas."),
             ),
             usage = listOf("Escanear, ver detalle, abrir comprobante, cancelar un diálogo."),
             tags = listOf("botón", "acción", "secundario"),
@@ -504,6 +550,7 @@ object LabComponentCatalog {
                 LabTokenRef("XauxaColor.Danger", "Contenedor del botón."),
                 LabTokenRef("XauxaColor.White", "Contenido sobre peligro."),
                 LabTokenRef("XauxaMetrics.ControlMinSize", "Altura mínima de 48dp."),
+                LabTokenRef("XauxaType.LetterSpacingWide", "Tracking de la etiqueta en mayúsculas."),
             ),
             usage = listOf("Confirmar eliminación en XauxaDialog; quitar comprobante o destino."),
             notes = listOf("Solo dentro de confirmaciones destructivas; nunca como acción primaria de pantalla."),
@@ -539,6 +586,7 @@ object LabComponentCatalog {
             tokens = listOf(
                 LabTokenRef("XauxaColor.Brand", "Color del texto."),
                 LabTokenRef("XauxaMetrics.ControlMinSize", "Altura mínima de 48dp."),
+                LabTokenRef("XauxaType.LetterSpacingWide", "Tracking de la etiqueta en mayúsculas."),
             ),
             usage = listOf("Editar, cancelar o disparar una acción secundaria dentro de tiles o secciones."),
             tags = listOf("acción", "texto"),
@@ -606,6 +654,7 @@ object LabComponentCatalog {
                 LabTokenRef("XauxaColor.OnBrand", "Texto seleccionado."),
                 LabTokenRef("XauxaColor.Border", "Borde sin seleccionar."),
                 LabTokenRef("XauxaMetrics.ControlMinSize", "Altura mínima de 48dp."),
+                LabTokenRef("XauxaType.LetterSpacingWide", "Tracking de la etiqueta en mayúsculas."),
             ),
             usage = listOf("Filtrar historial por tipo (patrón filter-pills de XauxaXcan)."),
             notes = listOf("Filtra; no clasifica: para etiquetas estáticas usar XauxaCategoryChip."),
@@ -1110,6 +1159,7 @@ object LabComponentCatalog {
                 LabTokenRef("XauxaColor.TextPrimary", "Valor neutro."),
                 LabTokenRef("XauxaColor.TextSecondary", "Etiqueta."),
                 LabTokenRef("XauxaType.Headline", "Tamaño del valor."),
+                LabTokenRef("XauxaType.FamilyMono", "Valor monoespaciado."),
                 LabTokenRef("XauxaType.Caption", "Tamaño de la etiqueta."),
             ),
             usage = listOf("Totales de historial, FPS/escaneos del viewport y métricas de dashboard."),
@@ -1141,6 +1191,7 @@ object LabComponentCatalog {
             tokens = listOf(
                 LabTokenRef("XauxaColor.Border", "Borde neutro."),
                 LabTokenRef("XauxaType.Caption", "Tamaño del texto."),
+                LabTokenRef("XauxaType.LetterSpacingWide", "Tracking del texto en mayúsculas."),
                 LabTokenRef("XauxaSpacing.Sm", "Padding horizontal."),
             ),
             usage = listOf("Estados de tile, tipos de QR y conteos (patrón tile-status-badge de XauxaXcan)."),
@@ -1302,6 +1353,7 @@ object LabComponentCatalog {
             tokens = listOf(
                 LabTokenRef("XauxaColor.Surface2", "Fondo del viewport."),
                 LabTokenRef("XauxaColor.Brand", "Marco de encuadre."),
+                LabTokenRef("XauxaMetrics.BorderStrong", "Grosor del marco (2px)."),
                 LabTokenRef("XauxaColor.TextSecondary", "Texto de ayuda."),
                 LabTokenRef("XauxaMetrics.QrPreviewSize", "Tamaño del encuadre."),
             ),

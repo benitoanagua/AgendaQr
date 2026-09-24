@@ -44,7 +44,10 @@ tasks.register("verifyDesignSystemCompliance") {
     group = "verification"
     description = "Enforces Xauxa Design System invariants in production Kotlin sources."
     doLast {
-        val violations = checkViolations()
+        val violations = checkViolations().toMutableList()
+        if (file("design-tokens.json").exists()) {
+            violations += "design-tokens.json was retired as an editable source (XauxaTokens.kt is canonical); delete it instead of editing"
+        }
         require(violations.isEmpty()) { "Xauxa Design System violations:\n${violations.joinToString("\n")}" }
     }
 }
