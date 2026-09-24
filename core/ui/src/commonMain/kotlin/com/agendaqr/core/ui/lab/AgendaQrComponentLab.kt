@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,9 +36,7 @@ import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaTile
 import com.agendaqr.core.ui.theme.AgendaQrTheme
 import com.agendaqr.core.ui.theme.XauxaColor
-import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
-import com.agendaqr.core.ui.theme.XauxaType
 
 /**
  * Development-only AgendaQr design-system catalog.
@@ -249,7 +246,7 @@ private fun ComponentPreview(component: AgendaQrComponentId) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.surfaceVariant,
-            tonalElevation = 0.dp,
+            tonalElevation = XauxaSpacing.None,
         ) {
             Column(
                 modifier = Modifier.padding(XauxaSpacing.Lg),
