@@ -162,7 +162,7 @@ class SuggestReceiptAssociationUseCase(
         const val NEAR_DATE_SCORE = 2
         const val FILENAME_TOKEN_SCORE = 3
         const val MIN_TOKEN_LENGTH = 3
-        const val STRONG_MATCH_SCORE = CONTEXT_SCORE + SAME_DAY_SCORE
+        const val STRONG_MATCH_SCORE = FILENAME_TOKEN_SCORE * 3 + SAME_DAY_SCORE
         const val MIN_SCORE_MARGIN = 3
         const val MAX_AMBIGUOUS_CANDIDATES = 8
     }
