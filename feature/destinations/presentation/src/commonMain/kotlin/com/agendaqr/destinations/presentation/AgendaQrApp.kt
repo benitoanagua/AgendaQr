@@ -267,7 +267,16 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
                     AgendaSearchResultType.CONTEXT -> result.contextId?.let { contextViewModel.onAction(ContextAction.Open(it)); showContexts = true }
                     AgendaSearchResultType.QR -> result.destinationId?.let { viewModel.onAction(DestinationAction.Open(it)) }
                     AgendaSearchResultType.ACTIVITY -> result.operationId?.let { operationsViewModel.onAction(OperationAction.Open(it)); showOperations = true }
-                    AgendaSearchResultType.COMPROBANTE -> if (result.operationId != null) { operationsViewModel.onAction(OperationAction.Open(result.operationId)); showOperations = true } else { operationsViewModel.onAction(OperationAction.OpenUnassociated); showOperations = true }
+                    AgendaSearchResultType.COMPROBANTE -> {
+                        val operationId = result.operationId
+                        if (operationId != null) {
+                            operationsViewModel.onAction(OperationAction.Open(operationId))
+                            showOperations = true
+                        } else {
+                            operationsViewModel.onAction(OperationAction.OpenUnassociated)
+                            showOperations = true
+                        }
+                    }
                 }
             },
             onBack = { showSearch = false },
