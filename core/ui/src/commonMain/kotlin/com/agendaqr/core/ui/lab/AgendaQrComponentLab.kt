@@ -126,7 +126,7 @@ fun AgendaQrComponentLab(
             }
 
             LabSection(title = "QR y comprobante") {
-                Card(modifier = Modifier.fillMaxWidth()) {
+                XauxaTile {
                     Column(
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(6.dp),
