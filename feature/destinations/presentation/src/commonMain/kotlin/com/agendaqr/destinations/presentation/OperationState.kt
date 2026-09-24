@@ -150,6 +150,16 @@ class OperationsViewModel(
 
     private fun saveIncoming(openInbox: Boolean) {
         val incoming = state.value.pendingIncoming ?: return
+        if (state.value.pendingDuplicates.isNotEmpty()) {
+            _state.update {
+                it.copy(
+                    pendingIncoming = null,
+                    pendingDuplicates = emptyList(),
+                    error = "Este comprobante ya existe y no se guardará otra copia.",
+                )
+            }
+            return
+        }
         scope.launch {
             _state.update { it.copy(isSavingReceipt = true) }
             runCatching {
