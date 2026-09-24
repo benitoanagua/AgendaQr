@@ -39,35 +39,13 @@ jobs:
             ${{ runner.os }}-gradle-v2-
 
       - name: Domain unit tests
-        continue-on-error: true
         run: ./gradlew :feature:destinations:domain:testDebugUnitTest --stacktrace
-
-      - name: Upload domain test reports
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: domain-test-reports-${{ github.run_id }}
-          path: |
-            feature/destinations/domain/build/test-results/testDebugUnitTest/**
-            feature/destinations/domain/build/reports/tests/testDebugUnitTest/**
-          if-no-files-found: warn
 
       - name: Data unit tests
         run: ./gradlew :feature:destinations:data:testDebugUnitTest --stacktrace
 
       - name: Presentation unit tests
-        continue-on-error: true
         run: ./gradlew :feature:destinations:presentation:testDebugUnitTest --stacktrace
-
-      - name: Upload presentation test reports
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: presentation-test-reports-${{ github.run_id }}
-          path: |
-            feature/destinations/presentation/build/test-results/testDebugUnitTest/**
-            feature/destinations/presentation/build/reports/tests/testDebugUnitTest/**
-          if-no-files-found: warn
 
       - name: Android unit tests
         run: ./gradlew :androidApp:testDebugUnitTest --stacktrace
