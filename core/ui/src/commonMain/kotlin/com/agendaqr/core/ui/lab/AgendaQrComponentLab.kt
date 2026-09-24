@@ -10,10 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,6 +21,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.agendaqr.core.ui.components.XauxaPrimaryButton
+import com.agendaqr.core.ui.components.XauxaSecondaryButton
+import com.agendaqr.core.ui.components.XauxaTile
+import com.agendaqr.core.ui.theme.AgendaQrTheme
+import com.agendaqr.core.ui.theme.XauxaSpacing
 
 /**
  * Development-only AgendaQr component gallery.
@@ -42,6 +44,7 @@ fun AgendaQrComponentLab(
     var activeFilter by remember { mutableStateOf("Todos") }
     var lastAction by remember { mutableStateOf("Selecciona una acción para probar su estado.") }
 
+    AgendaQrTheme {
     Surface(
         modifier = modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background,
@@ -50,8 +53,8 @@ fun AgendaQrComponentLab(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .padding(XauxaSpacing.Xxl),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xl),
         ) {
             Text("AgendaQr · Laboratorio de componentes", style = MaterialTheme.typography.headlineSmall)
             Text(
@@ -61,13 +64,9 @@ fun AgendaQrComponentLab(
             )
 
             LabSection(title = "Acciones principales") {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Button(onClick = { lastAction = "Añadir QR: acción activada" }) {
-                        Text("Añadir QR")
-                    }
-                    OutlinedButton(onClick = { lastAction = "Escanear QR: acción activada" }) {
-                        Text("Escanear")
-                    }
+                Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                    XauxaPrimaryButton(label = "Añadir QR", onClick = { lastAction = "Añadir QR: acción activada" })
+                    XauxaSecondaryButton(label = "Escanear", onClick = { lastAction = "Escanear QR: acción activada" })
                 }
                 Text(lastAction, style = MaterialTheme.typography.bodySmall)
             }
@@ -83,16 +82,16 @@ fun AgendaQrComponentLab(
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf("Todos", "Por vencer", "Vencidos").forEach { filter ->
                         if (activeFilter == filter) {
-                            Button(onClick = { activeFilter = filter }) { Text(filter) }
+                            XauxaPrimaryButton(label = filter, onClick = { activeFilter = filter })
                         } else {
-                            OutlinedButton(onClick = { activeFilter = filter }) { Text(filter) }
+                            XauxaSecondaryButton(label = filter, onClick = { activeFilter = filter })
                         }
                     }
                 }
             }
 
             LabSection(title = "Elemento de lista · obligación") {
-                Card(modifier = Modifier.fillMaxWidth()) {
+                XauxaTile {
                     Column(
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -102,8 +101,8 @@ fun AgendaQrComponentLab(
                         Text("Vence: 30 sep 2026 · Bs 450", style = MaterialTheme.typography.bodyMedium)
                         Text("Por vencer", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            OutlinedButton(onClick = { lastAction = "Abrir detalle de obligación" }) { Text("Ver detalle") }
-                            Button(onClick = { lastAction = "Registrar comprobante" }) { Text("Comprobante") }
+                            XauxaSecondaryButton(label = "Ver detalle", onClick = { lastAction = "Abrir detalle de obligación" })
+                            XauxaPrimaryButton(label = "Comprobante", onClick = { lastAction = "Registrar comprobante" })
                         }
                     }
                 }
@@ -117,15 +116,13 @@ fun AgendaQrComponentLab(
                     label = { Text("Nombre de la obligación") },
                     singleLine = true,
                 )
-                OutlinedButton(onClick = { reminderEnabled = !reminderEnabled }) {
-                    Text(if (reminderEnabled) "Recordatorio: activado" else "Recordatorio: desactivado")
-                }
+                XauxaSecondaryButton(label = if (reminderEnabled) "Recordatorio: activado" else "Recordatorio: desactivado", onClick = { reminderEnabled = !reminderEnabled })
                 Text(
                     "El recordatorio es una muestra de estado local; no programa notificaciones.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Button(onClick = { lastAction = "Guardar muestra: $paymentName" }) { Text("Guardar") }
+                XauxaPrimaryButton(label = "Guardar", onClick = { lastAction = "Guardar muestra: $paymentName" })
             }
 
             LabSection(title = "QR y comprobante") {
@@ -137,9 +134,9 @@ fun AgendaQrComponentLab(
                         Text("QR asociado", style = MaterialTheme.typography.titleMedium)
                         Text("Titular: Colegio Los Pinos", style = MaterialTheme.typography.bodyMedium)
                         Text("Tipo: Pago · Estado: Guardado", style = MaterialTheme.typography.bodyMedium)
-                        OutlinedButton(onClick = { lastAction = "Vista previa del QR" }) { Text("Ver QR") }
+                        XauxaSecondaryButton(label = "Ver QR", onClick = { lastAction = "Vista previa del QR" })
                         Text("Comprobante reciente: pago-septiembre.pdf", style = MaterialTheme.typography.bodySmall)
-                        OutlinedButton(onClick = { lastAction = "Abrir comprobante de ejemplo" }) { Text("Ver comprobante") }
+                        XauxaSecondaryButton(label = "Ver comprobante", onClick = { lastAction = "Abrir comprobante de ejemplo" })
                     }
                 }
             }
@@ -151,6 +148,7 @@ fun AgendaQrComponentLab(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+    }
     }
 }
 
