@@ -38,5 +38,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Run Android validation
-        run: ./gradlew :feature:destinations:domain:testDebugUnitTest :feature:destinations:data:testDebugUnitTest :feature:destinations:presentation:testDebugUnitTest :androidApp:testDebugUnitTest :androidApp:assembleDebug --stacktrace
+      - name: Domain unit tests
+        run: ./gradlew :feature:destinations:domain:testDebugUnitTest --stacktrace
+
+      - name: Data unit tests
+        run: ./gradlew :feature:destinations:data:testDebugUnitTest --stacktrace
+
+      - name: Presentation unit tests
+        run: ./gradlew :feature:destinations:presentation:testDebugUnitTest --stacktrace
+
+      - name: Android unit tests
+        run: ./gradlew :androidApp:testDebugUnitTest --stacktrace
+
+      - name: Android debug assembly
+        run: ./gradlew :androidApp:assembleDebug --stacktrace
