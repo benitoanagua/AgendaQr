@@ -67,11 +67,11 @@ No se introducen cambios de UX fuera del contrato congelado.
 
 ## CI
 
-PR #42 amplió el workflow para ejecutar domain, data, presentation, androidApp unit tests y assembleDebug.
+PR #42 y PR #44 dejaron el workflow dividido en tareas independientes: domain, data, presentation, androidApp unit tests y assembleDebug.
 
-El cambio está mergeado en main mediante a75a8cf996741c3a94ba5a3d97656653f1d20366.
+El último run de main antes de esta corrección (35941171336) falló en **Domain unit tests**; las tareas posteriores quedaron omitidas. Se invalidó la caché Gradle de CI en esta rama para descartar una caché inconsistente antes de volver a declarar PASS.
 
-El run de main asociado es 35940764289; al momento de esta actualización seguía en ejecución. No se debe declarar PASS hasta que finalice.
+No se declara PASS hasta que el workflow posterior a esta corrección finalice correctamente.
 
 ## Pendientes reales
 
@@ -87,9 +87,9 @@ El run de main asociado es 35940764289; al momento de esta actualización seguí
 6. prueba de errores recuperables en Android.
 
 ### P2 — iOS
-- iOS sigue arquitectónicamente preparado pero no está validado funcionalmente.
-- reemplazar IosComprobanteFileStore en memoria por almacenamiento persistente con Foundation.
-- implementar NWPathMonitor real en PlatformNetworkMonitor.ios.kt.
+- iOS sigue sin evidencia de compilación/ejecución real en Xcode.
+- almacenamiento de comprobantes iOS migrado a Foundation/Application Support y aislado por usuario.
+- NetworkMonitor iOS implementado con NWPathMonitor; falta validación en Xcode.
 - completar adquisición iOS de importación bulk.
 - conectar Camera / Photos / Share mediante el boundary nativo existente.
 - ejecutar compilación y pruebas en Xcode.
