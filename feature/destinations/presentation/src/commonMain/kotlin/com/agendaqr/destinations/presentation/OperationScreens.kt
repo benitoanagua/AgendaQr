@@ -137,19 +137,35 @@ private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsVi
         }
     }
     selectedReceipt?.let { receipt ->
+        val suggestion = viewModel.receiptSuggestion(receipt.id)
+        val candidateOperations = suggestion?.operationIds.orEmpty()
+            .mapNotNull { id -> state.operations.firstOrNull { it.id == id } }
         AlertDialog(
             onDismissRequest = { selectedReceipt = null },
-            title = { Text("Elegir operación") },
+            title = { Text(
+                when (suggestion?.kind) {
+                    ReceiptMatchKind.SINGLE -> "Parece corresponder a"
+                    ReceiptMatchKind.MULTIPLE -> "¿A cuál corresponde?"
+                    ReceiptMatchKind.NONE, null -> "No encontramos coincidencia"
+                }
+            ) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                    state.operations.take(8).forEach { operation ->
-                        XauxaTile(onClick = {
-                            viewModel.onAction(OperationAction.Associate(receipt.id, operation.id))
-                            selectedReceipt = null
-                        }) {
-                            Row(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text(operation.type.name + " · " + formatDate(operation.occurredAt))
-                                Text(operation.amount.orEmpty().ifBlank { "—" })
+                    when {
+                        suggestion == null -> Text("Estamos analizando el comprobante.")
+                        suggestion.kind == ReceiptMatchKind.NONE ->
+                            Text("No encontramos una operación con señales suficientes para asociarlo automáticamente. Puedes guardarlo sin asociar.")
+                        candidateOperations.isEmpty() ->
+                            Text("Las operaciones candidatas ya no están disponibles. Puedes volver atrás y revisar el comprobante.")
+                        else -> candidateOperations.forEach { operation ->
+                            XauxaTile(onClick = {
+                                viewModel.onAction(OperationAction.Associate(receipt.id, operation.id))
+                                selectedReceipt = null
+                            }) {
+                                Row(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), horizontalArrangement = Arrangement.SpaceBetween) {
+                                    Text(operation.type.name + " · " + formatDate(operation.occurredAt))
+                                    Text(operation.amount.orEmpty().ifBlank { "—" })
+                                }
                             }
                         }
                     }
