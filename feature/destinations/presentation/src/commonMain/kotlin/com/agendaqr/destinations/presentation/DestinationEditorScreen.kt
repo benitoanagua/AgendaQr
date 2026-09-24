@@ -25,6 +25,7 @@ import com.agendaqr.core.ui.components.XauxaQrPreview
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.destinations.domain.Context
 import com.agendaqr.destinations.domain.Destination
 import com.agendaqr.destinations.domain.QrAsset
 

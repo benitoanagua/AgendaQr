@@ -32,6 +32,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import com.agendaqr.destinations.domain.*
+import com.agendaqr.destinations.domain.AgendaSearchResult
+import com.agendaqr.destinations.domain.AgendaSearchResultType
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.theme.AgendaQrTheme
 
