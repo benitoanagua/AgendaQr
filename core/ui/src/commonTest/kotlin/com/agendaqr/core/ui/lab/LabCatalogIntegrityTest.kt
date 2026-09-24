@@ -7,6 +7,7 @@ import com.agendaqr.core.ui.lab.model.LabDarkThemeSupport
 import com.agendaqr.core.ui.lab.model.LabReviewStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 /**
@@ -131,5 +132,17 @@ class LabCatalogIntegrityTest {
         // exist yet in core:ui; the catalog must not invent them.
         assertTrue(LabCategory.FOUNDATIONS in used)
         assertTrue(LabCategory.QR in used)
+    }
+
+    @Test
+    fun web_wasm_render_stays_pending_until_browser_decoding_exists() {
+        // The Wasm migration made the platform assumption of XauxaQrPreview
+        // explicit: only Android decodes. The web state must stay PENDING —
+        // never VERIFIED — until a browser decoding path really exists.
+        val qrPreview = requireNotNull(LabComponentCatalog.find("xauxa-qr-preview"))
+        val webRender = qrPreview.states.firstOrNull { it.name == "Render en web (Wasm)" }
+        assertNotNull(webRender, "XauxaQrPreview must declare its web (Wasm) render state")
+        assertEquals(LabReviewStatus.PENDING, webRender.status)
+        assertTrue(webRender.description.isNotBlank())
     }
 }

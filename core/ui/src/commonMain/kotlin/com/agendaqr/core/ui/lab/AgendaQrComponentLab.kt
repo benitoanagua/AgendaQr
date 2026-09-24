@@ -51,8 +51,9 @@ import com.agendaqr.core.ui.theme.XauxaType
  *   preview makes the real dark-mode gap visible instead of hiding it.
  * - The lab is intentionally isolated from production navigation,
  *   repositories, services, authentication, camera, storage and
- *   notifications. It is hosted only by the debug-only activity of the
- *   Android app.
+ *   notifications. Its only host is the WebAssembly target of core:ui,
+ *   which renders it in a browser; no production app entry point
+ *   references it.
  */
 @Composable
 fun AgendaQrComponentLab(

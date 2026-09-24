@@ -7,6 +7,10 @@ local.properties
 app/*.apk
 app/google-services.json
 
+# Kotlin / Wasm toolchain artifacts
+.kotlin/
+kotlin-js-store/
+
 # Android signing
 *.jks
 *.keystore

@@ -460,7 +460,8 @@ object LabComponentCatalog {
             purpose = "Preview del QR almacenado de un destino.",
             description = "Contrato expect/actual: Android decodifica un PNG en base64 y lo renderiza; con " +
                 "dato inválido o vacío muestra placeholder blanco. iOS difiere el decodificado y muestra " +
-                "placeholder hasta validación de hardware.",
+                "placeholder hasta validación de hardware. El host web (Wasm) muestra placeholder hasta que " +
+                "exista una ruta de decodificación en navegador.",
             props = listOf(
                 LabProp("encodedQr", "String"),
                 LabProp("modifier", "Modifier"),
@@ -480,6 +481,12 @@ object LabComponentCatalog {
                     "Render en iOS",
                     "La implementación iOS aún no decodifica: siempre muestra placeholder hasta validar en " +
                     "hardware.",
+                    LabReviewStatus.PENDING,
+                ),
+                LabState(
+                    "Render en web (Wasm)",
+                    "El host Wasm del laboratorio aún no decodifica: siempre muestra placeholder blanco hasta " +
+                    "implementar la ruta de decodificación en navegador.",
                     LabReviewStatus.PENDING,
                 ),
             ),

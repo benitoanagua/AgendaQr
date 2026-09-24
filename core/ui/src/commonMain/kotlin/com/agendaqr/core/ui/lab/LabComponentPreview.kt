@@ -392,7 +392,7 @@ private fun QrPreviewControls() {
         XauxaQrPreview(encodedQr = encodedQr)
         Text(
             "En Android el QR de ejemplo se decodifica a bitmap; dato inválido o vacío muestra placeholder. " +
-                "En iOS la implementación aún muestra placeholder.",
+                "En iOS y en el host web (Wasm) la implementación aún muestra placeholder.",
             fontSize = XauxaType.Caption,
             color = XauxaColor.TextSecondary,
         )
