@@ -50,7 +50,8 @@ internal fun LabFoundationPreview(foundationId: String, modifier: Modifier = Mod
 
 private data class LabColorEntry(val name: String, val color: Color, val role: String)
 
-private val labColorEntries: List<LabColorEntry> = listOf(
+@Composable
+private fun labColorEntries(): List<LabColorEntry> = listOf(
     LabColorEntry("Background", XauxaColor.Background, "Fondo de pantalla"),
     LabColorEntry("Surface", XauxaColor.Surface, "Fondo de superficies"),
     LabColorEntry("Surface2", XauxaColor.Surface2, "Superficie secundaria y fondo de banner"),
@@ -76,7 +77,7 @@ private val labColorEntries: List<LabColorEntry> = listOf(
 @Composable
 private fun ColorSpecimen() {
     Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-        labColorEntries.forEach { entry ->
+        labColorEntries().forEach { entry ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Md),

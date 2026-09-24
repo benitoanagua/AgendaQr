@@ -54,6 +54,7 @@ enum class XauxaTone {
     Info,
 }
 
+@Composable
 internal fun XauxaTone.content(): androidx.compose.ui.graphics.Color = when (this) {
     XauxaTone.Neutral -> XauxaColor.TextSecondary
     XauxaTone.Success -> XauxaColor.Success
@@ -62,6 +63,7 @@ internal fun XauxaTone.content(): androidx.compose.ui.graphics.Color = when (thi
     XauxaTone.Info -> XauxaColor.Info
 }
 
+@Composable
 internal fun XauxaTone.container(): androidx.compose.ui.graphics.Color = when (this) {
     XauxaTone.Neutral -> XauxaColor.Surface2
     XauxaTone.Success -> XauxaColor.SuccessBg

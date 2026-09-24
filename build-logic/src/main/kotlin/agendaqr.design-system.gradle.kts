@@ -50,46 +50,12 @@ tasks.register("verifyDesignSystemCompliance") {
 }
 
 /**
- * Single token direction: the canonical source is core/ui XauxaTokens.kt and
- * design-tokens.json is its documented snapshot. Every Color literal in
- * XauxaTokens.kt must be documented as a hex value in the snapshot
- * (references like {color.primitive.teal60} are resolved first), so no token
- * value can exist without documentation. Unused reference primitives in the
- * snapshot are allowed: they are Xauxa source context, not product claims.
- */
-fun tokenSnapshotViolations(): List<String> {
-    val snapshot = file("design-tokens.json")
-    if (!snapshot.exists()) return listOf("design-tokens.json missing at repository root")
-    val raw = snapshot.readText()
-    val declared = Regex("\"[A-Za-z0-9]+\"\\s*:\\s*\"(#[0-9A-Fa-f]{6})\"")
-        .findAll(raw).associate { match ->
-            Regex("\"([A-Za-z0-9]+)\"").find(match.value)!!.groupValues[1] to match.groupValues[1].uppercase()
-        }
-    val resolved = Regex("\\{[A-Za-z0-9.]+\\}").replace(raw) { match ->
-        declared[match.value.substringAfterLast(".").dropLast(1)] ?: match.value
-    }
-    val documented = Regex("#([0-9A-FA-f]{6})").findAll(resolved).map { it.groupValues[1] }.toSet()
-    val tokensKt = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/XauxaTokens.kt")
-    if (!tokensKt.exists()) return listOf("XauxaTokens.kt missing: cannot verify token snapshot")
-    val kotlinHexes = Regex("0xFF([0-9A-FA-F]{6})").findAll(tokensKt.readText()).map { it.groupValues[1] }.toSet()
-    return kotlinHexes.filter { it !in documented }.map { "Color(0xFF$it) in XauxaTokens.kt is not documented in design-tokens.json" }
-}
-
-tasks.register("verifyTokenSnapshot") {
-    group = "verification"
-    description = "Checks every Color in the canonical XauxaTokens.kt is documented in design-tokens.json."
-    doLast {
-        val violations = tokenSnapshotViolations()
-        require(violations.isEmpty()) { "Token snapshot drift:\n${violations.joinToString("\n")}" }
-    }
-}
-
-/**
- * CSS enforcement for the wasmJs host resources (mirrors Regla 01-03 of the
- * xauxa stylelint sidecar, scoped to this repository: radius 0 in
- * rectangular containers, no visual elevation, no raw hex outside token
- * output). Pure functions over content so the fixture self-test below can
- * prove that forbidden examples fail and token-correct usage passes.
+ * CSS enforcement for the wasmJs host resources: the host stylesheet is a
+ * token-free viewport reset (the Compose canvas renders Kotlin tokens
+ * directly, so no CSS generation exists). This gate keeps it that way —
+ * radius 0, no elevation, no raw hex — with pure functions over content so
+ * the fixture self-test proves forbidden examples fail and valid usage
+ * passes.
  */
 fun cssViolations(path: String, content: String): List<String> = buildList {
     content.lines().forEachIndexed { index, line ->
@@ -166,6 +132,6 @@ tasks.register("verifyArchitectureBoundaries") {
 
 tasks.register("verifyAgendaQrArchitecture") {
     group = "verification"
-    dependsOn("verifyDesignSystemCompliance", "verifyArchitectureBoundaries", "verifyTokenSnapshot", "verifyWebDesignSystem", "verifyDesignSystemFixtures")
+    dependsOn("verifyDesignSystemCompliance", "verifyArchitectureBoundaries", "verifyWebDesignSystem", "verifyDesignSystemFixtures")
     description = "Runs the complete Agenda QR architecture and Xauxa design-system gates."
 }

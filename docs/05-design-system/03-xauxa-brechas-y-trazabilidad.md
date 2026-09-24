@@ -13,7 +13,7 @@ muestra estas brechas en vivo, no las corrige.
 | `xauxa-design-system/tokens/tokens.json` (v13) | Fuente canónica de tokens: primitivos, semánticos dark-first, tema light, marca por producto, focus, motion, tipografía. |
 | `xauxa-design-system/docs/design-system.html` (v13) | Documento vivo: 9 foundations, 26 componentes (C01–C26 + C1b), 6 patterns, matriz de estados §10, auditoría de contraste, breakpoints §07. |
 | `xauxa-design-system/kotlin-compose/` (v13) | `XauxaLiveTile`, `XauxaCommandBar`, `XauxaTurnstileNav`, `ReducedMotion`: código escrito contra APIs reales, **no compilado contra ningún proyecto**. |
-| `design-tokens.json` (raíz del repo, v9) | Snapshot documentado ampliado: semánticos reales de AgendaQr (incluye `-bg` y `focusRing`), radio, elevación, espaciado, motion, accesibilidad y tipografía. La fuente canónica es `XauxaTokens.kt`; `verifyTokenSnapshot` exige que cada `Color` de Kotlin esté documentado aquí. |
+| `design-tokens.json` (raíz del repo, v9, **retirado**) | Snapshot documentado ampliado que se migró a `XauxaTokens.kt` y se eliminó: la fuente canónica es Kotlin y no quedan consumidores del JSON (ver historial Git). |
 | `core/ui/.../theme/XauxaTokens.kt` | Tokens implementados que el código consume realmente. |
 
 ## 1. Deriva de valores entre Xauxa canónico y la implementación
@@ -45,16 +45,15 @@ light, 4.76:1 / 4.65:1). Agenda QR usa ese color para texto deshabilitado de
 botones — conviene revisarlo con la auditoría de contraste de Xauxa antes de
 dar por cerrada la paleta.
 
-## 2. Tokens documentados que faltan en la implementación
+## 2. Tokens documentados: estado tras la migración a Kotlin
 
-- **Dimensión de tema oscuro** completa (surface/surface-2/surface-3/border/
-  text-1/2/3 para dark). Es la brecha raíz: sin tokens dark, ningún componente
-  Xauxa puede adaptarse y el `darkColorScheme` de `AgendaQrTheme` queda como
-  infraestructura Material parcial (solo el chrome M3 del lab cambia).
-- **Contenedores de estado** `-bg`: `success-bg`, `danger-bg`, `warning-bg`,
-  `info-bg`. **CERRADO en esta pasada**: existen como `SuccessBg/DangerBg/
-  WarningBg/InfoBg` en `XauxaTokens.kt`, documentados en `design-tokens.json`
-  v9 y consumidos por Toast, InlineResult y StatusBanner (peligro).
+- **Dimensión de tema oscuro**: **IMPLEMENTADA con valores de referencia**.
+  `DarkXauxaColorScheme` aplica surface/surface-2/surface-3/border/
+  text-1/2/3 y semánticos de xauxa v13 dark-first, con fondo `#151218` de
+  XauxaXcan. Definidos por referencia, **pendientes de validación visual de
+  producto** (cada contrato lo declara PENDING).
+- **Contenedores de estado** `-bg`: `SuccessBg/DangerBg/WarningBg/InfoBg`
+  existen en ambos esquemas y los consumen Toast, InlineResult y StatusBanner.
 - **Colores por tipo de QR**: `type-url`, `type-email`, `type-text` (usados por
   XauxaXcan para color-coding de listas; Agenda QR aún no los consume).
 - **Anillo de foco**: `focus.ring-color` (= brand-accent), `ring-offset` (2px).
@@ -117,16 +116,16 @@ categoría.
 
 ## 4. Tema oscuro: estado real
 
-- `AgendaQrTheme(darkTheme = true)` instala un `darkColorScheme` Material
-  construido con los mismos tokens claros fijos (p. ej. `background =
-  XauxaColor.TextPrimary`). Los componentes Xauxa leen `XauxaColor.*`
-  directamente, por lo que **no cambian** con el tema.
-- En el laboratorio, el toggle de preview oscuro oscurece el chrome Material
-  (que sí consume `MaterialTheme`) y deja los componentes bajo inspección con
-  su apariencia clara. El inspector lo marca explícitamente como la brecha
-  real de tokens, no como un fallo del lab.
-- Soporte honesto por componente en el catálogo: `NOT_SUPPORTED` para los 31
-  componentes; `NOT_APPLICABLE` para fundamentos no cromáticos.
+- `AgendaQrTheme(darkTheme = true)` provee `DarkXauxaColorScheme` vía
+  `LocalXauxaColorScheme` y mapea `MaterialTheme` al esquema. Los componentes
+  Xauxa leen la fachada `XauxaColor`, por lo que **sí cambian** con el tema.
+- La producción no usa el wrapper y queda en esquema claro, idéntica a antes.
+- En el laboratorio, el toggle de preview oscuro aplica el esquema de
+  referencia. El inspector lo marca PENDING: valores definidos por
+  referencia, no verificados por producto.
+- Soporte honesto por componente en el catálogo: `PENDING` para los 31
+  componentes y la fundación de color; `NOT_APPLICABLE` para fundamentos no
+  cromáticos.
 
 ## 5. Trazabilidad del catálogo del laboratorio
 

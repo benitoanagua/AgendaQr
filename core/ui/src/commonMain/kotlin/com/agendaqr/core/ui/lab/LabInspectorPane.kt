@@ -94,10 +94,10 @@ private fun LabIdentitySection(contract: LabComponentContract, darkPreviewActive
                 fontSize = XauxaType.Caption,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            if (darkPreviewActive && contract.darkThemeSupport == LabDarkThemeSupport.NOT_SUPPORTED) {
+            if (darkPreviewActive && contract.darkThemeSupport != LabDarkThemeSupport.VERIFIED) {
                 Text(
-                    "Preview oscuro activo y el componente no cambia: esta es la brecha real de tokens dark " +
-                        "de Xauxa, no un fallo del laboratorio.",
+                    "Preview oscuro activo: el componente resuelve el esquema oscuro de referencia, " +
+                        "pendiente de validación visual de producto.",
                     fontSize = XauxaType.Caption,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.error,

@@ -129,17 +129,23 @@ class LabCatalogIntegrityTest {
 
     @Test
     fun dark_theme_support_is_declared_honestly() {
-        // Today no component adapts to dark theme: all use fixed light tokens.
+        // Every component resolves the scheme through XauxaColor: the dark
+        // scheme applies reference values pending product validation.
         LabComponentCatalog.components.forEach { contract ->
             assertEquals(
-                LabDarkThemeSupport.NOT_SUPPORTED,
+                LabDarkThemeSupport.PENDING,
                 contract.darkThemeSupport,
-                "${contract.id} claims dark support that the tokens do not provide",
+                "${contract.id} must not claim verified dark support without visual QA",
             )
+            assertTrue(contract.darkThemeNote.isNotBlank(), "${contract.id}: dark note")
         }
-        // Non-chromatic foundations legitimately answer "no aplica".
-        val nonChromatic = LabComponentCatalog.foundations.filter { it.id != "xauxa-color" }
-        nonChromatic.forEach { contract ->
+        // The color foundation carries the dark palette (pending); other
+        // non-chromatic foundations legitimately answer "no aplica".
+        assertEquals(
+            LabDarkThemeSupport.PENDING,
+            requireNotNull(LabComponentCatalog.find("xauxa-color")).darkThemeSupport,
+        )
+        LabComponentCatalog.foundations.filter { it.id != "xauxa-color" }.forEach { contract ->
             assertEquals(LabDarkThemeSupport.NOT_APPLICABLE, contract.darkThemeSupport, contract.id)
         }
     }

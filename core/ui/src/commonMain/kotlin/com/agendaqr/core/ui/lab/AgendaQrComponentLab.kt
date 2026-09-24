@@ -195,7 +195,7 @@ private fun LabHeader(
                 }
             }
             Text(
-                "Los componentes usan tokens claros fijos: el preview oscuro expone la brecha real.",
+                "Los componentes resuelven el esquema vía XauxaColor: el preview oscuro aplica valores de referencia pendientes de validación.",
                 fontSize = XauxaType.Caption,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

@@ -14,6 +14,7 @@ object XauxaTokenIndex {
         "XauxaColor.Background",
         "XauxaColor.Surface",
         "XauxaColor.Surface2",
+        "XauxaColor.Surface3",
         "XauxaColor.Border",
         "XauxaColor.TextPrimary",
         "XauxaColor.TextSecondary",

@@ -42,6 +42,48 @@ Se prioriza composición de componentes existentes. Pueden reutilizarse, donde c
 
 No se crea un componente nuevo solo porque una pantalla tenga una composición diferente.
 
+## Fuente canónica de tokens (Kotlin)
+
+`core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/XauxaTokens.kt` es la
+única fuente editable (`design-tokens.json` se retiró tras migrar sus valores;
+ver historial Git). Estructura:
+
+- `XauxaPrimitive` (interno): valores base sin intención de UI. Solo los
+  esquemas los consumen; los componentes tienen prohibido usarlos.
+- `XauxaColorScheme` (data class inmutable): intención semántica completa —
+  `background`, `surface`/`surface2`/`surface3`, `border`,
+  `textPrimary`/`textSecondary`/`textTertiary`, `brand`/`brandAccent`/`onBrand`,
+  `success`/`danger`/`warning`/`info` con sus fondos `-bg`, `focusRing` y
+  `white` (blanco QR, idéntico en ambos temas).
+- `LightXauxaColorScheme`: producción vigente preservada. Solo `surface3`
+  (`#E6EBEA`) es propuesta nueva pendiente de validación.
+- `DarkXauxaColorScheme`: valores dark-first de la referencia xauxa v13 y
+  fondo `#151218` de XauxaXcan. Definidos por referencia, pendientes de
+  validación visual de producto.
+- `LocalXauxaColorScheme` + fachada `XauxaColor`: los componentes consumen
+  `XauxaColor.Surface` etc. y reciben el esquema vigente sin comprobar el
+  tema a mano. Sin provider explícito rige el claro.
+- `XauxaSpacing`, `XauxaMetrics`, `XauxaType`, `XauxaMotion`: sin cambios.
+
+`AgendaQrTheme(darkTheme)` provee el esquema y mapea `MaterialTheme`. La
+producción no usa el wrapper y queda en claro, idéntica a antes.
+
+### Cómo añadir o modificar un token
+
+1. Añadir el primitivo a `XauxaPrimitive` con comentario de procedencia
+   (`[prod]`, `[refs]`, `[derivado]` o `[nuevo]`).
+2. Exponerlo en `XauxaColorScheme` y en ambos esquemas (un esquema incompleto
+   no compila: la data class lo exige).
+3. Si es color semántico, añadir la fachada en `XauxaColor` y el nombre en
+   `XauxaTokenIndex` (el catálogo lo valida).
+4. Añadir/ajustar el specimen en `LabFoundationPreview` y el pin en
+   `XauxaSchemeTest` si fija apariencia de producción.
+
+No hay salidas derivadas que regenerar: el host Wasm renderiza los tokens
+Kotlin directamente en el canvas (su `styles.css` es un reset sin valores,
+verificado por `verifyWebDesignSystem`); no existe CSS generado ni JSON
+generado porque no hay consumidores que los necesiten.
+
 ## Nota
 
 La especificación UX/UI V1 está congelada. Este documento describe cómo aplicar Xauxa al contrato; no autoriza modificar el contrato UX.

@@ -45,7 +45,7 @@ Android es la plataforma que se valida primero. iOS forma parte de la arquitectu
     ├── build-logic/                # convention plugins
     ├── gradle/                     # version catalog / wrapper
     ├── docs/                       # documentación normativa y de implementación
-    └── design-tokens.json          # snapshot exportable de tokens
+    └── core/ui/.../theme/XauxaTokens.kt  # fuente canónica de tokens (Kotlin)
 
 ## 5. Kotlin Way
 
