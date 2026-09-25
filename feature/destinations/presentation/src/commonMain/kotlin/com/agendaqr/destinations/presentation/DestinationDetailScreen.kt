@@ -39,8 +39,8 @@ fun DestinationDetailScreen(
             destination.note?.takeIf { it.isNotBlank() }?.let { Text(it, color = XauxaColor.TextSecondary) }
             XauxaQrPreview(destination.qr.encoded)
             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                XauxaPrimaryButton("Show QR", onShowQr)
-                XauxaSecondaryButton("Back", onBack)
+                XauxaPrimaryButton("Mostrar QR", onShowQr)
+                XauxaSecondaryButton("Volver", onBack)
             }
         }
         // cb1: command bar contextual solo en pantallas de detalle/foco como
@@ -49,11 +49,11 @@ fun DestinationDetailScreen(
         // es destructiva y no debería quedar a un toque de Edit/Share.
         XauxaCommandBar(
             visibleActions = listOf(
-                { XauxaTextAction("Edit", onEdit) },
-                { XauxaTextAction("Share", onShare) },
+                { XauxaTextAction("Editar", onEdit) },
+                { XauxaTextAction("Compartir", onShare) },
             ),
             overflowActions = listOf(
-                XauxaOverflowAction("Delete", onDelete),
+                XauxaOverflowAction("Eliminar", onDelete),
             ),
         )
     }
