@@ -16,7 +16,7 @@ internal object XauxaPrimitive {
     val lightSurface = Color(0xFFFFFFFF)
     val lightSurface2 = Color(0xFFF3EBF4)
     val lightSurface3 = Color(0xFFE8E0E9)
-    val lightBorder = Color(0xFFCDC3D2)
+    val lightBorder = Color(0xFF7C7482)
     val lightText1 = Color(0xFF1E1A20)
     val lightText2 = Color(0xFF4B4450)
     val lightText3 = Color(0xFF7C7482)
@@ -198,3 +198,5 @@ object XauxaMotion {
 }
 
 fun Dp.xauxaBorder() = this
+
+fun XauxaTextColorScheme(scheme: XauxaColorScheme) = scheme
