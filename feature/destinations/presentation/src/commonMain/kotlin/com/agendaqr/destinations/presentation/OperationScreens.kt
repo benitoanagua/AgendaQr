@@ -3,7 +3,7 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +22,7 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
     }
     state.pendingIncoming?.let { incoming ->
         val duplicate = state.pendingDuplicates.isNotEmpty()
-        AlertDialog(
+        XauxaDialog(
             onDismissRequest = { viewModel.onAction(OperationAction.ClearIncoming) },
             title = { Text(if (duplicate) "Comprobante duplicado" else "Comprobante recibido") },
             text = {
@@ -68,7 +68,7 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
                 XauxaPrimaryButton(label = "Nuevo", onClick = { viewModel.onAction(OperationAction.New) })
             }
         }
-        OutlinedTextField(state.query, { viewModel.onAction(OperationAction.Search(it)) }, Modifier.fillMaxWidth(), label = { Text("Buscar") }, singleLine = true)
+        XauxaTextInput(state.query, { viewModel.onAction(OperationAction.Search(it)) }, Modifier.fillMaxWidth(), label = { Text("Buscar") }, singleLine = true)
         if (state.unassociated.isNotEmpty()) {
             XauxaStatusBanner("Comprobantes sin asociar: " + state.unassociated.size)
             XauxaSecondaryButton(label = "Ver bandeja de respaldos", onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
@@ -146,7 +146,7 @@ private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsVi
         val suggestion = viewModel.receiptSuggestion(receipt.id)
         val candidateOperations = suggestion?.operationIds.orEmpty()
             .mapNotNull { id -> state.operations.firstOrNull { it.id == id } }
-        AlertDialog(
+        XauxaDialog(
             onDismissRequest = { selectedReceipt = null },
             title = { Text(
                 when (suggestion?.kind) {
@@ -206,20 +206,20 @@ private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsVi
             if (type == OperationType.COBRO) XauxaPrimaryButton(label = "COBRO", onClick = { type = OperationType.COBRO })
             else XauxaSecondaryButton(label = "COBRO", onClick = { type = OperationType.COBRO })
         }
-        OutlinedTextField(amount, { amount = it }, Modifier.fillMaxWidth(), label = { Text("Monto (opcional)") }, singleLine = true)
-        OutlinedTextField(currency, { currency = it }, Modifier.fillMaxWidth(), label = { Text("Moneda (opcional)") }, singleLine = true)
-        OutlinedTextField(person, { person = it }, Modifier.fillMaxWidth(), label = { Text("Persona o entidad (opcional)") }, singleLine = true)
-        OutlinedTextField(destination, { destination = it }, Modifier.fillMaxWidth(), label = { Text("Destino QR (opcional)") }, singleLine = true)
+        XauxaTextInput(amount, { amount = it }, Modifier.fillMaxWidth(), label = { Text("Monto (opcional)") }, singleLine = true)
+        XauxaTextInput(currency, { currency = it }, Modifier.fillMaxWidth(), label = { Text("Moneda (opcional)") }, singleLine = true)
+        XauxaTextInput(person, { person = it }, Modifier.fillMaxWidth(), label = { Text("Persona o entidad (opcional)") }, singleLine = true)
+        XauxaTextInput(destination, { destination = it }, Modifier.fillMaxWidth(), label = { Text("Destino QR (opcional)") }, singleLine = true)
         XauxaSecondaryButton(label = selectedContextId?.let { id -> "Para: " + (state.contexts.firstOrNull { it.id == id }?.name ?: "Contexto") } ?: "Para: elegir contexto (opcional)", onClick = { showContextPicker = true })
-        OutlinedTextField(concept, { concept = it }, Modifier.fillMaxWidth(), label = { Text("Concepto (opcional)") }, singleLine = true)
-        OutlinedTextField(note, { note = it }, Modifier.fillMaxWidth(), label = { Text("Nota (opcional)") }, singleLine = true)
+        XauxaTextInput(concept, { concept = it }, Modifier.fillMaxWidth(), label = { Text("Concepto (opcional)") }, singleLine = true)
+        XauxaTextInput(note, { note = it }, Modifier.fillMaxWidth(), label = { Text("Nota (opcional)") }, singleLine = true)
         Text("Podrás adjuntar comprobantes más adelante", color = XauxaColor.TextSecondary, fontSize = XauxaType.Label)
         XauxaPrimaryButton(label = "Guardar", onClick = {
             viewModel.onAction(OperationAction.SaveNew(type, nowMillis(), amount, currency, person, destination, concept, note, selectedContextId, draftOperationId))
         })
     }
     if (showContextPicker) {
-        AlertDialog(
+        XauxaDialog(
             onDismissRequest = { showContextPicker = false },
             title = { Text("¿A cuál corresponde?") },
             text = {
