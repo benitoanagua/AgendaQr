@@ -15,6 +15,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
@@ -48,7 +50,7 @@ fun DestinationsScreen(
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Agenda QR", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            Text("Agenda QR", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 XauxaTextAction(label = "Cerrar sesión", onClick = onSignOut)
                 XauxaSecondaryButton(label = "Contextos", onClick = onOpenContexts)
