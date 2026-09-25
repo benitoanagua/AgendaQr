@@ -83,21 +83,10 @@ private fun LabIdentitySection(contract: LabComponentContract, darkPreviewActive
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
             Text(contract.purpose, fontSize = XauxaType.Body, color = XauxaColor.TextPrimary)
-            Text(
-                contract.description,
-                fontSize = XauxaType.Label,
-                color = XauxaColor.TextSecondary,
-            )
             LabLabelValue("Tema oscuro", contract.darkThemeSupport.label)
-            Text(
-                contract.darkThemeNote,
-                fontSize = XauxaType.Caption,
-                color = XauxaColor.TextSecondary,
-            )
             if (darkPreviewActive && contract.darkThemeSupport != LabDarkThemeSupport.VERIFIED) {
                 Text(
-                    "Preview oscuro activo: el componente resuelve el esquema oscuro de referencia, " +
-                        "pendiente de validación visual de producto.",
+                    "Validación visual pendiente.",
                     fontSize = XauxaType.Caption,
                     fontWeight = FontWeight.SemiBold,
                     color = XauxaColor.Danger,
