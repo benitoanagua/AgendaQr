@@ -7,6 +7,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.theme.*
@@ -54,7 +56,7 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
     val paged = operations.take(visibleCount)
     Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Operaciones", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            Text("Operaciones", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 XauxaTextAction(label = "Destinos", onClick = onBack)
                 XauxaPrimaryButton(label = "Nuevo", onClick = { viewModel.onAction(OperationAction.New) })
@@ -109,7 +111,7 @@ private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsVi
     var selectedReceipt by remember { mutableStateOf<Comprobante?>(null) }
     Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Comprobantes sin asociar", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            Text("Comprobantes sin asociar", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             XauxaTextAction(label = "Volver", onClick = { viewModel.onAction(OperationAction.Back) })
         }
         if (state.unassociated.isEmpty()) {
@@ -192,7 +194,7 @@ private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsVi
 
     Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Registrar operación", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            Text("Registrar operación", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             XauxaTextAction(label = "Volver", onClick = { viewModel.onAction(OperationAction.Back) })
         }
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
@@ -243,7 +245,7 @@ private fun OperationDetailScreen(state: OperationsUiState, viewModel: Operation
     val operation = viewModel.selectedOperation() ?: return
     Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Detalle", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            Text("Detalle", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             XauxaTextAction(label = "Volver", onClick = { viewModel.onAction(OperationAction.Back) })
         }
         XauxaStatusBanner(
