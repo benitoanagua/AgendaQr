@@ -179,7 +179,7 @@ fun XauxaTextAction(label: String, onClick: () -> Unit, modifier: Modifier = Mod
         shape = RectangleShape,
     ) {
         Text(
-            label.uppercase(),
+            label,
             fontSize = XauxaType.Label,
             fontWeight = FontWeight.Bold,
             letterSpacing = XauxaType.LetterSpacingWide,
