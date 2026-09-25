@@ -240,3 +240,10 @@ Esta nota complementa los hallazgos históricos anteriores; no los elimina, porq
 - `DestinationsScreen` pasa a mostrar “Cargando destinos QR…” en el patrón común, dando contexto explícito al estado de carga de la lista.
 - `ImportReviewScreen` singulariza el resumen cuando hay un solo elemento (“1 destino”) y conserva el plural para cero o varios (“N destinos”). Es una mejora de microcopy de presentación, sin modificar el conjunto de activos ni el guardado.
 - Pendiente en revisión final: confirmar la composición del encabezado y las acciones de la lista en anchuras pequeñas; esta pasada no altera la distribución ni la lógica de acciones.
+
+
+## Semántica de anuncios para estados compartidos
+
+- `XauxaLoading` y `XauxaStatusBanner` ahora marcan su contenido como región viva de prioridad cortés (`LiveRegionMode.Polite`) para que los cambios de carga/estado puedan comunicarse sin interrumpir de forma agresiva.
+- Esto mejora la señal semántica a nivel Compose, pero no sustituye la comprobación real con TalkBack y VoiceOver: la forma y el momento de anuncio dependen de la plataforma y del contexto de actualización.
+- Pendiente: validar que los anuncios no se repitan en recomposiciones y que el texto del estado se lea junto con el indicador de progreso, además de comprobar banners dinámicos de error/éxito.
