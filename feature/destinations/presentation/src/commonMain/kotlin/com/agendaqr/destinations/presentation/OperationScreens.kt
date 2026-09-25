@@ -247,7 +247,7 @@ private fun OperationDetailScreen(state: OperationsUiState, viewModel: Operation
             XauxaTextAction(label = "Volver", onClick = { viewModel.onAction(OperationAction.Back) })
         }
         XauxaStatusBanner(
-            operation.type.name + " · " + formatDate(operation.occurredAt) + " · " +
+            operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt) + " · " +
                 operation.amount.orEmpty().ifBlank { "sin monto" }
         )
         operation.personOrEntity?.let { Text("Persona o entidad: " + it) }
