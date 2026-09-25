@@ -266,3 +266,9 @@ Esta nota complementa los hallazgos históricos anteriores; no los elimina, porq
 
 - Se expusieron como encabezados los títulos raíz de Destinations y Contextos, y el nombre del contexto en detalle. El estado vacío compartido también expone su título como encabezado.
 - La semántica mejora la navegación por encabezados, pero no equivale a una auditoría completa de jerarquía: queda pendiente verificar orden y niveles en TalkBack/VoiceOver, en particular cuando pantallas anfitrionas añaden encabezados propios.
+
+## Encabezados semánticos en pantallas de operaciones
+
+- Los títulos raíz de la lista de operaciones, bandeja de comprobantes sin asociar, alta de operación y detalle ahora se exponen como encabezados semánticos mediante Compose.
+- El cambio afecta solo a la navegación accesible por encabezados; textos, acciones, rutas y estado de negocio permanecen iguales.
+- Pendiente comprobar orden de lectura, foco y anuncios con TalkBack/VoiceOver, además de evitar encabezados redundantes en pantallas compuestas. No se ejecutaron pruebas ni builds locales, reservados para la fase final.
