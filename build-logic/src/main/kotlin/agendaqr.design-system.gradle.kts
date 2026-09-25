@@ -25,6 +25,7 @@ fun checkViolations(): List<String> {
     val rawSp = Regex("(?<![A-Za-z0-9_])(\\d+(?:\\.\\d+)?)\\.sp\\b")
     val rawColor = Regex("\\bColor\\s*\\(")
     val forbiddenShapes = listOf("RoundedCornerShape", "CutCornerShape", "shadow(", ".shadow(")
+    val forbiddenVisualAuthority = listOf("MaterialTheme.colorScheme")
 
     sources.forEach { file ->
         file.readLines().forEachIndexed { index, line ->
@@ -35,6 +36,7 @@ fun checkViolations(): List<String> {
             if (!file.path.endsWith("XauxaTokens.kt") && rawSp.containsMatchIn(line)) violations += "$location: raw sp outside token layer: $line"
             if (!file.path.endsWith("XauxaTokens.kt") && rawColor.containsMatchIn(line)) violations += "$location: raw Color constructor outside token layer: $line"
             if (forbiddenShapes.any(line::contains)) violations += "$location: forbidden radius/elevation API: $line"
+            if (!file.path.endsWith("XauxaTheme.kt") && forbiddenVisualAuthority.any(line::contains)) violations += "$location: MaterialTheme cannot be the visual authority outside XauxaTheme: $line"
         }
     }
     return violations
