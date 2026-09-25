@@ -104,3 +104,13 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - La revisión de esta pantalla confirma que ya compone búsqueda, filtros, banner de error, carga, estado vacío y lista paginada con componentes comunes. No se hizo una revisión visual ejecutada ni se considera cerrada la migración de toda la pantalla; quedan por revisar densidad/ajuste en pantallas estrechas y los textos de los demás flujos.
 
 **Pruebas:** no ejecutadas, de acuerdo con la instrucción de reservarlas para el cierre.
+
+
+## Siguiente pasada: editor y operaciones
+
+- `DestinationEditorScreen`: título de creación/edición localizado al español. Se conserva el estado del formulario, persistencia, importación QR y selección de contexto sin cambios.
+- `OperationScreens`: los tipos de operación visibles en la lista y en el resumen del detalle se presentan como “Pago” y “Cobro” en lugar de exponer los identificadores internos `PAGO`/`COBRO`. La traducción es exhaustiva para los dos valores de `OperationType` usados en esta pantalla; revisar si el dominio incorpora más tipos en el futuro.
+- La inspección estática encontró que el editor y los flujos de operaciones ya usan componentes compartidos para campos, botones, banners, filas, tiles, diálogos y secciones. Persisten oportunidades de revisar disposición responsive, asociación de campos/errores, y estados de accesibilidad en ejecución.
+- No se modificaron reglas de negocio, fechas, montos, guardado, asociación/eliminación de comprobantes ni navegación.
+
+**Pruebas:** no ejecutadas; se mantienen reservadas para la fase final.
