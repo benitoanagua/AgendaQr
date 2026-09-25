@@ -54,10 +54,18 @@ fun GlobalSearchScreen(
                         subtitle = result.subtitle,
                         tone = XauxaTone.Info,
                         onClick = { onSelect(result) },
-                        trailing = { XauxaCategoryChip(result.type.name) },
+                        trailing = { XauxaCategoryChip(searchResultTypeLabel(result.type)) },
                     )
                 }
             }
         }
     }
 }
+
+private fun searchResultTypeLabel(type: com.agendaqr.destinations.domain.AgendaSearchResultType): String =
+    when (type) {
+        com.agendaqr.destinations.domain.AgendaSearchResultType.CONTEXT -> "Contexto"
+        com.agendaqr.destinations.domain.AgendaSearchResultType.QR -> "QR"
+        com.agendaqr.destinations.domain.AgendaSearchResultType.ACTIVITY -> "Actividad"
+        com.agendaqr.destinations.domain.AgendaSearchResultType.COMPROBANTE -> "Comprobante"
+    }
