@@ -23,33 +23,25 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
     state.pendingIncoming?.let { incoming ->
         val duplicate = state.pendingDuplicates.isNotEmpty()
         XauxaDialog(
-            onDismissRequest = { viewModel.onAction(OperationAction.ClearIncoming) },
-            title = { Text(if (duplicate) "Comprobante duplicado" else "Comprobante recibido") },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                    if (duplicate) {
-                        Text("Ya existe un comprobante igual. No se guardará otra copia.")
-                    } else {
-                        Text("Se guardará en tu bandeja de respaldos sin asociar.")
-                    }
-                    Text("Archivo: " + incoming.extension, color = XauxaColor.TextSecondary)
-                }
+            title = if (duplicate) "Comprobante duplicado" else "Comprobante recibido",
+            message = if (duplicate) {
+                "Ya existe un comprobante igual. No se guardará otra copia.\nArchivo: " + incoming.extension
+            } else {
+                "Se guardará en tu bandeja de respaldos sin asociar.\nArchivo: " + incoming.extension
             },
-            confirmButton = {
-                XauxaPrimaryButton(
-                    if (duplicate) "CERRAR" else if (state.isSavingReceipt) "Guardando…" else "LISTO / OK",
-                    { viewModel.onAction(OperationAction.ClearIncoming.takeIf { duplicate } ?: OperationAction.SaveIncoming(false)) },
-                    enabled = !state.isSavingReceipt,
+            confirmLabel = if (duplicate) "CERRAR" else if (state.isSavingReceipt) "GUARDANDO…" else "LISTO / OK",
+            onConfirm = {
+                viewModel.onAction(
+                    if (duplicate) OperationAction.ClearIncoming
+                    else OperationAction.SaveIncoming(false),
                 )
             },
-            dismissButton = if (!duplicate) {
-                {
-                    XauxaTextAction(label = "ASOCIAR AHORA (Opcional)", onClick = {
-                        viewModel.onAction(OperationAction.SaveIncoming(true))
-                    })
-                }
-            } else {
-                null
+            dismissLabel = if (duplicate) null else "ASOCIAR AHORA",
+            onDismiss = {
+                viewModel.onAction(
+                    if (duplicate) OperationAction.ClearIncoming
+                    else OperationAction.SaveIncoming(true),
+                )
             },
         )
     }
@@ -147,37 +139,41 @@ private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsVi
         val candidateOperations = suggestion?.operationIds.orEmpty()
             .mapNotNull { id -> state.operations.firstOrNull { it.id == id } }
         XauxaDialog(
-            onDismissRequest = { selectedReceipt = null },
-            title = { Text(
-                when (suggestion?.kind) {
-                    ReceiptMatchKind.SINGLE -> "Parece corresponder a"
-                    ReceiptMatchKind.MULTIPLE -> "¿A cuál corresponde?"
-                    ReceiptMatchKind.NONE, null -> "No encontramos coincidencia"
-                }
-            ) },
-            text = {
+            title = when (suggestion?.kind) {
+                ReceiptMatchKind.SINGLE -> "Parece corresponder a"
+                ReceiptMatchKind.MULTIPLE -> "¿A cuál corresponde?"
+                ReceiptMatchKind.NONE, null -> "No encontramos coincidencia"
+            },
+            confirmLabel = "Cancelar",
+            onConfirm = { selectedReceipt = null },
+            onDismiss = { selectedReceipt = null },
+            content = {
                 Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                     when {
-                        suggestion == null -> Text("Estamos analizando el comprobante.")
+                        suggestion == null -> Text("Estamos analizando el comprobante.", color = XauxaColor.TextSecondary)
                         suggestion.kind == ReceiptMatchKind.NONE ->
-                            Text("No encontramos una operación con señales suficientes para asociarlo automáticamente. Puedes guardarlo sin asociar.")
+                            Text(
+                                "No encontramos una operación con señales suficientes para asociarlo automáticamente. Puedes guardarlo sin asociar.",
+                                color = XauxaColor.TextSecondary,
+                            )
                         candidateOperations.isEmpty() ->
-                            Text("Las operaciones candidatas ya no están disponibles. Puedes volver atrás y revisar el comprobante.")
+                            Text(
+                                "Las operaciones candidatas ya no están disponibles.",
+                                color = XauxaColor.TextSecondary,
+                            )
                         else -> candidateOperations.forEach { operation ->
-                            XauxaTile(onClick = {
-                                viewModel.onAction(OperationAction.Associate(receipt.id, operation.id))
-                                selectedReceipt = null
-                            }) {
-                                Row(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text(operation.type.name + " · " + formatDate(operation.occurredAt))
-                                    Text(operation.amount.orEmpty().ifBlank { "—" })
-                                }
-                            }
+                            XauxaListRow(
+                                title = operation.type.name + " · " + formatDate(operation.occurredAt),
+                                subtitle = operation.amount.orEmpty().ifBlank { "—" },
+                                onClick = {
+                                    viewModel.onAction(OperationAction.Associate(receipt.id, operation.id))
+                                    selectedReceipt = null
+                                },
+                            )
                         }
                     }
                 }
             },
-            confirmButton = { XauxaTextAction(label = "CANCELAR", onClick = { selectedReceipt = null }) },
         )
     }
 }
@@ -220,19 +216,24 @@ private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsVi
     }
     if (showContextPicker) {
         XauxaDialog(
-            onDismissRequest = { showContextPicker = false },
-            title = { Text("¿A cuál corresponde?") },
-            text = {
+            title = "Seleccionar contexto",
+            confirmLabel = "Cerrar",
+            onConfirm = { showContextPicker = false },
+            dismissLabel = "Sin contexto",
+            onDismiss = { selectedContextId = null; showContextPicker = false },
+            content = {
                 Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                    XauxaTextAction(label = "Sin contexto", onClick = { selectedContextId = null; showContextPicker = false })
                     state.contexts.forEach { context ->
-                        XauxaTile(onClick = { selectedContextId = context.id; showContextPicker = false }) {
-                            Text(context.name, modifier = Modifier.padding(XauxaSpacing.Lg))
-                        }
+                        XauxaListRow(
+                            title = context.name,
+                            onClick = {
+                                selectedContextId = context.id
+                                showContextPicker = false
+                            },
+                        )
                     }
                 }
             },
-            confirmButton = { XauxaTextAction(label = "CANCELAR", onClick = { showContextPicker = false }) },
         )
     }
 
