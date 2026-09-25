@@ -40,7 +40,7 @@ private fun ContextList(state: ContextsUiState, onAction: (ContextAction) -> Uni
         Text("Contextos", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
         state.error?.let { XauxaStatusBanner(it, danger = true) }
         when {
-            state.isLoading -> XauxaLoading()
+            state.isLoading -> XauxaLoading(message = "Cargando contextos…")
             state.contexts.isEmpty() -> XauxaEmptyState(
                 title = "Sin contextos",
                 actionLabel = "Volver",
@@ -93,6 +93,6 @@ private fun ContextDetail(state: ContextsUiState, onAction: (ContextAction) -> U
                 )
             }
             Text("Comprobantes · " + data.comprobantes.size, fontSize = XauxaType.Title, color = XauxaColor.TextPrimary)
-        } ?: XauxaLoading()
+        } ?: XauxaLoading(message = "Cargando contexto…")
     }
 }
