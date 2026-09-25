@@ -32,6 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
@@ -201,6 +204,7 @@ fun XauxaStatusBanner(
             .fillMaxWidth()
             .border(XauxaMetrics.Border, XauxaColor.Border, RectangleShape)
             .background(background)
+            .semantics { liveRegion = LiveRegionMode.Polite }
             .padding(XauxaSpacing.Lg),
     ) { Text(message, color = foreground, fontSize = XauxaType.Label) }
 }
@@ -208,7 +212,8 @@ fun XauxaStatusBanner(
 @Composable
 fun XauxaLoading(modifier: Modifier = Modifier, message: String? = null) {
     Column(
-        modifier = modifier.fillMaxWidth().padding(XauxaSpacing.Xxxl),
+        modifier = modifier.fillMaxWidth().padding(XauxaSpacing.Xxxl)
+            .semantics { liveRegion = LiveRegionMode.Polite },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md),
     ) {
