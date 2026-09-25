@@ -39,7 +39,7 @@ import com.agendaqr.destinations.domain.*
 import com.agendaqr.destinations.domain.AgendaSearchResult
 import com.agendaqr.destinations.domain.AgendaSearchResultType
 import com.agendaqr.core.ui.components.XauxaLoading
-import com.agendaqr.core.ui.theme.AgendaQrTheme
+import com.agendaqr.core.ui.theme.XauxaTheme
 
 @Composable
 fun AgendaQrApp() {
@@ -54,7 +54,7 @@ fun AgendaQrApp() {
     }
     val authState by authViewModel.state.collectAsState()
 
-    AgendaQrTheme {
+    XauxaTheme {
         when (authState.authState) {
             AuthState.Loading -> XauxaLoading()
             AuthState.SignedOut -> AuthScreen(

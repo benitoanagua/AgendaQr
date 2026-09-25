@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,6 +25,7 @@ import com.agendaqr.core.ui.components.XauxaToast
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.lab.model.LabComponentCatalog
 import com.agendaqr.core.ui.lab.model.LabPattern
+import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
 
@@ -54,13 +54,13 @@ internal fun LabPatternPane(
                     Text(
                         pattern.description,
                         fontSize = XauxaType.Body,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = XauxaColor.TextPrimary,
                     )
                     if (pattern.demo) {
                         Text(
                             pattern.demoNote,
                             fontSize = XauxaType.Caption,
-                            color = MaterialTheme.colorScheme.error,
+                            color = XauxaColor.Danger,
                         )
                     }
                 }
@@ -81,7 +81,7 @@ internal fun LabPatternPane(
                         Text(
                             "${index + 1}. $step",
                             fontSize = XauxaType.Label,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = XauxaColor.TextPrimary,
                         )
                     }
                 }
@@ -100,7 +100,7 @@ internal fun LabPatternPane(
                             Text(
                                 "Contrato inexistente: $id",
                                 fontSize = XauxaType.Caption,
-                                color = MaterialTheme.colorScheme.error,
+                                color = XauxaColor.Danger,
                             )
                         } else {
                             LabCatalogRow(contract, selected = false) {
@@ -205,7 +205,7 @@ private fun LabPatternScenario(pattern: LabPattern, onEvent: (String) -> Unit) {
         else -> Text(
             "Patrón sin escenario.",
             fontSize = XauxaType.Label,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = XauxaColor.TextSecondary,
         )
     }
 }

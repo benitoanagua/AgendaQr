@@ -21,7 +21,7 @@ import com.agendaqr.core.ui.theme.XauxaType
 @Composable
 fun FirstUsePattern(onAdd: () -> Unit) {
     XauxaEmptyState(
-        title = "No destinations",
+        title = "Sin destinos",
         actionLabel = "Add QR",
         onAction = onAdd,
     )
@@ -44,6 +44,6 @@ fun QrFullscreenPattern(
     ) {
         Text("QR", fontSize = XauxaType.Headline, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
         XauxaQrPreview(encodedQr, modifier = Modifier.fillMaxWidth())
-        XauxaSecondaryButton("Back", onBack)
+        XauxaSecondaryButton("Volver", onBack)
     }
 }

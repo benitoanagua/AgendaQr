@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +27,7 @@ import com.agendaqr.core.ui.lab.model.LabCatalogIntegrity
 import com.agendaqr.core.ui.lab.model.LabCatalogQuery
 import com.agendaqr.core.ui.lab.model.LabComponentCatalog
 import com.agendaqr.core.ui.lab.model.LabPatterns
-import com.agendaqr.core.ui.theme.AgendaQrTheme
+import com.agendaqr.core.ui.theme.XauxaTheme
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -48,7 +47,7 @@ import com.agendaqr.core.ui.theme.XauxaType
  * - The layout is adaptive: below XauxaMetrics.BreakpointMedium (640dp, a
  *   breakpoint documented by Xauxa) the page collapses to a single
  *   scroll owner to avoid nested-scroll conflicts on narrow devices.
- * - The dark preview wraps everything in AgendaQrTheme with the dark
+ * - The dark preview wraps everything in XauxaTheme with the dark
  *   Material scheme. Xauxa components consume fixed light tokens, so the
  *   preview makes the real dark-mode gap visible instead of hiding it.
  * - The lab is intentionally isolated from production navigation,
@@ -77,10 +76,10 @@ fun AgendaQrComponentLab(
         if (events.size > MAX_LOGGED_EVENTS) events.removeAt(0)
     }
 
-    AgendaQrTheme(darkTheme = darkPreview) {
+    XauxaTheme(darkTheme = darkPreview) {
         Surface(
             modifier = modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background,
+            color = XauxaColor.Background,
         ) {
             BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Lg)) {
                 val compact = maxWidth < XauxaMetrics.BreakpointMedium
@@ -190,14 +189,14 @@ private fun LabHeader(
                         "Inventario con ${integrityProblems.size} problema(s); ver pruebas",
                         fontSize = XauxaType.Caption,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.error,
+                        color = XauxaColor.Danger,
                     )
                 }
             }
             Text(
                 "Los componentes resuelven el esquema vía XauxaColor: el preview oscuro aplica valores de referencia pendientes de validación.",
                 fontSize = XauxaType.Caption,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = XauxaColor.TextSecondary,
             )
         }
     }

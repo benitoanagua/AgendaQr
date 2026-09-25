@@ -126,7 +126,7 @@ fun XauxaDangerButton(
 /**
  * Tarjeta hero con número grande y footer de estadísticas. Compone
  * [XauxaTile]: no duplica superficie, solo la jerarquía display + footer
- * con borde superior (patrón tile-stats de XauxaXcan).
+ * con borde superior (patrón tile-stats de Xauxa).
  */
 @Composable
 fun XauxaHeroCard(
@@ -205,7 +205,7 @@ fun XauxaBadge(
 
 /**
  * Fila de lista: separador por borde inferior y marcador semántico lateral
- * de 2px (XauxaXcan usa 4px; se reduce a 2px por la invariante 01).
+ * de 2px (el sistema Xauxa permite un marcador estructural de 2px).
  */
 @Composable
 fun XauxaListRow(
@@ -471,22 +471,42 @@ fun XauxaSettingRow(
 @Composable
 fun XauxaDialog(
     title: String,
-    message: String,
+    message: String? = null,
     confirmLabel: String,
     onConfirm: () -> Unit,
-    dismissLabel: String,
+    dismissLabel: String? = null,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    content: (@Composable () -> Unit)? = null,
 ) {
     androidx.compose.material3.AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
         shape = RectangleShape,
         containerColor = XauxaColor.Surface,
-        title = { Text(title, fontSize = XauxaType.Title, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary) },
-        text = { Text(message, fontSize = XauxaType.Body, color = XauxaColor.TextSecondary) },
-        confirmButton = { XauxaDangerButton(label = confirmLabel, onClick = onConfirm) },
-        dismissButton = { XauxaTextAction(label = dismissLabel, onClick = onDismiss) },
+        title = {
+            Text(
+                title,
+                fontSize = XauxaType.Title,
+                fontWeight = FontWeight.SemiBold,
+                color = XauxaColor.TextPrimary,
+            )
+        },
+        text = {
+            if (content != null) {
+                content()
+            } else {
+                Text(
+                    message.orEmpty(),
+                    fontSize = XauxaType.Body,
+                    color = XauxaColor.TextSecondary,
+                )
+            }
+        },
+        confirmButton = { XauxaPrimaryButton(label = confirmLabel, onClick = onConfirm) },
+        dismissButton = dismissLabel?.let {
+            { XauxaTextAction(label = it, onClick = onDismiss) }
+        },
     )
 }
 
@@ -556,7 +576,7 @@ fun XauxaInlineResult(
     }
 }
 
-/** Bloque de estadística centrado (patrón stats de XauxaXcan). */
+/** Bloque de estadística centrado (patrón stats de Xauxa). */
 @Composable
 fun XauxaStatBlock(
     value: String,
@@ -699,7 +719,7 @@ fun XauxaFavoriteToggle(
 }
 
 /**
- * Cabecera de tile con banda de marca (patrón tile-header de XauxaXcan:
+ * Cabecera de tile con banda de marca (patrón tile-header de Xauxa:
  * fondo Brand, título uppercase y slot de estado/acciones). Opt-in: las
  * pantallas existentes que usan XauxaSection no cambian.
  */

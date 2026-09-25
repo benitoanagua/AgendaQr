@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -137,7 +134,7 @@ internal fun LabComponentPreview(
                 else -> Text(
                     "Este contrato es un grupo de tokens: revisa la especimen de la sección Fundamentos.",
                     fontSize = XauxaType.Label,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = XauxaColor.TextSecondary,
                 )
             }
         }
@@ -152,7 +149,7 @@ private fun LabControlRow(label: String, control: @Composable () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(label, fontSize = XauxaType.Label, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(label, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
         control()
     }
 }
@@ -174,11 +171,10 @@ private fun LabTextInput(
     singleLine: Boolean = true,
     onChange: (String) -> Unit,
 ) {
-    OutlinedTextField(
+    XauxaTextInput(
+        label = label,
         value = value,
         onValueChange = onChange,
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text(label) },
         singleLine = singleLine,
     )
 }
@@ -773,7 +769,7 @@ private fun BadgePreview() {
             XauxaBadge(text = "URL", tone = XauxaTone.Info)
         }
         Text(
-            "Rectangulares por invariante 02 (XauxaXcan usa rounded-sm).",
+            "Rectangulares por invariante 02 (Xauxa usa rounded-sm).",
             fontSize = XauxaType.Caption,
             color = XauxaColor.TextSecondary,
         )

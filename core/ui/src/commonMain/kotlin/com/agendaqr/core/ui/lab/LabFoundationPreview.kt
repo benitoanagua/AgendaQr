@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -60,18 +59,18 @@ private fun labColorEntries(): List<LabColorEntry> = listOf(
     LabColorEntry("TextPrimary", XauxaColor.TextPrimary, "Texto principal"),
     LabColorEntry("TextSecondary", XauxaColor.TextSecondary, "Texto secundario"),
     LabColorEntry("TextTertiary", XauxaColor.TextTertiary, "Texto terciario y deshabilitado"),
-    LabColorEntry("Brand", XauxaColor.Brand, "Acento de AgendaQr"),
+    LabColorEntry("Brand", XauxaColor.Brand, "Color primario de Xauxa"),
     LabColorEntry("BrandAccent", XauxaColor.BrandAccent, "Acento secundario de marca"),
     LabColorEntry("OnBrand", XauxaColor.OnBrand, "Contenido sobre marca"),
     LabColorEntry("White", XauxaColor.White, "Contenido sobre fondo de QR"),
-    LabColorEntry("Success", XauxaColor.Success, "Semántica de éxito"),
-    LabColorEntry("SuccessBg", XauxaColor.SuccessBg, "Contenedor de éxito"),
+    LabColorEntry("Success", XauxaColor.Success, "Uso primario"),
+    LabColorEntry("SuccessBg", XauxaColor.SuccessBg, "Contenedor de estado"),
     LabColorEntry("Danger", XauxaColor.Danger, "Semántica de error/peligro"),
     LabColorEntry("DangerBg", XauxaColor.DangerBg, "Contenedor de peligro"),
-    LabColorEntry("Warning", XauxaColor.Warning, "Semántica de advertencia"),
-    LabColorEntry("WarningBg", XauxaColor.WarningBg, "Contenedor de advertencia"),
-    LabColorEntry("Info", XauxaColor.Info, "Semántica informativa"),
-    LabColorEntry("InfoBg", XauxaColor.InfoBg, "Contenedor informativo"),
+    LabColorEntry("Warning", XauxaColor.Warning, "Uso secundario"),
+    LabColorEntry("WarningBg", XauxaColor.WarningBg, "Contenedor secundario"),
+    LabColorEntry("Info", XauxaColor.Info, "Uso terciario"),
+    LabColorEntry("InfoBg", XauxaColor.InfoBg, "Contenedor terciario"),
     LabColorEntry("FocusRing", XauxaColor.FocusRing, "Anillo de foco visible"),
 )
 
@@ -88,27 +87,27 @@ private fun ColorSpecimen() {
                     modifier = Modifier
                         .size(XauxaMetrics.ControlMinSize)
                         .background(entry.color)
-                        .border(XauxaMetrics.Border, MaterialTheme.colorScheme.outline, RectangleShape),
+                        .border(XauxaMetrics.Border, XauxaColor.BorderVariant, RectangleShape),
                 )
                 Column {
                     Text(
                         "XauxaColor.${entry.name}",
                         fontSize = XauxaType.Label,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = XauxaColor.TextPrimary,
                     )
                     Text(
                         entry.role,
                         fontSize = XauxaType.Caption,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = XauxaColor.TextSecondary,
                     )
                 }
             }
         }
         Text(
-            "No existen variantes dark de estos tokens: el tema Material oscuro no altera los componentes Xauxa.",
+            "Los tokens se resuelven desde el esquema Xauxa activo; el laboratorio permite revisar los temas claro y oscuro.",
             fontSize = XauxaType.Caption,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = XauxaColor.TextSecondary,
         )
     }
 }
@@ -140,12 +139,12 @@ private fun SpacingSpecimen() {
                     modifier = Modifier
                         .width(entry.value)
                         .height(XauxaSpacing.Md)
-                        .background(MaterialTheme.colorScheme.primary),
+                        .background(XauxaColor.Brand),
                 )
                 Text(
                     "XauxaSpacing.${entry.name}",
                     fontSize = XauxaType.Label,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = XauxaColor.TextPrimary,
                 )
             }
         }
@@ -185,19 +184,19 @@ private fun TypeSpecimen() {    Column(verticalArrangement = Arrangement.spacedB
                 Text(
                     "XauxaType.${entry.name}",
                     fontSize = XauxaType.Caption,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = XauxaColor.TextSecondary,
                 )
                 Text(
                     entry.sample,
                     fontSize = entry.value,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = XauxaColor.TextPrimary,
                 )
             }
         }
         Text(
-            "Xauxa documenta Archivo (display) y Roboto (UI); la implementación usa la pila del sistema como XauxaXcan (FamilyUi) y monoespaciada para valores (FamilyMono). Tracking amplio en XauxaType.LetterSpacingWide.",
+            "Xauxa documenta Archivo (display) y Roboto (UI); la implementación usa la pila del sistema como Xauxa (FamilyUi) y monoespaciada para valores (FamilyMono). Tracking amplio en XauxaType.LetterSpacingWide.",
             fontSize = XauxaType.Caption,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = XauxaColor.TextSecondary,
         )
     }
 }
@@ -214,7 +213,7 @@ private fun MotionSpecimen() {
         Text(
             "Movimiento con propósito y sin loops; respetar prefers-reduced-motion del sistema.",
             fontSize = XauxaType.Caption,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = XauxaColor.TextSecondary,
         )
     }
 }
@@ -235,7 +234,7 @@ private fun FocusSpecimen() {
             Text(
                 "Anillo de foco de ejemplo aplicado a un contenedor.",
                 fontSize = XauxaType.Label,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = XauxaColor.TextPrimary,
             )
         }
     }

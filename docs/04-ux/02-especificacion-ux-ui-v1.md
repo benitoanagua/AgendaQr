@@ -192,9 +192,9 @@ No existe un ErrorScreen global como destino de navegación.
 - Roboto/San Francisco para UI/cuerpo;
 - spacing según Xauxa;
 - Command Bar solo donde aporte acciones de detalle/foco;
-- lenguaje visual del scanner XauxaXcan para cámara, sin métricas técnicas.
+- lenguaje visual del scanner Xauxa para cámara, sin métricas técnicas.
 
-Los restos históricos rounded/shadow de XauxaXcan no sustituyen el Design System normativo.
+Los restos históricos rounded/shadow de Xauxa no sustituyen el Design System normativo.
 
 ## 13. Fuera de esta congelación
 

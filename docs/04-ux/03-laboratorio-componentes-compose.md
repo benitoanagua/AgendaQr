@@ -10,7 +10,7 @@ La implementación respeta esta precedencia:
 
 1. Agenda QR: producto, dominio, requisitos y reglas de negocio.
 2. UX/UI V1 de Agenda QR: contrato de interacción y estados.
-3. Xauxa Design System + XauxaXcan: tokens, lenguaje visual, componentes y patrones.
+3. Xauxa Design System + Xauxa: tokens, lenguaje visual, componentes y patrones.
 4. WaraWerse: referencia técnica para Kotlin Multiplatform, Compose, modularización y testing.
 
 El laboratorio se construye dentro de Agenda QR. La referencia técnica aporta patrones de arquitectura, no lógica ni modelos de negocio. No se duplican tokens ni se redefinen los componentes normativos de Xauxa.

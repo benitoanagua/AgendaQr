@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
-import com.agendaqr.core.ui.components.XauxaTile
+import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -47,17 +47,11 @@ private fun ContextList(state: ContextsUiState, onAction: (ContextAction) -> Uni
             )
             else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 items(state.contexts, key = { it.id }) { context ->
-                    XauxaTile(onClick = { onAction(ContextAction.Open(context.id)) }) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth().padding(XauxaSpacing.Lg),
-                            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
-                        ) {
-                            Text(context.name, fontSize = XauxaType.Title, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
-                            context.note?.takeIf { it.isNotBlank() }?.let {
-                                Text(it, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
-                            }
-                        }
-                    }
+                    XauxaListRow(
+                        title = context.name,
+                        subtitle = context.note?.takeIf { it.isNotBlank() },
+                        onClick = { onAction(ContextAction.Open(context.id)) },
+                    )
                 }
             }
         }

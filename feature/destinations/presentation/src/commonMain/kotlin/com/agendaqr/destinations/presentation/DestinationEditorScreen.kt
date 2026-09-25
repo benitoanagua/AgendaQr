@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
@@ -70,9 +67,9 @@ private fun varName(
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         Text(if (existing == null) "Add destination" else "Edit destination", fontSize = XauxaType.Headline, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
-        OutlinedTextField(name, { name = it }, modifier = Modifier.fillMaxWidth(), label = { Text("Name") }, shape = RectangleShape)
-        OutlinedTextField(category, { category = it }, modifier = Modifier.fillMaxWidth(), label = { Text("Category") }, shape = RectangleShape)
-        OutlinedTextField(note, { note = it }, modifier = Modifier.fillMaxWidth(), label = { Text("Note") }, shape = RectangleShape, minLines = 3)
+        XauxaTextInput(label = "Nombre", value = name, onValueChange = { name = it })
+        XauxaTextInput(label = "Categoría", value = category, onValueChange = { category = it })
+        XauxaTextInput(label = "Nota", value = note, onValueChange = { note = it }, singleLine = false, minLines = 3)
         XauxaSecondaryButton(label = contextId?.let { id -> "Para: " + (contexts.firstOrNull { it.id == id }?.name ?: "Contexto") } ?: "Para: elegir contexto (opcional)", onClick = { showContextPicker = true })
         QrImportControls { result ->
             when {
@@ -82,8 +79,8 @@ private fun varName(
         }
         XauxaQrPreview(qr.encoded)
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-            XauxaSecondaryButton(label = "Back", onClick = onBack)
-            XauxaPrimaryButton(label = "Save", onClick = {
+            XauxaSecondaryButton(label = "Volver", onClick = onBack)
+            XauxaPrimaryButton(label = "Guardar", onClick = {
                 val now = com.agendaqr.destinations.domain.nowMillis()
                 onSave(initial.copy(
                     name = name.trim(),
@@ -96,20 +93,13 @@ private fun varName(
             })
         }
         if (showContextPicker) {
-            AlertDialog(
-                onDismissRequest = { showContextPicker = false },
-                title = { Text("¿A cuál corresponde?") },
-                text = {
-                    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                        XauxaTextAction(label = "Sin contexto", onClick = { contextId = null; showContextPicker = false })
-                        contexts.forEach { context ->
-                            XauxaTile(onClick = { contextId = context.id; showContextPicker = false }) {
-                                Text(context.name, modifier = Modifier.padding(XauxaSpacing.Lg))
-                            }
-                        }
-                    }
-                },
-                confirmButton = { XauxaTextAction(label = "CANCELAR", onClick = { showContextPicker = false }) },
+            XauxaDialog(
+                title = "¿A cuál corresponde?",
+                message = contexts.joinToString("\n") { it.name }.ifBlank { "Sin contextos disponibles." },
+                confirmLabel = "Cerrar",
+                onConfirm = { showContextPicker = false },
+                dismissLabel = "Sin contexto",
+                onDismiss = { contextId = null; showContextPicker = false },
             )
         }
     }

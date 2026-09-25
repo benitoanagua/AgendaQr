@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -82,17 +81,17 @@ private fun LabIdentitySection(contract: LabComponentContract, darkPreviewActive
         trailing = { LabBadge(if (contract.isInteractive) "Interactivo" else "Presentacional") },
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-            Text(contract.purpose, fontSize = XauxaType.Body, color = MaterialTheme.colorScheme.onSurface)
+            Text(contract.purpose, fontSize = XauxaType.Body, color = XauxaColor.TextPrimary)
             Text(
                 contract.description,
                 fontSize = XauxaType.Label,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = XauxaColor.TextSecondary,
             )
             LabLabelValue("Tema oscuro", contract.darkThemeSupport.label)
             Text(
                 contract.darkThemeNote,
                 fontSize = XauxaType.Caption,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = XauxaColor.TextSecondary,
             )
             if (darkPreviewActive && contract.darkThemeSupport != LabDarkThemeSupport.VERIFIED) {
                 Text(
@@ -100,7 +99,7 @@ private fun LabIdentitySection(contract: LabComponentContract, darkPreviewActive
                         "pendiente de validación visual de producto.",
                     fontSize = XauxaType.Caption,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.error,
+                    color = XauxaColor.Danger,
                 )
             }
         }
@@ -134,7 +133,7 @@ private fun LabInteractionRow(lens: LabInteractionLens, verdict: LabLensVerdict,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Column {
-            Text(lens.label, fontSize = XauxaType.Label, color = MaterialTheme.colorScheme.onSurface)
+            Text(lens.label, fontSize = XauxaType.Label, color = XauxaColor.TextPrimary)
             Text(
                 if (verdict == LabLensVerdict.REAL && exactState != null) {
                     "Estado declarado: $exactState"
@@ -142,7 +141,7 @@ private fun LabInteractionRow(lens: LabInteractionLens, verdict: LabLensVerdict,
                     lens.description
                 },
                 fontSize = XauxaType.Caption,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = XauxaColor.TextSecondary,
             )
         }
         LabLensVerdictBadge(verdict)
@@ -151,7 +150,6 @@ private fun LabInteractionRow(lens: LabInteractionLens, verdict: LabLensVerdict,
 
 @Composable
 private fun LabLensVerdictBadge(verdict: LabLensVerdict) {
-    val scheme = MaterialTheme.colorScheme
     val color = when (verdict) {
         LabLensVerdict.REAL -> scheme.primary
         LabLensVerdict.SIMULATED -> scheme.tertiary
@@ -178,14 +176,14 @@ private fun LabDeclaredStatesSection(contract: LabComponentContract) {
                         state.name,
                         fontSize = XauxaType.Label,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = XauxaColor.TextPrimary,
                     )
                     LabStatusBadge(state.status)
                 }
                 Text(
                     state.description,
                     fontSize = XauxaType.Caption,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = XauxaColor.TextSecondary,
                 )
             }
         }
@@ -203,7 +201,7 @@ private fun LabApiSection(contract: LabComponentContract) {
                 Text(
                     "Sin eventos: componente de presentación.",
                     fontSize = XauxaType.Caption,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = XauxaColor.TextSecondary,
                 )
             } else {
                 contract.events.forEach { event ->
@@ -221,7 +219,7 @@ private fun LabGuidanceSection(contract: LabComponentContract) {
         Text(
             contract.whenToUse,
             fontSize = XauxaType.Label,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = XauxaColor.TextPrimary,
         )
     }
 }
@@ -248,18 +246,18 @@ private fun LabPlatformsSection(contract: LabComponentContract) {
                             platform.platform,
                             fontSize = XauxaType.Label,
                             fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = XauxaColor.TextPrimary,
                         )
                         Text(
                             platform.note,
                             fontSize = XauxaType.Caption,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = XauxaColor.TextSecondary,
                         )
                     }
                     Text(
                         if (platform.implemented) "Real" else "Pendiente",
                         fontSize = XauxaType.Caption,
-                        color = if (platform.implemented) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                        color = if (platform.implemented) XauxaColor.Brand else XauxaColor.BorderVariant,
                     )
                 }
             }
@@ -285,7 +283,7 @@ private fun LabGovernanceSection(contract: LabComponentContract) {
                 Text(
                     "Auditoría de API sin observaciones.",
                     fontSize = XauxaType.Caption,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = XauxaColor.TextSecondary,
                 )
             } else {
                 issues.forEach { issue ->
@@ -319,7 +317,7 @@ private fun LabUsageSection(contract: LabComponentContract) {
                 Text(
                     "· $usage",
                     fontSize = XauxaType.Label,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = XauxaColor.TextPrimary,
                 )
             }
         }
@@ -335,7 +333,7 @@ private fun LabNotesSection(contract: LabComponentContract) {
                 Text(
                     "· $note",
                     fontSize = XauxaType.Label,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = XauxaColor.TextSecondary,
                 )
             }
         }

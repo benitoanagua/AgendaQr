@@ -6,25 +6,26 @@
 
 ## UX funcional
 
-La especificación UX/UI V1 congelada en `docs/04-ux/02-especificacion-ux-ui-v1.md` define el comportamiento de interacción aprobado para V1.
+La especificación UX/UI V1 define el comportamiento funcional del producto.
 
 ## UI/UX visual
 
-- `Xauxa Design System` — especificación normativa.
-- `XauxaXcan-main/` — implementación de referencia de componentes y patrones.
+Xauxa es la fuente única de:
+- fundamentos visuales;
+- tokens;
+- componentes;
+- patterns;
+- estados visuales;
+- accesibilidad;
+- movimiento;
+- lenguaje de composición.
 
-Si existe una discrepancia entre una implementación histórica de XauxaXcan y una regla explícita del Design System, prevalece el Design System.
+Agenda QR no conserva una segunda interpretación del sistema visual.
 
 ## Arquitectura técnica
 
-`warawerse-game-main/` es referencia para Kotlin Multiplatform, Compose, modularización, build logic y prácticas de testing compatibles.
-
-WaraWerse no es dependencia de runtime ni fuente de negocio de Agenda QR.
-
-## Proyecto destino
-
-El resultado final vive en `AgendaQr-main/`.
+WaraWerse es referencia para Kotlin Multiplatform, Compose, modularización, build logic y testing.
 
 ## Regla de implementación
 
-La implementación debe satisfacer el contrato UX/UI congelado sin reinterpretarlo como una nueva fuente de negocio. Si la implementación encuentra una contradicción real con dominio/requisitos, debe documentarse antes de cambiar la UX.
+La implementación debe expresar el dominio de Agenda QR usando Xauxa como lenguaje visual único. Cuando una pantalla necesite una composición nueva, se compone primero con primitives Xauxa existentes.

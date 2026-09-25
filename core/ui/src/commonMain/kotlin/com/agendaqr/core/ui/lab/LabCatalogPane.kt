@@ -12,13 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -106,21 +103,13 @@ internal fun LabCatalogPane(
             )
             return@LabPanel
         }
-        OutlinedTextField(
+        XauxaSearchBar(
             value = query.text,
             onValueChange = { onQueryChange(query.copy(text = it)) },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Buscar por nombre, uso, estado o tag") },
-            singleLine = true,
-            shape = RectangleShape,
-            colors = androidx.compose.material3.TextFieldDefaults.colors(
-                focusedIndicatorColor = XauxaColor.Brand,
-                unfocusedIndicatorColor = MaterialTheme.colorScheme.outline,
-                focusedLabelColor = XauxaColor.Brand,
-                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-            ),
+            label = "Buscar por nombre, uso, estado o tag",
+            placeholder = "Buscar",
+            onClear = { onQueryChange(query.copy(text = "")) },
         )
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
@@ -198,7 +187,7 @@ private fun LabPatternRow(pattern: LabPattern, selected: Boolean, onClick: () ->
     Surface(
         modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         shape = RectangleShape,
-        color = if (selected) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
+        color = if (selected) XauxaColor.SurfaceVariant else XauxaColor.Surface,
         onClick = onClick,
     ) {
         Column(modifier = Modifier.padding(XauxaSpacing.Sm)) {
@@ -207,16 +196,16 @@ private fun LabPatternRow(pattern: LabPattern, selected: Boolean, onClick: () ->
                     pattern.title,
                     fontSize = XauxaType.Label,
                     fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
-                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                    color = if (selected) XauxaColor.Brand else XauxaColor.TextPrimary,
                 )
                 if (pattern.demo) {
-                    Text("Demo", fontSize = XauxaType.Caption, color = MaterialTheme.colorScheme.primary)
+                    Text("Demo", fontSize = XauxaType.Caption, color = XauxaColor.Brand)
                 }
             }
             Text(
                 pattern.description,
                 fontSize = XauxaType.Caption,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = XauxaColor.TextSecondary,
             )
         }
     }
@@ -232,7 +221,7 @@ internal fun LabCatalogRow(component: LabComponentContract, selected: Boolean, o
     Surface(
         modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         shape = RectangleShape,
-        color = if (selected) XauxaColor.Surface2 else MaterialTheme.colorScheme.surface,
+        color = if (selected) XauxaColor.Surface2 else XauxaColor.Surface,
         onClick = onClick,
     ) {
         Column(
@@ -248,7 +237,7 @@ internal fun LabCatalogRow(component: LabComponentContract, selected: Boolean, o
                     color = if (selected) {
                         XauxaColor.Brand
                     } else {
-                        MaterialTheme.colorScheme.onSurface
+                        XauxaColor.TextPrimary
                     },
                 )
                 if (selected) {
@@ -262,7 +251,7 @@ internal fun LabCatalogRow(component: LabComponentContract, selected: Boolean, o
             Text(
                 component.purpose,
                 fontSize = XauxaType.Caption,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = XauxaColor.TextSecondary,
             )
         }
     }
@@ -273,7 +262,7 @@ private fun LabEmptySearch(query: LabCatalogQuery) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RectangleShape,
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = XauxaColor.SurfaceVariant,
     ) {
         Column(
             modifier = Modifier.padding(XauxaSpacing.Lg),
@@ -283,7 +272,7 @@ private fun LabEmptySearch(query: LabCatalogQuery) {
                 "Sin resultados",
                 fontSize = XauxaType.Label,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = XauxaColor.TextPrimary,
             )
             Text(
                 if (query.category == null) {
@@ -292,7 +281,7 @@ private fun LabEmptySearch(query: LabCatalogQuery) {
                     "Ninguna entrada de ${query.category.label} coincide con «${query.text}»."
                 },
                 fontSize = XauxaType.Caption,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = XauxaColor.TextSecondary,
             )
         }
     }

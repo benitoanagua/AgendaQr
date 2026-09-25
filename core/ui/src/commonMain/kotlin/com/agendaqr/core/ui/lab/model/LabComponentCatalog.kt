@@ -18,7 +18,7 @@ package com.agendaqr.core.ui.lab.model
  * (`WwComponentContract`, `WwInteractionMatrix`, `WwApiFreeze`): separable
  * pure model, typed contracts, central inventory, explicit capability
  * classification and an inspector derived from contracts. Visual appearance
- * follows XauxaXcan, never the reference project.
+ * follows Xauxa, never the reference project.
  */
 object LabComponentCatalog {
 
@@ -147,7 +147,7 @@ object LabComponentCatalog {
                 ),
                 LabState(
                     "Familias tipográficas",
-                    "Como XauxaXcan: pila del sistema para UI (FamilyUi) y monoespaciada para " +
+                    "Como Xauxa: pila del sistema para UI (FamilyUi) y monoespaciada para " +
                         "valores (FamilyMono). Las webfonts Archivo/Roboto de la referencia " +
                         "complementaria siguen pendientes por decisión de producto.",
                     LabReviewStatus.VERIFIED,
@@ -162,7 +162,7 @@ object LabComponentCatalog {
             tags = listOf("tipografía", "tokens"),
             darkThemeSupport = LabDarkThemeSupport.NOT_APPLICABLE,
             darkThemeNote = "Token no cromático: el tema no aplica.",
-            whenToUse = "Todo tamaño de texto. Display solo para encabezados y números hero (patrón XauxaXcan).",
+            whenToUse = "Todo tamaño de texto. Display solo para encabezados y números hero (patrón Xauxa).",
             androidMapping = "androidx.compose.ui.unit.TextUnit (sp) en object XauxaType.",
             iosMapping = "UIFont.preferredFont pendiente de mapear; hoy solo existe la capa Kotlin.",
         ),
@@ -260,7 +260,7 @@ object LabComponentCatalog {
             category = LabCategory.SURFACES,
             purpose = "Encabezado de sección con título y acción contextual opcional.",
             description = "Columna con título XauxaType.Title en mayúsculas con tracking, slot trailing alineado a la " +
-                "derecha y contenido debajo separado por XauxaSpacing.Md (patrón tile h2 de XauxaXcan).",
+                "derecha y contenido debajo separado por XauxaSpacing.Md (patrón tile h2 de Xauxa).",
             props = listOf(
                 LabProp("title", "String"),
                 LabProp("modifier", "Modifier"),
@@ -336,7 +336,7 @@ object LabComponentCatalog {
             category = LabCategory.SURFACES,
             purpose = "Tarjeta hero con número grande y footer de estadísticas.",
             description = "Compone XauxaTile: valor en tipografía Display, etiqueta y footer opcional " +
-                "con borde superior (patrón tile-stats de XauxaXcan). No duplica superficie.",
+                "con borde superior (patrón tile-stats de Xauxa). No duplica superficie.",
             props = listOf(
                 LabProp("value", "String"),
                 LabProp("label", "String"),
@@ -374,7 +374,7 @@ object LabComponentCatalog {
             category = LabCategory.SURFACES,
             purpose = "Cabecera de tile con banda de marca.",
             description = "Banda XauxaColor.Brand a ancho completo con título en mayúsculas, estado " +
-                "opcional y slot de acciones (patrón tile-header de XauxaXcan, sin sombra).",
+                "opcional y slot de acciones (patrón tile-header de Xauxa, sin sombra).",
             props = listOf(
                 LabProp("title", "String"),
                 LabProp("modifier", "Modifier"),
@@ -656,7 +656,7 @@ object LabComponentCatalog {
                 LabTokenRef("XauxaMetrics.ControlMinSize", "Altura mínima de 48dp."),
                 LabTokenRef("XauxaType.LetterSpacingWide", "Tracking de la etiqueta en mayúsculas."),
             ),
-            usage = listOf("Filtrar historial por tipo (patrón filter-pills de XauxaXcan)."),
+            usage = listOf("Filtrar historial por tipo (patrón filter-pills de Xauxa)."),
             notes = listOf("Filtra; no clasifica: para etiquetas estáticas usar XauxaCategoryChip."),
             tags = listOf("chip", "filtro", "selección"),
             darkThemeSupport = LabDarkThemeSupport.PENDING,
@@ -775,7 +775,7 @@ object LabComponentCatalog {
                 LabTokenRef("XauxaColor.White", "Pastilla del toggle."),
                 LabTokenRef("XauxaMetrics.ControlMinSize", "Altura mínima de fila y toggle."),
             ),
-            usage = listOf("Ajustes de AgendaQr (patrón setting-toggle de XauxaXcan, cuadrado por invariante 02)."),
+            usage = listOf("Ajustes de AgendaQr (patrón setting-toggle de Xauxa, cuadrado por invariante 02)."),
             tags = listOf("ajuste", "toggle", "selector", "preferencia"),
             darkThemeSupport = LabDarkThemeSupport.PENDING,
             darkThemeNote = "Resuelve el esquema vía XauxaColor; el esquema oscuro aplica valores de referencia pendientes de validación visual.",
@@ -912,7 +912,7 @@ object LabComponentCatalog {
             category = LabCategory.FEEDBACK,
             purpose = "Resultado embebido con marcador semántico y acciones.",
             description = "Banner de contenido con marcador lateral de 2px, fondo -bg por tono y " +
-                "slot de acciones. Patrón result-item de XauxaXcan sin radios ni sombras.",
+                "slot de acciones. Patrón result-item de Xauxa sin radios ni sombras.",
             props = listOf(
                 LabProp("title", "String"),
                 LabProp("modifier", "Modifier"),
@@ -1037,7 +1037,7 @@ object LabComponentCatalog {
             category = LabCategory.FEEDBACK,
             purpose = "Página de error a pantalla completa.",
             description = "Estado centrado con título Danger, mensaje, acción primaria y secundaria " +
-                "opcional. Patrón error-page de XauxaXcan sin sombras.",
+                "opcional. Patrón error-page de Xauxa sin sombras.",
             props = listOf(
                 LabProp("title", "String"),
                 LabProp("message", "String"),
@@ -1094,7 +1094,7 @@ object LabComponentCatalog {
                 LabTokenRef("XauxaColor.TextSecondary", "Etiquetas."),
                 LabTokenRef("XauxaSpacing.Lg", "Padding del footer."),
             ),
-            usage = listOf("Historial, resultados y listas paginadas (patrón tile-footer de XauxaXcan)."),
+            usage = listOf("Historial, resultados y listas paginadas (patrón tile-footer de Xauxa)."),
             tags = listOf("paginación", "cargar", "lista", "footer"),
             darkThemeSupport = LabDarkThemeSupport.PENDING,
             darkThemeNote = "Resuelve el esquema vía XauxaColor; el esquema oscuro aplica valores de referencia pendientes de validación visual.",
@@ -1129,7 +1129,7 @@ object LabComponentCatalog {
                 LabTokenRef("XauxaColor.Border", "Separador."),
                 LabTokenRef("XauxaMetrics.ControlMinSize", "Altura mínima."),
             ),
-            usage = listOf("Historial, resultados y movimientos (patrón history-item de XauxaXcan)."),
+            usage = listOf("Historial, resultados y movimientos (patrón history-item de Xauxa)."),
             tags = listOf("fila", "lista", "datos"),
             darkThemeSupport = LabDarkThemeSupport.PENDING,
             darkThemeNote = "Resuelve el esquema vía XauxaColor; el esquema oscuro aplica valores de referencia pendientes de validación visual.",
@@ -1144,7 +1144,7 @@ object LabComponentCatalog {
             category = LabCategory.DATA,
             purpose = "Bloque de estadística centrado: valor + etiqueta.",
             description = "Valor en Headline con tono opcional y etiqueta Caption, centrados " +
-                "(patrón stats de XauxaXcan).",
+                "(patrón stats de Xauxa).",
             props = listOf(
                 LabProp("value", "String"),
                 LabProp("label", "String"),
@@ -1177,7 +1177,7 @@ object LabComponentCatalog {
             category = LabCategory.DATA,
             purpose = "Etiqueta semántica outline o sólida.",
             description = "Badge rectangular con borde de tono; sólido usa fondo de tono. Sin " +
-                "radios: XauxaXcan usa rounded-sm y aquí se fija a 0 por invariante.",
+                "radios: Xauxa usa rounded-sm y aquí se fija a 0 por invariante.",
             props = listOf(
                 LabProp("text", "String"),
                 LabProp("modifier", "Modifier"),
@@ -1194,7 +1194,7 @@ object LabComponentCatalog {
                 LabTokenRef("XauxaType.LetterSpacingWide", "Tracking del texto en mayúsculas."),
                 LabTokenRef("XauxaSpacing.Sm", "Padding horizontal."),
             ),
-            usage = listOf("Estados de tile, tipos de QR y conteos (patrón tile-status-badge de XauxaXcan)."),
+            usage = listOf("Estados de tile, tipos de QR y conteos (patrón tile-status-badge de Xauxa)."),
             tags = listOf("badge", "etiqueta", "estado"),
             darkThemeSupport = LabDarkThemeSupport.PENDING,
             darkThemeNote = "Resuelve el esquema vía XauxaColor; el esquema oscuro aplica valores de referencia pendientes de validación visual.",
@@ -1357,7 +1357,7 @@ object LabComponentCatalog {
                 LabTokenRef("XauxaColor.TextSecondary", "Texto de ayuda."),
                 LabTokenRef("XauxaMetrics.QrPreviewSize", "Tamaño del encuadre."),
             ),
-            usage = listOf("Pantalla de escaneo de AgendaQr (patrón scanner-viewport de XauxaXcan)."),
+            usage = listOf("Pantalla de escaneo de AgendaQr (patrón scanner-viewport de Xauxa)."),
             notes = listOf("Preview y escaneo real se declaran por separado, como exige el contrato."),
             tags = listOf("escáner", "cámara", "qr", "viewport"),
             darkThemeSupport = LabDarkThemeSupport.PENDING,
@@ -1407,7 +1407,7 @@ object LabComponentCatalog {
                 LabTokenRef("XauxaColor.Danger", "Mensaje de error."),
                 LabTokenRef("XauxaType.Caption", "Ayuda y error."),
             ),
-            usage = listOf("Importar comprobantes desde archivo (patrón upload-zone de XauxaXcan)."),
+            usage = listOf("Importar comprobantes desde archivo (patrón upload-zone de Xauxa)."),
             tags = listOf("archivo", "carga", "importación", "qr"),
             darkThemeSupport = LabDarkThemeSupport.PENDING,
             darkThemeNote = "Resuelve el esquema vía XauxaColor; el esquema oscuro aplica valores de referencia pendientes de validación visual.",

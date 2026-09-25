@@ -28,14 +28,14 @@ fun ImportReviewScreen(
         modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Xxl),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        Text("Imported QR", fontSize = XauxaType.Headline, color = XauxaColor.TextPrimary)
-        Text("${assets.size} destination(s)", fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+        Text("QR importados", fontSize = XauxaType.Headline, color = XauxaColor.TextPrimary)
+        Text("${assets.size} destinos", fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
         LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm), modifier = Modifier.fillMaxWidth()) {
             itemsIndexed(assets) { _, asset ->
                 XauxaQrPreview(asset.encoded)
             }
         }
-        XauxaPrimaryButton("Save all", onSaveAll)
-        XauxaSecondaryButton("Back", onBack)
+        XauxaPrimaryButton("Guardar todo", onSaveAll)
+        XauxaSecondaryButton("Volver", onBack)
     }
 }
