@@ -35,6 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.ToggleableState
+import androidx.compose.ui.semantics.toggleableState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.agendaqr.core.ui.theme.XauxaColor
@@ -440,7 +442,17 @@ fun XauxaSettingRow(
         else -> onClick
     }
     val clickableModifier = if (action == null) modifier else modifier
-        .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = action)
+        .semantics {
+            if (checked != null) {
+                toggleableState = if (checked) ToggleableState.On else ToggleableState.Off
+            }
+        }
+        .clickable(
+            interactionSource = interaction,
+            indication = null,
+            role = if (checked != null && onCheckedChange != null) Role.Switch else Role.Button,
+            onClick = action,
+        )
         .focusable(interactionSource = interaction)
     Row(
         modifier = clickableModifier
@@ -713,7 +725,10 @@ fun XauxaFavoriteToggle(
     Box(
         modifier = modifier
             .size(XauxaMetrics.ControlMinSize)
-            .semantics { this.contentDescription = contentDescription }
+            .semantics {
+                this.contentDescription = contentDescription
+                toggleableState = if (favorite) ToggleableState.On else ToggleableState.Off
+            }
             .clickable(
                 interactionSource = interaction,
                 indication = null,
