@@ -122,8 +122,8 @@ private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsVi
                             Text("Comprobante recibido", fontWeight = FontWeight.SemiBold)
                             Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
                             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                                XauxaPrimaryButton(label = "ASOCIAR A OPERACIÓN EXISTENTE", onClick = { selectedReceipt = receipt })
-                                XauxaSecondaryButton(label = "CREAR NUEVA OPERACIÓN CON ESTO", onClick = {
+                                XauxaPrimaryButton(label = "Asociar a operación existente", onClick = { selectedReceipt = receipt })
+                                XauxaSecondaryButton(label = "Crear nueva operación con esto", onClick = {
                                     viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
                                 })
                             }
@@ -197,9 +197,9 @@ private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsVi
         }
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
             if (type == OperationType.PAGO) XauxaPrimaryButton(label = "Pago", onClick = { type = OperationType.PAGO })
-            else XauxaSecondaryButton(label = "PAGO", onClick = { type = OperationType.PAGO })
+            else XauxaSecondaryButton(label = "Pago", onClick = { type = OperationType.PAGO })
             if (type == OperationType.COBRO) XauxaPrimaryButton(label = "Cobro", onClick = { type = OperationType.COBRO })
-            else XauxaSecondaryButton(label = "COBRO", onClick = { type = OperationType.COBRO })
+            else XauxaSecondaryButton(label = "Cobro", onClick = { type = OperationType.COBRO })
         }
         XauxaTextInput(label = "Monto (opcional)", value = amount, onValueChange = { amount = it }, modifier = Modifier.fillMaxWidth())
         XauxaTextInput(label = "Moneda (opcional)", value = currency, onValueChange = { currency = it }, modifier = Modifier.fillMaxWidth())
@@ -259,7 +259,7 @@ private fun OperationDetailScreen(state: OperationsUiState, viewModel: Operation
         XauxaSection("Comprobantes") {
             if (state.operationComprobantes.isEmpty()) {
                 Text("Sin comprobante adjunto", color = XauxaColor.TextSecondary)
-                XauxaTextAction(label = "ADJUNTAR COMPROBANTE AHORA", onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
+                XauxaTextAction(label = "Adjuntar comprobante ahora", onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
             } else {
                 for (receipt in state.operationComprobantes) {
                     XauxaTile {
