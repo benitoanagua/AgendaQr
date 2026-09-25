@@ -17,9 +17,9 @@ No se importa comportamiento de negocio desde WaraWerse.
 
 ## 2. Xauxa — autoridad visual
 
-`Xauxa Design System` y `XauxaXcan` definen la UI/UX.
+`Xauxa Design System` y `Xauxa` definen la UI/UX.
 
-El Design System es normativo. Cuando una implementación histórica de XauxaXcan difiere de una regla explícita del Design System, prevalece la especificación.
+El Design System es normativo. Cuando una implementación histórica de Xauxa difiere de una regla explícita del Design System, prevalece la especificación.
 
 ## 3. WaraWerse — referencia técnica
 
