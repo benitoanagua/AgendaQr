@@ -216,7 +216,7 @@ object XauxaColor {
     val WarningBg: Color @Composable get() = LocalXauxaColorScheme.current.tertiaryContainer
     val Info: Color @Composable get() = LocalXauxaColorScheme.current.brand
     val InfoBg: Color @Composable get() = LocalXauxaColorScheme.current.brandContainer
-    val White: Color = XauxaPrimitive.white
+    val White: Color = Color.White
     val OnDangerBg: Color @Composable get() = LocalXauxaColorScheme.current.onDangerBg
     val InverseSurface: Color @Composable get() = LocalXauxaColorScheme.current.inverseSurface
     val InverseOnSurface: Color @Composable get() = LocalXauxaColorScheme.current.inverseOnSurface
