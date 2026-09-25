@@ -1,7 +1,7 @@
 # Xauxa source snapshot used by Agenda QR
 
 This file records the portions of Xauxa Design System that are normative for this implementation.
-The complete design artifact and XauxaXcan project remain external source references.
+The complete design artifact and Xauxa project remain external source references.
 
 ## Product brand
 
@@ -42,6 +42,6 @@ AgendaQr:
 - Standard easing: cubic-bezier(.4,0,.2,1).
 - Reduced motion must suppress animation/transition.
 
-## XauxaXcan reconciliation
+## Xauxa reconciliation
 
-The XauxaXcan source contains historical implementation details such as `shadow-lg` and small `rounded-*` usages. Those are not copied into Agenda QR because the Xauxa Design System explicitly marks them as violations. The specification prevails over the historical implementation.
+The Xauxa source contains historical implementation details such as `shadow-lg` and small `rounded-*` usages. Those are not copied into Agenda QR because the Xauxa Design System explicitly marks them as violations. The specification prevails over the historical implementation.
