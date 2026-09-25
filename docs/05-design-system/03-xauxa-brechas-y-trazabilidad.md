@@ -1,23 +1,19 @@
 # Xauxa — auditoría de fidelidad
 
-Agenda QR debe seguir Xauxa directamente. Este documento ya no mantiene una conciliación entre una implementación propia y una fuente visual histórica.
+El objetivo es una sola implementación visual: Xauxa.
 
-## Fuente
+## Control
 
-Xauxa define tokens, fundamentos, componentes, patterns, estados, movimiento, tipografía, accesibilidad y breakpoints.
+Se consideran defectos de adopción:
+- colores fuera de los tokens Xauxa;
+- consumo de `MaterialTheme.colorScheme` fuera del adaptador de tema;
+- primitives Material directos en features;
+- radios no definidos por Xauxa;
+- sombras/elevaciones decorativas;
+- tamaños/spacing literales fuera de tokens;
+- estados o motion que contradigan los contratos Xauxa;
+- nomenclatura heredada de fuentes visuales anteriores.
 
-## Criterio de terminado
+## Situación de la rama
 
-Un componente o pantalla está terminado cuando:
-1. consume exclusivamente primitives/componentes Xauxa existentes;
-2. no introduce valores visuales locales;
-3. no introduce radios ni elevaciones decorativas;
-4. respeta los estados y motion de Xauxa;
-5. tiene mapeo de plataforma;
-6. pasa las compuertas de gobierno visual.
-
-## Estado actual
-
-La revisión sobre la rama `main` detectó residuos de la implementación anterior: inputs Material directos en features, uso de `MaterialTheme` dentro del laboratorio y documentación que presentaba una paleta propia.
-
-Estos residuos se deben eliminar antes de considerar la adopción fiel.
+La rama migra la paleta, el tema, el laboratorio y las pantallas principales a Xauxa. Antes del merge se debe ejecutar la suite Android y revisar cualquier error de compilación generado por la migración.
