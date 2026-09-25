@@ -10,6 +10,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
@@ -37,7 +39,7 @@ private fun ContextList(state: ContextsUiState, onAction: (ContextAction) -> Uni
         modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Xxl),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        Text("Contextos", fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+        Text("Contextos", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
         state.error?.let { XauxaStatusBanner(it, danger = true) }
         when {
             state.isLoading -> XauxaLoading(message = "Cargando contextos…")
@@ -68,7 +70,7 @@ private fun ContextDetail(state: ContextsUiState, onAction: (ContextAction) -> U
     ) {
         XauxaSecondaryButton(label = "Volver", onClick = { onAction(ContextAction.Back) })
         contents?.let { data ->
-            Text(data.context.name, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            Text(data.context.name, modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             data.context.note?.takeIf { it.isNotBlank() }?.let {
                 Text(it, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
             }
