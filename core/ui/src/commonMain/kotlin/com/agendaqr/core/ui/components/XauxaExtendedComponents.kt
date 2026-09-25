@@ -721,14 +721,14 @@ fun XauxaFavoriteToggle(
     favorite: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    contentDescription: String = "Marcar como favorito",
+    contentDescription: String? = null,
 ) {
     val interaction = remember { MutableInteractionSource() }
     Box(
         modifier = modifier
             .size(XauxaMetrics.ControlMinSize)
             .semantics {
-                this.contentDescription = contentDescription
+                this.contentDescription = contentDescription ?: if (favorite) "Quitar de favoritos" else "Marcar como favorito"
                 toggleableState = if (favorite) ToggleableState.On else ToggleableState.Off
             }
             .clickable(
