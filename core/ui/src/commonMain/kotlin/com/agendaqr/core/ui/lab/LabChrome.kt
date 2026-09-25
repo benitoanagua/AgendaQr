@@ -101,10 +101,10 @@ internal fun LabBadge(text: String, modifier: Modifier = Modifier) {    Surface(
 @Composable
 internal fun LabStatusBadge(status: LabReviewStatus, modifier: Modifier = Modifier) {
     val color = when (status) {
-        LabReviewStatus.VERIFIED -> scheme.primary
-        LabReviewStatus.DOCUMENTED -> scheme.tertiary
-        LabReviewStatus.PENDING -> scheme.secondary
-        LabReviewStatus.NOT_SUPPORTED -> scheme.outline
+        LabReviewStatus.VERIFIED -> XauxaColor.Brand
+        LabReviewStatus.DOCUMENTED -> XauxaColor.Warning
+        LabReviewStatus.PENDING -> XauxaColor.Info
+        LabReviewStatus.NOT_SUPPORTED -> XauxaColor.TextTertiary
     }
     Surface(
         modifier = modifier,
@@ -191,7 +191,7 @@ internal fun LabChoiceChip(
             borderWidth = XauxaMetrics.Border,
         ),
         colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = XauxaColor.Surface,
             labelColor = XauxaColor.TextPrimary,
             selectedContainerColor = XauxaColor.Brand,
             selectedLabelColor = XauxaColor.OnBrand,
