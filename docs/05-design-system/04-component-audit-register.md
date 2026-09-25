@@ -87,3 +87,11 @@ Revisión estática del resto de `XauxaExtendedComponents.kt` y las piezas bási
 Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su estado `On/Off` mediante semántica de control, conservando el callback y el rol de checkbox. En `XauxaSettingRow`, cuando existe `checked` y callback de cambio, ahora se comunica el estado y se declara rol de switch; la fila de navegación conserva rol de botón. Esto es un ajuste de semántica accesible, no una modificación del estado de producto.
 
 **Pendiente:** revisar los consumidores de `XauxaSettingRow` para resolver explícitamente el caso `checked` sin callback (actualmente el estado se muestra, pero no es interactivo), y validar lector de pantalla, foco y teclado en Android/iOS. No se han ejecutado pruebas locales; continúan reservadas para la fase final.
+
+
+## Cambio aplicado: errores de campo y consumidores del toggle
+
+- `XauxaTextInput`: el mensaje de error ahora se entrega al slot `supportingText` del propio `OutlinedTextField`, en lugar de componerse como texto hermano independiente. Se conserva la API pública y la decisión de validación del llamador. La asociación debe confirmarse con TalkBack/VoiceOver durante la validación final.
+- `XauxaSettingRow`: la búsqueda de usos halló ejemplos interactivos en el laboratorio (incluido el patrón de bloqueo de edición); no se identificó en esa búsqueda un consumidor de producción, por lo que no se afirma que el inventario sea exhaustivo. El estado sin callback se mantiene como presentación de solo lectura y no recibe acción clickable; revisar si se necesita un contrato explícito de disabled/read-only en una siguiente pasada.
+
+**Pruebas locales y comprobación visual:** aplazadas deliberadamente hasta la fase final.
