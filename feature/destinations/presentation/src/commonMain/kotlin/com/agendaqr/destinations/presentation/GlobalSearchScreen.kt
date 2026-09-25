@@ -41,7 +41,7 @@ fun GlobalSearchScreen(
                 actionLabel = "Limpiar",
                 onAction = { onAction(GlobalSearchAction.Clear) },
             )
-            state.isSearching -> XauxaLoading()
+            state.isSearching -> XauxaLoading(message = "Buscando en Agenda QR…")
             state.results.isEmpty() -> XauxaEmptyState(
                 title = "Sin resultados",
                 actionLabel = "Limpiar",
