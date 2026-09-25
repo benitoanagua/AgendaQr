@@ -206,9 +206,14 @@ fun XauxaStatusBanner(
 }
 
 @Composable
-fun XauxaLoading(modifier: Modifier = Modifier) {
-    Box(modifier.fillMaxWidth().padding(XauxaSpacing.Xxxl), contentAlignment = Alignment.Center) {
+fun XauxaLoading(modifier: Modifier = Modifier, message: String? = null) {
+    Column(
+        modifier = modifier.fillMaxWidth().padding(XauxaSpacing.Xxxl),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md),
+    ) {
         CircularProgressIndicator(color = XauxaColor.Brand)
+        message?.let { Text(it, color = XauxaColor.TextSecondary, fontSize = XauxaType.Label) }
     }
 }
 
