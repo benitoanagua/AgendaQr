@@ -181,3 +181,10 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - Se normalizaron las etiquetas explícitas en mayúsculas de `OperationScreens` a capitalización de frase: asociar comprobante, crear operación, selector Pago/Cobro y adjuntar comprobante.
 - Los componentes compartidos respetan ahora la etiqueta del caller, por lo que las pantallas declaran el casing deseado sin transformaciones ocultas.
 - Pendiente inspección visual de textos largos y tamaños reducidos; no se ejecutaron pruebas locales en esta tanda.
+
+
+## Toggle de favorito: anuncio contextual
+
+- `XauxaFavoriteToggle` conserva `ToggleableState.On/Off` y ahora, si no se proporciona una descripción personalizada, anuncia “Marcar como favorito” en estado apagado y “Quitar de favoritos” en estado activado.
+- La descripción explícita del caller sigue teniendo prioridad. El cambio aclara la acción disponible para tecnologías de asistencia sin alterar el callback ni el estado visual.
+- Pendiente verificar TalkBack/VoiceOver y traducciones/localización en la revisión multiplataforma final; no se ejecutaron pruebas locales.
