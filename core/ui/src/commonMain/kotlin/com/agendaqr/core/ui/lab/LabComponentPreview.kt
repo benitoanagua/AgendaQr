@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -137,7 +135,7 @@ internal fun LabComponentPreview(
                 else -> Text(
                     "Este contrato es un grupo de tokens: revisa la especimen de la sección Fundamentos.",
                     fontSize = XauxaType.Label,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = XauxaColor.TextSecondary,
                 )
             }
         }
@@ -152,7 +150,7 @@ private fun LabControlRow(label: String, control: @Composable () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(label, fontSize = XauxaType.Label, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(label, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
         control()
     }
 }
