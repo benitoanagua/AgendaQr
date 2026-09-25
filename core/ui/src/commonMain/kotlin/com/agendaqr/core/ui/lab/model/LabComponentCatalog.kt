@@ -50,7 +50,7 @@ object LabComponentCatalog {
                 ),
                 LabState(
                     "Paleta oscura",
-                    "DarkXauxaColorScheme aplica los valores dark-first de la referencia; " +
+                    "DarkXauxaColorScheme aplica la paleta monocromática definida en el contrato visual; " +
                         "pendiente de validación visual de producto.",
                     LabReviewStatus.PENDING,
                 ),
@@ -61,7 +61,7 @@ object LabComponentCatalog {
                 ),
             ),
             tokens = listOf(
-                LabTokenRef("XauxaColor.Brand", "Acento de marca AgendaQr (teal)."),
+                LabTokenRef("XauxaColor.Brand", "Acento cromático actual; decisión final pendiente de auditoría de identidad y contraste."),
                 LabTokenRef("XauxaColor.Danger", "Semántica de error y peligro."),
                 LabTokenRef("XauxaColor.DangerBg", "Contenedor de peligro."),
                 LabTokenRef("XauxaColor.Surface3", "Tercera superficie del esquema."),
@@ -73,7 +73,7 @@ object LabComponentCatalog {
             ),
             tags = listOf("color", "tokens", "tema"),
             darkThemeSupport = LabDarkThemeSupport.PENDING,
-            darkThemeNote = "La paleta oscura aplica valores de la referencia xauxa v13, pendientes de validación de producto.",
+            darkThemeNote = "La paleta oscura aplica el contrato visual unificado; pendiente de validación visual de producto.",
             whenToUse = "Siempre que un componente necesite color. Nunca exponer Color ni hex en props: preferir XauxaTone.",
             androidMapping = "androidx.compose.ui.graphics.Color centralizado en object XauxaColor.",
             iosMapping = "Valores pendientes de exportar a Swift (Colors.swift de la referencia); hoy solo existe la capa Kotlin.",
