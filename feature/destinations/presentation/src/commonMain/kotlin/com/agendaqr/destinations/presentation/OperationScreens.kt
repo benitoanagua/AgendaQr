@@ -82,7 +82,7 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
                         Row(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), horizontalArrangement = Arrangement.SpaceBetween) {
                             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                                 Text(formatDate(operation.occurredAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
-                                Text(operation.type.name, fontWeight = FontWeight.SemiBold,
+                                Text(operationTypeLabel(operation.type), fontWeight = FontWeight.SemiBold,
                                     color = if (operation.type == OperationType.COBRO) XauxaColor.Success else XauxaColor.Brand)
                             }
                             Column(horizontalAlignment = Alignment.End) {
@@ -162,7 +162,7 @@ private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsVi
                             )
                         else -> candidateOperations.forEach { operation ->
                             XauxaListRow(
-                                title = operation.type.name + " · " + formatDate(operation.occurredAt),
+                                title = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
                                 subtitle = operation.amount.orEmpty().ifBlank { "—" },
                                 onClick = {
                                     viewModel.onAction(OperationAction.Associate(receipt.id, operation.id))
@@ -289,4 +289,10 @@ private fun formatDate(millis: Long): String {
     val year = y + if (month <= 2) 1 else 0
     fun two(value: Long) = if (value < 10) "0" + value else value.toString()
     return two(day) + "/" + two(month) + "/" + year
+}
+
+
+private fun operationTypeLabel(type: OperationType): String = when (type) {
+    OperationType.PAGO -> "Pago"
+    OperationType.COBRO -> "Cobro"
 }
