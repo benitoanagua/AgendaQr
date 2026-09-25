@@ -31,11 +31,11 @@ fun ImportBatchScreen(
                 Text("Trae varios elementos a Agenda QR.", color = XauxaColor.TextSecondary)
                 XauxaSecondaryButton("Volver", onClick = { onAction(ImportBatchAction.Back) })
             }
-            ImportBatchUiState.Importing -> XauxaLoading()
-            ImportBatchUiState.Analyzing -> XauxaLoading()
+            ImportBatchUiState.Importing -> XauxaLoading(message = "Importando…")
+            ImportBatchUiState.Analyzing -> XauxaLoading(message = "Analizando…")
             is ImportBatchUiState.Result -> BatchResultContent(state.batch, onAction)
             is ImportBatchUiState.Review -> BatchReviewContent(state.batch, onAction)
-            is ImportBatchUiState.Saving -> XauxaLoading()
+            is ImportBatchUiState.Saving -> XauxaLoading(message = "Guardando elementos reconocidos…")
             is ImportBatchUiState.Saved -> {
                 XauxaStatusBanner("Guardado. Los elementos pendientes conservan su revisión.", danger = false)
                 XauxaPrimaryButton("Volver", onClick = { onAction(ImportBatchAction.Back) })
