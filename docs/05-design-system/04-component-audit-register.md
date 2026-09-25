@@ -151,3 +151,11 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - `GlobalSearchScreen`: las etiquetas de tipo de resultado ahora se muestran como “Contexto”, “QR”, “Actividad” y “Comprobante”, en lugar de exponer nombres internos del enum.
 - La etiqueta se limita a presentación; identificadores, búsqueda y selección del resultado no cambian.
 - Pendiente comprobar con pruebas de interfaz y revisión de lector de pantalla que el tipo del resultado se comunica de forma clara y que no se trunca en anchos reducidos.
+
+
+## Pasada agrupada de consistencia de textos
+
+- `DestinationsScreen`: la acción del estado vacío inicial se presenta como “Agregar QR”, coherente con la acción principal de la pantalla y el idioma de la interfaz.
+- Cambio de texto únicamente; no modifica la condición del estado vacío ni el callback.
+- En esta pasada se revisaron también las pantallas de editor, revisión de importación e importación por lotes: no se detectó otro literal inglés claro en los rótulos visibles inspeccionados que justificara un cambio sin contexto adicional.
+- Validación visual, truncamiento y accesibilidad quedan agrupados para la ronda final; no se ejecutaron pruebas locales.
