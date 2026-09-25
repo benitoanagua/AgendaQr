@@ -203,3 +203,10 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - `LabChoiceChip` también respeta la etiqueta recibida, manteniendo el laboratorio alineado con el comportamiento real de los componentes compartidos.
 - Se conserva la tipografía, pesos, letter spacing, geometría y comportamiento; el cambio es exclusivamente de presentación textual.
 - El objetivo es eliminar transformaciones lingüísticas ocultas y permitir sentence case de forma consistente. La validación visual de los textos existentes queda para la ronda final.
+
+
+## Estados de carga: adopción del patrón compartido
+
+- `ContextScreen` usa `XauxaLoading` tanto en la lista de contextos como mientras espera el detalle, sustituyendo mensajes de carga sueltos.
+- `ImportBatchScreen` usa el mismo patrón para los estados Importando, Analizando y Guardando, manteniendo el texto descriptivo de cada estado en el modelo de estado y el indicador visual común.
+- Se reduce la variación visual entre pantallas sin cambiar estados de negocio, secuencia de importación ni callbacks. Pendiente revisión de anuncios accesibles, layout y pruebas de regresión en la validación final.
