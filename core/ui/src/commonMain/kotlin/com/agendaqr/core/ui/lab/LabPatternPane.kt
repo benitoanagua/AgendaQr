@@ -25,6 +25,7 @@ import com.agendaqr.core.ui.components.XauxaToast
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.lab.model.LabComponentCatalog
 import com.agendaqr.core.ui.lab.model.LabPattern
+import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
 
