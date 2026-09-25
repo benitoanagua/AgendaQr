@@ -14,10 +14,13 @@ import kotlin.math.pow
 /**
  * Token scheme tests: both schemes pin the current Xauxa values (no silent
  * visual change), both schemes are complete, and the pairs that must switch
- * with the theme are verified. Shared container identities between light and
- * dark (brandContainer, tertiaryContainer and their on-colors) are pinned as
- * the current code reality and flagged as pending official Xauxa reference —
- * they are NOT presented as validated design decisions.
+ * with the theme are verified. Since the Metro-unified palette
+ * (commit 86854d7) the interface is monochrome with a single brand accent:
+ * background/surface are pure white/black, and brand/onBrand/brandContainer
+ * are intentionally identical in light and dark. Shared identities between
+ * light and dark (brand family, tertiaryContainer and their on-colors) are
+ * pinned as the current code reality and flagged as pending official Xauxa
+ * reference — they are NOT presented as validated design decisions.
  */
 class XauxaSchemeTest {
 
@@ -57,20 +60,20 @@ class XauxaSchemeTest {
     @Test
     fun light_scheme_pins_the_current_xauxa_values() {
         val scheme = LightXauxaColorScheme
-        assertEquals("FFF7FF", hex(scheme.background))
-        assertEquals("FFF7FF", hex(scheme.surface))
-        assertEquals("F3EBF4", hex(scheme.surface2))
-        assertEquals("E8E0E9", hex(scheme.surface3))
-        assertEquals("E9DFEE", hex(scheme.surfaceVariant))
-        assertEquals("CDC3D2", hex(scheme.border))
-        assertEquals("7C7482", hex(scheme.borderVariant))
-        assertEquals("1E1A20", hex(scheme.textPrimary))
-        assertEquals("4B4450", hex(scheme.textSecondary))
-        assertEquals("7C7482", hex(scheme.textTertiary))
-        assertEquals("4A1F7A", hex(scheme.brand))
+        assertEquals("FFFFFF", hex(scheme.background))
+        assertEquals("FFFFFF", hex(scheme.surface))
+        assertEquals("F2F2F2", hex(scheme.surface2))
+        assertEquals("E0E0E0", hex(scheme.surface3))
+        assertEquals("F2F2F2", hex(scheme.surfaceVariant))
+        assertEquals("BDBDBD", hex(scheme.border))
+        assertEquals("666666", hex(scheme.borderVariant))
+        assertEquals("000000", hex(scheme.textPrimary))
+        assertEquals("333333", hex(scheme.textSecondary))
+        assertEquals("666666", hex(scheme.textTertiary))
+        assertEquals("0067B8", hex(scheme.brand))
         assertEquals("FFFFFF", hex(scheme.onBrand))
-        assertEquals("623993", hex(scheme.brandContainer))
-        assertEquals("D5B0FF", hex(scheme.onBrandContainer))
+        assertEquals("0067B8", hex(scheme.brandContainer))
+        assertEquals("FFFFFF", hex(scheme.onBrandContainer))
         assertEquals("68577C", hex(scheme.secondary))
         assertEquals("FFFFFF", hex(scheme.onSecondary))
         assertEquals("E8D1FD", hex(scheme.secondaryContainer))
@@ -86,26 +89,26 @@ class XauxaSchemeTest {
         assertEquals("332F35", hex(scheme.inverseSurface))
         assertEquals("F6EEF7", hex(scheme.inverseOnSurface))
         assertEquals("DAB9FF", hex(scheme.inverseBrand))
-        assertEquals("4A1F7A", hex(scheme.focusRing))
+        assertEquals("0067B8", hex(scheme.focusRing))
     }
 
     @Test
     fun dark_scheme_pins_the_baseline_values() {
         val scheme = DarkXauxaColorScheme
-        assertEquals("151218", hex(scheme.background))
-        assertEquals("151218", hex(scheme.surface))
-        assertEquals("221E24", hex(scheme.surface2))
-        assertEquals("37333A", hex(scheme.surface3))
-        assertEquals("4B4450", hex(scheme.surfaceVariant))
-        assertEquals("4B4450", hex(scheme.border))
-        assertEquals("968E9C", hex(scheme.borderVariant))
-        assertEquals("E8E0E9", hex(scheme.textPrimary))
-        assertEquals("CDC3D2", hex(scheme.textSecondary))
-        assertEquals("968E9C", hex(scheme.textTertiary))
-        assertEquals("DAB9FF", hex(scheme.brand))
-        assertEquals("421673", hex(scheme.onBrand))
-        assertEquals("623993", hex(scheme.brandContainer))
-        assertEquals("D5B0FF", hex(scheme.onBrandContainer))
+        assertEquals("000000", hex(scheme.background))
+        assertEquals("000000", hex(scheme.surface))
+        assertEquals("1A1A1A", hex(scheme.surface2))
+        assertEquals("2A2A2A", hex(scheme.surface3))
+        assertEquals("1A1A1A", hex(scheme.surfaceVariant))
+        assertEquals("555555", hex(scheme.border))
+        assertEquals("999999", hex(scheme.borderVariant))
+        assertEquals("FFFFFF", hex(scheme.textPrimary))
+        assertEquals("CCCCCC", hex(scheme.textSecondary))
+        assertEquals("999999", hex(scheme.textTertiary))
+        assertEquals("0067B8", hex(scheme.brand))
+        assertEquals("FFFFFF", hex(scheme.onBrand))
+        assertEquals("0067B8", hex(scheme.brandContainer))
+        assertEquals("FFFFFF", hex(scheme.onBrandContainer))
         assertEquals("D4BEE9", hex(scheme.secondary))
         assertEquals("39294B", hex(scheme.onSecondary))
         assertEquals("524266", hex(scheme.secondaryContainer))
@@ -121,7 +124,7 @@ class XauxaSchemeTest {
         assertEquals("E8E0E9", hex(scheme.inverseSurface))
         assertEquals("332F35", hex(scheme.inverseOnSurface))
         assertEquals("734AA5", hex(scheme.inverseBrand))
-        assertEquals("DAB9FF", hex(scheme.focusRing))
+        assertEquals("0067B8", hex(scheme.focusRing))
     }
 
     @Test
@@ -131,9 +134,12 @@ class XauxaSchemeTest {
             assertTrue(scheme.all().none { it == Color.Unspecified }, "scheme has Unspecified colors")
         }
         assertNotEquals(LightXauxaColorScheme, DarkXauxaColorScheme)
-        // Current code reality: brand/tertiary containers are shared between
-        // themes (identical hex). Pinned here; requires official Xauxa
+        // Current code reality: the whole brand family and the tertiary
+        // containers are shared between themes (identical hex) — a single
+        // brand accent by design. Pinned here; requires official Xauxa
         // reference to confirm or correct — see report.
+        assertEquals(LightXauxaColorScheme.brand, DarkXauxaColorScheme.brand)
+        assertEquals(LightXauxaColorScheme.onBrand, DarkXauxaColorScheme.onBrand)
         assertEquals(LightXauxaColorScheme.brandContainer, DarkXauxaColorScheme.brandContainer)
         assertEquals(LightXauxaColorScheme.onBrandContainer, DarkXauxaColorScheme.onBrandContainer)
         assertEquals(LightXauxaColorScheme.tertiaryContainer, DarkXauxaColorScheme.tertiaryContainer)
@@ -214,11 +220,13 @@ class XauxaSchemeTest {
         val dark = DarkXauxaColorScheme.fields()
         assertEquals(light.keys, dark.keys)
         assertEquals(30, light.size)
-        // Every neutral role actually switches; shared container accents stay put (pending reference).
+        // Every neutral role actually switches; the brand family and the
+        // tertiary containers stay put by design (single accent, pending
+        // reference) — see both_schemes_are_complete_and_switchable.
         listOf(
             "background", "surface", "surface2", "surface3", "surfaceVariant",
             "border", "borderVariant", "textPrimary", "textSecondary",
-            "brand", "onBrand", "secondary", "danger", "dangerBg",
+            "secondary", "danger", "dangerBg",
         ).forEach { key ->
             assertNotEquals(light.getValue(key), dark.getValue(key), "$key must switch with the theme")
         }

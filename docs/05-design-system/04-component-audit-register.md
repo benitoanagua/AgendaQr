@@ -422,3 +422,28 @@ Pendiente manual: Android en dispositivo/emulador (selección de archivo, cámar
 | TalkBack/VoiceOver, responsive visual, contraste claro/oscuro | NO EJECUTADO (manual pendiente) | Sin dispositivo/entorno; instrucciones en cada lote |
 
 Archivos afectados: `core/ui/…/XauxaExtendedComponents.kt`, `feature/destinations/presentation/…/DestinationsScreen.kt`, `OperationScreens.kt`, `AuthScreen.kt`, `ImportBatchScreen.kt`, `ContextScreen.kt`, `GlobalSearchScreen.kt`, `AgendaQrApp.kt`, `AgendaQrPatterns.kt`, este registro.
+
+## Cierre 2026-09-25 (continuación): desbloqueo de compilación y tests de esquema
+
+### Lote I — `ToggleableState`: import obsoleto (bloqueante real, corregido)
+
+El comando `:core:ui:testDebugUnitTest verifyAgendaQrArchitecture componentLabWeb` fallaba en `:core:ui:compileDebugKotlinAndroid` y `:core:ui:compileKotlinWasmJs` con `Unresolved reference 'ToggleableState'` (`XauxaExtendedComponents.kt:38,471,754`).
+
+Causa verificada por inspección del artefacto resuelto (no por intuición): en `androidx.compose.ui:ui-android:1.8.2` la clase existe solo como `androidx.compose.ui.state.ToggleableState`; no existe `androidx.compose.ui.semantics.ToggleableState` (paquete eliminado en 1.8). La propiedad de semántica `toggleableState` (minúscula, paquete `semantics`) sigue existiendo y conserva su significado.
+
+Cambio (`XauxaExtendedComponents.kt`, 1 línea): import `androidx.compose.ui.semantics.ToggleableState` → `androidx.compose.ui.state.ToggleableState`. Valores `On/Off`, roles y descripciones intactos; accesibilidad sin cambios de comportamiento.
+
+### Lote J — `XauxaSchemeTest`: valores fijados obsoletos (corregido)
+
+Con la compilación desbloqueada, `:core:ui:testDebugUnitTest` fallaba en 3 tests que fijaban la paleta morada anterior (`background FFF7FF`, `brand 4A1F7A`, …), mientras `XauxaTokens.kt` define la paleta unificada monocroma + acento único `0067B8`. Historial: `86854d7 refactor(design-system): unify Metro-inspired semantic tokens` cambió los valores sin tocar el test. El test es un detector de cambios cuya propia docstring ordena fijar “los valores actuales”; fijaba valores derogados, no comportamiento correcto de producto.
+
+Cambio (`XauxaSchemeTest.kt`, solo expectativas): hex fijados actualizados a los primitivos canónicos vigentes (blanco/negro puros, `0067B8` como acento); `brand`/`onBrand` pasan de “deben cambiar con el tema” a fijados como compartidos por diseño (acento único), igual que ya hacían `brandContainer`/`tertiaryContainer`. Contraste WCAG AA verificado por los propios tests (pasan). Decisión para el propietario: confirmar que el acento único constante entre temas es la identidad deseada.
+
+### Validación local — actualización (2026-09-25)
+
+| Comando | Resultado | Motivo |
+|---|---|---|
+| `./gradlew :core:ui:testDebugUnitTest verifyAgendaQrArchitecture componentLabWeb` | PASS | Compilación Android + wasmJs, 41 tests unitarios, arquitectura y lab web (`componentLabWeb` empaqueta wasm) — BUILD SUCCESSFUL |
+| `./gradlew :feature:destinations:domain:testDebugUnitTest :feature:destinations:data:testDebugUnitTest --rerun-tasks` | PASS | Re-ejecutados previamente, BUILD SUCCESSFUL |
+| `:androidApp:assembleDebug` | NO EJECUTADO | Fuera del comando solicitado; pendiente si se requiere |
+| TalkBack/VoiceOver, iOS físico, contraste visual manual | NO EJECUTADO (manual pendiente) | Sin dispositivo/entorno; instrucciones en los lotes B–H |
