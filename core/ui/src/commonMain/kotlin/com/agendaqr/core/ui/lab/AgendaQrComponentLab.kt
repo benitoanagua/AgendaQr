@@ -47,7 +47,7 @@ import com.agendaqr.core.ui.theme.XauxaType
  * - The layout is adaptive: below XauxaMetrics.BreakpointMedium (640dp, a
  *   breakpoint documented by Xauxa) the page collapses to a single
  *   scroll owner to avoid nested-scroll conflicts on narrow devices.
- * - The dark preview wraps everything in AgendaQrTheme with the dark
+ * - The dark preview wraps everything in XauxaTheme with the dark
  *   Material scheme. Xauxa components consume fixed light tokens, so the
  *   preview makes the real dark-mode gap visible instead of hiding it.
  * - The lab is intentionally isolated from production navigation,
