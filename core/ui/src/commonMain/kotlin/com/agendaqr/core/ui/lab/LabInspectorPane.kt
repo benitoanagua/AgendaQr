@@ -16,6 +16,7 @@ import com.agendaqr.core.ui.lab.model.LabDarkThemeSupport
 import com.agendaqr.core.ui.lab.model.LabInteractionLens
 import com.agendaqr.core.ui.lab.model.LabInteractionMatrix
 import com.agendaqr.core.ui.lab.model.LabLensVerdict
+import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
 
@@ -151,9 +152,9 @@ private fun LabInteractionRow(lens: LabInteractionLens, verdict: LabLensVerdict,
 @Composable
 private fun LabLensVerdictBadge(verdict: LabLensVerdict) {
     val color = when (verdict) {
-        LabLensVerdict.REAL -> scheme.primary
-        LabLensVerdict.SIMULATED -> scheme.tertiary
-        LabLensVerdict.NOT_APPLICABLE -> scheme.outline
+        LabLensVerdict.REAL -> XauxaColor.Brand
+        LabLensVerdict.SIMULATED -> XauxaColor.Tertiary
+        LabLensVerdict.NOT_APPLICABLE -> XauxaColor.TextTertiary
     }
     Text(
         verdict.label,

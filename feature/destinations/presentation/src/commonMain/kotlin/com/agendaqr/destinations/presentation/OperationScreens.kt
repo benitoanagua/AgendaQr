@@ -95,7 +95,6 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
                 if (paged.size < operations.size) {
                     item {
                         XauxaLoadMoreFooter(
-                            label = "CARGAR MÁS",
                             onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(operations.size) },
                         )
                     }

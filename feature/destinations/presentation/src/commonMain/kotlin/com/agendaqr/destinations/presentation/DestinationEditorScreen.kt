@@ -17,6 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaTextAction
+import com.agendaqr.core.ui.components.XauxaTextInput
+import com.agendaqr.core.ui.components.XauxaDialog
 import com.agendaqr.core.ui.components.XauxaTile
 import com.agendaqr.core.ui.components.XauxaQrPreview
 import com.agendaqr.core.ui.theme.XauxaColor

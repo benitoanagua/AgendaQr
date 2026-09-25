@@ -27,6 +27,7 @@ import com.agendaqr.core.ui.lab.model.LabCatalogIntegrity
 import com.agendaqr.core.ui.lab.model.LabCatalogQuery
 import com.agendaqr.core.ui.lab.model.LabComponentCatalog
 import com.agendaqr.core.ui.lab.model.LabPatterns
+import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaTheme
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
@@ -48,8 +49,8 @@ import com.agendaqr.core.ui.theme.XauxaType
  *   breakpoint documented by Xauxa) the page collapses to a single
  *   scroll owner to avoid nested-scroll conflicts on narrow devices.
  * - The dark preview wraps everything in XauxaTheme with the dark
- *   Material scheme. Xauxa components consume fixed light tokens, so the
- *   preview makes the real dark-mode gap visible instead of hiding it.
+ *   Material scheme. Xauxa components resolve the scheme via XauxaColor,
+ *   so the preview shows the real dark/light tokens of each scheme.
  * - The lab is intentionally isolated from production navigation,
  *   repositories, services, authentication, camera, storage and
  *   notifications. Its only host is the WebAssembly target of core:ui,

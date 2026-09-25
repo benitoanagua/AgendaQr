@@ -9,84 +9,165 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
+import kotlin.math.pow
 
 /**
- * Token scheme tests: the light scheme pins the production appearance (no
- * silent visual change), both schemes are complete, and the dark scheme
- * carries the reference values pending product validation.
+ * Token scheme tests: both schemes pin the current Xauxa values (no silent
+ * visual change), both schemes are complete, and the pairs that must switch
+ * with the theme are verified. Shared container identities between light and
+ * dark (brandContainer, tertiaryContainer and their on-colors) are pinned as
+ * the current code reality and flagged as pending official Xauxa reference —
+ * they are NOT presented as validated design decisions.
  */
 class XauxaSchemeTest {
 
     private fun XauxaColorScheme.all(): List<Color> = listOf(
-        background, surface, surface2, surface3, border,
+        background, surface, surface2, surface3, surfaceVariant,
+        border, borderVariant,
         textPrimary, textSecondary, textTertiary,
-        brand, brandAccent, onBrand, white,
-        success, successBg, danger, dangerBg,
-        warning, warningBg, info, infoBg, focusRing,
+        brand, onBrand, brandContainer, onBrandContainer,
+        secondary, onSecondary, secondaryContainer, onSecondaryContainer,
+        tertiary, onTertiary, tertiaryContainer, onTertiaryContainer,
+        danger, onDanger, dangerBg, onDangerBg,
+        inverseSurface, inverseOnSurface, inverseBrand,
+        focusRing,
     )
 
     private fun hex(color: Color): String =
         color.toArgb().toUInt().toString(16).uppercase().padStart(8, '0').drop(2)
 
+    private fun luminance(hex: String): Double {
+        fun channel(v: Int): Double {
+            val c = v / 255.0
+            return if (c <= 0.04045) c / 12.92 else ((c + 0.055) / 1.055).pow(2.4)
+        }
+        val r = channel(hex.substring(0, 2).toInt(16))
+        val g = channel(hex.substring(2, 4).toInt(16))
+        val b = channel(hex.substring(4, 6).toInt(16))
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b
+    }
+
+    private fun contrast(a: String, b: String): Double {
+        val l1 = luminance(a)
+        val l2 = luminance(b)
+        val (hi, lo) = if (l1 >= l2) l1 to l2 else l2 to l1
+        return (hi + 0.05) / (lo + 0.05)
+    }
+
     @Test
-    fun light_scheme_preserves_the_production_appearance() {
+    fun light_scheme_pins_the_current_xauxa_values() {
         val scheme = LightXauxaColorScheme
-        assertEquals("F8FAFA", hex(scheme.background))
-        assertEquals("FFFFFF", hex(scheme.surface))
-        assertEquals("F0F4F3", hex(scheme.surface2))
-        assertEquals("D7DEDC", hex(scheme.border))
-        assertEquals("17201E", hex(scheme.textPrimary))
-        assertEquals("4E5B57", hex(scheme.textSecondary))
-        assertEquals("6C7773", hex(scheme.textTertiary))
-        assertEquals("0E7D6E", hex(scheme.brand))
-        assertEquals("7FD9C9", hex(scheme.brandAccent))
-        assertEquals("2E7D5B", hex(scheme.success))
-        assertEquals("EAF2EF", hex(scheme.successBg))
-        assertEquals("B3261E", hex(scheme.danger))
-        assertEquals("F7E9E8", hex(scheme.dangerBg))
-        assertEquals("8A5A00", hex(scheme.warning))
-        assertEquals("F3EEE6", hex(scheme.warningBg))
-        assertEquals("245E9B", hex(scheme.info))
-        assertEquals("E9EFF5", hex(scheme.infoBg))
-        assertEquals("7FD9C9", hex(scheme.focusRing))
+        assertEquals("FFF7FF", hex(scheme.background))
+        assertEquals("FFF7FF", hex(scheme.surface))
+        assertEquals("F3EBF4", hex(scheme.surface2))
+        assertEquals("E8E0E9", hex(scheme.surface3))
+        assertEquals("E9DFEE", hex(scheme.surfaceVariant))
+        assertEquals("CDC3D2", hex(scheme.border))
+        assertEquals("7C7482", hex(scheme.borderVariant))
+        assertEquals("1E1A20", hex(scheme.textPrimary))
+        assertEquals("4B4450", hex(scheme.textSecondary))
+        assertEquals("7C7482", hex(scheme.textTertiary))
+        assertEquals("4A1F7A", hex(scheme.brand))
+        assertEquals("FFFFFF", hex(scheme.onBrand))
+        assertEquals("623993", hex(scheme.brandContainer))
+        assertEquals("D5B0FF", hex(scheme.onBrandContainer))
+        assertEquals("68577C", hex(scheme.secondary))
+        assertEquals("FFFFFF", hex(scheme.onSecondary))
+        assertEquals("E8D1FD", hex(scheme.secondaryContainer))
+        assertEquals("69587D", hex(scheme.onSecondaryContainer))
+        assertEquals("671448", hex(scheme.tertiary))
+        assertEquals("FFFFFF", hex(scheme.onTertiary))
+        assertEquals("842D60", hex(scheme.tertiaryContainer))
+        assertEquals("FFA4D1", hex(scheme.onTertiaryContainer))
+        assertEquals("BA1A1A", hex(scheme.danger))
+        assertEquals("FFFFFF", hex(scheme.onDanger))
+        assertEquals("FFDAD6", hex(scheme.dangerBg))
+        assertEquals("93000A", hex(scheme.onDangerBg))
+        assertEquals("332F35", hex(scheme.inverseSurface))
+        assertEquals("F6EEF7", hex(scheme.inverseOnSurface))
+        assertEquals("DAB9FF", hex(scheme.inverseBrand))
+        assertEquals("4A1F7A", hex(scheme.focusRing))
     }
 
     @Test
-    fun light_surface3_is_the_documented_new_proposal() {
-        assertEquals("E6EBEA", hex(LightXauxaColorScheme.surface3))
-    }
-
-    @Test
-    fun dark_scheme_carries_the_reference_values() {
+    fun dark_scheme_pins_the_baseline_values() {
         val scheme = DarkXauxaColorScheme
         assertEquals("151218", hex(scheme.background))
-        assertEquals("17171B", hex(scheme.surface))
-        assertEquals("1F1F24", hex(scheme.surface2))
-        assertEquals("26262C", hex(scheme.surface3))
-        assertEquals("2A2A30", hex(scheme.border))
-        assertEquals("F4F4F6", hex(scheme.textPrimary))
-        assertEquals("9C9CA6", hex(scheme.textSecondary))
-        assertEquals("90909A", hex(scheme.textTertiary))
-        assertEquals("3DA35D", hex(scheme.success))
-        assertEquals("163521", hex(scheme.successBg))
-        assertEquals("D9534F", hex(scheme.danger))
-        assertEquals("3A1E1D", hex(scheme.dangerBg))
-        assertEquals("B5790A", hex(scheme.warning))
-        assertEquals("3A2B0B", hex(scheme.warningBg))
-        assertEquals("3A7BD5", hex(scheme.info))
-        assertEquals("17263D", hex(scheme.infoBg))
+        assertEquals("151218", hex(scheme.surface))
+        assertEquals("221E24", hex(scheme.surface2))
+        assertEquals("37333A", hex(scheme.surface3))
+        assertEquals("4B4450", hex(scheme.surfaceVariant))
+        assertEquals("4B4450", hex(scheme.border))
+        assertEquals("968E9C", hex(scheme.borderVariant))
+        assertEquals("E8E0E9", hex(scheme.textPrimary))
+        assertEquals("CDC3D2", hex(scheme.textSecondary))
+        assertEquals("968E9C", hex(scheme.textTertiary))
+        assertEquals("DAB9FF", hex(scheme.brand))
+        assertEquals("421673", hex(scheme.onBrand))
+        assertEquals("623993", hex(scheme.brandContainer))
+        assertEquals("D5B0FF", hex(scheme.onBrandContainer))
+        assertEquals("D4BEE9", hex(scheme.secondary))
+        assertEquals("39294B", hex(scheme.onSecondary))
+        assertEquals("524266", hex(scheme.secondaryContainer))
+        assertEquals("C5B0DA", hex(scheme.onSecondaryContainer))
+        assertEquals("FFAFD5", hex(scheme.tertiary))
+        assertEquals("5E0A41", hex(scheme.onTertiary))
+        assertEquals("842D60", hex(scheme.tertiaryContainer))
+        assertEquals("FFA4D1", hex(scheme.onTertiaryContainer))
+        assertEquals("FFB4AB", hex(scheme.danger))
+        assertEquals("690005", hex(scheme.onDanger))
+        assertEquals("93000A", hex(scheme.dangerBg))
+        assertEquals("FFDAD6", hex(scheme.onDangerBg))
+        assertEquals("E8E0E9", hex(scheme.inverseSurface))
+        assertEquals("332F35", hex(scheme.inverseOnSurface))
+        assertEquals("734AA5", hex(scheme.inverseBrand))
+        assertEquals("DAB9FF", hex(scheme.focusRing))
     }
 
     @Test
     fun both_schemes_are_complete_and_switchable() {
         listOf(LightXauxaColorScheme, DarkXauxaColorScheme).forEach { scheme ->
-            assertEquals(21, scheme.all().size)
+            assertEquals(30, scheme.all().size)
             assertTrue(scheme.all().none { it == Color.Unspecified }, "scheme has Unspecified colors")
         }
         assertNotEquals(LightXauxaColorScheme, DarkXauxaColorScheme)
-        // Brand accent identity is shared by design (single brand accent).
-        assertEquals(LightXauxaColorScheme.brand, DarkXauxaColorScheme.brand)
-        assertEquals(LightXauxaColorScheme.focusRing, DarkXauxaColorScheme.focusRing)
+        // Current code reality: brand/tertiary containers are shared between
+        // themes (identical hex). Pinned here; requires official Xauxa
+        // reference to confirm or correct — see report.
+        assertEquals(LightXauxaColorScheme.brandContainer, DarkXauxaColorScheme.brandContainer)
+        assertEquals(LightXauxaColorScheme.onBrandContainer, DarkXauxaColorScheme.onBrandContainer)
+        assertEquals(LightXauxaColorScheme.tertiaryContainer, DarkXauxaColorScheme.tertiaryContainer)
+        assertEquals(LightXauxaColorScheme.onTertiaryContainer, DarkXauxaColorScheme.onTertiaryContainer)
+    }
+
+    @Test
+    fun light_foreground_background_pairs_meet_wcag_aa() {
+        val s = LightXauxaColorScheme
+        // Normal text and UI roles require >= 4.5:1.
+        assertTrue(contrast(hex(s.brand), hex(s.onBrand)) >= 4.5, "light brand/onBrand")
+        assertTrue(contrast(hex(s.brandContainer), hex(s.onBrandContainer)) >= 4.5, "light brandContainer/onBrandContainer")
+        assertTrue(contrast(hex(s.secondary), hex(s.onSecondary)) >= 4.5, "light secondary/onSecondary")
+        assertTrue(contrast(hex(s.secondaryContainer), hex(s.onSecondaryContainer)) >= 4.5, "light secondaryContainer/onSecondaryContainer")
+        assertTrue(contrast(hex(s.tertiary), hex(s.onTertiary)) >= 4.5, "light tertiary/onTertiary")
+        assertTrue(contrast(hex(s.tertiaryContainer), hex(s.onTertiaryContainer)) >= 4.5, "light tertiaryContainer/onTertiaryContainer")
+        assertTrue(contrast(hex(s.danger), hex(s.onDanger)) >= 4.5, "light danger/onDanger")
+        assertTrue(contrast(hex(s.dangerBg), hex(s.onDangerBg)) >= 4.5, "light dangerBg/onDangerBg")
+        assertTrue(contrast(hex(s.surface), hex(s.textPrimary)) >= 4.5, "light surface/textPrimary")
+        assertTrue(contrast(hex(s.surfaceVariant), hex(s.textSecondary)) >= 4.5, "light surfaceVariant/textSecondary")
+    }
+
+    @Test
+    fun dark_foreground_background_pairs_meet_wcag_aa() {
+        val s = DarkXauxaColorScheme
+        assertTrue(contrast(hex(s.brand), hex(s.onBrand)) >= 4.5, "dark brand/onBrand")
+        assertTrue(contrast(hex(s.brandContainer), hex(s.onBrandContainer)) >= 4.5, "dark brandContainer/onBrandContainer")
+        assertTrue(contrast(hex(s.secondary), hex(s.onSecondary)) >= 4.5, "dark secondary/onSecondary")
+        assertTrue(contrast(hex(s.secondaryContainer), hex(s.onSecondaryContainer)) >= 4.5, "dark secondaryContainer/onSecondaryContainer")
+        assertTrue(contrast(hex(s.tertiary), hex(s.onTertiary)) >= 4.5, "dark tertiary/onTertiary")
+        assertTrue(contrast(hex(s.tertiaryContainer), hex(s.onTertiaryContainer)) >= 4.5, "dark tertiaryContainer/onTertiaryContainer")
+        assertTrue(contrast(hex(s.danger), hex(s.onDanger)) >= 4.5, "dark danger/onDanger")
+        assertTrue(contrast(hex(s.dangerBg), hex(s.onDangerBg)) >= 4.5, "dark dangerBg/onDangerBg")
+        assertTrue(contrast(hex(s.surface), hex(s.textPrimary)) >= 4.5, "dark surface/textPrimary")
     }
 
     /**
@@ -102,30 +183,43 @@ class XauxaSchemeTest {
             "surface" to surface,
             "surface2" to surface2,
             "surface3" to surface3,
+            "surfaceVariant" to surfaceVariant,
             "border" to border,
+            "borderVariant" to borderVariant,
             "textPrimary" to textPrimary,
             "textSecondary" to textSecondary,
             "textTertiary" to textTertiary,
             "brand" to brand,
-            "brandAccent" to brandAccent,
             "onBrand" to onBrand,
-            "white" to white,
-            "success" to success,
-            "successBg" to successBg,
+            "brandContainer" to brandContainer,
+            "onBrandContainer" to onBrandContainer,
+            "secondary" to secondary,
+            "onSecondary" to onSecondary,
+            "secondaryContainer" to secondaryContainer,
+            "onSecondaryContainer" to onSecondaryContainer,
+            "tertiary" to tertiary,
+            "onTertiary" to onTertiary,
+            "tertiaryContainer" to tertiaryContainer,
+            "onTertiaryContainer" to onTertiaryContainer,
             "danger" to danger,
+            "onDanger" to onDanger,
             "dangerBg" to dangerBg,
-            "warning" to warning,
-            "warningBg" to warningBg,
-            "info" to info,
-            "infoBg" to infoBg,
+            "onDangerBg" to onDangerBg,
+            "inverseSurface" to inverseSurface,
+            "inverseOnSurface" to inverseOnSurface,
+            "inverseBrand" to inverseBrand,
             "focusRing" to focusRing,
         )
         val light = LightXauxaColorScheme.fields()
         val dark = DarkXauxaColorScheme.fields()
         assertEquals(light.keys, dark.keys)
-        assertEquals(21, light.size)
-        // Every neutral role actually switches; shared accents stay put.
-        listOf("background", "surface", "surface2", "surface3", "border", "textPrimary", "successBg", "dangerBg").forEach { key ->
+        assertEquals(30, light.size)
+        // Every neutral role actually switches; shared container accents stay put (pending reference).
+        listOf(
+            "background", "surface", "surface2", "surface3", "surfaceVariant",
+            "border", "borderVariant", "textPrimary", "textSecondary",
+            "brand", "onBrand", "secondary", "danger", "dangerBg",
+        ).forEach { key ->
             assertNotEquals(light.getValue(key), dark.getValue(key), "$key must switch with the theme")
         }
     }

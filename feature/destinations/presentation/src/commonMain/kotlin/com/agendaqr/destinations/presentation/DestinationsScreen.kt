@@ -23,6 +23,12 @@ import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaTile
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.components.XauxaEmptyState
+import com.agendaqr.core.ui.components.XauxaSearchBar
+import com.agendaqr.core.ui.components.XauxaFilterChip
+import com.agendaqr.core.ui.components.XauxaCategoryChip
+import com.agendaqr.core.ui.components.XauxaLoadMoreFooter
+import com.agendaqr.core.ui.components.XauxaListRow
+import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -73,7 +79,6 @@ fun DestinationsScreen(
                     if (paged.size < state.visibleDestinations.size) {
                         item {
                             XauxaLoadMoreFooter(
-                                label = "CARGAR MÁS",
                                 onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(state.visibleDestinations.size) },
                             )
                         }

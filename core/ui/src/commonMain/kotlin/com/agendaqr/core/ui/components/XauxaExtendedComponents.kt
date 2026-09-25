@@ -101,7 +101,7 @@ fun XauxaDangerButton(
         shape = RectangleShape,
         colors = ButtonDefaults.buttonColors(
             containerColor = XauxaColor.Danger,
-            contentColor = XauxaColor.White,
+            contentColor = XauxaColor.OnDanger,
             disabledContainerColor = XauxaColor.Surface2,
             disabledContentColor = XauxaColor.TextTertiary,
         ),
@@ -109,7 +109,7 @@ fun XauxaDangerButton(
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.size(XauxaSpacing.Lg),
-                color = XauxaColor.White,
+                color = XauxaColor.OnDanger,
                 strokeWidth = XauxaMetrics.Border,
             )
         } else {
@@ -182,7 +182,16 @@ fun XauxaBadge(
         XauxaColor.Surface
     }
     val foreground = if (solid) {
-        if (tone == XauxaTone.Neutral) XauxaColor.TextPrimary else XauxaColor.White
+        // Contenido sobre fondo sólido: usa el on-color del rol de fondo.
+        // En light todos son blancos (sin cambio visual); en dark son texto
+        // oscuro sobre contenedor claro (White fijo daba 1.70:1 en dark).
+        when (tone) {
+            XauxaTone.Neutral -> XauxaColor.TextPrimary
+            XauxaTone.Success -> XauxaColor.OnSecondary
+            XauxaTone.Danger -> XauxaColor.OnDanger
+            XauxaTone.Warning -> XauxaColor.OnTertiary
+            XauxaTone.Info -> XauxaColor.OnBrand
+        }
     } else {
         tone.content()
     }
@@ -455,9 +464,14 @@ fun XauxaSettingRow(
                     .padding(XauxaSpacing.Xs),
                 contentAlignment = if (checked) Alignment.CenterEnd else Alignment.CenterStart,
             ) {
+                // Pastilla del toggle: OnBrand preserva el blanco en light
+                // y corrige el contraste en dark (White fijo fallaba el
+                // par con Brand en dark). El estado apagado
+                // (Surface2 + White en light) queda
+                // pendiente de referencia oficial de Xauxa: no se inventa color.
                 Box(
                     modifier = Modifier.size(XauxaSpacing.Xl)
-                        .background(XauxaColor.White),
+                        .background(if (checked) XauxaColor.OnBrand else XauxaColor.White),
                 )
             }
         }

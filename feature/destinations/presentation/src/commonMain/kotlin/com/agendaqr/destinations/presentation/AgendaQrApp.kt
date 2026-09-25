@@ -30,6 +30,7 @@ import com.agendaqr.destinations.data.createSyncedComprobanteRepository
 import com.agendaqr.destinations.data.createSyncedDestinationRepository
 import com.agendaqr.destinations.data.createSyncedOperationRepository
 import com.agendaqr.core.ui.components.XauxaStatusBanner
+import com.agendaqr.core.ui.components.XauxaTextAction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -198,9 +199,7 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
                 danger = hasFailed,
             )
             if (hasFailed) {
-                androidx.compose.material3.TextButton(onClick = { syncScope.launch { syncProcessor.drain() } }) {
-                    androidx.compose.material3.Text("Reintentar ahora")
-                }
+                XauxaTextAction(label = "Reintentar ahora", onClick = { syncScope.launch { syncProcessor.drain() } })
             }
         }
     }
