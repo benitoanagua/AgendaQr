@@ -53,10 +53,10 @@ private fun BatchResultContent(
     batch: ImportBatch,
     onAction: (ImportBatchAction) -> Unit,
 ) {
-    Text("✓ ${batch.qr.size} QR reconocidos", color = XauxaColor.TextPrimary)
-    Text("✓ ${batch.comprobantes.size} comprobantes", color = XauxaColor.TextPrimary)
-    Text("! ${batch.duplicates.size} duplicados", color = XauxaColor.TextPrimary)
-    Text("? ${batch.unknown.size} para revisar", color = XauxaColor.TextPrimary)
+    Text("QR reconocidos: ${batch.qr.size}", color = XauxaColor.TextPrimary)
+    Text("Comprobantes reconocidos: ${batch.comprobantes.size}", color = XauxaColor.TextPrimary)
+    Text("Duplicados: ${batch.duplicates.size}", color = XauxaColor.TextPrimary)
+    Text("Elementos desconocidos para revisar: ${batch.unknown.size}", color = XauxaColor.TextPrimary)
     Text("${batch.uniqueRecognized.size} elementos listos para guardar", color = XauxaColor.TextSecondary)
 
     if (batch.canSaveRecognized()) {
