@@ -27,6 +27,9 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(compose.material3)
+            // Xauxa motion tokens (Easing) and the LiveTile / turnstile-nav
+            // components consume androidx.compose.animation(.core) directly.
+            implementation(compose.animation)
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.agendaqr.core.ui.theme
 
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.Easing
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
@@ -233,9 +235,26 @@ object XauxaMotion {
     const val DurationShortMs = 150
     const val DurationMediumMs = 300
     const val DurationLongMs = 600
+
+    // Curvas CSS documentadas por Xauxa, conservadas para trazabilidad con
+    // tokens.json / design-system.html (no consumibles por Compose).
     const val EasingStandard = "cubic-bezier(0.4, 0, 0.2, 1)"
     const val EasingEmphasized = "cubic-bezier(0.2, 0, 0, 1)"
     const val EasingDecelerate = "cubic-bezier(0, 0, 0.2, 1)"
+
+    /**
+     * Mismas curvas que [EasingStandard]/[EasingEmphasized]/[EasingDecelerate],
+     * como [Easing] de Compose. Antes de esta pasada `XauxaMotion` solo
+     * documentaba duración/easing como texto CSS y ningún componente los
+     * consumía (ver docs/05-design-system/03, §2 "Motion"); estos son los
+     * valores reales que [XauxaLiveTile], [XauxaCommandBar] (overflow) y
+     * `xauxaTurnstileEnter`/`xauxaTurnstileExit` usan.
+     */
+    object Easings {
+        val Standard: Easing = CubicBezierEasing(0.4f, 0f, 0.2f, 1f)
+        val Emphasized: Easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
+        val Decelerate: Easing = CubicBezierEasing(0f, 0f, 0.2f, 1f)
+    }
 }
 
 fun Dp.xauxaBorder() = this

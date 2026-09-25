@@ -1,5 +1,7 @@
 package com.agendaqr.destinations.presentation
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -8,6 +10,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.agendaqr.core.ui.components.xauxaTurnstileEnter
+import com.agendaqr.core.ui.components.xauxaTurnstileExit
 import com.agendaqr.destinations.data.SyncQueueObserver
 import com.agendaqr.destinations.data.createComprobanteFileStore
 import com.agendaqr.destinations.data.createImportPayloadStore
@@ -284,7 +288,20 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
         )
         showContexts -> ContextsScreen(contextState, contextViewModel::onAction)
         showOperations -> OperationsScreen(operationState, operationsViewModel, onBack = { showOperations = false })
-        else -> when (val route = state.route) {
+        else -> AnimatedContent(
+            targetState = state.route,
+            transitionSpec = {
+                // ts5 (¿toda navegación o solo lista↔detalle?) queda como
+                // decisión de producto: por ahora solo se conecta acá, la
+                // ruta de destinos. Dirección "reverse" (atrás vs adelante)
+                // no se infiere todavía del route en sí — ver comentario en
+                // XauxaTurnstileNav.kt (ts3) — así que hoy siempre entra
+                // desde la derecha; diferenciar back queda PENDING.
+                xauxaTurnstileEnter() togetherWith xauxaTurnstileExit()
+            },
+            label = "destination_route_turnstile",
+        ) { route ->
+            when (route) {
             DestinationRoute.List -> DestinationsScreen(
                 state,
                 viewModel::onAction,
@@ -297,6 +314,7 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
             is DestinationRoute.Detail -> route.id.let(viewModel::destination)?.let { destination -> DestinationDetailScreen(destination = destination, onShowQr = { viewModel.onAction(DestinationAction.ShowQr(destination.id)) }, onEdit = { viewModel.onAction(DestinationAction.Edit(destination.id)) }, onDelete = { viewModel.onAction(DestinationAction.Delete(destination.id)) }, onShare = { shareQr(destination.qr) }, onBack = { viewModel.onAction(DestinationAction.Back) }) }
             is DestinationRoute.FullscreenQr -> route.id.let(viewModel::destination)?.let { destination -> QrFullscreenPattern(destination.qr.encoded) { viewModel.onAction(DestinationAction.Back) } }
             DestinationRoute.ImportReview -> ImportReviewScreen(assets = viewModel.importedAssets(), onSaveAll = viewModel::saveImportedAssets, onBack = { viewModel.onAction(DestinationAction.Back) })
+            }
         }
     }
 }

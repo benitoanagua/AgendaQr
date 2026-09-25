@@ -12,7 +12,7 @@ muestra estas brechas en vivo, no las corrige.
 |---|---|
 | `xauxa-design-system/tokens/tokens.json` (v13) | Fuente canónica de tokens: primitivos, semánticos dark-first, tema light, marca por producto, focus, motion, tipografía. |
 | `xauxa-design-system/docs/design-system.html` (v13) | Documento vivo: 9 foundations, 26 componentes (C01–C26 + C1b), 6 patterns, matriz de estados §10, auditoría de contraste, breakpoints §07. |
-| `xauxa-design-system/kotlin-compose/` (v13) | `XauxaLiveTile`, `XauxaCommandBar`, `XauxaTurnstileNav`, `ReducedMotion`: código escrito contra APIs reales, **no compilado contra ningún proyecto**. |
+| `xauxa-design-system/kotlin-compose/` (v13) | `XauxaLiveTile`, `XauxaCommandBar`, `XauxaTurnstileNav`, `ReducedMotion`: código escrito contra APIs reales, **no compilado contra ningún proyecto**. Adoptado en `core:ui` en esta pasada (ver §3, "Kotlin del ZIP: adoptado en esta pasada") — misma advertencia de no-compilado aplica a la adopción. |
 | `design-tokens.json` (raíz del repo, v9, **retirado**) | Snapshot documentado ampliado que se migró a `XauxaTokens.kt` y se eliminó: la fuente canónica es Kotlin y no quedan consumidores del JSON (ver historial Git). |
 | `core/ui/.../theme/XauxaTokens.kt` | Tokens implementados que el código consume realmente. |
 
@@ -62,9 +62,16 @@ dar por cerrada la paleta.
   `accessibility.focusOffset` en el snapshot. El pixel-review manual del anillo
   queda pendiente (ver documento del laboratorio).
   Material/Carbon.
-- **Motion**: `duration.short/medium/long` y `easing.standard/emphasized/
-  decelerate` no existen como tokens Compose. Ningún componente los consume
-  aún (invariante 06/07 pendiente de poder aplicarse).
+- **Motion**: **CERRADO parcialmente en esta pasada**. `XauxaMotion` ganó
+  `Easings.Standard/Emphasized/Decelerate` (`androidx.compose.animation.core.Easing`,
+  mismas curvas que `EasingStandard`/`EasingEmphasized`/`EasingDecelerate`,
+  que se conservan como documentación CSS). Antes ningún componente los
+  consumía; ahora los usan `XauxaLiveTile`, `XauxaCommandBar` (transición del
+  overflow via `DropdownMenu`, sin tocar) y `xauxaTurnstileEnter`/
+  `xauxaTurnstileExit`. Sigue pendiente auditar el resto de animaciones
+  existentes (ripple de Material en botones, `AnimatedVisibility` si se
+  agrega en el futuro) para que consuman el mismo token en vez de sus
+  valores por defecto.
 - **Familias tipográficas**: Xauxa documenta Archivo (display) y Roboto (UI);
   `XauxaType` solo define tamaños.
 
@@ -100,13 +107,34 @@ dar por cerrada la paleta.
 | C25 | Skeleton loading | `XauxaSkeleton` ✓ (estático, sin movimiento decorativo) |
 | C26 | Load more / Paginación | `XauxaLoadMoreFooter` ✓ |
 
-### Kotlin del ZIP no adoptado
+### Kotlin del ZIP: adoptado en esta pasada
 
-`kotlin-compose/` del ZIP trae `XauxaLiveTile`, `XauxaCommandBar`,
-`XauxaTurnstileNav` y `ReducedMotion` (§05/§07/§08 del checklist KMP). El propio
-README advierte que no fueron compilados contra un proyecto real. No se
-copian a `core:ui` en esta pasada; quedan como candidatos cuando producto
-los requiera, previa compilación y validación en el laboratorio.
+`kotlin-compose/` del ZIP traía `XauxaLiveTile`, `XauxaCommandBar`,
+`XauxaTurnstileNav` y `ReducedMotion` (§05/§07/§08 del checklist KMP), sin
+compilar contra ningún proyecto real (advertencia del propio README del
+ZIP). Se adoptaron en `core:ui` con estos cambios respecto al original:
+
+| Componente del ZIP | Cambio al adoptarlo en `core:ui` |
+|---|---|
+| `ReducedMotion.kt` | Era Android-only (`Settings.Global`). Se convirtió en `expect`/`actual` real: `ReducedMotion.android.kt` (idéntico al ZIP), `ReducedMotion.ios.kt` (nuevo — `UIAccessibility.isReduceMotionEnabled` + `UIAccessibilityReduceMotionStatusDidChangeNotification`, mismo patrón de interop que `PlatformNetworkMonitor.ios.kt`), `ReducedMotion.wasmJs.kt` (nuevo — lee `prefers-reduced-motion` una vez al montar vía `@JsFun`; no observa cambios en vivo, PENDING, es el laboratorio de desarrollo, no producto). |
+| `XauxaLiveTile.kt` | Puerto directo a `core:ui/.../components/`, cambiando `design.xauxa.tokens.XauxaColors`/`XauxaMotion` por `XauxaColor.Surface`/`XauxaSpacing.Lg`/`XauxaMotion.DurationMediumMs`/`XauxaMotion.Easings.Standard` propios, y `LocalReducedMotion` del expect/actual nuevo en vez del `design.xauxa.components` Android-only. |
+| `XauxaCommandBar.kt` | Puerto con un cambio obligatorio: `Icons.Default.MoreVert` está prohibido por la compuerta `verifyDesignSystemCompliance` (`bannedImports` en `agendaqr.design-system.gradle.kts`). Se reemplazó por `XauxaIconButton` + glifo de texto `"⋮"`, el mismo patrón que ya usa `XauxaToast` para su botón de descarte `"×"`. `tonalElevation` se fija a `XauxaSpacing.None` (invariante 03: separación por borde, nunca sombra). |
+| `XauxaTurnstileNav.kt` | El ZIP lo tipa contra `AnimatedContentTransitionScope<NavBackStackEntry>` (navigation-compose). Agenda QR no tiene esa dependencia — navega con un `when` sobre estado de pantalla en `AgendaQrApp.kt`. Se generalizó a `AnimatedContentTransitionScope<S>` para usarlo con `AnimatedContent(targetState = ...)` directo, sin agregar navigation-compose. |
+
+**Conectado a producto** (no solo disponible en `core:ui`):
+
+- `ProvideReducedMotion` envuelve `AgendaQrSharedApp()` (`shared/.../AgendaQrShared.kt`), el único punto de entrada compartido por Android/iOS/wasmJs — así `LocalReducedMotion.current` (que `XauxaLiveTile` ya lee por default) es real en las tres plataformas desde una sola llamada, en vez de duplicarla por `MainActivity`/`MainViewController`.
+- `xauxaTurnstileEnter`/`xauxaTurnstileExit` envuelven el `when (route)` de `DestinationRoute` en `AgendaQrApp.kt` con `AnimatedContent`. Deliberadamente **no** se tocó el `when` externo de `showImportBatch`/`showSearch`/`showContexts`/`showOperations` (banderas booleanas independientes con wiring de viewModel distinto por rama): envolverlo a ciegas sin poder compilar/probar en este pase era más riesgo que valor. La dirección `reverse` (atrás vs. adelante) no se infiere del `route` — ts3 del checklist original ya avisaba que esto no resuelve predictive back — así que hoy toda transición entra desde la derecha; diferenciar back queda **PENDING**, documentado también en el propio `XauxaTurnstileNav.kt`.
+- `XauxaCommandBar` reemplaza los dos `Row` de acciones secundarias en `DestinationDetailScreen` (pantalla de detalle/foco, cumple cb1): `Edit`/`Share` visibles, `Delete` a overflow a propósito (acción destructiva, no a un toque de las otras).
+
+**Sin verificar** (honesto, como el resto de este documento): nada de lo
+anterior se compiló contra un proyecto Android/iOS real en este pase — el
+entorno donde se escribió no tiene SDK de Android ni acceso a los
+repositorios Maven de Google/JetBrains. Antes de dar esto por cerrado falta:
+correr `verifyDesignSystemCompliance` (debería pasar: sin íconos Material,
+sin hex/dp/sp crudos, sin `RoundedCornerShape`/`shadow(` fuera de
+`XauxaTokens.kt`), compilar los tres targets, y el mismo chequeo de VoiceOver
+pendiente que ya señalaba cb5 en el ZIP original para el botón de overflow.
 
 ### Decisiones de fidelidad visual (XauxaXcan → AgendaQr)
 
@@ -162,6 +190,10 @@ categoría.
 | `XauxaFavoriteIndicator` / `XauxaFavoriteToggle` | ambos | C21 |
 | `XauxaScannerViewport` / `XauxaFileUpload` | `XauxaExtendedComponents.kt` | Scanner-viewport, uploader (PENDING plataforma) |
 | `XauxaQrPreview` | expect + actuals Android/iOS/Wasm (web muestra placeholder; PENDIENTE) | C23/P3 (patrón QR) |
+| `XauxaLiveTile` | `core/ui/.../components/XauxaLiveTile.kt` | Checklist KMP §05; no está en el catálogo del laboratorio todavía (PENDING) |
+| `XauxaCommandBar` / `XauxaOverflowAction` | `core/ui/.../components/XauxaCommandBar.kt`; conectado en `DestinationDetailScreen` | Checklist KMP §07; no está en el catálogo del laboratorio todavía (PENDING) |
+| `xauxaTurnstileEnter` / `xauxaTurnstileExit` | `core/ui/.../components/XauxaTurnstileNav.kt`; conectado en `AgendaQrApp.kt` (ruta de destinos) | Checklist KMP §08; dirección "reverse" no conectada aún (PENDING) |
+| `LocalReducedMotion` / `ProvideReducedMotion` | `core/ui/.../motion/ReducedMotion.kt` (expect) + actuals Android/iOS/Wasm; conectado en `AgendaQrSharedApp()` | Checklist KMP §05 (lt4); base de accesibilidad de movimiento para todo lo anterior |
 | `XauxaColor` / `XauxaSpacing` / `XauxaMetrics` / `XauxaType` / `XauxaMotion` (`xauxa-focus` documenta el anillo) | `XauxaTokens.kt` | §01 color, §04 spacing, §06 métricas, §02 tipografía, §05 motion, §07 breakpoints, §10 foco |
 
 Cada entrada del inspector enlaza los tokens que consume con `XauxaTokenIndex`
@@ -177,3 +209,18 @@ Cada entrada del inspector enlaza los tokens que consume con `XauxaTokenIndex`
    texto (C20), chips/filtros (C14/C22), modal (C24), tonos del banner con `-bg`.
 4. Habilitar Roborazzi para fijar los previews del lab como evidencia visual
    automatizada (hoy no existe infraestructura de screenshot tests).
+5. **Nuevo esta pasada**: compilar y correr `verifyDesignSystemCompliance` +
+   los tres targets (Android/iOS/wasmJs) sobre `XauxaLiveTile`,
+   `XauxaCommandBar`, `xauxaTurnstileEnter`/`Exit` y el `ProvideReducedMotion`
+   expect/actual — nada de esto se verificó contra un proyecto real (ver
+   nota de "Sin verificar" arriba).
+6. **Nuevo esta pasada**: agregar `XauxaLiveTile` y `XauxaCommandBar` al
+   catálogo del laboratorio (`LabComponentCatalog.kt`) — hoy solo existen en
+   `core:ui` y conectados a un punto de producto, pero no aparecen en el
+   inspector/catálogo como el resto de C01–C26.
+7. **Nuevo esta pasada**: decidir la dirección `reverse` de
+   `xauxaTurnstileEnter`/`xauxaTurnstileExit` para navegación hacia atrás
+   (hoy siempre entra desde la derecha — ver `XauxaTurnstileNav.kt`, ts3) y
+   evaluar si el `when` de `showImportBatch`/`showSearch`/`showContexts`/
+   `showOperations` en `AgendaQrApp.kt` debe sumarse a la transición turnstile
+   o queda fuera de alcance (ts5).

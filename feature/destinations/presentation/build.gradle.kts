@@ -9,6 +9,7 @@ kotlin {
             implementation(project(":feature:destinations:data"))
             implementation(project(":core:ui"))
             implementation(compose.material3)
+            implementation(compose.animation)
         }
         androidMain.dependencies {
             implementation(libs.activity.compose)
