@@ -95,3 +95,12 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - `XauxaSettingRow`: la búsqueda de usos halló ejemplos interactivos en el laboratorio (incluido el patrón de bloqueo de edición); no se identificó en esa búsqueda un consumidor de producción, por lo que no se afirma que el inventario sea exhaustivo. El estado sin callback se mantiene como presentación de solo lectura y no recibe acción clickable; revisar si se necesita un contrato explícito de disabled/read-only en una siguiente pasada.
 
 **Pruebas locales y comprobación visual:** aplazadas deliberadamente hasta la fase final.
+
+
+## Migración incremental de acciones y pantalla de destinos
+
+- Los componentes compartidos `XauxaPrimaryButton`, `XauxaSecondaryButton` y `XauxaTextAction` ahora preservan la capitalización editorial que recibe cada llamada, en lugar de forzar mayúsculas. Se mantiene la tipografía, la geometría, los colores y los callbacks. Esto aplica el hallazgo transversal de la primera auditoría y evita que el componente altere el texto de producto.
+- `DestinationsScreen`: los estados vacíos que estaban en inglés se localizaron al español y el placeholder de búsqueda aclara que se buscan destinos QR. No se modificó filtrado, paginación, acciones ni navegación.
+- La revisión de esta pantalla confirma que ya compone búsqueda, filtros, banner de error, carga, estado vacío y lista paginada con componentes comunes. No se hizo una revisión visual ejecutada ni se considera cerrada la migración de toda la pantalla; quedan por revisar densidad/ajuste en pantallas estrechas y los textos de los demás flujos.
+
+**Pruebas:** no ejecutadas, de acuerdo con la instrucción de reservarlas para el cierre.
