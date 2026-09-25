@@ -447,3 +447,17 @@ Cambio (`XauxaSchemeTest.kt`, solo expectativas): hex fijados actualizados a los
 | `./gradlew :feature:destinations:domain:testDebugUnitTest :feature:destinations:data:testDebugUnitTest --rerun-tasks` | PASS | Re-ejecutados previamente, BUILD SUCCESSFUL |
 | `:androidApp:assembleDebug` | NO EJECUTADO | Fuera del comando solicitado; pendiente si se requiere |
 | TalkBack/VoiceOver, iOS físico, contraste visual manual | NO EJECUTADO (manual pendiente) | Sin dispositivo/entorno; instrucciones en los lotes B–H |
+
+
+## Catálogo del laboratorio: exploración con tiles Metro (2026-09-25)
+
+- `LabCatalogPane.kt`: la fila compacta `LabCatalogRow` (nombre a 1 línea, badge de categoría, descripción a 1 línea, padding `Sm`, cuadrícula con `spacedBy(Sm)`) se sustituye por `LabCatalogTile`, pieza interna del laboratorio con API mínima (`contract`, `selected`, `onClick`). No es un segundo sistema de diseño y no debe usarse en producción.
+- Aplicación de Metro sin copia literal: tiles planas rectangulares (`RectangleShape`, sin sombras/gradientes), tipografía como jerarquía (nombre `Body` semibold → categoría `Caption` secundaria → descripción `Label` a 3 líneas), categoría como texto secundario en lugar de badge, cuadrícula `GridCells.Adaptive` que reduce columnas antes que comprimir. Paleta monocromática + acento único de marca; sin colores nuevos.
+- Tokens (`XauxaTokens.kt`, única fuente editable): `CatalogCardMinWidth` 168dp → 208dp; nuevo `CatalogTileMinHeight = 116dp`. Ambos múltiplos de 4dp. Espaciados de la zona de exploración: `Md` entre tiles y entre bloques, `Md` de padding interno, `Sm` entre líneas de la tile.
+- Selección nunca solo por color: borde fuerte (`BorderStrong`) de marca + fondo `Surface2` + etiqueta textual “Seleccionado” + `semantics { selected }`. Foco de teclado con el anillo dedicado `xauxaFocusRing` (mismo patrón que `XauxaTile`); navegación por ratón/teclado/AT reutilizando el callback `onComponentSelected` existente. Búsqueda, filtros, detalle, preview y matriz de interacción sin cambios de lógica.
+- `LabPatternPane.kt` (“Contratos que compone”) y la lista compacta reutilizan la misma tile; filas de patrones y navegación lateral exponen `selected` en semántica y la descripción del patrón admite 2 líneas.
+- Contador de cabecera: badge “N elementos” → “N de M” (filtrados del alcance de la sección, denominador estable). Proporción escritorio 0.68/0.32 → 0.62/0.38 para dar aire al inspector sin restar dominio al catálogo.
+- Conflicto resuelto: `XauxaColor.FocusRing` y `XauxaColor.Brand` comparten el primitivo `0067B8` por diseño del esquema; foco y selección se distinguen estructuralmente (anillo externo transitorio frente a borde + fondo + etiqueta persistentes), no por tono. Se conserva el contrato y no se introduce color paralelo.
+- No se actualiza el documento de lenguaje visual: la tile es específica del laboratorio, no una regla reutilizable de producto (`docs/05-design-system/03-agendaqr-visual-language.md` no existe en el árbol; la fuente vigente es `01-xauxa-source-snapshot.md` + `02-xauxa-implementation.md`).
+
+Pendiente manual: ventana amplia/mediana/estrecha, texto ampliado, nombres largos, categorías densas/dispersas, sin resultados, teclado y foco visible en ambos temas, TalkBack/VoiceOver.

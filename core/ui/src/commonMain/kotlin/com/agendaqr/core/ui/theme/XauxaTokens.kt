@@ -247,11 +247,22 @@ object XauxaMetrics {
     val BreakpointCompact = 480.dp
     val BreakpointMedium = 640.dp
     /**
-     * Ancho mínimo de tarjeta del catálogo del laboratorio. Existe para que
+     * Ancho mínimo de tile del catálogo del laboratorio. Existe para que
      * la cuadrícula adaptativa (`GridCells.Adaptive`) consuma un token
      * semántico en lugar de un literal `dp` fuera de la capa de tokens.
+     * El valor (208dp) da a cada tile Metro una superficie de lectura
+     * cómoda: nombre a 16sp en dos líneas y descripción en tres sin
+     * compresión. La cuadrícula reduce columnas antes que comprimir el
+     * contenido por debajo de este mínimo.
      */
-    val CatalogCardMinWidth = 168.dp
+    val CatalogCardMinWidth = 208.dp
+    /**
+     * Altura mínima de tile del catálogo. Garantiza un objetivo táctil
+     * superior al mínimo de control y una superficie de lectura
+     * consistente; las tiles con más texto crecen por encima de este
+     * mínimo en lugar de recortar.
+     */
+    val CatalogTileMinHeight = 116.dp
 }
 
 object XauxaType {

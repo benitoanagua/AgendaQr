@@ -169,8 +169,8 @@ fun AgendaQrComponentLab(
 }
 
 private const val MAX_LOGGED_EVENTS = 12
-private const val CATALOG_PANE_WEIGHT = 0.68f
-private const val INSPECTOR_PANE_WEIGHT = 0.32f
+private const val CATALOG_PANE_WEIGHT = 0.62f
+private const val INSPECTOR_PANE_WEIGHT = 0.38f
 
 @Composable
 private fun LabHeader(

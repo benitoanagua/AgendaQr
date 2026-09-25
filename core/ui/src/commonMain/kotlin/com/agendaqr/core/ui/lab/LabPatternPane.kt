@@ -93,7 +93,7 @@ internal fun LabPatternPane(
                 subtitle = "Resueltos contra el inventario central",
                 trailing = { LabBadge("${pattern.components.size} contratos") },
             ) {
-                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs)) {
+                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                     pattern.components.forEach { id ->
                         val contract = LabComponentCatalog.find(id)
                         if (contract == null) {
@@ -103,7 +103,7 @@ internal fun LabPatternPane(
                                 color = XauxaColor.Danger,
                             )
                         } else {
-                            LabCatalogRow(contract, selected = false) {
+                            LabCatalogTile(contract, selected = false) {
                                 onSectionChange(if (contract.category == com.agendaqr.core.ui.lab.model.LabCategory.FOUNDATIONS) LabSection.FOUNDATIONS else LabSection.COMPONENTS)
                                 onComponentSelected(id)
                             }

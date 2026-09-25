@@ -1,5 +1,9 @@
 package com.agendaqr.core.ui.lab
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -18,12 +22,15 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import com.agendaqr.core.ui.components.xauxaFocusRing
 import com.agendaqr.core.ui.components.XauxaSearchBar
 import com.agendaqr.core.ui.lab.model.LabCatalogQuery
 import com.agendaqr.core.ui.lab.model.LabCategory
@@ -96,7 +103,7 @@ internal fun LabCatalogPane(
             if (section == LabSection.PATTERNS) {
                 LabBadge("${LabPatterns.all.size} patrones")
             } else {
-                LabBadge("${results.size} elementos")
+                LabBadge("${results.size} de ${scope.size}")
             }
         },
         modifier = modifier,
@@ -134,8 +141,11 @@ internal fun LabCatalogPane(
                 )
             }
         } else {
-            Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs)) {
+            Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+                    verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
+                ) {
                     LabSection.entries.forEach { item ->
                         LabCategoryFilter(
                             label = item.label,
@@ -225,7 +235,7 @@ private fun CatalogContent(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md),
     ) {
         if (section == LabSection.PATTERNS) {
             LabPatternList(selectedPatternId, onPatternSelected, scrollable)
@@ -239,7 +249,10 @@ private fun CatalogContent(
             placeholder = "Buscar por nombre o uso",
             onClear = { onQueryChange(query.copy(text = "")) },
         )
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
+        ) {
             LabCategoryFilter(
                 label = "Todos",
                 count = scopeSize,
@@ -261,19 +274,19 @@ private fun CatalogContent(
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = XauxaMetrics.CatalogCardMinWidth),
                 modifier = Modifier.fillMaxWidth().weight(1f),
-                horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
-                verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+                horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Md),
+                verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md),
             ) {
                 items(results, key = { it.id }) { component ->
-                    LabCatalogRow(component, component.id == selectedId) {
+                    LabCatalogTile(component, component.id == selectedId) {
                         onComponentSelected(component.id)
                     }
                 }
             }
         } else {
-            Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs)) {
+            Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 results.forEach { component ->
-                    LabCatalogRow(component, component.id == selectedId) {
+                    LabCatalogTile(component, component.id == selectedId) {
                         onComponentSelected(component.id)
                     }
                 }
@@ -316,17 +329,26 @@ private fun ColumnScope.LabPatternList(
 @Composable
 private fun LabPatternRow(pattern: LabPattern, selected: Boolean, onClick: () -> Unit) {
     Surface(
-        modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
+        modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
+            .semantics { this.selected = selected },
         shape = RectangleShape,
         color = if (selected) XauxaColor.SurfaceVariant else XauxaColor.Surface,
+        border = if (selected) {
+            BorderStroke(XauxaMetrics.BorderStrong, XauxaColor.Brand)
+        } else {
+            null
+        },
         onClick = onClick,
     ) {
-        Column(Modifier.padding(XauxaSpacing.Sm)) {
+        Column(
+            Modifier.padding(horizontal = XauxaSpacing.Md, vertical = XauxaSpacing.Sm),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
+        ) {
             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 Text(pattern.title, fontSize = XauxaType.Label, fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal, color = if (selected) XauxaColor.Brand else XauxaColor.TextPrimary)
                 if (pattern.demo) Text("Demo", fontSize = XauxaType.Caption, color = XauxaColor.Brand)
             }
-            Text(pattern.description, fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(pattern.description, fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary, maxLines = 2, overflow = TextOverflow.Ellipsis)
         }
     }
 }
@@ -334,9 +356,15 @@ private fun LabPatternRow(pattern: LabPattern, selected: Boolean, onClick: () ->
 @Composable
 private fun LabCatalogNavItem(label: String, count: Int, selected: Boolean, onClick: () -> Unit) {
     Surface(
-        modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
+        modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
+            .semantics { this.selected = selected },
         color = if (selected) XauxaColor.Surface2 else XauxaColor.Surface,
         shape = RectangleShape,
+        border = if (selected) {
+            BorderStroke(XauxaMetrics.BorderStrong, XauxaColor.Brand)
+        } else {
+            null
+        },
         onClick = onClick,
     ) {
         Row(
@@ -354,35 +382,89 @@ private fun LabCategoryFilter(label: String, count: Int, selected: Boolean, onCl
     LabChoiceChip(label = "$label ($count)", selected = selected, onClick = onClick)
 }
 
+/**
+ * Tile Metro del catálogo del laboratorio: superficie plana y rectangular
+ * para explorar componentes. Adapta el lenguaje Metro (tile plana,
+ * tipografía como jerarquía, sin sombras ni gradientes) al contrato Xauxa:
+ * paleta monocromática + acento único de marca, bordes de 1-2dp, espaciado
+ * en múltiplos de 4dp y anillo de foco visible.
+ *
+ * Jerarquía del contenido: nombre (principal) → categoría (metadato
+ * secundario en texto, sin badge) → descripción (tres líneas como máximo).
+ * La selección combina borde fuerte de marca, fondo Surface2 y etiqueta
+ * textual "Seleccionado": nunca depende solo del color. El foco de teclado
+ * usa el anillo de foco Xauxa dedicado, estructuralmente distinto de la
+ * selección persistente. El estado se expone en semántica para que las
+ * tecnologías de asistencia anuncien la selección.
+ *
+ * Es una pieza exclusiva del laboratorio con API mínima; no es un segundo
+ * sistema de diseño y no debe usarse en pantallas de producción.
+ */
 @Composable
-internal fun LabCatalogRow(component: LabComponentContract, selected: Boolean, onClick: () -> Unit) {
+internal fun LabCatalogTile(
+    component: LabComponentContract,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    val interaction = remember { MutableInteractionSource() }
     Surface(
-        modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
+        modifier = modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = XauxaMetrics.CatalogTileMinHeight)
+            .clickable(
+                interactionSource = interaction,
+                indication = null,
+                role = Role.Button,
+                onClick = onClick,
+            )
+            .focusable(interactionSource = interaction)
+            .xauxaFocusRing(interaction)
+            .semantics { this.selected = selected },
         shape = RectangleShape,
         color = if (selected) XauxaColor.Surface2 else XauxaColor.Surface,
-        onClick = onClick,
+        border = if (selected) {
+            BorderStroke(XauxaMetrics.BorderStrong, XauxaColor.Brand)
+        } else {
+            BorderStroke(XauxaMetrics.Border, XauxaColor.Border)
+        },
+        tonalElevation = XauxaSpacing.None,
+        shadowElevation = XauxaSpacing.None,
     ) {
         Column(
-            modifier = Modifier.padding(XauxaSpacing.Sm)
-                .semantics { contentDescription = "${component.name}, ${component.category.label}" },
-            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
+            modifier = Modifier.padding(XauxaSpacing.Md),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
         ) {
             Text(
                 component.name,
-                fontSize = XauxaType.Label,
-                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                fontSize = XauxaType.Body,
+                fontWeight = FontWeight.SemiBold,
                 color = if (selected) XauxaColor.Brand else XauxaColor.TextPrimary,
-                maxLines = 1,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
-            LabBadge(component.category.label)
+            Text(
+                component.category.label,
+                fontSize = XauxaType.Caption,
+                letterSpacing = XauxaType.LetterSpacingWide,
+                color = XauxaColor.TextTertiary,
+            )
             Text(
                 component.purpose,
-                fontSize = XauxaType.Caption,
+                fontSize = XauxaType.Label,
                 color = XauxaColor.TextSecondary,
-                maxLines = 1,
+                maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
             )
+            if (selected) {
+                Text(
+                    "Seleccionado",
+                    fontSize = XauxaType.Caption,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = XauxaType.LetterSpacingWide,
+                    color = XauxaColor.Brand,
+                )
+            }
         }
     }
 }
