@@ -11,42 +11,76 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * Xauxa semantic tokens. The feature layer must consume only this semantic
+ * facade; raw primitives stay private to the theme layer.
+ */
 internal object XauxaPrimitive {
+    // Xauxa light scheme
     val lightBackground = Color(0xFFFFF7FF)
-    val lightSurface = Color(0xFFFFFFFF)
-    val lightSurface2 = Color(0xFFF3EBF4)
-    val lightSurface3 = Color(0xFFE8E0E9)
-    val lightBorder = Color(0xFF7C7482)
-    val lightText1 = Color(0xFF1E1A20)
-    val lightText2 = Color(0xFF4B4450)
-    val lightText3 = Color(0xFF7C7482)
+    val lightSurface = Color(0xFFFFF7FF)
+    val lightSurfaceContainerLowest = Color(0xFFFFFFFF)
+    val lightSurfaceContainerLow = Color(0xFFF9F1FA)
+    val lightSurfaceContainer = Color(0xFFF3EBF4)
+    val lightSurfaceContainerHigh = Color(0xFFEEE6EE)
+    val lightSurfaceContainerHighest = Color(0xFFE8E0E9)
+    val lightSurfaceVariant = Color(0xFFE9DFEE)
+    val lightOutline = Color(0xFF7C7482)
+    val lightOutlineVariant = Color(0xFFCDC3D2)
+    val lightText = Color(0xFF1E1A20)
+    val lightTextVariant = Color(0xFF4B4450)
+    val lightPrimary = Color(0xFF4A1F7A)
+    val lightOnPrimary = Color(0xFFFFFFFF)
+    val lightPrimaryContainer = Color(0xFF623993)
+    val lightOnPrimaryContainer = Color(0xFFD5B0FF)
+    val lightSecondary = Color(0xFF68577C)
+    val lightOnSecondary = Color(0xFFFFFFFF)
+    val lightSecondaryContainer = Color(0xFFE8D1FD)
+    val lightOnSecondaryContainer = Color(0xFF69587D)
+    val lightTertiary = Color(0xFF671448)
+    val lightOnTertiary = Color(0xFFFFFFFF)
+    val lightTertiaryContainer = Color(0xFF842D60)
+    val lightOnTertiaryContainer = Color(0xFFFFA4D1)
+    val lightError = Color(0xFFBA1A1A)
+    val lightOnError = Color(0xFFFFFFFF)
+    val lightErrorContainer = Color(0xFFFFDAD6)
+    val lightOnErrorContainer = Color(0xFF93000A)
+    val lightInverseSurface = Color(0xFF332F35)
+    val lightInverseOnSurface = Color(0xFFF6EEF7)
+    val lightInversePrimary = Color(0xFFDAB9FF)
 
+    // Xauxa dark scheme
     val darkBackground = Color(0xFF151218)
-    val darkSurface = Color(0xFF17171B)
-    val darkSurface2 = Color(0xFF221E24)
-    val darkSurface3 = Color(0xFF37333A)
-    val darkBorder = Color(0xFF968E9C)
-    val darkText1 = Color(0xFFE8E0E9)
-    val darkText2 = Color(0xFFCDC3D2)
-    val darkText3 = Color(0xFF968E9C)
-
-    val teal60 = Color(0xFF4A1F7A)
-    val teal30 = Color(0xFF623993)
-    val white = Color(0xFFFFFFFF)
-
-    val green50 = Color(0xFF2E7D32)
-    val green10 = Color(0xFFE8F5E9)
-    val red60 = Color(0xFFBA1A1A)
-    val red10 = Color(0xFFFFDAD6)
-    val amber60 = Color(0xFF68577C)
-    val amber10 = Color(0xFFE8D1FD)
-    val blue55 = Color(0xFF671448)
-    val blue10 = Color(0xFFFFA4D1)
-
-    val darkGreen10 = Color(0xFF18381B)
-    val darkRed10 = Color(0xFF93000A)
-    val darkAmber10 = Color(0xFF524266)
-    val darkBlue10 = Color(0xFF842D60)
+    val darkSurface = Color(0xFF151218)
+    val darkSurfaceContainerLowest = Color(0xFF100D13)
+    val darkSurfaceContainerLow = Color(0xFF1E1A20)
+    val darkSurfaceContainer = Color(0xFF221E24)
+    val darkSurfaceContainerHigh = Color(0xFF2C292F)
+    val darkSurfaceContainerHighest = Color(0xFF37333A)
+    val darkSurfaceVariant = Color(0xFF4B4450)
+    val darkOutline = Color(0xFF968E9C)
+    val darkOutlineVariant = Color(0xFF4B4450)
+    val darkText = Color(0xFFE8E0E9)
+    val darkTextVariant = Color(0xFFCDC3D2)
+    val darkPrimary = Color(0xFFDAB9FF)
+    val darkOnPrimary = Color(0xFF421673)
+    val darkPrimaryContainer = Color(0xFF623993)
+    val darkOnPrimaryContainer = Color(0xFFD5B0FF)
+    val darkSecondary = Color(0xFFD4BEE9)
+    val darkOnSecondary = Color(0xFF39294B)
+    val darkSecondaryContainer = Color(0xFF524266)
+    val darkOnSecondaryContainer = Color(0xFFC5B0DA)
+    val darkTertiary = Color(0xFFFFAFD5)
+    val darkOnTertiary = Color(0xFF5E0A41)
+    val darkTertiaryContainer = Color(0xFF842D60)
+    val darkOnTertiaryContainer = Color(0xFFFFA4D1)
+    val darkError = Color(0xFFFFB4AB)
+    val darkOnError = Color(0xFF690005)
+    val darkErrorContainer = Color(0xFF93000A)
+    val darkOnErrorContainer = Color(0xFFFFDAD6)
+    val darkInverseSurface = Color(0xFFE8E0E9)
+    val darkInverseOnSurface = Color(0xFF332F35)
+    val darkInversePrimary = Color(0xFF734AA5)
 }
 
 data class XauxaColorScheme(
@@ -54,71 +88,98 @@ data class XauxaColorScheme(
     val surface: Color,
     val surface2: Color,
     val surface3: Color,
+    val surfaceVariant: Color,
     val border: Color,
+    val borderVariant: Color,
     val textPrimary: Color,
     val textSecondary: Color,
     val textTertiary: Color,
     val brand: Color,
-    val brandAccent: Color,
     val onBrand: Color,
-    val white: Color,
-    val success: Color,
-    val successBg: Color,
+    val brandContainer: Color,
+    val onBrandContainer: Color,
+    val secondary: Color,
+    val onSecondary: Color,
+    val secondaryContainer: Color,
+    val onSecondaryContainer: Color,
+    val tertiary: Color,
+    val onTertiary: Color,
+    val tertiaryContainer: Color,
+    val onTertiaryContainer: Color,
     val danger: Color,
+    val onDanger: Color,
     val dangerBg: Color,
-    val warning: Color,
-    val warningBg: Color,
-    val info: Color,
-    val infoBg: Color,
+    val onDangerBg: Color,
+    val inverseSurface: Color,
+    val inverseOnSurface: Color,
+    val inverseBrand: Color,
     val focusRing: Color,
 )
 
 val LightXauxaColorScheme = XauxaColorScheme(
     background = XauxaPrimitive.lightBackground,
     surface = XauxaPrimitive.lightSurface,
-    surface2 = XauxaPrimitive.lightSurface2,
-    surface3 = XauxaPrimitive.lightSurface3,
-    border = XauxaPrimitive.lightBorder,
-    textPrimary = XauxaPrimitive.lightText1,
-    textSecondary = XauxaPrimitive.lightText2,
-    textTertiary = XauxaPrimitive.lightText3,
-    brand = XauxaPrimitive.teal60,
-    brandAccent = XauxaPrimitive.teal30,
-    onBrand = XauxaPrimitive.white,
-    white = XauxaPrimitive.white,
-    success = XauxaPrimitive.green50,
-    successBg = XauxaPrimitive.green10,
-    danger = XauxaPrimitive.red60,
-    dangerBg = XauxaPrimitive.red10,
-    warning = XauxaPrimitive.amber60,
-    warningBg = XauxaPrimitive.amber10,
-    info = XauxaPrimitive.blue55,
-    infoBg = XauxaPrimitive.blue10,
-    focusRing = XauxaPrimitive.teal30,
+    surface2 = XauxaPrimitive.lightSurfaceContainer,
+    surface3 = XauxaPrimitive.lightSurfaceContainerHighest,
+    surfaceVariant = XauxaPrimitive.lightSurfaceVariant,
+    border = XauxaPrimitive.lightOutlineVariant,
+    borderVariant = XauxaPrimitive.lightOutline,
+    textPrimary = XauxaPrimitive.lightText,
+    textSecondary = XauxaPrimitive.lightTextVariant,
+    textTertiary = XauxaPrimitive.lightOutline,
+    brand = XauxaPrimitive.lightPrimary,
+    onBrand = XauxaPrimitive.lightOnPrimary,
+    brandContainer = XauxaPrimitive.lightPrimaryContainer,
+    onBrandContainer = XauxaPrimitive.lightOnPrimaryContainer,
+    secondary = XauxaPrimitive.lightSecondary,
+    onSecondary = XauxaPrimitive.lightOnSecondary,
+    secondaryContainer = XauxaPrimitive.lightSecondaryContainer,
+    onSecondaryContainer = XauxaPrimitive.lightOnSecondaryContainer,
+    tertiary = XauxaPrimitive.lightTertiary,
+    onTertiary = XauxaPrimitive.lightOnTertiary,
+    tertiaryContainer = XauxaPrimitive.lightTertiaryContainer,
+    onTertiaryContainer = XauxaPrimitive.lightOnTertiaryContainer,
+    danger = XauxaPrimitive.lightError,
+    onDanger = XauxaPrimitive.lightOnError,
+    dangerBg = XauxaPrimitive.lightErrorContainer,
+    onDangerBg = XauxaPrimitive.lightOnErrorContainer,
+    inverseSurface = XauxaPrimitive.lightInverseSurface,
+    inverseOnSurface = XauxaPrimitive.lightInverseOnSurface,
+    inverseBrand = XauxaPrimitive.lightInversePrimary,
+    focusRing = XauxaPrimitive.lightPrimary,
 )
 
 val DarkXauxaColorScheme = XauxaColorScheme(
     background = XauxaPrimitive.darkBackground,
     surface = XauxaPrimitive.darkSurface,
-    surface2 = XauxaPrimitive.darkSurface2,
-    surface3 = XauxaPrimitive.darkSurface3,
-    border = XauxaPrimitive.darkBorder,
-    textPrimary = XauxaPrimitive.darkText1,
-    textSecondary = XauxaPrimitive.darkText2,
-    textTertiary = XauxaPrimitive.darkText3,
-    brand = XauxaPrimitive.teal60,
-    brandAccent = XauxaPrimitive.teal30,
-    onBrand = XauxaPrimitive.white,
-    white = XauxaPrimitive.white,
-    success = XauxaPrimitive.green50,
-    successBg = XauxaPrimitive.darkGreen10,
-    danger = XauxaPrimitive.red60,
-    dangerBg = XauxaPrimitive.darkRed10,
-    warning = XauxaPrimitive.amber60,
-    warningBg = XauxaPrimitive.darkAmber10,
-    info = XauxaPrimitive.blue55,
-    infoBg = XauxaPrimitive.darkBlue10,
-    focusRing = XauxaPrimitive.teal30,
+    surface2 = XauxaPrimitive.darkSurfaceContainer,
+    surface3 = XauxaPrimitive.darkSurfaceContainerHighest,
+    surfaceVariant = XauxaPrimitive.darkSurfaceVariant,
+    border = XauxaPrimitive.darkOutlineVariant,
+    borderVariant = XauxaPrimitive.darkOutline,
+    textPrimary = XauxaPrimitive.darkText,
+    textSecondary = XauxaPrimitive.darkTextVariant,
+    textTertiary = XauxaPrimitive.darkOutline,
+    brand = XauxaPrimitive.darkPrimary,
+    onBrand = XauxaPrimitive.darkOnPrimary,
+    brandContainer = XauxaPrimitive.darkPrimaryContainer,
+    onBrandContainer = XauxaPrimitive.darkOnPrimaryContainer,
+    secondary = XauxaPrimitive.darkSecondary,
+    onSecondary = XauxaPrimitive.darkOnSecondary,
+    secondaryContainer = XauxaPrimitive.darkSecondaryContainer,
+    onSecondaryContainer = XauxaPrimitive.darkOnSecondaryContainer,
+    tertiary = XauxaPrimitive.darkTertiary,
+    onTertiary = XauxaPrimitive.darkOnTertiary,
+    tertiaryContainer = XauxaPrimitive.darkTertiaryContainer,
+    onTertiaryContainer = XauxaPrimitive.darkOnTertiaryContainer,
+    danger = XauxaPrimitive.darkError,
+    onDanger = XauxaPrimitive.darkOnError,
+    dangerBg = XauxaPrimitive.darkErrorContainer,
+    onDangerBg = XauxaPrimitive.darkOnErrorContainer,
+    inverseSurface = XauxaPrimitive.darkInverseSurface,
+    inverseOnSurface = XauxaPrimitive.darkInverseOnSurface,
+    inverseBrand = XauxaPrimitive.darkInversePrimary,
+    focusRing = XauxaPrimitive.darkPrimary,
 )
 
 val LocalXauxaColorScheme = compositionLocalOf { LightXauxaColorScheme }
@@ -128,22 +189,31 @@ object XauxaColor {
     val Surface: Color @Composable get() = LocalXauxaColorScheme.current.surface
     val Surface2: Color @Composable get() = LocalXauxaColorScheme.current.surface2
     val Surface3: Color @Composable get() = LocalXauxaColorScheme.current.surface3
+    val SurfaceVariant: Color @Composable get() = LocalXauxaColorScheme.current.surfaceVariant
     val Border: Color @Composable get() = LocalXauxaColorScheme.current.border
+    val BorderVariant: Color @Composable get() = LocalXauxaColorScheme.current.borderVariant
     val TextPrimary: Color @Composable get() = LocalXauxaColorScheme.current.textPrimary
     val TextSecondary: Color @Composable get() = LocalXauxaColorScheme.current.textSecondary
     val TextTertiary: Color @Composable get() = LocalXauxaColorScheme.current.textTertiary
     val Brand: Color @Composable get() = LocalXauxaColorScheme.current.brand
-    val BrandAccent: Color @Composable get() = LocalXauxaColorScheme.current.brandAccent
     val OnBrand: Color @Composable get() = LocalXauxaColorScheme.current.onBrand
-    val White: Color @Composable get() = LocalXauxaColorScheme.current.white
-    val Success: Color @Composable get() = LocalXauxaColorScheme.current.success
-    val SuccessBg: Color @Composable get() = LocalXauxaColorScheme.current.successBg
+    val BrandContainer: Color @Composable get() = LocalXauxaColorScheme.current.brandContainer
+    val OnBrandContainer: Color @Composable get() = LocalXauxaColorScheme.current.onBrandContainer
+    val Secondary: Color @Composable get() = LocalXauxaColorScheme.current.secondary
+    val OnSecondary: Color @Composable get() = LocalXauxaColorScheme.current.onSecondary
+    val SecondaryContainer: Color @Composable get() = LocalXauxaColorScheme.current.secondaryContainer
+    val OnSecondaryContainer: Color @Composable get() = LocalXauxaColorScheme.current.onSecondaryContainer
+    val Tertiary: Color @Composable get() = LocalXauxaColorScheme.current.tertiary
+    val OnTertiary: Color @Composable get() = LocalXauxaColorScheme.current.onTertiary
+    val TertiaryContainer: Color @Composable get() = LocalXauxaColorScheme.current.tertiaryContainer
+    val OnTertiaryContainer: Color @Composable get() = LocalXauxaColorScheme.current.onTertiaryContainer
     val Danger: Color @Composable get() = LocalXauxaColorScheme.current.danger
+    val OnDanger: Color @Composable get() = LocalXauxaColorScheme.current.onDanger
     val DangerBg: Color @Composable get() = LocalXauxaColorScheme.current.dangerBg
-    val Warning: Color @Composable get() = LocalXauxaColorScheme.current.warning
-    val WarningBg: Color @Composable get() = LocalXauxaColorScheme.current.warningBg
-    val Info: Color @Composable get() = LocalXauxaColorScheme.current.info
-    val InfoBg: Color @Composable get() = LocalXauxaColorScheme.current.infoBg
+    val OnDangerBg: Color @Composable get() = LocalXauxaColorScheme.current.onDangerBg
+    val InverseSurface: Color @Composable get() = LocalXauxaColorScheme.current.inverseSurface
+    val InverseOnSurface: Color @Composable get() = LocalXauxaColorScheme.current.inverseOnSurface
+    val InverseBrand: Color @Composable get() = LocalXauxaColorScheme.current.inverseBrand
     val FocusRing: Color @Composable get() = LocalXauxaColorScheme.current.focusRing
 }
 
@@ -198,5 +268,3 @@ object XauxaMotion {
 }
 
 fun Dp.xauxaBorder() = this
-
-fun XauxaTextColorScheme(scheme: XauxaColorScheme) = scheme
