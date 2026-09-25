@@ -284,3 +284,9 @@ Esta nota complementa los hallazgos históricos anteriores; no los elimina, porq
 - El título raíz del editor (“Agregar destino”/“Editar destino”) y el nombre del destino en su pantalla de detalle ahora se exponen como encabezados semánticos.
 - El nombre del destino es dinámico y conserva su contenido original; no se alteran los datos, las acciones ni la navegación.
 - Con esta tanda se amplía la cobertura estática de encabezados en pantallas principales, pero no se declara cerrada la auditoría. Falta comprobar jerarquía/orden y navegación por encabezados con TalkBack/VoiceOver, además de revisar posibles redundancias en composiciones anfitrionas. Pruebas y builds locales siguen reservados para la fase final.
+
+## Formularios: asociación estructural de etiquetas
+
+- `XauxaTextInput` ahora entrega la etiqueta mediante el parámetro `label` del propio `OutlinedTextField` de Material 3, en lugar de dibujarla como un `Text` hermano. Esto establece la relación etiqueta-control en la semántica del campo a través del componente de entrada.
+- El mensaje de error continúa en `supportingText` del mismo campo y el estado `isError` se conserva; no se cambian validaciones ni decisiones de producto de los consumidores.
+- La asociación está reforzada en la estructura común, pero no se considera validada hasta probar lectura de etiqueta/error, foco y edición con TalkBack/VoiceOver. No se ejecutaron pruebas ni builds locales, reservados para la fase final.
