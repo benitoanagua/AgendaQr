@@ -80,3 +80,10 @@ Revisión estática del resto de `XauxaExtendedComponents.kt` y las piezas bási
 6. Ejecutar pruebas locales y comprobación visual únicamente en la fase final, como solicitó el usuario.
 
 **Límite actual:** todavía no se han revisado exhaustivamente todos los usos de cada API ni los source sets de plataforma; por tanto, no se marca ningún grupo como completamente auditado.
+
+
+## Cambio aplicado: semántica de toggles
+
+Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su estado `On/Off` mediante semántica de control, conservando el callback y el rol de checkbox. En `XauxaSettingRow`, cuando existe `checked` y callback de cambio, ahora se comunica el estado y se declara rol de switch; la fila de navegación conserva rol de botón. Esto es un ajuste de semántica accesible, no una modificación del estado de producto.
+
+**Pendiente:** revisar los consumidores de `XauxaSettingRow` para resolver explícitamente el caso `checked` sin callback (actualmente el estado se muestra, pero no es interactivo), y validar lector de pantalla, foco y teclado en Android/iOS. No se han ejecutado pruebas locales; continúan reservadas para la fase final.
