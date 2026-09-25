@@ -217,3 +217,10 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - `XauxaLoading` admite ahora un mensaje opcional junto al indicador, manteniendo compatibilidad con los usos sin mensaje.
 - Los estados de Contextos, Importación por lote y autenticación pasan a mostrar el indicador común con su descripción contextual (“Cargando contextos…”, “Cargando contexto…”, “Importando…”, “Analizando…”, “Guardando elementos reconocidos…” e “Iniciando sesión…”).
 - Esta ampliación evita que la unificación visual elimine la información de progreso que antes se mostraba como texto. Pendiente comprobar visualmente el ajuste de línea y el anuncio accesible del estado en ambas plataformas.
+
+
+## Consistencia de búsqueda y acciones de comprobantes
+
+- La búsqueda global comunica su estado activo con el indicador compartido y el mensaje “Buscando en Agenda QR…”.
+- Las acciones del diálogo de comprobante recibido/duplicado usan capitalización de frase (“Cerrar”, “Guardando…”, “Listo”, “Asociar ahora”), alineadas con la regla de preservar el casing editorial y evitar mayúsculas forzadas.
+- Pendiente validar lectura accesible de los estados de búsqueda y la adaptación de las acciones en anchos reducidos.
