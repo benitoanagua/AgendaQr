@@ -29,7 +29,7 @@ fun ImportReviewScreen(
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         Text("QR importados", fontSize = XauxaType.Headline, color = XauxaColor.TextPrimary)
-        Text(""${assets.size} destinos"", fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+        Text("${assets.size} destinos", fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
         LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm), modifier = Modifier.fillMaxWidth()) {
             itemsIndexed(assets) { _, asset ->
                 XauxaQrPreview(asset.encoded)
