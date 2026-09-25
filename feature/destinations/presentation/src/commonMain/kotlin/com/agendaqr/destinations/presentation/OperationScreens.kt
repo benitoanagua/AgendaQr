@@ -68,7 +68,7 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
                 XauxaPrimaryButton(label = "Nuevo", onClick = { viewModel.onAction(OperationAction.New) })
             }
         }
-        XauxaTextInput(state.query, { viewModel.onAction(OperationAction.Search(it)) }, Modifier.fillMaxWidth(), label = { Text("Buscar") }, singleLine = true)
+        XauxaSearchBar(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = "Buscar", placeholder = "Buscar operaciones", onClear = { viewModel.onAction(OperationAction.Search("")) })
         if (state.unassociated.isNotEmpty()) {
             XauxaStatusBanner("Comprobantes sin asociar: " + state.unassociated.size)
             XauxaSecondaryButton(label = "Ver bandeja de respaldos", onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
@@ -102,9 +102,9 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
                 }
                 if (paged.size < operations.size) {
                     item {
-                        XauxaSecondaryButton(
-                            label = "Cargar más (${operations.size - paged.size} restantes)",
-                            onClick = { visibleCount = (visibleCount + 50).coerceAtMost(operations.size) },
+                        XauxaLoadMoreFooter(
+                            label = "CARGAR MÁS",
+                            onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(operations.size) },
                         )
                     }
                 }
@@ -206,13 +206,13 @@ private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsVi
             if (type == OperationType.COBRO) XauxaPrimaryButton(label = "COBRO", onClick = { type = OperationType.COBRO })
             else XauxaSecondaryButton(label = "COBRO", onClick = { type = OperationType.COBRO })
         }
-        XauxaTextInput(amount, { amount = it }, Modifier.fillMaxWidth(), label = { Text("Monto (opcional)") }, singleLine = true)
-        XauxaTextInput(currency, { currency = it }, Modifier.fillMaxWidth(), label = { Text("Moneda (opcional)") }, singleLine = true)
-        XauxaTextInput(person, { person = it }, Modifier.fillMaxWidth(), label = { Text("Persona o entidad (opcional)") }, singleLine = true)
-        XauxaTextInput(destination, { destination = it }, Modifier.fillMaxWidth(), label = { Text("Destino QR (opcional)") }, singleLine = true)
+        XauxaTextInput(label = "Monto (opcional)", value = amount, onValueChange = { amount = it }, modifier = Modifier.fillMaxWidth())
+        XauxaTextInput(label = "Moneda (opcional)", value = currency, onValueChange = { currency = it }, modifier = Modifier.fillMaxWidth())
+        XauxaTextInput(label = "Persona o entidad (opcional)", value = person, onValueChange = { person = it }, modifier = Modifier.fillMaxWidth())
+        XauxaTextInput(label = "Destino QR (opcional)", value = destination, onValueChange = { destination = it }, modifier = Modifier.fillMaxWidth())
         XauxaSecondaryButton(label = selectedContextId?.let { id -> "Para: " + (state.contexts.firstOrNull { it.id == id }?.name ?: "Contexto") } ?: "Para: elegir contexto (opcional)", onClick = { showContextPicker = true })
-        XauxaTextInput(concept, { concept = it }, Modifier.fillMaxWidth(), label = { Text("Concepto (opcional)") }, singleLine = true)
-        XauxaTextInput(note, { note = it }, Modifier.fillMaxWidth(), label = { Text("Nota (opcional)") }, singleLine = true)
+        XauxaTextInput(label = "Concepto (opcional)", value = concept, onValueChange = { concept = it }, modifier = Modifier.fillMaxWidth())
+        XauxaTextInput(label = "Nota (opcional)", value = note, onValueChange = { note = it }, modifier = Modifier.fillMaxWidth())
         Text("Podrás adjuntar comprobantes más adelante", color = XauxaColor.TextSecondary, fontSize = XauxaType.Label)
         XauxaPrimaryButton(label = "Guardar", onClick = {
             viewModel.onAction(OperationAction.SaveNew(type, nowMillis(), amount, currency, person, destination, concept, note, selectedContextId, draftOperationId))
