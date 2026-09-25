@@ -13,6 +13,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
@@ -68,7 +70,7 @@ private fun varName(
         modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Xxl),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        Text(if (existing == null) "Agregar destino" else "Editar destino", fontSize = XauxaType.Headline, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+        Text(if (existing == null) "Agregar destino" else "Editar destino", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Headline, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
         XauxaTextInput(label = "Nombre", value = name, onValueChange = { name = it })
         XauxaTextInput(label = "Categoría", value = category, onValueChange = { category = it })
         XauxaTextInput(label = "Nota", value = note, onValueChange = { note = it }, singleLine = false, minLines = 3)
