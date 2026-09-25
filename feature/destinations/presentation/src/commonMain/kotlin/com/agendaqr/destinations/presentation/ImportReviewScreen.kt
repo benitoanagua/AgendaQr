@@ -10,6 +10,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaQrPreview
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
@@ -28,7 +30,7 @@ fun ImportReviewScreen(
         modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Xxl),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        Text("QR importados", fontSize = XauxaType.Headline, color = XauxaColor.TextPrimary)
+        Text("QR importados", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Headline, color = XauxaColor.TextPrimary)
         Text(if (assets.size == 1) "1 destino" else "${assets.size} destinos", fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
         LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm), modifier = Modifier.fillMaxWidth()) {
             itemsIndexed(assets) { _, asset ->
