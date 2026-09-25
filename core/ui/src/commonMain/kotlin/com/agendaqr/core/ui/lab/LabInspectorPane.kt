@@ -150,7 +150,6 @@ private fun LabInteractionRow(lens: LabInteractionLens, verdict: LabLensVerdict,
 
 @Composable
 private fun LabLensVerdictBadge(verdict: LabLensVerdict) {
-    val scheme = MaterialTheme.colorScheme
     val color = when (verdict) {
         LabLensVerdict.REAL -> scheme.primary
         LabLensVerdict.SIMULATED -> scheme.tertiary
