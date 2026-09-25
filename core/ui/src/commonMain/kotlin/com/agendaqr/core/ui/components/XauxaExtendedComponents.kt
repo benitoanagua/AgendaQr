@@ -116,7 +116,7 @@ fun XauxaDangerButton(
             )
         } else {
             Text(
-                label.uppercase(),
+                label,
                 fontSize = XauxaType.Label,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = XauxaType.LetterSpacingWide,
@@ -148,7 +148,7 @@ fun XauxaHeroCard(
                 color = XauxaColor.TextPrimary,
             )
             Text(
-                label.uppercase(),
+                label,
                 fontSize = XauxaType.Label,
                 letterSpacing = XauxaType.LetterSpacingWide,
                 color = XauxaColor.TextSecondary,
@@ -205,7 +205,7 @@ fun XauxaBadge(
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text.uppercase(),
+            text,
             fontSize = XauxaType.Caption,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = XauxaType.LetterSpacingWide,
@@ -301,7 +301,7 @@ fun XauxaFilterChip(
         enabled = enabled,
         label = {
             Text(
-                label.uppercase(),
+                label,
                 fontSize = XauxaType.Label,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = XauxaType.LetterSpacingWide,
@@ -626,7 +626,7 @@ fun XauxaStatBlock(
             textAlign = TextAlign.Center,
         )
         Text(
-            label.uppercase(),
+            label,
             fontSize = XauxaType.Caption,
             letterSpacing = XauxaType.LetterSpacingWide,
             color = XauxaColor.TextSecondary,
@@ -770,7 +770,7 @@ fun XauxaTileHeader(
         horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
         Text(
-            title.uppercase(),
+            title,
             modifier = Modifier.weight(XauxaToneWeight),
             fontSize = XauxaType.Title,
             fontWeight = FontWeight.Bold,
@@ -779,7 +779,7 @@ fun XauxaTileHeader(
         )
         if (status != null) {
             Text(
-                status.uppercase(),
+                status,
                 fontSize = XauxaType.Caption,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = XauxaType.LetterSpacingWide,
