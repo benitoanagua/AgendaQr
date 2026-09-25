@@ -159,3 +159,10 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - Cambio de texto únicamente; no modifica la condición del estado vacío ni el callback.
 - En esta pasada se revisaron también las pantallas de editor, revisión de importación e importación por lotes: no se detectó otro literal inglés claro en los rótulos visibles inspeccionados que justificara un cambio sin contexto adicional.
 - Validación visual, truncamiento y accesibilidad quedan agrupados para la ronda final; no se ejecutaron pruebas locales.
+
+
+## Pasada agrupada: selector de tipo de operación
+
+- `OperationScreens`: el selector de tipo presenta “Pago” y “Cobro” con capitalización natural, consistente con las etiquetas de lista, detalle y actividad.
+- Los valores enum y callbacks seleccionados permanecen iguales; solo cambia el texto visible.
+- El control sigue siendo un par de botones seleccionados/no seleccionados; pendiente revisar con teclado/lector de pantalla y escalado de texto durante la validación final.
