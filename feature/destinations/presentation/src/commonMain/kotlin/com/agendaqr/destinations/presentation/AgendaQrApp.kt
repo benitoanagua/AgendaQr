@@ -31,6 +31,7 @@ import com.agendaqr.destinations.data.createSyncedDestinationRepository
 import com.agendaqr.destinations.data.createSyncedOperationRepository
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextAction
+import com.agendaqr.core.ui.components.XauxaTone
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -196,7 +197,7 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
             XauxaStatusBanner(
                 if (hasFailed) "Sincronización pendiente: $pendingCount · reintentando…"
                 else "Sincronización pendiente: $pendingCount",
-                danger = hasFailed,
+                tone = if (hasFailed) XauxaTone.Danger else XauxaTone.Neutral,
             )
             if (hasFailed) {
                 XauxaTextAction(label = "Reintentar ahora", onClick = { syncScope.launch { syncProcessor.drain() } })

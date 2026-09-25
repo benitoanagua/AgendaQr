@@ -314,3 +314,111 @@ Se consultaron búsquedas de código para Color.White, Color.Black, Color(0x, Ma
 **Resultado del lote:** no se aplicaron cambios de código de producción porque las coincidencias revisadas ya están centralizadas o responden a una superficie técnica/funcional específica. Se evita una sustitución cosmética que pueda cambiar contraste o renderizado QR sin inspección visual.
 
 **Pendiente:** ampliar búsqueda por valores literales dp/sp, radios, elevación/sombras y APIs Material en source sets de features; revisar consumidores completos y ejecutar el chequeo de arquitectura durante el cierre. No se ejecutaron pruebas ni builds locales.
+
+
+## Cierre 2026-09-25: inventario ampliado, accesibilidad, tonos y responsive
+
+Rama de trabajo: `audit/cierre-visual-accesibilidad`. Cambios agrupados en lotes coherentes; sin cambios de reglas de negocio, modelos, repositorios, persistencia, navegación funcional ni integraciones.
+
+### Lote A — Inventario ampliado de tokens (alcance reproducible)
+
+Búsquedas ejecutadas sobre el árbol (`feature/`, `core/`, `androidApp/`, `shared/`, `build-logic/`):
+
+- `Color\(0x|Color\.White|Color\.Black|MaterialTheme\.colorScheme`: solo `Color(0x…)` en `core/ui/…/theme/XauxaTokens.kt` (primitivos centralizados) y `XauxaColor.White = Color.White` como facade; `Color.White` fuera de tokens solo vía `XauxaColor.White` en `XauxaQrPreview` Android/iOS/wasmJs (fondo técnico de legibilidad QR) y pastilla del toggle en `XauxaSettingRow`; `Color.Black` sin coincidencias; `MaterialTheme.colorScheme` solo en la regla del plugin `agendaqr.design-system` y documentación.
+- `\.dp|\.sp|RoundedCornerShape|CircleShape|shadow|elevation|tonalElevation|shadowElevation`: `dp`/`sp` literales solo en `XauxaTokens.kt` (escala `XauxaSpacing`, `XauxaMetrics`, `XauxaType`) y un `import …unit.dp` sin uso literal en `XauxaQrPreview.android.kt`; pantallas de `feature/destinations/presentation` consumen `XauxaSpacing`/`XauxaMetrics`/`XauxaType` sin literales; `tonalElevation`/`shadowElevation` siempre `XauxaSpacing.None`; sin `RoundedCornerShape`; `CircleShape` solo en `XauxaFavoriteIndicator` (`XauxaComponents.kt:256`).
+- `background(|border(`: pantallas de producción no fijan colores literales; componentes usan `XauxaColor.*` o `tone.content()/container()`.
+
+Decisiones:
+
+- Conservar `XauxaColor.White` para fondo QR (excepción técnica/funcional: la matriz QR exige blanco fijo para legibilidad) y documentarlo en el catálogo del laboratorio.
+- Conservar `CircleShape` solo en `XauxaFavoriteIndicator` (indicador circular real, permitido por catálogo); el toggle interactivo `XauxaFavoriteToggle` sigue rectangular conforme al contrato (radio ≤ 4dp).
+- No sustituir ningún valor: equivalencia ya centralizada; sustitución cosmética vetada sin inspección visual.
+- Señalado para producto (sin cambio): `OperationScreens.kt:88` tiñe `COBRO` con `XauxaColor.Success` y `PAGO` con `XauxaColor.Brand`; el tipo de operación no es un estado de éxito/error. ¿Debe el tipo usar color semántico o texto neutral + etiqueta? Se conserva el comportamiento actual.
+
+### Lote B — Formularios (`XauxaTextInput`, compatible)
+
+Hallazgo: sin slot de ayuda, sin indicador de obligatorio, sin `readOnly`, sin opciones de teclado/transformación visual; la etiqueta ya viaja en `label` del `OutlinedTextField` y el error en `supportingText` + `isError`.
+
+Cambio (`XauxaExtendedComponents.kt`, solo parámetros opcionales con defecto; ningún caller existente se toca):
+
+- `helperMessage: String? = null` (se muestra en `supportingText` cuando no hay error).
+- `isRequired: Boolean = false` (etiqueta visible `"$label *"`).
+- `readOnly: Boolean = false` (delegado al campo).
+- `keyboardOptions/keyboardActions/visualTransformation` (defectos `Default`/`None`).
+- Prioridad `supportingText`: error > ayuda > nada; el error sigue sin depender solo del color (`isError` + texto).
+
+Consumidores migrados donde el significado es inequívoco (`AuthScreen.kt`): correo con `KeyboardType.Email`, contraseña con `KeyboardType.Password` + `PasswordVisualTransformation` (antes texto plano visible). Resto de callers (`DestinationEditorScreen`, formulario de operación) sin cambios: validación de dominio intacta.
+
+Pendiente manual: lectura de etiqueta/error/ayuda, foco y orden de teclado, escalado de texto y anchos reducidos con TalkBack/VoiceOver.
+
+### Lote C — Toggles (inventario, sin cambio de modelo)
+
+- `XauxaFavoriteToggle`: siempre interactivo (`onCheckedChange` requerido), `Role.Checkbox` + `toggleableState On/Off` + descripción dinámica (“Marcar como favorito”/“Quitar de favoritos”, override del caller con prioridad). Correcto; callbacks/modelo intactos.
+- `XauxaSettingRow`: `toggleableState` + `Role.Switch` solo cuando coexisten `checked` y `onCheckedChange`; con `onClick` es `Role.Button` (navegación); sin acción no es clickable (contenido estático, no se anuncia interactivo). Correcto.
+- Consumidores: solo laboratorio (`LabComponentPreview`, `LabPatternPane`); no se halló consumidor de producción en `feature/` (búsqueda `XauxaSettingRow|XauxaFavoriteToggle`). Sin migración de callers.
+
+Pendiente manual: TalkBack/VoiceOver, foco por teclado y targets de 48dp en Android/iOS.
+
+### Lote D — Tonos semánticos (migración explícita solo inequívoca)
+
+`XauxaStatusBanner(message, danger = false, tone: XauxaTone? = null)`: `tone` prevalece; sin `tone` se conserva la interpretación histórica de `danger`. Compatibilidad intacta.
+
+Migraciones aplicadas (mismo significado, forma explícita):
+
+- Errores inequívocos `danger = true` → `tone = XauxaTone.Danger`: `DestinationsScreen`, `ContextScreen`, `GlobalSearchScreen`, `OperationScreens` (error), `ImportBatchScreen` (error), `AgendaQrPatterns.OperationFailurePattern`, `AuthScreen` (error).
+- `ImportBatchScreen` guardado (“Guardado…”) `danger = false` → `tone = XauxaTone.Success` (confirmación de guardado del flujo).
+- `AuthScreen` confirmación (“Revisa tu correo…”) → `tone = XauxaTone.Info` (instrucción informativa, no éxito).
+- `AgendaQrApp` sincronización: `danger = hasFailed` → `tone = Danger/Neutral` explícito equivalente.
+- `DestinationsScreen.DestinationRow`: marcador de favorito `Success` → `Info` (selección activa = acento de marca, no estado de éxito).
+
+Conservados sin adivinar (preguntas a producto):
+
+- Banner offline (“Sin conexión…”, neutral) y conteo “Comprobantes sin asociar” (neutral): ¿informativo neutral o advertencia/Info? Se conserva neutral seguro.
+- Resumen del detalle de operación (neutral): resumen descriptivo, no estado.
+- `XauxaToast`/`XauxaInlineResult` sin consumidores de producción hallados (solo laboratorio); no se asignan tonos a mensajes por intuición.
+- Contraste claro/oscuro y no repetición de anuncios en recomposiciones quedan para validación visual/manual (live regions `Polite` ya presentes en `XauxaLoading`/`XauxaStatusBanner`).
+
+### Lote E — Encabezados y lectura
+
+- Añadido `heading()` faltante al título “Importación completa” (`ImportBatchScreen.kt`).
+- Verificado: cada pantalla principal expone un único título raíz como encabezado (`Agenda QR`, `Contextos`, nombre de contexto, `Operaciones`, `Comprobantes sin asociar`, `Registrar operación`, `Detalle`, `Agregar/Editar destino`, nombre de destino, `Agenda QR` en auth, revisión de importación); `XauxaEmptyState` expone su título como encabezado (título de pantalla + título de vacío = dos encabezados, patrón aceptado: sección dentro de pantalla).
+- Sin cambios de foco inicial, orden de lectura ni rutas.
+
+Pendiente manual: jerarquía/niveles anunciados por Compose en cada plataforma, orden título→texto→campos→acciones, foco en diálogos/menús y anuncios de carga/error/vacío con TalkBack (Android) y VoiceOver (iOS). Ninguna plataforma se declara validada.
+
+### Lote F — Responsive y legibilidad
+
+- `DestinationsScreen.kt`: cabecera con 5 acciones en `Row` desbordaba en ~360dp. Ahora título + `FlowRow` de acciones (envuelven a varias líneas). Filtros y lista sin cambios (ya usan `LazyColumn` + `spacedBy` por tokens).
+- `OperationScreens.kt` (bandeja sin asociar): `Row` con “Asociar a operación existente” + “Crear nueva operación con esto” desbordaba en estrecho. Ahora `Column` apilada.
+- Geometría verificada: sin anchos fijos en pantallas (salvo `QrPreviewSize = 240dp` + `padding Xxxl` = ~304dp, cabe en 320dp), sin `maxLines`/elipsis injustificados, botones con `ControlMinSize = 48dp`, espaciado en múltiplos de 4dp, radios rectangulares, sin sombras/gradientes.
+
+Pendiente manual: anchos pequeños/grandes, orientación, texto ampliado, etiquetas largas, listas largas/lotes/diálogos y teclado visible con campo enfocado.
+
+### Lote G — QR y plataformas (código, sin afirmar integración)
+
+- `XauxaQrPreview` es `expect` común + `actual` Android (decodifica Base64→Bitmap; placeholder blanco si falla) / iOS (placeholder blanco fijo; decodificación diferida hasta validación hardware) / wasmJs (blanco). Presentación compartida ≠ lectura real.
+- `XauxaFileUpload`/`XauxaScannerViewport`: presentacionales; selección real de archivos, cámara, permisos, error/cancelación delegados a plataforma y pendientes.
+- Sin nuevas dependencias ni cambios de arquitectura `expect/actual`.
+
+Pendiente manual: Android en dispositivo/emulador (selección de archivo, cámara, permisos, cancelación, lectura QR); iOS solo vía Xcode/simulador/dispositivo (no ejecutable en este entorno).
+
+### Lote H — Movimiento y navegación
+
+- Tokens conformes al contrato: 150/300/450 ms, curva cubic-bezier(0.1, 0.9, 0.2, 1) (`XauxaMotion` + `Easings.Standard/Emphasized/Decelerate`).
+- `XauxaTurnstileNav`: `tween(DurationMediumMs, Standard)` + enter full-width / exit 25% + fade; `reverse` soportado pero `AgendaQrApp` siempre entra desde la derecha (decisión de producto ts5 pendiente: ¿toda navegación o solo lista↔detalle?; atrás programático vs gesto predictivo ts3 no resuelto por esta spec).
+- `ProvideReducedMotion` expect/actual (Android `ANIMATOR_DURATION_SCALE`, iOS `isReduceMotionEnabled`, web `matchMedia`); `XauxaLiveTile` lo respeta; turnstile no fuerza duración 0 (decisión pendiente documentada en el archivo).
+- Sin animaciones decorativas añadidas; rutas intactas.
+
+### Validación local (2026-09-25)
+
+| Comando | Resultado | Motivo |
+|---|---|---|
+| `./gradlew verifyAgendaQrArchitecture` | PASS | 13 tareas, `verifyArchitectureBoundaries`, `verifyDesignSystemCompliance`, `verifyDesignSystemFixtures`, `verifyWebDesignSystem` OK |
+| `./gradlew :feature:destinations:domain:testDebugUnitTest :feature:destinations:data:testDebugUnitTest --rerun-tasks` | PASS | Tests de dominio y data re-ejecutados, BUILD SUCCESSFUL |
+| `./gradlew :core:ui:compileDebugKotlin` y `:feature:destinations:presentation:compileDebugKotlin` | BLOQUEADO (preexistente) | `Unresolved reference 'ToggleableState'` en `XauxaExtendedComponents.kt:38,471,754` (import + usos). Reproducido en `main` limpio vía `git stash`: mismo fallo sin mis cambios. Mis ediciones no añaden ningún error nuevo (el conjunto de errores es idéntico antes/después; ningún `e:` apunta a líneas editadas). No se “arregla” cambiando la API de semántica sin justificación; queda como bloqueante de entorno/versión Compose 1.8.2 |
+| `:androidApp:assembleDebug` | NO EJECUTADO | Bloqueado por el fallo anterior (depende de `:core:ui`); no se afirma compilación Android completa |
+| Lint/análisis/architecture | PASS (parcial) | `verifyAgendaQrArchitecture` incluye las validaciones de arquitectura/diseño disponibles; no se halló tarea `lint` específica del proyecto para ejecutar |
+| Tests multiplataforma iOS / UI instrumentados | NO EJECUTADO | iOS requiere Xcode/simulador/dispositivo; no hay suite instrumentada ejecutable en este Linux |
+| TalkBack/VoiceOver, responsive visual, contraste claro/oscuro | NO EJECUTADO (manual pendiente) | Sin dispositivo/entorno; instrucciones en cada lote |
+
+Archivos afectados: `core/ui/…/XauxaExtendedComponents.kt`, `feature/destinations/presentation/…/DestinationsScreen.kt`, `OperationScreens.kt`, `AuthScreen.kt`, `ImportBatchScreen.kt`, `ContextScreen.kt`, `GlobalSearchScreen.kt`, `AgendaQrApp.kt`, `AgendaQrPatterns.kt`, este registro.

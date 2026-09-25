@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaLoading
+import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -25,7 +28,7 @@ fun ImportBatchScreen(
         modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Xxl),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        Text("Importación completa", fontSize = XauxaType.Headline, color = XauxaColor.TextPrimary)
+        Text("Importación completa", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Headline, color = XauxaColor.TextPrimary)
         when (state) {
             ImportBatchUiState.Idle -> {
                 Text("Trae varios elementos a Agenda QR.", color = XauxaColor.TextSecondary)
@@ -37,11 +40,11 @@ fun ImportBatchScreen(
             is ImportBatchUiState.Review -> BatchReviewContent(state.batch, onAction)
             is ImportBatchUiState.Saving -> XauxaLoading(message = "Guardando elementos reconocidos…")
             is ImportBatchUiState.Saved -> {
-                XauxaStatusBanner("Guardado. Los elementos pendientes conservan su revisión.", danger = false)
+                XauxaStatusBanner("Guardado. Los elementos pendientes conservan su revisión.", tone = XauxaTone.Success)
                 XauxaPrimaryButton("Volver", onClick = { onAction(ImportBatchAction.Back) })
             }
             is ImportBatchUiState.Error -> {
-                XauxaStatusBanner(state.message, danger = true)
+                XauxaStatusBanner(state.message, tone = XauxaTone.Danger)
                 state.batch?.let { BatchResultContent(it, onAction) }
                     ?: XauxaSecondaryButton("Volver", onClick = { onAction(ImportBatchAction.Back) })
             }

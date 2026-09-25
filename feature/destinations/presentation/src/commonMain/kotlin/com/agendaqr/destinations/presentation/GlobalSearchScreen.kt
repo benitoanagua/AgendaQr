@@ -34,7 +34,7 @@ fun GlobalSearchScreen(
             placeholder = "Buscar",
             onClear = { onAction(GlobalSearchAction.Clear) },
         )
-        state.error?.let { XauxaStatusBanner(it, danger = true) }
+        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger) }
         when {
             state.query.isBlank() -> XauxaEmptyState(
                 title = "Escribe para buscar",

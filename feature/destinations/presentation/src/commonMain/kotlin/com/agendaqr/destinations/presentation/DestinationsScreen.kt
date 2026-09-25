@@ -2,6 +2,8 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,6 +38,7 @@ import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
 import com.agendaqr.destinations.domain.Destination
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun DestinationsScreen(
     state: DestinationsUiState,
@@ -49,15 +52,15 @@ fun DestinationsScreen(
         modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Xxl),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Agenda QR", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
-            Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                XauxaTextAction(label = "Cerrar sesión", onClick = onSignOut)
-                XauxaSecondaryButton(label = "Contextos", onClick = onOpenContexts)
-                XauxaSecondaryButton(label = "Operaciones", onClick = onOpenOperations)
-                XauxaPrimaryButton(label = "Buscar", onClick = onOpenSearch)
-                XauxaPrimaryButton(label = "Agregar QR", onClick = { onAction(DestinationAction.Edit(null)) })
-            }
+        // Cabecera responsive: título arriba y acciones en FlowRow para que
+        // en anchos pequeños pasen a varias líneas en vez de comprimirse.
+        Text("Agenda QR", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+        FlowRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+            XauxaTextAction(label = "Cerrar sesión", onClick = onSignOut)
+            XauxaSecondaryButton(label = "Contextos", onClick = onOpenContexts)
+            XauxaSecondaryButton(label = "Operaciones", onClick = onOpenOperations)
+            XauxaPrimaryButton(label = "Buscar", onClick = onOpenSearch)
+            XauxaPrimaryButton(label = "Agregar QR", onClick = { onAction(DestinationAction.Edit(null)) })
         }
         XauxaSearchBar(value = state.query, onValueChange = { onAction(DestinationAction.Search(it)) }, label = "Buscar", placeholder = "Buscar destinos QR", onClear = { onAction(DestinationAction.Search("")) })
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
@@ -65,7 +68,7 @@ fun DestinationsScreen(
             XauxaFilterChip("Recientes", state.recentOnly, { onAction(DestinationAction.ToggleRecent) })
             state.category?.let { XauxaCategoryChip(it) }
         }
-        state.error?.let { XauxaStatusBanner(it, danger = true) }
+        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger) }
         when {
             state.isLoading -> XauxaLoading(message = "Cargando destinos QR…")
             state.visibleDestinations.isEmpty() -> XauxaEmptyState(
@@ -96,7 +99,8 @@ fun DestinationRow(destination: Destination, onAction: (DestinationAction) -> Un
     XauxaListRow(
         title = destination.name.ifBlank { "Sin nombre" },
         subtitle = destination.note ?: destination.category,
-        tone = if (destination.favorite) XauxaTone.Success else XauxaTone.Neutral,
+        // Favorito = selección activa -> acento de marca (Info), no estado de éxito.
+        tone = if (destination.favorite) XauxaTone.Info else XauxaTone.Neutral,
         onClick = { onAction(DestinationAction.Open(destination.id)) },
         trailing = {
             XauxaTextAction(

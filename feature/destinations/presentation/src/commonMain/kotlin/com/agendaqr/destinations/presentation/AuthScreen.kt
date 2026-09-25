@@ -4,18 +4,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaScreen
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextInput
+import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -49,14 +53,17 @@ fun AuthScreen(
                 label = "Correo",
                 value = state.email,
                 onValueChange = onEmailChanged,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             )
             XauxaTextInput(
                 label = "Contraseña",
                 value = state.password,
                 onValueChange = onPasswordChanged,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                visualTransformation = PasswordVisualTransformation(),
             )
-            state.errorMessage?.let { XauxaStatusBanner(it, danger = true) }
-            state.confirmationMessage?.let { XauxaStatusBanner(it) }
+            state.errorMessage?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger) }
+            state.confirmationMessage?.let { XauxaStatusBanner(it, tone = XauxaTone.Info) }
             if (state.isSubmitting) {
                 XauxaLoading(message = "Iniciando sesión…")
             } else {

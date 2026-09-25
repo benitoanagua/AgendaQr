@@ -14,6 +14,7 @@ import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaQrPreview
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
+import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -29,7 +30,7 @@ fun FirstUsePattern(onAdd: () -> Unit) {
 
 @Composable
 fun OperationFailurePattern(message: String) {
-    XauxaStatusBanner(message = message, danger = true)
+    XauxaStatusBanner(message = message, tone = XauxaTone.Danger)
 }
 
 @Composable

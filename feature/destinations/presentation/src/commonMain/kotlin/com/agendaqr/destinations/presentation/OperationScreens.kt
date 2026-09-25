@@ -67,7 +67,7 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
             XauxaStatusBanner("Comprobantes sin asociar: " + state.unassociated.size)
             XauxaSecondaryButton(label = "Ver bandeja de respaldos", onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
         }
-        state.error?.let { XauxaStatusBanner(it, danger = true) }
+        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger) }
         if (operations.isEmpty()) {
             XauxaEmptyState(
                 title = if (state.query.isBlank()) "Aún no hay operaciones" else "No hay coincidencias",
@@ -123,7 +123,8 @@ private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsVi
                         Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                             Text("Comprobante recibido", fontWeight = FontWeight.SemiBold)
                             Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
-                            Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                            // Acciones apiladas: dos etiquetas largas no caben lado a lado en 360dp.
+                            Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                                 XauxaPrimaryButton(label = "Asociar a operación existente", onClick = { selectedReceipt = receipt })
                                 XauxaSecondaryButton(label = "Crear nueva operación con esto", onClick = {
                                     viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))

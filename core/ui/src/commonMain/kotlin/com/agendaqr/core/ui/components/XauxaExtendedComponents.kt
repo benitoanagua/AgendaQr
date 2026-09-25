@@ -349,11 +349,18 @@ fun XauxaTextInput(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    readOnly: Boolean = false,
     isError: Boolean = false,
     errorMessage: String? = null,
+    helperMessage: String? = null,
+    isRequired: Boolean = false,
     singleLine: Boolean = true,
     minLines: Int = 1,
+    keyboardOptions: androidx.compose.foundation.text.KeyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default,
+    keyboardActions: androidx.compose.foundation.text.KeyboardActions = androidx.compose.foundation.text.KeyboardActions.Default,
+    visualTransformation: androidx.compose.ui.text.input.VisualTransformation = androidx.compose.ui.text.input.VisualTransformation.None,
 ) {
+    val visibleLabel = if (isRequired) "$label *" else label
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
@@ -363,10 +370,11 @@ fun XauxaTextInput(
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
             enabled = enabled,
+            readOnly = readOnly,
             isError = isError,
             label = {
                 Text(
-                    label,
+                    visibleLabel,
                     fontSize = XauxaType.Label,
                     fontWeight = FontWeight.SemiBold,
                     color = XauxaColor.TextPrimary,
@@ -374,10 +382,17 @@ fun XauxaTextInput(
             },
             singleLine = singleLine,
             minLines = minLines,
-            supportingText = if (isError && errorMessage != null) {
-                { Text(errorMessage, fontSize = XauxaType.Caption, color = XauxaColor.Danger) }
-            } else {
-                null
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            visualTransformation = visualTransformation,
+            supportingText = when {
+                isError && errorMessage != null -> {
+                    { Text(errorMessage, fontSize = XauxaType.Caption, color = XauxaColor.Danger) }
+                }
+                helperMessage != null -> {
+                    { Text(helperMessage, fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary) }
+                }
+                else -> null
             },
             shape = RectangleShape,
             textStyle = androidx.compose.ui.text.TextStyle(fontSize = XauxaType.Body),

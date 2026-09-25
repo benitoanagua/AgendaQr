@@ -18,6 +18,7 @@ import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaLoading
+import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -40,7 +41,7 @@ private fun ContextList(state: ContextsUiState, onAction: (ContextAction) -> Uni
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         Text("Contextos", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
-        state.error?.let { XauxaStatusBanner(it, danger = true) }
+        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger) }
         when {
             state.isLoading -> XauxaLoading(message = "Cargando contextos…")
             state.contexts.isEmpty() -> XauxaEmptyState(
