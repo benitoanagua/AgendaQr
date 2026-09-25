@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -80,7 +79,7 @@ fun AgendaQrComponentLab(
     AgendaQrTheme(darkTheme = darkPreview) {
         Surface(
             modifier = modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background,
+            color = XauxaColor.Background,
         ) {
             BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Lg)) {
                 val compact = maxWidth < XauxaMetrics.BreakpointMedium
@@ -190,14 +189,14 @@ private fun LabHeader(
                         "Inventario con ${integrityProblems.size} problema(s); ver pruebas",
                         fontSize = XauxaType.Caption,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.error,
+                        color = XauxaColor.Danger,
                     )
                 }
             }
             Text(
                 "Los componentes resuelven el esquema vía XauxaColor: el preview oscuro aplica valores de referencia pendientes de validación.",
                 fontSize = XauxaType.Caption,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = XauxaColor.TextSecondary,
             )
         }
     }
