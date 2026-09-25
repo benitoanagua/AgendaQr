@@ -114,3 +114,11 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - No se modificaron reglas de negocio, fechas, montos, guardado, asociación/eliminación de comprobantes ni navegación.
 
 **Pruebas:** no ejecutadas; se mantienen reservadas para la fase final.
+
+
+## Importación y contextos: pasada de consistencia
+
+- `ImportBatchScreen`: el resumen de resultados ahora usa etiquetas descriptivas (“QR reconocidos”, “Comprobantes reconocidos”, “Duplicados”, “Elementos desconocidos para revisar”) en vez de depender de símbolos ✓/!/?. El estado se expresa con texto y conteo; no se altera el resultado ni la clasificación.
+- `ImportReviewScreen`: lista de previsualizaciones QR y acciones principales ya usan componentes compartidos; queda pendiente validar comportamiento con lotes largos y accesibilidad del contenido QR en Android/iOS.
+- `ContextScreen`: pantalla de lista/detalle ya está en español y consume filas/estados compartidos. El detalle presenta actividad usando el nombre interno del tipo de operación; queda señalado para unificar con las etiquetas de “Pago”/“Cobro” en la siguiente pasada.
+- No se ejecutaron pruebas locales ni comprobaciones visuales en esta fase; la validación queda para el cierre acordado.
