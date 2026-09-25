@@ -11,9 +11,9 @@ La especificación UX/UI V1 congelada en `docs/04-ux/02-especificacion-ux-ui-v1.
 ## UI/UX visual
 
 - `Xauxa Design System` — especificación normativa.
-- `XauxaXcan-main/` — implementación de referencia de componentes y patrones.
+- `Xauxa-main/` — implementación de referencia de componentes y patrones.
 
-Si existe una discrepancia entre una implementación histórica de XauxaXcan y una regla explícita del Design System, prevalece el Design System.
+Si existe una discrepancia entre una implementación histórica de Xauxa y una regla explícita del Design System, prevalece el Design System.
 
 ## Arquitectura técnica
 
