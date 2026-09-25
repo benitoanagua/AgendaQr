@@ -278,3 +278,9 @@ Esta nota complementa los hallazgos históricos anteriores; no los elimina, porq
 - Se marcaron como encabezados semánticos el título raíz de autenticación (“Agenda QR”) y el título de revisión de QR importados. Se amplía la aplicación del patrón a dos pantallas comunes adicionales.
 - El contador de destinos, el texto introductorio y los campos no se marcan como encabezados: conservan su papel de información complementaria y controles.
 - Pendiente validar orden de lectura y navegación por encabezados con TalkBack/VoiceOver, especialmente en la pantalla de autenticación con mensajes dinámicos. No se ejecutaron pruebas/builds locales; siguen reservados para el cierre.
+
+## Encabezados semánticos: editor y detalle de destino
+
+- El título raíz del editor (“Agregar destino”/“Editar destino”) y el nombre del destino en su pantalla de detalle ahora se exponen como encabezados semánticos.
+- El nombre del destino es dinámico y conserva su contenido original; no se alteran los datos, las acciones ni la navegación.
+- Con esta tanda se amplía la cobertura estática de encabezados en pantallas principales, pero no se declara cerrada la auditoría. Falta comprobar jerarquía/orden y navegación por encabezados con TalkBack/VoiceOver, además de revisar posibles redundancias en composiciones anfitrionas. Pruebas y builds locales siguen reservados para la fase final.
