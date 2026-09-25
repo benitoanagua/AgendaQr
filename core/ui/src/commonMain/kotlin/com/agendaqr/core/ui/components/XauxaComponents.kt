@@ -66,7 +66,7 @@ fun XauxaSection(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                title.uppercase(),
+                title,
                 fontSize = XauxaType.Title,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = XauxaType.LetterSpacingWide,
