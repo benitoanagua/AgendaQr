@@ -68,7 +68,7 @@ fun DestinationsScreen(
             state.isLoading -> XauxaLoading()
             state.visibleDestinations.isEmpty() -> XauxaEmptyState(
                 title = if (state.destinations.isEmpty()) "Aún no hay destinos" else "No se encontraron destinos",
-                actionLabel = if (state.destinations.isEmpty()) "Add QR" else "Limpiar búsqueda",
+                actionLabel = if (state.destinations.isEmpty()) "Agregar QR" else "Limpiar búsqueda",
                 onAction = { if (state.destinations.isEmpty()) onAction(DestinationAction.Edit(null)) else onAction(DestinationAction.Search("")) },
             )
             else -> {
