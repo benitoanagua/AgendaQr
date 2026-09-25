@@ -188,3 +188,10 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - `XauxaFavoriteToggle` conserva `ToggleableState.On/Off` y ahora, si no se proporciona una descripción personalizada, anuncia “Marcar como favorito” en estado apagado y “Quitar de favoritos” en estado activado.
 - La descripción explícita del caller sigue teniendo prioridad. El cambio aclara la acción disponible para tecnologías de asistencia sin alterar el callback ni el estado visual.
 - Pendiente verificar TalkBack/VoiceOver y traducciones/localización en la revisión multiplataforma final; no se ejecutaron pruebas locales.
+
+
+## SettingRow: semántica solo cuando el control es editable
+
+- `XauxaSettingRow` ahora expone `toggleableState` únicamente cuando existen simultáneamente `checked` y `onCheckedChange`.
+- Un estado `checked` sin callback ya no se anuncia como toggle editable; mantiene la ruta de interacción existente mediante `onClick` cuando corresponde.
+- El cambio separa estado visual de capacidad de edición y conserva navegación/callbacks. Pendiente validación en TalkBack/VoiceOver durante la ronda final.
