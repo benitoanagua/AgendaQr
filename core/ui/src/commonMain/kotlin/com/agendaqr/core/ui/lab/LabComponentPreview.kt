@@ -171,11 +171,10 @@ private fun LabTextInput(
     singleLine: Boolean = true,
     onChange: (String) -> Unit,
 ) {
-    OutlinedTextField(
+    XauxaTextInput(
+        label = label,
         value = value,
         onValueChange = onChange,
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text(label) },
         singleLine = singleLine,
     )
 }
@@ -770,7 +769,7 @@ private fun BadgePreview() {
             XauxaBadge(text = "URL", tone = XauxaTone.Info)
         }
         Text(
-            "Rectangulares por invariante 02 (XauxaXcan usa rounded-sm).",
+            "Rectangulares por invariante 02 (Xauxa usa rounded-sm).",
             fontSize = XauxaType.Caption,
             color = XauxaColor.TextSecondary,
         )
