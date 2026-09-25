@@ -130,3 +130,10 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - La traducción se limita a la presentación; no cambia el modelo ni los valores persistidos.
 - Las etiquetas largas en acciones de la bandeja de comprobantes siguen en mayúsculas porque son textos de llamada explícitos del flujo; revisar longitud y ajuste en pantallas estrechas durante la prueba visual.
 - Pendiente de validación final: ejecutar pruebas/builds acordados, revisar tamaños de pantalla y escalado de texto, y comprobar semántica/lectura accesible de los controles y previsualizaciones QR en Android/iOS.
+
+
+## Consistencia de tipo en el detalle de operación
+
+- `OperationScreens`: el banner del detalle ahora usa la etiqueta de presentación “Pago”/“Cobro” en lugar del nombre interno enum en mayúsculas, alineado con la lista y actividad reciente.
+- Cambio solo de presentación; no modifica lógica, modelo ni datos persistidos.
+- Pendiente validar visualmente el banner en distintos anchos y escalas de texto junto con la pasada final de accesibilidad.
