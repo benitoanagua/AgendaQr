@@ -52,3 +52,31 @@ La búsqueda del símbolo `XauxaPrimaryButton` encontró usos en autenticación,
 ### Siguiente paso
 
 Completar la inspección por grupos (feedback, datos, campos y patrones), registrar excepciones de plataforma y después aplicar cambios compatibles a los componentes compartidos. Las pruebas locales siguen deliberadamente aplazadas hasta la fase final solicitada.
+
+## Segunda pasada: feedback, datos, formularios y plataforma
+
+Revisión estática del resto de `XauxaExtendedComponents.kt` y las piezas básicas de `XauxaComponents.kt`. Las conclusiones son de código fuente; la apariencia y comportamiento final aún requieren ejecución.
+
+| Elemento | Hallazgo | Decisión / acción |
+|---|---|---|
+| `XauxaStatusBanner` | Ofrece solo variante neutral y de peligro mediante un booleano; no expresa éxito/advertencia/información con el enum semántico ya disponible. | Adaptar API a tono semántico compartido, manteniendo compatibilidad de llamada existente. Evitar cambiarlo hasta revisar usos y firma en conjunto. |
+| `XauxaToast`, `XauxaInlineResult` | Componen colores por `XauxaTone`; las acciones son slots opcionales y el cierre del toast depende del llamador, sin temporizador oculto. | Conservar como bloques presentacionales; revisar anuncios de accesibilidad (live region) y contraste de cada tono en prueba visual. |
+| `XauxaLoading`, `XauxaSkeleton`, `XauxaLoadMoreFooter` | Carga y skeleton son presentacionales; el footer distingue fin/carga/callback disponible. El skeleton impone al menos una línea. | Conservar provisionalmente; agregar/confirmar descripciones accesibles y evitar que un estado de carga quede comunicado solo visualmente. |
+| `XauxaEmptyState`, `XauxaErrorPage` | Estados con CTA; la página de error usa color de peligro también para el título, sin depender de iconografía. | Conservar el patrón; verificar que el texto identifique la causa/recuperación y que no se use peligro para errores recuperables menores. |
+| `XauxaBadge`, `XauxaStatBlock`, `XauxaListRow` | Badge distingue tono/solid; el bloque estadístico pone el valor neutral en Brand; fila admite interacción opcional y marcador semántico lateral. | Conservar provisionalmente; validar que el color no sea el único portador de estado y que las cifras tengan contexto comprensible para lector de pantalla. |
+| `XauxaFavoriteToggle` | Usa `Role.Checkbox` y descripción, pero el modificador no declara explícitamente el valor `checked` en semántica. | Adaptar para exponer estado seleccionado y etiqueta dinámica (marcado/no marcado) sin alterar callback ni modelo de favoritos. |
+| `XauxaSettingRow` | Toggle personalizado comunica acción como `Role.Button`; el estado checked no se expone como estado de control en semántica. Además, con checked presente y callback ausente se presenta un control visual que no puede cambiarse. | Adaptar semántica de control y contrato de callback; definir si fila deshabilitada o solo lectura cuando falte callback. Mantener separado de navegación de ajustes. |
+| `XauxaTextInput` | El mensaje de error se dibuja como texto adyacente, pero la API no declara relación semántica explícita entre campo y error; tampoco hay slot de ayuda. | Adaptar en una pasada de formularios: asociación accesible de error/ayuda, sin cambiar validación de dominio. |
+| `XauxaSearchBar` | La acción de limpiar se implementa con `XauxaTextAction` dentro del icono trailing; no se muestra si no hay texto. | Conservar con revisión de accesibilidad y comportamiento en teclado; comprobar que la acción no quede comprimida en anchos pequeños. |
+| `XauxaFileUpload`, `XauxaScannerViewport`, `XauxaQrPreview` | Upload/viewport son presentacionales y delegan selección/cámara; `QrPreview` es expect por plataforma. | Mantener infraestructura por plataforma, pero no presentarlos en catálogo como integraciones funcionales hasta verificar cada target. |
+
+### Orden de ejecución actualizado
+
+1. Resolver primero semántica accesible de controles de estado (`FavoriteToggle`, toggle de `SettingRow`) y asociación de errores en campos.
+2. Revisar los consumidores de estas APIs y mantener callbacks/modelos de producto intactos.
+3. Consolidar feedback con un único enum de tonos donde aporte significado real, conservando compatibilidad de API.
+4. Revisar componentes específicos de plataforma (cámara, selección de archivo y QR) por separado; la inspección commonMain no valida sus implementaciones Android/iOS.
+5. Migrar las pantallas de producción de manera incremental y actualizar catálogo/documentación junto al código.
+6. Ejecutar pruebas locales y comprobación visual únicamente en la fase final, como solicitó el usuario.
+
+**Límite actual:** todavía no se han revisado exhaustivamente todos los usos de cada API ni los source sets de plataforma; por tanto, no se marca ningún grupo como completamente auditado.
