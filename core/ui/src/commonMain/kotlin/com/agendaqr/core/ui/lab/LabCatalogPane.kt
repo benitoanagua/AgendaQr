@@ -155,12 +155,7 @@ private fun CatalogNavigation(
             onClick = { onSectionChange(LabSection.COMPONENTS) },
         )
         LabCategory.entries.forEach { category ->
-            LabCatalogNavItem(
-                label = category.label,
-                count = counts[category] ?: 0,
-                selected = false,
-                onClick = { /* category selection is handled in the content filters */ },
-            )
+            CategoryCountRow(category.label, counts[category] ?: 0)
         }
     }
 }
@@ -307,6 +302,17 @@ private fun LabCatalogNavItem(label: String, count: Int, selected: Boolean, onCl
             Text(label, fontSize = XauxaType.Label, color = if (selected) XauxaColor.Brand else XauxaColor.TextPrimary)
             Text(count.toString(), fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary)
         }
+    }
+}
+
+@Composable
+private fun CategoryCountRow(label: String, count: Int) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = XauxaSpacing.Sm, vertical = XauxaSpacing.Xs),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(label, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+        Text(count.toString(), fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary)
     }
 }
 
