@@ -54,10 +54,10 @@ fun DestinationsScreen(
                 XauxaSecondaryButton(label = "Contextos", onClick = onOpenContexts)
                 XauxaSecondaryButton(label = "Operaciones", onClick = onOpenOperations)
                 XauxaPrimaryButton(label = "Buscar", onClick = onOpenSearch)
-                XauxaPrimaryButton(label = "Add QR", onClick = { onAction(DestinationAction.Edit(null)) })
+                XauxaPrimaryButton(label = "Agregar QR", onClick = { onAction(DestinationAction.Edit(null)) })
             }
         }
-        XauxaSearchBar(value = state.query, onValueChange = { onAction(DestinationAction.Search(it)) }, label = "Buscar", placeholder = "Buscar destinos", onClear = { onAction(DestinationAction.Search("")) })
+        XauxaSearchBar(value = state.query, onValueChange = { onAction(DestinationAction.Search(it)) }, label = "Buscar", placeholder = "Buscar destinos QR", onClear = { onAction(DestinationAction.Search("")) })
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
             XauxaFilterChip("Favoritos", state.favoriteOnly, { onAction(DestinationAction.ToggleFavorites) })
             XauxaFilterChip("Recientes", state.recentOnly, { onAction(DestinationAction.ToggleRecent) })
@@ -67,8 +67,8 @@ fun DestinationsScreen(
         when {
             state.isLoading -> XauxaLoading()
             state.visibleDestinations.isEmpty() -> XauxaEmptyState(
-                title = if (state.destinations.isEmpty()) "No destinations" else "No matching destinations",
-                actionLabel = if (state.destinations.isEmpty()) "Add QR" else "Clear search",
+                title = if (state.destinations.isEmpty()) "Aún no hay destinos" else "No se encontraron destinos",
+                actionLabel = if (state.destinations.isEmpty()) "Add QR" else "Limpiar búsqueda",
                 onAction = { if (state.destinations.isEmpty()) onAction(DestinationAction.Edit(null)) else onAction(DestinationAction.Search("")) },
             )
             else -> {
