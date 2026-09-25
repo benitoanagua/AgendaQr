@@ -166,3 +166,11 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - `OperationScreens`: el selector de tipo presenta “Pago” y “Cobro” con capitalización natural, consistente con las etiquetas de lista, detalle y actividad.
 - Los valores enum y callbacks seleccionados permanecen iguales; solo cambia el texto visible.
 - El control sigue siendo un par de botones seleccionados/no seleccionados; pendiente revisar con teclado/lector de pantalla y escalado de texto durante la validación final.
+
+
+## Normalización transversal de capitalización en acciones
+
+- `XauxaComponents`: `XauxaSecondaryButton` y `XauxaTextAction` ya no convierten automáticamente las etiquetas a mayúsculas; respetan el texto entregado por cada pantalla.
+- Esto permite capitalización natural en controles como el selector “Pago”/“Cobro” y evita que componentes compartidos alteren el contenido lingüístico del caller. Las pantallas que requieran mayúsculas explícitas pueden solicitarlas en su etiqueta.
+- Cambio de presentación solamente; no altera enabled/loading, callbacks ni navegación.
+- Pendiente revisión visual transversal de etiquetas existentes, wrapping en anchos estrechos, escalado tipográfico y accesibilidad en la ronda final. No se ejecutaron pruebas locales.
