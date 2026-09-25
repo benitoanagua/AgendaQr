@@ -196,9 +196,9 @@ private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsVi
             XauxaTextAction(label = "Volver", onClick = { viewModel.onAction(OperationAction.Back) })
         }
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-            if (type == OperationType.PAGO) XauxaPrimaryButton(label = "PAGO", onClick = { type = OperationType.PAGO })
+            if (type == OperationType.PAGO) XauxaPrimaryButton(label = "Pago", onClick = { type = OperationType.PAGO })
             else XauxaSecondaryButton(label = "PAGO", onClick = { type = OperationType.PAGO })
-            if (type == OperationType.COBRO) XauxaPrimaryButton(label = "COBRO", onClick = { type = OperationType.COBRO })
+            if (type == OperationType.COBRO) XauxaPrimaryButton(label = "Cobro", onClick = { type = OperationType.COBRO })
             else XauxaSecondaryButton(label = "COBRO", onClick = { type = OperationType.COBRO })
         }
         XauxaTextInput(label = "Monto (opcional)", value = amount, onValueChange = { amount = it }, modifier = Modifier.fillMaxWidth())
