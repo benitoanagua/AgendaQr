@@ -1001,8 +1001,8 @@ object LabComponentCatalog {
             name = "XauxaEmptyState",
             category = LabCategory.FEEDBACK,
             purpose = "Estado sin elementos con una acción de recuperación.",
-            description = "Columna centrada con título Title semibold y botón primario, separados por " +
-                "XauxaSpacing.Lg y con padding Huge.",
+            description = "Columna centrada con título Title semibold expuesto como encabezado semántico y botón " +
+                "primario, separados por XauxaSpacing.Lg y con padding Huge.",
             props = listOf(
                 LabProp("title", "String"),
                 LabProp("actionLabel", "String"),
@@ -1010,7 +1010,7 @@ object LabComponentCatalog {
                 LabProp("modifier", "Modifier"),
             ),
             states = listOf(
-                LabState("Default", "Título centrado más botón primario de acción.", LabReviewStatus.VERIFIED),
+                LabState("Default", "Título centrado expuesto como encabezado semántico más botón primario de acción.", LabReviewStatus.VERIFIED),
             ),
             events = listOf(LabEvent("onAction", "Activación de la acción de recuperación.")),
             tokens = listOf(
