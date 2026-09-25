@@ -298,3 +298,19 @@ Esta nota complementa los hallazgos históricos anteriores; no los elimina, porq
 - `XauxaStatusBanner` ahora acepta `tone: XauxaTone?` como opción aditiva. Si no se especifica, mantiene compatibilidad con `danger`: `true` resuelve a Danger y `false` a Neutral. Cuando se pasa `tone`, este tiene precedencia. Los colores de contenido y contenedor se resuelven desde los helpers semánticos existentes.
 - **Decisión de compatibilidad:** se conserva el booleano histórico para no romper los callers existentes; no se fuerza una migración masiva de mensajes sin clasificación inequívoca. Para nuevos usos se puede preferir `tone` explícito.
 - **Pendiente:** confirmar el mapa de estados de producto para mensajes informativos, de éxito y advertencia; revisar contraste de cada tono en claro/oscuro y consistencia entre banner/toast/inline. Completar búsqueda de usos en todo el repo y validar anuncios no repetidos con TalkBack/VoiceOver. No se ejecutaron pruebas ni builds locales, reservados para el cierre final.
+
+
+## Lote 3: inventario estático de consumidores y valores visuales
+
+Se consultaron búsquedas de código para Color.White, Color.Black, Color(0x, MaterialTheme.colorScheme y background(. El índice de búsqueda es una detección inicial, no una prueba exhaustiva de ausencia.
+
+- Las coincidencias de Color.White fuera de los tokens apuntan a XauxaQrPreview en Android/iOS/wasm y a una superficie interna del toggle personalizado. El blanco fijo de la previsualización QR tiene una función técnica de legibilidad; conservarlo como token semántico XauxaColor.White y revisar contraste en ejecución.
+- Color.Black no devolvió coincidencias en la búsqueda consultada. Esto no garantiza ausencia de equivalentes expresados de otra forma.
+- Color(0x aparece en XauxaTokens.kt, donde se centralizan los primitivos de los esquemas claro/oscuro. No se identificó en los resultados consultados otro origen de color.
+- La búsqueda de MaterialTheme.colorScheme devolvió la regla documentada y el plugin de validación de arquitectura; no surgieron pantallas de producción en los resultados de esa consulta. El índice por sí solo no demuestra cumplimiento.
+- Las llamadas background( visibles usan tokens o valores semánticos calculados en componentes comunes y el laboratorio; no se identificó una pantalla de producción con color literal en esos resultados.
+- XauxaColor.White se mantiene en el facade semántico por su uso específico sobre el área QR y en una pieza de control; no se sustituye por Surface sin comprobar si el blanco fijo es deliberado.
+
+**Resultado del lote:** no se aplicaron cambios de código de producción porque las coincidencias revisadas ya están centralizadas o responden a una superficie técnica/funcional específica. Se evita una sustitución cosmética que pueda cambiar contraste o renderizado QR sin inspección visual.
+
+**Pendiente:** ampliar búsqueda por valores literales dp/sp, radios, elevación/sombras y APIs Material en source sets de features; revisar consumidores completos y ejecutar el chequeo de arquitectura durante el cierre. No se ejecutaron pruebas ni builds locales.
