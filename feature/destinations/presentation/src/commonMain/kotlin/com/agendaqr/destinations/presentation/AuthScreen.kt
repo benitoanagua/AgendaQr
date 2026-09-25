@@ -55,7 +55,7 @@ fun AuthScreen(
             state.errorMessage?.let { XauxaStatusBanner(it, danger = true) }
             state.confirmationMessage?.let { XauxaStatusBanner(it) }
             if (state.isSubmitting) {
-                XauxaLoading()
+                XauxaLoading(message = "Iniciando sesión…")
             } else {
                 XauxaPrimaryButton("Iniciar sesión", onSignIn, modifier = Modifier.fillMaxWidth())
                 XauxaSecondaryButton("Crear cuenta", onSignUp, modifier = Modifier.fillMaxWidth())
