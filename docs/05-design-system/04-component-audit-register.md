@@ -254,3 +254,9 @@ Esta nota complementa los hallazgos históricos anteriores; no los elimina, porq
 - `XauxaEmptyState` expone ahora su título como encabezado semántico (`heading()`), además de su jerarquía visual. Esto facilita la navegación por encabezados en tecnologías de asistencia.
 - Pendiente de validación manual: confirmar el orden de lectura título→acción, el nivel de encabezado anunciado por Compose en cada plataforma y que el patrón no duplique encabezados cuando se inserta dentro de otra pantalla.
 - Los estados vacíos siguen requiriendo revisión de copy/CTA por flujo; este cambio no determina el contenido ni modifica acciones de negocio.
+
+
+## Primera experiencia: consistencia de idioma
+
+- `FirstUsePattern` usa ahora la acción localizada «Agregar QR», consistente con el CTA de alta de destinos en la pantalla principal.
+- La ficha/laboratorio debe conservar ejemplos de copy en español para flujos de producto; no se cambia la semántica de la acción ni el flujo de incorporación.
