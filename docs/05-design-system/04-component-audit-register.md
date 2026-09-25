@@ -144,3 +144,10 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - `DestinationDetailScreen`: acciones de QR, regreso, edición, compartir y eliminación se presentan en español (“Mostrar QR”, “Volver”, “Editar”, “Compartir”, “Eliminar”), manteniendo la eliminación dentro del menú de desbordamiento.
 - Ajuste de textos de interfaz únicamente; callbacks y comportamiento de acciones permanecen intactos.
 - Pendiente revisar en validación visual final el ajuste de etiquetas en la barra contextual y la accesibilidad del menú.
+
+
+## Localización de categorías de búsqueda global
+
+- `GlobalSearchScreen`: las etiquetas de tipo de resultado ahora se muestran como “Contexto”, “QR”, “Actividad” y “Comprobante”, en lugar de exponer nombres internos del enum.
+- La etiqueta se limita a presentación; identificadores, búsqueda y selección del resultado no cambian.
+- Pendiente comprobar con pruebas de interfaz y revisión de lector de pantalla que el tipo del resultado se comunica de forma clara y que no se trunca en anchos reducidos.
