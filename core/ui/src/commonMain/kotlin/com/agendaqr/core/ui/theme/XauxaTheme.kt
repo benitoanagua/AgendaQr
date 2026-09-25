@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 
 @Composable
-fun AgendaQrTheme(
+fun XauxaTheme(
     darkTheme: Boolean = false,
     content: @Composable () -> Unit,
 ) {
@@ -16,9 +16,9 @@ fun AgendaQrTheme(
         MaterialTheme(
             colorScheme = if (darkTheme) {
                 darkColorScheme(
-                    primary = scheme.brandAccent,
-                    onPrimary = scheme.textPrimary,
-                    secondary = scheme.brand,
+                    primary = scheme.brand,
+                    onPrimary = scheme.onBrand,
+                    secondary = scheme.brandAccent,
                     background = scheme.background,
                     onBackground = scheme.textPrimary,
                     surface = scheme.surface,
