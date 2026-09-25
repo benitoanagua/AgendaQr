@@ -71,7 +71,7 @@ No se introducen cambios de UX fuera del contrato congelado.
 - Catálogo navegable (secciones Fundamentos/Componentes/Patrones) de los componentes y tokens Xauxa reales de `core:ui`: 6 fundamentos + 31 componentes + 8 patrones, con inspector derivado de un modelo puro (`core/ui/.../lab/model/`), previews interactivos con datos ficticios, matriz de interacción con veredictos honestos, guía de uso, mapeos nativos, gobierno por contrato y registro de eventos.
 - Host WebAssembly: el laboratorio se ejecuta en el navegador mediante el target `wasmJs` de `core:ui` (entrypoint `AgendaQrComponentLabWebMain.kt` + recursos web en `wasmJsMain/resources`). Se construye con `./gradlew componentLabWeb` y se sirve en `build/web/component-lab/`.
 - El host Android solo-debug fue retirado (`ComponentLabActivity`, su manifiesto y el `debugImplementation(project(":core:ui"))`); `androidApp` ya no tiene dependencia del lab en ningún build.
-- Aislado de navegación, repositorios y servicios de producción; documentación en `docs/04-ux/03-laboratorio-componentes-compose.md` y brechas Xauxa en `docs/05-design-system/03-xauxa-brechas-y-trazabilidad.md`.
+- Aislado de navegación, repositorios y servicios de producción; documentación en `docs/04-ux/03-laboratorio-componentes-compose.md` y estado de conformidad visual en `docs/05-design-system/04-component-audit-register.md`.
 - Validación: 40 pruebas unitarias del modelo PASS (integridad, búsqueda, matriz, gobierno, patrones, esquemas); features domain/data/presentation PASS sin cambios; compilación Wasm del host PASS y revisión en navegador headless (Chromium) con evidencia registrada en el documento del laboratorio; `assembleDebug` y `assembleRelease` PASS. Host iOS: pendiente.
 
 ## CI

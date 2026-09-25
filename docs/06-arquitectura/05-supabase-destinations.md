@@ -8,7 +8,7 @@ Los destinos usan una estrategia **local-first con espejo remoto**.
 - Supabase PostgreSQL conserva una copia por usuario.
 - RLS limita el acceso a filas cuyo `user_id` coincide con `auth.uid()`.
 - Al crear el repositorio se intenta una sincronización remota → local.
-- Las altas, ediciones y eliminaciones se escriben primero localmente y luego se reflejan en Supabase de forma best-effort.
+- Las altas, ediciones y eliminaciones se escriben primero localmente y luego se registran como mutación durable en la cola de sincronización (ver `05-sync.md`).
 - Un fallo de red no bloquea la operación local.
 - La próxima inicialización vuelve a intentar la descarga remota.
 
@@ -18,7 +18,7 @@ V1 utiliza una regla simple para la sincronización inicial:
 
 > gana el registro con `updatedAt` más reciente.
 
-Todavía no existe una cola persistente de mutaciones pendientes. Por eso una escritura local realizada sin conexión puede quedar pendiente de espejo remoto hasta una evolución posterior.
+Las mutaciones pendientes usan la cola durable especificada en `05-sync.md` (estados PENDING/PROCESSING/FAILED con recuperación). Una escritura local realizada sin conexión queda encolada hasta su espejo remoto.
 
 ## Mapeo actual
 
@@ -36,13 +36,10 @@ La sesión autenticada proporciona el `user_id` usado por el adaptador remoto.
 
 ## Fuera de esta fase
 
-- cola durable de cambios offline;
 - resolución avanzada de conflictos;
-- sincronización de operaciones;
-- sincronización de comprobantes/Storage;
 - realtime;
 - migración destructiva del modelo QR.
 
 ## Siguiente evolución
 
-Una vez validado este flujo en Android, la misma abstracción se reutiliza para operaciones y comprobantes, manteniendo local-first.
+La misma abstracción de espejo remoto se reutiliza para operaciones y comprobantes a través de la cola durable (`05-sync.md`), manteniendo local-first.

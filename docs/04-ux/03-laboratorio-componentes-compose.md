@@ -117,7 +117,7 @@ La matriz de interacción del inspector distingue además estado `REAL`, lente `
 
 ## Trazabilidad Xauxa
 
-El detalle token por token y componente documentado vs implementado está en `docs/05-design-system/03-xauxa-brechas-y-trazabilidad.md`.
+El detalle token por token y componente documentado vs implementado está en `docs/05-design-system/04-component-audit-register.md`.
 
 ## Reglas de arquitectura (vigentes)
 

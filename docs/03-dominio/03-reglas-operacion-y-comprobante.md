@@ -12,8 +12,10 @@ Tipos permitidos:
 La creación mínima requiere:
 
 ```text
-id + type + occurredAt + createdAt
+id + type + occurredAt
 ```
+
+(`createdAt` lo genera el sistema al registrar; no lo aporta quien crea la operación.)
 
 Los datos de importe, moneda, persona/entidad, destino, concepto y nota son opcionales.
 

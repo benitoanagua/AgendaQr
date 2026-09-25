@@ -46,7 +46,7 @@ import com.agendaqr.core.ui.theme.XauxaMotion
  *   se conecte.
  *
  * Uso previsto (pendiente de conectar en `AgendaQrApp.kt`, ver
- * docs/05-design-system/03-xauxa-brechas-y-trazabilidad.md):
+ * docs/05-design-system/04-component-audit-register.md, Lote H):
  *
  *   AnimatedContent(
  *       targetState = currentScreen,

@@ -35,7 +35,7 @@ Android es la plataforma que se valida primero. iOS forma parte de la arquitectu
 
 ## 4. Estructura
 
-    AgendaQr-main/
+    AgendaQr/
     ├── androidApp/                 # host Android
     ├── iosApp/                     # host iOS
     ├── shared/                     # KMP compartido

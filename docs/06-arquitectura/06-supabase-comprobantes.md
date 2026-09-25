@@ -30,4 +30,4 @@ No se genera URL pública. Para descargar se usa el acceso autenticado del bucke
 
 ## Limitaciones
 
-La sincronización sigue siendo best-effort; todavía no existe una cola durable de mutaciones pendientes. La siguiente fase debe centralizar esa cola y la política de reintentos.
+Los reintentos usan la cola durable de mutaciones pendientes (`05-sync.md`); un fallo remoto no elimina el respaldo local.

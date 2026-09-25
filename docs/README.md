@@ -25,5 +25,5 @@ Agenda QR no conserva una identidad visual paralela. La aplicación es Agenda QR
 | `06-arquitectura` | estructura técnica y fuentes |
 | `07-decisiones` | decisiones aprobadas |
 | `08-validacion` | escenarios y validaciones |
-| `09-implementacion` | estado y trazabilidad |
+| `09-implementacion` | estado y gate de release |
 | `10-fuera-de-alcance` | exclusiones de V1 |

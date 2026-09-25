@@ -43,6 +43,10 @@ status = operación eliminada
 
 No se conserva el archivo del comprobante.
 
+## Eliminación de destino
+
+Eliminar un destino no elimina sus operaciones: la asociación es contextual, no de propiedad. En remoto, `operations.destination_id` no declara FK (ver `supabase/migrations/001_v1.sql`); es una decisión intencional de dominio para preservar la operación aunque se elimine el destino.
+
 ## Contexto histórico de destino
 
 Cambiar el QR actual de un destino no sustituye el contexto histórico de una operación ya registrada.
