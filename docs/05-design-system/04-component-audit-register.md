@@ -210,3 +210,10 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - `ContextScreen` usa `XauxaLoading` tanto en la lista de contextos como mientras espera el detalle, sustituyendo mensajes de carga sueltos.
 - `ImportBatchScreen` usa el mismo patrón para los estados Importando, Analizando y Guardando, manteniendo el texto descriptivo de cada estado en el modelo de estado y el indicador visual común.
 - Se reduce la variación visual entre pantallas sin cambiar estados de negocio, secuencia de importación ni callbacks. Pendiente revisión de anuncios accesibles, layout y pruebas de regresión en la validación final.
+
+
+## Carga compartida: conservar el contexto textual
+
+- `XauxaLoading` admite ahora un mensaje opcional junto al indicador, manteniendo compatibilidad con los usos sin mensaje.
+- Los estados de Contextos, Importación por lote y autenticación pasan a mostrar el indicador común con su descripción contextual (“Cargando contextos…”, “Cargando contexto…”, “Importando…”, “Analizando…”, “Guardando elementos reconocidos…” e “Iniciando sesión…”).
+- Esta ampliación evita que la unificación visual elimine la información de progreso que antes se mostraba como texto. Pendiente comprobar visualmente el ajuste de línea y el anuncio accesible del estado en ambas plataformas.
