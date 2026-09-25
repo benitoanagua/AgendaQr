@@ -1,31 +1,29 @@
-# Implementación Xauxa en Agenda QR
+# Implementación Xauxa
 
-Xauxa es la autoridad visual completa de Agenda QR. No existe una paleta propia de producto, una interpretación paralela de tokens ni una excepción visual local.
+Xauxa es la autoridad visual completa de Agenda QR. El código de producto no conserva una paleta propia, radios propios, sombras propias ni variantes visuales históricas.
 
-## Principios obligatorios
+## Capas
 
-- Consumir tokens Xauxa; no valores visuales crudos en features.
-- Rectángulos con radio 0.
-- Sin sombras ni elevación decorativa.
-- Separación mediante borde y spacing.
-- Acciones e inputs compuestos desde primitives Xauxa existentes.
-- Targets interactivos mínimos de 48dp / 44pt.
-- Foco siempre visible.
-- Movimiento con propósito, duración y easing Xauxa.
-- Reduced motion respetado.
-- Mapeo de plataforma definido antes de cerrar un componente.
+- `XauxaTokens.kt`: única fuente editable de tokens.
+- `XauxaTheme.kt`: adaptación del esquema Xauxa al runtime Compose.
+- `XauxaComponents.kt` y `XauxaExtendedComponents.kt`: primitives y componentes compartidos.
+- `lab/`: validación visual y contractual del mismo sistema.
 
-## Tokens
+## Reglas
 
-`core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/XauxaTokens.kt` es la única fuente editable de tokens. Los componentes solo consumen la fachada semántica `XauxaColor`, las escalas `XauxaSpacing`, `XauxaMetrics`, `XauxaType` y `XauxaMotion`.
+- Todo color sale de `XauxaColor`.
+- Todo spacing sale de `XauxaSpacing`.
+- Toda métrica sale de `XauxaMetrics`.
+- Toda jerarquía tipográfica sale de `XauxaType`.
+- Todo movimiento sale de `XauxaMotion`.
+- No usar `MaterialTheme.colorScheme` como fuente visual fuera de `XauxaTheme.kt`.
+- No usar `OutlinedTextField`, `AlertDialog`, chips o botones Material directamente desde features: deben pasar por componentes Xauxa.
+- No introducir sombras, radios ni colores locales.
 
-## Aplicación
+## Adaptación de plataforma
 
-La UI de Agenda QR debe parecer una aplicación Xauxa aplicada al dominio de Agenda QR: misma geometría, misma densidad, mismo tratamiento tipográfico, mismas superficies, mismo lenguaje de estados y misma filosofía de movimiento.
+Material 3 puede seguir siendo infraestructura interna de los componentes Xauxa. La apariencia se determina exclusivamente por los tokens y contratos Xauxa.
 
-No se conservan colores, radios, sombras, campos, chips, headers o composiciones de la implementación anterior cuando difieran de Xauxa.
+## Terminación
 
-## Gobierno
-
-Toda desviación debe entrar como cambio explícito del sistema Xauxa, no como excepción de una feature.
-
+Una pantalla está terminada cuando sus elementos visuales consumen el lenguaje Xauxa sin excepciones locales.
