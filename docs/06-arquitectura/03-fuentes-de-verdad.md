@@ -2,49 +2,18 @@
 
 ## 1. Agenda QR — autoridad de producto
 
-Es la única fuente de verdad para:
-
-- producto;
-- requisitos;
-- dominio;
-- alcance y límites;
-- decisiones aprobadas;
-- flujos funcionales;
-- reglas de negocio;
-- comportamiento local/offline especificado.
-
-No se importa comportamiento de negocio desde WaraWerse.
+Es la única fuente para producto, requisitos, dominio, alcance, decisiones y reglas de negocio.
 
 ## 2. Xauxa — autoridad visual
 
-`Xauxa Design System` y `Xauxa` definen la UI/UX.
+Xauxa define la UI/UX visual completa: tokens, fundamentos, componentes, patterns, estados, accesibilidad, movimiento, tipografía y composición.
 
-El Design System es normativo. Cuando una implementación histórica de Xauxa difiere de una regla explícita del Design System, prevalece la especificación.
+No se mantienen excepciones visuales heredadas ni una paleta propia de Agenda QR.
 
 ## 3. WaraWerse — referencia técnica
 
-Se utiliza como referencia para:
+Se utiliza solo como referencia para Kotlin Multiplatform, Compose, modularización, Gradle/build logic y prácticas de testing.
 
-- Kotlin Multiplatform;
-- Compose Multiplatform;
-- límites de módulos;
-- convention plugins;
-- Gradle/build logic;
-- prácticas de testing.
+## 4. Regla de implementación
 
-Sus conceptos de producto o dominio no se copian a Agenda QR.
-
-## 4. Kotlin Way
-
-La implementación favorece:
-
-- modelos inmutables;
-- interfaces pequeñas;
-- constructor injection;
-- use cases con `operator fun invoke()`;
-- `Flow`/`StateFlow`;
-- `sealed interface`;
-- dependencias explícitas;
-- boundaries `expect`/`actual` solo donde son necesarios;
-- dominio independiente de plataforma/UI;
-- ausencia de estado global de negocio.
+El código de producto combina reglas de negocio de Agenda QR con el lenguaje visual de Xauxa. Una discrepancia visual se resuelve a favor de Xauxa.
