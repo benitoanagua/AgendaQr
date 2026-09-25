@@ -358,13 +358,20 @@ fun XauxaTextInput(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
     ) {
-        Text(label, fontSize = XauxaType.Label, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
             enabled = enabled,
             isError = isError,
+            label = {
+                Text(
+                    label,
+                    fontSize = XauxaType.Label,
+                    fontWeight = FontWeight.SemiBold,
+                    color = XauxaColor.TextPrimary,
+                )
+            },
             singleLine = singleLine,
             minLines = minLines,
             supportingText = if (isError && errorMessage != null) {
