@@ -17,22 +17,22 @@ import androidx.compose.ui.unit.sp
  */
 internal object XauxaPrimitive {
     // Xauxa light scheme
-    val lightBackground = Color(0xFFFFF7FF)
-    val lightSurface = Color(0xFFFFF7FF)
+    val lightBackground = Color(0xFFFFFFFF)
+    val lightSurface = Color(0xFFFFFFFF)
     val lightSurfaceContainerLowest = Color(0xFFFFFFFF)
-    val lightSurfaceContainerLow = Color(0xFFF9F1FA)
-    val lightSurfaceContainer = Color(0xFFF3EBF4)
-    val lightSurfaceContainerHigh = Color(0xFFEEE6EE)
-    val lightSurfaceContainerHighest = Color(0xFFE8E0E9)
-    val lightSurfaceVariant = Color(0xFFE9DFEE)
-    val lightOutline = Color(0xFF7C7482)
-    val lightOutlineVariant = Color(0xFFCDC3D2)
-    val lightText = Color(0xFF1E1A20)
-    val lightTextVariant = Color(0xFF4B4450)
-    val lightPrimary = Color(0xFF4A1F7A)
+    val lightSurfaceContainerLow = Color(0xFFF7F7F7)
+    val lightSurfaceContainer = Color(0xFFF2F2F2)
+    val lightSurfaceContainerHigh = Color(0xFFEAEAEA)
+    val lightSurfaceContainerHighest = Color(0xFFE0E0E0)
+    val lightSurfaceVariant = Color(0xFFF2F2F2)
+    val lightOutline = Color(0xFF666666)
+    val lightOutlineVariant = Color(0xFFBDBDBD)
+    val lightText = Color(0xFF000000)
+    val lightTextVariant = Color(0xFF333333)
+    val lightPrimary = Color(0xFF0067B8)
     val lightOnPrimary = Color(0xFFFFFFFF)
-    val lightPrimaryContainer = Color(0xFF623993)
-    val lightOnPrimaryContainer = Color(0xFFD5B0FF)
+    val lightPrimaryContainer = Color(0xFF0067B8)
+    val lightOnPrimaryContainer = Color(0xFFFFFFFF)
     val lightSecondary = Color(0xFF68577C)
     val lightOnSecondary = Color(0xFFFFFFFF)
     val lightSecondaryContainer = Color(0xFFE8D1FD)
@@ -50,22 +50,22 @@ internal object XauxaPrimitive {
     val lightInversePrimary = Color(0xFFDAB9FF)
 
     // Xauxa dark scheme
-    val darkBackground = Color(0xFF151218)
-    val darkSurface = Color(0xFF151218)
-    val darkSurfaceContainerLowest = Color(0xFF100D13)
-    val darkSurfaceContainerLow = Color(0xFF1E1A20)
-    val darkSurfaceContainer = Color(0xFF221E24)
-    val darkSurfaceContainerHigh = Color(0xFF2C292F)
-    val darkSurfaceContainerHighest = Color(0xFF37333A)
-    val darkSurfaceVariant = Color(0xFF4B4450)
-    val darkOutline = Color(0xFF968E9C)
-    val darkOutlineVariant = Color(0xFF4B4450)
-    val darkText = Color(0xFFE8E0E9)
-    val darkTextVariant = Color(0xFFCDC3D2)
-    val darkPrimary = Color(0xFFDAB9FF)
-    val darkOnPrimary = Color(0xFF421673)
-    val darkPrimaryContainer = Color(0xFF623993)
-    val darkOnPrimaryContainer = Color(0xFFD5B0FF)
+    val darkBackground = Color(0xFF000000)
+    val darkSurface = Color(0xFF000000)
+    val darkSurfaceContainerLowest = Color(0xFF000000)
+    val darkSurfaceContainerLow = Color(0xFF111111)
+    val darkSurfaceContainer = Color(0xFF1A1A1A)
+    val darkSurfaceContainerHigh = Color(0xFF222222)
+    val darkSurfaceContainerHighest = Color(0xFF2A2A2A)
+    val darkSurfaceVariant = Color(0xFF1A1A1A)
+    val darkOutline = Color(0xFF999999)
+    val darkOutlineVariant = Color(0xFF555555)
+    val darkText = Color(0xFFFFFFFF)
+    val darkTextVariant = Color(0xFFCCCCCC)
+    val darkPrimary = Color(0xFF0067B8)
+    val darkOnPrimary = Color(0xFFFFFFFF)
+    val darkPrimaryContainer = Color(0xFF0067B8)
+    val darkOnPrimaryContainer = Color(0xFFFFFFFF)
     val darkSecondary = Color(0xFFD4BEE9)
     val darkOnSecondary = Color(0xFF39294B)
     val darkSecondaryContainer = Color(0xFF524266)
@@ -269,13 +269,13 @@ object XauxaType {
 object XauxaMotion {
     const val DurationShortMs = 150
     const val DurationMediumMs = 300
-    const val DurationLongMs = 600
-    const val EasingStandard = "cubic-bezier(0.4, 0, 0.2, 1)"
-    const val EasingEmphasized = "cubic-bezier(0.2, 0, 0, 1)"
+    const val DurationLongMs = 450
+    const val EasingStandard = "cubic-bezier(0.1, 0.9, 0.2, 1)"
+    const val EasingEmphasized = "cubic-bezier(0.1, 0.9, 0.2, 1)"
     const val EasingDecelerate = "cubic-bezier(0, 0, 0.2, 1)"
     object Easings {
-        val Standard: Easing = CubicBezierEasing(0.4f, 0f, 0.2f, 1f)
-        val Emphasized: Easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
+        val Standard: Easing = CubicBezierEasing(0.1f, 0.9f, 0.2f, 1f)
+        val Emphasized: Easing = CubicBezierEasing(0.1f, 0.9f, 0.2f, 1f)
         val Decelerate: Easing = CubicBezierEasing(0f, 0f, 0.2f, 1f)
     }
 }
