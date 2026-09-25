@@ -224,3 +224,12 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - La búsqueda global comunica su estado activo con el indicador compartido y el mensaje “Buscando en Agenda QR…”.
 - Las acciones del diálogo de comprobante recibido/duplicado usan capitalización de frase (“Cerrar”, “Guardando…”, “Listo”, “Asociar ahora”), alineadas con la regla de preservar el casing editorial y evitar mayúsculas forzadas.
 - Pendiente validar lectura accesible de los estados de búsqueda y la adaptación de las acciones en anchos reducidos.
+
+
+## Actualización del estado de auditoría: casing y carga
+
+Esta nota complementa los hallazgos históricos anteriores; no los elimina, porque describen el estado observado en el momento de cada pasada:
+
+- **Acciones:** los componentes de acción compartidos ya preservan el casing del texto que entrega cada caller. Los literales que aún aparezcan en mayúsculas deben revisarse en contexto de pantalla, no atribuirse a una transformación automática del componente.
+- **Carga:** `XauxaLoading` admite `message: String?` opcional. Los consumidores de autenticación, contexto, importación por lote y búsqueda global inspeccionados pasan mensajes de estado específicos. La API sigue permitiendo el indicador sin texto cuando el contexto ya está explicado por otra parte de la pantalla.
+- **Límite de verificación:** la presencia de mensajes visibles no confirma por sí sola que las plataformas los anuncien como estado a tecnologías de asistencia. No se ha hecho ejecución visual, prueba de lector de pantalla ni build en esta pasada.
