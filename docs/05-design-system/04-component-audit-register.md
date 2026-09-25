@@ -174,3 +174,10 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - Esto permite capitalización natural en controles como el selector “Pago”/“Cobro” y evita que componentes compartidos alteren el contenido lingüístico del caller. Las pantallas que requieran mayúsculas explícitas pueden solicitarlas en su etiqueta.
 - Cambio de presentación solamente; no altera enabled/loading, callbacks ni navegación.
 - Pendiente revisión visual transversal de etiquetas existentes, wrapping en anchos estrechos, escalado tipográfico y accesibilidad en la ronda final. No se ejecutaron pruebas locales.
+
+
+## Acciones de operaciones: capitalización
+
+- Se normalizaron las etiquetas explícitas en mayúsculas de `OperationScreens` a capitalización de frase: asociar comprobante, crear operación, selector Pago/Cobro y adjuntar comprobante.
+- Los componentes compartidos respetan ahora la etiqueta del caller, por lo que las pantallas declaran el casing deseado sin transformaciones ocultas.
+- Pendiente inspección visual de textos largos y tamaños reducidos; no se ejecutaron pruebas locales en esta tanda.
