@@ -182,7 +182,7 @@ val DarkXauxaColorScheme = XauxaColorScheme(
     focusRing = XauxaPrimitive.darkPrimary,
 )
 
-val LocalXauxaColorScheme = compositionLocalOf { LightXauxaColorScheme }
+val LocalXauxaColorScheme = compositionLocalOf { DarkXauxaColorScheme }
 
 object XauxaColor {
     val Background: Color @Composable get() = LocalXauxaColorScheme.current.background
