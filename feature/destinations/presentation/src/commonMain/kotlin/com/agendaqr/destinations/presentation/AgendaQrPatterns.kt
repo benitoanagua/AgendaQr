@@ -22,7 +22,7 @@ import com.agendaqr.core.ui.theme.XauxaType
 fun FirstUsePattern(onAdd: () -> Unit) {
     XauxaEmptyState(
         title = "Sin destinos",
-        actionLabel = "Add QR",
+        actionLabel = "Agregar QR",
         onAction = onAdd,
     )
 }
