@@ -445,7 +445,7 @@ fun XauxaSettingRow(
     }
     val clickableModifier = if (action == null) modifier else modifier
         .semantics {
-            if (checked != null) {
+            if (checked != null && onCheckedChange != null) {
                 toggleableState = if (checked) ToggleableState.On else ToggleableState.Off
             }
         }
