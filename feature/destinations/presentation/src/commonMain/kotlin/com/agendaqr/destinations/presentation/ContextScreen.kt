@@ -78,7 +78,15 @@ private fun ContextDetail(state: ContextsUiState, onAction: (ContextAction) -> U
             Text("Actividad reciente · " + data.operations.size, fontSize = XauxaType.Title, color = XauxaColor.TextPrimary)
             data.operations.take(5).forEach { operation ->
                 Text(
-                    listOfNotNull(operation.type.name, operation.amount, operation.currency, operation.personOrEntity)
+                    listOfNotNull(
+                        when (operation.type) {
+                            com.agendaqr.destinations.domain.OperationType.PAGO -> "Pago"
+                            com.agendaqr.destinations.domain.OperationType.COBRO -> "Cobro"
+                        },
+                        operation.amount,
+                        operation.currency,
+                        operation.personOrEntity,
+                    )
                         .joinToString(" · "),
                     color = XauxaColor.TextSecondary,
                 )
