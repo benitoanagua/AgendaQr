@@ -67,9 +67,9 @@ private fun varName(
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         Text(if (existing == null) "Add destination" else "Edit destination", fontSize = XauxaType.Headline, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
-        XauxaTextInput("Nombre", name, { name = it })
-        XauxaTextInput("Categoría", category, { category = it })
-        XauxaTextInput("Nota", note, { note = it }, singleLine = false, minLines = 3)
+        XauxaTextInput(label = "Nombre", value = name, onValueChange = { name = it })
+        XauxaTextInput(label = "Categoría", value = category, onValueChange = { category = it })
+        XauxaTextInput(label = "Nota", value = note, onValueChange = { note = it }, singleLine = false, minLines = 3)
         XauxaSecondaryButton(label = contextId?.let { id -> "Para: " + (contexts.firstOrNull { it.id == id }?.name ?: "Contexto") } ?: "Para: elegir contexto (opcional)", onClick = { showContextPicker = true })
         QrImportControls { result ->
             when {
@@ -79,8 +79,8 @@ private fun varName(
         }
         XauxaQrPreview(qr.encoded)
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-            XauxaSecondaryButton(label = "Back", onClick = onBack)
-            XauxaPrimaryButton(label = "Save", onClick = {
+            XauxaSecondaryButton(label = "Volver", onClick = onBack)
+            XauxaPrimaryButton(label = "Guardar", onClick = {
                 val now = com.agendaqr.destinations.domain.nowMillis()
                 onSave(initial.copy(
                     name = name.trim(),
