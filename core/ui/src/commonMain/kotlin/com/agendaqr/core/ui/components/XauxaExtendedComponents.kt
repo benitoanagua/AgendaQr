@@ -471,22 +471,42 @@ fun XauxaSettingRow(
 @Composable
 fun XauxaDialog(
     title: String,
-    message: String,
+    message: String? = null,
     confirmLabel: String,
     onConfirm: () -> Unit,
-    dismissLabel: String,
+    dismissLabel: String? = null,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    content: (@Composable () -> Unit)? = null,
 ) {
     androidx.compose.material3.AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
         shape = RectangleShape,
         containerColor = XauxaColor.Surface,
-        title = { Text(title, fontSize = XauxaType.Title, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary) },
-        text = { Text(message, fontSize = XauxaType.Body, color = XauxaColor.TextSecondary) },
-        confirmButton = { XauxaDangerButton(label = confirmLabel, onClick = onConfirm) },
-        dismissButton = { XauxaTextAction(label = dismissLabel, onClick = onDismiss) },
+        title = {
+            Text(
+                title,
+                fontSize = XauxaType.Title,
+                fontWeight = FontWeight.SemiBold,
+                color = XauxaColor.TextPrimary,
+            )
+        },
+        text = {
+            if (content != null) {
+                content()
+            } else {
+                Text(
+                    message.orEmpty(),
+                    fontSize = XauxaType.Body,
+                    color = XauxaColor.TextSecondary,
+                )
+            }
+        },
+        confirmButton = { XauxaPrimaryButton(label = confirmLabel, onClick = onConfirm) },
+        dismissButton = dismissLabel?.let {
+            { XauxaTextAction(label = it, onClick = onDismiss) }
+        },
     )
 }
 
