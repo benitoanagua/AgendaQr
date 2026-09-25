@@ -108,17 +108,9 @@ internal fun LabCatalogPane(
             value = query.text,
             onValueChange = { onQueryChange(query.copy(text = it)) },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Buscar por nombre, uso, estado o tag") },
-            singleLine = true,
-            shape = RectangleShape,
-            colors = androidx.compose.material3.TextFieldDefaults.colors(
-                focusedIndicatorColor = XauxaColor.Brand,
-                unfocusedIndicatorColor = XauxaColor.BorderVariant,
-                focusedLabelColor = XauxaColor.Brand,
-                unfocusedLabelColor = XauxaColor.TextSecondary,
-                focusedTextColor = XauxaColor.TextPrimary,
-                unfocusedTextColor = XauxaColor.TextPrimary,
-            ),
+            label = "Buscar por nombre, uso, estado o tag",
+            placeholder = "Buscar",
+            onClear = { onQueryChange(query.copy(text = "")) },
         )
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
