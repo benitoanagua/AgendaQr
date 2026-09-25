@@ -10,12 +10,12 @@ La implementación sigue una jerarquía explícita de fuentes de verdad:
 
 1. **Agenda QR** — producto, dominio, requisitos, alcance, decisiones y reglas de negocio.
 2. **UX/UI V1 de Agenda QR** — contrato de interacción congelado para la experiencia del producto.
-3. **Xauxa Design System + XauxaXcan** — lenguaje visual, tokens, componentes y patterns.
+3. **Xauxa Design System + Xauxa** — lenguaje visual, tokens, componentes y patterns.
 4. **WaraWerse** — referencia técnica para Kotlin Multiplatform, Compose, modularización, build y prácticas de testing.
 
 Si dos fuentes entran en conflicto, prevalece la fuente de mayor autoridad indicada arriba.
 
-WaraWerse nunca introduce lógica de negocio en Agenda QR. XauxaXcan no puede sobreescribir una regla normativa explícita del Xauxa Design System.
+WaraWerse nunca introduce lógica de negocio en Agenda QR. Xauxa define por completo la UI/UX visual del producto.
 
 ## 2. UX/UI V1
 
