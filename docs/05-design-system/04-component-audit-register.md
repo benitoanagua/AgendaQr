@@ -195,3 +195,11 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - `XauxaSettingRow` ahora expone `toggleableState` únicamente cuando existen simultáneamente `checked` y `onCheckedChange`.
 - Un estado `checked` sin callback ya no se anuncia como toggle editable; mantiene la ruta de interacción existente mediante `onClick` cuando corresponde.
 - El cambio separa estado visual de capacidad de edición y conserva navegación/callbacks. Pendiente validación en TalkBack/VoiceOver durante la ronda final.
+
+
+## Capitalización: segunda pasada de componentes y laboratorio
+
+- `XauxaSection`, `XauxaDangerButton`, `XauxaHeroCard`, `XauxaBadge`, `XauxaFilterChip`, `XauxaStatBlock` y `XauxaTileHeader` ya no transforman automáticamente etiquetas/títulos/estado a mayúsculas; respetan la capitalización editorial de la pantalla o del catálogo.
+- `LabChoiceChip` también respeta la etiqueta recibida, manteniendo el laboratorio alineado con el comportamiento real de los componentes compartidos.
+- Se conserva la tipografía, pesos, letter spacing, geometría y comportamiento; el cambio es exclusivamente de presentación textual.
+- El objetivo es eliminar transformaciones lingüísticas ocultas y permitir sentence case de forma consistente. La validación visual de los textos existentes queda para la ronda final.
