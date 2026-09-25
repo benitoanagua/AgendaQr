@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.XauxaCommandBar
 import com.agendaqr.core.ui.components.XauxaOverflowAction
@@ -34,7 +36,7 @@ fun DestinationDetailScreen(
             modifier = Modifier.weight(1f).padding(XauxaSpacing.Xxl),
             verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
         ) {
-            Text(destination.name, fontSize = XauxaType.Headline, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            Text(destination.name, modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Headline, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             destination.category?.let { Text(it, color = XauxaColor.TextSecondary) }
             destination.note?.takeIf { it.isNotBlank() }?.let { Text(it, color = XauxaColor.TextSecondary) }
             XauxaQrPreview(destination.qr.encoded)
