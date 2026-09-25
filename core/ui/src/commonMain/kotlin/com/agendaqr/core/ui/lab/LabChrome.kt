@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,10 +43,10 @@ internal fun LabPanel(
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = RectangleShape,
-        color = MaterialTheme.colorScheme.surface,
+        color = XauxaColor.Surface,
         tonalElevation = XauxaSpacing.None,
         shadowElevation = XauxaSpacing.None,
-        border = BorderStroke(XauxaMetrics.Border, MaterialTheme.colorScheme.outline),
+        border = BorderStroke(XauxaMetrics.Border, XauxaColor.Border),
     ) {
         Column(
             modifier = Modifier.padding(XauxaSpacing.Lg),
@@ -63,13 +62,13 @@ internal fun LabPanel(
                         title,
                         fontSize = XauxaType.Body,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = XauxaColor.TextPrimary,
                     )
                     if (subtitle != null) {
                         Text(
                             subtitle,
                             fontSize = XauxaType.Caption,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = XauxaColor.TextSecondary,
                         )
                     }
                 }
@@ -86,7 +85,7 @@ internal fun LabPanel(
 internal fun LabBadge(text: String, modifier: Modifier = Modifier) {    Surface(
         modifier = modifier,
         shape = RectangleShape,
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = XauxaColor.Surface2,
         tonalElevation = XauxaSpacing.None,
     ) {
         Text(
