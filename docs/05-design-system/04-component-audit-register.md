@@ -290,3 +290,11 @@ Esta nota complementa los hallazgos históricos anteriores; no los elimina, porq
 - `XauxaTextInput` ahora entrega la etiqueta mediante el parámetro `label` del propio `OutlinedTextField` de Material 3, en lugar de dibujarla como un `Text` hermano. Esto establece la relación etiqueta-control en la semántica del campo a través del componente de entrada.
 - El mensaje de error continúa en `supportingText` del mismo campo y el estado `isError` se conserva; no se cambian validaciones ni decisiones de producto de los consumidores.
 - La asociación está reforzada en la estructura común, pero no se considera validada hasta probar lectura de etiqueta/error, foco y edición con TalkBack/VoiceOver. No se ejecutaron pruebas ni builds locales, reservados para la fase final.
+
+## Lote: coherencia de tonos en feedback compartido
+
+- Inspección estática de usos de `XauxaStatusBanner` encontró banners de error en autenticación, búsqueda, contextos, destinos y fallo de importación; también mensajes neutrales de sincronización, conteo de comprobantes y resumen de operación. Los consumidores usan principalmente el booleano `danger` o el valor neutral por defecto.
+- `XauxaToast` y `XauxaInlineResult` ya reciben `XauxaTone`; los ejemplos inspeccionados del laboratorio ejercitan tonos semánticos. No se migraron los consumidores a nuevos colores ni se redefinió qué estado de negocio corresponde a éxito/advertencia/información.
+- `XauxaStatusBanner` ahora acepta `tone: XauxaTone?` como opción aditiva. Si no se especifica, mantiene compatibilidad con `danger`: `true` resuelve a Danger y `false` a Neutral. Cuando se pasa `tone`, este tiene precedencia. Los colores de contenido y contenedor se resuelven desde los helpers semánticos existentes.
+- **Decisión de compatibilidad:** se conserva el booleano histórico para no romper los callers existentes; no se fuerza una migración masiva de mensajes sin clasificación inequívoca. Para nuevos usos se puede preferir `tone` explícito.
+- **Pendiente:** confirmar el mapa de estados de producto para mensajes informativos, de éxito y advertencia; revisar contraste de cada tono en claro/oscuro y consistencia entre banner/toast/inline. Completar búsqueda de usos en todo el repo y validar anuncios no repetidos con TalkBack/VoiceOver. No se ejecutaron pruebas ni builds locales, reservados para el cierre final.
