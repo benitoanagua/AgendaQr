@@ -8,7 +8,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 
 @Composable
 fun XauxaTheme(
-    darkTheme: Boolean = false,
+    darkTheme: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     val scheme = if (darkTheme) DarkXauxaColorScheme else LightXauxaColorScheme
