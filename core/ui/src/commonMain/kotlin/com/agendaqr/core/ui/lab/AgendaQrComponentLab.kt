@@ -27,7 +27,7 @@ import com.agendaqr.core.ui.lab.model.LabCatalogIntegrity
 import com.agendaqr.core.ui.lab.model.LabCatalogQuery
 import com.agendaqr.core.ui.lab.model.LabComponentCatalog
 import com.agendaqr.core.ui.lab.model.LabPatterns
-import com.agendaqr.core.ui.theme.AgendaQrTheme
+import com.agendaqr.core.ui.theme.XauxaTheme
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -76,7 +76,7 @@ fun AgendaQrComponentLab(
         if (events.size > MAX_LOGGED_EVENTS) events.removeAt(0)
     }
 
-    AgendaQrTheme(darkTheme = darkPreview) {
+    XauxaTheme(darkTheme = darkPreview) {
         Surface(
             modifier = modifier.fillMaxSize(),
             color = XauxaColor.Background,
