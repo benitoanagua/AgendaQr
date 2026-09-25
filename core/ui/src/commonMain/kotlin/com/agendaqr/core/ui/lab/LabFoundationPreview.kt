@@ -194,7 +194,7 @@ private fun TypeSpecimen() {    Column(verticalArrangement = Arrangement.spacedB
             }
         }
         Text(
-            "Xauxa documenta Archivo (display) y Roboto (UI); la implementación usa la pila del sistema como XauxaXcan (FamilyUi) y monoespaciada para valores (FamilyMono). Tracking amplio en XauxaType.LetterSpacingWide.",
+            "Xauxa documenta Archivo (display) y Roboto (UI); la implementación usa la pila del sistema como Xauxa (FamilyUi) y monoespaciada para valores (FamilyMono). Tracking amplio en XauxaType.LetterSpacingWide.",
             fontSize = XauxaType.Caption,
             color = XauxaColor.TextSecondary,
         )
