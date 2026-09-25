@@ -129,7 +129,7 @@ fun XauxaPrimaryButton(
             )
         } else {
             Text(
-                label.uppercase(),
+                label,
                 fontSize = XauxaType.Label,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = XauxaType.LetterSpacingWide,
