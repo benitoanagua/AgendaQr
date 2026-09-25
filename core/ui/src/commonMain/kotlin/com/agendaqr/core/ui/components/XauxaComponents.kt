@@ -197,9 +197,13 @@ fun XauxaStatusBanner(
     message: String,
     modifier: Modifier = Modifier,
     danger: Boolean = false,
+    tone: XauxaTone? = null,
 ) {
-    val background = if (danger) XauxaColor.DangerBg else XauxaColor.Surface2
-    val foreground = if (danger) XauxaColor.Danger else XauxaColor.TextSecondary
+    // Compatibilidad: el parámetro semántico nuevo prevalece; sin él se
+    // conserva exactamente la interpretación histórica de danger.
+    val resolvedTone = tone ?: if (danger) XauxaTone.Danger else XauxaTone.Neutral
+    val background = resolvedTone.container()
+    val foreground = resolvedTone.content()
     Box(
         modifier = modifier
             .fillMaxWidth()
