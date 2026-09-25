@@ -247,3 +247,10 @@ Esta nota complementa los hallazgos históricos anteriores; no los elimina, porq
 - `XauxaLoading` y `XauxaStatusBanner` ahora marcan su contenido como región viva de prioridad cortés (`LiveRegionMode.Polite`) para que los cambios de carga/estado puedan comunicarse sin interrumpir de forma agresiva.
 - Esto mejora la señal semántica a nivel Compose, pero no sustituye la comprobación real con TalkBack y VoiceOver: la forma y el momento de anuncio dependen de la plataforma y del contexto de actualización.
 - Pendiente: validar que los anuncios no se repitan en recomposiciones y que el texto del estado se lea junto con el indicador de progreso, además de comprobar banners dinámicos de error/éxito.
+
+
+## Semántica de encabezados en estados vacíos
+
+- `XauxaEmptyState` expone ahora su título como encabezado semántico (`heading()`), además de su jerarquía visual. Esto facilita la navegación por encabezados en tecnologías de asistencia.
+- Pendiente de validación manual: confirmar el orden de lectura título→acción, el nivel de encabezado anunciado por Compose en cada plataforma y que el patrón no duplique encabezados cuando se inserta dentro de otra pantalla.
+- Los estados vacíos siguen requiriendo revisión de copy/CTA por flujo; este cambio no determina el contenido ni modifica acciones de negocio.
