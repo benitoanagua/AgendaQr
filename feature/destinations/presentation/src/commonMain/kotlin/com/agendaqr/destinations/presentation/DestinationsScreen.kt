@@ -65,7 +65,7 @@ fun DestinationsScreen(
         }
         state.error?.let { XauxaStatusBanner(it, danger = true) }
         when {
-            state.isLoading -> XauxaLoading()
+            state.isLoading -> XauxaLoading(message = "Cargando destinos QR…")
             state.visibleDestinations.isEmpty() -> XauxaEmptyState(
                 title = if (state.destinations.isEmpty()) "Aún no hay destinos" else "No se encontraron destinos",
                 actionLabel = if (state.destinations.isEmpty()) "Agregar QR" else "Limpiar búsqueda",
