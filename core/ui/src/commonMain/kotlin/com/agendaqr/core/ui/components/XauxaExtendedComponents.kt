@@ -367,6 +367,11 @@ fun XauxaTextInput(
             isError = isError,
             singleLine = singleLine,
             minLines = minLines,
+            supportingText = if (isError && errorMessage != null) {
+                { Text(errorMessage, fontSize = XauxaType.Caption, color = XauxaColor.Danger) }
+            } else {
+                null
+            },
             shape = RectangleShape,
             textStyle = androidx.compose.ui.text.TextStyle(fontSize = XauxaType.Body),
             colors = TextFieldDefaults.colors(
@@ -382,9 +387,6 @@ fun XauxaTextInput(
                 errorTextColor = XauxaColor.TextPrimary,
             ),
         )
-        if (isError && errorMessage != null) {
-            Text(errorMessage, fontSize = XauxaType.Caption, color = XauxaColor.Danger)
-        }
     }
 }
 
