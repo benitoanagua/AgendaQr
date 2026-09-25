@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextOverflow
 import com.agendaqr.core.ui.components.XauxaSearchBar
 import com.agendaqr.core.ui.lab.model.LabCatalogQuery
@@ -31,7 +30,6 @@ import com.agendaqr.core.ui.lab.model.LabCategory
 import com.agendaqr.core.ui.lab.model.LabComponentContract
 import com.agendaqr.core.ui.lab.model.LabPattern
 import com.agendaqr.core.ui.lab.model.LabPatterns
-import com.agendaqr.core.ui.lab.model.categoryCounts
 import com.agendaqr.core.ui.lab.model.filterCatalog
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
@@ -43,6 +41,25 @@ enum class LabSection(val label: String) {
     COMPONENTS("Componentes"),
     PATTERNS("Patrones"),
 }
+
+/**
+ * Indica si una categoría puede filtrar dentro de una sección. Fundamentos
+ * solo admite su propia categoría; Componentes admite todas menos
+ * Fundamentos; Patrones ignora el filtro de categoría porque su listado es
+ * independiente del catálogo de componentes.
+ */
+internal fun LabSection.allows(category: LabCategory?): Boolean = when (this) {
+    LabSection.FOUNDATIONS -> category == null || category == LabCategory.FOUNDATIONS
+    LabSection.COMPONENTS -> category == null || category != LabCategory.FOUNDATIONS
+    LabSection.PATTERNS -> true
+}
+
+private fun sectionScope(section: LabSection, catalog: List<LabComponentContract>): List<LabComponentContract> =
+    when (section) {
+        LabSection.FOUNDATIONS -> catalog.filter { it.category == LabCategory.FOUNDATIONS }
+        LabSection.COMPONENTS -> catalog.filter { it.category != LabCategory.FOUNDATIONS }
+        LabSection.PATTERNS -> catalog
+    }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -59,18 +76,29 @@ internal fun LabCatalogPane(
     selectedPatternId: String = LabPatterns.all.first().id,
     onPatternSelected: (String) -> Unit = {},
 ) {
-    val visible = when (section) {
-        LabSection.FOUNDATIONS -> catalog.filter { it.category == LabCategory.FOUNDATIONS }
-        LabSection.COMPONENTS -> catalog.filter { it.category != LabCategory.FOUNDATIONS }
-        LabSection.PATTERNS -> catalog
-    }
-    val results = filterCatalog(visible, query)
-    val counts = categoryCounts(catalog)
+    val scope = sectionScope(section, catalog)
+    // Defensa ante un filtro de categoría que quedó obsoleto tras cambiar de
+    // sección: se ignora en lugar de mostrar un vacío confuso. El propietario
+    // del estado además lo limpia en onSectionChange.
+    val effectiveQuery = if (section.allows(query.category)) query else query.copy(category = null)
+    val results = filterCatalog(scope, effectiveQuery)
+    // Conteos informativos y estables: dependen solo de la sección, nunca del
+    // texto buscado ni de la categoría activa, para no fluctuar al escribir.
+    val countsInScope = scope.groupingBy { it.category }.eachCount()
+    // Las categorías vacías en la sección actual se ocultan (en ambos modos)
+    // en vez de ofrecer un filtro que solo produce "sin resultados".
+    val availableCategories = LabCategory.entries.filter { (countsInScope[it] ?: 0) > 0 }
 
     LabPanel(
-        title = "Componentes",
+        title = section.label,
         subtitle = "Explora y prueba el sistema.",
-        trailing = { LabBadge("${visible.size} elementos") },
+        trailing = {
+            if (section == LabSection.PATTERNS) {
+                LabBadge("${LabPatterns.all.size} patrones")
+            } else {
+                LabBadge("${results.size} elementos")
+            }
+        },
         modifier = modifier,
     ) {
         if (scrollable) {
@@ -81,15 +109,22 @@ internal fun LabCatalogPane(
                 CatalogNavigation(
                     section = section,
                     onSectionChange = onSectionChange,
-                    counts = counts,
                     catalog = catalog,
+                    scopeSize = scope.size,
+                    query = effectiveQuery,
+                    onQueryChange = onQueryChange,
+                    availableCategories = availableCategories,
+                    countsInScope = countsInScope,
                     modifier = Modifier.fillMaxWidth(0.26f),
                 )
                 CatalogContent(
                     section = section,
-                    query = query,
+                    query = effectiveQuery,
                     onQueryChange = onQueryChange,
+                    scopeSize = scope.size,
                     results = results,
+                    availableCategories = availableCategories,
+                    countsInScope = countsInScope,
                     selectedId = selectedId,
                     onComponentSelected = onComponentSelected,
                     selectedPatternId = selectedPatternId,
@@ -112,9 +147,12 @@ internal fun LabCatalogPane(
                 }
                 CatalogContent(
                     section = section,
-                    query = query,
+                    query = effectiveQuery,
                     onQueryChange = onQueryChange,
+                    scopeSize = scope.size,
                     results = results,
+                    availableCategories = availableCategories,
+                    countsInScope = countsInScope,
                     selectedId = selectedId,
                     onComponentSelected = onComponentSelected,
                     selectedPatternId = selectedPatternId,
@@ -131,8 +169,12 @@ internal fun LabCatalogPane(
 private fun CatalogNavigation(
     section: LabSection,
     onSectionChange: (LabSection) -> Unit,
-    counts: Map<LabCategory, Int>,
     catalog: List<LabComponentContract>,
+    scopeSize: Int,
+    query: LabCatalogQuery,
+    onQueryChange: (LabCatalogQuery) -> Unit,
+    availableCategories: List<LabCategory>,
+    countsInScope: Map<LabCategory, Int>,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -150,12 +192,17 @@ private fun CatalogNavigation(
         Text("CATEGORÍAS", fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary)
         LabCatalogNavItem(
             label = "Todos",
-            count = catalog.size,
-            selected = false,
-            onClick = { onSectionChange(LabSection.COMPONENTS) },
+            count = scopeSize,
+            selected = query.category == null,
+            onClick = { onQueryChange(query.copy(category = null)) },
         )
-        LabCategory.entries.forEach { category ->
-            CategoryCountRow(category.label, counts[category] ?: 0)
+        availableCategories.forEach { category ->
+            LabCatalogNavItem(
+                label = category.label,
+                count = countsInScope[category] ?: 0,
+                selected = query.category == category,
+                onClick = { onQueryChange(query.copy(category = category)) },
+            )
         }
     }
 }
@@ -165,7 +212,10 @@ private fun CatalogContent(
     section: LabSection,
     query: LabCatalogQuery,
     onQueryChange: (LabCatalogQuery) -> Unit,
+    scopeSize: Int,
     results: List<LabComponentContract>,
+    availableCategories: List<LabCategory>,
+    countsInScope: Map<LabCategory, Int>,
     selectedId: String,
     onComponentSelected: (String) -> Unit,
     selectedPatternId: String,
@@ -192,14 +242,14 @@ private fun CatalogContent(
         FlowRow(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs)) {
             LabCategoryFilter(
                 label = "Todos",
-                count = results.size,
+                count = scopeSize,
                 selected = query.category == null,
                 onClick = { onQueryChange(query.copy(category = null)) },
             )
-            LabCategory.entries.forEach { category ->
+            availableCategories.forEach { category ->
                 LabCategoryFilter(
                     label = category.label,
-                    count = categoryCountInSection(category, section, results),
+                    count = countsInScope[category] ?: 0,
                     selected = query.category == category,
                     onClick = { onQueryChange(query.copy(category = category)) },
                 )
@@ -209,7 +259,7 @@ private fun CatalogContent(
             LabEmptySearch(query)
         } else if (scrollable) {
             LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 168.dp),
+                columns = GridCells.Adaptive(minSize = XauxaMetrics.CatalogCardMinWidth),
                 modifier = Modifier.fillMaxWidth().weight(1f),
                 horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
                 verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
@@ -238,12 +288,6 @@ private fun sectionCount(section: LabSection, catalog: List<LabComponentContract
         LabSection.COMPONENTS -> catalog.count { it.category != LabCategory.FOUNDATIONS }
         LabSection.PATTERNS -> LabPatterns.all.size
     }
-
-private fun categoryCountInSection(
-    category: LabCategory,
-    section: LabSection,
-    results: List<LabComponentContract>,
-): Int = results.count { it.category == category }
 
 @Composable
 private fun ColumnScope.LabPatternList(
@@ -302,17 +346,6 @@ private fun LabCatalogNavItem(label: String, count: Int, selected: Boolean, onCl
             Text(label, fontSize = XauxaType.Label, color = if (selected) XauxaColor.Brand else XauxaColor.TextPrimary)
             Text(count.toString(), fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary)
         }
-    }
-}
-
-@Composable
-private fun CategoryCountRow(label: String, count: Int) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = XauxaSpacing.Sm, vertical = XauxaSpacing.Xs),
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Text(label, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
-        Text(count.toString(), fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary)
     }
 }
 

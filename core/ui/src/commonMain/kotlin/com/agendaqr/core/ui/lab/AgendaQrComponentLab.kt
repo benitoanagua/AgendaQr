@@ -65,7 +65,8 @@ fun AgendaQrComponentLab(
     var section by rememberSaveable { mutableStateOf(LabSection.COMPONENTS) }
     var selectedId by rememberSaveable { mutableStateOf(LabComponentCatalog.components.first().id) }
     var selectedPatternId by rememberSaveable { mutableStateOf(LabPatterns.all.first().id) }
-    var darkPreview by rememberSaveable { mutableStateOf(false) }
+    // Xauxa es dark-first: el laboratorio arranca en tema oscuro.
+    var darkPreview by rememberSaveable { mutableStateOf(true) }
     val events = remember { mutableStateListOf<String>() }
     val integrityProblems = remember { LabCatalogIntegrity.validate() }
 
@@ -106,7 +107,13 @@ fun AgendaQrComponentLab(
                             modifier = modifier,
                             scrollable = scrollable,
                             section = section,
-                            onSectionChange = { section = it },
+                            onSectionChange = {
+                                section = it
+                                // Un filtro de categoría incompatible con la
+                                // nueva sección se limpia para no mostrar un
+                                // vacío confuso.
+                                if (!it.allows(query.category)) query = query.copy(category = null)
+                            },
                             selectedPatternId = pattern.id,
                             onPatternSelected = { selectedPatternId = it },
                         )
@@ -120,7 +127,10 @@ fun AgendaQrComponentLab(
                                 modifier = modifier,
                                 scrollable = scrollable,
                                 onComponentSelected = { selectedId = it },
-                                onSectionChange = { section = it },
+                                onSectionChange = {
+                                    section = it
+                                    if (!it.allows(query.category)) query = query.copy(category = null)
+                                },
                                 onEvent = ::onEvent,
                             )
                         } else {

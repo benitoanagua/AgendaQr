@@ -246,6 +246,12 @@ object XauxaMetrics {
     val FavoriteIndicatorSize = 24.dp
     val BreakpointCompact = 480.dp
     val BreakpointMedium = 640.dp
+    /**
+     * Ancho mínimo de tarjeta del catálogo del laboratorio. Existe para que
+     * la cuadrícula adaptativa (`GridCells.Adaptive`) consuma un token
+     * semántico en lugar de un literal `dp` fuera de la capa de tokens.
+     */
+    val CatalogCardMinWidth = 168.dp
 }
 
 object XauxaType {
