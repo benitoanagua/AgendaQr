@@ -233,3 +233,10 @@ Esta nota complementa los hallazgos históricos anteriores; no los elimina, porq
 - **Acciones:** los componentes de acción compartidos ya preservan el casing del texto que entrega cada caller. Los literales que aún aparezcan en mayúsculas deben revisarse en contexto de pantalla, no atribuirse a una transformación automática del componente.
 - **Carga:** `XauxaLoading` admite `message: String?` opcional. Los consumidores de autenticación, contexto, importación por lote y búsqueda global inspeccionados pasan mensajes de estado específicos. La API sigue permitiendo el indicador sin texto cuando el contexto ya está explicado por otra parte de la pantalla.
 - **Límite de verificación:** la presencia de mensajes visibles no confirma por sí sola que las plataformas los anuncien como estado a tecnologías de asistencia. No se ha hecho ejecución visual, prueba de lector de pantalla ni build en esta pasada.
+
+
+## Pasada adicional: carga de destinos y resumen de revisión QR
+
+- `DestinationsScreen` pasa a mostrar “Cargando destinos QR…” en el patrón común, dando contexto explícito al estado de carga de la lista.
+- `ImportReviewScreen` singulariza el resumen cuando hay un solo elemento (“1 destino”) y conserva el plural para cero o varios (“N destinos”). Es una mejora de microcopy de presentación, sin modificar el conjunto de activos ni el guardado.
+- Pendiente en revisión final: confirmar la composición del encabezado y las acciones de la lista en anchuras pequeñas; esta pasada no altera la distribución ni la lógica de acciones.
