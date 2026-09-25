@@ -272,3 +272,9 @@ Esta nota complementa los hallazgos históricos anteriores; no los elimina, porq
 - Los títulos raíz de la lista de operaciones, bandeja de comprobantes sin asociar, alta de operación y detalle ahora se exponen como encabezados semánticos mediante Compose.
 - El cambio afecta solo a la navegación accesible por encabezados; textos, acciones, rutas y estado de negocio permanecen iguales.
 - Pendiente comprobar orden de lectura, foco y anuncios con TalkBack/VoiceOver, además de evitar encabezados redundantes en pantallas compuestas. No se ejecutaron pruebas ni builds locales, reservados para la fase final.
+
+## Encabezados semánticos: autenticación y revisión de importación
+
+- Se marcaron como encabezados semánticos el título raíz de autenticación (“Agenda QR”) y el título de revisión de QR importados. Se amplía la aplicación del patrón a dos pantallas comunes adicionales.
+- El contador de destinos, el texto introductorio y los campos no se marcan como encabezados: conservan su papel de información complementaria y controles.
+- Pendiente validar orden de lectura y navegación por encabezados con TalkBack/VoiceOver, especialmente en la pantalla de autenticación con mensajes dinámicos. No se ejecutaron pruebas/builds locales; siguen reservados para el cierre.
