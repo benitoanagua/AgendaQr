@@ -9,9 +9,9 @@
 | Decisiones | Agenda QR | obligatorio |
 | UX funcional | Agenda QR | obligatorio |
 | UX/UI congelada | Agenda QR + Xauxa Design System | obligatorio |
-| UI/UX visual | Xauxa Design System + XauxaXcan | obligatorio |
+| UI/UX visual | Xauxa Design System + Xauxa | obligatorio |
 | Tokens | Xauxa Design System | obligatorio |
-| Componentes/patterns | Xauxa Design System + XauxaXcan | obligatorio |
+| Componentes/patterns | Xauxa Design System + Xauxa | obligatorio |
 | Kotlin/KMP | WaraWerse | referencia técnica |
 | Compose | WaraWerse | referencia técnica |
 | Build logic | WaraWerse | referencia técnica |
