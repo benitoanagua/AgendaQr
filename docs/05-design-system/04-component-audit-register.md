@@ -122,3 +122,11 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - `ImportReviewScreen`: lista de previsualizaciones QR y acciones principales ya usan componentes compartidos; queda pendiente validar comportamiento con lotes largos y accesibilidad del contenido QR en Android/iOS.
 - `ContextScreen`: pantalla de lista/detalle ya está en español y consume filas/estados compartidos. El detalle presenta actividad usando el nombre interno del tipo de operación; queda señalado para unificar con las etiquetas de “Pago”/“Cobro” en la siguiente pasada.
 - No se ejecutaron pruebas locales ni comprobaciones visuales en esta fase; la validación queda para el cierre acordado.
+
+
+## Unificación de etiquetas de actividad
+
+- `ContextScreen`: la actividad reciente ahora traduce los tipos internos de operación a “Pago” y “Cobro”, alineándose con la lista y el detalle de operaciones.
+- La traducción se limita a la presentación; no cambia el modelo ni los valores persistidos.
+- Las etiquetas largas en acciones de la bandeja de comprobantes siguen en mayúsculas porque son textos de llamada explícitos del flujo; revisar longitud y ajuste en pantallas estrechas durante la prueba visual.
+- Pendiente de validación final: ejecutar pruebas/builds acordados, revisar tamaños de pantalla y escalado de texto, y comprobar semántica/lectura accesible de los controles y previsualizaciones QR en Android/iOS.
