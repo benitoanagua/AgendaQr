@@ -59,18 +59,18 @@ private fun labColorEntries(): List<LabColorEntry> = listOf(
     LabColorEntry("TextPrimary", XauxaColor.TextPrimary, "Texto principal"),
     LabColorEntry("TextSecondary", XauxaColor.TextSecondary, "Texto secundario"),
     LabColorEntry("TextTertiary", XauxaColor.TextTertiary, "Texto terciario y deshabilitado"),
-    LabColorEntry("Brand", XauxaColor.Brand, "Acento de AgendaQr"),
+    LabColorEntry("Brand", XauxaColor.Brand, "Color primario de Xauxa"),
     LabColorEntry("BrandAccent", XauxaColor.BrandAccent, "Acento secundario de marca"),
     LabColorEntry("OnBrand", XauxaColor.OnBrand, "Contenido sobre marca"),
     LabColorEntry("White", XauxaColor.White, "Contenido sobre fondo de QR"),
-    LabColorEntry("Success", XauxaColor.Success, "Semántica de éxito"),
-    LabColorEntry("SuccessBg", XauxaColor.SuccessBg, "Contenedor de éxito"),
+    LabColorEntry("Success", XauxaColor.Success, "Uso primario"),
+    LabColorEntry("SuccessBg", XauxaColor.SuccessBg, "Contenedor de estado"),
     LabColorEntry("Danger", XauxaColor.Danger, "Semántica de error/peligro"),
     LabColorEntry("DangerBg", XauxaColor.DangerBg, "Contenedor de peligro"),
-    LabColorEntry("Warning", XauxaColor.Warning, "Semántica de advertencia"),
-    LabColorEntry("WarningBg", XauxaColor.WarningBg, "Contenedor de advertencia"),
-    LabColorEntry("Info", XauxaColor.Info, "Semántica informativa"),
-    LabColorEntry("InfoBg", XauxaColor.InfoBg, "Contenedor informativo"),
+    LabColorEntry("Warning", XauxaColor.Warning, "Uso secundario"),
+    LabColorEntry("WarningBg", XauxaColor.WarningBg, "Contenedor secundario"),
+    LabColorEntry("Info", XauxaColor.Info, "Uso terciario"),
+    LabColorEntry("InfoBg", XauxaColor.InfoBg, "Contenedor terciario"),
     LabColorEntry("FocusRing", XauxaColor.FocusRing, "Anillo de foco visible"),
 )
 
@@ -105,7 +105,7 @@ private fun ColorSpecimen() {
             }
         }
         Text(
-            "No existen variantes dark de estos tokens: el tema Material oscuro no altera los componentes Xauxa.",
+            "Los tokens se resuelven desde el esquema Xauxa activo; el laboratorio permite revisar los temas claro y oscuro.",
             fontSize = XauxaType.Caption,
             color = XauxaColor.TextSecondary,
         )
