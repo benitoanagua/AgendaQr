@@ -6,7 +6,7 @@ Esta carpeta es la referencia normativa del producto y de la implementación. La
 
 1. **Agenda QR**: producto, dominio, requisitos, alcance y decisiones aprobadas.
 2. **UX/UI V1 de Agenda QR**: comportamiento de interacción congelado en `docs/04-ux/02-especificacion-ux-ui-v1.md`.
-3. **Xauxa Design System + XauxaXcan**: UI/UX visual, tokens, componentes y referencia técnica para lectura/clasificación de QR.
+3. **Xauxa Design System + Xauxa**: UI/UX visual, tokens, componentes y referencia técnica para lectura/clasificación de QR.
 4. **WaraWerse**: referencia técnica para Kotlin Multiplatform, modularización, Gradle y patrones de implementación.
 
 Una referencia técnica no puede introducir reglas de negocio que no estén aprobadas para Agenda QR.
