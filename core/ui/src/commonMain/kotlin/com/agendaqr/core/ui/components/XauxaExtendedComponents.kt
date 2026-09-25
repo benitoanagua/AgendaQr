@@ -205,7 +205,7 @@ fun XauxaBadge(
 
 /**
  * Fila de lista: separador por borde inferior y marcador semántico lateral
- * de 2px (Xauxa usa 4px; se reduce a 2px por la invariante 01).
+ * de 2px (el sistema Xauxa permite un marcador estructural de 2px).
  */
 @Composable
 fun XauxaListRow(
