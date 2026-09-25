@@ -260,3 +260,9 @@ Esta nota complementa los hallazgos históricos anteriores; no los elimina, porq
 
 - `FirstUsePattern` usa ahora la acción localizada «Agregar QR», consistente con el CTA de alta de destinos en la pantalla principal.
 - La ficha/laboratorio debe conservar ejemplos de copy en español para flujos de producto; no se cambia la semántica de la acción ni el flujo de incorporación.
+
+
+## Encabezados semánticos en pantallas principales
+
+- Se expusieron como encabezados los títulos raíz de Destinations y Contextos, y el nombre del contexto en detalle. El estado vacío compartido también expone su título como encabezado.
+- La semántica mejora la navegación por encabezados, pero no equivale a una auditoría completa de jerarquía: queda pendiente verificar orden y niveles en TalkBack/VoiceOver, en particular cuando pantallas anfitrionas añaden encabezados propios.
