@@ -74,7 +74,7 @@ internal fun LabPanel(
                 }
                 trailing?.invoke()
             }
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+            HorizontalDivider(color = XauxaColor.Border)
             content()
         }
     }
@@ -92,7 +92,7 @@ internal fun LabBadge(text: String, modifier: Modifier = Modifier) {    Surface(
             text,
             modifier = Modifier.padding(horizontal = XauxaSpacing.Sm, vertical = XauxaSpacing.Xs),
             fontSize = XauxaType.Caption,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = XauxaColor.TextSecondary,
         )
     }
 }
@@ -100,7 +100,6 @@ internal fun LabBadge(text: String, modifier: Modifier = Modifier) {    Surface(
 /** Status badge for a review classification. Never color-only: label included. */
 @Composable
 internal fun LabStatusBadge(status: LabReviewStatus, modifier: Modifier = Modifier) {
-    val scheme = MaterialTheme.colorScheme
     val color = when (status) {
         LabReviewStatus.VERIFIED -> scheme.primary
         LabReviewStatus.DOCUMENTED -> scheme.tertiary
@@ -110,7 +109,7 @@ internal fun LabStatusBadge(status: LabReviewStatus, modifier: Modifier = Modifi
     Surface(
         modifier = modifier,
         shape = RectangleShape,
-        color = scheme.surfaceVariant,
+        color = XauxaColor.Surface2,
         tonalElevation = XauxaSpacing.None,
     ) {
         Text(
@@ -133,12 +132,12 @@ internal fun LabLabelValue(label: String, value: String, modifier: Modifier = Mo
         Text(
             label,
             fontSize = XauxaType.Label,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = XauxaColor.TextSecondary,
         )
         Text(
             value,
             fontSize = XauxaType.Label,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = XauxaColor.TextPrimary,
         )
     }
 }
@@ -153,14 +152,14 @@ internal fun LabEventLog(events: List<String>, modifier: Modifier = Modifier) {
             Text(
                 "Interactúa con el preview para capturar eventos.",
                 fontSize = XauxaType.Label,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = XauxaColor.TextSecondary,
             )
         } else {
             events.asReversed().forEachIndexed { index, event ->
                 Text(
                     "${index + 1}. $event",
                     fontSize = XauxaType.Label,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = XauxaColor.TextPrimary,
                 )
             }
         }
@@ -187,13 +186,13 @@ internal fun LabChoiceChip(
         border = androidx.compose.material3.FilterChipDefaults.filterChipBorder(
             enabled = true,
             selected = selected,
-            borderColor = MaterialTheme.colorScheme.outline,
+            borderColor = XauxaColor.Border,
             selectedBorderColor = XauxaColor.Brand,
             borderWidth = XauxaMetrics.Border,
         ),
         colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
             containerColor = MaterialTheme.colorScheme.surface,
-            labelColor = MaterialTheme.colorScheme.onSurface,
+            labelColor = XauxaColor.TextPrimary,
             selectedContainerColor = XauxaColor.Brand,
             selectedLabelColor = XauxaColor.OnBrand,
         ),
