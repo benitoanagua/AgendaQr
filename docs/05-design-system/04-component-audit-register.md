@@ -137,3 +137,10 @@ Se actualizó la implementación común de `XauxaFavoriteToggle` para exponer su
 - `OperationScreens`: el banner del detalle ahora usa la etiqueta de presentación “Pago”/“Cobro” en lugar del nombre interno enum en mayúsculas, alineado con la lista y actividad reciente.
 - Cambio solo de presentación; no modifica lógica, modelo ni datos persistidos.
 - Pendiente validar visualmente el banner en distintos anchos y escalas de texto junto con la pasada final de accesibilidad.
+
+
+## Localización de acciones en detalle de destino
+
+- `DestinationDetailScreen`: acciones de QR, regreso, edición, compartir y eliminación se presentan en español (“Mostrar QR”, “Volver”, “Editar”, “Compartir”, “Eliminar”), manteniendo la eliminación dentro del menú de desbordamiento.
+- Ajuste de textos de interfaz únicamente; callbacks y comportamiento de acciones permanecen intactos.
+- Pendiente revisar en validación visual final el ajuste de etiquetas en la barra contextual y la accesibilidad del menú.
