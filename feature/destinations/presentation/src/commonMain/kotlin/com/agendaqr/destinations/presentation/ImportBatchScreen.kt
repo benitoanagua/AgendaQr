@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
+import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -30,11 +31,11 @@ fun ImportBatchScreen(
                 Text("Trae varios elementos a Agenda QR.", color = XauxaColor.TextSecondary)
                 XauxaSecondaryButton("Volver", onClick = { onAction(ImportBatchAction.Back) })
             }
-            ImportBatchUiState.Importing -> Text("Importando…", color = XauxaColor.TextSecondary)
-            ImportBatchUiState.Analyzing -> Text("Analizando…", color = XauxaColor.TextSecondary)
+            ImportBatchUiState.Importing -> XauxaLoading()
+            ImportBatchUiState.Analyzing -> XauxaLoading()
             is ImportBatchUiState.Result -> BatchResultContent(state.batch, onAction)
             is ImportBatchUiState.Review -> BatchReviewContent(state.batch, onAction)
-            is ImportBatchUiState.Saving -> Text("Guardando elementos reconocidos…", color = XauxaColor.TextSecondary)
+            is ImportBatchUiState.Saving -> XauxaLoading()
             is ImportBatchUiState.Saved -> {
                 XauxaStatusBanner("Guardado. Los elementos pendientes conservan su revisión.", danger = false)
                 XauxaPrimaryButton("Volver", onClick = { onAction(ImportBatchAction.Back) })
