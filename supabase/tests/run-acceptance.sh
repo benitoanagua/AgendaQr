@@ -21,6 +21,11 @@ CREATE TABLE IF NOT EXISTS auth.users(id uuid PRIMARY KEY);
 CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
     LANGUAGE sql STABLE AS $$ SELECT NULL::uuid $$;
 CREATE SCHEMA IF NOT EXISTS storage;
+CREATE TABLE IF NOT EXISTS storage.buckets(
+    id text PRIMARY KEY,
+    name text,
+    public boolean
+);
 CREATE TABLE IF NOT EXISTS storage.objects(
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     bucket_id text,

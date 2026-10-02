@@ -99,6 +99,8 @@ jobs:
 
   ios-compile:
     runs-on: macos-latest
+    env:
+      ORG_GRADLE_PROJECT_allowDebugSigningForRc: "true"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
