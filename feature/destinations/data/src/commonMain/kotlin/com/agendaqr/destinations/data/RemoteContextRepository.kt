@@ -12,6 +12,8 @@ interface RemoteContextRepository {
     suspend fun save(context: Context)
     suspend fun update(context: Context)
     suspend fun delete(id: String)
+    /** Lectura puntual; por defecto filtra el snapshot. */
+    suspend fun get(id: String): Context? = observe().firstOrNull { it.id == id }
 }
 
 class SupabaseContextRepository(

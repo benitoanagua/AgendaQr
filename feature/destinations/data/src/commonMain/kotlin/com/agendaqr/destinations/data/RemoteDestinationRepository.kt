@@ -16,6 +16,8 @@ interface RemoteDestinationRepository {
     suspend fun save(destination: Destination)
     suspend fun update(destination: Destination)
     suspend fun delete(id: String)
+    /** Lectura puntual; por defecto filtra el snapshot (Supabase no expone single barato en KMP). */
+    suspend fun get(id: String): Destination? = observe().firstOrNull { it.id == id }
 }
 
 class SupabaseDestinationRepository(

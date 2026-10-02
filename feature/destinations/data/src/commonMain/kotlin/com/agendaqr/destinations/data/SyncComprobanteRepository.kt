@@ -3,6 +3,7 @@ package com.agendaqr.destinations.data
 import com.agendaqr.destinations.domain.Comprobante
 import com.agendaqr.destinations.domain.ComprobanteFileStore
 import com.agendaqr.destinations.domain.ComprobanteRepository
+import com.agendaqr.destinations.domain.nowMillis
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,7 @@ class SyncComprobanteRepository(
     private val fileStore: ComprobanteFileStore,
     private val enqueuer: SyncMutationEnqueuer,
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+    private val conflictResolver: SyncConflictResolver = SyncConflictResolver(),
 ) : ComprobanteRepository {
 
     private val syncMutex = Mutex()
@@ -35,26 +37,50 @@ class SyncComprobanteRepository(
             val bytes = fileStore.read(comprobante.file)
                 ?: error("Local receipt file not found: " + comprobante.file)
             remote.save(comprobante, bytes)
-        }.onFailure { enqueuer.upsert(SyncResource.COMPROBANTE, comprobante.id) }
+        }.onFailure {
+            enqueuer.upsert(
+                SyncResource.COMPROBANTE,
+                comprobante.id,
+                comprobante.updatedAt,
+                runCatching { remote.get(comprobante.id)?.comprobante?.updatedAt }.getOrNull(),
+            )
+        }
     }
 
     override suspend fun update(comprobante: Comprobante) {
         local.update(comprobante)
         runCatching { remote.update(comprobante) }
-            .onFailure { enqueuer.upsert(SyncResource.COMPROBANTE, comprobante.id) }
+            .onFailure {
+                enqueuer.upsert(
+                    SyncResource.COMPROBANTE,
+                    comprobante.id,
+                    comprobante.updatedAt,
+                    runCatching { remote.get(comprobante.id)?.comprobante?.updatedAt }.getOrNull(),
+                )
+            }
     }
 
     override suspend fun delete(id: String) {
+        val deletedAt = local.get(id)?.updatedAt
         local.delete(id)
         runCatching {
             remote.observe().firstOrNull { it.comprobante.id == id }?.let { remote.delete(it) }
-        }.onFailure { enqueuer.delete(SyncResource.COMPROBANTE, id) }
+        }.onFailure {
+            enqueuer.delete(
+                SyncResource.COMPROBANTE,
+                id,
+                deletedAt ?: nowMillis(),
+                runCatching { remote.get(id)?.comprobante?.updatedAt }.getOrNull(),
+            )
+        }
     }
 
     suspend fun syncFromRemote() {
         syncMutex.withLock {
             runCatching {
+                val dirty = enqueuer.pendingIds(SyncResource.COMPROBANTE)
                 remote.observe().forEach { record ->
+                    if (record.comprobante.id in dirty) return@forEach
                     val bytes = AgendaQrSupabase.client.storage
                         .from("comprobantes")
                         .downloadAuthenticated(record.remoteFilePath)
@@ -66,7 +92,9 @@ class SyncComprobanteRepository(
                     val localReceipt = record.comprobante.copy(file = localFile)
                     val existing = local.get(localReceipt.id)
                     if (existing == null) local.save(localReceipt)
-                    else if (localReceipt.updatedAt >= existing.updatedAt) local.update(localReceipt)
+                    else if (conflictResolver.shouldApplyRemote(existing.updatedAt, localReceipt.updatedAt)) {
+                        local.update(localReceipt)
+                    }
                 }
             }
         }
@@ -90,6 +118,19 @@ fun createSyncedComprobanteRepository(
 ): ComprobanteRepository =
     SyncComprobanteRepository(
         local = LocalComprobanteRepository(storageKey = userScopedKey("agendaqr.comprobantes.v1")),
+        remote = createRemoteComprobanteRepository(),
+        fileStore = fileStore,
+        enqueuer = enqueuer,
+    )
+
+/** Variante con [local] compartido con el [SyncMutationProcessor] (ver contexts). */
+fun createSyncedComprobanteRepository(
+    fileStore: ComprobanteFileStore,
+    enqueuer: SyncMutationEnqueuer,
+    local: ComprobanteRepository,
+): ComprobanteRepository =
+    SyncComprobanteRepository(
+        local = local,
         remote = createRemoteComprobanteRepository(),
         fileStore = fileStore,
         enqueuer = enqueuer,

@@ -16,6 +16,8 @@ interface RemoteOperationRepository {
     suspend fun save(operation: Operation)
     suspend fun update(operation: Operation)
     suspend fun delete(id: String)
+    /** Lectura puntual; por defecto filtra el snapshot. */
+    suspend fun get(id: String): Operation? = observe().firstOrNull { it.id == id }
 }
 
 class SupabaseOperationRepository(

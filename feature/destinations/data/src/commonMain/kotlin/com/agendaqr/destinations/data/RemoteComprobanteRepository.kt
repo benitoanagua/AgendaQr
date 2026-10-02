@@ -21,6 +21,9 @@ interface RemoteComprobanteRepository {
     suspend fun save(comprobante: Comprobante, bytes: ByteArray)
     suspend fun update(comprobante: Comprobante)
     suspend fun delete(record: RemoteComprobanteRecord)
+    /** Lectura puntual; por defecto filtra el snapshot. */
+    suspend fun get(id: String): RemoteComprobanteRecord? =
+        observe().firstOrNull { it.comprobante.id == id }
 }
 
 class SupabaseComprobanteRepository(

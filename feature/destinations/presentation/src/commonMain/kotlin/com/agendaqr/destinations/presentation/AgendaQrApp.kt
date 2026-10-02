@@ -17,10 +17,15 @@ import com.agendaqr.destinations.data.createComprobanteFileStore
 import com.agendaqr.destinations.data.createImportPayloadStore
 import com.agendaqr.destinations.data.createDeletedOperationHistoryRepository
 import com.agendaqr.destinations.data.createAuthRepository
+import com.agendaqr.destinations.data.LocalComprobanteRepository
+import com.agendaqr.destinations.data.LocalContextRepository
+import com.agendaqr.destinations.data.LocalDestinationRepository
+import com.agendaqr.destinations.data.LocalOperationRepository
 import com.agendaqr.destinations.data.LocalSyncQueue
 import com.agendaqr.destinations.data.SyncMutationEnqueuer
 import com.agendaqr.destinations.data.SyncMutationProcessor
 import com.agendaqr.destinations.data.SyncRecoveryCoordinator
+import com.agendaqr.destinations.data.userScopedKey
 import com.agendaqr.destinations.data.createRemoteContextRepository
 import com.agendaqr.destinations.data.createRemoteDestinationRepository
 import com.agendaqr.destinations.data.createRemoteOperationRepository
@@ -76,19 +81,34 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
     val syncScope = remember { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
     val syncQueue = remember { LocalSyncQueue() }
     val syncEnqueuer = remember(syncQueue) { SyncMutationEnqueuer(syncQueue) }
-    val contextRepository = remember(syncQueue) { createSyncedContextRepository(syncQueue) }
-    val destinationRepository = remember(syncEnqueuer) { createSyncedDestinationRepository(syncEnqueuer) }
-    val operationRepository = remember(syncEnqueuer) { createSyncedOperationRepository(syncEnqueuer) }
+    // Estado local crudo compartido: los wrappers Sync son la vía de escritura
+    // de UI (encolan), y el procesador opera sobre estos mismos locales sin
+    // re-encolar al aplicar snapshots ganadores del servidor.
+    val contextLocal = remember(syncQueue) {
+        LocalContextRepository(storageKey = userScopedKey("agendaqr.contexts.v1"))
+    }
+    val destinationLocal = remember(syncQueue) {
+        LocalDestinationRepository(storageKey = userScopedKey("agendaqr.destinations.v1"))
+    }
+    val operationLocal = remember(syncQueue) {
+        LocalOperationRepository(storageKey = userScopedKey("agendaqr.operations.v1"))
+    }
+    val comprobanteLocal = remember(syncQueue) {
+        LocalComprobanteRepository(storageKey = userScopedKey("agendaqr.comprobantes.v1"))
+    }
+    val contextRepository = remember(syncQueue) { createSyncedContextRepository(syncQueue, contextLocal) }
+    val destinationRepository = remember(syncEnqueuer) { createSyncedDestinationRepository(syncEnqueuer, destinationLocal) }
+    val operationRepository = remember(syncEnqueuer) { createSyncedOperationRepository(syncEnqueuer, operationLocal) }
     val fileStore = remember { createComprobanteFileStore() }
     val importPayloadStore = remember { createImportPayloadStore() }
-    val comprobanteRepository = remember(syncEnqueuer, fileStore) { createSyncedComprobanteRepository(fileStore, syncEnqueuer) }
-    val syncProcessor = remember(syncQueue, contextRepository, destinationRepository, operationRepository, comprobanteRepository, fileStore) {
+    val comprobanteRepository = remember(syncEnqueuer, fileStore) { createSyncedComprobanteRepository(fileStore, syncEnqueuer, comprobanteLocal) }
+    val syncProcessor = remember(syncQueue, contextLocal, destinationLocal, operationLocal, comprobanteLocal, fileStore) {
         SyncMutationProcessor(
             queue = syncQueue,
-            contexts = contextRepository,
-            destinations = destinationRepository,
-            operations = operationRepository,
-            comprobantes = comprobanteRepository,
+            contexts = contextLocal,
+            destinations = destinationLocal,
+            operations = operationLocal,
+            comprobantes = comprobanteLocal,
             remoteContexts = createRemoteContextRepository(),
             remoteDestinations = createRemoteDestinationRepository(),
             remoteOperations = createRemoteOperationRepository(),
