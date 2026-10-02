@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -330,7 +331,37 @@ class SyncResilienceTest {
         assertTrue(queue.all().isEmpty())
     }
 
-    // ---- Fixture ----
+    @Test
+    fun comprobante_delete_removes_remote_record_by_id_and_does_not_resurrect() = runTest {
+        val fixture = Fixture()
+        val processor = fixture.processorWithConflicts(mutableListOf())
+
+        // El comprobante se borró localmente en t=5000; en el servidor sigue
+        // la versión vieja (t=100): el borrado gana y no hay resurrección.
+        fixture.remoteComprobantes.records["r-1"] = RemoteComprobanteRecord(
+            Comprobante("r-1", "remote/r-1.png", createdAt = 50, updatedAt = 100),
+            "user/r-1.png",
+        )
+        fixture.queue.enqueue(
+            PendingSyncMutation(
+                id = "m-1",
+                resource = SyncResource.COMPROBANTE,
+                mutation = SyncMutationType.DELETE,
+                entityId = "r-1",
+                enqueuedAt = 5_000,
+                nextAttemptAt = 5_000,
+                baseUpdatedAt = 100,
+                localUpdatedAt = 5_000,
+            )
+        )
+
+        val result = processor.drainWithReport(now = 6_000)
+
+        assertEquals(1, result.pushed)
+        assertEquals(listOf("r-1"), fixture.remoteComprobantes.deleted)
+        assertNull(fixture.comprobantes.get("r-1"))
+        assertTrue(fixture.queue.all().isEmpty())
+    }
 
     private fun Fixture.processorOn(
         queue: LocalSyncQueue,
@@ -539,12 +570,17 @@ class SyncResilienceTest {
 
     private class FakeRemoteComprobantes : RemoteComprobanteRepository {
         val saved = mutableListOf<Pair<Comprobante, ByteArray>>()
-        override suspend fun observe(): List<RemoteComprobanteRecord> = emptyList()
+        val records = mutableMapOf<String, RemoteComprobanteRecord>()
+        val deleted = mutableListOf<String>()
+        override suspend fun observe(): List<RemoteComprobanteRecord> = records.values.toList()
         override suspend fun save(comprobante: Comprobante, bytes: ByteArray) {
             saved.removeAll { it.first.id == comprobante.id }
             saved += comprobante to bytes.copyOf()
         }
         override suspend fun update(comprobante: Comprobante) = Unit
-        override suspend fun delete(record: RemoteComprobanteRecord) = Unit
+        override suspend fun delete(record: RemoteComprobanteRecord) {
+            records.remove(record.comprobante.id)
+            deleted += record.comprobante.id
+        }
     }
 }
