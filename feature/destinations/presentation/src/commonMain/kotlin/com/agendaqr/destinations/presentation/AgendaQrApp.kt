@@ -24,7 +24,9 @@ import com.agendaqr.destinations.data.LocalOperationRepository
 import com.agendaqr.destinations.data.LocalSyncQueue
 import com.agendaqr.destinations.data.SyncMutationEnqueuer
 import com.agendaqr.destinations.data.SyncMutationProcessor
+import com.agendaqr.destinations.data.SyncMutationState
 import com.agendaqr.destinations.data.SyncRecoveryCoordinator
+import com.agendaqr.destinations.data.platformNetworkMonitor
 import com.agendaqr.destinations.data.userScopedKey
 import com.agendaqr.destinations.data.createRemoteContextRepository
 import com.agendaqr.destinations.data.createRemoteDestinationRepository
@@ -62,7 +64,8 @@ fun AgendaQrApp() {
     val authState by authViewModel.state.collectAsState()
 
     XauxaTheme {
-        when (authState.authState) {
+        val session = authState.authState
+        when (session) {
             AuthState.Loading -> XauxaLoading()
             AuthState.SignedOut -> AuthScreen(
                 state = authState,
@@ -71,14 +74,24 @@ fun AgendaQrApp() {
                 onSignIn = authViewModel::submitSignIn,
                 onSignUp = authViewModel::submitSignUp,
             )
-            is AuthState.SignedIn -> AgendaQrAuthenticatedApp(onSignOut = authViewModel::signOut)
+            is AuthState.SignedIn -> AgendaQrAuthenticatedApp(
+                userId = session.user.id,
+                onSignOut = authViewModel::signOut,
+            )
         }
     }
 }
 
 @Composable
-private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
-    val syncScope = remember { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
+private fun AgendaQrAuthenticatedApp(userId: String, onSignOut: () -> Unit) {
+    // Scope ligado al usuario: sobrevive a recomposiciones y solo se cancela
+    // cuando esta sesión autenticada sale de composición (su propio onDispose).
+    // El coordinator se detiene por separado con recovery.stop() para que
+    // "Reintentar ahora" y los syncScope.launch sigan funcionando.
+    val syncScope = remember(userId) { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
+    DisposableEffect(syncScope) {
+        onDispose { syncScope.coroutineContext.cancel() }
+    }
     val syncQueue = remember { LocalSyncQueue() }
     val syncEnqueuer = remember(syncQueue) { SyncMutationEnqueuer(syncQueue) }
     // Estado local crudo compartido: los wrappers Sync son la vía de escritura
@@ -116,15 +129,13 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
             fileStore = fileStore,
         )
     }
-    val recovery = remember(syncProcessor, syncScope) {
-        SyncRecoveryCoordinator(syncProcessor, syncScope)
+    val networkMonitor = remember { platformNetworkMonitor() }
+    val recovery = remember(syncProcessor, syncScope, networkMonitor) {
+        SyncRecoveryCoordinator(syncProcessor, syncScope, networkMonitor = networkMonitor)
     }
     DisposableEffect(recovery) {
         recovery.start()
-        onDispose {
-            recovery.stop()
-            syncScope.coroutineContext.cancel()
-        }
+        onDispose { recovery.stop() }
     }
     val queueObserver = remember(syncQueue) { SyncQueueObserver(syncQueue) }
     var pendingCount by remember { mutableStateOf(0) }
@@ -132,10 +143,8 @@ private fun AgendaQrAuthenticatedApp(onSignOut: () -> Unit) {
     var hasFailed by remember { mutableStateOf(false) }
     LaunchedEffect(queueObserver) {
         queueObserver.observeQueue().collect { items ->
-            pendingCount = items.count { it.state != com.agendaqr.destinations.data.SyncMutationState.FAILED } + items.count { it.state == com.agendaqr.destinations.data.SyncMutationState.FAILED }
-            hasFailed = items.any { it.state == com.agendaqr.destinations.data.SyncMutationState.FAILED }
-            // failed count kept separate for banner
             pendingCount = items.size
+            hasFailed = items.any { it.state == SyncMutationState.FAILED }
         }
     }
     LaunchedEffect(queueObserver) {
