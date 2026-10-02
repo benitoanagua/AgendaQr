@@ -21,9 +21,9 @@ fun checkViolations(): List<String> {
     val violations = mutableListOf<String>()
     val bannedImports = listOf("androidx.compose.material.icons", "Icons.Filled", "Icons.Outlined", "Icons.Rounded")
     val rawHex = Regex("#[0-9A-Fa-f]{6,8}")
-    val rawDp = Regex("(?<![A-Za-z0-9_])(\d+(?:\.\d+)?)\.dp\b")
-    val rawSp = Regex("(?<![A-Za-z0-9_])(\d+(?:\.\d+)?)\.sp\b")
-    val rawColor = Regex("\bColor\s*\(")
+    val rawDp = Regex("(?<![A-Za-z0-9_])(\\d+(?:\\.\\d+)?)\\.dp\\b")
+    val rawSp = Regex("(?<![A-Za-z0-9_])(\\d+(?:\\.\\d+)?)\\.sp\\b")
+    val rawColor = Regex("\\bColor\\s*\\(")
     val forbiddenShapes = listOf("RoundedCornerShape", "CutCornerShape", "shadow(", ".shadow(")
     val forbiddenVisualAuthority = listOf("MaterialTheme.colorScheme")
 
@@ -50,18 +50,16 @@ tasks.register("verifyDesignSystemCompliance") {
         if (file("design-tokens.json").exists()) {
             violations += "design-tokens.json was retired as an editable source (XauxaTokens.kt is canonical); delete it instead of editing"
         }
-        require(violations.isEmpty()) { "Xauxa Design System violations:
-${violations.joinToString("
-")}" }
+        require(violations.isEmpty()) { "Xauxa Design System violations:\\n${violations.joinToString("\\n")}" }
     }
 }
 
 fun cssViolations(path: String, content: String): List<String> = buildList {
     content.lines().forEachIndexed { index, line ->
         val location = "$path:${index + 1}"
-        val radius = Regex("border-radius\s*:\s*([^;]+);?").find(line)?.groupValues?.get(1)?.trim()
+        val radius = Regex("border-radius\\s*:\\s*([^;]+);?").find(line)?.groupValues?.get(1)?.trim()
         if (radius != null && radius != "0" && radius != "0px") add("$location: forbidden radius '$radius' (rectangular containers use 0)")
-        val shadow = Regex("box-shadow\s*:\s*([^;]+);?").find(line)?.groupValues?.get(1)?.trim()
+        val shadow = Regex("box-shadow\\s*:\\s*([^;]+);?").find(line)?.groupValues?.get(1)?.trim()
         if (shadow != null && shadow != "none") add("$location: forbidden elevation '$shadow' (separation uses 1-2px borders)")
         if (Regex("#[0-9A-Fa-f]{3,8}").containsMatchIn(line)) add("$location: raw hex in CSS (consume token output): $line".trim())
     }
@@ -76,9 +74,7 @@ tasks.register("verifyWebDesignSystem") {
     description = "Enforces Xauxa visual invariants in the Wasm host CSS."
     doLast {
         val violations = cssSources().flatMap { cssViolations(it.path, it.readText()) }
-        require(violations.isEmpty()) { "Web Design System violations:
-${violations.joinToString("
-")}" }
+        require(violations.isEmpty()) { "Web Design System violations:\\n${violations.joinToString("\\n")}" }
     }
 }
 
@@ -117,9 +113,7 @@ tasks.register("verifyArchitectureBoundaries") {
                 } else null
             }
         }
-        require(forbidden.isEmpty()) { "Domain boundary violations:
-${forbidden.joinToString("
-")}" }
+        require(forbidden.isEmpty()) { "Domain boundary violations:\\n${forbidden.joinToString("\\n")}" }
 
         val all = file(".").walkTopDown().filter { it.isFile && it.extension == "kt" && !it.path.contains("/build/") }.toList()
         val leakage = all.flatMap { source ->
@@ -129,9 +123,7 @@ ${forbidden.joinToString("
                 } else null
             }
         }
-        require(leakage.isEmpty()) { "WaraWerse product leakage detected:
-${leakage.joinToString("
-")}" }
+        require(leakage.isEmpty()) { "WaraWerse product leakage detected:\\n${leakage.joinToString("\\n")}" }
     }
 }
 
