@@ -31,7 +31,7 @@ android {
                     file(requireNotNull(prodKeystore)).exists()
 
             if (productionSigningReady) {
-                storeFile = file(prodKeystore)
+                storeFile = file(requireNotNull(prodKeystore))
                 storePassword = prodStorePassword
                 keyAlias = prodKeyAlias
                 keyPassword = prodKeyPassword
