@@ -458,6 +458,6 @@ Cambio (`XauxaSchemeTest.kt`, solo expectativas): hex fijados actualizados a los
 - `LabPatternPane.kt` (“Contratos que compone”) y la lista compacta reutilizan la misma tile; filas de patrones y navegación lateral exponen `selected` en semántica y la descripción del patrón admite 2 líneas.
 - Contador de cabecera: badge “N elementos” → “N de M” (filtrados del alcance de la sección, denominador estable). Proporción escritorio 0.68/0.32 → 0.62/0.38 para dar aire al inspector sin restar dominio al catálogo.
 - Conflicto resuelto: `XauxaColor.FocusRing` y `XauxaColor.Brand` comparten el primitivo `0067B8` por diseño del esquema; foco y selección se distinguen estructuralmente (anillo externo transitorio frente a borde + fondo + etiqueta persistentes), no por tono. Se conserva el contrato y no se introduce color paralelo.
-- No se actualiza el documento de lenguaje visual: la tile es específica del laboratorio, no una regla reutilizable de producto (`docs/05-design-system/03-agendaqr-visual-language.md` no existe en el árbol; la fuente vigente es `01-xauxa-source-snapshot.md` + `02-xauxa-implementation.md`).
+- No se actualiza el documento de lenguaje visual: la tile es específica del laboratorio, no una regla reutilizable de producto (`docs/05-design-system/01-xauxa-source-snapshot.md` + `docs/05-design-system/02-xauxa-implementation.md` son la fuente vigente).
 
 Pendiente manual: ventana amplia/mediana/estrecha, texto ampliado, nombres largos, categorías densas/dispersas, sin resultados, teclado y foco visible en ambos temas, TalkBack/VoiceOver.
