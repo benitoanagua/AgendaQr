@@ -23,6 +23,7 @@ jobs:
           java-version: "17"
 
       - name: Validate Supabase CI configuration
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         shell: bash
         run: |
           test -n "$SUPABASE_URL"
@@ -37,6 +38,9 @@ jobs:
           key: ${{ runner.os }}-gradle-v2-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.os }}-gradle-v2-
+
+      - name: Architecture and design-system gates
+        run: ./gradlew verifyAgendaQrArchitecture --stacktrace
 
       - name: Domain unit tests
         run: ./gradlew :feature:destinations:domain:testDebugUnitTest --stacktrace
@@ -70,5 +74,17 @@ jobs:
       - name: Android unit tests
         run: ./gradlew :androidApp:testDebugUnitTest --stacktrace
 
+      - name: Core UI unit tests
+        run: ./gradlew :core:ui:testDebugUnitTest --stacktrace
+
       - name: Android debug assembly
         run: ./gradlew :androidApp:assembleDebug --stacktrace
+
+      - name: Android lint
+        run: ./gradlew :androidApp:lint --stacktrace
+
+      - name: Android release assembly
+        run: ./gradlew :androidApp:assembleRelease --stacktrace
+
+      - name: Component lab WebAssembly
+        run: ./gradlew componentLabWeb --stacktrace

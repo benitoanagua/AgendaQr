@@ -27,7 +27,28 @@ class SyncMutationProcessor @OptIn(ExperimentalTime::class) constructor(
     suspend fun drain(now: Long = Clock.System.now().toEpochMilliseconds()): Int = mutex.withLock {
         queue.resetProcessing()
         var processed = 0
-        queue.claim(now).forEach { mutation ->
+        val beforeClaim = queue.all()
+        val claimed = queue.claim(now)
+        val claimedIds = claimed.mapTo(mutableSetOf()) { it.id }
+        val blockedResources = beforeClaim
+            .filter { it.state != SyncMutationState.PROCESSING && it.nextAttemptAt > now }
+            .mapTo(mutableSetOf()) { it.resource }
+        val failedParents = mutableSetOf<SyncResource>()
+        val dependencyOrder = listOf(
+            SyncResource.CONTEXT,
+            SyncResource.DESTINATION,
+            SyncResource.OPERATION,
+            SyncResource.COMPROBANTE,
+        )
+
+        claimed
+            .sortedWith(compareBy<PendingSyncMutation> { it.resource.ordinal }.thenBy { it.enqueuedAt })
+            .forEach { mutation ->
+            val parentResources = dependencyOrder.takeWhile { it != mutation.resource }.toSet()
+            if (parentResources.any { it in blockedResources || it in failedParents }) {
+                queue.defer(mutation.id, now)
+                return@forEach
+            }
             runCatching {
                 when (mutation.resource) {
                     SyncResource.CONTEXT -> {
@@ -51,10 +72,11 @@ class SyncMutationProcessor @OptIn(ExperimentalTime::class) constructor(
                     SyncResource.COMPROBANTE -> processComprobante(mutation)
                 }
             }.onSuccess {
-                queue.complete(mutation.id)
+                queue.complete(mutation.id, mutation.revision)
                 processed++
             }.onFailure {
                 queue.fail(mutation.id, now, it.message ?: "Synchronization failed")
+                failedParents += mutation.resource
             }
         }
         processed

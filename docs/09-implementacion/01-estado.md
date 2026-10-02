@@ -158,3 +158,28 @@ El primer run de CI posterior al push del commit de cierre (`e3f45f6`, "Android 
 Código presente no equivale a capacidad validada.
 Una prueba conceptual PASS no equivale a una prueba runtime PASS.
 La siguiente etapa debe cerrar primero evidencia de ejecución y recuperación; no agregar funcionalidades fuera del contrato V1.
+## Aplicación del backlog priorizado — 2026-10-01
+
+Esta pasada aplicó los cambios deterministas de A6, A1, A2 y A4 sobre el snapshot local del repositorio. La línea base de Gradle **no pudo ejecutarse** porque el entorno de ejecución no pudo resolver `services.gradle.org` para descargar Gradle 8.13; por tanto ningún resultado de tests/build se declara PASS en esta pasada.
+
+### Cambios aplicados
+
+- **A6:** `productionKotlinSources()` ahora incluye `androidApp`; CI ejecuta `verifyAgendaQrArchitecture`, `:core:ui:testDebugUnitTest`, lint, release assembly y `componentLabWeb`; la validación de secretos Supabase se omite únicamente en PRs provenientes de forks.
+- **A1:** creada `supabase/migrations/006_context_fk_set_null_columns.sql`, sin modificar 001–005, para aplicar `ON DELETE SET NULL (context_id)` a las tres FKs compuestas. Añadida prueba de aceptación SQL en `supabase/tests/006_context_fk_set_null_columns.sql`. Pendiente ejecutar contra PostgreSQL/Supabase real.
+- **A2:** `PendingSyncMutation` incorpora `revision`; `complete` elimina solo la revisión reclamada y devuelve a `PENDING` una mutación que cambió durante el envío. La corrupción JSON ya no se convierte silenciosamente en cola vacía; el payload corrupto se conserva bajo una clave `.corrupt.<timestamp>` en los stores de plataforma. El drenaje ordena recursos por dependencia y difiere hijos cuando existe un padre pendiente/fallido. Se añadieron regresiones unitarias. Pendiente ejecución de Gradle.
+- **A4:** `targetSdk` actualizado a 36; release deja de usar keystore debug silenciosamente y solo lo permite mediante `-PallowDebugSigningForRc=true`; `android:allowBackup` pasa a `false`. CI añade lint y release assembly. Pendiente ejecución/validación en Android.
+
+### Pendientes reales después de esta pasada
+
+- **A2:** validar runtime de cola, corrupción y orden de dependencias; revisar que el almacenamiento de evidencia `.corrupt.*` sea suficiente como estado observable de UI.
+- **A3:** clasificación de errores permanentes/`DEAD`, pull/reconexión, prevención de resurrección de borrados, conexión completa de `NetworkMonitor`, borrado remoto de comprobantes por id y lifecycle de scopes.
+- **A4:** Back/predictive back y validación Android 16 en dispositivo/emulador; firma release real.
+- **A5:** cableado de casos de uso restantes y confirmación de que cada flujo está definido en el contrato UX antes de implementarlo.
+- **A7:** validación física y E2E.
+- **M1–B:** sin iniciar; respetar el orden del backlog.
+
+### Evidencia de esta pasada
+
+- Se ejecutaron comprobaciones estáticas locales sobre los archivos modificados y todas las invariantes comprobables devolvieron PASS.
+- `./gradlew --version` / tareas Gradle no pudieron ejecutarse por falta de acceso DNS a `services.gradle.org`.
+- No se declara ningún test Kotlin, build Android, migración Supabase ni laboratorio Wasm como PASS hasta poder ejecutarlo.
