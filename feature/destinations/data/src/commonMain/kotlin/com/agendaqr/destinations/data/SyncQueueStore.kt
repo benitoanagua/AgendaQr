@@ -20,11 +20,13 @@ data class PendingSyncMutation(
     val state: SyncMutationState = SyncMutationState.PENDING,
     val nextAttemptAt: Long = enqueuedAt,
     val lastError: String? = null,
+    val revision: Long = 0,
 )
 
 interface SyncQueueStore {
     fun read(): List<PendingSyncMutation>
     fun write(items: List<PendingSyncMutation>)
+    fun preserveCorrupt(raw: String, timestamp: Long) {}
 }
 
 expect fun platformSyncQueueStore(): SyncQueueStore
@@ -37,8 +39,12 @@ class LocalSyncQueue(private val store: SyncQueueStore = platformSyncQueueStore(
     suspend fun enqueue(item: PendingSyncMutation) = mutex.withLock {
         val current = store.read()
         val existing = current.firstOrNull { it.resource == item.resource && it.entityId == item.entityId }
-        val next = if (existing == null) current + item else current.map {
-            if (it.id == existing.id) item.copy(id = existing.id) else it
+        val next = if (existing == null) {
+            current + item.copy(revision = item.revision.coerceAtLeast(1))
+        } else current.map {
+            if (it.id == existing.id) {
+                item.copy(id = existing.id, revision = existing.revision + 1)
+            } else it
         }
         store.write(next)
     }
@@ -50,8 +56,19 @@ class LocalSyncQueue(private val store: SyncQueueStore = platformSyncQueueStore(
         claimed.map { it.copy(state = SyncMutationState.PROCESSING) }
     }
 
-    suspend fun complete(id: String) = mutex.withLock {
-        store.write(store.read().filterNot { it.id == id })
+    suspend fun complete(id: String, claimedRevision: Long) = mutex.withLock {
+        val current = store.read()
+        store.write(current.mapNotNull {
+            if (it.id != id) return@mapNotNull it
+            if (it.revision == claimedRevision) null
+            else it.copy(state = SyncMutationState.PENDING, nextAttemptAt = it.enqueuedAt)
+        })
+    }
+
+    suspend fun defer(id: String, now: Long) = mutex.withLock {
+        store.write(store.read().map {
+            if (it.id == id) it.copy(state = SyncMutationState.PENDING, nextAttemptAt = now) else it
+        })
     }
 
     suspend fun fail(id: String, now: Long, error: String, maxDelayMillis: Long = 60_000L) = mutex.withLock {
@@ -72,7 +89,13 @@ class LocalSyncQueue(private val store: SyncQueueStore = platformSyncQueueStore(
 }
 
 fun encodeSyncQueue(items: List<PendingSyncMutation>) = queueJson.encodeToString(items)
+class SyncQueueCorruptionException(message: String, cause: Throwable) : IllegalStateException(message, cause)
+
 fun decodeSyncQueue(value: String): List<PendingSyncMutation> =
-    runCatching { queueJson.decodeFromString<List<PendingSyncMutation>>(value) }.getOrDefault(emptyList())
+    try {
+        queueJson.decodeFromString<List<PendingSyncMutation>>(value)
+    } catch (error: Throwable) {
+        throw SyncQueueCorruptionException("Persisted sync queue is corrupt", error)
+    }
 
 // Queue invariants are intentionally covered at repository level before platform integration.

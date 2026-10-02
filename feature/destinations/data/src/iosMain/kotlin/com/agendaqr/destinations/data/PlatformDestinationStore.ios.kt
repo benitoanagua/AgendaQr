@@ -1,5 +1,7 @@
 package com.agendaqr.destinations.data
 
+import kotlinx.datetime.Clock
+
 import com.agendaqr.destinations.domain.DestinationRepository
 import platform.Foundation.NSUserDefaults
 
@@ -19,7 +21,16 @@ private const val SYNC_QUEUE_PREFIX = "agendaqr.sync.queue.v1"
 private class PlatformSyncQueueStore : SyncQueueStore {
     private val delegate = platformDestinationStore()
     private fun key(): String = userScopedKey(SYNC_QUEUE_PREFIX)
-    override fun read(): List<PendingSyncMutation> = decodeSyncQueue(delegate.read(key()) ?: "[]")
+    override fun read(): List<PendingSyncMutation> {
+        val raw = delegate.read(key()) ?: "[]"
+        return try {
+            decodeSyncQueue(raw)
+        } catch (error: SyncQueueCorruptionException) {
+            val timestamp = Clock.System.now().toEpochMilliseconds()
+            delegate.write("${key()}.corrupt.$timestamp", raw)
+            throw error
+        }
+    }
     override fun write(items: List<PendingSyncMutation>) { delegate.write(key(), encodeSyncQueue(items)) }
 }
 
