@@ -23,11 +23,12 @@ android {
                 .map(String::toBoolean)
                 .orElse(false)
                 .get()
-            val productionSigningReady = prodKeystore != null &&
-                prodStorePassword != null &&
-                prodKeyAlias != null &&
-                prodKeyPassword != null &&
-                file(prodKeystore).exists()
+            val productionSigningReady =
+                prodKeystore != null &&
+                    prodStorePassword != null &&
+                    prodKeyAlias != null &&
+                    prodKeyPassword != null &&
+                    file(requireNotNull(prodKeystore)).exists()
 
             if (productionSigningReady) {
                 storeFile = file(prodKeystore)
