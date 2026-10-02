@@ -119,26 +119,26 @@ test = PASS (250 tests, 0 failures, 0 errors)
 verifyAgendaQrArchitecture / lint / assembleDebug / assembleRelease RC / componentLabWeb = PASS
 ```
 
-## Cierre — EJECUTADO
+## Cierre — estado real (revisado al archivar este documento)
 
-La rama `fix/ios-data-platform-interop` se integró a `main` vía merge local
-(`2ef3a86`, `--no-ff`), por instrucción explícita del mantenedor y ante la
-ausencia de `gh` CLI / token para abrir PR vía API. Contenido idéntico al
-validado en la rama.
+La contradicción original ("EJECUTADO" vs "Pendiente para cierre real") queda
+resuelta así:
+
+- La rama `fix/ios-data-platform-interop` **sí está integrada a `main`** vía
+  merge local `2ef3a86` (verificable con
+  `git log --oneline --all | grep 2ef3a86`), antecesor del `main` actual.
+- **No se abrió PR**: en aquel entorno no había `gh`/token. Queda registrado.
+- La rama **ya no existe** (ni local ni remota): `git branch -a` solo muestra
+  `main`. Los puntos 1–3 del antiguo "Pendiente para cierre real" quedaron
+  obsoletos por la integración ya efectuada.
+- El `check`/`lint`/`compileKotlinIosX64` sobre el nuevo `main` se repitieron en
+  pasadas posteriores (ver `docs/09-implementacion/01-estado.md`).
 
 ```text
-CLOSURE_CHECK = PASS (ver abajo)
-CLOSURE_TEST = PASS (incluido en check)
-main sincronizado con origin/main = SÍ (ver abajo)
-ramas fix eliminadas (local + remoto) = SÍ (ver abajo)
+main contiene a 2ef3a86 = SÍ (verificado)
+ramas fix eliminadas (local + remoto) = SÍ (verificado con git branch -a)
 working tree = limpio
 ```
-
-## Pendiente para cierre real
-
-1. Abrir PR de `fix/ios-data-platform-interop` contra `main` y mergearlo.
-2. Repetir sobre el nuevo `main`: `lint` + `compileKotlinIosX64` + `check`.
-3. Recién entonces: push, eliminar las tres ramas fix (local + remoto) y declarar cierre.
 
 ## Bloqueados externos (no convertir en PASS)
 

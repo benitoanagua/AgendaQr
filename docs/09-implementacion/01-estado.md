@@ -28,11 +28,14 @@ No se introducen cambios de UX fuera del contrato congelado.
 - deduplicación por (resource, entityId).
 - última mutación gana.
 - DELETE sustituye UPSERT pendiente.
-- estados PENDING / PROCESSING / FAILED.
-- backoff y nextAttemptAt.
+- estados PENDING / PROCESSING / FAILED / DEAD_LETTER (cuarentena de errores permanentes).
+- backoff exponencial acotado con `nextAttemptAt` y reporte `nextRetryAt`.
 - recuperación de PROCESSING tras reinicio.
+- resolución de conflictos Last-Write-Wins con tolerancia de skew (`SyncConflictResolver`, servidor gana empates; DELETE viejo no resucita).
+- `syncFromRemote` no pisa entidades con mutaciones pendientes; el drain decide.
+- `SyncRecoveryCoordinator` con `NetworkMonitor` de plataforma y scope ligado al usuario (`remember(userId)`; `stop()` no cancela el scope).
 - procesamiento de CONTEXT / DESTINATION / OPERATION / COMPROBANTE.
-- SyncMutationEnqueuer y LocalSyncQueue compartidos por sesión autenticada.
+- SyncMutationEnqueuer y LocalSyncQueue compartidos por sesión autenticada; el procesador opera sobre los locales crudos compartidos.
 
 ### Importación
 - flujo IMPORTANDO → ANALIZANDO → RESULTADO → REVISAR → GUARDAR → GUARDADO.
@@ -122,7 +125,8 @@ El primer run de CI posterior al push del commit de cierre (`e3f45f6`, "Android 
 7. revisión visual manual del laboratorio de componentes en el navegador (claro/oscuro con el toggle, anchos estrecho/medio/escritorio; comandos en `docs/04-ux/03-laboratorio-componentes-compose.md`) y de sus hallazgos de tema oscuro.
 
 ### P2 — iOS
-- iOS sigue sin evidencia de compilación/ejecución real en Xcode. La validación de esta pasada fue solo inspección estática en un host Linux (sin Kotlin/Native para targets Apple): los fuentes usan patrones interop conocidos (Foundation/Application Support con aislamiento por usuario, NWPathMonitor sobre callbackFlow/awaitClose, NSData.create/toByteArray), pero nada de esto sustituye una compilación real.
+- iOS **compila** (verificado en Linux: `:shared`, `:feature:destinations:data`, `:feature:destinations:presentation` y `:core:ui` en `compileKotlinIosSimulatorArm64` → BUILD SUCCESSFUL); **sin validación runtime** (sin Xcode en este entorno).
+- NetworkMonitor iOS implementado con `nw_path_monitor_*` (`PlatformNetworkMonitor.ios.kt`: callbackFlow + distinctUntilChanged + queue dedicada + cancel); falta validación en Xcode.
 - almacenamiento de comprobantes iOS migrado a Foundation/Application Support y aislado por usuario.
 - NetworkMonitor iOS implementado con NWPathMonitor; falta validación en Xcode.
 - puntos a verificar en Xcode al primer build: firma exacta de `NSSearchPathForDirectoriesInDomains`/enums ObjC en Kotlin 2.2, nulabilidad del bloque `pathUpdateHandler`, `options = 0u` en `NSData.create(base64EncodedString=...)`, y `keyWindow` (deprecado desde iOS 13) en `ShareQr.ios.kt` — si `keyWindow` devuelve nil en runtime, el share de QR no se presenta.
@@ -183,3 +187,25 @@ Esta pasada aplicó los cambios deterministas de A6, A1, A2 y A4 sobre el snapsh
 - Se ejecutaron comprobaciones estáticas locales sobre los archivos modificados y todas las invariantes comprobables devolvieron PASS.
 - `./gradlew --version` / tareas Gradle no pudieron ejecutarse por falta de acceso DNS a `services.gradle.org`.
 - No se declara ningún test Kotlin, build Android, migración Supabase ni laboratorio Wasm como PASS hasta poder ejecutarlo.
+
+## Validación de cierre — 2026-10-02 (ramas fix/* + main, Linux x86_64, JDK 17)
+
+Línea base `main` (1f3e6e9): `check`, `:androidApp:assembleDebug`, `:androidApp:lint`, `componentLabWeb` y `verifyAgendaQrArchitecture` → **PASS**.
+
+Conteos reales de `testDebugUnitTest` (0 fallos, 0 errores):
+
+```text
+core:ui = PASS (41 tests)
+domain = PASS (43 tests)
+data = PASS (58 tests)
+presentation = PASS (3 tests)
+androidApp = PASS pero NO-SOURCE (sin unit tests propios)
+global = PASS (145 tests)
+```
+
+- Zona horaria (domain, con `./gradlew --stop` entre corridas): `TZ=America/La_Paz` y `TZ=Pacific/Kiritimati` → **PASS** en todas las ramas tocadas.
+- iOS: `compileKotlinIosSimulatorArm64` de `shared`, `data`, `presentation` y `core:ui` → **PASS** (compilación Kotlin/Native; link/runtime en Xcode sigue pendiente).
+- CI añade job `ios-compile` (macos-latest, JDK 17), job no bloqueante `supabase-acceptance` (postgres:15 + `supabase/tests/run-acceptance.sh`) y el check de secretos Supabase ahora advierte en vez de fallar (los unit tests no usan secretos).
+- Documentos renumerados sin prefijos duplicados en `04-ux`, `06-arquitectura` y `08-validacion`; `VALIDATION_FINAL_417ea2a.md` archivado en `docs/08-validacion/05-validacion-final-417ea2a.md` con la contradicción de cierre resuelta.
+
+Sigue BLOCKED (ver entregable de cierre): keystore de producción, runtime Supabase (sin daemon Docker), link/runtime iOS en Xcode, runtime del laboratorio (sin navegador), tests instrumentados/E2E en dispositivo.
