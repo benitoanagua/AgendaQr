@@ -50,7 +50,7 @@ tasks.register("verifyDesignSystemCompliance") {
         if (file("design-tokens.json").exists()) {
             violations += "design-tokens.json was retired as an editable source (XauxaTokens.kt is canonical); delete it instead of editing"
         }
-        require(violations.isEmpty()) { "Xauxa Design System violations:\\n${violations.joinToString("\\n")}" }
+        require(violations.isEmpty()) { "Xauxa Design System violations:\n${violations.joinToString("\n")}" }
     }
 }
 
@@ -74,7 +74,7 @@ tasks.register("verifyWebDesignSystem") {
     description = "Enforces Xauxa visual invariants in the Wasm host CSS."
     doLast {
         val violations = cssSources().flatMap { cssViolations(it.path, it.readText()) }
-        require(violations.isEmpty()) { "Web Design System violations:\\n${violations.joinToString("\\n")}" }
+        require(violations.isEmpty()) { "Web Design System violations:\n${violations.joinToString("\n")}" }
     }
 }
 
@@ -113,7 +113,7 @@ tasks.register("verifyArchitectureBoundaries") {
                 } else null
             }
         }
-        require(forbidden.isEmpty()) { "Domain boundary violations:\\n${forbidden.joinToString("\\n")}" }
+        require(forbidden.isEmpty()) { "Domain boundary violations:\n${forbidden.joinToString("\n")}" }
 
         val all = file(".").walkTopDown().filter { it.isFile && it.extension == "kt" && !it.path.contains("/build/") }.toList()
         val leakage = all.flatMap { source ->
@@ -123,7 +123,7 @@ tasks.register("verifyArchitectureBoundaries") {
                 } else null
             }
         }
-        require(leakage.isEmpty()) { "WaraWerse product leakage detected:\\n${leakage.joinToString("\\n")}" }
+        require(leakage.isEmpty()) { "WaraWerse product leakage detected:\n${leakage.joinToString("\n")}" }
     }
 }
 
