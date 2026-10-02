@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.data
 
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 import com.agendaqr.destinations.domain.DestinationRepository
 import platform.Foundation.NSUserDefaults
@@ -21,6 +22,7 @@ private const val SYNC_QUEUE_PREFIX = "agendaqr.sync.queue.v1"
 private class PlatformSyncQueueStore : SyncQueueStore {
     private val delegate = platformDestinationStore()
     private fun key(): String = userScopedKey(SYNC_QUEUE_PREFIX)
+    @OptIn(ExperimentalTime::class)
     override fun read(): List<PendingSyncMutation> {
         val raw = delegate.read(key()) ?: "[]"
         return try {
