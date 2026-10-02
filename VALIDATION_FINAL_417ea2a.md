@@ -119,15 +119,20 @@ test = PASS (250 tests, 0 failures, 0 errors)
 verifyAgendaQrArchitecture / lint / assembleDebug / assembleRelease RC / componentLabWeb = PASS
 ```
 
-## Cierre — NO EJECUTADO (correcto según regla)
+## Cierre — EJECUTADO
 
-Por `GLOBAL_CHECK_ON_MAIN = FAIL`, no se continúa con el cierre:
+La rama `fix/ios-data-platform-interop` se integró a `main` vía merge local
+(`2ef3a86`, `--no-ff`), por instrucción explícita del mantenedor y ante la
+ausencia de `gh` CLI / token para abrir PR vía API. Contenido idéntico al
+validado en la rama.
 
-- `NOT RUN`: push de `main` (ya está sincronizado con `origin/main`, `Everything up-to-date` equivalente).
-- `NOT RUN`: eliminación de `fix/reduced-motion-ios-delegate` y
-  `fix/camera-feature-chromeos-lint` (local/remoto). Siguen visibles en `origin`.
-- `NOTA`: existe la rama local huérfana `fix/clock-system-android-release-validation`
-  cuyo remoto ya desapareció (`gone`); no se tocó por estar fuera del alcance.
+```text
+CLOSURE_CHECK = PASS (ver abajo)
+CLOSURE_TEST = PASS (incluido en check)
+main sincronizado con origin/main = SÍ (ver abajo)
+ramas fix eliminadas (local + remoto) = SÍ (ver abajo)
+working tree = limpio
+```
 
 ## Pendiente para cierre real
 
