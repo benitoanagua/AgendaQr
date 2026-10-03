@@ -241,6 +241,7 @@ class OperationsViewModel(
                 selectedOperationId = operation.id
                 _state.update { it.copy(route = OperationRoute.Detail(operation.id)) }
             }
+            _state.update { it.copy(isSavingOperation = false) }
         }
     }
 
@@ -250,6 +251,6 @@ class OperationsViewModel(
     }
 
     private fun showError(error: Throwable) {
-        _state.update { it.copy(error = error.message ?: "No se pudo completar la operación", isSavingReceipt = false) }
+        _state.update { it.copy(error = error.message ?: "No se pudo completar la operación", isSavingReceipt = false, isSavingOperation = false) }
     }
 }
