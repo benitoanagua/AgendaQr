@@ -4,7 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -37,19 +40,20 @@ fun ContextsScreen(
 @Composable
 private fun ContextList(state: ContextsUiState, onAction: (ContextAction) -> Unit) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Xxl),
+        modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         Text("Contextos", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
-        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger) }
+        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { onAction(ContextAction.ClearError) }) }
         when {
             state.isLoading -> XauxaLoading(message = "Cargando contextos…")
             state.contexts.isEmpty() -> XauxaEmptyState(
                 title = "Sin contextos",
+                subtitle = "Los contextos agrupan tus QR y operaciones.",
                 actionLabel = "Volver",
                 onAction = { onAction(ContextAction.Back) },
             )
-            else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+            else -> LazyColumn(modifier = Modifier.fillMaxSize().weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 items(state.contexts, key = { it.id }) { context ->
                     XauxaListRow(
                         title = context.name,
@@ -66,10 +70,11 @@ private fun ContextList(state: ContextsUiState, onAction: (ContextAction) -> Uni
 private fun ContextDetail(state: ContextsUiState, onAction: (ContextAction) -> Unit) {
     val contents = state.contents
     Column(
-        modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Xxl),
+        modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         XauxaSecondaryButton(label = "Volver", onClick = { onAction(ContextAction.Back) })
+        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { onAction(ContextAction.ClearError) }) }
         contents?.let { data ->
             Text(data.context.name, modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             data.context.note?.takeIf { it.isNotBlank() }?.let {

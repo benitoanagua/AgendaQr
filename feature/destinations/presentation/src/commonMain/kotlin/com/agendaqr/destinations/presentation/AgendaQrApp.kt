@@ -339,10 +339,40 @@ private fun AgendaQrAuthenticatedApp(userId: String, onSignOut: () -> Unit) {
                 onOpenContexts = { showContexts = true },
                 onSignOut = onSignOut,
             )
-            is DestinationRoute.Edit -> DestinationEditorScreen(existing = route.id?.let(viewModel::destination), onSave = { destination -> viewModel.onAction(if (route.id == null) DestinationAction.Save(destination) else DestinationAction.Update(destination)) }, onImportMany = { assets -> viewModel.onAction(DestinationAction.ImportAssets(assets)) }, contexts = contextState.contexts, onBack = { viewModel.onAction(DestinationAction.Back) })
-            is DestinationRoute.Detail -> route.id.let(viewModel::destination)?.let { destination -> DestinationDetailScreen(destination = destination, onShowQr = { viewModel.onAction(DestinationAction.ShowQr(destination.id)) }, onEdit = { viewModel.onAction(DestinationAction.Edit(destination.id)) }, onDelete = { viewModel.onAction(DestinationAction.Delete(destination.id)) }, onShare = { shareQr(destination.qr) }, onBack = { viewModel.onAction(DestinationAction.Back) }) }
-            is DestinationRoute.FullscreenQr -> route.id.let(viewModel::destination)?.let { destination -> QrFullscreenPattern(destination.qr.encoded) { viewModel.onAction(DestinationAction.Back) } }
-            DestinationRoute.ImportReview -> ImportReviewScreen(assets = viewModel.importedAssets(), onSaveAll = viewModel::saveImportedAssets, onBack = { viewModel.onAction(DestinationAction.Back) })
+            is DestinationRoute.Edit -> DestinationEditorScreen(
+                existing = route.id?.let(viewModel::destination),
+                onSave = { destination -> viewModel.onAction(if (route.id == null) DestinationAction.Save(destination) else DestinationAction.Update(destination)) },
+                onImportMany = { assets -> viewModel.onAction(DestinationAction.ImportAssets(assets)) },
+                contexts = contextState.contexts,
+                onBack = { viewModel.onAction(DestinationAction.Back) },
+                isSaving = state.isSaving,
+                error = state.error,
+                onClearError = { viewModel.onAction(DestinationAction.ClearError) },
+            )
+            is DestinationRoute.Detail -> {
+                val destination = viewModel.destination(route.id)
+                if (destination == null) {
+                    DestinationNotFound(onBack = { viewModel.onAction(DestinationAction.Back) })
+                } else {
+                    DestinationDetailScreen(destination = destination, onShowQr = { viewModel.onAction(DestinationAction.ShowQr(destination.id)) }, onEdit = { viewModel.onAction(DestinationAction.Edit(destination.id)) }, onDelete = { viewModel.onAction(DestinationAction.Delete(destination.id)) }, onShare = { shareQr(destination.qr) }, onBack = { viewModel.onAction(DestinationAction.Back) })
+                }
+            }
+            is DestinationRoute.FullscreenQr -> {
+                val destination = viewModel.destination(route.id)
+                if (destination == null || destination.qr.encoded.isBlank()) {
+                    DestinationNotFound(onBack = { viewModel.onAction(DestinationAction.Back) })
+                } else {
+                    QrFullscreenPattern(destination.qr.encoded) { viewModel.onAction(DestinationAction.Back) }
+                }
+            }
+            DestinationRoute.ImportReview -> ImportReviewScreen(
+                assets = viewModel.importedAssets(),
+                onSaveAll = viewModel::saveImportedAssets,
+                onBack = { viewModel.onAction(DestinationAction.Back) },
+                isSaving = state.isSaving,
+                error = state.error,
+                onClearError = { viewModel.onAction(DestinationAction.ClearError) },
+            )
             }
         }
     }

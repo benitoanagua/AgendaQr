@@ -1,10 +1,13 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
@@ -24,6 +27,7 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
     }
     state.pendingIncoming?.let { incoming ->
         val duplicate = state.pendingDuplicates.isNotEmpty()
+        val saving = state.isSavingReceipt
         XauxaDialog(
             title = if (duplicate) "Comprobante duplicado" else "Comprobante recibido",
             message = if (duplicate) {
@@ -31,12 +35,14 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
             } else {
                 "Se guardará en tu bandeja de respaldos sin asociar.\nArchivo: " + incoming.extension
             },
-            confirmLabel = if (duplicate) "Cerrar" else if (state.isSavingReceipt) "Guardando…" else "Listo",
+            confirmLabel = if (duplicate) "Cerrar" else if (saving) "Guardando…" else "Guardar",
             onConfirm = {
-                viewModel.onAction(
-                    if (duplicate) OperationAction.ClearIncoming
-                    else OperationAction.SaveIncoming(false),
-                )
+                if (!saving) {
+                    viewModel.onAction(
+                        if (duplicate) OperationAction.ClearIncoming
+                        else OperationAction.SaveIncoming(false),
+                    )
+                }
             },
             dismissLabel = if (duplicate) null else "Asociar ahora",
             onDismiss = {
@@ -54,7 +60,7 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
     val operations = viewModel.visibleOperations()
     var visibleCount by remember(operations.size) { mutableStateOf(50) }
     val paged = operations.take(visibleCount)
-    Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
+    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Operaciones", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
@@ -67,10 +73,11 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
             XauxaStatusBanner("Comprobantes sin asociar: " + state.unassociated.size)
             XauxaSecondaryButton(label = "Ver bandeja de respaldos", onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
         }
-        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger) }
+        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { viewModel.onAction(OperationAction.ClearError) }) }
         if (operations.isEmpty()) {
             XauxaEmptyState(
                 title = if (state.query.isBlank()) "Aún no hay operaciones" else "No hay coincidencias",
+                subtitle = if (state.query.isBlank()) "Registra tu primer pago o cobro." else "Prueba con otra búsqueda.",
                 actionLabel = if (state.query.isBlank()) "Registrar operación" else "Limpiar búsqueda",
                 onAction = {
                     if (state.query.isBlank()) viewModel.onAction(OperationAction.New)
@@ -78,7 +85,7 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
                 }
             )
         } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+            LazyColumn(modifier = Modifier.fillMaxSize().weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 items(paged, key = { it.id }) { operation ->
                     XauxaTile(onClick = { viewModel.onAction(OperationAction.Open(operation.id)) }) {
                         Row(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -109,7 +116,7 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
 @Composable
 private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsViewModel) {
     var selectedReceipt by remember { mutableStateOf<Comprobante?>(null) }
-    Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
+    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Comprobantes sin asociar", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             XauxaTextAction(label = "Volver", onClick = { viewModel.onAction(OperationAction.Back) })
@@ -182,18 +189,19 @@ private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsVi
 
 @Composable
 private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsViewModel) {
-    var type by remember { mutableStateOf(OperationType.PAGO) }
-    var amount by remember { mutableStateOf("") }
-    var currency by remember { mutableStateOf("") }
-    var person by remember { mutableStateOf("") }
-    var destination by remember { mutableStateOf("") }
-    var concept by remember { mutableStateOf("") }
-    var note by remember { mutableStateOf("") }
-    var selectedContextId by remember { mutableStateOf<String?>(null) }
-    val draftOperationId = remember { newEntityId("operation") }
+    var type by rememberSaveable { mutableStateOf(OperationType.PAGO) }
+    var amount by rememberSaveable { mutableStateOf("") }
+    var currency by rememberSaveable { mutableStateOf("") }
+    var person by rememberSaveable { mutableStateOf("") }
+    var destination by rememberSaveable { mutableStateOf("") }
+    var concept by rememberSaveable { mutableStateOf("") }
+    var note by rememberSaveable { mutableStateOf("") }
+    var selectedContextId by rememberSaveable { mutableStateOf<String?>(null) }
+    val draftOperationId = rememberSaveable { newEntityId("operation") }
     var showContextPicker by remember { mutableStateOf(false) }
+    val saving = state.isSavingOperation
 
-    Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
+    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Registrar operación", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             XauxaTextAction(label = "Volver", onClick = { viewModel.onAction(OperationAction.Back) })
@@ -212,9 +220,15 @@ private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsVi
         XauxaTextInput(label = "Concepto (opcional)", value = concept, onValueChange = { concept = it }, modifier = Modifier.fillMaxWidth())
         XauxaTextInput(label = "Nota (opcional)", value = note, onValueChange = { note = it }, modifier = Modifier.fillMaxWidth())
         Text("Podrás adjuntar comprobantes más adelante", color = XauxaColor.TextSecondary, fontSize = XauxaType.Label)
-        XauxaPrimaryButton(label = "Guardar", onClick = {
-            viewModel.onAction(OperationAction.SaveNew(type, nowMillis(), amount, currency, person, destination, concept, note, selectedContextId, draftOperationId))
-        })
+        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { viewModel.onAction(OperationAction.ClearError) }) }
+        XauxaPrimaryButton(
+            label = "Guardar",
+            onClick = {
+                viewModel.onAction(OperationAction.SaveNew(type, nowMillis(), amount, currency, person, destination, concept, note, selectedContextId, draftOperationId))
+            },
+            enabled = !saving,
+            isLoading = saving,
+        )
     }
     if (showContextPicker) {
         XauxaDialog(
@@ -243,8 +257,20 @@ private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsVi
 
 @Composable
 private fun OperationDetailScreen(state: OperationsUiState, viewModel: OperationsViewModel) {
-    val operation = viewModel.selectedOperation() ?: return
-    Column(Modifier.fillMaxSize().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
+    val operation = viewModel.selectedOperation()
+    if (operation == null) {
+        Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.Center) {
+            XauxaEmptyState(
+                title = "Operación no encontrada",
+                subtitle = "Pudo haber sido eliminada.",
+                actionLabel = "Volver",
+                onAction = { viewModel.onAction(OperationAction.Back) },
+            )
+        }
+        return
+    }
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Detalle", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             XauxaTextAction(label = "Volver", onClick = { viewModel.onAction(OperationAction.Back) })
@@ -275,7 +301,20 @@ private fun OperationDetailScreen(state: OperationsUiState, viewModel: Operation
             }
         }
         XauxaSecondaryButton(label = "Compartir", onClick = { shareOperation(operation) })
-        XauxaTextAction(label = "Eliminar operación", onClick = { viewModel.onAction(OperationAction.Delete(operation.id)) })
+        XauxaTextAction(label = "Eliminar operación", onClick = { showDeleteConfirm = true })
+    }
+    if (showDeleteConfirm) {
+        XauxaDialog(
+            title = "Eliminar operación",
+            message = "Esta acción no se puede deshacer.",
+            confirmLabel = "Eliminar",
+            onConfirm = {
+                showDeleteConfirm = false
+                viewModel.onAction(OperationAction.Delete(operation.id))
+            },
+            dismissLabel = "Cancelar",
+            onDismiss = { showDeleteConfirm = false },
+        )
     }
 }
 

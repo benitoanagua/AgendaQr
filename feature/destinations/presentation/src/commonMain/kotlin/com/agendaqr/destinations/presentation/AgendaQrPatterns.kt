@@ -4,7 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,6 +26,7 @@ import com.agendaqr.core.ui.theme.XauxaType
 fun FirstUsePattern(onAdd: () -> Unit) {
     XauxaEmptyState(
         title = "Sin destinos",
+        subtitle = "Agrega tu primer QR para empezar.",
         actionLabel = "Agregar QR",
         onAction = onAdd,
     )
@@ -34,12 +38,38 @@ fun OperationFailurePattern(message: String) {
 }
 
 @Composable
+fun DestinationNotFound(onBack: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(XauxaSpacing.Xxl)
+            .imePadding(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        XauxaEmptyState(
+            title = "Destino no encontrado",
+            subtitle = "Pudo haber sido eliminado en otro dispositivo.",
+            actionLabel = "Volver a la lista",
+            onAction = onBack,
+        )
+    }
+}
+
+@Composable
 fun QrFullscreenPattern(
     encodedQr: String,
     onBack: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Xxl),
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(XauxaSpacing.Xxl)
+            .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg, Alignment.CenterVertically),
     ) {

@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -49,7 +52,12 @@ fun DestinationsScreen(
     onSignOut: () -> Unit = {},
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Xxl),
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(XauxaSpacing.Xxl)
+            .imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         // Cabecera responsive: título arriba y acciones en FlowRow para que
@@ -68,18 +76,22 @@ fun DestinationsScreen(
             XauxaFilterChip("Recientes", state.recentOnly, { onAction(DestinationAction.ToggleRecent) })
             state.category?.let { XauxaCategoryChip(it) }
         }
-        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger) }
+        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { onAction(DestinationAction.ClearError) }) }
         when {
             state.isLoading -> XauxaLoading(message = "Cargando destinos QR…")
             state.visibleDestinations.isEmpty() -> XauxaEmptyState(
                 title = if (state.destinations.isEmpty()) "Aún no hay destinos" else "No se encontraron destinos",
+                subtitle = if (state.destinations.isEmpty()) "Agrega tu primer QR para empezar." else "Prueba con otra búsqueda o limpia los filtros.",
                 actionLabel = if (state.destinations.isEmpty()) "Agregar QR" else "Limpiar búsqueda",
                 onAction = { if (state.destinations.isEmpty()) onAction(DestinationAction.Edit(null)) else onAction(DestinationAction.Search("")) },
             )
             else -> {
                 var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
                 val paged = state.visibleDestinations.take(visibleCount)
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize().weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+                ) {
                     items(paged, key = { it.id }) { destination -> DestinationRow(destination, onAction) }
                     if (paged.size < state.visibleDestinations.size) {
                         item {

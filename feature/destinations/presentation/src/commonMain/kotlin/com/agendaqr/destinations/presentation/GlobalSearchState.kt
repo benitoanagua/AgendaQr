@@ -25,6 +25,7 @@ data class GlobalSearchUiState(
 sealed interface GlobalSearchAction {
     data class QueryChanged(val value: String) : GlobalSearchAction
     data object Clear : GlobalSearchAction
+    data object ClearError : GlobalSearchAction
 }
 
 class GlobalSearchViewModel(
@@ -79,6 +80,7 @@ class GlobalSearchViewModel(
                 searchJob?.cancel()
                 _state.value = GlobalSearchUiState()
             }
+            GlobalSearchAction.ClearError -> _state.update { it.copy(error = null) }
         }
     }
 }

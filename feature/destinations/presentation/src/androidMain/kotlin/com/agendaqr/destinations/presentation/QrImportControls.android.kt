@@ -1,20 +1,28 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.theme.XauxaSpacing
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 actual fun QrImportControls(onResult: (QrImportResult) -> Unit) {
     LaunchedEffect(Unit) {
         AgendaQrAndroidImportLauncher.results.collect(onResult)
     }
-    Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-        XauxaSecondaryButton("Camera", AgendaQrAndroidImportLauncher::camera)
-        XauxaSecondaryButton("Gallery", AgendaQrAndroidImportLauncher::gallery)
-        XauxaSecondaryButton("Multiple", AgendaQrAndroidImportLauncher::multiple)
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+    ) {
+        XauxaSecondaryButton("Cámara", AgendaQrAndroidImportLauncher::camera)
+        XauxaSecondaryButton("Galería", AgendaQrAndroidImportLauncher::gallery)
+        XauxaSecondaryButton("Varios", AgendaQrAndroidImportLauncher::multiple)
     }
 }

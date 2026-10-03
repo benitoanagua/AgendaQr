@@ -3,7 +3,12 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,7 +30,13 @@ fun ImportBatchScreen(
     onAction: (ImportBatchAction) -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Xxl),
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(XauxaSpacing.Xxl)
+            .imePadding()
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         Text("Importación completa", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Headline, color = XauxaColor.TextPrimary)
@@ -36,16 +47,19 @@ fun ImportBatchScreen(
             }
             ImportBatchUiState.Importing -> XauxaLoading(message = "Importando…")
             ImportBatchUiState.Analyzing -> XauxaLoading(message = "Analizando…")
-            is ImportBatchUiState.Result -> BatchResultContent(state.batch, onAction)
-            is ImportBatchUiState.Review -> BatchReviewContent(state.batch, onAction)
-            is ImportBatchUiState.Saving -> XauxaLoading(message = "Guardando elementos reconocidos…")
+            is ImportBatchUiState.Result -> BatchResultContent(state.batch, onAction, isSaving = false)
+            is ImportBatchUiState.Review -> BatchReviewContent(state.batch, onAction, isSaving = false)
+            is ImportBatchUiState.Saving -> {
+                XauxaLoading(message = "Guardando elementos reconocidos…")
+                BatchResultContent(state.batch, onAction, isSaving = true)
+            }
             is ImportBatchUiState.Saved -> {
                 XauxaStatusBanner("Guardado. Los elementos pendientes conservan su revisión.", tone = XauxaTone.Success)
                 XauxaPrimaryButton("Volver", onClick = { onAction(ImportBatchAction.Back) })
             }
             is ImportBatchUiState.Error -> {
                 XauxaStatusBanner(state.message, tone = XauxaTone.Danger)
-                state.batch?.let { BatchResultContent(it, onAction) }
+                state.batch?.let { BatchResultContent(it, onAction, isSaving = false) }
                     ?: XauxaSecondaryButton("Volver", onClick = { onAction(ImportBatchAction.Back) })
             }
         }
@@ -56,26 +70,33 @@ fun ImportBatchScreen(
 private fun BatchResultContent(
     batch: ImportBatch,
     onAction: (ImportBatchAction) -> Unit,
+    isSaving: Boolean,
 ) {
     Text("QR reconocidos: ${batch.qr.size}", color = XauxaColor.TextPrimary)
     Text("Comprobantes reconocidos: ${batch.comprobantes.size}", color = XauxaColor.TextPrimary)
-    Text("Duplicados: ${batch.duplicates.size}", color = XauxaColor.TextPrimary)
-    Text("Elementos desconocidos para revisar: ${batch.unknown.size}", color = XauxaColor.TextPrimary)
+    Text("Duplicados: ${batch.duplicates.size}", color = XauxaColor.TextSecondary)
+    Text("Elementos desconocidos para revisar: ${batch.unknown.size}", color = XauxaColor.TextSecondary)
     Text("${batch.uniqueRecognized.size} elementos listos para guardar", color = XauxaColor.TextSecondary)
 
     if (batch.canSaveRecognized()) {
-        XauxaPrimaryButton("Guardar reconocidos", onClick = { onAction(ImportBatchAction.SaveRecognized) })
+        XauxaPrimaryButton(
+            "Guardar reconocidos",
+            onClick = { onAction(ImportBatchAction.SaveRecognized) },
+            enabled = !isSaving,
+            isLoading = isSaving,
+        )
     }
     if (batch.pendingItems().isNotEmpty()) {
-        XauxaSecondaryButton("Revisar pendientes", onClick = { onAction(ImportBatchAction.ReviewPending) })
+        XauxaSecondaryButton("Revisar pendientes", onClick = { onAction(ImportBatchAction.ReviewPending) }, enabled = !isSaving)
     }
-    XauxaSecondaryButton("Volver", onClick = { onAction(ImportBatchAction.Back) })
+    XauxaSecondaryButton("Volver", onClick = { onAction(ImportBatchAction.Back) }, enabled = !isSaving)
 }
 
 @Composable
 private fun BatchReviewContent(
     batch: ImportBatch,
     onAction: (ImportBatchAction) -> Unit,
+    isSaving: Boolean,
 ) {
     Text("Elementos que necesitan revisión", color = XauxaColor.TextPrimary)
     batch.pendingItems().forEach { candidate ->
@@ -85,7 +106,12 @@ private fun BatchReviewContent(
         )
     }
     if (batch.canSaveRecognized()) {
-        XauxaPrimaryButton("Guardar reconocidos", onClick = { onAction(ImportBatchAction.SaveRecognized) })
+        XauxaPrimaryButton(
+            "Guardar reconocidos",
+            onClick = { onAction(ImportBatchAction.SaveRecognized) },
+            enabled = !isSaving,
+            isLoading = isSaving,
+        )
     }
-    XauxaSecondaryButton("Volver a resultado", onClick = { onAction(ImportBatchAction.Back) })
+    XauxaSecondaryButton("Volver a resultado", onClick = { onAction(ImportBatchAction.Back) }, enabled = !isSaving)
 }

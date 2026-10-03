@@ -11,7 +11,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -48,7 +52,7 @@ fun XauxaScreen(
     content: @Composable () -> Unit,
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing),
         color = XauxaColor.Background,
         shape = RectangleShape,
         tonalElevation = XauxaSpacing.None,
@@ -198,20 +202,33 @@ fun XauxaStatusBanner(
     modifier: Modifier = Modifier,
     danger: Boolean = false,
     tone: XauxaTone? = null,
+    onDismiss: (() -> Unit)? = null,
 ) {
     // Compatibilidad: el parámetro semántico nuevo prevalece; sin él se
     // conserva exactamente la interpretación histórica de danger.
     val resolvedTone = tone ?: if (danger) XauxaTone.Danger else XauxaTone.Neutral
     val background = resolvedTone.container()
     val foreground = resolvedTone.content()
-    Box(
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .border(XauxaMetrics.Border, XauxaColor.Border, RectangleShape)
             .background(background)
             .semantics { liveRegion = LiveRegionMode.Polite }
             .padding(XauxaSpacing.Lg),
-    ) { Text(message, color = foreground, fontSize = XauxaType.Label) }
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+    ) {
+        Text(
+            message,
+            modifier = Modifier.weight(1f),
+            color = foreground,
+            fontSize = XauxaType.Label,
+        )
+        if (onDismiss != null) {
+            XauxaTextAction(label = "Descartar", onClick = onDismiss)
+        }
+    }
 }
 
 @Composable
@@ -233,6 +250,7 @@ fun XauxaEmptyState(
     actionLabel: String,
     onAction: () -> Unit,
     modifier: Modifier = Modifier,
+    subtitle: String? = null,
 ) {
     Column(
         modifier = modifier.fillMaxWidth().padding(XauxaSpacing.Huge),
@@ -240,6 +258,7 @@ fun XauxaEmptyState(
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         Text(title, modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Title, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
+        subtitle?.let { Text(it, color = XauxaColor.TextSecondary, fontSize = XauxaType.Label) }
         XauxaPrimaryButton(actionLabel, onAction)
     }
 }
