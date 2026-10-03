@@ -33,6 +33,9 @@ data class OperationsUiState(
     val pendingDuplicates: List<Comprobante> = emptyList(),
     val isSavingReceipt: Boolean = false,
     val isSavingOperation: Boolean = false,
+    val openedComprobante: Comprobante? = null,
+    val openedComprobanteBytes: ByteArray? = null,
+    val isLoadingComprobante: Boolean = false,
     val error: String? = null,
     val receiptSuggestions: Map<String, ReceiptAssociationSuggestion> = emptyMap(),
 )
@@ -50,6 +53,9 @@ sealed interface OperationAction {
     data object OpenUnassociated : OperationAction
     data object Back : OperationAction
     data object ClearError : OperationAction
+    data class OpenComprobante(val id: String) : OperationAction
+    data object CloseComprobante : OperationAction
+    data class DeleteComprobante(val id: String) : OperationAction
     data class SaveNew(
         val type: OperationType,
         val occurredAt: Long,
@@ -76,6 +82,8 @@ class OperationsViewModel(
     private val saveComprobante: SaveComprobanteUseCase,
     private val findDuplicates: FindDuplicateComprobantesUseCase,
     private val suggestReceiptAssociation: SuggestReceiptAssociationUseCase,
+    private val deleteComprobante: DeleteComprobanteUseCase,
+    private val comprobanteFiles: ComprobanteFileStore,
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
 ) {
     private val _state = MutableStateFlow(OperationsUiState())
@@ -126,6 +134,26 @@ class OperationsViewModel(
             OperationAction.OpenUnassociated -> _state.update { it.copy(route = OperationRoute.Unassociated, error = null) }
             OperationAction.Back -> back()
             OperationAction.ClearError -> _state.update { it.copy(error = null) }
+            is OperationAction.OpenComprobante -> openComprobante(action.id)
+            OperationAction.CloseComprobante -> _state.update { it.copy(openedComprobante = null, openedComprobanteBytes = null, isLoadingComprobante = false) }
+            is OperationAction.DeleteComprobante -> scope.launch {
+                runCatching {
+                    val receipt = requireNotNull(
+                        state.value.unassociated.firstOrNull { it.id == action.id }
+                            ?: state.value.operationComprobantes.firstOrNull { it.id == action.id }
+                            ?: state.value.openedComprobante?.takeIf { it.id == action.id },
+                    ) { "Comprobante no encontrado" }
+                    deleteComprobante(receipt)
+                }.onFailure(::showError).onSuccess {
+                    _state.update {
+                        it.copy(
+                            openedComprobante = null,
+                            openedComprobanteBytes = null,
+                            isLoadingComprobante = false,
+                        )
+                    }
+                }
+            }
             is OperationAction.SaveNew -> if (!state.value.isSavingOperation) saveNew(action)
         }
     }
@@ -248,6 +276,21 @@ class OperationsViewModel(
     private fun back() {
         selectedOperationId = null
         _state.update { it.copy(route = OperationRoute.List, operationComprobantes = emptyList(), error = null) }
+    }
+
+    private fun openComprobante(id: String) {
+        val receipt = state.value.unassociated.firstOrNull { it.id == id }
+            ?: state.value.operationComprobantes.firstOrNull { it.id == id }
+            ?: return
+        _state.update { it.copy(openedComprobante = receipt, openedComprobanteBytes = null, isLoadingComprobante = true, error = null) }
+        scope.launch {
+            val bytes = runCatching { comprobanteFiles.read(receipt.file) }.getOrNull()
+            if (bytes == null) {
+                _state.update { it.copy(isLoadingComprobante = false, error = "No se pudo abrir el comprobante") }
+            } else {
+                _state.update { it.copy(openedComprobanteBytes = bytes, isLoadingComprobante = false) }
+            }
+        }
     }
 
     private fun showError(error: Throwable) {

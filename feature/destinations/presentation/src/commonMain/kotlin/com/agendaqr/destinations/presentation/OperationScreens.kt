@@ -53,6 +53,9 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
             },
         )
     }
+    state.openedComprobante?.let { receipt ->
+        ComprobanteViewerDialog(state, receipt, viewModel)
+    }
 }
 
 @Composable
@@ -126,7 +129,7 @@ private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsVi
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 items(state.unassociated, key = { it.id }) { receipt ->
-                    XauxaTile {
+                    XauxaTile(onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) }) {
                         Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                             Text("Comprobante recibido", fontWeight = FontWeight.SemiBold)
                             Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
@@ -291,7 +294,7 @@ private fun OperationDetailScreen(state: OperationsUiState, viewModel: Operation
                 XauxaTextAction(label = "Adjuntar comprobante ahora", onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
             } else {
                 for (receipt in state.operationComprobantes) {
-                    XauxaTile {
+                    XauxaTile(onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) }) {
                         Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg)) {
                             Text("Comprobante " + receipt.provenance?.name.orEmpty(), fontWeight = FontWeight.SemiBold)
                             Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
@@ -337,4 +340,48 @@ private fun formatDate(millis: Long): String {
 private fun operationTypeLabel(type: OperationType): String = when (type) {
     OperationType.PAGO -> "Pago"
     OperationType.COBRO -> "Cobro"
+}
+
+@Composable
+private fun ComprobanteViewerDialog(state: OperationsUiState, receipt: Comprobante, viewModel: OperationsViewModel) {
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+    if (showDeleteConfirm) {
+        XauxaDialog(
+            title = "Eliminar comprobante",
+            message = "La operación asociada se conservará.",
+            confirmLabel = "Eliminar",
+            onConfirm = {
+                showDeleteConfirm = false
+                viewModel.onAction(OperationAction.DeleteComprobante(receipt.id))
+            },
+            dismissLabel = "Cancelar",
+            onDismiss = { showDeleteConfirm = false },
+        )
+        return
+    }
+    val bytes = state.openedComprobanteBytes
+    XauxaDialog(
+        title = "Comprobante",
+        confirmLabel = "Cerrar",
+        onConfirm = { viewModel.onAction(OperationAction.CloseComprobante) },
+        dismissLabel = "Eliminar",
+        onDismiss = { showDeleteConfirm = true },
+        content = {
+            Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                receipt.provenance?.let { Text("Origen: " + it.name, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary) }
+                when {
+                    state.isLoadingComprobante -> XauxaLoading(message = "Abriendo comprobante…")
+                    bytes != null -> {
+                        ComprobantePreview(bytes, receipt.mimeType)
+                        XauxaSecondaryButton(
+                            label = "Compartir",
+                            onClick = { shareComprobante(bytes, receipt.extension ?: "bin", receipt.mimeType) },
+                        )
+                    }
+                    else -> Text("No se pudo abrir el comprobante", fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                }
+            }
+        },
+    )
 }
