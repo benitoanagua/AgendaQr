@@ -199,10 +199,14 @@ private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsVi
     var destination by rememberSaveable { mutableStateOf("") }
     var concept by rememberSaveable { mutableStateOf("") }
     var note by rememberSaveable { mutableStateOf("") }
+    var dateText by rememberSaveable { mutableStateOf(formatDate(nowMillis())) }
     var selectedContextId by rememberSaveable { mutableStateOf<String?>(null) }
     val draftOperationId = rememberSaveable { newEntityId("operation") }
     var showContextPicker by remember { mutableStateOf(false) }
+    var submitted by remember { mutableStateOf(false) }
     val saving = state.isSavingOperation
+    val occurredAt = parseDate(dateText)
+    val dateError = submitted && occurredAt == null
 
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -216,6 +220,15 @@ private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsVi
             else XauxaSecondaryButton(label = "Cobro", onClick = { type = OperationType.COBRO })
         }
         XauxaTextInput(label = "Monto (opcional)", value = amount, onValueChange = { amount = it }, modifier = Modifier.fillMaxWidth())
+        XauxaTextInput(
+            label = "Fecha",
+            value = dateText,
+            onValueChange = { dateText = it },
+            modifier = Modifier.fillMaxWidth(),
+            isRequired = true,
+            isError = dateError,
+            errorMessage = if (dateError) "Usa el formato dd/mm/aaaa" else null,
+        )
         XauxaTextInput(label = "Moneda (opcional)", value = currency, onValueChange = { currency = it }, modifier = Modifier.fillMaxWidth())
         XauxaTextInput(label = "Persona o entidad (opcional)", value = person, onValueChange = { person = it }, modifier = Modifier.fillMaxWidth())
         XauxaTextInput(label = "Destino QR (opcional)", value = destination, onValueChange = { destination = it }, modifier = Modifier.fillMaxWidth())
@@ -227,7 +240,9 @@ private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsVi
         XauxaPrimaryButton(
             label = "Guardar",
             onClick = {
-                viewModel.onAction(OperationAction.SaveNew(type, nowMillis(), amount, currency, person, destination, concept, note, selectedContextId, draftOperationId))
+                submitted = true
+                val at = parseDate(dateText) ?: return@XauxaPrimaryButton
+                viewModel.onAction(OperationAction.SaveNew(type, at, amount, currency, person, destination, concept, note, selectedContextId, draftOperationId))
             },
             enabled = !saving,
             isLoading = saving,
@@ -321,7 +336,7 @@ private fun OperationDetailScreen(state: OperationsUiState, viewModel: Operation
     }
 }
 
-private fun formatDate(millis: Long): String {
+internal fun formatDate(millis: Long): String {
     val z = millis / 86_400_000L + 719468
     val era = if (z >= 0) z / 146097 else (z - 146096) / 146097
     val doe = z - era * 146097
@@ -334,6 +349,28 @@ private fun formatDate(millis: Long): String {
     val year = y + if (month <= 2) 1 else 0
     fun two(value: Long) = if (value < 10) "0" + value else value.toString()
     return two(day) + "/" + two(month) + "/" + year
+}
+
+/** Inversa estricta de [formatDate]: solo acepta dd/mm/aaaa reales. */
+internal fun parseDate(text: String): Long? {
+    val parts = text.trim().split("/")
+    if (parts.size != 3) return null
+    val day = parts[0].toIntOrNull() ?: return null
+    val month = parts[1].toIntOrNull() ?: return null
+    val year = parts[2].toIntOrNull() ?: return null
+    if (year < 1900 || year > 2100 || month !in 1..12 || day !in 1..31) return null
+    var y = year
+    if (month <= 2) y -= 1
+    val era = if (y >= 0) y / 400 else (y - 399) / 400
+    val yoe = y - era * 400
+    val mp = if (month > 2) month - 3 else month + 9
+    val doy = (153 * mp + 2) / 5 + day - 1
+    val doe = yoe * 365 + yoe / 4 - yoe / 100 + doy
+    val millis = (era * 146097 + doe - 719468) * 86_400_000L
+    // Round-trip: rechaza 31/02, 30/02, 31/04 y demás combinaciones inexistentes.
+    fun two(value: Int) = if (value < 10) "0" + value else value.toString()
+    if (formatDate(millis) != two(day) + "/" + two(month) + "/" + year) return null
+    return millis
 }
 
 
