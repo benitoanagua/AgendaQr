@@ -6,6 +6,7 @@ import com.agendaqr.destinations.domain.ComprobanteFileStore
 import com.agendaqr.destinations.domain.ComprobanteRepository
 import com.agendaqr.destinations.domain.Context
 import com.agendaqr.destinations.domain.ContextRepository
+import com.agendaqr.destinations.domain.DeleteComprobanteUseCase
 import com.agendaqr.destinations.domain.DeleteOperationWithHistoryUseCase
 import com.agendaqr.destinations.domain.DeletedOperationHistory
 import com.agendaqr.destinations.domain.DeletedOperationHistoryRepository
@@ -109,6 +110,8 @@ class OperationsSavingStateTest {
             saveComprobante = SaveComprobanteUseCase(receipts, files),
             findDuplicates = FindDuplicateComprobantesUseCase(receipts, files),
             suggestReceiptAssociation = SuggestReceiptAssociationUseCase(receipts, operations),
+            deleteComprobante = DeleteComprobanteUseCase(receipts, files),
+            comprobanteFiles = files,
             scope = scope,
         )
     }
