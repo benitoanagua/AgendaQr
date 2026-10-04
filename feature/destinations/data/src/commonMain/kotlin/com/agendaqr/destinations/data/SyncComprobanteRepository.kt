@@ -81,6 +81,14 @@ class SyncComprobanteRepository(
                 val dirty = enqueuer.pendingIds(SyncResource.COMPROBANTE)
                 remote.observe().forEach { record ->
                     if (record.comprobante.id in dirty) return@forEach
+                    val existing = local.get(record.comprobante.id)
+                    val shouldApply = existing == null ||
+                        conflictResolver.shouldApplyRemote(
+                            existing.updatedAt,
+                            record.comprobante.updatedAt,
+                        )
+                    if (!shouldApply) return@forEach
+
                     val bytes = AgendaQrSupabase.client.storage
                         .from("comprobantes")
                         .downloadAuthenticated(record.remoteFilePath)
@@ -90,11 +98,8 @@ class SyncComprobanteRepository(
                         record.comprobante.extension ?: record.comprobante.file.substringAfterLast('.', "bin"),
                     )
                     val localReceipt = record.comprobante.copy(file = localFile)
-                    val existing = local.get(localReceipt.id)
                     if (existing == null) local.save(localReceipt)
-                    else if (conflictResolver.shouldApplyRemote(existing.updatedAt, localReceipt.updatedAt)) {
-                        local.update(localReceipt)
-                    }
+                    else local.update(localReceipt)
                 }
             }
         }
