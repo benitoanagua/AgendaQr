@@ -82,7 +82,7 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
         XauxaSearchBar(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = "Buscar", placeholder = "Buscar operaciones", onClear = { viewModel.onAction(OperationAction.Search("")) })
         if (state.unassociated.isNotEmpty()) {
             XauxaStatusBanner("Comprobantes sin asociar: " + state.unassociated.size)
-            XauxaSecondaryButton(label = "Ver bandeja de respaldos", onClick = { viewModel.openUnassociatedForOperation(operation.id) })
+            XauxaSecondaryButton(label = "Ver bandeja de respaldos", onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
         }
         state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { viewModel.onAction(OperationAction.ClearError) }) }
         if (operations.isEmpty()) {
