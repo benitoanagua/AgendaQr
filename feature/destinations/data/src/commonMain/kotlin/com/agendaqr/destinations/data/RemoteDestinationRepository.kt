@@ -7,6 +7,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import kotlinx.datetime.Instant
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.ExperimentalTime
 
@@ -78,18 +79,18 @@ class SupabaseDestinationRepository(
 }
 
 @Serializable
-private data class DestinationRow(
+internal data class DestinationRow(
     val id: String,
-    val userId: String,
+    @SerialName("user_id") val userId: String,
     val name: String,
-    val qrRawContent: String,
-    val qrKind: String,
+    @SerialName("qr_raw_content") val qrRawContent: String,
+    @SerialName("qr_kind") val qrKind: String,
     val category: String? = null,
     val note: String? = null,
     val favorite: Boolean = false,
-    val createdAt: Instant,
-    val updatedAt: Instant,
-    val contextId: String? = null,
+    @SerialName("created_at") val createdAt: Instant,
+    @SerialName("updated_at") val updatedAt: Instant,
+    @SerialName("context_id") val contextId: String? = null,
 )
 
 fun createRemoteDestinationRepository(): RemoteDestinationRepository =

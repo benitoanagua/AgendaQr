@@ -7,6 +7,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import kotlinx.datetime.Instant
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.ExperimentalTime
 
@@ -83,20 +84,20 @@ class SupabaseOperationRepository(
 }
 
 @Serializable
-private data class OperationRow(
+internal data class OperationRow(
     val id: String,
-    val userId: String,
+    @SerialName("user_id") val userId: String,
     val type: String,
-    val occurredAt: Instant,
-    val createdAt: Instant,
-    val updatedAt: Instant? = null,
+    @SerialName("occurred_at") val occurredAt: Instant,
+    @SerialName("created_at") val createdAt: Instant,
+    @SerialName("updated_at") val updatedAt: Instant? = null,
     val amount: String? = null,
     val currency: String? = null,
-    val personOrEntity: String? = null,
-    val destinationId: String? = null,
+    @SerialName("person_or_entity") val personOrEntity: String? = null,
+    @SerialName("destination_id") val destinationId: String? = null,
     val concept: String? = null,
     val note: String? = null,
-    val contextId: String? = null,
+    @SerialName("context_id") val contextId: String? = null,
 )
 
 fun createRemoteOperationRepository(): RemoteOperationRepository =

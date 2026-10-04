@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Debug-only override: local-first development against a local Supabase stack
+(`supabase start`, http://10.0.2.2:54321 from the emulator) requires cleartext
+HTTP. Release builds keep the platform default (no cleartext traffic).
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:usesCleartextTraffic="true" />
+</manifest>

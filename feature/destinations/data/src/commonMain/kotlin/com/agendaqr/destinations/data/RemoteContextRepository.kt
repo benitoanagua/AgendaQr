@@ -5,6 +5,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import kotlinx.datetime.Instant
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 interface RemoteContextRepository {
@@ -59,13 +60,13 @@ class SupabaseContextRepository(
 }
 
 @Serializable
-private data class ContextRow(
+internal data class ContextRow(
     val id: String,
-    val userId: String,
+    @SerialName("user_id") val userId: String,
     val name: String,
     val note: String? = null,
-    val createdAt: Instant,
-    val updatedAt: Instant,
+    @SerialName("created_at") val createdAt: Instant,
+    @SerialName("updated_at") val updatedAt: Instant,
 )
 
 fun createRemoteContextRepository(): RemoteContextRepository = SupabaseContextRepository()
