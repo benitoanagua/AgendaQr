@@ -23,8 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.Alignment
@@ -81,6 +83,9 @@ fun DestinationsScreen(
         // La barra es la entrada a S04 (búsqueda global): al tocarla se abre
         // la pantalla de Buscar, que encuentra QR, operaciones, comprobantes
         // y contextos. El listado de destinos de Inicio no se filtra aquí.
+        // T10: un ÚNICO nodo semántico para el control — el campo decorativo
+        // no expone su editable-node al lector de pantalla; el botón real
+        // es el que navega, con rol y etiqueta (cero nodos duplicados).
         Box {
             XauxaSearchBar(
                 value = "",
@@ -91,11 +96,18 @@ fun DestinationsScreen(
             Box(
                 Modifier
                     .matchParentSize()
-                    .semantics {
+                    // El toque físico vive en clickable; clearAndSetSemantics
+                    // reemplaza TODA la semántica (incluida la de clickable)
+                    // por el nodo único del control.
+                    .clickable(onClickLabel = "Buscar en Agenda QR") { onOpenSearch() }
+                    .clearAndSetSemantics {
                         contentDescription = "Buscar en Agenda QR"
                         role = Role.Button
-                    }
-                    .clickable(onClickLabel = "Buscar en Agenda QR") { onOpenSearch() },
+                        onClick(label = "Buscar en Agenda QR") {
+                            onOpenSearch()
+                            true
+                        }
+                    },
             )
         }
 
