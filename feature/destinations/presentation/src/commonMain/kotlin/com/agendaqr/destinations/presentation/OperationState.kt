@@ -46,6 +46,7 @@ sealed interface OperationAction {
     data class Open(val id: String) : OperationAction
     data class Delete(val id: String) : OperationAction
     data class Associate(val comprobanteId: String, val operationId: String) : OperationAction
+    data class Disassociate(val comprobanteId: String) : OperationAction
     data class CreateOperationFromReceipt(val comprobanteId: String) : OperationAction
     data object ClearIncoming : OperationAction
     data class SaveIncoming(val openInbox: Boolean = false) : OperationAction
@@ -79,6 +80,7 @@ class OperationsViewModel(
     private val saveOperation: SaveOperationUseCase,
     private val deleteOperation: DeleteOperationWithHistoryUseCase,
     private val associate: AssociateComprobanteToOperationUseCase,
+    private val unassociate: UnassociateComprobanteUseCase,
     private val saveComprobante: SaveComprobanteUseCase,
     private val findDuplicates: FindDuplicateComprobantesUseCase,
     private val suggestReceiptAssociation: SuggestReceiptAssociationUseCase,
@@ -124,6 +126,9 @@ class OperationsViewModel(
             }
             is OperationAction.Associate -> scope.launch {
                 runCatching { associate(action.comprobanteId, action.operationId) }.onFailure(::showError)
+            }
+            is OperationAction.Disassociate -> scope.launch {
+                runCatching { unassociate(action.comprobanteId) }.onFailure(::showError)
             }
             is OperationAction.CreateOperationFromReceipt -> {
                 if (!state.value.isSavingOperation) createOperationFromReceipt(action.comprobanteId)
