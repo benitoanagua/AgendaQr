@@ -2,6 +2,7 @@ package com.agendaqr.destinations.presentation
 
 import com.agendaqr.destinations.domain.AssociateComprobanteToOperationUseCase
 import com.agendaqr.destinations.domain.UnassociateComprobanteUseCase
+import com.agendaqr.destinations.domain.UpdateOperationUseCase
 import com.agendaqr.destinations.domain.Comprobante
 import com.agendaqr.destinations.domain.ComprobanteFileStore
 import com.agendaqr.destinations.domain.ComprobanteRepository
@@ -22,6 +23,7 @@ import com.agendaqr.destinations.domain.OperationRepository
 import com.agendaqr.destinations.domain.OperationType
 import com.agendaqr.destinations.domain.SaveComprobanteUseCase
 import com.agendaqr.destinations.domain.SaveOperationUseCase
+import com.agendaqr.destinations.domain.UpdateOperationUseCase
 import com.agendaqr.destinations.domain.SuggestReceiptAssociationUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -167,6 +169,7 @@ class OperationsComprobanteActionsTest {
             observeOperationComprobantes = ObserveOperationComprobantesUseCase(receipts),
             getOperation = GetOperationUseCase(operations),
             saveOperation = SaveOperationUseCase(operations),
+            updateOperation = UpdateOperationUseCase(operations),
             deleteOperation = DeleteOperationWithHistoryUseCase(operations, receipts, files, history),
             associate = AssociateComprobanteToOperationUseCase(operations, receipts),
             unassociate = UnassociateComprobanteUseCase(receipts),
