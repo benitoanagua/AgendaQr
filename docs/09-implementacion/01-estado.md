@@ -225,3 +225,11 @@ Sobre `main`, sin declarar runtime PASS:
 - La transición turnstile de destinos invierte dirección en rutas de regreso; el predictive back físico de Android sigue pendiente de validación runtime.
 - Estas correcciones son cambios de código; no convierten por sí mismas los journeys runtime en PASS.
 
+
+
+### Correcciones adicionales posteriores
+
+- RF-15: se incorporó edición de operaciones desde el detalle. Los campos sensibles se comparan contra el estado original y, si existen comprobantes, se solicita una única confirmación contextual antes de guardar; el archivo del comprobante no se modifica.
+- RF-18: la búsqueda textual de operaciones ahora incluye fecha y tipo además de importe, moneda, persona/entidad, concepto y nota.
+- RF-12: si la sugerencia automática de asociación de un comprobante no encuentra coincidencias, la bandeja ofrece igualmente las operaciones existentes para selección manual.
+- Estas capacidades siguen requiriendo ejecución runtime para declararse PASS.
