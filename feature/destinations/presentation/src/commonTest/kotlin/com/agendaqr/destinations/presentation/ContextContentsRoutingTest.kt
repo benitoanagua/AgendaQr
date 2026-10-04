@@ -83,12 +83,14 @@ class ContextContentsRoutingTest {
         contextVm.onAction(ContextAction.Open("ctx-1"))
         waitUntil { contextVm.state.value.contents != null }
 
-        // Stack real: S06 abierta sobre Inicio. La fila del QR ejecuta la
-        // MISMA ruta que un resultado de búsqueda: Open + pop de superficie.
+        // Caso real más profundo: S06 abierta SOBRE la Búsqueda (S04 → S06).
+        // La fila del QR debe llevar a Inicio con el detalle visible, no
+        // dejarlo oculto bajo la Búsqueda: popToRoot.
         val nav = AppBackStack()
+        nav.push(AppRoute.Search)
         nav.push(AppRoute.Contexts)
         destinationsVm.onAction(DestinationAction.Open("d-mercado"))
-        nav.pop()
+        nav.popToRoot()
 
         assertEquals(AppRoute.Home, nav.top)
         assertTrue(destinationsVm.state.value.route is DestinationRoute.Detail)
