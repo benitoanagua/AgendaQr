@@ -197,6 +197,7 @@ private fun AgendaQrAuthenticatedApp(userId: String, onSignOut: () -> Unit) {
             unassociate = UnassociateComprobanteUseCase(comprobanteRepository),
             saveComprobante = SaveComprobanteUseCase(comprobanteRepository, fileStore),
             findDuplicates = FindDuplicateComprobantesUseCase(comprobanteRepository, fileStore),
+            getComprobante = GetComprobanteUseCase(comprobanteRepository),
             suggestReceiptAssociation = SuggestReceiptAssociationUseCase(comprobanteRepository, operationRepository),
             deleteComprobante = DeleteComprobanteUseCase(comprobanteRepository, fileStore),
             comprobanteFiles = fileStore,
