@@ -167,7 +167,7 @@ private fun AgendaQrAuthenticatedApp(userId: String, onSignOut: () -> Unit) {
     }
     var showOperations by remember { mutableStateOf(false) }
     var showSearch by remember { mutableStateOf(false) }
-    var showContexts by remember { mutableStateOf(false) }
+    var contextsSurface by remember { mutableStateOf(ContextsSurface()) }
     var showImportBatch by remember { mutableStateOf(false) }
     var importBatchState by remember { mutableStateOf<ImportBatchUiState>(ImportBatchUiState.Idle) }
     val importBatchReducer = remember { ImportBatchReducer() }
@@ -344,7 +344,10 @@ private fun AgendaQrAuthenticatedApp(userId: String, onSignOut: () -> Unit) {
             onSelect = { result ->
                 showSearch = false
                 when (result.type) {
-                    AgendaSearchResultType.CONTEXT -> result.contextId?.let { contextViewModel.onAction(ContextAction.Open(it)); showContexts = true }
+                    AgendaSearchResultType.CONTEXT -> result.contextId?.let {
+                        contextViewModel.onAction(ContextAction.Open(it))
+                        contextsSurface = contextsSurface.open(fromSearch = true)
+                    }
                     AgendaSearchResultType.QR -> result.destinationId?.let { viewModel.onAction(DestinationAction.Open(it)) }
                     AgendaSearchResultType.ACTIVITY -> result.operationId?.let { operationsViewModel.onAction(OperationAction.Open(it)); showOperations = true }
                     AgendaSearchResultType.COMPROBANTE -> {
@@ -355,7 +358,18 @@ private fun AgendaQrAuthenticatedApp(userId: String, onSignOut: () -> Unit) {
             },
             onBack = { showSearch = false },
         )
-        showContexts -> ContextsScreen(contextState, contextViewModel::onAction)
+        contextsSurface.visible -> ContextsScreen(
+            state = contextState,
+            onAction = contextViewModel::onAction,
+            onBack = {
+                // Lista → cierra el flujo; el destino depende del origen:
+                // desde un resultado Contexto se vuelve a la Búsqueda con la
+                // consulta conservada (S05), desde Inicio se vuelve a Inicio.
+                val exit = contextsSurface.exit
+                contextsSurface = contextsSurface.close()
+                if (exit == ContextsExit.Search) showSearch = true
+            },
+        )
         showOperations -> OperationsScreen(operationState, operationsViewModel, onBack = { showOperations = false })
         else -> AnimatedContent(
             targetState = state.route,
@@ -375,7 +389,7 @@ private fun AgendaQrAuthenticatedApp(userId: String, onSignOut: () -> Unit) {
                     showOperations = true
                 },
                 onOpenSearch = { showSearch = true },
-                onOpenContexts = { showContexts = true },
+                onOpenContexts = { contextsSurface = contextsSurface.open(fromSearch = false) },
                 onSignOut = onSignOut,
             )
             DestinationRoute.Add -> AddDestinationScreen(
