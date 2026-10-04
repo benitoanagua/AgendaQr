@@ -342,7 +342,10 @@ private fun AgendaQrAuthenticatedApp(userId: String, onSignOut: () -> Unit) {
             DestinationRoute.List -> DestinationsScreen(
                 state,
                 viewModel::onAction,
-                onOpenOperations = { showOperations = true },
+                onOpenOperations = {
+                    operationsViewModel.onAction(OperationAction.New)
+                    showOperations = true
+                },
                 onOpenSearch = { showSearch = true },
                 onOpenContexts = { showContexts = true },
                 onSignOut = onSignOut,
