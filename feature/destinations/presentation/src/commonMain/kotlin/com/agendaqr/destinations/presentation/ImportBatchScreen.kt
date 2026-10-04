@@ -39,7 +39,7 @@ fun ImportBatchScreen(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        Text("Importación completa", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Headline, color = XauxaColor.TextPrimary)
+        Text("Resultado de importación", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Headline, color = XauxaColor.TextPrimary)
         when (state) {
             ImportBatchUiState.Idle -> {
                 Text("Trae varios elementos a Agenda QR.", color = XauxaColor.TextSecondary)
@@ -72,11 +72,9 @@ private fun BatchResultContent(
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
 ) {
-    Text("QR reconocidos: ${batch.qr.size}", color = XauxaColor.TextPrimary)
-    Text("Comprobantes reconocidos: ${batch.comprobantes.size}", color = XauxaColor.TextPrimary)
-    Text("Duplicados: ${batch.duplicates.size}", color = XauxaColor.TextSecondary)
-    Text("Elementos desconocidos para revisar: ${batch.unknown.size}", color = XauxaColor.TextSecondary)
-    Text("${batch.uniqueRecognized.size} elementos listos para guardar", color = XauxaColor.TextSecondary)
+    Text("✓ Reconocidos: ${batch.uniqueRecognized.size}", color = XauxaColor.TextPrimary)
+    Text("! Posibles duplicados: ${batch.duplicates.size}", color = XauxaColor.TextSecondary)
+    Text("? Pendientes de revisión: ${batch.unknown.size}", color = XauxaColor.TextSecondary)
 
     if (batch.canSaveRecognized()) {
         XauxaPrimaryButton(
@@ -101,7 +99,13 @@ private fun BatchReviewContent(
     Text("Elementos que necesitan revisión", color = XauxaColor.TextPrimary)
     batch.pendingItems().forEach { candidate ->
         Text(
-            "${candidate.kind} · ${candidate.fingerprint.take(10)}${candidate.error?.let { " · $it" } ?: ""}",
+            when (candidate.kind.name) {
+                "DUPLICATE" -> "! Parece que este elemento ya está guardado."
+                "UNKNOWN" -> "? No pudimos clasificar este elemento."
+                "QR" -> "QR pendiente de revisión."
+                "COMPROBANTE" -> "Comprobante pendiente de revisión."
+                else -> "Elemento pendiente de revisión."
+            },
             color = XauxaColor.TextSecondary,
         )
     }
