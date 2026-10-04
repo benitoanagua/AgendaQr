@@ -48,9 +48,11 @@ class SyncComprobanteRepositoryTest {
         val remote = FakeRemoteComprobanteRepository()
         val local = FakeComprobanteRepository()
         val files = FakeComprobanteFileStore()
-        local.save(Comprobante("receipt", "local/receipt.png", createdAt = 1, updatedAt = 5))
+        // Local estrictamente más nuevo, más allá de la tolerancia de skew
+        // (documentada: dentro de la tolerancia gana el servidor).
+        local.save(Comprobante("receipt", "local/receipt.png", createdAt = 1, updatedAt = 6_000))
         remote.items += RemoteComprobanteRecord(
-            Comprobante("receipt", "remote.png", createdAt = 1, updatedAt = 4),
+            Comprobante("receipt", "remote.png", createdAt = 1, updatedAt = 4_000),
             "user/receipt.png",
         )
         val downloads = mutableListOf<String>()
@@ -70,7 +72,7 @@ class SyncComprobanteRepositoryTest {
 
         assertEquals(emptyList(), downloads)
         assertEquals("local/receipt.png", local.get("receipt")?.file)
-        assertEquals(5, local.get("receipt")?.updatedAt)
+        assertEquals(6_000, local.get("receipt")?.updatedAt)
     }
 
     @Test

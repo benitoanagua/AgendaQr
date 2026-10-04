@@ -8,7 +8,7 @@ import kotlin.test.assertTrue
 class SyncQueueIdempotencyTest {
     @Test
     fun latest_mutation_wins_for_same_entity_after_multiple_retries() = runTest {
-        val store = MemoryQueueStore()
+        val store = IdempotencyQueueStore()
         val queue = LocalSyncQueue(store)
 
         queue.enqueue(mutation("first", SyncMutationType.UPSERT, "op-1", enqueuedAt = 10))
@@ -29,7 +29,7 @@ class SyncQueueIdempotencyTest {
 
     @Test
     fun delete_supersedes_pending_upsert_without_creating_a_second_queue_item() = runTest {
-        val store = MemoryQueueStore()
+        val store = IdempotencyQueueStore()
         val queue = LocalSyncQueue(store)
 
         queue.enqueue(mutation("upsert", SyncMutationType.UPSERT, "destination-1", enqueuedAt = 100))
@@ -45,7 +45,7 @@ class SyncQueueIdempotencyTest {
 
     @Test
     fun failed_mutation_is_not_claimed_before_backoff_but_is_claimed_after_it() = runTest {
-        val store = MemoryQueueStore()
+        val store = IdempotencyQueueStore()
         val queue = LocalSyncQueue(store)
 
         queue.enqueue(mutation("1", SyncMutationType.UPSERT, "context-1", enqueuedAt = 1))
@@ -99,7 +99,7 @@ class SyncQueueIdempotencyTest {
     )
 }
 
-private class MemoryQueueStore : SyncQueueStore {
+private class IdempotencyQueueStore : SyncQueueStore {
     private var items = emptyList<PendingSyncMutation>()
 
     override fun read(): List<PendingSyncMutation> = items

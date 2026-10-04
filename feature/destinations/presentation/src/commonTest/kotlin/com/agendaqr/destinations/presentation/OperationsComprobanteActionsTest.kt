@@ -23,7 +23,6 @@ import com.agendaqr.destinations.domain.OperationRepository
 import com.agendaqr.destinations.domain.OperationType
 import com.agendaqr.destinations.domain.SaveComprobanteUseCase
 import com.agendaqr.destinations.domain.SaveOperationUseCase
-import com.agendaqr.destinations.domain.UpdateOperationUseCase
 import com.agendaqr.destinations.domain.SuggestReceiptAssociationUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -147,7 +146,7 @@ class OperationsComprobanteActionsTest {
         }
     }
 
-    private suspend fun waitUntil(condition: () -> Boolean) {
+    private suspend fun waitUntil(condition: suspend () -> Boolean) {
         repeat(100) {
             if (condition()) return
             delay(20)
