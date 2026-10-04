@@ -3,6 +3,7 @@ package com.agendaqr.destinations.presentation
 import com.agendaqr.destinations.domain.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,6 +38,7 @@ class ContextsViewModel(
     private val _state = MutableStateFlow(ContextsUiState())
     val state: StateFlow<ContextsUiState> = _state.asStateFlow()
     private var selectedId: String? = null
+    private var contentsJob: Job? = null
 
     init {
         scope.launch {
@@ -51,7 +53,13 @@ class ContextsViewModel(
             is ContextAction.Open -> open(action.id)
             ContextAction.Back -> {
                 selectedId = null
-                _state.value = _state.value.copy(route = ContextRoute.List, contents = null, error = null)
+                contentsJob?.cancel()
+                contentsJob = null
+                _state.value = _state.value.copy(
+                    route = ContextRoute.List,
+                    contents = null,
+                    error = null,
+                )
             }
             ContextAction.ClearError -> _state.value = _state.value.copy(error = null)
         }
@@ -59,14 +67,21 @@ class ContextsViewModel(
 
     private fun open(id: String) {
         selectedId = id
-        scope.launch {
+        contentsJob?.cancel()
+        contentsJob = scope.launch {
             if (get(id) == null) {
-                _state.value = _state.value.copy(error = "Context not found: $id")
+                _state.value = _state.value.copy(error = "No encontramos este contexto.")
                 return@launch
             }
-            _state.value = _state.value.copy(route = ContextRoute.Detail(id), error = null)
+            _state.value = _state.value.copy(
+                route = ContextRoute.Detail(id),
+                contents = null,
+                error = null,
+            )
             observeContents(id).collect { contents ->
-                _state.value = _state.value.copy(contents = contents)
+                if (selectedId == id) {
+                    _state.value = _state.value.copy(contents = contents)
+                }
             }
         }
     }
