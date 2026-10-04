@@ -82,6 +82,17 @@ fun AgendaQrApp() {
     }
 }
 
+private fun destinationNavigationIsBack(
+    from: DestinationRoute,
+    to: DestinationRoute,
+): Boolean = when {
+    from is DestinationRoute.Edit && to is DestinationRoute.List -> true
+    from is DestinationRoute.Detail && to is DestinationRoute.List -> true
+    from is DestinationRoute.FullscreenQr && to is DestinationRoute.Detail -> true
+    from is DestinationRoute.ImportReview && to is DestinationRoute.Edit -> true
+    else -> false
+}
+
 @Composable
 private fun AgendaQrAuthenticatedApp(userId: String, onSignOut: () -> Unit) {
     // Scope ligado al usuario: sobrevive a recomposiciones y solo se cancela
@@ -323,13 +334,9 @@ private fun AgendaQrAuthenticatedApp(userId: String, onSignOut: () -> Unit) {
         else -> AnimatedContent(
             targetState = state.route,
             transitionSpec = {
-                // ts5 (¿toda navegación o solo lista↔detalle?) queda como
-                // decisión de producto: por ahora solo se conecta acá, la
-                // ruta de destinos. Dirección "reverse" (atrás vs adelante)
-                // no se infiere todavía del route en sí — ver comentario en
-                // XauxaTurnstileNav.kt (ts3) — así que hoy siempre entra
-                // desde la derecha; diferenciar back queda PENDING.
-                xauxaTurnstileEnter() togetherWith xauxaTurnstileExit()
+                val reverse = destinationNavigationIsBack(initialState, targetState)
+                xauxaTurnstileEnter(reverse = reverse) togetherWith
+                    xauxaTurnstileExit(reverse = reverse)
             },
             label = "destination_route_turnstile",
         ) { route ->
