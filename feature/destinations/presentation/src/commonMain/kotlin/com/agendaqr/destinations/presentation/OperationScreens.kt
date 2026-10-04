@@ -16,6 +16,11 @@ import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.domain.*
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, onBack: () -> Unit) {
@@ -433,41 +438,32 @@ internal fun receiptProvenanceLabel(provenance: ReceiptProvenance?): String = wh
     ReceiptProvenance.DESCONOCIDO, null -> "Origen desconocido"
 }
 
-internal fun formatDate(millis: Long): String {
-    val z = millis / 86_400_000L + 719468
-    val era = if (z >= 0) z / 146097 else (z - 146096) / 146097
-    val doe = z - era * 146097
-    val yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365
-    val y = yoe + era * 400
-    val doy = doe - (365 * yoe + yoe / 4 - yoe / 100)
-    val mp = (5 * doy + 2) / 153
-    val day = doy - (153 * mp + 2) / 5 + 1
-    val month = mp + if (mp < 10) 3 else -9
-    val year = y + if (month <= 2) 1 else 0
-    fun two(value: Long) = if (value < 10) "0" + value else value.toString()
-    return two(day) + "/" + two(month) + "/" + year
+/**
+ * Fecha civil dd/mm/aaaa de [millis] en [timeZone] (por defecto, la del
+ * dispositivo).
+ *
+ * Se calcula en la zona local (no UTC): con la zona del público objetivo
+ * (p. ej. UTC-4) la medianoche UTC ya pertenece al día siguiente por la
+ * tarde, y el editor proponía "mañana" como fecha por defecto.
+ */
+internal fun formatDate(millis: Long, timeZone: TimeZone = TimeZone.currentSystemDefault()): String {
+    val date = Instant.fromEpochMilliseconds(millis).toLocalDateTime(timeZone).date
+    fun two(value: Int) = if (value < 10) "0" + value else value.toString()
+    return two(date.dayOfMonth) + "/" + two(date.monthNumber) + "/" + date.year
 }
 
 /** Inversa estricta de [formatDate]: solo acepta dd/mm/aaaa reales. */
-internal fun parseDate(text: String): Long? {
+internal fun parseDate(text: String, timeZone: TimeZone = TimeZone.currentSystemDefault()): Long? {
     val parts = text.trim().split("/")
     if (parts.size != 3) return null
     val day = parts[0].toIntOrNull() ?: return null
     val month = parts[1].toIntOrNull() ?: return null
     val year = parts[2].toIntOrNull() ?: return null
     if (year < 1900 || year > 2100 || month !in 1..12 || day !in 1..31) return null
-    var y = year
-    if (month <= 2) y -= 1
-    val era = if (y >= 0) y / 400 else (y - 399) / 400
-    val yoe = y - era * 400
-    val mp = if (month > 2) month - 3 else month + 9
-    val doy = (153 * mp + 2) / 5 + day - 1
-    val doe = yoe * 365 + yoe / 4 - yoe / 100 + doy
-    val millis = (era * 146097 + doe - 719468) * 86_400_000L
-    // Round-trip: rechaza 31/02, 30/02, 31/04 y demás combinaciones inexistentes.
-    fun two(value: Int) = if (value < 10) "0" + value else value.toString()
-    if (formatDate(millis) != two(day) + "/" + two(month) + "/" + year) return null
-    return millis
+    // LocalDate rechaza 31/02, 29/02 en año no bisiesto, etc.
+    val date = runCatching { LocalDate(year, month, day) }.getOrNull() ?: return null
+    // Medianoche local de esa fecha civil: mismo valor que vería el usuario.
+    return date.atStartOfDayIn(timeZone).toEpochMilliseconds()
 }
 
 
