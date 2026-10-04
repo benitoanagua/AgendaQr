@@ -95,6 +95,7 @@ class OperationsViewModel(
     private val _state = MutableStateFlow(OperationsUiState())
     val state: StateFlow<OperationsUiState> = _state.asStateFlow()
     private var selectedOperationId: String? = null
+    private var associationReturnOperationId: String? = null
 
     init {
         scope.launch { observeContexts().collect { contexts ->
@@ -129,7 +130,15 @@ class OperationsViewModel(
                 runCatching { deleteOperation(action.id) }.onFailure(::showError).onSuccess { back() }
             }
             is OperationAction.Associate -> scope.launch {
-                runCatching { associate(action.comprobanteId, action.operationId) }.onFailure(::showError)
+                runCatching { associate(action.comprobanteId, action.operationId) }
+                    .onFailure(::showError)
+                    .onSuccess {
+                        associationReturnOperationId?.let { operationId ->
+                            selectedOperationId = operationId
+                            associationReturnOperationId = null
+                            _state.update { it.copy(route = OperationRoute.Detail(operationId), error = null) }
+                        }
+                    }
             }
             is OperationAction.Disassociate -> scope.launch {
                 runCatching { unassociate(action.comprobanteId) }.onFailure(::showError)
@@ -304,9 +313,22 @@ class OperationsViewModel(
         }
     }
 
+    fun openUnassociatedForOperation(operationId: String) {
+        associationReturnOperationId = operationId
+        selectedOperationId = operationId
+        _state.update { it.copy(route = OperationRoute.Unassociated, error = null) }
+    }
+
     private fun back() {
-        selectedOperationId = null
-        _state.update { it.copy(route = OperationRoute.List, operationComprobantes = emptyList(), error = null) }
+        val returnOperationId = associationReturnOperationId
+        associationReturnOperationId = null
+        if (returnOperationId != null) {
+            selectedOperationId = returnOperationId
+            _state.update { it.copy(route = OperationRoute.Detail(returnOperationId), error = null) }
+        } else {
+            selectedOperationId = null
+            _state.update { it.copy(route = OperationRoute.List, operationComprobantes = emptyList(), error = null) }
+        }
     }
 
     private fun openComprobante(id: String) {
