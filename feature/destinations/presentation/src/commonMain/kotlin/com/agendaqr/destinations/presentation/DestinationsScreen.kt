@@ -1,6 +1,8 @@
 package com.agendaqr.destinations.presentation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -20,7 +22,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
@@ -70,13 +75,26 @@ fun DestinationsScreen(
         // S01 — Inicio: buscar domina visualmente; Añadir y Registrar son
         // acciones secundarias. Contexto pertenece al flujo que lo necesita,
         // no a una taxonomía de navegación principal.
-        XauxaSearchBar(
-            value = state.query,
-            onValueChange = { onAction(DestinationAction.Search(it)) },
-            label = "Buscar en Agenda QR",
-            placeholder = "Buscar QR, actividades, comprobantes o contextos",
-            onClear = { onAction(DestinationAction.Search("")) },
-        )
+        // La barra es la entrada a S04 (búsqueda global): al tocarla se abre
+        // la pantalla de Buscar, que encuentra QR, operaciones, comprobantes
+        // y contextos. El listado de destinos de Inicio no se filtra aquí.
+        Box {
+            XauxaSearchBar(
+                value = "",
+                onValueChange = {},
+                label = "Buscar en Agenda QR",
+                placeholder = "Buscar QR, actividades, comprobantes o contextos",
+            )
+            Box(
+                Modifier
+                    .matchParentSize()
+                    .semantics {
+                        contentDescription = "Buscar en Agenda QR"
+                        role = Role.Button
+                    }
+                    .clickable(onClickLabel = "Buscar en Agenda QR") { onOpenSearch() },
+            )
+        }
 
         FlowRow(
             modifier = Modifier.fillMaxWidth(),

@@ -116,6 +116,22 @@ class OperationsViewModel(
                                 state.copy(receiptSuggestions = state.receiptSuggestions + (receipt.id to suggestion))
                             }
                         }
+                        .onFailure { error ->
+                            // Never leave the dialog stuck in "analizando":
+                            // degrade to an explicit no-match so the user can
+                            // still associate manually.
+                            println("AGENDAQR suggestion failed for ${receipt.id}: $error")
+                            _state.update { state ->
+                                state.copy(
+                                    receiptSuggestions = state.receiptSuggestions +
+                                        (receipt.id to ReceiptAssociationSuggestion(
+                                            kind = ReceiptMatchKind.NONE,
+                                            receiptId = receipt.id,
+                                            operationIds = emptyList(),
+                                        )),
+                                )
+                            }
+                        }
                 }
             }
         } }

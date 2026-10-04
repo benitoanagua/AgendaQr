@@ -231,12 +231,40 @@ private fun AgendaQrAuthenticatedApp(userId: String, onSignOut: () -> Unit) {
     }
     val globalSearchState by globalSearchViewModel.state.collectAsState()
 
+    // QR compartidos desde fuera de la app: pueden llegar en frío (antes de
+    // que exista colector) y se retienen hasta que la app autenticada los
+    // consume; el contrato S02/S09 lleva la importación compartida a la
+    // revisión de QR.
+    LaunchedEffect(viewModel) {
+        observeSharedQrImports().collect { result ->
+            viewModel.onAction(DestinationAction.ImportAssets(result.assets))
+        }
+    }
+    // Un comprobante recibido (share o selección única no-QR) se presenta
+    // desde la superficie de operaciones; sin esto el diálogo quedaba
+    // montado sobre una pantalla que no lo muestra y era invisible.
+    LaunchedEffect(operationState.pendingIncoming) {
+        if (operationState.pendingIncoming != null) showOperations = true
+    }
+    // Errores de importación recuperables (URI compartida ilegible/revocada).
+    var importError by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(Unit) {
+        observeImportErrors().collect { importError = it }
+    }
+
     ImportBatchControls { batch ->
         importBatchState = importBatchReducer.reduce(importBatchState, ImportBatchAction.Analyzed(batch))
         showImportBatch = true
     }
 
     androidx.compose.foundation.layout.Column {
+        importError?.let { message ->
+            XauxaStatusBanner(
+                message,
+                tone = XauxaTone.Danger,
+                onDismiss = { importError = null },
+            )
+        }
         if (isOffline) {
             XauxaStatusBanner("Sin conexión — los cambios se guardan localmente y se sincronizarán al recuperar conectividad.", danger = false)
         }

@@ -18,8 +18,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.onEach
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.security.MessageDigest
@@ -79,12 +83,35 @@ object AgendaQrAndroidImportLauncher {
     private var activity: Activity? = null
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val payloadStore = createImportPayloadStore()
+    /**
+     * In-app acquisition (Galería/Cámara launched from Añadir or the editor).
+     * The launching screen owns a live collector, so no retention is needed.
+     */
     private val _results = MutableSharedFlow<QrImportResult>(extraBufferCapacity = 16)
-    private val _receiptResults = MutableSharedFlow<IncomingComprobante>(extraBufferCapacity = 16)
-    private val _batchResults = MutableSharedFlow<ImportBatch>(extraBufferCapacity = 16)
     val results = _results.asSharedFlow()
-    val receiptResults = _receiptResults.asSharedFlow()
-    val batchResults = _batchResults.asSharedFlow()
+
+    /**
+     * External share intents can arrive while the app is cold (no collector
+     * composed yet) or even signed out. These channels RETAIN the last value
+     * until the signed-in app consumes it; consumption clears the slot so a
+     * later recomposition never replays an already handled import.
+     */
+    private val _sharedQrResults = MutableStateFlow<QrImportResult?>(null)
+    val sharedQrResults: Flow<QrImportResult> =
+        _sharedQrResults.filterNotNull().onEach { _sharedQrResults.value = null }
+
+    private val _receiptResults = MutableStateFlow<IncomingComprobante?>(null)
+    val receiptResults: Flow<IncomingComprobante> =
+        _receiptResults.filterNotNull().onEach { _receiptResults.value = null }
+
+    private val _batchResults = MutableStateFlow<ImportBatch?>(null)
+    val batchResults: Flow<ImportBatch> =
+        _batchResults.filterNotNull().onEach { _batchResults.value = null }
+
+    /** Import failures the user must see (unreadable/revoked shared URIs). */
+    private val _importErrors = MutableStateFlow<String?>(null)
+    val importErrors: Flow<String> =
+        _importErrors.filterNotNull().onEach { _importErrors.value = null }
 
     fun initialize(compActivity: ComponentActivity) {
         this.activity = compActivity
@@ -114,10 +141,17 @@ object AgendaQrAndroidImportLauncher {
     fun gallery() { gallery?.launch("image/*") }
     fun multiple() { multiple?.launch("image/*") }
 
+    /**
+     * Share entry point (ACTION_SEND / ACTION_SEND_MULTIPLE). Single files go
+     * to exactly one semantic surface — S09 review for a QR, the receipt
+     * dialog for a comprobante, S12 for multiples — instead of double-feeding
+     * the batch screen plus a second review, which allowed the same file to
+     * be saved twice.
+     */
     fun handleShare(activity: Activity, intent: android.content.Intent?) {
         when (intent?.action) {
             android.content.Intent.ACTION_SEND -> {
-                intent.getParcelableExtra<Uri>(android.content.Intent.EXTRA_STREAM)?.let { decodeAndEmit(it, activity) }
+                intent.getParcelableExtra<Uri>(android.content.Intent.EXTRA_STREAM)?.let { importSharedUri(it, activity) }
             }
             android.content.Intent.ACTION_SEND_MULTIPLE -> {
                 intent.getParcelableArrayListExtra<Uri>(android.content.Intent.EXTRA_STREAM)?.let { decodeMultiple(it, activity) }
@@ -125,21 +159,44 @@ object AgendaQrAndroidImportLauncher {
         }
     }
 
+    private fun importSharedUri(uri: Uri, sourceActivity: Activity) {
+        scope.launch {
+            // A shared URI can be unreadable (revoked grant, missing file,
+            // storage restrictions); that must surface as a recoverable
+            // error, never crash the process.
+            val bytes = runCatching { readUriBytes(uri, sourceActivity) }.getOrNull()
+            if (bytes == null) {
+                _importErrors.value = "No se pudo abrir el archivo compartido."
+                return@launch
+            }
+            val mime = sourceActivity.contentResolver.getType(uri) ?: "image/png"
+            val asset = decodeQrAsset(bytes, mime)
+            if (asset != null) {
+                _sharedQrResults.value = QrImportResult(listOf(asset))
+            } else {
+                _receiptResults.value = IncomingComprobante(bytes, mime, extensionFor(mime))
+            }
+        }
+    }
+
+    private fun readUriBytes(uri: Uri, sourceActivity: Activity): ByteArray? =
+        sourceActivity.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+
     private fun decodeMultiple(uris: List<Uri>) {
         activity?.let { decodeMultiple(uris, it) }
     }
 
     private fun decodeMultiple(uris: List<Uri>, sourceActivity: Activity) {
         scope.launch {
-            val assets = mutableListOf<QrAsset>()
             val candidates = mutableListOf<ImportCandidate>()
             uris.forEach { uri ->
-                val bytes = sourceActivity.contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: return@forEach
+                // Unreadable URIs are isolated per candidate and never block
+                // the valid ones (multi-import contract).
+                val bytes = runCatching { readUriBytes(uri, sourceActivity) }.getOrNull() ?: return@forEach
                 val mime = sourceActivity.contentResolver.getType(uri) ?: "image/png"
                 val fingerprint = sha256(bytes)
                 val asset = decodeQrAsset(bytes, mime)
                 if (asset != null) {
-                    assets += asset
                     candidates += ImportCandidate(
                         id = "import-$fingerprint",
                         kind = ImportKind.QR,
@@ -152,7 +209,6 @@ object AgendaQrAndroidImportLauncher {
                     val extension = extensionFor(mime)
                     val payloadRef = "import-payload-$fingerprint"
                     payloadStore.put(payloadRef, bytes)
-                    _receiptResults.emit(IncomingComprobante(bytes, mime, extension))
                     candidates += ImportCandidate(
                         id = "import-$fingerprint",
                         kind = classifyNonQr(mime),
@@ -163,8 +219,15 @@ object AgendaQrAndroidImportLauncher {
                     )
                 }
             }
-            if (assets.isNotEmpty()) _results.emit(QrImportResult(assets))
-            if (candidates.isNotEmpty()) _batchResults.emit(ImportBatch(candidates))
+            // Multi-import is a single surface (S12): recognized QRs and
+            // pendings both live in the batch. Emitting the extra single-QR
+            // channel here made a stale "Revisar QR" reappear after the batch
+            // was already saved, offering a second save of the same file.
+            if (candidates.isNotEmpty()) {
+                _batchResults.value = ImportBatch(candidates)
+            } else {
+                _importErrors.value = "No se pudo abrir ninguno de los archivos compartidos."
+            }
         }
     }
 
@@ -174,45 +237,19 @@ object AgendaQrAndroidImportLauncher {
 
     private fun decodeAndEmit(uri: Uri, sourceActivity: Activity) {
         scope.launch {
-            val bytes = sourceActivity.contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: return@launch
+            val bytes = runCatching { readUriBytes(uri, sourceActivity) }.getOrNull()
+            if (bytes == null) {
+                _importErrors.value = "No se pudo abrir el archivo seleccionado."
+                return@launch
+            }
             val mime = sourceActivity.contentResolver.getType(uri) ?: "image/png"
             val asset = decodeQrAsset(bytes, mime)
-            val fingerprint = sha256(bytes)
             if (asset != null) {
                 _results.emit(QrImportResult(listOf(asset)))
-                _batchResults.emit(
-                    ImportBatch(
-                        listOf(
-                            ImportCandidate(
-                                id = "import-$fingerprint",
-                                kind = ImportKind.QR,
-                                fingerprint = fingerprint,
-                                mimeType = mime,
-                                extension = extensionFor(mime),
-                                qrAsset = asset,
-                            )
-                        )
-                    )
-                )
             } else {
-                val extension = extensionFor(mime)
-                val payloadRef = "import-payload-$fingerprint"
-                payloadStore.put(payloadRef, bytes)
-                _receiptResults.emit(IncomingComprobante(bytes, mime, extension))
-                _batchResults.emit(
-                    ImportBatch(
-                        listOf(
-                            ImportCandidate(
-                                id = "import-$fingerprint",
-                                kind = classifyNonQr(mime),
-                                fingerprint = fingerprint,
-                                mimeType = mime,
-                                extension = extension,
-                                payloadRef = payloadRef,
-                            )
-                        )
-                    )
-                )
+                // Single non-QR pick: the receipt dialog owns the flow and the
+                // bytes travel with it, so no payload slot is kept behind.
+                _receiptResults.value = IncomingComprobante(bytes, mime, extensionFor(mime))
             }
         }
     }
