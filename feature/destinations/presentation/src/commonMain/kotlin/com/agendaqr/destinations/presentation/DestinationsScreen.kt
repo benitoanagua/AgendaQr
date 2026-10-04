@@ -27,7 +27,6 @@ import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextAction
-import com.agendaqr.core.ui.components.XauxaTile
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaSearchBar
@@ -60,17 +59,44 @@ fun DestinationsScreen(
             .imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        // Cabecera responsive: título arriba y acciones en FlowRow para que
-        // en anchos pequeños pasen a varias líneas en vez de comprimirse.
-        Text("Agenda QR", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
-        FlowRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-            XauxaTextAction(label = "Cerrar sesión", onClick = onSignOut)
-            XauxaSecondaryButton(label = "Contextos", onClick = onOpenContexts)
-            XauxaSecondaryButton(label = "Operaciones", onClick = onOpenOperations)
-            XauxaPrimaryButton(label = "Buscar", onClick = onOpenSearch)
-            XauxaPrimaryButton(label = "Agregar QR", onClick = { onAction(DestinationAction.Edit(null)) })
+        Text(
+            "Agenda QR",
+            modifier = Modifier.semantics { heading() },
+            fontSize = XauxaType.Display,
+            fontWeight = FontWeight.Bold,
+            color = XauxaColor.TextPrimary,
+        )
+
+        // S01 — Inicio: buscar domina visualmente; Añadir y Registrar son
+        // acciones secundarias. Contexto pertenece al flujo que lo necesita,
+        // no a una taxonomía de navegación principal.
+        XauxaSearchBar(
+            value = state.query,
+            onValueChange = { onAction(DestinationAction.Search(it)) },
+            label = "Buscar en Agenda QR",
+            placeholder = "Buscar QR, actividades, comprobantes o contextos",
+            onClear = { onAction(DestinationAction.Search("")) },
+        )
+
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+        ) {
+            XauxaPrimaryButton(
+                label = "Agregar QR",
+                onClick = { onAction(DestinationAction.Edit(null)) },
+            )
+            XauxaSecondaryButton(
+                label = "Registrar",
+                onClick = onOpenOperations,
+            )
+            XauxaTextAction(
+                label = "Cerrar sesión",
+                onClick = onSignOut,
+            )
         }
-        XauxaSearchBar(value = state.query, onValueChange = { onAction(DestinationAction.Search(it)) }, label = "Buscar", placeholder = "Buscar destinos QR", onClear = { onAction(DestinationAction.Search("")) })
+
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
             XauxaFilterChip("Favoritos", state.favoriteOnly, { onAction(DestinationAction.ToggleFavorites) })
             XauxaFilterChip("Recientes", state.recentOnly, { onAction(DestinationAction.ToggleRecent) })
@@ -111,7 +137,6 @@ fun DestinationRow(destination: Destination, onAction: (DestinationAction) -> Un
     XauxaListRow(
         title = destination.name.ifBlank { "Sin nombre" },
         subtitle = destination.note ?: destination.category,
-        // Favorito = selección activa -> acento de marca (Info), no estado de éxito.
         tone = if (destination.favorite) XauxaTone.Info else XauxaTone.Neutral,
         onClick = { onAction(DestinationAction.Open(destination.id)) },
         trailing = {
