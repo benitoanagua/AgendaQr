@@ -87,6 +87,8 @@ private fun destinationNavigationIsBack(
     to: DestinationRoute,
 ): Boolean = when {
     from is DestinationRoute.Edit && to is DestinationRoute.List -> true
+    from is DestinationRoute.Add && to is DestinationRoute.List -> true
+    from is DestinationRoute.ImportReview && to is DestinationRoute.Add -> true
     from is DestinationRoute.Detail && to is DestinationRoute.List -> true
     from is DestinationRoute.FullscreenQr && to is DestinationRoute.Detail -> true
     from is DestinationRoute.ImportReview && to is DestinationRoute.Edit -> true
@@ -103,28 +105,28 @@ private fun AgendaQrAuthenticatedApp(userId: String, onSignOut: () -> Unit) {
     DisposableEffect(syncScope) {
         onDispose { syncScope.coroutineContext.cancel() }
     }
-    val syncQueue = remember { LocalSyncQueue() }
+    val syncQueue = remember(userId) { LocalSyncQueue() }
     val syncEnqueuer = remember(syncQueue) { SyncMutationEnqueuer(syncQueue) }
     // Estado local crudo compartido: los wrappers Sync son la vía de escritura
     // de UI (encolan), y el procesador opera sobre estos mismos locales sin
     // re-encolar al aplicar snapshots ganadores del servidor.
-    val contextLocal = remember(syncQueue) {
+    val contextLocal = remember(userId) {
         LocalContextRepository(storageKey = userScopedKey("agendaqr.contexts.v1"))
     }
-    val destinationLocal = remember(syncQueue) {
+    val destinationLocal = remember(userId) {
         LocalDestinationRepository(storageKey = userScopedKey("agendaqr.destinations.v1"))
     }
-    val operationLocal = remember(syncQueue) {
+    val operationLocal = remember(userId) {
         LocalOperationRepository(storageKey = userScopedKey("agendaqr.operations.v1"))
     }
-    val comprobanteLocal = remember(syncQueue) {
+    val comprobanteLocal = remember(userId) {
         LocalComprobanteRepository(storageKey = userScopedKey("agendaqr.comprobantes.v1"))
     }
     val contextRepository = remember(syncQueue) { createSyncedContextRepository(syncQueue, contextLocal) }
     val destinationRepository = remember(syncEnqueuer) { createSyncedDestinationRepository(syncEnqueuer, destinationLocal) }
     val operationRepository = remember(syncEnqueuer) { createSyncedOperationRepository(syncEnqueuer, operationLocal) }
-    val fileStore = remember { createComprobanteFileStore() }
-    val importPayloadStore = remember { createImportPayloadStore() }
+    val fileStore = remember(userId) { createComprobanteFileStore() }
+    val importPayloadStore = remember(userId) { createImportPayloadStore() }
     val comprobanteRepository = remember(syncEnqueuer, fileStore) { createSyncedComprobanteRepository(fileStore, syncEnqueuer, comprobanteLocal) }
     val syncProcessor = remember(syncQueue, contextLocal, destinationLocal, operationLocal, comprobanteLocal, fileStore) {
         SyncMutationProcessor(
@@ -182,7 +184,7 @@ private fun AgendaQrAuthenticatedApp(userId: String, onSignOut: () -> Unit) {
             toggleFavorite = ToggleFavoriteUseCase(repository),
         ) }
     val state by viewModel.state.collectAsState()
-    val historyRepository = remember { createDeletedOperationHistoryRepository() }
+    val historyRepository = remember(userId) { createDeletedOperationHistoryRepository() }
     val operationsViewModel = remember(operationRepository, comprobanteRepository, fileStore, historyRepository) {
         OperationsViewModel(
             observeOperations = ObserveOperationsUseCase(operationRepository),
@@ -340,10 +342,17 @@ private fun AgendaQrAuthenticatedApp(userId: String, onSignOut: () -> Unit) {
             DestinationRoute.List -> DestinationsScreen(
                 state,
                 viewModel::onAction,
-                onOpenOperations = { showOperations = true },
+                onOpenOperations = {
+                    operationsViewModel.onAction(OperationAction.New)
+                    showOperations = true
+                },
                 onOpenSearch = { showSearch = true },
                 onOpenContexts = { showContexts = true },
                 onSignOut = onSignOut,
+            )
+            DestinationRoute.Add -> AddDestinationScreen(
+                onImport = { assets -> viewModel.onAction(DestinationAction.ImportAssets(assets)) },
+                onBack = { viewModel.onAction(DestinationAction.Back) },
             )
             is DestinationRoute.Edit -> DestinationEditorScreen(
                 existing = route.id?.let(viewModel::destination),

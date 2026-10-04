@@ -83,8 +83,8 @@ fun DestinationsScreen(
             horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
             verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
         ) {
-            XauxaPrimaryButton(
-                label = "Agregar QR",
+            XauxaSecondaryButton(
+                label = "Añadir",
                 onClick = { onAction(DestinationAction.Edit(null)) },
             )
             XauxaSecondaryButton(
@@ -107,7 +107,7 @@ fun DestinationsScreen(
             state.visibleDestinations.isEmpty() -> XauxaEmptyState(
                 title = if (state.destinations.isEmpty()) "Aún no hay destinos" else "No se encontraron destinos",
                 subtitle = if (state.destinations.isEmpty()) "Agrega tu primer QR para empezar." else "Prueba con otra búsqueda o limpia los filtros.",
-                actionLabel = if (state.destinations.isEmpty()) "Agregar QR" else "Limpiar búsqueda",
+                actionLabel = if (state.destinations.isEmpty()) "Añadir" else "Limpiar búsqueda",
                 onAction = { if (state.destinations.isEmpty()) onAction(DestinationAction.Edit(null)) else onAction(DestinationAction.Search("")) },
             )
             else -> {

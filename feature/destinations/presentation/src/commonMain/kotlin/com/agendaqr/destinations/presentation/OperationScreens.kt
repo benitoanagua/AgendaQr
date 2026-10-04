@@ -32,9 +32,11 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
         XauxaDialog(
             title = if (duplicate) "Comprobante duplicado" else "Comprobante recibido",
             message = if (duplicate) {
-                "Ya existe un comprobante igual. Puedes verlo o guardar otra copia.\nArchivo: " + incoming.extension
+                "Ya existe un comprobante igual. Puedes verlo o guardar otra copia.
+Archivo: " + incoming.extension
             } else {
-                "Se guardará en tu bandeja de respaldos sin asociar.\nArchivo: " + incoming.extension
+                "Se guardará en tu bandeja de respaldos sin asociar.
+Archivo: " + incoming.extension
             },
             confirmLabel = if (duplicate) "Guardar de todos modos" else if (saving) "Guardando…" else "Guardar",
             onConfirm = {
@@ -392,12 +394,12 @@ private fun OperationDetailScreen(state: OperationsUiState, viewModel: Operation
         XauxaSection("Comprobantes") {
             if (state.operationComprobantes.isEmpty()) {
                 Text("Sin comprobante adjunto", color = XauxaColor.TextSecondary)
-                XauxaTextAction(label = "Adjuntar comprobante ahora", onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
+                XauxaTextAction(label = "Adjuntar comprobante ahora", onClick = { viewModel.openUnassociatedForOperation(operation.id) })
             } else {
                 for (receipt in state.operationComprobantes) {
                     XauxaTile(onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) }) {
                         Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg)) {
-                            Text("Comprobante " + receipt.provenance?.name.orEmpty(), fontWeight = FontWeight.SemiBold)
+                            Text("Comprobante · " + receiptProvenanceLabel(receipt.provenance), fontWeight = FontWeight.SemiBold)
                             Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
                             XauxaTextAction(
                                 label = "Desasociar",
@@ -425,6 +427,12 @@ private fun OperationDetailScreen(state: OperationsUiState, viewModel: Operation
             onDismiss = { showDeleteConfirm = false },
         )
     }
+}
+
+internal fun receiptProvenanceLabel(provenance: ReceiptProvenance?): String = when (provenance) {
+    ReceiptProvenance.ENVIADO -> "Enviado"
+    ReceiptProvenance.RECIBIDO -> "Recibido"
+    ReceiptProvenance.DESCONOCIDO, null -> "Origen desconocido"
 }
 
 internal fun formatDate(millis: Long): String {

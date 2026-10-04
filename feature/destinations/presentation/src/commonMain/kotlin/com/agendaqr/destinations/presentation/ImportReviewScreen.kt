@@ -45,7 +45,7 @@ fun ImportReviewScreen(
             .imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        Text("QR importados", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Headline, color = XauxaColor.TextPrimary)
+        Text("Revisar QR", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Headline, color = XauxaColor.TextPrimary)
         error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = onClearError) }
         if (assets.isEmpty()) {
             XauxaEmptyState(
@@ -56,7 +56,7 @@ fun ImportReviewScreen(
             )
         } else {
             Text(
-                if (assets.size == 1) "1 destino" else "${assets.size} destinos",
+                if (assets.size == 1) "1 QR listo para guardar" else "${assets.size} QR listos para guardar",
                 fontSize = XauxaType.Label,
                 color = XauxaColor.TextSecondary,
             )
@@ -68,7 +68,7 @@ fun ImportReviewScreen(
                     XauxaQrPreview(asset.encoded)
                 }
             }
-            XauxaPrimaryButton("Guardar todo", onSaveAll, enabled = !isSaving, isLoading = isSaving)
+            XauxaPrimaryButton(if (assets.size == 1) "Guardar" else "Guardar todo", onSaveAll, enabled = !isSaving, isLoading = isSaving)
             XauxaSecondaryButton("Volver", onBack, enabled = !isSaving)
         }
     }

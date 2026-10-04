@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 
 sealed interface DestinationRoute {
     data object List : DestinationRoute
+    data object Add : DestinationRoute
     data class Detail(val id: String) : DestinationRoute
     data class Edit(val id: String?) : DestinationRoute
     data class FullscreenQr(val id: String) : DestinationRoute
@@ -88,7 +89,7 @@ class DestinationsViewModel(
             is DestinationAction.Open -> scope.launch {
                 get(action.id)?.let { _state.update { state -> state.copy(route = DestinationRoute.Detail(action.id)) } }
             }
-            is DestinationAction.Edit -> _state.update { it.copy(route = DestinationRoute.Edit(action.id)) }
+            is DestinationAction.Edit -> _state.update { it.copy(route = if (action.id == null) DestinationRoute.Add else DestinationRoute.Edit(action.id)) }
             is DestinationAction.ShowQr -> scope.launch {
                 get(action.id)?.let { destination ->
                     _state.update { state -> state.copy(route = DestinationRoute.FullscreenQr(action.id)) }
@@ -131,6 +132,16 @@ class DestinationsViewModel(
         }
     }
 
-    private fun back() { _state.update { it.copy(route = DestinationRoute.List, error = null) } }
+    private fun back() {
+        _state.update {
+            it.copy(
+                route = when (it.route) {
+                    DestinationRoute.ImportReview -> DestinationRoute.Add
+                    else -> DestinationRoute.List
+                },
+                error = null,
+            )
+        }
+    }
     private fun showError(error: Throwable) { _state.update { it.copy(error = error.message ?: "Operation failed") } }
 }
