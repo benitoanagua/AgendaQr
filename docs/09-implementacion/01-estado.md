@@ -239,3 +239,98 @@ Sobre `main`, sin declarar runtime PASS:
 - RF-13: un resultado de comprobante en la búsqueda global abre directamente el visor del comprobante, incluso si está asociado o no está en la bandeja visible.
 - UX: se retiró el filtro "Recientes" de destinos porque el contrato de dominio había eliminado la regla de "uso reciente"; no se inventa una ventana temporal sin especificación.
 - Los cambios anteriores son correcciones estáticas sobre `main`; CI queda pendiente y no se declara runtime PASS.
+
+## Cierre MVP local — 2026-10-04 (main 75a205d → 4b04587, Linux x86_64, JDK 17)
+
+Pasada de cierre sobre `main` con ejecución real: emulador Android (AVD `agenda_qr`, API 34), Supabase local completo vía podman (`supabase start` con socket docker-compatible: Auth+Postgrest+Storage en `127.0.0.1:54321`, migraciones 001–006 aplicadas) y APK debug construido con `SUPABASE_URL=http://10.0.2.2:54321`. La regla de firma de release (A4) exige keystore de producción; toda compilación local de `androidApp` usa `-PallowDebugSigningForRc=true` (guard intencional, no defecto).
+
+### BUILD — PASS
+
+- `./gradlew build -PallowDebugSigningForRc=true` → **BUILD SUCCESSFUL** (raíz, todas las variantes: Android debug+release, compilaciones iOS/Native, wasm del laboratorio, todos los tests, lint).
+- `./gradlew verifyAgendaQrArchitecture` → **PASS** (compliance Xauxa + límites de arquitectura + invariants web).
+- `./gradlew componentLabWeb` → **PASS**.
+- Nota: `./gradlew build` sin el flag falla en configuración por el guard de firma release de A4 (keystore de producción no disponible en este entorno); es comportamiento intencional.
+- Corrección de infraestructura: `kotlin.daemon.jvmargs=-Xmx3g` (la generación del binario wasm moría con GC overhead limit exceeded).
+
+### TESTS — PASS
+
+`testDebugUnitTest`, ejecutados en el build completo (0 fallos, 0 errores):
+
+```text
+domain        = PASS (43 tests)
+data          = PASS (69 tests)
+presentation  = PASS (19 tests)
+core:ui       = PASS (41 tests)
+androidApp    = NO-SOURCE (sin unit tests propios, como está documentado)
+global        = PASS (172 tests)
+```
+
+Los tests de presentación declarados históricamente como "3 tests" nunca habían compilado: el commonTest introducido en merges recientes tenía errores de compilación en todas las plataformas. Las suites de sync nombradas en la pasada de cierre (SyncResilienceTest, SyncRecoveryCoordinatorTest, SyncQueueIdempotencyTest, SyncQueueTest, SyncMutationProcessorTest, SyncComprobanteRepositoryTest, SyncQueueUserIsolationTest) ejecutaron PASS dentro del total de data.
+
+### Supabase — PASS (aceptación SQL) / PASS (runtime local)
+
+- `supabase/tests/run-acceptance.sh` contra PostgreSQL 15 real (podman) → **ACCEPTANCE PASS** (migraciones 001–006 + prueba de FK `ON DELETE SET NULL` del 006). RLS *behavior* validado en runtime local vía API con sesiones de usuario (ver aislamiento).
+- Migraciones aplicadas en el stack local; `supabase migration list` muestra 001–006 aplicadas.
+
+### Runtime Android — PASS (flujos ejecutados)
+
+Evidencia recolectada con uiautomator dumps, consultas SQL directas a Postgres, `run-as` para inspección de la cola y análisis de píxeles para tema. Todas contra el backend local real.
+
+- **Auth**: signup e2e.a, sesión persistente, sign-out (tras corregir ANR), signin e2e.b, vuelta a e2e.a con datos intactos.
+- **FLUJO A (QR por galería)**: Añadir → Galería → QR reconocido por ZXing → S09 "Revisar QR" → Guardar → fila en `public.destinations` → edición de metadata (nombre "Carniceria Don Bife") → visible en DB → búsqueda global → apertura desde resultado.
+- **FLUJO B (desde otra app)**: `ACTION_SEND image/png` vía resolver del sistema (con grant): app cerrada (arranque frío) y app abierta → importación → diálogo/visor correctos. Un `am start` directo sin paso por el resolver no otorga el URI (comportamiento del harness, no de la app); la lectura de una URI sin permiso ya no tumba el proceso (banner recuperable "No se pudo abrir el archivo compartido.").
+- **FLUJO C (operación)**: PAGO y COBRO creados; occurredAt ≠ createdAt verificado (02/10 vs createdAt real); edición de monto (150.50→175→180) con push verificado en Postgres; búsqueda por texto ("Carniceria", "Mercado") desde la lista y desde la búsqueda global.
+- **FLUJO D (comprobante adjunto)**: "Adjuntar comprobante ahora" → bandeja → "Asociar a operación existente" → ambigüedad "¿A cuál corresponde?" → asociación → **retorno al detalle** (fix PR #78 verificado) → abrir visor → compartir (FileProvider "Sharing image") → Desasociar → volver a asociar. Edición de campo sensible con comprobante asociado muestra la advertencia exacta del contrato ("Esta operación tiene comprobantes. El comprobante no será modificado." [Cancelar] [Guardar cambio]) y el comprobante no se toca.
+- **FLUJO E (comprobante independiente)**: share de imagen → "Comprobante recibido" → Guardar sin operación → bandeja ("Comprobantes sin asociar: 1") → asociación posterior. PDF compartido → comprobante con "Archivo: pdf", visor con "PDF adjunto (sin vista previa)" y Compartir funcional.
+- **FLUJO F (duplicados)**: mismo archivo compartido dos veces → diálogo con el texto congelado exacto "Parece que este comprobante ya está guardado." [Ver existente] [Guardar de todos modos]; ambas acciones ejecutadas y verificadas (copia deliberada persistida; "Ver existente" abre el visor). La detección no bloquea el guardado deliberado.
+- **Sincronización E2E**: UPSERT de operación/comprobante/destino contra backend real (filas verificadas en SQL); UPDATE directo online; pull de cambios remotos (una fila insertada por curl apareció en el app).
+- **Offline/online**: modo avión → banner "Sin conexión…" → operación COBRO creada → "Sincronización pendiente: 1" persistido tras kill de la app → al reactivar red, drain automático sin intervención → fila en Postgres, cola vacía, sin duplicados, sin resurrecciones.
+- **Kill/restart**: kill con mutación pendiente (estado y datos persistidos en SharedPreferences) y kill simulado durante sync (estado PROCESSING escrito en disco) → al abrir, `resetProcessing` recupera → push correcto → cola vacía. PROCESSING no queda bloqueado.
+- **Aislamiento por usuario**: usuario B (e2e.b) ve cero destinos, cero operaciones, cero comprobantes (UI + PostgREST con su JWT + Storage vacío); claves locales user-scoped (dos sufijos de user id en prefs); la cola de A no aparece para B; datos de A intactos al volver. RLS efectivo.
+- **Búsqueda global**: resultados QR/Actividad/Comprobante con chip de tipo semántico; QR→detalle de destino, Actividad→detalle de operación, Comprobante→visor directo (RF-13); la consulta se conserva al volver (S05); el substring "comprobante" localiza recibos por id/archivo.
+- **Navegación/Back**: Inicio → Añadir → Galería → Revisar QR → Back → vuelve a **Añadir** (flujo congelado PR #78); sin instancias duplicadas de pantallas (la app enruta por estado, single-activity; `singleTask` además evita instancias paralelas de MainActivity).
+- **Manifest/share/FileProvider**: `ACTION_SEND image/*` ✓ (vivo y frío), `ACTION_SEND application/pdf` ✓, FileProvider ✓ ("Sharing image", "Sharing 1 file" con `shared_comprobante.pdf`), MIME preservado, intents nuevos con Activity viva ✓ (onNewIntent). `ACTION_SEND_MULTIPLE`: el harness del shell (`--esa`) entrega `String[]`, no `ArrayList<Parcelable>`, así que no es reproducible por adb; la ruta múltiple quedó validada por "Galería (varios)" (S12 con ✓ reconocidos / ? pendientes, superficie única) y el parsing por inspección.
+- **Cámara (S03)**: permiso solicitado correctamente → cámara del sistema → foto → retorno a la app sin crash y sin import falso. La escena virtual del emulador no contiene QR, así que el *decod* de un QR real por cámara queda NO VALIDADO.
+- **Tema**: dark (`cmd uimode night yes`) y light verificados por análisis de píxeles (fondo/texto/inversión + acento de marca); sin crash en el cambio de configuración.
+- **Accesibilidad (estática + targets)**: touch targets ≥ 48dp (440dpi → 132px) en Home y detalle; acciones icon-only etiquetadas ("Marcar favorito", "Buscar en Agenda QR", "Más opciones"); headings semánticos en títulos. TalkBack interactivo queda NO VALIDADO (sin entorno de lector de pantalla en headless).
+- **Laboratorio de componentes (Wasm)**: `componentLabWeb` construido y servido; cargado en Brave headless (Chromium) con **0 errores de consola**, render de paleta Xauxa oscura + acento de marca, y navegación interactiva con cambios de pantalla verificables por diff de píxeles; las 40 pruebas de integridad del catálogo pasan dentro de core:ui. La matriz visual completa de estados por componente requiere revisión humana → se mantiene el pendiente de revisión manual.
+
+### iOS — compilación PASS / runtime BLOCKED
+
+- `compileKotlinIosSimulatorArm64` de `shared`, `domain`, `data`, `presentation` y `core:ui` (+ test de presentation y core:ui) → **PASS** en Linux.
+- Runtime, firma, cámara, galería, share sheet, Foundation/Application Support real, NetworkMonitor real → **BLOCKED** (sin Xcode en este entorno).
+
+### Defectos encontrados y corregidos en esta pasada (todos con evidencia runtime o test)
+
+1. **`main` no compilaba** (presentation): literales de string partidos en líneas físicas en el diálogo de duplicado; `OperationAction.Edit` inexistente cableado al botón "Editar"; `operationTypeLabel` privada usada desde otro archivo. Además el provenance se mostraba como enum técnico (`it.name`). → commit 1b74631 (+ regresión OperationEditActionTest).
+2. **El commonTest de presentation nunca compiló en ninguna plataforma** (los "tests" no se ejecutaban): imports duplicados ambiguos, llamadas suspend en lambda no-suspend, parámetro `unassociate` faltante. → a9e47f4.
+3. **Dos clases privadas top-level con el mismo nombre** (`MemoryQueueStore`) en un paquete rompían la compilación de tests en Kotlin/Native. → a9e47f4.
+4. **Toda la sincronización remota estaba rota** (PGRST204): las filas serializaban camelCase contra columnas snake_case; ningún push llegó jamás al backend. Encontrado con Supabase local real. → 26f74c6 (+ RemoteRowSerializationTest). Incluye manifest debug con cleartext para validar contra stack local.
+5. **La búsqueda global (S04) era inalcanzable**: `onOpenSearch`/`onOpenContexts` eran parámetros muertos; la barra de inicio filtraba destinos prometiendo búsqueda global. → b309395.
+6. **Doble superficie de importación**: cada import emitía lote (S12) y revisión (S09); tras "Guardar reconocidos" reaparecía una revisión vieja del mismo archivo (riesgo de doble guardado). → b309395.
+7. **Shares con app cerrada se perdían en silencio**: canales sin retención; y los shares con URI ilegible/revocada **tumbaban el proceso** (FileNotFoundException/SecurityException sin manejar). → b309395.
+8. **El diálogo de comprobante recibido era invisible** fuera de la superficie de operaciones. → b309395.
+9. **kotlinx-datetime 0.6.2 vs 0.7.1**: supabase-kt fuerza 0.7.1 y `:domain` compilaba contra la clase real de 0.6.x → `NoClassDefFoundError` en runtime → **toda sugerencia de asociación fallaba** y el diálogo quedaba en "Estamos analizando" para siempre. Catálogo actualizado a 0.7.1 + degradación honesta a NONE. → b309395 (+ OperationSuggestionFailureTest).
+10. **Drains fallaban con cualquier operación con monto**: `amount numeric(20,6)` llega como número JSON y el row lo esperaba como String. Serializador tolerante con canonicalización. → 9049f6f (+ regresión).
+11. **"Cerrar sesión" congelaba la app (ANR)**: la propiedad `signOut` quedaba eclipsada por la función miembro y `runCatching { signOut() }` se recursaba infinitamente en el hilo principal. Encontrado con el trace del ANR durante la prueba de cambio de usuario. → 0f7938d (+ AuthViewModelSignOutTest).
+12. **Shares vía resolver acumulaban instancias paralelas de MainActivity**: la instancia vieja (composición viva, colectores activos) consumía el canal retenido y el diálogo aparecía en la instancia invisible; un PDF compartido no producía UI. `singleTask` + entrega por `onNewIntent`. → 2842854.
+13. **Enums técnicos en resultados de búsqueda** (PAGO/COBRO/RECIBIDO): mapeados a semántica en el render. → 2842854 (+ GlobalSearchResultSemanticsTest).
+14. **Fechas en UTC**: el editor proponía "mañana" como fecha por defecto en UTC-4 por la tarde (observado: dispositivo 03/10 23:xx, editor 04/10/2026). Fechas civiles ahora en la zona del dispositivo (inyectable para tests). → 4b04587 (+ regresión).
+
+### Defecto de harness documentado (no de la app)
+
+Una cirugía manual sobre `shared_prefs/agendaqr.xml` con re-escape incorrecto corrompió el XML y la app cayó al backup (pérdida de un dato de prueba). Repetida correctamente (reemplazo crudo byte a byte), la recuperación de PROCESSING funcionó. Se lista para dejar constancia de que esa pérdida fue artefacto de prueba, no del producto.
+
+### Pendientes reales después de esta pasada
+
+- **Contextos sin vía de creación (FAIL como capacidad, gap de contrato)**: `SaveContextUseCase` existe pero ninguna UI lo invoca; no hay forma de crear un contexto en toda la app, por lo que S06, el selector S08 y los resultados de búsqueda de tipo Contexto están muertos en la práctica. El contrato congelado no define un flujo de creación, y el backlog A5 exige confirmar el flujo en el contrato UX antes de implementarlo: no se inventó UX en esta pasada. Es la brecha principal entre lo documentado ("main contiene Contextos") y la realidad.
+- **iOS runtime** — BLOCKED (sin Xcode): launch, login, persistencia, import, cámara/galería/share (siguen siendo stubs de adquisición), NetworkMonitor real, restart.
+- **TalkBack interactivo y predictive back físico** — NO VALIDADO en headless.
+- **Decod de QR real vía cámara** — NO VALIDADO (la escena virtual del emulador no contiene QR).
+- **`ACTION_SEND_MULTIPLE` con URIs parcelables reales** — NO VALIDADO por harness (la ruta múltiple sí está validada por Galería (varios)).
+- **Revisión visual humana completa del laboratorio** (claro/oscuro, anchos, matriz de estados) — pendiente.
+- **RLS *behavior* contra el proyecto remoto del usuario** — la validación fue contra el stack local (mismas migraciones).
+
+### Regla de cierre (se mantiene)
+
+Código presente no equivale a capacidad validada. Esta pasada convirtió afirmaciones documentales en evidencia de ejecución o en defectos corregidos; lo que sigue pendiente está listado con su razón exacta.
