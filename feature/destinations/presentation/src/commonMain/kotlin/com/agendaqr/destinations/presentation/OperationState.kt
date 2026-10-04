@@ -57,6 +57,7 @@ sealed interface OperationAction {
     data class OpenComprobante(val id: String) : OperationAction
     data object CloseComprobante : OperationAction
     data class DeleteComprobante(val id: String) : OperationAction
+    data class Update(val operation: Operation, val confirmedSensitiveChange: Boolean = false) : OperationAction
     data class SaveNew(
         val type: OperationType,
         val occurredAt: Long,
@@ -78,6 +79,7 @@ class OperationsViewModel(
     private val observeOperationComprobantes: ObserveOperationComprobantesUseCase,
     private val getOperation: GetOperationUseCase,
     private val saveOperation: SaveOperationUseCase,
+    private val updateOperation: UpdateOperationUseCase,
     private val deleteOperation: DeleteOperationWithHistoryUseCase,
     private val associate: AssociateComprobanteToOperationUseCase,
     private val unassociate: UnassociateComprobanteUseCase,
@@ -159,6 +161,7 @@ class OperationsViewModel(
                     }
                 }
             }
+            is OperationAction.Update -> if (!state.value.isSavingOperation) update(action)
             is OperationAction.SaveNew -> if (!state.value.isSavingOperation) saveNew(action)
         }
     }
@@ -251,6 +254,19 @@ class OperationsViewModel(
                 selectedOperationId = operation.id
                 _state.update { it.copy(route = OperationRoute.Detail(operation.id)) }
             }
+            _state.update { it.copy(isSavingOperation = false) }
+        }
+    }
+
+    private fun update(action: OperationAction.Update) {
+        scope.launch {
+            _state.update { it.copy(isSavingOperation = true, error = null) }
+            runCatching { updateOperation(action.operation) }
+                .onFailure(::showError)
+                .onSuccess {
+                    selectedOperationId = action.operation.id
+                    _state.update { it.copy(route = OperationRoute.Detail(action.operation.id)) }
+                }
             _state.update { it.copy(isSavingOperation = false) }
         }
     }
