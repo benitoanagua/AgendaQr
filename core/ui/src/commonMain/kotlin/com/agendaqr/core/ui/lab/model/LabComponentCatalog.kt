@@ -868,7 +868,7 @@ object LabComponentCatalog {
             name = "XauxaStatusBanner",
             category = LabCategory.FEEDBACK,
             purpose = "Mensaje persistente de estado.",
-            description = "Caja de ancho completo con borde y fondo Surface2; con danger = true usa " +
+            description = "Caja de ancho completo con borde; el tono se declara con tone (T12: danger se retiró). " +
                 "fondo DangerBg y texto Danger.",
             props = listOf(
                 LabProp("message", "String"),
@@ -877,7 +877,7 @@ object LabComponentCatalog {
             ),
             states = listOf(
                 LabState("Neutro", "Mensaje informativo sobre Surface2.", LabReviewStatus.VERIFIED),
-                LabState("Peligro", "danger = true: fondo DangerBg y texto Danger.", LabReviewStatus.VERIFIED),
+                LabState("Peligro", "tone = Danger: fondo DangerBg y texto Danger.", LabReviewStatus.VERIFIED),
                 LabState(
                     "Tonos éxito/información/advertencia",
                     "Existen tokens SuccessBg/WarningBg/InfoBg; el banner actual solo distingue " +

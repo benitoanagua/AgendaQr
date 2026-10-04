@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -19,6 +19,8 @@ import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
+import com.agendaqr.core.ui.components.XauxaStatusBanner
+import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaTone
@@ -70,8 +72,8 @@ private fun ContextList(state: ContextsUiState, onAction: (ContextAction) -> Uni
         modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        XauxaSecondaryButton(label = "Volver", onClick = onBack)
-        XauxaHeading(text = "Contextos", size = XauxaType.Display, fontWeight = FontWeight.Bold)
+        XauxaSecondaryButton(label = AppStrings.Volver, onClick = onBack)
+        XauxaHeading(text = AppStrings.Contextos, size = XauxaType.Display, fontWeight = FontWeight.Bold)
         state.error?.let { err ->
             XauxaStatusBanner(
                 err.display(),
@@ -82,11 +84,11 @@ private fun ContextList(state: ContextsUiState, onAction: (ContextAction) -> Uni
             )
         }
         when {
-            state.isLoading -> XauxaLoading(message = "Cargando contextos…")
+            state.isLoading -> XauxaLoading(message = AppStrings.CargandoContextos)
             state.contexts.isEmpty() -> XauxaEmptyState(
-                title = "Sin contextos",
-                subtitle = "Los contextos agrupan tus QR y operaciones.",
-                actionLabel = "Volver",
+                title = AppStrings.SinContextos,
+                subtitle = AppStrings.LosContextosAgrupanTusQr,
+                actionLabel = AppStrings.Volver,
                 onAction = onBack,
             )
             else -> LazyColumn(modifier = Modifier.fillMaxSize().weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
@@ -118,7 +120,7 @@ private fun ContextDetail(
         modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        XauxaSecondaryButton(label = "Volver", onClick = { onAction(ContextAction.Back) })
+        XauxaSecondaryButton(label = AppStrings.Volver, onClick = { onAction(ContextAction.Back) })
         state.error?.let { err ->
             XauxaStatusBanner(
                 err.display(),
@@ -131,22 +133,22 @@ private fun ContextDetail(
         contents?.let { data ->
             XauxaHeading(text = data.context.name, size = XauxaType.Display, fontWeight = FontWeight.Bold)
             data.context.note?.takeIf { it.isNotBlank() }?.let {
-                Text(it, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                XauxaText(it, size = XauxaType.Label, color = XauxaColor.TextSecondary)
             }
-            Text("QR · " + data.destinations.size, fontSize = XauxaType.Title, color = XauxaColor.TextPrimary)
+            XauxaText(AppStrings.Qr2 + data.destinations.size, size = XauxaType.Title, color = XauxaColor.TextPrimary)
             data.destinations.forEach { destination ->
                 XauxaListRow(
-                    title = destination.name.ifBlank { "QR sin nombre" },
+                    title = destination.name.ifBlank { AppStrings.QrSinNombre },
                     onClick = { onOpenDestination(destination.id) },
                 )
             }
-            Text("Actividad reciente · " + data.operations.size, fontSize = XauxaType.Title, color = XauxaColor.TextPrimary)
+            XauxaText(AppStrings.ActividadReciente + data.operations.size, size = XauxaType.Title, color = XauxaColor.TextPrimary)
             data.operations.take(RECENT_ACTIVITIES_SHOWN).forEach { operation ->
                 XauxaListRow(
                     title = listOfNotNull(
                         when (operation.type) {
-                            com.agendaqr.destinations.domain.OperationType.PAGO -> "Pago"
-                            com.agendaqr.destinations.domain.OperationType.COBRO -> "Cobro"
+                            com.agendaqr.destinations.domain.OperationType.PAGO -> AppStrings.Pago
+                            com.agendaqr.destinations.domain.OperationType.COBRO -> AppStrings.Cobro
                         },
                         operation.amount,
                         operation.currency,
@@ -157,18 +159,18 @@ private fun ContextDetail(
             }
             if (data.operations.size > RECENT_ACTIVITIES_SHOWN) {
                 XauxaTextAction(
-                    label = "Ver más",
+                    label = AppStrings.VerMas,
                     onClick = onOpenOperations,
                 )
             }
-            Text("Comprobantes · " + data.comprobantes.size, fontSize = XauxaType.Title, color = XauxaColor.TextPrimary)
+            XauxaText(AppStrings.Comprobantes + data.comprobantes.size, size = XauxaType.Title, color = XauxaColor.TextPrimary)
             data.comprobantes.forEach { receipt ->
                 XauxaListRow(
-                    title = "Comprobante · " + receiptProvenanceLabel(receipt.provenance),
+                    title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
                     subtitle = receipt.file.takeIf { it.isNotBlank() },
                     onClick = { onOpenComprobante(receipt.id) },
                 )
             }
-        } ?: XauxaLoading(message = "Cargando contexto…")
+        } ?: XauxaLoading(message = AppStrings.CargandoContexto)
     }
 }

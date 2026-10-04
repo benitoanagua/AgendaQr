@@ -1,6 +1,8 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.destinations.presentation.AppStrings
+import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,27 +53,27 @@ fun DestinationDetailScreen(
             verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
         ) {
             XauxaHeading(text = destination.name.ifBlank { "Sin nombre" }, size = XauxaType.Headline, fontWeight = FontWeight.Bold)
-            destination.category?.let { Text(it, color = XauxaColor.TextSecondary) }
-            destination.note?.takeIf { it.isNotBlank() }?.let { Text(it, color = XauxaColor.TextSecondary) }
+            destination.category?.let { XauxaText(it, color = XauxaColor.TextSecondary) }
+            destination.note?.takeIf { it.isNotBlank() }?.let { XauxaText(it, color = XauxaColor.TextSecondary) }
             // T6: estado de sincronización del elemento (texto, no solo
             // color) con REINTENTAR cuando es un error recuperable.
             ElementSyncBadge(syncStatus)
             if (syncStatus == ElementSyncStatus.ErrorRecoverable) {
-                XauxaTextAction(label = "REINTENTAR", onClick = onRetrySync)
+                XauxaTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
             }
             if (destination.qr.encoded.isNotBlank()) {
                 XauxaQrPreview(destination.qr.encoded)
             } else {
                 XauxaEmptyState(
-                    title = "QR sin contenido",
-                    subtitle = "Edita el destino para importar un código válido.",
-                    actionLabel = "Editar",
+                    title = AppStrings.QrSinContenido,
+                    subtitle = AppStrings.EditaElDestinoParaImportar,
+                    actionLabel = AppStrings.Editar,
                     onAction = onEdit,
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                XauxaPrimaryButton("Mostrar QR", onShowQr, enabled = destination.qr.encoded.isNotBlank())
-                XauxaSecondaryButton("Volver", onBack)
+                XauxaPrimaryButton(AppStrings.MostrarQr, onShowQr, enabled = destination.qr.encoded.isNotBlank())
+                XauxaSecondaryButton(AppStrings.Volver, onBack)
             }
         }
         // cb1: command bar contextual solo en pantallas de detalle/foco como
@@ -91,14 +92,14 @@ fun DestinationDetailScreen(
     }
     if (showDeleteConfirm) {
         XauxaDialog(
-            title = "Eliminar destino",
-            message = "Esta acción no se puede deshacer.",
-            confirmLabel = "Eliminar",
+            title = AppStrings.EliminarDestino,
+            message = AppStrings.EstaAccionNoSePuede,
+            confirmLabel = AppStrings.Eliminar,
             onConfirm = {
                 showDeleteConfirm = false
                 onDelete()
             },
-            dismissLabel = "Cancelar",
+            dismissLabel = AppStrings.Cancelar,
             onDismiss = { showDeleteConfirm = false },
         )
     }

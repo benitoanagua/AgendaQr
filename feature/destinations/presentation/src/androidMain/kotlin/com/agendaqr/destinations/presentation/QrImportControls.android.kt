@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,11 +40,11 @@ actual fun QrImportControls(
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
         if (galleryAsPrimary) {
-            com.agendaqr.core.ui.components.XauxaPrimaryButton("Galería", AgendaQrAndroidImportLauncher::gallery)
+            com.agendaqr.core.ui.components.XauxaPrimaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery)
         } else {
-            XauxaSecondaryButton("Galería", AgendaQrAndroidImportLauncher::gallery)
+            XauxaSecondaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery)
         }
-        XauxaSecondaryButton("Galería (varios)", AgendaQrAndroidImportLauncher::multiple)
+        XauxaSecondaryButton(AppStrings.GaleriaVarios, AgendaQrAndroidImportLauncher::multiple)
         CameraQrEntry(onOpen = { cameraOpen = true })
     }
     if (cameraOpen) {

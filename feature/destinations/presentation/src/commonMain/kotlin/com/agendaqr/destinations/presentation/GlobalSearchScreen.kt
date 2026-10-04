@@ -1,6 +1,8 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.destinations.presentation.AppStrings
+import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
@@ -9,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
@@ -35,12 +36,12 @@ fun GlobalSearchScreen(
             .imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        XauxaSecondaryButton(label = "Volver", onClick = onBack)
+        XauxaSecondaryButton(label = AppStrings.Volver, onClick = onBack)
         XauxaSearchBar(
             value = state.query,
             onValueChange = { onAction(GlobalSearchAction.QueryChanged(it)) },
-            label = "Buscar en Agenda QR",
-            placeholder = "Buscar",
+            label = AppStrings.BuscarEnAgendaQr,
+            placeholder = AppStrings.Buscar,
             onClear = { onAction(GlobalSearchAction.Clear) },
         )
         state.error?.let { err ->
@@ -54,15 +55,15 @@ fun GlobalSearchScreen(
             )
         }
         when {
-            state.query.isBlank() -> Text(
-                "Busca destinos, operaciones, contextos o comprobantes.",
+            state.query.isBlank() -> XauxaText(
+                AppStrings.BuscaDestinosOperacionesContextosO,
                 color = XauxaColor.TextSecondary,
             )
-            state.isSearching -> XauxaLoading(message = "Buscando en Agenda QR…")
+            state.isSearching -> XauxaLoading(message = AppStrings.BuscandoEnAgendaQr)
             state.results.isEmpty() -> XauxaEmptyState(
-                title = "Sin resultados",
-                subtitle = "Prueba con otra palabra o revisa la ortografía.",
-                actionLabel = "Limpiar",
+                title = AppStrings.SinResultados,
+                subtitle = AppStrings.PruebaConOtraPalabraO,
+                actionLabel = AppStrings.Limpiar,
                 onAction = { onAction(GlobalSearchAction.Clear) },
             )
             else -> LazyColumn(

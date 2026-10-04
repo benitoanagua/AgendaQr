@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import android.Manifest
+import com.agendaqr.destinations.presentation.AppStrings
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageFormat
@@ -26,7 +27,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -47,6 +47,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
 import com.agendaqr.core.ui.components.XauxaStatusBanner
+import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
@@ -137,9 +138,9 @@ internal fun CameraQrCaptureOverlay(
                                     ),
                                 ),
                         )
-                        Text(
-                            "Encuadre el código QR",
-                            fontSize = XauxaType.Label,
+                        XauxaText(
+                            AppStrings.EncuadreElCodigoQr,
+                            size = XauxaType.Label,
                             color = XauxaColor.TextSecondary,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(top = XauxaSpacing.Lg),
@@ -153,7 +154,7 @@ internal fun CameraQrCaptureOverlay(
                         .padding(XauxaSpacing.Lg),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    XauxaSecondaryButton(label = "Volver", onClick = onDismiss)
+                    XauxaSecondaryButton(label = AppStrings.Volver, onClick = onDismiss)
                 }
             }
         }
@@ -291,7 +292,7 @@ internal fun CameraQrEntry(onOpen: () -> Unit) {
             )
         }
         XauxaSecondaryButton(
-            label = "Cámara",
+            label = AppStrings.Camara,
             onClick = {
                 val granted = ContextCompat.checkSelfPermission(
                     context,

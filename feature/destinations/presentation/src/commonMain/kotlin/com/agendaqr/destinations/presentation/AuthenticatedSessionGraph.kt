@@ -75,7 +75,7 @@ import kotlinx.coroutines.cancel
 @Suppress("LongParameterList", "TooManyFunctions")
 class AuthenticatedSessionGraph(
     val userId: String,
-    val syncScope: CoroutineScope,
+    val sessionScope: CoroutineScope,
     val syncQueue: LocalSyncQueue,
     val syncProcessor: SyncMutationProcessor,
     val recovery: SyncRecoveryCoordinator,
@@ -100,9 +100,11 @@ class AuthenticatedSessionGraph(
  */
 @Composable
 fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph {
-    val syncScope = remember(userId) { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
-    DisposableEffect(syncScope) {
-        onDispose { syncScope.coroutineContext.cancel() }
+    // T12 — UN scope cancelable ligado a la sesión: sync y ViewModels
+    // comparten ciclo de vida; el cierre de sesión cancela TODO.
+    val sessionScope = remember(userId) { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
+    DisposableEffect(sessionScope) {
+        onDispose { sessionScope.coroutineContext.cancel() }
     }
     val syncQueue = remember(userId) { LocalSyncQueue() }
     val syncEnqueuer = remember(syncQueue) { SyncMutationEnqueuer(syncQueue) }
@@ -144,8 +146,8 @@ fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph
         )
     }
     val networkMonitor = remember { platformNetworkMonitor() }
-    val recovery = remember(syncProcessor, syncScope, networkMonitor) {
-        SyncRecoveryCoordinator(syncProcessor, syncScope, networkMonitor = networkMonitor)
+    val recovery = remember(syncProcessor, sessionScope, networkMonitor) {
+        SyncRecoveryCoordinator(syncProcessor, sessionScope, networkMonitor = networkMonitor)
     }
     DisposableEffect(recovery) {
         recovery.start()
@@ -156,7 +158,7 @@ fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph
         SaveImportBatchUseCase(destinationRepository, comprobanteRepository, fileStore, importPayloadStore)
     }
     val historyRepository = remember(userId) { createDeletedOperationHistoryRepository() }
-    val destinationsViewModel = remember(destinationRepository) {
+    val destinationsViewModel = remember(destinationRepository, sessionScope) {
         DestinationsViewModel(
             observe = ObserveDestinationsUseCase(destinationRepository),
             get = GetDestinationUseCase(destinationRepository),
@@ -164,9 +166,10 @@ fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph
             update = UpdateDestinationUseCase(destinationRepository),
             delete = DeleteDestinationUseCase(destinationRepository),
             toggleFavorite = ToggleFavoriteUseCase(destinationRepository),
+            scope = sessionScope,
         )
     }
-    val operationsViewModel = remember(operationRepository, comprobanteRepository, fileStore, historyRepository) {
+    val operationsViewModel = remember(operationRepository, comprobanteRepository, fileStore, historyRepository, sessionScope) {
         OperationsViewModel(
             observeOperations = ObserveOperationsUseCase(operationRepository),
             observeContexts = ObserveContextsUseCase(contextRepository),
@@ -184,9 +187,10 @@ fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph
             suggestReceiptAssociation = SuggestReceiptAssociationUseCase(comprobanteRepository, operationRepository),
             deleteComprobante = DeleteComprobanteUseCase(comprobanteRepository, fileStore),
             comprobanteFiles = fileStore,
+            scope = sessionScope,
         )
     }
-    val contextsViewModel = remember(contextRepository, destinationRepository, operationRepository, comprobanteRepository) {
+    val contextsViewModel = remember(contextRepository, destinationRepository, operationRepository, comprobanteRepository, sessionScope) {
         ContextsViewModel(
             observe = ObserveContextsUseCase(contextRepository),
             observeContents = ObserveContextContentsUseCase(
@@ -196,9 +200,10 @@ fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph
                 comprobanteRepository,
             ),
             get = GetContextUseCase(contextRepository),
+            scope = sessionScope,
         )
     }
-    val globalSearchViewModel = remember(contextRepository, destinationRepository, operationRepository, comprobanteRepository) {
+    val globalSearchViewModel = remember(contextRepository, destinationRepository, operationRepository, comprobanteRepository, sessionScope) {
         GlobalSearchViewModel(
             search = SearchAgendaQrUseCase(
                 contextRepository,
@@ -206,10 +211,11 @@ fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph
                 operationRepository,
                 comprobanteRepository,
             ),
+            scope = sessionScope,
         )
     }
     return remember(
-        userId, syncScope, syncQueue, syncProcessor, recovery, queueObserver,
+        userId, sessionScope, syncQueue, syncProcessor, recovery, queueObserver,
         destinationRepository, operationRepository, comprobanteRepository, fileStore,
         contextRepository,
         importPayloadStore, saveImportBatch,
@@ -217,7 +223,7 @@ fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph
     ) {
         AuthenticatedSessionGraph(
             userId = userId,
-            syncScope = syncScope,
+            sessionScope = sessionScope,
             syncQueue = syncQueue,
             syncProcessor = syncProcessor,
             recovery = recovery,

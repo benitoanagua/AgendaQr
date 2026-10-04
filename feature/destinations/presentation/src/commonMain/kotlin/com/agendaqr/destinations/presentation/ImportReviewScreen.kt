@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,13 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.components.XauxaEmptyState
+import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaQrPreview
@@ -47,7 +48,7 @@ fun ImportReviewScreen(
             .imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        XauxaHeading(text = "Revisar QR", size = XauxaType.Headline, fontWeight = FontWeight.Normal)
+        XauxaHeading(text = AppStrings.RevisarQr, size = XauxaType.Headline, fontWeight = FontWeight.Normal)
         error?.let { err ->
             XauxaStatusBanner(
                 err.display(),
@@ -59,15 +60,15 @@ fun ImportReviewScreen(
         }
         if (assets.isEmpty()) {
             XauxaEmptyState(
-                title = "No hay QR para revisar",
-                subtitle = "Vuelve e importa desde Cámara o Galería.",
-                actionLabel = "Volver",
+                title = AppStrings.NoHayQrParaRevisar,
+                subtitle = AppStrings.VuelveEImportaDesdeCamara,
+                actionLabel = AppStrings.Volver,
                 onAction = onBack,
             )
         } else {
-            Text(
+            XauxaText(
                 if (assets.size == 1) "1 QR listo para guardar" else "${assets.size} QR listos para guardar",
-                fontSize = XauxaType.Label,
+                size = XauxaType.Label,
                 color = XauxaColor.TextSecondary,
             )
             LazyColumn(
@@ -79,7 +80,7 @@ fun ImportReviewScreen(
                 }
             }
             XauxaPrimaryButton(if (assets.size == 1) "Guardar" else "Guardar todo", onSaveAll, enabled = !isSaving, isLoading = isSaving)
-            XauxaSecondaryButton("Volver", onBack, enabled = !isSaving)
+            XauxaSecondaryButton(AppStrings.Volver, onBack, enabled = !isSaving)
         }
     }
 }

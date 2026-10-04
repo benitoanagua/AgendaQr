@@ -8,9 +8,7 @@ import com.agendaqr.destinations.domain.SaveDestinationUseCase
 import com.agendaqr.destinations.domain.ToggleFavoriteUseCase
 import com.agendaqr.destinations.domain.UpdateDestinationUseCase
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -69,7 +67,11 @@ class DestinationsViewModel(
     private val update: UpdateDestinationUseCase,
     private val delete: DeleteDestinationUseCase,
     private val toggleFavorite: ToggleFavoriteUseCase,
-    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+    /**
+     * Scope de la sesión (T12): lo aporta el grafo de la app; se cancela
+     * al cerrar sesión, junto con todos los colecciones del ViewModel.
+     */
+    private val scope: CoroutineScope,
 ) {
     private val _state = MutableStateFlow(DestinationsUiState())
     val state: StateFlow<DestinationsUiState> = _state.asStateFlow()
