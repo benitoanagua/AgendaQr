@@ -87,7 +87,6 @@ class OperationsViewModel(
     private val saveComprobante: SaveComprobanteUseCase,
     private val findDuplicates: FindDuplicateComprobantesUseCase,
     private val getComprobante: GetComprobanteUseCase,
-    private val getComprobante: GetComprobanteUseCase,
     private val suggestReceiptAssociation: SuggestReceiptAssociationUseCase,
     private val deleteComprobante: DeleteComprobanteUseCase,
     private val comprobanteFiles: ComprobanteFileStore,
