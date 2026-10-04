@@ -140,7 +140,7 @@ class UserFacingErrorTest {
         // "un test por flujo que verifique que el error incluye acción":
         // el mapeo central es exhaustivo sobre los flujos.
         val boom = GenericAppError("boom")
-        for (flow in ErrorFlow.entries) {
+        for (flow in ErrorFlow.values()) {
             val error = userFacingError(boom, flow)
             assertTrue(error.action.label.isNotBlank(), "El flujo $flow no ofrece acción")
             assertTrue(error.what.isNotBlank(), "El flujo $flow no dice qué ocurrió")

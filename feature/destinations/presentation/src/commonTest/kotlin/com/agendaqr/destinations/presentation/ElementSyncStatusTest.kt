@@ -6,6 +6,7 @@ import com.agendaqr.destinations.data.SyncMutationType
 import com.agendaqr.destinations.data.SyncResource
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * T6 — Estados Guardado / Pendiente / Sincronizado visibles por elemento.
@@ -108,10 +109,11 @@ class ElementSyncStatusTest {
     fun labels_are_text_not_only_color() {
         // Spec §11: significado independiente del color; los cuatro estados
         // del contrato §5 tienen texto distinguible.
-        val labels = ElementSyncStatus.entries.map { it.label }
+        val labels = ElementSyncStatus.values().map { it.label }
         assertEquals(4, labels.toSet().size)
-        ElementSyncStatus.entries.forEach { label ->
-            assert(label.label.isNotBlank()) { "El estado $label necesita texto" }
+        for (status in ElementSyncStatus.values()) {
+            // kotlin-test común: el mensaje va primero.
+            assertTrue("El estado $status necesita texto") { status.label.isNotBlank() }
         }
     }
 }
