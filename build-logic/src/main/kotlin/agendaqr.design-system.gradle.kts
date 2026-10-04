@@ -21,9 +21,11 @@ fun Project.productionKotlinSources(): Sequence<File> = sequence {
 
 fun visualSources(): List<File> = productionKotlinSources().toList()
 
-fun checkViolations(): List<String> {
-    val sources = visualSources()
-    val violations = mutableListOf<String>()
+/**
+ * Reglas por línea, parametrizadas por ruta: así la tarea de fixtures
+ * puede auto-verificar el guard con contenido sintético.
+ */
+fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = buildList {
     val bannedImports = listOf("androidx.compose.material.icons", "Icons.Filled", "Icons.Outlined", "Icons.Rounded")
     val rawHex = Regex("#[0-9A-Fa-f]{6,8}")
     val rawDp = Regex("(?<![A-Za-z0-9_])(\\d+(?:\\.\\d+)?)\\.dp\\b")
@@ -31,18 +33,38 @@ fun checkViolations(): List<String> {
     val rawColor = Regex("\\bColor\\s*\\(")
     val forbiddenShapes = listOf("RoundedCornerShape", "CutCornerShape", "shadow(", ".shadow(")
     val forbiddenVisualAuthority = listOf("MaterialTheme.colorScheme")
-
-    sources.forEach { file ->
-        file.readLines().forEachIndexed { index, line ->
-            val location = "${file.path}:${index + 1}"
-            if (bannedImports.any(line::contains)) violations += "$location: forbidden Material icon API: $line"
-            if (!file.path.endsWith("XauxaTokens.kt") && rawHex.containsMatchIn(line)) violations += "$location: raw hex outside token layer: $line"
-            if (!file.path.endsWith("XauxaTokens.kt") && rawDp.containsMatchIn(line)) violations += "$location: raw dp outside token layer: $line"
-            if (!file.path.endsWith("XauxaTokens.kt") && rawSp.containsMatchIn(line)) violations += "$location: raw sp outside token layer: $line"
-            if (!file.path.endsWith("XauxaTokens.kt") && rawColor.containsMatchIn(line)) violations += "$location: raw Color constructor outside token layer: $line"
-            if (forbiddenShapes.any(line::contains)) violations += "$location: forbidden radius/elevation API: $line"
-            if (!file.path.endsWith("XauxaTheme.kt") && forbiddenVisualAuthority.any(line::contains)) violations += "$location: MaterialTheme cannot be the visual authority outside XauxaTheme: $line"
+    // T12 — la capa feature compone Xauxa; los componentes Material solo
+    // viven en core:ui (que los adapta con tokens). Un import directo de
+    // estos controles en feature/ es una fuga del design system.
+    val bannedMaterialInFeature = listOf(
+        "androidx.compose.material3.OutlinedTextField",
+        "androidx.compose.material3.AlertDialog",
+        "androidx.compose.material3.Button",
+        "androidx.compose.material3.OutlinedButton",
+        "androidx.compose.material3.TextButton",
+        "androidx.compose.material3.FilterChip",
+        "androidx.compose.material3.AssistChip",
+    )
+    val isFeatureSource = path.contains("/feature/")
+    lines.forEachIndexed { index, line ->
+        val location = "$path:${index + 1}"
+        if (bannedImports.any(line::contains)) add("$location: forbidden Material icon API: $line")
+        if (!path.endsWith("XauxaTokens.kt") && rawHex.containsMatchIn(line)) add("$location: raw hex outside token layer: $line")
+        if (!path.endsWith("XauxaTokens.kt") && rawDp.containsMatchIn(line)) add("$location: raw dp outside token layer: $line")
+        if (!path.endsWith("XauxaTokens.kt") && rawSp.containsMatchIn(line)) add("$location: raw sp outside token layer: $line")
+        if (!path.endsWith("XauxaTokens.kt") && rawColor.containsMatchIn(line)) add("$location: raw Color constructor outside token layer: $line")
+        if (forbiddenShapes.any(line::contains)) add("$location: forbidden radius/elevation API: $line")
+        if (!path.endsWith("XauxaTheme.kt") && forbiddenVisualAuthority.any(line::contains)) add("$location: MaterialTheme cannot be the visual authority outside XauxaTheme: $line")
+        if (isFeatureSource && bannedMaterialInFeature.any(line::contains)) {
+            add("$location: Material component imported from feature/ (compose Xauxa instead): $line")
         }
+    }
+}
+
+fun checkViolations(): List<String> {
+    val violations = mutableListOf<String>()
+    visualSources().forEach { file ->
+        violations += kotlinDesignViolations(file.path, file.readLines())
     }
     return violations
 }
@@ -100,6 +122,33 @@ tasks.register("verifyDesignSystemFixtures") {
         )
         val falsePositives = allowed.filter { cssViolations("fixture-ok.css", it).isNotEmpty() }
         require(falsePositives.isEmpty()) { "Valid token usage failed enforcement: ${falsePositives.joinToString()}" }
+
+        // T12 — fixtures Kotlin: los imports Material prohibidos en
+        // feature/ DEBEN fallar, y el mismo import en core:ui (donde los
+        // componentes Xauxa adaptan Material) no debe.
+        val bannedFeatureImports = listOf(
+            "import androidx.compose.material3.OutlinedTextField",
+            "import androidx.compose.material3.AlertDialog",
+            "import androidx.compose.material3.Button",
+            "import androidx.compose.material3.OutlinedButton",
+            "import androidx.compose.material3.TextButton",
+            "import androidx.compose.material3.FilterChip",
+            "import androidx.compose.material3.AssistChip",
+        )
+        val featurePath = "/repo/feature/destinations/presentation/src/commonMain/kotlin/Fixture.kt"
+        val missedBans = bannedFeatureImports.filter {
+            kotlinDesignViolations(featurePath, listOf(it)).isEmpty()
+        }
+        require(missedBans.isEmpty()) {
+            "feature/ Material imports that must fail passed: ${missedBans.joinToString()}"
+        }
+        val corePath = "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/Fixture.kt"
+        val falseCoreBans = bannedFeatureImports.filter {
+            kotlinDesignViolations(corePath, listOf(it)).isNotEmpty()
+        }
+        require(falseCoreBans.isEmpty()) {
+            "core:ui adapter imports must not be banned: ${falseCoreBans.joinToString()}"
+        }
     }
 }
 
