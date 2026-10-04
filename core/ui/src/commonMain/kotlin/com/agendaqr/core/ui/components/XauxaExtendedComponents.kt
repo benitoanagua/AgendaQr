@@ -517,6 +517,12 @@ fun XauxaSettingRow(
 /**
  * Diálogo de confirmación destructiva con exactamente dos acciones.
  * Sin loops ni sombras: superficie plana con borde.
+ *
+ * [onDismissRequest] cubre las vías de cierre que NO son el botón
+ * dismiss (Back del sistema, toque fuera). Por defecto equivale a
+ * [onDismiss]; un diálogo cuya acción dismiss sea destructiva (p. ej.
+ * "Quitar contexto") debe pasar aquí la acción conservativa (Cancelar)
+ * para que el Back nunca destruya estado por accidente.
  */
 @Composable
 fun XauxaDialog(
@@ -528,10 +534,11 @@ fun XauxaDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     content: (@Composable () -> Unit)? = null,
+    onDismissRequest: (() -> Unit)? = null,
 ) {
     androidx.compose.material3.AlertDialog(
         modifier = modifier,
-        onDismissRequest = onDismiss,
+        onDismissRequest = onDismissRequest ?: onDismiss,
         shape = RectangleShape,
         containerColor = XauxaColor.Surface,
         title = {
