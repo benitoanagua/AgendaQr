@@ -2,11 +2,13 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -14,20 +16,38 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import com.agendaqr.core.ui.components.XauxaDialog
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
+import com.agendaqr.core.ui.components.XauxaQrPreview
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
+import com.agendaqr.core.ui.components.XauxaTextAction
+import com.agendaqr.core.ui.components.XauxaTile
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
 import com.agendaqr.destinations.domain.ImportBatch
+import com.agendaqr.destinations.domain.ImportCandidate
+import com.agendaqr.destinations.domain.ImportKind
+
+/**
+ * Vista previa del elemento existente con el que coincide un duplicado
+ * (T7 — "Ver existente"). No navega: el usuario decide sin perder la
+ * revisión del lote.
+ */
+data class ExistingImportPreview(
+    val qrAsset: com.agendaqr.destinations.domain.QrAsset? = null,
+    val comprobanteBytes: ByteArray? = null,
+    val comprobanteMimeType: String? = null,
+)
 
 @Composable
 fun ImportBatchScreen(
     state: ImportBatchUiState,
     onAction: (ImportBatchAction) -> Unit,
+    existing: ExistingImportPreview? = null,
 ) {
     Column(
         modifier = Modifier
@@ -64,6 +84,25 @@ fun ImportBatchScreen(
             }
         }
     }
+
+    existing?.let { preview ->
+        XauxaDialog(
+            title = "Elemento existente",
+            confirmLabel = "Cerrar",
+            onConfirm = { onAction(ImportBatchAction.CloseExisting) },
+            onDismiss = { onAction(ImportBatchAction.CloseExisting) },
+            content = {
+                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                    when {
+                        preview.qrAsset != null -> XauxaQrPreview(preview.qrAsset.encoded)
+                        preview.comprobanteBytes != null ->
+                            ComprobantePreview(preview.comprobanteBytes, preview.comprobanteMimeType)
+                        else -> Text("No pudimos mostrar el elemento existente.", color = XauxaColor.TextSecondary)
+                    }
+                }
+            },
+        )
+    }
 }
 
 @Composable
@@ -85,7 +124,8 @@ private fun BatchResultContent(
         )
     }
     if (batch.pendingItems().isNotEmpty()) {
-        XauxaSecondaryButton("Revisar pendientes", onClick = { onAction(ImportBatchAction.ReviewPending) }, enabled = !isSaving)
+        // Contrato S12: "Revisar N pendientes".
+        XauxaSecondaryButton(reviewPendingLabel(batch), onClick = { onAction(ImportBatchAction.ReviewPending) }, enabled = !isSaving)
     }
     XauxaSecondaryButton("Volver", onClick = { onAction(ImportBatchAction.Back) }, enabled = !isSaving)
 }
@@ -98,18 +138,10 @@ private fun BatchReviewContent(
 ) {
     Text("Elementos que necesitan revisión", color = XauxaColor.TextPrimary)
     batch.pendingItems().forEach { candidate ->
-        Text(
-            when {
-                batch.duplicates.any { it.id == candidate.id } -> "! Parece que este elemento ya está guardado."
-                candidate.kind.name == "DESCONOCIDO" -> "? No pudimos clasificar este elemento."
-                candidate.kind.name == "QR" -> "QR pendiente de revisión."
-                candidate.kind.name == "COMPROBANTE" -> "Comprobante pendiente de revisión."
-                else -> "Elemento pendiente de revisión."
-            },
-            color = XauxaColor.TextSecondary,
-        )
+        PendingItemCard(candidate, batch, onAction, isSaving)
     }
     if (batch.canSaveRecognized()) {
+        // Los válidos nunca dependen de los pendientes (contrato S12).
         XauxaPrimaryButton(
             "Guardar reconocidos",
             onClick = { onAction(ImportBatchAction.SaveRecognized) },
@@ -118,4 +150,46 @@ private fun BatchReviewContent(
         )
     }
     XauxaSecondaryButton("Volver a resultado", onClick = { onAction(ImportBatchAction.Back) }, enabled = !isSaving)
+}
+
+@Composable
+private fun PendingItemCard(
+    candidate: ImportCandidate,
+    batch: ImportBatch,
+    onAction: (ImportBatchAction) -> Unit,
+    isSaving: Boolean,
+) {
+    val isDuplicate = batch.duplicates.any { it.id == candidate.id }
+    XauxaTile {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(XauxaSpacing.Lg),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+        ) {
+            Text(pendingItemName(candidate), fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold)
+            Text(
+                when {
+                    isDuplicate -> "! Parece que este elemento ya está guardado."
+                    candidate.kind == ImportKind.DESCONOCIDO -> "? No pudimos clasificar este elemento."
+                    else -> "Elemento pendiente de revisión."
+                },
+                color = XauxaColor.TextSecondary,
+                fontSize = XauxaType.Label,
+            )
+            when {
+                isDuplicate -> Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                    XauxaTextAction(label = "Ver existente", onClick = { onAction(ImportBatchAction.ViewExisting(candidate.id)) })
+                    XauxaTextAction(label = "Guardar de todos modos", onClick = { onAction(ImportBatchAction.SaveDuplicateAnyway(candidate.id)) })
+                }
+                else -> Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                    XauxaTextAction(label = "Reintentar clasificación", onClick = { onAction(ImportBatchAction.RetryCandidate(candidate.id)) })
+                }
+            }
+            // El descarte siempre está disponible: abandona la intención
+            // con este elemento y libera su payload temporal.
+            XauxaTextAction(
+                label = "Descartar",
+                onClick = { onAction(ImportBatchAction.DiscardCandidate(candidate.id)) },
+            )
+        }
+    }
 }
