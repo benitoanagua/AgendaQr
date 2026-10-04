@@ -394,7 +394,7 @@ private fun OperationDetailScreen(state: OperationsUiState, viewModel: Operation
         XauxaSection("Comprobantes") {
             if (state.operationComprobantes.isEmpty()) {
                 Text("Sin comprobante adjunto", color = XauxaColor.TextSecondary)
-                XauxaTextAction(label = "Adjuntar comprobante ahora", onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
+                XauxaTextAction(label = "Adjuntar comprobante ahora", onClick = { viewModel.openUnassociatedForOperation(operation.id) })
             } else {
                 for (receipt in state.operationComprobantes) {
                     XauxaTile(onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) }) {
