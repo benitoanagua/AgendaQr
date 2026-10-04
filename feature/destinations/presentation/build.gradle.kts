@@ -20,9 +20,17 @@ kotlin {
             implementation(libs.activity.compose)
             implementation(libs.core.ktx)
             implementation(libs.zxing.core)
+            // T8 — S03: captura con CameraX + análisis continuo.
+            implementation(libs.camera.core)
+            implementation(libs.camera.camera2)
+            implementation(libs.camera.lifecycle)
+            implementation(libs.camera.view)
         }
         commonTest.dependencies {
             implementation(libs.coroutines.test)
+        }
+        androidUnitTest.dependencies {
+            implementation(kotlin("test"))
         }
     }
 }

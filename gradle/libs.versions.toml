@@ -6,6 +6,7 @@ serialization = "1.9.0"
 coroutines = "1.10.2"
 activity = "1.10.1"
 zxing = "3.5.3"
+camerax = "1.4.2"
 coreKtx = "1.16.0"
 supabase = "3.2.4"
 ktor = "3.3.0"
@@ -28,3 +29,7 @@ coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
+camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
+camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
+camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
+camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }

@@ -47,6 +47,7 @@ enum class ErrorFlow {
     ImportRead,
     ImportBatchSave,
     ContextOpen,
+    CameraPermission,
 }
 
 /**
@@ -190,6 +191,11 @@ fun userFacingError(error: Throwable, flow: ErrorFlow): UserFacingError = when (
     ErrorFlow.ContextOpen -> UserFacingError(
         what = "No encontramos este contexto.",
         dataStatus = "Tus demás datos están bien.",
+        action = ErrorAction.Retry,
+    )
+    ErrorFlow.CameraPermission -> UserFacingError(
+        what = "No pudimos abrir la cámara.",
+        dataStatus = "Concede el permiso o usa Galería.",
         action = ErrorAction.Retry,
     )
 }
