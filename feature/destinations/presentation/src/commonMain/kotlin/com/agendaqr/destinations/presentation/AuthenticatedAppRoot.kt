@@ -90,7 +90,7 @@ internal fun AuthenticatedAppRoot(
     // T6: estado de sincronización por elemento (consulta indexada).
     val syncLookup = remember(syncQueueItems) { ElementSyncLookup(syncQueueItems) }
     val retrySync = remember(graph) {
-        { graph.syncScope.launch { graph.syncProcessor.drain() }; Unit }
+        { graph.sessionScope.launch { graph.syncProcessor.drain() }; Unit }
     }
     LaunchedEffect(graph.queueObserver) {
         graph.queueObserver.observeNetwork().collect { online -> isOffline = !online }
@@ -180,7 +180,7 @@ internal fun AuthenticatedAppRoot(
             if (hasFailed) {
                 XauxaTextAction(
                     label = "Reintentar ahora",
-                    onClick = { graph.syncScope.launch { graph.syncProcessor.drain() } },
+                    onClick = { graph.sessionScope.launch { graph.syncProcessor.drain() } },
                 )
             }
         }
@@ -203,7 +203,7 @@ internal fun AuthenticatedAppRoot(
                                 else -> null
                             }
                             batch?.let { pending ->
-                                graph.syncScope.launch {
+                                graph.sessionScope.launch {
                                     pending.candidates.mapNotNull { it.payloadRef }
                                         .distinct()
                                         .forEach { graph.importPayloadStore.delete(it) }
@@ -223,7 +223,7 @@ internal fun AuthenticatedAppRoot(
                             )
                         } else {
                             importBatchState = importBatchReducer.reduce(importBatchState, action)
-                            graph.syncScope.launch {
+                            graph.sessionScope.launch {
                                 runCatching { graph.saveImportBatch(batch) }
                                     .onSuccess {
                                         importBatchState = importBatchReducer.reduce(
@@ -251,7 +251,7 @@ internal fun AuthenticatedAppRoot(
                         val candidate = currentCandidate(action.candidateId)
                         val payloadRef = candidate?.payloadRef
                         if (candidate != null && payloadRef != null) {
-                            graph.syncScope.launch {
+                            graph.sessionScope.launch {
                                 val bytes = runCatching { graph.importPayloadStore.read(payloadRef) }.getOrNull()
                                 val reclassified = if (bytes != null) {
                                     reclassifyImportCandidate(candidate, bytes)
@@ -268,7 +268,7 @@ internal fun AuthenticatedAppRoot(
                     is ImportBatchAction.DiscardCandidate -> {
                         val candidate = currentCandidate(action.candidateId)
                         // El payload temporal se elimina al descartar.
-                        graph.syncScope.launch { candidate?.let { importBatchHost.discardPayload(it) } }
+                        graph.sessionScope.launch { candidate?.let { importBatchHost.discardPayload(it) } }
                         importBatchState = importBatchReducer.reduce(
                             importBatchState,
                             ImportBatchAction.CandidateSaved(action.candidateId),
@@ -277,7 +277,7 @@ internal fun AuthenticatedAppRoot(
                     is ImportBatchAction.SaveDuplicateAnyway -> {
                         val candidate = currentCandidate(action.candidateId)
                         if (candidate != null) {
-                            graph.syncScope.launch {
+                            graph.sessionScope.launch {
                                 runCatching { importBatchHost.saveDuplicateAnyway(candidate) }
                                     .onSuccess {
                                         // Sin doble guardado: el elemento sale del lote.
@@ -299,7 +299,7 @@ internal fun AuthenticatedAppRoot(
                         val candidate = currentCandidate(action.candidateId)
                         val batch = currentBatch()
                         if (candidate != null && batch != null) {
-                            graph.syncScope.launch {
+                            graph.sessionScope.launch {
                                 existingPreview = importBatchHost.resolveExisting(candidate, batch)
                             }
                         }

@@ -2,8 +2,6 @@ package com.agendaqr.destinations.presentation
 
 import com.agendaqr.destinations.domain.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -91,7 +89,11 @@ class OperationsViewModel(
     private val suggestReceiptAssociation: SuggestReceiptAssociationUseCase,
     private val deleteComprobante: DeleteComprobanteUseCase,
     private val comprobanteFiles: ComprobanteFileStore,
-    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+    /**
+     * Scope de la sesión (T12): lo aporta el grafo de la app; se cancela
+     * al cerrar sesión, junto con todos los colecciones del ViewModel.
+     */
+    private val scope: CoroutineScope,
 ) {
     private val _state = MutableStateFlow(OperationsUiState())
     val state: StateFlow<OperationsUiState> = _state.asStateFlow()

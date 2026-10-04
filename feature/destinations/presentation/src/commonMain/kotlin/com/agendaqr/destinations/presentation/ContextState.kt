@@ -2,9 +2,7 @@ package com.agendaqr.destinations.presentation
 
 import com.agendaqr.destinations.domain.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,7 +31,11 @@ class ContextsViewModel(
     observe: ObserveContextsUseCase,
     private val observeContents: ObserveContextContentsUseCase,
     private val get: GetContextUseCase,
-    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+    /**
+     * Scope de la sesión (T12): lo aporta el grafo de la app; se cancela
+     * al cerrar sesión, junto con todos los colecciones del ViewModel.
+     */
+    private val scope: CoroutineScope,
 ) {
     private val _state = MutableStateFlow(ContextsUiState())
     val state: StateFlow<ContextsUiState> = _state.asStateFlow()

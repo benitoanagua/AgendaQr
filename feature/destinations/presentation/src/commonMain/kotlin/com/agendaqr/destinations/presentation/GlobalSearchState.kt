@@ -4,9 +4,7 @@ import com.agendaqr.destinations.domain.AgendaSearchQuery
 import com.agendaqr.destinations.domain.AgendaSearchResult
 import com.agendaqr.destinations.domain.SearchAgendaQrUseCase
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,7 +28,11 @@ sealed interface GlobalSearchAction {
 
 class GlobalSearchViewModel(
     private val search: SearchAgendaQrUseCase,
-    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+    /**
+     * Scope de la sesión (T12): lo aporta el grafo de la app; se cancela
+     * al cerrar sesión, junto con todos los colecciones del ViewModel.
+     */
+    private val scope: CoroutineScope,
 ) {
     private val _state = MutableStateFlow(GlobalSearchUiState())
     private var searchJob: Job? = null
