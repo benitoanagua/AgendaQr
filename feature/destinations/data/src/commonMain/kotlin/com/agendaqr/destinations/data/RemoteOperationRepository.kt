@@ -7,8 +7,14 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import kotlinx.datetime.Instant
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
@@ -91,7 +97,8 @@ internal data class OperationRow(
     @SerialName("occurred_at") val occurredAt: Instant,
     @SerialName("created_at") val createdAt: Instant,
     @SerialName("updated_at") val updatedAt: Instant? = null,
-    val amount: String? = null,
+    /** `numeric(20,6)` in SQL: PostgREST returns a JSON number on reads. */
+    @Serializable(with = NumericAsStringSerializer::class) val amount: String? = null,
     val currency: String? = null,
     @SerialName("person_or_entity") val personOrEntity: String? = null,
     @SerialName("destination_id") val destinationId: String? = null,
@@ -99,6 +106,42 @@ internal data class OperationRow(
     val note: String? = null,
     @SerialName("context_id") val contextId: String? = null,
 )
+
+/**
+ * The SQL schema stores `amount` as `numeric(20,6)`, while the domain carries
+ * the user's original text. PostgREST serializes numeric as a JSON NUMBER
+ * (e.g. `180.000000`), which plain String decoding rejects — every drain that
+ * read an operation with an amount failed and the mutation stayed in retry
+ * forever. This serializer accepts both shapes: on decode it canonicalizes
+ * pure numeric text (trailing zeros trimmed: "180.000000" -> "180"), and on
+ * encode it always emits a string, which PostgREST accepts for numeric.
+ */
+object NumericAsStringSerializer : KSerializer<String> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("NumericAsString", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: String) {
+        encoder.encodeString(value)
+    }
+
+    override fun deserialize(decoder: Decoder): String {
+        val jsonDecoder = decoder as? kotlinx.serialization.json.JsonDecoder
+            ?: throw IllegalStateException("NumericAsStringSerializer requires JSON input")
+        return canonicalize(jsonDecoder.decodeJsonElement())
+    }
+
+    private fun canonicalize(element: kotlinx.serialization.json.JsonElement): String {
+        require(element is kotlinx.serialization.json.JsonPrimitive) {
+            "Expected a JSON primitive for amount, got $element"
+        }
+        val text = element.content
+        if (!element.isString && text.contains('.') && text.none { it == 'e' || it == 'E' }) {
+            val trimmed = text.trimEnd('0').trimEnd('.')
+            return trimmed.ifEmpty { "0" }
+        }
+        return text
+    }
+}
 
 fun createRemoteOperationRepository(): RemoteOperationRepository =
     SupabaseOperationRepository()

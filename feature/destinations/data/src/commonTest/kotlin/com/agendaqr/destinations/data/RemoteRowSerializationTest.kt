@@ -118,6 +118,45 @@ class RemoteRowSerializationTest {
     }
 
     @Test
+    fun operation_row_decodes_postgrest_numeric_amount_as_string() {
+        val json = Json { ignoreUnknownKeys = true; explicitNulls = false }
+        // PostgREST serializes numeric(20,6) as a JSON number.
+        val numeric = json.decodeFromString(
+            OperationRow.serializer(),
+            "{\"id\":\"op-1\",\"user_id\":\"u\",\"type\":\"PAGO\"," +
+                "\"occurred_at\":\"1970-01-01T00:00:00.001Z\",\"created_at\":\"1970-01-01T00:00:00.001Z\"," +
+                "\"amount\":180.000000,\"currency\":\"BOB\"}",
+        )
+        assertEquals("180", numeric.amount)
+        assertEquals("BOB", numeric.currency)
+
+        // Integer amounts arrive without a decimal part.
+        val integral = json.decodeFromString(
+            OperationRow.serializer(),
+            "{\"id\":\"op-2\",\"user_id\":\"u\",\"type\":\"PAGO\"," +
+                "\"occurred_at\":\"1970-01-01T00:00:00.001Z\",\"created_at\":\"1970-01-01T00:00:00.001Z\"," +
+                "\"amount\":90}",
+        )
+        assertEquals("90", integral.amount)
+
+        // Null stays null and strings pass through unchanged.
+        val textual = json.decodeFromString(
+            OperationRow.serializer(),
+            "{\"id\":\"op-3\",\"user_id\":\"u\",\"type\":\"PAGO\"," +
+                "\"occurred_at\":\"1970-01-01T00:00:00.001Z\",\"created_at\":\"1970-01-01T00:00:00.001Z\"," +
+                "\"amount\":\"150.50\"}",
+        )
+        assertEquals("150.50", textual.amount)
+
+        // Encoding always emits a string, which PostgREST accepts for numeric.
+        val encoded = json.encodeToString(
+            OperationRow.serializer(),
+            OperationRow("op-4", "u", "PAGO", Instant.fromEpochMilliseconds(1), Instant.fromEpochMilliseconds(1), amount = "90"),
+        )
+        assertEquals(true, "\"amount\":\"90\"" in encoded)
+    }
+
+    @Test
     fun no_row_json_contains_legacy_camel_case_only_keys() {
         // Barrido final: ninguna fila debe serializarse sin underscore en claves compuestas.
         val samples = listOf(
