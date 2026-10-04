@@ -32,9 +32,11 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
         XauxaDialog(
             title = if (duplicate) "Comprobante duplicado" else "Comprobante recibido",
             message = if (duplicate) {
-                "Ya existe un comprobante igual. Puedes verlo o guardar otra copia.\nArchivo: " + incoming.extension
+                "Ya existe un comprobante igual. Puedes verlo o guardar otra copia.
+Archivo: " + incoming.extension
             } else {
-                "Se guardará en tu bandeja de respaldos sin asociar.\nArchivo: " + incoming.extension
+                "Se guardará en tu bandeja de respaldos sin asociar.
+Archivo: " + incoming.extension
             },
             confirmLabel = if (duplicate) "Guardar de todos modos" else if (saving) "Guardando…" else "Guardar",
             onConfirm = {
@@ -427,7 +429,13 @@ private fun OperationDetailScreen(state: OperationsUiState, viewModel: Operation
     }
 }
 
-internal fun receiptProvenanceLabel(provenance: ReceiptProvenance?): String = when (provenance) {\n    ReceiptProvenance.ENVIADO -> "Enviado"\n    ReceiptProvenance.RECIBIDO -> "Recibido"\n    ReceiptProvenance.DESCONOCIDO, null -> "Origen desconocido"\n}\n\ninternal fun formatDate(millis: Long): String {
+internal fun receiptProvenanceLabel(provenance: ReceiptProvenance?): String = when (provenance) {
+    ReceiptProvenance.ENVIADO -> "Enviado"
+    ReceiptProvenance.RECIBIDO -> "Recibido"
+    ReceiptProvenance.DESCONOCIDO, null -> "Origen desconocido"
+}
+
+internal fun formatDate(millis: Long): String {
     val z = millis / 86_400_000L + 719468
     val era = if (z >= 0) z / 146097 else (z - 146096) / 146097
     val doe = z - era * 146097
