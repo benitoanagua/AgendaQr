@@ -87,6 +87,8 @@ private fun destinationNavigationIsBack(
     to: DestinationRoute,
 ): Boolean = when {
     from is DestinationRoute.Edit && to is DestinationRoute.List -> true
+    from is DestinationRoute.Add && to is DestinationRoute.List -> true
+    from is DestinationRoute.ImportReview && to is DestinationRoute.Add -> true
     from is DestinationRoute.Detail && to is DestinationRoute.List -> true
     from is DestinationRoute.FullscreenQr && to is DestinationRoute.Detail -> true
     from is DestinationRoute.ImportReview && to is DestinationRoute.Edit -> true
@@ -344,6 +346,10 @@ private fun AgendaQrAuthenticatedApp(userId: String, onSignOut: () -> Unit) {
                 onOpenSearch = { showSearch = true },
                 onOpenContexts = { showContexts = true },
                 onSignOut = onSignOut,
+            )
+            DestinationRoute.Add -> AddDestinationScreen(
+                onImport = { assets -> viewModel.onAction(DestinationAction.ImportAssets(assets)) },
+                onBack = { viewModel.onAction(DestinationAction.Back) },
             )
             is DestinationRoute.Edit -> DestinationEditorScreen(
                 existing = route.id?.let(viewModel::destination),
