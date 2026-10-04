@@ -99,11 +99,11 @@ private fun BatchReviewContent(
     Text("Elementos que necesitan revisión", color = XauxaColor.TextPrimary)
     batch.pendingItems().forEach { candidate ->
         Text(
-            when (candidate.kind.name) {
-                "DUPLICATE" -> "! Parece que este elemento ya está guardado."
-                "UNKNOWN" -> "? No pudimos clasificar este elemento."
-                "QR" -> "QR pendiente de revisión."
-                "COMPROBANTE" -> "Comprobante pendiente de revisión."
+            when {
+                batch.duplicates.any { it.id == candidate.id } -> "! Parece que este elemento ya está guardado."
+                candidate.kind.name == "DESCONOCIDO" -> "? No pudimos clasificar este elemento."
+                candidate.kind.name == "QR" -> "QR pendiente de revisión."
+                candidate.kind.name == "COMPROBANTE" -> "Comprobante pendiente de revisión."
                 else -> "Elemento pendiente de revisión."
             },
             color = XauxaColor.TextSecondary,
