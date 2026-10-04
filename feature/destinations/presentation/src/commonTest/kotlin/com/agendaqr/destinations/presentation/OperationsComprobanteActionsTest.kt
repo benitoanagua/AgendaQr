@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import com.agendaqr.destinations.domain.AssociateComprobanteToOperationUseCase
+import com.agendaqr.destinations.domain.UnassociateComprobanteUseCase
 import com.agendaqr.destinations.domain.Comprobante
 import com.agendaqr.destinations.domain.ComprobanteFileStore
 import com.agendaqr.destinations.domain.ComprobanteRepository
@@ -82,6 +83,14 @@ class OperationsComprobanteActionsTest {
             waitUntil { vm.state.value.operationComprobantes.any { it.id == "r-1" } }
             vm.onAction(OperationAction.OpenComprobante("r-1"))
             waitUntil { !vm.state.value.isLoadingComprobante }
+
+            vm.onAction(OperationAction.Disassociate("r-1"))
+            waitUntil { receipts.get("r-1")?.operationId == null }
+            assertNull(receipts.get("r-1")?.operationId)
+
+            vm.onAction(OperationAction.Associate("r-1", "op-1"))
+            waitUntil { receipts.get("r-1")?.operationId == "op-1" }
+
             vm.onAction(OperationAction.DeleteComprobante("r-1"))
             waitUntil { receipts.deleted.contains("r-1") }
 
@@ -160,6 +169,7 @@ class OperationsComprobanteActionsTest {
             saveOperation = SaveOperationUseCase(operations),
             deleteOperation = DeleteOperationWithHistoryUseCase(operations, receipts, files, history),
             associate = AssociateComprobanteToOperationUseCase(operations, receipts),
+            unassociate = UnassociateComprobanteUseCase(receipts),
             saveComprobante = SaveComprobanteUseCase(receipts, files),
             findDuplicates = FindDuplicateComprobantesUseCase(receipts, files),
             suggestReceiptAssociation = SuggestReceiptAssociationUseCase(receipts, operations),
