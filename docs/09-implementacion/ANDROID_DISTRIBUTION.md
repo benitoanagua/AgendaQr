@@ -36,6 +36,27 @@
 - Content rating, target audience, content declarations
 - Account deletion URL (if Play requires for Auth)
 - Production keystore creation + `ANDROID_KEYSTORE_*` secrets in Play Console / CI
+
+## Firma release: uso de `-PallowDebugSigningForRc=true` (T13)
+
+`agendaqr.android-application` NO permite firmar release con el keystore de
+debug de forma silenciosa: sin variables de producción el build de release
+falla en configuración con un `GradleException` explícito. El único camino
+para un RC local/candidato es pedírselo de forma explícita:
+
+```bash
+./gradlew build -PallowDebugSigningForRc=true
+```
+
+- **CI** lo fija como `ORG_GRADLE_PROJECT_allowDebugSigningForRc: "true"`:
+  el assembly de release del gate es un *candidato*, no una firma de
+  producción; **PRODUCTION_RELEASE sigue BLOCKED** sin keystore real.
+- **Local**: cualquier tarea de `androidApp` necesita el flag porque el
+  guard se evalúa en configuración (incluso para `verifyAgendaQrArchitecture`
+  o `assembleDebug`); los APK de runtime contra Supabase local se construyen
+  además con `-PSUPABASE_URL=http://10.0.2.2:54321 -PSUPABASE_PUBLISHABLE_KEY=<anon>`.
+- **El guard no se toca**: la exigencia de `ANDROID_KEYSTORE_*` para firma
+  de producción permanece intacta (A4).
 - `versionCode` increment strategy for next release
 - `minify`/`R8` disabled (`isMinifyEnabled=false`) — enable for production if needed
 

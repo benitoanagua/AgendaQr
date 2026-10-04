@@ -115,10 +115,11 @@ jobs:
         run: ./gradlew :shared:compileKotlinIosSimulatorArm64 :feature:destinations:data:compileKotlinIosSimulatorArm64 :feature:destinations:presentation:compileKotlinIosSimulatorArm64 :core:ui:compileKotlinIosSimulatorArm64 --stacktrace
 
   supabase-acceptance:
-    # Non-blocking until verified green: needs a live Postgres; RLS behavior
-    # still requires `supabase start` or a hosted project (see harness header).
+    # Blocking since T13: the harness is deterministic against a stock
+    # postgres:15 (verified locally with podman and green on every PR run
+    # since its introduction). RLS *behavior* still requires `supabase start`
+    # or a hosted project — only the SQL acceptance is gated here.
     runs-on: ubuntu-latest
-    continue-on-error: true
     services:
       postgres:
         image: postgres:15
