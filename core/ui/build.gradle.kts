@@ -1,5 +1,14 @@
 plugins { id("agendaqr.compose-library") }
 
+// T9 — tipografía Xauxa: los recursos de fuente (Archivo, OFL 1.1) viven en
+// composeResources y se exponen solo vía XauxaType.
+compose {
+    resources {
+        publicResClass = true
+        packageOfResClass = "com.agendaqr.core.ui"
+    }
+}
+
 android { namespace = "com.agendaqr.core.ui" }
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
@@ -27,6 +36,8 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(compose.material3)
+            // T9 — recursos Compose (fuentes Xauxa empaquetadas).
+            implementation(compose.components.resources)
             // Xauxa motion tokens (Easing) and the LiveTile / turnstile-nav
             // components consume androidx.compose.animation(.core) directly.
             implementation(compose.animation)

@@ -22,6 +22,7 @@ import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.components.XauxaTone
+import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -54,7 +55,7 @@ private fun ContextList(state: ContextsUiState, onAction: (ContextAction) -> Uni
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         XauxaSecondaryButton(label = "Volver", onClick = onBack)
-        Text("Contextos", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+        XauxaHeading(text = "Contextos", size = XauxaType.Display, fontWeight = FontWeight.Bold)
         state.error?.let { err ->
             XauxaStatusBanner(
                 err.display(),
@@ -103,7 +104,7 @@ private fun ContextDetail(state: ContextsUiState, onAction: (ContextAction) -> U
             )
         }
         contents?.let { data ->
-            Text(data.context.name, modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            XauxaHeading(text = data.context.name, size = XauxaType.Display, fontWeight = FontWeight.Bold)
             data.context.note?.takeIf { it.isNotBlank() }?.let {
                 Text(it, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
             }

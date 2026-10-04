@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.material3.Text
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
+import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -41,12 +42,9 @@ fun AddDestinationScreen(
             .imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        Text(
-            "Añadir",
-            modifier = Modifier.semantics { heading() },
-            fontSize = XauxaType.Headline,
-            fontWeight = FontWeight.Bold,
-            color = XauxaColor.TextPrimary,
+        XauxaHeading(
+            text = "Añadir",
+            size = XauxaType.Headline,
         )
         Text(
             "Trae a Agenda QR algo que ya tienes.",

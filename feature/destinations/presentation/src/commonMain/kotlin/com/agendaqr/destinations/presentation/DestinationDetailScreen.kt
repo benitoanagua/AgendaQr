@@ -21,6 +21,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.XauxaCommandBar
+import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.components.XauxaDialog
 import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaOverflowAction
@@ -50,7 +51,7 @@ fun DestinationDetailScreen(
             modifier = Modifier.weight(1f).padding(XauxaSpacing.Xxl).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
         ) {
-            Text(destination.name.ifBlank { "Sin nombre" }, modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Headline, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            XauxaHeading(text = destination.name.ifBlank { "Sin nombre" }, size = XauxaType.Headline, fontWeight = FontWeight.Bold)
             destination.category?.let { Text(it, color = XauxaColor.TextSecondary) }
             destination.note?.takeIf { it.isNotBlank() }?.let { Text(it, color = XauxaColor.TextSecondary) }
             // T6: estado de sincronización del elemento (texto, no solo

@@ -6,10 +6,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.agendaqr.core.ui.Res
+import com.agendaqr.core.ui.archivo_bold
+import com.agendaqr.core.ui.archivo_medium
+import com.agendaqr.core.ui.archivo_regular
+import com.agendaqr.core.ui.archivo_semibold
+import org.jetbrains.compose.resources.Font
 
 /**
  * Xauxa semantic tokens. The feature layer must consume only this semantic
@@ -273,6 +280,28 @@ object XauxaType {
     val Label: TextUnit = 14.sp
     val Caption: TextUnit = 12.sp
     val LetterSpacingWide: TextUnit = 0.5.sp
+    /**
+     * T9 — §12: "Archivo para display/encabezados". Empaquetada en
+     * `composeResources/font` (4 pesos estáticos, subset latin, ~40 KB cada
+     * uno); licencia OFL 1.1 documentada en
+     * `docs/05-design-system/05-xauxa-tipografia.md`. Solo se consume a
+     * través de [com.agendaqr.core.ui.components.XauxaHeading].
+     *
+     * Acceso componible (mismo patrón que [XauxaColor]): el cargador de
+     * fuentes de Compose retiene los typefaces.
+     */
+    val FamilyDisplay: FontFamily
+        @Composable get() = FontFamily(
+            Font(Res.font.archivo_regular, FontWeight.Normal),
+            Font(Res.font.archivo_medium, FontWeight.Medium),
+            Font(Res.font.archivo_semibold, FontWeight.SemiBold),
+            Font(Res.font.archivo_bold, FontWeight.Bold),
+        )
+    /**
+     * §12: "Roboto/San Francisco para UI/cuerpo": la sans del sistema
+     * (Roboto en Android, SF en iOS) es la fuente de UI correcta sin
+     * empaquetar una copia redundante; resperta el escalado del usuario.
+     */
     val FamilyUi: FontFamily = FontFamily.Default
     val FamilyMono: FontFamily = FontFamily.Monospace
 }

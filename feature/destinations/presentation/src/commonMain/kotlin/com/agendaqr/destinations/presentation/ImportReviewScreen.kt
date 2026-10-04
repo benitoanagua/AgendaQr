@@ -14,8 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.components.XauxaEmptyState
+import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaQrPreview
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
@@ -45,7 +47,7 @@ fun ImportReviewScreen(
             .imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        Text("Revisar QR", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Headline, color = XauxaColor.TextPrimary)
+        XauxaHeading(text = "Revisar QR", size = XauxaType.Headline, fontWeight = FontWeight.Normal)
         error?.let { err ->
             XauxaStatusBanner(
                 err.display(),
