@@ -8,7 +8,12 @@ fun Project.productionKotlinSources(): Sequence<File> = sequence {
                 it.isFile && it.extension == "kt" &&
                     !it.path.contains("/build/") &&
                     !it.path.contains("/src/test/") &&
-                    !it.path.contains("/src/androidTest/")
+                    !it.path.contains("/src/androidTest/") &&
+                    // Los source sets de test (commonTest, androidUnitTest,
+                    // iosTest…) no son código de producción: las pruebas
+                    // pueden usar primitivas (p. ej. 48.dp para verificar
+                    // touch targets) sin violar la autoridad visual.
+                    !Regex("/src/[a-zA-Z]*[Tt]est/").containsMatchIn(it.path)
             })
         }
     }

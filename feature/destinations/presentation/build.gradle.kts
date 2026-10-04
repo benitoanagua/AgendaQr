@@ -1,6 +1,13 @@
 plugins { id("agendaqr.compose-library") }
 
-android { namespace = "com.agendaqr.destinations.presentation" }
+android {
+    namespace = "com.agendaqr.destinations.presentation"
+    testOptions {
+        // T10 — Robolectric necesita los recursos del módulo para las
+        // pruebas de UI Compose.
+        unitTests.isIncludeAndroidResources = true
+    }
+}
 
 kotlin {
     sourceSets {
@@ -31,6 +38,11 @@ kotlin {
         }
         androidUnitTest.dependencies {
             implementation(kotlin("test"))
+            // T10 — pruebas de UI Compose sobre Robolectric (JVM): corren en
+            // el gate existente (testDebugUnitTest) sin emulador en CI.
+            implementation("androidx.compose.ui:ui-test-junit4:${libs.versions.androidx.compose.get()}")
+            implementation("androidx.compose.ui:ui-test-manifest:${libs.versions.androidx.compose.get()}")
+            implementation("org.robolectric:robolectric:${libs.versions.robolectric.get()}")
         }
     }
 }
