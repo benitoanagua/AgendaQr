@@ -26,23 +26,34 @@ import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
 
+/**
+ * S06 — Contexto.
+ *
+ * `onBack` cierra la superficie completa según el punto de entrada:
+ * desde la Lista termina el flujo (vuelve a Inicio o a la Búsqueda que
+ * la abrió); desde el Detalle el "Volver" existente regresa a la Lista.
+ * Sin este parámetro la pantalla era un dead-end: `showContexts` nunca
+ * volvía a false.
+ */
 @Composable
 fun ContextsScreen(
     state: ContextsUiState,
     onAction: (ContextAction) -> Unit,
+    onBack: () -> Unit,
 ) {
     when (state.route) {
-        ContextRoute.List -> ContextList(state, onAction)
+        ContextRoute.List -> ContextList(state, onAction, onBack)
         is ContextRoute.Detail -> ContextDetail(state, onAction)
     }
 }
 
 @Composable
-private fun ContextList(state: ContextsUiState, onAction: (ContextAction) -> Unit) {
+private fun ContextList(state: ContextsUiState, onAction: (ContextAction) -> Unit, onBack: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
+        XauxaSecondaryButton(label = "Volver", onClick = onBack)
         Text("Contextos", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
         state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { onAction(ContextAction.ClearError) }) }
         when {
@@ -51,7 +62,7 @@ private fun ContextList(state: ContextsUiState, onAction: (ContextAction) -> Uni
                 title = "Sin contextos",
                 subtitle = "Los contextos agrupan tus QR y operaciones.",
                 actionLabel = "Volver",
-                onAction = { onAction(ContextAction.Back) },
+                onAction = onBack,
             )
             else -> LazyColumn(modifier = Modifier.fillMaxSize().weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 items(state.contexts, key = { it.id }) { context ->

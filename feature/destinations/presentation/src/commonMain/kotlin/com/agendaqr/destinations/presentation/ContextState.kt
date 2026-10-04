@@ -29,6 +29,37 @@ sealed interface ContextAction {
     data object ClearError : ContextAction
 }
 
+/**
+ * Visibilidad de la superficie Contextos (S06) a nivel de app y origen de
+ * su apertura. El origen decide a dónde vuelve el `onBack` de
+ * `ContextsScreen`: abrir desde un resultado de búsqueda (S04/S05) regresa
+ * a la Búsqueda con la consulta conservada; abrir desde Inicio regresa a
+ * Inicio.
+ *
+ * Es estado puro y testeable: el dead-end original era un booleano
+ * `showContexts` que nunca volvía a false.
+ */
+internal enum class ContextsExit {
+    /** Abierta desde Inicio: Back regresa a Inicio. */
+    Home,
+    /** Abierta desde un resultado de Búsqueda: Back regresa a S04/S05. */
+    Search,
+}
+
+internal data class ContextsSurface(
+    val visible: Boolean = false,
+    val openedFromSearch: Boolean = false,
+) {
+    fun open(fromSearch: Boolean): ContextsSurface =
+        ContextsSurface(visible = true, openedFromSearch = fromSearch)
+
+    fun close(): ContextsSurface = ContextsSurface()
+
+    /** Destino de retorno al cerrar; se calcula del estado aún visible. */
+    val exit: ContextsExit
+        get() = if (openedFromSearch) ContextsExit.Search else ContextsExit.Home
+}
+
 class ContextsViewModel(
     observe: ObserveContextsUseCase,
     private val observeContents: ObserveContextContentsUseCase,
