@@ -29,7 +29,6 @@ data class DestinationsUiState(
     val destinations: List<Destination> = emptyList(),
     val query: String = "",
     val favoriteOnly: Boolean = false,
-    val recentOnly: Boolean = false,
     val category: String? = null,
     val route: DestinationRoute = DestinationRoute.List,
     val isLoading: Boolean = true,
@@ -49,7 +48,6 @@ data class DestinationsUiState(
 sealed interface DestinationAction {
     data class Search(val value: String) : DestinationAction
     data object ToggleFavorites : DestinationAction
-    data object ToggleRecent : DestinationAction
     data class SelectCategory(val value: String?) : DestinationAction
     data class Open(val id: String) : DestinationAction
     data class Edit(val id: String?) : DestinationAction
@@ -86,7 +84,6 @@ class DestinationsViewModel(
         when (action) {
             is DestinationAction.Search -> _state.update { it.copy(query = action.value) }
             DestinationAction.ToggleFavorites -> _state.update { it.copy(favoriteOnly = !it.favoriteOnly) }
-            DestinationAction.ToggleRecent -> _state.update { it.copy(recentOnly = !it.recentOnly) }
             is DestinationAction.SelectCategory -> _state.update { it.copy(category = action.value) }
             is DestinationAction.Open -> scope.launch {
                 get(action.id)?.let { _state.update { state -> state.copy(route = DestinationRoute.Detail(action.id)) } }
