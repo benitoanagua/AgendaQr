@@ -22,14 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaQrPreview
 import com.agendaqr.core.ui.components.XauxaScannerViewport
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextInput
-import com.agendaqr.core.ui.components.XauxaDialog
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
@@ -77,8 +75,11 @@ private fun DestinationEditorContent(
     var category by rememberSaveable(existing?.category) { mutableStateOf(existing?.category.orEmpty()) }
     var note by rememberSaveable(existing?.note) { mutableStateOf(existing?.note.orEmpty()) }
     var qr by remember(existing?.qr) { mutableStateOf(existing?.qr ?: QrAsset(encoded = "")) }
-    var contextId by rememberSaveable(existing?.contextId) { mutableStateOf(existing?.contextId) }
-    var showContextPicker by remember { mutableStateOf(false) }
+    // S08: selección de contexto con semántica explícita — Cancelar no
+    // toca la selección; Quitar contexto es la única vía de limpiarla.
+    var selection by rememberSaveable(existing?.contextId, stateSaver = ContextSelectionSaver) {
+        mutableStateOf(ContextSelection(contextId = existing?.contextId))
+    }
     var submitted by remember { mutableStateOf(false) }
 
     val nameError = submitted && name.isBlank()
@@ -114,8 +115,8 @@ private fun DestinationEditorContent(
         XauxaTextInput(label = "Categoría", value = category, onValueChange = { category = it })
         XauxaTextInput(label = "Nota", value = note, onValueChange = { note = it }, singleLine = false, minLines = 3)
         XauxaSecondaryButton(
-            label = contextId?.let { id -> "Para: " + (contexts.firstOrNull { it.id == id }?.name ?: "Contexto") } ?: "Para: elegir contexto (opcional)",
-            onClick = { showContextPicker = true },
+            label = selection.contextId?.let { id -> "Para: " + (contexts.firstOrNull { it.id == id }?.name ?: "Contexto") } ?: "Para: elegir contexto (opcional)",
+            onClick = { selection = selection.openPicker() },
         )
         Text(
             "Desde otra app: comparte una imagen o PDF con Agenda QR.",
@@ -153,7 +154,7 @@ private fun DestinationEditorContent(
                             category = category.trim().ifBlank { null },
                             note = note.trim().ifBlank { null },
                             qr = qr,
-                            contextId = contextId,
+                            contextId = selection.contextId,
                             updatedAt = now,
                         ),
                     )
@@ -162,32 +163,13 @@ private fun DestinationEditorContent(
                 isLoading = isSaving,
             )
         }
-        if (showContextPicker) {
-            XauxaDialog(
-                title = "¿A cuál corresponde?",
-                confirmLabel = "Cerrar",
-                onConfirm = { showContextPicker = false },
-                dismissLabel = "Sin contexto",
-                onDismiss = { contextId = null; showContextPicker = false },
-                content = {
-                    if (contexts.isEmpty()) {
-                        Text("Sin contextos disponibles.", color = XauxaColor.TextSecondary)
-                    } else {
-                        Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                            contexts.forEach { context ->
-                                XauxaListRow(
-                                    title = context.name,
-                                    subtitle = context.note?.takeIf { it.isNotBlank() },
-                                    tone = if (context.id == contextId) XauxaTone.Info else XauxaTone.Neutral,
-                                    onClick = {
-                                        contextId = context.id
-                                        showContextPicker = false
-                                    },
-                                )
-                            }
-                        }
-                    }
-                },
+        if (selection.pickerOpen) {
+            ContextPickerDialog(
+                contexts = contexts,
+                selection = selection,
+                onSelect = { id -> selection = selection.select(id) },
+                onRemove = { selection = selection.removeContext() },
+                onCancel = { selection = selection.cancelPicker() },
             )
         }
     }

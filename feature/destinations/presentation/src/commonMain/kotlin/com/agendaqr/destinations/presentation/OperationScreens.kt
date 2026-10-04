@@ -235,8 +235,11 @@ private fun OperationEditorScreen(
     var concept by rememberSaveable(editorKey) { mutableStateOf(existing?.concept.orEmpty()) }
     var note by rememberSaveable(editorKey) { mutableStateOf(existing?.note.orEmpty()) }
     var dateText by rememberSaveable(editorKey) { mutableStateOf(formatDate(existing?.occurredAt ?: nowMillis())) }
-    var selectedContextId by rememberSaveable(editorKey) { mutableStateOf(existing?.contextId) }
-    var showContextPicker by remember { mutableStateOf(false) }
+    // S08: selección de contexto con semántica explícita — Cancelar no toca
+    // la selección; Quitar contexto es la única vía de limpiarla.
+    var contextSelection by rememberSaveable(editorKey, stateSaver = ContextSelectionSaver) {
+        mutableStateOf(ContextSelection(contextId = existing?.contextId))
+    }
     var showSensitiveConfirm by remember { mutableStateOf(false) }
     var submitted by remember { mutableStateOf(false) }
     val saving = state.isSavingOperation
@@ -255,7 +258,7 @@ private fun OperationEditorScreen(
         destinationId = destination.trim().takeIf(String::isNotBlank),
         concept = concept.trim().takeIf(String::isNotBlank),
         note = note.trim().takeIf(String::isNotBlank),
-        contextId = selectedContextId,
+        contextId = contextSelection.contextId,
     )
 
     Column(
@@ -293,9 +296,9 @@ private fun OperationEditorScreen(
         XauxaTextInput(label = "Persona o entidad (opcional)", value = person, onValueChange = { person = it }, modifier = Modifier.fillMaxWidth())
         XauxaTextInput(label = "Destino QR (opcional)", value = destination, onValueChange = { destination = it }, modifier = Modifier.fillMaxWidth())
         XauxaSecondaryButton(
-            label = selectedContextId?.let { id -> "Para: " + (state.contexts.firstOrNull { it.id == id }?.name ?: "Contexto") }
+            label = contextSelection.contextId?.let { id -> "Para: " + (state.contexts.firstOrNull { it.id == id }?.name ?: "Contexto") }
                 ?: "Para: elegir contexto (opcional)",
-            onClick = { showContextPicker = true },
+            onClick = { contextSelection = contextSelection.openPicker() },
         )
         XauxaTextInput(label = "Concepto (opcional)", value = concept, onValueChange = { concept = it }, modifier = Modifier.fillMaxWidth())
         XauxaTextInput(label = "Nota (opcional)", value = note, onValueChange = { note = it }, modifier = Modifier.fillMaxWidth())
@@ -312,7 +315,7 @@ private fun OperationEditorScreen(
                 if (existing == null) {
                     viewModel.onAction(
                         OperationAction.SaveNew(
-                            type, at, amount, currency, person, destination, concept, note, selectedContextId, candidate.id,
+                            type, at, amount, currency, person, destination, concept, note, contextSelection.contextId, candidate.id,
                         ),
                     )
                 } else if (candidate.hasSensitiveChangesComparedTo(existing) && state.operationComprobantes.isNotEmpty()) {
@@ -326,26 +329,13 @@ private fun OperationEditorScreen(
         )
     }
 
-    if (showContextPicker) {
-        XauxaDialog(
-            title = "Seleccionar contexto",
-            confirmLabel = "Cerrar",
-            onConfirm = { showContextPicker = false },
-            dismissLabel = "Sin contexto",
-            onDismiss = { selectedContextId = null; showContextPicker = false },
-            content = {
-                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                    state.contexts.forEach { context ->
-                        XauxaListRow(
-                            title = context.name,
-                            onClick = {
-                                selectedContextId = context.id
-                                showContextPicker = false
-                            },
-                        )
-                    }
-                }
-            },
+    if (contextSelection.pickerOpen) {
+        ContextPickerDialog(
+            contexts = state.contexts,
+            selection = contextSelection,
+            onSelect = { id -> contextSelection = contextSelection.select(id) },
+            onRemove = { contextSelection = contextSelection.removeContext() },
+            onCancel = { contextSelection = contextSelection.cancelPicker() },
         )
     }
 
