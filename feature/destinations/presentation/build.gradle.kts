@@ -16,5 +16,8 @@ kotlin {
             implementation(libs.core.ktx)
             implementation(libs.zxing.core)
         }
+        commonTest.dependencies {
+            implementation(libs.coroutines.test)
+        }
     }
 }

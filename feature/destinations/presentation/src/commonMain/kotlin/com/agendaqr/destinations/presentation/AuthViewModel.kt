@@ -26,7 +26,10 @@ class AuthViewModel(
     observe: ObserveAuthStateUseCase,
     private val signIn: SignInUseCase,
     private val signUp: SignUpUseCase,
-    private val signOut: SignOutUseCase,
+    // Named distinctly: a `signOut` property is shadowed by the member
+    // function below, making `runCatching { signOut() }` recurse into
+    // itself until the main thread ANRs (observed on device).
+    private val signOutUseCase: SignOutUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AuthUiState())
@@ -85,7 +88,7 @@ class AuthViewModel(
 
     fun signOut() {
         viewModelScope.launch {
-            runCatching { signOut() }
+            runCatching { signOutUseCase() }
                 .onFailure { error ->
                     _state.value = _state.value.copy(errorMessage = error.message ?: "No se pudo cerrar sesión.")
                 }

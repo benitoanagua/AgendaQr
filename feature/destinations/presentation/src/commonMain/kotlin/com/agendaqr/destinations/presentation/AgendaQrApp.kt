@@ -58,7 +58,7 @@ fun AgendaQrApp() {
             observe = ObserveAuthStateUseCase(authRepository),
             signIn = SignInUseCase(authRepository),
             signUp = SignUpUseCase(authRepository),
-            signOut = SignOutUseCase(authRepository),
+            signOutUseCase = SignOutUseCase(authRepository),
         )
     }
     val authState by authViewModel.state.collectAsState()
