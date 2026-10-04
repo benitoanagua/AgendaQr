@@ -50,6 +50,31 @@ internal fun AuthenticatedAppRoot(
 
     var importBatchState by remember { mutableStateOf<ImportBatchUiState>(ImportBatchUiState.Idle) }
     val importBatchReducer = remember { ImportBatchReducer() }
+    // T7 — S12: efectos por elemento (copias deliberadas, payloads, existentes).
+    val importBatchHost = remember(
+        graph.destinationRepository,
+        graph.comprobanteRepository,
+        graph.importPayloadStore,
+    ) {
+        ImportBatchItemHost(
+            destinations = graph.destinationRepository,
+            comprobantes = graph.comprobanteRepository,
+            comprobanteFiles = graph.comprobanteFiles,
+            payloads = graph.importPayloadStore,
+        )
+    }
+    var existingPreview by remember { mutableStateOf<ExistingImportPreview?>(null) }
+    /** Lote actual (el que la UI está viendo), si hay alguno. */
+    fun currentBatch() = when (val current = importBatchState) {
+        is ImportBatchUiState.Result -> current.batch
+        is ImportBatchUiState.Review -> current.batch
+        is ImportBatchUiState.Saving -> current.batch
+        is ImportBatchUiState.Error -> current.batch
+        is ImportBatchUiState.Saved -> current.batch
+        else -> null
+    }
+    fun currentCandidate(id: String): com.agendaqr.destinations.domain.ImportCandidate? =
+        currentBatch()?.candidates?.firstOrNull { it.id == id }
 
     var pendingCount by remember { mutableStateOf(0) }
     var isOffline by remember { mutableStateOf(false) }
@@ -154,6 +179,7 @@ internal fun AuthenticatedAppRoot(
     when (top) {
         AppRoute.ImportBatch -> ImportBatchScreen(
             state = importBatchState,
+            existing = existingPreview,
             onAction = { action ->
                 when (action) {
                     ImportBatchAction.Back -> {
@@ -208,6 +234,67 @@ internal fun AuthenticatedAppRoot(
                             }
                         }
                     }
+                    // ------------------------------------------------------
+                    // T7 — resolución de pendientes por elemento.
+                    // ------------------------------------------------------
+                    is ImportBatchAction.RetryCandidate -> {
+                        val candidate = currentCandidate(action.candidateId)
+                        val payloadRef = candidate?.payloadRef
+                        if (candidate != null && payloadRef != null) {
+                            graph.syncScope.launch {
+                                val bytes = runCatching { graph.importPayloadStore.read(payloadRef) }.getOrNull()
+                                val reclassified = if (bytes != null) {
+                                    reclassifyImportCandidate(candidate, bytes)
+                                } else {
+                                    candidate
+                                }
+                                importBatchState = importBatchReducer.reduce(
+                                    importBatchState,
+                                    ImportBatchAction.CandidateReclassified(reclassified),
+                                )
+                            }
+                        }
+                    }
+                    is ImportBatchAction.DiscardCandidate -> {
+                        val candidate = currentCandidate(action.candidateId)
+                        // El payload temporal se elimina al descartar.
+                        graph.syncScope.launch { candidate?.let { importBatchHost.discardPayload(it) } }
+                        importBatchState = importBatchReducer.reduce(
+                            importBatchState,
+                            ImportBatchAction.CandidateSaved(action.candidateId),
+                        )
+                    }
+                    is ImportBatchAction.SaveDuplicateAnyway -> {
+                        val candidate = currentCandidate(action.candidateId)
+                        if (candidate != null) {
+                            graph.syncScope.launch {
+                                runCatching { importBatchHost.saveDuplicateAnyway(candidate) }
+                                    .onSuccess {
+                                        // Sin doble guardado: el elemento sale del lote.
+                                        importBatchState = importBatchReducer.reduce(
+                                            importBatchState,
+                                            ImportBatchAction.CandidateSaved(action.candidateId),
+                                        )
+                                    }
+                                    .onFailure {
+                                        importBatchState = importBatchReducer.reduce(
+                                            importBatchState,
+                                            ImportBatchAction.Failed("No pudimos guardar el elemento. Inténtalo de nuevo."),
+                                        )
+                                    }
+                            }
+                        }
+                    }
+                    is ImportBatchAction.ViewExisting -> {
+                        val candidate = currentCandidate(action.candidateId)
+                        val batch = currentBatch()
+                        if (candidate != null && batch != null) {
+                            graph.syncScope.launch {
+                                existingPreview = importBatchHost.resolveExisting(candidate, batch)
+                            }
+                        }
+                    }
+                    ImportBatchAction.CloseExisting -> existingPreview = null
                     else -> importBatchState = importBatchReducer.reduce(importBatchState, action)
                 }
             },

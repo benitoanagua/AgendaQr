@@ -83,6 +83,7 @@ class AuthenticatedSessionGraph(
     val destinationRepository: com.agendaqr.destinations.domain.DestinationRepository,
     val operationRepository: com.agendaqr.destinations.domain.OperationRepository,
     val comprobanteRepository: com.agendaqr.destinations.domain.ComprobanteRepository,
+    val comprobanteFiles: com.agendaqr.destinations.domain.ComprobanteFileStore,
     val contextRepository: com.agendaqr.destinations.domain.ContextRepository,
     val importPayloadStore: ImportPayloadStore,
     val saveImportBatch: SaveImportBatchUseCase,
@@ -209,7 +210,8 @@ fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph
     }
     return remember(
         userId, syncScope, syncQueue, syncProcessor, recovery, queueObserver,
-        destinationRepository, operationRepository, comprobanteRepository, contextRepository,
+        destinationRepository, operationRepository, comprobanteRepository, fileStore,
+        contextRepository,
         importPayloadStore, saveImportBatch,
         destinationsViewModel, operationsViewModel, contextsViewModel, globalSearchViewModel,
     ) {
@@ -223,6 +225,7 @@ fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph
             destinationRepository = destinationRepository,
             operationRepository = operationRepository,
             comprobanteRepository = comprobanteRepository,
+            comprobanteFiles = fileStore,
             contextRepository = contextRepository,
             importPayloadStore = importPayloadStore,
             saveImportBatch = saveImportBatch,
