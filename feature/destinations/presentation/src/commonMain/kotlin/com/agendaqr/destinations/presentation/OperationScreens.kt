@@ -89,7 +89,15 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
             XauxaStatusBanner("Comprobantes sin asociar: " + state.unassociated.size)
             XauxaSecondaryButton(label = "Ver bandeja de respaldos", onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
         }
-        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { viewModel.onAction(OperationAction.ClearError) }) }
+        state.error?.let { err ->
+            XauxaStatusBanner(
+                err.display(),
+                tone = XauxaTone.Danger,
+                actionLabel = err.action.label,
+                onAction = { viewModel.onAction(OperationAction.ClearError) },
+                onDismiss = { viewModel.onAction(OperationAction.ClearError) },
+            )
+        }
         if (operations.isEmpty()) {
             XauxaEmptyState(
                 title = if (state.query.isBlank()) "Aún no hay operaciones" else "No hay coincidencias",
@@ -305,7 +313,15 @@ private fun OperationEditorScreen(
         if (existing == null) {
             Text("Podrás adjuntar comprobantes más adelante", color = XauxaColor.TextSecondary, fontSize = XauxaType.Label)
         }
-        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { viewModel.onAction(OperationAction.ClearError) }) }
+        state.error?.let { err ->
+            XauxaStatusBanner(
+                err.display(),
+                tone = XauxaTone.Danger,
+                actionLabel = err.action.label,
+                onAction = { viewModel.onAction(OperationAction.ClearError) },
+                onDismiss = { viewModel.onAction(OperationAction.ClearError) },
+            )
+        }
         XauxaPrimaryButton(
             label = if (existing == null) "Guardar" else "Guardar cambios",
             onClick = {

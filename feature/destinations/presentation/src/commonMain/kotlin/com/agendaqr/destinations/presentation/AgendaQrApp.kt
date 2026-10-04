@@ -42,6 +42,7 @@ fun AgendaQrApp() {
                 onPasswordChanged = authViewModel::setPassword,
                 onSignIn = authViewModel::submitSignIn,
                 onSignUp = authViewModel::submitSignUp,
+                onClearError = authViewModel::clearError,
             )
             is AuthState.SignedIn -> AgendaQrAuthenticatedApp(
                 userId = session.user.id,

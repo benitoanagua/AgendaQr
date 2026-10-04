@@ -121,9 +121,15 @@ internal fun AuthenticatedAppRoot(
 
     Column {
         importError?.let { message ->
+            // T5: error recuperable con acción (spec §10): ELEGIR OTRA
+            // IMAGEN despeja el error para volver a intentarlo desde la
+            // pantalla de origen (Añadir/Galería).
+            val error = importReadError(message)
             XauxaStatusBanner(
-                message,
+                error.display(),
                 tone = XauxaTone.Danger,
+                actionLabel = error.action.label,
+                onAction = { importError = null },
                 onDismiss = { importError = null },
             )
         }
@@ -192,8 +198,10 @@ internal fun AuthenticatedAppRoot(
                                     .onFailure { error ->
                                         importBatchState = importBatchReducer.reduce(
                                             importBatchState,
+                                            // T5: mapeo centralizado; nunca
+                                            // `error.message` crudo.
                                             ImportBatchAction.Failed(
-                                                error.message ?: "No se pudo guardar la importación",
+                                                userFacingError(error, ErrorFlow.ImportBatchSave).display(),
                                             ),
                                         )
                                     }

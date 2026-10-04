@@ -20,7 +20,7 @@ data class ContextsUiState(
     val contents: ContextContents? = null,
     val route: ContextRoute = ContextRoute.List,
     val isLoading: Boolean = true,
-    val error: String? = null,
+    val error: UserFacingError? = null,
 )
 
 sealed interface ContextAction {
@@ -70,7 +70,8 @@ class ContextsViewModel(
         contentsJob?.cancel()
         contentsJob = scope.launch {
             if (get(id) == null) {
-                _state.value = _state.value.copy(error = "No encontramos este contexto.")
+                // T5: error mostrable con qué/data/acción (spec §10).
+                _state.value = _state.value.copy(error = userFacingError(IllegalStateException(), ErrorFlow.ContextOpen))
                 return@launch
             }
             _state.value = _state.value.copy(

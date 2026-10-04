@@ -44,7 +44,7 @@ fun DestinationEditorScreen(
     contexts: List<Context> = emptyList(),
     onBack: () -> Unit,
     isSaving: Boolean = false,
-    error: String? = null,
+    error: UserFacingError? = null,
     onClearError: () -> Unit = {},
 ) {
     val initial = remember(existing) {
@@ -68,7 +68,7 @@ private fun DestinationEditorContent(
     contexts: List<Context>,
     onBack: () -> Unit,
     isSaving: Boolean,
-    error: String?,
+    error: UserFacingError?,
     onClearError: () -> Unit,
 ) {
     var name by rememberSaveable(initial.name) { mutableStateOf(initial.name) }
@@ -103,7 +103,15 @@ private fun DestinationEditorContent(
             fontWeight = FontWeight.Bold,
             color = XauxaColor.TextPrimary,
         )
-        error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = onClearError) }
+        error?.let { err ->
+            XauxaStatusBanner(
+                err.display(),
+                tone = XauxaTone.Danger,
+                actionLabel = err.action.label,
+                onAction = onClearError,
+                onDismiss = onClearError,
+            )
+        }
         XauxaTextInput(
             label = "Nombre",
             value = name,

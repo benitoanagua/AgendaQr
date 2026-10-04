@@ -39,6 +39,7 @@ fun AuthScreen(
     onPasswordChanged: (String) -> Unit,
     onSignIn: () -> Unit,
     onSignUp: () -> Unit,
+    onClearError: () -> Unit = {},
 ) {
     var submitted by remember { mutableStateOf(false) }
     val emailError = submitted && !isValidEmail(state.email)
@@ -87,7 +88,20 @@ fun AuthScreen(
                 errorMessage = if (passwordError) "Mínimo 6 caracteres" else null,
                 helperMessage = if (!passwordError) "Mínimo 6 caracteres" else null,
             )
-            state.errorMessage?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger) }
+            state.errorMessage?.let { err ->
+                XauxaStatusBanner(
+                    err.display(),
+                    tone = XauxaTone.Danger,
+                    actionLabel = err.action.label,
+                    // REINTENTAR repite el mismo paso que falló.
+                    onAction = when (state.errorFlow) {
+                        ErrorFlow.SignIn -> onSignIn
+                        ErrorFlow.SignUp -> onSignUp
+                        else -> onClearError
+                    },
+                    onDismiss = onClearError,
+                )
+            }
             state.confirmationMessage?.let { XauxaStatusBanner(it, tone = XauxaTone.Info) }
             XauxaPrimaryButton(
                 "Iniciar sesión",

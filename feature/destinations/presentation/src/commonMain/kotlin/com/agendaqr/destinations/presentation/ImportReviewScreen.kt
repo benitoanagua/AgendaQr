@@ -33,7 +33,7 @@ fun ImportReviewScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     isSaving: Boolean = false,
-    error: String? = null,
+    error: UserFacingError? = null,
     onClearError: () -> Unit = {},
 ) {
     Column(
@@ -46,7 +46,15 @@ fun ImportReviewScreen(
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         Text("Revisar QR", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Headline, color = XauxaColor.TextPrimary)
-        error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = onClearError) }
+        error?.let { err ->
+            XauxaStatusBanner(
+                err.display(),
+                tone = XauxaTone.Danger,
+                actionLabel = err.action.label,
+                onAction = onClearError,
+                onDismiss = onClearError,
+            )
+        }
         if (assets.isEmpty()) {
             XauxaEmptyState(
                 title = "No hay QR para revisar",

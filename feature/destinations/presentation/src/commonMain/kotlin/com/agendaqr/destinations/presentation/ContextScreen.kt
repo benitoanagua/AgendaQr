@@ -55,7 +55,15 @@ private fun ContextList(state: ContextsUiState, onAction: (ContextAction) -> Uni
     ) {
         XauxaSecondaryButton(label = "Volver", onClick = onBack)
         Text("Contextos", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
-        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { onAction(ContextAction.ClearError) }) }
+        state.error?.let { err ->
+            XauxaStatusBanner(
+                err.display(),
+                tone = XauxaTone.Danger,
+                actionLabel = err.action.label,
+                onAction = { onAction(ContextAction.ClearError) },
+                onDismiss = { onAction(ContextAction.ClearError) },
+            )
+        }
         when {
             state.isLoading -> XauxaLoading(message = "Cargando contextos…")
             state.contexts.isEmpty() -> XauxaEmptyState(
@@ -85,7 +93,15 @@ private fun ContextDetail(state: ContextsUiState, onAction: (ContextAction) -> U
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         XauxaSecondaryButton(label = "Volver", onClick = { onAction(ContextAction.Back) })
-        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { onAction(ContextAction.ClearError) }) }
+        state.error?.let { err ->
+            XauxaStatusBanner(
+                err.display(),
+                tone = XauxaTone.Danger,
+                actionLabel = err.action.label,
+                onAction = { onAction(ContextAction.ClearError) },
+                onDismiss = { onAction(ContextAction.ClearError) },
+            )
+        }
         contents?.let { data ->
             Text(data.context.name, modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             data.context.note?.takeIf { it.isNotBlank() }?.let {

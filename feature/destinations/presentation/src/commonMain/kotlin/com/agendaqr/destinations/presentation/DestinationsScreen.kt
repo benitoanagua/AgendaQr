@@ -119,7 +119,15 @@ fun DestinationsScreen(
             XauxaFilterChip("Favoritos", state.favoriteOnly, { onAction(DestinationAction.ToggleFavorites) })
             state.category?.let { XauxaCategoryChip(it) }
         }
-        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { onAction(DestinationAction.ClearError) }) }
+        state.error?.let { error ->
+            XauxaStatusBanner(
+                error.display(),
+                tone = XauxaTone.Danger,
+                actionLabel = error.action.label,
+                onAction = { onAction(DestinationAction.ClearError) },
+                onDismiss = { onAction(DestinationAction.ClearError) },
+            )
+        }
         when {
             state.isLoading -> XauxaLoading(message = "Cargando destinos QR…")
             state.visibleDestinations.isEmpty() -> XauxaEmptyState(
