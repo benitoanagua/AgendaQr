@@ -130,12 +130,12 @@ private fun DestinationEditorContent(
             fontSize = XauxaType.Label,
             color = XauxaColor.TextSecondary,
         )
-        QrImportControls { result ->
+        QrImportControls(onResult = { result ->
             when {
                 result.assets.size > 1 -> onImportMany(result.assets)
                 result.assets.size == 1 -> qr = result.assets.first()
             }
-        }
+        })
         if (qr.encoded.isBlank()) {
             XauxaScannerViewport(
                 scanning = false,

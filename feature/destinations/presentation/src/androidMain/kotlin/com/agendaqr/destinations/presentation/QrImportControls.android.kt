@@ -25,7 +25,10 @@ import com.agendaqr.destinations.domain.QrAsset
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-actual fun QrImportControls(onResult: (QrImportResult) -> Unit) {
+actual fun QrImportControls(
+    onResult: (QrImportResult) -> Unit,
+    galleryAsPrimary: Boolean,
+) {
     LaunchedEffect(Unit) {
         AgendaQrAndroidImportLauncher.results.collect(onResult)
     }
@@ -35,7 +38,11 @@ actual fun QrImportControls(onResult: (QrImportResult) -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
-        XauxaSecondaryButton("Galería", AgendaQrAndroidImportLauncher::gallery)
+        if (galleryAsPrimary) {
+            com.agendaqr.core.ui.components.XauxaPrimaryButton("Galería", AgendaQrAndroidImportLauncher::gallery)
+        } else {
+            XauxaSecondaryButton("Galería", AgendaQrAndroidImportLauncher::gallery)
+        }
         XauxaSecondaryButton("Galería (varios)", AgendaQrAndroidImportLauncher::multiple)
         CameraQrEntry(onOpen = { cameraOpen = true })
     }

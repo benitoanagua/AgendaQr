@@ -7,11 +7,18 @@ import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.theme.XauxaSpacing
 
 @Composable
-actual fun QrImportControls(onResult: (QrImportResult) -> Unit) {
+actual fun QrImportControls(
+    onResult: (QrImportResult) -> Unit,
+    galleryAsPrimary: Boolean,
+) {
     // iOS acquisition remains behind this boundary so Vision/Photos/UIKit can be
     // introduced without leaking platform APIs into the feature/domain layers.
     Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-        XauxaSecondaryButton("Galería", onClick = { IosQrImportController.openGallery(onResult) })
+        if (galleryAsPrimary) {
+            com.agendaqr.core.ui.components.XauxaPrimaryButton("Galería", onClick = { IosQrImportController.openGallery(onResult) })
+        } else {
+            XauxaSecondaryButton("Galería", onClick = { IosQrImportController.openGallery(onResult) })
+        }
         XauxaSecondaryButton("Galería (varios)", onClick = { IosQrImportController.openMultiple(onResult) })
         XauxaSecondaryButton("Cámara", onClick = { IosQrImportController.openCamera(onResult) })
     }

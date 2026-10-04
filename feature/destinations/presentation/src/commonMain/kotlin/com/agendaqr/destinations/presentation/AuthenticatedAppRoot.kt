@@ -347,6 +347,28 @@ internal fun AuthenticatedAppRoot(
             // Lista → pop: la superficie que queda debajo es el origen real
             // (Inicio o Búsqueda), no un estado aparte (S05).
             onBack = { nav.pop() },
+            // T11 — S06 utilizable: las filas reutilizan las rutas
+            // existentes (las mismas que los resultados de búsqueda):
+            // el QR abre su detalle en Inicio; la actividad y el
+            // comprobante abren su superficie en Operaciones.
+            onOpenDestination = { id ->
+                graph.destinationsViewModel.onAction(DestinationAction.Open(id))
+                nav.pop()
+            },
+            onOpenOperation = { id ->
+                graph.operationsViewModel.onAction(OperationAction.Open(id))
+                nav.pop()
+                nav.push(AppRoute.Operations)
+            },
+            onOpenComprobante = { id ->
+                graph.operationsViewModel.onAction(OperationAction.OpenComprobante(id))
+                nav.pop()
+                nav.push(AppRoute.Operations)
+            },
+            onOpenOperations = {
+                nav.pop()
+                nav.push(AppRoute.Operations)
+            },
         )
         AppRoute.Operations -> OperationsScreen(
             state = operationState,

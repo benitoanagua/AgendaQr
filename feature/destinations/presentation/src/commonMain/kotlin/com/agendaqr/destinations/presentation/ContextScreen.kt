@@ -13,14 +13,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.XauxaEmptyState
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
-import com.agendaqr.core.ui.components.XauxaStatusBanner
+import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaLoading
+import com.agendaqr.core.ui.components.XauxaSecondaryButton
+import com.agendaqr.core.ui.components.XauxaStatusBanner
+import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.theme.XauxaColor
@@ -28,23 +28,39 @@ import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
 
 /**
- * S06 — Contexto.
+ * S06 — Contexto. `onBack` cierra la superficie según el punto de entrada:
+ * desde la Lista termina el flujo (vuelve a Inicio o a la Búsqueda que la
+ * abrió); desde el Detalle el "Volver" existente regresa a la Lista.
  *
- * `onBack` cierra la superficie completa según el punto de entrada:
- * desde la Lista termina el flujo (vuelve a Inicio o a la Búsqueda que
- * la abrió); desde el Detalle el "Volver" existente regresa a la Lista.
- * Sin este parámetro la pantalla era un dead-end: `showContexts` nunca
- * volvía a false.
+ * T11 — filas navegables: cada QR, actividad y comprobante del contexto es
+ * una fila que reutiliza las rutas existentes (detalle de QR en Inicio;
+ * detalle/visor en Operaciones). Criterio de acción primaria desde S06
+ * (spec: "La acción primaria depende del flujo que llevó al usuario
+ * allí"): continuar el trabajo dentro del contexto — ABRIR el elemento.
+ * "Ver más" en actividad lleva a la superficie completa de Operaciones
+ * (la única ruta existente de lista de actividades; sin crear
+ * navegación nueva). La creación (Registrar) no se fuerza desde S06.
  */
 @Composable
 fun ContextsScreen(
     state: ContextsUiState,
     onAction: (ContextAction) -> Unit,
     onBack: () -> Unit,
+    onOpenDestination: (String) -> Unit = {},
+    onOpenOperation: (String) -> Unit = {},
+    onOpenComprobante: (String) -> Unit = {},
+    onOpenOperations: () -> Unit = {},
 ) {
     when (state.route) {
         ContextRoute.List -> ContextList(state, onAction, onBack)
-        is ContextRoute.Detail -> ContextDetail(state, onAction)
+        is ContextRoute.Detail -> ContextDetail(
+            state = state,
+            onAction = onAction,
+            onOpenDestination = onOpenDestination,
+            onOpenOperation = onOpenOperation,
+            onOpenComprobante = onOpenComprobante,
+            onOpenOperations = onOpenOperations,
+        )
     }
 }
 
@@ -86,8 +102,17 @@ private fun ContextList(state: ContextsUiState, onAction: (ContextAction) -> Uni
     }
 }
 
+private const val RECENT_ACTIVITIES_SHOWN = 5
+
 @Composable
-private fun ContextDetail(state: ContextsUiState, onAction: (ContextAction) -> Unit) {
+private fun ContextDetail(
+    state: ContextsUiState,
+    onAction: (ContextAction) -> Unit,
+    onOpenDestination: (String) -> Unit,
+    onOpenOperation: (String) -> Unit,
+    onOpenComprobante: (String) -> Unit,
+    onOpenOperations: () -> Unit,
+) {
     val contents = state.contents
     Column(
         modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(),
@@ -110,12 +135,15 @@ private fun ContextDetail(state: ContextsUiState, onAction: (ContextAction) -> U
             }
             Text("QR · " + data.destinations.size, fontSize = XauxaType.Title, color = XauxaColor.TextPrimary)
             data.destinations.forEach { destination ->
-                Text(destination.name.ifBlank { "QR sin nombre" }, color = XauxaColor.TextSecondary)
+                XauxaListRow(
+                    title = destination.name.ifBlank { "QR sin nombre" },
+                    onClick = { onOpenDestination(destination.id) },
+                )
             }
             Text("Actividad reciente · " + data.operations.size, fontSize = XauxaType.Title, color = XauxaColor.TextPrimary)
-            data.operations.take(5).forEach { operation ->
-                Text(
-                    listOfNotNull(
+            data.operations.take(RECENT_ACTIVITIES_SHOWN).forEach { operation ->
+                XauxaListRow(
+                    title = listOfNotNull(
                         when (operation.type) {
                             com.agendaqr.destinations.domain.OperationType.PAGO -> "Pago"
                             com.agendaqr.destinations.domain.OperationType.COBRO -> "Cobro"
@@ -123,12 +151,24 @@ private fun ContextDetail(state: ContextsUiState, onAction: (ContextAction) -> U
                         operation.amount,
                         operation.currency,
                         operation.personOrEntity,
-                    )
-                        .joinToString(" · "),
-                    color = XauxaColor.TextSecondary,
+                    ).joinToString(" · "),
+                    onClick = { onOpenOperation(operation.id) },
+                )
+            }
+            if (data.operations.size > RECENT_ACTIVITIES_SHOWN) {
+                XauxaTextAction(
+                    label = "Ver más",
+                    onClick = onOpenOperations,
                 )
             }
             Text("Comprobantes · " + data.comprobantes.size, fontSize = XauxaType.Title, color = XauxaColor.TextPrimary)
+            data.comprobantes.forEach { receipt ->
+                XauxaListRow(
+                    title = "Comprobante · " + receiptProvenanceLabel(receipt.provenance),
+                    subtitle = receipt.file.takeIf { it.isNotBlank() },
+                    onClick = { onOpenComprobante(receipt.id) },
+                )
+            }
         } ?: XauxaLoading(message = "Cargando contexto…")
     }
 }

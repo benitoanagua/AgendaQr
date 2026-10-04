@@ -8,7 +8,17 @@ import kotlinx.coroutines.flow.flowOf
 data class QrImportResult(val assets: List<QrAsset>)
 
 @Composable
-expect fun QrImportControls(onResult: (QrImportResult) -> Unit)
+expect fun QrImportControls(
+    onResult: (QrImportResult) -> Unit,
+    /**
+     * T11 — S02: cuando la superficie es Añadir, Galería es la acción
+     * principal (§3: "Galería es la entrada principal para imágenes que
+     * ya existen") sin alterar el orden congelado Galería → Galería
+     * (varios) → Cámara. En el editor queda en secundario: su primaria
+     * es Guardar.
+     */
+    galleryAsPrimary: Boolean = false,
+)
 
 /**
  * QR imports delivered from OUTSIDE the app (share intents). Unlike in-app
