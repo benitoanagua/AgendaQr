@@ -99,7 +99,6 @@ fun DestinationsScreen(
 
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
             XauxaFilterChip("Favoritos", state.favoriteOnly, { onAction(DestinationAction.ToggleFavorites) })
-            XauxaFilterChip("Recientes", state.recentOnly, { onAction(DestinationAction.ToggleRecent) })
             state.category?.let { XauxaCategoryChip(it) }
         }
         state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { onAction(DestinationAction.ClearError) }) }
