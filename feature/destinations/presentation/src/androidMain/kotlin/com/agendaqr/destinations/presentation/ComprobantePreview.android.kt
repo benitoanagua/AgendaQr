@@ -1,13 +1,13 @@
 package com.agendaqr.destinations.presentation
 
 import android.graphics.BitmapFactory
+import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,10 +37,10 @@ actual fun ComprobantePreview(bytes: ByteArray, mimeType: String?, modifier: Mod
                 contentScale = ContentScale.Fit,
             )
         } else {
-            Text(
+            XauxaText(
                 if (mimeType?.contains("pdf", ignoreCase = true) == true) "PDF adjunto (sin vista previa)"
                 else "Vista previa no disponible",
-                fontSize = XauxaType.Label,
+                size = XauxaType.Label,
                 color = XauxaColor.TextSecondary,
             )
         }

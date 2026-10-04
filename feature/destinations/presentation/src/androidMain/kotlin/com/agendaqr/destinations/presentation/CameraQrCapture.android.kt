@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -47,6 +46,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
 import com.agendaqr.core.ui.components.XauxaStatusBanner
+import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
@@ -137,9 +137,9 @@ internal fun CameraQrCaptureOverlay(
                                     ),
                                 ),
                         )
-                        Text(
+                        XauxaText(
                             "Encuadre el código QR",
-                            fontSize = XauxaType.Label,
+                            size = XauxaType.Label,
                             color = XauxaColor.TextSecondary,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(top = XauxaSpacing.Lg),

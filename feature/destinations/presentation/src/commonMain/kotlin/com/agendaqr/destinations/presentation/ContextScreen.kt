@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -18,7 +17,8 @@ import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaLoading
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
+import com.agendaqr.core.ui.components.XauxaStatusBanner
+import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaTone
@@ -131,16 +131,16 @@ private fun ContextDetail(
         contents?.let { data ->
             XauxaHeading(text = data.context.name, size = XauxaType.Display, fontWeight = FontWeight.Bold)
             data.context.note?.takeIf { it.isNotBlank() }?.let {
-                Text(it, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                XauxaText(it, size = XauxaType.Label, color = XauxaColor.TextSecondary)
             }
-            Text("QR · " + data.destinations.size, fontSize = XauxaType.Title, color = XauxaColor.TextPrimary)
+            XauxaText("QR · " + data.destinations.size, size = XauxaType.Title, color = XauxaColor.TextPrimary)
             data.destinations.forEach { destination ->
                 XauxaListRow(
                     title = destination.name.ifBlank { "QR sin nombre" },
                     onClick = { onOpenDestination(destination.id) },
                 )
             }
-            Text("Actividad reciente · " + data.operations.size, fontSize = XauxaType.Title, color = XauxaColor.TextPrimary)
+            XauxaText("Actividad reciente · " + data.operations.size, size = XauxaType.Title, color = XauxaColor.TextPrimary)
             data.operations.take(RECENT_ACTIVITIES_SHOWN).forEach { operation ->
                 XauxaListRow(
                     title = listOfNotNull(
@@ -161,7 +161,7 @@ private fun ContextDetail(
                     onClick = onOpenOperations,
                 )
             }
-            Text("Comprobantes · " + data.comprobantes.size, fontSize = XauxaType.Title, color = XauxaColor.TextPrimary)
+            XauxaText("Comprobantes · " + data.comprobantes.size, size = XauxaType.Title, color = XauxaColor.TextPrimary)
             data.comprobantes.forEach { receipt ->
                 XauxaListRow(
                     title = "Comprobante · " + receiptProvenanceLabel(receipt.provenance),

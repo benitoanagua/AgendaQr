@@ -3,7 +3,6 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
@@ -11,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.components.XauxaDialog
+import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
@@ -101,7 +101,7 @@ internal fun ContextPickerDialog(
         content = {
             Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 if (contexts.isEmpty()) {
-                    Text("Sin contextos disponibles.", color = XauxaColor.TextSecondary)
+                    XauxaText("Sin contextos disponibles.", color = XauxaColor.TextSecondary)
                 } else {
                     contexts.forEach { context ->
                         XauxaListRow(

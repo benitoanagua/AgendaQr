@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -125,9 +125,9 @@ private fun DestinationEditorContent(
             label = selection.contextId?.let { id -> "Para: " + (contexts.firstOrNull { it.id == id }?.name ?: "Contexto") } ?: "Para: elegir contexto (opcional)",
             onClick = { selection = selection.openPicker() },
         )
-        Text(
+        XauxaText(
             "Desde otra app: comparte una imagen o PDF con Agenda QR.",
-            fontSize = XauxaType.Label,
+            size = XauxaType.Label,
             color = XauxaColor.TextSecondary,
         )
         QrImportControls(onResult = { result ->
@@ -142,7 +142,7 @@ private fun DestinationEditorContent(
                 hint = "Importa un QR con Cámara o Galería para previsualizarlo aquí",
             )
             if (qrError) {
-                Text("Falta el código QR: usa Cámara o Galería", fontSize = XauxaType.Caption, color = XauxaColor.Danger)
+                XauxaText("Falta el código QR: usa Cámara o Galería", size = XauxaType.Caption, color = XauxaColor.Danger)
             }
         } else {
             XauxaQrPreview(qr.encoded)

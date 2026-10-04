@@ -1,11 +1,11 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.*
+import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -126,8 +126,8 @@ private fun OperationListScreen(
                     XauxaTile(onClick = { viewModel.onAction(OperationAction.Open(operation.id)) }) {
                         Row(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), horizontalArrangement = Arrangement.SpaceBetween) {
                             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                                Text(formatDate(operation.occurredAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
-                                Text(operationTypeLabel(operation.type), fontWeight = FontWeight.SemiBold,
+                                XauxaText(formatDate(operation.occurredAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
+                                XauxaText(operationTypeLabel(operation.type), fontWeight = FontWeight.SemiBold,
                                     color = if (operation.type == OperationType.COBRO) XauxaColor.Success else XauxaColor.Brand)
                                 // T6: estado de sincronización por elemento, con texto.
                                 ElementSyncBadge(
@@ -135,8 +135,8 @@ private fun OperationListScreen(
                                 )
                             }
                             Column(horizontalAlignment = Alignment.End) {
-                                Text(operation.amount.orEmpty().ifBlank { "—" }, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
-                                operation.personOrEntity?.let { Text(it, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary) }
+                                XauxaText(operation.amount.orEmpty().ifBlank { "—" }, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
+                                operation.personOrEntity?.let { XauxaText(it, size = XauxaType.Label, color = XauxaColor.TextSecondary) }
                             }
                         }
                     }
@@ -172,8 +172,8 @@ private fun UnassociatedScreen(
                 items(state.unassociated, key = { it.id }) { receipt ->
                     XauxaTile(onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) }) {
                         Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                            Text("Comprobante recibido", fontWeight = FontWeight.SemiBold)
-                            Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                            XauxaText("Comprobante recibido", fontWeight = FontWeight.SemiBold)
+                            XauxaText(formatDate(receipt.createdAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
                             // T6: estado de sincronización por comprobante, con texto.
                             ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                             // Acciones apiladas: dos etiquetas largas no caben lado a lado en 360dp.
@@ -206,15 +206,15 @@ private fun UnassociatedScreen(
             content = {
                 Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                     when {
-                        suggestion == null -> Text("Estamos analizando el comprobante.", color = XauxaColor.TextSecondary)
+                        suggestion == null -> XauxaText("Estamos analizando el comprobante.", color = XauxaColor.TextSecondary)
                         suggestion.kind == ReceiptMatchKind.NONE ->
                             Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                                Text(
+                                XauxaText(
                                     "No encontramos una coincidencia automática. Puedes elegir manualmente una operación.",
                                     color = XauxaColor.TextSecondary,
                                 )
                                 if (candidateOperations.isEmpty()) {
-                                    Text("No hay operaciones disponibles.", color = XauxaColor.TextSecondary)
+                                    XauxaText("No hay operaciones disponibles.", color = XauxaColor.TextSecondary)
                                 } else {
                                     candidateOperations.forEach { operation ->
                                         XauxaListRow(
@@ -229,7 +229,7 @@ private fun UnassociatedScreen(
                                 }
                             }
                         candidateOperations.isEmpty() ->
-                            Text(
+                            XauxaText(
                                 "Las operaciones candidatas ya no están disponibles.",
                                 color = XauxaColor.TextSecondary,
                             )
@@ -331,7 +331,7 @@ private fun OperationEditorScreen(
         XauxaTextInput(label = "Concepto (opcional)", value = concept, onValueChange = { concept = it }, modifier = Modifier.fillMaxWidth())
         XauxaTextInput(label = "Nota (opcional)", value = note, onValueChange = { note = it }, modifier = Modifier.fillMaxWidth())
         if (existing == null) {
-            Text("Podrás adjuntar comprobantes más adelante", color = XauxaColor.TextSecondary, fontSize = XauxaType.Label)
+            XauxaText("Podrás adjuntar comprobantes más adelante", color = XauxaColor.TextSecondary, size = XauxaType.Label)
         }
         state.error?.let { err ->
             XauxaStatusBanner(
@@ -426,22 +426,22 @@ private fun OperationDetailScreen(
             // El dato está a salvo localmente: el usuario puede reintentar.
             XauxaTextAction(label = "REINTENTAR", onClick = onRetrySync)
         }
-        operation.personOrEntity?.let { Text("Persona o entidad: " + it) }
-        operation.currency?.let { Text("Moneda: " + it) }
-        operation.destinationId?.let { Text("Destino: " + it) }
-        operation.concept?.let { Text("Concepto: " + it) }
-        operation.note?.let { Text("Nota: " + it, color = XauxaColor.TextSecondary) }
+        operation.personOrEntity?.let { XauxaText("Persona o entidad: " + it) }
+        operation.currency?.let { XauxaText("Moneda: " + it) }
+        operation.destinationId?.let { XauxaText("Destino: " + it) }
+        operation.concept?.let { XauxaText("Concepto: " + it) }
+        operation.note?.let { XauxaText("Nota: " + it, color = XauxaColor.TextSecondary) }
 
         XauxaSection("Comprobantes") {
             if (state.operationComprobantes.isEmpty()) {
-                Text("Sin comprobante adjunto", color = XauxaColor.TextSecondary)
+                XauxaText("Sin comprobante adjunto", color = XauxaColor.TextSecondary)
                 XauxaTextAction(label = "Adjuntar comprobante ahora", onClick = { viewModel.openUnassociatedForOperation(operation.id) })
             } else {
                 for (receipt in state.operationComprobantes) {
                     XauxaTile(onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) }) {
                         Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg)) {
-                            Text("Comprobante · " + receiptProvenanceLabel(receipt.provenance), fontWeight = FontWeight.SemiBold)
-                            Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                            XauxaText("Comprobante · " + receiptProvenanceLabel(receipt.provenance), fontWeight = FontWeight.SemiBold)
+                            XauxaText(formatDate(receipt.createdAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
                             XauxaTextAction(
                                 label = "Desasociar",
                                 onClick = { viewModel.onAction(OperationAction.Disassociate(receipt.id)) },
@@ -541,8 +541,8 @@ private fun ComprobanteViewerDialog(
         onDismiss = { showDeleteConfirm = true },
         content = {
             Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
-                Text("Origen: " + receiptProvenanceLabel(receipt.provenance), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                XauxaText(formatDate(receipt.createdAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
+                XauxaText("Origen: " + receiptProvenanceLabel(receipt.provenance), size = XauxaType.Label, color = XauxaColor.TextSecondary)
                 // T6: estado de sincronización del comprobante, con texto.
                 ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                 when {
@@ -554,7 +554,7 @@ private fun ComprobanteViewerDialog(
                             onClick = { shareComprobante(bytes, receipt.extension ?: "bin", receipt.mimeType) },
                         )
                     }
-                    else -> Text("No se pudo abrir el comprobante", fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                    else -> XauxaText("No se pudo abrir el comprobante", size = XauxaType.Label, color = XauxaColor.TextSecondary)
                 }
             }
         },

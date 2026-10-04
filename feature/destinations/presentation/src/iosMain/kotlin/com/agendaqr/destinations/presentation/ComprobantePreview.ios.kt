@@ -1,10 +1,10 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.border
+import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +20,6 @@ actual fun ComprobantePreview(bytes: ByteArray, mimeType: String?, modifier: Mod
         modifier = modifier.fillMaxWidth().heightIn(min = XauxaMetrics.QrPreviewSize).border(XauxaMetrics.Border, XauxaColor.Border),
         contentAlignment = Alignment.Center,
     ) {
-        Text("Comprobante adjunto (vista previa pendiente en iOS)", fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+        XauxaText("Comprobante adjunto (vista previa pendiente en iOS)", size = XauxaType.Label, color = XauxaColor.TextSecondary)
     }
 }

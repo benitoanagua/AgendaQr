@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,9 +61,9 @@ fun AuthScreen(
                 text = "Agenda QR",
                 size = XauxaType.Display,
             )
-            Text(
+            XauxaText(
                 "Inicia sesión para acceder a tu agenda.",
-                fontSize = XauxaType.Body,
+                size = XauxaType.Body,
                 color = XauxaColor.TextSecondary,
             )
             XauxaTextInput(

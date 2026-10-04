@@ -10,13 +10,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.components.XauxaEmptyState
+import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaQrPreview
@@ -65,9 +65,9 @@ fun ImportReviewScreen(
                 onAction = onBack,
             )
         } else {
-            Text(
+            XauxaText(
                 if (assets.size == 1) "1 QR listo para guardar" else "${assets.size} QR listos para guardar",
-                fontSize = XauxaType.Label,
+                size = XauxaType.Label,
                 color = XauxaColor.TextSecondary,
             )
             LazyColumn(

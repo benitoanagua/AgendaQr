@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,8 +52,8 @@ fun DestinationDetailScreen(
             verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
         ) {
             XauxaHeading(text = destination.name.ifBlank { "Sin nombre" }, size = XauxaType.Headline, fontWeight = FontWeight.Bold)
-            destination.category?.let { Text(it, color = XauxaColor.TextSecondary) }
-            destination.note?.takeIf { it.isNotBlank() }?.let { Text(it, color = XauxaColor.TextSecondary) }
+            destination.category?.let { XauxaText(it, color = XauxaColor.TextSecondary) }
+            destination.note?.takeIf { it.isNotBlank() }?.let { XauxaText(it, color = XauxaColor.TextSecondary) }
             // T6: estado de sincronización del elemento (texto, no solo
             // color) con REINTENTAR cuando es un error recuperable.
             ElementSyncBadge(syncStatus)

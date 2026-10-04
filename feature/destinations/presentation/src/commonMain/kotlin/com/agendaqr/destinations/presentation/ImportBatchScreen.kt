@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
@@ -64,7 +64,7 @@ fun ImportBatchScreen(
         XauxaHeading(text = "Resultado de importación", size = XauxaType.Headline, fontWeight = FontWeight.Normal)
         when (state) {
             ImportBatchUiState.Idle -> {
-                Text("Trae varios elementos a Agenda QR.", color = XauxaColor.TextSecondary)
+                XauxaText("Trae varios elementos a Agenda QR.", color = XauxaColor.TextSecondary)
                 XauxaSecondaryButton("Volver", onClick = { onAction(ImportBatchAction.Back) })
             }
             ImportBatchUiState.Importing -> XauxaLoading(message = "Importando…")
@@ -99,7 +99,7 @@ fun ImportBatchScreen(
                         preview.qrAsset != null -> XauxaQrPreview(preview.qrAsset.encoded)
                         preview.comprobanteBytes != null ->
                             ComprobantePreview(preview.comprobanteBytes, preview.comprobanteMimeType)
-                        else -> Text("No pudimos mostrar el elemento existente.", color = XauxaColor.TextSecondary)
+                        else -> XauxaText("No pudimos mostrar el elemento existente.", color = XauxaColor.TextSecondary)
                     }
                 }
             },
@@ -113,9 +113,9 @@ private fun BatchResultContent(
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
 ) {
-    Text("✓ Reconocidos: ${batch.uniqueRecognized.size}", color = XauxaColor.TextPrimary)
-    Text("! Posibles duplicados: ${batch.duplicates.size}", color = XauxaColor.TextSecondary)
-    Text("? Pendientes de revisión: ${batch.unknown.size}", color = XauxaColor.TextSecondary)
+    XauxaText("✓ Reconocidos: ${batch.uniqueRecognized.size}", color = XauxaColor.TextPrimary)
+    XauxaText("! Posibles duplicados: ${batch.duplicates.size}", color = XauxaColor.TextSecondary)
+    XauxaText("? Pendientes de revisión: ${batch.unknown.size}", color = XauxaColor.TextSecondary)
 
     if (batch.canSaveRecognized()) {
         XauxaPrimaryButton(
@@ -138,7 +138,7 @@ private fun BatchReviewContent(
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
 ) {
-    Text("Elementos que necesitan revisión", color = XauxaColor.TextPrimary)
+    XauxaText("Elementos que necesitan revisión", color = XauxaColor.TextPrimary)
     batch.pendingItems().forEach { candidate ->
         PendingItemCard(candidate, batch, onAction, isSaving)
     }
@@ -167,15 +167,15 @@ private fun PendingItemCard(
             modifier = Modifier.fillMaxWidth().padding(XauxaSpacing.Lg),
             verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
         ) {
-            Text(pendingItemName(candidate), fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold)
-            Text(
+            XauxaText(pendingItemName(candidate), fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold)
+            XauxaText(
                 when {
                     isDuplicate -> "! Parece que este elemento ya está guardado."
                     candidate.kind == ImportKind.DESCONOCIDO -> "? No pudimos clasificar este elemento."
                     else -> "Elemento pendiente de revisión."
                 },
                 color = XauxaColor.TextSecondary,
-                fontSize = XauxaType.Label,
+                size = XauxaType.Label,
             )
             when {
                 isDuplicate -> Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {

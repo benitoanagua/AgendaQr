@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.material3.Text
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
+import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.theme.XauxaColor
@@ -46,20 +46,20 @@ fun AddDestinationScreen(
             text = "Añadir",
             size = XauxaType.Headline,
         )
-        Text(
+        XauxaText(
             "Trae a Agenda QR algo que ya tienes.",
             color = XauxaColor.TextSecondary,
         )
 
         QrImportControls(onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) }, galleryAsPrimary = true)
 
-        Text(
+        XauxaText(
             "Desde otra app",
-            fontSize = XauxaType.Title,
+            size = XauxaType.Title,
             fontWeight = FontWeight.SemiBold,
             color = XauxaColor.TextPrimary,
         )
-        Text(
+        XauxaText(
             "Comparte una imagen o PDF desde otra app con Agenda QR. La importación continuará aquí para revisar lo que se encontró.",
             color = XauxaColor.TextSecondary,
         )
