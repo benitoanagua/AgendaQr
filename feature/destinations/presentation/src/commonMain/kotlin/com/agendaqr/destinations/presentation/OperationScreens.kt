@@ -22,7 +22,8 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
     when (state.route) {
         OperationRoute.List -> OperationListScreen(state, viewModel, onBack)
         OperationRoute.Unassociated -> UnassociatedScreen(state, viewModel)
-        OperationRoute.New -> NewOperationScreen(state, viewModel)
+        OperationRoute.New -> OperationEditorScreen(state, viewModel, existing = null)
+        is OperationRoute.Edit -> OperationEditorScreen(state, viewModel, existing = viewModel.selectedOperation())
         is OperationRoute.Detail -> OperationDetailScreen(state, viewModel)
     }
     state.pendingIncoming?.let { incoming ->
@@ -194,26 +195,56 @@ private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsVi
 }
 
 @Composable
-private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsViewModel) {
-    var type by rememberSaveable { mutableStateOf(OperationType.PAGO) }
-    var amount by rememberSaveable { mutableStateOf("") }
-    var currency by rememberSaveable { mutableStateOf("") }
-    var person by rememberSaveable { mutableStateOf("") }
-    var destination by rememberSaveable { mutableStateOf("") }
-    var concept by rememberSaveable { mutableStateOf("") }
-    var note by rememberSaveable { mutableStateOf("") }
-    var dateText by rememberSaveable { mutableStateOf(formatDate(nowMillis())) }
-    var selectedContextId by rememberSaveable { mutableStateOf<String?>(null) }
-    val draftOperationId = rememberSaveable { newEntityId("operation") }
+private fun OperationEditorScreen(
+    state: OperationsUiState,
+    viewModel: OperationsViewModel,
+    existing: Operation?,
+) {
+    val editorKey = existing?.id ?: "new"
+    var type by rememberSaveable(editorKey) { mutableStateOf(existing?.type ?: OperationType.PAGO) }
+    var amount by rememberSaveable(editorKey) { mutableStateOf(existing?.amount.orEmpty()) }
+    var currency by rememberSaveable(editorKey) { mutableStateOf(existing?.currency.orEmpty()) }
+    var person by rememberSaveable(editorKey) { mutableStateOf(existing?.personOrEntity.orEmpty()) }
+    var destination by rememberSaveable(editorKey) { mutableStateOf(existing?.destinationId.orEmpty()) }
+    var concept by rememberSaveable(editorKey) { mutableStateOf(existing?.concept.orEmpty()) }
+    var note by rememberSaveable(editorKey) { mutableStateOf(existing?.note.orEmpty()) }
+    var dateText by rememberSaveable(editorKey) { mutableStateOf(formatDate(existing?.occurredAt ?: nowMillis())) }
+    var selectedContextId by rememberSaveable(editorKey) { mutableStateOf(existing?.contextId) }
     var showContextPicker by remember { mutableStateOf(false) }
+    var showSensitiveConfirm by remember { mutableStateOf(false) }
     var submitted by remember { mutableStateOf(false) }
     val saving = state.isSavingOperation
     val occurredAt = parseDate(dateText)
     val dateError = submitted && occurredAt == null
 
-    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
+    fun buildCandidate(at: Long): Operation = Operation(
+        id = existing?.id ?: newEntityId("operation"),
+        type = type,
+        occurredAt = at,
+        createdAt = existing?.createdAt ?: nowMillis(),
+        updatedAt = existing?.updatedAt ?: nowMillis(),
+        amount = amount.trim().takeIf(String::isNotBlank),
+        currency = currency.trim().takeIf(String::isNotBlank),
+        personOrEntity = person.trim().takeIf(String::isNotBlank),
+        destinationId = destination.trim().takeIf(String::isNotBlank),
+        concept = concept.trim().takeIf(String::isNotBlank),
+        note = note.trim().takeIf(String::isNotBlank),
+        contextId = selectedContextId,
+    )
+
+    Column(
+        Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl)
+            .imePadding().verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
+    ) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Registrar operación", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            Text(
+                if (existing == null) "Registrar operación" else "Editar operación",
+                modifier = Modifier.semantics { heading() },
+                fontSize = XauxaType.Display,
+                fontWeight = FontWeight.Bold,
+                color = XauxaColor.TextPrimary,
+            )
             XauxaTextAction(label = "Volver", onClick = { viewModel.onAction(OperationAction.Back) })
         }
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
@@ -235,22 +266,40 @@ private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsVi
         XauxaTextInput(label = "Moneda (opcional)", value = currency, onValueChange = { currency = it }, modifier = Modifier.fillMaxWidth())
         XauxaTextInput(label = "Persona o entidad (opcional)", value = person, onValueChange = { person = it }, modifier = Modifier.fillMaxWidth())
         XauxaTextInput(label = "Destino QR (opcional)", value = destination, onValueChange = { destination = it }, modifier = Modifier.fillMaxWidth())
-        XauxaSecondaryButton(label = selectedContextId?.let { id -> "Para: " + (state.contexts.firstOrNull { it.id == id }?.name ?: "Contexto") } ?: "Para: elegir contexto (opcional)", onClick = { showContextPicker = true })
+        XauxaSecondaryButton(
+            label = selectedContextId?.let { id -> "Para: " + (state.contexts.firstOrNull { it.id == id }?.name ?: "Contexto") }
+                ?: "Para: elegir contexto (opcional)",
+            onClick = { showContextPicker = true },
+        )
         XauxaTextInput(label = "Concepto (opcional)", value = concept, onValueChange = { concept = it }, modifier = Modifier.fillMaxWidth())
         XauxaTextInput(label = "Nota (opcional)", value = note, onValueChange = { note = it }, modifier = Modifier.fillMaxWidth())
-        Text("Podrás adjuntar comprobantes más adelante", color = XauxaColor.TextSecondary, fontSize = XauxaType.Label)
+        if (existing == null) {
+            Text("Podrás adjuntar comprobantes más adelante", color = XauxaColor.TextSecondary, fontSize = XauxaType.Label)
+        }
         state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { viewModel.onAction(OperationAction.ClearError) }) }
         XauxaPrimaryButton(
-            label = "Guardar",
+            label = if (existing == null) "Guardar" else "Guardar cambios",
             onClick = {
                 submitted = true
-                val at = parseDate(dateText) ?: return@XauxaPrimaryButton
-                viewModel.onAction(OperationAction.SaveNew(type, at, amount, currency, person, destination, concept, note, selectedContextId, draftOperationId))
+                val at = occurredAt ?: return@XauxaPrimaryButton
+                val candidate = buildCandidate(at)
+                if (existing == null) {
+                    viewModel.onAction(
+                        OperationAction.SaveNew(
+                            type, at, amount, currency, person, destination, concept, note, selectedContextId, candidate.id,
+                        ),
+                    )
+                } else if (candidate.hasSensitiveChangesComparedTo(existing) && state.operationComprobantes.isNotEmpty()) {
+                    showSensitiveConfirm = true
+                } else {
+                    viewModel.onAction(OperationAction.Update(candidate))
+                }
             },
             enabled = !saving,
             isLoading = saving,
         )
     }
+
     if (showContextPicker) {
         XauxaDialog(
             title = "Seleccionar contexto",
@@ -274,6 +323,19 @@ private fun NewOperationScreen(state: OperationsUiState, viewModel: OperationsVi
         )
     }
 
+    if (showSensitiveConfirm) {
+        XauxaDialog(
+            title = "Cambiar operación con comprobantes",
+            message = "Esta operación tiene comprobantes. El comprobante no será modificado.",
+            confirmLabel = "Guardar cambio",
+            onConfirm = {
+                showSensitiveConfirm = false
+                occurredAt?.let { viewModel.onAction(OperationAction.Update(buildCandidate(it), confirmedSensitiveChange = true)) }
+            },
+            dismissLabel = "Cancelar",
+            onDismiss = { showSensitiveConfirm = false },
+        )
+    }
 }
 
 @Composable
@@ -326,6 +388,7 @@ private fun OperationDetailScreen(state: OperationsUiState, viewModel: Operation
             }
         }
         XauxaSecondaryButton(label = "Compartir", onClick = { shareOperation(operation) })
+        XauxaSecondaryButton(label = "Editar", onClick = { viewModel.onAction(OperationAction.Edit(operation.id)) })
         XauxaTextAction(label = "Eliminar operación", onClick = { showDeleteConfirm = true })
     }
     if (showDeleteConfirm) {
