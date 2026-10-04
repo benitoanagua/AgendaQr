@@ -20,6 +20,11 @@ class SyncComprobanteRepository(
     private val enqueuer: SyncMutationEnqueuer,
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
     private val conflictResolver: SyncConflictResolver = SyncConflictResolver(),
+    private val downloadRemoteBytes: suspend (remotePath: String) -> ByteArray = { path ->
+        AgendaQrSupabase.client.storage
+            .from("comprobantes")
+            .downloadAuthenticated(path)
+    },
 ) : ComprobanteRepository {
 
     private val syncMutex = Mutex()
@@ -89,9 +94,7 @@ class SyncComprobanteRepository(
                         )
                     if (!shouldApply) return@forEach
 
-                    val bytes = AgendaQrSupabase.client.storage
-                        .from("comprobantes")
-                        .downloadAuthenticated(record.remoteFilePath)
+                    val bytes = downloadRemoteBytes(record.remoteFilePath)
                     val localFile = fileStore.save(
                         record.comprobante.id,
                         bytes,
