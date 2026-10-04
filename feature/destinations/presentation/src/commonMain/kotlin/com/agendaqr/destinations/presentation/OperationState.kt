@@ -86,6 +86,7 @@ class OperationsViewModel(
     private val unassociate: UnassociateComprobanteUseCase,
     private val saveComprobante: SaveComprobanteUseCase,
     private val findDuplicates: FindDuplicateComprobantesUseCase,
+    private val getComprobante: GetComprobanteUseCase,
     private val suggestReceiptAssociation: SuggestReceiptAssociationUseCase,
     private val deleteComprobante: DeleteComprobanteUseCase,
     private val comprobanteFiles: ComprobanteFileStore,
@@ -137,7 +138,7 @@ class OperationsViewModel(
                 if (!state.value.isSavingOperation) createOperationFromReceipt(action.comprobanteId)
             }
             OperationAction.ClearIncoming -> _state.update { it.copy(pendingIncoming = null, pendingDuplicates = emptyList()) }
-            is OperationAction.SaveIncoming -> saveIncoming(action.openInbox)
+            is OperationAction.SaveIncoming -> saveIncoming(action.openInbox, action.allowDuplicate)
             OperationAction.DismissDuplicateWarning -> _state.update { it.copy(pendingDuplicates = emptyList()) }
             OperationAction.OpenUnassociated -> _state.update { it.copy(route = OperationRoute.Unassociated, error = null) }
             OperationAction.Back -> back()
@@ -210,7 +211,7 @@ class OperationsViewModel(
         }
     }
 
-    private fun saveIncoming(openInbox: Boolean) {
+    private fun saveIncoming(openInbox: Boolean, allowDuplicate: Boolean) {
         val incoming = state.value.pendingIncoming ?: return
         if (state.value.pendingDuplicates.isNotEmpty() && !allowDuplicate) {
             _state.update {
@@ -309,11 +310,16 @@ class OperationsViewModel(
     }
 
     private fun openComprobante(id: String) {
-        val receipt = state.value.unassociated.firstOrNull { it.id == id }
+        val knownReceipt = state.value.unassociated.firstOrNull { it.id == id }
             ?: state.value.operationComprobantes.firstOrNull { it.id == id }
-            ?: return
-        _state.update { it.copy(openedComprobante = receipt, openedComprobanteBytes = null, isLoadingComprobante = true, error = null) }
+        _state.update { it.copy(openedComprobante = knownReceipt, openedComprobanteBytes = null, isLoadingComprobante = true, error = null) }
         scope.launch {
+            val receipt = knownReceipt ?: getComprobante(id)
+            if (receipt == null) {
+                _state.update { it.copy(openedComprobante = null, isLoadingComprobante = false, error = "Comprobante no encontrado") }
+                return@launch
+            }
+            _state.update { it.copy(openedComprobante = receipt) }
             val bytes = runCatching { comprobanteFiles.read(receipt.file) }.getOrNull()
             if (bytes == null) {
                 _state.update { it.copy(isLoadingComprobante = false, error = "No se pudo abrir el comprobante") }
