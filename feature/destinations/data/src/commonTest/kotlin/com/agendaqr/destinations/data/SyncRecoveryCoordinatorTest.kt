@@ -45,13 +45,17 @@ class SyncRecoveryCoordinatorTest {
 
         coordinator.start()
         runCurrent()
-        // Drenado periódico inicial con la cola vacía.
-        assertTrue(results.any { it.processed == 0 })
-        results.clear()
+        // Offline significa pausa real: no debe intentar drenar ni generar
+        // resultados mientras no haya conectividad.
+        assertTrue(results.isEmpty())
 
-        // Trabajo encolado mientras el periódico duerme: solo el collector
-        // oportunista (online) puede drenarlo sin avanzar el reloj virtual.
         fixture.enqueueOperationUpsert("op-1")
+        runCurrent()
+        assertEquals(listOf("op-1"), fixture.queue.all().map { it.entityId })
+        assertTrue(results.isEmpty())
+
+        // Al volver online, el ciclo se activa inmediatamente sin avanzar el
+        // reloj virtual.
         monitor.setOnline(true)
         runCurrent()
 
