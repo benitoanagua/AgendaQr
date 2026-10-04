@@ -35,16 +35,19 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
             } else {
                 "Se guardará en tu bandeja de respaldos sin asociar.\nArchivo: " + incoming.extension
             },
-            confirmLabel = if (duplicate) "Cerrar" else if (saving) "Guardando…" else "Guardar",
+            confirmLabel = if (duplicate) "Guardar de todos modos" else if (saving) "Guardando…" else "Guardar",
             onConfirm = {
                 if (!saving) {
                     viewModel.onAction(
-                        if (duplicate) OperationAction.ClearIncoming
+                        if (duplicate) OperationAction.SaveIncoming(
+                            openInbox = false,
+                            allowDuplicate = duplicate,
+                        )
                         else OperationAction.SaveIncoming(false),
                     )
                 }
             },
-            dismissLabel = if (duplicate) null else "Asociar ahora",
+            dismissLabel = if (duplicate) "Cerrar" else "Asociar ahora",
             onDismiss = {
                 viewModel.onAction(
                     if (duplicate) OperationAction.ClearIncoming
