@@ -1,7 +1,6 @@
 package com.agendaqr.destinations.presentation
 
 import android.app.Activity
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Base64
@@ -9,10 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
-import androidx.core.app.ActivityCompat
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
 import com.agendaqr.destinations.domain.QrAsset
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +20,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.onEach
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.security.MessageDigest
 import com.agendaqr.destinations.domain.ImportCandidate
@@ -66,20 +61,9 @@ fun decodeQrAsset(bytes: ByteArray, mimeType: String): QrAsset? {
     }
 }
 
-fun decodeQrBitmap(bitmap: Bitmap): QrAsset? {
-    val outputStream = ByteArrayOutputStream()
-    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-    val bytes = outputStream.toByteArray()
-    return decodeQrAsset(bytes, "image/png")
-}
-
-fun bitmapToAsset(asset: QrAsset, mimeType: String): QrAsset = asset
-
 object AgendaQrAndroidImportLauncher {
-    private var camera: ActivityResultLauncher<Void?>? = null
     private var gallery: ActivityResultLauncher<String>? = null
     private var multiple: ActivityResultLauncher<String>? = null
-    private var cameraPermission: ActivityResultLauncher<String>? = null
     private var activity: Activity? = null
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val payloadStore = createImportPayloadStore()
@@ -115,26 +99,14 @@ object AgendaQrAndroidImportLauncher {
 
     fun initialize(compActivity: ComponentActivity) {
         this.activity = compActivity
-        cameraPermission = compActivity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            if (granted) camera?.launch(null)
-        }
-        camera = compActivity.registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
-            bitmap?.let { decodeAndEmit(it) }
-        }
+        // T8 — S03: la captura con cámara ya no es `TakePicturePreview`
+        // (cámara del sistema): es CameraX + análisis ZXing continuo dentro
+        // de la app (CameraQrCaptureOverlay), con detección automática.
         gallery = compActivity.registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             uri?.let { decodeAndEmit(it) }
         }
         multiple = compActivity.registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
             decodeMultiple(uris)
-        }
-    }
-
-    fun camera() {
-        val current = activity ?: return
-        if (ActivityCompat.checkSelfPermission(current, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            camera?.launch(null)
-        } else {
-            cameraPermission?.launch(Manifest.permission.CAMERA)
         }
     }
 
@@ -270,9 +242,4 @@ object AgendaQrAndroidImportLauncher {
         return ImportKind.DESCONOCIDO
     }
 
-    private fun decodeAndEmit(bitmap: Bitmap) {
-        scope.launch {
-            decodeQrBitmap(bitmap)?.let { _results.emit(QrImportResult(listOf(it))) }
-        }
-    }
 }
