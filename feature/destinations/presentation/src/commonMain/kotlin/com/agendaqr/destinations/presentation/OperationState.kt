@@ -171,8 +171,15 @@ class OperationsViewModel(
         val query = state.value.query.trim()
         if (query.isBlank()) return state.value.operations
         return state.value.operations.filter { operation ->
-            listOfNotNull(operation.amount, operation.currency, operation.personOrEntity, operation.concept, operation.note)
-                .any { it.contains(query, ignoreCase = true) }
+            listOfNotNull(
+                formatDate(operation.occurredAt),
+                operationTypeLabel(operation.type),
+                operation.amount,
+                operation.currency,
+                operation.personOrEntity,
+                operation.concept,
+                operation.note,
+            ).any { it.contains(query, ignoreCase = true) }
         }
     }
 
