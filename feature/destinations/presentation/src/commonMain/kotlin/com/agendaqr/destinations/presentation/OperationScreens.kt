@@ -313,6 +313,10 @@ private fun OperationDetailScreen(state: OperationsUiState, viewModel: Operation
                         Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg)) {
                             Text("Comprobante " + receipt.provenance?.name.orEmpty(), fontWeight = FontWeight.SemiBold)
                             Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                            XauxaTextAction(
+                                label = "Desasociar",
+                                onClick = { viewModel.onAction(OperationAction.Disassociate(receipt.id)) },
+                            )
                         }
                     }
                 }
