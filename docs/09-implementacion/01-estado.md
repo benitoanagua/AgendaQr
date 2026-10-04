@@ -209,3 +209,19 @@ global = PASS (145 tests)
 - Documentos renumerados sin prefijos duplicados en `04-ux`, `06-arquitectura` y `08-validacion`; `VALIDATION_FINAL_417ea2a.md` archivado en `docs/08-validacion/05-validacion-final-417ea2a.md` con la contradicción de cierre resuelta.
 
 Sigue BLOCKED (ver entregable de cierre): keystore de producción, runtime Supabase (sin daemon Docker), link/runtime iOS en Xcode, runtime del laboratorio (sin navegador), tests instrumentados/E2E en dispositivo.
+
+
+## Correcciones UX/MVP aplicadas — 2026-10-04
+
+Sobre `main`, sin declarar runtime PASS:
+
+- `supabase/.branches/` quedó excluido del tracking mediante `.gitignore`.
+- `XauxaTheme` dejó de forzar dark theme y respeta `isSystemInDarkTheme()`.
+- S01 Inicio recuperó la jerarquía congelada: Buscar domina; Agregar QR y Registrar son acciones secundarias; Contextos dejó de ser navegación principal.
+- S02 Añadir ordena adquisición como Galería → Galería (varios) → Cámara y documenta Desde otra app como entrada de primer nivel mediante Compartir.
+- La asociación de comprobantes ahora expone Desasociar desde el detalle de operación y reutiliza `UnassociateComprobanteUseCase`; se añadió regresión de asociación/desasociación.
+- La advertencia de comprobante duplicado dejó de bloquear el guardado: el usuario puede Guardar de todos modos.
+- La importación de comprobantes conserva el MIME recibido en `SaveComprobanteUseCase`.
+- La transición turnstile de destinos invierte dirección en rutas de regreso; el predictive back físico de Android sigue pendiente de validación runtime.
+- Estas correcciones son cambios de código; no convierten por sí mismas los journeys runtime en PASS.
+
