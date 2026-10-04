@@ -196,19 +196,22 @@ fun XauxaTextAction(label: String, onClick: () -> Unit, modifier: Modifier = Mod
     }
 }
 
+/**
+ * Banner de resultado embebido: marcador semántico + contenido + acciones.
+ *
+ * El tono se expresa SIEMPRE con [tone] (T12: el parámetro booleano
+ * `danger` histórico se retiró; unifica Neutral/Danger/Success/…).
+ */
 @Composable
 fun XauxaStatusBanner(
     message: String,
     modifier: Modifier = Modifier,
-    danger: Boolean = false,
     tone: XauxaTone? = null,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
     onDismiss: (() -> Unit)? = null,
 ) {
-    // Compatibilidad: el parámetro semántico nuevo prevalece; sin él se
-    // conserva exactamente la interpretación histórica de danger.
-    val resolvedTone = tone ?: if (danger) XauxaTone.Danger else XauxaTone.Neutral
+    val resolvedTone = tone ?: XauxaTone.Neutral
     val background = resolvedTone.container()
     val foreground = resolvedTone.content()
     Row(

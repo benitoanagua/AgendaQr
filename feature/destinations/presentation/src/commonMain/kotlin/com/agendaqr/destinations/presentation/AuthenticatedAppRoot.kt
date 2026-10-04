@@ -166,7 +166,10 @@ internal fun AuthenticatedAppRoot(
             )
         }
         if (isOffline) {
-            XauxaStatusBanner("Sin conexión — los cambios se guardan localmente y se sincronizarán al recuperar conectividad.", danger = false)
+            XauxaStatusBanner(
+                "Sin conexión — los cambios se guardan localmente y se sincronizarán al recuperar conectividad.",
+                tone = XauxaTone.Neutral,
+            )
         }
         if (pendingCount > 0) {
             XauxaStatusBanner(

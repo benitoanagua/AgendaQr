@@ -369,8 +369,8 @@ private fun StatusBannerPreview() {
     var danger by rememberSaveable { mutableStateOf(false) }
     Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
         LabTextInput("Mensaje", message) { message = it }
-        LabControlRow("danger") { LabToggle("danger", danger) { danger = it } }
-        XauxaStatusBanner(message = message, danger = danger)
+        LabControlRow("tone") { LabToggle("danger (tone=Danger)", danger) { danger = it } }
+        XauxaStatusBanner(message = message, tone = if (danger) XauxaTone.Danger else XauxaTone.Neutral)
     }
 }
 
