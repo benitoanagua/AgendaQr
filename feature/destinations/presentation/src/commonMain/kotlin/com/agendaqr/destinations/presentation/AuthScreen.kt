@@ -28,6 +28,7 @@ import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextInput
 import com.agendaqr.core.ui.components.XauxaTone
+import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -56,12 +57,9 @@ fun AuthScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
         ) {
-            Text(
-                "Agenda QR",
-                modifier = Modifier.semantics { heading() },
-                fontSize = XauxaType.Display,
-                fontWeight = FontWeight.Bold,
-                color = XauxaColor.TextPrimary,
+            XauxaHeading(
+                text = "Agenda QR",
+                size = XauxaType.Display,
             )
             Text(
                 "Inicia sesión para acceder a tu agenda.",

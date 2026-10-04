@@ -264,7 +264,7 @@ fun XauxaEmptyState(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        Text(title, modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Title, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
+        XauxaHeading(text = title, size = XauxaType.Title, fontWeight = FontWeight.SemiBold)
         subtitle?.let { Text(it, color = XauxaColor.TextSecondary, fontSize = XauxaType.Label) }
         XauxaPrimaryButton(actionLabel, onAction)
     }

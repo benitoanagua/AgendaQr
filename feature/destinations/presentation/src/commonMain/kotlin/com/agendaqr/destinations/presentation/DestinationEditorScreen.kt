@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
+import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.components.XauxaQrPreview
 import com.agendaqr.core.ui.components.XauxaScannerViewport
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
@@ -96,12 +97,10 @@ private fun DestinationEditorContent(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        Text(
-            if (existing == null) "Agregar destino" else "Editar destino",
-            modifier = Modifier.semantics { heading() },
-            fontSize = XauxaType.Headline,
+        XauxaHeading(
+            text = if (existing == null) "Agregar destino" else "Editar destino",
+            size = XauxaType.Headline,
             fontWeight = FontWeight.Bold,
-            color = XauxaColor.TextPrimary,
         )
         error?.let { err ->
             XauxaStatusBanner(

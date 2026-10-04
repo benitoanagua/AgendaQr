@@ -42,6 +42,7 @@ import com.agendaqr.core.ui.components.XauxaCategoryChip
 import com.agendaqr.core.ui.components.XauxaLoadMoreFooter
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaTone
+import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -67,12 +68,9 @@ fun DestinationsScreen(
             .imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        Text(
-            "Agenda QR",
-            modifier = Modifier.semantics { heading() },
-            fontSize = XauxaType.Display,
-            fontWeight = FontWeight.Bold,
-            color = XauxaColor.TextPrimary,
+        XauxaHeading(
+            text = "Agenda QR",
+            size = XauxaType.Display,
         )
 
         // S01 — Inicio: buscar domina visualmente; Añadir y Registrar son

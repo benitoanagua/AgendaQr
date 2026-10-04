@@ -90,7 +90,7 @@ private fun OperationListScreen(
     val paged = operations.take(visibleCount)
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Operaciones", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            XauxaHeading(text = "Operaciones", size = XauxaType.Display, fontWeight = FontWeight.Bold)
             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 XauxaTextAction(label = "Destinos", onClick = onBack)
                 XauxaPrimaryButton(label = "Nuevo", onClick = { viewModel.onAction(OperationAction.New) })
@@ -162,7 +162,7 @@ private fun UnassociatedScreen(
     var selectedReceipt by remember { mutableStateOf<Comprobante?>(null) }
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Comprobantes sin asociar", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            XauxaHeading(text = "Comprobantes sin asociar", size = XauxaType.Display, fontWeight = FontWeight.Bold)
             XauxaTextAction(label = "Volver", onClick = { viewModel.onAction(OperationAction.Back) })
         }
         if (state.unassociated.isEmpty()) {
@@ -297,12 +297,10 @@ private fun OperationEditorScreen(
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(
-                if (existing == null) "Registrar operación" else "Editar operación",
-                modifier = Modifier.semantics { heading() },
-                fontSize = XauxaType.Display,
+            XauxaHeading(
+                text = if (existing == null) "Registrar operación" else "Editar operación",
+                size = XauxaType.Display,
                 fontWeight = FontWeight.Bold,
-                color = XauxaColor.TextPrimary,
             )
             XauxaTextAction(label = "Volver", onClick = { viewModel.onAction(OperationAction.Back) })
         }
@@ -414,7 +412,7 @@ private fun OperationDetailScreen(
     var showDeleteConfirm by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Detalle", modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Display, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
+            XauxaHeading(text = "Detalle", size = XauxaType.Display, fontWeight = FontWeight.Bold)
             XauxaTextAction(label = "Volver", onClick = { viewModel.onAction(OperationAction.Back) })
         }
         XauxaStatusBanner(
