@@ -19,6 +19,7 @@ sealed interface OperationRoute {
     data object List : OperationRoute
     data class Detail(val id: String) : OperationRoute
     data object New : OperationRoute
+    data class Edit(val id: String) : OperationRoute
     data object Unassociated : OperationRoute
 }
 
