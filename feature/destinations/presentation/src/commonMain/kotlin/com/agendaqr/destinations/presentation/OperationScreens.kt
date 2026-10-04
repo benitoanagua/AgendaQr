@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.domain.*
+import com.agendaqr.destinations.data.SyncResource
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -23,13 +24,19 @@ import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
 
 @Composable
-fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, onBack: () -> Unit) {
+fun OperationsScreen(
+    state: OperationsUiState,
+    viewModel: OperationsViewModel,
+    onBack: () -> Unit,
+    syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
+    onRetrySync: () -> Unit = {},
+) {
     when (state.route) {
-        OperationRoute.List -> OperationListScreen(state, viewModel, onBack)
-        OperationRoute.Unassociated -> UnassociatedScreen(state, viewModel)
+        OperationRoute.List -> OperationListScreen(state, viewModel, onBack, syncLookup)
+        OperationRoute.Unassociated -> UnassociatedScreen(state, viewModel, syncLookup)
         OperationRoute.New -> OperationEditorScreen(state, viewModel, existing = null)
         is OperationRoute.Edit -> OperationEditorScreen(state, viewModel, existing = viewModel.selectedOperation())
-        is OperationRoute.Detail -> OperationDetailScreen(state, viewModel)
+        is OperationRoute.Detail -> OperationDetailScreen(state, viewModel, syncLookup, onRetrySync)
     }
     state.pendingIncoming?.let { incoming ->
         val duplicate = state.pendingDuplicates.isNotEmpty()
@@ -67,12 +74,17 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
         )
     }
     state.openedComprobante?.let { receipt ->
-        ComprobanteViewerDialog(state, receipt, viewModel)
+        ComprobanteViewerDialog(state, receipt, viewModel, syncLookup)
     }
 }
 
 @Composable
-private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsViewModel, onBack: () -> Unit = {}) {
+private fun OperationListScreen(
+    state: OperationsUiState,
+    viewModel: OperationsViewModel,
+    onBack: () -> Unit = {},
+    syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
+) {
     val operations = viewModel.visibleOperations()
     var visibleCount by remember(operations.size) { mutableStateOf(50) }
     val paged = operations.take(visibleCount)
@@ -117,6 +129,10 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
                                 Text(formatDate(operation.occurredAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
                                 Text(operationTypeLabel(operation.type), fontWeight = FontWeight.SemiBold,
                                     color = if (operation.type == OperationType.COBRO) XauxaColor.Success else XauxaColor.Brand)
+                                // T6: estado de sincronización por elemento, con texto.
+                                ElementSyncBadge(
+                                    syncLookup.status(SyncResource.OPERATION, operation.id),
+                                )
                             }
                             Column(horizontalAlignment = Alignment.End) {
                                 Text(operation.amount.orEmpty().ifBlank { "—" }, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
@@ -138,7 +154,11 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
 }
 
 @Composable
-private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsViewModel) {
+private fun UnassociatedScreen(
+    state: OperationsUiState,
+    viewModel: OperationsViewModel,
+    syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
+) {
     var selectedReceipt by remember { mutableStateOf<Comprobante?>(null) }
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -154,6 +174,8 @@ private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsVi
                         Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                             Text("Comprobante recibido", fontWeight = FontWeight.SemiBold)
                             Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                            // T6: estado de sincronización por comprobante, con texto.
+                            ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                             // Acciones apiladas: dos etiquetas largas no caben lado a lado en 360dp.
                             Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                                 XauxaPrimaryButton(label = "Asociar a operación existente", onClick = { selectedReceipt = receipt })
@@ -371,7 +393,12 @@ private fun OperationEditorScreen(
 }
 
 @Composable
-private fun OperationDetailScreen(state: OperationsUiState, viewModel: OperationsViewModel) {
+private fun OperationDetailScreen(
+    state: OperationsUiState,
+    viewModel: OperationsViewModel,
+    syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
+    onRetrySync: () -> Unit = {},
+) {
     val operation = viewModel.selectedOperation()
     if (operation == null) {
         Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.Center) {
@@ -394,6 +421,13 @@ private fun OperationDetailScreen(state: OperationsUiState, viewModel: Operation
             operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt) + " · " +
                 operation.amount.orEmpty().ifBlank { "sin monto" }
         )
+        // T6: estado de sincronización del elemento (texto, no solo color).
+        val operationSyncStatus = syncLookup.status(SyncResource.OPERATION, operation.id)
+        ElementSyncBadge(operationSyncStatus)
+        if (operationSyncStatus == ElementSyncStatus.ErrorRecoverable) {
+            // El dato está a salvo localmente: el usuario puede reintentar.
+            XauxaTextAction(label = "REINTENTAR", onClick = onRetrySync)
+        }
         operation.personOrEntity?.let { Text("Persona o entidad: " + it) }
         operation.currency?.let { Text("Moneda: " + it) }
         operation.destinationId?.let { Text("Destino: " + it) }
@@ -479,7 +513,12 @@ internal fun operationTypeLabel(type: OperationType): String = when (type) {
 }
 
 @Composable
-private fun ComprobanteViewerDialog(state: OperationsUiState, receipt: Comprobante, viewModel: OperationsViewModel) {
+private fun ComprobanteViewerDialog(
+    state: OperationsUiState,
+    receipt: Comprobante,
+    viewModel: OperationsViewModel,
+    syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
+) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
     if (showDeleteConfirm) {
         XauxaDialog(
@@ -506,6 +545,8 @@ private fun ComprobanteViewerDialog(state: OperationsUiState, receipt: Comproban
             Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
                 Text("Origen: " + receiptProvenanceLabel(receipt.provenance), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                // T6: estado de sincronización del comprobante, con texto.
+                ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                 when {
                     state.isLoadingComprobante -> XauxaLoading(message = "Abriendo comprobante…")
                     bytes != null -> {

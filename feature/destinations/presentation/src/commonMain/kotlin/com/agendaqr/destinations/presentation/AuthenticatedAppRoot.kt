@@ -79,11 +79,18 @@ internal fun AuthenticatedAppRoot(
     var pendingCount by remember { mutableStateOf(0) }
     var isOffline by remember { mutableStateOf(false) }
     var hasFailed by remember { mutableStateOf(false) }
+    var syncQueueItems by remember { mutableStateOf<List<com.agendaqr.destinations.data.PendingSyncMutation>>(emptyList()) }
     LaunchedEffect(graph.queueObserver) {
         graph.queueObserver.observeQueue().collect { items ->
+            syncQueueItems = items
             pendingCount = items.size
             hasFailed = items.any { it.state == SyncMutationState.FAILED }
         }
+    }
+    // T6: estado de sincronización por elemento (consulta indexada).
+    val syncLookup = remember(syncQueueItems) { ElementSyncLookup(syncQueueItems) }
+    val retrySync = remember(graph) {
+        { graph.syncScope.launch { graph.syncProcessor.drain() }; Unit }
     }
     LaunchedEffect(graph.queueObserver) {
         graph.queueObserver.observeNetwork().collect { online -> isOffline = !online }
@@ -345,6 +352,8 @@ internal fun AuthenticatedAppRoot(
             state = operationState,
             viewModel = graph.operationsViewModel,
             onBack = { nav.pop() },
+            syncLookup = syncLookup,
+            onRetrySync = retrySync,
         )
         AppRoute.Home -> HomeSurface(
             state = state,
@@ -352,6 +361,8 @@ internal fun AuthenticatedAppRoot(
             graph = graph,
             onSignOut = onSignOut,
             nav = nav,
+            syncLookup = syncLookup,
+            onRetrySync = retrySync,
         )
     }
 }
@@ -368,6 +379,8 @@ private fun HomeSurface(
     graph: AuthenticatedSessionGraph,
     onSignOut: () -> Unit,
     nav: AppBackStack,
+    syncLookup: ElementSyncLookup,
+    onRetrySync: () -> Unit,
 ) {
     val reducedMotion = LocalReducedMotion.current
     AnimatedContent(
@@ -396,6 +409,7 @@ private fun HomeSurface(
                 onOpenSearch = { nav.push(AppRoute.Search) },
                 onOpenContexts = { nav.push(AppRoute.Contexts) },
                 onSignOut = onSignOut,
+                syncLookup = syncLookup,
             )
             DestinationRoute.Add -> AddDestinationScreen(
                 onImport = { assets ->
@@ -445,6 +459,11 @@ private fun HomeSurface(
                         },
                         onShare = { shareQr(destination.qr) },
                         onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
+                        syncStatus = syncLookup.status(
+                            com.agendaqr.destinations.data.SyncResource.DESTINATION,
+                            destination.id,
+                        ),
+                        onRetrySync = onRetrySync,
                     )
                 }
             }

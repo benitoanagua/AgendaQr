@@ -41,6 +41,8 @@ fun DestinationDetailScreen(
     onDelete: () -> Unit,
     onShare: () -> Unit,
     onBack: () -> Unit,
+    syncStatus: ElementSyncStatus = ElementSyncStatus.Synced,
+    onRetrySync: () -> Unit = {},
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
     Column(modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().imePadding()) {
@@ -51,6 +53,12 @@ fun DestinationDetailScreen(
             Text(destination.name.ifBlank { "Sin nombre" }, modifier = Modifier.semantics { heading() }, fontSize = XauxaType.Headline, fontWeight = FontWeight.Bold, color = XauxaColor.TextPrimary)
             destination.category?.let { Text(it, color = XauxaColor.TextSecondary) }
             destination.note?.takeIf { it.isNotBlank() }?.let { Text(it, color = XauxaColor.TextSecondary) }
+            // T6: estado de sincronización del elemento (texto, no solo
+            // color) con REINTENTAR cuando es un error recuperable.
+            ElementSyncBadge(syncStatus)
+            if (syncStatus == ElementSyncStatus.ErrorRecoverable) {
+                XauxaTextAction(label = "REINTENTAR", onClick = onRetrySync)
+            }
             if (destination.qr.encoded.isNotBlank()) {
                 XauxaQrPreview(destination.qr.encoded)
             } else {

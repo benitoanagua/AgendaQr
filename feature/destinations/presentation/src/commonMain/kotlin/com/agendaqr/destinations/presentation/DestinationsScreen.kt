@@ -27,7 +27,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
+import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
@@ -54,6 +56,7 @@ fun DestinationsScreen(
     onOpenSearch: () -> Unit = {},
     onOpenContexts: () -> Unit = {},
     onSignOut: () -> Unit = {},
+    syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
     Column(
         modifier = Modifier
@@ -143,7 +146,9 @@ fun DestinationsScreen(
                     modifier = Modifier.fillMaxSize().weight(1f),
                     verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
                 ) {
-                    items(paged, key = { it.id }) { destination -> DestinationRow(destination, onAction) }
+                    items(paged, key = { it.id }) { destination ->
+                        DestinationRow(destination, onAction, syncLookup)
+                    }
                     if (paged.size < state.visibleDestinations.size) {
                         item {
                             XauxaLoadMoreFooter(
@@ -158,17 +163,27 @@ fun DestinationsScreen(
 }
 
 @Composable
-fun DestinationRow(destination: Destination, onAction: (DestinationAction) -> Unit) {
+fun DestinationRow(
+    destination: Destination,
+    onAction: (DestinationAction) -> Unit,
+    syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
+) {
     XauxaListRow(
         title = destination.name.ifBlank { "Sin nombre" },
         subtitle = destination.note ?: destination.category,
         tone = if (destination.favorite) XauxaTone.Info else XauxaTone.Neutral,
         onClick = { onAction(DestinationAction.Open(destination.id)) },
         trailing = {
-            XauxaTextAction(
-                label = if (destination.favorite) "Favorito" else "Marcar favorito",
-                onClick = { onAction(DestinationAction.ToggleFavorite(destination)) },
-            )
+            Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm), verticalAlignment = Alignment.CenterVertically) {
+                // T6: estado de sincronización por elemento (con texto).
+                ElementSyncBadge(
+                    syncLookup.status(SyncResource.DESTINATION, destination.id),
+                )
+                XauxaTextAction(
+                    label = if (destination.favorite) "Favorito" else "Marcar favorito",
+                    onClick = { onAction(DestinationAction.ToggleFavorite(destination)) },
+                )
+            }
         },
     )
 }
