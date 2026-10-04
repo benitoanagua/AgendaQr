@@ -49,7 +49,7 @@ sealed interface OperationAction {
     data class Disassociate(val comprobanteId: String) : OperationAction
     data class CreateOperationFromReceipt(val comprobanteId: String) : OperationAction
     data object ClearIncoming : OperationAction
-    data class SaveIncoming(val openInbox: Boolean = false) : OperationAction
+    data class SaveIncoming(val openInbox: Boolean = false, val allowDuplicate: Boolean = false) : OperationAction
     data object DismissDuplicateWarning : OperationAction
     data object OpenUnassociated : OperationAction
     data object Back : OperationAction
@@ -201,12 +201,12 @@ class OperationsViewModel(
 
     private fun saveIncoming(openInbox: Boolean) {
         val incoming = state.value.pendingIncoming ?: return
-        if (state.value.pendingDuplicates.isNotEmpty()) {
+        if (state.value.pendingDuplicates.isNotEmpty() && !allowDuplicate) {
             _state.update {
                 it.copy(
                     pendingIncoming = null,
                     pendingDuplicates = emptyList(),
-                    error = "Este comprobante ya existe y no se guardará otra copia.",
+                    error = "Ya existe un comprobante igual. Puedes conservarlo sin crear otra copia.",
                 )
             }
             return
@@ -225,6 +225,7 @@ class OperationsViewModel(
                     ),
                     incoming.bytes,
                     incoming.extension,
+                    incoming.mimeType,
                 )
             }.onFailure(::showError).onSuccess {
                 _state.update { it.copy(pendingIncoming = null, pendingDuplicates = emptyList(), route = if (openInbox) OperationRoute.Unassociated else OperationRoute.List) }
