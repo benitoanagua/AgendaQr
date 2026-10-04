@@ -62,8 +62,8 @@ fun GlobalSearchScreen(
             ) {
                 items(state.results, key = { it.type.name + ":" + it.id }) { result ->
                     XauxaListRow(
-                        title = result.title,
-                        subtitle = result.subtitle,
+                        title = searchResultTitle(result),
+                        subtitle = searchResultSubtitle(result),
                         tone = XauxaTone.Info,
                         onClick = { onSelect(result) },
                         trailing = { XauxaCategoryChip(searchResultTypeLabel(result.type)) },
@@ -81,3 +81,21 @@ private fun searchResultTypeLabel(type: com.agendaqr.destinations.domain.AgendaS
         com.agendaqr.destinations.domain.AgendaSearchResultType.ACTIVITY -> "Actividad"
         com.agendaqr.destinations.domain.AgendaSearchResultType.COMPROBANTE -> "Comprobante"
     }
+
+/**
+ * El dominio emite `type.name`/`provenance.name` como fallback de texto; aquí
+ * se traducen a la semántica visible (nunca enums técnicos en UI).
+ */
+internal fun searchResultTitle(result: AgendaSearchResult): String = when (result.title) {
+    "PAGO" -> "Pago"
+    "COBRO" -> "Cobro"
+    else -> result.title
+}
+
+internal fun searchResultSubtitle(result: AgendaSearchResult): String? {
+    val subtitle = result.subtitle ?: return null
+    val provenance = runCatching {
+        com.agendaqr.destinations.domain.ReceiptProvenance.valueOf(subtitle)
+    }.getOrNull()
+    return provenance?.let { receiptProvenanceLabel(it) } ?: subtitle
+}
