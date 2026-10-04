@@ -10,6 +10,10 @@ kotlin {
             implementation(project(":core:ui"))
             implementation(compose.material3)
             implementation(compose.animation)
+            // BackHandler/PredictiveBackHandler multiplataforma (CMP 1.8.x):
+            // en Android delega en OnBackPressedDispatcher (gesto/back real),
+            // en iOS/web en el dispatcher de la plataforma.
+            implementation("org.jetbrains.compose.ui:ui-backhandler:${libs.versions.compose.get()}")
             implementation(libs.kotlinx.datetime)
         }
         androidMain.dependencies {

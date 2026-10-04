@@ -281,6 +281,12 @@ object XauxaMotion {
     const val DurationShortMs = 150
     const val DurationMediumMs = 300
     const val DurationLongMs = 450
+    /**
+     * Duración de las transiciones con movimiento reducido activo: 0.
+     * Reduced motion no significa "animación corta" sino "sin
+     * desplazamiento" (§11 accesibilidad); el cambio ocurre en el sitio.
+     */
+    const val DurationReducedMs = 0
     const val EasingStandard = "cubic-bezier(0.1, 0.9, 0.2, 1)"
     const val EasingEmphasized = "cubic-bezier(0.1, 0.9, 0.2, 1)"
     const val EasingDecelerate = "cubic-bezier(0, 0, 0.2, 1)"

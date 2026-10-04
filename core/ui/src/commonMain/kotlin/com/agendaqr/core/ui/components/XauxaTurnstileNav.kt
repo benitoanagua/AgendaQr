@@ -40,10 +40,9 @@ import com.agendaqr.core.ui.theme.XauxaMotion
  *   animación distintos.
  * - ts2 (iOS) y ts5 (alcance: ¿toda navegación o solo lista↔detalle?) quedan
  *   fuera de este archivo — ts5 en particular es una decisión de producto.
- *   No fija duración 0 en `reducedMotion`: a diferencia de [XauxaLiveTile],
- *   quien lo use debe decidir el intercambio entre desactivar el slide y
- *   solo acortar duración — ver TODO de producto en `AgendaQrApp.kt` cuando
- *   se conecte.
+ *   ReducedMotion está resuelto aquí: [xauxaReducedMotionEnter]/
+ *   [xauxaReducedMotionExit] fijan duración 0 y cero desplazamiento; el
+ *   call-site lee `LocalReducedMotion` y elige con [xauxaTurnstileMotion].
  *
  * Uso previsto (pendiente de conectar en `AgendaQrApp.kt`, ver
  * docs/05-design-system/04-component-audit-register.md, Lote H):
@@ -56,6 +55,24 @@ import com.agendaqr.core.ui.theme.XauxaMotion
  *   ) { screen -> /* when (screen) { ... } */ }
  */
 private const val TURNSTILE_EXIT_OFFSET_FRACTION = 0.25f // grid de página: 1 de 4 columnas
+
+/**
+ * Movimiento aplicable en una transición turnstile según el ajuste de
+ * movimiento reducido del sistema (§11: reduced motion respetado).
+ *
+ * - [Turnstile]: desplazamiento completo (comportamiento normal).
+ * - [Reduced]: sin desplazamiento; la pantalla cambia en el sitio con un
+ *   fade de duración 0 ([XauxaMotion.DurationReducedMs]). La comprensión no
+ *   depende de la animación.
+ */
+enum class XauxaTurnstileMotion {
+    Turnstile,
+    Reduced,
+}
+
+/** Decisión pura y testeable del movimiento de la transición. */
+fun xauxaTurnstileMotion(reducedMotion: Boolean): XauxaTurnstileMotion =
+    if (reducedMotion) XauxaTurnstileMotion.Reduced else XauxaTurnstileMotion.Turnstile
 
 fun <S> AnimatedContentTransitionScope<S>.xauxaTurnstileEnter(
     reverse: Boolean = false,
@@ -77,3 +94,14 @@ fun <S> AnimatedContentTransitionScope<S>.xauxaTurnstileExit(
             (if (reverse) 1 else -1) * (fullWidth * TURNSTILE_EXIT_OFFSET_FRACTION).toInt()
         },
     ) + fadeOut(tween(XauxaMotion.DurationMediumMs, easing = XauxaMotion.Easings.Standard))
+
+/**
+ * Variante reduced-motion de la entrada: sin desplazamiento.
+ * La pantalla entrante aparece en el sitio (fade de duración 0).
+ */
+fun <S> AnimatedContentTransitionScope<S>.xauxaReducedMotionEnter(): EnterTransition =
+    fadeIn(tween(XauxaMotion.DurationReducedMs, easing = XauxaMotion.Easings.Standard))
+
+/** Variante reduced-motion de la salida: sin desplazamiento. */
+fun <S> AnimatedContentTransitionScope<S>.xauxaReducedMotionExit(): ExitTransition =
+    fadeOut(tween(XauxaMotion.DurationReducedMs, easing = XauxaMotion.Easings.Standard))
