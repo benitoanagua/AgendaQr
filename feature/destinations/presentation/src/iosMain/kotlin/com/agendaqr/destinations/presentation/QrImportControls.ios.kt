@@ -11,8 +11,8 @@ actual fun QrImportControls(onResult: (QrImportResult) -> Unit) {
     // iOS acquisition remains behind this boundary so Vision/Photos/UIKit can be
     // introduced without leaking platform APIs into the feature/domain layers.
     Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-        XauxaSecondaryButton("Camera", onClick = { IosQrImportController.openCamera(onResult) })
-        XauxaSecondaryButton("Gallery", onClick = { IosQrImportController.openGallery(onResult) })
-        XauxaSecondaryButton("Multiple", onClick = { IosQrImportController.openMultiple(onResult) })
+        XauxaSecondaryButton("Galería", onClick = { IosQrImportController.openGallery(onResult) })
+        XauxaSecondaryButton("Galería (varios)", onClick = { IosQrImportController.openMultiple(onResult) })
+        XauxaSecondaryButton("Cámara", onClick = { IosQrImportController.openCamera(onResult) })
     }
 }
