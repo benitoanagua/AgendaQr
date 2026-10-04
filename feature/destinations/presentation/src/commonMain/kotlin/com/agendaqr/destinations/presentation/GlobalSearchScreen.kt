@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.destinations.presentation.AppStrings
 import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,12 +36,12 @@ fun GlobalSearchScreen(
             .imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        XauxaSecondaryButton(label = "Volver", onClick = onBack)
+        XauxaSecondaryButton(label = AppStrings.Volver, onClick = onBack)
         XauxaSearchBar(
             value = state.query,
             onValueChange = { onAction(GlobalSearchAction.QueryChanged(it)) },
-            label = "Buscar en Agenda QR",
-            placeholder = "Buscar",
+            label = AppStrings.BuscarEnAgendaQr,
+            placeholder = AppStrings.Buscar,
             onClear = { onAction(GlobalSearchAction.Clear) },
         )
         state.error?.let { err ->
@@ -55,14 +56,14 @@ fun GlobalSearchScreen(
         }
         when {
             state.query.isBlank() -> XauxaText(
-                "Busca destinos, operaciones, contextos o comprobantes.",
+                AppStrings.BuscaDestinosOperacionesContextosO,
                 color = XauxaColor.TextSecondary,
             )
-            state.isSearching -> XauxaLoading(message = "Buscando en Agenda QR…")
+            state.isSearching -> XauxaLoading(message = AppStrings.BuscandoEnAgendaQr)
             state.results.isEmpty() -> XauxaEmptyState(
-                title = "Sin resultados",
-                subtitle = "Prueba con otra palabra o revisa la ortografía.",
-                actionLabel = "Limpiar",
+                title = AppStrings.SinResultados,
+                subtitle = AppStrings.PruebaConOtraPalabraO,
+                actionLabel = AppStrings.Limpiar,
                 onAction = { onAction(GlobalSearchAction.Clear) },
             )
             else -> LazyColumn(

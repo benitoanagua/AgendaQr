@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.destinations.presentation.AppStrings
 import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -58,21 +59,21 @@ fun DestinationDetailScreen(
             // color) con REINTENTAR cuando es un error recuperable.
             ElementSyncBadge(syncStatus)
             if (syncStatus == ElementSyncStatus.ErrorRecoverable) {
-                XauxaTextAction(label = "REINTENTAR", onClick = onRetrySync)
+                XauxaTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
             }
             if (destination.qr.encoded.isNotBlank()) {
                 XauxaQrPreview(destination.qr.encoded)
             } else {
                 XauxaEmptyState(
-                    title = "QR sin contenido",
-                    subtitle = "Edita el destino para importar un código válido.",
-                    actionLabel = "Editar",
+                    title = AppStrings.QrSinContenido,
+                    subtitle = AppStrings.EditaElDestinoParaImportar,
+                    actionLabel = AppStrings.Editar,
                     onAction = onEdit,
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                XauxaPrimaryButton("Mostrar QR", onShowQr, enabled = destination.qr.encoded.isNotBlank())
-                XauxaSecondaryButton("Volver", onBack)
+                XauxaPrimaryButton(AppStrings.MostrarQr, onShowQr, enabled = destination.qr.encoded.isNotBlank())
+                XauxaSecondaryButton(AppStrings.Volver, onBack)
             }
         }
         // cb1: command bar contextual solo en pantallas de detalle/foco como
@@ -91,14 +92,14 @@ fun DestinationDetailScreen(
     }
     if (showDeleteConfirm) {
         XauxaDialog(
-            title = "Eliminar destino",
-            message = "Esta acción no se puede deshacer.",
-            confirmLabel = "Eliminar",
+            title = AppStrings.EliminarDestino,
+            message = AppStrings.EstaAccionNoSePuede,
+            confirmLabel = AppStrings.Eliminar,
             onConfirm = {
                 showDeleteConfirm = false
                 onDelete()
             },
-            dismissLabel = "Cancelar",
+            dismissLabel = AppStrings.Cancelar,
             onDismiss = { showDeleteConfirm = false },
         )
     }

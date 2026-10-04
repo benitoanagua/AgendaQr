@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.*
+import com.agendaqr.destinations.presentation.AppStrings
 import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -90,16 +91,16 @@ private fun OperationListScreen(
     val paged = operations.take(visibleCount)
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            XauxaHeading(text = "Operaciones", size = XauxaType.Display, fontWeight = FontWeight.Bold)
+            XauxaHeading(text = AppStrings.Operaciones, size = XauxaType.Display, fontWeight = FontWeight.Bold)
             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                XauxaTextAction(label = "Destinos", onClick = onBack)
-                XauxaPrimaryButton(label = "Nuevo", onClick = { viewModel.onAction(OperationAction.New) })
+                XauxaTextAction(label = AppStrings.Destinos, onClick = onBack)
+                XauxaPrimaryButton(label = AppStrings.Nuevo, onClick = { viewModel.onAction(OperationAction.New) })
             }
         }
-        XauxaSearchBar(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = "Buscar", placeholder = "Buscar operaciones", onClear = { viewModel.onAction(OperationAction.Search("")) })
+        XauxaSearchBar(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = AppStrings.Buscar, placeholder = AppStrings.BuscarOperaciones, onClear = { viewModel.onAction(OperationAction.Search("")) })
         if (state.unassociated.isNotEmpty()) {
-            XauxaStatusBanner("Comprobantes sin asociar: " + state.unassociated.size)
-            XauxaSecondaryButton(label = "Ver bandeja de respaldos", onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
+            XauxaStatusBanner(AppStrings.ComprobantesSinAsociar2 + state.unassociated.size)
+            XauxaSecondaryButton(label = AppStrings.VerBandejaDeRespaldos, onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
         }
         state.error?.let { err ->
             XauxaStatusBanner(
@@ -162,24 +163,24 @@ private fun UnassociatedScreen(
     var selectedReceipt by remember { mutableStateOf<Comprobante?>(null) }
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            XauxaHeading(text = "Comprobantes sin asociar", size = XauxaType.Display, fontWeight = FontWeight.Bold)
-            XauxaTextAction(label = "Volver", onClick = { viewModel.onAction(OperationAction.Back) })
+            XauxaHeading(text = AppStrings.ComprobantesSinAsociar, size = XauxaType.Display, fontWeight = FontWeight.Bold)
+            XauxaTextAction(label = AppStrings.Volver, onClick = { viewModel.onAction(OperationAction.Back) })
         }
         if (state.unassociated.isEmpty()) {
-            XauxaEmptyState(title = "No hay comprobantes sin asociar", actionLabel = "Volver", onAction = { viewModel.onAction(OperationAction.Back) })
+            XauxaEmptyState(title = AppStrings.NoHayComprobantesSinAsociar, actionLabel = AppStrings.Volver, onAction = { viewModel.onAction(OperationAction.Back) })
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 items(state.unassociated, key = { it.id }) { receipt ->
                     XauxaTile(onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) }) {
                         Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                            XauxaText("Comprobante recibido", fontWeight = FontWeight.SemiBold)
+                            XauxaText(AppStrings.ComprobanteRecibido, fontWeight = FontWeight.SemiBold)
                             XauxaText(formatDate(receipt.createdAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
                             // T6: estado de sincronización por comprobante, con texto.
                             ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                             // Acciones apiladas: dos etiquetas largas no caben lado a lado en 360dp.
                             Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                                XauxaPrimaryButton(label = "Asociar a operación existente", onClick = { selectedReceipt = receipt })
-                                XauxaSecondaryButton(label = "Crear nueva operación con esto", onClick = {
+                                XauxaPrimaryButton(label = AppStrings.AsociarAOperacionExistente, onClick = { selectedReceipt = receipt })
+                                XauxaSecondaryButton(label = AppStrings.CrearNuevaOperacionConEsto, onClick = {
                                     viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
                                 })
                             }
@@ -200,21 +201,21 @@ private fun UnassociatedScreen(
                 ReceiptMatchKind.MULTIPLE -> "¿A cuál corresponde?"
                 ReceiptMatchKind.NONE, null -> "No encontramos coincidencia"
             },
-            confirmLabel = "Cancelar",
+            confirmLabel = AppStrings.Cancelar,
             onConfirm = { selectedReceipt = null },
             onDismiss = { selectedReceipt = null },
             content = {
                 Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                     when {
-                        suggestion == null -> XauxaText("Estamos analizando el comprobante.", color = XauxaColor.TextSecondary)
+                        suggestion == null -> XauxaText(AppStrings.EstamosAnalizandoElComprobante, color = XauxaColor.TextSecondary)
                         suggestion.kind == ReceiptMatchKind.NONE ->
                             Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                                 XauxaText(
-                                    "No encontramos una coincidencia automática. Puedes elegir manualmente una operación.",
+                                    AppStrings.NoEncontramosUnaCoincidenciaAutomatica,
                                     color = XauxaColor.TextSecondary,
                                 )
                                 if (candidateOperations.isEmpty()) {
-                                    XauxaText("No hay operaciones disponibles.", color = XauxaColor.TextSecondary)
+                                    XauxaText(AppStrings.NoHayOperacionesDisponibles, color = XauxaColor.TextSecondary)
                                 } else {
                                     candidateOperations.forEach { operation ->
                                         XauxaListRow(
@@ -230,7 +231,7 @@ private fun UnassociatedScreen(
                             }
                         candidateOperations.isEmpty() ->
                             XauxaText(
-                                "Las operaciones candidatas ya no están disponibles.",
+                                AppStrings.LasOperacionesCandidatasYaNo,
                                 color = XauxaColor.TextSecondary,
                             )
                         else -> candidateOperations.forEach { operation ->
@@ -302,17 +303,17 @@ private fun OperationEditorScreen(
                 size = XauxaType.Display,
                 fontWeight = FontWeight.Bold,
             )
-            XauxaTextAction(label = "Volver", onClick = { viewModel.onAction(OperationAction.Back) })
+            XauxaTextAction(label = AppStrings.Volver, onClick = { viewModel.onAction(OperationAction.Back) })
         }
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-            if (type == OperationType.PAGO) XauxaPrimaryButton(label = "Pago", onClick = { type = OperationType.PAGO })
-            else XauxaSecondaryButton(label = "Pago", onClick = { type = OperationType.PAGO })
-            if (type == OperationType.COBRO) XauxaPrimaryButton(label = "Cobro", onClick = { type = OperationType.COBRO })
-            else XauxaSecondaryButton(label = "Cobro", onClick = { type = OperationType.COBRO })
+            if (type == OperationType.PAGO) XauxaPrimaryButton(label = AppStrings.Pago, onClick = { type = OperationType.PAGO })
+            else XauxaSecondaryButton(label = AppStrings.Pago, onClick = { type = OperationType.PAGO })
+            if (type == OperationType.COBRO) XauxaPrimaryButton(label = AppStrings.Cobro, onClick = { type = OperationType.COBRO })
+            else XauxaSecondaryButton(label = AppStrings.Cobro, onClick = { type = OperationType.COBRO })
         }
-        XauxaTextInput(label = "Monto (opcional)", value = amount, onValueChange = { amount = it }, modifier = Modifier.fillMaxWidth())
+        XauxaTextInput(label = AppStrings.MontoOpcional, value = amount, onValueChange = { amount = it }, modifier = Modifier.fillMaxWidth())
         XauxaTextInput(
-            label = "Fecha",
+            label = AppStrings.Fecha,
             value = dateText,
             onValueChange = { dateText = it },
             modifier = Modifier.fillMaxWidth(),
@@ -320,18 +321,18 @@ private fun OperationEditorScreen(
             isError = dateError,
             errorMessage = if (dateError) "Usa el formato dd/mm/aaaa" else null,
         )
-        XauxaTextInput(label = "Moneda (opcional)", value = currency, onValueChange = { currency = it }, modifier = Modifier.fillMaxWidth())
-        XauxaTextInput(label = "Persona o entidad (opcional)", value = person, onValueChange = { person = it }, modifier = Modifier.fillMaxWidth())
-        XauxaTextInput(label = "Destino QR (opcional)", value = destination, onValueChange = { destination = it }, modifier = Modifier.fillMaxWidth())
+        XauxaTextInput(label = AppStrings.MonedaOpcional, value = currency, onValueChange = { currency = it }, modifier = Modifier.fillMaxWidth())
+        XauxaTextInput(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, modifier = Modifier.fillMaxWidth())
+        XauxaTextInput(label = AppStrings.DestinoQrOpcional, value = destination, onValueChange = { destination = it }, modifier = Modifier.fillMaxWidth())
         XauxaSecondaryButton(
             label = contextSelection.contextId?.let { id -> "Para: " + (state.contexts.firstOrNull { it.id == id }?.name ?: "Contexto") }
                 ?: "Para: elegir contexto (opcional)",
             onClick = { contextSelection = contextSelection.openPicker() },
         )
-        XauxaTextInput(label = "Concepto (opcional)", value = concept, onValueChange = { concept = it }, modifier = Modifier.fillMaxWidth())
-        XauxaTextInput(label = "Nota (opcional)", value = note, onValueChange = { note = it }, modifier = Modifier.fillMaxWidth())
+        XauxaTextInput(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, modifier = Modifier.fillMaxWidth())
+        XauxaTextInput(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, modifier = Modifier.fillMaxWidth())
         if (existing == null) {
-            XauxaText("Podrás adjuntar comprobantes más adelante", color = XauxaColor.TextSecondary, size = XauxaType.Label)
+            XauxaText(AppStrings.PodrasAdjuntarComprobantesMasAdelante, color = XauxaColor.TextSecondary, size = XauxaType.Label)
         }
         state.error?.let { err ->
             XauxaStatusBanner(
@@ -377,14 +378,14 @@ private fun OperationEditorScreen(
 
     if (showSensitiveConfirm) {
         XauxaDialog(
-            title = "Cambiar operación con comprobantes",
-            message = "Esta operación tiene comprobantes. El comprobante no será modificado.",
-            confirmLabel = "Guardar cambio",
+            title = AppStrings.CambiarOperacionConComprobantes,
+            message = AppStrings.EstaOperacionTieneComprobantesEl,
+            confirmLabel = AppStrings.GuardarCambio,
             onConfirm = {
                 showSensitiveConfirm = false
                 occurredAt?.let { viewModel.onAction(OperationAction.Update(buildCandidate(it), confirmedSensitiveChange = true)) }
             },
-            dismissLabel = "Cancelar",
+            dismissLabel = AppStrings.Cancelar,
             onDismiss = { showSensitiveConfirm = false },
         )
     }
@@ -401,9 +402,9 @@ private fun OperationDetailScreen(
     if (operation == null) {
         Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.Center) {
             XauxaEmptyState(
-                title = "Operación no encontrada",
-                subtitle = "Pudo haber sido eliminada.",
-                actionLabel = "Volver",
+                title = AppStrings.OperacionNoEncontrada,
+                subtitle = AppStrings.PudoHaberSidoEliminada,
+                actionLabel = AppStrings.Volver,
                 onAction = { viewModel.onAction(OperationAction.Back) },
             )
         }
@@ -412,8 +413,8 @@ private fun OperationDetailScreen(
     var showDeleteConfirm by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            XauxaHeading(text = "Detalle", size = XauxaType.Display, fontWeight = FontWeight.Bold)
-            XauxaTextAction(label = "Volver", onClick = { viewModel.onAction(OperationAction.Back) })
+            XauxaHeading(text = AppStrings.Detalle, size = XauxaType.Display, fontWeight = FontWeight.Bold)
+            XauxaTextAction(label = AppStrings.Volver, onClick = { viewModel.onAction(OperationAction.Back) })
         }
         XauxaStatusBanner(
             operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt) + " · " +
@@ -424,26 +425,26 @@ private fun OperationDetailScreen(
         ElementSyncBadge(operationSyncStatus)
         if (operationSyncStatus == ElementSyncStatus.ErrorRecoverable) {
             // El dato está a salvo localmente: el usuario puede reintentar.
-            XauxaTextAction(label = "REINTENTAR", onClick = onRetrySync)
+            XauxaTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
         }
-        operation.personOrEntity?.let { XauxaText("Persona o entidad: " + it) }
-        operation.currency?.let { XauxaText("Moneda: " + it) }
-        operation.destinationId?.let { XauxaText("Destino: " + it) }
-        operation.concept?.let { XauxaText("Concepto: " + it) }
-        operation.note?.let { XauxaText("Nota: " + it, color = XauxaColor.TextSecondary) }
+        operation.personOrEntity?.let { XauxaText(AppStrings.PersonaOEntidad + it) }
+        operation.currency?.let { XauxaText(AppStrings.Moneda + it) }
+        operation.destinationId?.let { XauxaText(AppStrings.Destino + it) }
+        operation.concept?.let { XauxaText(AppStrings.Concepto + it) }
+        operation.note?.let { XauxaText(AppStrings.Nota2 + it, color = XauxaColor.TextSecondary) }
 
         XauxaSection("Comprobantes") {
             if (state.operationComprobantes.isEmpty()) {
-                XauxaText("Sin comprobante adjunto", color = XauxaColor.TextSecondary)
-                XauxaTextAction(label = "Adjuntar comprobante ahora", onClick = { viewModel.openUnassociatedForOperation(operation.id) })
+                XauxaText(AppStrings.SinComprobanteAdjunto, color = XauxaColor.TextSecondary)
+                XauxaTextAction(label = AppStrings.AdjuntarComprobanteAhora, onClick = { viewModel.openUnassociatedForOperation(operation.id) })
             } else {
                 for (receipt in state.operationComprobantes) {
                     XauxaTile(onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) }) {
                         Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg)) {
-                            XauxaText("Comprobante · " + receiptProvenanceLabel(receipt.provenance), fontWeight = FontWeight.SemiBold)
+                            XauxaText(AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance), fontWeight = FontWeight.SemiBold)
                             XauxaText(formatDate(receipt.createdAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
                             XauxaTextAction(
-                                label = "Desasociar",
+                                label = AppStrings.Desasociar,
                                 onClick = { viewModel.onAction(OperationAction.Disassociate(receipt.id)) },
                             )
                         }
@@ -451,20 +452,20 @@ private fun OperationDetailScreen(
                 }
             }
         }
-        XauxaSecondaryButton(label = "Compartir", onClick = { shareOperation(operation) })
-        XauxaSecondaryButton(label = "Editar", onClick = { viewModel.onAction(OperationAction.Edit(operation.id)) })
-        XauxaTextAction(label = "Eliminar operación", onClick = { showDeleteConfirm = true })
+        XauxaSecondaryButton(label = AppStrings.Compartir, onClick = { shareOperation(operation) })
+        XauxaSecondaryButton(label = AppStrings.Editar, onClick = { viewModel.onAction(OperationAction.Edit(operation.id)) })
+        XauxaTextAction(label = AppStrings.EliminarOperacion, onClick = { showDeleteConfirm = true })
     }
     if (showDeleteConfirm) {
         XauxaDialog(
-            title = "Eliminar operación",
-            message = "Esta acción no se puede deshacer.",
-            confirmLabel = "Eliminar",
+            title = AppStrings.EliminarOperacion,
+            message = AppStrings.EstaAccionNoSePuede,
+            confirmLabel = AppStrings.Eliminar,
             onConfirm = {
                 showDeleteConfirm = false
                 viewModel.onAction(OperationAction.Delete(operation.id))
             },
-            dismissLabel = "Cancelar",
+            dismissLabel = AppStrings.Cancelar,
             onDismiss = { showDeleteConfirm = false },
         )
     }
@@ -520,41 +521,41 @@ private fun ComprobanteViewerDialog(
     var showDeleteConfirm by remember { mutableStateOf(false) }
     if (showDeleteConfirm) {
         XauxaDialog(
-            title = "Eliminar comprobante",
-            message = "La operación asociada se conservará.",
-            confirmLabel = "Eliminar",
+            title = AppStrings.EliminarComprobante,
+            message = AppStrings.LaOperacionAsociadaSeConservara,
+            confirmLabel = AppStrings.Eliminar,
             onConfirm = {
                 showDeleteConfirm = false
                 viewModel.onAction(OperationAction.DeleteComprobante(receipt.id))
             },
-            dismissLabel = "Cancelar",
+            dismissLabel = AppStrings.Cancelar,
             onDismiss = { showDeleteConfirm = false },
         )
         return
     }
     val bytes = state.openedComprobanteBytes
     XauxaDialog(
-        title = "Comprobante",
-        confirmLabel = "Cerrar",
+        title = AppStrings.Comprobante,
+        confirmLabel = AppStrings.Cerrar,
         onConfirm = { viewModel.onAction(OperationAction.CloseComprobante) },
-        dismissLabel = "Eliminar",
+        dismissLabel = AppStrings.Eliminar,
         onDismiss = { showDeleteConfirm = true },
         content = {
             Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 XauxaText(formatDate(receipt.createdAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
-                XauxaText("Origen: " + receiptProvenanceLabel(receipt.provenance), size = XauxaType.Label, color = XauxaColor.TextSecondary)
+                XauxaText(AppStrings.Origen + receiptProvenanceLabel(receipt.provenance), size = XauxaType.Label, color = XauxaColor.TextSecondary)
                 // T6: estado de sincronización del comprobante, con texto.
                 ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                 when {
-                    state.isLoadingComprobante -> XauxaLoading(message = "Abriendo comprobante…")
+                    state.isLoadingComprobante -> XauxaLoading(message = AppStrings.AbriendoComprobante)
                     bytes != null -> {
                         ComprobantePreview(bytes, receipt.mimeType)
                         XauxaSecondaryButton(
-                            label = "Compartir",
+                            label = AppStrings.Compartir,
                             onClick = { shareComprobante(bytes, receipt.extension ?: "bin", receipt.mimeType) },
                         )
                     }
-                    else -> XauxaText("No se pudo abrir el comprobante", size = XauxaType.Label, color = XauxaColor.TextSecondary)
+                    else -> XauxaText(AppStrings.NoSePudoAbrirEl, size = XauxaType.Label, color = XauxaColor.TextSecondary)
                 }
             }
         },

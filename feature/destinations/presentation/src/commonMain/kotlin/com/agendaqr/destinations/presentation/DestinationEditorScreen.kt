@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.destinations.presentation.AppStrings
 import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -112,21 +113,21 @@ private fun DestinationEditorContent(
             )
         }
         XauxaTextInput(
-            label = "Nombre",
+            label = AppStrings.Nombre,
             value = name,
             onValueChange = { name = it },
             isRequired = true,
             isError = nameError,
             errorMessage = if (nameError) "El nombre es obligatorio" else null,
         )
-        XauxaTextInput(label = "Categoría", value = category, onValueChange = { category = it })
-        XauxaTextInput(label = "Nota", value = note, onValueChange = { note = it }, singleLine = false, minLines = 3)
+        XauxaTextInput(label = AppStrings.Categoria, value = category, onValueChange = { category = it })
+        XauxaTextInput(label = AppStrings.Nota, value = note, onValueChange = { note = it }, singleLine = false, minLines = 3)
         XauxaSecondaryButton(
             label = selection.contextId?.let { id -> "Para: " + (contexts.firstOrNull { it.id == id }?.name ?: "Contexto") } ?: "Para: elegir contexto (opcional)",
             onClick = { selection = selection.openPicker() },
         )
         XauxaText(
-            "Desde otra app: comparte una imagen o PDF con Agenda QR.",
+            AppStrings.DesdeOtraAppComparteUna,
             size = XauxaType.Label,
             color = XauxaColor.TextSecondary,
         )
@@ -139,18 +140,18 @@ private fun DestinationEditorContent(
         if (qr.encoded.isBlank()) {
             XauxaScannerViewport(
                 scanning = false,
-                hint = "Importa un QR con Cámara o Galería para previsualizarlo aquí",
+                hint = AppStrings.ImportaUnQrConCamara,
             )
             if (qrError) {
-                XauxaText("Falta el código QR: usa Cámara o Galería", size = XauxaType.Caption, color = XauxaColor.Danger)
+                XauxaText(AppStrings.FaltaElCodigoQrUsa, size = XauxaType.Caption, color = XauxaColor.Danger)
             }
         } else {
             XauxaQrPreview(qr.encoded)
         }
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-            XauxaSecondaryButton(label = "Volver", onClick = onBack, enabled = !isSaving)
+            XauxaSecondaryButton(label = AppStrings.Volver, onClick = onBack, enabled = !isSaving)
             XauxaPrimaryButton(
-                label = "Guardar",
+                label = AppStrings.Guardar,
                 onClick = {
                     submitted = true
                     if (name.isBlank() || qr.encoded.isBlank()) return@XauxaPrimaryButton

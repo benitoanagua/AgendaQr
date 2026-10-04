@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -90,8 +91,8 @@ internal fun ContextPickerDialog(
     onCancel: () -> Unit,
 ) {
     XauxaDialog(
-        title = "Seleccionar contexto",
-        confirmLabel = "Cancelar",
+        title = AppStrings.SeleccionarContexto,
+        confirmLabel = AppStrings.Cancelar,
         onConfirm = onCancel,
         dismissLabel = if (selection.canRemove) "Quitar contexto" else null,
         onDismiss = onRemove,
@@ -101,7 +102,7 @@ internal fun ContextPickerDialog(
         content = {
             Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 if (contexts.isEmpty()) {
-                    XauxaText("Sin contextos disponibles.", color = XauxaColor.TextSecondary)
+                    XauxaText(AppStrings.SinContextosDisponibles, color = XauxaColor.TextSecondary)
                 } else {
                     contexts.forEach { context ->
                         XauxaListRow(

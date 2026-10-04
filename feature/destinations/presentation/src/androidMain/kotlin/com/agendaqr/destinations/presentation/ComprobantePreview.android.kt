@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import android.graphics.BitmapFactory
+import com.agendaqr.destinations.presentation.AppStrings
 import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -32,7 +33,7 @@ actual fun ComprobantePreview(bytes: ByteArray, mimeType: String?, modifier: Mod
         if (bitmap != null) {
             Image(
                 bitmap = bitmap,
-                contentDescription = "Comprobante",
+                contentDescription = AppStrings.Comprobante,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Fit,
             )

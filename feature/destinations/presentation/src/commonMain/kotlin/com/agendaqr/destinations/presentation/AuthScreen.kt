@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.destinations.presentation.AppStrings
 import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -58,16 +59,16 @@ fun AuthScreen(
             verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
         ) {
             XauxaHeading(
-                text = "Agenda QR",
+                text = AppStrings.AgendaQr,
                 size = XauxaType.Display,
             )
             XauxaText(
-                "Inicia sesión para acceder a tu agenda.",
+                AppStrings.IniciaSesionParaAccederA,
                 size = XauxaType.Body,
                 color = XauxaColor.TextSecondary,
             )
             XauxaTextInput(
-                label = "Correo",
+                label = AppStrings.Correo,
                 value = state.email,
                 onValueChange = onEmailChanged,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -76,7 +77,7 @@ fun AuthScreen(
                 errorMessage = if (emailError) "Ingresa un correo válido" else null,
             )
             XauxaTextInput(
-                label = "Contraseña",
+                label = AppStrings.Contrasena,
                 value = state.password,
                 onValueChange = onPasswordChanged,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -102,7 +103,7 @@ fun AuthScreen(
             }
             state.confirmationMessage?.let { XauxaStatusBanner(it, tone = XauxaTone.Info) }
             XauxaPrimaryButton(
-                "Iniciar sesión",
+                AppStrings.IniciarSesion,
                 onClick = {
                     submitted = true
                     if (isValidEmail(state.email) && state.password.length >= 6) onSignIn()
@@ -112,7 +113,7 @@ fun AuthScreen(
                 isLoading = state.isSubmitting,
             )
             XauxaSecondaryButton(
-                "Crear cuenta",
+                AppStrings.CrearCuenta,
                 onClick = {
                     submitted = true
                     if (isValidEmail(state.email) && state.password.length >= 6) onSignUp()

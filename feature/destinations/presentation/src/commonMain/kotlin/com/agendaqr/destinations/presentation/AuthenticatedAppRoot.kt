@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.animation.AnimatedContent
+import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
@@ -167,7 +168,7 @@ internal fun AuthenticatedAppRoot(
         }
         if (isOffline) {
             XauxaStatusBanner(
-                "Sin conexión — los cambios se guardan localmente y se sincronizarán al recuperar conectividad.",
+                AppStrings.SinConexionLosCambiosSe,
                 tone = XauxaTone.Neutral,
             )
         }
@@ -179,7 +180,7 @@ internal fun AuthenticatedAppRoot(
             )
             if (hasFailed) {
                 XauxaTextAction(
-                    label = "Reintentar ahora",
+                    label = AppStrings.ReintentarAhora,
                     onClick = { graph.sessionScope.launch { graph.syncProcessor.drain() } },
                 )
             }
@@ -421,7 +422,7 @@ private fun HomeSurface(
                     xauxaTurnstileExit(reverse = reverse)
             }
         },
-        label = "destination_route_turnstile",
+        label = AppStrings.DestinationRouteTurnstile,
     ) { route ->
         when (route) {
             DestinationRoute.List -> DestinationsScreen(

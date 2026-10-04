@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,29 +44,29 @@ fun AddDestinationScreen(
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         XauxaHeading(
-            text = "Añadir",
+            text = AppStrings.Anadir,
             size = XauxaType.Headline,
         )
         XauxaText(
-            "Trae a Agenda QR algo que ya tienes.",
+            AppStrings.TraeAAgendaQrAlgo,
             color = XauxaColor.TextSecondary,
         )
 
         QrImportControls(onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) }, galleryAsPrimary = true)
 
         XauxaText(
-            "Desde otra app",
+            AppStrings.DesdeOtraApp,
             size = XauxaType.Title,
             fontWeight = FontWeight.SemiBold,
             color = XauxaColor.TextPrimary,
         )
         XauxaText(
-            "Comparte una imagen o PDF desde otra app con Agenda QR. La importación continuará aquí para revisar lo que se encontró.",
+            AppStrings.ComparteUnaImagenOPdf,
             color = XauxaColor.TextSecondary,
         )
 
         XauxaSecondaryButton(
-            label = "Volver",
+            label = AppStrings.Volver,
             onClick = onBack,
         )
     }

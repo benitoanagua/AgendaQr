@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import android.Manifest
+import com.agendaqr.destinations.presentation.AppStrings
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageFormat
@@ -138,7 +139,7 @@ internal fun CameraQrCaptureOverlay(
                                 ),
                         )
                         XauxaText(
-                            "Encuadre el código QR",
+                            AppStrings.EncuadreElCodigoQr,
                             size = XauxaType.Label,
                             color = XauxaColor.TextSecondary,
                             textAlign = TextAlign.Center,
@@ -153,7 +154,7 @@ internal fun CameraQrCaptureOverlay(
                         .padding(XauxaSpacing.Lg),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    XauxaSecondaryButton(label = "Volver", onClick = onDismiss)
+                    XauxaSecondaryButton(label = AppStrings.Volver, onClick = onDismiss)
                 }
             }
         }
@@ -291,7 +292,7 @@ internal fun CameraQrEntry(onOpen: () -> Unit) {
             )
         }
         XauxaSecondaryButton(
-            label = "Cámara",
+            label = AppStrings.Camara,
             onClick = {
                 val granted = ContextCompat.checkSelfPermission(
                     context,

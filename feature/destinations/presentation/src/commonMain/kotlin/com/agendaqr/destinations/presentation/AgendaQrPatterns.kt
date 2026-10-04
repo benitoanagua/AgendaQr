@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,9 +26,9 @@ import com.agendaqr.core.ui.theme.XauxaType
 @Composable
 fun FirstUsePattern(onAdd: () -> Unit) {
     XauxaEmptyState(
-        title = "Sin destinos",
-        subtitle = "Agrega tu primer QR para empezar.",
-        actionLabel = "Agregar QR",
+        title = AppStrings.SinDestinos,
+        subtitle = AppStrings.AgregaTuPrimerQrPara,
+        actionLabel = AppStrings.AgregarQr,
         onAction = onAdd,
     )
 }
@@ -50,9 +51,9 @@ fun DestinationNotFound(onBack: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         XauxaEmptyState(
-            title = "Destino no encontrado",
-            subtitle = "Pudo haber sido eliminado en otro dispositivo.",
-            actionLabel = "Volver a la lista",
+            title = AppStrings.DestinoNoEncontrado,
+            subtitle = AppStrings.PudoHaberSidoEliminadoEn,
+            actionLabel = AppStrings.VolverALaLista,
             onAction = onBack,
         )
     }
@@ -73,8 +74,8 @@ fun QrFullscreenPattern(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg, Alignment.CenterVertically),
     ) {
-        XauxaText("QR", size = XauxaType.Headline, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
+        XauxaText(AppStrings.Qr, size = XauxaType.Headline, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
         XauxaQrPreview(encodedQr, modifier = Modifier.fillMaxWidth())
-        XauxaSecondaryButton("Volver", onBack)
+        XauxaSecondaryButton(AppStrings.Volver, onBack)
     }
 }

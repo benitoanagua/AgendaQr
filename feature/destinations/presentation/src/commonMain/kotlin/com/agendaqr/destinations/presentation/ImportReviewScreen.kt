@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,7 +48,7 @@ fun ImportReviewScreen(
             .imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        XauxaHeading(text = "Revisar QR", size = XauxaType.Headline, fontWeight = FontWeight.Normal)
+        XauxaHeading(text = AppStrings.RevisarQr, size = XauxaType.Headline, fontWeight = FontWeight.Normal)
         error?.let { err ->
             XauxaStatusBanner(
                 err.display(),
@@ -59,9 +60,9 @@ fun ImportReviewScreen(
         }
         if (assets.isEmpty()) {
             XauxaEmptyState(
-                title = "No hay QR para revisar",
-                subtitle = "Vuelve e importa desde Cámara o Galería.",
-                actionLabel = "Volver",
+                title = AppStrings.NoHayQrParaRevisar,
+                subtitle = AppStrings.VuelveEImportaDesdeCamara,
+                actionLabel = AppStrings.Volver,
                 onAction = onBack,
             )
         } else {
@@ -79,7 +80,7 @@ fun ImportReviewScreen(
                 }
             }
             XauxaPrimaryButton(if (assets.size == 1) "Guardar" else "Guardar todo", onSaveAll, enabled = !isSaving, isLoading = isSaving)
-            XauxaSecondaryButton("Volver", onBack, enabled = !isSaving)
+            XauxaSecondaryButton(AppStrings.Volver, onBack, enabled = !isSaving)
         }
     }
 }

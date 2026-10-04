@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.clickable
+import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -70,7 +71,7 @@ fun DestinationsScreen(
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         XauxaHeading(
-            text = "Agenda QR",
+            text = AppStrings.AgendaQr,
             size = XauxaType.Display,
         )
 
@@ -87,8 +88,8 @@ fun DestinationsScreen(
             XauxaSearchBar(
                 value = "",
                 onValueChange = {},
-                label = "Buscar en Agenda QR",
-                placeholder = "Buscar QR, actividades, comprobantes o contextos",
+                label = AppStrings.BuscarEnAgendaQr,
+                placeholder = AppStrings.BuscarQrActividadesComprobantesO,
             )
             Box(
                 Modifier
@@ -96,11 +97,11 @@ fun DestinationsScreen(
                     // El toque físico vive en clickable; clearAndSetSemantics
                     // reemplaza TODA la semántica (incluida la de clickable)
                     // por el nodo único del control.
-                    .clickable(onClickLabel = "Buscar en Agenda QR") { onOpenSearch() }
+                    .clickable(onClickLabel = AppStrings.BuscarEnAgendaQr) { onOpenSearch() }
                     .clearAndSetSemantics {
-                        contentDescription = "Buscar en Agenda QR"
+                        contentDescription = AppStrings.BuscarEnAgendaQr
                         role = Role.Button
-                        onClick(label = "Buscar en Agenda QR") {
+                        onClick(label = AppStrings.BuscarEnAgendaQr) {
                             onOpenSearch()
                             true
                         }
@@ -114,11 +115,11 @@ fun DestinationsScreen(
             verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
         ) {
             XauxaSecondaryButton(
-                label = "Añadir",
+                label = AppStrings.Anadir,
                 onClick = { onAction(DestinationAction.Edit(null)) },
             )
             XauxaSecondaryButton(
-                label = "Registrar",
+                label = AppStrings.Registrar,
                 onClick = onOpenOperations,
             )
         }
@@ -137,7 +138,7 @@ fun DestinationsScreen(
             )
         }
         when {
-            state.isLoading -> XauxaLoading(message = "Cargando destinos QR…")
+            state.isLoading -> XauxaLoading(message = AppStrings.CargandoDestinosQr)
             state.visibleDestinations.isEmpty() -> XauxaEmptyState(
                 title = if (state.destinations.isEmpty()) "Aún no hay destinos" else "No se encontraron destinos",
                 subtitle = if (state.destinations.isEmpty()) "Agrega tu primer QR para empezar." else "Prueba con otra búsqueda o limpia los filtros.",
@@ -169,7 +170,7 @@ fun DestinationsScreen(
         // vive al pie, fuera de la fila de acciones principales (Buscar
         // domina; Añadir y Registrar son las acciones secundarias).
         XauxaTextAction(
-            label = "Cerrar sesión",
+            label = AppStrings.CerrarSesion,
             onClick = onSignOut,
             modifier = Modifier.padding(top = XauxaSpacing.Lg),
         )
@@ -183,7 +184,7 @@ fun DestinationRow(
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
     XauxaListRow(
-        title = destination.name.ifBlank { "Sin nombre" },
+        title = destination.name.ifBlank { AppStrings.SinNombre },
         subtitle = destination.note ?: destination.category,
         tone = if (destination.favorite) XauxaTone.Info else XauxaTone.Neutral,
         onClick = { onAction(DestinationAction.Open(destination.id)) },
