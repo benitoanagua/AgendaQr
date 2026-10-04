@@ -122,10 +122,6 @@ fun DestinationsScreen(
                 label = "Registrar",
                 onClick = onOpenOperations,
             )
-            XauxaTextAction(
-                label = "Cerrar sesión",
-                onClick = onSignOut,
-            )
         }
 
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
@@ -169,6 +165,15 @@ fun DestinationsScreen(
                 }
             }
         }
+
+        // T11 — S01: "Cerrar sesión" es una acción de cuenta, no del flujo:
+        // vive al pie, fuera de la fila de acciones principales (Buscar
+        // domina; Añadir y Registrar son las acciones secundarias).
+        XauxaTextAction(
+            label = "Cerrar sesión",
+            onClick = onSignOut,
+            modifier = Modifier.padding(top = XauxaSpacing.Lg),
+        )
     }
 }
 

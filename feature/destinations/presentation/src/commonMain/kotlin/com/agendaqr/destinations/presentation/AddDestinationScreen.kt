@@ -51,9 +51,7 @@ fun AddDestinationScreen(
             color = XauxaColor.TextSecondary,
         )
 
-        QrImportControls { result ->
-            if (result.assets.isNotEmpty()) onImport(result.assets)
-        }
+        QrImportControls(onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) }, galleryAsPrimary = true)
 
         Text(
             "Desde otra app",
