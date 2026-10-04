@@ -34,7 +34,7 @@ data class DestinationsUiState(
     val route: DestinationRoute = DestinationRoute.List,
     val isLoading: Boolean = true,
     val isSaving: Boolean = false,
-    val error: String? = null,
+    val error: UserFacingError? = null,
 ) {
     val visibleDestinations: List<Destination>
         get() = destinations
@@ -95,11 +95,11 @@ class DestinationsViewModel(
                     _state.update { state -> state.copy(route = DestinationRoute.FullscreenQr(action.id)) }
                 }
             }
-            is DestinationAction.Save -> { if (!state.value.isSaving) scope.launch { _state.update { it.copy(isSaving = true, error = null) }; runCatching { save(action.destination) }.onFailure(::showError).onSuccess { back() }; _state.update { it.copy(isSaving = false) } } }
+            is DestinationAction.Save -> { if (!state.value.isSaving) scope.launch { _state.update { it.copy(isSaving = true, error = null) }; runCatching { save(action.destination) }.onFailure { showError(it, ErrorFlow.SaveQr) }.onSuccess { back() }; _state.update { it.copy(isSaving = false) } } }
             is DestinationAction.ImportAssets -> { importedAssets = action.assets; _state.update { it.copy(route = DestinationRoute.ImportReview, error = null) } }
-            is DestinationAction.Update -> { if (!state.value.isSaving) scope.launch { _state.update { it.copy(isSaving = true, error = null) }; runCatching { update(action.destination) }.onFailure(::showError).onSuccess { back() }; _state.update { it.copy(isSaving = false) } } }
-            is DestinationAction.Delete -> scope.launch { runCatching { delete(action.id) }.onFailure(::showError).onSuccess { back() } }
-            is DestinationAction.ToggleFavorite -> scope.launch { runCatching { toggleFavorite(action.destination) }.onFailure(::showError) }
+            is DestinationAction.Update -> { if (!state.value.isSaving) scope.launch { _state.update { it.copy(isSaving = true, error = null) }; runCatching { update(action.destination) }.onFailure { showError(it, ErrorFlow.SaveQr) }.onSuccess { back() }; _state.update { it.copy(isSaving = false) } } }
+            is DestinationAction.Delete -> scope.launch { runCatching { delete(action.id) }.onFailure { showError(it, ErrorFlow.DeleteQr) }.onSuccess { back() } }
+            is DestinationAction.ToggleFavorite -> scope.launch { runCatching { toggleFavorite(action.destination) }.onFailure { showError(it, ErrorFlow.SaveQr) } }
             DestinationAction.Back -> back()
             DestinationAction.ClearError -> _state.update { it.copy(error = null) }
         }
@@ -127,7 +127,7 @@ class DestinationsViewModel(
                         updatedAt = now,
                     ))
                 }
-            }.onFailure(::showError).onSuccess { importedAssets = emptyList(); back() }
+            }.onFailure { showError(it, ErrorFlow.SaveQr) }.onSuccess { importedAssets = emptyList(); back() }
             _state.update { it.copy(isSaving = false) }
         }
     }
@@ -143,5 +143,11 @@ class DestinationsViewModel(
             )
         }
     }
-    private fun showError(error: Throwable) { _state.update { it.copy(error = error.message ?: "Operation failed") } }
+    /**
+     * Mapeo centralizado (T5): nunca se expone `error.message` crudo; el
+     * estado lleva un error mostrable con qué/data/acción (spec §10).
+     */
+    private fun showError(error: Throwable, flow: ErrorFlow) {
+        _state.update { it.copy(error = userFacingError(error, flow)) }
+    }
 }

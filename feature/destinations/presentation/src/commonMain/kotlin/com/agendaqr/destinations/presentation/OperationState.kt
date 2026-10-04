@@ -37,7 +37,7 @@ data class OperationsUiState(
     val openedComprobante: Comprobante? = null,
     val openedComprobanteBytes: ByteArray? = null,
     val isLoadingComprobante: Boolean = false,
-    val error: String? = null,
+    val error: UserFacingError? = null,
     val receiptSuggestions: Map<String, ReceiptAssociationSuggestion> = emptyMap(),
 )
 
@@ -148,11 +148,11 @@ class OperationsViewModel(
                 _state.update { it.copy(route = OperationRoute.Edit(action.id), error = null) }
             }
             is OperationAction.Delete -> scope.launch {
-                runCatching { deleteOperation(action.id) }.onFailure(::showError).onSuccess { back() }
+                runCatching { deleteOperation(action.id) }.onFailure { showError(it, ErrorFlow.DeleteOperation) }.onSuccess { back() }
             }
             is OperationAction.Associate -> scope.launch {
                 runCatching { associate(action.comprobanteId, action.operationId) }
-                    .onFailure(::showError)
+                    .onFailure { showError(it, ErrorFlow.SaveReceipt) }
                     .onSuccess {
                         associationReturnOperationId?.let { operationId ->
                             selectedOperationId = operationId
@@ -162,7 +162,7 @@ class OperationsViewModel(
                     }
             }
             is OperationAction.Disassociate -> scope.launch {
-                runCatching { unassociate(action.comprobanteId) }.onFailure(::showError)
+                runCatching { unassociate(action.comprobanteId) }.onFailure { showError(it, ErrorFlow.SaveReceipt) }
             }
             is OperationAction.CreateOperationFromReceipt -> {
                 if (!state.value.isSavingOperation) createOperationFromReceipt(action.comprobanteId)
@@ -183,7 +183,7 @@ class OperationsViewModel(
                             ?: state.value.openedComprobante?.takeIf { it.id == action.id },
                     ) { "Comprobante no encontrado" }
                     deleteComprobante(receipt)
-                }.onFailure(::showError).onSuccess {
+                }.onFailure { showError(it, ErrorFlow.DeleteReceipt) }.onSuccess {
                     _state.update {
                         it.copy(
                             openedComprobante = null,
@@ -222,7 +222,7 @@ class OperationsViewModel(
         _state.update { it.copy(route = OperationRoute.Detail(id), error = null, operationComprobantes = emptyList()) }
         scope.launch {
             if (getOperation(id) == null) {
-                showError(IllegalArgumentException("Operation not found: $id"))
+                _state.update { it.copy(error = operationNotFound()) }
                 return@launch
             }
             observeOperationComprobantes(id).collect { receipts ->
@@ -248,7 +248,7 @@ class OperationsViewModel(
                 it.copy(
                     pendingIncoming = null,
                     pendingDuplicates = emptyList(),
-                    error = "Ya existe un comprobante igual. Puedes conservarlo sin crear otra copia.",
+                    error = duplicateReceiptGuardError(),
                 )
             }
             return
@@ -269,7 +269,7 @@ class OperationsViewModel(
                     incoming.extension,
                     incoming.mimeType,
                 )
-            }.onFailure(::showError).onSuccess {
+            }.onFailure { showError(it, ErrorFlow.SaveReceipt) }.onSuccess {
                 _state.update { it.copy(pendingIncoming = null, pendingDuplicates = emptyList(), route = if (openInbox) OperationRoute.Unassociated else OperationRoute.List) }
             }
             _state.update { it.copy(isSavingReceipt = false) }
@@ -289,7 +289,7 @@ class OperationsViewModel(
             runCatching {
                 saveOperation(operation)
                 associate(comprobanteId, operation.id)
-            }.onFailure(::showError).onSuccess {
+            }.onFailure { showError(it, ErrorFlow.SaveReceipt) }.onSuccess {
                 selectedOperationId = operation.id
                 _state.update { it.copy(route = OperationRoute.Detail(operation.id)) }
             }
@@ -301,7 +301,7 @@ class OperationsViewModel(
         scope.launch {
             _state.update { it.copy(isSavingOperation = true, error = null) }
             runCatching { updateOperation(action.operation) }
-                .onFailure(::showError)
+                .onFailure { showError(it, ErrorFlow.SaveOperation) }
                 .onSuccess {
                     selectedOperationId = action.operation.id
                     _state.update { it.copy(route = OperationRoute.Detail(action.operation.id)) }
@@ -326,7 +326,7 @@ class OperationsViewModel(
                 note = action.note?.trim()?.takeIf(String::isNotBlank),
                 contextId = action.contextId,
             )
-            runCatching { saveOperation(operation) }.onFailure(::showError).onSuccess {
+            runCatching { saveOperation(operation) }.onFailure { showError(it, ErrorFlow.SaveOperation) }.onSuccess {
                 selectedOperationId = operation.id
                 _state.update { it.copy(route = OperationRoute.Detail(operation.id)) }
             }
@@ -365,20 +365,26 @@ class OperationsViewModel(
         scope.launch {
             val receipt = knownReceipt ?: getComprobante(id)
             if (receipt == null) {
-                _state.update { it.copy(openedComprobante = null, isLoadingComprobante = false, error = "Comprobante no encontrado") }
+                _state.update { it.copy(openedComprobante = null, isLoadingComprobante = false, error = comprobanteNotFound()) }
                 return@launch
             }
             _state.update { it.copy(openedComprobante = receipt) }
             val bytes = runCatching { comprobanteFiles.read(receipt.file) }.getOrNull()
             if (bytes == null) {
-                _state.update { it.copy(isLoadingComprobante = false, error = "No se pudo abrir el comprobante") }
+                _state.update { it.copy(isLoadingComprobante = false, error = userFacingError(IllegalStateException(), ErrorFlow.ComprobanteOpen)) }
             } else {
                 _state.update { it.copy(openedComprobanteBytes = bytes, isLoadingComprobante = false) }
             }
         }
     }
 
-    private fun showError(error: Throwable) {
-        _state.update { it.copy(error = error.message ?: "No se pudo completar la operación", isSavingReceipt = false, isSavingOperation = false) }
+    /**
+     * Mapeo centralizado (T5): nunca `error.message` crudo; el estado lleva
+     * qué pasó, qué pasó con los datos y la acción (spec §10).
+     */
+    private fun showError(error: Throwable, flow: ErrorFlow) {
+        _state.update {
+            it.copy(error = userFacingError(error, flow), isSavingReceipt = false, isSavingOperation = false)
+        }
     }
 }

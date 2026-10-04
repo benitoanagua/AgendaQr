@@ -19,7 +19,7 @@ data class GlobalSearchUiState(
     val query: String = "",
     val results: List<AgendaSearchResult> = emptyList(),
     val isSearching: Boolean = false,
-    val error: String? = null,
+    val error: UserFacingError? = null,
 )
 
 sealed interface GlobalSearchAction {
@@ -64,9 +64,11 @@ class GlobalSearchViewModel(
                         if (currentCoroutineContext().isActive) {
                             _state.update { current ->
                                 if (current.query == action.value) {
+                                    // T5: nunca `error.message` crudo; el
+                                    // error ofrece REINTENTAR (spec §10).
                                     current.copy(
                                         isSearching = false,
-                                        error = error.message ?: "No se pudo buscar",
+                                        error = userFacingError(error, ErrorFlow.Search),
                                     )
                                 } else {
                                     current

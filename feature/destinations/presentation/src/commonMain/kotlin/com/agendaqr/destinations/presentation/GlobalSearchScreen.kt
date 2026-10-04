@@ -43,7 +43,16 @@ fun GlobalSearchScreen(
             placeholder = "Buscar",
             onClear = { onAction(GlobalSearchAction.Clear) },
         )
-        state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { onAction(GlobalSearchAction.ClearError) }) }
+        state.error?.let { err ->
+            XauxaStatusBanner(
+                err.display(),
+                tone = XauxaTone.Danger,
+                actionLabel = err.action.label,
+                // REINTENTAR: relanza la búsqueda con la misma consulta.
+                onAction = { onAction(GlobalSearchAction.QueryChanged(state.query)) },
+                onDismiss = { onAction(GlobalSearchAction.ClearError) },
+            )
+        }
         when {
             state.query.isBlank() -> Text(
                 "Busca destinos, operaciones, contextos o comprobantes.",

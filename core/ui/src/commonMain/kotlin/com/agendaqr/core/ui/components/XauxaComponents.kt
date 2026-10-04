@@ -202,6 +202,8 @@ fun XauxaStatusBanner(
     modifier: Modifier = Modifier,
     danger: Boolean = false,
     tone: XauxaTone? = null,
+    actionLabel: String? = null,
+    onAction: (() -> Unit)? = null,
     onDismiss: (() -> Unit)? = null,
 ) {
     // Compatibilidad: el parámetro semántico nuevo prevalece; sin él se
@@ -225,6 +227,11 @@ fun XauxaStatusBanner(
             color = foreground,
             fontSize = XauxaType.Label,
         )
+        // Acción del error recuperable (spec §10: el error ofrece qué
+        // hacer) antes que el descarte opcional.
+        if (actionLabel != null && onAction != null) {
+            XauxaTextAction(label = actionLabel, onClick = onAction)
+        }
         if (onDismiss != null) {
             XauxaTextAction(label = "Descartar", onClick = onDismiss)
         }
