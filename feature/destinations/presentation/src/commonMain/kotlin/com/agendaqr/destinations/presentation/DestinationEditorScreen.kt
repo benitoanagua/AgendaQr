@@ -117,6 +117,11 @@ private fun DestinationEditorContent(
             label = contextId?.let { id -> "Para: " + (contexts.firstOrNull { it.id == id }?.name ?: "Contexto") } ?: "Para: elegir contexto (opcional)",
             onClick = { showContextPicker = true },
         )
+        Text(
+            "Desde otra app: comparte una imagen o PDF con Agenda QR.",
+            fontSize = XauxaType.Label,
+            color = XauxaColor.TextSecondary,
+        )
         QrImportControls { result ->
             when {
                 result.assets.size > 1 -> onImportMany(result.assets)
