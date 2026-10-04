@@ -323,7 +323,7 @@ Una cirugía manual sobre `shared_prefs/agendaqr.xml` con re-escape incorrecto c
 
 ### Pendientes reales después de esta pasada
 
-- **Contextos sin vía de creación (FAIL como capacidad, gap de contrato)**: `SaveContextUseCase` existe pero ninguna UI lo invoca; no hay forma de crear un contexto en toda la app, por lo que S06, el selector S08 y los resultados de búsqueda de tipo Contexto están muertos en la práctica. El contrato congelado no define un flujo de creación, y el backlog A5 exige confirmar el flujo en el contrato UX antes de implementarlo: no se inventó UX en esta pasada. Es la brecha principal entre lo documentado ("main contiene Contextos") y la realidad.
+- **Contextos sin vía de creación (GATE DE DECISIÓN — T3)**: `SaveContextUseCase`/`UpdateContextUseCase` existen pero ninguna UI los invoca; no hay forma de crear un contexto en toda la app, por lo que S06, el selector S08 y los resultados de búsqueda de tipo Contexto solo son alcanzables con seed manual por SQL. El contrato congelado no define el flujo de creación: **no se implementó**. La decisión está propuesta en `docs/07-decisiones/ADR-0003-creacion-de-contextos.md` (opciones A/B/C + sub-decisión de edición, marcada `PROPUESTA — requiere aprobación`); hasta aprobación humana explícita, los casos de uso siguen sin cablear.
 - **iOS runtime** — BLOCKED (sin Xcode): launch, login, persistencia, import, cámara/galería/share (siguen siendo stubs de adquisición), NetworkMonitor real, restart.
 - **TalkBack interactivo y predictive back físico** — NO VALIDADO en headless.
 - **Decod de QR real vía cámara** — NO VALIDADO (la escena virtual del emulador no contiene QR).
