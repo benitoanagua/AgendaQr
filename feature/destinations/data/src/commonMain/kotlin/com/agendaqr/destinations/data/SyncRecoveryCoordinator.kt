@@ -5,6 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -34,21 +35,23 @@ class SyncRecoveryCoordinator @OptIn(ExperimentalTime::class) constructor(
     fun start(): Job {
         job?.cancel()
         return scope.launch {
-            val periodic = launch {
-                // Drenado inicial inmediato + reintentos con backoff.
+            if (networkMonitor == null) {
                 while (isActive) {
                     val result = drainAndReport()
                     delay(nextDelay(result))
                 }
-            }
-            if (networkMonitor != null) {
-                // Drenado oportunista al recuperar conectividad (concurre de
-                // forma segura: el procesador serializa con Mutex).
-                networkMonitor.observe().collect { online ->
-                    if (online && isActive) drainAndReport()
-                }
             } else {
-                periodic.join()
+                // La conectividad es una condición de ejecución, no solo un
+                // disparador: mientras estamos offline no se intenta drenar.
+                // collectLatest cancela el ciclo activo al pasar a offline y
+                // lo reinicia inmediatamente cuando vuelve online.
+                networkMonitor.observe().collectLatest { online ->
+                    if (!online) return@collectLatest
+                    while (isActive) {
+                        val result = drainAndReport()
+                        delay(nextDelay(result))
+                    }
+                }
             }
         }.also { job = it }
     }
