@@ -21,8 +21,8 @@ actual fun QrImportControls(onResult: (QrImportResult) -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
-        XauxaSecondaryButton("Cámara", AgendaQrAndroidImportLauncher::camera)
         XauxaSecondaryButton("Galería", AgendaQrAndroidImportLauncher::gallery)
-        XauxaSecondaryButton("Varios", AgendaQrAndroidImportLauncher::multiple)
+        XauxaSecondaryButton("Galería (varios)", AgendaQrAndroidImportLauncher::multiple)
+        XauxaSecondaryButton("Cámara", AgendaQrAndroidImportLauncher::camera)
     }
 }
