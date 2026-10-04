@@ -175,6 +175,7 @@ class OperationsComprobanteActionsTest {
             unassociate = UnassociateComprobanteUseCase(receipts),
             saveComprobante = SaveComprobanteUseCase(receipts, files),
             findDuplicates = FindDuplicateComprobantesUseCase(receipts, files),
+            getComprobante = com.agendaqr.destinations.domain.GetComprobanteUseCase(receipts),
             suggestReceiptAssociation = SuggestReceiptAssociationUseCase(receipts, operations),
             deleteComprobante = DeleteComprobanteUseCase(receipts, files),
             comprobanteFiles = files,
