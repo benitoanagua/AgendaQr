@@ -45,6 +45,7 @@ sealed interface OperationAction {
     data class Search(val value: String) : OperationAction
     data object New : OperationAction
     data class Open(val id: String) : OperationAction
+    data class Edit(val id: String) : OperationAction
     data class Delete(val id: String) : OperationAction
     data class Associate(val comprobanteId: String, val operationId: String) : OperationAction
     data class Disassociate(val comprobanteId: String) : OperationAction
@@ -126,6 +127,10 @@ class OperationsViewModel(
             is OperationAction.Search -> _state.update { it.copy(query = action.value) }
             OperationAction.New -> _state.update { it.copy(route = OperationRoute.New, error = null) }
             is OperationAction.Open -> open(action.id)
+            is OperationAction.Edit -> {
+                selectedOperationId = action.id
+                _state.update { it.copy(route = OperationRoute.Edit(action.id), error = null) }
+            }
             is OperationAction.Delete -> scope.launch {
                 runCatching { deleteOperation(action.id) }.onFailure(::showError).onSuccess { back() }
             }
@@ -322,9 +327,15 @@ class OperationsViewModel(
     private fun back() {
         val returnOperationId = associationReturnOperationId
         associationReturnOperationId = null
+        val currentRoute = state.value.route
         if (returnOperationId != null) {
             selectedOperationId = returnOperationId
             _state.update { it.copy(route = OperationRoute.Detail(returnOperationId), error = null) }
+        } else if (currentRoute is OperationRoute.Edit) {
+            // Back desde edición vuelve al detalle que la originó (contrato:
+            // "Back vuelve al estado anterior y conserva el draft cuando existe").
+            selectedOperationId = currentRoute.id
+            _state.update { it.copy(route = OperationRoute.Detail(currentRoute.id), error = null) }
         } else {
             selectedOperationId = null
             _state.update { it.copy(route = OperationRoute.List, operationComprobantes = emptyList(), error = null) }

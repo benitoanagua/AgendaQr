@@ -32,11 +32,9 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
         XauxaDialog(
             title = if (duplicate) "Comprobante duplicado" else "Comprobante recibido",
             message = if (duplicate) {
-                "Ya existe un comprobante igual. Puedes verlo o guardar otra copia.
-Archivo: " + incoming.extension
+                "Parece que este comprobante ya está guardado.\nArchivo: " + incoming.extension
             } else {
-                "Se guardará en tu bandeja de respaldos sin asociar.
-Archivo: " + incoming.extension
+                "Se guardará en tu bandeja de respaldos sin asociar.\nArchivo: " + incoming.extension
             },
             confirmLabel = if (duplicate) "Guardar de todos modos" else if (saving) "Guardando…" else "Guardar",
             onConfirm = {
@@ -473,7 +471,7 @@ internal fun parseDate(text: String): Long? {
 }
 
 
-private fun operationTypeLabel(type: OperationType): String = when (type) {
+internal fun operationTypeLabel(type: OperationType): String = when (type) {
     OperationType.PAGO -> "Pago"
     OperationType.COBRO -> "Cobro"
 }
@@ -505,7 +503,7 @@ private fun ComprobanteViewerDialog(state: OperationsUiState, receipt: Comproban
         content = {
             Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
-                receipt.provenance?.let { Text("Origen: " + it.name, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary) }
+                Text("Origen: " + receiptProvenanceLabel(receipt.provenance), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
                 when {
                     state.isLoadingComprobante -> XauxaLoading(message = "Abriendo comprobante…")
                     bytes != null -> {
