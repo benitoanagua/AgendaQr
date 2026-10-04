@@ -152,8 +152,9 @@ private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsVi
     }
     selectedReceipt?.let { receipt ->
         val suggestion = viewModel.receiptSuggestion(receipt.id)
-        val candidateOperations = suggestion?.operationIds.orEmpty()
+        val suggestedOperations = suggestion?.operationIds.orEmpty()
             .mapNotNull { id -> state.operations.firstOrNull { it.id == id } }
+        val candidateOperations = suggestedOperations.ifEmpty { state.operations }
         XauxaDialog(
             title = when (suggestion?.kind) {
                 ReceiptMatchKind.SINGLE -> "Parece corresponder a"
@@ -168,10 +169,26 @@ private fun UnassociatedScreen(state: OperationsUiState, viewModel: OperationsVi
                     when {
                         suggestion == null -> Text("Estamos analizando el comprobante.", color = XauxaColor.TextSecondary)
                         suggestion.kind == ReceiptMatchKind.NONE ->
-                            Text(
-                                "No encontramos una operación con señales suficientes para asociarlo automáticamente. Puedes guardarlo sin asociar.",
-                                color = XauxaColor.TextSecondary,
-                            )
+                            Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                                Text(
+                                    "No encontramos una coincidencia automática. Puedes elegir manualmente una operación.",
+                                    color = XauxaColor.TextSecondary,
+                                )
+                                if (candidateOperations.isEmpty()) {
+                                    Text("No hay operaciones disponibles.", color = XauxaColor.TextSecondary)
+                                } else {
+                                    candidateOperations.forEach { operation ->
+                                        XauxaListRow(
+                                            title = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
+                                            subtitle = operation.amount.orEmpty().ifBlank { "—" },
+                                            onClick = {
+                                                viewModel.onAction(OperationAction.Associate(receipt.id, operation.id))
+                                                selectedReceipt = null
+                                            },
+                                        )
+                                    }
+                                }
+                            }
                         candidateOperations.isEmpty() ->
                             Text(
                                 "Las operaciones candidatas ya no están disponibles.",
