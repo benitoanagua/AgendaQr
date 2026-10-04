@@ -32,7 +32,7 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
         XauxaDialog(
             title = if (duplicate) "Comprobante duplicado" else "Comprobante recibido",
             message = if (duplicate) {
-                "Ya existe un comprobante igual. No se guardará otra copia.\nArchivo: " + incoming.extension
+                "Ya existe un comprobante igual. Puedes verlo o guardar otra copia.\nArchivo: " + incoming.extension
             } else {
                 "Se guardará en tu bandeja de respaldos sin asociar.\nArchivo: " + incoming.extension
             },
@@ -48,12 +48,16 @@ fun OperationsScreen(state: OperationsUiState, viewModel: OperationsViewModel, o
                     )
                 }
             },
-            dismissLabel = if (duplicate) "Cerrar" else "Asociar ahora",
+            dismissLabel = if (duplicate) "Ver existente" else "Asociar ahora",
             onDismiss = {
-                viewModel.onAction(
-                    if (duplicate) OperationAction.ClearIncoming
-                    else OperationAction.SaveIncoming(true),
-                )
+                if (duplicate) {
+                    state.pendingDuplicates.firstOrNull()?.id?.let { id ->
+                        viewModel.onAction(OperationAction.OpenComprobante(id))
+                    }
+                    viewModel.onAction(OperationAction.ClearIncoming)
+                } else {
+                    viewModel.onAction(OperationAction.SaveIncoming(true))
+                }
             },
         )
     }
