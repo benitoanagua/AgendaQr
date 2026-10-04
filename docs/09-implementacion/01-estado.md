@@ -63,7 +63,7 @@ No se introducen cambios de UX fuera del contrato congelado.
 - registro de Operation con contexto.
 - revisión de QR.
 - revisión de comprobante.
-- comprobante duplicado bloqueado.
+- advertencia de comprobante duplicado no bloqueante; permite Ver existente o Guardar de todos modos.
 - sugerencia determinista de asociación.
 - importación bulk con estados y acciones.
 - guardas contra doble guardado.
@@ -233,3 +233,9 @@ Sobre `main`, sin declarar runtime PASS:
 - RF-18: la búsqueda textual de operaciones ahora incluye fecha y tipo además de importe, moneda, persona/entidad, concepto y nota.
 - RF-12: si la sugerencia automática de asociación de un comprobante no encuentra coincidencias, la bandeja ofrece igualmente las operaciones existentes para selección manual.
 - Estas capacidades siguen requiriendo ejecución runtime para declararse PASS.
+
+
+- RF-14: la advertencia de duplicado ahora permite abrir el comprobante existente directamente o guardar otra copia de forma intencional; se corrigió el cableado de `allowDuplicate`.
+- RF-13: un resultado de comprobante en la búsqueda global abre directamente el visor del comprobante, incluso si está asociado o no está en la bandeja visible.
+- UX: se retiró el filtro "Recientes" de destinos porque el contrato de dominio había eliminado la regla de "uso reciente"; no se inventa una ventana temporal sin especificación.
+- Los cambios anteriores son correcciones estáticas sobre `main`; CI queda pendiente y no se declara runtime PASS.
