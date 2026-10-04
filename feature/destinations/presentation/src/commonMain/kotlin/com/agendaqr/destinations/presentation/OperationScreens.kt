@@ -82,7 +82,7 @@ private fun OperationListScreen(state: OperationsUiState, viewModel: OperationsV
         XauxaSearchBar(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = "Buscar", placeholder = "Buscar operaciones", onClear = { viewModel.onAction(OperationAction.Search("")) })
         if (state.unassociated.isNotEmpty()) {
             XauxaStatusBanner("Comprobantes sin asociar: " + state.unassociated.size)
-            XauxaSecondaryButton(label = "Ver bandeja de respaldos", onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
+            XauxaSecondaryButton(label = "Ver bandeja de respaldos", onClick = { viewModel.openUnassociatedForOperation(operation.id) })
         }
         state.error?.let { XauxaStatusBanner(it, tone = XauxaTone.Danger, onDismiss = { viewModel.onAction(OperationAction.ClearError) }) }
         if (operations.isEmpty()) {
@@ -397,7 +397,7 @@ private fun OperationDetailScreen(state: OperationsUiState, viewModel: Operation
                 for (receipt in state.operationComprobantes) {
                     XauxaTile(onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) }) {
                         Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg)) {
-                            Text("Comprobante " + receipt.provenance?.name.orEmpty(), fontWeight = FontWeight.SemiBold)
+                            Text("Comprobante · " + receiptProvenanceLabel(receipt.provenance), fontWeight = FontWeight.SemiBold)
                             Text(formatDate(receipt.createdAt), fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
                             XauxaTextAction(
                                 label = "Desasociar",
@@ -427,7 +427,7 @@ private fun OperationDetailScreen(state: OperationsUiState, viewModel: Operation
     }
 }
 
-internal fun formatDate(millis: Long): String {
+internal fun receiptProvenanceLabel(provenance: ReceiptProvenance?): String = when (provenance) {\n    ReceiptProvenance.ENVIADO -> "Enviado"\n    ReceiptProvenance.RECIBIDO -> "Recibido"\n    ReceiptProvenance.DESCONOCIDO, null -> "Origen desconocido"\n}\n\ninternal fun formatDate(millis: Long): String {
     val z = millis / 86_400_000L + 719468
     val era = if (z >= 0) z / 146097 else (z - 146096) / 146097
     val doe = z - era * 146097
