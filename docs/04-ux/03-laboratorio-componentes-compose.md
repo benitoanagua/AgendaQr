@@ -1,5 +1,7 @@
 # Laboratorio de componentes UI (Compose)
 
+> **Nota V1.1 (2026-10-05, ADR-0005):** el laboratorio debe actualizarse para reflejar la especificación V1.1 (tiles Metro, app bar inferior, pivot, campos planos, iconos Lucide, Archivo Light). Esta pasada es solo documental: no se edita el código del lab. Las altas de catálogo correspondientes están registradas en `docs/05-design-system/04-component-audit-register.md` (sección V1.1, PENDIENTE).
+
 ## Propósito
 
 Espacio aislado para desarrollar, inspeccionar y validar los componentes visuales de Agenda QR antes de integrarlos en los flujos de producto. El laboratorio es un catálogo ejecutable de componentes y tokens reales con su contrato (propiedades, estados, eventos, trazabilidad a Xauxa) y un preview interactivo con datos ficticios. No es una pantalla de producto ni introduce reglas de dominio.

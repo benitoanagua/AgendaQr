@@ -209,6 +209,15 @@ I16 Evento tardío no puede retroceder a una fase inválida.
 I17 Una operación en curso tiene una única identidad aunque se dispare varias veces.  
 I18 Todo estado no terminal tiene salida recuperable o cancelable.
 
+### Invariantes V1.1 (ADR-0005) — PENDIENTES de implementación
+
+- I19 (PENDIENTE) Contraste de acentos: para cada acento admitido de la paleta Metro (spec §12), el par acento/texto asignado cumple ≥ 4.5:1 en texto normal (≥ 3:1 texto grande), verificado en tema claro y en oscuro.
+- I20 (PENDIENTE) Todo tile expone rol de botón, etiqueta de texto visible, estado y orden de foco lógico; el foco por teclado/TalkBack es visible sobre el color del tile.
+- I21 (PENDIENTE) Reduced motion desactiva tilt, escalonado y flip: solo cambio de estado inmediato.
+- I22 (PENDIENTE) No hay bucles de animación: el live tile realiza una única transición por cambio de dato; ninguna animación decorativa rota en bucle.
+- I23 (PENDIENTE) Ningún contenedor muestra borde de reposo: los bordes solo aparecen en foco, campo en foco/error o tile seleccionado.
+- I24 (PENDIENTE) Todo icono interactivo va acompañado de etiqueta de texto visible (también en la barra de aplicación inferior); los iconos decorativos están marcados como no accesibles.
+
 ## 5. Resultado
 
 **44 escenarios conceptuales cubiertos.**

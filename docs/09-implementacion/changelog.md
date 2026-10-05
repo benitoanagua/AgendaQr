@@ -140,3 +140,23 @@ de comprobantes con "mismo día" por días de calendario; laboratorio Wasm
 (40 tests del modelo); CI dividido en jobs + ios-compile + supabase
 acceptance; migración 006 (FK ON DELETE SET NULL) sin tocar 001–005;
 A4 (targetSdk 36, firma release con guard, allowBackup false).
+
+## 2026-10-05 (4) — Pasada docs-only: UX/UI V1.1 Metro (rama docs/ux-metro-v1.1)
+
+Enmienda de la especificación congelada a **V1.1 FROZEN** por aprobación
+humana explícita (ADR-0005, D-18): lenguaje visual Metro como expresión de
+Xauxa. Reescritos S01 (rejilla de tiles + búsqueda dominante + recientes
+sin borde), S06 (pivot QR · Actividades · Comprobantes), §11 (contraste,
+tiles accesibles, etiqueta visible en iconos, reduced motion) y §12
+(contrato visual Metro: rejilla/tiles, paleta de 12 acentos con tabla de
+contraste calculada, tipografía con Archivo Light, app bar inferior,
+campos planos, bordes funcionales, botones, movimiento, iconografía Lucide
+ISC, modo oscuro). Intención, navegación conceptual, modelo mental, reglas
+de negocio y recuperación: intactos. Design system actualizado (snapshot,
+reglas de implementación V1.1, tipografía, auditoría con componentes
+PENDIENTES) y nuevo registro de licencias (`06-licencias-terceros.md`).
+Suite de validación: invariantes I19–I24 añadidos como PENDIENTES.
+**Sin ningún cambio fuera de `docs/`**; el código queda declarado
+desalineado hasta la pasada de implementación. Defectos de implementación
+abiertos registrados en `01-estado.md` (Volver en dos líneas, primario
+recortado, badge de ancho completo, destinos indistinguibles, QR pequeño).
