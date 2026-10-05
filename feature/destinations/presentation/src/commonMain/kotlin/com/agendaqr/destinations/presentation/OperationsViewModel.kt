@@ -120,7 +120,7 @@ class OperationsViewModel(
                         state.value.unassociated.firstOrNull { it.id == action.id }
                             ?: state.value.operationComprobantes.firstOrNull { it.id == action.id }
                             ?: state.value.openedComprobante?.takeIf { it.id == action.id },
-                    ) { "Comprobante no encontrado" }
+                    ) { AppStrings.ComprobanteNoEncontrado }
                     deleteComprobante(receipt)
                 }.onFailure { showError(it, ErrorFlow.DeleteReceipt) }.onSuccess {
                     _state.update {

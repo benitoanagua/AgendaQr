@@ -140,7 +140,7 @@ private fun DestinationEditorContent(
             onClick = { selection = selection.openPicker() },
         )
         XauxaText(
-            AppStrings.DesdeOtraAppComparteUna,
+            AppStrings.shareFromAnotherAppLabel,
             size = XauxaType.Label,
             color = XauxaColor.TextSecondary,
         )

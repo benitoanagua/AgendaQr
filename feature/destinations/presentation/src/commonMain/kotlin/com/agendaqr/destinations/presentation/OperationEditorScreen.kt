@@ -161,8 +161,8 @@ internal fun OperationEditorScreen(
 
     if (showSensitiveConfirm) {
         XauxaDialog(
-            title = AppStrings.CambiarOperacionConComprobantes,
-            message = AppStrings.EstaOperacionTieneComprobantesEl,
+            title = AppStrings.changeOperationWithReceipts,
+            message = AppStrings.sensitiveChangeWarning,
             confirmLabel = AppStrings.GuardarCambio,
             onConfirm = {
                 showSensitiveConfirm = false

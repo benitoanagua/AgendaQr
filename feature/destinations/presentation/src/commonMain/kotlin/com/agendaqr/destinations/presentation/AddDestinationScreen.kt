@@ -61,7 +61,7 @@ fun AddDestinationScreen(
             color = XauxaColor.TextPrimary,
         )
         XauxaText(
-            AppStrings.ComparteUnaImagenOPdf,
+            AppStrings.shareFromAnotherAppHint,
             color = XauxaColor.TextSecondary,
         )
 

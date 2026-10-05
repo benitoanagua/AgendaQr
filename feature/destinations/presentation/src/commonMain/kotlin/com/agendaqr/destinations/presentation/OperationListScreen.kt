@@ -56,13 +56,13 @@ fun OperationsScreen(
         val duplicate = state.pendingDuplicates.isNotEmpty()
         val saving = state.isSavingReceipt
         XauxaDialog(
-            title = if (duplicate) "Comprobante duplicado" else "Comprobante recibido",
+            title = if (duplicate)  AppStrings.ComprobanteDuplicado else AppStrings.receiptReceivedTitle,
             message = if (duplicate) {
-                "Parece que este comprobante ya está guardado.\nArchivo: " + incoming.extension
+                AppStrings.duplicateReceiptWarningPrefix + incoming.extension
             } else {
-                "Se guardará en tu bandeja de respaldos sin asociar.\nArchivo: " + incoming.extension
+                AppStrings.incomingReceiptExplanationPrefix + incoming.extension
             },
-            confirmLabel = if (duplicate) "Guardar de todos modos" else if (saving) "Guardando…" else "Guardar",
+            confirmLabel = if (duplicate) AppStrings.GuardarDeTodosModos else if (saving) AppStrings.Guardando else AppStrings.Guardar,
             onConfirm = {
                 if (!saving) {
                     viewModel.onAction(
@@ -74,7 +74,7 @@ fun OperationsScreen(
                     )
                 }
             },
-            dismissLabel = if (duplicate) "Ver existente" else "Asociar ahora",
+            dismissLabel = if (duplicate) AppStrings.VerExistente else AppStrings.AsociarAhora,
             onDismiss = {
                 if (duplicate) {
                     state.pendingDuplicates.firstOrNull()?.id?.let { id ->
@@ -130,9 +130,9 @@ internal fun OperationListScreen(
         }
         if (operations.isEmpty()) {
             XauxaEmptyState(
-                title = if (state.query.isBlank()) "Aún no hay operaciones" else "No hay coincidencias",
-                subtitle = if (state.query.isBlank()) "Registra tu primer pago o cobro." else "Prueba con otra búsqueda.",
-                actionLabel = if (state.query.isBlank()) "Registrar operación" else "Limpiar búsqueda",
+                title = if (state.query.isBlank()) AppStrings.AunNoHayOperaciones else AppStrings.NoHayCoincidencias,
+                subtitle = if (state.query.isBlank()) AppStrings.registerFirstPaymentHint else AppStrings.tryAnotherSearchHint,
+                actionLabel = if (state.query.isBlank()) AppStrings.RegistrarOperacion else AppStrings.LimpiarBusqueda,
                 onAction = {
                     if (state.query.isBlank()) viewModel.onAction(OperationAction.New)
                     else viewModel.onAction(OperationAction.Search(""))
@@ -184,20 +184,20 @@ internal fun UnassociatedScreen(
             XauxaTextAction(label = AppStrings.Volver, onClick = { viewModel.onAction(OperationAction.Back) })
         }
         if (state.unassociated.isEmpty()) {
-            XauxaEmptyState(title = AppStrings.NoHayComprobantesSinAsociar, actionLabel = AppStrings.Volver, onAction = { viewModel.onAction(OperationAction.Back) })
+            XauxaEmptyState(title = AppStrings.noUnassociatedReceipts, actionLabel = AppStrings.Volver, onAction = { viewModel.onAction(OperationAction.Back) })
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 items(state.unassociated, key = { it.id }) { receipt ->
                     XauxaTile(onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) }) {
                         Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                            XauxaText(AppStrings.ComprobanteRecibido, fontWeight = FontWeight.SemiBold)
+                            XauxaText(AppStrings.receiptReceivedTitle, fontWeight = FontWeight.SemiBold)
                             XauxaText(formatDate(receipt.createdAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
                             // T6: estado de sincronización por comprobante, con texto.
                             ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                             // Acciones apiladas: dos etiquetas largas no caben lado a lado en 360dp.
                             Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                                XauxaPrimaryButton(label = AppStrings.AsociarAOperacionExistente, onClick = { selectedReceipt = receipt })
-                                XauxaSecondaryButton(label = AppStrings.CrearNuevaOperacionConEsto, onClick = {
+                                XauxaPrimaryButton(label = AppStrings.associateToExistingOperation, onClick = { selectedReceipt = receipt })
+                                XauxaSecondaryButton(label = AppStrings.createOperationFromThis, onClick = {
                                     viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
                                 })
                             }
@@ -214,9 +214,9 @@ internal fun UnassociatedScreen(
         val candidateOperations = suggestedOperations.ifEmpty { state.operations }
         XauxaDialog(
             title = when (suggestion?.kind) {
-                ReceiptMatchKind.SINGLE -> "Parece corresponder a"
+                ReceiptMatchKind.SINGLE -> AppStrings.singleMatchTitle
                 ReceiptMatchKind.MULTIPLE -> "¿A cuál corresponde?"
-                ReceiptMatchKind.NONE, null -> "No encontramos coincidencia"
+                ReceiptMatchKind.NONE, null -> AppStrings.noMatchTitle
             },
             confirmLabel = AppStrings.Cancelar,
             onConfirm = { selectedReceipt = null },
@@ -224,15 +224,15 @@ internal fun UnassociatedScreen(
             content = {
                 Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                     when {
-                        suggestion == null -> XauxaText(AppStrings.EstamosAnalizandoElComprobante, color = XauxaColor.TextSecondary)
+                        suggestion == null -> XauxaText(AppStrings.analyzingReceipt, color = XauxaColor.TextSecondary)
                         suggestion.kind == ReceiptMatchKind.NONE ->
                             Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                                 XauxaText(
-                                    AppStrings.NoEncontramosUnaCoincidenciaAutomatica,
+                                    AppStrings.noAutomaticMatch,
                                     color = XauxaColor.TextSecondary,
                                 )
                                 if (candidateOperations.isEmpty()) {
-                                    XauxaText(AppStrings.NoHayOperacionesDisponibles, color = XauxaColor.TextSecondary)
+                                    XauxaText(AppStrings.noOperationsAvailable, color = XauxaColor.TextSecondary)
                                 } else {
                                     candidateOperations.forEach { operation ->
                                         XauxaListRow(

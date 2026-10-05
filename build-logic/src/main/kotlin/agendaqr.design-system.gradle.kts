@@ -25,6 +25,19 @@ fun visualSources(): List<File> = productionKotlinSources().toList()
  * Reglas por línea, parametrizadas por ruta: así la tarea de fixtures
  * puede auto-verificar el guard con contenido sintético.
  */
+/**
+ * D2 — allowlist de literales de UI permitidos en feature/: solo
+ * identificadores técnicos (ids, prefijos, MIME, rutas), nunca copy.
+ */
+val uiLiteralAllowlist = listOf(
+    "image/png", "image/jpeg", "image/webp", "application/pdf",
+    "file://", "ctx-", "operation-", "destination-", "comprobante-",
+    "import-", "m-", "u-", "qr-", "d-", "photo-", "Revisar ",
+)
+
+fun isUiLiteralAllowed(text: String): Boolean =
+    uiLiteralAllowlist.any { text.contains(it) }
+
 fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = buildList {
     val bannedImports = listOf("androidx.compose.material.icons", "Icons.Filled", "Icons.Outlined", "Icons.Rounded")
     val rawHex = Regex("#[0-9A-Fa-f]{6,8}")
@@ -57,6 +70,17 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
         if (!path.endsWith("XauxaTheme.kt") && forbiddenVisualAuthority.any(line::contains)) add("$location: MaterialTheme cannot be the visual authority outside XauxaTheme: $line")
         if (isFeatureSource && bannedMaterialInFeature.any(line::contains)) {
             add("$location: Material component imported from feature/ (compose Xauxa instead): $line")
+        }
+        // D2 — copy de UI en feature/ debe salir de AppStrings.
+        if (isFeatureSource) {
+            val uiCall = Regex("(XauxaText|XauxaHeading|XauxaEmptyState|XauxaStatusBanner|XauxaPrimaryButton|XauxaSecondaryButton|XauxaTextAction|XauxaDialog)\\(\\s*\"([^\"]+)\"").find(line)
+            if (uiCall != null && !isUiLiteralAllowed(uiCall.groupValues[2])) {
+                add("$location: UI string literal outside AppStrings (D2): ${uiCall.groupValues[2]}")
+            }
+            val namedArg = Regex("(title|subtitle|actionLabel|label|placeholder|confirmLabel|dismissLabel|message|text|hint) = \"([^\"]+)\"").find(line)
+            if (namedArg != null && !isUiLiteralAllowed(namedArg.groupValues[2])) {
+                add("$location: UI string literal outside AppStrings (D2): ${namedArg.groupValues[2]}")
+            }
         }
     }
 }
@@ -148,6 +172,21 @@ tasks.register("verifyDesignSystemFixtures") {
         }
         require(falseCoreBans.isEmpty()) {
             "core:ui adapter imports must not be banned: ${falseCoreBans.joinToString()}"
+        }
+
+        // D2 — copy de UI en feature/: el literal crudo DEBE fallar...
+        val rawLiteral = "XauxaText(\"Sin conexión\", color = XauxaColor.TextSecondary)"
+        require(kotlinDesignViolations(featurePath, listOf(rawLiteral)).isNotEmpty()) {
+            "feature/ UI literal that must fail passed (D2)"
+        }
+        // ...y el mismo texto vía AppStrings o id técnico debe pasar.
+        val allowedD2 = listOf(
+            "XauxaText(AppStrings.offlineBanner, color = XauxaColor.TextSecondary)",
+            "XauxaText(\"operation-123\", color = XauxaColor.TextSecondary)",
+        )
+        val falseLiterals = allowedD2.filter { kotlinDesignViolations(featurePath, listOf(it)).isNotEmpty() }
+        require(falseLiterals.isEmpty()) {
+            "Valid AppStrings/technical literals failed enforcement (D2): ${falseLiterals.joinToString()}"
         }
     }
 }

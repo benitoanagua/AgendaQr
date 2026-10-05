@@ -73,11 +73,11 @@ fun ImportBatchScreen(
             is ImportBatchUiState.Result -> BatchResultContent(state.batch, onAction, isSaving = false)
             is ImportBatchUiState.Review -> BatchReviewContent(state.batch, onAction, isSaving = false)
             is ImportBatchUiState.Saving -> {
-                XauxaLoading(message = AppStrings.GuardandoElementosReconocidos)
+                XauxaLoading(message = AppStrings.savingRecognizedItems)
                 BatchResultContent(state.batch, onAction, isSaving = true)
             }
             is ImportBatchUiState.Saved -> {
-                XauxaStatusBanner(AppStrings.GuardadoLosElementosPendientesConservan, tone = XauxaTone.Success)
+                XauxaStatusBanner(AppStrings.batchSavedKeepReviewNotice, tone = XauxaTone.Success)
                 XauxaPrimaryButton(AppStrings.Volver, onClick = { onAction(ImportBatchAction.Back) })
             }
             is ImportBatchUiState.Error -> {
@@ -119,9 +119,9 @@ private fun BatchResultContent(
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
 ) {
-    XauxaText("✓ " + AppStrings.Reconocidos + ": " + batch.uniqueRecognized.size, color = XauxaColor.TextPrimary)
-    XauxaText("! " + AppStrings.PosiblesDuplicados + ": " + batch.duplicates.size, color = XauxaColor.TextSecondary)
-    XauxaText("? " + AppStrings.PendientesDeRevision + ": " + batch.unknown.size, color = XauxaColor.TextSecondary)
+    XauxaText(AppStrings.checkMark + AppStrings.Reconocidos + ": " + batch.uniqueRecognized.size, color = XauxaColor.TextPrimary)
+    XauxaText(AppStrings.dupMark + AppStrings.PosiblesDuplicados + ": " + batch.duplicates.size, color = XauxaColor.TextSecondary)
+    XauxaText(AppStrings.pendingMark + AppStrings.PendientesDeRevision + ": " + batch.unknown.size, color = XauxaColor.TextSecondary)
 
     if (batch.canSaveRecognized()) {
         XauxaPrimaryButton(

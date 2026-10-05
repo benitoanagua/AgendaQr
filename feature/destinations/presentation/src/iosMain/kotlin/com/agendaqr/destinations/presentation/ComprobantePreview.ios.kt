@@ -20,6 +20,6 @@ actual fun ComprobantePreview(bytes: ByteArray, mimeType: String?, modifier: Mod
         modifier = modifier.fillMaxWidth().heightIn(min = XauxaMetrics.QrPreviewSize).border(XauxaMetrics.Border, XauxaColor.Border),
         contentAlignment = Alignment.Center,
     ) {
-        XauxaText("Comprobante adjunto (vista previa pendiente en iOS)", size = XauxaType.Label, color = XauxaColor.TextSecondary)
+        XauxaText(AppStrings.ComprobanteAdjuntoVistaPreviaPendienteEnIos, size = XauxaType.Label, color = XauxaColor.TextSecondary)
     }
 }

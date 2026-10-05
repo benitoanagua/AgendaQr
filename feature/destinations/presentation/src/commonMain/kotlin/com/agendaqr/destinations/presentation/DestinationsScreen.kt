@@ -88,7 +88,7 @@ fun DestinationsScreen(
                 value = "",
                 onValueChange = {},
                 label = AppStrings.BuscarEnAgendaQr,
-                placeholder = AppStrings.BuscarQrActividadesComprobantesO,
+                placeholder = AppStrings.searchPlaceholder,
             )
             Box(
                 Modifier
@@ -124,7 +124,7 @@ fun DestinationsScreen(
         }
 
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-            XauxaFilterChip("Favoritos", state.favoriteOnly, { onAction(DestinationAction.ToggleFavorites) })
+            XauxaFilterChip(AppStrings.Favoritos, state.favoriteOnly, { onAction(DestinationAction.ToggleFavorites) })
             state.category?.let { XauxaCategoryChip(it) }
         }
         state.error?.let { error ->
@@ -194,7 +194,7 @@ fun DestinationRow(
                     syncLookup.status(SyncResource.DESTINATION, destination.id),
                 )
                 XauxaTextAction(
-                    label = if (destination.favorite) "Favorito" else "Marcar favorito",
+                    label = if (destination.favorite) AppStrings.Favorito else AppStrings.MarcarFavorito,
                     onClick = { onAction(DestinationAction.ToggleFavorite(destination)) },
                 )
             }

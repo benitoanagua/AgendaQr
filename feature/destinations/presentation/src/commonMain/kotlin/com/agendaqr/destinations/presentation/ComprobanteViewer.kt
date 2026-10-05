@@ -36,7 +36,7 @@ internal fun ComprobanteViewerDialog(
     if (showDeleteConfirm) {
         XauxaDialog(
             title = AppStrings.EliminarComprobante,
-            message = AppStrings.LaOperacionAsociadaSeConservara,
+            message = AppStrings.operationKeptOnReceiptDelete,
             confirmLabel = AppStrings.Eliminar,
             onConfirm = {
                 showDeleteConfirm = false
