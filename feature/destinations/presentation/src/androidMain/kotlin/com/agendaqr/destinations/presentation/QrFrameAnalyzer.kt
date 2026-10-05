@@ -87,6 +87,23 @@ object QrFrameAnalyzer {
         }
     }
 
+    /**
+     * Quita el padding de fin de fila de un plano Y real: los frames de
+     * cámara traen `rowStride >= width` (alineación del sensor) y copiar
+     * el buffer crudo cizalla la imagen — en físicos eso rompía TODA
+     * decodificación. Puro y testeable.
+     */
+    fun stripStride(padded: ByteArray, width: Int, height: Int, rowStride: Int): ByteArray {
+        require(width > 0 && height > 0 && rowStride >= width) { "dimensiones inválidas" }
+        require(padded.size >= rowStride * (height - 1) + width) { "buffer corto para su stride" }
+        if (rowStride == width) return padded.copyOf(width * height)
+        val out = ByteArray(width * height)
+        for (row in 0 until height) {
+            padded.copyInto(out, destinationOffset = row * width, startIndex = row * rowStride, endIndex = row * rowStride + width)
+        }
+        return out
+    }
+
     /** Gira el plano de luminancia al orientación de lectura natural. */
     internal fun rotateLuminance(y: ByteArray, width: Int, height: Int, rotationDegrees: Int): ByteArray {
         if (rotationDegrees % 360 == 0) return y
