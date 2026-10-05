@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -216,8 +217,13 @@ class ScreensA11yCoverageTest {
         }
         compose.waitForIdle()
         compose.onNodeWithText("Agenda QR").assert(headingMatcher())
-        compose.onNodeWithText("Carniceria Don Bife").assertIsDisplayed()
-        // La acción solo-texto está etiquetada (quitar de favoritos).
+        // V1.1 (ADR-0005, S01): el nombre del último QR aparece dos veces —
+        // en su fila de Recientes y en el tile vivo ancho (M2). El test fija
+        // ahora esa composición: ambas presentaciones existen y la acción
+        // de favorito sigue etiquetada y con target de 48 dp.
+        val nameNodes = compose.onAllNodesWithText("Carniceria Don Bife").fetchSemanticsNodes()
+        assert(nameNodes.size == 2) { "Se esperan fila de Recientes + tile vivo con el último QR" }
+        compose.onNodeWithText("Último QR o actividad reciente").assertExists()
         compose.onNodeWithText("Favorito").assertHeightIsAtLeast(48.dp)
         // T6/U4: el estado de sync es texto, nunca solo color.
         compose.onNodeWithText("Sincronizado").assertExists()
