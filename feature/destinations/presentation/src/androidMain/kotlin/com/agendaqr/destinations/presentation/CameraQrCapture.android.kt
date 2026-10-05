@@ -4,9 +4,7 @@ import android.Manifest
 import com.agendaqr.destinations.presentation.AppStrings
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.ImageFormat
 import android.graphics.Matrix
-import android.graphics.YuvImage
 import android.util.Base64
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -215,7 +213,9 @@ private fun CameraPreviewWithAnalysis(
  * importación (S09): imagen PNG del QR capturado, igual que Galería.
  */
 internal fun assetFromFrame(proxy: ImageProxy, content: String): QrAsset {
-    val bitmap = runCatching { proxy.toBitmapCompat() }.getOrNull()
+    // Preview en grises desde el Y ya sin stride: legible para S09 y sin
+    // el ensamblado NV21 manual (que sufría el mismo stride en U/V).
+    val bitmap = runCatching { proxy.toGrayscaleBitmap() }.getOrNull()
     return if (bitmap != null) {
         val rotated = rotateBitmap(bitmap, proxy.imageInfo.rotationDegrees)
         val bytes = ByteArrayOutputStream().also {
@@ -231,27 +231,16 @@ internal fun assetFromFrame(proxy: ImageProxy, content: String): QrAsset {
     }
 }
 
-private fun ImageProxy.toBitmapCompat(): Bitmap = when (format) {
-    ImageFormat.YUV_420_888 -> yuvToBitmap(this)
-    else -> toBitmap()
-}
-
-private fun yuvToBitmap(image: ImageProxy): Bitmap {
-    val yBuffer = image.planes[0].buffer
-    val uBuffer = image.planes[1].buffer
-    val vBuffer = image.planes[2].buffer
-    val ySize = yBuffer.remaining()
-    val uSize = uBuffer.remaining()
-    val vSize = vBuffer.remaining()
-    val nv21 = ByteArray(ySize + uSize + vSize)
-    yBuffer.get(nv21, 0, ySize)
-    vBuffer.get(nv21, ySize, vSize)
-    uBuffer.get(nv21, ySize + vSize, uSize)
-    val yuv = YuvImage(nv21, ImageFormat.NV21, image.width, image.height, null)
-    val out = ByteArrayOutputStream()
-    yuv.compressToJpeg(android.graphics.Rect(0, 0, image.width, image.height), 100, out)
-    val bytes = out.toByteArray()
-    return android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+/** Bitmap en grises del plano Y (stride ya corregido por [planeY]). */
+private fun ImageProxy.toGrayscaleBitmap(): Bitmap {
+    val y = planeY(this)
+    val argb = IntArray(width * height) { i ->
+        val v = y[i].toInt() and 0xFF
+        (0xFF shl 24) or (v shl 16) or (v shl 8) or v
+    }
+    return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).apply {
+        setPixels(argb, 0, width, 0, 0, width, height)
+    }
 }
 
 private fun rotateBitmap(bitmap: Bitmap, degrees: Int): Bitmap {
