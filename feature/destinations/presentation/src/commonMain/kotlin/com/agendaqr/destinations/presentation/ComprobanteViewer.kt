@@ -54,6 +54,9 @@ internal fun ComprobanteViewerDialog(
         onConfirm = { viewModel.onAction(OperationAction.CloseComprobante) },
         dismissLabel = AppStrings.Eliminar,
         onDismiss = { showDeleteConfirm = true },
+        // R1: Back del sistema / toque fuera CIERRA el visor; "Eliminar"
+        // solo se alcanza por su botón explícito (§3: Back ≠ destructivo).
+        onDismissRequest = { viewModel.onAction(OperationAction.CloseComprobante) },
         content = {
             Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 XauxaText(formatDate(receipt.createdAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
