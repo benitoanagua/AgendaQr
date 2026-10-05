@@ -82,6 +82,10 @@ fun OperationsScreen(
                     viewModel.onAction(OperationAction.SaveIncoming(true))
                 }
             },
+            // R1: Back del sistema / toque fuera ABANDONA el comprobante
+            // entrante sin guardar nada (§3 "Cancelar abandona la intención
+            // actual"); "Asociar ahora"/"Ver existente" requieren su botón.
+            onDismissRequest = { viewModel.onAction(OperationAction.ClearIncoming) },
         )
     }
     state.openedComprobante?.let { receipt ->
