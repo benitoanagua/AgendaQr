@@ -53,6 +53,15 @@ android {
             }
         }
     }
+    // D6: advertencias triaged con justificación en lint-baseline.xml
+    // (versiones de libs: actualización dedicada; icono y reglas de
+    // backup: decisión de producto pendiente; onBackInvokedCallback:
+    // intencional API 33+).
+    lint {
+        baseline = project.file("lint-baseline.xml")
+        warningsAsErrors = false
+        // D6: `./gradlew :androidApp:updateLintBaseline` regenera el archivo.
+    }
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
