@@ -68,6 +68,19 @@ componentLabWeb PASS; TZ La_Paz/Kiritimati PASS; ACCEPTANCE PASS;
 runtime en emulador: flujos A y C + T1/T2/T4/T5/T6/T7/T8/T11 con dump de
 UI + SQL (ver `01-estado.md`).
 
+## 2026-10-05 — Pasada 2: R1 + U1–U5 + D1–D6 + V1–V7 (main 4fd63c7…b1e3ef4)
+
+Bugs reales de R1: clears-null remotos (#94) y Back destructivo en
+diálogos (#95). Gaps: contadores U1 (#96), iOS real compilando (#97),
+creación de contextos ADR-0003 opción C + fix XauxaListRow (#98),
+DEAD_LETTER honesto + ADR-0004 propuesta (#99), predictive back (#100).
+Deuda: coordinador de lote D1 (#101), strings completos + guard D2
+(#102), a11y ampliada D3 (#103), instrumentados D4 (#104), riesgos de
+datos D5 (#105/#107), lint+lab D6 (#106). Validación final: 268 tests
+(47/70/105/46), lint 0, aceptación SQL, TZ×4, connectedTest 3/3, runtime
+A–F + offline/kill/usuarios/back. iOS runtime BLOCKED; QR real y
+TalkBack NO VALIDADO.
+
 ## 2026-10-04 (1.ª mitad) — Cierre MVP local (main 75a205d → 2349f51)
 
 Pasada con emulador + Supabase local real: flujos A–F ejecutados con
