@@ -5,6 +5,8 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import kotlinx.datetime.Instant
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -59,11 +61,13 @@ class SupabaseContextRepository(
     )
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 internal data class ContextRow(
     val id: String,
     @SerialName("user_id") val userId: String,
     val name: String,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     val note: String? = null,
     @SerialName("created_at") val createdAt: Instant,
     @SerialName("updated_at") val updatedAt: Instant,

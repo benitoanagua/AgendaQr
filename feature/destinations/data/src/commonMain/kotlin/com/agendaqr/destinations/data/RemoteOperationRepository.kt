@@ -8,6 +8,8 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import kotlinx.datetime.Instant
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -89,6 +91,7 @@ class SupabaseOperationRepository(
     )
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 internal data class OperationRow(
     val id: String,
@@ -98,12 +101,19 @@ internal data class OperationRow(
     @SerialName("created_at") val createdAt: Instant,
     @SerialName("updated_at") val updatedAt: Instant? = null,
     /** `numeric(20,6)` in SQL: PostgREST returns a JSON number on reads. */
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     @Serializable(with = NumericAsStringSerializer::class) val amount: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     val currency: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     @SerialName("person_or_entity") val personOrEntity: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     @SerialName("destination_id") val destinationId: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     val concept: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     val note: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     @SerialName("context_id") val contextId: String? = null,
 )
 

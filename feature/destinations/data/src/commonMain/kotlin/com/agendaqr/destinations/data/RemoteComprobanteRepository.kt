@@ -7,6 +7,8 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.storage.storage
 import kotlinx.datetime.Instant
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.ExperimentalTime
@@ -108,17 +110,23 @@ class SupabaseComprobanteRepository(
     )
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 internal data class ComprobanteRow(
     val id: String,
     @SerialName("user_id") val userId: String,
     @SerialName("file_path") val filePath: String,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     @SerialName("mime_type") val mimeType: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     val extension: String? = null,
     @SerialName("created_at") val createdAt: Instant,
     @SerialName("updated_at") val updatedAt: Instant,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     val provenance: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     @SerialName("operation_id") val operationId: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     @SerialName("context_id") val contextId: String? = null,
 )
 
