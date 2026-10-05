@@ -62,7 +62,7 @@ CRM, obligaciones, saldos, pagos parciales, reembolsos especializados, contabili
 
 ## D-16 — UX
 
-La UI/UX permanece bajo Xauxa Design System; esta consolidación no crea un sistema visual paralelo.
+La UI/UX permanece bajo Xauxa Design System; esta consolidación no crea un sistema visual paralelo. (Enmienda 2026-10-05, ADR-0005: Xauxa sigue siendo el único sistema de diseño; su expresión visual en Agenda QR es el lenguaje Metro, definido como enmienda del contrato Xauxa — no un segundo sistema.)
 
 ## D-17 — UX/UI V1 congelada
 
@@ -83,3 +83,7 @@ Quedan consolidados, sin alterar las reglas de negocio existentes:
 - invariantes de idempotencia y recuperación.
 
 La implementación debe adaptarse al contrato UX/UI; un fallo de implementación no modifica automáticamente la especificación.
+
+## D-18 — Lenguaje visual Metro dentro de Xauxa (UX/UI V1.1)
+
+Se adopta el lenguaje visual Metro completo como expresión de Xauxa, según ADR-0005. D-17 queda enmendado en **jerarquía visual y composición** (S01, S06, §11, §12 de la especificación): el contrato pasa de V1.0 a V1.1 FROZEN el 2026-10-05. No se alteran intención, navegación conceptual, modelo mental, reglas de negocio ni recuperación de errores. Se adopta Lucide (licencia ISC) como set de iconos, con etiqueta de texto visible en todo icono interactivo (decisión de accesibilidad y desviación consciente de Metro). La implementación debe adaptarse a V1.1 en una pasada posterior; hasta entonces el código está declarado desalineado.
