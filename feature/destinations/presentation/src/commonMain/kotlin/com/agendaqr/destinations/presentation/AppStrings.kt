@@ -11,7 +11,8 @@ package com.agendaqr.destinations.presentation
  */
 internal object AppStrings {
     val AbriendoComprobante = "Abriendo comprobante…"
-    val ActividadReciente = "Actividad reciente · "
+    val ActividadReciente = "Actividad reciente"
+    val ActividadesRecientes = "Actividades recientes"
     val AdjuntarComprobanteAhora = "Adjuntar comprobante ahora"
     val AgendaQr = "Agenda QR"
     val AgregaTuPrimerQrPara = "Agrega tu primer QR para empezar."
@@ -41,7 +42,7 @@ internal object AppStrings {
     val Comprobante2 = "Comprobante · "
     val ComprobantesSinAsociar = "Comprobantes sin asociar"
     val ComprobantesSinAsociar2 = "Comprobantes sin asociar: "
-    val Comprobantes = "Comprobantes · "
+    val Comprobantes = "Comprobantes"
     val ConceptoOpcional = "Concepto (opcional)"
     val Concepto = "Concepto: "
     val Contextos = "Contextos"
@@ -142,4 +143,7 @@ internal object AppStrings {
     val QrSinNombre = "QR sin nombre"
     val SinNombre = "Sin nombre"
     val VerMas = "Ver más"
+    val Reconocidos = "Reconocidos"
+    val PosiblesDuplicados = "Posibles duplicados"
+    val PendientesDeRevision = "Pendientes de revisión"
 }

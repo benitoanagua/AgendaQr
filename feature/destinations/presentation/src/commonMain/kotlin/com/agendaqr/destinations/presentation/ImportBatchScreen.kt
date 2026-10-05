@@ -114,9 +114,9 @@ private fun BatchResultContent(
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
 ) {
-    XauxaText("✓ Reconocidos: ${batch.uniqueRecognized.size}", color = XauxaColor.TextPrimary)
-    XauxaText("! Posibles duplicados: ${batch.duplicates.size}", color = XauxaColor.TextSecondary)
-    XauxaText("? Pendientes de revisión: ${batch.unknown.size}", color = XauxaColor.TextSecondary)
+    XauxaText("✓ " + AppStrings.Reconocidos + ": " + batch.uniqueRecognized.size, color = XauxaColor.TextPrimary)
+    XauxaText("! " + AppStrings.PosiblesDuplicados + ": " + batch.duplicates.size, color = XauxaColor.TextSecondary)
+    XauxaText("? " + AppStrings.PendientesDeRevision + ": " + batch.unknown.size, color = XauxaColor.TextSecondary)
 
     if (batch.canSaveRecognized()) {
         XauxaPrimaryButton(

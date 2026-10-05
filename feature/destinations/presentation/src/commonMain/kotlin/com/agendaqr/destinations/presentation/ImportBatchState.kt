@@ -141,6 +141,6 @@ fun ImportBatch.canSaveRecognized(): Boolean = uniqueRecognized.isNotEmpty()
 
 fun ImportBatch.pendingItems(): List<ImportCandidate> = pendingReview
 
-/** Etiqueta del botón de revisión: "Revisar N pendientes" (contrato S12). */
+/** Etiqueta del botón de revisión: "Revisar N pendiente(s)" (contrato S12). */
 fun reviewPendingLabel(batch: ImportBatch): String =
-    "Revisar " + batch.pendingItems().size + " pendientes"
+    reviewPendingLabel(batch.pendingItems().size)
