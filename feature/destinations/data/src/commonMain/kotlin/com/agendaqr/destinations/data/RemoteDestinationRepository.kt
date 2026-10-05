@@ -7,6 +7,8 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import kotlinx.datetime.Instant
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.ExperimentalTime
@@ -78,6 +80,7 @@ class SupabaseDestinationRepository(
     )
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 internal data class DestinationRow(
     val id: String,
@@ -85,11 +88,14 @@ internal data class DestinationRow(
     val name: String,
     @SerialName("qr_raw_content") val qrRawContent: String,
     @SerialName("qr_kind") val qrKind: String,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     val category: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     val note: String? = null,
     val favorite: Boolean = false,
     @SerialName("created_at") val createdAt: Instant,
     @SerialName("updated_at") val updatedAt: Instant,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     @SerialName("context_id") val contextId: String? = null,
 )
 

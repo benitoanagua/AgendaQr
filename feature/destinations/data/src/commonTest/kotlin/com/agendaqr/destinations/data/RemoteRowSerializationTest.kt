@@ -15,8 +15,17 @@ import kotlin.test.assertFalse
  * push remoto fallaba con "Could not find the 'createdAt' column". Este test
  * fija el contrato de nombres de cada fila contra el esquema real.
  */
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 class RemoteRowSerializationTest {
     private val json = Json { encodeDefaults = true; explicitNulls = true }
+    /**
+     * El Json por defecto del cliente Supabase NO activa encodeDefaults
+     * (hallado en runtime: desasociar marcaba "Sincronizado" pero Postgres
+     * conservaba operation_id y el dato resucitaba en el pull). Con
+     * @EncodeDefault los campos null SIEMPRE viajan: limpiar un campo
+     * (operation_id, context_id, nota...) debe llegar como NULL explícito.
+     */
+    private val clientJson = Json
 
     @Test
     fun operation_row_serializes_with_schema_snake_case_columns() {
@@ -172,5 +181,58 @@ class RemoteRowSerializationTest {
         samples.forEach { encoded ->
             assertFalse("\"userId\"" in encoded, "camelCase userId in $encoded")
         }
+    }
+
+    @Test
+    fun cleared_fields_serialize_as_explicit_nulls_under_the_default_client_json() {
+        // Json SIN encodeDefaults: el que usa el cliente Supabase por defecto.
+        val plain = Json
+        val comprobante = ComprobanteRow(
+            id = "c-1",
+            userId = "u-1",
+            filePath = "u-1/c-1.pdf",
+            createdAt = Instant.fromEpochMilliseconds(1),
+            updatedAt = Instant.fromEpochMilliseconds(2),
+            operationId = null,
+            contextId = null,
+        )
+        val encodedComprobante = plain.encodeToString(ComprobanteRow.serializer(), comprobante)
+        assertEquals(true, "\"operation_id\":null" in encodedComprobante, "operation_id null debe viajar explícito: $encodedComprobante")
+        assertEquals(true, "\"context_id\":null" in encodedComprobante)
+
+        val operation = OperationRow(
+            id = "op-1",
+            userId = "u-1",
+            type = "PAGO",
+            occurredAt = Instant.fromEpochMilliseconds(1),
+            createdAt = Instant.fromEpochMilliseconds(2),
+            updatedAt = Instant.fromEpochMilliseconds(3),
+        )
+        val encodedOperation = plain.encodeToString(OperationRow.serializer(), operation)
+        listOf("\"amount\":null", "\"currency\":null", "\"person_or_entity\":null", "\"destination_id\":null", "\"concept\":null", "\"note\":null", "\"context_id\":null")
+            .forEach { column -> assertEquals(true, column in encodedOperation, "missing cleared column $column in $encodedOperation") }
+
+        val destination = DestinationRow(
+            id = "d-1",
+            userId = "u-1",
+            name = "Carniceria",
+            qrRawContent = "content",
+            qrKind = "QR",
+            createdAt = Instant.fromEpochMilliseconds(1),
+            updatedAt = Instant.fromEpochMilliseconds(2),
+        )
+        val encodedDestination = plain.encodeToString(DestinationRow.serializer(), destination)
+        listOf("\"category\":null", "\"note\":null", "\"context_id\":null")
+            .forEach { column -> assertEquals(true, column in encodedDestination, "missing cleared column $column in $encodedDestination") }
+
+        val context = ContextRow(
+            id = "ctx-1",
+            userId = "u-1",
+            name = "Mercado",
+            createdAt = Instant.fromEpochMilliseconds(1),
+            updatedAt = Instant.fromEpochMilliseconds(2),
+        )
+        val encodedContext = plain.encodeToString(ContextRow.serializer(), context)
+        assertEquals(true, "\"note\":null" in encodedContext, "missing cleared note in $encodedContext")
     }
 }
