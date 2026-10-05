@@ -54,6 +54,23 @@ internal fun AuthenticatedAppRoot(
     val importBatchState by importBatch.state.collectAsState()
     val existingPreview by importBatch.existingPreview.collectAsState()
 
+    // S05: un resultado QR de la Búsqueda abre su detalle en Inicio; al
+    // volver se restaura la superficie de Búsqueda (la consulta sobrevive
+    // en el ViewModel retenido). La restauración se ata al detalle
+    // concreto: si el detalle se cerró por otra vía (eliminar, guardar la
+    // edición — backs internos del VM) el id ya no coincide y no se
+    // restaura nada ajeno.
+    var searchReturnDestinationId by remember { mutableStateOf<String?>(null) }
+    fun backFromDestinationDetail() {
+        val detailId = (state.route as? DestinationRoute.Detail)?.id
+        graph.destinationsViewModel.onAction(DestinationAction.Back)
+        val pending = searchReturnDestinationId
+        searchReturnDestinationId = null
+        if (pending != null && pending == detailId) {
+            nav.push(AppRoute.Search)
+        }
+    }
+
     var pendingCount by remember { mutableStateOf(0) }
     var isOffline by remember { mutableStateOf(false) }
     var hasFailed by remember { mutableStateOf(false) }
@@ -117,7 +134,7 @@ internal fun AuthenticatedAppRoot(
     BackHandler(enabled = needsInnerBack(top) || nav.canPop()) {
         when (val action = systemBackAction(top, needsInnerBack, nav.canPop())) {
             is SystemBackAction.InnerFlow -> when (action.route) {
-                AppRoute.Home -> graph.destinationsViewModel.onAction(DestinationAction.Back)
+                AppRoute.Home -> backFromDestinationDetail()
                 AppRoute.Operations -> graph.operationsViewModel.onAction(OperationAction.Back)
                 AppRoute.Contexts -> graph.contextsViewModel.onAction(ContextAction.Back)
                 AppRoute.ImportBatch -> importBatch.onAction(ImportBatchAction.Back)
@@ -186,17 +203,18 @@ internal fun AuthenticatedAppRoot(
                             )
                         }
                         nav.pop()
+                        searchReturnDestinationId = result.destinationId
                     }
                     AgendaSearchResultType.ACTIVITY -> {
                         result.operationId?.let {
                             graph.operationsViewModel.onAction(OperationAction.Open(it))
-                            nav.pop()
+                            // Sin pop: Operaciones se apila SOBRE la Búsqueda;
+                            // Back vuelve a los resultados con la consulta (S05).
                             nav.push(AppRoute.Operations)
                         }
                     }
                     AgendaSearchResultType.COMPROBANTE -> {
                         graph.operationsViewModel.onAction(OperationAction.OpenComprobante(result.id))
-                        nav.pop()
                         nav.push(AppRoute.Operations)
                     }
                 }
@@ -252,6 +270,8 @@ internal fun AuthenticatedAppRoot(
         AppRoute.Home -> HomeSurface(
             state = state,
             contextState = contextState,
+            onSearchOpened = { searchReturnDestinationId = null },
+            onDetailBack = ::backFromDestinationDetail,
             graph = graph,
             onSignOut = onSignOut,
             nav = nav,
