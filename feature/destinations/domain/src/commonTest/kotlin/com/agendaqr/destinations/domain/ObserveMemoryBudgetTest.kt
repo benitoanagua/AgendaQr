@@ -3,6 +3,7 @@ package com.agendaqr.destinations.domain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Clock  // Kotlin/Native safe clock when available; fallback below
 import kotlin.test.assertTrue
 
 /**
@@ -30,15 +31,15 @@ class ObserveMemoryBudgetTest {
             )
         }
         val flow = MutableStateFlow(operations)
-        val start = System.currentTimeMillis()
+        val start = kotlin.time.TimeSource.Monotonic.markNow()
         var renders = 0
         repeat(100) {
             val snapshot = flow.value.sortedByDescending { it.occurredAt }
             assertEquals(200, snapshot.size)
             renders++
         }
-        val elapsed = System.currentTimeMillis() - start
+        val elapsedMs = start.elapsedNow().inWholeMilliseconds
         // 100 recolecciones completas de 200 elementos: presupuesto de V1.
-        assertTrue(elapsed < 2000, "100 renders de 200 elementos tardaron ${elapsed}ms; revisar paginación")
+        assertTrue(elapsedMs < 2000, "100 renders de 200 elementos tardaron ${elapsedMs}ms; revisar paginación")
     }
 }
