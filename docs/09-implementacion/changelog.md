@@ -68,6 +68,28 @@ componentLabWeb PASS; TZ La_Paz/Kiritimati PASS; ACCEPTANCE PASS;
 runtime en emulador: flujos A y C + T1/T2/T4/T5/T6/T7/T8/T11 con dump de
 UI + SQL (ver `01-estado.md`).
 
+## 2026-10-05 (2) — Revisión humana, lote de gaps (main …fcc39c6)
+
+Sobre la revisión de solo-lectura: S06 con scroll (filas QR/
+comprobantes sin tope); listas de diálogos con scroll
+(`XauxaDialogList` + token `DialogListMaxHeight`) en S08 y
+¿a cuál corresponde?; S05 conserva la consulta para QR/Actividad/
+Comprobante (Operaciones se apila sobre Buscar; el detalle QR la
+restaura atado a su id); S09 muestra el contenido decodificado
+(`QrAsset.content`, solo local); REINTENTAR re-ejecuta de verdad
+(`RetryFailed` en los 3 VMs, S09 re-guarda) y CERRAR donde no tiene
+sentido + flujo `ContextSave`; S10 con ASOCIAR primario +
+`XauxaDialog.confirmAsText`; S02 en orden congelado
+(`QrGalleryControls`/`QrCameraEntryControl`); S07 con chips
+seleccionables (`OperationTypeSelector`), sin campo ID roto y sin rama
+muerta del editor; vocabulario de la spec (Actividades, QR, Inicio);
+literales restantes a AppStrings. Runtime en emulador: S09 con
+contenido, ASOCIAR primario (píxel), S02/S05/chips/selección (semántica
+`checked=true`), S06 scrolleable, picker de 16 scrolleable, reintento de
+auth que re-ejecuta. Abierto a propósito: fecha dd/mm/aaaa sin picker
+Xauxa (requiere decisión de diseño), pesos de encabezados y posición de
+Volver (jerarquía intencional por pantalla).
+
 ## 2026-10-05 — Pasada 2: R1 + U1–U5 + D1–D6 + V1–V7 (main 4fd63c7…b1e3ef4)
 
 Bugs reales de R1: clears-null remotos (#94) y Back destructivo en
