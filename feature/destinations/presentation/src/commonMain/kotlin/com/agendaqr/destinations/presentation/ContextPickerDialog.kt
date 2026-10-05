@@ -129,6 +129,9 @@ internal fun ContextPickerDialog(
         ContextPickerStep.List -> XauxaDialog(
             title = AppStrings.SeleccionarContexto,
             confirmLabel = AppStrings.Cancelar,
+            // La acción principal es elegir de la lista (§1); Cancelar y
+            // Quitar contexto son salidas secundarias.
+            confirmAsText = true,
             onConfirm = onCancel,
             dismissLabel = if (selection.canRemove) AppStrings.QuitarContexto else null,
             onDismiss = onRemove,

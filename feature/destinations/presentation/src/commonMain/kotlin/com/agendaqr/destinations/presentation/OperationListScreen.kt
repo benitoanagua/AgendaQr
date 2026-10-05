@@ -62,7 +62,10 @@ fun OperationsScreen(
             } else {
                 AppStrings.incomingReceiptExplanationPrefix + incoming.extension
             },
-            confirmLabel = if (duplicate) AppStrings.GuardarDeTodosModos else if (saving) AppStrings.Guardando else AppStrings.Guardar,
+            // S10: ASOCIAR es la acción primaria y "Guardar sin asociar"
+            // la secundaria (orden de la spec; ambos resultados legítimos).
+            // El caso duplicado conserva su contrato (RF-14) intacto.
+            confirmLabel = if (duplicate) AppStrings.GuardarDeTodosModos else if (saving) AppStrings.Guardando else AppStrings.AsociarAhora,
             onConfirm = {
                 if (!saving) {
                     viewModel.onAction(
@@ -70,11 +73,11 @@ fun OperationsScreen(
                             openInbox = false,
                             allowDuplicate = duplicate,
                         )
-                        else OperationAction.SaveIncoming(false),
+                        else OperationAction.SaveIncoming(true),
                     )
                 }
             },
-            dismissLabel = if (duplicate) AppStrings.VerExistente else AppStrings.AsociarAhora,
+            dismissLabel = if (duplicate) AppStrings.VerExistente else AppStrings.Guardar,
             onDismiss = {
                 if (duplicate) {
                     state.pendingDuplicates.firstOrNull()?.id?.let { id ->
@@ -82,7 +85,7 @@ fun OperationsScreen(
                     }
                     viewModel.onAction(OperationAction.ClearIncoming)
                 } else {
-                    viewModel.onAction(OperationAction.SaveIncoming(true))
+                    viewModel.onAction(OperationAction.SaveIncoming(false))
                 }
             },
             // R1: Back del sistema / toque fuera ABANDONA el comprobante
@@ -224,6 +227,8 @@ internal fun UnassociatedScreen(
                 ReceiptMatchKind.NONE, null -> AppStrings.noMatchTitle
             },
             confirmLabel = AppStrings.Cancelar,
+            // La primaria es elegir de la lista (§1).
+            confirmAsText = true,
             onConfirm = { selectedReceipt = null },
             onDismiss = { selectedReceipt = null },
             content = {
