@@ -110,7 +110,7 @@ internal fun OperationListScreen(
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             XauxaHeading(text = AppStrings.Operaciones, size = XauxaType.Display, fontWeight = FontWeight.Bold)
             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                XauxaTextAction(label = AppStrings.Destinos, onClick = onBack)
+                XauxaTextAction(label = AppStrings.Inicio, onClick = onBack)
                 XauxaPrimaryButton(label = AppStrings.Nuevo, onClick = { viewModel.onAction(OperationAction.New) })
             }
         }

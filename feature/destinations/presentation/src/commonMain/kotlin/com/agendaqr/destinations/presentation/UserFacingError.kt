@@ -132,12 +132,12 @@ fun userFacingError(error: Throwable, flow: ErrorFlow): UserFacingError = when (
         action = ErrorAction.Retry,
     )
     ErrorFlow.SaveOperation -> UserFacingError(
-        what = "No pudimos guardar la operación.",
+        what = "No pudimos guardar la actividad.",
         dataStatus = "Tus cambios siguen en la pantalla.",
         action = ErrorAction.Retry,
     )
     ErrorFlow.DeleteOperation -> UserFacingError(
-        what = "No pudimos eliminar la operación.",
+        what = "No pudimos eliminar la actividad.",
         dataStatus = "La operación sigue guardada.",
         action = ErrorAction.Retry,
     )
@@ -229,7 +229,7 @@ internal fun comprobanteNotFound(): UserFacingError = UserFacingError(
 
 /** Error contextual cuando la operación pedida no existe. */
 internal fun operationNotFound(): UserFacingError = UserFacingError(
-    what = "No encontramos esta operación.",
+    what = "No encontramos esta actividad.",
     dataStatus = "Pudo haber sido eliminada.",
     action = ErrorAction.Close,
 )

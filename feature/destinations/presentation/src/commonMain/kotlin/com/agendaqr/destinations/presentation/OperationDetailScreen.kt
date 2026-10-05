@@ -76,7 +76,6 @@ internal fun OperationDetailScreen(
         }
         operation.personOrEntity?.let { XauxaText(AppStrings.PersonaOEntidad + it) }
         operation.currency?.let { XauxaText(AppStrings.Moneda + it) }
-        operation.destinationId?.let { XauxaText(AppStrings.Destino + it) }
         operation.concept?.let { XauxaText(AppStrings.Concepto + it) }
         operation.note?.let { XauxaText(AppStrings.Nota2 + it, color = XauxaColor.TextSecondary) }
 

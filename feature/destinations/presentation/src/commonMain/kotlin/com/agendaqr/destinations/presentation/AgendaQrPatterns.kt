@@ -28,7 +28,7 @@ fun FirstUsePattern(onAdd: () -> Unit) {
     XauxaEmptyState(
         title = AppStrings.SinDestinos,
         subtitle = AppStrings.emptyDestinationsHint,
-        actionLabel = AppStrings.AgregarQr,
+        actionLabel = AppStrings.Anadir,
         onAction = onAdd,
     )
 }

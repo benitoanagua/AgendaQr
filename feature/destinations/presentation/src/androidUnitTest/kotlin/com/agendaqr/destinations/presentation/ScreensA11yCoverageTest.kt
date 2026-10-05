@@ -20,6 +20,7 @@ import com.agendaqr.destinations.domain.ReceiptProvenance
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.test.assertTrue
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -72,7 +73,7 @@ class ScreensA11yCoverageTest {
         compose.waitForIdle()
         compose.onNodeWithText("Volver").assertHeightIsAtLeast(48.dp)
         // §11: el estado se expresa con texto, no solo con color.
-        compose.onNodeWithText("Busca destinos, operaciones, contextos o comprobantes.")
+        compose.onNodeWithText("Busca QR, actividades, contextos o comprobantes.")
             .assertIsDisplayed()
     }
 
@@ -219,5 +220,25 @@ class ScreensA11yCoverageTest {
         compose.onNodeWithText("Favorito").assertHeightIsAtLeast(48.dp)
         // T6/U4: el estado de sync es texto, nunca solo color.
         compose.onNodeWithText("Sincronizado").assertExists()
+    }
+
+    @Test
+    fun s07_type_selector_shows_single_selection() {
+        var selected = OperationType.PAGO
+        compose.setContent {
+            XauxaTheme {
+                OperationTypeSelector(
+                    type = selected,
+                    onSelect = { selected = it },
+                )
+            }
+        }
+        compose.waitForIdle()
+        compose.onNodeWithText("Pago").assertHeightIsAtLeast(48.dp)
+        compose.onNodeWithText("Cobro").assertHeightIsAtLeast(48.dp)
+        // Cambiar el tipo mueve la selección (semántica, no dos primarios).
+        compose.onNodeWithText("Cobro").performClick()
+        compose.waitForIdle()
+        assertTrue(selected == OperationType.COBRO)
     }
 }

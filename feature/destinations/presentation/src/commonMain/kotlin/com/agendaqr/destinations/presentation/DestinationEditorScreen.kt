@@ -38,9 +38,14 @@ import com.agendaqr.destinations.domain.Context
 import com.agendaqr.destinations.domain.Destination
 import com.agendaqr.destinations.domain.QrAsset
 
+/**
+ * Editor del QR (la rama "agregar" no existe: Edit(null) enruta a S02 en
+ * el VM, así que esta pantalla siempre edita un destino existente; la
+ * rama muerta se retiró en vez de reactivarla contra S02).
+ */
 @Composable
 fun DestinationEditorScreen(
-    existing: Destination?,
+    existing: Destination,
     onSave: (Destination) -> Unit,
     onImportMany: (List<QrAsset>) -> Unit,
     contexts: List<Context> = emptyList(),
@@ -54,25 +59,15 @@ fun DestinationEditorScreen(
     onCreateContext: (name: String, note: String?) -> Unit = { _, _ -> },
     justCreatedContextId: String? = null,
 ) {
-    val initial = remember(existing) {
-        existing ?: Destination(
-            id = com.agendaqr.destinations.domain.newEntityId("destination"),
-            name = "",
-            qr = QrAsset(encoded = ""),
-            createdAt = com.agendaqr.destinations.domain.nowMillis(),
-            updatedAt = com.agendaqr.destinations.domain.nowMillis(),
-        )
-    }
     DestinationEditorContent(
-        initial, existing, onSave, onImportMany, contexts, onBack, isSaving, error, onClearError,
+        existing, onSave, onImportMany, contexts, onBack, isSaving, error, onClearError,
         onCreateContext, justCreatedContextId, onRetryError,
     )
 }
 
 @Composable
 private fun DestinationEditorContent(
-    initial: Destination,
-    existing: Destination?,
+    existing: Destination,
     onSave: (Destination) -> Unit,
     onImportMany: (List<QrAsset>) -> Unit,
     contexts: List<Context>,
@@ -84,14 +79,14 @@ private fun DestinationEditorContent(
     justCreatedContextId: String?,
     onRetryError: () -> Unit,
 ) {
-    var name by rememberSaveable(initial.name) { mutableStateOf(initial.name) }
-    var category by rememberSaveable(existing?.category) { mutableStateOf(existing?.category.orEmpty()) }
-    var note by rememberSaveable(existing?.note) { mutableStateOf(existing?.note.orEmpty()) }
-    var qr by remember(existing?.qr) { mutableStateOf(existing?.qr ?: QrAsset(encoded = "")) }
+    var name by rememberSaveable(existing.name) { mutableStateOf(existing.name) }
+    var category by rememberSaveable(existing.category) { mutableStateOf(existing.category.orEmpty()) }
+    var note by rememberSaveable(existing.note) { mutableStateOf(existing.note.orEmpty()) }
+    var qr by remember(existing.qr) { mutableStateOf(existing.qr) }
     // S08: selección de contexto con semántica explícita — Cancelar no
     // toca la selección; Quitar contexto es la única vía de limpiarla.
-    var selection by rememberSaveable(existing?.contextId, stateSaver = ContextSelectionSaver) {
-        mutableStateOf(ContextSelection(contextId = existing?.contextId))
+    var selection by rememberSaveable(existing.contextId, stateSaver = ContextSelectionSaver) {
+        mutableStateOf(ContextSelection(contextId = existing.contextId))
     }
     var submitted by remember { mutableStateOf(false) }
     // U3/ADR-0003: crear contexto desde S08 lo deja seleccionado (el
@@ -115,7 +110,8 @@ private fun DestinationEditorContent(
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         XauxaHeading(
-            text = if (existing == null) AppStrings.AgregarDestino else AppStrings.EditarDestino,
+            text = AppStrings.EditarQr,
+
             size = XauxaType.Headline,
             fontWeight = FontWeight.Bold,
         )
@@ -173,7 +169,7 @@ private fun DestinationEditorContent(
                     if (name.isBlank() || qr.encoded.isBlank()) return@XauxaPrimaryButton
                     val now = com.agendaqr.destinations.domain.nowMillis()
                     onSave(
-                        initial.copy(
+                        existing.copy(
                             name = name.trim(),
                             category = category.trim().ifBlank { null },
                             note = note.trim().ifBlank { null },

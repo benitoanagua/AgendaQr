@@ -26,6 +26,30 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
 
+/**
+ * Selector de tipo de actividad (S07): dos chips con estado seleccionado
+ * visible (no dos primarios compitiendo, §1/§11).
+ */
+@Composable
+internal fun OperationTypeSelector(
+    type: OperationType,
+    onSelect: (OperationType) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+        XauxaFilterChip(
+            label = AppStrings.Pago,
+            selected = type == OperationType.PAGO,
+            onClick = { onSelect(OperationType.PAGO) },
+        )
+        XauxaFilterChip(
+            label = AppStrings.Cobro,
+            selected = type == OperationType.COBRO,
+            onClick = { onSelect(OperationType.COBRO) },
+        )
+    }
+}
+
 @Composable
 internal fun OperationEditorScreen(
     state: OperationsUiState,
@@ -39,7 +63,6 @@ internal fun OperationEditorScreen(
     var amount by rememberSaveable(editorKey) { mutableStateOf(existing?.amount.orEmpty()) }
     var currency by rememberSaveable(editorKey) { mutableStateOf(existing?.currency.orEmpty()) }
     var person by rememberSaveable(editorKey) { mutableStateOf(existing?.personOrEntity.orEmpty()) }
-    var destination by rememberSaveable(editorKey) { mutableStateOf(existing?.destinationId.orEmpty()) }
     var concept by rememberSaveable(editorKey) { mutableStateOf(existing?.concept.orEmpty()) }
     var note by rememberSaveable(editorKey) { mutableStateOf(existing?.note.orEmpty()) }
     var dateText by rememberSaveable(editorKey) { mutableStateOf(formatDate(existing?.occurredAt ?: nowMillis())) }
@@ -67,7 +90,7 @@ internal fun OperationEditorScreen(
         amount = amount.trim().takeIf(String::isNotBlank),
         currency = currency.trim().takeIf(String::isNotBlank),
         personOrEntity = person.trim().takeIf(String::isNotBlank),
-        destinationId = destination.trim().takeIf(String::isNotBlank),
+        destinationId = existing?.destinationId,
         concept = concept.trim().takeIf(String::isNotBlank),
         note = note.trim().takeIf(String::isNotBlank),
         contextId = contextSelection.contextId,
@@ -86,12 +109,12 @@ internal fun OperationEditorScreen(
             )
             XauxaTextAction(label = AppStrings.Volver, onClick = { viewModel.onAction(OperationAction.Back) })
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-            if (type == OperationType.PAGO) XauxaPrimaryButton(label = AppStrings.Pago, onClick = { type = OperationType.PAGO })
-            else XauxaSecondaryButton(label = AppStrings.Pago, onClick = { type = OperationType.PAGO })
-            if (type == OperationType.COBRO) XauxaPrimaryButton(label = AppStrings.Cobro, onClick = { type = OperationType.COBRO })
-            else XauxaSecondaryButton(label = AppStrings.Cobro, onClick = { type = OperationType.COBRO })
-        }
+        // Tipo con semántica de selección (no dos botones primarios
+        // compitiendo): Guardar queda como única acción principal (§1).
+        OperationTypeSelector(
+            type = type,
+            onSelect = { type = it },
+        )
         XauxaTextInput(label = AppStrings.MontoOpcional, value = amount, onValueChange = { amount = it }, modifier = Modifier.fillMaxWidth())
         XauxaTextInput(
             label = AppStrings.Fecha,
@@ -104,7 +127,6 @@ internal fun OperationEditorScreen(
         )
         XauxaTextInput(label = AppStrings.MonedaOpcional, value = currency, onValueChange = { currency = it }, modifier = Modifier.fillMaxWidth())
         XauxaTextInput(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, modifier = Modifier.fillMaxWidth())
-        XauxaTextInput(label = AppStrings.DestinoQrOpcional, value = destination, onValueChange = { destination = it }, modifier = Modifier.fillMaxWidth())
         XauxaSecondaryButton(
             label = contextSelection.contextId?.let { id -> AppStrings.ParaContextoElegido + (state.contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico) }
                 ?: AppStrings.ParaElegirContexto,
@@ -138,7 +160,7 @@ internal fun OperationEditorScreen(
                 if (existing == null) {
                     viewModel.onAction(
                         OperationAction.SaveNew(
-                            type, at, amount, currency, person, destination, concept, note, contextSelection.contextId, candidate.id,
+                            type, at, amount, currency, person, null, concept, note, contextSelection.contextId, candidate.id,
                         ),
                     )
                 } else if (candidate.hasSensitiveChangesComparedTo(existing) && state.operationComprobantes.isNotEmpty()) {
