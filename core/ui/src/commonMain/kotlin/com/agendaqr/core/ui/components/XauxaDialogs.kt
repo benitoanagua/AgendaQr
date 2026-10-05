@@ -94,6 +94,12 @@ fun XauxaDialog(
     modifier: Modifier = Modifier,
     content: (@Composable () -> Unit)? = null,
     onDismissRequest: (() -> Unit)? = null,
+    /**
+     * Cuando la acción principal vive en el contenido (elegir de una
+     * lista, §1 "una acción principal"), el confirmar se pinta como
+     * acción de texto en vez de botón primario.
+     */
+    confirmAsText: Boolean = false,
 ) {
     androidx.compose.material3.AlertDialog(
         modifier = modifier,
@@ -119,7 +125,10 @@ fun XauxaDialog(
                 )
             }
         },
-        confirmButton = { XauxaPrimaryButton(label = confirmLabel, onClick = onConfirm) },
+        confirmButton = {
+            if (confirmAsText) XauxaTextAction(label = confirmLabel, onClick = onConfirm)
+            else XauxaPrimaryButton(label = confirmLabel, onClick = onConfirm)
+        },
         dismissButton = dismissLabel?.let {
             { XauxaTextAction(label = it, onClick = onDismiss) }
         },
