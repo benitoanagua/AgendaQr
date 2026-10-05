@@ -86,6 +86,7 @@ class LabCatalogIntegrityTest {
             "xauxa-secondary-button",
             "xauxa-danger-button",
             "xauxa-text-action",
+            "xauxa-icon",
             "xauxa-icon-button",
             "xauxa-filter-chip",
             "xauxa-text-input",
