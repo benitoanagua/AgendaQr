@@ -200,6 +200,8 @@ fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph
                 comprobanteRepository,
             ),
             get = GetContextUseCase(contextRepository),
+            // U3/ADR-0003: creación de contextos (opción C).
+            save = com.agendaqr.destinations.domain.SaveContextUseCase(contextRepository),
             scope = sessionScope,
         )
     }

@@ -1,6 +1,7 @@
 # ADR-0003 — Creación y edición de Contextos
 
-**Estado:** PROPUESTA — requiere aprobación  
+**Estado:** APROBADA — Opción C (crear en S08 y en S06 vacío), sin edición en V1  
+**Aprobación:** 2026-10-05, decisión humana registrada en el prompt de la pasada U1–D6 ("Opción C, edición dentro de V1: NO")
 **Fecha:** 2026-10-04  
 **Área:** UX/UI V1 (S06, S08) / Dominio Context  
 **Decisor requerido:** humano (propietario de producto/UX)

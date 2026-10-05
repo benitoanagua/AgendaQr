@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import com.agendaqr.destinations.domain.*
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,18 +20,28 @@ data class ContextsUiState(
     val route: ContextRoute = ContextRoute.List,
     val isLoading: Boolean = true,
     val error: UserFacingError? = null,
+    /** U3/ADR-0003: id del contexto recién creado (para seleccionarlo). */
+    val justCreatedContextId: String? = null,
 )
 
 sealed interface ContextAction {
     data class Open(val id: String) : ContextAction
     data object Back : ContextAction
     data object ClearError : ContextAction
+    /** U3/ADR-0003 (opción C): crear contexto (Nombre obligatorio). */
+    data class Create(val name: String, val note: String?) : ContextAction
+    data object ClearJustCreated : ContextAction
 }
 
 class ContextsViewModel(
     observe: ObserveContextsUseCase,
     private val observeContents: ObserveContextContentsUseCase,
     private val get: GetContextUseCase,
+    /**
+     * U3/ADR-0003 (opción C): persistencia de contextos nuevos. Opcional
+     * para los tests que no ejercen creación.
+     */
+    private val save: SaveContextUseCase? = null,
     /**
      * Scope de la sesión (T12): lo aporta el grafo de la app; se cancela
      * al cerrar sesión, junto con todos los colecciones del ViewModel.
@@ -52,6 +63,9 @@ class ContextsViewModel(
 
     fun onAction(action: ContextAction) {
         when (action) {
+            is ContextAction.Create -> create(action)
+            ContextAction.ClearJustCreated ->
+                _state.value = _state.value.copy(justCreatedContextId = null)
             is ContextAction.Open -> open(action.id)
             ContextAction.Back -> {
                 selectedId = null
@@ -64,6 +78,51 @@ class ContextsViewModel(
                 )
             }
             ContextAction.ClearError -> _state.value = _state.value.copy(error = null)
+        }
+    }
+
+    /**
+     * U3/ADR-0003 (opción C): crear contexto con el formulario mínimo
+     * (Nombre obligatorio + Nota). Persiste vía SaveContextUseCase (la
+     * cola de sync encola el UPSERT) y expone el id para que la superficie
+     * que pidió la creación lo seleccione. El draft del flujo padre nunca
+     * se toca: solo cambia la selección de contexto.
+     */
+    private fun create(action: ContextAction.Create) {
+        val name = action.name.trim()
+        if (name.isBlank()) {
+            _state.value = _state.value.copy(
+                error = userFacingError(IllegalArgumentException("nombre vacío"), ErrorFlow.ContextOpen),
+            )
+            return
+        }
+        val useCase = save ?: run {
+            _state.value = _state.value.copy(
+                error = userFacingError(IllegalStateException("sin repositorio de guardado"), ErrorFlow.ContextOpen),
+            )
+            return
+        }
+        val now = nowMillis()
+        val context = Context(
+            id = newEntityId("context"),
+            name = name,
+            note = action.note?.trim()?.takeIf { it.isNotBlank() },
+            createdAt = now,
+            updatedAt = now,
+        )
+        scope.launch {
+            runCatching { useCase(context) }
+                .onSuccess {
+                    _state.value = _state.value.copy(
+                        justCreatedContextId = context.id,
+                        error = null,
+                    )
+                }
+                .onFailure { error ->
+                    _state.value = _state.value.copy(
+                        error = userFacingError(error, ErrorFlow.ContextOpen),
+                    )
+                }
         }
     }
 

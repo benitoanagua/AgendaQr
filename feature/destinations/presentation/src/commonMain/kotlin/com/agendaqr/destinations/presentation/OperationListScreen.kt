@@ -41,12 +41,15 @@ fun OperationsScreen(
     onBack: () -> Unit,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
     onRetrySync: () -> Unit = {},
+    /** U3/ADR-0003: crear contexto desde S08 sin perder el draft. */
+    onCreateContext: (name: String, note: String?) -> Unit = { _, _ -> },
+    justCreatedContextId: String? = null,
 ) {
     when (state.route) {
         OperationRoute.List -> OperationListScreen(state, viewModel, onBack, syncLookup)
         OperationRoute.Unassociated -> UnassociatedScreen(state, viewModel, syncLookup)
-        OperationRoute.New -> OperationEditorScreen(state, viewModel, existing = null)
-        is OperationRoute.Edit -> OperationEditorScreen(state, viewModel, existing = viewModel.selectedOperation())
+        OperationRoute.New -> OperationEditorScreen(state, viewModel, existing = null, onCreateContext = onCreateContext, justCreatedContextId = justCreatedContextId)
+        is OperationRoute.Edit -> OperationEditorScreen(state, viewModel, existing = viewModel.selectedOperation(), onCreateContext = onCreateContext, justCreatedContextId = justCreatedContextId)
         is OperationRoute.Detail -> OperationDetailScreen(state, viewModel, syncLookup, onRetrySync)
     }
     state.pendingIncoming?.let { incoming ->

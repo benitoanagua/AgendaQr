@@ -12,6 +12,10 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.XauxaEmptyState
@@ -53,8 +57,14 @@ fun ContextsScreen(
     onOpenComprobante: (String) -> Unit = {},
     onOpenOperations: () -> Unit = {},
 ) {
+    var showCreateDialog by remember { mutableStateOf(false) }
     when (state.route) {
-        ContextRoute.List -> ContextList(state, onAction, onBack)
+        ContextRoute.List -> ContextList(
+            state = state,
+            onAction = onAction,
+            onBack = onBack,
+            onCreateContext = { showCreateDialog = true },
+        )
         is ContextRoute.Detail -> ContextDetail(
             state = state,
             onAction = onAction,
@@ -64,10 +74,26 @@ fun ContextsScreen(
             onOpenOperations = onOpenOperations,
         )
     }
+    // U3/ADR-0003 (opción C/B): S06 vacío ofrece Crear contexto como
+    // acción primaria (con ≥1 contexto no aparece: sin jerarquía nueva).
+    if (showCreateDialog) {
+        ContextCreationDialog(
+            onConfirmCreate = { name, note ->
+                onAction(ContextAction.Create(name, note))
+                showCreateDialog = false
+            },
+            onDismiss = { showCreateDialog = false },
+        )
+    }
 }
 
 @Composable
-private fun ContextList(state: ContextsUiState, onAction: (ContextAction) -> Unit, onBack: () -> Unit) {
+private fun ContextList(
+    state: ContextsUiState,
+    onAction: (ContextAction) -> Unit,
+    onBack: () -> Unit,
+    onCreateContext: () -> Unit = {},
+) {
     Column(
         modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
