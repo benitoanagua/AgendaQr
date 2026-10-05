@@ -67,16 +67,15 @@ internal fun HomeSurface(
                 },
                 onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
             )
-            is DestinationRoute.Edit -> DestinationEditorScreen(
-                existing = route.id?.let(graph.destinationsViewModel::destination),
+            is DestinationRoute.Edit -> {
+                val target = route.id?.let(graph.destinationsViewModel::destination)
+                if (target == null) {
+                    DestinationNotFound(onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) })
+                } else {
+                    DestinationEditorScreen(
+                        existing = target,
                 onSave = { destination ->
-                    graph.destinationsViewModel.onAction(
-                        if (route.id == null) {
-                            DestinationAction.Save(destination)
-                        } else {
-                            DestinationAction.Update(destination)
-                        },
-                    )
+                    graph.destinationsViewModel.onAction(DestinationAction.Update(destination))
                 },
                 onImportMany = { assets ->
                     graph.destinationsViewModel.onAction(
@@ -93,7 +92,9 @@ internal fun HomeSurface(
                 error = state.error,
                 onClearError = { graph.destinationsViewModel.onAction(DestinationAction.ClearError) },
                 onRetryError = { graph.destinationsViewModel.onAction(DestinationAction.RetryFailed) },
-            )
+                    )
+                }
+            }
             is DestinationRoute.Detail -> {
                 val destination = graph.destinationsViewModel.destination(route.id)
                 if (destination == null) {

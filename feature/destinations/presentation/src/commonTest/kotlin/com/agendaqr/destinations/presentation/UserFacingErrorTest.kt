@@ -129,7 +129,7 @@ class UserFacingErrorTest {
     fun save_error_says_what_happened_to_the_data() {
         val error = userFacingError(GenericAppError("disk on fire"), ErrorFlow.SaveOperation)
         val shown = error.display()
-        assertTrue(shown.contains("No pudimos guardar la operación."))
+        assertTrue(shown.contains("No pudimos guardar la actividad."))
         assertTrue(shown.contains("Tus cambios siguen en la pantalla."))
         assertFalse(shown.contains("disk on fire"))
         assertEquals("REINTENTAR", error.action.label)
@@ -225,7 +225,7 @@ class UserFacingErrorTest {
         waitUntil { vm.state.value.error != null }
         val error = vm.state.value.error
         assertNotNull(error)
-        assertTrue(error.display().contains("No pudimos guardar la operación."))
+        assertTrue(error.display().contains("No pudimos guardar la actividad."))
         assertEquals("REINTENTAR", error.action.label)
     }
 
