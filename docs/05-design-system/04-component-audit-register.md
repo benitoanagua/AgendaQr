@@ -461,3 +461,37 @@ Cambio (`XauxaSchemeTest.kt`, solo expectativas): hex fijados actualizados a los
 - No se actualiza el documento de lenguaje visual: la tile es específica del laboratorio, no una regla reutilizable de producto (`docs/05-design-system/01-xauxa-source-snapshot.md` + `docs/05-design-system/02-xauxa-implementation.md` son la fuente vigente).
 
 Pendiente manual: ventana amplia/mediana/estrecha, texto ampliado, nombres largos, categorías densas/dispersas, sin resultados, teclado y foco visible en ambos temas, TalkBack/VoiceOver.
+
+## Cierre 2026-10-04 (pasada T1–T14): componentes nuevos o cambiados
+
+Cambios de esta pasada con su justificación de contrato. Ninguno introduce
+color, radio, sombra ni métrica fuera de tokens; todos compuestos desde
+`core:ui`.
+
+### Nuevos
+
+| Componente | Contrato que cumple | Notas de auditoría |
+|---|---|---|
+| `XauxaHeading` (core:ui) | §12 "Archivo para display/encabezados"; §11 heading semántico | Aplica `FamilyDisplay` (Archivo empaquetada, OFL 1.1 — ver `05-xauxa-tipografia.md`) + tokens; único lugar con `heading()` fuera de `XauxaEmptyState` (que lo usa) |
+| `XauxaText` (core:ui) | §12 "Roboto/SF para UI/cuerpo" | Sans del sistema + tokens; `feature/` no importa `material3.Text` (guard) |
+| `ElementSyncBadge` (feature) | §5 estados con texto; §11 significado independiente del color | Envuelve `XauxaBadge` con el label del estado (`elementSyncStatus`); sin color paralelo |
+| `ContextPickerDialog` (feature) | S08: elegir contexto conservando el draft; §3 Cancelar abandona la intención | Comparte `XauxaDialog`; Back del diálogo = Cancelar (`onDismissRequest`) |
+| `AppStrings` (feature) | Copy congelado centralizado | 129 literales, palabra por palabra idéntica; prepara i18n |
+
+### Cambiados
+
+| Componente | Cambio | Justificación |
+|---|---|---|
+| `XauxaStatusBanner` | +`actionLabel`/`onAction`; `danger` RETIRADO | §10 el error ofrece acción; un solo mecanismo de tono (`tone`) |
+| `XauxaDialog` | +`onDismissRequest` opcional | Back/fuera ≠ botón destructivo: el descarte accidental no destruye estado |
+| `XauxaScannerViewport` | Referencia visual del overlay S03 (nuevo uso) | S03 congelado: sin métricas técnicas; la captura real vive en `CameraQrCaptureOverlay` (androidMain) con el mismo lenguaje |
+| `XauxaType` | +`FamilyDisplay` (Archivo), `DurationReducedMs=0` en `XauxaMotion` | §12 tipografía; §11 reduced motion (transición sin desplazamiento) |
+| `XauxaTurnstileNav` | +`xauxaTurnstileMotion` + variantes reduced | Decisión pura testeable; el call-site lee `LocalReducedMotion` |
+| `XauxaSearchBar` (uso en S01) | Nodo único con `clearAndSetSemantics` | §11: cero nodos duplicados; rol Button + onClick; verificado por tests Compose UI |
+| `XauxaExtendedComponents.kt` | DIVIDIDO en `XauxaTone/Buttons/Lists/Inputs/Dialogs/Feedback.kt` | T12 por responsabilidad; mismas declaraciones, mismo paquete |
+
+### Sin cambio de contrato visual
+
+`XauxaEmptyState` (título ahora vía `XauxaHeading`), listas y botones
+primario/secundario (S02 Galería primaria es uso, no cambio de componente),
+diálogos de confirmación existentes.
