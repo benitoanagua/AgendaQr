@@ -114,8 +114,10 @@ private fun ContextList(
             state.contexts.isEmpty() -> XauxaEmptyState(
                 title = AppStrings.SinContextos,
                 subtitle = AppStrings.LosContextosAgrupanTusQr,
-                actionLabel = AppStrings.Volver,
-                onAction = onBack,
+                // U3/ADR-0003 (opción B/C): la acción primaria del vacío es
+                // crear; "Volver" sigue disponible en la barra superior.
+                actionLabel = AppStrings.CrearContexto,
+                onAction = onCreateContext,
             )
             else -> LazyColumn(modifier = Modifier.fillMaxSize().weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 items(state.contexts, key = { it.id }) { context ->
