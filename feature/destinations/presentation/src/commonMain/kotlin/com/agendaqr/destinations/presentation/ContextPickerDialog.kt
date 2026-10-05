@@ -22,6 +22,7 @@ import com.agendaqr.core.ui.components.XauxaTextInput
 import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
+import com.agendaqr.core.ui.theme.accentFor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.destinations.domain.Context
 
@@ -162,6 +163,9 @@ internal fun ContextPickerDialog(
                             XauxaListRow(
                                 title = context.name,
                                 subtitle = context.note?.takeIf { it.isNotBlank() },
+                                // M4: el acento derivado identifica el
+                                // contexto; Cancelar/Quitar/Back intactos.
+                                accent = accentFor(context.id).background,
                                 tone = if (context.id == selectedId) XauxaTone.Info else XauxaTone.Neutral,
                                 onClick = { onSelect(context.id) },
                             )

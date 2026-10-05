@@ -20,8 +20,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import com.agendaqr.core.ui.components.XauxaAppBar
+import com.agendaqr.core.ui.components.XauxaAppBarAction
 import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaHeading
+import com.agendaqr.core.ui.components.XauxaIcons
+import com.agendaqr.core.ui.components.XauxaPageTitle
+import com.agendaqr.core.ui.components.XauxaPivot
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
@@ -30,6 +35,7 @@ import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
+import com.agendaqr.core.ui.theme.accentFor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
 
@@ -95,11 +101,13 @@ private fun ContextList(
     onCreateContext: () -> Unit = {},
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(),
-        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
+        modifier = Modifier.fillMaxSize().statusBarsPadding().imePadding(),
     ) {
-        XauxaSecondaryButton(label = AppStrings.Volver, onClick = onBack)
-        XauxaHeading(text = AppStrings.Contextos, size = XauxaType.Display, fontWeight = FontWeight.Bold)
+        Column(
+            modifier = Modifier.fillMaxWidth().weight(1f).padding(XauxaSpacing.ScreenMargin),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
+        ) {
+        XauxaPageTitle(text = AppStrings.Contextos)
         state.error?.let { err ->
             XauxaStatusBanner(
                 err.display(),
@@ -124,16 +132,27 @@ private fun ContextList(
                 actionLabel = AppStrings.CrearContexto,
                 onAction = onCreateContext,
             )
-            else -> LazyColumn(modifier = Modifier.fillMaxSize().weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+            else -> LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 items(state.contexts, key = { it.id }) { context ->
+                    // M4: bloque de acento derivado del id del contexto.
                     XauxaListRow(
                         title = context.name,
                         subtitle = context.note?.takeIf { it.isNotBlank() },
                         onClick = { onAction(ContextAction.Open(context.id)) },
+                        accent = accentFor(context.id).background,
                     )
                 }
             }
         }
+        }
+        // M7: Volver vive en la barra de aplicación inferior (flecha atrás,
+        // required en iOS; Back del sistema intacto en Android).
+        XauxaAppBar(
+            modifier = Modifier.navigationBarsPadding(),
+            actions = emptyList(),
+            onBack = onBack,
+            backLabel = AppStrings.Volver,
+        )
     }
 }
 
@@ -150,13 +169,16 @@ private fun ContextDetail(
 ) {
     val contents = state.contents
     Column(
-        modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding()
-            // §11: el detalle crece con sus filas (QR/comprobantes sin tope);
-            // sin scroll el contenido quedaría cortado e inalcanzable.
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
+        modifier = Modifier.fillMaxSize().statusBarsPadding().imePadding(),
     ) {
-        XauxaSecondaryButton(label = AppStrings.Volver, onClick = { onAction(ContextAction.Back) })
+        Column(
+            modifier = Modifier.fillMaxWidth().weight(1f)
+                .padding(horizontal = XauxaSpacing.ScreenMargin)
+                // §11: el detalle crece con sus filas (sin scroll el contenido
+                // quedaría cortado e inalcanzable).
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
+        ) {
         state.error?.let { err ->
             XauxaStatusBanner(
                 err.display(),
@@ -172,48 +194,79 @@ private fun ContextDetail(
             )
         }
         contents?.let { data ->
-            XauxaHeading(text = data.context.name, size = XauxaType.Display, fontWeight = FontWeight.Bold)
+            // V1.1 (ADR-0005, S06): título ligero; el acento del contexto
+            // (M4, derivado del id) tiñe los encabezados del pivot.
+            val contextAccent = accentFor(data.context.id)
+            XauxaPageTitle(text = data.context.name)
             data.context.note?.takeIf { it.isNotBlank() }?.let {
                 XauxaText(it, size = XauxaType.Label, color = XauxaColor.TextSecondary)
             }
-            // U1: QR es invariable en español; pasa por el helper de contadores.
-            XauxaText(contextSectionLabel("QR", "QR", data.destinations.size), size = XauxaType.Title, color = XauxaColor.TextPrimary)
-            data.destinations.forEach { destination ->
-                XauxaListRow(
-                    title = destination.name.ifBlank { AppStrings.QrSinNombre },
-                    onClick = { onOpenDestination(destination.id) },
-                )
-            }
-            // U1: singular honesto para N=1 ("Actividad reciente · 1").
-            XauxaText(contextSectionLabel(AppStrings.ActividadReciente, AppStrings.ActividadesRecientes, data.operations.size), size = XauxaType.Title, color = XauxaColor.TextPrimary)
-            data.operations.take(RECENT_ACTIVITIES_SHOWN).forEach { operation ->
-                XauxaListRow(
-                    title = listOfNotNull(
-                        when (operation.type) {
-                            com.agendaqr.destinations.domain.OperationType.PAGO -> AppStrings.Pago
-                            com.agendaqr.destinations.domain.OperationType.COBRO -> AppStrings.Cobro
-                        },
-                        operation.amount,
-                        operation.currency,
-                        operation.personOrEntity,
-                    ).joinToString(" · "),
-                    onClick = { onOpenOperation(operation.id) },
-                )
-            }
-            if (data.operations.size > RECENT_ACTIVITIES_SHOWN) {
-                XauxaTextAction(
-                    label = AppStrings.VerMas,
-                    onClick = onOpenOperations,
-                )
-            }
-            XauxaText(contextSectionLabel(AppStrings.Comprobante, AppStrings.Comprobantes, data.comprobantes.size), size = XauxaType.Title, color = XauxaColor.TextPrimary)
-            data.comprobantes.forEach { receipt ->
-                XauxaListRow(
-                    title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
-                    subtitle = receipt.file.takeIf { it.isNotBlank() },
-                    onClick = { onOpenComprobante(receipt.id) },
-                )
+            // M7: pivot QR · Actividades · Comprobantes (modelo mental §2;
+            // sin crear navegación nueva — la conmutación es local).
+            var pivotSection by remember { mutableStateOf(0) }
+            XauxaPivot(
+                sections = listOf(AppStrings.Qr, AppStrings.Operaciones, AppStrings.Comprobantes),
+                selectedIndex = pivotSection,
+                onSelect = { pivotSection = it },
+                accent = contextAccent.background,
+            ) { section ->
+                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                    when (section) {
+                        0 -> {
+                            // U1: QR es invariable en español; conteo vía helper.
+                            XauxaText(contextSectionLabel("QR", "QR", data.destinations.size), size = XauxaType.Label, color = XauxaColor.TextSecondary)
+                            data.destinations.forEach { destination ->
+                                XauxaListRow(
+                                    title = destination.name.ifBlank { AppStrings.QrSinNombre },
+                                    onClick = { onOpenDestination(destination.id) },
+                                )
+                            }
+                        }
+                        1 -> {
+                            // U1: singular honesto para N=1 ("Actividad reciente · 1").
+                            XauxaText(contextSectionLabel(AppStrings.ActividadReciente, AppStrings.ActividadesRecientes, data.operations.size), size = XauxaType.Label, color = XauxaColor.TextSecondary)
+                            data.operations.take(RECENT_ACTIVITIES_SHOWN).forEach { operation ->
+                                XauxaListRow(
+                                    title = listOfNotNull(
+                                        when (operation.type) {
+                                            com.agendaqr.destinations.domain.OperationType.PAGO -> AppStrings.Pago
+                                            com.agendaqr.destinations.domain.OperationType.COBRO -> AppStrings.Cobro
+                                        },
+                                        operation.amount,
+                                        operation.currency,
+                                        operation.personOrEntity,
+                                    ).joinToString(" · "),
+                                    onClick = { onOpenOperation(operation.id) },
+                                )
+                            }
+                            if (data.operations.size > RECENT_ACTIVITIES_SHOWN) {
+                                XauxaTextAction(
+                                    label = AppStrings.VerMas,
+                                    onClick = onOpenOperations,
+                                )
+                            }
+                        }
+                        else -> {
+                            XauxaText(contextSectionLabel(AppStrings.Comprobante, AppStrings.Comprobantes, data.comprobantes.size), size = XauxaType.Label, color = XauxaColor.TextSecondary)
+                            data.comprobantes.forEach { receipt ->
+                                XauxaListRow(
+                                    title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
+                                    subtitle = receipt.file.takeIf { it.isNotBlank() },
+                                    onClick = { onOpenComprobante(receipt.id) },
+                                )
+                            }
+                        }
+                    }
+                }
             }
         } ?: XauxaLoading(message = AppStrings.CargandoContexto)
+        }
+        // M7: Volver vive en la barra inferior (flecha atrás).
+        XauxaAppBar(
+            modifier = Modifier.navigationBarsPadding(),
+            actions = emptyList(),
+            onBack = { onAction(ContextAction.Back) },
+            backLabel = AppStrings.Volver,
+        )
     }
 }
