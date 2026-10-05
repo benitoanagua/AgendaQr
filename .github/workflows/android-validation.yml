@@ -97,6 +97,39 @@ jobs:
       - name: Component lab WebAssembly
         run: ./gradlew componentLabWeb --stacktrace
 
+  instrumented-tests:
+    # D4 — instrumentados en emulador (ACTION_SEND, singleTask, URI
+    # revocada). NO BLOQUEANTE hasta 5 corridas estables en CI.
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Run instrumented tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          script: ./gradlew :androidApp:connectedDebugAndroidTest -PallowDebugSigningForRc=true --stacktrace
+      - name: Upload instrumented reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: instrumented-reports-${{ github.run_id }}
+          path: androidApp/build/outputs/androidTest-results/**
+          if-no-files-found: warn
+
   ios-compile:
     runs-on: macos-latest
     env:
