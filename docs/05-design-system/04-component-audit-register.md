@@ -495,3 +495,28 @@ color, radio, sombra ni métrica fuera de tokens; todos compuestos desde
 `XauxaEmptyState` (título ahora vía `XauxaHeading`), listas y botones
 primario/secundario (S02 Galería primaria es uso, no cambio de componente),
 diálogos de confirmación existentes.
+
+
+## Cierre 2026-10-05 (pasada 2): auditoría actualizada con evidencia
+
+- `XauxaListRow`: **bug estructural corregido** — el marcador
+  `fillMaxHeight` en slots scrolleables (diálogos) estiraba la fila a
+  todo el alto disponible y empujaba al resto fuera del pliegue; ahora
+  `height(IntrinsicSize.Min)` fija la fila a su contenido (mismo patrón
+  aplicado a Toast/InlineResult).
+- `XauxaStatusBanner`: sin cambios de contrato en esta pasada (tone
+  único desde T12); el guard D2 no lo afecta.
+- `ContextPickerDialog`: paso "Crear contexto" (ADR-0003 opción C):
+  formulario mínimo Nombre+Nota, Cancelar vuelve a la lista sin tocar la
+  selección, Back = Cancelar; el contexto creado queda seleccionado y
+  marcado en la lista.
+- `ContextCreationDialog`: mismo paso mínimo para S06 vacío (acción
+  primaria textual "Crear contexto").
+- `XauxaScannerViewport`: "Escaneo real" VERIFIED en el catálogo del lab
+  (Android: CameraX integrado con análisis ZXing continuo — T8; iOS:
+  AVFoundation implementado, runtime pendiente de Xcode).
+- Paleta oscura: VERIFIED por análisis de píxel runtime (fondo negro
+  puro, sin crash en la recreación).
+- Capturas del laboratorio (Chromium headless, 3 anchos, 0 errores de
+  consola): `docs/04-ux/lab-captures/`. El toggle de tema del lab se
+  dibuja en canvas: NO automatizable — revisión visual humana pendiente.

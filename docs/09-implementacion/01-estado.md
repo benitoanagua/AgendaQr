@@ -1,6 +1,11 @@
 # Estado de implementación — V1 / Release Gate
 
 > Regla de cierre: código presente no equivale a capacidad validada.
+> Cada afirmación tiene evidencia (comando + resultado) o está marcada NO
+> VALIDADA / BLOCKED con su razón exacta. El historial vive en
+> `changelog.md`.
+
+> Regla de cierre: código presente no equivale a capacidad validada.
 > Cada afirmación de este documento tiene evidencia (comando + resultado) o
 > está marcada NO VALIDADA / BLOCKED con su razón exacta.
 > El historial completo vive en `changelog.md`.
@@ -122,3 +127,136 @@ assembleRelease RC, componentLabWeb, ios-compile, supabase-acceptance
   migraciones 001–006 sin tocar.
 - Un cambio = un commit convencional; una rama por tarea; CI verde antes
   del merge.
+
+
+---
+
+## Pasada 2 (2026-10-05) — Regresión R1, gaps U1–U5, deuda D1–D6, V1–V7
+
+Fuente de verdad: `main` @ b1e3ef4. Todos los merges con CI verde
+(incluye jobs `instrumented-tests` y `supabase-acceptance` bloqueante).
+
+### R1 — Regresión runtime completa (PASS ejecutado)
+
+Flujos A–F + offline + cambio de usuario + Back del sistema en todas las
+superficies, sobre APK de main con Supabase local (evidencia: dumps
+uiautomator + SQL en esta pasada):
+
+- **A** QR galería → S09 → guardar → Postgres (`destination-1791…`) →
+  editar (categoría "alimentos" → Postgres) → búsqueda "bife" → abrir.
+- **B** ACTION_SEND imagen (app cerrada, arranque frío vía resolver) →
+  S09; ACTION_SEND PDF (app abierta, `onNewIntent`) → diálogo recibido.
+- **C** PAGO 321→321500 con advertencia exacta de sensible + comprobante
+  intacto (Postgres: amount 321500.000000, attached=1).
+- **D** adjuntar → bandeja → "¿A cuál corresponde?" → retorno al detalle
+  → visor → compartir (FileProvider) → Desasociar (Postgres
+  operation_id=NULL) → re-asociar.
+- **E** PDF compartido → guardar sin operación → bandeja (fila en
+  Postgres `comprobante-f74f…`).
+- **F** duplicados: "Ver existente" (abre el visor del original) y
+  "Guardar de todos modos" (copia deliberada, bandeja +1).
+- **Offline**: avión → 999 "Pendiente" → kill → reabrir → banner persiste
+  → reconectar → backoff reintenta solo → "Sincronizado" + fila única.
+- **Kill durante sync**: force-stop al reconectar → relanzar → drain →
+  fila 444 única en Postgres (sin duplicados ni bloqueos).
+- **Cambio de usuario**: e2e.a → signup e2e.c (cero datos de a) →
+  sign-out → e2e.a (datos intactos); claves locales user-scoped.
+- **Back del sistema**: S09→Añadir→Inicio→salir; editor→detalle→lista;
+  bandeja→lista; visor (diálogo)→detalle; S12 revisión→resultado→fuera;
+  Búsqueda→Inicio (con IME: primero cierra teclado).
+
+**Bugs reales encontrados y corregidos en R1:**
+1. **PR #94**: desasociar marcaba "Sincronizado" pero Postgres conservaba
+   `operation_id` — el Json por defecto del cliente Supabase omite campos
+   null ⇒ los "clear" de TODAS las filas remotas nunca viajaban (context_id,
+   note, category…). Fix: `@EncodeDefault(ALWAYS)` + regresión con Json
+   por defecto. Verificado runtime: Postgres `operation_id: None`.
+2. **PR #95**: Back del sistema en el visor abría "Eliminar" y en el
+   diálogo de recibido guardaba implícitamente. Fix: `onDismissRequest`
+   explícito (Back cierra visor / abandona el entrante).
+
+### U — gaps UX/plataforma
+
+- **U1 (PR #96)**: contadores en español ("Revisar 1 pendiente",
+  "Comprobante sin asociar: 1", "Actividad reciente · 1"); cero
+  concatenación manual (helper `Counters`). +5 tests. PASS (unit+runtime).
+- **U2 (PR #97)**: iOS con adquisición REAL: PHPicker único/múltiple por
+  el mismo canal que Android, cámara AVFoundation con detección nativa de
+  QR, escena activa (adiós `keyWindow`), `ImportBatchControls.ios` y
+  `observeIncomingComprobantes()` implementados, literales en AppStrings.
+  **PASS (solo compila/unit + CI ios-compile)**; runtime BLOCKED (sin
+  Xcode) — checklist exacto en `docs/09-implementacion/IOS_RUNTIME_CHECKLIST.md`.
+- **U3 (PR #98)**: ADR-0003 **APROBADA — opción C, sin edición**. Creación
+  desde S08 (paso "Crear contexto", auto-selección, draft intacto) y
+  acción primaria en S06 vacío; `SaveContextUseCase` cableado; parámetro
+  muerto `onOpenContexts` eliminado. **Bug raíz de XauxaListRow corregido**
+  (fillMaxHeight en slot scrolleable estiraba la fila a todo el alto —
+  IntrinsicSize.Min). Runtime: contexto creado visible en selector/S06/
+  búsqueda y en Postgres vía cola. +7 tests (5 comunes + 2 Robolectric).
+- **U4 (PR #99)**: DEAD_LETTER con estado propio honesto ("No se pudo
+  sincronizar" + "Tu información está guardada…"), REINTENTAR solo para
+  FAILED (el drain omite DEAD_LETTER). ADR-0004 (recuperación de
+  cuarentena, opción B recomendada) **PROPUESTA**. +tests separados.
+  Runtime del estado: NO VALIDADO (requiere forzar error permanente).
+- **U5 (PR #100)**: `enableOnBackInvokedCallback=true` verificado en el
+  manifest fusionado; gesto del borde PASS (ejecutado) en AVD API 34
+  (Añadir→Inicio, Buscar→Inicio, raíz→salir). Android 16/API 36: NO
+  VALIDADO (sin imagen de sistema en el SDK); preview animado: NO
+  VALIDADO (visual transitorio).
+
+### D — deuda técnica
+
+- **D1 (PR #101)**: `ImportBatchCoordinator` (sin Compose) +
+  `ImportBatchStateHolder`; `Failed` transporta `UserFacingError`;
+  `AuthenticatedAppRoot` 542→262 líneas (fn ~150), `HomeSurface` a su
+  archivo. +4 tests del coordinador. R1-S12 re-validado runtime.
+- **D2 (PR #102)**: cero literales de UI en `feature/` fuera de
+  `AppStrings` (guard con fixtures que fallan/pasan); renombres
+  semánticos; decisión strings.xml documentada. +0 tests (guard).
+- **D3 (PR #103)**: a11y Compose UI ampliada a S02/S04/S06/S07-S08/S09/
+  S12/S01 (+8); **bug S06 vacío corregido** (la acción primaria seguía
+  "Volver" tras U3). presentation 105.
+- **D4 (PR #104)**: suite instrumentada propia (3 PASS en AVD: SEND con
+  grant, URI revocada sin crash, singleTask+filtros); job CI con emulador
+  NO bloqueante (promoción tras 5 corridas estables — 1ª verde).
+- **D5 (PR #107)**: colisión nowMillis cubierta por test (desempate de
+  newEntityId, 500 ids únicos); presupuesto de observe() (100 renders de
+  200 elementos) medido y asertado; paginación queda como ADR si V2 crece.
+- **D6 (PR #106)**: lint a cero salida (4 coords al toml; 26 advertencias
+  baselined con justificación); lab: paleta oscura VERIFIED (píxel),
+  escaneo real VERIFIED (CameraX T8), capturas headless 0 errores de
+  consola (docs/04-ux/lab-captures/); toggle de tema del lab NO
+  AUTOMATIZABLE (canvas) — revisión humana pendiente.
+
+### V — validaciones con entorno especial
+
+- **V1 QR real por cámara**: NO VALIDADO (escena virtual sin QR; sin
+  cámara física controlable — documentado desde la primera pasada).
+- **V2**: fuente 200% PASS (ejecutado: UI legible, sin crash; escala
+  restaurada), tema claro/oscuro PASS (píxel), reduced motion PASS
+  (transición instantánea), TalkBack NO VALIDADO (headless).
+- **V3 ACTION_SEND_MULTIPLE real**: NO VALIDADO (harness; la ruta
+  múltiple se valida por Galería (varios) — PASS).
+- **V4**: sin red PASS (banner + cola + recuperación), URI revocada PASS
+  (instrumentado, sin crash), **login con sesión revocada PASS** (pantalla
+  de login honesta; error con acción "No pudimos iniciar sesión. / No se
+  perdió nada. / REINTENTAR" verificado en runtime), almacenamiento lleno
+  NO VALIDADO (no se puede llenar el disco del emulador sin riesgo de
+  perder el stack), token expirado a mitad de drain NO VALIDADO sin
+  romper el stack local (revocar todas las sesiones fuerza re-login, que
+  es el camino honesto probado).
+- **V5**: no-QR y PDF PASS (E/F), lote PASS (S12), duplicados PASS (F),
+  kill durante sync PASS (444 única en Postgres tras relanzar).
+- **V6 RLS remoto**: BLOCKED (sin credenciales; nunca inventadas).
+- **V7 aceptación SQL**: PASS (postgres:15 limpio en podman).
+
+### Validación final sobre main b1e3ef4 (PASS ejecutado)
+
+`./gradlew build -PallowDebugSigningForRc=true` → BUILD SUCCESSFUL;
+`verifyAgendaQrArchitecture` → PASS; tests: **domain 47, data 70,
+presentation 105, core:ui 46** (268 global; nada bajó); `:androidApp:lint`
+→ "No errors or warnings" (26 filtradas por baseline justificado);
+`componentLabWeb` → PASS; TZ La_Paz/Kiritimati/Midway/UTC → PASS;
+aceptación SQL → ACCEPTANCE PASS; iOS sim compile (shared, data,
+presentation, core:ui) → PASS; `connectedDebugAndroidTest` → 3/3 PASS;
+CI de main → success (últimos 3 runs verdes).
