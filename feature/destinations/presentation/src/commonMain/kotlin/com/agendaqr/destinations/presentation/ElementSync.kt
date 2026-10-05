@@ -31,15 +31,24 @@ enum class ElementSyncStatus(val label: String) {
     /** Mutación en vuelo. */
     Syncing("Sincronizando"),
 
-    /** Falló la sincronización; el dato está a salvo y se puede reintentar. */
+    /** Error TRANSITORIO (FAILED): el drain lo reintentará; REINTENTAR ayuda. */
     ErrorRecoverable("Error recuperable"),
+
+    /**
+     * U4 — DEAD_LETTER: error permanente (validación/esquema/permisos) o
+     * reintentos agotados. El drain NO lo retoma: REINTENTAR no puede
+     * recuperarlo (verificaría como falso). El dato está a salvo en el
+     * dispositivo; la acción de recuperación (re-encolar) no existe en el
+     * contrato V1 y se propone por ADR.
+     */
+    Dead("No se pudo sincronizar"),
 }
 
 fun ElementSyncStatus.tone(): XauxaTone = when (this) {
     ElementSyncStatus.Synced -> XauxaTone.Success
     ElementSyncStatus.Pending -> XauxaTone.Neutral
     ElementSyncStatus.Syncing -> XauxaTone.Info
-    ElementSyncStatus.ErrorRecoverable -> XauxaTone.Danger
+    ElementSyncStatus.ErrorRecoverable, ElementSyncStatus.Dead -> XauxaTone.Danger
 }
 
 /** Insignia con texto del estado de sincronización del elemento. */
@@ -54,9 +63,12 @@ fun ElementSyncBadge(status: ElementSyncStatus) {
  * - Sin mutación en cola → [ElementSyncStatus.Synced].
  * - PENDING → [ElementSyncStatus.Pending] (guardado localmente, esperando).
  * - PROCESSING → [ElementSyncStatus.Syncing].
- * - FAILED (y DEAD_LETTER, cuarentena permanente pendiente de A3) →
- *   [ElementSyncStatus.ErrorRecoverable]; el dato sigue a salvo localmente
- *   y el banner global ofrece REINTENTAR (drain).
+ * - FAILED → [ElementSyncStatus.ErrorRecoverable]: error transitorio; el
+ *   drain (y su REINTENTAR) lo reintenta.
+ * - DEAD_LETTER → [ElementSyncStatus.Dead] (U4): error permanente o
+ *   reintentos agotados; el drain lo omite, así que REINTENTAR no se
+ *   ofrece para estos elementos — la recuperación requeriría re-encolar
+ *   (acción nueva: ADR-0004). El dato está a salvo localmente.
  */
 fun elementSyncStatus(
     queue: List<PendingSyncMutation>,
@@ -70,8 +82,8 @@ fun elementSyncStatus(
     return when (mutation.state) {
         SyncMutationState.PENDING -> ElementSyncStatus.Pending
         SyncMutationState.PROCESSING -> ElementSyncStatus.Syncing
-        SyncMutationState.FAILED, SyncMutationState.DEAD_LETTER ->
-            ElementSyncStatus.ErrorRecoverable
+        SyncMutationState.FAILED -> ElementSyncStatus.ErrorRecoverable
+        SyncMutationState.DEAD_LETTER -> ElementSyncStatus.Dead
     }
 }
 
@@ -89,8 +101,8 @@ class ElementSyncLookup(private val queue: List<PendingSyncMutation>) {
         return when (mutation.state) {
             SyncMutationState.PENDING -> ElementSyncStatus.Pending
             SyncMutationState.PROCESSING -> ElementSyncStatus.Syncing
-            SyncMutationState.FAILED, SyncMutationState.DEAD_LETTER ->
-                ElementSyncStatus.ErrorRecoverable
+            SyncMutationState.FAILED -> ElementSyncStatus.ErrorRecoverable
+            SyncMutationState.DEAD_LETTER -> ElementSyncStatus.Dead
         }
     }
 
