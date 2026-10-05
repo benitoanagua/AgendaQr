@@ -48,6 +48,8 @@ fun DestinationEditorScreen(
     isSaving: Boolean = false,
     error: UserFacingError? = null,
     onClearError: () -> Unit = {},
+    /** REINTENTAR del banner: re-ejecuta el guardado fallido en el VM. */
+    onRetryError: () -> Unit = onClearError,
     /** U3/ADR-0003: crear contexto desde S08 sin perder el draft. */
     onCreateContext: (name: String, note: String?) -> Unit = { _, _ -> },
     justCreatedContextId: String? = null,
@@ -63,7 +65,7 @@ fun DestinationEditorScreen(
     }
     DestinationEditorContent(
         initial, existing, onSave, onImportMany, contexts, onBack, isSaving, error, onClearError,
-        onCreateContext, justCreatedContextId,
+        onCreateContext, justCreatedContextId, onRetryError,
     )
 }
 
@@ -80,6 +82,7 @@ private fun DestinationEditorContent(
     onClearError: () -> Unit,
     onCreateContext: (name: String, note: String?) -> Unit,
     justCreatedContextId: String?,
+    onRetryError: () -> Unit,
 ) {
     var name by rememberSaveable(initial.name) { mutableStateOf(initial.name) }
     var category by rememberSaveable(existing?.category) { mutableStateOf(existing?.category.orEmpty()) }
@@ -112,7 +115,7 @@ private fun DestinationEditorContent(
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         XauxaHeading(
-            text = if (existing == null) "Agregar destino" else "Editar destino",
+            text = if (existing == null) AppStrings.AgregarDestino else AppStrings.EditarDestino,
             size = XauxaType.Headline,
             fontWeight = FontWeight.Bold,
         )
@@ -121,7 +124,7 @@ private fun DestinationEditorContent(
                 err.display(),
                 tone = XauxaTone.Danger,
                 actionLabel = err.action.label,
-                onAction = onClearError,
+                onAction = { if (err.action == ErrorAction.Retry) onRetryError() else onClearError() },
                 onDismiss = onClearError,
             )
         }
@@ -136,7 +139,7 @@ private fun DestinationEditorContent(
         XauxaTextInput(label = AppStrings.Categoria, value = category, onValueChange = { category = it })
         XauxaTextInput(label = AppStrings.Nota, value = note, onValueChange = { note = it }, singleLine = false, minLines = 3)
         XauxaSecondaryButton(
-            label = selection.contextId?.let { id -> "Para: " + (contexts.firstOrNull { it.id == id }?.name ?: "Contexto") } ?: "Para: elegir contexto (opcional)",
+            label = selection.contextId?.let { id -> AppStrings.ParaContextoElegido + (contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico) } ?: AppStrings.ParaElegirContexto,
             onClick = { selection = selection.openPicker() },
         )
         XauxaText(

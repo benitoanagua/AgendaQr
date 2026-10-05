@@ -132,16 +132,22 @@ fun DestinationsScreen(
                 error.display(),
                 tone = XauxaTone.Danger,
                 actionLabel = error.action.label,
-                onAction = { onAction(DestinationAction.ClearError) },
+                // REINTENTAR re-ejecuta la operación fallida en el VM.
+                onAction = {
+                    onAction(
+                        if (error.action == ErrorAction.Retry) DestinationAction.RetryFailed
+                        else DestinationAction.ClearError,
+                    )
+                },
                 onDismiss = { onAction(DestinationAction.ClearError) },
             )
         }
         when {
             state.isLoading -> XauxaLoading(message = AppStrings.CargandoDestinosQr)
             state.visibleDestinations.isEmpty() -> XauxaEmptyState(
-                title = if (state.destinations.isEmpty()) "Aún no hay destinos" else "No se encontraron destinos",
-                subtitle = if (state.destinations.isEmpty()) "Agrega tu primer QR para empezar." else "Prueba con otra búsqueda o limpia los filtros.",
-                actionLabel = if (state.destinations.isEmpty()) "Añadir" else "Limpiar búsqueda",
+                title = if (state.destinations.isEmpty()) AppStrings.AunNoHayDestinos else AppStrings.NoSeEncontraronDestinos,
+                subtitle = if (state.destinations.isEmpty()) AppStrings.emptyDestinationsHint else AppStrings.PruebaConOtraBusquedaOLimpia,
+                actionLabel = if (state.destinations.isEmpty()) AppStrings.Anadir else AppStrings.LimpiarBusqueda,
                 onAction = { if (state.destinations.isEmpty()) onAction(DestinationAction.Edit(null)) else onAction(DestinationAction.Search("")) },
             )
             else -> {

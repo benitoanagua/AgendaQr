@@ -80,7 +80,7 @@ internal fun OperationEditorScreen(
     ) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             XauxaHeading(
-                text = if (existing == null) "Registrar operación" else "Editar operación",
+                text = if (existing == null) AppStrings.RegistrarOperacion else AppStrings.EditarOperacion,
                 size = XauxaType.Display,
                 fontWeight = FontWeight.Bold,
             )
@@ -106,8 +106,8 @@ internal fun OperationEditorScreen(
         XauxaTextInput(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, modifier = Modifier.fillMaxWidth())
         XauxaTextInput(label = AppStrings.DestinoQrOpcional, value = destination, onValueChange = { destination = it }, modifier = Modifier.fillMaxWidth())
         XauxaSecondaryButton(
-            label = contextSelection.contextId?.let { id -> "Para: " + (state.contexts.firstOrNull { it.id == id }?.name ?: "Contexto") }
-                ?: "Para: elegir contexto (opcional)",
+            label = contextSelection.contextId?.let { id -> AppStrings.ParaContextoElegido + (state.contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico) }
+                ?: AppStrings.ParaElegirContexto,
             onClick = { contextSelection = contextSelection.openPicker() },
         )
         XauxaTextInput(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, modifier = Modifier.fillMaxWidth())
@@ -120,12 +120,17 @@ internal fun OperationEditorScreen(
                 err.display(),
                 tone = XauxaTone.Danger,
                 actionLabel = err.action.label,
-                onAction = { viewModel.onAction(OperationAction.ClearError) },
+                onAction = {
+                    viewModel.onAction(
+                        if (err.action == ErrorAction.Retry) OperationAction.RetryFailed
+                        else OperationAction.ClearError,
+                    )
+                },
                 onDismiss = { viewModel.onAction(OperationAction.ClearError) },
             )
         }
         XauxaPrimaryButton(
-            label = if (existing == null) "Guardar" else "Guardar cambios",
+            label = if (existing == null) AppStrings.Guardar else AppStrings.GuardarCambios,
             onClick = {
                 submitted = true
                 val at = occurredAt ?: return@XauxaPrimaryButton

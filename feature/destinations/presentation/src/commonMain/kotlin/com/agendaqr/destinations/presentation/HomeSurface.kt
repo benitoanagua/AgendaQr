@@ -92,6 +92,7 @@ internal fun HomeSurface(
                 isSaving = state.isSaving,
                 error = state.error,
                 onClearError = { graph.destinationsViewModel.onAction(DestinationAction.ClearError) },
+                onRetryError = { graph.destinationsViewModel.onAction(DestinationAction.RetryFailed) },
             )
             is DestinationRoute.Detail -> {
                 val destination = graph.destinationsViewModel.destination(route.id)

@@ -77,7 +77,12 @@ class OperationsViewModel(
         scope.launch { observeIncomingComprobantes().collect { receiveIncoming(it) } }
     }
 
+    /** Última operación fallida, para re-ejecutarla con RetryFailed. */
+    private var retryBlock: (() -> Unit)? = null
+
     fun onAction(action: OperationAction) {
+        // Un reintento consume el bloque; cualquier otra acción lo invalida.
+        if (action != OperationAction.RetryFailed) retryBlock = null
         when (action) {
             is OperationAction.Search -> _state.update { it.copy(query = action.value) }
             OperationAction.New -> _state.update { it.copy(route = OperationRoute.New, error = null) }
@@ -87,12 +92,15 @@ class OperationsViewModel(
                 _state.update { it.copy(route = OperationRoute.Edit(action.id), error = null) }
             }
             is OperationAction.Delete -> scope.launch {
-                runCatching { deleteOperation(action.id) }.onFailure { showError(it, ErrorFlow.DeleteOperation) }.onSuccess { back() }
+                retryBlock = { onAction(action) }
+                runCatching { deleteOperation(action.id) }.onFailure { showError(it, ErrorFlow.DeleteOperation) }.onSuccess { retryBlock = null; back() }
             }
             is OperationAction.Associate -> scope.launch {
+                retryBlock = { onAction(action) }
                 runCatching { associate(action.comprobanteId, action.operationId) }
                     .onFailure { showError(it, ErrorFlow.SaveReceipt) }
                     .onSuccess {
+                        retryBlock = null
                         associationReturnOperationId?.let { operationId ->
                             selectedOperationId = operationId
                             associationReturnOperationId = null
@@ -101,7 +109,8 @@ class OperationsViewModel(
                     }
             }
             is OperationAction.Disassociate -> scope.launch {
-                runCatching { unassociate(action.comprobanteId) }.onFailure { showError(it, ErrorFlow.SaveReceipt) }
+                retryBlock = { onAction(action) }
+                runCatching { unassociate(action.comprobanteId) }.onFailure { showError(it, ErrorFlow.SaveReceipt) }.onSuccess { retryBlock = null }
             }
             is OperationAction.CreateOperationFromReceipt -> {
                 if (!state.value.isSavingOperation) createOperationFromReceipt(action.comprobanteId)
@@ -112,9 +121,11 @@ class OperationsViewModel(
             OperationAction.OpenUnassociated -> _state.update { it.copy(route = OperationRoute.Unassociated, error = null) }
             OperationAction.Back -> back()
             OperationAction.ClearError -> _state.update { it.copy(error = null) }
+            OperationAction.RetryFailed -> retryBlock?.invoke()
             is OperationAction.OpenComprobante -> openComprobante(action.id)
             OperationAction.CloseComprobante -> _state.update { it.copy(openedComprobante = null, openedComprobanteBytes = null, isLoadingComprobante = false) }
             is OperationAction.DeleteComprobante -> scope.launch {
+                retryBlock = { onAction(action) }
                 runCatching {
                     val receipt = requireNotNull(
                         state.value.unassociated.firstOrNull { it.id == action.id }
@@ -123,6 +134,7 @@ class OperationsViewModel(
                     ) { AppStrings.ComprobanteNoEncontrado }
                     deleteComprobante(receipt)
                 }.onFailure { showError(it, ErrorFlow.DeleteReceipt) }.onSuccess {
+                    retryBlock = null
                     _state.update {
                         it.copy(
                             openedComprobante = null,
@@ -194,6 +206,7 @@ class OperationsViewModel(
         }
         scope.launch {
             _state.update { it.copy(isSavingReceipt = true) }
+            retryBlock = { saveIncoming(openInbox, allowDuplicate) }
             runCatching {
                 val now = nowMillis()
                 saveComprobante(
@@ -209,6 +222,7 @@ class OperationsViewModel(
                     incoming.mimeType,
                 )
             }.onFailure { showError(it, ErrorFlow.SaveReceipt) }.onSuccess {
+                retryBlock = null
                 _state.update { it.copy(pendingIncoming = null, pendingDuplicates = emptyList(), route = if (openInbox) OperationRoute.Unassociated else OperationRoute.List) }
             }
             _state.update { it.copy(isSavingReceipt = false) }
@@ -217,6 +231,7 @@ class OperationsViewModel(
 
     private fun createOperationFromReceipt(comprobanteId: String) {
         _state.update { it.copy(isSavingOperation = true, error = null) }
+        retryBlock = { createOperationFromReceipt(comprobanteId) }
         scope.launch {
             val now = nowMillis()
             val operation = Operation(
@@ -229,6 +244,7 @@ class OperationsViewModel(
                 saveOperation(operation)
                 associate(comprobanteId, operation.id)
             }.onFailure { showError(it, ErrorFlow.SaveReceipt) }.onSuccess {
+                retryBlock = null
                 selectedOperationId = operation.id
                 _state.update { it.copy(route = OperationRoute.Detail(operation.id)) }
             }
@@ -239,9 +255,11 @@ class OperationsViewModel(
     private fun update(action: OperationAction.Update) {
         scope.launch {
             _state.update { it.copy(isSavingOperation = true, error = null) }
+            retryBlock = { update(action) }
             runCatching { updateOperation(action.operation) }
                 .onFailure { showError(it, ErrorFlow.SaveOperation) }
                 .onSuccess {
+                    retryBlock = null
                     selectedOperationId = action.operation.id
                     _state.update { it.copy(route = OperationRoute.Detail(action.operation.id)) }
                 }
@@ -265,7 +283,9 @@ class OperationsViewModel(
                 note = action.note?.trim()?.takeIf(String::isNotBlank),
                 contextId = action.contextId,
             )
+            retryBlock = { saveNew(action) }
             runCatching { saveOperation(operation) }.onFailure { showError(it, ErrorFlow.SaveOperation) }.onSuccess {
+                retryBlock = null
                 selectedOperationId = operation.id
                 _state.update { it.copy(route = OperationRoute.Detail(operation.id)) }
             }

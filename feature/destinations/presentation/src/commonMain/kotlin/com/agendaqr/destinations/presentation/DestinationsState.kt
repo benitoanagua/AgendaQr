@@ -58,6 +58,12 @@ sealed interface DestinationAction {
     data class ToggleFavorite(val destination: Destination) : DestinationAction
     data object Back : DestinationAction
     data object ClearError : DestinationAction
+    /**
+     * Re-ejecuta la última operación fallida (guardar, actualizar,
+     * eliminar, favorito, guardado masivo): el banner REINTENTAR reintenta
+     * de verdad en vez de solo cerrar (§10).
+     */
+    data object RetryFailed : DestinationAction
 }
 
 class DestinationsViewModel(
@@ -76,6 +82,8 @@ class DestinationsViewModel(
     private val _state = MutableStateFlow(DestinationsUiState())
     val state: StateFlow<DestinationsUiState> = _state.asStateFlow()
     private var importedAssets: List<com.agendaqr.destinations.domain.QrAsset> = emptyList()
+    /** Última operación fallida, para re-ejecutarla con RetryFailed. */
+    private var retryBlock: (() -> Unit)? = null
 
     private var observation: Job = scope.launch {
         observe().collect { destinations ->
@@ -84,6 +92,9 @@ class DestinationsViewModel(
     }
 
     fun onAction(action: DestinationAction) {
+        // Un reintento consume el bloque; cualquier otra acción lo invalida
+        // (una intención nueva reemplaza a la fallida).
+        if (action != DestinationAction.RetryFailed) retryBlock = null
         when (action) {
             is DestinationAction.Search -> _state.update { it.copy(query = action.value) }
             DestinationAction.ToggleFavorites -> _state.update { it.copy(favoriteOnly = !it.favoriteOnly) }
@@ -97,13 +108,14 @@ class DestinationsViewModel(
                     _state.update { state -> state.copy(route = DestinationRoute.FullscreenQr(action.id)) }
                 }
             }
-            is DestinationAction.Save -> { if (!state.value.isSaving) scope.launch { _state.update { it.copy(isSaving = true, error = null) }; runCatching { save(action.destination) }.onFailure { showError(it, ErrorFlow.SaveQr) }.onSuccess { back() }; _state.update { it.copy(isSaving = false) } } }
+            is DestinationAction.Save -> { if (!state.value.isSaving) scope.launch { _state.update { it.copy(isSaving = true, error = null) }; retryBlock = { onAction(action) }; runCatching { save(action.destination) }.onFailure { showError(it, ErrorFlow.SaveQr) }.onSuccess { retryBlock = null; back() }; _state.update { it.copy(isSaving = false) } } }
             is DestinationAction.ImportAssets -> { importedAssets = action.assets; _state.update { it.copy(route = DestinationRoute.ImportReview, error = null) } }
-            is DestinationAction.Update -> { if (!state.value.isSaving) scope.launch { _state.update { it.copy(isSaving = true, error = null) }; runCatching { update(action.destination) }.onFailure { showError(it, ErrorFlow.SaveQr) }.onSuccess { back() }; _state.update { it.copy(isSaving = false) } } }
-            is DestinationAction.Delete -> scope.launch { runCatching { delete(action.id) }.onFailure { showError(it, ErrorFlow.DeleteQr) }.onSuccess { back() } }
-            is DestinationAction.ToggleFavorite -> scope.launch { runCatching { toggleFavorite(action.destination) }.onFailure { showError(it, ErrorFlow.SaveQr) } }
+            is DestinationAction.Update -> { if (!state.value.isSaving) scope.launch { _state.update { it.copy(isSaving = true, error = null) }; retryBlock = { onAction(action) }; runCatching { update(action.destination) }.onFailure { showError(it, ErrorFlow.SaveQr) }.onSuccess { retryBlock = null; back() }; _state.update { it.copy(isSaving = false) } } }
+            is DestinationAction.Delete -> scope.launch { retryBlock = { onAction(action) }; runCatching { delete(action.id) }.onFailure { showError(it, ErrorFlow.DeleteQr) }.onSuccess { retryBlock = null; back() } }
+            is DestinationAction.ToggleFavorite -> scope.launch { retryBlock = { onAction(action) }; runCatching { toggleFavorite(action.destination) }.onFailure { showError(it, ErrorFlow.SaveQr) }.onSuccess { retryBlock = null } }
             DestinationAction.Back -> back()
             DestinationAction.ClearError -> _state.update { it.copy(error = null) }
+            DestinationAction.RetryFailed -> retryBlock?.invoke()
         }
     }
 
@@ -116,6 +128,7 @@ class DestinationsViewModel(
         if (assets.isEmpty()) { back(); return }
         scope.launch {
             _state.update { it.copy(isSaving = true, error = null) }
+            retryBlock = { saveImportedAssets() }
             runCatching {
                 assets.forEachIndexed { index, asset ->
                     val now = com.agendaqr.destinations.domain.nowMillis()
@@ -129,7 +142,7 @@ class DestinationsViewModel(
                         updatedAt = now,
                     ))
                 }
-            }.onFailure { showError(it, ErrorFlow.SaveQr) }.onSuccess { importedAssets = emptyList(); back() }
+            }.onFailure { showError(it, ErrorFlow.SaveQr) }.onSuccess { importedAssets = emptyList(); retryBlock = null; back() }
             _state.update { it.copy(isSaving = false) }
         }
     }

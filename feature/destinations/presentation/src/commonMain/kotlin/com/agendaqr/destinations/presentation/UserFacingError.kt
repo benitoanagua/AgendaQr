@@ -29,6 +29,12 @@ enum class ErrorAction(val label: String) {
 
     /** Volver a elegir el archivo/imagen de origen. */
     ChooseAnotherImage("ELEGIR OTRA IMAGEN"),
+
+    /**
+     * Cerrar: para errores donde reintentar no tiene sentido (el elemento
+     * ya no existe). El banner se descarta; el usuario sigue en su flujo.
+     */
+    Close("CERRAR"),
 }
 
 /** Flujos que producen errores recuperables en la app. */
@@ -47,6 +53,7 @@ enum class ErrorFlow {
     ImportRead,
     ImportBatchSave,
     ContextOpen,
+    ContextSave,
     CameraPermission,
 }
 
@@ -188,10 +195,16 @@ fun userFacingError(error: Throwable, flow: ErrorFlow): UserFacingError = when (
         dataStatus = "Los elementos reconocidos siguen pendientes de guardar.",
         action = ErrorAction.Retry,
     )
+    ErrorFlow.ContextSave -> UserFacingError(
+        what = "No pudimos crear el contexto.",
+        dataStatus = "No se guardó nada.",
+        action = ErrorAction.Retry,
+    )
+    // Reintentar no tiene sentido: el contexto no existe. Cerrar.
     ErrorFlow.ContextOpen -> UserFacingError(
         what = "No encontramos este contexto.",
         dataStatus = "Tus demás datos están bien.",
-        action = ErrorAction.Retry,
+        action = ErrorAction.Close,
     )
     ErrorFlow.CameraPermission -> UserFacingError(
         what = "No pudimos abrir la cámara.",
@@ -204,21 +217,21 @@ fun userFacingError(error: Throwable, flow: ErrorFlow): UserFacingError = when (
 internal fun duplicateReceiptGuardError(): UserFacingError = UserFacingError(
     what = "Ya existe un comprobante igual. Puedes conservarlo sin crear otra copia.",
     dataStatus = "No se creó ninguna copia.",
-    action = ErrorAction.Retry,
+    action = ErrorAction.Close,
 )
 
 /** Error contextual cuando el comprobante pedido no existe. */
 internal fun comprobanteNotFound(): UserFacingError = UserFacingError(
     what = "No encontramos este comprobante.",
     dataStatus = "Pudo haber sido eliminado.",
-    action = ErrorAction.Retry,
+    action = ErrorAction.Close,
 )
 
 /** Error contextual cuando la operación pedida no existe. */
 internal fun operationNotFound(): UserFacingError = UserFacingError(
     what = "No encontramos esta operación.",
     dataStatus = "Pudo haber sido eliminada.",
-    action = ErrorAction.Retry,
+    action = ErrorAction.Close,
 )
 
 /** Envoltura para los errores de lectura de import que llegan por canal. */

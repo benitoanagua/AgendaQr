@@ -124,7 +124,12 @@ internal fun OperationListScreen(
                 err.display(),
                 tone = XauxaTone.Danger,
                 actionLabel = err.action.label,
-                onAction = { viewModel.onAction(OperationAction.ClearError) },
+                onAction = {
+                    viewModel.onAction(
+                        if (err.action == ErrorAction.Retry) OperationAction.RetryFailed
+                        else OperationAction.ClearError,
+                    )
+                },
                 onDismiss = { viewModel.onAction(OperationAction.ClearError) },
             )
         }

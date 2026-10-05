@@ -208,8 +208,8 @@ class AppBackStackTest {
     }
 }
 
-/** Factoría local para no duplicar el cableado del ViewModel de operaciones. */
-private object OperationsViewModelFactory {
+/** Factoría compartida para no duplicar el cableado del ViewModel de operaciones. */
+internal object OperationsViewModelFactory {
     fun create(operations: OperationRepository): OperationsViewModel {
         val contexts = FakeContexts()
         val receipts = FakeReceipts()

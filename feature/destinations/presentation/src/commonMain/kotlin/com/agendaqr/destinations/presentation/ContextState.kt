@@ -31,6 +31,8 @@ sealed interface ContextAction {
     /** U3/ADR-0003 (opción C): crear contexto (Nombre obligatorio). */
     data class Create(val name: String, val note: String?) : ContextAction
     data object ClearJustCreated : ContextAction
+    /** Re-ejecuta la creación fallida (el banner REINTENTAR reintenta). */
+    data object RetryFailed : ContextAction
 }
 
 class ContextsViewModel(
@@ -61,11 +63,16 @@ class ContextsViewModel(
         }
     }
 
+    /** Última creación fallida, para re-ejecutarla con RetryFailed. */
+    private var retryBlock: (() -> Unit)? = null
+
     fun onAction(action: ContextAction) {
+        if (action != ContextAction.RetryFailed) retryBlock = null
         when (action) {
             is ContextAction.Create -> create(action)
             ContextAction.ClearJustCreated ->
                 _state.value = _state.value.copy(justCreatedContextId = null)
+            ContextAction.RetryFailed -> retryBlock?.invoke()
             is ContextAction.Open -> open(action.id)
             ContextAction.Back -> {
                 selectedId = null
@@ -98,7 +105,7 @@ class ContextsViewModel(
         }
         val useCase = save ?: run {
             _state.value = _state.value.copy(
-                error = userFacingError(IllegalStateException("sin repositorio de guardado"), ErrorFlow.ContextOpen),
+                error = userFacingError(IllegalStateException("sin repositorio de guardado"), ErrorFlow.ContextSave),
             )
             return
         }
@@ -111,8 +118,10 @@ class ContextsViewModel(
             updatedAt = now,
         )
         scope.launch {
+            retryBlock = { onAction(action) }
             runCatching { useCase(context) }
                 .onSuccess {
+                    retryBlock = null
                     _state.value = _state.value.copy(
                         justCreatedContextId = context.id,
                         error = null,
@@ -120,7 +129,7 @@ class ContextsViewModel(
                 }
                 .onFailure { error ->
                     _state.value = _state.value.copy(
-                        error = userFacingError(error, ErrorFlow.ContextOpen),
+                        error = userFacingError(error, ErrorFlow.ContextSave),
                     )
                 }
         }
