@@ -66,6 +66,14 @@ internal fun OperationDetailScreen(
             // El dato está a salvo localmente: el usuario puede reintentar.
             XauxaTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
         }
+        if (operationSyncStatus == ElementSyncStatus.Dead) {
+            // U4: el drain omite los errores permanentes; reintentar no
+            // puede recuperarlos. El dato está a salvo localmente.
+            XauxaText(
+                text = "Tu información está guardada en el dispositivo.",
+                color = XauxaColor.TextSecondary,
+            )
+        }
         operation.personOrEntity?.let { XauxaText(AppStrings.PersonaOEntidad + it) }
         operation.currency?.let { XauxaText(AppStrings.Moneda + it) }
         operation.destinationId?.let { XauxaText(AppStrings.Destino + it) }

@@ -67,12 +67,26 @@ class ElementSyncStatusTest {
     }
 
     @Test
-    fun dead_letter_quarantine_is_visible_as_an_error_to_the_user() {
-        val queue = listOf(mutation(SyncResource.OPERATION, "op-1", SyncMutationState.DEAD_LETTER))
+    fun failed_transitory_maps_to_recoverable_error() {
+        val queue = listOf(mutation(SyncResource.OPERATION, "op-1", SyncMutationState.FAILED))
         assertEquals(
             ElementSyncStatus.ErrorRecoverable,
             elementSyncStatus(queue, SyncResource.OPERATION, "op-1"),
         )
+        // FAILED: el drain reintenta; REINTENTAR es una acción real.
+        assertEquals("Error recuperable", ElementSyncStatus.ErrorRecoverable.label)
+    }
+
+    @Test
+    fun dead_letter_permanent_maps_to_its_own_honest_state() {
+        val queue = listOf(mutation(SyncResource.OPERATION, "op-1", SyncMutationState.DEAD_LETTER))
+        val status = elementSyncStatus(queue, SyncResource.OPERATION, "op-1")
+        // U4: DEAD_LETTER ya NO se disfraza de "recuperable" — el drain lo
+        // omite y REINTENTAR no puede recuperarlo; su etiqueta lo dice.
+        assertEquals(ElementSyncStatus.Dead, status)
+        assertEquals("No se pudo sincronizar", status.label)
+        // Distinto del transitorio (FAILED): cada estado con su texto.
+        assertEquals(ElementSyncStatus.ErrorRecoverable, elementSyncStatus(listOf(mutation(SyncResource.OPERATION, "op-2", SyncMutationState.FAILED)), SyncResource.OPERATION, "op-2"))
     }
 
     @Test
@@ -110,7 +124,7 @@ class ElementSyncStatusTest {
         // Spec §11: significado independiente del color; los cuatro estados
         // del contrato §5 tienen texto distinguible.
         val labels = ElementSyncStatus.values().map { it.label }
-        assertEquals(4, labels.toSet().size)
+        assertEquals(5, labels.toSet().size)
         for (status in ElementSyncStatus.values()) {
             // kotlin-test común: el mensaje va primero.
             assertTrue("El estado $status necesita texto") { status.label.isNotBlank() }

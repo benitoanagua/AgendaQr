@@ -61,6 +61,12 @@ fun DestinationDetailScreen(
             if (syncStatus == ElementSyncStatus.ErrorRecoverable) {
                 XauxaTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
             }
+            if (syncStatus == ElementSyncStatus.Dead) {
+                XauxaText(
+                    text = "Tu información está guardada en el dispositivo.",
+                    color = XauxaColor.TextSecondary,
+                )
+            }
             if (destination.qr.encoded.isNotBlank()) {
                 XauxaQrPreview(destination.qr.encoded)
             } else {
