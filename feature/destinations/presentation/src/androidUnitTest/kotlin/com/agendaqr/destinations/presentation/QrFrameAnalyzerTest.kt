@@ -98,3 +98,59 @@ class QrFrameAnalyzerTest {
         assertEquals(content, session.onFrame(content))
     }
 }
+
+/**
+ * S09 — la galería captura el MISMO contenido que la cámara (decodeArgb
+ * comparte lector y hints con decodeLuminance).
+ */
+class QrGalleryContentTest {
+
+    private val content = "https://agendaqr.test/qr/gallery-check"
+
+    private fun qrArgb(scale: Int = 4, quiet: Int = 4): Triple<IntArray, Int, Int> {
+        val code = Encoder.encode(content, ErrorCorrectionLevel.L)
+        val matrix = code.matrix
+        val w = (matrix.width + quiet * 2) * scale
+        val h = (matrix.height + quiet * 2) * scale
+        val pixels = IntArray(w * h) { 0xFFFFFFFF.toInt() }
+        for (y in 0 until h) {
+            for (x in 0 until w) {
+                val mx = x / scale - quiet
+                val my = y / scale - quiet
+                if (mx in 0 until matrix.width && my in 0 until matrix.height &&
+                    matrix.get(mx, my).toInt() != 0
+                ) {
+                    pixels[y * w + x] = 0xFF000000.toInt()
+                }
+            }
+        }
+        return Triple(pixels, w, h)
+    }
+
+    @Test
+    fun gallery_decode_captures_the_same_content_as_camera() {
+        val (pixels, w, h) = qrArgb()
+        assertEquals(content, QrFrameAnalyzer.decodeArgb(pixels, w, h))
+    }
+
+    @Test
+    fun blank_argb_decodes_nothing() {
+        val (_, w, h) = qrArgb()
+        assertNull(QrFrameAnalyzer.decodeArgb(IntArray(w * h) { 0xFFFFFFFF.toInt() }, w, h))
+    }
+
+    @Test
+    fun undersized_buffer_is_rejected_safely() {
+        assertNull(QrFrameAnalyzer.decodeArgb(IntArray(10), 100, 100))
+        assertNull(QrFrameAnalyzer.decodeArgb(IntArray(0), 0, 0))
+    }
+
+    @Test
+    fun qr_asset_content_defaults_to_unknown() {
+        // Sin contenido decodificado (p. ej. releído del remoto) la UI
+        // simplemente no muestra evidencia; el flujo no se rompe.
+        val asset = com.agendaqr.destinations.domain.QrAsset(encoded = "eA==")
+        assertNull(asset.content)
+        assertEquals("https://x.test", asset.copy(content = "https://x.test").content)
+    }
+}

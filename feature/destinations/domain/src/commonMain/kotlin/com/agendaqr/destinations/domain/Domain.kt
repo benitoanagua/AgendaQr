@@ -27,6 +27,14 @@ data class QrAsset(
     /** Base64 encoded image bytes. The domain intentionally does not know how the QR is decoded. */
     val encoded: String,
     val mimeType: String = "image/png",
+    /**
+     * Texto decodificado del QR (lo que Agenda QR entendió). Solo existe
+     * en memoria durante la importación: es la evidencia de S09
+     * ("verificar lo que Agenda QR entendió"). La sincronización persiste
+     * únicamente la imagen (`qr_raw_content`); al releer del remoto el
+     * contenido es desconocido (null).
+     */
+    val content: String? = null,
 )
 
 interface DestinationRepository {

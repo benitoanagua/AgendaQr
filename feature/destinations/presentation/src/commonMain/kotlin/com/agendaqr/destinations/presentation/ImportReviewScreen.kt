@@ -77,6 +77,15 @@ fun ImportReviewScreen(
             ) {
                 itemsIndexed(assets) { _, asset ->
                     XauxaQrPreview(asset.encoded)
+                    // S09: evidencia de lo que Agenda QR entendió — el texto
+                    // decodificado, sin exponer payload técnico.
+                    asset.content?.takeIf { it.isNotBlank() }?.let { content ->
+                        XauxaText(
+                            AppStrings.Contenido + ": " + content,
+                            size = XauxaType.Label,
+                            color = XauxaColor.TextSecondary,
+                        )
+                    }
                 }
             }
             XauxaPrimaryButton(if (assets.size == 1) "Guardar" else "Guardar todo", onSaveAll, enabled = !isSaving, isLoading = isSaving)
