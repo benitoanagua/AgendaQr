@@ -52,7 +52,11 @@ fun AddDestinationScreen(
             color = XauxaColor.TextSecondary,
         )
 
-        QrImportControls(onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) }, galleryAsPrimary = true)
+        // Orden congelado S02: Galería → Desde otra app → Cámara.
+        QrGalleryControls(
+            onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
+            galleryAsPrimary = true,
+        )
 
         XauxaText(
             AppStrings.DesdeOtraApp,
@@ -63,6 +67,10 @@ fun AddDestinationScreen(
         XauxaText(
             AppStrings.shareFromAnotherAppHint,
             color = XauxaColor.TextSecondary,
+        )
+
+        QrCameraEntryControl(
+            onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
         )
 
         XauxaSecondaryButton(

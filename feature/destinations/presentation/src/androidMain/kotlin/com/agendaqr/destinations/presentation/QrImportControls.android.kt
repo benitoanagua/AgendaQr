@@ -33,7 +33,6 @@ actual fun QrImportControls(
     LaunchedEffect(Unit) {
         AgendaQrAndroidImportLauncher.results.collect(onResult)
     }
-    var cameraOpen by remember { mutableStateOf(false) }
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
@@ -45,13 +44,53 @@ actual fun QrImportControls(
             XauxaSecondaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery)
         }
         XauxaSecondaryButton(AppStrings.GaleriaVarios, AgendaQrAndroidImportLauncher::multiple)
-        CameraQrEntry(onOpen = { cameraOpen = true })
+        CameraCaptureHost(onQr = { asset -> onResult(QrImportResult(listOf(asset))) })
     }
+}
+
+@Composable
+actual fun QrGalleryControls(
+    onResult: (QrImportResult) -> Unit,
+    galleryAsPrimary: Boolean,
+) {
+    LaunchedEffect(Unit) {
+        AgendaQrAndroidImportLauncher.results.collect(onResult)
+    }
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+    ) {
+        if (galleryAsPrimary) {
+            com.agendaqr.core.ui.components.XauxaPrimaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery)
+        } else {
+            XauxaSecondaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery)
+        }
+        XauxaSecondaryButton(AppStrings.GaleriaVarios, AgendaQrAndroidImportLauncher::multiple)
+    }
+}
+
+@Composable
+actual fun QrCameraEntryControl(
+    onResult: (QrImportResult) -> Unit,
+) {
+    CameraCaptureHost(onQr = { asset -> onResult(QrImportResult(listOf(asset))) })
+}
+
+/**
+ * Entrada de cámara con su overlay (estado propio): compartida entre el
+ * editor (todo junto) y S02 (cámara separada de la galería por el orden
+ * congelado).
+ */
+@Composable
+internal fun CameraCaptureHost(onQr: (QrAsset) -> Unit) {
+    var cameraOpen by remember { mutableStateOf(false) }
+    CameraQrEntry(onOpen = { cameraOpen = true })
     if (cameraOpen) {
         CameraQrCaptureOverlay(
             onQr = { asset ->
                 cameraOpen = false
-                onResult(QrImportResult(listOf(asset)))
+                onQr(asset)
             },
             onDismiss = { cameraOpen = false },
         )

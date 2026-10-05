@@ -21,6 +21,23 @@ expect fun QrImportControls(
 )
 
 /**
+ * Solo Galería (+ varios): la entrada principal de S02. La pantalla
+ * Añadir la compone separada de la cámara para respetar el orden
+ * congelado Galería → Desde otra app → Cámara.
+ */
+@Composable
+expect fun QrGalleryControls(
+    onResult: (QrImportResult) -> Unit,
+    galleryAsPrimary: Boolean = false,
+)
+
+/** Solo Cámara: captura propia con detección (S03). */
+@Composable
+expect fun QrCameraEntryControl(
+    onResult: (QrImportResult) -> Unit,
+)
+
+/**
  * QR imports delivered from OUTSIDE the app (share intents). Unlike in-app
  * acquisition, a share can arrive before any collector exists — cold start,
  * or even before sign-in — so platforms that support it must retain the last
