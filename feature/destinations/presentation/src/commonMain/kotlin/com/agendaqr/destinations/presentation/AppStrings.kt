@@ -183,4 +183,5 @@ internal object AppStrings {
     val dupMark = "! "
     val pendingMark = "? "
     val ComprobanteAdjuntoVistaPreviaPendienteEnIos = "Comprobante adjunto (vista previa pendiente en iOS)"
+    val Contenido = "Contenido"
 }

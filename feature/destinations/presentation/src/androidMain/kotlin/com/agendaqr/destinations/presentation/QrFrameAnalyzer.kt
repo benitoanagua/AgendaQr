@@ -3,8 +3,10 @@ package com.agendaqr.destinations.presentation
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.DecodeHintType
+import com.google.zxing.LuminanceSource
 import com.google.zxing.MultiFormatReader
 import com.google.zxing.PlanarYUVLuminanceSource
+import com.google.zxing.RGBLuminanceSource
 import com.google.zxing.ReaderException
 import com.google.zxing.common.HybridBinarizer
 
@@ -54,6 +56,20 @@ object QrFrameAnalyzer {
             false,
         )
         val bitmap = BinaryBitmap(HybridBinarizer(source))
+        return decodeSource(bitmap)
+    }
+
+    /**
+     * Decodifica píxeles ARGB (vía de galería/share): mismo lector y mismas
+     * hints que el análisis de cámara, para que el contenido capturado en
+     * S09 sea idéntico venga de donde venga.
+     */
+    fun decodeArgb(pixels: IntArray, width: Int, height: Int): String? {
+        if (width <= 0 || height <= 0 || pixels.size < width * height) return null
+        return decodeSource(BinaryBitmap(HybridBinarizer(RGBLuminanceSource(width, height, pixels))))
+    }
+
+    private fun decodeSource(bitmap: BinaryBitmap): String? {
         val reader = MultiFormatReader().apply {
             setHints(
                 mapOf(

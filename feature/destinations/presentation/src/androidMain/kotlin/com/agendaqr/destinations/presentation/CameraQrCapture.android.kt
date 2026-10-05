@@ -110,7 +110,7 @@ internal fun CameraQrCaptureOverlay(
                             )
                             val emitted = scanSession.onFrame(content)
                             if (emitted != null) {
-                                val asset = assetFromFrame(proxy)
+                                val asset = assetFromFrame(proxy, emitted)
                                 detected = true
                                 onQr(asset)
                             }
@@ -214,7 +214,7 @@ private fun CameraPreviewWithAnalysis(
  * Convierte el frame detectado en el asset que espera el flujo de
  * importación (S09): imagen PNG del QR capturado, igual que Galería.
  */
-internal fun assetFromFrame(proxy: ImageProxy): QrAsset {
+internal fun assetFromFrame(proxy: ImageProxy, content: String): QrAsset {
     val bitmap = runCatching { proxy.toBitmapCompat() }.getOrNull()
     return if (bitmap != null) {
         val rotated = rotateBitmap(bitmap, proxy.imageInfo.rotationDegrees)
@@ -224,9 +224,10 @@ internal fun assetFromFrame(proxy: ImageProxy): QrAsset {
         QrAsset(
             encoded = Base64.encodeToString(bytes, Base64.NO_WRAP),
             mimeType = "image/png",
+            content = content,
         )
     } else {
-        QrAsset(encoded = "", mimeType = "image/png")
+        QrAsset(encoded = "", mimeType = "image/png", content = content)
     }
 }
 

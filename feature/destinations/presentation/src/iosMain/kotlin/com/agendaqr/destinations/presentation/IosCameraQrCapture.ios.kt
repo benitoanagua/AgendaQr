@@ -86,7 +86,7 @@ internal class IosQrCameraPresenter(
         // El QR detectado se entrega como asset por el mismo canal; el
         // contenido llega a S09 igual que en Android (el flujo revisa lo
         // que la app entendió).
-        val asset = QrAsset(encoded = value, mimeType = "image/png")
+        val asset = QrAsset(encoded = "", mimeType = "image/png", content = value)
         currentRootViewController()?.dismissViewControllerAnimated(true) {
             session.stopRunning()
             onQr(QrImportResult(listOf(asset)))

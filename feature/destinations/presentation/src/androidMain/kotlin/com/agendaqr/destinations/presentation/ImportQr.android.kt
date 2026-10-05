@@ -26,11 +26,6 @@ import com.agendaqr.destinations.domain.ImportCandidate
 import com.agendaqr.destinations.domain.ImportKind
 import com.agendaqr.destinations.domain.ImportBatch
 import com.agendaqr.destinations.data.createImportPayloadStore
-import com.google.zxing.BinaryBitmap
-import com.google.zxing.MultiFormatReader
-import com.google.zxing.ReaderException
-import com.google.zxing.RGBLuminanceSource
-import com.google.zxing.common.HybridBinarizer
 
 fun QrAsset.toShareUri(context: Context): Uri {
     val bytes = Base64.decode(encoded, Base64.DEFAULT)
@@ -49,15 +44,16 @@ fun decodeQrAsset(bytes: ByteArray, mimeType: String): QrAsset? {
     val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: return null
     val pixels = IntArray(bitmap.width * bitmap.height)
     bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
-    val source = RGBLuminanceSource(bitmap.width, bitmap.height, pixels)
-    val binary = BinaryBitmap(HybridBinarizer(source))
-    return try {
-        MultiFormatReader().decode(binary)
-        QrAsset(encoded = Base64.encodeToString(bytes, Base64.NO_WRAP), mimeType = mimeType)
-    } catch (_: ReaderException) {
-        null
-    } finally {
-        bitmap.recycle()
+    val content = QrFrameAnalyzer.decodeArgb(pixels, bitmap.width, bitmap.height)
+    bitmap.recycle()
+    // Sin decodificación no hay QR demostrable: la imagen queda pendiente
+    // de revisión por otra vía (contrato de clasificación conservadora).
+    return content?.let {
+        QrAsset(
+            encoded = Base64.encodeToString(bytes, Base64.NO_WRAP),
+            mimeType = mimeType,
+            content = it,
+        )
     }
 }
 
