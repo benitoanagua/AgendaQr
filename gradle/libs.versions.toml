@@ -14,6 +14,9 @@ coreKtx = "1.16.0"
 supabase = "3.2.4"
 ktor = "3.3.0"
 datetime = "0.7.1"
+# Lucide icons (ISC) — ADR-0005 / V1.1 T2; wrapper KMP com.composables.
+# Licencia registrada en docs/05-design-system/06-licencias-terceros.md.
+lucide = "1.1.0"
 
 [plugins]
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -40,3 +43,4 @@ camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "
 camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
 camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
 camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
+icons-lucide = { group = "com.composables", name = "icons-lucide", version.ref = "lucide" }

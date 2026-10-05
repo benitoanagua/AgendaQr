@@ -30,7 +30,9 @@ import com.agendaqr.core.ui.components.XauxaFavoriteToggle
 import com.agendaqr.core.ui.components.XauxaFileUpload
 import com.agendaqr.core.ui.components.XauxaFilterChip
 import com.agendaqr.core.ui.components.XauxaHeroCard
+import com.agendaqr.core.ui.components.XauxaIcon
 import com.agendaqr.core.ui.components.XauxaIconButton
+import com.agendaqr.core.ui.components.XauxaIcons
 import com.agendaqr.core.ui.components.XauxaInlineResult
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaLoadMoreFooter
@@ -109,6 +111,7 @@ internal fun LabComponentPreview(
                 "xauxa-secondary-button" -> SecondaryButtonPreview(onEvent)
                 "xauxa-danger-button" -> DangerButtonPreview(onEvent)
                 "xauxa-text-action" -> TextActionPreview(onEvent)
+                "xauxa-icon" -> IconGlyphPreview()
                 "xauxa-icon-button" -> IconButtonPreview(onEvent)
                 "xauxa-filter-chip" -> FilterChipPreview(onEvent)
                 "xauxa-text-input" -> TextInputPreview()
@@ -523,6 +526,35 @@ private fun DialogPreview(onEvent: (String) -> Unit) {
         }
         Text(
             "Diálogo con exactamente dos acciones; la destructiva es XauxaDangerButton.",
+            fontSize = XauxaType.Caption,
+            color = XauxaColor.TextSecondary,
+        )
+    }
+}
+
+@Composable
+private fun IconGlyphPreview() {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        XauxaIcon(
+            imageVector = XauxaIcons.Search,
+            contentDescription = "Buscar",
+        )
+        XauxaIcon(
+            imageVector = XauxaIcons.Favorite,
+            contentDescription = null,
+            size = XauxaMetrics.IconSizeTile,
+            tint = XauxaColor.Brand,
+        )
+        XauxaIcon(
+            imageVector = XauxaIcons.Context,
+            contentDescription = null,
+            tint = XauxaColor.TextSecondary,
+        )
+        Text(
+            "Set Lucide (ISC): con nombre accesible, decorativo grande de marca y decorativo secundario.",
             fontSize = XauxaType.Caption,
             color = XauxaColor.TextSecondary,
         )

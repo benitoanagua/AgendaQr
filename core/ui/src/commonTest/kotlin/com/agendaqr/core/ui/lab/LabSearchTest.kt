@@ -73,7 +73,7 @@ class LabSearchTest {
         assertEquals(6, counts[LabCategory.SURFACES])
         assertEquals(10, counts[LabCategory.ACTIONS])
         assertEquals(8, counts[LabCategory.FEEDBACK])
-        assertEquals(5, counts[LabCategory.DATA])
+        assertEquals(6, counts[LabCategory.DATA]) // T2/V1.1: +XauxaIcon
         assertEquals(3, counts[LabCategory.QR])
     }
 }

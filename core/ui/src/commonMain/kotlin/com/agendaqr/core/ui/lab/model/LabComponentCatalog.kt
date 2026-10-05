@@ -631,6 +631,48 @@ object LabComponentCatalog {
             platforms = commonPlatforms(),
         ),
         LabComponentContract(
+            id = "xauxa-icon",
+            name = "XauxaIcon",
+            category = LabCategory.DATA,
+            purpose = "Único punto de entrada de iconografía de producto (set Lucide, ISC).",
+            description = "T2/V1.1 (ADR-0005, spec §12): glifos de línea de un solo color, tamaño y " +
+                "color por tokens. contentDescription nulo marca el icono como decorativo y lo " +
+                "excluye de la accesibilidad; los iconos interactivos siempre llevan etiqueta de " +
+                "texto visible compuesta por el llamador (nunca el icono solo).",
+            props = listOf(
+                LabProp("imageVector", "ImageVector"),
+                LabProp("contentDescription", "String?"),
+                LabProp("modifier", "Modifier"),
+                LabProp("size", "Dp", "XauxaMetrics.IconSize"),
+                LabProp("tint", "Color", "XauxaColor.TextPrimary"),
+            ),
+            states = listOf(
+                LabState("Default", "Glifo con nombre accesible (contentDescription no nulo).", LabReviewStatus.VERIFIED),
+                LabState("Decorativo", "contentDescription nulo: excluido de la accesibilidad (clearAndSetSemantics).", LabReviewStatus.VERIFIED),
+            ),
+            tokens = listOf(
+                LabTokenRef("XauxaMetrics.IconSize", "Tamaño por defecto del icono."),
+                LabTokenRef("XauxaColor.TextPrimary", "Tinte por defecto (un solo color)."),
+            ),
+            usage = listOf(
+                "Iconos de la app bar inferior, de tiles y de acciones secundarias con etiqueta visible.",
+            ),
+            notes = listOf(
+                "El mapeo mínimo de la spec vive en XauxaIcons (Search, Add, Register, Favorite, " +
+                    "Context, Back, Save, Cancel, More, Gallery, Camera); fuera de esa lista no se " +
+                    "añaden iconos sin decisión.",
+                "Las acciones interactivas usan XauxaIconButton/XauxaAppBar con etiqueta visible; " +
+                    "XauxaIcon aporta solo el glifo.",
+            ),
+            tags = listOf("icono", "lucide", "accesibilidad"),
+            darkThemeSupport = LabDarkThemeSupport.PENDING,
+            darkThemeNote = "El tinte se resuelve vía XauxaColor o el color del acento del contexto; el esquema oscuro queda pendiente de validación visual.",
+            whenToUse = "Para cualquier glifo de producto. Nunca sustituye por sí solo a una acción etiquetada.",
+            androidMapping = "Material3 Icon con vector Lucide (com.composables:icons-lucide).",
+            iosMapping = "Mismo vector compartido; sin SF Symbols de plataforma.",
+            platforms = commonPlatforms(),
+        ),
+        LabComponentContract(
             id = "xauxa-filter-chip",
             name = "XauxaFilterChip",
             category = LabCategory.ACTIONS,

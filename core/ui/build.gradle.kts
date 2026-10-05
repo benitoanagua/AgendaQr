@@ -41,6 +41,10 @@ kotlin {
             // Xauxa motion tokens (Easing) and the LiveTile / turnstile-nav
             // components consume androidx.compose.animation(.core) directly.
             implementation(compose.animation)
+            // T2/V1.1 (ADR-0005): iconografía Lucide (ISC) consumida solo a
+            // través de XauxaIcon. Objetivos: android/ios/wasmJs verificados
+            // por compilación en esta tarea.
+            implementation(libs.icons.lucide)
         }
     }
 }
