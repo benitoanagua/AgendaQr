@@ -68,6 +68,18 @@ componentLabWeb PASS; TZ La_Paz/Kiritimati PASS; ACCEPTANCE PASS;
 runtime en emulador: flujos A y C + T1/T2/T4/T5/T6/T7/T8/T11 con dump de
 UI + SQL (ver `01-estado.md`).
 
+## 2026-10-05 (3) — Dispositivo físico + stride de cámara (main …a64a549)
+
+Con un moto g(9) plus (Android 11) en la misma LAN que el Supabase local
+(APK con `SUPABASE_URL=http://192.168.0.58:54321`; 10.0.2.2 no existe
+fuera del emulador): login, S01 sincronizada, S02 en orden, S03 con
+CameraX. La primera pasada NO detectó: `planeY()` ignoraba el rowStride
+del sensor y todos los frames llegaban cizallados (#116:
+`stripStride()` puro y testeado + preview en grises sin el NV21 manual).
+Tras el fix, un QR real de Banco Unión detecta → S09 → guardar → sync a
+Postgres, con preview limpio (finder patterns intactos en captura). V1
+pasa a PASS (ejecutado).
+
 ## 2026-10-05 (2) — Revisión humana, lote de gaps (main …fcc39c6)
 
 Sobre la revisión de solo-lectura: S06 con scroll (filas QR/

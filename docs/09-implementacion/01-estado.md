@@ -230,7 +230,8 @@ uiautomator + SQL en esta pasada):
 
 ### V — validaciones con entorno especial
 
-- **V1 QR real por cámara**: NO VALIDADO (escena virtual sin QR; sin
+- **V1 QR real por cámara**: PASS (ejecutado en físico 2026-10-05; antes
+  NO VALIDADO por escena virtual sin QR y sin
   cámara física controlable — documentado desde la primera pasada).
 - **V2**: fuente 200% PASS (ejecutado: UI legible, sin crash; escala
   restaurada), tema claro/oscuro PASS (píxel), reduced motion PASS
