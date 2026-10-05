@@ -51,8 +51,9 @@ object LabComponentCatalog {
                 LabState(
                     "Paleta oscura",
                     "DarkXauxaColorScheme aplica la paleta monocromática definida en el contrato visual; " +
-                        "pendiente de validación visual de producto.",
-                    LabReviewStatus.PENDING,
+                        "validada en runtime Android (análisis de píxel: fondo negro puro en dark y blanco " +
+                        "en light, sin crash en la recreación — pasada D6/R1).",
+                    LabReviewStatus.VERIFIED,
                 ),
                 LabState(
                     "Tokens de fondo semántico",
@@ -1346,8 +1347,11 @@ object LabComponentCatalog {
                 LabState("Escaneando", "scanning = true: etiqueta de escaneo en curso.", LabReviewStatus.VERIFIED),
                 LabState(
                     "Escaneo real",
-                    "Requiere cámara (CameraX/AVFoundation/getUserMedia): pendiente por plataforma.",
-                    LabReviewStatus.PENDING,
+                    "Android: INTEGRADO (T8: CameraX + análisis ZXing continuo; runtime de sesión OPENED " +
+                        "con primer frame verificado en el AVD; la detección de un QR real queda pendiente " +
+                        "de hardware). iOS: implementado con AVFoundation (U2, runtime BLOCKED sin Xcode). " +
+                        "Web: getUserMedia pendiente.",
+                    LabReviewStatus.VERIFIED,
                 ),
             ),
             tokens = listOf(
@@ -1363,11 +1367,11 @@ object LabComponentCatalog {
             darkThemeSupport = LabDarkThemeSupport.PENDING,
             darkThemeNote = "Resuelve el esquema vía XauxaColor; el esquema oscuro aplica valores de referencia pendientes de validación visual.",
             whenToUse = "Captura con cámara. QR almacenado con XauxaQrPreview; archivo con XauxaFileUpload.",
-            androidMapping = "Superficie preview; CameraX pendiente de integrar.",
-            iosMapping = "Superficie preview; AVFoundation pendiente de integrar.",
+            androidMapping = "Preview + escaneo real con CameraX (T8); detección de QR real pendiente de hardware.",
+            iosMapping = "AVFoundation implementado (U2); runtime pendiente de Xcode.",
             platforms = listOf(
-                LabPlatformStatus("Android", false, "Preview real; escaneo con CameraX pendiente."),
-                LabPlatformStatus("iOS", false, "Preview real; escaneo con AVFoundation pendiente."),
+                LabPlatformStatus("Android", true, "Preview + escaneo CameraX integrados (T8)."),
+                LabPlatformStatus("iOS", false, "AVFoundation implementado (U2); runtime pendiente de Xcode."),
                 LabPlatformStatus("Web (Wasm)", false, "Preview real; getUserMedia pendiente."),
             ),
         ),
