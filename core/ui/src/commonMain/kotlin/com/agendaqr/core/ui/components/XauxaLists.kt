@@ -122,10 +122,12 @@ fun XauxaBadge(
     } else {
         tone.content()
     }
+    // V1.1 (M9): sin caja ni borde de reposo. solid=true mantiene un
+    // bloque de color funcional (separación por bloques, permitida); el
+    // estado sigue expresándose con texto + tono, nunca solo por color.
     Box(
         modifier = modifier
-            .border(BorderStroke(XauxaMetrics.Border, tone.content()), RectangleShape)
-            .background(background)
+            .background(background, RectangleShape)
             .padding(horizontal = XauxaSpacing.Sm, vertical = XauxaSpacing.Xs),
         contentAlignment = Alignment.Center,
     ) {
@@ -167,8 +169,9 @@ fun XauxaListRow(
             // mostraba la primera fila).
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
             .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
-            .xauxaFocusRing(interaction)
-            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape),
+            .xauxaFocusRing(interaction),
+            // V1.1 (M9): fila abierta, sin borde de reposo; separación por
+            // espacio. El marcador lateral solo aparece con tono semántico.
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(

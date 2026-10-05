@@ -298,7 +298,7 @@ object LabComponentCatalog {
             name = "XauxaTile",
             category = LabCategory.SURFACES,
             purpose = "Superficie rectangular para una entidad o bloque de contenido.",
-            description = "Surface plana con borde XauxaMetrics.Border y fondo XauxaColor.Surface. Con " +
+            description = "Surface plana SIN borde de reposo (V1.1 M9) con fondo XauxaColor.Surface2. Con " +
                 "onClick no nulo añade rol Button, foco y anillo xauxaFocusRing.",
             props = listOf(
                 LabProp("modifier", "Modifier"),
@@ -311,10 +311,8 @@ object LabComponentCatalog {
             ),
             events = listOf(LabEvent("onClick", "Activación del tile; solo se emite cuando onClick != null.")),
             tokens = listOf(
-                LabTokenRef("XauxaColor.Surface", "Fondo del tile."),
-                LabTokenRef("XauxaColor.Border", "Borde del tile."),
-                LabTokenRef("XauxaMetrics.Border", "Grosor del borde."),
-                LabTokenRef("XauxaColor.FocusRing", "Anillo de foco en modo interactivo."),
+                LabTokenRef("XauxaColor.Surface2", "Fondo del tile (bloque de color, M9)."),
+                LabTokenRef("XauxaColor.FocusRing", "Anillo de foco en modo interactivo (borde funcional, M9)."),
             ),
             usage = listOf(
                 "Obligación, destino QR, comprobante, contacto o bloque resumen dentro de una sección.",
@@ -329,6 +327,140 @@ object LabComponentCatalog {
             whenToUse = "Bloques de contenido y entidades. Para número grande + footer preferir XauxaHeroCard.",
             androidMapping = "Material3 Surface rectangular con clickable + focusable.",
             iosMapping = "SwiftUI RoundedRectangle radius 0 + .border + .onTapGesture + .focusable().",
+            platforms = commonPlatforms(),
+        ),
+        LabComponentContract(
+            id = "xauxa-page-title",
+            name = "XauxaPageTitle",
+            category = LabCategory.SURFACES,
+            purpose = "Título de página Metro: display ligero (M6).",
+            description = "Archivo peso Light 300 a XauxaType.DisplayPage (>= 40 sp), capitalización de " +
+                "oración y semántica heading(). V1.1 (ADR-0005, spec §12 Tipografía).",
+            props = listOf(
+                LabProp("text", "String"),
+                LabProp("modifier", "Modifier"),
+                LabProp("color", "Color", "XauxaColor.TextPrimary"),
+            ),
+            states = listOf(
+                LabState("Default", "Título de página en display ligero.", LabReviewStatus.VERIFIED),
+            ),
+            tokens = listOf(
+                LabTokenRef("XauxaType.DisplayPage", "Tamaño del título de página (>= 40 sp)."),
+                LabTokenRef("XauxaColor.TextPrimary", "Color del título."),
+            ),
+            usage = listOf("Título raíz de cada pantalla V1.1 (S01 Agenda QR, S06 nombre de contexto)."),
+            tags = listOf("título", "tipografía", "metro"),
+            darkThemeSupport = LabDarkThemeSupport.PENDING,
+            darkThemeNote = "Resuelve el esquema vía XauxaColor; validación visual de oscuro pendiente en T8.",
+            whenToUse = "Título raíz de pantalla. Encabezados de sección con XauxaSectionHeader.",
+            androidMapping = "Material3 Text con FontFamily Archivo Light.",
+            iosMapping = "Mismo typeface empaquetado; no SF Display de plataforma.",
+            platforms = commonPlatforms(),
+        ),
+        LabComponentContract(
+            id = "xauxa-section-header",
+            name = "XauxaSectionHeader",
+            category = LabCategory.SURFACES,
+            purpose = "Encabezado de sección pequeño en color de acento (M6).",
+            description = "14-16 sp (XauxaType.SectionHeader) en color de acento — sistema por defecto, " +
+                "acento del contexto en S06 (M4). Semántica heading(). V1.1 (ADR-0005).",
+            props = listOf(
+                LabProp("text", "String"),
+                LabProp("modifier", "Modifier"),
+                LabProp("accent", "Color", "XauxaColor.Brand"),
+            ),
+            states = listOf(
+                LabState("Default", "Encabezado en acento de sistema.", LabReviewStatus.VERIFIED),
+                LabState("Acento de contexto", "accent derivado del contexto (accentFor).", LabReviewStatus.VERIFIED),
+            ),
+            tokens = listOf(
+                LabTokenRef("XauxaType.SectionHeader", "Tamaño del encabezado (14-16 sp)."),
+                LabTokenRef("XauxaColor.Brand", "Acento por defecto."),
+            ),
+            usage = listOf("Secciones de S04/S05 (tipo de resultado) y del pivot de S06."),
+            tags = listOf("encabezado", "sección", "metro"),
+            darkThemeSupport = LabDarkThemeSupport.PENDING,
+            darkThemeNote = "El acento fijado por acento+texto es válido en claro y oscuro (spec §12); validación visual en T8.",
+            whenToUse = "Encabezados de sección. Título de página con XauxaPageTitle.",
+            androidMapping = "Material3 Text con color de acento.",
+            iosMapping = "SwiftUI Text con tinte de acento.",
+            platforms = commonPlatforms(),
+        ),
+        LabComponentContract(
+            id = "xauxa-metro-tile",
+            name = "XauxaMetroTile",
+            category = LabCategory.SURFACES,
+            purpose = "Tile Metro: bloque plano de acento, icono centrado, etiqueta abajo a la izquierda.",
+            description = "Bloque de color plano sin borde ni sombra (M3/M9), tilt <=150 ms al presionar " +
+                "(M11; sin tilt con reduced motion) y etiqueta siempre visible (M14: rol Button, nombre, " +
+                "estado y orden de foco). V1.1 (ADR-0005).",
+            props = listOf(
+                LabProp("label", "String"),
+                LabProp("accent", "XauxaAccent"),
+                LabProp("onClick", "(() -> Unit)?"),
+                LabProp("size", "XauxaTileSize", "SMALL"),
+                LabProp("icon", "ImageVector?", "null"),
+                LabProp("content", "(@Composable () -> Unit)?", "null"),
+            ),
+            states = listOf(
+                LabState("Default", "Bloque plano con etiqueta visible.", LabReviewStatus.VERIFIED),
+                LabState("Interactivo", "Con onClick: rol Button, foco y tilt al presionar.", LabReviewStatus.VERIFIED),
+                LabState("Ancho con contenido", "WIDE: contenido en texto (último QR/actividad), etiqueta visible.", LabReviewStatus.VERIFIED),
+            ),
+            events = listOf(LabEvent("onClick", "Activación del tile (cuando onClick != null).")),
+            tokens = listOf(
+                LabTokenRef("XauxaMetrics.TileUnit", "Unidad 1x1 de la rejilla."),
+                LabTokenRef("XauxaMetrics.TileWideHeight", "Alto de los tiles 2x2 y 4x2."),
+                LabTokenRef("XauxaMetrics.ControlMinSize", "Objetivo táctil mínimo."),
+                LabTokenRef("XauxaMetrics.IconSizeTile", "Tamaño del icono centrado."),
+                LabTokenRef("XauxaColor.FocusRing", "Anillo de foco sobre el acento (M9/M14)."),
+                LabTokenRef("XauxaMotion.DurationShortMs", "Tilt <=150 ms y entrada del tile."),
+            ),
+            usage = listOf("Rejilla de S01: Añadir, Registrar, Favoritos, Contextos y tile vivo ancho."),
+            notes = listOf(
+                "El tile ancho omite el icono y muestra contenido textual; la etiqueta nunca desaparece.",
+                "El acento viene de XauxaAccents: par fondo/texto fijo por contraste calculado (M5).",
+            ),
+            tags = listOf("tile", "metro", "rejilla"),
+            darkThemeSupport = LabDarkThemeSupport.PENDING,
+            darkThemeNote = "Acentos idénticos en ambos temas por diseño (spec §12 Modo oscuro); validación visual en T8.",
+            whenToUse = "Entradas de acción de S01. Bloques de contenido sin acción con XauxaTile.",
+            androidMapping = "Box + background plano + clickable con rol Button.",
+            iosMapping = "SwiftUI Rectangle + onTapGesture + accessibilityLabel.",
+            platforms = commonPlatforms(),
+        ),
+        LabComponentContract(
+            id = "xauxa-tile-grid",
+            name = "XauxaTileGrid",
+            category = LabCategory.SURFACES,
+            purpose = "Rejilla Metro de 4 columnas con entrada escalonada (M3/M11).",
+            description = "Coloca XauxaTileItem en 4 columnas en compacto (reduce columnas antes que " +
+                "comprimir); el tile ancho ocupa la fila. Entrada escalonada de 30-50 ms por tile, total " +
+                "<=300 ms; con reduced motion aparece de inmediato.",
+            props = listOf(
+                LabProp("items", "List<XauxaTileItem>"),
+                LabProp("modifier", "Modifier"),
+                LabProp("reducedMotion", "Boolean", "LocalReducedMotion.current"),
+            ),
+            states = listOf(
+                LabState("Default", "Rejilla compuesta por unidades de 4 columnas.", LabReviewStatus.VERIFIED),
+                LabState("Entrada escalonada", "Fade por tile, total <=300 ms (sin reduced motion).", LabReviewStatus.VERIFIED),
+                LabState("Reduced motion", "Sin escalonado ni transición: estado inmediato.", LabReviewStatus.VERIFIED),
+            ),
+            tokens = listOf(
+                LabTokenRef("XauxaMetrics.TileUnit", "Unidad base de la rejilla (1x1)."),
+                LabTokenRef("XauxaSpacing.TileGap", "Separación entre tiles (multiplo de 4 dp)."),
+                LabTokenRef("XauxaSpacing.ScreenMargin", "Margen de pantalla (multiplo de 4 dp)."),
+                LabTokenRef("XauxaMotion.DurationMediumMs", "Tope total del escalonado (300 ms)."),
+            ),
+            usage = listOf("S01: rejilla de acciones principales."),
+            notes = listOf("La comprension nunca depende de la animacion (spec §11)."),
+            tags = listOf("rejilla", "tile", "metro", "motion"),
+            darkThemeSupport = LabDarkThemeSupport.PENDING,
+            darkThemeNote = "Composición de acentos fijos; validación visual en T8.",
+            whenToUse = "S01 y cualquier superficie de entrada con tiles.",
+            androidMapping = "Column/Row manual con spans (sin LazyGrid: el conjunto de S01 es finito y corto).",
+            iosMapping = "SwiftUI Grid con columnas adaptadas.",
             platforms = commonPlatforms(),
         ),
         LabComponentContract(
@@ -441,6 +573,83 @@ object LabComponentCatalog {
             whenToUse = "Confirmaciones destructivas. Para avisos no bloqueantes preferir XauxaToast.",
             androidMapping = "Material3 AlertDialog con RectangleShape.",
             iosMapping = "SwiftUI .confirmationDialog o .alert con dos botones.",
+            platforms = commonPlatforms(),
+        ),
+        LabComponentContract(
+            id = "xauxa-pivot",
+            name = "XauxaPivot",
+            category = LabCategory.SURFACES,
+            purpose = "Pivot de secciones (M7, S06): QR / Actividades / Comprobantes.",
+            description = "Encabezados de seccion con la activa en acento; la conmutacion es local y no " +
+                "crea rutas ni navegacion nueva (spec §3). Cada pestana declara rol Tab con estado " +
+                "selected y etiqueta de texto visible (§11/M14). Sin panorama horizontal en V1.1.",
+            props = listOf(
+                LabProp("sections", "List<String>"),
+                LabProp("selectedIndex", "Int"),
+                LabProp("onSelect", "(Int) -> Unit"),
+                LabProp("accent", "Color", "XauxaColor.Brand"),
+                LabProp("content", "@Composable (Int) -> Unit"),
+            ),
+            states = listOf(
+                LabState("Default", "Primera seccion activa.", LabReviewStatus.VERIFIED),
+                LabState("Interactivo", "Cambio de seccion con rol Tab y foco visible.", LabReviewStatus.VERIFIED),
+            ),
+            events = listOf(LabEvent("onSelect", "Selección de seccion; el caller conserva la pantalla actual.")),
+            tokens = listOf(
+                LabTokenRef("XauxaType.SectionHeader", "Titulos de seccion del pivot."),
+                LabTokenRef("XauxaColor.Brand", "Acento por defecto de la seccion activa."),
+                LabTokenRef("XauxaMetrics.ControlMinSize", "Objetivo tactil de cada pestana."),
+            ),
+            usage = listOf("S06 Contexto: secciones QR, Actividades y Comprobantes (modelo mental §2)."),
+            tags = listOf("pivot", "secciones", "metro"),
+            darkThemeSupport = LabDarkThemeSupport.PENDING,
+            darkThemeNote = "Resuelve el esquema vía XauxaColor; validacion visual en T8.",
+            whenToUse = "S06. No es una navegacion nueva: dentro de una misma pantalla.",
+            androidMapping = "Row de pestañas textuales + contenido conmutado.",
+            iosMapping = "SwiftUI HStack + contenido conmutado (sin UIPageViewController).",
+            platforms = commonPlatforms(),
+        ),
+        LabComponentContract(
+            id = "xauxa-app-bar",
+            name = "XauxaAppBar",
+            category = LabCategory.ACTIONS,
+            purpose = "Barra de aplicacion inferior: 2-4 acciones con icono + etiqueta visible y menu ... .",
+            description = "Aloja la accion principal (bloque solido de acento, M10) y las secundarias de " +
+                "la pantalla (M7). Sustituye a botones sueltos de Volver/Guardar/Cerrar sesion en el " +
+                "cuerpo. Respeta insets de navegacion/teclado: la accion principal nunca queda recortada. " +
+                "Etiqueta visible en TODO icono (§11/M12: desviacion consciente de Metro).",
+            props = listOf(
+                LabProp("actions", "List<XauxaAppBarAction>", "2-4 con icono + etiqueta"),
+                LabProp("modifier", "Modifier"),
+                LabProp("overflowActions", "List<XauxaOverflowAction>", "emptyList()"),
+                LabProp("onBack", "(() -> Unit)?", "null"),
+                LabProp("backLabel", "String", "'Atrás'"),
+            ),
+            states = listOf(
+                LabState("Default", "Acciones con icono + etiqueta; principal en bloque de acento.", LabReviewStatus.VERIFIED),
+                LabState("Interactivo", "Activacion de acciones, overflow y atras.", LabReviewStatus.VERIFIED),
+            ),
+            events = listOf(
+                LabEvent("action.onClick", "Ejecuta la accion etiquetada."),
+                LabEvent("onBack", "Atras (requerido en iOS; en Android el Back del sistema se mantiene)."),
+            ),
+            tokens = listOf(
+                LabTokenRef("XauxaMetrics.AppBarHeight", "Altura minima de la barra."),
+                LabTokenRef("XauxaMetrics.ControlMinSize", "Objetivo tactil de cada accion."),
+                LabTokenRef("XauxaColor.Brand", "Bloque de acento de la accion principal."),
+                LabTokenRef("XauxaColor.FocusRing", "Anillo de foco sobre cada accion."),
+            ),
+            usage = listOf("Barra inferior de cada pantalla V1.1 (accion principal + secundarias + ...)."),
+            notes = listOf(
+                "El boton ... reutiliza XauxaOverflowAction de XauxaCommandBar (misma semantica de menu).",
+                "La flecha atras es requerida en iOS y redundante en Android (spec §12).",
+            ),
+            tags = listOf("appbar", "navegacion", "acciones", "metro"),
+            darkThemeSupport = LabDarkThemeSupport.PENDING,
+            darkThemeNote = "Resuelve el esquema vía XauxaColor; validacion visual en T8.",
+            whenToUse = "Acciones primaria/secundarias de pantalla. Secciones internas con XauxaPivot.",
+            androidMapping = "Surface rectangular anclada a bottomBar del scaffold.",
+            iosMapping = "SwiftUI safeArea bottom bar con etiqueta e icono.",
             platforms = commonPlatforms(),
         ),
         LabComponentContract(
@@ -1150,7 +1359,7 @@ object LabComponentCatalog {
             id = "xauxa-list-row",
             name = "XauxaListRow",
             category = LabCategory.DATA,
-            purpose = "Fila de datos con separador por borde y marcador semántico.",
+            purpose = "Fila de datos abierta (sin borde de reposo, V1.1 M9) con marcador semántico.",
             description = "Fila con marcador lateral de tono de 2px, título, subtítulo opcional y " +
                 "slot trailing. La separación entre filas es el borde de 1px.",
             props = listOf(
@@ -1219,7 +1428,7 @@ object LabComponentCatalog {
             name = "XauxaBadge",
             category = LabCategory.DATA,
             purpose = "Etiqueta semántica outline o sólida.",
-            description = "Badge rectangular con borde de tono; sólido usa fondo de tono. Sin " +
+            description = "Badge sin caja de reposo (V1.1 M9); solid usa bloque de color de tono. Sin " +
                 "radios: Xauxa usa rounded-sm y aquí se fija a 0 por invariante.",
             props = listOf(
                 LabProp("text", "String"),

@@ -1,6 +1,5 @@
 package com.agendaqr.core.ui.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,7 +22,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -35,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -73,13 +72,8 @@ fun XauxaSection(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(
-                title,
-                fontSize = XauxaType.Title,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = XauxaType.LetterSpacingWide,
-                color = XauxaColor.TextPrimary,
-            )
+            // V1.1 (M6): encabezado de sección pequeño en color de acento.
+            XauxaSectionHeader(text = title)
             trailing?.invoke()
         }
         Spacer(Modifier.height(XauxaSpacing.Md))
@@ -97,13 +91,15 @@ fun XauxaTile(
     val clickableModifier = if (onClick == null) modifier else modifier
         .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onClick)
         .focusable(interactionSource = interaction)
+    // V1.1 (M9): sin borde de reposo — la separación es por bloque de
+    // color (Surface2 sobre Background); el borde queda reservado al foco
+    // (xauxaFocusRing) y a la selección (M9 funcional).
     Surface(
         modifier = clickableModifier
             .fillMaxWidth()
-            .xauxaFocusRing(interaction)
-            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape),
+            .xauxaFocusRing(interaction),
         shape = RectangleShape,
-        color = XauxaColor.Surface,
+        color = XauxaColor.Surface2,
         tonalElevation = XauxaSpacing.None,
         shadowElevation = XauxaSpacing.None,
     ) { content() }
@@ -153,13 +149,16 @@ fun XauxaSecondaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
+    icon: ImageVector? = null,
 ) {
-    OutlinedButton(
+    // V1.1 (M10): las secundarias son texto con icono, SIN caja (nada de
+    // outline Material en reposo). La acción principal es bloque sólido de
+    // acento o acción de la app bar.
+    TextButton(
         modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         onClick = onClick,
         enabled = enabled && !isLoading,
         shape = RectangleShape,
-        border = BorderStroke(XauxaMetrics.Border, XauxaColor.Border),
     ) {
         if (isLoading) {
             CircularProgressIndicator(
@@ -168,31 +167,56 @@ fun XauxaSecondaryButton(
                 strokeWidth = XauxaMetrics.Border,
             )
         } else {
-            Text(
-                label,
-                fontSize = XauxaType.Label,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = XauxaType.LetterSpacingWide,
-                color = XauxaColor.TextPrimary,
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
+            ) {
+                if (icon != null) {
+                    XauxaIcon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = XauxaColor.Brand,
+                    )
+                }
+                Text(
+                    label,
+                    fontSize = XauxaType.Label,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = XauxaType.LetterSpacingWide,
+                    color = if (enabled) XauxaColor.Brand else XauxaColor.TextTertiary,
+                )
+            }
         }
     }
 }
 
 @Composable
-fun XauxaTextAction(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun XauxaTextAction(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+) {
     TextButton(
         modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         onClick = onClick,
         shape = RectangleShape,
     ) {
-        Text(
-            label,
-            fontSize = XauxaType.Label,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = XauxaType.LetterSpacingWide,
-            color = XauxaColor.Brand,
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
+        ) {
+            if (icon != null) {
+                XauxaIcon(imageVector = icon, contentDescription = null, tint = XauxaColor.Brand)
+            }
+            Text(
+                label,
+                fontSize = XauxaType.Label,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = XauxaType.LetterSpacingWide,
+                color = XauxaColor.Brand,
+            )
+        }
     }
 }
 

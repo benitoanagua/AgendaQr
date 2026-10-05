@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,10 +31,16 @@ import com.agendaqr.core.ui.components.XauxaFavoriteToggle
 import com.agendaqr.core.ui.components.XauxaFileUpload
 import com.agendaqr.core.ui.components.XauxaFilterChip
 import com.agendaqr.core.ui.components.XauxaHeroCard
+import com.agendaqr.core.ui.components.XauxaAppBar
+import com.agendaqr.core.ui.components.XauxaAppBarAction
 import com.agendaqr.core.ui.components.XauxaIcon
 import com.agendaqr.core.ui.components.XauxaIconButton
 import com.agendaqr.core.ui.components.XauxaIcons
 import com.agendaqr.core.ui.components.XauxaInlineResult
+import com.agendaqr.core.ui.components.XauxaMetroTile
+import com.agendaqr.core.ui.components.XauxaOverflowAction
+import com.agendaqr.core.ui.components.XauxaPageTitle
+import com.agendaqr.core.ui.components.XauxaPivot
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaLoadMoreFooter
 import com.agendaqr.core.ui.components.XauxaLoading
@@ -51,11 +58,16 @@ import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaTextInput
 import com.agendaqr.core.ui.components.XauxaTile
+import com.agendaqr.core.ui.components.XauxaTileGrid
+import com.agendaqr.core.ui.components.XauxaTileItem
+import com.agendaqr.core.ui.components.XauxaTileSize
+import com.agendaqr.core.ui.components.XauxaSectionHeader
 import com.agendaqr.core.ui.components.XauxaTileHeader
 import com.agendaqr.core.ui.components.XauxaToast
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.lab.model.LabComponentContract
 import com.agendaqr.core.ui.theme.XauxaColor
+import com.agendaqr.core.ui.theme.accentFor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -104,6 +116,12 @@ internal fun LabComponentPreview(
                 "xauxa-screen" -> ScreenPreview()
                 "xauxa-section" -> SectionPreview(onEvent)
                 "xauxa-tile" -> TilePreview(onEvent)
+                "xauxa-page-title" -> XauxaPageTitle("Agenda QR")
+                "xauxa-section-header" -> XauxaSectionHeader("Recientes")
+                "xauxa-metro-tile" -> MetroTilePreview(onEvent)
+                "xauxa-tile-grid" -> TileGridPreview(onEvent)
+                "xauxa-pivot" -> PivotPreview(onEvent)
+                "xauxa-app-bar" -> AppBarPreview(onEvent)
                 "xauxa-tile-header" -> TileHeaderPreview()
                 "xauxa-hero-card" -> HeroCardPreview(onEvent)
                 "xauxa-dialog" -> DialogPreview(onEvent)
@@ -559,6 +577,98 @@ private fun IconGlyphPreview() {
             color = XauxaColor.TextSecondary,
         )
     }
+}
+
+@Composable
+private fun MetroTilePreview(onEvent: (String) -> Unit) {
+    var clicks by rememberSaveable { mutableStateOf(0) }
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(modifier = Modifier.width(XauxaMetrics.TileUnit)) {
+            XauxaMetroTile(
+                label = "Añadir",
+                accent = accentFor(null),
+                onClick = {
+                    clicks++
+                    onEvent("XauxaMetroTile.onClick #$clicks")
+                },
+                icon = XauxaIcons.Add,
+            )
+        }
+        Text(
+            "Bloque plano de acento, icono centrado y etiqueta visible. Activaciones: $clicks",
+            fontSize = XauxaType.Caption,
+            color = XauxaColor.TextSecondary,
+        )
+    }
+}
+
+@Composable
+private fun TileGridPreview(onEvent: (String) -> Unit) {
+    var last by rememberSaveable { mutableStateOf("(ninguna)") }
+    XauxaTileGrid(
+        items = listOf(
+            XauxaTileItem("Añadir", icon = XauxaIcons.Add, onClick = { last = "Añadir"; onEvent("TileGrid Añadir") }),
+            XauxaTileItem("Registrar", icon = XauxaIcons.Register, onClick = { last = "Registrar"; onEvent("TileGrid Registrar") }),
+            XauxaTileItem("Favoritos", icon = XauxaIcons.Favorite, onClick = { last = "Favoritos"; onEvent("TileGrid Favoritos") }),
+            XauxaTileItem("Contextos", icon = XauxaIcons.Context, onClick = { last = "Contextos"; onEvent("TileGrid Contextos") }),
+            XauxaTileItem(
+                "Actividad reciente",
+                size = XauxaTileSize.WIDE,
+                content = {
+                    Text("Último movimiento de ejemplo", fontSize = XauxaType.Label, color = XauxaColor.OnBrand)
+                },
+                onClick = { last = "Actividad"; onEvent("TileGrid Actividad") },
+            ),
+        ),
+    )
+    Text(
+        "Última activación: $last",
+        fontSize = XauxaType.Caption,
+        color = XauxaColor.TextSecondary,
+    )
+}
+
+@Composable
+private fun PivotPreview(onEvent: (String) -> Unit) {
+    var selected by rememberSaveable { mutableStateOf(0) }
+    val sections = listOf("QR", "Actividades", "Comprobantes")
+    XauxaPivot(
+        sections = sections,
+        selectedIndex = selected,
+        onSelect = {
+            selected = it
+            onEvent("XauxaPivot.onSelect ${sections[it]}")
+        },
+    ) { index ->
+        Text(
+            "Contenido de ${sections[index]}",
+            fontSize = XauxaType.Caption,
+            color = XauxaColor.TextSecondary,
+        )
+    }
+}
+
+@Composable
+private fun AppBarPreview(onEvent: (String) -> Unit) {
+    var last by rememberSaveable { mutableStateOf("(ninguna)") }
+    XauxaAppBar(
+        actions = listOf(
+            XauxaAppBarAction("Guardar", XauxaIcons.Save, primary = true, onClick = { last = "Guardar"; onEvent("AppBar Guardar") }),
+            XauxaAppBarAction("Compartir", XauxaIcons.More, onClick = { last = "Compartir"; onEvent("AppBar Compartir") }),
+        ),
+        overflowActions = listOf(
+            XauxaOverflowAction("Cerrar sesión", onClick = { last = "Cerrar sesión"; onEvent("AppBar overflow Cerrar sesión") }),
+        ),
+        onBack = { last = "Atrás"; onEvent("AppBar onBack") },
+    )
+    Text(
+        "Última acción: $last",
+        fontSize = XauxaType.Caption,
+        color = XauxaColor.TextSecondary,
+    )
 }
 
 @Composable

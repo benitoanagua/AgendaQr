@@ -24,7 +24,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -32,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -50,7 +51,13 @@ import com.agendaqr.core.ui.theme.XauxaType
  * (T12: dividido de XauxaExtendedComponents.kt por responsabilidad, sin cambio de comportamiento.)
  */
 
-/** Entrada de texto etiquetada con estado de error. Textarea con singleLine=false. */
+/** Entrada de texto etiquetada con estado de error. Textarea con singleLine=false.
+ *
+ * V1.1 (M8): campo de relleno plano (`Surface2`, el surfaceContainer del
+ * esquema), etiqueta FIJA pequeña encima (no flotante), borde de 2 dp con
+ * acento SOLO en foco o error; sin outline Material en reposo. El error se
+ * expresa con icono + texto debajo del campo (§11: nunca solo color).
+ */
 @Composable
 fun XauxaTextInput(
     label: String,
@@ -69,59 +76,96 @@ fun XauxaTextInput(
     keyboardActions: androidx.compose.foundation.text.KeyboardActions = androidx.compose.foundation.text.KeyboardActions.Default,
     visualTransformation: androidx.compose.ui.text.input.VisualTransformation = androidx.compose.ui.text.input.VisualTransformation.None,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val focused by interactionSource.collectIsFocusedAsState()
     val visibleLabel = if (isRequired) "$label *" else label
+    // M9: el borde existe solo cuando aporta estado (foco o error).
+    val borderColor = when {
+        isError -> XauxaColor.Danger
+        focused -> XauxaColor.Brand
+        else -> null
+    }
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
     ) {
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
-            enabled = enabled,
-            readOnly = readOnly,
-            isError = isError,
-            label = {
-                Text(
-                    visibleLabel,
-                    fontSize = XauxaType.Label,
-                    fontWeight = FontWeight.SemiBold,
-                    color = XauxaColor.TextPrimary,
-                )
-            },
-            singleLine = singleLine,
-            minLines = minLines,
-            keyboardOptions = keyboardOptions,
-            keyboardActions = keyboardActions,
-            visualTransformation = visualTransformation,
-            supportingText = when {
-                isError && errorMessage != null -> {
-                    { Text(errorMessage, fontSize = XauxaType.Caption, color = XauxaColor.Danger) }
-                }
-                helperMessage != null -> {
-                    { Text(helperMessage, fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary) }
-                }
-                else -> null
-            },
-            shape = RectangleShape,
-            textStyle = androidx.compose.ui.text.TextStyle(fontSize = XauxaType.Body),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = XauxaColor.Surface,
-                unfocusedContainerColor = XauxaColor.Surface,
-                disabledContainerColor = XauxaColor.Surface2,
-                errorContainerColor = XauxaColor.Surface,
-                focusedIndicatorColor = XauxaColor.Brand,
-                unfocusedIndicatorColor = XauxaColor.Border,
-                errorIndicatorColor = XauxaColor.Danger,
-                focusedTextColor = XauxaColor.TextPrimary,
-                unfocusedTextColor = XauxaColor.TextPrimary,
-                errorTextColor = XauxaColor.TextPrimary,
-            ),
+        XauxaText(
+            text = visibleLabel,
+            size = XauxaType.Caption,
+            color = XauxaColor.TextSecondary,
         )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(XauxaColor.Surface2, RectangleShape)
+                .then(
+                    if (borderColor != null) {
+                        Modifier.border(XauxaMetrics.Focus, borderColor, RectangleShape)
+                    } else {
+                        Modifier
+                    },
+                ),
+        ) {
+            TextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
+                enabled = enabled,
+                readOnly = readOnly,
+                isError = isError,
+                singleLine = singleLine,
+                minLines = minLines,
+                keyboardOptions = keyboardOptions,
+                keyboardActions = keyboardActions,
+                visualTransformation = visualTransformation,
+                interactionSource = interactionSource,
+                shape = RectangleShape,
+                textStyle = androidx.compose.ui.text.TextStyle(fontSize = XauxaType.Body),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = XauxaColor.Surface2,
+                    unfocusedContainerColor = XauxaColor.Surface2,
+                    disabledContainerColor = XauxaColor.Surface2,
+                    errorContainerColor = XauxaColor.Surface2,
+                    // Sin indicador Material: el borde de 2 dp externo es la
+                    // única señal de foco/error (M8).
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    errorIndicatorColor = Color.Transparent,
+                    focusedTextColor = XauxaColor.TextPrimary,
+                    unfocusedTextColor = XauxaColor.TextPrimary,
+                    errorTextColor = XauxaColor.TextPrimary,
+                ),
+            )
+        }
+        // §11/M8: el error informa con icono + texto, nunca solo por color.
+        when {
+            isError && errorMessage != null -> {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
+                ) {
+                    XauxaIcon(
+                        imageVector = XauxaIcons.Cancel,
+                        contentDescription = null,
+                        tint = XauxaColor.Danger,
+                    )
+                    Text(errorMessage, fontSize = XauxaType.Caption, color = XauxaColor.Danger)
+                }
+            }
+            helperMessage != null -> {
+                Text(helperMessage, fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary)
+            }
+        }
     }
 }
 
-/** Barra de búsqueda: entrada de una línea con limpieza opcional. */
+/** Barra de búsqueda: entrada de una línea con limpieza opcional.
+ *
+ * V1.1 (M8): mismo lenguaje de campo plano — relleno `Surface2`, etiqueta
+ * fija encima, borde de 2 dp solo en foco; icono de búsqueda del set
+ * Lucide como glifo decorativo (el nombre accesible lo da la etiqueta).
+ */
 @Composable
 fun XauxaSearchBar(
     value: String,
@@ -131,29 +175,59 @@ fun XauxaSearchBar(
     placeholder: String = "Buscar",
     onClear: (() -> Unit)? = null,
 ) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
-        label = { Text(label, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary) },
-        placeholder = { Text(placeholder, fontSize = XauxaType.Body, color = XauxaColor.TextTertiary) },
-        singleLine = true,
-        shape = RectangleShape,
-        textStyle = androidx.compose.ui.text.TextStyle(fontSize = XauxaType.Body),
-        trailingIcon = if (onClear != null && value.isNotEmpty()) {
-            { XauxaTextAction(label = "Limpiar", onClick = onClear) }
-        } else {
-            null
-        },
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = XauxaColor.Surface,
-            unfocusedContainerColor = XauxaColor.Surface,
-            focusedIndicatorColor = XauxaColor.Brand,
-            unfocusedIndicatorColor = XauxaColor.Border,
-            focusedTextColor = XauxaColor.TextPrimary,
-            unfocusedTextColor = XauxaColor.TextPrimary,
-        ),
-    )
+    val interactionSource = remember { MutableInteractionSource() }
+    val focused by interactionSource.collectIsFocusedAsState()
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
+    ) {
+        XauxaText(
+            text = label,
+            size = XauxaType.Caption,
+            color = XauxaColor.TextSecondary,
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(XauxaColor.Surface2, RectangleShape)
+                .then(
+                    if (focused) {
+                        Modifier.border(XauxaMetrics.Focus, XauxaColor.Brand, RectangleShape)
+                    } else {
+                        Modifier
+                    },
+                ),
+        ) {
+            TextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
+                placeholder = { Text(placeholder, fontSize = XauxaType.Body, color = XauxaColor.TextTertiary) },
+                singleLine = true,
+                interactionSource = interactionSource,
+                shape = RectangleShape,
+                textStyle = androidx.compose.ui.text.TextStyle(fontSize = XauxaType.Body),
+                leadingIcon = { XauxaIcon(imageVector = XauxaIcons.Search, contentDescription = null) },
+                trailingIcon = if (onClear != null && value.isNotEmpty()) {
+                    { XauxaTextAction(label = "Limpiar", onClick = onClear) }
+                } else {
+                    null
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = XauxaColor.Surface2,
+                    unfocusedContainerColor = XauxaColor.Surface2,
+                    disabledContainerColor = XauxaColor.Surface2,
+                    errorContainerColor = XauxaColor.Surface2,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    errorIndicatorColor = Color.Transparent,
+                    focusedTextColor = XauxaColor.TextPrimary,
+                    unfocusedTextColor = XauxaColor.TextPrimary,
+                ),
+            )
+        }
+    }
 }
 
 /**
@@ -192,7 +266,9 @@ fun XauxaSettingRow(
             .fillMaxWidth()
             .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
             .xauxaFocusRing(interaction)
-            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape)
+            // V1.1 (M9): la fila no lleva borde de reposo; la separación es
+            // por espacio. El borde queda reservado al foco
+            // (xauxaFocusRing) y al track del toggle (control funcional).
             .padding(XauxaSpacing.Sm),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
