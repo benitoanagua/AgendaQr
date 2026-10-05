@@ -520,3 +520,40 @@ diálogos de confirmación existentes.
 - Capturas del laboratorio (Chromium headless, 3 anchos, 0 errores de
   consola): `docs/04-ux/lab-captures/`. El toggle de tema del lab se
   dibuja en canvas: NO automatizable — revisión visual humana pendiente.
+
+## Enmienda V1.1 (2026-10-05, ADR-0005): componentes a crear o cambiar — PENDIENTE de implementación
+
+El lenguaje visual Metro (expresión de Xauxa, D-18) introduce la siguiente
+lista de trabajo sobre componentes. **Ninguno está implementado**: el
+código actual queda desalineado de V1.1 hasta la pasada de implementación
+(ver `docs/09-implementacion/01-estado.md`).
+
+### A crear — PENDIENTE
+
+| Componente | Contrato que cumple | Notas |
+|---|---|---|
+| `XauxaAppBar` | §12 Navegación y chrome: barra de aplicación inferior, 2–4 acciones con icono + etiqueta visible y menú "…"; aloja la acción principal | Reemplaza a los botones "Volver/Guardar/Cerrar sesión" sueltos; flecha atrás requerida en iOS, redundante en Android |
+| `XauxaPivot` | S06: pivot QR · Actividades · Comprobantes (modelo mental §2) | Sin panorama horizontal en V1.1 |
+| `XauxaTile` variantes pequeño (1×1) / mediano (2×2) / ancho (4×2) | §12 Rejilla: rejilla de 4 columnas en compacto; icono centrado, etiqueta abajo a la izquierda | Tokens de rejilla (márgenes, separación, tamaños, tamaños de icono) en `XauxaTokens.kt`, múltiplos de 4 dp |
+| `XauxaLiveTile` (ancho) | S01: último QR o actividad reciente; una transición por cambio de dato, sin bucles | Existe la base; falta la variante ancha y la política de contenido |
+| `XauxaTextInput` plano | §12 Campos: relleno `surfaceContainer`, etiqueta fija pequeña encima (no flotante), borde 2 dp con acento solo en foco/error | Hoy usa `OutlinedTextField` con etiqueta flotante |
+| Integración de Lucide | §12 Iconografía: dependencia KMP candidata `com.composables:icons-lucide`, wrapper `XauxaIcon` con tamaño tokenizado, mapeo de iconos y política de etiqueta visible | Verificación de versión/compatibilidad (Kotlin 2.2.20, wasmJs) pendiente; licencia ISC registrada en `06-licencias-terceros.md` |
+
+### Cambian — PENDIENTE
+
+| Componente | Cambio | Justificación |
+|---|---|---|
+| `XauxaPrimaryButton` / `XauxaSecondaryButton` / `XauxaTextAction` | Primaria = bloque sólido de acento o acción en la app bar; secundarias = texto con icono, sin caja | M10; eliminar borde/caja de reposo (M9) |
+| `XauxaListRow` y filas abiertas | Sin borde de reposo; separación por espacio | M9 ("recientes" de S01) |
+| `XauxaBadge` | Sin caja en reposo; estado por texto + marcador, no por contenedor | M9; §5 se mantiene (el estado sigue expresándose con texto/semántica) |
+| `XauxaTile` / tiles seleccionables | Tilt al presionar ≤150 ms; entrada escalonada 30–50 ms (total ≤300 ms); borde solo en selección/foco | M11; M9; §11 reduced motion |
+| `XauxaType` | Display de página en Archivo Light (300) ≥40 sp; encabezados de sección 14–16 sp en acento | M6; empaquetar Archivo Light (OFL 1.1) |
+| `XauxaColor` | Paleta Metro de 12 acentos + texto asignado por contraste calculado; derivación determinista por contexto | M4/M5; tabla en spec §12 |
+
+### Nota de vigencia
+
+Las menciones históricas anteriores a esta sección a "acento único" (lotes
+J de 2026-09-25 y exploración del laboratorio) describen el esquema vigente
+en esas fechas y quedan **supersadas por ADR-0005**: el acento de sistema
+`0067B8` se mantiene como defecto, y se añaden los 12 acentos Metro
+asignables a contextos con su tabla de contraste.

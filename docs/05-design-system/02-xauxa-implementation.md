@@ -20,6 +20,18 @@ Xauxa es la autoridad visual completa de Agenda QR. El código de producto no co
 - No usar `OutlinedTextField`, `AlertDialog`, chips o botones Material directamente desde features: deben pasar por componentes Xauxa.
 - No introducir sombras, radios ni colores locales.
 
+## Reglas V1.1 (ADR-0005, pendientes de implementación)
+
+- Un acento por contexto, derivado de forma determinista del identificador del contexto; el acento de sistema `0067B8` es el valor por defecto. El color nunca se persiste en el dominio.
+- Sin bordes de reposo en filas, botones, badges y tiles: los bordes son solo funcionales (foco, campo en foco/error, tile seleccionado).
+- Campos de entrada planos: relleno `surfaceContainer`, etiqueta fija pequeña encima (no flotante), borde de 2 dp con acento solo en foco/error.
+- Acciones: principal como bloque sólido de acento o en la app bar inferior; secundarias como texto con icono, sin caja.
+- Iconografía: únicamente el set Lucide mediante el wrapper `XauxaIcon` (tamaños desde tokens; etiqueta visible en todo icono interactivo). Prohibido introducir otros sets.
+- Movimiento: turnstile entre pantallas, tilt ≤150 ms en tiles, entrada escalonada 30–50 ms por tile (total ≤300 ms); live tile sin bucles; reduced motion = cambio de estado inmediato.
+- Los tamaños de icono y las métricas de la rejilla de tiles viven como tokens en `XauxaTokens.kt` (múltiplos de 4 dp); el gate `verify-xauxa.sh` rechaza literales en `core/ui`.
+
+Estas reglas son la meta normativa; el código actual está declarado desalineado hasta la pasada de implementación (ver `docs/09-implementacion/01-estado.md`).
+
 ## Adaptación de plataforma
 
 Material 3 puede seguir siendo infraestructura interna de los componentes Xauxa. La apariencia se determina exclusivamente por los tokens y contratos Xauxa.
