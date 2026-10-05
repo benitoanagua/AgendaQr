@@ -59,13 +59,15 @@ class ImportBatchReducerTest {
             ImportBatchUiState.Result(batch),
             ImportBatchAction.SaveRecognized,
         )
+        val userError = userFacingError(IllegalStateException("storage unavailable"), ErrorFlow.ImportBatchSave)
         val error = reducer.reduce(
             saving,
-            ImportBatchAction.Failed("storage unavailable"),
+            ImportBatchAction.Failed(userError),
         )
 
         val state = assertIs<ImportBatchUiState.Error>(error)
-        assertEquals("storage unavailable", state.message)
+        // D1: el error viaja como UserFacingError (qué/data/acción), no String.
+        assertEquals(userError, state.error)
         assertEquals(batch, state.batch)
         assertTrue(batch.canSaveRecognized())
     }

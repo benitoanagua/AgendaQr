@@ -11,7 +11,7 @@ sealed interface ImportBatchUiState {
     data class Review(val batch: ImportBatch) : ImportBatchUiState
     data class Saving(val batch: ImportBatch) : ImportBatchUiState
     data class Saved(val batch: ImportBatch) : ImportBatchUiState
-    data class Error(val message: String, val batch: ImportBatch? = null) : ImportBatchUiState
+    data class Error(val error: UserFacingError, val batch: ImportBatch? = null) : ImportBatchUiState
 }
 
 sealed interface ImportBatchAction {
@@ -20,7 +20,8 @@ sealed interface ImportBatchAction {
     data object ReviewPending : ImportBatchAction
     data object SaveRecognized : ImportBatchAction
     data object Saved : ImportBatchAction
-    data class Failed(val message: String) : ImportBatchAction
+    /** D1: el error viaja listo para mostrar (qué/data/acción), no crudo. */
+    data class Failed(val error: UserFacingError) : ImportBatchAction
     data object Back : ImportBatchAction
 
     // ------------------------------------------------------------------
@@ -67,7 +68,7 @@ class ImportBatchReducer {
                 else -> state
             }
             is ImportBatchAction.Failed -> ImportBatchUiState.Error(
-                message = action.message,
+                error = action.error,
                 batch = when (state) {
                     is ImportBatchUiState.Result -> state.batch
                     is ImportBatchUiState.Review -> state.batch

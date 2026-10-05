@@ -49,33 +49,10 @@ internal fun AuthenticatedAppRoot(
     val contextState by graph.contextsViewModel.state.collectAsState()
     val globalSearchState by graph.globalSearchViewModel.state.collectAsState()
 
-    var importBatchState by remember { mutableStateOf<ImportBatchUiState>(ImportBatchUiState.Idle) }
-    val importBatchReducer = remember { ImportBatchReducer() }
-    // T7 — S12: efectos por elemento (copias deliberadas, payloads, existentes).
-    val importBatchHost = remember(
-        graph.destinationRepository,
-        graph.comprobanteRepository,
-        graph.importPayloadStore,
-    ) {
-        ImportBatchItemHost(
-            destinations = graph.destinationRepository,
-            comprobantes = graph.comprobanteRepository,
-            comprobanteFiles = graph.comprobanteFiles,
-            payloads = graph.importPayloadStore,
-        )
-    }
-    var existingPreview by remember { mutableStateOf<ExistingImportPreview?>(null) }
-    /** Lote actual (el que la UI está viendo), si hay alguno. */
-    fun currentBatch() = when (val current = importBatchState) {
-        is ImportBatchUiState.Result -> current.batch
-        is ImportBatchUiState.Review -> current.batch
-        is ImportBatchUiState.Saving -> current.batch
-        is ImportBatchUiState.Error -> current.batch
-        is ImportBatchUiState.Saved -> current.batch
-        else -> null
-    }
-    fun currentCandidate(id: String): com.agendaqr.destinations.domain.ImportCandidate? =
-        currentBatch()?.candidates?.firstOrNull { it.id == id }
+    // D1 — la lógica del lote vive en ImportBatchCoordinator (sin Compose).
+    val importBatch = remember(graph) { ImportBatchStateHolder(graph) }
+    val importBatchState by importBatch.state.collectAsState()
+    val existingPreview by importBatch.existingPreview.collectAsState()
 
     var pendingCount by remember { mutableStateOf(0) }
     var isOffline by remember { mutableStateOf(false) }
@@ -121,7 +98,7 @@ internal fun AuthenticatedAppRoot(
     }
 
     ImportBatchControls { batch ->
-        importBatchState = importBatchReducer.reduce(importBatchState, ImportBatchAction.Analyzed(batch))
+        importBatch.onAnalyzed(batch)
         nav.push(AppRoute.ImportBatch)
     }
 
@@ -143,8 +120,7 @@ internal fun AuthenticatedAppRoot(
                 AppRoute.Home -> graph.destinationsViewModel.onAction(DestinationAction.Back)
                 AppRoute.Operations -> graph.operationsViewModel.onAction(OperationAction.Back)
                 AppRoute.Contexts -> graph.contextsViewModel.onAction(ContextAction.Back)
-                AppRoute.ImportBatch ->
-                    importBatchState = importBatchReducer.reduce(importBatchState, ImportBatchAction.Back)
+                AppRoute.ImportBatch -> importBatch.onAction(ImportBatchAction.Back)
                 AppRoute.Search -> Unit
             }
             SystemBackAction.PopSurface -> nav.pop()
@@ -190,124 +166,7 @@ internal fun AuthenticatedAppRoot(
         AppRoute.ImportBatch -> ImportBatchScreen(
             state = importBatchState,
             existing = existingPreview,
-            onAction = { action ->
-                when (action) {
-                    ImportBatchAction.Back -> {
-                        if (importBatchState is ImportBatchUiState.Review) {
-                            importBatchState = importBatchReducer.reduce(importBatchState, action)
-                        } else {
-                            val batch = when (val current = importBatchState) {
-                                is ImportBatchUiState.Result -> current.batch
-                                is ImportBatchUiState.Error -> current.batch
-                                is ImportBatchUiState.Saved -> current.batch
-                                else -> null
-                            }
-                            batch?.let { pending ->
-                                graph.sessionScope.launch {
-                                    pending.candidates.mapNotNull { it.payloadRef }
-                                        .distinct()
-                                        .forEach { graph.importPayloadStore.delete(it) }
-                                }
-                            }
-                            importBatchState = importBatchReducer.reduce(importBatchState, action)
-                            nav.pop()
-                        }
-                    }
-                    ImportBatchAction.SaveRecognized -> {
-                        val batch = (importBatchState as? ImportBatchUiState.Result)?.batch
-                            ?: (importBatchState as? ImportBatchUiState.Review)?.batch
-                        if (batch == null) {
-                            importBatchState = importBatchReducer.reduce(
-                                importBatchState,
-                                ImportBatchAction.Failed("No hay lote para guardar"),
-                            )
-                        } else {
-                            importBatchState = importBatchReducer.reduce(importBatchState, action)
-                            graph.sessionScope.launch {
-                                runCatching { graph.saveImportBatch(batch) }
-                                    .onSuccess {
-                                        importBatchState = importBatchReducer.reduce(
-                                            importBatchState,
-                                            ImportBatchAction.Saved,
-                                        )
-                                    }
-                                    .onFailure { error ->
-                                        importBatchState = importBatchReducer.reduce(
-                                            importBatchState,
-                                            // T5: mapeo centralizado; nunca
-                                            // `error.message` crudo.
-                                            ImportBatchAction.Failed(
-                                                userFacingError(error, ErrorFlow.ImportBatchSave).display(),
-                                            ),
-                                        )
-                                    }
-                            }
-                        }
-                    }
-                    // ------------------------------------------------------
-                    // T7 — resolución de pendientes por elemento.
-                    // ------------------------------------------------------
-                    is ImportBatchAction.RetryCandidate -> {
-                        val candidate = currentCandidate(action.candidateId)
-                        val payloadRef = candidate?.payloadRef
-                        if (candidate != null && payloadRef != null) {
-                            graph.sessionScope.launch {
-                                val bytes = runCatching { graph.importPayloadStore.read(payloadRef) }.getOrNull()
-                                val reclassified = if (bytes != null) {
-                                    reclassifyImportCandidate(candidate, bytes)
-                                } else {
-                                    candidate
-                                }
-                                importBatchState = importBatchReducer.reduce(
-                                    importBatchState,
-                                    ImportBatchAction.CandidateReclassified(reclassified),
-                                )
-                            }
-                        }
-                    }
-                    is ImportBatchAction.DiscardCandidate -> {
-                        val candidate = currentCandidate(action.candidateId)
-                        // El payload temporal se elimina al descartar.
-                        graph.sessionScope.launch { candidate?.let { importBatchHost.discardPayload(it) } }
-                        importBatchState = importBatchReducer.reduce(
-                            importBatchState,
-                            ImportBatchAction.CandidateSaved(action.candidateId),
-                        )
-                    }
-                    is ImportBatchAction.SaveDuplicateAnyway -> {
-                        val candidate = currentCandidate(action.candidateId)
-                        if (candidate != null) {
-                            graph.sessionScope.launch {
-                                runCatching { importBatchHost.saveDuplicateAnyway(candidate) }
-                                    .onSuccess {
-                                        // Sin doble guardado: el elemento sale del lote.
-                                        importBatchState = importBatchReducer.reduce(
-                                            importBatchState,
-                                            ImportBatchAction.CandidateSaved(action.candidateId),
-                                        )
-                                    }
-                                    .onFailure {
-                                        importBatchState = importBatchReducer.reduce(
-                                            importBatchState,
-                                            ImportBatchAction.Failed("No pudimos guardar el elemento. Inténtalo de nuevo."),
-                                        )
-                                    }
-                            }
-                        }
-                    }
-                    is ImportBatchAction.ViewExisting -> {
-                        val candidate = currentCandidate(action.candidateId)
-                        val batch = currentBatch()
-                        if (candidate != null && batch != null) {
-                            graph.sessionScope.launch {
-                                existingPreview = importBatchHost.resolveExisting(candidate, batch)
-                            }
-                        }
-                    }
-                    ImportBatchAction.CloseExisting -> existingPreview = null
-                    else -> importBatchState = importBatchReducer.reduce(importBatchState, action)
-                }
-            },
+            onAction = { action -> importBatch.onAction(action) },
         )
         AppRoute.Search -> GlobalSearchScreen(
             state = globalSearchState,
@@ -400,143 +259,4 @@ internal fun AuthenticatedAppRoot(
             onRetrySync = retrySync,
         )
     }
-}
-
-/**
- * S01 — Inicio y el flujo de destinos completo (S02/S09). Las rutas internas
- * de destinos siguen viviendo en [DestinationsUiState.route] con su
- * transición turnstile, que respeta el movimiento reducido del sistema.
- */
-@Composable
-private fun HomeSurface(
-    state: DestinationsUiState,
-    contextState: ContextsUiState,
-    graph: AuthenticatedSessionGraph,
-    onSignOut: () -> Unit,
-    nav: AppBackStack,
-    syncLookup: ElementSyncLookup,
-    onRetrySync: () -> Unit,
-) {
-    val reducedMotion = LocalReducedMotion.current
-    AnimatedContent(
-        targetState = state.route,
-        transitionSpec = {
-            val reverse = destinationNavigationIsBack(initialState, targetState)
-            if (reducedMotion) {
-                // ReducedMotion (§11): sin desplazamiento; la pantalla cambia
-                // en el sitio y la comprensión no depende de la animación.
-                xauxaReducedMotionEnter() togetherWith xauxaReducedMotionExit()
-            } else {
-                xauxaTurnstileEnter(reverse = reverse) togetherWith
-                    xauxaTurnstileExit(reverse = reverse)
-            }
-        },
-        label = AppStrings.DestinationRouteTurnstile,
-    ) { route ->
-        when (route) {
-            DestinationRoute.List -> DestinationsScreen(
-                state,
-                graph.destinationsViewModel::onAction,
-                onOpenOperations = {
-                    graph.operationsViewModel.onAction(OperationAction.New)
-                    nav.push(AppRoute.Operations)
-                },
-                onOpenSearch = { nav.push(AppRoute.Search) },
-                onSignOut = onSignOut,
-                syncLookup = syncLookup,
-            )
-            DestinationRoute.Add -> AddDestinationScreen(
-                onImport = { assets ->
-                    graph.destinationsViewModel.onAction(
-                        DestinationAction.ImportAssets(assets),
-                    )
-                },
-                onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
-            )
-            is DestinationRoute.Edit -> DestinationEditorScreen(
-                existing = route.id?.let(graph.destinationsViewModel::destination),
-                onSave = { destination ->
-                    graph.destinationsViewModel.onAction(
-                        if (route.id == null) {
-                            DestinationAction.Save(destination)
-                        } else {
-                            DestinationAction.Update(destination)
-                        },
-                    )
-                },
-                onImportMany = { assets ->
-                    graph.destinationsViewModel.onAction(
-                        DestinationAction.ImportAssets(assets),
-                    )
-                },
-                contexts = contextState.contexts,
-                onCreateContext = { name, note ->
-                    graph.contextsViewModel.onAction(ContextAction.Create(name, note))
-                },
-                justCreatedContextId = contextState.justCreatedContextId,
-                onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
-                isSaving = state.isSaving,
-                error = state.error,
-                onClearError = { graph.destinationsViewModel.onAction(DestinationAction.ClearError) },
-            )
-            is DestinationRoute.Detail -> {
-                val destination = graph.destinationsViewModel.destination(route.id)
-                if (destination == null) {
-                    DestinationNotFound(onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) })
-                } else {
-                    DestinationDetailScreen(
-                        destination = destination,
-                        onShowQr = {
-                            graph.destinationsViewModel.onAction(DestinationAction.ShowQr(destination.id))
-                        },
-                        onEdit = {
-                            graph.destinationsViewModel.onAction(DestinationAction.Edit(destination.id))
-                        },
-                        onDelete = {
-                            graph.destinationsViewModel.onAction(DestinationAction.Delete(destination.id))
-                        },
-                        onShare = { shareQr(destination.qr) },
-                        onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
-                        syncStatus = syncLookup.status(
-                            com.agendaqr.destinations.data.SyncResource.DESTINATION,
-                            destination.id,
-                        ),
-                        onRetrySync = onRetrySync,
-                    )
-                }
-            }
-            is DestinationRoute.FullscreenQr -> {
-                val destination = graph.destinationsViewModel.destination(route.id)
-                if (destination == null || destination.qr.encoded.isBlank()) {
-                    DestinationNotFound(onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) })
-                } else {
-                    QrFullscreenPattern(destination.qr.encoded) {
-                        graph.destinationsViewModel.onAction(DestinationAction.Back)
-                    }
-                }
-            }
-            DestinationRoute.ImportReview -> ImportReviewScreen(
-                assets = graph.destinationsViewModel.importedAssets(),
-                onSaveAll = graph.destinationsViewModel::saveImportedAssets,
-                onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
-                isSaving = state.isSaving,
-                error = state.error,
-                onClearError = { graph.destinationsViewModel.onAction(DestinationAction.ClearError) },
-            )
-        }
-    }
-}
-
-/** Rutas de destinos: ¿este cambio de ruta es un regreso (turnstile inverso)? */
-internal fun destinationNavigationIsBack(
-    from: DestinationRoute,
-    to: DestinationRoute,
-): Boolean = when {
-    from is DestinationRoute.Edit && to is DestinationRoute.List -> true
-    from is DestinationRoute.Add && to is DestinationRoute.List -> true
-    from is DestinationRoute.ImportReview && to is DestinationRoute.Add -> true
-    from is DestinationRoute.Detail && to is DestinationRoute.List -> true
-    from is DestinationRoute.FullscreenQr && to is DestinationRoute.Detail -> true
-    from is DestinationRoute.ImportReview && to is DestinationRoute.Edit -> true
-    else -> false
 }
