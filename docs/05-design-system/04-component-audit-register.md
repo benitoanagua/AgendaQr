@@ -472,7 +472,7 @@ color, radio, sombra ni métrica fuera de tokens; todos compuestos desde
 
 | Componente | Contrato que cumple | Notas de auditoría |
 |---|---|---|
-| `XauxaHeading` (core:ui) | §12 "Archivo para display/encabezados"; §11 heading semántico | Aplica `FamilyDisplay` (Archivo empaquetada, OFL 1.1 — ver `05-xauxa-tipografia.md`) + tokens; único lugar con `heading()` fuera de `XauxaEmptyState` (que lo usa) |
+| `XauxaHeading` (core:ui) | §12 "Archivo para display/encabezados" (V1.1: peso Light 300 — pendiente); §11 heading semántico | Aplica `FamilyDisplay` (Archivo empaquetada, OFL 1.1 — ver `05-xauxa-tipografia.md`) + tokens; único lugar con `heading()` fuera de `XauxaEmptyState` (que lo usa) |
 | `XauxaText` (core:ui) | §12 "Roboto/SF para UI/cuerpo" | Sans del sistema + tokens; `feature/` no importa `material3.Text` (guard) |
 | `ElementSyncBadge` (feature) | §5 estados con texto; §11 significado independiente del color | Envuelve `XauxaBadge` con el label del estado (`elementSyncStatus`); sin color paralelo |
 | `ContextPickerDialog` (feature) | S08: elegir contexto conservando el draft; §3 Cancelar abandona la intención | Comparte `XauxaDialog`; Back del diálogo = Cancelar (`onDismissRequest`) |
