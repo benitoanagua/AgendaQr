@@ -74,7 +74,7 @@ class ScreensA11yCoverageTest {
         compose.waitForIdle()
         compose.onNodeWithText("Volver").assertHeightIsAtLeast(48.dp)
         // §11: el estado se expresa con texto, no solo con color.
-        compose.onNodeWithText("Busca destinos, operaciones, contextos o comprobantes.")
+        compose.onNodeWithText("Busca QR, actividades, contextos o comprobantes.")
             .assertIsDisplayed()
     }
 
