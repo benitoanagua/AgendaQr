@@ -2,6 +2,7 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -222,6 +223,26 @@ class ScreensA11yCoverageTest {
         compose.onNodeWithText("Sincronizado").assertExists()
     }
 
+    // S02 — orden congelado: Galería → Desde otra app → Cámara.
+    @Test
+    fun s02_frozen_order_gallery_share_camera() {
+        compose.setContent {
+            XauxaTheme {
+                AddDestinationScreen(
+                    onImport = { },
+                    onBack = { },
+                )
+            }
+        }
+        compose.waitForIdle()
+        val gallery = compose.onNodeWithText("Galería").getBoundsInRoot().top
+        val share = compose.onNodeWithText("Desde otra app").getBoundsInRoot().top
+        val camera = compose.onNodeWithText("Cámara").getBoundsInRoot().top
+        assertTrue(gallery < share, "Galería debe estar sobre Desde otra app")
+        assertTrue(share < camera, "Desde otra app debe estar sobre Cámara")
+    }
+
+    // S07 — tipo con semántica de selección: un chip marcado, 48dp.
     @Test
     fun s07_type_selector_shows_single_selection() {
         var selected = OperationType.PAGO

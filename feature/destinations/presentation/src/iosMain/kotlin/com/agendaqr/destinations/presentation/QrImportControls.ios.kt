@@ -16,6 +16,40 @@ import com.agendaqr.core.ui.theme.XauxaSpacing
  * botón muerto y compila contra los bindings reales.
  */
 @Composable
+actual fun QrGalleryControls(
+    onResult: (QrImportResult) -> Unit,
+    galleryAsPrimary: Boolean,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+        if (galleryAsPrimary) {
+            XauxaPrimaryButton(
+                label = AppStrings.Galeria,
+                onClick = { IosQrImportController.openGallery(onResult) },
+            )
+        } else {
+            XauxaSecondaryButton(
+                label = AppStrings.Galeria,
+                onClick = { IosQrImportController.openGallery(onResult) },
+            )
+        }
+        XauxaSecondaryButton(
+            label = AppStrings.GaleriaVarios,
+            onClick = { IosQrImportController.openMultiple(onResult) },
+        )
+    }
+}
+
+@Composable
+actual fun QrCameraEntryControl(
+    onResult: (QrImportResult) -> Unit,
+) {
+    XauxaSecondaryButton(
+        label = AppStrings.Camara,
+        onClick = { IosQrCameraPresenter(onQr = onResult, onDismiss = {}).present() },
+    )
+}
+
+@Composable
 actual fun QrImportControls(
     onResult: (QrImportResult) -> Unit,
     galleryAsPrimary: Boolean,
@@ -37,10 +71,7 @@ actual fun QrImportControls(
                 label = AppStrings.GaleriaVarios,
                 onClick = { IosQrImportController.openMultiple(onResult) },
             )
-            XauxaSecondaryButton(
-                label = AppStrings.Camara,
-                onClick = { IosQrCameraPresenter(onQr = onResult, onDismiss = {}).present() },
-            )
+            QrCameraEntryControl(onResult)
         }
     }
 }
