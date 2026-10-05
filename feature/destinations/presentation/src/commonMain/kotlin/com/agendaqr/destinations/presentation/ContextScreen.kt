@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,10 +27,8 @@ import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaText
-import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaTone
-import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -145,7 +145,10 @@ private fun ContextDetail(
 ) {
     val contents = state.contents
     Column(
-        modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(),
+        modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding()
+            // §11: el detalle crece con sus filas (QR/comprobantes sin tope);
+            // sin scroll el contenido quedaría cortado e inalcanzable.
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
         XauxaSecondaryButton(label = AppStrings.Volver, onClick = { onAction(ContextAction.Back) })
