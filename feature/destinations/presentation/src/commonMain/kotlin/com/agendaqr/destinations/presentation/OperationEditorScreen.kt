@@ -31,6 +31,8 @@ internal fun OperationEditorScreen(
     state: OperationsUiState,
     viewModel: OperationsViewModel,
     existing: Operation?,
+    onCreateContext: (name: String, note: String?) -> Unit = { _, _ -> },
+    justCreatedContextId: String? = null,
 ) {
     val editorKey = existing?.id ?: "new"
     var type by rememberSaveable(editorKey) { mutableStateOf(existing?.type ?: OperationType.PAGO) }
@@ -45,6 +47,10 @@ internal fun OperationEditorScreen(
     // la selección; Quitar contexto es la única vía de limpiarla.
     var contextSelection by rememberSaveable(editorKey, stateSaver = ContextSelectionSaver) {
         mutableStateOf(ContextSelection(contextId = existing?.contextId))
+    }
+    // U3/ADR-0003: crear contexto desde S08 lo deja seleccionado.
+    androidx.compose.runtime.LaunchedEffect(justCreatedContextId) {
+        justCreatedContextId?.let { id -> contextSelection = contextSelection.select(id) }
     }
     var showSensitiveConfirm by remember { mutableStateOf(false) }
     var submitted by remember { mutableStateOf(false) }
@@ -148,6 +154,8 @@ internal fun OperationEditorScreen(
             onSelect = { id -> contextSelection = contextSelection.select(id) },
             onRemove = { contextSelection = contextSelection.removeContext() },
             onCancel = { contextSelection = contextSelection.cancelPicker() },
+            onCreateContext = onCreateContext,
+            justCreatedContextId = justCreatedContextId,
         )
     }
 

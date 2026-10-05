@@ -159,6 +159,13 @@ fun XauxaListRow(
     Row(
         modifier = clickableModifier
             .fillMaxWidth()
+            // La altura de la fila la fija su CONTENIDO (48dp mínimo): sin
+            // esto, el marcador `fillMaxHeight` dentro de un contenedor con
+            // alto no acotado (slot scrolleable de un diálogo) estira la
+            // fila a TODO el alto disponible y empuja a las demás fuera
+            // del pliegue (hallado en runtime: el selector S08 solo
+            // mostraba la primera fila).
+            .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
             .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
             .xauxaFocusRing(interaction)
             .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape),

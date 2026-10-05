@@ -57,7 +57,6 @@ fun DestinationsScreen(
     onAction: (DestinationAction) -> Unit,
     onOpenOperations: () -> Unit = {},
     onOpenSearch: () -> Unit = {},
-    onOpenContexts: () -> Unit = {},
     onSignOut: () -> Unit = {},
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {

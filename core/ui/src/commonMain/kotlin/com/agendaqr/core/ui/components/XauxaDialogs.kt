@@ -116,6 +116,7 @@ fun XauxaToast(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
             .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape)
             .background(tone.container())
             .padding(XauxaSpacing.Sm),
@@ -152,6 +153,7 @@ fun XauxaInlineResult(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
             .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape)
             .background(tone.container())
             .padding(XauxaSpacing.Sm),

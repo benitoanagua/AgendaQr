@@ -48,6 +48,9 @@ fun DestinationEditorScreen(
     isSaving: Boolean = false,
     error: UserFacingError? = null,
     onClearError: () -> Unit = {},
+    /** U3/ADR-0003: crear contexto desde S08 sin perder el draft. */
+    onCreateContext: (name: String, note: String?) -> Unit = { _, _ -> },
+    justCreatedContextId: String? = null,
 ) {
     val initial = remember(existing) {
         existing ?: Destination(
@@ -58,7 +61,10 @@ fun DestinationEditorScreen(
             updatedAt = com.agendaqr.destinations.domain.nowMillis(),
         )
     }
-    DestinationEditorContent(initial, existing, onSave, onImportMany, contexts, onBack, isSaving, error, onClearError)
+    DestinationEditorContent(
+        initial, existing, onSave, onImportMany, contexts, onBack, isSaving, error, onClearError,
+        onCreateContext, justCreatedContextId,
+    )
 }
 
 @Composable
@@ -72,6 +78,8 @@ private fun DestinationEditorContent(
     isSaving: Boolean,
     error: UserFacingError?,
     onClearError: () -> Unit,
+    onCreateContext: (name: String, note: String?) -> Unit,
+    justCreatedContextId: String?,
 ) {
     var name by rememberSaveable(initial.name) { mutableStateOf(initial.name) }
     var category by rememberSaveable(existing?.category) { mutableStateOf(existing?.category.orEmpty()) }
@@ -83,6 +91,11 @@ private fun DestinationEditorContent(
         mutableStateOf(ContextSelection(contextId = existing?.contextId))
     }
     var submitted by remember { mutableStateOf(false) }
+    // U3/ADR-0003: crear contexto desde S08 lo deja seleccionado (el
+    // selector vuelve a la lista con el nuevo elemento marcado).
+    androidx.compose.runtime.LaunchedEffect(justCreatedContextId) {
+        justCreatedContextId?.let { id -> selection = selection.select(id) }
+    }
 
     val nameError = submitted && name.isBlank()
     val qrError = submitted && qr.encoded.isBlank()
@@ -178,6 +191,8 @@ private fun DestinationEditorContent(
                 onSelect = { id -> selection = selection.select(id) },
                 onRemove = { selection = selection.removeContext() },
                 onCancel = { selection = selection.cancelPicker() },
+                onCreateContext = onCreateContext,
+                justCreatedContextId = justCreatedContextId,
             )
         }
     }

@@ -146,4 +146,8 @@ internal object AppStrings {
     val Reconocidos = "Reconocidos"
     val PosiblesDuplicados = "Posibles duplicados"
     val PendientesDeRevision = "Pendientes de revisión"
+    val CrearContexto = "Crear contexto"
+    val Crear = "Crear"
+    val QuitarContexto = "Quitar contexto"
+    val ElNombreEsObligatorio = "El nombre es obligatorio"
 }

@@ -383,6 +383,12 @@ internal fun AuthenticatedAppRoot(
             onBack = { nav.pop() },
             syncLookup = syncLookup,
             onRetrySync = retrySync,
+            // U3/ADR-0003: el selector S08 puede crear contexto; el draft
+            // del editor nunca sale de composición.
+            onCreateContext = { name, note ->
+                graph.contextsViewModel.onAction(ContextAction.Create(name, note))
+            },
+            justCreatedContextId = contextState.justCreatedContextId,
         )
         AppRoute.Home -> HomeSurface(
             state = state,
@@ -436,7 +442,6 @@ private fun HomeSurface(
                     nav.push(AppRoute.Operations)
                 },
                 onOpenSearch = { nav.push(AppRoute.Search) },
-                onOpenContexts = { nav.push(AppRoute.Contexts) },
                 onSignOut = onSignOut,
                 syncLookup = syncLookup,
             )
@@ -465,6 +470,10 @@ private fun HomeSurface(
                     )
                 },
                 contexts = contextState.contexts,
+                onCreateContext = { name, note ->
+                    graph.contextsViewModel.onAction(ContextAction.Create(name, note))
+                },
+                justCreatedContextId = contextState.justCreatedContextId,
                 onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
                 isSaving = state.isSaving,
                 error = state.error,
