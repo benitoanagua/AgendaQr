@@ -29,6 +29,7 @@ actual fun shareComprobante(bytes: ByteArray, extension: String, mimeType: Strin
     if (UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
         controller.modalPresentationStyle = UIModalPresentationFormSheet
     }
-    val root = UIApplication.sharedApplication.keyWindow?.rootViewController ?: return
+    // U2: keyWindow deprecado (iOS 13+); escena activa con fallback honesto.
+    val root = currentRootViewController() ?: return
     root.presentViewController(controller, animated = true, completion = null)
 }

@@ -34,6 +34,7 @@ actual fun shareQr(asset: QrAsset) {
         // avoids the missing-anchor crash on iPad.
         controller.modalPresentationStyle = UIModalPresentationFormSheet
     }
-    val root = UIApplication.sharedApplication.keyWindow?.rootViewController ?: return
+    // U2: keyWindow deprecado (iOS 13+); escena activa con fallback honesto.
+    val root = currentRootViewController() ?: return
     root.presentViewController(controller, animated = true, completion = null)
 }
