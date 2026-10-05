@@ -54,7 +54,9 @@ fun ImportReviewScreen(
                 err.display(),
                 tone = XauxaTone.Danger,
                 actionLabel = err.action.label,
-                onAction = onClearError,
+                // REINTENTAR guarda los importados de nuevo (el lote sigue
+                // retenido en el VM); el resto de acciones solo descarta.
+                onAction = { if (err.action == ErrorAction.Retry) onSaveAll() else onClearError() },
                 onDismiss = onClearError,
             )
         }

@@ -184,4 +184,15 @@ internal object AppStrings {
     val pendingMark = "? "
     val ComprobanteAdjuntoVistaPreviaPendienteEnIos = "Comprobante adjunto (vista previa pendiente en iOS)"
     val Contenido = "Contenido"
+    val AunNoHayDestinos = "Aún no hay destinos"
+    val NoSeEncontraronDestinos = "No se encontraron destinos"
+    val PruebaConOtraBusquedaOLimpia = "Prueba con otra búsqueda o limpia los filtros."
+    val AgregarDestino = "Agregar destino"
+    val EditarDestino = "Editar destino"
+    val ParaContextoElegido = "Para: "
+    val ParaElegirContexto = "Para: elegir contexto (opcional)"
+    val GuardarCambios = "Guardar cambios"
+    val ContextoGenerico = "Contexto"
+    val EditarOperacion = "Editar operación"
+
 }

@@ -105,7 +105,12 @@ private fun ContextList(
                 err.display(),
                 tone = XauxaTone.Danger,
                 actionLabel = err.action.label,
-                onAction = { onAction(ContextAction.ClearError) },
+                onAction = {
+                    onAction(
+                        if (err.action == ErrorAction.Retry) ContextAction.RetryFailed
+                        else ContextAction.ClearError,
+                    )
+                },
                 onDismiss = { onAction(ContextAction.ClearError) },
             )
         }
@@ -157,7 +162,12 @@ private fun ContextDetail(
                 err.display(),
                 tone = XauxaTone.Danger,
                 actionLabel = err.action.label,
-                onAction = { onAction(ContextAction.ClearError) },
+                onAction = {
+                    onAction(
+                        if (err.action == ErrorAction.Retry) ContextAction.RetryFailed
+                        else ContextAction.ClearError,
+                    )
+                },
                 onDismiss = { onAction(ContextAction.ClearError) },
             )
         }

@@ -54,6 +54,11 @@ sealed interface OperationAction {
     data object OpenUnassociated : OperationAction
     data object Back : OperationAction
     data object ClearError : OperationAction
+    /**
+     * Re-ejecuta la última operación fallida: el banner REINTENTAR
+     * reintenta de verdad en vez de solo cerrar (§10).
+     */
+    data object RetryFailed : OperationAction
     data class OpenComprobante(val id: String) : OperationAction
     data object CloseComprobante : OperationAction
     data class DeleteComprobante(val id: String) : OperationAction
