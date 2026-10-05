@@ -1,7 +1,20 @@
 # Xauxa — Tipografía (T9)
 
-**Contrato (spec congelada §12):** "Archivo para display/encabezados;
+**Contrato (spec congelada §12, V1.0):** "Archivo para display/encabezados;
 Roboto/San Francisco para UI/cuerpo."
+
+**Enmienda V1.1 (ADR-0005, 2026-10-05):** los títulos de página usan
+**Archivo peso Light (300), ≥ 40 sp**, en lugar de negrita; los
+encabezados de sección pasan a 14–16 sp en color de acento. El cuerpo
+sigue en Roboto/San Francisco. Capitalización de oración (sin
+mayúsculas forzadas). El escalado de fuente del sistema se mantiene.
+
+**Tarea de implementación PENDIENTE (no hecha en esta pasada
+documental):** empaquetar el peso Light (300) de Archivo (OFL 1.1,
+misma fuente y licencia ya registradas abajo y en
+`06-licencias-terceros.md`) y ajustar la escala display de `XauxaType`.
+Hasta entonces los títulos siguen usando los pesos actuales
+400/500/600/700.
 
 ## Familias expuestas por `XauxaType`
 
@@ -15,7 +28,8 @@ Roboto/San Francisco para UI/cuerpo."
 
 - Archivo no es fuente del sistema en ninguna plataforma objetivo: se
   empaquetan 4 pesos estáticos (400/500/600/700) instanciados de la
-  familia variable oficial, subset latin, ~40 KB cada uno.
+  familia variable oficial, subset latin, ~40 KB cada uno. V1.1 añade
+  el peso 300 (Light) a ese conjunto — pendiente de implementación.
 - Roboto ES la fuente por defecto de Android y SF la de iOS: empaquetar
   una copia de Roboto añadiría peso al APK sin ningún cambio visual ni de
   contrato (§12 pide literalmente "Roboto/San Francisco"). `FamilyUi =

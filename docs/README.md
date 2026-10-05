@@ -21,7 +21,7 @@ Agenda QR no conserva una identidad visual paralela. La aplicación es Agenda QR
 | `02-requisitos` | requisitos funcionales y no funcionales |
 | `03-dominio` | QR, destino, operación, comprobante y relaciones |
 | `04-ux` | flujos y especificación UX/UI |
-| `05-design-system` | contrato visual Xauxa |
+| `05-design-system` | contrato visual Xauxa y licencias de terceros (`06-licencias-terceros.md`) |
 | `06-arquitectura` | estructura técnica y fuentes |
 | `07-decisiones` | decisiones aprobadas |
 | `08-validacion` | escenarios y validaciones |

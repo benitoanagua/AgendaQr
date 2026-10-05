@@ -10,6 +10,44 @@
 > está marcada NO VALIDADA / BLOCKED con su razón exacta.
 > El historial completo vive en `changelog.md`.
 
+## Pasada 2026-10-05 — UX/UI V1.1 (docs-only, ADR-0005)
+
+**Pasada exclusivamente documental.** Se enmendó la especificación congelada
+a **V1.1 FROZEN** (lenguaje visual Metro como expresión de Xauxa; ADR-0005,
+D-18). **Ningún archivo fuera de `docs/` fue modificado.**
+
+**Declaración explícita:** el código actual está **DESALINEADO** con V1.1
+en cuanto a jerarquía visual y composición (S01, S06, §11, §12) hasta la
+pasada de implementación que aplique la enmienda. La spec manda sobre el
+código (D-17); esta desalineación no es un fallo de implementación sino el
+estado esperado tras una enmienda de spec aprobada.
+
+### Defectos de implementación abiertos (NO de spec)
+
+Registrados para la pasada de implementación V1.1/V2; son fallos del código
+respecto al contrato vigente y no modifican la especificación:
+
+1. Botón "Volver" partido en dos líneas en Registrar actividad.
+2. Botón primario recortado al final de la pantalla Registrar actividad.
+3. Badge "Sincronizado" ocupando el ancho completo en cada fila.
+4. Destinos "Sin nombre"/"QR importado" indistinguibles entre sí.
+5. Revisar QR (S09) con el código QR pequeño y pegado a la izquierda.
+
+### Tareas de implementación pendientes de esta enmienda
+
+Integrar: `XauxaAppBar`, `XauxaPivot`, variantes de `XauxaTile`
+(pequeño/mediano/ancho) con rejilla de 4 columnas, `XauxaTextInput` plano,
+`XauxaLiveTile` ancho sin bucles, botones/listas/badges sin borde de
+reposo, Archivo Light (300) empaquetado, integración de Lucide vía
+dependencia KMP (candidata `com.composables:icons-lucide`, ISC; verificar
+Licencia efectiva del artefacto, tamaño APK/IPA y compatibilidad con
+Kotlin 2.2.20/wasmJs) con wrapper `XauxaIcon`, derivación determinista del
+acento por contexto, movimiento V1.1 (tilt ≤150 ms; escalonado ≤300 ms;
+reduced motion inmediato) y alinear el laboratorio de componentes. Detalle
+en `docs/05-design-system/04-component-audit-register.md` (sección V1.1)
+e invariantes I19–I24 de `docs/08-validacion/02-suite-estados-eventos-v1.md`
+(todos PENDIENTES).
+
 ## Estado actual (2026-10-04, cierre de la pasada T1–T14)
 
 **Fuente de verdad**: `main` @ 03e5697. CI del último push de main: verde
