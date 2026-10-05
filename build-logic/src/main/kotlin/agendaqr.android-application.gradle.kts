@@ -12,6 +12,8 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "0.1.0"
+        // D4 — instrumentados de la app (share intents/singleTask/URI).
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
         create("release") {
