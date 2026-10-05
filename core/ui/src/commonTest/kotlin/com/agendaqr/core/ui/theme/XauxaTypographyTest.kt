@@ -1,6 +1,7 @@
 package com.agendaqr.core.ui.theme
 
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -32,5 +33,19 @@ class XauxaTypographyTest {
         // Roboto en Android, SF en iOS (§12): delegar en el sistema evita
         // empaquetar una copia redundante y respeta al usuario.
         assertEquals(FontFamily.Default, XauxaType.FamilyUi)
+    }
+
+    @Test
+    fun display_page_is_light_and_at_least_40sp() {
+        // V1.1 (ADR-0005, spec §12 Tipografía): títulos de página en
+        // display ligero (Archivo peso 300) y ≥ 40 sp, en lugar de
+        // negrita; encabezados de sección pequeños (14–16 sp) en acento.
+        assertEquals(FontWeight.Light, XauxaType.WeightDisplayPage)
+        assertTrue(XauxaType.DisplayPage.value >= 40f)
+        assertTrue(
+            XauxaType.SectionHeader.value in 14f..16f,
+            "SectionHeader debe estar en 14–16 sp (spec §12)",
+        )
+        assertTrue(XauxaType.DisplayPage.value > XauxaType.Display.value)
     }
 }

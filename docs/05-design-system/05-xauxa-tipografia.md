@@ -9,12 +9,11 @@ encabezados de sección pasan a 14–16 sp en color de acento. El cuerpo
 sigue en Roboto/San Francisco. Capitalización de oración (sin
 mayúsculas forzadas). El escalado de fuente del sistema se mantiene.
 
-**Tarea de implementación PENDIENTE (no hecha en esta pasada
-documental):** empaquetar el peso Light (300) de Archivo (OFL 1.1,
-misma fuente y licencia ya registradas abajo y en
-`06-licencias-terceros.md`) y ajustar la escala display de `XauxaType`.
-Hasta entonces los títulos siguen usando los pesos actuales
-400/500/600/700.
+**Implementado en T1 (2026-10-05, feat/metro-T1):** el peso Light (300)
+de Archivo está empaquetado (`archivo_light.ttf`, OFL 1.1, misma fuente y
+licencia registradas abajo y en `06-licencias-terceros.md`) y `XauxaType`
+añade `DisplayPage = 40.sp` (≥ 40 sp), `WeightDisplayPage = FontWeight.Light`
+y `SectionHeader = 14.sp` para los encabezados de sección (14–16 sp).
 
 ## Familias expuestas por `XauxaType`
 
@@ -27,9 +26,9 @@ Hasta entonces los títulos siguen usando los pesos actuales
 ## Por qué Archivo se empaqueta y Roboto no
 
 - Archivo no es fuente del sistema en ninguna plataforma objetivo: se
-  empaquetan 4 pesos estáticos (400/500/600/700) instanciados de la
+  empaquetan 5 pesos estáticos (300/400/500/600/700) instanciados de la
   familia variable oficial, subset latin, ~40 KB cada uno. V1.1 añade
-  el peso 300 (Light) a ese conjunto — pendiente de implementación.
+  empaquetación del peso 300 realizada en V1.1/T1.
 - Roboto ES la fuente por defecto de Android y SF la de iOS: empaquetar
   una copia de Roboto añadiría peso al APK sin ningún cambio visual ni de
   contrato (§12 pide literalmente "Roboto/San Francisco"). `FamilyUi =
