@@ -123,7 +123,7 @@ class DestinationsViewModel(
                         id = "destination-$now-${asset.hashCode()}",
                         // La vía masiva no pasa por el editor (que exige nombre):
                         // valor por defecto editable luego, nunca vacío.
-                        name = "QR importado" + if (assets.size > 1) " ${index + 1}" else "",
+                        name = AppStrings.QrImportado + if (assets.size > 1) " ${index + 1}" else "",
                         qr = asset,
                         createdAt = now,
                         updatedAt = now,

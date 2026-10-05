@@ -70,7 +70,7 @@ internal fun OperationDetailScreen(
             // U4: el drain omite los errores permanentes; reintentar no
             // puede recuperarlos. El dato está a salvo localmente.
             XauxaText(
-                text = "Tu información está guardada en el dispositivo.",
+                text = AppStrings.TuInformacionEstaGuardadaEnElDispositivo,
                 color = XauxaColor.TextSecondary,
             )
         }
@@ -80,10 +80,10 @@ internal fun OperationDetailScreen(
         operation.concept?.let { XauxaText(AppStrings.Concepto + it) }
         operation.note?.let { XauxaText(AppStrings.Nota2 + it, color = XauxaColor.TextSecondary) }
 
-        XauxaSection("Comprobantes") {
+        XauxaSection(AppStrings.SeccionComprobantes) {
             if (state.operationComprobantes.isEmpty()) {
                 XauxaText(AppStrings.SinComprobanteAdjunto, color = XauxaColor.TextSecondary)
-                XauxaTextAction(label = AppStrings.AdjuntarComprobanteAhora, onClick = { viewModel.openUnassociatedForOperation(operation.id) })
+                XauxaTextAction(label = AppStrings.attachReceiptNow, onClick = { viewModel.openUnassociatedForOperation(operation.id) })
             } else {
                 for (receipt in state.operationComprobantes) {
                     XauxaTile(onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) }) {
@@ -106,7 +106,7 @@ internal fun OperationDetailScreen(
     if (showDeleteConfirm) {
         XauxaDialog(
             title = AppStrings.EliminarOperacion,
-            message = AppStrings.EstaAccionNoSePuede,
+            message = AppStrings.irreversibleActionWarning,
             confirmLabel = AppStrings.Eliminar,
             onConfirm = {
                 showDeleteConfirm = false

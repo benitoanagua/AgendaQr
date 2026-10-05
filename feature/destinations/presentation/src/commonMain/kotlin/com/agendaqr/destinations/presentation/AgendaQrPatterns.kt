@@ -27,7 +27,7 @@ import com.agendaqr.core.ui.theme.XauxaType
 fun FirstUsePattern(onAdd: () -> Unit) {
     XauxaEmptyState(
         title = AppStrings.SinDestinos,
-        subtitle = AppStrings.AgregaTuPrimerQrPara,
+        subtitle = AppStrings.emptyDestinationsHint,
         actionLabel = AppStrings.AgregarQr,
         onAction = onAdd,
     )

@@ -56,7 +56,7 @@ fun GlobalSearchScreen(
         }
         when {
             state.query.isBlank() -> XauxaText(
-                AppStrings.BuscaDestinosOperacionesContextosO,
+                AppStrings.searchIntroHint,
                 color = XauxaColor.TextSecondary,
             )
             state.isSearching -> XauxaLoading(message = AppStrings.BuscandoEnAgendaQr)

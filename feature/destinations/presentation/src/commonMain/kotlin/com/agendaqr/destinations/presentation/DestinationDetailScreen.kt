@@ -63,7 +63,7 @@ fun DestinationDetailScreen(
             }
             if (syncStatus == ElementSyncStatus.Dead) {
                 XauxaText(
-                    text = "Tu información está guardada en el dispositivo.",
+                    text = AppStrings.TuInformacionEstaGuardadaEnElDispositivo,
                     color = XauxaColor.TextSecondary,
                 )
             }
@@ -88,8 +88,8 @@ fun DestinationDetailScreen(
         // es destructiva y no debería quedar a un toque de Edit/Share.
         XauxaCommandBar(
             visibleActions = listOf(
-                { XauxaTextAction("Editar", onEdit) },
-                { XauxaTextAction("Compartir", onShare) },
+                { XauxaTextAction(AppStrings.Editar, onEdit) },
+                { XauxaTextAction(AppStrings.Compartir, onShare) },
             ),
             overflowActions = listOf(
                 XauxaOverflowAction("Eliminar", { showDeleteConfirm = true }),
@@ -99,7 +99,7 @@ fun DestinationDetailScreen(
     if (showDeleteConfirm) {
         XauxaDialog(
             title = AppStrings.EliminarDestino,
-            message = AppStrings.EstaAccionNoSePuede,
+            message = AppStrings.irreversibleActionWarning,
             confirmLabel = AppStrings.Eliminar,
             onConfirm = {
                 showDeleteConfirm = false
