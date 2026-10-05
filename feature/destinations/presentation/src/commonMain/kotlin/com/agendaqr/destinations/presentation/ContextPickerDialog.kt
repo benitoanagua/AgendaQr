@@ -14,6 +14,7 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.XauxaDialog
+import com.agendaqr.core.ui.components.XauxaDialogList
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaText
@@ -135,7 +136,7 @@ internal fun ContextPickerDialog(
             // selección por accidente (§3).
             onDismissRequest = onCancel,
             content = {
-                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                XauxaDialogList {
                     // U3/ADR-0003 (opción C): crear sin salir del draft.
                     // Arriba de la lista: el slot de texto del diálogo
                     // recorta el fondo en pantallas bajas.

@@ -270,6 +270,13 @@ object XauxaMetrics {
      * mínimo en lugar de recortar.
      */
     val CatalogTileMinHeight = 116.dp
+    /**
+     * Altura máxima de una lista dentro de un diálogo: las filas de
+     * selección (S08, ¿a cuál corresponde?) deben ser alcanzables con
+     * scroll cuando la lista es larga (§11);
+     * por debajo de este tope la lista mide su contenido.
+     */
+    val DialogListMaxHeight = 320.dp
 }
 
 object XauxaType {

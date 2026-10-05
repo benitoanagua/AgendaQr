@@ -222,7 +222,9 @@ internal fun UnassociatedScreen(
             onConfirm = { selectedReceipt = null },
             onDismiss = { selectedReceipt = null },
             content = {
-                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                // §11: el slot de texto del diálogo recorta el fondo; con
+                // muchas operaciones candidatas la lista queda inalcanzable.
+                XauxaDialogList {
                     when {
                         suggestion == null -> XauxaText(AppStrings.analyzingReceipt, color = XauxaColor.TextSecondary)
                         suggestion.kind == ReceiptMatchKind.NONE ->

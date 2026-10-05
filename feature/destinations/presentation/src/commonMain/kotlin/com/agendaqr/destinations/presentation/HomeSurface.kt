@@ -27,6 +27,9 @@ internal fun HomeSurface(
     nav: AppBackStack,
     syncLookup: ElementSyncLookup,
     onRetrySync: () -> Unit,
+    onSearchOpened: () -> Unit = {},
+    /** Back desde el detalle del QR (S05: puede restaurar la Búsqueda). */
+    onDetailBack: () -> Unit = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
 ) {
     val reducedMotion = LocalReducedMotion.current
     AnimatedContent(
@@ -52,7 +55,7 @@ internal fun HomeSurface(
                     graph.operationsViewModel.onAction(OperationAction.New)
                     nav.push(AppRoute.Operations)
                 },
-                onOpenSearch = { nav.push(AppRoute.Search) },
+                onOpenSearch = { onSearchOpened(); nav.push(AppRoute.Search) },
                 onSignOut = onSignOut,
                 syncLookup = syncLookup,
             )
@@ -107,7 +110,7 @@ internal fun HomeSurface(
                             graph.destinationsViewModel.onAction(DestinationAction.Delete(destination.id))
                         },
                         onShare = { shareQr(destination.qr) },
-                        onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
+                        onBack = onDetailBack,
                         syncStatus = syncLookup.status(
                             com.agendaqr.destinations.data.SyncResource.DESTINATION,
                             destination.id,
