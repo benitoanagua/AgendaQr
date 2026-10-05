@@ -56,6 +56,7 @@ internal fun HomeSurface(
                     nav.push(AppRoute.Operations)
                 },
                 onOpenSearch = { onSearchOpened(); nav.push(AppRoute.Search) },
+                onOpenContexts = { nav.push(AppRoute.Contexts) },
                 onSignOut = onSignOut,
                 syncLookup = syncLookup,
             )

@@ -24,6 +24,9 @@ internal object AppStrings {
     val ActividadesRecientes = "Actividades recientes"
     val attachReceiptNow = "Adjuntar comprobante ahora"
     val AgendaQr = "Agenda QR"
+    // V1.1 (ADR-0005, S01): sección de entradas recientes y tile vivo.
+    val Recientes = "Recientes"
+    val UltimoQrOActividad = "Último QR o actividad reciente"
     val emptyDestinationsHint = "Agrega tu primer QR para empezar."
     val Analizando = "Analizando…"
     val associateToExistingOperation = "Asociar a actividad existente"

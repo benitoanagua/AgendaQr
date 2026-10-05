@@ -5,8 +5,6 @@ import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +13,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,143 +25,181 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.destinations.data.SyncResource
-import com.agendaqr.core.ui.components.XauxaPrimaryButton
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
+import com.agendaqr.core.ui.components.XauxaAppBar
+import com.agendaqr.core.ui.components.XauxaAppBarAction
+import com.agendaqr.core.ui.components.XauxaIcons
+import com.agendaqr.core.ui.components.XauxaLiveTile
+import com.agendaqr.core.ui.components.XauxaOverflowAction
+import com.agendaqr.core.ui.components.XauxaPageTitle
+import com.agendaqr.core.ui.components.XauxaSectionHeader
+import com.agendaqr.core.ui.components.XauxaText
+import com.agendaqr.core.ui.components.XauxaTileGrid
+import com.agendaqr.core.ui.components.XauxaTileItem
+import com.agendaqr.core.ui.components.XauxaTileSize
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaSearchBar
-import com.agendaqr.core.ui.components.XauxaFilterChip
 import com.agendaqr.core.ui.components.XauxaCategoryChip
 import com.agendaqr.core.ui.components.XauxaLoadMoreFooter
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaTone
-import com.agendaqr.core.ui.components.XauxaHeading
+import com.agendaqr.core.ui.theme.XauxaAccents
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
 import com.agendaqr.destinations.domain.Destination
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun DestinationsScreen(
     state: DestinationsUiState,
     onAction: (DestinationAction) -> Unit,
     onOpenOperations: () -> Unit = {},
     onOpenSearch: () -> Unit = {},
+    onOpenContexts: () -> Unit = {},
     onSignOut: () -> Unit = {},
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
+    var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
+    val paged = state.visibleDestinations.take(visibleCount)
+    // S01 V1.1 (ADR-0005): título ligero, búsqueda como primer bloque,
+    // rejilla de tiles, sección Recientes con filas abiertas sin borde y
+    // las acciones de sesión en la barra de aplicación inferior. Ninguna
+    // capacidad existente desaparece: favorito, filtro de favoritos,
+    // estado de sincronización y cerrar sesión siguen accesibles.
     Column(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(XauxaSpacing.Xxl)
             .imePadding(),
-        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        XauxaHeading(
-            text = AppStrings.AgendaQr,
-            size = XauxaType.Display,
-        )
-
-        // S01 — Inicio: buscar domina visualmente; Añadir y Registrar son
-        // acciones secundarias. Contexto pertenece al flujo que lo necesita,
-        // no a una taxonomía de navegación principal.
-        // La barra es la entrada a S04 (búsqueda global): al tocarla se abre
-        // la pantalla de Buscar, que encuentra QR, operaciones, comprobantes
-        // y contextos. El listado de destinos de Inicio no se filtra aquí.
-        // T10: un ÚNICO nodo semántico para el control — el campo decorativo
-        // no expone su editable-node al lector de pantalla; el botón real
-        // es el que navega, con rol y etiqueta (cero nodos duplicados).
-        Box {
-            XauxaSearchBar(
-                value = "",
-                onValueChange = {},
-                label = AppStrings.BuscarEnAgendaQr,
-                placeholder = AppStrings.searchPlaceholder,
-            )
-            Box(
-                Modifier
-                    .matchParentSize()
-                    // El toque físico vive en clickable; clearAndSetSemantics
-                    // reemplaza TODA la semántica (incluida la de clickable)
-                    // por el nodo único del control.
-                    .clickable(onClickLabel = AppStrings.BuscarEnAgendaQr) { onOpenSearch() }
-                    .clearAndSetSemantics {
-                        contentDescription = AppStrings.BuscarEnAgendaQr
-                        role = Role.Button
-                        onClick(label = AppStrings.BuscarEnAgendaQr) {
-                            onOpenSearch()
-                            true
-                        }
-                    },
-            )
-        }
-
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
-            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+        // Un único contenedor scrolleable (M1: contenido antes que cromo):
+        // la pantalla entera desliza y la app bar queda anclada abajo.
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = XauxaSpacing.ScreenMargin),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
         ) {
-            XauxaSecondaryButton(
-                label = AppStrings.Anadir,
-                onClick = { onAction(DestinationAction.Edit(null)) },
-            )
-            XauxaSecondaryButton(
-                label = AppStrings.Registrar,
-                onClick = onOpenOperations,
-            )
-        }
+            XauxaPageTitle(text = AppStrings.AgendaQr)
 
-        Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-            XauxaFilterChip(AppStrings.Favoritos, state.favoriteOnly, { onAction(DestinationAction.ToggleFavorites) })
-            state.category?.let { XauxaCategoryChip(it) }
-        }
-        state.error?.let { error ->
-            XauxaStatusBanner(
-                error.display(),
-                tone = XauxaTone.Danger,
-                actionLabel = error.action.label,
-                // REINTENTAR re-ejecuta la operación fallida en el VM.
-                onAction = {
-                    onAction(
-                        if (error.action == ErrorAction.Retry) DestinationAction.RetryFailed
-                        else DestinationAction.ClearError,
+            // S01 — buscar domina visualmente (M2). La barra es la entrada
+            // a S04; el listado de Inicio no se filtra aquí. T10: un ÚNICO
+            // nodo semántico para el control (cero nodos duplicados).
+            run {
+                Box {
+                    XauxaSearchBar(
+                        value = "",
+                        onValueChange = {},
+                        label = AppStrings.BuscarEnAgendaQr,
+                        placeholder = AppStrings.searchPlaceholder,
                     )
-                },
-                onDismiss = { onAction(DestinationAction.ClearError) },
+                    Box(
+                        Modifier
+                            .matchParentSize()
+                            .clickable(onClickLabel = AppStrings.BuscarEnAgendaQr) { onOpenSearch() }
+                            .clearAndSetSemantics {
+                                contentDescription = AppStrings.BuscarEnAgendaQr
+                                role = Role.Button
+                                onClick(label = AppStrings.BuscarEnAgendaQr) {
+                                    onOpenSearch()
+                                    true
+                                }
+                            },
+                    )
+                }
+            }
+
+            // §10: los errores son recuperables y contextuales — el banner
+            // queda junto a la acción que lo provocó, visible sin scroll.
+                        state.error?.let { error ->
+                XauxaStatusBanner(
+                    error.display(),
+                    tone = XauxaTone.Danger,
+                    actionLabel = error.action.label,
+                    // REINTENTAR re-ejecuta la operación fallida en el VM.
+                    onAction = {
+                        onAction(
+                            if (error.action == ErrorAction.Retry) DestinationAction.RetryFailed
+                            else DestinationAction.ClearError,
+                        )
+                    },
+                    onDismiss = { onAction(DestinationAction.ClearError) },
+                )
+            }
+            // M2: rejilla de tiles — Añadir, Registrar, Favoritos, Contextos y
+            // el tile ancho vivo (último QR o actividad reciente). La capacidad
+            // de filtrar por favoritos la conserva el tile Favoritos (misma
+            // acción ToggleFavorites que antes hacía el chip).
+            val latest = state.visibleDestinations.firstOrNull()
+            XauxaTileGrid(
+                items = listOf(
+                        XauxaTileItem(
+                            label = AppStrings.Anadir,
+                            icon = XauxaIcons.Add,
+                            onClick = { onAction(DestinationAction.Edit(null)) },
+                        ),
+                        XauxaTileItem(
+                            label = AppStrings.Registrar,
+                            icon = XauxaIcons.Register,
+                            onClick = onOpenOperations,
+                        ),
+                        XauxaTileItem(
+                            label = AppStrings.Favoritos,
+                            icon = XauxaIcons.Favorite,
+                            accent = if (state.favoriteOnly) XauxaAccents.Admitted.first() else XauxaAccents.System,
+                            onClick = { onAction(DestinationAction.ToggleFavorites) },
+                        ),
+                        XauxaTileItem(
+                            label = AppStrings.Contextos,
+                            icon = XauxaIcons.Context,
+                            onClick = onOpenContexts,
+                        ),
+                        // M2/M11: el tile vivo cambia de contenido SOLO cuando
+                        // cambia el dato (una transición por cambio, sin bucles).
+                        XauxaTileItem(
+                            label = AppStrings.UltimoQrOActividad,
+                            size = XauxaTileSize.WIDE,
+                            onClick = latest?.let { d -> { onAction(DestinationAction.Open(d.id)) } },
+                            content = {
+                                    XauxaLiveTile(data = latest?.id) {
+                                        XauxaText(
+                                                text = latest?.name?.ifBlank { AppStrings.SinNombre }
+                                                    ?: AppStrings.AunNoHayDestinos,
+                                                color = XauxaColor.OnBrand,
+                                        )
+                                    }
+                            },
+                        ),
+                ),
             )
-        }
-        when {
-            state.isLoading -> XauxaLoading(message = AppStrings.CargandoDestinosQr)
-            state.visibleDestinations.isEmpty() -> XauxaEmptyState(
-                title = if (state.destinations.isEmpty()) AppStrings.AunNoHayDestinos else AppStrings.NoSeEncontraronDestinos,
-                subtitle = if (state.destinations.isEmpty()) AppStrings.emptyDestinationsHint else AppStrings.PruebaConOtraBusquedaOLimpia,
-                actionLabel = if (state.destinations.isEmpty()) AppStrings.Anadir else AppStrings.LimpiarBusqueda,
-                onAction = { if (state.destinations.isEmpty()) onAction(DestinationAction.Edit(null)) else onAction(DestinationAction.Search("")) },
-            )
-            else -> {
-                var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
-                val paged = state.visibleDestinations.take(visibleCount)
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize().weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
-                ) {
-                    items(paged, key = { it.id }) { destination ->
-                        DestinationRow(destination, onAction, syncLookup)
-                    }
-                    if (paged.size < state.visibleDestinations.size) {
-                        item {
+
+            Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                state.category?.let { XauxaCategoryChip(it) }
+                XauxaSectionHeader(text = AppStrings.Recientes)
+            }
+            when {
+                state.isLoading -> XauxaLoading(message = AppStrings.CargandoDestinosQr)
+                state.visibleDestinations.isEmpty() -> XauxaEmptyState(
+                    title = if (state.destinations.isEmpty()) AppStrings.AunNoHayDestinos else AppStrings.NoSeEncontraronDestinos,
+                    subtitle = if (state.destinations.isEmpty()) AppStrings.emptyDestinationsHint else AppStrings.PruebaConOtraBusquedaOLimpia,
+                    actionLabel = if (state.destinations.isEmpty()) AppStrings.Anadir else AppStrings.LimpiarBusqueda,
+                    onAction = { if (state.destinations.isEmpty()) onAction(DestinationAction.Edit(null)) else onAction(DestinationAction.Search("")) },
+                )
+                else -> {
+                    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                        paged.forEach { destination ->
+                            DestinationRow(destination, onAction, syncLookup)
+                        }
+                        if (paged.size < state.visibleDestinations.size) {
                             XauxaLoadMoreFooter(
                                 onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(state.visibleDestinations.size) },
                             )
@@ -171,13 +209,22 @@ fun DestinationsScreen(
             }
         }
 
-        // T11 — S01: "Cerrar sesión" es una acción de cuenta, no del flujo:
-        // vive al pie, fuera de la fila de acciones principales (Buscar
-        // domina; Añadir y Registrar son las acciones secundarias).
-        XauxaTextAction(
-            label = AppStrings.CerrarSesion,
-            onClick = onSignOut,
-            modifier = Modifier.padding(top = XauxaSpacing.Lg),
+        // M7: las acciones de sesión viven en la barra de aplicación
+        // inferior (menú "…"), no sueltas en el cuerpo. "Buscar" domina
+        // como primer bloque y además es la acción principal de la barra.
+        XauxaAppBar(
+            modifier = Modifier.navigationBarsPadding(),
+            actions = listOf(
+                XauxaAppBarAction(
+                    label = AppStrings.BuscarEnAgendaQr,
+                    icon = XauxaIcons.Search,
+                    primary = true,
+                    onClick = onOpenSearch,
+                ),
+            ),
+            overflowActions = listOf(
+                XauxaOverflowAction(AppStrings.CerrarSesion, onClick = onSignOut),
+            ),
         )
     }
 }
