@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.agendaqr.core.ui.Res
 import com.agendaqr.core.ui.archivo_bold
+import com.agendaqr.core.ui.archivo_light
 import com.agendaqr.core.ui.archivo_medium
 import com.agendaqr.core.ui.archivo_regular
 import com.agendaqr.core.ui.archivo_semibold
@@ -241,11 +242,17 @@ object XauxaSpacing {
     val Xxl = 24.dp
     val Xxxl = 32.dp
     val Huge = 40.dp
+    /** V1.1 (ADR-0005, spec §12 Rejilla): margen de pantalla — múltiplo de 4. */
+    val ScreenMargin = 16.dp
+    /** V1.1: separación entre tiles de la rejilla — múltiplo de 4. */
+    val TileGap = 8.dp
 }
 
 object XauxaMetrics {
     val Border = 1.dp
     val BorderStrong = 2.dp
+    /** §12 V1.1 (M8/M9): ancho de foco y de borde funcional — 2 dp, solo en
+     * foco, campo en foco/error o tile seleccionado; sin bordes de reposo. */
     val Focus = 2.dp
     val ControlMinSize = 48.dp
     val ContentMaxWidth = 720.dp
@@ -253,6 +260,23 @@ object XauxaMetrics {
     val FavoriteIndicatorSize = 24.dp
     val BreakpointCompact = 480.dp
     val BreakpointMedium = 640.dp
+
+    // V1.1 (ADR-0005, spec §12 Rejilla y tiles) — rejilla Metro de 4
+    // columnas en compacto. Unidad base de tile y métricas derivadas en
+    // múltiplos de 4 dp (Xauxa base 4px); la rejilla reduce columnas antes
+    // de comprimir por debajo de la unidad mínima.
+    /** Unidad 1×1 de la rejilla de tiles (compacto, margen 16 + gaps 8). */
+    val TileUnit = 76.dp
+    /** Alto del tile ancho (4×2): dos unidades más una separación. */
+    val TileWideHeight = 160.dp
+    /** Tamaño de icono estándar en tiles y acciones (un solo color, línea). */
+    val IconSize = 24.dp
+    /** Icono grande de tile (pequeño/mediano: glifo centrado dominante). */
+    val IconSizeTile = 32.dp
+    /** Altura de la barra de aplicación inferior (M7): 2–4 acciones con
+     * icono + etiqueta visible; admite dos líneas de contenido y respeta
+     * el objetivo táctil mínimo. */
+    val AppBarHeight = 64.dp
     /**
      * Ancho mínimo de tile del catálogo del laboratorio. Existe para que
      * la cuadrícula adaptativa (`GridCells.Adaptive`) consuma un token
@@ -287,23 +311,35 @@ object XauxaType {
     val Label: TextUnit = 14.sp
     val Caption: TextUnit = 12.sp
     val LetterSpacingWide: TextUnit = 0.5.sp
+    /** V1.1 (ADR-0005, spec §12 Tipografía): título de página en display
+     * ligero (Archivo 300) y ≥ 40 sp. */
+    val DisplayPage: TextUnit = 40.sp
+    /** V1.1: encabezados de sección pequeños (14–16 sp) en color de
+     * acento. */
+    val SectionHeader: TextUnit = 14.sp
     /**
-     * T9 — §12: "Archivo para display/encabezados". Empaquetada en
-     * `composeResources/font` (4 pesos estáticos, subset latin, ~40 KB cada
-     * uno); licencia OFL 1.1 documentada en
-     * `docs/05-design-system/05-xauxa-tipografia.md`. Solo se consume a
-     * través de [com.agendaqr.core.ui.components.XauxaHeading].
+     * T9 — §12: "Archivo para display/encabezados" (V1.1: el display de
+     * página usa el peso Light 300). Empaquetada en
+     * `composeResources/font` (5 pesos estáticos, subset latin, ~40 KB
+     * cada uno); licencia OFL 1.1 documentada en
+     * `docs/05-design-system/05-xauxa-tipografia.md` y
+     * `06-licencias-terceros.md`. Solo se consume a través de
+     * [com.agendaqr.core.ui.components.XauxaHeading] y
+     * [com.agendaqr.core.ui.components.XauxaPageTitle].
      *
      * Acceso componible (mismo patrón que [XauxaColor]): el cargador de
      * fuentes de Compose retiene los typefaces.
      */
     val FamilyDisplay: FontFamily
         @Composable get() = FontFamily(
+            Font(Res.font.archivo_light, FontWeight.Light),
             Font(Res.font.archivo_regular, FontWeight.Normal),
             Font(Res.font.archivo_medium, FontWeight.Medium),
             Font(Res.font.archivo_semibold, FontWeight.SemiBold),
             Font(Res.font.archivo_bold, FontWeight.Bold),
         )
+    /** V1.1: peso del título de página (display ligero). */
+    val WeightDisplayPage: FontWeight = FontWeight.Light
     /**
      * §12: "Roboto/San Francisco para UI/cuerpo": la sans del sistema
      * (Roboto en Android, SF en iOS) es la fuente de UI correcta sin
@@ -331,6 +367,62 @@ object XauxaMotion {
         val Emphasized: Easing = CubicBezierEasing(0.1f, 0.9f, 0.2f, 1f)
         val Decelerate: Easing = CubicBezierEasing(0f, 0f, 0.2f, 1f)
     }
+}
+
+/**
+ * V1.1 (ADR-0005, spec §12 Color): acento Metro. [background] es el bloque
+ * plano del tile y [onAccent] el único color de texto admitido sobre él;
+ * el par es fijo, calculado (tabla de contraste de la spec) e idéntico en
+ * tema claro y oscuro (el fondo oscuro es negro puro y la regla de
+ * contraste de cada par es válida contra él — ver spec §12 Modo oscuro).
+ */
+data class XauxaAccent(val id: String, val background: Color, val onAccent: Color)
+
+/**
+ * Paleta de acentos V1.1: los 12 admitidos por la tabla de contraste
+ * calculada de la spec §12 (ni uno más ni uno menos) más el acento de
+ * sistema `0067B8` por defecto. Los colores de estado (danger/warning/
+ * success) siguen siendo semánticos y separados.
+ */
+object XauxaAccents {
+    val System = XauxaAccent("system", Color(0xFF0067B8), Color(0xFFFFFFFF))
+
+    private val Lime = XauxaAccent("lime", Color(0xFFA4C400), Color(0xFF000000))
+    private val Emerald = XauxaAccent("emerald", Color(0xFF008A00), Color(0xFF000000))
+    private val Teal = XauxaAccent("teal", Color(0xFF00ABA9), Color(0xFF000000))
+    private val Cyan = XauxaAccent("cyan", Color(0xFF1BA1E2), Color(0xFF000000))
+    private val Cobalt = XauxaAccent("cobalt", Color(0xFF0050EF), Color(0xFFFFFFFF))
+    private val Indigo = XauxaAccent("indigo", Color(0xFF6A00FF), Color(0xFFFFFFFF))
+    private val Violet = XauxaAccent("violet", Color(0xFFAA00FF), Color(0xFFFFFFFF))
+    private val Magenta = XauxaAccent("magenta", Color(0xFFD80073), Color(0xFFFFFFFF))
+    private val Crimson = XauxaAccent("crimson", Color(0xFFA20025), Color(0xFFFFFFFF))
+    private val Red = XauxaAccent("red", Color(0xFFE51400), Color(0xFFFFFFFF))
+    private val Orange = XauxaAccent("orange", Color(0xFFFA6800), Color(0xFF000000))
+    private val Amber = XauxaAccent("amber", Color(0xFFF0A30A), Color(0xFF000000))
+
+    val Admitted: List<XauxaAccent> = listOf(
+        Lime, Emerald, Teal, Cyan, Cobalt, Indigo,
+        Violet, Magenta, Crimson, Red, Orange, Amber,
+    )
+}
+
+/**
+ * V1.1 (spec §12 Color): acento estable por contexto, derivado de forma
+ * determinista del identificador del contexto. Sin persistencia ni cambio
+ * de dominio; [contextId] nulo devuelve el acento de sistema.
+ *
+ * Hash propio FNV-1a (32 bits, sobre los bytes UTF-8 del identificador):
+ * explícitamente NO `String.hashCode`, para que la asignación sea idéntica
+ * en Android, iOS y wasmJs y no cambie entre ejecuciones ni plataformas.
+ */
+fun accentFor(contextId: String?): XauxaAccent {
+    if (contextId == null) return XauxaAccents.System
+    var hash: UInt = 0x811C9DC5u
+    for (byte in contextId.encodeToByteArray()) {
+        hash = hash xor byte.toUInt()
+        hash *= 0x01000193u
+    }
+    return XauxaAccents.Admitted[(hash % XauxaAccents.Admitted.size.toUInt()).toInt()]
 }
 
 fun Dp.xauxaBorder() = this
