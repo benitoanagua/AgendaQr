@@ -135,14 +135,16 @@ private fun ContextDetail(
             data.context.note?.takeIf { it.isNotBlank() }?.let {
                 XauxaText(it, size = XauxaType.Label, color = XauxaColor.TextSecondary)
             }
-            XauxaText(AppStrings.Qr2 + data.destinations.size, size = XauxaType.Title, color = XauxaColor.TextPrimary)
+            // U1: QR es invariable en español; pasa por el helper de contadores.
+            XauxaText(contextSectionLabel("QR", "QR", data.destinations.size), size = XauxaType.Title, color = XauxaColor.TextPrimary)
             data.destinations.forEach { destination ->
                 XauxaListRow(
                     title = destination.name.ifBlank { AppStrings.QrSinNombre },
                     onClick = { onOpenDestination(destination.id) },
                 )
             }
-            XauxaText(AppStrings.ActividadReciente + data.operations.size, size = XauxaType.Title, color = XauxaColor.TextPrimary)
+            // U1: singular honesto para N=1 ("Actividad reciente · 1").
+            XauxaText(contextSectionLabel(AppStrings.ActividadReciente, AppStrings.ActividadesRecientes, data.operations.size), size = XauxaType.Title, color = XauxaColor.TextPrimary)
             data.operations.take(RECENT_ACTIVITIES_SHOWN).forEach { operation ->
                 XauxaListRow(
                     title = listOfNotNull(
@@ -163,7 +165,7 @@ private fun ContextDetail(
                     onClick = onOpenOperations,
                 )
             }
-            XauxaText(AppStrings.Comprobantes + data.comprobantes.size, size = XauxaType.Title, color = XauxaColor.TextPrimary)
+            XauxaText(contextSectionLabel(AppStrings.Comprobante, AppStrings.Comprobantes, data.comprobantes.size), size = XauxaType.Title, color = XauxaColor.TextPrimary)
             data.comprobantes.forEach { receipt ->
                 XauxaListRow(
                     title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),

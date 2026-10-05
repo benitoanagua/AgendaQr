@@ -174,8 +174,7 @@ internal fun AuthenticatedAppRoot(
         }
         if (pendingCount > 0) {
             XauxaStatusBanner(
-                if (hasFailed) "Sincronización pendiente: $pendingCount · reintentando…"
-                else "Sincronización pendiente: $pendingCount",
+                syncPendingLabel(pendingCount, retrying = hasFailed),
                 tone = if (hasFailed) XauxaTone.Danger else XauxaTone.Neutral,
             )
             if (hasFailed) {
