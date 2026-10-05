@@ -4,6 +4,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -49,6 +51,27 @@ import com.agendaqr.core.ui.theme.XauxaType
  * Diálogos y notificaciones Xauxa: confirmación, toast e inline result.
  * (T12: dividido de XauxaExtendedComponents.kt por responsabilidad, sin cambio de comportamiento.)
  */
+
+/**
+ * Lista dentro de un diálogo: filas de selección (S08, ¿a cuál
+ * corresponde?) con scroll cuando la lista es larga (§11). Sin cambio de
+ * jerarquía: el orden de las filas y las acciones del diálogo no cambian.
+ */
+@Composable
+fun XauxaDialogList(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(max = XauxaMetrics.DialogListMaxHeight)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+    ) {
+        content()
+    }
+}
 
 /**
  * Diálogo de confirmación destructiva con exactamente dos acciones.
