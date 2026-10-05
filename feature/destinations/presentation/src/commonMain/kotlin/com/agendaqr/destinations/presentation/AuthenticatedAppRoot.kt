@@ -357,7 +357,11 @@ internal fun AuthenticatedAppRoot(
             // comprobante abren su superficie en Operaciones.
             onOpenDestination = { id ->
                 graph.destinationsViewModel.onAction(DestinationAction.Open(id))
-                nav.pop()
+                // El detalle del QR es una ruta INTERNA de Inicio (la raíz):
+                // desde S06 (posiblemente abierta sobre la Búsqueda) hay que
+                // volver a la raíz, igual que al abrir un QR desde un
+                // resultado de búsqueda (S04 → S09/detalle).
+                nav.popToRoot()
             },
             onOpenOperation = { id ->
                 graph.operationsViewModel.onAction(OperationAction.Open(id))
