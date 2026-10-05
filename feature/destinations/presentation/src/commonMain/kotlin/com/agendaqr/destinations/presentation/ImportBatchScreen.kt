@@ -81,7 +81,12 @@ fun ImportBatchScreen(
                 XauxaPrimaryButton(AppStrings.Volver, onClick = { onAction(ImportBatchAction.Back) })
             }
             is ImportBatchUiState.Error -> {
-                XauxaStatusBanner(state.message, tone = XauxaTone.Danger)
+                XauxaStatusBanner(
+                    state.error.display(),
+                    tone = XauxaTone.Danger,
+                    actionLabel = state.error.action.label,
+                    onAction = { onAction(ImportBatchAction.SaveRecognized) },
+                )
                 state.batch?.let { BatchResultContent(it, onAction, isSaving = false) }
                     ?: XauxaSecondaryButton(AppStrings.Volver, onClick = { onAction(ImportBatchAction.Back) })
             }
