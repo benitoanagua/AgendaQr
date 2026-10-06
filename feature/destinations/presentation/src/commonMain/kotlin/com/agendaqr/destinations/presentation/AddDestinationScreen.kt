@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import com.agendaqr.core.ui.components.XauxaAppBar
+import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
@@ -34,19 +36,22 @@ fun AddDestinationScreen(
     onImport: (List<com.agendaqr.destinations.domain.QrAsset>) -> Unit,
     onBack: () -> Unit,
 ) {
+    // V1.1 (M7): Volver vive en la barra de aplicación inferior; el orden
+    // congelado S02 (Galería → Desde otra app → Cámara) no cambia.
     Column(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(XauxaSpacing.Xxl)
             .imePadding(),
-        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        XauxaHeading(
-            text = AppStrings.Anadir,
-            size = XauxaType.Headline,
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(XauxaSpacing.ScreenMargin),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
+        ) {
+        XauxaPageTitle(text = AppStrings.Anadir)
         XauxaText(
             AppStrings.TraeAAgendaQrAlgo,
             color = XauxaColor.TextSecondary,
@@ -73,9 +78,12 @@ fun AddDestinationScreen(
             onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
         )
 
-        XauxaSecondaryButton(
-            label = AppStrings.Volver,
-            onClick = onBack,
+        }
+        XauxaAppBar(
+            modifier = Modifier.navigationBarsPadding(),
+            actions = emptyList(),
+            onBack = onBack,
+            backLabel = AppStrings.Volver,
         )
     }
 }
