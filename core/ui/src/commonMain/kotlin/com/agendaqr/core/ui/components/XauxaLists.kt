@@ -153,6 +153,11 @@ fun XauxaListRow(
     tone: XauxaTone = XauxaTone.Neutral,
     onClick: (() -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
+    /** V1.1 (M4): bloque de acento del contexto. Cuando no es nulo
+     * sustituye al marcador de tono semántico: el acento identifica el
+     * contexto; el estado sigue expresándose con texto en el contenido
+     * (§11: nunca solo color). */
+    accent: androidx.compose.ui.graphics.Color? = null,
 ) {
     val interaction = remember { MutableInteractionSource() }
     val clickableModifier = if (onClick == null) modifier else modifier
@@ -175,7 +180,8 @@ fun XauxaListRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
-            modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight().background(tone.content()),
+            modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight()
+                .background(accent ?: tone.content()),
         )
         Column(
             modifier = Modifier.weight(XauxaToneWeight).padding(XauxaSpacing.Sm),
