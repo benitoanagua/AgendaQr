@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.components.XauxaDialog
 import com.agendaqr.core.ui.components.XauxaHeading
+import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaQrPreview
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
@@ -62,7 +63,7 @@ fun ImportBatchScreen(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        XauxaHeading(text = AppStrings.ResultadoDeImportacion, size = XauxaType.Headline, fontWeight = FontWeight.Normal)
+        XauxaPageTitle(text = AppStrings.ResultadoDeImportacion)
         when (state) {
             ImportBatchUiState.Idle -> {
                 XauxaText(AppStrings.TraeVariosElementosAAgenda, color = XauxaColor.TextSecondary)

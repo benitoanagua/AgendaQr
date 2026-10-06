@@ -21,8 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import com.agendaqr.core.ui.components.XauxaCommandBar
+import com.agendaqr.core.ui.components.XauxaAppBar
+import com.agendaqr.core.ui.components.XauxaAppBarAction
+import com.agendaqr.core.ui.components.XauxaIcons
 import com.agendaqr.core.ui.components.XauxaHeading
+import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaDialog
 import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaOverflowAction
@@ -47,12 +50,12 @@ fun DestinationDetailScreen(
     onRetrySync: () -> Unit = {},
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
-    Column(modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().imePadding()) {
+    Column(modifier = Modifier.fillMaxSize().statusBarsPadding().imePadding()) {
         Column(
-            modifier = Modifier.weight(1f).padding(XauxaSpacing.Xxl).verticalScroll(rememberScrollState()),
+            modifier = Modifier.weight(1f).padding(XauxaSpacing.ScreenMargin).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
         ) {
-            XauxaHeading(text = destination.name.ifBlank { "Sin nombre" }, size = XauxaType.Headline, fontWeight = FontWeight.Bold)
+            XauxaPageTitle(text = destination.name.ifBlank { "Sin nombre" })
             destination.category?.let { XauxaText(it, color = XauxaColor.TextSecondary) }
             destination.note?.takeIf { it.isNotBlank() }?.let { XauxaText(it, color = XauxaColor.TextSecondary) }
             // T6: estado de sincronización del elemento (texto, no solo
@@ -77,23 +80,33 @@ fun DestinationDetailScreen(
                     onAction = onEdit,
                 )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                XauxaPrimaryButton(AppStrings.MostrarQr, onShowQr, enabled = destination.qr.encoded.isNotBlank())
-                XauxaSecondaryButton(AppStrings.Volver, onBack)
-            }
         }
-        // cb1: command bar contextual solo en pantallas de detalle/foco como
-        // esta (nunca en la lista/Home) — Xauxa checklist KMP §07. Delete va
-        // a overflow a propósito, no a las hasta 3 acciones visibles (cb2):
-        // es destructiva y no debería quedar a un toque de Edit/Share.
-        XauxaCommandBar(
-            visibleActions = listOf(
-                { XauxaTextAction(AppStrings.Editar, onEdit) },
-                { XauxaTextAction(AppStrings.Compartir, onShare) },
+        // M7 (V1.1): acciones de detalle en la barra de aplicación
+        // inferior — principal "Mostrar QR" en bloque de acento; Editar y
+        // Compartir como acciones etiquetadas; Eliminar en el menú "…"
+        // (destructiva, no a un toque), mismo criterio que la command bar
+        // V1 (cb1/cb2) ahora expresado en el chrome Metro.
+        XauxaAppBar(
+            modifier = Modifier.navigationBarsPadding(),
+            actions = listOf(
+                // Sin glifo asignado aún en el mapeo mínimo (spec §12): la
+                // acción va etiquetada en texto (la etiqueta siempre se ve,
+                // §11) hasta una decisión de iconografía nueva.
+                XauxaAppBarAction(
+                    label = AppStrings.MostrarQr,
+                    icon = null,
+                    primary = true,
+                    enabled = destination.qr.encoded.isNotBlank(),
+                    onClick = onShowQr,
+                ),
+                XauxaAppBarAction(AppStrings.Editar, icon = null, onClick = onEdit),
+                XauxaAppBarAction(AppStrings.Compartir, icon = null, onClick = onShare),
             ),
             overflowActions = listOf(
                 XauxaOverflowAction("Eliminar", { showDeleteConfirm = true }),
             ),
+            onBack = onBack,
+            backLabel = AppStrings.Volver,
         )
     }
     if (showDeleteConfirm) {

@@ -23,6 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import com.agendaqr.core.ui.components.XauxaAppBar
+import com.agendaqr.core.ui.components.XauxaAppBarAction
+import com.agendaqr.core.ui.components.XauxaIcons
+import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.components.XauxaQrPreview
@@ -99,21 +103,24 @@ private fun DestinationEditorContent(
     val qrError = submitted && qr.encoded.isBlank()
     val canSave = name.isNotBlank() && qr.encoded.isNotBlank() && !isSaving
 
+    // V1.1 (M7/T7): Guardar como acción principal de la app bar; Volver
+    // pasa a la flecha de la barra (sin desbordar en dos líneas).
     Column(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(XauxaSpacing.Xxl)
-            .imePadding()
+            .imePadding(),
+    ) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
+            .padding(horizontal = XauxaSpacing.ScreenMargin)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        XauxaHeading(
+        XauxaPageTitle(
             text = AppStrings.EditarQr,
-
-            size = XauxaType.Headline,
-            fontWeight = FontWeight.Bold,
         )
         error?.let { err ->
             XauxaStatusBanner(
@@ -160,13 +167,18 @@ private fun DestinationEditorContent(
         } else {
             XauxaQrPreview(qr.encoded)
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-            XauxaSecondaryButton(label = AppStrings.Volver, onClick = onBack, enabled = !isSaving)
-            XauxaPrimaryButton(
-                label = AppStrings.Guardar,
+    }
+    XauxaAppBar(
+        modifier = Modifier.navigationBarsPadding(),
+        actions = listOf(
+            XauxaAppBarAction(
+                label = if (isSaving) AppStrings.Guardando else AppStrings.Guardar,
+                icon = XauxaIcons.Save,
+                primary = true,
+                enabled = canSave,
                 onClick = {
                     submitted = true
-                    if (name.isBlank() || qr.encoded.isBlank()) return@XauxaPrimaryButton
+                    if (name.isBlank() || qr.encoded.isBlank()) return@XauxaAppBarAction
                     val now = com.agendaqr.destinations.domain.nowMillis()
                     onSave(
                         existing.copy(
@@ -179,20 +191,21 @@ private fun DestinationEditorContent(
                         ),
                     )
                 },
-                enabled = canSave,
-                isLoading = isSaving,
-            )
-        }
-        if (selection.pickerOpen) {
-            ContextPickerDialog(
-                contexts = contexts,
-                selection = selection,
-                onSelect = { id -> selection = selection.select(id) },
-                onRemove = { selection = selection.removeContext() },
-                onCancel = { selection = selection.cancelPicker() },
-                onCreateContext = onCreateContext,
-                justCreatedContextId = justCreatedContextId,
-            )
-        }
+            ),
+        ),
+        onBack = if (isSaving) null else onBack,
+        backLabel = AppStrings.Volver,
+    )
+    }
+    if (selection.pickerOpen) {
+        ContextPickerDialog(
+            contexts = contexts,
+            selection = selection,
+            onSelect = { id -> selection = selection.select(id) },
+            onRemove = { selection = selection.removeContext() },
+            onCancel = { selection = selection.cancelPicker() },
+            onCreateContext = onCreateContext,
+            justCreatedContextId = justCreatedContextId,
+        )
     }
 }

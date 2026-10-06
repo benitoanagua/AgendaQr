@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.text.font.FontWeight
@@ -22,6 +23,10 @@ import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaQrPreview
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
+import com.agendaqr.core.ui.components.XauxaAppBar
+import com.agendaqr.core.ui.components.XauxaAppBarAction
+import com.agendaqr.core.ui.components.XauxaIcons
+import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
@@ -39,16 +44,22 @@ fun ImportReviewScreen(
     error: UserFacingError? = null,
     onClearError: () -> Unit = {},
 ) {
+    // V1.1 (M6/M7 + defecto T7): título ligero; Guardar como acción
+    // principal de la app bar (nunca recortada) y Volver en la flecha.
     Column(
         modifier = modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(XauxaSpacing.Xxl)
             .imePadding(),
+    ) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
+            .padding(horizontal = XauxaSpacing.ScreenMargin),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        XauxaHeading(text = AppStrings.RevisarQr, size = XauxaType.Headline, fontWeight = FontWeight.Normal)
+        XauxaPageTitle(text = AppStrings.RevisarQr)
         error?.let { err ->
             XauxaStatusBanner(
                 err.display(),
@@ -78,7 +89,11 @@ fun ImportReviewScreen(
                 verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
             ) {
                 itemsIndexed(assets) { _, asset ->
-                    XauxaQrPreview(asset.encoded)
+                    // S09/T7: el código va centrado (antes quedaba pegado a
+                    // la izquierda) y sin depender de métricas técnicas.
+                    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                        XauxaQrPreview(asset.encoded)
+                    }
                     // S09: evidencia de lo que Agenda QR entendió — el texto
                     // decodificado, sin exponer payload técnico.
                     asset.content?.takeIf { it.isNotBlank() }?.let { content ->
@@ -90,8 +105,25 @@ fun ImportReviewScreen(
                     }
                 }
             }
-            XauxaPrimaryButton(if (assets.size == 1) "Guardar" else "Guardar todo", onSaveAll, enabled = !isSaving, isLoading = isSaving)
-            XauxaSecondaryButton(AppStrings.Volver, onBack, enabled = !isSaving)
         }
+    }
+    XauxaAppBar(
+        modifier = Modifier.navigationBarsPadding(),
+        actions = listOf(
+            XauxaAppBarAction(
+                label = when {
+                    isSaving -> AppStrings.Guardando
+                    assets.size == 1 -> "Guardar"
+                    else -> "Guardar todo"
+                },
+                icon = XauxaIcons.Save,
+                primary = true,
+                enabled = !isSaving && assets.isNotEmpty(),
+                onClick = onSaveAll,
+            ),
+        ),
+        onBack = if (isSaving) null else onBack,
+        backLabel = AppStrings.Volver,
+    )
     }
 }

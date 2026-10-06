@@ -96,19 +96,20 @@ internal fun OperationEditorScreen(
         contextId = contextSelection.contextId,
     )
 
+    // V1.1 (M7/T7): Guardar vive como acción principal de la app bar
+    // inferior (nunca recortada al final del scroll) y Volver pasa a la
+    // flecha de la barra (sin desbordar a dos líneas).
     Column(
-        Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl)
-            .imePadding().verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
+        Modifier.fillMaxSize().statusBarsPadding().imePadding(),
     ) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            XauxaHeading(
-                text = if (existing == null) AppStrings.RegistrarOperacion else AppStrings.EditarOperacion,
-                size = XauxaType.Display,
-                fontWeight = FontWeight.Bold,
-            )
-            XauxaTextAction(label = AppStrings.Volver, onClick = { viewModel.onAction(OperationAction.Back) })
-        }
+        Column(
+            Modifier.fillMaxWidth().weight(1f).padding(horizontal = XauxaSpacing.ScreenMargin)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
+        ) {
+        XauxaPageTitle(
+            text = if (existing == null) AppStrings.RegistrarOperacion else AppStrings.EditarOperacion,
+        )
         // Tipo con semántica de selección (no dos botones primarios
         // compitiendo): Guardar queda como única acción principal (§1).
         OperationTypeSelector(
@@ -151,26 +152,42 @@ internal fun OperationEditorScreen(
                 onDismiss = { viewModel.onAction(OperationAction.ClearError) },
             )
         }
-        XauxaPrimaryButton(
-            label = if (existing == null) AppStrings.Guardar else AppStrings.GuardarCambios,
-            onClick = {
-                submitted = true
-                val at = occurredAt ?: return@XauxaPrimaryButton
-                val candidate = buildCandidate(at)
-                if (existing == null) {
-                    viewModel.onAction(
-                        OperationAction.SaveNew(
-                            type, at, amount, currency, person, null, concept, note, contextSelection.contextId, candidate.id,
-                        ),
-                    )
-                } else if (candidate.hasSensitiveChangesComparedTo(existing) && state.operationComprobantes.isNotEmpty()) {
-                    showSensitiveConfirm = true
-                } else {
-                    viewModel.onAction(OperationAction.Update(candidate))
-                }
-            },
-            enabled = !saving,
-            isLoading = saving,
+        }
+
+        XauxaAppBar(
+            modifier = Modifier.navigationBarsPadding(),
+            actions = listOf(
+                XauxaAppBarAction(
+                    label = if (saving) {
+                        AppStrings.Guardando
+                    } else if (existing == null) {
+                        AppStrings.Guardar
+                    } else {
+                        AppStrings.GuardarCambios
+                    },
+                    icon = XauxaIcons.Save,
+                    primary = true,
+                    enabled = !saving,
+                    onClick = {
+                        submitted = true
+                        val at = occurredAt ?: return@XauxaAppBarAction
+                        val candidate = buildCandidate(at)
+                        if (existing == null) {
+                            viewModel.onAction(
+                                OperationAction.SaveNew(
+                                    type, at, amount, currency, person, null, concept, note, contextSelection.contextId, candidate.id,
+                                ),
+                            )
+                        } else if (candidate.hasSensitiveChangesComparedTo(existing) && state.operationComprobantes.isNotEmpty()) {
+                            showSensitiveConfirm = true
+                        } else {
+                            viewModel.onAction(OperationAction.Update(candidate))
+                        }
+                    },
+                ),
+            ),
+            onBack = { viewModel.onAction(OperationAction.Back) },
+            backLabel = AppStrings.Volver,
         )
     }
 

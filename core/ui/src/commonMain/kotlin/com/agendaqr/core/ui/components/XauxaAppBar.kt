@@ -37,11 +37,16 @@ import com.agendaqr.core.ui.theme.XauxaType
  * el significado no depende solo de un símbolo). */
 data class XauxaAppBarAction(
     val label: String,
-    val icon: ImageVector,
+    /** Icono del mapeo mínimo de la spec §12, o null si la acción aún no
+     * tiene glifo aprobado (la etiqueta visible se mantiene siempre: §11). */
+    val icon: ImageVector?,
     val onClick: () -> Unit,
     /** true en la acción principal de la pantalla (M7/M10): se diferencia
      * como bloque sólido de acento. */
     val primary: Boolean = false,
+    /** Guardados en curso (§5 GUARDANDO): la acción principal se
+     * deshabilita con etiqueta de estado en texto (I02: sin duplicados). */
+    val enabled: Boolean = true,
 )
 
 /**
@@ -168,6 +173,7 @@ private fun AppBarItem(action: XauxaAppBarAction) {
                 interactionSource = interaction,
                 indication = null,
                 role = Role.Button,
+                enabled = action.enabled,
                 onClick = action.onClick,
             )
             .focusable(interactionSource = interaction)
@@ -176,14 +182,20 @@ private fun AppBarItem(action: XauxaAppBarAction) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        val tint = if (action.primary) XauxaColor.OnBrand else XauxaColor.TextPrimary
-        XauxaIcon(
-            imageVector = action.icon,
-            // La etiqueta visible (debajo) es el nombre del control; el
-            // glifo no duplica anuncio (§11/M12).
-            contentDescription = null,
-            tint = tint,
-        )
+        val tint = when {
+            !action.enabled -> if (action.primary) XauxaColor.OnBrand else XauxaColor.TextTertiary
+            action.primary -> XauxaColor.OnBrand
+            else -> XauxaColor.TextPrimary
+        }
+        if (action.icon != null) {
+            XauxaIcon(
+                imageVector = action.icon,
+                // La etiqueta visible (debajo) es el nombre del control; el
+                // glifo no duplica anuncio (§11/M12).
+                contentDescription = null,
+                tint = tint,
+            )
+        }
         Text(
             action.label,
             fontSize = XauxaType.Caption,

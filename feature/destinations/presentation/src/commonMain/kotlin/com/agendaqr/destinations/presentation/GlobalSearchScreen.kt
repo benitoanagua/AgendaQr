@@ -5,6 +5,7 @@ import com.agendaqr.destinations.presentation.AppStrings
 import com.agendaqr.core.ui.components.XauxaText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -27,16 +28,21 @@ fun GlobalSearchScreen(
     onSelect: (AgendaSearchResult) -> Unit,
     onBack: () -> Unit,
 ) {
+    // V1.1 (M7): Volver en la app bar inferior; los resultados siguen
+    // agrupados por tipo (ahora con encabezados de sección en acento).
     Column(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(XauxaSpacing.Xxl)
             .imePadding(),
-        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
-        XauxaSecondaryButton(label = AppStrings.Volver, onClick = onBack)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = XauxaSpacing.ScreenMargin),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
+        ) {
         XauxaSearchBar(
             value = state.query,
             onValueChange = { onAction(GlobalSearchAction.QueryChanged(it)) },
@@ -67,20 +73,38 @@ fun GlobalSearchScreen(
                 onAction = { onAction(GlobalSearchAction.Clear) },
             )
             else -> LazyColumn(
-                modifier = Modifier.fillMaxSize().weight(1f),
+                modifier = Modifier.fillMaxWidth().weight(1f),
                 verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
             ) {
-                items(state.results, key = { it.type.name + ":" + it.id }) { result ->
-                    XauxaListRow(
-                        title = searchResultTitle(result),
-                        subtitle = searchResultSubtitle(result),
-                        tone = XauxaTone.Info,
-                        onClick = { onSelect(result) },
-                        trailing = { XauxaCategoryChip(searchResultTypeLabel(result.type)) },
-                    )
+                // S04/S05 (M7): resultados heterogéneos agrupados por tipo,
+                // cada grupo con su encabezado de sección (§4: el tipo se
+                // expresa con texto/semántica).
+                val groups = state.results.groupBy { it.type }
+                com.agendaqr.destinations.domain.AgendaSearchResultType.entries.forEach { type ->
+                    val group = groups[type].orEmpty()
+                    if (group.isNotEmpty()) {
+                        item(key = "header:" + type.name) {
+                            XauxaSectionHeader(text = searchResultTypeLabel(type))
+                        }
+                        items(group, key = { it.type.name + ":" + it.id }) { result ->
+                            XauxaListRow(
+                                title = searchResultTitle(result),
+                                subtitle = searchResultSubtitle(result),
+                                tone = XauxaTone.Info,
+                                onClick = { onSelect(result) },
+                            )
+                        }
+                    }
                 }
             }
         }
+        }
+        XauxaAppBar(
+            modifier = Modifier.navigationBarsPadding(),
+            actions = emptyList(),
+            onBack = onBack,
+            backLabel = AppStrings.Volver,
+        )
     }
 }
 
