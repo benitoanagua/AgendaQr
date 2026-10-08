@@ -160,3 +160,38 @@ Suite de validación: invariantes I19–I24 añadidos como PENDIENTES.
 desalineado hasta la pasada de implementación. Defectos de implementación
 abiertos registrados en `01-estado.md` (Volver en dos líneas, primario
 recortado, badge de ancho completo, destinos indistinguibles, QR pequeño).
+
+## 2026-10-08 — Pasada Metro T1–T8: implementación UX/UI V1.1 (main 77b636f)
+
+Una rama/PR por tarea, CI verde en cada merge (incluidos ios-compile,
+instrumented-tests, supabase-acceptance, lint y componentLabWeb).
+
+- **T1 (#119)** Tokens: paleta de 12 acentos + sistema (tabla de contraste
+  fijada por test), accentFor determinista (FNV-1a), rejilla de tiles,
+  Archivo Light, DisplayPage/SectionHeader.
+- **T2 (#120)** Lucide 1.1.0 (ISC) via `com.composables:icons-lucide`
+  (android/ios/wasm verificados); XauxaIcon/XauxaIcons; delta medido
+  (+586 KB APK, +5.4 MB dist lab).
+- **T3 (#121)** Componentes: MetroTile/TileGrid (tilt/escalonado con
+  reduced motion), AppBar, Pivot, PageTitle/SectionHeader, campos planos,
+  sin bordes de reposo, LiveTile sin bucle; lab actualizado (freeze +
+  gates PASS).
+- **T4 (#122)** S01: rejilla + tile vivo + Recientes sin borde + app bar.
+- **T5 (#123)** S06 pivot con acento por contexto; S08 filas con acento
+  (contrato intacto).
+- **T6 (#124)** App bar y títulos ligeros en S02/S04/S05/S07/S09/detalle/
+  editor/importación/auth; resultados agrupados por tipo; defectos
+  "Volver en dos líneas", "primario recortado" y "QR pegado a la
+  izquierda" resueltos.
+- **T7+T8 (#125)** Test explícito de defectos; fix del fondo del LiveTile
+  (hallado en captura); evidencia visual en emulador claro/oscuro/130 %
+  (docs/04-ux/lab-captures/metro-v11/); batería local completa PASS
+  (arch, gate xauxa, tests, lint, release RC, lab web, iOS sim compile).
+
+Invariantes I19–I24 marcados IMPLEMENTADO/PENDIENTE con su evidencia en la
+suite de validación. Abiertos (decisión de producto, ver ADR-0005 Puntos
+abiertos): glifos para Editar/Compartir/Mostrar QR; destinos "Sin nombre"
+vs "QR importado"; layout del badge de sync en filas estrechas;
+alternancia QR/actividad del tile vivo; chips con contorno de selección.
+iOS runtime, TalkBack interactivo y captura de S09 con QR real siguen SIN
+validar.

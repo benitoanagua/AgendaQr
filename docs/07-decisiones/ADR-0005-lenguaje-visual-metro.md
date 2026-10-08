@@ -166,6 +166,26 @@ No hay panorama horizontal en V1.1.
    visible puede desbordar en idiomas de etiquetas largas; se evalúa con
    datos reales en la pasada de implementación (no se afloja la regla
    sin decisión).
+6. **Glifos fuera del mapeo mínimo (hallazgo de T6):** "Editar",
+   "Compartir" y "Mostrar QR" no tienen glifo asignado en la spec §12;
+   esas acciones de la app bar van etiquetadas en texto (la etiqueta
+   siempre visible, §11) hasta una decisión de iconografía. Opciones:
+   (a) mantener texto; (b) proponer glifos de Lucide (`Pencil`, `Share2`,
+   `Maximize2`) para decisión explícita de producto.
+7. **Defectos de implementación que la spec no resuelve (T7):**
+   destinos "Sin nombre" y "QR importado" siguen indistinguibles en la
+   lista (exigir un copy distintivo o una marca de origen es decisión de
+   producto/dominio, no visual); y el badge de sincronización compite
+   por el ancho de la fila (§5 se cumple: el estado es texto; el layout
+   de fila no está congelado). Ambos quedan como defectos abiertos de
+   implementación en `docs/09-implementacion/01-estado.md`, no de spec.
+8. **Contenido del tile vivo (S01):** hoy muestra el último QR;
+   alternar con la actividad más reciente es decisión de contenido
+   pendiente (M2 admite ambas).
+9. **Chips de filtro (T3):** conservan su contorno de selección porque
+   son controles con estado (borde funcional de M9), no contenedores.
+   Si producto prefiere chips planos al 100 %, es un cambio de diseño a
+   decidir.
 
 ## Consecuencias si NO se aprueba nada
 

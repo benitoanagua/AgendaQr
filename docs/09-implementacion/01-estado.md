@@ -22,31 +22,74 @@ pasada de implementación que aplique la enmienda. La spec manda sobre el
 código (D-17); esta desalineación no es un fallo de implementación sino el
 estado esperado tras una enmienda de spec aprobada.
 
-### Defectos de implementación abiertos (NO de spec)
+### Defectos de implementación V1.1 — estado tras la pasada Metro (T1–T8, 2026-10-08)
 
-Registrados para la pasada de implementación V1.1/V2; son fallos del código
-respecto al contrato vigente y no modifican la especificación:
+RESUELTOS (con verificación explícita):
 
-1. Botón "Volver" partido en dos líneas en Registrar actividad.
-2. Botón primario recortado al final de la pantalla Registrar actividad.
-3. Badge "Sincronizado" ocupando el ancho completo en cada fila.
-4. Destinos "Sin nombre"/"QR importado" indistinguibles entre sí.
-5. Revisar QR (S09) con el código QR pequeño y pegado a la izquierda.
+1. ~~Botón "Volver" partido en dos líneas en Registrar actividad~~ — vive en
+   la flecha de la `XauxaAppBar` (una línea; test
+   `t07_actions_live_in_the_bottom_app_bar` + captura
+   `docs/04-ux/lab-captures/metro-v11/s07-registrar.png`).
+2. ~~Botón primario recortado al final de Registrar actividad~~ — Guardar es
+   la acción principal de la app bar anclada a insets (mismo test; captura
+   con fuente al 130 % `s07-font130.png`).
+3. ~~Revisar QR (S09) con el código pequeño y pegado a la izquierda~~ —
+   preview centrada (T6).
 
-### Tareas de implementación pendientes de esta enmienda
+ABIERTOS (registrados también en Puntos abiertos del ADR-0005; requieren
+decisión de producto, no son fallos de la spec):
 
-Integrar: `XauxaAppBar`, `XauxaPivot`, variantes de `XauxaTile`
-(pequeño/mediano/ancho) con rejilla de 4 columnas, `XauxaTextInput` plano,
-`XauxaLiveTile` ancho sin bucles, botones/listas/badges sin borde de
-reposo, Archivo Light (300) empaquetado, integración de Lucide vía
-dependencia KMP (candidata `com.composables:icons-lucide`, ISC; verificar
-Licencia efectiva del artefacto, tamaño APK/IPA y compatibilidad con
-Kotlin 2.2.20/wasmJs) con wrapper `XauxaIcon`, derivación determinista del
-acento por contexto, movimiento V1.1 (tilt ≤150 ms; escalonado ≤300 ms;
-reduced motion inmediato) y alinear el laboratorio de componentes. Detalle
-en `docs/05-design-system/04-component-audit-register.md` (sección V1.1)
-e invariantes I19–I24 de `docs/08-validacion/02-suite-estados-eventos-v1.md`
-(todos PENDIENTES).
+4. Badge "Sincronizado" compite por el ancho de fila en pantallas
+   estrechas (el estado sigue expresándose con texto; el layout de fila no
+   está congelado por la spec).
+5. Destinos "Sin nombre"/"QR importado" indistinguibles entre sí (copy o
+   marca de origen = decisión de dominio).
+
+### Pasada Metro T1–T8 (2026-10-08): implementación UX/UI V1.1 COMPLETA en Android/wasm
+
+- **T1 Tokens** (PR #119): rejilla de tiles (`TileUnit`/`TileWideHeight`),
+  `ScreenMargin`/`TileGap`, `IconSize`/`IconSizeTile`/`AppBarHeight`,
+  paleta de 12 acentos Metro + sistema `0067B8` con pares texto/fondo fijos
+  por la tabla de contraste, `accentFor(contextId)` determinista (FNV-1a
+  propio), Archivo Light (300) empaquetada, `DisplayPage` 40 sp /
+  `SectionHeader` 14 sp. Tests: `XauxaAccentTest` (paleta exacta, WCAG de
+  cada par, determinismo, reparto), `XauxaTypographyTest`.
+- **T2 Iconos** (PR #120): `com.composables:icons-lucide:1.1.0` (ISC)
+  verificada contra android/ios-sim/wasm con Kotlin 2.2.20 + CMP 1.8.2;
+  wrapper `XauxaIcon` + mapeo `XauxaIcons` (los 11 del mínimo existen);
+  delta medido: APK release +586 KB, dist wasm del lab +5.4 MB.
+- **T3 Componentes** (PR #121): `XauxaMetroTile`/`XauxaTileGrid` (tilt
+  ≤150 ms, escalonado ≤300 ms, reduced motion inmediato), `XauxaAppBar`,
+  `XauxaPivot`, `XauxaPageTitle`/`XauxaSectionHeader`, campos planos
+  (`XauxaTextInput`/`XauxaSearchBar`), botones secundarios texto+icono sin
+  caja, filas/badges/tiles sin borde de reposo, `XauxaLiveTile` sin bucle.
+  Contratos nuevos en el lab (freeze + gate a11y/auditoría PASS).
+- **T4 S01** (PR #122): título ligero, búsqueda dominante, rejilla
+  (Añadir/Registrar/Favoritos/Contextos + tile vivo), Recientes sin borde,
+  acciones de sesión en la app bar. Capacidades intactas.
+- **T5 S06/S08** (PR #123): pivot QR · Actividades · Comprobantes con acento
+  derivado por contexto; selector de contexto con filas de acento (contrato
+  Cancelar/Quitar/Back=Cancelar intacto).
+- **T6 Flujos** (PR #124): app bar + títulos ligeros en S02/S04/S05/S07/
+  S09/detalle/editor/importación/auth; S04/S05 agrupados por tipo con
+  encabezados de sección; defectos 1–3 resueltos.
+- **T7+T8** (PR #125): test explícito de defectos, fix del fondo del live
+  tile, evidencia visual en emulador (claro/oscuro/fuente 130 %,
+  `docs/04-ux/lab-captures/metro-v11/`), batería local completa PASS.
+
+Validación local de la pasada (todo ejecutado en este host):
+`verifyAgendaQrArchitecture` PASS · `verify-xauxa.sh` XAUXA_GATE=PASS ·
+tests domain/data/presentation/androidApp/core:ui PASS · `:androidApp:lint`
+0 errores · `assembleDebug`/`assembleRelease` (RC) PASS · `componentLabWeb`
+PASS · compilación iOS simulator (shared/data/presentation/core:ui) PASS ·
+runtime emulador con Supabase local y capturas de S01/S02/S04/S06/S07.
+
+**Sigue SIN validar** (no afirmado): iOS runtime (Xcode/simulador),
+TalkBack/VoiceOver interactivo y foco por teclado físico, captura de S09
+con QR real (el flujo exige imagen), revisión de contraste con lente en
+dispositivo físico. Invariantes I19–I24 de la suite:
+IMPLEMENTADO/PENDIENTE según se detalla en
+`docs/08-validacion/02-suite-estados-eventos-v1.md`.
 
 ## Estado actual (2026-10-04, cierre de la pasada T1–T14)
 
