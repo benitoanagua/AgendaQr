@@ -40,6 +40,7 @@ import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaMotion
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.theme.asTextOn
 
 /**
  * T3/V1.1 (ADR-0005, spec §12): piezas del lenguaje Metro dentro de Xauxa.
@@ -72,20 +73,35 @@ fun XauxaPageTitle(
 /**
  * Encabezado de sección (M6): pequeño (14–16 sp) en color de acento —
  * acento de sistema por defecto, acento del contexto en S06 (M4).
+ *
+ * Fase 1 (auditoría a11y): el acento de contexto se usa como TEXTO solo si
+ * cumple 4.5:1 ([asTextOn] cae a `brandText` si no); la identidad del
+ * contexto la marca el subrayado de 2 dp en el color crudo del acento.
  */
 @Composable
 fun XauxaSectionHeader(
     text: String,
     modifier: Modifier = Modifier,
-    accent: Color = XauxaColor.Brand,
+    accent: Color = XauxaColor.BrandText,
 ) {
-    androidx.compose.material3.Text(
-        text = text,
-        modifier = modifier.semantics { heading() },
-        fontSize = XauxaType.SectionHeader,
-        fontFamily = XauxaType.FamilyUi,
-        color = accent,
-    )
+    val textColor = accent.asTextOn(XauxaColor.Background, XauxaColor.BrandText)
+    Column(modifier = modifier) {
+        androidx.compose.material3.Text(
+            text = text,
+            modifier = Modifier.semantics { heading() },
+            fontSize = XauxaType.SectionHeader,
+            fontFamily = XauxaType.FamilyUi,
+            color = textColor,
+        )
+        // Marcador de 2 dp con el acento crudo: identidad sin sacrificar
+        // la lectura del texto.
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(XauxaMetrics.Focus)
+                .background(accent),
+        )
+    }
 }
 
 /** Tamaños de tile sobre la rejilla de 4 columnas en compacto (M3). */
@@ -294,34 +310,46 @@ fun XauxaPivot(
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    accent: Color = XauxaColor.Brand,
+    accent: Color = XauxaColor.BrandText,
     content: @Composable (Int) -> Unit,
 ) {
     require(sections.isNotEmpty()) { "XauxaPivot necesita al menos una sección" }
     require(selectedIndex in sections.indices) { "XauxaPivot: índice fuera de rango" }
     Column(modifier.fillMaxWidth()) {
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
+            // Fase 1: el acento solo es texto si es legible (>= 4.5:1); la
+            // sección activa lleva además un marcador de 2 dp con el color
+            // crudo del acento (identidad de contexto, M4).
+            val selectedTextColor = accent.asTextOn(XauxaColor.Background, XauxaColor.BrandText)
             sections.forEachIndexed { index, title ->
                 val selected = index == selectedIndex
                 val interaction = remember { MutableInteractionSource() }
-                androidx.compose.material3.Text(
-                    text = title,
-                    modifier = Modifier
-                        .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
-                        .clickable(
-                            interactionSource = interaction,
-                            indication = null,
-                            role = Role.Tab,
-                            onClick = { onSelect(index) },
-                        )
-                        .focusable(interactionSource = interaction)
-                        .xauxaFocusRing(interaction)
-                        .semantics { this.selected = selected }
-                        .padding(vertical = XauxaSpacing.Sm),
-                    fontSize = XauxaType.SectionHeader,
-                    fontFamily = XauxaType.FamilyUi,
-                    color = if (selected) accent else XauxaColor.TextSecondary,
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    androidx.compose.material3.Text(
+                        text = title,
+                        modifier = Modifier
+                            .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
+                            .clickable(
+                                interactionSource = interaction,
+                                indication = null,
+                                role = Role.Tab,
+                                onClick = { onSelect(index) },
+                            )
+                            .focusable(interactionSource = interaction)
+                            .xauxaFocusRing(interaction)
+                            .semantics { this.selected = selected }
+                            .padding(vertical = XauxaSpacing.Sm),
+                        fontSize = XauxaType.SectionHeader,
+                        fontFamily = XauxaType.FamilyUi,
+                        color = if (selected) selectedTextColor else XauxaColor.TextSecondary,
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(XauxaMetrics.Focus)
+                            .background(if (selected) accent else XauxaColor.Background),
+                    )
+                }
             }
         }
         content(selectedIndex)

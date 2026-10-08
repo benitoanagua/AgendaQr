@@ -142,7 +142,8 @@ fun XauxaFilterChip(
         border = FilterChipDefaults.filterChipBorder(
             enabled = enabled,
             selected = selected,
-            borderColor = XauxaColor.Border,
+            // Fase 1: borde de control >= 3:1 (Border fallaba 3:1).
+            borderColor = XauxaColor.BorderControl,
             selectedBorderColor = XauxaColor.Brand,
             borderWidth = XauxaMetrics.Border,
         ),

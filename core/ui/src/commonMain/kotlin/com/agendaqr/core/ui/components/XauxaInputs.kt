@@ -285,14 +285,12 @@ fun XauxaSettingRow(
                     .padding(XauxaSpacing.Xs),
                 contentAlignment = if (checked) Alignment.CenterEnd else Alignment.CenterStart,
             ) {
-                // Pastilla del toggle: OnBrand preserva el blanco en light
-                // y corrige el contraste en dark (White fijo fallaba el
-                // par con Brand en dark). El estado apagado
-                // (Surface2 + White en light) queda
-                // pendiente de referencia oficial de Xauxa: no se inventa color.
+                // Fase 1: la pastilla apagada (White sobre Surface2,
+                // 1.12:1) pasa a BorderControl: >= 3:1 contra el track en
+                // claro y oscuro (XauxaSchemeTest).
                 Box(
                     modifier = Modifier.size(XauxaSpacing.Xl)
-                        .background(if (checked) XauxaColor.OnBrand else XauxaColor.White),
+                        .background(if (checked) XauxaColor.OnBrand else XauxaColor.BorderControl),
                 )
             }
         }

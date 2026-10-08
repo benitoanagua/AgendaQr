@@ -68,7 +68,7 @@ fun XauxaStatBlock(
             fontSize = XauxaType.Headline,
             fontWeight = FontWeight.Bold,
             fontFamily = XauxaType.FamilyMono,
-            color = if (tone == XauxaTone.Neutral) XauxaColor.Brand else tone.content(),
+            color = if (tone == XauxaTone.Neutral) XauxaColor.BrandText else tone.content(),
             textAlign = TextAlign.Center,
         )
         Text(
@@ -190,7 +190,7 @@ fun XauxaFavoriteToggle(
         Box(
             modifier = Modifier.size(XauxaMetrics.FavoriteIndicatorSize)
                 .background(if (favorite) XauxaColor.Brand else XauxaColor.Surface2)
-                .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape),
+                .border(BorderStroke(XauxaMetrics.Border, XauxaColor.BorderControl), RectangleShape),
         )
     }
 }

@@ -175,7 +175,7 @@ fun XauxaSecondaryButton(
                     XauxaIcon(
                         imageVector = icon,
                         contentDescription = null,
-                        tint = XauxaColor.Brand,
+                        tint = if (enabled) XauxaColor.BrandText else XauxaColor.TextTertiary,
                     )
                 }
                 Text(
@@ -183,7 +183,7 @@ fun XauxaSecondaryButton(
                     fontSize = XauxaType.Label,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = XauxaType.LetterSpacingWide,
-                    color = if (enabled) XauxaColor.Brand else XauxaColor.TextTertiary,
+                    color = if (enabled) XauxaColor.BrandText else XauxaColor.TextTertiary,
                 )
             }
         }
@@ -207,14 +207,14 @@ fun XauxaTextAction(
             horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
         ) {
             if (icon != null) {
-                XauxaIcon(imageVector = icon, contentDescription = null, tint = XauxaColor.Brand)
+                XauxaIcon(imageVector = icon, contentDescription = null, tint = XauxaColor.BrandText)
             }
             Text(
                 label,
                 fontSize = XauxaType.Label,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = XauxaType.LetterSpacingWide,
-                color = XauxaColor.Brand,
+                color = XauxaColor.BrandText,
             )
         }
     }
@@ -248,6 +248,14 @@ fun XauxaStatusBanner(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
+        // §11: el estado nunca se comunica solo por color — icono por tono.
+        resolvedTone.iconVector?.let { glyph ->
+            XauxaIcon(
+                imageVector = glyph,
+                contentDescription = null,
+                tint = foreground,
+            )
+        }
         Text(
             message,
             modifier = Modifier.weight(1f),

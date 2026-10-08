@@ -21,6 +21,17 @@ La implementación Compose debe reflejar los tokens Material de Xauxa en `XauxaT
 
 Paleta de acentos (V1.1, ADR-0005): acento de sistema `0067B8` más 12 acentos Metro admitidos con texto asignado por contraste calculado — lime A4C400 (negro), emerald 008A00 (negro), teal 00ABA9 (negro), cyan 1BA1E2 (negro), cobalt 0050EF (blanco), indigo 6A00FF (blanco), violet AA00FF (blanco), magenta D80073 (blanco), crimson A20025 (blanco), red E51400 (blanco), orange FA6800 (negro), amber F0A30A (negro). Tabla completa y regla en la spec §12.
 
+Tonos de estado (corrección de accesibilidad, 2026-10-08): cada tono tiene
+par propio content/container ≥ 4.5:1 en ambos temas, ya no hereda de
+secondary/tertiary — claro: success 0B6B2E/E3F4E8, warning 7A4A00/FFF1CC,
+info 004A87/DCEBFA; oscuro: success 7FD99A/0F2E1A, warning FFD27A/3A2A00,
+info 8CC4F5/0B2A47. `brandText` (brand legible como TEXTO): claro 0067B8,
+oscuro 4DA3EA. `borderControl` (borde de control ≥ 3:1 contra
+background/surface2): claro 858585, oscuro 6E6E6E. Los acentos de contexto
+nunca se usan como texto si su par no llega a 4.5:1 (`asTextOn` cae al
+fallback); la identidad del contexto la marca un subrayado de 2 dp con el
+acento crudo. Todo fijado por tests en `XauxaSchemeTest`.
+
 ## Tipografía
 
 Xauxa documenta Archivo para display/page/tile headers y Roboto/San Francisco para UI/body/metadata. Con V1.1 (ADR-0005) el display de página usa **Archivo peso Light (300), ≥ 40 sp**; empaquetar ese peso es tarea de implementación registrada en `05-xauxa-tipografia.md`. Cuando las fuentes no estén empaquetadas en el proyecto, se utiliza la familia de sistema sin inventar una identidad tipográfica alternativa.

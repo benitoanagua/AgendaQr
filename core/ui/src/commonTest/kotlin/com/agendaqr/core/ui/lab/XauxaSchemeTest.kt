@@ -3,8 +3,13 @@ package com.agendaqr.core.ui.lab
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.agendaqr.core.ui.theme.DarkXauxaColorScheme
+import com.agendaqr.core.ui.components.XauxaTone
+import com.agendaqr.core.ui.components.toneColors
 import com.agendaqr.core.ui.theme.LightXauxaColorScheme
+import com.agendaqr.core.ui.theme.XauxaAccent
+import com.agendaqr.core.ui.theme.XauxaAccents
 import com.agendaqr.core.ui.theme.XauxaColorScheme
+import com.agendaqr.core.ui.theme.asTextOn
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -34,6 +39,8 @@ class XauxaSchemeTest {
         danger, onDanger, dangerBg, onDangerBg,
         inverseSurface, inverseOnSurface, inverseBrand,
         focusRing,
+        success, successContainer, warning, warningContainer,
+        info, infoContainer, brandText, borderControl,
     )
 
     private fun hex(color: Color): String =
@@ -90,6 +97,17 @@ class XauxaSchemeTest {
         assertEquals("F6EEF7", hex(scheme.inverseOnSurface))
         assertEquals("DAB9FF", hex(scheme.inverseBrand))
         assertEquals("0067B8", hex(scheme.focusRing))
+        // Fase 1 (auditoría a11y): estado con par propio, brand como
+        // texto y borde de control — valores fijados, contraste verificado
+        // por los tests de tonos/bordes de esta misma clase.
+        assertEquals("0B6B2E", hex(scheme.success))
+        assertEquals("E3F4E8", hex(scheme.successContainer))
+        assertEquals("7A4A00", hex(scheme.warning))
+        assertEquals("FFF1CC", hex(scheme.warningContainer))
+        assertEquals("004A87", hex(scheme.info))
+        assertEquals("DCEBFA", hex(scheme.infoContainer))
+        assertEquals("0067B8", hex(scheme.brandText))
+        assertEquals("858585", hex(scheme.borderControl))
     }
 
     @Test
@@ -125,12 +143,20 @@ class XauxaSchemeTest {
         assertEquals("332F35", hex(scheme.inverseOnSurface))
         assertEquals("734AA5", hex(scheme.inverseBrand))
         assertEquals("0067B8", hex(scheme.focusRing))
+        assertEquals("7FD99A", hex(scheme.success))
+        assertEquals("0F2E1A", hex(scheme.successContainer))
+        assertEquals("FFD27A", hex(scheme.warning))
+        assertEquals("3A2A00", hex(scheme.warningContainer))
+        assertEquals("8CC4F5", hex(scheme.info))
+        assertEquals("0B2A47", hex(scheme.infoContainer))
+        assertEquals("4DA3EA", hex(scheme.brandText))
+        assertEquals("6E6E6E", hex(scheme.borderControl))
     }
 
     @Test
     fun both_schemes_are_complete_and_switchable() {
         listOf(LightXauxaColorScheme, DarkXauxaColorScheme).forEach { scheme ->
-            assertEquals(30, scheme.all().size)
+            assertEquals(38, scheme.all().size)
             assertTrue(scheme.all().none { it == Color.Unspecified }, "scheme has Unspecified colors")
         }
         assertNotEquals(LightXauxaColorScheme, DarkXauxaColorScheme)
@@ -176,6 +202,96 @@ class XauxaSchemeTest {
         assertTrue(contrast(hex(s.surface), hex(s.textPrimary)) >= 4.5, "dark surface/textPrimary")
     }
 
+    @Test
+    fun state_tone_pairs_meet_wcag_aa_in_both_schemes() {
+        // Fase 1 de la auditoría: Success/Warning/Info ya no heredan de
+        // secondary/tertiary (morado/magenta Material); cada tono tiene
+        // content/container propios con >= 4.5:1 en ambos temas.
+        listOf(LightXauxaColorScheme, DarkXauxaColorScheme).forEach { scheme ->
+            XauxaTone.entries.filter { it != XauxaTone.Neutral }.forEach { tone ->
+                val colors = scheme.toneColors(tone)
+                assertTrue(
+                    contrast(hex(colors.content), hex(colors.container)) >= 4.5,
+                    "${scheme.javaClass.simpleName} $tone content/container",
+                )
+                assertTrue(
+                    contrast(hex(scheme.textPrimary), hex(colors.container)) >= 4.5,
+                    "${scheme.javaClass.simpleName} $tone textPrimary/container",
+                )
+            }
+            assertEquals(scheme.success, scheme.toneColors(XauxaTone.Success).content)
+            assertEquals(scheme.info, scheme.toneColors(XauxaTone.Info).content)
+            assertEquals(scheme.warning, scheme.toneColors(XauxaTone.Warning).content)
+        }
+    }
+
+    @Test
+    fun brand_text_is_readable_on_background_and_surface2_in_both_schemes() {
+        // Brand como TEXTO (3.63:1 sobre negro no bastaba): brandText >= 4.5
+        // sobre background y surface2 en claro y oscuro.
+        listOf(LightXauxaColorScheme, DarkXauxaColorScheme).forEach { scheme ->
+            assertTrue(contrast(hex(scheme.brandText), hex(scheme.background)) >= 4.5, "brandText/background")
+            assertTrue(contrast(hex(scheme.brandText), hex(scheme.surface2)) >= 4.5, "brandText/surface2")
+        }
+    }
+
+    @Test
+    fun control_borders_meet_3_to_1_in_both_schemes() {
+        // BDBDBD/555555 fallaban 3:1 para bordes de control; borderControl
+        // >= 3:1 contra background y surface2 (borde funcional, M9).
+        listOf(LightXauxaColorScheme, DarkXauxaColorScheme).forEach { scheme ->
+            assertTrue(contrast(hex(scheme.borderControl), hex(scheme.background)) >= 3.0, "borderControl/background")
+            assertTrue(contrast(hex(scheme.borderControl), hex(scheme.surface2)) >= 3.0, "borderControl/surface2")
+        }
+    }
+
+    @Test
+    fun toggle_pill_meets_3_to_1_against_its_track() {
+        // La pastilla apagada (blanco sobre F2F2F2) daba 1.12:1: >= 3:1
+        // contra el track (surface2 con borde borderControl).
+        listOf(LightXauxaColorScheme, DarkXauxaColorScheme).forEach { scheme ->
+            assertTrue(
+                contrast(hex(scheme.borderControl), hex(scheme.surface2)) >= 3.0,
+                "pill apagada/track",
+            )
+        }
+    }
+
+    @Test
+    fun admitted_accents_keep_their_pairs_in_both_schemes() {
+        // Los pares acento/texto de la tabla M5 (spec §12) no cambian con
+        // esta pasada; se re-fijan aquí junto al resto del esquema.
+        (XauxaAccents.Admitted + XauxaAccents.System).forEach { accent ->
+            assertTrue(
+                contrast(hex(accent.background), hex(accent.onAccent)) >= 4.5,
+                "${accent.id} background/onAccent",
+            )
+        }
+    }
+
+    @Test
+    fun accent_as_text_never_returns_below_threshold() {
+        // Los acentos de contexto NO se usan como texto si su par no llega
+        // a 4.5:1: asTextOn cae al fallback (brandText por tema).
+        val cases = listOf(
+            XauxaAccent("lime", Color(0xFFA4C400), Color(0xFF000000)) to LightXauxaColorScheme,
+            XauxaAccent("cobalt", Color(0xFF0050EF), Color(0xFFFFFFFF)) to DarkXauxaColorScheme,
+        )
+        cases.forEach { (accent, scheme) ->
+            val asText = accent.background.asTextOn(scheme.background, scheme.brandText)
+            assertTrue(
+                contrast(hex(asText), hex(scheme.background)) >= 4.5,
+                "${accent.id} asTextOn ${if (scheme === LightXauxaColorScheme) "light" else "dark"}",
+            )
+        }
+        // El acento de sistema SÍ puede usarse como texto en claro pero no
+        // en oscuro (3.63:1): en oscuro cae al fallback.
+        assertEquals(
+            DarkXauxaColorScheme.brandText,
+            XauxaAccents.System.background.asTextOn(DarkXauxaColorScheme.background, DarkXauxaColorScheme.brandText),
+        )
+    }
+
     /**
      * Required semantic fields per scheme. The data-class constructor makes
      * a missing field a compile error; this test pins the required set so a
@@ -215,11 +331,19 @@ class XauxaSchemeTest {
             "inverseOnSurface" to inverseOnSurface,
             "inverseBrand" to inverseBrand,
             "focusRing" to focusRing,
+            "success" to success,
+            "successContainer" to successContainer,
+            "warning" to warning,
+            "warningContainer" to warningContainer,
+            "info" to info,
+            "infoContainer" to infoContainer,
+            "brandText" to brandText,
+            "borderControl" to borderControl,
         )
         val light = LightXauxaColorScheme.fields()
         val dark = DarkXauxaColorScheme.fields()
         assertEquals(light.keys, dark.keys)
-        assertEquals(30, light.size)
+        assertEquals(38, light.size)
         // Every neutral role actually switches; the brand family and the
         // tertiary containers stay put by design (single accent, pending
         // reference) — see both_schemes_are_complete_and_switchable.
@@ -227,6 +351,8 @@ class XauxaSchemeTest {
             "background", "surface", "surface2", "surface3", "surfaceVariant",
             "border", "borderVariant", "textPrimary", "textSecondary",
             "secondary", "danger", "dangerBg",
+            "success", "successContainer", "warning", "warningContainer",
+            "info", "infoContainer", "brandText", "borderControl",
         ).forEach { key ->
             assertNotEquals(light.getValue(key), dark.getValue(key), "$key must switch with the theme")
         }

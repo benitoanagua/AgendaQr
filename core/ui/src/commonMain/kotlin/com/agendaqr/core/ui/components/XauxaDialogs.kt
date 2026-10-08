@@ -34,8 +34,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.toggleableState
 import androidx.compose.ui.state.ToggleableState
@@ -151,11 +153,18 @@ fun XauxaToast(
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
             .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape)
             .background(tone.container())
+            // Fase 1: región viva cortés — el toast se anuncia (antes
+            // solo se veía).
+            .semantics { liveRegion = LiveRegionMode.Polite }
             .padding(XauxaSpacing.Sm),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
         Box(modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight().background(tone.content()))
+        // §11: icono por tono — el estado nunca solo por color.
+        tone.iconVector?.let { glyph ->
+            XauxaIcon(imageVector = glyph, contentDescription = null, tint = tone.content())
+        }
         Text(
             message,
             modifier = Modifier.weight(XauxaToneWeight),
@@ -193,6 +202,10 @@ fun XauxaInlineResult(
         horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
         Box(modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight().background(tone.content()))
+        // §11: icono por tono — el estado nunca solo por color.
+        tone.iconVector?.let { glyph ->
+            XauxaIcon(imageVector = glyph, contentDescription = null, tint = tone.content())
+        }
         Column(modifier = Modifier.weight(XauxaToneWeight)) {
             Text(title, fontSize = XauxaType.Body, color = XauxaColor.TextPrimary)
             if (meta != null) {
