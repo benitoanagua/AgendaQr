@@ -23,9 +23,15 @@ Microsoft con licencia restringida.
   propio repositorio). Ambas exigen conservar el aviso de copyright y el
   permiso en copias: el archivo LICENSE del set se conservará junto a los
   recursos empaquetados en la pasada de implementación.
-- Consumo previsto: dependencia KMP candidata `com.composables:icons-lucide`
-  (wrapper no oficial; versión, licencia efectiva del artefacto y
-  compatibilidad con Kotlin 2.2.20/wasmJs a verificar en implementación).
+- Consumo vigente (T2, 2026-10-08): `com.composables:icons-lucide:1.1.0`
+  (wrapper no oficial) en `core:ui` commonMain, consumido SOLO vía
+  `XauxaIcon`. Verificado: compila en androidMain, iosSimulatorArm64 y
+  wasmJs con Kotlin 2.2.20 / Compose 1.8.2; publica las mismas
+  coordenadas para los tres targets. La licencia del artefacto es la ISC
+  del set (más MIT para los glifos derivados de Feather listados en su
+  LICENSE): el aviso se conserva en este registro; **pendiente de
+  implementación**: copiar el archivo LICENSE junto a los recursos
+  empaquetados del distribuible (APK/IPA/web).
 
 Texto exacto de la licencia ISC, transcrito del repositorio oficial de
 Lucide (`LICENSE`, rama main, verificado el 2026-10-05):

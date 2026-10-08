@@ -557,3 +557,44 @@ J de 2026-09-25 y exploración del laboratorio) describen el esquema vigente
 en esas fechas y quedan **supersadas por ADR-0005**: el acento de sistema
 `0067B8` se mantiene como defecto, y se añaden los 12 acentos Metro
 asignables a contextos con su tabla de contraste.
+
+
+## Cierre V1.1 (2026-10-08, pasadas T1–T8 de Metro): listas PENDIENTES → estado real
+
+La lista de la sección anterior queda ejecutada. Componente por componente:
+
+### Creados — IMPLEMENTADO
+
+| Componente | Evidencia |
+|---|---|
+| `XauxaAppBar` (+ `XauxaAppBarAction`) | Barra inferior 2–4 acciones con icono + etiqueta visible, menú "…" (reutiliza `XauxaOverflowAction`), flecha atrás (label configurable), acción principal en bloque de acento; anclada a insets (la principal nunca recortada). Consumida por S01/S02/S04/S05/S06/S07/S09/detalle/editor. Contrato en el catálogo del lab (gate a11y/API PASS). |
+| `XauxaPivot` | Secciones con activa en acento, conmutación local (S06: QR · Actividades · Comprobantes; sin rutas nuevas). |
+| `XauxaMetroTile` + `XauxaTileGrid` | Variantes pequeño (1×1)/mediano (2×2)/ancho (4×2) sobre rejilla de 4 columnas en compacto; bloque plano de acento, icono centrado, etiqueta abajo a la izquierda siempre visible; tilt ≤150 ms; entrada escalonada 30–50 ms (tope 300 ms); sin reduced motion todo es inmediato. Tokens: `TileUnit`, `TileWideHeight`, `IconSize`, `IconSizeTile`, `AppBarHeight`, `ScreenMargin`, `TileGap`. |
+| `XauxaPageTitle` / `XauxaSectionHeader` | Display ligero (Archivo 300, 40 sp) con `heading()`; encabezados de sección 14 sp en acento. |
+| `XauxaIcon` + `XauxaIcons` (T2) | Wrapper Lucide (ISC) con tamaño/tinte por tokens; `contentDescription = null` = decorativo excluido; mapeo mínimo de la spec confirmado contra el catálogo real. |
+| `accentFor(contextId)` (tokens, T1) | FNV-1a 32 bits propio sobre UTF-8 (nada de `String.hashCode`), determinista en Android/iOS/wasm; sin persistencia. Tests: `XauxaAccentTest` (paleta exacta 12+1, contraste WCAG de cada par, determinismo, reparto ≥8/12 con 500 ids). |
+
+### Cambiados — IMPLEMENTADO
+
+| Componente | Cambio V1.1 |
+|---|---|
+| `XauxaTextInput` / `XauxaSearchBar` | Relleno plano `Surface2`, etiqueta fija pequeña encima (no flotante), borde de 2 dp solo en foco/error (indicators Material transparentes), error con icono + texto debajo. |
+| `XauxaSecondaryButton` / `XauxaTextAction` | Secundarias = texto con icono opcional, SIN caja (parámetro `icon` aditivo). |
+| `XauxaListRow` | Sin borde de reposo; marcador lateral de tono o de acento del contexto (`accent` aditivo, M4). |
+| `XauxaBadge` | Sin caja ni borde de reposo; `solid` conserva bloque de color funcional. |
+| `XauxaTile` | Fondo `Surface2` (bloque de color), sin borde de reposo; foco con anillo. |
+| `XauxaLiveTile` | Sin temporizador ni rotación: una transición por cambio de dato (corte directo con reduced motion); no pinta fondo propio (vive sobre el acento del tile ancho — hallado en captura de T8). |
+| `XauxaSection` | Título de sección en acento 14 sp (M6). |
+| `XauxaType` | `DisplayPage` 40 sp, `SectionHeader` 14 sp, `WeightDisplayPage` Light; Archivo 300 empaquetada (OFL 1.1). |
+| `XauxaColor`/paleta | Acento de sistema `0067B8` + 12 acentos Metro con texto asignado por contraste (M5); colores de estado intactos. |
+
+### No implementado en V1.1 (a la espera de decisión)
+
+- Glifos para "Editar", "Compartir", "Mostrar QR" (fuera del mapeo mínimo de la spec §12): esas acciones de la app bar van etiquetadas en texto hasta decisión de iconografía (Puntos abiertos del ADR-0005).
+- Chips de filtro con contorno de selección (borde funcional de control, no contenedor): se conservan.
+
+### Delta de tamaño por Lucide (medido, T2)
+
+- APK release (RC con firma debug): **+600 753 B (~586 KB)** respecto de main previo a T2 (12 306 586 → 12 907 339).
+- Dist Wasm del laboratorio: **+5 639 244 B (~5.4 MB s/mini)** (31 500 392 → 37 167 636; el wrapper incluye el set completo de glifos).
+- Versión fijada: `com.composables:icons-lucide:1.1.0`; aviso ISC/MIT conservado en `06-licencias-terceros.md`.

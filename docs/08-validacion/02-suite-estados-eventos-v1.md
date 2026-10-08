@@ -209,14 +209,14 @@ I16 Evento tardío no puede retroceder a una fase inválida.
 I17 Una operación en curso tiene una única identidad aunque se dispare varias veces.  
 I18 Todo estado no terminal tiene salida recuperable o cancelable.
 
-### Invariantes V1.1 (ADR-0005) — PENDIENTES de implementación
+### Invariantes V1.1 (ADR-0005) — implementados en la pasada Metro (T1–T8, 2026-10-08)
 
-- I19 (PENDIENTE) Contraste de acentos: para cada acento admitido de la paleta Metro (spec §12), el par acento/texto asignado cumple ≥ 4.5:1 en texto normal (≥ 3:1 texto grande), verificado en tema claro y en oscuro.
-- I20 (PENDIENTE) Todo tile expone rol de botón, etiqueta de texto visible, estado y orden de foco lógico; el foco por teclado/TalkBack es visible sobre el color del tile.
-- I21 (PENDIENTE) Reduced motion desactiva tilt, escalonado y flip: solo cambio de estado inmediato.
-- I22 (PENDIENTE) No hay bucles de animación: el live tile realiza una única transición por cambio de dato; ninguna animación decorativa rota en bucle.
-- I23 (PENDIENTE) Ningún contenedor muestra borde de reposo: los bordes solo aparecen en foco, campo en foco/error o tile seleccionado.
-- I24 (PENDIENTE) Todo icono interactivo va acompañado de etiqueta de texto visible (también en la barra de aplicación inferior); los iconos decorativos están marcados como no accesibles.
+- I19 (IMPLEMENTADO por test) Contraste de acentos: cada par acento/texto de la paleta Metro (spec §12) cumple ≥ 4.5:1 en texto normal — fijado por `XauxaAccentTest` (`the_palette_is_exactly_the_12_admitted_accents_plus_system`, `every_accent_text_pair_meets_the_spec_wcag_thresholds`), válido en claro y oscuro (pares idénticos por diseño, §12 Modo oscuro). PENDIENTE: revisión visual con lente de contraste en dispositivo físico.
+- I20 (IMPLEMENTADO por test) Todo tile expone rol de botón, etiqueta de texto visible y orden de foco lógico: `XauxaMetroTile` declara `Role.Button` + etiqueta textual; `ScreensA11yCoverageTest`/`DestinationsScreenA11yTest` verifican semántica y targets 48 dp. PENDIENTE: TalkBack interactivo y anillo de foco con teclado físico en dispositivo; VoiceOver en iOS.
+- I21 (IMPLEMENTADO en componentes) Reduced motion desactiva tilt, escalonado y transición: `XauxaMetroTile`/`XauxaTileGrid`/`XauxaLiveTile` consultan `LocalReducedMotion` (duración 0, sin tilt, sin escalonado). PENDIENTE: verificación interactiva en dispositivo con la opción activada (V1 ya verificó en runtime el turno inmediato del turnstile).
+- I22 (IMPLEMENTADO por diseño y test) No hay bucles de animación: `XauxaLiveTile` quedó sin temporizador (una transición por cambio de dato, corte directo con reduced motion); no existe ninguna otra animación en bucle en `core:ui`.
+- I23 (IMPLEMENTADO por captura) Ningún contenedor de fila/tile/badge/botón muestra borde de reposo: los bordes solo aparecen en foco, campo en foco/error o selección (M9); evidencia en `docs/04-ux/lab-captures/metro-v11/`. Nota: los chips de filtro conservan su contorno porque son controles de selección con estado (borde funcional), no contenedores — registrado en Puntos abiertos del ADR-0005 por si producto quiere alinearlos.
+- I24 (IMPLEMENTADO por política de componentes) Todo icono interactivo va acompañado de etiqueta de texto visible (también en la barra de aplicación inferior; `XauxaAppBar`/`XauxaIconButton`); los iconos decorativos se marcan como no accesibles (`XauxaIcon` con `contentDescription = null`). PENDIENTE: VoiceOver en iOS runtime.
 
 ## 5. Resultado
 
