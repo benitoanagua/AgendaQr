@@ -5,15 +5,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.motion.LocalReducedMotion
-import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMotion
-import com.agendaqr.core.ui.theme.XauxaSpacing
 
 /**
  * V1.1 (ADR-0005, spec §12 Movimiento / §11): tile vivo (S01) — muestra el
@@ -45,11 +41,10 @@ fun XauxaLiveTile(
     }
     val easing = XauxaMotion.Easings.Standard
 
-    Box(
-        modifier = modifier
-            .background(XauxaColor.Surface)
-            .padding(XauxaSpacing.Lg),
-    ) {
+    // V1.1: el live tile NO pinta fondo propio — vive sobre el bloque de
+    // acento del tile ancho (M3); su color de texto lo da el caller
+    // (XauxaAccents.<accento>.onAccent garantizado por la tabla M5).
+    Box(modifier = modifier) {
         AnimatedContent(
             targetState = data,
             transitionSpec = {

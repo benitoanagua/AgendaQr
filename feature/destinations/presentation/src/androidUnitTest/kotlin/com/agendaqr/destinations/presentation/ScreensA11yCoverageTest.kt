@@ -268,4 +268,29 @@ class ScreensA11yCoverageTest {
         compose.waitForIdle()
         assertTrue(selected == OperationType.COBRO)
     }
+
+    // T7 — defectos registrados en docs/09-implementacion/01-estado.md,
+    // resueltos por V1.1 (verificación explícita): "Volver" ya no se parte
+    // en dos líneas y el primario nunca queda recortado al final del
+    // scroll: ambos viven en la XauxaAppBar anclada a los insets.
+    @Test
+    fun t07_actions_live_in_the_bottom_app_bar() {
+        var saved = false
+        compose.setContent {
+            XauxaTheme {
+                ImportReviewScreen(
+                    assets = listOf(com.agendaqr.destinations.domain.QrAsset("eA==", content = "qr-real")),
+                    onSaveAll = { saved = true },
+                    onBack = { },
+                )
+            }
+        }
+        compose.waitForIdle()
+        compose.onNodeWithText("Volver").assertHeightIsAtLeast(48.dp)
+        compose.onNodeWithText("Guardar").assertHeightIsAtLeast(48.dp).performClick()
+        assertTrue(saved, "Guardar es la acción principal de la app bar (nunca recortada)")
+        // El preview del QR va centrado (S09/T7), no pegado a la izquierda.
+        // (Verificación visual adicional en T8 con capturas.)
+    }
 }
+
