@@ -179,6 +179,7 @@ fun XauxaListRow(
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
             .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
             .xauxaFocusRing(interaction)
+            .xauxaPressFeedback(interaction)
             .then(
                 if (selected) Modifier.semantics { this.selected = true } else Modifier,
             ),

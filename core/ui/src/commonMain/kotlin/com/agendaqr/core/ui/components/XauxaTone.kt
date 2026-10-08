@@ -7,6 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -105,6 +107,40 @@ val XauxaTone.iconVector: androidx.compose.ui.graphics.vector.ImageVector?
         XauxaTone.Warning -> XauxaIcons.Warning
         XauxaTone.Info -> XauxaIcons.Info
     }
+
+/**
+ * Fase 3 (auditoría): realimentación de pulsación como overlay con el token
+ * [com.agendaqr.core.ui.theme.XauxaOpacity.Pressed] sobre el contenido —
+ * nunca un cambio de color local. Respeta reduced motion: con la opción
+ * activa el cambio es inmediato (sin animación, §11); sin ella funde con
+ * el tiempo corto del sistema (150 ms, M11).
+ */
+@Composable
+fun Modifier.xauxaPressFeedback(source: MutableInteractionSource): Modifier {
+    val pressed by source.collectIsPressedAsState()
+    val reducedMotion = com.agendaqr.core.ui.motion.LocalReducedMotion.current
+    val overlayAlpha by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = if (pressed) com.agendaqr.core.ui.theme.XauxaOpacity.Pressed else 0f,
+        animationSpec = if (reducedMotion) {
+            androidx.compose.animation.core.snap()
+        } else {
+            androidx.compose.animation.core.tween(
+                com.agendaqr.core.ui.theme.XauxaMotion.DurationShortMs,
+                easing = com.agendaqr.core.ui.theme.XauxaMotion.Easings.Standard,
+            )
+        },
+        label = "xauxa_press_feedback",
+    )
+    return drawWithContent {
+        drawContent()
+        if (overlayAlpha > 0f) {
+            drawRect(
+                color = androidx.compose.ui.graphics.Color.Black.copy(alpha = overlayAlpha),
+                size = size,
+            )
+        }
+    }
+}
 
 /**
  * Anillo de foco visible dedicado (invariante 10). Todo clickable

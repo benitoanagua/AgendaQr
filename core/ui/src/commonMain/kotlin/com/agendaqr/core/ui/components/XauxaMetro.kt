@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -230,69 +231,89 @@ fun XauxaTileGrid(
         val maxUnits = ((maxWidth + XauxaSpacing.TileGap) / unitWithGap)
             .toInt().coerceIn(1, GridColumns)
         val unit = (maxWidth - XauxaSpacing.TileGap * (maxUnits - 1)) / maxUnits
+        // Fase 3: el cálculo de filas se memoriza (antes recomponía en cada
+        // frame de la entrada) y la entrada es un Animatable REAL: la
+        // versión anterior animaba hacia el valor inicial (código muerto,
+        // los tiles nunca aparecieron escalonados).
+        val rows = remember(items, maxUnits) { tileRows(items, maxUnits) }
         Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.TileGap)) {
-            var row = mutableListOf<Pair<Int, XauxaTileItem>>()
-            var rowUnits = 0
-            val rows = mutableListOf<List<Pair<Int, XauxaTileItem>>>()
-            items.forEachIndexed { index, item ->
-                val span = when (item.size) {
-                    XauxaTileSize.WIDE -> maxUnits
-                    XauxaTileSize.MEDIUM -> 2.coerceAtMost(maxUnits)
-                    XauxaTileSize.SMALL -> 1
-                }
-                if (rowUnits + span > maxUnits) {
-                    rows += row.toList()
-                    row = mutableListOf()
-                    rowUnits = 0
-                }
-                row += index to item
-                rowUnits += span
-            }
-            if (row.isNotEmpty()) rows += row.toList()
             rows.forEach { rowItems ->
                 Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.TileGap)) {
-                    rowItems.forEach { (index, item) ->
-                        val span = when (item.size) {
-                            XauxaTileSize.WIDE -> maxUnits
-                            XauxaTileSize.MEDIUM -> 2.coerceAtMost(maxUnits)
-                            XauxaTileSize.SMALL -> 1
-                        }
+                    rowItems.forEach { (index, item, span) ->
                         val tileWidth = unit * span + XauxaSpacing.TileGap * (span - 1)
-                        val delayMs = if (reducedMotion) {
-                            0
-                        } else {
-                            (index * StaggerStepMs).coerceAtMost(XauxaMotion.DurationMediumMs)
-                        }
-                        val alpha by animateFloatAsState(
-                            targetValue = FullScale,
-                            animationSpec = tween(
-                                durationMillis = if (reducedMotion) 0 else XauxaMotion.DurationShortMs,
-                                delayMillis = delayMs,
-                                easing = XauxaMotion.Easings.Standard,
-                            ),
-                            label = "xauxa_tile_appear",
-                        )
-                        Box(
-                            modifier = Modifier
-                                .width(tileWidth)
-                                .graphicsLayer { this.alpha = alpha },
-                        ) {
-                            XauxaMetroTile(
-                                label = item.label,
-                                accent = item.accent,
-                                onClick = item.onClick,
-                                modifier = Modifier.fillMaxWidth(),
-                                size = item.size,
-                                icon = item.icon,
-                                reducedMotion = reducedMotion,
-                                content = item.content,
-                            )
+                        TileAppear(index, reducedMotion) {
+                            Box(
+                                modifier = Modifier
+                                    .width(tileWidth)
+                                    .graphicsLayer { this.alpha = it },
+                            ) {
+                                XauxaMetroTile(
+                                    label = item.label,
+                                    accent = item.accent,
+                                    onClick = item.onClick,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    size = item.size,
+                                    icon = item.icon,
+                                    reducedMotion = reducedMotion,
+                                    content = item.content,
+                                )
+                            }
                         }
                     }
                 }
             }
         }
     }
+}
+
+/** Entrada escalonada de un tile: alpha 0 -> 1 con retardo por índice. */
+@Composable
+private fun TileAppear(
+    index: Int,
+    reducedMotion: Boolean,
+    content: @Composable (Float) -> Unit,
+) {
+    val delayMs = tileStaggerDelayMs(index, reducedMotion)
+    val appear = androidx.compose.animation.core.Animatable(0f)
+    LaunchedEffect(delayMs) {
+        if (delayMs == 0) {
+            appear.snapTo(FullScale)
+        } else {
+            appear.animateTo(
+                targetValue = FullScale,
+                animationSpec = tween(
+                    durationMillis = XauxaMotion.DurationShortMs,
+                    delayMillis = delayMs,
+                    easing = XauxaMotion.Easings.Standard,
+                ),
+            )
+        }
+    }
+    content(appear.value)
+}
+
+/** Filas de la rejilla como datos puros (testeable; span por item). */
+internal data class XauxaTileRowItem(val index: Int, val item: XauxaTileItem, val span: Int)
+
+internal fun tileRows(items: List<XauxaTileItem>, maxUnits: Int): List<List<XauxaTileRowItem>> {
+    fun spanOf(item: XauxaTileItem): Int = when (item.size) {
+        XauxaTileSize.WIDE -> maxUnits
+        XauxaTileSize.MEDIUM -> 2.coerceAtMost(maxUnits)
+        XauxaTileSize.SMALL -> 1
+    }
+    val rows = mutableListOf<MutableList<XauxaTileRowItem>>()
+    var rowUnits = 0
+    items.forEachIndexed { index, item ->
+        val span = spanOf(item)
+        if (rowUnits + span > maxUnits) {
+            rows.add(mutableListOf())
+            rowUnits = 0
+        }
+        if (rows.isEmpty()) rows.add(mutableListOf())
+        rows.last().add(XauxaTileRowItem(index, item, span))
+        rowUnits += span
+    }
+    return rows.map { row -> row.toList() }
 }
 
 /**
@@ -360,4 +381,12 @@ private const val FullScale = 1f
 private const val TiltScale = 0.96f
 private const val StaggerStepMs = 40
 private const val GridColumns = 4
+
+/**
+ * Fase 3 (auditoría): matemática de la entrada escalonada como función
+ * PURA — [index] * 30–50 ms por tile, total acotado a 300 ms (spec §12
+ * Movimiento). Con reduced motion el retardo es 0 (aparición inmediata).
+ */
+internal fun tileStaggerDelayMs(index: Int, reducedMotion: Boolean): Int =
+    if (reducedMotion) 0 else (index * StaggerStepMs).coerceAtMost(XauxaMotion.DurationMediumMs)
 

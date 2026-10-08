@@ -98,7 +98,8 @@ fun XauxaIconButton(
                 onClick = onClick,
             )
             .focusable(interactionSource = interaction)
-            .xauxaFocusRing(interaction),
+            .xauxaFocusRing(interaction)
+            .xauxaPressFeedback(interaction),
         contentAlignment = Alignment.Center,
     ) {
         content()

@@ -183,6 +183,7 @@ private fun AppBarItem(action: XauxaAppBarAction) {
             )
             .focusable(interactionSource = interaction)
             .xauxaFocusRing(interaction)
+            .xauxaPressFeedback(interaction)
             .padding(horizontal = XauxaSpacing.Sm, vertical = XauxaSpacing.Xs),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,

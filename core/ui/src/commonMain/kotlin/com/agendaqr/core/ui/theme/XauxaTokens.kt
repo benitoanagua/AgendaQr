@@ -404,6 +404,15 @@ object XauxaType {
     val FamilyMono: FontFamily = FontFamily.Monospace
 }
 
+/**
+ * Fase 3 (auditoría): opacidades funcionales del lenguaje. [Pressed] es la
+ * capa de realimentación táctil (overlay sobre el contenido, nunca un
+ * cambio de color local).
+ */
+object XauxaOpacity {
+    const val Pressed = 0.08f
+}
+
 object XauxaMotion {
     const val DurationShortMs = 150
     const val DurationMediumMs = 300
