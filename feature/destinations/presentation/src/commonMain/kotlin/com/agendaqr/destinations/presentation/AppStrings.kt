@@ -166,6 +166,10 @@ internal object AppStrings {
     val duplicateReceiptWarningPrefix = "Parece que este comprobante ya está guardado.\nArchivo: "
     val incomingReceiptExplanationPrefix = "Se guardará en tu bandeja de respaldos sin asociar.\nArchivo: "
     val Guardando = "Guardando…"
+    // Fase 2 (auditoría a11y): validación de auth + estado ocupado.
+    val IngresaUnCorreoValido = "Ingresa un correo válido"
+    val Minimo6Caracteres = "Mínimo 6 caracteres"
+    val IniciandoSesion = "Iniciando sesión…"
     val AsociarAhora = "Asociar ahora"
     val AunNoHayOperaciones = "Aún no hay actividades"
     val NoHayCoincidencias = "No hay coincidencias"

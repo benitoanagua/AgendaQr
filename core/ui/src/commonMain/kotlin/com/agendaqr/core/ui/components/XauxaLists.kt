@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.toggleableState
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.font.FontWeight
@@ -158,11 +159,14 @@ fun XauxaListRow(
      * contexto; el estado sigue expresándose con texto en el contenido
      * (§11: nunca solo color). */
     accent: androidx.compose.ui.graphics.Color? = null,
+    /** Fase 2: selección explícita con semántica `selected` (§11). */
+    selected: Boolean = false,
 ) {
     val interaction = remember { MutableInteractionSource() }
     val clickableModifier = if (onClick == null) modifier else modifier
         .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onClick)
         .focusable(interactionSource = interaction)
+    val showsMarker = accent != null || tone != XauxaTone.Neutral
     Row(
         modifier = clickableModifier
             .fillMaxWidth()
@@ -174,15 +178,21 @@ fun XauxaListRow(
             // mostraba la primera fila).
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
             .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
-            .xauxaFocusRing(interaction),
-            // V1.1 (M9): fila abierta, sin borde de reposo; separación por
-            // espacio. El marcador lateral solo aparece con tono semántico.
+            .xauxaFocusRing(interaction)
+            .then(
+                if (selected) Modifier.semantics { this.selected = true } else Modifier,
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(
-            modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight()
-                .background(accent ?: tone.content()),
-        )
+        // Fase 2: la barra lateral SOLO con tono no Neutral o acento — una
+        // fila neutra sin estado no dibuja marcador (antes pintaba el
+        // color de tono Neutral, ruido visual sin significado).
+        if (showsMarker) {
+            Box(
+                modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight()
+                    .background(accent ?: tone.content()),
+            )
+        }
         Column(
             modifier = Modifier.weight(XauxaToneWeight).padding(XauxaSpacing.Sm),
         ) {

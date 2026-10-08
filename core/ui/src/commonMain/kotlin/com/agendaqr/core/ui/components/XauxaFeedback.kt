@@ -191,7 +191,19 @@ fun XauxaFavoriteToggle(
             modifier = Modifier.size(XauxaMetrics.FavoriteIndicatorSize)
                 .background(if (favorite) XauxaColor.Brand else XauxaColor.Surface2)
                 .border(BorderStroke(XauxaMetrics.Border, XauxaColor.BorderControl), RectangleShape),
-        )
+            contentAlignment = Alignment.Center,
+        ) {
+            // Fase 2 (§11): el estado no depende solo del color — el
+            // glifo aparece solo cuando está marcado.
+            if (favorite) {
+                XauxaIcon(
+                    imageVector = XauxaIcons.Favorite,
+                    contentDescription = null,
+                    size = XauxaMetrics.IconSize,
+                    tint = XauxaColor.OnBrand,
+                )
+            }
+        }
     }
 }
 

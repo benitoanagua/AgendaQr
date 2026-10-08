@@ -162,9 +162,14 @@ private fun AppBarItem(action: XauxaAppBarAction) {
             )
             .then(
                 // Acción principal: bloque sólido de acento (M10); el resto
-                // texto + icono sin caja (M10).
+                // texto + icono sin caja (M10). Fase 2: la primaria
+                // DESHABILITADA es distinguible — Surface3 + TextTertiary
+                // (antes mantenía el acento y parecía activa).
                 if (action.primary) {
-                    Modifier.background(XauxaColor.Brand, RectangleShape)
+                    Modifier.background(
+                        if (action.enabled) XauxaColor.Brand else XauxaColor.Surface3,
+                        RectangleShape,
+                    )
                 } else {
                     Modifier
                 },
@@ -183,7 +188,7 @@ private fun AppBarItem(action: XauxaAppBarAction) {
         verticalArrangement = Arrangement.Center,
     ) {
         val tint = when {
-            !action.enabled -> if (action.primary) XauxaColor.OnBrand else XauxaColor.TextTertiary
+            !action.enabled -> XauxaColor.TextTertiary
             action.primary -> XauxaColor.OnBrand
             else -> XauxaColor.TextPrimary
         }

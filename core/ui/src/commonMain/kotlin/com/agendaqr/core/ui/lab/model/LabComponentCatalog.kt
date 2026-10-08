@@ -1489,12 +1489,18 @@ object LabComponentCatalog {
             name = "XauxaFavoriteIndicator",
             category = LabCategory.DATA,
             purpose = "Indicador visual de favorito.",
-            description = "Círculo de XauxaMetrics.FavoriteIndicatorSize con fondo Brand (marcado) o Surface2 " +
-                "(sin marcar).",
-            props = listOf(LabProp("favorite", "Boolean")),
+            description = "Cuadrado (radio 0, Metro) de XauxaMetrics.FavoriteIndicatorSize con fondo Brand " +
+                "(marcado) o Surface2 (sin marcar). Fase 2 (auditoría a11y): glifo Favorito solo cuando está " +
+                "marcado — el estado no depende solo del color (§11); contentDescription opcional para exponer " +
+                "su significado cuando el llamador lo necesita.",
+            props = listOf(
+                LabProp("favorite", "Boolean"),
+                LabProp("modifier", "Modifier"),
+                LabProp("contentDescription", "String?", "null"),
+            ),
             states = listOf(
-                LabState("Marcado", "favorito = true: círculo con color de marca.", LabReviewStatus.VERIFIED),
-                LabState("Sin marcar", "favorito = false: círculo con Surface2.", LabReviewStatus.VERIFIED),
+                LabState("Marcado", "favorito = true: cuadrado de marca con glifo Favorito en OnBrand.", LabReviewStatus.VERIFIED),
+                LabState("Sin marcar", "favorito = false: cuadrado Surface2 vacío (sin glifo).", LabReviewStatus.VERIFIED),
                 LabState(
                     "Interactivo (toggle)",
                     "Para interacción usar XauxaFavoriteToggle; este indicador es solo presentación.",
@@ -1504,12 +1510,13 @@ object LabComponentCatalog {
             tokens = listOf(
                 LabTokenRef("XauxaColor.Brand", "Fondo del estado marcado."),
                 LabTokenRef("XauxaColor.Surface2", "Fondo del estado sin marcar."),
-                LabTokenRef("XauxaMetrics.FavoriteIndicatorSize", "Diámetro del indicador."),
+                LabTokenRef("XauxaMetrics.FavoriteIndicatorSize", "Lado del indicador cuadrado."),
+                LabTokenRef("XauxaMetrics.IconSize", "Tamaño del glifo."),
             ),
             usage = listOf("Marcar visualmente un destino u obligación favorita en listas y detalles."),
             notes = listOf(
-                "Al no ser interactivo no aplica el target de 48dp, pero carece de contentDescription y " +
-                    "semántica propia: brecha de accesibilidad pendiente.",
+                "Fase 2: la excepción histórica del círculo (CircleShape) se retiró — radio 0 en TODO, " +
+                    "incluidos los indicadores (el catálogo anterior documentaba el círculo como permitido).",
             ),
             tags = listOf("favorito", "indicador", "datos"),
             darkThemeSupport = LabDarkThemeSupport.PENDING,

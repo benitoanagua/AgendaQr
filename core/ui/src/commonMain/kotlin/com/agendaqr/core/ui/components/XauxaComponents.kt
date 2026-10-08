@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
@@ -31,14 +30,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
@@ -112,32 +113,78 @@ fun XauxaPrimaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
+    /** Fase 2: stateDescription de "ocupado" (texto del llamador, §5). */
+    busyDescription: String? = null,
+) {
+    XauxaLoadingButton(
+        label = label,
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        isLoading = isLoading,
+        busyDescription = busyDescription,
+        containerColor = XauxaColor.Brand,
+        contentColor = XauxaColor.OnBrand,
+        disabledContainerColor = XauxaColor.Surface3,
+        disabledContentColor = XauxaColor.TextTertiary,
+    )
+}
+
+/**
+ * Cuerpo compartido de los botones sólidos (Fase 2): con carga, la
+ * etiqueta PERMANECE en el layout con alpha 0 y el spinner se superpone
+ * centrado — sin salto de ancho; el estado "ocupado" se anuncia con
+ * [busyDescription] (stateDescription, texto del llamador desde
+ * AppStrings; nunca hardcodeado).
+ */
+@Composable
+internal fun XauxaLoadingButton(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier,
+    enabled: Boolean,
+    isLoading: Boolean,
+    busyDescription: String?,
+    containerColor: Color,
+    contentColor: Color,
+    disabledContainerColor: Color,
+    disabledContentColor: Color,
 ) {
     androidx.compose.material3.Button(
-        modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
+        modifier = modifier
+            .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
+            .then(
+                if (isLoading && busyDescription != null) {
+                    Modifier.semantics { stateDescription = busyDescription }
+                } else {
+                    Modifier
+                },
+            ),
         onClick = onClick,
         enabled = enabled && !isLoading,
         shape = RectangleShape,
         colors = ButtonDefaults.buttonColors(
-            containerColor = XauxaColor.Brand,
-            contentColor = XauxaColor.OnBrand,
-            disabledContainerColor = XauxaColor.Surface2,
-            disabledContentColor = XauxaColor.TextTertiary,
+            containerColor = containerColor,
+            contentColor = contentColor,
+            disabledContainerColor = disabledContainerColor,
+            disabledContentColor = disabledContentColor,
         ),
     ) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(XauxaSpacing.Lg),
-                color = XauxaColor.OnBrand,
-                strokeWidth = XauxaMetrics.Border,
-            )
-        } else {
+        Box(contentAlignment = Alignment.Center) {
             Text(
                 label,
+                modifier = if (isLoading) Modifier.alpha(0f) else Modifier,
                 fontSize = XauxaType.Label,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = XauxaType.LetterSpacingWide,
             )
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(XauxaSpacing.Lg),
+                    color = contentColor,
+                    strokeWidth = XauxaMetrics.Border,
+                )
+            }
         }
     }
 }
@@ -311,9 +358,38 @@ expect fun XauxaQrPreview(
     modifier: Modifier = Modifier,
 )
 
+/**
+ * Indicador de favorito (Fase 2): cuadrado (radio 0, Metro) con glifo y
+ * descripción accesible — el estado NO depende solo del color (§11).
+ * El glifo Favorito aparece solo cuando está marcado; sin marca el
+ * cuadro queda vacío y apagado.
+ */
 @Composable
-fun XauxaFavoriteIndicator(favorite: Boolean) {
+fun XauxaFavoriteIndicator(
+    favorite: Boolean,
+    modifier: Modifier = Modifier,
+    contentDescription: String? = null,
+) {
     Box(
-        modifier = Modifier.size(XauxaMetrics.FavoriteIndicatorSize).clip(CircleShape).background(if (favorite) XauxaColor.Brand else XauxaColor.Surface2),
-    )
+        modifier = modifier
+            .size(XauxaMetrics.FavoriteIndicatorSize)
+            .background(if (favorite) XauxaColor.Brand else XauxaColor.Surface2)
+            .then(
+                if (contentDescription != null) {
+                    Modifier.semantics { this.contentDescription = contentDescription }
+                } else {
+                    Modifier
+                },
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (favorite) {
+            XauxaIcon(
+                imageVector = XauxaIcons.Favorite,
+                contentDescription = null,
+                size = XauxaMetrics.IconSize,
+                tint = XauxaColor.OnBrand,
+            )
+        }
+    }
 }

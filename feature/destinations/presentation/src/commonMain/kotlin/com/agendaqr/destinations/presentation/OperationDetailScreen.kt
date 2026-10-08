@@ -105,6 +105,7 @@ internal fun OperationDetailScreen(
     if (showDeleteConfirm) {
         XauxaDialog(
             title = AppStrings.EliminarOperacion,
+            destructive = true,
             message = AppStrings.irreversibleActionWarning,
             confirmLabel = AppStrings.Eliminar,
             onConfirm = {

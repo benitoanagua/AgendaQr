@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -102,7 +103,20 @@ fun XauxaDialog(
      * acción de texto en vez de botón primario.
      */
     confirmAsText: Boolean = false,
+    /**
+     * Fase 2 (auditoría a11y): la confirmación es DESTRUCTIVA (eliminar
+     * QR/actividad/comprobante). Usa [XauxaDangerButton] y el foco
+     * inicial cae en la acción conservativa (dismiss) para que el primer
+     * toque no dispare lo irreversible.
+     */
+    destructive: Boolean = false,
 ) {
+    val dismissFocus = androidx.compose.runtime.remember { androidx.compose.ui.focus.FocusRequester() }
+    if (destructive) {
+        androidx.compose.runtime.LaunchedEffect(Unit) {
+            runCatching { dismissFocus.requestFocus() }
+        }
+    }
     androidx.compose.material3.AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest ?: onDismiss,
@@ -128,11 +142,24 @@ fun XauxaDialog(
             }
         },
         confirmButton = {
-            if (confirmAsText) XauxaTextAction(label = confirmLabel, onClick = onConfirm)
-            else XauxaPrimaryButton(label = confirmLabel, onClick = onConfirm)
+            when {
+                confirmAsText -> XauxaTextAction(label = confirmLabel, onClick = onConfirm)
+                destructive -> XauxaDangerButton(label = confirmLabel, onClick = onConfirm)
+                else -> XauxaPrimaryButton(label = confirmLabel, onClick = onConfirm)
+            }
         },
         dismissButton = dismissLabel?.let {
-            { XauxaTextAction(label = it, onClick = onDismiss) }
+            {
+                XauxaTextAction(
+                    label = it,
+                    onClick = onDismiss,
+                    modifier = if (destructive) {
+                        Modifier.focusRequester(dismissFocus)
+                    } else {
+                        Modifier
+                    },
+                )
+            }
         },
     )
 }

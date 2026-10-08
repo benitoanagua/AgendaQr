@@ -32,9 +32,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.toggleableState
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.font.FontWeight
@@ -57,34 +59,21 @@ fun XauxaDangerButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
+    /** Fase 2: stateDescription de "ocupado" (texto del llamador, §5). */
+    busyDescription: String? = null,
 ) {
-    androidx.compose.material3.Button(
-        modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
+    XauxaLoadingButton(
+        label = label,
         onClick = onClick,
-        enabled = enabled && !isLoading,
-        shape = RectangleShape,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = XauxaColor.Danger,
-            contentColor = XauxaColor.OnDanger,
-            disabledContainerColor = XauxaColor.Surface2,
-            disabledContentColor = XauxaColor.TextTertiary,
-        ),
-    ) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(XauxaSpacing.Lg),
-                color = XauxaColor.OnDanger,
-                strokeWidth = XauxaMetrics.Border,
-            )
-        } else {
-            Text(
-                label,
-                fontSize = XauxaType.Label,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = XauxaType.LetterSpacingWide,
-            )
-        }
-    }
+        modifier = modifier,
+        enabled = enabled,
+        isLoading = isLoading,
+        busyDescription = busyDescription,
+        containerColor = XauxaColor.Danger,
+        contentColor = XauxaColor.OnDanger,
+        disabledContainerColor = XauxaColor.Surface3,
+        disabledContentColor = XauxaColor.TextTertiary,
+    )
 }
 
 /** Botón solo-icono con etiqueta accesible y área táctil de 48dp. */

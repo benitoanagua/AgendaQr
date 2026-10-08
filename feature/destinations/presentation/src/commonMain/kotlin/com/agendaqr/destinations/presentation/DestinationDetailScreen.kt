@@ -114,6 +114,7 @@ fun DestinationDetailScreen(
             title = AppStrings.EliminarDestino,
             message = AppStrings.irreversibleActionWarning,
             confirmLabel = AppStrings.Eliminar,
+            destructive = true,
             onConfirm = {
                 showDeleteConfirm = false
                 onDelete()
