@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -150,7 +151,10 @@ fun XauxaMetroTile(
     }
     Box(
         modifier = modifier
-            .height(height)
+            // Ronda 2 (Área D): altura MÍNIMA, no fija — el tile crece con
+            // la fuente grande del usuario (§11 escalado) en vez de
+            // recortar su etiqueta.
+            .heightIn(min = height)
             .fillMaxWidth()
             .graphicsLayer { scaleX = scale; scaleY = scale }
             .background(accent.background, RectangleShape)
@@ -194,9 +198,13 @@ fun XauxaMetroTile(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(XauxaSpacing.Sm),
+            // Ronda 2 (Área D): dos líneas con elipsis; el nombre ACCESIBLE
+            // conserva el texto completo (la semántica no recorta).
             fontSize = XauxaType.Label,
             fontFamily = XauxaType.FamilyUi,
             color = accent.onAccent,
+            maxLines = 2,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
         )
     }
 }

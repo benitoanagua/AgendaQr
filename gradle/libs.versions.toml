@@ -17,8 +17,13 @@ datetime = "0.7.1"
 # Lucide icons (ISC) — ADR-0005 / V1.1 T2; wrapper KMP com.composables.
 # Licencia registrada en docs/05-design-system/06-licencias-terceros.md.
 lucide = "1.1.0"
+# Ronda 2 (Área D): capturas de referencia. Roborazzi (Apache 2.0) sobre
+# la suite Robolectric existente — ADR-0007. Compat: AGP 8.11, robolectric
+# 4.14.1, Compose 1.8.2 (verificado por compilación en esta pasada).
+roborazzi = "1.26.0"
 
 [plugins]
+roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
@@ -44,3 +49,7 @@ camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.r
 camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
 camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
 icons-lucide = { group = "com.composables", name = "icons-lucide", version.ref = "lucide" }
+roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
+roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
+roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
+roborazzi-plugin = { group = "io.github.takahirom.roborazzi", name = "io.github.takahirom.roborazzi.gradle.plugin", version.ref = "roborazzi" }
