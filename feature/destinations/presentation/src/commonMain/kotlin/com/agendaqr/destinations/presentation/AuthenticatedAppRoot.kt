@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.togetherWith
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,18 +46,18 @@ internal fun AuthenticatedAppRoot(
     // Ronda 2 (Área C): el back stack SOBREVIVE a rotación y a muerte de
     // proceso (rememberSaveable + Saver por nombre de ruta).
     val nav = rememberSaveable(saver = AppBackStackSaver) { AppBackStack() }
-    val stack by nav.stack.collectAsState()
+    val stack by nav.stack.collectAsStateWithLifecycle()
     val top = stack.last()
 
-    val state by graph.destinationsViewModel.state.collectAsState()
-    val operationState by graph.operationsViewModel.state.collectAsState()
-    val contextState by graph.contextsViewModel.state.collectAsState()
-    val globalSearchState by graph.globalSearchViewModel.state.collectAsState()
+    val state by graph.destinationsViewModel.state.collectAsStateWithLifecycle()
+    val operationState by graph.operationsViewModel.state.collectAsStateWithLifecycle()
+    val contextState by graph.contextsViewModel.state.collectAsStateWithLifecycle()
+    val globalSearchState by graph.globalSearchViewModel.state.collectAsStateWithLifecycle()
 
     // D1 — la lógica del lote vive en ImportBatchCoordinator (sin Compose).
     val importBatch = remember(graph) { ImportBatchStateHolder(graph) }
-    val importBatchState by importBatch.state.collectAsState()
-    val existingPreview by importBatch.existingPreview.collectAsState()
+    val importBatchState by importBatch.state.collectAsStateWithLifecycle()
+    val existingPreview by importBatch.existingPreview.collectAsStateWithLifecycle()
 
     // S05: un resultado QR de la Búsqueda abre su detalle en Inicio; al
     // volver se restaura la superficie de Búsqueda (la consulta sobrevive

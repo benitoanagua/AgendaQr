@@ -1,7 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import com.agendaqr.core.ui.components.XauxaLoading
@@ -30,7 +30,7 @@ fun AgendaQrApp() {
             signOutUseCase = SignOutUseCase(authRepository),
         )
     }
-    val authState by authViewModel.state.collectAsState()
+    val authState by authViewModel.state.collectAsStateWithLifecycle()
 
     XauxaTheme {
         val session = authState.authState
