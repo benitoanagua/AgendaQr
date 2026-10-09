@@ -53,9 +53,16 @@ fun XauxaCommandBar(
     visibleActions: List<@Composable RowScope.() -> Unit>,
     modifier: Modifier = Modifier,
     overflowActions: List<XauxaOverflowAction> = emptyList(),
+    /** Ronda 2 (Área H/ADR-0008): nombre accesible del botón "…". */
+    overflowDescription: String = "",
 ) {
     require(visibleActions.size <= 3) {
         "XauxaCommandBar: máximo 3 acciones visibles (checklist cb2) — el resto va a overflowActions"
+    }
+    if (overflowActions.isNotEmpty()) {
+        require(overflowDescription.isNotBlank()) {
+            "XauxaCommandBar: overflowActions necesita overflowDescription (copy del llamador)"
+        }
     }
     var overflowOpen by remember { mutableStateOf(false) }
 
@@ -72,7 +79,7 @@ fun XauxaCommandBar(
         } else {
             {
                 XauxaIconButton(
-                    contentDescription = "Más opciones",
+                    contentDescription = overflowDescription,
                     onClick = { overflowOpen = true },
                 ) {
                     Text("⋮", fontSize = XauxaType.Title, color = XauxaColor.TextPrimary)

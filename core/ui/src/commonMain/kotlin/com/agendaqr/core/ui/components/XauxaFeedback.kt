@@ -262,8 +262,12 @@ fun XauxaTileHeader(
 fun XauxaScannerViewport(
     modifier: Modifier = Modifier,
     scanning: Boolean = false,
-    hint: String = "Encuadre el código QR",
+    /** Ronda 2 (Área H/ADR-0008): copy del llamador; el DS no hardcodea. */
+    hint: String = "",
+    /** Texto del estado "escaneando". */
+    scanningLabel: String = "",
 ) {
+    if (scanning) require(scanningLabel.isNotBlank()) { "scanningLabel requerido" }
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -282,7 +286,7 @@ fun XauxaScannerViewport(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    if (scanning) "Escaneando…" else hint,
+                    if (scanning) scanningLabel else hint,
                     fontSize = XauxaType.Caption,
                     color = XauxaColor.TextSecondary,
                     textAlign = TextAlign.Center,
@@ -305,7 +309,16 @@ fun XauxaFileUpload(
     error: String? = null,
     onSelect: (() -> Unit)? = null,
     onClear: (() -> Unit)? = null,
+    /** Ronda 2 (Área H/ADR-0008): copy del llamador; el DS no hardcodea. */
+    loadingLabel: String = "",
+    clearLabel: String = "",
+    placeholderTitle: String = "",
+    placeholderMeta: String = "",
 ) {
+    if (isLoading) require(placeholderTitle.isNotBlank() || loadingLabel.isNotBlank()) {
+        "XauxaFileUpload: copy del llamador requerido"
+    }
+    if (onClear != null) require(clearLabel.isNotBlank()) { "clearLabel requerido" }
     val interaction = remember { MutableInteractionSource() }
     val clickableModifier = if (onSelect == null) modifier else modifier
         .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onSelect)
@@ -323,15 +336,15 @@ fun XauxaFileUpload(
         when {
             isLoading -> {
                 CircularProgressIndicator(color = XauxaColor.Brand, strokeWidth = XauxaMetrics.Border)
-                Text("Cargando archivo…", fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                Text(loadingLabel, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
             }
             fileName != null -> {
                 Text(fileName, fontSize = XauxaType.Body, color = XauxaColor.TextPrimary, textAlign = TextAlign.Center)
-                if (onClear != null) XauxaTextAction(label = "Quitar", onClick = onClear)
+                if (onClear != null) XauxaTextAction(label = clearLabel, onClick = onClear)
             }
             else -> {
-                Text("Toque para seleccionar un archivo", fontSize = XauxaType.Body, color = XauxaColor.TextPrimary, textAlign = TextAlign.Center)
-                Text("PNG, JPG o PDF · máx. 10 MB", fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary, textAlign = TextAlign.Center)
+                Text(placeholderTitle, fontSize = XauxaType.Body, color = XauxaColor.TextPrimary, textAlign = TextAlign.Center)
+                Text(placeholderMeta, fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary, textAlign = TextAlign.Center)
             }
         }
         if (error != null) {

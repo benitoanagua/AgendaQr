@@ -203,7 +203,12 @@ fun XauxaSearchBar(
     label: String,
     placeholder: String,
     onClear: (() -> Unit)? = null,
+    /** Ronda 2 (Área H): copy de la acción de limpiar, del llamador. */
+    clearLabel: String = "",
 ) {
+    if (onClear != null) require(clearLabel.isNotBlank()) {
+        "XauxaSearchBar: onClear necesita clearLabel (copy del llamador)"
+    }
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
     Column(
@@ -238,7 +243,7 @@ fun XauxaSearchBar(
                 textStyle = androidx.compose.ui.text.TextStyle(fontSize = XauxaType.Body),
                 leadingIcon = { XauxaIcon(imageVector = XauxaIcons.Search, contentDescription = null) },
                 trailingIcon = if (onClear != null && value.isNotEmpty()) {
-                    { XauxaTextAction(label = "Limpiar", onClick = onClear) }
+                    { XauxaTextAction(label = clearLabel, onClick = onClear) }
                 } else {
                     null
                 },
