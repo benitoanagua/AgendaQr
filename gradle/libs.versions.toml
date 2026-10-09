@@ -21,6 +21,13 @@ lucide = "1.1.0"
 # la suite Robolectric existente — ADR-0007. Compat: AGP 8.11, robolectric
 # 4.14.1, Compose 1.8.2 (verificado por compilación en esta pasada).
 roborazzi = "1.26.0"
+# Ronda 2 (Área E): recolección con ciclo de vida en commonMain. El
+# artifact androidx.lifecycle:lifecycle-runtime-compose es SOLO Android
+# (verificado contra su .module: sin variantes ios/wasm). Se usa la
+# publicación KMP de JetBrains (org.jetbrains.androidx), 2.9.4 estable,
+# con variantes android/ios/wasm — compat con CMP 1.8.2 verificada por
+# compilación de los tres targets en esta pasada.
+lifecycle = "2.9.4"
 
 [plugins]
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
@@ -52,4 +59,5 @@ icons-lucide = { group = "com.composables", name = "icons-lucide", version.ref =
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
 roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
 roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
+lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 roborazzi-plugin = { group = "io.github.takahirom.roborazzi", name = "io.github.takahirom.roborazzi.gradle.plugin", version.ref = "roborazzi" }

@@ -25,6 +25,8 @@ kotlin {
             // BackHandler/PredictiveBackHandler multiplataforma (CMP 1.8.x):
             // en Android delega en OnBackPressedDispatcher (gesto/back real),
             // en iOS/web en el dispatcher de la plataforma.
+            // Ronda 2 (Área E): collectAsStateWithLifecycle en commonMain.
+            implementation(libs.lifecycle.runtime.compose)
             implementation("org.jetbrains.compose.ui:ui-backhandler:${libs.versions.compose.get()}")
             implementation(libs.kotlinx.datetime)
         }
