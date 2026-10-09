@@ -14,12 +14,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.components.XauxaDialog
 import com.agendaqr.core.ui.components.XauxaHeading
+import com.agendaqr.core.ui.components.XauxaFeedbackEvent
 import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaQrPreview
@@ -53,6 +58,18 @@ fun ImportBatchScreen(
     onAction: (ImportBatchAction) -> Unit,
     existing: ExistingImportPreview? = null,
 ) {
+    // Ronda 2 (Área F): guardado del lote anunciado en la TRANSICIÓN al
+    // estado Saved (por evento, no por estado).
+    var savedEvent by remember { mutableStateOf<Any?>(null) }
+    var wasSaving by remember { mutableStateOf(false) }
+    androidx.compose.runtime.LaunchedEffect(state) {
+        val savingNow = state is ImportBatchUiState.Saving
+        if (wasSaving && state is ImportBatchUiState.Saved) {
+            savedEvent = Any()
+        }
+        wasSaving = state is ImportBatchUiState.Saving || state is ImportBatchUiState.Saved
+    }
+    XauxaFeedbackEvent(event = savedEvent, message = AppStrings.GuardadoOk)
     Column(
         modifier = Modifier
             .fillMaxSize()
