@@ -6,6 +6,8 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -157,6 +159,7 @@ internal fun AuthenticatedAppRoot(
                 actionLabel = error.action.label,
                 onAction = { importError = null },
                 onDismiss = { importError = null },
+                dismissLabel = AppStrings.Descartar,
             )
         }
         if (isOffline) {
@@ -179,7 +182,32 @@ internal fun AuthenticatedAppRoot(
         }
     }
 
-    when (top) {
+    // Fase 3 (auditoría): las SUPERFICIES (AppRoute) también transicionan
+    // con el turnstile — igual que las rutas internas de HomeSurface. La
+    // dirección se decide por la profundidad del back stack: si la nueva
+    // superficie está MENOS profunda que la anterior, es un regreso
+    // (turnstile inverso). Con reduced motion: cambio inmediato en el
+    // sitio (§11). NOTA (ts3): el predictive back animado de Android 14+
+    // requiere verificación manual en dispositivo — ver changelog.
+    val reducedMotion = com.agendaqr.core.ui.motion.LocalReducedMotion.current
+    AnimatedContent(
+        targetState = top,
+        transitionSpec = {
+            // Profundidad en el stack: si la nueva superficie es menos
+            // profunda (o igual), es un regreso visual.
+            val from = stack.indexOf(initialState)
+            val to = stack.indexOf(targetState)
+            val reverse = to in 0..from
+            if (reducedMotion) {
+                xauxaReducedMotionEnter() togetherWith xauxaReducedMotionExit()
+            } else {
+                xauxaTurnstileEnter(reverse = reverse) togetherWith
+                    xauxaTurnstileExit(reverse = reverse)
+            }
+        },
+        label = AppStrings.SurfaceRouteTurnstile,
+    ) { route ->
+        when (route) {
         AppRoute.ImportBatch -> ImportBatchScreen(
             state = importBatchState,
             existing = existingPreview,
@@ -278,5 +306,6 @@ internal fun AuthenticatedAppRoot(
             syncLookup = syncLookup,
             onRetrySync = retrySync,
         )
+        }
     }
 }

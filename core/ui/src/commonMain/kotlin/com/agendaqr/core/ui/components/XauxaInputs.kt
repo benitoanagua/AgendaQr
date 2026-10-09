@@ -34,7 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.toggleableState
 import androidx.compose.ui.state.ToggleableState
@@ -97,7 +102,12 @@ fun XauxaTextInput(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(XauxaColor.Surface2, RectangleShape)
+                .background(
+                    // Fase 2: deshabilitado distinguible — Surface3 (más
+                    // oscuro que el Surface2 de reposo), texto TextTertiary.
+                    if (!enabled) XauxaColor.Surface3 else XauxaColor.Surface2,
+                    RectangleShape,
+                )
                 .then(
                     if (borderColor != null) {
                         Modifier.border(XauxaMetrics.Focus, borderColor, RectangleShape)
@@ -109,7 +119,12 @@ fun XauxaTextInput(
             TextField(
                 value = value,
                 onValueChange = onValueChange,
-                modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
+                    // Fase 2: asociación etiqueta-campo (la etiqueta fija
+                    // es visual; el campo la expone como nombre accesible).
+                    .semantics { contentDescription = visibleLabel },
                 enabled = enabled,
                 readOnly = readOnly,
                 isError = isError,
@@ -135,10 +150,15 @@ fun XauxaTextInput(
                     focusedTextColor = XauxaColor.TextPrimary,
                     unfocusedTextColor = XauxaColor.TextPrimary,
                     errorTextColor = XauxaColor.TextPrimary,
+                    // Fase 2: readOnly se distingue por texto secundario
+                    // (el campo sigue legible pero no editable); disabled
+                    // hereda el Surface3 del contenedor + TextTertiary.
+                    disabledTextColor = XauxaColor.TextTertiary,
                 ),
             )
         }
         // §11/M8: el error informa con icono + texto, nunca solo por color.
+        // Fase 2: liveRegion cortés — el error se anuncia cuando aparece.
         when {
             isError && errorMessage != null -> {
                 Row(
@@ -150,7 +170,15 @@ fun XauxaTextInput(
                         contentDescription = null,
                         tint = XauxaColor.Danger,
                     )
-                    Text(errorMessage, fontSize = XauxaType.Caption, color = XauxaColor.Danger)
+                    // liveRegion en el propio texto: el lector anuncia el
+                    // error cuando aparece (§11); el icono lo acompaña
+                    // para quien ve.
+                    Text(
+                        errorMessage,
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                        fontSize = XauxaType.Caption,
+                        color = XauxaColor.Danger,
+                    )
                 }
             }
             helperMessage != null -> {
@@ -171,8 +199,9 @@ fun XauxaSearchBar(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    label: String = "Buscar",
-    placeholder: String = "Buscar",
+    /** Fase 4: copy desde el llamador (sin defaults hardcodeados). */
+    label: String,
+    placeholder: String,
     onClear: (() -> Unit)? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -231,6 +260,51 @@ fun XauxaSearchBar(
 }
 
 /**
+ * Disparador de búsqueda (Fase 4): la BARRA que abre la pantalla de
+ * búsqueda (S01) sin campo editable — la entrada real vive en S04. Un
+ * ÚNICO nodo semántico con rol Button y nombre accesible (antes el campo
+ * decorativo exponía su editable-node al lector de pantalla): el feature
+ * nunca compone clickable crudo para esto (gate Fase 4).
+ */
+@Composable
+fun XauxaSearchTrigger(
+    label: String,
+    placeholder: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier) {
+        XauxaSearchBar(
+            value = "",
+            onValueChange = {},
+            label = label,
+            placeholder = placeholder,
+        )
+        Box(
+            Modifier
+                .matchParentSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    role = Role.Button,
+                    onClickLabel = label,
+                    onClick = onClick,
+                )
+                // clearAndSetSemantics: el campo decorativo queda fuera del
+                // árbol; el control es un solo botón con nombre accesible.
+                .clearAndSetSemantics {
+                    contentDescription = label
+                    role = Role.Button
+                    onClick(label = label) {
+                        onClick()
+                        true
+                    }
+                },
+        )
+    }
+}
+
+/**
  * Fila de ajuste con toggle cuadrado (Selector + Toggle). checked==null la
  * convierte en fila de navegación. Toda la fila es el objetivo táctil.
  */
@@ -285,14 +359,12 @@ fun XauxaSettingRow(
                     .padding(XauxaSpacing.Xs),
                 contentAlignment = if (checked) Alignment.CenterEnd else Alignment.CenterStart,
             ) {
-                // Pastilla del toggle: OnBrand preserva el blanco en light
-                // y corrige el contraste en dark (White fijo fallaba el
-                // par con Brand en dark). El estado apagado
-                // (Surface2 + White en light) queda
-                // pendiente de referencia oficial de Xauxa: no se inventa color.
+                // Fase 1: la pastilla apagada (White sobre Surface2,
+                // 1.12:1) pasa a BorderControl: >= 3:1 contra el track en
+                // claro y oscuro (XauxaSchemeTest).
                 Box(
                     modifier = Modifier.size(XauxaSpacing.Xl)
-                        .background(if (checked) XauxaColor.OnBrand else XauxaColor.White),
+                        .background(if (checked) XauxaColor.OnBrand else XauxaColor.BorderControl),
                 )
             }
         }

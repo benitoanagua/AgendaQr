@@ -69,6 +69,7 @@ fun ImportReviewScreen(
                 // retenido en el VM); el resto de acciones solo descarta.
                 onAction = { if (err.action == ErrorAction.Retry) onSaveAll() else onClearError() },
                 onDismiss = onClearError,
+                dismissLabel = AppStrings.Descartar,
             )
         }
         if (assets.isEmpty()) {

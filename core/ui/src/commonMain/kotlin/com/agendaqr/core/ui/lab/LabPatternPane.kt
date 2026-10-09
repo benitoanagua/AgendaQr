@@ -150,6 +150,7 @@ private fun LabPatternScenario(pattern: LabPattern, onEvent: (String) -> Unit) {
             actionLabel = "Reintentar",
             onAction = { onEvent("Patrón fallo-puntual: XauxaToast.onAction") },
             onDismiss = { onEvent("Patrón fallo-puntual: XauxaToast.onDismiss") },
+            dismissDescription = "Descartar notificación",
         )
         "fallo-contenido" -> XauxaInlineResult(
             title = "Comprobante ilegible",

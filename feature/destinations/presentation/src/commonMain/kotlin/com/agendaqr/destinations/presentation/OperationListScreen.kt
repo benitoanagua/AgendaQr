@@ -109,7 +109,7 @@ internal fun OperationListScreen(
     val operations = viewModel.visibleOperations()
     var visibleCount by remember(operations.size) { mutableStateOf(50) }
     val paged = operations.take(visibleCount)
-    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
+    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.ScreenMargin).imePadding(), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             XauxaHeading(text = AppStrings.Operaciones, size = XauxaType.Display, fontWeight = FontWeight.Bold)
             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
@@ -171,6 +171,9 @@ internal fun OperationListScreen(
                     item {
                         XauxaLoadMoreFooter(
                             onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(operations.size) },
+                            loadMoreLabel = AppStrings.CargarMas,
+                            loadingLabel = AppStrings.Cargando,
+                            endLabel = AppStrings.NoHayMasElementos,
                         )
                     }
                 }
@@ -186,7 +189,7 @@ internal fun UnassociatedScreen(
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
     var selectedReceipt by remember { mutableStateOf<Comprobante?>(null) }
-    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding(), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
+    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.ScreenMargin).imePadding(), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             XauxaHeading(text = AppStrings.ComprobantesSinAsociar, size = XauxaType.Display, fontWeight = FontWeight.Bold)
             XauxaTextAction(label = AppStrings.Volver, onClick = { viewModel.onAction(OperationAction.Back) })

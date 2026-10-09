@@ -120,6 +120,7 @@ private fun ContextList(
                     )
                 },
                 onDismiss = { onAction(ContextAction.ClearError) },
+                dismissLabel = AppStrings.Descartar,
             )
         }
         when {
@@ -191,6 +192,7 @@ private fun ContextDetail(
                     )
                 },
                 onDismiss = { onAction(ContextAction.ClearError) },
+                dismissLabel = AppStrings.Descartar,
             )
         }
         contents?.let { data ->

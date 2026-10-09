@@ -34,8 +34,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.toggleableState
 import androidx.compose.ui.state.ToggleableState
@@ -100,7 +103,20 @@ fun XauxaDialog(
      * acción de texto en vez de botón primario.
      */
     confirmAsText: Boolean = false,
+    /**
+     * Fase 2 (auditoría a11y): la confirmación es DESTRUCTIVA (eliminar
+     * QR/actividad/comprobante). Usa [XauxaDangerButton] y el foco
+     * inicial cae en la acción conservativa (dismiss) para que el primer
+     * toque no dispare lo irreversible.
+     */
+    destructive: Boolean = false,
 ) {
+    val dismissFocus = androidx.compose.runtime.remember { androidx.compose.ui.focus.FocusRequester() }
+    if (destructive) {
+        androidx.compose.runtime.LaunchedEffect(Unit) {
+            runCatching { dismissFocus.requestFocus() }
+        }
+    }
     androidx.compose.material3.AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest ?: onDismiss,
@@ -126,11 +142,24 @@ fun XauxaDialog(
             }
         },
         confirmButton = {
-            if (confirmAsText) XauxaTextAction(label = confirmLabel, onClick = onConfirm)
-            else XauxaPrimaryButton(label = confirmLabel, onClick = onConfirm)
+            when {
+                confirmAsText -> XauxaTextAction(label = confirmLabel, onClick = onConfirm)
+                destructive -> XauxaDangerButton(label = confirmLabel, onClick = onConfirm)
+                else -> XauxaPrimaryButton(label = confirmLabel, onClick = onConfirm)
+            }
         },
         dismissButton = dismissLabel?.let {
-            { XauxaTextAction(label = it, onClick = onDismiss) }
+            {
+                XauxaTextAction(
+                    label = it,
+                    onClick = onDismiss,
+                    modifier = if (destructive) {
+                        Modifier.focusRequester(dismissFocus)
+                    } else {
+                        Modifier
+                    },
+                )
+            }
         },
     )
 }
@@ -144,18 +173,30 @@ fun XauxaToast(
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
     onDismiss: (() -> Unit)? = null,
+    /** Fase 4: nombre accesible del descarte, copy del llamador. */
+    dismissDescription: String = "",
 ) {
+    if (onDismiss != null) require(dismissDescription.isNotBlank()) {
+        "XauxaToast: onDismiss necesita dismissDescription (copy del llamador)"
+    }
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
             .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape)
             .background(tone.container())
+            // Fase 1: región viva cortés — el toast se anuncia (antes
+            // solo se veía).
+            .semantics { liveRegion = LiveRegionMode.Polite }
             .padding(XauxaSpacing.Sm),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
         Box(modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight().background(tone.content()))
+        // §11: icono por tono — el estado nunca solo por color.
+        tone.iconVector?.let { glyph ->
+            XauxaIcon(imageVector = glyph, contentDescription = null, tint = tone.content())
+        }
         Text(
             message,
             modifier = Modifier.weight(XauxaToneWeight),
@@ -166,7 +207,7 @@ fun XauxaToast(
             XauxaTextAction(label = actionLabel, onClick = onAction)
         }
         if (onDismiss != null) {
-            XauxaIconButton(contentDescription = "Descartar notificación", onClick = onDismiss) {
+            XauxaIconButton(contentDescription = dismissDescription, onClick = onDismiss) {
                 Text("×", fontSize = XauxaType.Title, color = XauxaColor.TextSecondary)
             }
         }
@@ -193,6 +234,10 @@ fun XauxaInlineResult(
         horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
         Box(modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight().background(tone.content()))
+        // §11: icono por tono — el estado nunca solo por color.
+        tone.iconVector?.let { glyph ->
+            XauxaIcon(imageVector = glyph, contentDescription = null, tint = tone.content())
+        }
         Column(modifier = Modifier.weight(XauxaToneWeight)) {
             Text(title, fontSize = XauxaType.Body, color = XauxaColor.TextPrimary)
             if (meta != null) {

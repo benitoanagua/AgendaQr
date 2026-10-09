@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
@@ -31,18 +30,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
+import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
 
 @Composable
@@ -112,32 +114,76 @@ fun XauxaPrimaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
+    /** Fase 2: stateDescription de "ocupado" (texto del llamador, §5). */
+    busyDescription: String? = null,
+) {
+    XauxaLoadingButton(
+        label = label,
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        isLoading = isLoading,
+        busyDescription = busyDescription,
+        containerColor = XauxaColor.Brand,
+        contentColor = XauxaColor.OnBrand,
+        disabledContainerColor = XauxaColor.Surface3,
+        disabledContentColor = XauxaColor.TextTertiary,
+    )
+}
+
+/**
+ * Cuerpo compartido de los botones sólidos (Fase 2): con carga, la
+ * etiqueta PERMANECE en el layout con alpha 0 y el spinner se superpone
+ * centrado — sin salto de ancho; el estado "ocupado" se anuncia con
+ * [busyDescription] (stateDescription, texto del llamador desde
+ * AppStrings; nunca hardcodeado).
+ */
+@Composable
+internal fun XauxaLoadingButton(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier,
+    enabled: Boolean,
+    isLoading: Boolean,
+    busyDescription: String?,
+    containerColor: Color,
+    contentColor: Color,
+    disabledContainerColor: Color,
+    disabledContentColor: Color,
 ) {
     androidx.compose.material3.Button(
-        modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
+        modifier = modifier
+            .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
+            .then(
+                if (isLoading && busyDescription != null) {
+                    Modifier.semantics { stateDescription = busyDescription }
+                } else {
+                    Modifier
+                },
+            ),
         onClick = onClick,
         enabled = enabled && !isLoading,
         shape = RectangleShape,
         colors = ButtonDefaults.buttonColors(
-            containerColor = XauxaColor.Brand,
-            contentColor = XauxaColor.OnBrand,
-            disabledContainerColor = XauxaColor.Surface2,
-            disabledContentColor = XauxaColor.TextTertiary,
+            containerColor = containerColor,
+            contentColor = contentColor,
+            disabledContainerColor = disabledContainerColor,
+            disabledContentColor = disabledContentColor,
         ),
     ) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(XauxaSpacing.Lg),
-                color = XauxaColor.OnBrand,
-                strokeWidth = XauxaMetrics.Border,
-            )
-        } else {
+        Box(contentAlignment = Alignment.Center) {
             Text(
                 label,
-                fontSize = XauxaType.Label,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = XauxaType.LetterSpacingWide,
+                modifier = if (isLoading) Modifier.alpha(0f) else Modifier,
+                style = XauxaTextStyles.ButtonLabel,
             )
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(XauxaSpacing.Lg),
+                    color = contentColor,
+                    strokeWidth = XauxaMetrics.Border,
+                )
+            }
         }
     }
 }
@@ -175,15 +221,13 @@ fun XauxaSecondaryButton(
                     XauxaIcon(
                         imageVector = icon,
                         contentDescription = null,
-                        tint = XauxaColor.Brand,
+                        tint = if (enabled) XauxaColor.BrandText else XauxaColor.TextTertiary,
                     )
                 }
                 Text(
                     label,
-                    fontSize = XauxaType.Label,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = XauxaType.LetterSpacingWide,
-                    color = if (enabled) XauxaColor.Brand else XauxaColor.TextTertiary,
+                    style = XauxaTextStyles.ButtonLabel,
+                    color = if (enabled) XauxaColor.BrandText else XauxaColor.TextTertiary,
                 )
             }
         }
@@ -207,14 +251,12 @@ fun XauxaTextAction(
             horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
         ) {
             if (icon != null) {
-                XauxaIcon(imageVector = icon, contentDescription = null, tint = XauxaColor.Brand)
+                XauxaIcon(imageVector = icon, contentDescription = null, tint = XauxaColor.BrandText)
             }
             Text(
                 label,
-                fontSize = XauxaType.Label,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = XauxaType.LetterSpacingWide,
-                color = XauxaColor.Brand,
+                style = XauxaTextStyles.ButtonLabel,
+                color = XauxaColor.BrandText,
             )
         }
     }
@@ -234,7 +276,14 @@ fun XauxaStatusBanner(
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
     onDismiss: (() -> Unit)? = null,
+    /** Fase 4: copy del descarte desde el llamador (core/ui no hardcodea). */
+    dismissLabel: String? = null,
 ) {
+    if (onDismiss != null) {
+        requireNotNull(dismissLabel) {
+            "XauxaStatusBanner: onDismiss necesita dismissLabel (copy del llamador)"
+        }
+    }
     val resolvedTone = tone ?: XauxaTone.Neutral
     val background = resolvedTone.container()
     val foreground = resolvedTone.content()
@@ -248,6 +297,14 @@ fun XauxaStatusBanner(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
+        // §11: el estado nunca se comunica solo por color — icono por tono.
+        resolvedTone.iconVector?.let { glyph ->
+            XauxaIcon(
+                imageVector = glyph,
+                contentDescription = null,
+                tint = foreground,
+            )
+        }
         Text(
             message,
             modifier = Modifier.weight(1f),
@@ -259,8 +316,8 @@ fun XauxaStatusBanner(
         if (actionLabel != null && onAction != null) {
             XauxaTextAction(label = actionLabel, onClick = onAction)
         }
-        if (onDismiss != null) {
-            XauxaTextAction(label = "Descartar", onClick = onDismiss)
+        if (onDismiss != null && dismissLabel != null) {
+            XauxaTextAction(label = dismissLabel, onClick = onDismiss)
         }
     }
 }
@@ -303,9 +360,38 @@ expect fun XauxaQrPreview(
     modifier: Modifier = Modifier,
 )
 
+/**
+ * Indicador de favorito (Fase 2): cuadrado (radio 0, Metro) con glifo y
+ * descripción accesible — el estado NO depende solo del color (§11).
+ * El glifo Favorito aparece solo cuando está marcado; sin marca el
+ * cuadro queda vacío y apagado.
+ */
 @Composable
-fun XauxaFavoriteIndicator(favorite: Boolean) {
+fun XauxaFavoriteIndicator(
+    favorite: Boolean,
+    modifier: Modifier = Modifier,
+    contentDescription: String? = null,
+) {
     Box(
-        modifier = Modifier.size(XauxaMetrics.FavoriteIndicatorSize).clip(CircleShape).background(if (favorite) XauxaColor.Brand else XauxaColor.Surface2),
-    )
+        modifier = modifier
+            .size(XauxaMetrics.FavoriteIndicatorSize)
+            .background(if (favorite) XauxaColor.Brand else XauxaColor.Surface2)
+            .then(
+                if (contentDescription != null) {
+                    Modifier.semantics { this.contentDescription = contentDescription }
+                } else {
+                    Modifier
+                },
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (favorite) {
+            XauxaIcon(
+                imageVector = XauxaIcons.Favorite,
+                contentDescription = null,
+                size = XauxaMetrics.IconSize,
+                tint = XauxaColor.OnBrand,
+            )
+        }
+    }
 }

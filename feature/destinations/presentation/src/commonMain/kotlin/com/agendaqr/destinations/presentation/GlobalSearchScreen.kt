@@ -58,6 +58,7 @@ fun GlobalSearchScreen(
                 // REINTENTAR: relanza la búsqueda con la misma consulta.
                 onAction = { onAction(GlobalSearchAction.QueryChanged(state.query)) },
                 onDismiss = { onAction(GlobalSearchAction.ClearError) },
+                dismissLabel = AppStrings.Descartar,
             )
         }
         when {

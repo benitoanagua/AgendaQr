@@ -124,7 +124,7 @@ internal fun OperationEditorScreen(
             modifier = Modifier.fillMaxWidth(),
             isRequired = true,
             isError = dateError,
-            errorMessage = if (dateError) "Usa el formato dd/mm/aaaa" else null,
+            errorMessage = if (dateError) AppStrings.FormatoFecha else null,
         )
         XauxaTextInput(label = AppStrings.MonedaOpcional, value = currency, onValueChange = { currency = it }, modifier = Modifier.fillMaxWidth())
         XauxaTextInput(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, modifier = Modifier.fillMaxWidth())

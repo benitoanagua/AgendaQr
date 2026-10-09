@@ -7,6 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,7 +55,9 @@ import com.agendaqr.core.ui.theme.XauxaType
 /**
  * Tono semántico de Xauxa para componentes. Un solo acento decorativo de
  * marca (Brand); los demás colores tienen significado semántico (Regla 04,
- * ADR-0002: sin variación de acento por categoría).
+ * ADR-0002: sin variación de acento por categoría). Fase 1: cada tono de
+ * estado resuelve su par content/container desde el esquema
+ * ([toneColors]); nada hereda de secondary/tertiary.
  */
 enum class XauxaTone {
     Neutral,
@@ -63,22 +67,79 @@ enum class XauxaTone {
     Info,
 }
 
-@Composable
-internal fun XauxaTone.content(): androidx.compose.ui.graphics.Color = when (this) {
-    XauxaTone.Neutral -> XauxaColor.TextSecondary
-    XauxaTone.Success -> XauxaColor.Success
-    XauxaTone.Danger -> XauxaColor.Danger
-    XauxaTone.Warning -> XauxaColor.Warning
-    XauxaTone.Info -> XauxaColor.Info
+/**
+ * Colores de un tono semántico sobre un esquema (Fase 1): función PURA a
+ * partir de [com.agendaqr.core.ui.theme.XauxaColorScheme]; los pares
+ * content/container cumplen >= 4.5:1 en ambos temas (XauxaSchemeTest).
+ */
+data class ToneColors(
+    val content: androidx.compose.ui.graphics.Color,
+    val container: androidx.compose.ui.graphics.Color,
+)
+
+/** Mapeo tono -> colores del esquema. Puro y testeable. */
+fun com.agendaqr.core.ui.theme.XauxaColorScheme.toneColors(tone: XauxaTone): ToneColors = when (tone) {
+    XauxaTone.Neutral -> ToneColors(textSecondary, surface2)
+    XauxaTone.Success -> ToneColors(success, successContainer)
+    XauxaTone.Danger -> ToneColors(danger, dangerBg)
+    XauxaTone.Warning -> ToneColors(warning, warningContainer)
+    XauxaTone.Info -> ToneColors(info, infoContainer)
 }
 
 @Composable
-internal fun XauxaTone.container(): androidx.compose.ui.graphics.Color = when (this) {
-    XauxaTone.Neutral -> XauxaColor.Surface2
-    XauxaTone.Success -> XauxaColor.SuccessBg
-    XauxaTone.Danger -> XauxaColor.DangerBg
-    XauxaTone.Warning -> XauxaColor.WarningBg
-    XauxaTone.Info -> XauxaColor.InfoBg
+internal fun XauxaTone.content(): androidx.compose.ui.graphics.Color =
+    com.agendaqr.core.ui.theme.LocalXauxaColorScheme.current.toneColors(this).content
+
+@Composable
+internal fun XauxaTone.container(): androidx.compose.ui.graphics.Color =
+    com.agendaqr.core.ui.theme.LocalXauxaColorScheme.current.toneColors(this).container
+
+/**
+ * Glifo del tono para feedback de estado (Fase 1 de la auditoría: el
+ * estado nunca solo por color, §11). Neutral no lleva: su texto ya es el
+ * contenido y un glifo añadiría ruido.
+ */
+val XauxaTone.iconVector: androidx.compose.ui.graphics.vector.ImageVector?
+    get() = when (this) {
+        XauxaTone.Neutral -> null
+        XauxaTone.Success -> XauxaIcons.Save // Check
+        XauxaTone.Danger -> XauxaIcons.Cancel // X
+        XauxaTone.Warning -> XauxaIcons.Warning
+        XauxaTone.Info -> XauxaIcons.Info
+    }
+
+/**
+ * Fase 3 (auditoría): realimentación de pulsación como overlay con el token
+ * [com.agendaqr.core.ui.theme.XauxaOpacity.Pressed] sobre el contenido —
+ * nunca un cambio de color local. Respeta reduced motion: con la opción
+ * activa el cambio es inmediato (sin animación, §11); sin ella funde con
+ * el tiempo corto del sistema (150 ms, M11).
+ */
+@Composable
+fun Modifier.xauxaPressFeedback(source: MutableInteractionSource): Modifier {
+    val pressed by source.collectIsPressedAsState()
+    val reducedMotion = com.agendaqr.core.ui.motion.LocalReducedMotion.current
+    val overlayAlpha by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = if (pressed) com.agendaqr.core.ui.theme.XauxaOpacity.Pressed else 0f,
+        animationSpec = if (reducedMotion) {
+            androidx.compose.animation.core.snap()
+        } else {
+            androidx.compose.animation.core.tween(
+                com.agendaqr.core.ui.theme.XauxaMotion.DurationShortMs,
+                easing = com.agendaqr.core.ui.theme.XauxaMotion.Easings.Standard,
+            )
+        },
+        label = "xauxa_press_feedback",
+    )
+    return drawWithContent {
+        drawContent()
+        if (overlayAlpha > 0f) {
+            drawRect(
+                color = androidx.compose.ui.graphics.Color.Black.copy(alpha = overlayAlpha),
+                size = size,
+            )
+        }
+    }
 }
 
 /**

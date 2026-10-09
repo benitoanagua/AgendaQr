@@ -64,6 +64,11 @@ internal object AppStrings {
     val Camara = "Cámara"
     val Desasociar = "Desasociar"
     val Descartar = "Descartar"
+    // Fase 4: copy que el DS exige al llamador (core/ui no hardcodea copy).
+    val Mas = "Más"
+    val CargarMas = "Cargar más"
+    val NoHayMasElementos = "No hay más elementos"
+    val Cargando = "Cargando…"
     val DesdeOtraApp = "Desde otra app"
     val shareFromAnotherAppLabel = "Desde otra app: comparte una imagen o PDF con Agenda QR."
     val DestinoNoEncontrado = "QR no encontrado"
@@ -151,6 +156,8 @@ internal object AppStrings {
     val VolverAResultado = "Volver a resultado"
     val VuelveEImportaDesdeCamara = "Vuelve e importa desde Cámara o Galería."
     val DestinationRouteTurnstile = "destination_route_turnstile"
+    // Fase 3: transición entre superficies (AppRoute) del stack raíz.
+    val SurfaceRouteTurnstile = "surface_route_turnstile"
     val QrSinNombre = "QR sin nombre"
     val SinNombre = "Sin nombre"
     val VerMas = "Ver más"
@@ -166,6 +173,12 @@ internal object AppStrings {
     val duplicateReceiptWarningPrefix = "Parece que este comprobante ya está guardado.\nArchivo: "
     val incomingReceiptExplanationPrefix = "Se guardará en tu bandeja de respaldos sin asociar.\nArchivo: "
     val Guardando = "Guardando…"
+    // Fase 2 (auditoría a11y): validación de auth + estado ocupado.
+    val IngresaUnCorreoValido = "Ingresa un correo válido"
+    // Fase 4: literales que esquivaban la regla D2 dentro de expresiones.
+    val FormatoFecha = "Usa el formato dd/mm/aaaa"
+    val Minimo6Caracteres = "Mínimo 6 caracteres"
+    val IniciandoSesion = "Iniciando sesión…"
     val AsociarAhora = "Asociar ahora"
     val AunNoHayOperaciones = "Aún no hay actividades"
     val NoHayCoincidencias = "No hay coincidencias"

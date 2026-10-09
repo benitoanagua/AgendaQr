@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
+import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
 
 /** Acción visible de la app bar inferior: icono + etiqueta SIEMPRE visible
@@ -69,10 +70,18 @@ fun XauxaAppBar(
     modifier: Modifier = Modifier,
     overflowActions: List<XauxaOverflowAction> = emptyList(),
     onBack: (() -> Unit)? = null,
-    backLabel: String = "Atrás",
+    /** Fase 4: copy de la flecha atrás desde el llamador (core/ui no hardcodea). */
+    backLabel: String,
+    /** Fase 4: copy del botón "…" (requerido si hay overflowActions). */
+    overflowLabel: String = "",
 ) {
     require(actions.size <= 4) {
         "XauxaAppBar: 2–4 acciones visibles (spec §12); el resto va a overflowActions"
+    }
+    if (overflowActions.isNotEmpty()) {
+        require(overflowLabel.isNotBlank()) {
+            "XauxaAppBar: overflowActions necesita overflowLabel (copy del llamador)"
+        }
     }
     var overflowOpen by remember { mutableStateOf(false) }
     Surface(
@@ -125,7 +134,7 @@ fun XauxaAppBar(
                     Box {
                         AppBarItem(
                             XauxaAppBarAction(
-                                label = "Más",
+                                label = overflowLabel,
                                 icon = XauxaIcons.More,
                                 onClick = { overflowOpen = true },
                             ),
@@ -133,6 +142,17 @@ fun XauxaAppBar(
                         DropdownMenu(
                             expanded = overflowOpen,
                             onDismissRequest = { overflowOpen = false },
+                            // Fase 4: el menú también habla Xauxa — radio 0
+                            // (red de seguridad del theme), sin elevación
+                            // tonal ni sombra, superficie y borde Xauxa.
+                            shape = RectangleShape,
+                            containerColor = XauxaColor.Surface,
+                            tonalElevation = XauxaSpacing.None,
+                            shadowElevation = XauxaSpacing.None,
+                            border = androidx.compose.foundation.BorderStroke(
+                                width = XauxaMetrics.Border,
+                                color = XauxaColor.BorderControl,
+                            ),
                         ) {
                             overflowActions.forEach { option ->
                                 DropdownMenuItem(
@@ -162,9 +182,14 @@ private fun AppBarItem(action: XauxaAppBarAction) {
             )
             .then(
                 // Acción principal: bloque sólido de acento (M10); el resto
-                // texto + icono sin caja (M10).
+                // texto + icono sin caja (M10). Fase 2: la primaria
+                // DESHABILITADA es distinguible — Surface3 + TextTertiary
+                // (antes mantenía el acento y parecía activa).
                 if (action.primary) {
-                    Modifier.background(XauxaColor.Brand, RectangleShape)
+                    Modifier.background(
+                        if (action.enabled) XauxaColor.Brand else XauxaColor.Surface3,
+                        RectangleShape,
+                    )
                 } else {
                     Modifier
                 },
@@ -178,12 +203,13 @@ private fun AppBarItem(action: XauxaAppBarAction) {
             )
             .focusable(interactionSource = interaction)
             .xauxaFocusRing(interaction)
+            .xauxaPressFeedback(interaction)
             .padding(horizontal = XauxaSpacing.Sm, vertical = XauxaSpacing.Xs),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         val tint = when {
-            !action.enabled -> if (action.primary) XauxaColor.OnBrand else XauxaColor.TextTertiary
+            !action.enabled -> XauxaColor.TextTertiary
             action.primary -> XauxaColor.OnBrand
             else -> XauxaColor.TextPrimary
         }
@@ -198,7 +224,7 @@ private fun AppBarItem(action: XauxaAppBarAction) {
         }
         Text(
             action.label,
-            fontSize = XauxaType.Caption,
+            style = XauxaTextStyles.AppBarItem,
             color = tint,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

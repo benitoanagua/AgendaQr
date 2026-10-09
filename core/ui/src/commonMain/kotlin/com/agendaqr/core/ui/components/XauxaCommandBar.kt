@@ -12,6 +12,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.theme.XauxaColor
+import androidx.compose.ui.graphics.RectangleShape
+import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
 
@@ -77,6 +79,15 @@ fun XauxaCommandBar(
                     DropdownMenu(
                         expanded = overflowOpen,
                         onDismissRequest = { overflowOpen = false },
+                        // Fase 4: radio 0, sin elevaciones, superficie Xauxa.
+                        shape = RectangleShape,
+                        containerColor = XauxaColor.Surface,
+                        tonalElevation = XauxaSpacing.None,
+                        shadowElevation = XauxaSpacing.None,
+                        border = androidx.compose.foundation.BorderStroke(
+                            width = XauxaMetrics.Border,
+                            color = XauxaColor.BorderControl,
+                        ),
                     ) {
                         overflowActions.forEach { action ->
                             DropdownMenuItem(

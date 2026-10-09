@@ -195,3 +195,60 @@ vs "QR importado"; layout del badge de sync en filas estrechas;
 alternancia QR/actividad del tile vivo; chips con contorno de selección.
 iOS runtime, TalkBack interactivo y captura de S09 con QR real siguen SIN
 validar.
+
+## 2026-10-08 (2) — Corrección de auditoría de accesibilidad del DS (fases 1–4, rama fix/xauxa-a11y-contrast)
+
+Sobre main f79f2c9. Un commit por fase; `verifyAgendaQrArchitecture`,
+`verify-xauxa.sh` y la suite de tests en verde al cierre de cada fase.
+
+- **Fase 1 — Contraste**: tonos de estado con par propio (success/warning/info
+  + container en ambos temas; fin de la herencia de secondary/tertiary);
+  `brandText` (brand como texto fallaba 3.63:1 en oscuro) usado en acciones
+  de texto, SectionHeader, Pivot y StatBlock; `borderControl` ≥3:1 para
+  bordes de control (track del toggle, chip sin seleccionar, favorite
+  toggle); pastilla apagada del toggle ≥3:1 (antes 1.12:1); icono por tono
+  en banner/toast/inline (glifos aprobados Info y TriangleAlert); Toast con
+  liveRegion; `contrastRatio`/`asTextOn` puras en la capa de tema; los
+  acentos de contexto nunca como texto ilegible (marcador de 2 dp crudo).
+  El banner de confirmación de registro (Brand sobre BrandContainer, 1:1)
+  es legible en claro y oscuro.
+- **Fase 2 — Estados/formularios**: AuthScreen valida al enviar (botones
+  habilitados; errores visibles; un solo spinner con stateDescription
+  "Iniciando sesión…"; imeAction Next/Done; sin autocapitalizar correo);
+  botones con carga sin salto de ancho (etiqueta alpha 0 + spinner);
+  deshabilitado distinguible (primaria de la app bar en Surface3 +
+  TextTertiary); `XauxaDialog(destructive)` con foco inicial en Cancelar
+  (marcado en eliminar destino/actividad/comprobante); XauxaTextInput con
+  etiqueta asociada (contentDescription) y error liveRegion; indicador de
+  favorito cuadrado con glifo (fin de la excepción CircleShape) y
+  description accesible; ListRow con `selected` semántico.
+- **Fase 3 — Movimiento**: `Modifier.xauxaPressFeedback` (overlay con token
+  XauxaOpacity.Pressed; inmediato con reduced motion) en ListRow,
+  IconButton, AppBarItem y Pivot; entrada escalonada del grid ahora real
+  (Animatable; antes animaba hacia el valor inicial = código muerto) con
+  `tileStaggerDelayMs` pura (40 ms/tile, tope 300 ms, 0 con reduced
+  motion) y filas memorizadas; el cambio de superficie (AppRoute) del
+  AuthenticatedAppRoot transiciona con turnstile (reverse por profundidad
+  del stack). **ts3 pendiente de prueba manual**: predictive back animado
+  en Android 14+ requiere dispositivo.
+- **Fase 4 — Robustez**: `XauxaTheme` define shapes planos (red de
+  seguridad; XauxaShapeFlat, la única forma con esquinas, vive en tokens);
+  DropdownMenu (AppBar/CommandBar) rectangular, sin elevaciones, con borde
+  Xauxa; gate endurecido con fixtures: RoundedCornerShape solo en
+  tokens/tema, copy de UI en EXPRESIONES en feature/ (D2), `.clickable(` e
+  `indication = null` prohibidos en feature/; `XauxaSearchTrigger` (nodo
+  único) sustituye al campo falso+overlay de S01; copy de core/ui
+  parametrizado (Descartar/Atrás/Más/Cargar más/Cargando…/Buscar/… desde
+  AppStrings del llamador); `XauxaTextStyles` con lineHeight canónico;
+  limpieza (fuera `Dp.xauxaBorder`; documentados el alias
+  brandContainer==brand, el default oscuro de LocalXauxaColorScheme y las
+  constantes de easing en string — consumidas por el laboratorio); margen
+  de pantalla unificado en ScreenMargin (Auth/ImportBatch/Operaciones/
+  patrones; el padding interno del hint de cámara se mantiene Xxl por ser
+  encuadre del overlay, no margen de pantalla).
+
+Pendientes de decisión/verificación manual: mostrar/ocultar contraseña
+(glifo Eye fuera del mapeo aprobado + slot trailing en XauxaTextInput);
+glifos para Editar/Compartir/Mostrar QR; TalkBack/VoiceOver interactivos,
+predictive back (Android 14+), fuente al 200 % y contraste con lente en
+dispositivo físico; iOS runtime (Xcode).

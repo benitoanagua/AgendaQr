@@ -663,6 +663,8 @@ private fun AppBarPreview(onEvent: (String) -> Unit) {
             XauxaOverflowAction("Cerrar sesión", onClick = { last = "Cerrar sesión"; onEvent("AppBar overflow Cerrar sesión") }),
         ),
         onBack = { last = "Atrás"; onEvent("AppBar onBack") },
+        backLabel = "Atrás",
+        overflowLabel = "Más",
     )
     Text(
         "Última acción: $last",
@@ -745,6 +747,8 @@ private fun SearchBarPreview(onEvent: (String) -> Unit) {
         XauxaSearchBar(
             value = value,
             onValueChange = { value = it },
+            label = "Buscar",
+            placeholder = "Buscar",
             onClear = {
                 value = ""
                 onEvent("XauxaSearchBar.onClear")
@@ -788,6 +792,7 @@ private fun FavoriteTogglePreview(onEvent: (String) -> Unit) {
     ) {
         XauxaFavoriteToggle(
             favorite = favorite,
+            contentDescription = if (favorite) "Quitar de favoritos" else "Marcar como favorito",
             onCheckedChange = {
                 favorite = it
                 onEvent("XauxaFavoriteToggle.onCheckedChange favorite=$it")
@@ -821,6 +826,7 @@ private fun ToastPreview(onEvent: (String) -> Unit) {
                 tone = tone,
                 actionLabel = "Deshacer",
                 onAction = { onEvent("XauxaToast.onAction Deshacer") },
+                dismissDescription = "Descartar notificación",
                 onDismiss = {
                     dismissed = true
                     onEvent("XauxaToast.onDismiss")
@@ -872,6 +878,9 @@ private fun LoadMorePreview(onEvent: (String) -> Unit) {
             isLoading = loading,
             endReached = end,
             onLoadMore = { onEvent("XauxaLoadMoreFooter.onLoadMore") },
+            loadMoreLabel = "Cargar más",
+            loadingLabel = "Cargando…",
+            endLabel = "No hay más elementos",
         )
     }
 }

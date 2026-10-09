@@ -15,6 +15,8 @@ import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Ellipsis
 import com.composables.icons.lucide.Folder
 import com.composables.icons.lucide.Image
+import com.composables.icons.lucide.Info
+import com.composables.icons.lucide.TriangleAlert
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Plus
 import com.composables.icons.lucide.Receipt
@@ -98,6 +100,14 @@ object XauxaIcons {
     val Gallery: ImageVector get() = Lucide.Image
     /** Cámara (S02/S03). */
     val Camera: ImageVector get() = Lucide.Camera
+
+    // Glifos de ESTADO (auditoría a11y, 2026-10-08): el estado nunca se
+    // comunica solo por color (§11) — banner/toast/inline llevan icono por
+    // tono. Aprobados en esta pasada; no ampliar sin decisión.
+    /** Info (tono informativo). */
+    val Info: ImageVector get() = Lucide.Info
+    /** Aviso (tono de advertencia). */
+    val Warning: ImageVector get() = Lucide.TriangleAlert
 
     // La spec menciona como alternativa "lápiz sobre cuadrado" para
     // registrar y "Folder o Layers" para contexto: se fijaron `Receipt` y

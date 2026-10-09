@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.toggleableState
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
+import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
 
 
@@ -133,9 +135,7 @@ fun XauxaBadge(
     ) {
         Text(
             text,
-            fontSize = XauxaType.Caption,
-            fontWeight = FontWeight.SemiBold,
-            letterSpacing = XauxaType.LetterSpacingWide,
+            style = XauxaTextStyles.Support,
             color = foreground,
         )
     }
@@ -158,11 +158,14 @@ fun XauxaListRow(
      * contexto; el estado sigue expresándose con texto en el contenido
      * (§11: nunca solo color). */
     accent: androidx.compose.ui.graphics.Color? = null,
+    /** Fase 2: selección explícita con semántica `selected` (§11). */
+    selected: Boolean = false,
 ) {
     val interaction = remember { MutableInteractionSource() }
     val clickableModifier = if (onClick == null) modifier else modifier
         .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onClick)
         .focusable(interactionSource = interaction)
+    val showsMarker = accent != null || tone != XauxaTone.Neutral
     Row(
         modifier = clickableModifier
             .fillMaxWidth()
@@ -174,21 +177,28 @@ fun XauxaListRow(
             // mostraba la primera fila).
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
             .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
-            .xauxaFocusRing(interaction),
-            // V1.1 (M9): fila abierta, sin borde de reposo; separación por
-            // espacio. El marcador lateral solo aparece con tono semántico.
+            .xauxaFocusRing(interaction)
+            .xauxaPressFeedback(interaction)
+            .then(
+                if (selected) Modifier.semantics { this.selected = true } else Modifier,
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(
-            modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight()
-                .background(accent ?: tone.content()),
-        )
+        // Fase 2: la barra lateral SOLO con tono no Neutral o acento — una
+        // fila neutra sin estado no dibuja marcador (antes pintaba el
+        // color de tono Neutral, ruido visual sin significado).
+        if (showsMarker) {
+            Box(
+                modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight()
+                    .background(accent ?: tone.content()),
+            )
+        }
         Column(
             modifier = Modifier.weight(XauxaToneWeight).padding(XauxaSpacing.Sm),
         ) {
-            Text(title, fontSize = XauxaType.Body, color = XauxaColor.TextPrimary)
+            Text(title, style = XauxaTextStyles.Body, color = XauxaColor.TextPrimary)
             if (subtitle != null) {
-                Text(subtitle, fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary)
+                Text(subtitle, style = XauxaTextStyles.Caption, color = XauxaColor.TextSecondary)
             }
         }
         trailing?.invoke()

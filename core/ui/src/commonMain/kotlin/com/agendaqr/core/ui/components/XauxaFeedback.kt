@@ -68,7 +68,7 @@ fun XauxaStatBlock(
             fontSize = XauxaType.Headline,
             fontWeight = FontWeight.Bold,
             fontFamily = XauxaType.FamilyMono,
-            color = if (tone == XauxaTone.Neutral) XauxaColor.Brand else tone.content(),
+            color = if (tone == XauxaTone.Neutral) XauxaColor.BrandText else tone.content(),
             textAlign = TextAlign.Center,
         )
         Text(
@@ -135,25 +135,30 @@ fun XauxaLoadMoreFooter(
     isLoading: Boolean = false,
     endReached: Boolean = false,
     onLoadMore: (() -> Unit)? = null,
+    /** Fase 4: copy desde el llamador (core/ui no hardcodea copy). */
+    loadMoreLabel: String = "",
+    loadingLabel: String = "",
+    endLabel: String = "",
 ) {
+    if (onLoadMore != null) require(loadMoreLabel.isNotBlank()) { "loadMoreLabel requerido" }
     Box(
         modifier = modifier.fillMaxWidth().padding(XauxaSpacing.Lg),
         contentAlignment = Alignment.Center,
     ) {
         when {
-            endReached -> Text("No hay más elementos", fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary)
+            endReached -> Text(endLabel, fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary)
             isLoading -> Row(
                 horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(XauxaSpacing.Lg),
-                    color = XauxaColor.Brand,
+                    color = XauxaColor.BrandText,
                     strokeWidth = XauxaMetrics.Border,
                 )
-                Text("Cargando…", fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
+                Text(loadingLabel, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
             }
-            onLoadMore != null -> XauxaSecondaryButton(label = "Cargar más", onClick = onLoadMore)
+            onLoadMore != null -> XauxaSecondaryButton(label = loadMoreLabel, onClick = onLoadMore)
         }
     }
 }
@@ -166,15 +171,16 @@ fun XauxaLoadMoreFooter(
 fun XauxaFavoriteToggle(
     favorite: Boolean,
     onCheckedChange: (Boolean) -> Unit,
+    /** Fase 4: nombre accesible del control, copy del llamador (§11). */
+    contentDescription: String,
     modifier: Modifier = Modifier,
-    contentDescription: String? = null,
 ) {
     val interaction = remember { MutableInteractionSource() }
     Box(
         modifier = modifier
             .size(XauxaMetrics.ControlMinSize)
             .semantics {
-                this.contentDescription = contentDescription ?: if (favorite) "Quitar de favoritos" else "Marcar como favorito"
+                this.contentDescription = contentDescription
                 toggleableState = if (favorite) ToggleableState.On else ToggleableState.Off
             }
             .clickable(
@@ -190,8 +196,20 @@ fun XauxaFavoriteToggle(
         Box(
             modifier = Modifier.size(XauxaMetrics.FavoriteIndicatorSize)
                 .background(if (favorite) XauxaColor.Brand else XauxaColor.Surface2)
-                .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape),
-        )
+                .border(BorderStroke(XauxaMetrics.Border, XauxaColor.BorderControl), RectangleShape),
+            contentAlignment = Alignment.Center,
+        ) {
+            // Fase 2 (§11): el estado no depende solo del color — el
+            // glifo aparece solo cuando está marcado.
+            if (favorite) {
+                XauxaIcon(
+                    imageVector = XauxaIcons.Favorite,
+                    contentDescription = null,
+                    size = XauxaMetrics.IconSize,
+                    tint = XauxaColor.OnBrand,
+                )
+            }
+        }
     }
 }
 

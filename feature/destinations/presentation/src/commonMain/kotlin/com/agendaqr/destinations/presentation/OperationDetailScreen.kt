@@ -39,7 +39,7 @@ internal fun OperationDetailScreen(
 ) {
     val operation = viewModel.selectedOperation()
     if (operation == null) {
-        Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl), verticalArrangement = Arrangement.Center) {
+        Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.ScreenMargin), verticalArrangement = Arrangement.Center) {
             XauxaEmptyState(
                 title = AppStrings.OperacionNoEncontrada,
                 subtitle = AppStrings.PudoHaberSidoEliminada,
@@ -50,7 +50,7 @@ internal fun OperationDetailScreen(
         return
     }
     var showDeleteConfirm by remember { mutableStateOf(false) }
-    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.Xxl).imePadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
+    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.ScreenMargin).imePadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             XauxaHeading(text = AppStrings.Detalle, size = XauxaType.Display, fontWeight = FontWeight.Bold)
             XauxaTextAction(label = AppStrings.Volver, onClick = { viewModel.onAction(OperationAction.Back) })
@@ -105,6 +105,7 @@ internal fun OperationDetailScreen(
     if (showDeleteConfirm) {
         XauxaDialog(
             title = AppStrings.EliminarOperacion,
+            destructive = true,
             message = AppStrings.irreversibleActionWarning,
             confirmLabel = AppStrings.Eliminar,
             onConfirm = {
