@@ -23,7 +23,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -178,11 +177,7 @@ internal fun XauxaLoadingButton(
                 style = XauxaTextStyles.ButtonLabel,
             )
             if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(XauxaSpacing.Lg),
-                    color = contentColor,
-                    strokeWidth = XauxaMetrics.Border,
-                )
+                XauxaDotProgress(color = contentColor)
             }
         }
     }
@@ -207,11 +202,7 @@ fun XauxaSecondaryButton(
         shape = XauxaShape,
     ) {
         if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(XauxaSpacing.Lg),
-                color = XauxaColor.Brand,
-                strokeWidth = XauxaMetrics.Border,
-            )
+            XauxaDotProgress(color = XauxaColor.Brand)
         } else {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -299,7 +290,7 @@ fun XauxaStatusBanner(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .border(XauxaMetrics.Border, XauxaColor.Border, XauxaShape)
+            // Sin borde de reposo: el bloque tonal ya define el límite.
             .background(background)
             .semantics { liveRegion = LiveRegionMode.Polite }
             .padding(XauxaSpacing.Lg),
@@ -341,7 +332,7 @@ fun XauxaLoading(modifier: Modifier = Modifier, message: String? = null) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md),
     ) {
-        CircularProgressIndicator(color = XauxaColor.Brand)
+        XauxaDotProgress(color = XauxaColor.Brand)
         message?.let { Text(it, color = XauxaColor.TextSecondary, fontSize = XauxaType.Label) }
     }
 }

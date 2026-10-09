@@ -183,7 +183,7 @@ fun XauxaToast(
         modifier = modifier
             .fillMaxWidth()
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
-            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), XauxaShape)
+            // Sin borde de reposo: el bloque tonal ya define el límite.
             .background(tone.container())
             // Fase 1: región viva cortés — el toast se anuncia (antes
             // solo se veía).
@@ -230,7 +230,7 @@ fun XauxaInlineResult(
         modifier = modifier
             .fillMaxWidth()
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
-            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), XauxaShape)
+            // Sin borde de reposo.
             .background(tone.container())
             .padding(XauxaSpacing.Sm),
         verticalAlignment = Alignment.CenterVertically,

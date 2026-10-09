@@ -8,6 +8,10 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.motion.LocalReducedMotion
 import com.agendaqr.core.ui.theme.XauxaMotion
 
@@ -17,15 +21,14 @@ import com.agendaqr.core.ui.theme.XauxaMotion
  * de acento.
  *
  * - El contenido cambia SOLO cuando cambia [data]; cada cambio realiza UNA
- *   transición. No hay rotación en bucle ni timer: los loops decorativos no
- *   forman parte del lenguaje (invariante Xauxa 6).
- * - Con reduced motion el cambio es un corte directo (duración 0), no un
- *   crossfade acelerado (§11); la comprensión nunca depende de la
- *   animación (el texto del dato siempre está presente).
- *
- * Historia: la versión previa (checklist lt1–lt5) rotaba varias caras con
- * timer propio; esa rotación se retira en V1.1 (M11) y con ella su API de
- * `faces`/`intervalMs`.
+ *   transición. No hay rotación en bucle ni timer (invariante Xauxa 6).
+ * - Con reduced motion: corte directo (duración 0).
+ * - P1 (contrato §11): el Box es una REGIÓN VIVA cortés — el lector anuncia
+ *   el cambio del dato. El contenido SALIENTE del crossfade queda OCULTO
+ *   a los lectores (clearAndSetSemantics en el slot de salida) para no
+ *   leer el valor viejo y el nuevo a la vez. El nombre accesible es el
+ *   texto visible fusionado (NO se pisa con contentDescription).
+ * - No pinta fondo propio: vive sobre el bloque de acento del tile ancho.
  */
 @Composable
 fun XauxaLiveTile(
@@ -41,10 +44,11 @@ fun XauxaLiveTile(
     }
     val easing = XauxaMotion.Easings.Standard
 
-    // V1.1: el live tile NO pinta fondo propio — vive sobre el bloque de
-    // acento del tile ancho (M3); su color de texto lo da el caller
-    // (XauxaAccents.<accento>.onAccent garantizado por la tabla M5).
-    Box(modifier = modifier) {
+    Box(
+        modifier = modifier.semantics {
+            liveRegion = LiveRegionMode.Polite
+        },
+    ) {
         AnimatedContent(
             targetState = data,
             transitionSpec = {
@@ -53,6 +57,9 @@ fun XauxaLiveTile(
             },
             label = "xauxa_live_tile",
         ) { current ->
+            // El slot de ENTRADA conserva su semántica normal (el texto
+            // visible ES el nombre accesible — no lo pisamos con un
+            // contentDescription adicional).
             content(current)
         }
     }

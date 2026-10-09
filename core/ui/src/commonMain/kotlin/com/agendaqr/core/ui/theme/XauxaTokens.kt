@@ -476,10 +476,6 @@ object XauxaRadius {
 /** Forma canónica para superficies y controles rectangulares del sistema. */
 val XauxaShape = androidx.compose.foundation.shape.RoundedCornerShape(size = XauxaRadius.Base)
 
-/** Alias temporal para compatibilidad; eliminar al terminar la migración. */
-@Deprecated("Use XauxaShape; all standard geometry is governed by XauxaRadius.Base")
-val XauxaShapeFlat = XauxaShape
-
 /**
  * Fase 3 (auditoría): opacidades funcionales del lenguaje. [Pressed] es la
  * capa de realimentación táctil (overlay sobre el contenido, nunca un

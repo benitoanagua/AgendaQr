@@ -378,7 +378,7 @@ fun XauxaSettingRow(
         if (checked != null) {
             Box(
                 modifier = Modifier.size(width = XauxaMetrics.ControlMinSize, height = XauxaSpacing.Xxxl)
-                    .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), XauxaShape)
+                    .border(BorderStroke(XauxaMetrics.Border, XauxaColor.BorderControl), XauxaShape)
                     .background(if (checked) XauxaColor.Brand else XauxaColor.Surface2)
                     .padding(XauxaSpacing.Xs),
                 contentAlignment = if (checked) Alignment.CenterEnd else Alignment.CenterStart,

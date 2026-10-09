@@ -155,7 +155,7 @@ fun XauxaCategoryChip(
 ) {
     Box(
         modifier = modifier
-            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), XauxaShape)
+            // Sin borde de reposo: el bloque tonal Surface2 ya define el límite.
             .background(XauxaColor.Surface2)
             .padding(horizontal = XauxaSpacing.Sm, vertical = XauxaSpacing.Xs),
         contentAlignment = Alignment.Center,

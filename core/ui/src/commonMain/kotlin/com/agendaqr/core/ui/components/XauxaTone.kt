@@ -116,7 +116,12 @@ val XauxaTone.iconVector: androidx.compose.ui.graphics.vector.ImageVector?
  * el tiempo corto del sistema (150 ms, M11).
  */
 @Composable
-fun Modifier.xauxaPressFeedback(source: MutableInteractionSource): Modifier {
+fun Modifier.xauxaPressFeedback(
+    source: MutableInteractionSource,
+    /** P1: color del overlay; default negro. Para tiles de acento claro,
+     * el llamador pasa BLANCO (el OPUESTO al texto) para no bajar 4.5:1. */
+    overlayColor: androidx.compose.ui.graphics.Color = androidx.compose.ui.graphics.Color.Black,
+): Modifier {
     val pressed by source.collectIsPressedAsState()
     val reducedMotion = com.agendaqr.core.ui.motion.LocalReducedMotion.current
     val overlayAlpha by androidx.compose.animation.core.animateFloatAsState(
@@ -135,7 +140,7 @@ fun Modifier.xauxaPressFeedback(source: MutableInteractionSource): Modifier {
         drawContent()
         if (overlayAlpha > 0f) {
             drawRect(
-                color = androidx.compose.ui.graphics.Color.Black.copy(alpha = overlayAlpha),
+                color = overlayColor.copy(alpha = overlayAlpha),
                 size = size,
             )
         }
@@ -147,10 +152,14 @@ fun Modifier.xauxaPressFeedback(source: MutableInteractionSource): Modifier {
  * personalizado lo aplica sobre su propio [MutableInteractionSource].
  */
 @Composable
-fun Modifier.xauxaFocusRing(source: MutableInteractionSource): Modifier {
+fun Modifier.xauxaFocusRing(
+    source: MutableInteractionSource,
+    /** P1: forma del anillo (default XauxaShape). */
+    shape: androidx.compose.ui.graphics.Shape = XauxaShape,
+): Modifier {
     val focused by source.collectIsFocusedAsState()
     return then(
-        if (focused) Modifier.border(XauxaMetrics.Focus, XauxaColor.FocusRing, XauxaShape)
+        if (focused) Modifier.border(XauxaMetrics.Focus, XauxaColor.FocusRing, shape)
         else Modifier,
     )
 }

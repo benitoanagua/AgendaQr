@@ -11,7 +11,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.foundation.isSystemInDarkTheme
 
 // Fase 4: la red de seguridad de shapes consume el token plano de la
-// capa de tokens (XauxaShapeFlat); RoundedCornerShape no aparece aquí.
+// capa de tokens (XauxaShape); RoundedCornerShape no aparece aquí.
 
 @Composable
 fun XauxaTheme(
@@ -26,11 +26,11 @@ fun XauxaTheme(
             // gate permite RoundedCornerShape SOLO en este archivo si algún
             // día se necesita; hoy ni se usa.
             shapes = Shapes(
-                extraSmall = XauxaShapeFlat,
-                small = XauxaShapeFlat,
-                medium = XauxaShapeFlat,
-                large = XauxaShapeFlat,
-                extraLarge = XauxaShapeFlat,
+                extraSmall = XauxaShape,
+                small = XauxaShape,
+                medium = XauxaShape,
+                large = XauxaShape,
+                extraLarge = XauxaShape,
             ),
             colorScheme = if (darkTheme) {
                 darkColorScheme(

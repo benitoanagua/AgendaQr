@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.OutlinedTextField
@@ -151,11 +150,7 @@ fun XauxaLoadMoreFooter(
                 horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(XauxaSpacing.Lg),
-                    color = XauxaColor.BrandText,
-                    strokeWidth = XauxaMetrics.Border,
-                )
+                XauxaDotProgress(color = XauxaColor.BrandText)
                 Text(loadingLabel, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
             }
             onLoadMore != null -> XauxaSecondaryButton(label = loadMoreLabel, onClick = onLoadMore)
@@ -271,7 +266,7 @@ fun XauxaScannerViewport(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), XauxaShape)
+            // Sin borde de reposo: el bloque tonal ya define el límite.
             .background(XauxaColor.Surface2)
             .padding(XauxaSpacing.Xxxl),
         contentAlignment = Alignment.Center,
@@ -327,7 +322,7 @@ fun XauxaFileUpload(
         modifier = clickableModifier
             .fillMaxWidth()
             .xauxaFocusRing(interaction)
-            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), XauxaShape)
+            // Sin borde de reposo: el bloque tonal define el límite.
             .background(XauxaColor.Surface)
             .padding(XauxaSpacing.Lg),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -335,7 +330,7 @@ fun XauxaFileUpload(
     ) {
         when {
             isLoading -> {
-                CircularProgressIndicator(color = XauxaColor.Brand, strokeWidth = XauxaMetrics.Border)
+                XauxaDotProgress(color = XauxaColor.Brand)
                 Text(loadingLabel, fontSize = XauxaType.Label, color = XauxaColor.TextSecondary)
             }
             fileName != null -> {

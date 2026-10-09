@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -63,10 +64,16 @@ fun XauxaPageTitle(
     modifier: Modifier = Modifier,
     color: Color = XauxaColor.TextPrimary,
 ) {
+    // P1: el display se acota a 1.3× (el CUERPO escala completo, §11): el
+    // título no consume el viewport con fuente al 200 %.
+    val fontScale = androidx.compose.ui.platform.LocalDensity.current.fontScale
+    val scaleFactor = pageTitleScaleFactor(fontScale)
+    val effectiveSp = XauxaType.DisplayPage.value * scaleFactor
     androidx.compose.material3.Text(
         text = text,
         modifier = modifier.semantics { heading() },
-        fontSize = XauxaType.DisplayPage,
+        fontSize = androidx.compose.ui.unit.TextUnit(effectiveSp, androidx.compose.ui.unit.TextUnitType.Sp),
+        
         fontFamily = XauxaType.FamilyDisplay,
         fontWeight = XauxaType.WeightDisplayPage,
         color = color,
@@ -149,15 +156,18 @@ fun XauxaMetroTile(
         XauxaTileSize.MEDIUM -> XauxaMetrics.TileWideHeight
         XauxaTileSize.WIDE -> XauxaMetrics.TileWideHeight
     }
+    // P1: overlay OPUESTO al texto — negro si onAccent es blanco, blanco si
+    // es negro — para que el contraste presionado nunca baje de 4.5:1.
+    val pressOverlay = if (accent.onAccent == androidx.compose.ui.graphics.Color.White) {
+        androidx.compose.ui.graphics.Color.Black
+    } else {
+        androidx.compose.ui.graphics.Color.White
+    }
+    val fontScale = androidx.compose.ui.platform.LocalDensity.current.fontScale
     Box(
         modifier = modifier
-            // Ronda 2 (Área D): altura MÍNIMA, no fija — el tile crece con
-            // la fuente grande del usuario (§11 escalado) en vez de
-            // recortar su etiqueta.
-            .heightIn(min = height)
-            .fillMaxWidth()
-            .graphicsLayer { scaleX = scale; scaleY = scale }
-            .background(accent.background, XauxaShape)
+            // P1: el clickable va ANTES del graphicsLayer del tilt: el
+            // tilt NO encoje el área táctil (48dp intactos).
             .then(
                 if (onClick != null) {
                     Modifier
@@ -172,40 +182,43 @@ fun XauxaMetroTile(
                     Modifier
                 },
             )
-            .xauxaFocusRing(interaction),
+            // Ronda 2 (Área D): altura MÍNIMA, no fija — el tile crece con
+            // la fuente grande del usuario (§11 escalado) en vez de
+            // recortar su etiqueta.
+            .heightIn(min = height)
+            .fillMaxWidth()
+            .graphicsLayer { scaleX = scale; scaleY = scale }
+            .background(accent.background, XauxaShape)
+            .xauxaPressFeedback(interaction, overlayColor = pressOverlay)
+            .xauxaFocusRing(interaction, shape = XauxaShape),
     ) {
-        // M3: icono centrado (omitido en el tile ancho/que lleva contenido).
-        if (icon != null && size != XauxaTileSize.WIDE) {
-            XauxaIcon(
-                imageVector = icon,
-                // La etiqueta visible del tile es el nombre accesible; el
-                // glifo es decorativo (§11: excluido para no duplicar).
-                contentDescription = null,
-                modifier = Modifier.align(Alignment.Center),
-                size = XauxaMetrics.IconSizeTile,
-                tint = accent.onAccent,
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(XauxaSpacing.Sm),
+        ) {
+            // Zona flexible para icono/contenido.
+            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                if (icon != null && size != XauxaTileSize.WIDE) {
+                    XauxaIcon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        size = XauxaMetrics.IconSizeTile,
+                        tint = accent.onAccent,
+                    )
+                }
+                if (content != null && size == XauxaTileSize.WIDE) {
+                    content()
+                }
+            }
+            // Etiqueta debajo, siempre visible; maxLines según escala.
+            androidx.compose.material3.Text(
+                text = label,
+                fontSize = XauxaType.Label,
+                fontFamily = XauxaType.FamilyUi,
+                color = accent.onAccent,
+                maxLines = tileLabelMaxLines(fontScale),
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
             )
         }
-        if (content != null && size == XauxaTileSize.WIDE) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(XauxaSpacing.Md),
-            ) { content() }
-        }
-        androidx.compose.material3.Text(
-            text = label,
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(XauxaSpacing.Sm),
-            // Ronda 2 (Área D): dos líneas con elipsis; el nombre ACCESIBLE
-            // conserva el texto completo (la semántica no recorta).
-            fontSize = XauxaType.Label,
-            fontFamily = XauxaType.FamilyUi,
-            color = accent.onAccent,
-            maxLines = 2,
-            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-        )
     }
 }
 
@@ -237,30 +250,35 @@ fun XauxaTileGrid(
 ) {
     BoxWithConstraints(modifier.fillMaxWidth()) {
         val unitWithGap = XauxaMetrics.TileUnit + XauxaSpacing.TileGap
-        val maxUnits = ((maxWidth + XauxaSpacing.TileGap) / unitWithGap)
+        val fitUnits = ((maxWidth + XauxaSpacing.TileGap) / unitWithGap)
             .toInt().coerceIn(1, GridColumns)
+        val fontScale = androidx.compose.ui.platform.LocalDensity.current.fontScale
+        // P1: columnas por escala de fuente (menos columnas con fuente
+        // grande para que cada tile conserve ancho legible).
+        val maxUnits = tileColumnsFor(fitUnits, fontScale)
         val unit = (maxWidth - XauxaSpacing.TileGap * (maxUnits - 1)) / maxUnits
-        // Fase 3: el cálculo de filas se memoriza (antes recomponía en cada
-        // frame de la entrada) y la entrada es un Animatable REAL: la
-        // versión anterior animaba hacia el valor inicial (código muerto,
-        // los tiles nunca aparecieron escalonados).
         val rows = remember(items, maxUnits) { tileRows(items, maxUnits) }
         Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.TileGap)) {
             rows.forEach { rowItems ->
-                Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.TileGap)) {
+                // P1: IntrinsicSize.Min — un tile que crece con fuente
+                // grande alinea la fila completa (sin desalineación).
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.TileGap),
+                    modifier = Modifier.height(androidx.compose.foundation.layout.IntrinsicSize.Min),
+                ) {
                     rowItems.forEach { (index, item, span) ->
                         val tileWidth = unit * span + XauxaSpacing.TileGap * (span - 1)
-                        TileAppear(index, reducedMotion) {
+                        TileAppear(index, reducedMotion) { alpha ->
                             Box(
                                 modifier = Modifier
                                     .width(tileWidth)
-                                    .graphicsLayer { this.alpha = it },
+                                    .graphicsLayer { this.alpha = alpha() },
                             ) {
                                 XauxaMetroTile(
                                     label = item.label,
                                     accent = item.accent,
                                     onClick = item.onClick,
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier.fillMaxWidth().fillMaxHeight(),
                                     size = item.size,
                                     icon = item.icon,
                                     reducedMotion = reducedMotion,
@@ -275,19 +293,29 @@ fun XauxaTileGrid(
     }
 }
 
-/** Entrada escalonada de un tile: alpha 0 -> 1 con retardo por índice. */
+/**
+ * Entrada escalonada de un tile (P0): alpha 0 → 1 con retardo por índice.
+ *
+ * CORRECCIÓN: el [Animatable] se envuelve en [remember] — sin esto, cada
+ * recomposición crea una NUEVA instancia en 0f y el tile parpadea o queda
+ * invisible. El alpha se lee como PROVEEDOR (`() -> Float`) dentro de
+ * `graphicsLayer`, evitando recomposición por frame de animación. Con
+ * reduced motion arranca en FullScale (sin retardo ni parpadeo).
+ */
 @Composable
 private fun TileAppear(
     index: Int,
     reducedMotion: Boolean,
-    content: @Composable (Float) -> Unit,
+    content: @Composable (() -> Float) -> Unit,
 ) {
     val delayMs = tileStaggerDelayMs(index, reducedMotion)
-    val appear = androidx.compose.animation.core.Animatable(0f)
+    val appear = remember(delayMs) {
+        androidx.compose.animation.core.Animatable(
+            initialValue = if (delayMs == 0) FullScale else 0f,
+        )
+    }
     LaunchedEffect(delayMs) {
-        if (delayMs == 0) {
-            appear.snapTo(FullScale)
-        } else {
+        if (delayMs > 0) {
             appear.animateTo(
                 targetValue = FullScale,
                 animationSpec = tween(
@@ -298,7 +326,7 @@ private fun TileAppear(
             )
         }
     }
-    content(appear.value)
+    content { appear.value }
 }
 
 /** Filas de la rejilla como datos puros (testeable; span por item). */
@@ -385,6 +413,33 @@ fun XauxaPivot(
         content(selectedIndex)
     }
 }
+
+/**
+ * P1: líneas máximas de la etiqueta del tile según la escala de fuente.
+ * Escala normal (≤1.3): 2 líneas. Fuente grande (>1.3): 4 líneas para no
+ * truncar nombres largos con elipsis agresiva.
+ */
+internal fun tileLabelMaxLines(fontScale: Float): Int =
+    if (fontScale > 1.3f) 4 else 2
+
+/**
+ * P1: columnas de la rejilla según la escala de fuente del usuario. A
+ * mayor fuente, menos columnas para que cada tile tenga ancho legible.
+ * >1.15 → 3 columnas; ≥1.5 → 2 columnas.
+ */
+internal fun tileColumnsFor(fitUnits: Int, fontScale: Float): Int = when {
+    fontScale >= 1.5f -> fitUnits.coerceAtMost(2)
+    fontScale > 1.15f -> fitUnits.coerceAtMost(3)
+    else -> fitUnits
+}
+
+/**
+ * P1: factor de escala efectiva del título de página (display ligero).
+ * El CUERPO escala completo (§11); el display se acota a 1.3× para no
+ * consumir el viewport con fuente grande.
+ */
+internal fun pageTitleScaleFactor(fontScale: Float): Float =
+    if (fontScale > 1.3f) 1.3f / fontScale else 1f
 
 private const val FullScale = 1f
 private const val TiltScale = 0.96f
