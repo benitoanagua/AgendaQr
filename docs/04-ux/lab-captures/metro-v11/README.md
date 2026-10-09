@@ -6,6 +6,13 @@ debug instalada y el stack local de Supabase
 (`SUPABASE_URL=http://10.0.2.2:54321`). Complementan los tests de
 accesibilidad (Robolectric) y el laboratorio Wasm; no los sustituyen.
 
+> **Decisión (2026-10-09): las capturas NO están versionadas** (`.gitignore`
+> global de imágenes). Este README documenta qué se verificó y cómo
+> regenerarlas: instalar el APK debug en el emulador, navegar S01→S07 y
+> capturar con `adb exec-out screencap -p > <nombre>.png` en claro, oscuro
+> (`adb shell settings put secure ui_night_mode 2/1`) y fuente 130 %
+> (`adb shell settings put system font_scale 1.3`).
+
 ## Capturas
 
 | Archivo | Pantalla / estado |

@@ -21,3 +21,14 @@ release.keystore
 # Supabase CLI temporary files
 supabase/.temp/
 supabase/.branches/
+
+# Imágenes de evidencia/capturas: NO se trackean binarios de imagen.
+# Las capturas de verificación se generan localmente (emulador/lab) y se
+# describen en docs/04-ux/lab-captures/README.md; la evidencia ejecutable
+# vive en los tests (Robolectric/compose) y en el CI.
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.bmp

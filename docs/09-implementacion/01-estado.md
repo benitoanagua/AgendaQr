@@ -29,10 +29,10 @@ RESUELTOS (con verificación explícita):
 1. ~~Botón "Volver" partido en dos líneas en Registrar actividad~~ — vive en
    la flecha de la `XauxaAppBar` (una línea; test
    `t07_actions_live_in_the_bottom_app_bar` + captura
-   `docs/04-ux/lab-captures/metro-v11/s07-registrar.png`).
+   `docs/04-ux/lab-captures/metro-v11/s07-registrar.png` — capturas no versionadas desde el 2026-10-09, ver el README de esa carpeta).
 2. ~~Botón primario recortado al final de Registrar actividad~~ — Guardar es
    la acción principal de la app bar anclada a insets (mismo test; captura
-   con fuente al 130 % `s07-font130.png`).
+   con fuente al 130 % `s07-font130.png`, no versionada).
 3. ~~Revisar QR (S09) con el código pequeño y pegado a la izquierda~~ —
    preview centrada (T6).
 
@@ -75,7 +75,7 @@ decisión de producto, no son fallos de la spec):
   encabezados de sección; defectos 1–3 resueltos.
 - **T7+T8** (PR #125): test explícito de defectos, fix del fondo del live
   tile, evidencia visual en emulador (claro/oscuro/fuente 130 %,
-  `docs/04-ux/lab-captures/metro-v11/`), batería local completa PASS.
+  `docs/04-ux/lab-captures/metro-v11/` — carpeta no versionada, solo su README —), batería local completa PASS.
 
 Validación local de la pasada (todo ejecutado en este host):
 `verifyAgendaQrArchitecture` PASS · `verify-xauxa.sh` XAUXA_GATE=PASS ·
