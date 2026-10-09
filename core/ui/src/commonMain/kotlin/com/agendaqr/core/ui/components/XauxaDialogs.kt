@@ -203,12 +203,15 @@ fun XauxaToast(
             fontSize = XauxaType.Label,
             color = XauxaColor.TextPrimary,
         )
+        // Ronda 2 (Área A): la acción hereda el color del tono (par
+        // content/container garantizado por test); brandText sobre el
+        // contenedor de Danger no cumplía 4.5:1.
         if (actionLabel != null && onAction != null) {
-            XauxaTextAction(label = actionLabel, onClick = onAction)
+            XauxaTextAction(label = actionLabel, onClick = onAction, color = tone.content())
         }
         if (onDismiss != null) {
             XauxaIconButton(contentDescription = dismissDescription, onClick = onDismiss) {
-                Text("×", fontSize = XauxaType.Title, color = XauxaColor.TextSecondary)
+                Text("×", fontSize = XauxaType.Title, color = tone.content())
             }
         }
     }
