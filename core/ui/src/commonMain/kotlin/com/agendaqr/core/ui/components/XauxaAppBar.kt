@@ -226,7 +226,9 @@ private fun AppBarItem(action: XauxaAppBarAction) {
             action.label,
             style = XauxaTextStyles.AppBarItem,
             color = tint,
-            maxLines = 1,
+            // Ronda 2 (Área D): hasta dos líneas con fuente grande; la
+            // acción nunca se queda sin etiqueta visible (§11).
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
         )

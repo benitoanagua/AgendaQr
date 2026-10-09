@@ -1,4 +1,9 @@
-plugins { id("agendaqr.compose-library") }
+plugins {
+    id("agendaqr.compose-library")
+    // Ronda 2 (Área D, ADR-0007): capturas de referencia con Roborazzi
+    // sobre la suite Robolectric existente.
+    alias(libs.plugins.roborazzi)
+}
 
 android {
     namespace = "com.agendaqr.destinations.presentation"
@@ -43,6 +48,10 @@ kotlin {
             implementation("androidx.compose.ui:ui-test-junit4:${libs.versions.androidx.compose.get()}")
             implementation("androidx.compose.ui:ui-test-manifest:${libs.versions.androidx.compose.get()}")
             implementation("org.robolectric:robolectric:${libs.versions.robolectric.get()}")
+            // Ronda 2 (Área D, ADR-0007): capturas de referencia.
+            implementation(libs.roborazzi)
+            implementation(libs.roborazzi.compose)
+            implementation(libs.roborazzi.junit.rule)
         }
     }
 }
