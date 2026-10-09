@@ -177,6 +177,10 @@ internal object AppStrings {
     val IngresaUnCorreoValido = "Ingresa un correo válido"
     // Fase 4: literales que esquivaban la regla D2 dentro de expresiones.
     val FormatoFecha = "Usa el formato dd/mm/aaaa"
+    // Ronda 2 (Área B): permiso de cámara y lectura de QR.
+    val AbrirAjustes = "Abrir ajustes"
+    val PermisoCamaraContexto = "Usamos la cámara solo para escanear códigos QR."
+    val CodigoQrDetectado = "Código QR detectado"
     val Minimo6Caracteres = "Mínimo 6 caracteres"
     val IniciandoSesion = "Iniciando sesión…"
     val AsociarAhora = "Asociar ahora"

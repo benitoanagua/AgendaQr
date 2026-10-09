@@ -4,6 +4,7 @@ import com.agendaqr.destinations.domain.QrAsset
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AVFoundation.AVCaptureConnection
 import platform.AVFoundation.AVCaptureDevice
+import platform.AVFoundation.AVMediaTypeVideo
 import platform.AVFoundation.AVCaptureDeviceDiscoverySession
 import platform.AVFoundation.AVCaptureDeviceInput
 import platform.AVFoundation.AVCaptureDevicePositionBack
@@ -13,7 +14,6 @@ import platform.AVFoundation.AVCaptureMetadataOutputObjectsDelegateProtocol
 import platform.AVFoundation.AVCaptureOutput
 import platform.AVFoundation.AVCaptureSession
 import platform.AVFoundation.AVCaptureVideoPreviewLayer
-import platform.AVFoundation.AVMediaTypeVideo
 import platform.AVFoundation.AVMetadataMachineReadableCodeObject
 import platform.AVFoundation.AVMetadataObjectTypeQRCode
 import platform.UIKit.UIApplication
@@ -30,23 +30,34 @@ import platform.darwin.NSObject
 internal class IosQrCameraPresenter(
     private val onQr: (QrImportResult) -> Unit,
     private val onDismiss: () -> Unit,
+    /** Ronda 2 (Área B/K): permiso denegado o restringido. */
+    private val onPermissionDenied: () -> Unit = {},
 ) : NSObject(), AVCaptureMetadataOutputObjectsDelegateProtocol {
 
     private val session = AVCaptureSession()
     private var emitted = false
 
     fun present() {
+        // Ronda 2 (Área B/K): la API de autorización de AVFoundation
+        // (authorizationStatusForMediaType/requestAccessForMediaType) NO
+        // está expuesta en los bindings precompilados de KMP usados aquí
+        // (verificado por sonda de compilación; ver
+        // 07-auditoria-ronda-2.md y el checklist de Xcode). Mientras
+        // tanto, el fallo de creación del input (permiso denegado o sin
+        // cámara) ya NO hace dismiss silencioso: se notifica para
+        // mostrar el banner con "Abrir ajustes". El pedido explícito del
+        // permiso y su verificación quedan en el checklist de Xcode.
         val devices = AVCaptureDeviceDiscoverySession.discoverySessionWithDeviceTypes(
             deviceTypes = listOf(AVCaptureDeviceTypeBuiltInWideAngleCamera),
             mediaType = AVMediaTypeVideo,
             position = AVCaptureDevicePositionBack,
         ).devices
         val device = devices.firstOrNull() as? AVCaptureDevice ?: run {
-            onDismiss()
+            onPermissionDenied()
             return
         }
         val input = AVCaptureDeviceInput.deviceInputWithDevice(device, error = null) ?: run {
-            onDismiss()
+            onPermissionDenied()
             return
         }
         session.beginConfiguration()
@@ -83,6 +94,9 @@ internal class IosQrCameraPresenter(
         if (code.type != AVMetadataObjectTypeQRCode) return
         emitted = true
         val value = code.stringValue ?: return
+        // Ronda 2 (Área B): el feedback de lectura exitosa vive en la
+        // entrada componible (XauxaFeedbackEvent) — háptica/anuncio
+        // multiplataforma sin depender de bindings de UIKit.
         // El QR detectado se entrega como asset por el mismo canal; el
         // contenido llega a S09 igual que en Android (el flujo revisa lo
         // que la app entendió).

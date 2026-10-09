@@ -1,10 +1,15 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -155,5 +160,52 @@ class AuditStatesFormsTest {
         }
         compose.waitForIdle()
         compose.onNodeWithText("Mercado Central").assertIsSelected()
+    }
+
+    // --- Ronda 2 (Área B): feedback de evento (háptica + anuncio) ---
+
+    @Test
+    fun feedback_event_announces_only_when_the_event_fires() {
+        // Un setContent por test: el token es estado del test y se
+        // conmuta dentro de la MISMA composición (como en producción).
+        var event: Any? by mutableStateOf(null)
+        compose.setContent {
+            XauxaTheme {
+                com.agendaqr.core.ui.components.XauxaFeedbackEvent(
+                    event = event,
+                    message = "Código QR detectado",
+                )
+            }
+        }
+        compose.waitForIdle()
+        // Sin evento: no hay nada que anunciar (cero anuncios al entrar).
+        compose.onNodeWithContentDescription("Código QR detectado").assertDoesNotExist()
+        event = Any()
+        compose.waitForIdle()
+        // Con evento: nodo de anuncio con liveRegion cortés y el copy
+        // del llamador (§11). Disparo por EVENTO: recomponer con el mismo
+        // token no vuelve a anunciar (el contenido no cambia).
+        compose.onNodeWithContentDescription("Código QR detectado")
+            .assert(
+                SemanticsMatcher.expectValue(
+                    SemanticsProperties.LiveRegion,
+                    LiveRegionMode.Polite,
+                ),
+            )
+    }
+
+    @Test
+    fun camera_entry_shows_permission_context_before_asking() {
+        compose.setContent {
+            XauxaTheme {
+                // El entry real (androidMain, internal): el launcher se
+                // crea pero no se dispara — el contexto es visible ANTES
+                // del diálogo del sistema (B2).
+                CameraQrEntry(onOpen = { })
+            }
+        }
+        compose.waitForIdle()
+        compose.onNodeWithText("Usamos la cámara solo para escanear códigos QR.").assertExists()
+        compose.onNodeWithText("Cámara").assertHeightIsAtLeast(48.dp)
     }
 }
