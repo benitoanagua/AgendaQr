@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.backhandler.BackHandler
 import com.agendaqr.core.ui.components.XauxaStatusBanner
+import com.agendaqr.core.ui.components.XauxaFeedbackEvent
 import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.components.xauxaReducedMotionEnter
@@ -87,6 +88,18 @@ internal fun AuthenticatedAppRoot(
             hasFailed = items.any { it.state == SyncMutationState.FAILED }
         }
     }
+    // Ronda 2 (Área F): anuncio de sincronización COMPLETADA por evento:
+    // la cola pasa de >0 a 0 (no se repite en recomposiciones; el token
+    // solo cambia en la transición).
+    var syncDoneEvent by remember { mutableStateOf<Any?>(null) }
+    var previousPendingCount by remember { mutableStateOf(0) }
+    LaunchedEffect(pendingCount) {
+        if (previousPendingCount > 0 && pendingCount == 0) {
+            syncDoneEvent = Any()
+        }
+        previousPendingCount = pendingCount
+    }
+    XauxaFeedbackEvent(event = syncDoneEvent, message = AppStrings.SincronizacionCompletada)
     // T6: estado de sincronización por elemento (consulta indexada).
     val syncLookup = remember(syncQueueItems) { ElementSyncLookup(syncQueueItems) }
     val retrySync = remember(graph) {

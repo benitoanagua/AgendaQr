@@ -50,6 +50,9 @@ internal fun OperationDetailScreen(
         return
     }
     var showDeleteConfirm by remember { mutableStateOf(false) }
+    // Ronda 2 (Área F): anuncio de eliminación confirmada (por evento).
+    var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
+    XauxaFeedbackEvent(event = deleteDoneEvent, message = AppStrings.Eliminado)
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.ScreenMargin).imePadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             XauxaHeading(text = AppStrings.Detalle, size = XauxaType.Display, fontWeight = FontWeight.Bold)
@@ -110,6 +113,7 @@ internal fun OperationDetailScreen(
             confirmLabel = AppStrings.Eliminar,
             onConfirm = {
                 showDeleteConfirm = false
+                deleteDoneEvent = Any()
                 viewModel.onAction(OperationAction.Delete(operation.id))
             },
             dismissLabel = AppStrings.Cancelar,

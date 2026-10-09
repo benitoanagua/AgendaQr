@@ -25,6 +25,7 @@ import com.agendaqr.core.ui.components.XauxaAppBar
 import com.agendaqr.core.ui.components.XauxaAppBarAction
 import com.agendaqr.core.ui.components.XauxaIcons
 import com.agendaqr.core.ui.components.XauxaHeading
+import com.agendaqr.core.ui.components.XauxaFeedbackEvent
 import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaDialog
 import com.agendaqr.core.ui.components.XauxaEmptyState
@@ -50,6 +51,9 @@ fun DestinationDetailScreen(
     onRetrySync: () -> Unit = {},
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
+    // Ronda 2 (Área F): anuncio de eliminación confirmada (por evento).
+    var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
+    XauxaFeedbackEvent(event = deleteDoneEvent, message = AppStrings.Eliminado)
     Column(modifier = Modifier.fillMaxSize().statusBarsPadding().imePadding()) {
         Column(
             modifier = Modifier.weight(1f).padding(XauxaSpacing.ScreenMargin).verticalScroll(rememberScrollState()),
@@ -117,6 +121,7 @@ fun DestinationDetailScreen(
             destructive = true,
             onConfirm = {
                 showDeleteConfirm = false
+                deleteDoneEvent = Any()
                 onDelete()
             },
             dismissLabel = AppStrings.Cancelar,

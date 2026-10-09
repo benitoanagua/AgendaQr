@@ -181,6 +181,10 @@ internal object AppStrings {
     val AbrirAjustes = "Abrir ajustes"
     val PermisoCamaraContexto = "Usamos la cámara solo para escanear códigos QR."
     val CodigoQrDetectado = "Código QR detectado"
+    // Ronda 2 (Área F): anuncios accesibles de estado (por evento).
+    val SincronizacionCompletada = "Sincronización completada"
+    val Eliminado = "Eliminado"
+    val GuardadoOk = "Guardado"
     val Minimo6Caracteres = "Mínimo 6 caracteres"
     val IniciandoSesion = "Iniciando sesión…"
     val AsociarAhora = "Asociar ahora"

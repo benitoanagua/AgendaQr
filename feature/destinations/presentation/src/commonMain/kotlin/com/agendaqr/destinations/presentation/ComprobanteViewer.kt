@@ -33,6 +33,9 @@ internal fun ComprobanteViewerDialog(
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
+    // Ronda 2 (Área F): anuncio de eliminación confirmada (por evento).
+    var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
+    XauxaFeedbackEvent(event = deleteDoneEvent, message = AppStrings.Eliminado)
     if (showDeleteConfirm) {
         XauxaDialog(
             title = AppStrings.EliminarComprobante,
@@ -41,6 +44,7 @@ internal fun ComprobanteViewerDialog(
             confirmLabel = AppStrings.Eliminar,
             onConfirm = {
                 showDeleteConfirm = false
+                deleteDoneEvent = Any()
                 viewModel.onAction(OperationAction.DeleteComprobante(receipt.id))
             },
             dismissLabel = AppStrings.Cancelar,
