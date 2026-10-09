@@ -83,7 +83,7 @@ internal object AppStrings {
     val EliminarComprobante = "Eliminar comprobante"
     val EliminarDestino = "Eliminar QR"
     val EliminarOperacion = "Eliminar actividad"
-    val EncuadreElCodigoQr = "Encuadre el código QR"
+    val EncuadreElCodigoQr = "Encuadra el código QR" // ADR-0008: tuteo (antes "Encuadre")
     val irreversibleActionWarning = "Esta acción no se puede deshacer."
     val sensitiveChangeWarning = "Esta actividad tiene comprobantes. El comprobante no será modificado."
     val analyzingReceipt = "Estamos analizando el comprobante."

@@ -107,6 +107,30 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
                 add("$location: raw indication override in feature/ (feedback lives in the DS): $line")
             }
         }
+        // Ronda 2 (Área H/ADR-0008): core/ui no hardcodea COPY: en
+        // components/ todo texto de UI llega como parámetro del llamador.
+        // Excepciones: mensajes require/error (desarrollador), labels de
+        // animación "xauxa_*" y glifos de un carácter (×, ⋮, ⧉).
+        if (path.contains("/core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/")) {
+            val trimmed = line.trim()
+            val isDevMessage = line.contains("require(") || line.contains("error(") || line.contains("check(")
+            // Comentarios (KDoc/linea) y CONTINUACIONES de strings previos
+            // (mensajes require multilínea) no son copy de UI.
+            val isComment = trimmed.startsWith("*") || trimmed.startsWith("//") || trimmed.startsWith("/*")
+            val isContinuation = trimmed.startsWith("\"")
+            if (!isDevMessage && !isComment && !isContinuation) {
+                Regex("\"([^\"]{3,})\"").findAll(line).forEach { match ->
+                    val text = match.groupValues[1]
+                    val isAnimationLabel = text.startsWith("xauxa_")
+                    val looksLikeCode = !text.contains(" ") && !text.contains("…") && !text.contains("·") &&
+                        text.firstOrNull()?.isLetter() == true && text.first().isLowerCase()
+                    val isTemplate = text.contains("$") || text.endsWith(" *")
+                    if (text.any { it.isLetter() } && !isAnimationLabel && !looksLikeCode && !isTemplate) {
+                        add("$location: UI string literal in core/ui components (pass it as a parameter, ADR-0008): $text")
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -236,6 +260,29 @@ tasks.register("verifyDesignSystemFixtures") {
         }
         require(falseExpressionFlags.isEmpty()) {
             "Valid expression usage failed enforcement (D2): ${falseExpressionFlags.joinToString()}"
+        }
+
+        // Ronda 2 (Área H) — copy en core/ui/components DEBE fallar...
+        val componentsPath = "/repo/core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/Fixture.kt"
+        val copyInComponents = listOf(
+            "Text(\"Cargando archivo…\", color = XauxaColor.TextSecondary)",
+            "XauxaTextAction(label = \"Quitar\", onClick = {})",
+        )
+        val missedCopy = copyInComponents.filter { kotlinDesignViolations(componentsPath, listOf(it)).isEmpty() }
+        require(missedCopy.isEmpty()) {
+            "components/ copy literals that must fail passed (ADR-0008): ${missedCopy.joinToString()}"
+        }
+        // ...y lo que NO es copy debe pasar: parámetros, mensajes de
+        // desarrollador, labels de animación y glifos de un carácter.
+        val allowedInComponents = listOf(
+            "Text(loadingLabel, color = XauxaColor.TextSecondary)",
+            "require(visibleActions.size <= 3) { \"máximo 3 acciones visibles\" }",
+            "animateFloatAsState(targetValue = 1f, label = \"xauxa_tile_tilt\")",
+            "Text(\"×\", fontSize = XauxaType.Title)",
+        )
+        val falseCopyFlags = allowedInComponents.filter { kotlinDesignViolations(componentsPath, listOf(it)).isNotEmpty() }
+        require(falseCopyFlags.isEmpty()) {
+            "Valid components usage failed enforcement (ADR-0008): ${falseCopyFlags.joinToString()}"
         }
 
         // Fase 4 — .clickable( e indication = null en feature/ deben

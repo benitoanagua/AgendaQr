@@ -749,6 +749,7 @@ private fun SearchBarPreview(onEvent: (String) -> Unit) {
             onValueChange = { value = it },
             label = "Buscar",
             placeholder = "Buscar",
+            clearLabel = "Limpiar",
             onClear = {
                 value = ""
                 onEvent("XauxaSearchBar.onClear")
@@ -940,7 +941,7 @@ private fun ScannerViewportPreview() {
     var scanning by rememberSaveable { mutableStateOf(false) }
     Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
         LabControlRow("Escaneando") { LabToggle("scanning", scanning) { scanning = it } }
-        XauxaScannerViewport(scanning = scanning)
+        XauxaScannerViewport(scanning = scanning, hint = "Encuadra el código QR", scanningLabel = "Escaneando…")
         Text(
             "Encuadre preview real; el escaneo real requiere cámara por plataforma.",
             fontSize = XauxaType.Caption,
@@ -956,6 +957,10 @@ private fun FileUploadPreview(onEvent: (String) -> Unit) {
     XauxaFileUpload(
         fileName = file,
         isLoading = loading,
+        loadingLabel = "Cargando archivo…",
+        clearLabel = "Quitar",
+        placeholderTitle = "Toca para seleccionar un archivo",
+        placeholderMeta = "PNG, JPG o PDF · máx. 10 MB",
         onSelect = {
             loading = true
             file = "comprobante-042.png"

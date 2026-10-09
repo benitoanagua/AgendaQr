@@ -171,8 +171,12 @@ private fun LabPatternScenario(pattern: LabPattern, onEvent: (String) -> Unit) {
             footer = "3 pendientes · 2 al día",
         )
         "incorporacion" -> Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
-            XauxaScannerViewport()
+            XauxaScannerViewport(hint = "Encuadra el código QR", scanningLabel = "Escaneando…")
             XauxaFileUpload(
+                loadingLabel = "Cargando archivo…",
+                clearLabel = "Quitar",
+                placeholderTitle = "Toca para seleccionar un archivo",
+                placeholderMeta = "PNG, JPG o PDF · máx. 10 MB",
                 onSelect = { onEvent("Patrón incorporacion: XauxaFileUpload.onSelect (simulado)") },
                 onClear = { onEvent("Patrón incorporacion: XauxaFileUpload.onClear") },
             )

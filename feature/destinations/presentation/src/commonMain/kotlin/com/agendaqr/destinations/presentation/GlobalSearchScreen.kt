@@ -49,6 +49,7 @@ fun GlobalSearchScreen(
             label = AppStrings.BuscarEnAgendaQr,
             placeholder = AppStrings.Buscar,
             onClear = { onAction(GlobalSearchAction.Clear) },
+            clearLabel = AppStrings.Limpiar,
         )
         state.error?.let { err ->
             XauxaStatusBanner(

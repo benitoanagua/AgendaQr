@@ -117,7 +117,7 @@ internal fun OperationListScreen(
                 XauxaPrimaryButton(label = AppStrings.Nuevo, onClick = { viewModel.onAction(OperationAction.New) })
             }
         }
-        XauxaSearchBar(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = AppStrings.Buscar, placeholder = AppStrings.BuscarOperaciones, onClear = { viewModel.onAction(OperationAction.Search("")) })
+        XauxaSearchBar(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = AppStrings.Buscar, placeholder = AppStrings.BuscarOperaciones, onClear = { viewModel.onAction(OperationAction.Search("")) }, clearLabel = AppStrings.Limpiar)
         if (state.unassociated.isNotEmpty()) {
             XauxaStatusBanner(unassociatedReceiptsLabel(state.unassociated.size))
             XauxaSecondaryButton(label = AppStrings.VerBandejaDeRespaldos, onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
