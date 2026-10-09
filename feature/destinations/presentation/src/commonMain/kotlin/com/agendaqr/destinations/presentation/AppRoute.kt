@@ -50,6 +50,44 @@ sealed interface AppRoute {
 }
 
 /**
+ * Ronda 2 (Área C): serialización del stack por NOMBRE de ruta. AppRoute
+ * son `data object` sin parámetros → el nombre ES el estado completo.
+ * Conservador ante lo desconocido: rutas que no existen (versiones
+ * futuras hacia atrás) se descartan; si la raíz no es Home, el stack se
+ * reconstruye desde Home (la raíz es un invariante del constructor).
+ */
+fun appRouteForName(name: String): AppRoute? = when (name) {
+    "Home" -> AppRoute.Home
+    "Search" -> AppRoute.Search
+    "Contexts" -> AppRoute.Contexts
+    "Operations" -> AppRoute.Operations
+    "ImportBatch" -> AppRoute.ImportBatch
+    else -> null
+}
+
+fun appRouteNameOf(route: AppRoute): String = when (route) {
+    AppRoute.Home -> "Home"
+    AppRoute.Search -> "Search"
+    AppRoute.Contexts -> "Contexts"
+    AppRoute.Operations -> "Operations"
+    AppRoute.ImportBatch -> "ImportBatch"
+}
+
+fun saveBackStack(stack: AppBackStack): List<String> = stack.stack.value.map(::appRouteNameOf)
+
+fun restoreBackStack(names: List<String>): AppBackStack {
+    val restored = names.mapNotNull(::appRouteForName)
+    val initial = if (restored.firstOrNull() == AppRoute.Home) restored else listOf(AppRoute.Home)
+    return if (initial == restored) AppBackStack(initial) else AppBackStack()
+}
+
+val AppBackStackSaver: androidx.compose.runtime.saveable.Saver<AppBackStack, List<String>> =
+    androidx.compose.runtime.saveable.Saver(
+        save = { stack -> saveBackStack(stack) },
+        restore = { names -> restoreBackStack(names) },
+    )
+
+/**
  * Back stack de superficies. Puro y testeable: sin Compose, sin VMs.
  *
  * - `push` no duplica la superficie ya visible (los eventos repetidos de

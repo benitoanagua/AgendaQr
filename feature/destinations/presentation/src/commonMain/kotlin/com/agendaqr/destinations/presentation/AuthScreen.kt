@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
@@ -47,7 +48,8 @@ fun AuthScreen(
     onSignUp: () -> Unit,
     onClearError: () -> Unit = {},
 ) {
-    var submitted by remember { mutableStateOf(false) }
+    // Ronda 2 (Área C): sobrevive a recreación.
+    var submitted by rememberSaveable { mutableStateOf(false) }
     val emailError = submitted && !isValidEmail(state.email)
     val passwordError = submitted && state.password.length < 6
     // Fase 2 (auditoría a11y): el botón NO se deshabilita por validación —
