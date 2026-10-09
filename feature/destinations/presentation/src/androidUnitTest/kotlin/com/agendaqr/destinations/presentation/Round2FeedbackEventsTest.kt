@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -51,5 +52,30 @@ class Round2FeedbackEventsTest {
         compose.waitForIdle()
         compose.onNodeWithContentDescription("Guardado")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Polite))
+    }
+    // --- Ronda 2 (Área I): slot trailing del campo (mostrar/ocultar contraseña) ---
+
+    @Test
+    fun text_input_trailing_slot_renders_inside_the_field() {
+        compose.setContent {
+            XauxaTheme {
+                com.agendaqr.core.ui.components.XauxaTextInput(
+                    label = "Contraseña",
+                    value = "secreto",
+                    onValueChange = {},
+                    trailing = {
+                        com.agendaqr.core.ui.components.XauxaText(
+                            "Mostrar",
+                            size = com.agendaqr.core.ui.theme.XauxaType.Caption,
+                        )
+                    },
+                )
+            }
+        }
+        compose.waitForIdle()
+        // El slot vive DENTRO del campo: coexiste con la etiqueta asociada
+        // (el campo conserva su nombre accesible).
+        compose.onNodeWithContentDescription("Contraseña").assertExists()
+        compose.onNodeWithText("Mostrar").assertExists()
     }
 }

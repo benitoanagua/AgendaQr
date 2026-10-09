@@ -80,6 +80,13 @@ fun XauxaTextInput(
     keyboardOptions: androidx.compose.foundation.text.KeyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default,
     keyboardActions: androidx.compose.foundation.text.KeyboardActions = androidx.compose.foundation.text.KeyboardActions.Default,
     visualTransformation: androidx.compose.ui.text.input.VisualTransformation = androidx.compose.ui.text.input.VisualTransformation.None,
+    /**
+     * Ronda 2 (Área I): slot trailing DENTRO del campo (p. ej. el futuro
+     * mostrar/ocultar contraseña). El DS ofrece el hueco; el glifo y su
+     * copy son decisión de producto pendiente (ADR-0005, Puntos abiertos)
+     * — el slot existe con su test, sin inventar el icono.
+     */
+    trailing: (@Composable () -> Unit)? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
@@ -116,11 +123,12 @@ fun XauxaTextInput(
                     },
                 ),
         ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
                 value = value,
                 onValueChange = onValueChange,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .weight(1f)
                     .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
                     // Fase 2: asociación etiqueta-campo (la etiqueta fija
                     // es visual; el campo la expone como nombre accesible).
@@ -156,6 +164,10 @@ fun XauxaTextInput(
                     disabledTextColor = XauxaColor.TextTertiary,
                 ),
             )
+            if (trailing != null) {
+                Box(modifier = Modifier.padding(end = XauxaSpacing.Sm)) { trailing() }
+            }
+            }
         }
         // §11/M8: el error informa con icono + texto, nunca solo por color.
         // Fase 2: liveRegion cortés — el error se anuncia cuando aparece.

@@ -31,7 +31,8 @@ fun XauxaScreenColumn(
         .navigationBarsPadding()
         .safeDrawingPadding()
         .imePadding()
-        .padding(XauxaSpacing.Xxl)
+        // Ronda 2 (Área I): margen de pantalla unificado (antes Xxl).
+        .padding(XauxaSpacing.ScreenMargin)
     if (scrollable) {
         Column(
             modifier = base.verticalScroll(rememberScrollState()),

@@ -630,3 +630,20 @@ fase vive en `docs/09-implementacion/changelog.md`.
 - NUEVO `XauxaSearchTrigger` (disparador de búsqueda de nodo único; S01).
 - NUEVO `Modifier.xauxaPressFeedback` (overlay `XauxaOpacity.Pressed`).
 - NUEVO `XauxaTextStyles` (ButtonLabel/Body/Caption/Support/AppBarItem/SectionHeader con lineHeight).
+
+## Ronda 2 (2026-10-09) — Área I: decisiones sobre componentes sin uso y tokens solo-laboratorio
+
+| Elemento | Consumidores de producción | Decisión registrada |
+|---|---|---|
+| `XauxaErrorPage` | ninguno | **Retirar en la próxima versión mayor**: la spec §10 fija errores recuperables contextuales y PROHÍBE un ErrorScreen global como destino; el patrón que lo consumiría no existe en el producto. |
+| `XauxaToast` | ninguno (solo lab/patrones) | **Sin uso: adoptar o retirar**. El feedback transitorio real (sync, guardado) ya vive en banners `liveRegion` + `XauxaFeedbackEvent`; no se duplica sin caso de producto. |
+| `XauxaInlineResult` | ninguno | **Sin uso: adoptar o retirar** (misma razón que Toast). |
+| `XauxaSettingRow` | ninguno | **Retirar en la próxima versión mayor**: no existe pantalla de ajustes en V1/V1.1 y ninguna spec la pide. |
+| `XauxaIconButton` | solo interno (`XauxaToast`/`XauxaCommandBar`, ambos sin uso de producto) | **Depende de Toast/CommandBar**: decisión conjunta en la misma revisión. |
+| `XauxaFavoriteToggle` | ninguno (la fila usa una acción de TEXTO etiquetada) | **Mantener la acción de texto en filas** (etiqueta visible > icono solo, §11); el toggle queda para una futura pantalla de favoritos o se retira. |
+| `XauxaDangerButton` | `XauxaDialog(destructive)` | **En uso** (vía diálogo destructivo) — no está en la lista de retiro. |
+| Tokens `BreakpointCompact/Medium`, `ContentMaxWidth` | solo el laboratorio wasm | **Conservar por ahora**: el lab compila contra ellos (retirarlos rompería el catálogo); marcados "lab-only: retirar junto con el laboratorio o migrarlo a constantes propias". El producto (teléfonos) no los consume. |
+
+`XauxaScreenColumn` unifica su margen a `ScreenMargin` (antes `Xxl`).
+`XauxaTextInput` gana slot `trailing` (preparado para mostrar/ocultar
+contraseña; el glifo sigue siendo decisión pendiente — ADR-0005).
