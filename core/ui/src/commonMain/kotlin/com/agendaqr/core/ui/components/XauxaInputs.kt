@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
@@ -37,6 +36,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.liveRegion
@@ -49,6 +49,7 @@ import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.theme.XauxaShape
 
 
 /**
@@ -113,11 +114,11 @@ fun XauxaTextInput(
                     // Fase 2: deshabilitado distinguible — Surface3 (más
                     // oscuro que el Surface2 de reposo), texto TextTertiary.
                     if (!enabled) XauxaColor.Surface3 else XauxaColor.Surface2,
-                    RectangleShape,
+                    XauxaShape,
                 )
                 .then(
                     if (borderColor != null) {
-                        Modifier.border(XauxaMetrics.Focus, borderColor, RectangleShape)
+                        Modifier.border(XauxaMetrics.Focus, borderColor, XauxaShape)
                     } else {
                         Modifier
                     },
@@ -132,7 +133,13 @@ fun XauxaTextInput(
                     .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
                     // Fase 2: asociación etiqueta-campo (la etiqueta fija
                     // es visual; el campo la expone como nombre accesible).
-                    .semantics { contentDescription = visibleLabel },
+                    .semantics {
+                        contentDescription = visibleLabel
+                        // El error se asocia al nodo editable, no solo a un
+                        // texto hermano; lectores de pantalla pueden anunciarlo
+                        // al enfocar el campo.
+                        if (isError && errorMessage != null) error(errorMessage)
+                    },
                 enabled = enabled,
                 readOnly = readOnly,
                 isError = isError,
@@ -142,7 +149,7 @@ fun XauxaTextInput(
                 keyboardActions = keyboardActions,
                 visualTransformation = visualTransformation,
                 interactionSource = interactionSource,
-                shape = RectangleShape,
+                shape = XauxaShape,
                 textStyle = androidx.compose.ui.text.TextStyle(fontSize = XauxaType.Body),
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = XauxaColor.Surface2,
@@ -235,10 +242,10 @@ fun XauxaSearchBar(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(XauxaColor.Surface2, RectangleShape)
+                .background(XauxaColor.Surface2, XauxaShape)
                 .then(
                     if (focused) {
-                        Modifier.border(XauxaMetrics.Focus, XauxaColor.Brand, RectangleShape)
+                        Modifier.border(XauxaMetrics.Focus, XauxaColor.Brand, XauxaShape)
                     } else {
                         Modifier
                     },
@@ -251,7 +258,7 @@ fun XauxaSearchBar(
                 placeholder = { Text(placeholder, fontSize = XauxaType.Body, color = XauxaColor.TextTertiary) },
                 singleLine = true,
                 interactionSource = interactionSource,
-                shape = RectangleShape,
+                shape = XauxaShape,
                 textStyle = androidx.compose.ui.text.TextStyle(fontSize = XauxaType.Body),
                 leadingIcon = { XauxaIcon(imageVector = XauxaIcons.Search, contentDescription = null) },
                 trailingIcon = if (onClear != null && value.isNotEmpty()) {
@@ -371,7 +378,7 @@ fun XauxaSettingRow(
         if (checked != null) {
             Box(
                 modifier = Modifier.size(width = XauxaMetrics.ControlMinSize, height = XauxaSpacing.Xxxl)
-                    .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape)
+                    .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), XauxaShape)
                     .background(if (checked) XauxaColor.Brand else XauxaColor.Surface2)
                     .padding(XauxaSpacing.Xs),
                 contentAlignment = if (checked) Alignment.CenterEnd else Alignment.CenterStart,

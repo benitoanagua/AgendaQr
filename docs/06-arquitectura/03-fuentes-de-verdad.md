@@ -6,7 +6,7 @@ Es la única fuente para producto, requisitos, dominio, alcance, decisiones y re
 
 ## 2. Xauxa — autoridad visual
 
-Xauxa define la UI/UX visual completa: tokens, fundamentos, componentes, patterns, estados, accesibilidad, movimiento, tipografía y composición.
+Xauxa define la UI/UX visual completa: tokens, fundamentos, componentes, patterns, estados, accesibilidad, movimiento, tipografía y composición. Su contrato normativo es `docs/05-design-system/00-xauxa-contrato-normativo.md`; ADR-0010 establece su precedencia sobre guías de implementación y código heredado.
 
 No se mantienen excepciones visuales heredadas ni una paleta propia de Agenda QR.
 
@@ -37,7 +37,7 @@ Se utiliza solo como referencia para Kotlin Multiplatform, Compose, modularizaci
 
 1. Negocio: Agenda QR gana.
 2. UX funcional: Agenda QR gana.
-3. Visual, componentes, tokens, motion y accesibilidad: Xauxa gana.
+3. Visual, componentes, tokens, motion y accesibilidad: el contrato normativo Xauxa y los ADR aprobados ganan; las guías de implementación explican el cómo, no redefinen el qué.
 4. Arquitectura técnica: WaraWerse es solo referencia.
 5. Una implementación no puede introducir una variante visual local de Xauxa.
 

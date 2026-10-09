@@ -647,3 +647,31 @@ fase vive en `docs/09-implementacion/changelog.md`.
 `XauxaScreenColumn` unifica su margen a `ScreenMargin` (antes `Xxl`).
 `XauxaTextInput` gana slot `trailing` (preparado para mostrar/ocultar
 contraseña; el glifo sigue siendo decisión pendiente — ADR-0005).
+
+## Ronda de consolidación normativa — 2026-10-09
+
+### Fundamento de geometría
+
+Se introduce `XauxaRadius.Base` como único token configurable (valor inicial `0.dp`) y `XauxaShape` como forma canónica consumida por componentes compartidos. Los 39 usos de `RectangleShape` detectados en componentes de producción compartidos se migraron a `XauxaShape`; `XauxaShapeFlat` queda como alias temporal obsoleto para no romper la adaptación del `MaterialTheme`. El laboratorio conserva algunos usos directos de `RectangleShape` para representar y explicar primitivas, pero deben migrarse o quedar declarados como excepción de infraestructura en una pasada específica.
+
+### Verificación ejecutada
+
+- `bash docs/05-design-system/verify-xauxa.sh`: `XAUXA_GATE=PASS`.
+- `bash gradlew :core:ui:allTests --no-daemon`: no ejecutable en este entorno porque el wrapper no tiene Gradle 8.13 en caché y no hay conectividad DNS hacia `services.gradle.org`. No se interpreta como fallo de compilación ni como prueba aprobada.
+- Barrido estático de features `commonMain`: no se encontraron literales de color, radios, sombras ni dimensiones tipográficas/físicas en el patrón buscado. Las dimensiones explícitas detectadas se concentran en pruebas o implementaciones de plataforma, y deben revisarse según su función en la próxima pasada.
+
+### Próximo lote de auditoría
+
+1. Unificar los roles semánticos de color Material que aún contienen valores M3 (especialmente `secondary`, `tertiary`, `inverse`) con la paleta Xauxa aprobada y actualizar pruebas de pares reales.
+2. Auditar los usos de Material visual en el laboratorio y las features; cada uso debe estar encapsulado por `core:ui` o registrado como excepción de infraestructura.
+3. Añadir el gate de geometría para impedir que componentes de producción reintroduzcan `RectangleShape` o formas literales fuera de tokens.
+4. Verificar tests de contraste, estados, escala tipográfica y regresión visual en un entorno con Gradle y runtime disponibles.
+
+
+## Ronda 4 (2026-10-09) — roles Material 3 y gate de arquitectura
+
+- `secondary` y `tertiary` de la adaptación Material 3 dejan de exponer tonos morados/magenta: ambos reutilizan `Brand`/`OnBrand`, en coherencia con el acento único Xauxa.
+- `secondaryContainer` y `tertiaryContainer` pasan a neutros adaptativos (`Surface2` claro, `Surface3` oscuro) con contenido de contraste alto. Los roles inversos también pasan a pares monocromos con `inverseBrand` accesible.
+- `XauxaSchemeTest` fija los nuevos valores, las equivalencias semánticas y el contraste WCAG AA de roles inversos, además de los pares de primer/segundo/tercer plano.
+- `verify-xauxa.sh` amplía el gate: los componentes de producción no pueden importar formas geométricas directamente; los módulos feature no pueden consumir `MaterialTheme.colorScheme` ni importar Material 3 directamente. La capa `core:ui` sigue siendo el adaptador autorizado; el laboratorio queda como infraestructura separada.
+- Validación de esta ronda: `bash docs/05-design-system/verify-xauxa.sh` devuelve `XAUXA_GATE=PASS`; el contraste calculado independiente para los pares cambiados supera 4.5:1. `bash gradlew :core:ui:allTests --no-daemon` sigue bloqueado por `UnknownHostException: services.gradle.org`. (Los informes intermedios de auditoría fueron retirados; el estado vigente vive en este registro y en los checklists de validación.)

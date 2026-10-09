@@ -21,11 +21,9 @@ import kotlin.math.pow
  * visual change), both schemes are complete, and the pairs that must switch
  * with the theme are verified. Since the Metro-unified palette
  * (commit 86854d7) the interface is monochrome with a single brand accent:
- * background/surface are pure white/black, and brand/onBrand/brandContainer
- * are intentionally identical in light and dark. Shared identities between
- * light and dark (brand family, tertiaryContainer and their on-colors) are
- * pinned as the current code reality and flagged as pending official Xauxa
- * reference — they are NOT presented as validated design decisions.
+ * background/surface are pure white/black, and the brand accent is shared
+ * between themes. M3 secondary/tertiary slots alias that single accent; their
+ * containers and inverse roles adapt to the active theme.
  */
 class XauxaSchemeTest {
 
@@ -81,21 +79,21 @@ class XauxaSchemeTest {
         assertEquals("FFFFFF", hex(scheme.onBrand))
         assertEquals("0067B8", hex(scheme.brandContainer))
         assertEquals("FFFFFF", hex(scheme.onBrandContainer))
-        assertEquals("68577C", hex(scheme.secondary))
+        assertEquals("0067B8", hex(scheme.secondary))
         assertEquals("FFFFFF", hex(scheme.onSecondary))
-        assertEquals("E8D1FD", hex(scheme.secondaryContainer))
-        assertEquals("69587D", hex(scheme.onSecondaryContainer))
-        assertEquals("671448", hex(scheme.tertiary))
+        assertEquals("F2F2F2", hex(scheme.secondaryContainer))
+        assertEquals("000000", hex(scheme.onSecondaryContainer))
+        assertEquals("0067B8", hex(scheme.tertiary))
         assertEquals("FFFFFF", hex(scheme.onTertiary))
-        assertEquals("842D60", hex(scheme.tertiaryContainer))
-        assertEquals("FFA4D1", hex(scheme.onTertiaryContainer))
+        assertEquals("F2F2F2", hex(scheme.tertiaryContainer))
+        assertEquals("000000", hex(scheme.onTertiaryContainer))
         assertEquals("BA1A1A", hex(scheme.danger))
         assertEquals("FFFFFF", hex(scheme.onDanger))
         assertEquals("FFDAD6", hex(scheme.dangerBg))
         assertEquals("93000A", hex(scheme.onDangerBg))
-        assertEquals("332F35", hex(scheme.inverseSurface))
-        assertEquals("F6EEF7", hex(scheme.inverseOnSurface))
-        assertEquals("DAB9FF", hex(scheme.inverseBrand))
+        assertEquals("1A1A1A", hex(scheme.inverseSurface))
+        assertEquals("FFFFFF", hex(scheme.inverseOnSurface))
+        assertEquals("4DA3EA", hex(scheme.inverseBrand))
         assertEquals("0067B8", hex(scheme.focusRing))
         // Fase 1 (auditoría a11y): estado con par propio, brand como
         // texto y borde de control — valores fijados, contraste verificado
@@ -127,21 +125,21 @@ class XauxaSchemeTest {
         assertEquals("FFFFFF", hex(scheme.onBrand))
         assertEquals("0067B8", hex(scheme.brandContainer))
         assertEquals("FFFFFF", hex(scheme.onBrandContainer))
-        assertEquals("D4BEE9", hex(scheme.secondary))
-        assertEquals("39294B", hex(scheme.onSecondary))
-        assertEquals("524266", hex(scheme.secondaryContainer))
-        assertEquals("C5B0DA", hex(scheme.onSecondaryContainer))
-        assertEquals("FFAFD5", hex(scheme.tertiary))
-        assertEquals("5E0A41", hex(scheme.onTertiary))
-        assertEquals("842D60", hex(scheme.tertiaryContainer))
-        assertEquals("FFA4D1", hex(scheme.onTertiaryContainer))
+        assertEquals("0067B8", hex(scheme.secondary))
+        assertEquals("FFFFFF", hex(scheme.onSecondary))
+        assertEquals("2A2A2A", hex(scheme.secondaryContainer))
+        assertEquals("FFFFFF", hex(scheme.onSecondaryContainer))
+        assertEquals("0067B8", hex(scheme.tertiary))
+        assertEquals("FFFFFF", hex(scheme.onTertiary))
+        assertEquals("2A2A2A", hex(scheme.tertiaryContainer))
+        assertEquals("FFFFFF", hex(scheme.onTertiaryContainer))
         assertEquals("FFB4AB", hex(scheme.danger))
         assertEquals("690005", hex(scheme.onDanger))
         assertEquals("93000A", hex(scheme.dangerBg))
         assertEquals("FFDAD6", hex(scheme.onDangerBg))
-        assertEquals("E8E0E9", hex(scheme.inverseSurface))
-        assertEquals("332F35", hex(scheme.inverseOnSurface))
-        assertEquals("734AA5", hex(scheme.inverseBrand))
+        assertEquals("F2F2F2", hex(scheme.inverseSurface))
+        assertEquals("111111", hex(scheme.inverseOnSurface))
+        assertEquals("0067B8", hex(scheme.inverseBrand))
         assertEquals("0067B8", hex(scheme.focusRing))
         assertEquals("7FD99A", hex(scheme.success))
         assertEquals("0F2E1A", hex(scheme.successContainer))
@@ -160,16 +158,19 @@ class XauxaSchemeTest {
             assertTrue(scheme.all().none { it == Color.Unspecified }, "scheme has Unspecified colors")
         }
         assertNotEquals(LightXauxaColorScheme, DarkXauxaColorScheme)
-        // Current code reality: the whole brand family and the tertiary
-        // containers are shared between themes (identical hex) — a single
-        // brand accent by design. Pinned here; requires official Xauxa
-        // reference to confirm or correct — see report.
+        // Single brand accent is shared by both themes; neutral containers
+        // and inverse roles adapt to the active theme.
         assertEquals(LightXauxaColorScheme.brand, DarkXauxaColorScheme.brand)
         assertEquals(LightXauxaColorScheme.onBrand, DarkXauxaColorScheme.onBrand)
         assertEquals(LightXauxaColorScheme.brandContainer, DarkXauxaColorScheme.brandContainer)
         assertEquals(LightXauxaColorScheme.onBrandContainer, DarkXauxaColorScheme.onBrandContainer)
-        assertEquals(LightXauxaColorScheme.tertiaryContainer, DarkXauxaColorScheme.tertiaryContainer)
-        assertEquals(LightXauxaColorScheme.onTertiaryContainer, DarkXauxaColorScheme.onTertiaryContainer)
+        listOf(LightXauxaColorScheme, DarkXauxaColorScheme).forEach { scheme ->
+            assertEquals(scheme.brand, scheme.secondary, "M3 secondary must alias Xauxa brand")
+            assertEquals(scheme.brand, scheme.tertiary, "M3 tertiary must alias Xauxa brand")
+            val neutralContainer = if (scheme == LightXauxaColorScheme) scheme.surface2 else scheme.surface3
+            assertEquals(neutralContainer, scheme.secondaryContainer, "secondary container must be neutral")
+            assertEquals(neutralContainer, scheme.tertiaryContainer, "tertiary container must be neutral")
+        }
     }
 
     @Test
@@ -186,6 +187,8 @@ class XauxaSchemeTest {
         assertTrue(contrast(hex(s.dangerBg), hex(s.onDangerBg)) >= 4.5, "light dangerBg/onDangerBg")
         assertTrue(contrast(hex(s.surface), hex(s.textPrimary)) >= 4.5, "light surface/textPrimary")
         assertTrue(contrast(hex(s.surfaceVariant), hex(s.textSecondary)) >= 4.5, "light surfaceVariant/textSecondary")
+        assertTrue(contrast(hex(s.inverseSurface), hex(s.inverseOnSurface)) >= 4.5, "light inverseSurface/inverseOnSurface")
+        assertTrue(contrast(hex(s.inverseSurface), hex(s.inverseBrand)) >= 4.5, "light inverseSurface/inverseBrand")
     }
 
     @Test
@@ -200,6 +203,8 @@ class XauxaSchemeTest {
         assertTrue(contrast(hex(s.danger), hex(s.onDanger)) >= 4.5, "dark danger/onDanger")
         assertTrue(contrast(hex(s.dangerBg), hex(s.onDangerBg)) >= 4.5, "dark dangerBg/onDangerBg")
         assertTrue(contrast(hex(s.surface), hex(s.textPrimary)) >= 4.5, "dark surface/textPrimary")
+        assertTrue(contrast(hex(s.inverseSurface), hex(s.inverseOnSurface)) >= 4.5, "dark inverseSurface/inverseOnSurface")
+        assertTrue(contrast(hex(s.inverseSurface), hex(s.inverseBrand)) >= 4.5, "dark inverseSurface/inverseBrand")
     }
 
     @Test
@@ -379,13 +384,15 @@ class XauxaSchemeTest {
         val dark = DarkXauxaColorScheme.fields()
         assertEquals(light.keys, dark.keys)
         assertEquals(38, light.size)
-        // Every neutral role actually switches; the brand family and the
-        // tertiary containers stay put by design (single accent, pending
-        // reference) — see both_schemes_are_complete_and_switchable.
+        // Theme-dependent roles switch; the single brand accent remains
+        // shared. secondary/tertiary son SLOTS de M3 aliados al acento de
+        // marca (ver XauxaTokens: "M3 requires secondary/tertiary slots")
+        // — NO conmutan con el tema por diseño.
         listOf(
             "background", "surface", "surface2", "surface3", "surfaceVariant",
             "border", "borderVariant", "textPrimary", "textSecondary",
-            "secondary", "danger", "dangerBg",
+            "secondaryContainer", "tertiaryContainer", "inverseSurface",
+            "inverseOnSurface", "inverseBrand", "danger", "dangerBg",
             "success", "successContainer", "warning", "warningContainer",
             "info", "infoContainer", "brandText", "borderControl",
         ).forEach { key ->

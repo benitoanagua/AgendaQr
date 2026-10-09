@@ -66,3 +66,8 @@ LISTO** (trailing con test; glifo pendiente de decisión). G1, B7, K1
 (runtime iOS) → **DISPOSITIVO** (checklist
 `docs/08-validacion/07-checklist-manual-ronda2.md`). B6, J1 →
 **DECISIÓN** (linterna sin glifo aprobado; ADR-0009 propuesto).
+
+
+## Reconciliación posterior — ronda 3
+
+La tabla de triage anterior conserva el historial de hallazgos al momento de abrir la ronda; no debe interpretarse por sí sola como el estado actual de cada archivo. La revisión del paquete de ronda 1 confirma en el código varios cierres ya descritos en la sección Cierre (back stack saveable, lifecycle-aware collection, ScreenMargin, altura mínima de tile y slot trailing). El detalle de conformidad quedó absorbido por el contrato normativo (`00-xauxa-contrato-normativo.md`) y los checklists de `docs/08-validacion/`.

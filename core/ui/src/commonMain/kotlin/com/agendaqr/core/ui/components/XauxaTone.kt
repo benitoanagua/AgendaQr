@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
@@ -45,6 +44,7 @@ import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.theme.XauxaShape
 
 
 /**
@@ -150,7 +150,7 @@ fun Modifier.xauxaPressFeedback(source: MutableInteractionSource): Modifier {
 fun Modifier.xauxaFocusRing(source: MutableInteractionSource): Modifier {
     val focused by source.collectIsFocusedAsState()
     return then(
-        if (focused) Modifier.border(XauxaMetrics.Focus, XauxaColor.FocusRing, RectangleShape)
+        if (focused) Modifier.border(XauxaMetrics.Focus, XauxaColor.FocusRing, XauxaShape)
         else Modifier,
     )
 }

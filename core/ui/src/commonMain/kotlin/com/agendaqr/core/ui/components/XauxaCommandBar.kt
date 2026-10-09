@@ -12,10 +12,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.theme.XauxaColor
-import androidx.compose.ui.graphics.RectangleShape
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.theme.XauxaShape
 
 data class XauxaOverflowAction(
     val label: String,
@@ -87,7 +87,7 @@ fun XauxaCommandBar(
                         expanded = overflowOpen,
                         onDismissRequest = { overflowOpen = false },
                         // Fase 4: radio 0, sin elevaciones, superficie Xauxa.
-                        shape = RectangleShape,
+                        shape = XauxaShape,
                         containerColor = XauxaColor.Surface,
                         tonalElevation = XauxaSpacing.None,
                         shadowElevation = XauxaSpacing.None,

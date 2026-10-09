@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -46,6 +45,7 @@ import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.theme.XauxaShape
 
 @Composable
 fun XauxaScreen(
@@ -55,7 +55,7 @@ fun XauxaScreen(
     Surface(
         modifier = modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing),
         color = XauxaColor.Background,
-        shape = RectangleShape,
+        shape = XauxaShape,
         tonalElevation = XauxaSpacing.None,
         shadowElevation = XauxaSpacing.None,
     ) { content() }
@@ -100,7 +100,7 @@ fun XauxaTile(
         modifier = clickableModifier
             .fillMaxWidth()
             .xauxaFocusRing(interaction),
-        shape = RectangleShape,
+        shape = XauxaShape,
         color = XauxaColor.Surface2,
         tonalElevation = XauxaSpacing.None,
         shadowElevation = XauxaSpacing.None,
@@ -163,7 +163,7 @@ internal fun XauxaLoadingButton(
             ),
         onClick = onClick,
         enabled = enabled && !isLoading,
-        shape = RectangleShape,
+        shape = XauxaShape,
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             contentColor = contentColor,
@@ -204,7 +204,7 @@ fun XauxaSecondaryButton(
         modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         onClick = onClick,
         enabled = enabled && !isLoading,
-        shape = RectangleShape,
+        shape = XauxaShape,
     ) {
         if (isLoading) {
             CircularProgressIndicator(
@@ -253,7 +253,7 @@ fun XauxaTextAction(
     TextButton(
         modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         onClick = onClick,
-        shape = RectangleShape,
+        shape = XauxaShape,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -299,7 +299,7 @@ fun XauxaStatusBanner(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .border(XauxaMetrics.Border, XauxaColor.Border, RectangleShape)
+            .border(XauxaMetrics.Border, XauxaColor.Border, XauxaShape)
             .background(background)
             .semantics { liveRegion = LiveRegionMode.Polite }
             .padding(XauxaSpacing.Lg),

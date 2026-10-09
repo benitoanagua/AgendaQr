@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
@@ -43,6 +42,7 @@ import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.theme.XauxaShape
 
 
 /**
@@ -196,7 +196,7 @@ fun XauxaFavoriteToggle(
         Box(
             modifier = Modifier.size(XauxaMetrics.FavoriteIndicatorSize)
                 .background(if (favorite) XauxaColor.Brand else XauxaColor.Surface2)
-                .border(BorderStroke(XauxaMetrics.Border, XauxaColor.BorderControl), RectangleShape),
+                .border(BorderStroke(XauxaMetrics.Border, XauxaColor.BorderControl), XauxaShape),
             contentAlignment = Alignment.Center,
         ) {
             // Fase 2 (§11): el estado no depende solo del color — el
@@ -271,7 +271,7 @@ fun XauxaScannerViewport(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape)
+            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), XauxaShape)
             .background(XauxaColor.Surface2)
             .padding(XauxaSpacing.Xxxl),
         contentAlignment = Alignment.Center,
@@ -282,7 +282,7 @@ fun XauxaScannerViewport(
         ) {
             Box(
                 modifier = Modifier.size(XauxaMetrics.QrPreviewSize)
-                    .border(BorderStroke(XauxaMetrics.BorderStrong, XauxaColor.Brand), RectangleShape),
+                    .border(BorderStroke(XauxaMetrics.BorderStrong, XauxaColor.Brand), XauxaShape),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
@@ -327,7 +327,7 @@ fun XauxaFileUpload(
         modifier = clickableModifier
             .fillMaxWidth()
             .xauxaFocusRing(interaction)
-            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape)
+            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), XauxaShape)
             .background(XauxaColor.Surface)
             .padding(XauxaSpacing.Lg),
         horizontalAlignment = Alignment.CenterHorizontally,

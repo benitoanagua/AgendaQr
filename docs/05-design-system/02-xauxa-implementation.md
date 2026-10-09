@@ -1,5 +1,7 @@
 # Implementación Xauxa
 
+> **Contrato normativo:** `docs/05-design-system/00-xauxa-contrato-normativo.md`. Este documento explica la distribución de implementación; no duplica ni redefine las reglas visuales. En caso de conflicto, prevalece el contrato normativo y los ADR aprobados.
+
 Xauxa es la autoridad visual completa de Agenda QR. El código de producto no conserva una paleta propia, radios propios, sombras propias ni variantes visuales históricas.
 
 ## Capas
@@ -20,7 +22,7 @@ Xauxa es la autoridad visual completa de Agenda QR. El código de producto no co
 - No usar `OutlinedTextField`, `AlertDialog`, chips o botones Material directamente desde features: deben pasar por componentes Xauxa.
 - No introducir sombras, radios ni colores locales.
 
-## Reglas V1.1 (ADR-0005, pendientes de implementación)
+## Estado de implementación de reglas históricas (ADR-0005)
 
 - Un acento por contexto, derivado de forma determinista del identificador del contexto; el acento de sistema `0067B8` es el valor por defecto. El color nunca se persiste en el dominio.
 - Sin bordes de reposo en filas, botones, badges y tiles: los bordes son solo funcionales (foco, campo en foco/error, tile seleccionado).
@@ -30,7 +32,7 @@ Xauxa es la autoridad visual completa de Agenda QR. El código de producto no co
 - Movimiento: turnstile entre pantallas, tilt ≤150 ms en tiles, entrada escalonada 30–50 ms por tile (total ≤300 ms); live tile sin bucles; reduced motion = cambio de estado inmediato.
 - Los tamaños de icono y las métricas de la rejilla de tiles viven como tokens en `XauxaTokens.kt` (múltiplos de 4 dp); el gate `verify-xauxa.sh` rechaza literales en `core/ui`.
 
-Estas reglas son la meta normativa; el código actual está declarado desalineado hasta la pasada de implementación (ver `docs/09-implementacion/01-estado.md`).
+Estas reglas históricas deben leerse junto al contrato normativo Xauxa y ADR-0010. No se consideran implementadas por el mero hecho de estar documentadas; verificar código, pruebas y consumidores antes de declarar alineación.
 
 ## Adaptación de plataforma
 

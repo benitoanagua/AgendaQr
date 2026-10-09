@@ -9,7 +9,15 @@ compose {
     }
 }
 
-android { namespace = "com.agendaqr.core.ui" }
+android {
+    namespace = "com.agendaqr.core.ui"
+    testOptions {
+        // Pruebas de UI Compose sobre Robolectric en androidUnitTest
+        // (XauxaAccessibilityContractTest, XauxaResponsiveLayoutContractTest):
+        // necesitan el manifest de test (ComponentActivity) y los recursos.
+        unitTests.isIncludeAndroidResources = true
+    }
+}
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
 kotlin {
@@ -45,6 +53,13 @@ kotlin {
             // través de XauxaIcon. Objetivos: android/ios/wasmJs verificados
             // por compilación en esta tarea.
             implementation(libs.icons.lucide)
+        }
+        androidUnitTest.dependencies {
+            implementation(kotlin("test"))
+            // Pruebas semánticas de los componentes Xauxa bajo Robolectric.
+            implementation("androidx.compose.ui:ui-test-junit4:${libs.versions.androidx.compose.get()}")
+            implementation("androidx.compose.ui:ui-test-manifest:${libs.versions.androidx.compose.get()}")
+            implementation("org.robolectric:robolectric:${libs.versions.robolectric.get()}")
         }
     }
 }

@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
@@ -48,6 +47,7 @@ import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.theme.XauxaShape
 
 
 /**
@@ -120,7 +120,7 @@ fun XauxaDialog(
     androidx.compose.material3.AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest ?: onDismiss,
-        shape = RectangleShape,
+        shape = XauxaShape,
         containerColor = XauxaColor.Surface,
         title = {
             Text(
@@ -183,7 +183,7 @@ fun XauxaToast(
         modifier = modifier
             .fillMaxWidth()
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
-            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape)
+            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), XauxaShape)
             .background(tone.container())
             // Fase 1: región viva cortés — el toast se anuncia (antes
             // solo se veía).
@@ -230,7 +230,7 @@ fun XauxaInlineResult(
         modifier = modifier
             .fillMaxWidth()
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
-            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), RectangleShape)
+            .border(BorderStroke(XauxaMetrics.Border, XauxaColor.Border), XauxaShape)
             .background(tone.container())
             .padding(XauxaSpacing.Sm),
         verticalAlignment = Alignment.CenterVertically,

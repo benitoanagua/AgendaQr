@@ -15,9 +15,5 @@ dependencies {
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.rules)
-    // Ronda 2 QA (ADR-0010): UiAutomator para flujos de sistema.
-    androidTestImplementation(libs.androidx.uiautomator)
-    // Compose semantics en instrumentados (búsqueda de nodos reales).
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:${libs.versions.androidx.compose.get()}")
     androidTestImplementation(kotlin("test"))
 }

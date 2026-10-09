@@ -16,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,6 +31,7 @@ import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.theme.XauxaShape
 
 /** Acción visible de la app bar inferior: icono + etiqueta SIEMPRE visible
  * (§11/M12: decisión de accesibilidad y desviación consciente de Metro —
@@ -87,7 +87,7 @@ fun XauxaAppBar(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = XauxaColor.Surface2,
-        shape = RectangleShape,
+        shape = XauxaShape,
         tonalElevation = XauxaSpacing.None,
         shadowElevation = XauxaSpacing.None,
     ) {
@@ -145,7 +145,7 @@ fun XauxaAppBar(
                             // Fase 4: el menú también habla Xauxa — radio 0
                             // (red de seguridad del theme), sin elevación
                             // tonal ni sombra, superficie y borde Xauxa.
-                            shape = RectangleShape,
+                            shape = XauxaShape,
                             containerColor = XauxaColor.Surface,
                             tonalElevation = XauxaSpacing.None,
                             shadowElevation = XauxaSpacing.None,
@@ -188,7 +188,7 @@ private fun AppBarItem(action: XauxaAppBarAction) {
                 if (action.primary) {
                     Modifier.background(
                         if (action.enabled) XauxaColor.Brand else XauxaColor.Surface3,
-                        RectangleShape,
+                        XauxaShape,
                     )
                 } else {
                     Modifier

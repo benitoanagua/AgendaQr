@@ -71,3 +71,13 @@ La existencia de código no equivale a validación de plataforma. Android e iOS 
 ## 7. Documentación
 
 La documentación está organizada por autoridad y ciclo de desarrollo. Comienza en `docs/README.md`.
+
+
+## Xauxa Design System
+
+El contrato visual normativo está en [`docs/05-design-system/00-xauxa-contrato-normativo.md`](docs/05-design-system/00-xauxa-contrato-normativo.md). La decisión de gobierno y migración está en [ADR-0010](docs/07-decisiones/ADR-0010-contrato-normativo-xauxa-metro-sin-carbon.md). La aprobación documental no implica que todos los componentes estén ya migrados o que las pruebas hayan sido ejecutadas.
+
+
+## Estado de auditoría Xauxa
+
+La ronda 7 asocia el error de `XauxaTextInput` a la semántica del nodo editable y refuerza la prueba del rol/estado del switch de `XauxaSettingRow`. El gate estático pasa; los tests Android/JVM siguen pendientes de ejecución porque el entorno no pudo resolver `services.gradle.org`. Ver `docs/05-design-system/12-cierre-auditoria-ronda-7.md`.

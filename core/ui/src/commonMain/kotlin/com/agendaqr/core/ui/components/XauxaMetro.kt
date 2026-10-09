@@ -27,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
@@ -44,6 +43,7 @@ import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
 import com.agendaqr.core.ui.theme.asTextOn
+import com.agendaqr.core.ui.theme.XauxaShape
 
 /**
  * T3/V1.1 (ADR-0005, spec §12): piezas del lenguaje Metro dentro de Xauxa.
@@ -157,7 +157,7 @@ fun XauxaMetroTile(
             .heightIn(min = height)
             .fillMaxWidth()
             .graphicsLayer { scaleX = scale; scaleY = scale }
-            .background(accent.background, RectangleShape)
+            .background(accent.background, XauxaShape)
             .then(
                 if (onClick != null) {
                     Modifier

@@ -41,21 +41,23 @@ internal object XauxaPrimitive {
     val lightOnPrimary = Color(0xFFFFFFFF)
     val lightPrimaryContainer = Color(0xFF0067B8)
     val lightOnPrimaryContainer = Color(0xFFFFFFFF)
-    val lightSecondary = Color(0xFF68577C)
+    // M3 requires secondary/tertiary slots; Xauxa has one brand accent.
+    // These slots alias the brand instead of introducing a second palette.
+    val lightSecondary = Color(0xFF0067B8)
     val lightOnSecondary = Color(0xFFFFFFFF)
-    val lightSecondaryContainer = Color(0xFFE8D1FD)
-    val lightOnSecondaryContainer = Color(0xFF69587D)
-    val lightTertiary = Color(0xFF671448)
+    val lightSecondaryContainer = Color(0xFFF2F2F2)
+    val lightOnSecondaryContainer = Color(0xFF000000)
+    val lightTertiary = Color(0xFF0067B8)
     val lightOnTertiary = Color(0xFFFFFFFF)
-    val lightTertiaryContainer = Color(0xFF842D60)
-    val lightOnTertiaryContainer = Color(0xFFFFA4D1)
+    val lightTertiaryContainer = Color(0xFFF2F2F2)
+    val lightOnTertiaryContainer = Color(0xFF000000)
     val lightError = Color(0xFFBA1A1A)
     val lightOnError = Color(0xFFFFFFFF)
     val lightErrorContainer = Color(0xFFFFDAD6)
     val lightOnErrorContainer = Color(0xFF93000A)
-    val lightInverseSurface = Color(0xFF332F35)
-    val lightInverseOnSurface = Color(0xFFF6EEF7)
-    val lightInversePrimary = Color(0xFFDAB9FF)
+    val lightInverseSurface = Color(0xFF1A1A1A)
+    val lightInverseOnSurface = Color(0xFFFFFFFF)
+    val lightInversePrimary = Color(0xFF4DA3EA)
 
     // Fase 1 de la auditoría de accesibilidad: tonos de estado con par
     // propio (>= 4.5:1 content/container), brand legible como TEXTO y
@@ -86,20 +88,20 @@ internal object XauxaPrimitive {
     val darkOnPrimary = Color(0xFFFFFFFF)
     val darkPrimaryContainer = Color(0xFF0067B8)
     val darkOnPrimaryContainer = Color(0xFFFFFFFF)
-    val darkSecondary = Color(0xFFD4BEE9)
-    val darkOnSecondary = Color(0xFF39294B)
-    val darkSecondaryContainer = Color(0xFF524266)
-    val darkOnSecondaryContainer = Color(0xFFC5B0DA)
-    val darkTertiary = Color(0xFFFFAFD5)
-    val darkOnTertiary = Color(0xFF5E0A41)
-    val darkTertiaryContainer = Color(0xFF842D60)
-    val darkOnTertiaryContainer = Color(0xFFFFA4D1)
+    val darkSecondary = Color(0xFF0067B8)
+    val darkOnSecondary = Color(0xFFFFFFFF)
+    val darkSecondaryContainer = Color(0xFF2A2A2A)
+    val darkOnSecondaryContainer = Color(0xFFFFFFFF)
+    val darkTertiary = Color(0xFF0067B8)
+    val darkOnTertiary = Color(0xFFFFFFFF)
+    val darkTertiaryContainer = Color(0xFF2A2A2A)
+    val darkOnTertiaryContainer = Color(0xFFFFFFFF)
     val darkError = Color(0xFFFFB4AB)
     val darkOnError = Color(0xFF690005)
     val darkErrorContainer = Color(0xFF93000A)
     val darkOnErrorContainer = Color(0xFFFFDAD6)
-    val darkInverseSurface = Color(0xFFE8E0E9)
-    val darkInverseOnSurface = Color(0xFF332F35)
+    val darkInverseSurface = Color(0xFFF2F2F2)
+    val darkInverseOnSurface = Color(0xFF111111)
 
     val darkSuccess = Color(0xFF7FD99A)
     val darkSuccessContainer = Color(0xFF0F2E1A)
@@ -109,7 +111,7 @@ internal object XauxaPrimitive {
     val darkInfoContainer = Color(0xFF0B2A47)
     val darkBrandText = Color(0xFF4DA3EA)
     val darkBorderControl = Color(0xFF6E6E6E)
-    val darkInversePrimary = Color(0xFF734AA5)
+    val darkInversePrimary = Color(0xFF0067B8)
 }
 
 data class XauxaColorScheme(
@@ -466,13 +468,17 @@ object XauxaTextStyles {
     )
 }
 
-/**
- * Fase 4 (auditoría): la ÚNICA forma con esquinas del sistema, aplanada a
- * 0 — se construye una vez en la capa de tokens para la red de seguridad
- * de `Shapes` (Material exige CornerBasedShape; RectangleShape no sirve
- * ahí). El gate permite RoundedCornerShape solo aquí y en XauxaTheme.kt.
- */
-val XauxaShapeFlat = androidx.compose.foundation.shape.RoundedCornerShape(size = 0.dp)
+/** Radio base único de Xauxa. Cambiarlo requiere revisión visual global. */
+object XauxaRadius {
+    val Base = 0.dp
+}
+
+/** Forma canónica para superficies y controles rectangulares del sistema. */
+val XauxaShape = androidx.compose.foundation.shape.RoundedCornerShape(size = XauxaRadius.Base)
+
+/** Alias temporal para compatibilidad; eliminar al terminar la migración. */
+@Deprecated("Use XauxaShape; all standard geometry is governed by XauxaRadius.Base")
+val XauxaShapeFlat = XauxaShape
 
 /**
  * Fase 3 (auditoría): opacidades funcionales del lenguaje. [Pressed] es la
