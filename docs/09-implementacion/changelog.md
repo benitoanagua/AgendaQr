@@ -264,3 +264,44 @@ fuentes .ttf de Archivo siguen versionadas — son dependencias de build,
 no evidencia). Los READMEs de capturas quedan como registro de qué se
 verificó y cómo regenerarlo; la evidencia ejecutable sigue en los tests y
 el CI. Nada de código tocado.
+
+## 2026-10-09 (2) — Auditoría ronda 2: contraste, cámara, estado, fuente grande, ciclo de vida, feedback, voz y gate (fix/auditoria-ronda2)
+
+Una rama, un commit por área. Triage completo con evidencia en
+`docs/05-design-system/07-auditoria-ronda-2.md`. Resumen por área:
+
+- **A (no-regresión)**: suite verde + barrido de pares REALES halló un
+  gap nuevo: brandText sobre contenedor Danger (4,47 claro/3,45 oscuro).
+  Acciones de banner/toast heredan el color de contenido del tono
+  (par garantizado); tests de pares ambientales nuevos.
+- **B (cámara)**: política de permiso pura (REINTENTAR vs "Abrir
+  ajustes" por denegación permanente), contexto antes de pedir,
+  XauxaFeedbackEvent (háptica + liveRegion por evento) aplicado a la
+  lectura del QR; iOS fail-closed con banner de ajustes (la API de
+  autorización AVFoundation no está en los bindings: B7, checklist).
+- **C (estado)**: back stack restaurable (Saver por nombre de ruta,
+  tests round-trip + conservador), rememberSaveable en flags de
+  formularios y permiso, StateRestorationTester del login; ADR-0006
+  (rotación libre con estado restaurable).
+- **D (fuente grande)**: tile con altura mínima + etiqueta 2 líneas;
+  app bar 2 líneas; tests de layout a 100/150/200 % en 320dp; capturas
+  de referencia Roborazzi + manifiesto de hashes SHA-256 (ADR-0007; sin
+  binarios en git, coherente con la decisión de no trackear imágenes).
+- **E (ciclo de vida)**: collectAsStateWithLifecycle (artifact KMP de
+  JetBrains 2.9.4 — el de androidx es Android-only, hallazgo) + derived
+  real para syncLookup.
+- **F (feedback)**: anuncios por TRANSICIÓN en sync completada,
+  eliminación (3 diálogos) y guardado de lote; el éxito del editor queda
+  propuesto como ObservableEvent de VM para V2 (no se tocan VMs).
+- **H (voz)**: ADR-0008 tuteo + guía de voz; core/ui sin copy hardcodeado
+  (Scanner/FileUpload/SearchBar/CommandBar parametrizados) + regla de
+  gate con fixtures.
+- **I (limpieza)**: margen unificado; slot trailing del campo con test;
+  tokens lab-only y componentes sin uso DECIDIDOS en el audit register.
+- **J (privacidad)**: ADR-0009 PROPUESTO (FLAG_SECURE/overlay iOS, costes,
+  interruptor) — sin implementar por decisión.
+- **G/K/L**: predictive back y runtime iOS en checklist manual con pasos
+  y criterio; barrido libre sin hallazgos accionables restantes.
+
+Pendiente de dispositivo/decisión: checklist
+`docs/08-validacion/07-checklist-manual-ronda2.md`.
