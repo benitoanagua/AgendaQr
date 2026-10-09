@@ -84,7 +84,8 @@ internal fun ContextPickerDialog(
     var step by rememberSaveable { mutableStateOf(ContextPickerStep.List) }
     var name by rememberSaveable { mutableStateOf("") }
     var note by rememberSaveable { mutableStateOf("") }
-    var submitted by remember { mutableStateOf(false) }
+    // Ronda 2 (Área C): sobrevive a recreación.
+    var submitted by rememberSaveable { mutableStateOf(false) }
 
     // El contexto recién creado queda seleccionado y marcado en la lista.
     val selectedId = justCreatedContextId ?: selection.contextId
@@ -189,7 +190,8 @@ internal fun ContextCreationDialog(
 ) {
     var name by rememberSaveable { mutableStateOf("") }
     var note by rememberSaveable { mutableStateOf("") }
-    var submitted by remember { mutableStateOf(false) }
+    // Ronda 2 (Área C): sobrevive a recreación.
+    var submitted by rememberSaveable { mutableStateOf(false) }
     XauxaDialog(
         title = AppStrings.CrearContexto,
         confirmLabel = AppStrings.Crear,

@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.backhandler.BackHandler
@@ -42,7 +43,9 @@ internal fun AuthenticatedAppRoot(
     graph: AuthenticatedSessionGraph,
     onSignOut: () -> Unit,
 ) {
-    val nav = remember { AppBackStack() }
+    // Ronda 2 (Área C): el back stack SOBREVIVE a rotación y a muerte de
+    // proceso (rememberSaveable + Saver por nombre de ruta).
+    val nav = rememberSaveable(saver = AppBackStackSaver) { AppBackStack() }
     val stack by nav.stack.collectAsState()
     val top = stack.last()
 
@@ -62,7 +65,7 @@ internal fun AuthenticatedAppRoot(
     // concreto: si el detalle se cerró por otra vía (eliminar, guardar la
     // edición — backs internos del VM) el id ya no coincide y no se
     // restaura nada ajeno.
-    var searchReturnDestinationId by remember { mutableStateOf<String?>(null) }
+    var searchReturnDestinationId by rememberSaveable { mutableStateOf<String?>(null) }
     fun backFromDestinationDetail() {
         val detailId = (state.route as? DestinationRoute.Detail)?.id
         graph.destinationsViewModel.onAction(DestinationAction.Back)
