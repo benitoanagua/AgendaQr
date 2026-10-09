@@ -31,12 +31,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,6 +48,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
 import com.agendaqr.core.ui.components.XauxaStatusBanner
+import com.agendaqr.core.ui.components.XauxaFeedbackEvent
 import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.theme.XauxaColor
@@ -79,6 +83,10 @@ internal fun CameraQrCaptureOverlay(
     val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
     val scanSession = remember { QrScanSession() }
     var detected by remember { mutableStateOf(false) }
+    // Ronda 2 (Área B): feedback de lectura exitosa — token por EVENTO
+    // (una lectura = un anuncio; sin repetición en recomposiciones).
+    var detectionToken by remember { mutableStateOf<Any?>(null) }
+    XauxaFeedbackEvent(event = detectionToken, message = AppStrings.CodigoQrDetectado)
 
     DisposableEffect(Unit) {
         onDispose { analysisExecutor.shutdown() }
@@ -110,6 +118,8 @@ internal fun CameraQrCaptureOverlay(
                             if (emitted != null) {
                                 val asset = assetFromFrame(proxy, emitted)
                                 detected = true
+                                // Háptica + anuncio accesible de éxito.
+                                detectionToken = Any()
                                 onQr(asset)
                             }
                             // El wrapper siempre cierra el frame.
@@ -136,12 +146,17 @@ internal fun CameraQrCaptureOverlay(
                                     ),
                                 ),
                         )
+                        // El hint SE VUELVE el estado: "Código QR detectado"
+                        // con liveRegion (§5/§11: el estado también se lee,
+                        // nunca solo se ve).
                         XauxaText(
-                            AppStrings.EncuadreElCodigoQr,
+                            if (detected) AppStrings.CodigoQrDetectado else AppStrings.EncuadreElCodigoQr,
                             size = XauxaType.Label,
                             color = XauxaColor.TextSecondary,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(top = XauxaSpacing.Lg),
+                            modifier = Modifier
+                                .padding(top = XauxaSpacing.Lg)
+                                .semantics { if (detected) liveRegion = LiveRegionMode.Polite },
                         )
                     }
                 }
@@ -257,18 +272,45 @@ private fun rotateBitmap(bitmap: Bitmap, degrees: Int): Bitmap {
 @Composable
 internal fun CameraQrEntry(onOpen: () -> Unit) {
     val context = LocalContext.current
-    var permissionError by remember { mutableStateOf<UserFacingError?>(null) }
+    // Ronda 2 (Área B): el estado de "ya se pidió" y el error del permiso
+    // sobreviven a la recreación de la pantalla (rotación).
+    var permissionError by rememberSaveable { mutableStateOf<UserFacingError?>(null) }
+    var requestedBefore by rememberSaveable { mutableStateOf(false) }
+    var permanentlyDenied by rememberSaveable { mutableStateOf(false) }
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { granted ->
-        if (granted) {
-            permissionError = null
-            onOpen()
-        } else {
-            permissionError = userFacingError(
-                SecurityException("camera permission denied"),
-                ErrorFlow.CameraPermission,
-            )
+        val action = cameraPermissionAction(
+            granted = granted,
+            previouslyRequested = requestedBefore,
+            shouldShowRationale = runCatching {
+                (context as? android.app.Activity)
+                    ?.let { androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale(it, Manifest.permission.CAMERA) }
+            }.getOrNull() ?: true,
+        )
+        requestedBefore = true
+        when (action) {
+            CameraPermissionAction.Open -> {
+                permissionError = null
+                permanentlyDenied = false
+                onOpen()
+            }
+            CameraPermissionAction.OpenSettings -> {
+                // "No volver a preguntar": relanzar el launcher no muestra
+                // NADA; la única recuperación real es Ajustes.
+                permanentlyDenied = true
+                permissionError = userFacingError(
+                    SecurityException("camera permission denied"),
+                    ErrorFlow.CameraPermission,
+                )
+            }
+            CameraPermissionAction.AskAgain -> {
+                permanentlyDenied = false
+                permissionError = userFacingError(
+                    SecurityException("camera permission denied"),
+                    ErrorFlow.CameraPermission,
+                )
+            }
         }
     }
     Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
@@ -276,11 +318,35 @@ internal fun CameraQrEntry(onOpen: () -> Unit) {
             XauxaStatusBanner(
                 error.display(),
                 tone = com.agendaqr.core.ui.components.XauxaTone.Danger,
-                actionLabel = error.action.label,
-                onAction = { permissionLauncher.launch(Manifest.permission.CAMERA) },
+                // Denegado permanentemente: la acción lleva a los ajustes de
+                // la app; si no, REINTENTAR vuelve a pedir el permiso.
+                actionLabel = if (permanentlyDenied) {
+                    AppStrings.AbrirAjustes
+                } else {
+                    error.action.label
+                },
+                onAction = {
+                    if (permanentlyDenied) {
+                        val intent = android.content.Intent(
+                            android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            android.net.Uri.fromParts("package", context.packageName, null),
+                        )
+                        runCatching { context.startActivity(intent) }
+                    } else {
+                        permissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                },
                 onDismiss = { permissionError = null },
+                dismissLabel = AppStrings.Descartar,
             )
         }
+        // Contexto del permiso ANTES de pedirlo (una línea, sin diálogo
+        // extra): el usuario sabe para qué es antes del diálogo del SO.
+        XauxaText(
+            AppStrings.PermisoCamaraContexto,
+            size = XauxaType.Caption,
+            color = XauxaColor.TextSecondary,
+        )
         XauxaSecondaryButton(
             label = AppStrings.Camara,
             onClick = {
