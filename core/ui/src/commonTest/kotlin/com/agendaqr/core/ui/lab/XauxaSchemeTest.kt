@@ -292,6 +292,41 @@ class XauxaSchemeTest {
         )
     }
 
+    @Test
+    fun neutral_tone_and_ambient_text_pairs_meet_wcag_aa() {
+        // Ronda 2 (Área A — barrido de pares de uso real): pares que
+        // llegan a pantalla y no estaban fijados: el tono Neutral
+        // (mensajes informativos), el texto secundario/terciario sobre
+        // background y surface2 (hints, captions) y el texto de error
+        // sobre background.
+        listOf(LightXauxaColorScheme, DarkXauxaColorScheme).forEach { scheme ->
+            val neutral = scheme.toneColors(XauxaTone.Neutral)
+            assertTrue(contrast(hex(neutral.content), hex(neutral.container)) >= 4.5, "Neutral content/container")
+            assertTrue(contrast(hex(scheme.textSecondary), hex(scheme.background)) >= 4.5, "textSecondary/background")
+            assertTrue(contrast(hex(scheme.textSecondary), hex(scheme.surface2)) >= 4.5, "textSecondary/surface2")
+            assertTrue(contrast(hex(scheme.textTertiary), hex(scheme.background)) >= 4.5, "textTertiary/background")
+            assertTrue(contrast(hex(scheme.danger), hex(scheme.background)) >= 4.5, "danger/background")
+        }
+    }
+
+    @Test
+    fun banner_actions_inherit_a_tested_tone_pair() {
+        // Ronda 2 (Área A): las acciones de banner/toast/inline usan el
+        // color de CONTENIDO del tono (no brandText: sobre el contenedor
+        // Danger daba 4.47 claro / 3.45 oscuro). Este test fija que cada
+        // par contenido/contenedor —el que ahora usan las acciones—
+        // cumple 4.5:1 en ambos temas,Neutral incluido.
+        listOf(LightXauxaColorScheme, DarkXauxaColorScheme).forEach { scheme ->
+            XauxaTone.entries.forEach { tone ->
+                val colors = scheme.toneColors(tone)
+                assertTrue(
+                    contrast(hex(colors.content), hex(colors.container)) >= 4.5,
+                    "banner action pair ${tone.name} content/container",
+                )
+            }
+        }
+    }
+
     /**
      * Required semantic fields per scheme. The data-class constructor makes
      * a missing field a compile error; this test pins the required set so a

@@ -240,7 +240,16 @@ fun XauxaTextAction(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
+    /**
+     * Ronda 2 (Área A): color del texto/icono. Por defecto brandText; el
+     * llamador lo anula cuando la acción vive sobre un fondo donde brand
+     * no cumple 4.5:1 (p. ej. las acciones DENTRO de un banner de tono,
+     * que heredan el color de contenido del tono — par garantizado por
+     * XauxaSchemeTest).
+     */
+    color: Color? = null,
 ) {
+    val actionColor = color ?: XauxaColor.BrandText
     TextButton(
         modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         onClick = onClick,
@@ -251,12 +260,12 @@ fun XauxaTextAction(
             horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
         ) {
             if (icon != null) {
-                XauxaIcon(imageVector = icon, contentDescription = null, tint = XauxaColor.BrandText)
+                XauxaIcon(imageVector = icon, contentDescription = null, tint = actionColor)
             }
             Text(
                 label,
                 style = XauxaTextStyles.ButtonLabel,
-                color = XauxaColor.BrandText,
+                color = actionColor,
             )
         }
     }
@@ -312,12 +321,14 @@ fun XauxaStatusBanner(
             fontSize = XauxaType.Label,
         )
         // Acción del error recuperable (spec §10: el error ofrece qué
-        // hacer) antes que el descarte opcional.
+        // hacer) antes que el descarte opcional. Ronda 2 (Área A): heredan
+        // el color de CONTENIDO del tono — brandText sobre el contenedor
+        // Danger fallaba 4.5:1 en ambos temas (4.47 claro / 3.45 oscuro).
         if (actionLabel != null && onAction != null) {
-            XauxaTextAction(label = actionLabel, onClick = onAction)
+            XauxaTextAction(label = actionLabel, onClick = onAction, color = foreground)
         }
         if (onDismiss != null && dismissLabel != null) {
-            XauxaTextAction(label = dismissLabel, onClick = onDismiss)
+            XauxaTextAction(label = dismissLabel, onClick = onDismiss, color = foreground)
         }
     }
 }
