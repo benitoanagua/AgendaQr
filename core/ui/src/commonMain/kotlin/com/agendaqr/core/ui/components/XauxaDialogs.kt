@@ -173,7 +173,12 @@ fun XauxaToast(
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
     onDismiss: (() -> Unit)? = null,
+    /** Fase 4: nombre accesible del descarte, copy del llamador. */
+    dismissDescription: String = "",
 ) {
+    if (onDismiss != null) require(dismissDescription.isNotBlank()) {
+        "XauxaToast: onDismiss necesita dismissDescription (copy del llamador)"
+    }
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -202,7 +207,7 @@ fun XauxaToast(
             XauxaTextAction(label = actionLabel, onClick = onAction)
         }
         if (onDismiss != null) {
-            XauxaIconButton(contentDescription = "Descartar notificación", onClick = onDismiss) {
+            XauxaIconButton(contentDescription = dismissDescription, onClick = onDismiss) {
                 Text("×", fontSize = XauxaType.Title, color = XauxaColor.TextSecondary)
             }
         }

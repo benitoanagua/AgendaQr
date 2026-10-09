@@ -1,6 +1,5 @@
 package com.agendaqr.destinations.presentation
 
-import androidx.compose.foundation.clickable
 import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,11 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.onClick
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.Alignment
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.core.ui.components.XauxaAppBar
@@ -36,7 +30,9 @@ import com.agendaqr.core.ui.components.XauxaIcons
 import com.agendaqr.core.ui.components.XauxaLiveTile
 import com.agendaqr.core.ui.components.XauxaOverflowAction
 import com.agendaqr.core.ui.components.XauxaPageTitle
+import com.agendaqr.core.ui.components.XauxaSearchTrigger
 import com.agendaqr.core.ui.components.XauxaSectionHeader
+import com.agendaqr.core.ui.components.XauxaSkeleton
 import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaTileGrid
 import com.agendaqr.core.ui.components.XauxaTileItem
@@ -45,7 +41,6 @@ import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.components.XauxaEmptyState
-import com.agendaqr.core.ui.components.XauxaSearchBar
 import com.agendaqr.core.ui.components.XauxaCategoryChip
 import com.agendaqr.core.ui.components.XauxaLoadMoreFooter
 import com.agendaqr.core.ui.components.XauxaListRow
@@ -92,31 +87,14 @@ fun DestinationsScreen(
             XauxaPageTitle(text = AppStrings.AgendaQr)
 
             // S01 — buscar domina visualmente (M2). La barra es la entrada
-            // a S04; el listado de Inicio no se filtra aquí. T10: un ÚNICO
-            // nodo semántico para el control (cero nodos duplicados).
-            run {
-                Box {
-                    XauxaSearchBar(
-                        value = "",
-                        onValueChange = {},
-                        label = AppStrings.BuscarEnAgendaQr,
-                        placeholder = AppStrings.searchPlaceholder,
-                    )
-                    Box(
-                        Modifier
-                            .matchParentSize()
-                            .clickable(onClickLabel = AppStrings.BuscarEnAgendaQr) { onOpenSearch() }
-                            .clearAndSetSemantics {
-                                contentDescription = AppStrings.BuscarEnAgendaQr
-                                role = Role.Button
-                                onClick(label = AppStrings.BuscarEnAgendaQr) {
-                                    onOpenSearch()
-                                    true
-                                }
-                            },
-                    )
-                }
-            }
+            // a S04; el listado de Inicio no se filtra aquí. Fase 4: el
+            // disparador vive en el DS (XauxaSearchTrigger — nodo único con
+            // rol Button); el feature ya no compone clickable crudo.
+            XauxaSearchTrigger(
+                label = AppStrings.BuscarEnAgendaQr,
+                placeholder = AppStrings.searchPlaceholder,
+                onClick = onOpenSearch,
+            )
 
             // §10: los errores son recuperables y contextuales — el banner
             // queda junto a la acción que lo provocó, visible sin scroll.
@@ -133,6 +111,7 @@ fun DestinationsScreen(
                         )
                     },
                     onDismiss = { onAction(DestinationAction.ClearError) },
+                    dismissLabel = AppStrings.Descartar,
                 )
             }
             // M2: rejilla de tiles — Añadir, Registrar, Favoritos, Contextos y
@@ -187,7 +166,12 @@ fun DestinationsScreen(
                 XauxaSectionHeader(text = AppStrings.Recientes)
             }
             when {
-                state.isLoading -> XauxaLoading(message = AppStrings.CargandoDestinosQr)
+                // Fase 4: la carga inicial de la lista se anuncia con el
+                // skeleton del DS (XauxaSkeleton, sin bucles) — el spinner
+                // con mensaje se reserva para estados en curso de una
+                // acción (guardar/sincronizar). Cambio de presentación; el
+                // flujo de datos no se toca.
+                state.isLoading -> XauxaSkeleton(lines = 4)
                 state.visibleDestinations.isEmpty() -> XauxaEmptyState(
                     title = if (state.destinations.isEmpty()) AppStrings.AunNoHayDestinos else AppStrings.NoSeEncontraronDestinos,
                     subtitle = if (state.destinations.isEmpty()) AppStrings.emptyDestinationsHint else AppStrings.PruebaConOtraBusquedaOLimpia,
@@ -202,6 +186,9 @@ fun DestinationsScreen(
                         if (paged.size < state.visibleDestinations.size) {
                             XauxaLoadMoreFooter(
                                 onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(state.visibleDestinations.size) },
+                                loadMoreLabel = AppStrings.CargarMas,
+                                loadingLabel = AppStrings.Cargando,
+                                endLabel = AppStrings.NoHayMasElementos,
                             )
                         }
                     }
@@ -225,6 +212,10 @@ fun DestinationsScreen(
             overflowActions = listOf(
                 XauxaOverflowAction(AppStrings.CerrarSesion, onClick = onSignOut),
             ),
+            overflowLabel = AppStrings.Mas,
+            // S01 es la raíz: sin flecha atrás (Back del sistema sale), pero
+            // el copy del parámetro es contrato del componente.
+            backLabel = AppStrings.Volver,
         )
     }
 }

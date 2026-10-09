@@ -129,6 +129,7 @@ private fun DestinationEditorContent(
                 actionLabel = err.action.label,
                 onAction = { if (err.action == ErrorAction.Retry) onRetryError() else onClearError() },
                 onDismiss = onClearError,
+                dismissLabel = AppStrings.Descartar,
             )
         }
         XauxaTextInput(
@@ -137,7 +138,7 @@ private fun DestinationEditorContent(
             onValueChange = { name = it },
             isRequired = true,
             isError = nameError,
-            errorMessage = if (nameError) "El nombre es obligatorio" else null,
+            errorMessage = if (nameError) AppStrings.ElNombreEsObligatorio else null,
         )
         XauxaTextInput(label = AppStrings.Categoria, value = category, onValueChange = { category = it })
         XauxaTextInput(label = AppStrings.Nota, value = note, onValueChange = { note = it }, singleLine = false, minLines = 3)

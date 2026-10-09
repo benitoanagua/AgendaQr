@@ -45,7 +45,7 @@ fun DestinationNotFound(onBack: () -> Unit) {
             .fillMaxSize()
             .statusBarsPadding()
             .navigationBarsPadding()
-            .padding(XauxaSpacing.Xxl)
+            .padding(XauxaSpacing.ScreenMargin)
             .imePadding(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -69,7 +69,7 @@ fun QrFullscreenPattern(
             .fillMaxSize()
             .statusBarsPadding()
             .navigationBarsPadding()
-            .padding(XauxaSpacing.Xxl)
+            .padding(XauxaSpacing.ScreenMargin)
             .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg, Alignment.CenterVertically),

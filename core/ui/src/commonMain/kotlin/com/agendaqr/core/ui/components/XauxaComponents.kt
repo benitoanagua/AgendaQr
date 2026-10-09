@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
+import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
 
 @Composable
@@ -174,9 +175,7 @@ internal fun XauxaLoadingButton(
             Text(
                 label,
                 modifier = if (isLoading) Modifier.alpha(0f) else Modifier,
-                fontSize = XauxaType.Label,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = XauxaType.LetterSpacingWide,
+                style = XauxaTextStyles.ButtonLabel,
             )
             if (isLoading) {
                 CircularProgressIndicator(
@@ -227,9 +226,7 @@ fun XauxaSecondaryButton(
                 }
                 Text(
                     label,
-                    fontSize = XauxaType.Label,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = XauxaType.LetterSpacingWide,
+                    style = XauxaTextStyles.ButtonLabel,
                     color = if (enabled) XauxaColor.BrandText else XauxaColor.TextTertiary,
                 )
             }
@@ -258,9 +255,7 @@ fun XauxaTextAction(
             }
             Text(
                 label,
-                fontSize = XauxaType.Label,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = XauxaType.LetterSpacingWide,
+                style = XauxaTextStyles.ButtonLabel,
                 color = XauxaColor.BrandText,
             )
         }
@@ -281,7 +276,14 @@ fun XauxaStatusBanner(
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
     onDismiss: (() -> Unit)? = null,
+    /** Fase 4: copy del descarte desde el llamador (core/ui no hardcodea). */
+    dismissLabel: String? = null,
 ) {
+    if (onDismiss != null) {
+        requireNotNull(dismissLabel) {
+            "XauxaStatusBanner: onDismiss necesita dismissLabel (copy del llamador)"
+        }
+    }
     val resolvedTone = tone ?: XauxaTone.Neutral
     val background = resolvedTone.container()
     val foreground = resolvedTone.content()
@@ -314,8 +316,8 @@ fun XauxaStatusBanner(
         if (actionLabel != null && onAction != null) {
             XauxaTextAction(label = actionLabel, onClick = onAction)
         }
-        if (onDismiss != null) {
-            XauxaTextAction(label = "Descartar", onClick = onDismiss)
+        if (onDismiss != null && dismissLabel != null) {
+            XauxaTextAction(label = dismissLabel, onClick = onDismiss)
         }
     }
 }

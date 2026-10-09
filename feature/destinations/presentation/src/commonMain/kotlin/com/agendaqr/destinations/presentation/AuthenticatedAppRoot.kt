@@ -159,6 +159,7 @@ internal fun AuthenticatedAppRoot(
                 actionLabel = error.action.label,
                 onAction = { importError = null },
                 onDismiss = { importError = null },
+                dismissLabel = AppStrings.Descartar,
             )
         }
         if (isOffline) {

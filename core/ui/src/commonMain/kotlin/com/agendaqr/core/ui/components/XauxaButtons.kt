@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
+import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
 
 

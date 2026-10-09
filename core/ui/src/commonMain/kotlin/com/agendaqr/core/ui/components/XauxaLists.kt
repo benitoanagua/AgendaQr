@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
+import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
 
 
@@ -134,9 +135,7 @@ fun XauxaBadge(
     ) {
         Text(
             text,
-            fontSize = XauxaType.Caption,
-            fontWeight = FontWeight.SemiBold,
-            letterSpacing = XauxaType.LetterSpacingWide,
+            style = XauxaTextStyles.Support,
             color = foreground,
         )
     }
@@ -197,9 +196,9 @@ fun XauxaListRow(
         Column(
             modifier = Modifier.weight(XauxaToneWeight).padding(XauxaSpacing.Sm),
         ) {
-            Text(title, fontSize = XauxaType.Body, color = XauxaColor.TextPrimary)
+            Text(title, style = XauxaTextStyles.Body, color = XauxaColor.TextPrimary)
             if (subtitle != null) {
-                Text(subtitle, fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary)
+                Text(subtitle, style = XauxaTextStyles.Caption, color = XauxaColor.TextSecondary)
             }
         }
         trailing?.invoke()

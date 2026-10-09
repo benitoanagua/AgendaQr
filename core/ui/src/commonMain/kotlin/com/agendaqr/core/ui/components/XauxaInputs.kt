@@ -35,7 +35,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.toggleableState
@@ -196,8 +199,9 @@ fun XauxaSearchBar(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    label: String = "Buscar",
-    placeholder: String = "Buscar",
+    /** Fase 4: copy desde el llamador (sin defaults hardcodeados). */
+    label: String,
+    placeholder: String,
     onClear: (() -> Unit)? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -252,6 +256,51 @@ fun XauxaSearchBar(
                 ),
             )
         }
+    }
+}
+
+/**
+ * Disparador de búsqueda (Fase 4): la BARRA que abre la pantalla de
+ * búsqueda (S01) sin campo editable — la entrada real vive en S04. Un
+ * ÚNICO nodo semántico con rol Button y nombre accesible (antes el campo
+ * decorativo exponía su editable-node al lector de pantalla): el feature
+ * nunca compone clickable crudo para esto (gate Fase 4).
+ */
+@Composable
+fun XauxaSearchTrigger(
+    label: String,
+    placeholder: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier) {
+        XauxaSearchBar(
+            value = "",
+            onValueChange = {},
+            label = label,
+            placeholder = placeholder,
+        )
+        Box(
+            Modifier
+                .matchParentSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    role = Role.Button,
+                    onClickLabel = label,
+                    onClick = onClick,
+                )
+                // clearAndSetSemantics: el campo decorativo queda fuera del
+                // árbol; el control es un solo botón con nombre accesible.
+                .clearAndSetSemantics {
+                    contentDescription = label
+                    role = Role.Button
+                    onClick(label = label) {
+                        onClick()
+                        true
+                    }
+                },
+        )
     }
 }
 

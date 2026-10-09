@@ -58,7 +58,7 @@ fun ImportBatchScreen(
             .fillMaxSize()
             .statusBarsPadding()
             .navigationBarsPadding()
-            .padding(XauxaSpacing.Xxl)
+            .padding(XauxaSpacing.ScreenMargin)
             .imePadding()
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),

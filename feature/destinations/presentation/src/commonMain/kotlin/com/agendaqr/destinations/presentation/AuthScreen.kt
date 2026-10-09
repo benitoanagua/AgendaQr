@@ -61,7 +61,7 @@ fun AuthScreen(
     XauxaScreen {
         Column(
             modifier = Modifier
-                .padding(XauxaSpacing.Xxl)
+                .padding(XauxaSpacing.ScreenMargin)
                 .statusBarsPadding()
                 .navigationBarsPadding()
                 .imePadding()
@@ -119,6 +119,7 @@ fun AuthScreen(
                         else -> onClearError
                     },
                     onDismiss = onClearError,
+                    dismissLabel = AppStrings.Descartar,
                 )
             }
             state.confirmationMessage?.let { XauxaStatusBanner(it, tone = XauxaTone.Info) }

@@ -46,6 +46,11 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
     val rawColor = Regex("\\bColor\\s*\\(")
     val forbiddenShapes = listOf("RoundedCornerShape", "CutCornerShape", "shadow(", ".shadow(")
     val forbiddenVisualAuthority = listOf("MaterialTheme.colorScheme")
+    // Fase 4: las formas con esquinas solo existen en la capa de tokens
+    // (XauxaShapeFlat, la única, aplanada a 0) y en XauxaTheme.kt como red
+    // de seguridad. Fuera de ahí, ni siquiera aplanadas: radio 0 se dice
+    // con RectangleShape.
+    val shapesAllowedFiles = listOf("XauxaTokens.kt", "XauxaTheme.kt")
     // T12 — la capa feature compone Xauxa; los componentes Material solo
     // viven en core:ui (que los adapta con tokens). Un import directo de
     // estos controles en feature/ es una fuga del design system.
@@ -66,7 +71,9 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
         if (!path.endsWith("XauxaTokens.kt") && rawDp.containsMatchIn(line)) add("$location: raw dp outside token layer: $line")
         if (!path.endsWith("XauxaTokens.kt") && rawSp.containsMatchIn(line)) add("$location: raw sp outside token layer: $line")
         if (!path.endsWith("XauxaTokens.kt") && rawColor.containsMatchIn(line)) add("$location: raw Color constructor outside token layer: $line")
-        if (forbiddenShapes.any(line::contains)) add("$location: forbidden radius/elevation API: $line")
+        if (shapesAllowedFiles.none { path.endsWith(it) } && forbiddenShapes.any(line::contains)) {
+            add("$location: forbidden radius/elevation API: $line")
+        }
         if (!path.endsWith("XauxaTheme.kt") && forbiddenVisualAuthority.any(line::contains)) add("$location: MaterialTheme cannot be the visual authority outside XauxaTheme: $line")
         if (isFeatureSource && bannedMaterialInFeature.any(line::contains)) {
             add("$location: Material component imported from feature/ (compose Xauxa instead): $line")
@@ -80,6 +87,24 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
             val namedArg = Regex("(title|subtitle|actionLabel|label|placeholder|confirmLabel|dismissLabel|message|text|hint) = \"([^\"]+)\"").find(line)
             if (namedArg != null && !isUiLiteralAllowed(namedArg.groupValues[2])) {
                 add("$location: UI string literal outside AppStrings (D2): ${namedArg.groupValues[2]}")
+            }
+            // Fase 4(a): copy dentro de EXPRESIONES también es copy —
+            // `label = if (...) "Texto" else null` y variantes con when
+            // esquivaban la regla anterior.
+            val expressionLiteral = Regex(
+                "(title|subtitle|actionLabel|label|placeholder|confirmLabel|dismissLabel|message|text|hint|errorMessage|helperMessage|backLabel|busyDescription) = (?:if|when)[^\n]*?\"([^\"]{2,})\"",
+            ).find(line)
+            if (expressionLiteral != null && !isUiLiteralAllowed(expressionLiteral.groupValues[2])) {
+                add("$location: UI string literal in expression outside AppStrings (D2): ${expressionLiteral.groupValues[2]}")
+            }
+            // Fase 4(b): la interacción cruda es cosa del design system —
+            // feature/ compone componentes Xauxa, nunca clickable propio
+            // (feedback de pulsación, rol, foco y semántica viven en el DS).
+            if (line.contains(".clickable(")) {
+                add("$location: raw .clickable( in feature/ (compose a Xauxa component): $line")
+            }
+            if (line.contains("indication = null")) {
+                add("$location: raw indication override in feature/ (feedback lives in the DS): $line")
             }
         }
     }
@@ -187,6 +212,74 @@ tasks.register("verifyDesignSystemFixtures") {
         val falseLiterals = allowedD2.filter { kotlinDesignViolations(featurePath, listOf(it)).isNotEmpty() }
         require(falseLiterals.isEmpty()) {
             "Valid AppStrings/technical literals failed enforcement (D2): ${falseLiterals.joinToString()}"
+        }
+
+        // Fase 4 — literales de copy DENTRO de expresiones deben fallar...
+        val expressionLiterals = listOf(
+            "errorMessage = if (emailError) \"Ingresa un correo válido\" else null",
+            "label = when (type) { PAGO -> \"Pago\" else -> \"Cobro\" }",
+        )
+        val missedExpressions = expressionLiterals.filter {
+            kotlinDesignViolations(featurePath, listOf(it)).isEmpty()
+        }
+        require(missedExpressions.isEmpty()) {
+            "feature/ expression literals that must fail passed (D2): ${missedExpressions.joinToString()}"
+        }
+        // ...y la MISMA forma con AppStrings (o id técnico) debe pasar.
+        val allowedExpressions = listOf(
+            "errorMessage = if (emailError) AppStrings.IngresaUnCorreoValido else null",
+            "label = when (type) { PAGO -> AppStrings.Pago else -> AppStrings.Cobro }",
+            "XauxaText(\"ctx-\" + id, color = XauxaColor.TextSecondary)",
+        )
+        val falseExpressionFlags = allowedExpressions.filter {
+            kotlinDesignViolations(featurePath, listOf(it)).isNotEmpty()
+        }
+        require(falseExpressionFlags.isEmpty()) {
+            "Valid expression usage failed enforcement (D2): ${falseExpressionFlags.joinToString()}"
+        }
+
+        // Fase 4 — .clickable( e indication = null en feature/ deben
+        // fallar; en core:ui (donde viven los componentes) deben pasar.
+        val rawInteraction = listOf(
+            "Modifier.clickable(onClick = { open() })",
+            ".clickable(interactionSource = source, indication = null, role = Role.Button, onClick = action)",
+        )
+        val missedInteraction = rawInteraction.filter {
+            kotlinDesignViolations(featurePath, listOf(it)).isEmpty()
+        }
+        require(missedInteraction.isEmpty()) {
+            "feature/ raw interaction that must fail passed: ${missedInteraction.joinToString()}"
+        }
+        val falseInteractionFlags = rawInteraction.filter {
+            kotlinDesignViolations(corePath, listOf(it)).isNotEmpty()
+        }
+        require(falseInteractionFlags.isEmpty()) {
+            "core:ui interaction must not be banned: ${falseInteractionFlags.joinToString()}"
+        }
+
+        // Fase 4 — RoundedCornerShape solo en tokens/tema: en feature/ y en
+        // componentes DEBE fallar (radio 0 se dice con RectangleShape)...
+        val flatShapeInFeature = "val card = RoundedCornerShape(0.dp)"
+        require(kotlinDesignViolations(featurePath, listOf(flatShapeInFeature)).isNotEmpty()) {
+            "feature/ RoundedCornerShape(0.dp) must fail (use RectangleShape/tokens)"
+        }
+        val componentShapePath = "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/FixtureShape.kt"
+        require(kotlinDesignViolations(componentShapePath, listOf(flatShapeInFeature)).isNotEmpty()) {
+            "components/ RoundedCornerShape must fail"
+        }
+        // ...y en la capa de tokens/tema pasa (XauxaShapeFlat + red de
+        // seguridad de Shapes). El fixture de tokens usa el constructor
+        // real (0.dp vive ahí); el del tema usa el import, para no tocar la
+        // regla de literales dp (que en el tema sigue prohibida).
+        val tokenShapeFixture = "val XauxaShapeFlat = RoundedCornerShape(size = 0.dp)"
+        val themeShapeFixture = "import androidx.compose.foundation.shape.RoundedCornerShape"
+        val tokenShapePath = "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/XauxaTokens.kt"
+        val themeShapePath = "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/XauxaTheme.kt"
+        require(kotlinDesignViolations(tokenShapePath, listOf(tokenShapeFixture)).isEmpty()) {
+            "token layer must allow flat shapes"
+        }
+        require(kotlinDesignViolations(themeShapePath, listOf(themeShapeFixture)).isEmpty()) {
+            "theme layer must allow flat shapes"
         }
     }
 }

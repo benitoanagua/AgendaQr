@@ -40,6 +40,7 @@ import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaMotion
 import com.agendaqr.core.ui.theme.XauxaSpacing
+import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
 import com.agendaqr.core.ui.theme.asTextOn
 
@@ -90,7 +91,7 @@ fun XauxaSectionHeader(
         androidx.compose.material3.Text(
             text = text,
             modifier = Modifier.semantics { heading() },
-            fontSize = XauxaType.SectionHeader,
+            style = XauxaTextStyles.SectionHeader,
             fontFamily = XauxaType.FamilyUi,
             color = textColor,
         )
@@ -360,7 +361,7 @@ fun XauxaPivot(
                             .xauxaFocusRing(interaction)
                             .semantics { this.selected = selected }
                             .padding(vertical = XauxaSpacing.Sm),
-                        fontSize = XauxaType.SectionHeader,
+                        style = XauxaTextStyles.SectionHeader,
                         fontFamily = XauxaType.FamilyUi,
                         color = if (selected) selectedTextColor else XauxaColor.TextSecondary,
                     )

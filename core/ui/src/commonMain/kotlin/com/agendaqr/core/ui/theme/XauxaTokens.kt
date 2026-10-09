@@ -8,7 +8,6 @@ import androidx.compose.ui.graphics.Color
 import kotlin.math.pow
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -126,6 +125,10 @@ data class XauxaColorScheme(
     val textTertiary: Color,
     val brand: Color,
     val onBrand: Color,
+    // NOTA (Fase 4): brandContainer/onBrandContainer son ALIAS de brand/
+    // onBrand por diseño V1.1 ("la familia de marca es compartida entre
+    // temas", XauxaSchemeTest la fija). Existen porque el esquema Material
+    // pide un contenedor primario; no es un segundo acento.
     val brandContainer: Color,
     val onBrandContainer: Color,
     val secondary: Color,
@@ -238,6 +241,11 @@ val DarkXauxaColorScheme = XauxaColorScheme(
     borderControl = XauxaPrimitive.darkBorderControl,
 )
 
+// NOTA (Fase 4): el default del CompositionLocal es el esquema OSCURO.
+// XauxaTheme SIEMPRE proporciona el esquema real (claro u oscuro según el
+// sistema); este default solo afecta a composiciones sin XauxaTheme
+// (tooling/previews). Se conserva oscuro por conservadurismo: cambiar el
+// default alteraría previews existentes; no afecta a producción.
 val LocalXauxaColorScheme = compositionLocalOf { DarkXauxaColorScheme }
 
 object XauxaColor {
@@ -366,6 +374,11 @@ object XauxaType {
     val Label: TextUnit = 14.sp
     val Caption: TextUnit = 12.sp
     val LetterSpacingWide: TextUnit = 0.5.sp
+    // Fase 4: interlineados canónicos (sp — respetan el escalado, §11).
+    val LineHeightLabel: TextUnit = 20.sp
+    val LineHeightBody: TextUnit = 24.sp
+    val LineHeightCaption: TextUnit = 16.sp
+    val LineHeightSection: TextUnit = 20.sp
     /** V1.1 (ADR-0005, spec §12 Tipografía): título de página en display
      * ligero (Archivo 300) y ≥ 40 sp. */
     val DisplayPage: TextUnit = 40.sp
@@ -405,6 +418,63 @@ object XauxaType {
 }
 
 /**
+ * Fase 4 (auditoría): estilos tipográficos canónicos. Reúnen fontSize,
+ * peso, tracking y LINE HEIGHT (la pieza que las repeticiones manuales de
+ * los componentes nunca fijaban). Los componentes consumen estos estilos
+ * en lugar de repetir tríos de tokens; los tamaños siguen siendo los de
+ * XauxaType (en sp: escalado del sistema, §11).
+ */
+object XauxaTextStyles {
+    /** Etiqueta de botón (Body de acción): Label/Bold/tracking wide. */
+    val ButtonLabel = androidx.compose.ui.text.TextStyle(
+        fontSize = XauxaType.Label,
+        fontWeight = FontWeight.Bold,
+        letterSpacing = XauxaType.LetterSpacingWide,
+        lineHeight = XauxaType.LineHeightLabel,
+    )
+
+    /** Cuerpo de texto (mensajes, filas). */
+    val Body = androidx.compose.ui.text.TextStyle(
+        fontSize = XauxaType.Body,
+        lineHeight = XauxaType.LineHeightBody,
+    )
+
+    /** Subtítulo/metadato de fila. */
+    val Caption = androidx.compose.ui.text.TextStyle(
+        fontSize = XauxaType.Caption,
+        lineHeight = XauxaType.LineHeightCaption,
+    )
+
+    /** Texto de apoyo (errores, helpers, badges). */
+    val Support = androidx.compose.ui.text.TextStyle(
+        fontSize = XauxaType.Caption,
+        fontWeight = FontWeight.SemiBold,
+        letterSpacing = XauxaType.LetterSpacingWide,
+        lineHeight = XauxaType.LineHeightCaption,
+    )
+
+    /** Etiqueta de acción de la app bar (bajo el icono). */
+    val AppBarItem = androidx.compose.ui.text.TextStyle(
+        fontSize = XauxaType.Caption,
+        lineHeight = XauxaType.LineHeightCaption,
+    )
+
+    /** Encabezado de sección (14 sp en acento, M6). */
+    val SectionHeader = androidx.compose.ui.text.TextStyle(
+        fontSize = XauxaType.SectionHeader,
+        lineHeight = XauxaType.LineHeightSection,
+    )
+}
+
+/**
+ * Fase 4 (auditoría): la ÚNICA forma con esquinas del sistema, aplanada a
+ * 0 — se construye una vez en la capa de tokens para la red de seguridad
+ * de `Shapes` (Material exige CornerBasedShape; RectangleShape no sirve
+ * ahí). El gate permite RoundedCornerShape solo aquí y en XauxaTheme.kt.
+ */
+val XauxaShapeFlat = androidx.compose.foundation.shape.RoundedCornerShape(size = 0.dp)
+
+/**
  * Fase 3 (auditoría): opacidades funcionales del lenguaje. [Pressed] es la
  * capa de realimentación táctil (overlay sobre el contenido, nunca un
  * cambio de color local).
@@ -423,6 +493,9 @@ object XauxaMotion {
      * desplazamiento" (§11 accesibilidad); el cambio ocurre en el sitio.
      */
     const val DurationReducedMs = 0
+    // Curvas en STRING: las consume el inspector del laboratorio
+    // (LabFoundationPreview las muestra como contrato documentado); las
+    // Easings reales (compose) están abajo. No son código muerto.
     const val EasingStandard = "cubic-bezier(0.1, 0.9, 0.2, 1)"
     const val EasingEmphasized = "cubic-bezier(0.1, 0.9, 0.2, 1)"
     const val EasingDecelerate = "cubic-bezier(0, 0, 0.2, 1)"
@@ -522,4 +595,3 @@ fun contrastRatio(a: Color, b: Color): Double {
 fun Color.asTextOn(background: Color, fallback: Color): Color =
     if (contrastRatio(this, background) >= 4.5) this else fallback
 
-fun Dp.xauxaBorder() = this

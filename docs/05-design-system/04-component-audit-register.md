@@ -598,3 +598,35 @@ La lista de la sección anterior queda ejecutada. Componente por componente:
 - APK release (RC con firma debug): **+600 753 B (~586 KB)** respecto de main previo a T2 (12 306 586 → 12 907 339).
 - Dist Wasm del laboratorio: **+5 639 244 B (~5.4 MB s/mini)** (31 500 392 → 37 167 636; el wrapper incluye el set completo de glifos).
 - Versión fijada: `com.composables:icons-lucide:1.1.0`; aviso ISC/MIT conservado en `06-licencias-terceros.md`.
+
+## Corrección de auditoría a11y (2026-10-08, fases 1–4 de la pasada fix/xauxa-a11y-contrast)
+
+Correcciones aplicadas sobre V1.1 (contraste, estados, movimiento y gate).
+Los valores y umbrales quedan fijados por `XauxaSchemeTest`; el detalle por
+fase vive en `docs/09-implementacion/changelog.md`.
+
+### Componentes sin consumidores de producción — estado
+
+| Componente | Estado |
+|---|---|
+| `XauxaSkeleton` | **ADOPTADO**: la carga inicial de la lista de S01 usa el skeleton (presentación; flujo intacto). |
+| `XauxaErrorPage` | sin uso: adoptar o retirar (S10/S12 ya componen banners contextuales; una página completa de error no encaja en la spec §10). |
+| `XauxaToast` | sin uso: adoptar o retirar (los patrones del lab lo ejercitan). |
+| `XauxaInlineResult` | sin uso: adoptar o retirar. |
+| `XauxaSettingRow` | sin uso: adoptar o retirar (no hay pantalla de ajustes en V1). |
+| `XauxaIconButton` | sin uso directo: hoy solo lo consume `XauxaToast` (que tampoco tiene uso de producción); decisión conjunta. |
+
+### Cambios de contrato de la pasada
+
+- `XauxaStatusBanner`: +`dismissLabel` (requerido con `onDismiss`); icono por tono.
+- `XauxaAppBar`: `backLabel` requerido; +`overflowLabel` (requerido con overflow).
+- `XauxaLoadMoreFooter`: +`loadMoreLabel`/`loadingLabel`/`endLabel` (copy del llamador).
+- `XauxaSearchBar`: `label`/`placeholder` sin defaults hardcodeados.
+- `XauxaToast`: +`dismissDescription` (requerido con `onDismiss`); liveRegion.
+- `XauxaFavoriteToggle`: `contentDescription` requerido (sin fallback hardcodeado).
+- `XauxaDialog`: +`destructive` (botón de peligro + foco inicial en Cancelar).
+- `XauxaListRow`: barra lateral solo con tono/acento; +`selected` con semántica.
+- `XauxaTextInput`: etiqueta como nombre accesible; error liveRegion; disabled distinguible (Surface3 + TextTertiary).
+- NUEVO `XauxaSearchTrigger` (disparador de búsqueda de nodo único; S01).
+- NUEVO `Modifier.xauxaPressFeedback` (overlay `XauxaOpacity.Pressed`).
+- NUEVO `XauxaTextStyles` (ButtonLabel/Body/Caption/Support/AppBarItem/SectionHeader con lineHeight).
