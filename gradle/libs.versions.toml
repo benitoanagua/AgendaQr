@@ -28,6 +28,10 @@ roborazzi = "1.26.0"
 # con variantes android/ios/wasm — compat con CMP 1.8.2 verificada por
 # compilación de los tres targets en esta pasada.
 lifecycle = "2.9.4"
+# Ronda 2 QA (ADR-0010): UiAutomator para flujos de sistema (permisos,
+# ajustes, rotación, escalas de fuente/animación, dumps de accesibilidad)
+# que Espresso/Compose-test no alcanzan fuera de la app.
+uiautomator = "2.4.0"
 
 [plugins]
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
@@ -60,4 +64,5 @@ roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", versi
 roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
 roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
 lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
+androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 roborazzi-plugin = { group = "io.github.takahirom.roborazzi", name = "io.github.takahirom.roborazzi.gradle.plugin", version.ref = "roborazzi" }
