@@ -312,7 +312,7 @@ Tabla de contraste calculada (script Python sin dependencias, WCAG 2.x sobre lum
 - **Set: Lucide** (licencia ISC — texto del aviso en `docs/05-design-system/06-licencias-terceros.md`). Se consume mediante una dependencia KMP que cubra Android, iOS y wasm (el laboratorio corre en wasm). Candidata: `com.composables:icons-lucide` — documentada; verificación de versión, compatibilidad con Kotlin 2.2.20 y target wasm pendiente en la pasada de implementación (no se modifican archivos de build en esta pasada documental).
 - Estilo: glifos de línea, trazo uniforme, un solo color, sin relleno. Concesión registrada: Lucide usa terminales redondeadas, menos angulosas que el Metro original; se acepta (punto abierto en ADR-0005).
 - Etiqueta visible: ver §11 (decisión de accesibilidad y desviación consciente de Metro).
-- Tamaños de icono como tokens en `XauxaTokens.kt` (múltiplos de 4 dp); nunca literales en `core/ui` (el gate `verify-xauxa.sh` los rechaza).
+- Tamaños de icono como tokens en `XauxaTokens.kt` (múltiplos de 4 dp); nunca literales en `core/ui` (el gate `verifyDesignSystemCompliance` los rechaza).
 - Mapeo mínimo (candidatos a confirmar contra el catálogo real de Lucide durante la implementación; no se dan por existentes): buscar → `Search`; añadir → `Plus`; registrar → icono de recibo o lápiz sobre cuadrado (`Receipt`/`SquarePen`); favorito → `Star`; contexto → `Folder` o `Layers`; atrás → `ArrowLeft`; guardar → `Check`; cancelar → `X`; más → `Ellipsis`; Galería → `Image`; Cámara → `Camera`.
 - Fuera de la lista mínima no se añaden iconos sin decisión; los iconos en cada fila de una lista no forman parte de Metro.
 

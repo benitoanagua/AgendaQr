@@ -38,7 +38,7 @@ test.
 - La "referencia" es `docs/04-ux/visual-hashes/manifest.json`: SHA-256 de
   cada PNG (TEXTO versionado).
 - Regresión visual = comparación de hashes:
-  `bash docs/04-ux/visual-hashes/verify.sh` (regenera + compara).
+  `./gradlew verifyVisualHashes` (regenera + compara).
 
 **Sensibilidad al entorno:** el render NATIVE de Robolectric depende de la
 plataforma (JDK, sistema). La comparación de hashes es determinista en un
@@ -59,5 +59,5 @@ recortes/solapes.
 ```bash
 ./gradlew :feature:destinations:presentation:recordRoborazzi \
   -PallowDebugSigningForRc=true          # genera los PNG
-bash docs/04-ux/visual-hashes/verify.sh  # regenera y compara hashes
+./gradlew verifyVisualHashes  # regenera y compara hashes
 ```

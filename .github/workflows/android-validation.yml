@@ -174,5 +174,5 @@ jobs:
 
       - name: Run 006 FK acceptance harness
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
-        run: bash supabase/tests/run-acceptance.sh
+          DATABASE_URL: jdbc:postgresql://localhost:5432/postgres?user=postgres&password=postgres
+        run: ./gradlew :supabase:acceptance:test -PallowDebugSigningForRc=true --console=plain

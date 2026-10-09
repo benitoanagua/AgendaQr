@@ -78,7 +78,7 @@ decisión de producto, no son fallos de la spec):
   `docs/04-ux/lab-captures/metro-v11/` — carpeta no versionada, solo su README —), batería local completa PASS.
 
 Validación local de la pasada (todo ejecutado en este host):
-`verifyAgendaQrArchitecture` PASS · `verify-xauxa.sh` XAUXA_GATE=PASS ·
+`verifyAgendaQrArchitecture` PASS · `verifyDesignSystemCompliance` verifyDesignSystemCompliance PASS ·
 tests domain/data/presentation/androidApp/core:ui PASS · `:androidApp:lint`
 0 errores · `assembleDebug`/`assembleRelease` (RC) PASS · `componentLabWeb`
 PASS · compilación iOS simulator (shared/data/presentation/core:ui) PASS ·
@@ -109,7 +109,7 @@ assembleRelease RC, componentLabWeb, ios-compile, supabase-acceptance
   43/69/19/41 = 172; ningún conteo bajó).
 - **Zonas horarias** (domain, daemon renovado por corrida):
   `TZ=America/La_Paz` y `TZ=Pacific/Kiritimati` → PASS.
-- **Aceptación SQL**: `bash supabase/tests/run-acceptance.sh` contra
+- **Aceptación SQL**: `./gradlew :supabase:acceptance:test` contra
   postgres:15 limpio (podman) → **ACCEPTANCE PASS**. El job de CI es
   bloqueante desde T13.
 - **Runtime Android** (AVD `agenda_qr` API 34 + Supabase local completo,

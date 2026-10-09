@@ -199,7 +199,7 @@ validar.
 ## 2026-10-08 (2) — Corrección de auditoría de accesibilidad del DS (fases 1–4, rama fix/xauxa-a11y-contrast)
 
 Sobre main f79f2c9. Un commit por fase; `verifyAgendaQrArchitecture`,
-`verify-xauxa.sh` y la suite de tests en verde al cierre de cada fase.
+`verifyDesignSystemCompliance` y la suite de tests en verde al cierre de cada fase.
 
 - **Fase 1 — Contraste**: tonos de estado con par propio (success/warning/info
   + container en ambos temas; fin de la herencia de secondary/tertiary);

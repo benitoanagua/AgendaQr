@@ -656,7 +656,7 @@ Se introduce `XauxaRadius.Base` como único token configurable (valor inicial `0
 
 ### Verificación ejecutada
 
-- `bash docs/05-design-system/verify-xauxa.sh`: `XAUXA_GATE=PASS`.
+- `./gradlew verifyDesignSystemCompliance`: `verifyDesignSystemCompliance PASS`.
 - `bash gradlew :core:ui:allTests --no-daemon`: no ejecutable en este entorno porque el wrapper no tiene Gradle 8.13 en caché y no hay conectividad DNS hacia `services.gradle.org`. No se interpreta como fallo de compilación ni como prueba aprobada.
 - Barrido estático de features `commonMain`: no se encontraron literales de color, radios, sombras ni dimensiones tipográficas/físicas en el patrón buscado. Las dimensiones explícitas detectadas se concentran en pruebas o implementaciones de plataforma, y deben revisarse según su función en la próxima pasada.
 
@@ -673,5 +673,5 @@ Se introduce `XauxaRadius.Base` como único token configurable (valor inicial `0
 - `secondary` y `tertiary` de la adaptación Material 3 dejan de exponer tonos morados/magenta: ambos reutilizan `Brand`/`OnBrand`, en coherencia con el acento único Xauxa.
 - `secondaryContainer` y `tertiaryContainer` pasan a neutros adaptativos (`Surface2` claro, `Surface3` oscuro) con contenido de contraste alto. Los roles inversos también pasan a pares monocromos con `inverseBrand` accesible.
 - `XauxaSchemeTest` fija los nuevos valores, las equivalencias semánticas y el contraste WCAG AA de roles inversos, además de los pares de primer/segundo/tercer plano.
-- `verify-xauxa.sh` amplía el gate: los componentes de producción no pueden importar formas geométricas directamente; los módulos feature no pueden consumir `MaterialTheme.colorScheme` ni importar Material 3 directamente. La capa `core:ui` sigue siendo el adaptador autorizado; el laboratorio queda como infraestructura separada.
-- Validación de esta ronda: `bash docs/05-design-system/verify-xauxa.sh` devuelve `XAUXA_GATE=PASS`; el contraste calculado independiente para los pares cambiados supera 4.5:1. `bash gradlew :core:ui:allTests --no-daemon` sigue bloqueado por `UnknownHostException: services.gradle.org`. (Los informes intermedios de auditoría fueron retirados; el estado vigente vive en este registro y en los checklists de validación.)
+- `verifyDesignSystemCompliance` amplía el gate: los componentes de producción no pueden importar formas geométricas directamente; los módulos feature no pueden consumir `MaterialTheme.colorScheme` ni importar Material 3 directamente. La capa `core:ui` sigue siendo el adaptador autorizado; el laboratorio queda como infraestructura separada.
+- Validación de esta ronda: `./gradlew verifyDesignSystemCompliance` devuelve `verifyDesignSystemCompliance PASS`; el contraste calculado independiente para los pares cambiados supera 4.5:1. `bash gradlew :core:ui:allTests --no-daemon` sigue bloqueado por `UnknownHostException: services.gradle.org`. (Los informes intermedios de auditoría fueron retirados; el estado vigente vive en este registro y en los checklists de validación.)

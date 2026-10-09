@@ -511,6 +511,6 @@ tasks.register("verifyArchitectureBoundaries") {
 
 tasks.register("verifyAgendaQrArchitecture") {
     group = "verification"
-    dependsOn("verifyDesignSystemCompliance", "verifyArchitectureBoundaries", "verifyWebDesignSystem", "verifyDesignSystemFixtures")
+    dependsOn("verifyDesignSystemCompliance", "verifyArchitectureBoundaries", "verifyWebDesignSystem", "verifyDesignSystemFixtures", "verifyNoScripts", "verifyControlMinSize")
     description = "Runs the complete Agenda QR architecture and Xauxa design-system gates."
 }
