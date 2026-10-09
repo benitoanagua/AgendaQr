@@ -74,9 +74,24 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
         if (shapesAllowedFiles.none { path.endsWith(it) } && forbiddenShapes.any(line::contains)) {
             add("$location: forbidden radius/elevation API: $line")
         }
+        // verify-xauxa.sh parity: CircleShape/RectangleShape también están
+        // prohibidos en componentes de core:ui (fuera de tokens/theme).
+        if (path.contains("/core/ui/") &&
+            !path.endsWith("XauxaTokens.kt") && !path.endsWith("XauxaTheme.kt") &&
+            !path.contains("/lab/") &&
+            (line.contains("CircleShape") || line.contains("RectangleShape"))
+        ) {
+            add("$location: production components must use XauxaShape/token API (no CircleShape/RectangleShape): $line")
+        }
         if (!path.endsWith("XauxaTheme.kt") && forbiddenVisualAuthority.any(line::contains)) add("$location: MaterialTheme cannot be the visual authority outside XauxaTheme: $line")
-        if (isFeatureSource && bannedMaterialInFeature.any(line::contains)) {
-            add("$location: Material component imported from feature/ (compose Xauxa instead): $line")
+        // verify-xauxa.sh parity: material3/colorScheme prohibido en
+        // feature/, shared/src y androidApp/src (solo core:ui puede adaptarlo).
+        val isAppSource = isFeatureSource || path.contains("/shared/src/") || path.contains("/androidApp/src/")
+        if (isAppSource && (bannedMaterialInFeature.any(line::contains) ||
+                line.contains("androidx.compose.material3.") ||
+                line.contains("MaterialTheme.colorScheme"))
+        ) {
+            add("$location: app/feature code must use core:ui and Xauxa tokens: $line")
         }
         // D2 — copy de UI en feature/ debe salir de AppStrings.
         if (isFeatureSource) {
@@ -140,6 +155,55 @@ fun checkViolations(): List<String> {
         violations += kotlinDesignViolations(file.path, file.readLines())
     }
     return violations
+}
+
+/**
+ * verify-xauxa.sh parity: el mínimo interactivo canónico es 48dp.
+ * Si alguien baja este valor, la accesibilidad se rompe (§11).
+ */
+tasks.register("verifyControlMinSize") {
+    group = "verification"
+    description = "XauxaMetrics.ControlMinSize must remain 48.dp."
+    doLast {
+        val tokens = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/XauxaTokens.kt")
+        if (!tokens.exists()) return@doLast
+        val content = tokens.readText()
+        if (!content.contains("val ControlMinSize = 48.dp")) {
+            throw GradleException("Xauxa gate failed: XauxaMetrics.ControlMinSize must remain 48.dp.")
+        }
+    }
+}
+
+/**
+ * A.6 Guardia permanente: ningún script sh/py/js/mjs/ts/ps1/bat fuera de
+ * la lista de excepciones (gradlew, gradlew.bat, salidas en build/).
+ */
+tasks.register("verifyNoScripts") {
+    group = "verification"
+    description = "No shell/JS/TS scripts in the repo (Kotlin way)."
+    doLast {
+        val scriptExtensions = listOf(".sh", ".py", ".js", ".mjs", ".ts", ".ps1", ".bat")
+        val exceptions = listOf("gradlew", "gradlew.bat")
+        val root = project.rootDir
+        val violations = mutableListOf<String>()
+        root.walkTopDown().forEach { file ->
+            if (file.isFile && !file.path.contains("/build/") && !file.path.contains("/.git/")) {
+                val name = file.name
+                val isScript = scriptExtensions.any { name.endsWith(it) }
+                if (isScript && name !in exceptions) {
+                    violations.add("${file.relativeTo(root).path}")
+                }
+            }
+        }
+        if (violations.isNotEmpty()) {
+            throw GradleException(
+                "Kotlin way: shell/JS/TS scripts are forbidden. " +
+                    "Port them to Gradle tasks or Kotlin modules. Found:\n" +
+                    violations.joinToString("\n  ") { "  $it" }
+            )
+        }
+        logger.lifecycle("verifyNoScripts: PASS (no forbidden scripts)")
+    }
 }
 
 tasks.register("verifyDesignSystemCompliance") {
