@@ -252,3 +252,15 @@ Pendientes de decisión/verificación manual: mostrar/ocultar contraseña
 glifos para Editar/Compartir/Mostrar QR; TalkBack/VoiceOver interactivos,
 predictive back (Android 14+), fuente al 200 % y contraste con lente en
 dispositivo físico; iOS runtime (Xcode).
+
+
+## 2026-10-09 — Imágenes fuera del repo (chore/no-track-images)
+
+Decisión del propietario: no trackear binarios de imagen. Se retiran las
+17 capturas versionadas (lab D6 + evidencia Metro V1.1) y `.gitignore`
+pasa a ignorar png/jpg/jpeg/gif/webp/bmp en todo el repo. No hay recursos
+de app afectados (ningún icono/asset de build era imagen trackeada; las
+fuentes .ttf de Archivo siguen versionadas — son dependencias de build,
+no evidencia). Los READMEs de capturas quedan como registro de qué se
+verificó y cómo regenerarlo; la evidencia ejecutable sigue en los tests y
+el CI. Nada de código tocado.
