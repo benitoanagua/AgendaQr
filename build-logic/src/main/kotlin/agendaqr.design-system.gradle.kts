@@ -206,6 +206,91 @@ tasks.register("verifyNoScripts") {
     }
 }
 
+
+/**
+ * A.2: Visual hash tasks (replaces docs/04-ux/visual-hashes/verify.sh).
+ * SHA-256 of each Roborazzi PNG compared against manifest.json (text).
+ * SENSIBLE AL ENTORNO (ADR-0007): el render depende del JDK/OS; usar en
+ * el mismo entorno que generó el manifest o regenerarlo.
+ */
+tasks.register("recordVisualHashes") {
+    group = "verification"
+    description = "Regenerates SHA-256 manifest from Roborazzi captures."
+    val outputDir = file("feature/destinations/presentation/build/roborazzi")
+    val manifestFile = file("docs/04-ux/visual-hashes/manifest.json")
+    inputs.dir(outputDir)
+    outputs.file(manifestFile)
+    doLast {
+        if (!outputDir.exists()) {
+            throw GradleException("No Roborazzi output at ${outputDir}. Run :feature:destinations:presentation:recordRoborazzi first.")
+        }
+        val hashes = sortedMapOf<String, String>()
+        outputDir.listFiles()?.filter { it.extension == "png" }?.sortedBy { it.name }?.forEach { png ->
+            val digest = java.security.MessageDigest.getInstance("SHA-256")
+            png.inputStream().use { input ->
+                val buf = ByteArray(8192)
+                var read: Int
+                while (input.read(buf).also { read = it } > 0) {
+                    digest.update(buf, 0, read)
+                }
+            }
+            hashes[png.name] = digest.digest().joinToString("") { "%02x".format(it) }
+        }
+        manifestFile.parentFile.mkdirs()
+        manifestFile.writeText(
+            hashes.entries.joinToString("", "{\n", "\n}\n") { (k, v) ->
+                "  \"${k}\": \"${v}\"${if (k == hashes.keys.last()) "" else ","}\n"
+            },
+        )
+        logger.lifecycle("recordVisualHashes: ${hashes.size} hashes written to ${manifestFile.path}")
+    }
+}
+
+tasks.register("verifyVisualHashes") {
+    group = "verification"
+    description = "Compares Roborazzi captures against the SHA-256 manifest (ADR-0007)."
+    val outputDir = file("feature/destinations/presentation/build/roborazzi")
+    val manifestFile = file("docs/04-ux/visual-hashes/manifest.json")
+    inputs.dir(outputDir)
+    inputs.file(manifestFile)
+    doLast {
+        if (!manifestFile.exists()) {
+            throw GradleException("Manifest not found: ${manifestFile}. Run recordVisualHashes first.")
+        }
+        if (!outputDir.exists()) {
+            throw GradleException("No Roborazzi output at ${outputDir}. Run :feature:destinations:presentation:recordRoborazzi first.")
+        }
+        val expected = mutableMapOf<String, String>()
+        manifestFile.readLines().forEach { line ->
+            val m = Regex("\"([^\"]+)\": \"([a-f0-9]+)\"").find(line)
+            if (m != null) expected[m.groupValues[1]] = m.groupValues[2]
+        }
+        val actual = mutableMapOf<String, String>()
+        outputDir.listFiles()?.filter { it.extension == "png" }?.forEach { png ->
+            val digest = java.security.MessageDigest.getInstance("SHA-256")
+            png.inputStream().use { input ->
+                val buf = ByteArray(8192)
+                var read: Int
+                while (input.read(buf).also { read = it } > 0) {
+                    digest.update(buf, 0, read)
+                }
+            }
+            actual[png.name] = digest.digest().joinToString("") { "%02x".format(it) }
+        }
+        val missing = (expected.keys - actual.keys).sorted()
+        val extra = (actual.keys - expected.keys).sorted()
+        val changed = expected.filter { (k, v) -> k in actual && actual[k] != v }.keys.sorted()
+        if (missing.isNotEmpty() || extra.isNotEmpty() || changed.isNotEmpty()) {
+            val sb = StringBuilder("VISUAL_HASHES=FAIL\n")
+            missing.forEach { sb.append("  - missing: $it\n") }
+            extra.forEach { sb.append("  - new: $it\n") }
+            changed.forEach { sb.append("  - pixel changed: $it\n") }
+            throw GradleException(sb.toString())
+        }
+        logger.lifecycle("VISUAL_HASHES=PASS (${actual.size} captures)")
+    }
+}
+
 tasks.register("verifyDesignSystemCompliance") {
     group = "verification"
     description = "Enforces Xauxa Design System invariants in production Kotlin sources."
