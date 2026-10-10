@@ -169,9 +169,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install psql client
-        run: sudo apt-get update -y -q && sudo apt-get install -y -q postgresql-client
-
       - name: Run 006 FK acceptance harness
         env:
           DATABASE_URL: jdbc:postgresql://localhost:5432/postgres?user=postgres&password=postgres
