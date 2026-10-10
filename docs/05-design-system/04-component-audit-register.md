@@ -39,3 +39,15 @@
 - `XauxaMetroTile`: altura mínima; etiqueta escalable; overlay de pulsación opuesto.
 - `XauxaSearchTrigger`: disparador de búsqueda de nodo único.
 - `XauxaFeedbackEvent`: háptica + liveRegion por evento.
+
+## Excepciones de chrome (nivel pantalla)
+
+El registro normativo de excepciones vive en el contrato §12; el gate
+`verifyDesignSystemCompliance` compara sus IDs E-xx con su propio registro
+y falla si no coinciden. Esta auditoría y el contrato deben leerse juntos:
+
+- **E-07 — AuthScreen sin barra inferior (M7)**: la autenticación no tiene
+  destino de retorno y su única acción legítima es el inicio/registro; el
+  bloque sólido de acento en el cuerpo es la acción principal (M10). Es la
+  única pantalla exenta de la barra inferior. Retirada cuando producto
+  defina navegación o acciones secundarias en Auth (nuevo ADR).

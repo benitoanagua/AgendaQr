@@ -160,8 +160,11 @@ No hay panorama horizontal en V1.1.
    normativo residual detectado, pero cualquier choque futuro se registra
    aquí.
 4. **Orden y tamaño del tile vivo** en S01 (4×2 en rejilla de 4
-   columnas en compacto): confirmar comportamiento en anchos de
-   breakpoint (480/640 px) durante la implementación.
+   columnas en compacto): RESUELTO (2026-10-10). La rejilla deriva el
+   alto de SMALL/MEDIUM/WIDE de la unidad calculada (no de `TileUnit`
+   fijo) y crece con la fuente; `XauxaTileGridTest`,
+   `XauxaTileContractTest` y `XauxaResponsiveLayoutContractTest` cubren
+   320/360 dp y font scale 100/150/200 %.
 5. **Etiqueta de la app bar en idiomas largos:** la regla de etiqueta
    visible puede desbordar en idiomas de etiquetas largas; se evalúa con
    datos reales en la pasada de implementación (no se afloja la regla
@@ -172,16 +175,17 @@ No hay panorama horizontal en V1.1.
    siempre visible, §11) hasta una decisión de iconografía. Opciones:
    (a) mantener texto; (b) proponer glifos de Lucide (`Pencil`, `Share2`,
    `Maximize2`) para decisión explícita de producto.
-7. **Defectos de implementación que la spec no resuelve (T7):**
-   destinos "Sin nombre" y "QR importado" siguen indistinguibles en la
-   lista (exigir un copy distintivo o una marca de origen es decisión de
-   producto/dominio, no visual); y el badge de sincronización compite
-   por el ancho de la fila (§5 se cumple: el estado es texto; el layout
-   de fila no está congelado). Ambos quedan como defectos abiertos de
-   implementación en `docs/09-implementacion/01-estado.md`, no de spec.
-8. **Contenido del tile vivo (S01):** hoy muestra el último QR;
-   alternar con la actividad más reciente es decisión de contenido
-   pendiente (M2 admite ambas).
+7. **Defectos de implementación que la spec no resuelve (T7):** RESUELTOS
+   (2026-10-10). Los destinos "Sin nombre" y "QR importado" muestran un
+   subtítulo distintivo con origen y fecha; el badge de sincronización
+   vive en su línea propia bajo el título (slot `meta` de `XauxaListRow`)
+   y no compite por el ancho de la fila. Cubierto por
+   `DestinationRowLayoutTest` (320/360 dp, font scale 100/150/200 %) y
+   `DestinationSubtitleTest`. No queda defecto abierto de implementación.
+8. **Contenido del tile vivo (S01):** RESUELTO (2026-10-10). El tile vivo
+   se deriva de los datos SIN filtrar (el más reciente entre el último QR
+   y la actividad reciente), no del resultado visible del filtro/búsqueda;
+   una sola transición por cambio de dato, sin bucles.
 9. **Chips de filtro (T3):** conservan su contorno de selección porque
    son controles con estado (borde funcional de M9), no contenedores.
    Si producto prefiere chips planos al 100 %, es un cambio de diseño a

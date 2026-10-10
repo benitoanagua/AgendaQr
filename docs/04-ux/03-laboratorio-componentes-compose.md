@@ -100,7 +100,7 @@ Categorías reales tras inspección del código (no se registran componentes que
 |---|---|
 | Fundamentos | `XauxaColor`, `XauxaSpacing`, `XauxaMetrics`, `XauxaType`, `XauxaMotion`, `XauxaFocus` |
 | Superficies | `XauxaScreen`, `XauxaSection`, `XauxaTile`, `XauxaTileHeader`, `XauxaHeroCard`, `XauxaDialog` |
-| Acciones | `XauxaPrimaryButton`, `XauxaSecondaryButton`, `XauxaDangerButton`, `XauxaTextAction`, `XauxaIconButton`, `XauxaFilterChip`, `XauxaTextInput`, `XauxaSearchBar`, `XauxaSettingRow`, `XauxaFavoriteToggle` |
+| Acciones | `XauxaPrimaryButton`, `XauxaSecondaryButton`, `XauxaDangerButton`, `XauxaTextAction`, `XauxaIconButton`, `XauxaFilterChip`, `XauxaTextInput`, `XauxaSearchBar`, `XauxaFavoriteToggle` |
 | Feedback | `XauxaToast`, `XauxaStatusBanner`, `XauxaInlineResult`, `XauxaLoading`, `XauxaSkeleton`, `XauxaEmptyState`, `XauxaErrorPage`, `XauxaLoadMoreFooter` |
 | Datos | `XauxaListRow`, `XauxaStatBlock`, `XauxaBadge`, `XauxaCategoryChip`, `XauxaFavoriteIndicator` |
 | QR y comprobantes | `XauxaQrPreview`, `XauxaScannerViewport`, `XauxaFileUpload` |

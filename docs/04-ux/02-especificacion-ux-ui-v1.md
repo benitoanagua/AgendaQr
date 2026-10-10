@@ -11,7 +11,12 @@
 | V1.0 | 2026-09-23 | Congelación original. |
 | V1.1 | 2026-10-05 | Enmienda por ADR-0005 (lenguaje visual Metro dentro de Xauxa): S01, S06, §11 y §12 reescritos. El resto de secciones (§§1–10, S02–S05, S07–S12) queda sin cambios. Intención, navegación conceptual, modelo mental, reglas de negocio y recuperación de errores: intactos. |
 
-La implementación vigente en `main` queda **desalineada** de V1.1 hasta la pasada de implementación que aplique esta enmienda (registrado en `docs/09-implementacion/01-estado.md`); la spec manda sobre el código (regla de D-17).
+La implementación de V1.1 está aplicada sobre `main` y verificada por las
+puertas del design system y de módulos (estado y cobertura reales en
+`docs/09-implementacion/01-estado.md`). Si en el futuro la implementación
+se aparta de esta spec, el desvío se registra allí y se corrige la fuente
+menos específica (contrato §2); la spec manda sobre el código en intención,
+composición funcional y flujos.
 
 ## 1. Contrato principal
 

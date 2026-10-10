@@ -5,7 +5,7 @@ Este documento fija la adopción de Xauxa en Agenda QR. Xauxa es la autoridad ú
 ## Invariantes
 
 1. Tokens semánticos; no valores visuales crudos en features.
-2. Contenedores rectangulares con radio 0; los círculos reales siguen siendo círculos.
+2. Contenedores rectangulares con radio base 0 dp, conmutable en el rango 0–6 dp vía `XauxaRadius.Base` (ADR-0011); los círculos reales siguen siendo círculos.
 3. Sin elevación decorativa ni sombras en el lenguaje base del producto.
 4. Acento de sistema `0067B8` más paleta Metro de acentos por contexto (enmienda V1.1, ADR-0005): acento derivado de forma determinista del identificador del contexto, con tabla de contraste calculada en la spec §12; los colores de estado permanecen semánticos y separados de los acentos.
 5. Separación estructural mediante spacing y bloques de color (enmienda V1.1, ADR-0005); los bordes pasan a uso funcional (foco, campo en foco/error, tile seleccionado) y se elimina el borde de reposo en filas, botones, badges y tiles.
@@ -42,7 +42,11 @@ Base de 4px; breakpoints de comportamiento en 480px y 640px; alineación izquier
 
 ## Motion
 
-150/300/600ms y curvas standard/emphasized/decelerate. Los loops decorativos no forman parte del lenguaje visual.
+150 ms (`DurationShortMs`) y 300 ms (`DurationMediumMs`); con movimiento
+reducido la duración es 0 ms (cambio inmediato, §11). Curvas: `standard`
+y `decelerate` (una por rol — la desaceleración es la curva de entrada; el
+contrato §3.2 prohíbe alias de easing divergentes). Los loops decorativos
+no forman parte del lenguaje visual.
 
 ## Norma de adopción
 

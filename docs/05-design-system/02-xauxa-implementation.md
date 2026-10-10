@@ -8,7 +8,7 @@ Xauxa es la autoridad visual completa de Agenda QR. El código de producto no co
 
 - `XauxaTokens.kt`: única fuente editable de tokens.
 - `XauxaTheme.kt`: adaptación del esquema Xauxa al runtime Compose.
-- `XauxaComponents.kt` y `XauxaExtendedComponents.kt`: primitives y componentes compartidos.
+- `components/`: primitives y componentes compartidos (`XauxaComponents.kt`, `XauxaMetro.kt`, `XauxaAppBar.kt`, `XauxaLists.kt`, `XauxaInputs.kt`, `XauxaFeedback.kt`, `XauxaTone.kt`, entre otros).
 - `lab/`: validación visual y contractual del mismo sistema.
 
 ## Reglas
