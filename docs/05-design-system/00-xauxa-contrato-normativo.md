@@ -167,6 +167,11 @@ Los diálogos se reservan para decisiones que necesitan interrupción o foco mod
 
 ## 7. Interacción, foco y movimiento
 
+### Indicación global
+
+El feedback de pulsación es un OVERLAY PLANO (token `XauxaOpacity.Pressed`), nunca un ripple o state layer de Material 3. `XauxaTheme` desactiva el ripple de M3 (`LocalRippleConfiguration provides null`). Todos los componentes Xauxa usan el patrón: `clickable(indication = null)` + `xauxaPressFeedback` (Modifier separado que dibuja el overlay). Este patrón NO es un `indication = null` "huérfano": el feedback visual siempre existe, dibujado por el modifier.
+
+
 - Cada control interactivo ofrece respuesta perceptible sin depender del ripple Material.
 - La indicación de pulsación es plana y coherente con la superficie; foco de teclado/lector de pantalla es visible y no se reemplaza por feedback de pulsación.
 - El anillo de foco debe tener grosor, separación y contraste tokenizados; se verifica sobre cada color de tile/acento.

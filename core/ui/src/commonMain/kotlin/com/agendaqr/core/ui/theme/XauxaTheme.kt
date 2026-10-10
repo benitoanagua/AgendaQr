@@ -9,6 +9,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalRippleConfiguration
 
 // Fase 4: la red de seguridad de shapes consume el token plano de la
 // capa de tokens (XauxaShape); RoundedCornerShape no aparece aquí.
@@ -19,7 +21,14 @@ fun XauxaTheme(
     content: @Composable () -> Unit,
 ) {
     val scheme = if (darkTheme) DarkXauxaColorScheme else LightXauxaColorScheme
-    CompositionLocalProvider(LocalXauxaColorScheme provides scheme) {
+    // Desactiva el ripple de Material 3 (contrato §7: overlay plano, no
+        // gradientes). Los componentes Xauxa dibujan su propio feedback con
+        // xauxaPressFeedback; por eso los clickable llevan indication = null.
+        @OptIn(ExperimentalMaterial3Api::class)
+        CompositionLocalProvider(
+            LocalXauxaColorScheme provides scheme,
+            LocalRippleConfiguration provides null,
+        ) {
         MaterialTheme(
             // Fase 4 (auditoría): red de seguridad — TODO componente M3 que
             // no pase shape explícita hereda radio 0 (invariante Metro). El
