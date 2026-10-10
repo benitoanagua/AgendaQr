@@ -64,7 +64,7 @@ fun DestinationDetailScreen(
             destination.note?.takeIf { it.isNotBlank() }?.let { XauxaText(it, color = XauxaColor.TextSecondary) }
             // T6: estado de sincronización del elemento (texto, no solo
             // color) con REINTENTAR cuando es un error recuperable.
-            ElementSyncBadge(syncStatus)
+            ElementSyncBadge(syncStatus, showWhenSynced = true)
             if (syncStatus == ElementSyncStatus.ErrorRecoverable) {
                 XauxaTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
             }
