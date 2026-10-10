@@ -185,7 +185,8 @@ fun XauxaFavoriteToggle(
                 onClick = { onCheckedChange(!favorite) },
             )
             .focusable(interactionSource = interaction)
-            .xauxaFocusRing(interaction),
+            .xauxaFocusRing(interaction)
+            .xauxaPressFeedback(interaction),
         contentAlignment = Alignment.Center,
     ) {
         Box(
@@ -322,6 +323,7 @@ fun XauxaFileUpload(
         modifier = clickableModifier
             .fillMaxWidth()
             .xauxaFocusRing(interaction)
+            .xauxaPressFeedback(interaction)
             // Sin borde de reposo: el bloque tonal define el límite.
             .background(XauxaColor.Surface)
             .padding(XauxaSpacing.Lg),

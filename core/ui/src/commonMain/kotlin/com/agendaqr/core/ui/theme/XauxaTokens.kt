@@ -515,7 +515,18 @@ object XauxaMotion {
  * tema claro y oscuro (el fondo oscuro es negro puro y la regla de
  * contraste de cada par es válida contra él — ver spec §12 Modo oscuro).
  */
-data class XauxaAccent(val id: String, val background: Color, val onAccent: Color)
+data class XauxaAccent(val id: String, val background: Color, val onAccent: Color) {
+    /**
+     * ADR-0011 (calidad de tiles): overlay de pulsación del bloque de
+     * acento — el color OPUESTO al texto. El overlay por defecto del tema
+     * ([XauxaColor.TextPrimary]) no vale aquí: sobre el propio bloque el
+     * color del tema puede repetir el fondo y dejar la pulsación invisible.
+     * El par onAccent/pressOverlay garantiza que el estado presionado
+     * nunca baje de 4.5:1 (XauxaTileContractTest).
+     */
+    val pressOverlay: Color
+        get() = if (onAccent == Color.White) Color.Black else Color.White
+}
 
 /**
  * Paleta de acentos V1.1: los 12 admitidos por la tabla de contraste

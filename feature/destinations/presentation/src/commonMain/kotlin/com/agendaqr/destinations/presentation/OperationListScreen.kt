@@ -109,15 +109,16 @@ internal fun OperationListScreen(
     val operations = viewModel.visibleOperations()
     var visibleCount by remember(operations.size) { mutableStateOf(50) }
     val paged = operations.take(visibleCount)
-    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.ScreenMargin).imePadding(), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            XauxaHeading(text = AppStrings.Operaciones, size = XauxaType.Display, fontWeight = FontWeight.Bold)
-            Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                XauxaTextAction(label = AppStrings.Inicio, onClick = onBack)
-                XauxaPrimaryButton(label = AppStrings.Nuevo, onClick = { viewModel.onAction(OperationAction.New) })
-            }
-        }
-        XauxaSearchBar(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = AppStrings.Buscar, placeholder = AppStrings.BuscarOperaciones, onClear = { viewModel.onAction(OperationAction.Search("")) }, clearLabel = AppStrings.Limpiar)
+    Column(Modifier.fillMaxSize().statusBarsPadding().imePadding()) {
+        Column(
+            Modifier.fillMaxWidth().weight(1f).padding(XauxaSpacing.ScreenMargin),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
+        ) {
+            // M6: título de página en display ligero; M7: "Nuevo" es la
+            // acción principal de la barra inferior (bloque de acento) y
+            // "Inicio" pasa a la flecha atrás de la misma barra.
+            XauxaPageTitle(text = AppStrings.Operaciones)
+            XauxaSearchBar(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = AppStrings.Buscar, placeholder = AppStrings.BuscarOperaciones, onClear = { viewModel.onAction(OperationAction.Search("")) }, clearLabel = AppStrings.Limpiar)
         if (state.unassociated.isNotEmpty()) {
             XauxaStatusBanner(unassociatedReceiptsLabel(state.unassociated.size))
             XauxaSecondaryButton(label = AppStrings.VerBandejaDeRespaldos, onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
@@ -147,7 +148,7 @@ internal fun OperationListScreen(
                 }
             )
         } else {
-            LazyColumn(modifier = Modifier.fillMaxSize().weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+            LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 items(paged, key = { it.id }) { operation ->
                     XauxaTile(onClick = { viewModel.onAction(OperationAction.Open(operation.id)) }) {
                         Row(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -179,6 +180,15 @@ internal fun OperationListScreen(
                 }
             }
         }
+        }
+        XauxaAppBar(
+            modifier = Modifier.navigationBarsPadding(),
+            actions = listOf(
+                XauxaAppBarAction(AppStrings.Nuevo, XauxaIcons.Add, onClick = { viewModel.onAction(OperationAction.New) }, primary = true),
+            ),
+            onBack = onBack,
+            backLabel = AppStrings.Inicio,
+        )
     }
 }
 
@@ -189,34 +199,47 @@ internal fun UnassociatedScreen(
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
     var selectedReceipt by remember { mutableStateOf<Comprobante?>(null) }
-    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.ScreenMargin).imePadding(), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            XauxaHeading(text = AppStrings.ComprobantesSinAsociar, size = XauxaType.Display, fontWeight = FontWeight.Bold)
-            XauxaTextAction(label = AppStrings.Volver, onClick = { viewModel.onAction(OperationAction.Back) })
-        }
-        if (state.unassociated.isEmpty()) {
-            XauxaEmptyState(title = AppStrings.noUnassociatedReceipts, actionLabel = AppStrings.Volver, onAction = { viewModel.onAction(OperationAction.Back) })
-        } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                items(state.unassociated, key = { it.id }) { receipt ->
-                    XauxaTile(onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) }) {
-                        Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                            XauxaText(AppStrings.receiptReceivedTitle, fontWeight = FontWeight.SemiBold)
-                            XauxaText(formatDate(receipt.createdAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
-                            // T6: estado de sincronización por comprobante, con texto.
-                            ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
-                            // Acciones apiladas: dos etiquetas largas no caben lado a lado en 360dp.
-                            Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                                XauxaPrimaryButton(label = AppStrings.associateToExistingOperation, onClick = { selectedReceipt = receipt })
-                                XauxaSecondaryButton(label = AppStrings.createOperationFromThis, onClick = {
-                                    viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
-                                })
+    Column(Modifier.fillMaxSize().statusBarsPadding().imePadding()) {
+        Column(
+            Modifier.fillMaxWidth().weight(1f).padding(XauxaSpacing.ScreenMargin),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
+        ) {
+            // M6: título de página en display ligero; M7: el Volver del
+            // estado vacío vive en la flecha de la barra inferior.
+            XauxaPageTitle(text = AppStrings.ComprobantesSinAsociar)
+            if (state.unassociated.isEmpty()) {
+                XauxaEmptyState(title = AppStrings.noUnassociatedReceipts)
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+                ) {
+                    items(state.unassociated, key = { it.id }) { receipt ->
+                        XauxaTile(onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) }) {
+                            Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                                XauxaText(AppStrings.receiptReceivedTitle, fontWeight = FontWeight.SemiBold)
+                                XauxaText(formatDate(receipt.createdAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
+                                // T6: estado de sincronización por comprobante, con texto.
+                                ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
+                                // Acciones apiladas: dos etiquetas largas no caben lado a lado en 360dp.
+                                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                                    XauxaPrimaryButton(label = AppStrings.associateToExistingOperation, onClick = { selectedReceipt = receipt })
+                                    XauxaSecondaryButton(label = AppStrings.createOperationFromThis, onClick = {
+                                        viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
+                                    })
+                                }
                             }
                         }
                     }
                 }
             }
         }
+        XauxaAppBar(
+            modifier = Modifier.navigationBarsPadding(),
+            actions = emptyList(),
+            onBack = { viewModel.onAction(OperationAction.Back) },
+            backLabel = AppStrings.Volver,
+        )
     }
     selectedReceipt?.let { receipt ->
         val suggestion = viewModel.receiptSuggestion(receipt.id)

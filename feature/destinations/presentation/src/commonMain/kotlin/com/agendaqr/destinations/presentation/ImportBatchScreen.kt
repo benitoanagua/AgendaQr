@@ -28,6 +28,7 @@ import com.agendaqr.core.ui.components.XauxaFeedbackEvent
 import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaQrPreview
+import com.agendaqr.core.ui.components.XauxaAppBar
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextAction
@@ -70,13 +71,21 @@ fun ImportBatchScreen(
         wasSaving = state is ImportBatchUiState.Saving || state is ImportBatchUiState.Saved
     }
     XauxaFeedbackEvent(event = savedEvent, message = AppStrings.GuardadoOk)
+    // M7: la barra de aplicación inferior aloja Volver/Volver a resultado;
+    // el cuerpo conserva solo las acciones del contrato S12 ("Guardar
+    // reconocidos" como bloque sólido de acento, M10, y "Revisar N
+    // pendientes").
     Column(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .navigationBarsPadding()
+            .imePadding(),
+    ) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
             .padding(XauxaSpacing.ScreenMargin)
-            .imePadding()
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
     ) {
@@ -84,7 +93,6 @@ fun ImportBatchScreen(
         when (state) {
             ImportBatchUiState.Idle -> {
                 XauxaText(AppStrings.TraeVariosElementosAAgenda, color = XauxaColor.TextSecondary)
-                XauxaSecondaryButton(AppStrings.Volver, onClick = { onAction(ImportBatchAction.Back) })
             }
             ImportBatchUiState.Importing -> XauxaLoading(message = AppStrings.Importando)
             ImportBatchUiState.Analyzing -> XauxaLoading(message = AppStrings.Analizando)
@@ -96,7 +104,6 @@ fun ImportBatchScreen(
             }
             is ImportBatchUiState.Saved -> {
                 XauxaStatusBanner(AppStrings.batchSavedKeepReviewNotice, tone = XauxaTone.Success)
-                XauxaPrimaryButton(AppStrings.Volver, onClick = { onAction(ImportBatchAction.Back) })
             }
             is ImportBatchUiState.Error -> {
                 XauxaStatusBanner(
@@ -106,9 +113,17 @@ fun ImportBatchScreen(
                     onAction = { onAction(ImportBatchAction.SaveRecognized) },
                 )
                 state.batch?.let { BatchResultContent(it, onAction, isSaving = false) }
-                    ?: XauxaSecondaryButton(AppStrings.Volver, onClick = { onAction(ImportBatchAction.Back) })
             }
         }
+    }
+    XauxaAppBar(
+        modifier = Modifier.navigationBarsPadding(),
+        actions = emptyList(),
+        // M7/§3: mientras se guarda NO hay vuelta (el lote se perdería); el
+        // Volver de Review regresa al RESULTADO (flujo padre), no al origen.
+        onBack = if (state is ImportBatchUiState.Saving) null else ({ onAction(ImportBatchAction.Back) }),
+        backLabel = if (state is ImportBatchUiState.Review) AppStrings.VolverAResultado else AppStrings.Volver,
+    )
     }
 
     existing?.let { preview ->
@@ -153,7 +168,6 @@ private fun BatchResultContent(
         // Contrato S12: "Revisar N pendientes".
         XauxaSecondaryButton(reviewPendingLabel(batch), onClick = { onAction(ImportBatchAction.ReviewPending) }, enabled = !isSaving)
     }
-    XauxaSecondaryButton(AppStrings.Volver, onClick = { onAction(ImportBatchAction.Back) }, enabled = !isSaving)
 }
 
 @Composable
@@ -175,7 +189,6 @@ private fun BatchReviewContent(
             isLoading = isSaving,
         )
     }
-    XauxaSecondaryButton(AppStrings.VolverAResultado, onClick = { onAction(ImportBatchAction.Back) }, enabled = !isSaving)
 }
 
 @Composable

@@ -13,8 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import com.agendaqr.core.ui.components.XauxaAppBar
 import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaText
+import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaQrPreview
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
@@ -64,18 +66,30 @@ fun QrFullscreenPattern(
     encodedQr: String,
     onBack: () -> Unit,
 ) {
+    // M6/M7: título de página en display ligero; Volver vive en la barra
+    // de aplicación inferior, no suelto en el cuerpo.
     Column(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(XauxaSpacing.ScreenMargin)
             .imePadding(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg, Alignment.CenterVertically),
     ) {
-        XauxaText(AppStrings.Qr, size = XauxaType.Headline, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
-        XauxaQrPreview(encodedQr, modifier = Modifier.fillMaxWidth())
-        XauxaSecondaryButton(AppStrings.Volver, onBack)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(XauxaSpacing.ScreenMargin),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg, Alignment.CenterVertically),
+        ) {
+            XauxaPageTitle(text = AppStrings.Qr)
+            XauxaQrPreview(encodedQr, modifier = Modifier.fillMaxWidth())
+        }
+        XauxaAppBar(
+            modifier = Modifier.navigationBarsPadding(),
+            actions = emptyList(),
+            onBack = onBack,
+            backLabel = AppStrings.Volver,
+        )
     }
 }

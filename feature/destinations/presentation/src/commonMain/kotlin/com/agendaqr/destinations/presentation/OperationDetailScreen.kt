@@ -53,15 +53,21 @@ internal fun OperationDetailScreen(
     // Ronda 2 (Área F): anuncio de eliminación confirmada (por evento).
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
     XauxaFeedbackEvent(event = deleteDoneEvent, message = AppStrings.Eliminado)
-    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(XauxaSpacing.ScreenMargin).imePadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            XauxaHeading(text = AppStrings.Detalle, size = XauxaType.Display, fontWeight = FontWeight.Bold)
-            XauxaTextAction(label = AppStrings.Volver, onClick = { viewModel.onAction(OperationAction.Back) })
-        }
-        XauxaStatusBanner(
-            operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt) + " · " +
-                operation.amount.orEmpty().ifBlank { "sin monto" }
-        )
+    Column(Modifier.fillMaxSize().statusBarsPadding().imePadding()) {
+        Column(
+            Modifier.fillMaxWidth().weight(1f).padding(XauxaSpacing.ScreenMargin)
+                // §11: el detalle crece con su contenido; las acciones viven
+                // en la barra inferior y nunca quedan fuera del pliegue.
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
+        ) {
+            // M6: título de página en display ligero (no XauxaHeading en
+            // negrita); M7: Compartir/Editar viven en la barra inferior.
+            XauxaPageTitle(text = AppStrings.Detalle)
+            XauxaStatusBanner(
+                operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt) + " · " +
+                    operation.amount.orEmpty().ifBlank { "sin monto" }
+            )
         // T6: estado de sincronización del elemento (texto, no solo color).
         val operationSyncStatus = syncLookup.status(SyncResource.OPERATION, operation.id)
         ElementSyncBadge(operationSyncStatus)
@@ -101,9 +107,21 @@ internal fun OperationDetailScreen(
                 }
             }
         }
-        XauxaSecondaryButton(label = AppStrings.Compartir, onClick = { shareOperation(operation) })
-        XauxaSecondaryButton(label = AppStrings.Editar, onClick = { viewModel.onAction(OperationAction.Edit(operation.id)) })
         XauxaTextAction(label = AppStrings.EliminarOperacion, onClick = { showDeleteConfirm = true })
+        }
+        // M7: Compartir y Editar viven en la barra de aplicación inferior;
+        // Editar es la acción principal (bloque sólido de acento, M10).
+        // Sus glifos siguen SIN icono aprobado (ADR-0005, puntos abiertos):
+        // la etiqueta visible se mantiene (§11).
+        XauxaAppBar(
+            modifier = Modifier.navigationBarsPadding(),
+            actions = listOf(
+                XauxaAppBarAction(AppStrings.Compartir, icon = null, onClick = { shareOperation(operation) }),
+                XauxaAppBarAction(AppStrings.Editar, icon = null, primary = true, onClick = { viewModel.onAction(OperationAction.Edit(operation.id)) }),
+            ),
+            onBack = { viewModel.onAction(OperationAction.Back) },
+            backLabel = AppStrings.Volver,
+        )
     }
     if (showDeleteConfirm) {
         XauxaDialog(

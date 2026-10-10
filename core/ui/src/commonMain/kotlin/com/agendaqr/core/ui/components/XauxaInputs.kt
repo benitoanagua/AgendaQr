@@ -297,6 +297,10 @@ fun XauxaSearchTrigger(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // Capa transparente con su PROPIA fuente de interacción: la barra
+    // decorativa de debajo nunca recibe el toque; la capa sí dibuja foco y
+    // pulsación (contrato §7) y expone un único nodo de botón.
+    val triggerInteraction = remember { MutableInteractionSource() }
     Box(modifier = modifier) {
         XauxaSearchBar(
             value = "",
@@ -308,12 +312,14 @@ fun XauxaSearchTrigger(
             Modifier
                 .matchParentSize()
                 .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
+                    interactionSource = triggerInteraction,
                     indication = null,
                     role = Role.Button,
                     onClickLabel = label,
                     onClick = onClick,
                 )
+                .xauxaFocusRing(triggerInteraction)
+                .xauxaPressFeedback(triggerInteraction)
                 // clearAndSetSemantics: el campo decorativo queda fuera del
                 // árbol; el control es un solo botón con nombre accesible.
                 .clearAndSetSemantics {

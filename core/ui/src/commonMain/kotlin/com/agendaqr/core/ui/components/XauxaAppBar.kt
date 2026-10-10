@@ -116,6 +116,7 @@ fun XauxaAppBar(
                         )
                         .focusable(interactionSource = interaction)
                         .xauxaFocusRing(interaction)
+                        .xauxaPressFeedback(interaction)
                         .padding(XauxaSpacing.Xs),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
@@ -202,7 +203,13 @@ private fun AppBarItem(action: XauxaAppBarAction) {
                 onClick = action.onClick,
             )
             .focusable(interactionSource = interaction)
-            .xauxaFocusRing(interaction)
+            // Sobre el bloque sólido de marca (acción primaria habilitada)
+            // el anillo de marca desaparece (1:1): se usa el color del
+            // CONTENIDO del bloque (OnBrand) para mantener >= 3:1.
+            .xauxaFocusRing(
+                interaction,
+                color = if (action.primary && action.enabled) XauxaColor.OnBrand else XauxaColor.FocusRing,
+            )
             .xauxaPressFeedback(interaction)
             .padding(horizontal = XauxaSpacing.Sm, vertical = XauxaSpacing.Xs),
         horizontalAlignment = Alignment.CenterHorizontally,

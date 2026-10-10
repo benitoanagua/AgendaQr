@@ -156,13 +156,10 @@ fun XauxaMetroTile(
         XauxaTileSize.MEDIUM -> XauxaMetrics.TileWideHeight
         XauxaTileSize.WIDE -> XauxaMetrics.TileWideHeight
     }
-    // P1: overlay OPUESTO al texto — negro si onAccent es blanco, blanco si
-    // es negro — para que el contraste presionado nunca baje de 4.5:1.
-    val pressOverlay = if (accent.onAccent == androidx.compose.ui.graphics.Color.White) {
-        androidx.compose.ui.graphics.Color.Black
-    } else {
-        androidx.compose.ui.graphics.Color.White
-    }
+    // ADR-0011: overlay OPUESTO al texto del acento (negro si onAccent es
+    // blanco, blanco si es negro) — el contraste presionado nunca baja
+    // de 4.5:1 (XauxaTileContractTest).
+    val pressOverlay = accent.pressOverlay
     val fontScale = androidx.compose.ui.platform.LocalDensity.current.fontScale
     Box(
         modifier = modifier
@@ -190,7 +187,7 @@ fun XauxaMetroTile(
             .graphicsLayer { scaleX = scale; scaleY = scale }
             .background(accent.background, XauxaShape)
             .xauxaPressFeedback(interaction, overlayColor = pressOverlay)
-            .xauxaFocusRing(interaction, shape = XauxaShape),
+            .xauxaFocusRing(interaction, shape = XauxaShape, color = tileFocusRingColor(accent)),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(XauxaSpacing.Sm),
@@ -231,6 +228,16 @@ data class XauxaTileItem(
     val onClick: (() -> Unit)? = null,
     val content: (@Composable () -> Unit)? = null,
 )
+
+/**
+ * Color del anillo de foco de un tile de acento: el color del CONTENIDO
+ * del bloque ([XauxaAccent.onAccent]). El anillo de marca sobre el propio
+ * bloque de marca (o sobre acentos parecidos) da 1:1 — invisible; el
+ * contenido del tile siempre cumple >= 3:1 contra su fondo (par calculado
+ * de la spec §12 Color; XauxaFocusRingContrastTest lo fija para TODOS los
+ * acentos).
+ */
+internal fun tileFocusRingColor(accent: XauxaAccent): Color = accent.onAccent
 
 /**
  * Rejilla de tiles (M3/M11): 4 columnas en compacto; si el ancho disponible
@@ -395,6 +402,7 @@ fun XauxaPivot(
                             )
                             .focusable(interactionSource = interaction)
                             .xauxaFocusRing(interaction)
+                            .xauxaPressFeedback(interaction)
                             .semantics { this.selected = selected }
                             .padding(vertical = XauxaSpacing.Sm),
                         style = XauxaTextStyles.SectionHeader,

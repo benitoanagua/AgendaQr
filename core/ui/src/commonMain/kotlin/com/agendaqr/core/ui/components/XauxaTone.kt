@@ -118,9 +118,12 @@ val XauxaTone.iconVector: androidx.compose.ui.graphics.vector.ImageVector?
 @Composable
 fun Modifier.xauxaPressFeedback(
     source: MutableInteractionSource,
-    /** P1: color del overlay; default negro. Para tiles de acento claro,
-     * el llamador pasa BLANCO (el OPUESTO al texto) para no bajar 4.5:1. */
-    overlayColor: androidx.compose.ui.graphics.Color = androidx.compose.ui.graphics.Color.Black,
+    /** Color del overlay. Default: [XauxaColor.TextPrimary] — negro sobre
+     * tema claro, blanco sobre oscuro; siempre contrasta con el fondo del
+     * tema (>= 7:1, XauxaFocusRingContrastTest). Sobre un BLOQUE de acento
+     * (p. ej. tiles Metro) el llamador pasa el color OPUESTO al texto del
+     * bloque ([XauxaAccent.pressOverlay]) para no bajar 4.5:1. */
+    overlayColor: androidx.compose.ui.graphics.Color = XauxaColor.TextPrimary,
 ): Modifier {
     val pressed by source.collectIsPressedAsState()
     val reducedMotion = com.agendaqr.core.ui.motion.LocalReducedMotion.current
@@ -154,12 +157,21 @@ fun Modifier.xauxaPressFeedback(
 @Composable
 fun Modifier.xauxaFocusRing(
     source: MutableInteractionSource,
-    /** P1: forma del anillo (default XauxaShape). */
+    /** Forma del anillo (default XauxaShape). */
     shape: androidx.compose.ui.graphics.Shape = XauxaShape,
+    /**
+     * Color del anillo. Default: [XauxaColor.FocusRing] (marca) sobre las
+     * superficies del tema (>= 3:1, XauxaFocusRingContrastTest). Sobre un
+     * BLOQUE sólido de color (tile de acento, acción primaria de la app
+     * bar) el anillo de marca desaparece (1:1): el llamador pasa el color
+     * del CONTENIDO del bloque (p. ej. [tileFocusRingColor], OnBrand) para
+     * garantizar >= 3:1 (contrato §7: se verifica sobre cada
+     * tile/acento). */
+    color: androidx.compose.ui.graphics.Color = XauxaColor.FocusRing,
 ): Modifier {
     val focused by source.collectIsFocusedAsState()
     return then(
-        if (focused) Modifier.border(XauxaMetrics.Focus, XauxaColor.FocusRing, shape)
+        if (focused) Modifier.border(XauxaMetrics.Focus, color, shape)
         else Modifier,
     )
 }

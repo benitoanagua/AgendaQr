@@ -98,7 +98,8 @@ fun XauxaTile(
     Surface(
         modifier = clickableModifier
             .fillMaxWidth()
-            .xauxaFocusRing(interaction),
+            .xauxaFocusRing(interaction)
+            .xauxaPressFeedback(interaction),
         shape = XauxaShape,
         color = XauxaColor.Surface2,
         tonalElevation = XauxaSpacing.None,
@@ -340,10 +341,16 @@ fun XauxaLoading(modifier: Modifier = Modifier, message: String? = null) {
 @Composable
 fun XauxaEmptyState(
     title: String,
-    actionLabel: String,
-    onAction: () -> Unit,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
+    /**
+     * Acción primaria del estado vacío. Opcional (M7): cuando la acción
+     * viable vive en la barra de aplicación inferior (p. ej. Volver en la
+     * flecha), el cuerpo no duplica el botón — el empty state solo explica
+     * qué ocurrió (§10/§6.4).
+     */
+    actionLabel: String? = null,
+    onAction: (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier.fillMaxWidth().padding(XauxaSpacing.Huge),
@@ -352,7 +359,9 @@ fun XauxaEmptyState(
     ) {
         XauxaHeading(text = title, size = XauxaType.Title, fontWeight = FontWeight.SemiBold)
         subtitle?.let { Text(it, color = XauxaColor.TextSecondary, fontSize = XauxaType.Label) }
-        XauxaPrimaryButton(actionLabel, onAction)
+        if (actionLabel != null && onAction != null) {
+            XauxaPrimaryButton(actionLabel, onAction)
+        }
     }
 }
 
