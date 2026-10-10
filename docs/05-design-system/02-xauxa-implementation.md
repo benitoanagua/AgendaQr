@@ -32,7 +32,7 @@ Xauxa es la autoridad visual completa de Agenda QR. El código de producto no co
 - Movimiento: turnstile entre pantallas, tilt ≤150 ms en tiles, entrada escalonada 30–50 ms por tile (total ≤300 ms); live tile sin bucles; reduced motion = cambio de estado inmediato.
 - Los tamaños de icono y las métricas de la rejilla de tiles viven como tokens en `XauxaTokens.kt` (múltiplos de 4 dp); el gate `verifyDesignSystemCompliance` rechaza literales en `core/ui`.
 
-Estas reglas históricas deben leerse junto al contrato normativo Xauxa y ADR-0010. No se consideran implementadas por el mero hecho de estar documentadas; verificar código, pruebas y consumidores antes de declarar alineación.
+Estas reglas históricas deben leerse junto al contrato normativo Xauxa y ADR-0011. No se consideran implementadas por el mero hecho de estar documentadas; verificar código, pruebas y consumidores antes de declarar alineación.
 
 ## Adaptación de plataforma
 

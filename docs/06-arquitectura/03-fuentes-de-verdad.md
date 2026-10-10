@@ -6,7 +6,7 @@ Es la única fuente para producto, requisitos, dominio, alcance, decisiones y re
 
 ## 2. Xauxa — autoridad visual
 
-Xauxa define la UI/UX visual completa: tokens, fundamentos, componentes, patterns, estados, accesibilidad, movimiento, tipografía y composición. Su contrato normativo es `docs/05-design-system/00-xauxa-contrato-normativo.md`; ADR-0010 establece su precedencia sobre guías de implementación y código heredado.
+Xauxa define la UI/UX visual completa: tokens, fundamentos, componentes, patterns, estados, accesibilidad, movimiento, tipografía y composición. Su contrato normativo es `docs/05-design-system/00-xauxa-contrato-normativo.md`; ADR-0011 establece su precedencia sobre guías de implementación y código heredado.
 
 No se mantienen excepciones visuales heredadas ni una paleta propia de Agenda QR.
 

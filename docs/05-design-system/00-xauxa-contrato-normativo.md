@@ -1,7 +1,7 @@
 # Xauxa Design System — contrato normativo
 
 **Versión:** 1.0  
-**Estado:** Normativo para nuevas implementaciones y migraciones aprobadas por ADR-0010  
+**Estado:** Normativo para nuevas implementaciones y migraciones aprobadas por ADR-0011  
 **Ámbito:** Android e iOS; Compose Multiplatform. El laboratorio es un entorno de validación, no una fuente alternativa de diseño.
 
 Este documento es la autoridad normativa para la expresión visual y el comportamiento transversal de Xauxa. No reemplaza la especificación funcional de Agenda QR: la intención, los flujos, las reglas de negocio y la recuperación de errores siguen gobernados por los documentos de producto. Xauxa define cómo se representan y operan visualmente.
@@ -226,10 +226,19 @@ El sistema está alineado cuando el mismo rol visual tiene la misma apariencia y
 
 ## 12. Registro de excepciones
 
-Estado inicial: **sin excepciones visuales aprobadas**. Las diferencias obligatorias de plataforma deben registrarse en ADR o en la documentación del componente; no se consideran permiso para alterar tokens compartidos.
+Toda excepción visual tiene entrada en esta tabla con propietario, razón,
+alcance, condición de retirada y prueba. Sin entrada, no existe excepción
+válida. La lista de excepciones del gate (`verifyDesignSystemCompliance`)
+DEBE coincidir con esta tabla.
 
-
-El gate estático pasa; la suite se ejecuta en CI.
+| ID | Componente | Tipo | Token | Razón | Retirada | Prueba |
+|---|---|---|---|---|---|---|
+| E-01 | DropdownMenu (AppBar, CommandBar) | Borde funcional | `borderControl` | Límite del overlay del menú; el contenido flotante necesita límite visual ≥3:1 | Menú M3 interno sustituido por componente Xauxa propio | XauxaSchemeTest: borderControl ≥3:1 |
+| E-02 | XauxaFavoriteIndicator | Borde de control | `borderControl` | Límite del indicador de favorito (control visible ≥3:1) | Componente retirado o rediseñado | XauxaSchemeTest |
+| E-03 | XauxaScannerViewport | Marco funcional | `brand` (BorderStrong) | Encuadre del scanner (S03 congelado: "marco con borde de marca"); guia visual activa de captura | S03 rediseñado | XauxaSchemeTest: brand ≥4,5:1 |
+| E-04 | XauxaSettingRow switch | Borde de control | `borderControl` | Pista del switch visible en reposo ≥3:1 | Componente retirado | XauxaSchemeTest |
+| E-05 | XauxaListRow barra lateral | Marcador semántico | `tone.content()` o `accent` | Solo con tono no-Neutral o acento de contexto real; el estado se expresa también con texto (§11) | Spec §6.3 cambia | Robolectric: ListRow con `selected` semántico |
+| E-06 | XauxaTextInput / XauxaSearchBar | Borde de foco/error | `brand`/`danger` (Focus=2dp) | Solo en foco o error (M8); nunca en reposo | M8 cambia | XauxaAccessibilityContractTest |
 
 
 ## Cobertura de auditoría
