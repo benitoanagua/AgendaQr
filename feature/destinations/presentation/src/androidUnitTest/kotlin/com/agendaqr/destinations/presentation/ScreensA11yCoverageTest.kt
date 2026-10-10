@@ -225,8 +225,10 @@ class ScreensA11yCoverageTest {
         assert(nameNodes.size == 2) { "Se esperan fila de Recientes + tile vivo con el último QR" }
         compose.onNodeWithText("Último QR o actividad reciente").assertExists()
         compose.onNodeWithText("Favorito").assertHeightIsAtLeast(48.dp)
-        // T6/U4: el estado de sync es texto, nunca solo color.
-        compose.onNodeWithText("Sincronizado").assertExists()
+        // T6/U4: el estado de sync ES texto cuando hay algo que informar.
+        // Defecto F-1: el estado SINCRONIZADO es el normal (silencio = OK);
+        // el badge solo aparece para Pendiente/Error/Sincronizando.
+        compose.onNodeWithText("Sincronizado").assertDoesNotExist()
     }
 
     // S02 — orden congelado: Galería → Desde otra app → Cámara.

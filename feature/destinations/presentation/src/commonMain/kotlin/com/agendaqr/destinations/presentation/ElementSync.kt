@@ -51,10 +51,20 @@ fun ElementSyncStatus.tone(): XauxaTone = when (this) {
     ElementSyncStatus.ErrorRecoverable, ElementSyncStatus.Dead -> XauxaTone.Danger
 }
 
-/** Insignia con texto del estado de sincronización del elemento. */
+/**
+ * Insignia del estado de sincronización del elemento.
+ *
+ * Defecto F-1 (badge que compite por ancho): el estado SINCRONIZADO es el
+ * estado normal — mostrar "Sincronizado" en cada fila es ruido que consume
+ * espacio en pantallas estrechas. La insignia solo aparece cuando hay algo
+ * que el usuario necesita saber (Pendiente, Sincronizando o Error). El
+ * estado sigue siendo consultable en el detalle.
+ */
 @Composable
-fun ElementSyncBadge(status: ElementSyncStatus) {
-    XauxaBadge(text = status.label, tone = status.tone())
+fun ElementSyncBadge(status: ElementSyncStatus, showWhenSynced: Boolean = false) {
+    if (showWhenSynced || status != ElementSyncStatus.Synced) {
+        XauxaBadge(text = status.label, tone = status.tone())
+    }
 }
 
 /**
