@@ -228,22 +228,38 @@ fun DestinationRow(
 ) {
     XauxaListRow(
         title = destination.name.ifBlank { AppStrings.SinNombre },
-        subtitle = destination.note ?: destination.category,
-        // E-05: el marcador lateral solo aparece con acento de contexto o
-        // tono de estado REALES — "favorito" ya se expresa con el texto de
-        // la acción (§11); Info aquí era otro significado del mismo color.
+        subtitle = destinationSubtitle(destination),
         onClick = { onAction(DestinationAction.Open(destination.id)) },
+        // Badge bajo el texto (línea propia vía `meta`): no compite por el
+        // ancho con la acción en pantallas estrechas (defecto abierto).
+        meta = {
+            // Estado de sincronización por elemento (con texto).
+            ElementSyncBadge(
+                syncLookup.status(SyncResource.DESTINATION, destination.id),
+            )
+        },
         trailing = {
-            Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm), verticalAlignment = Alignment.CenterVertically) {
-                // estado de sincronización por elemento (con texto).
-                ElementSyncBadge(
-                    syncLookup.status(SyncResource.DESTINATION, destination.id),
-                )
-                XauxaTextAction(
-                    label = if (destination.favorite) AppStrings.Favorito else AppStrings.MarcarFavorito,
-                    onClick = { onAction(DestinationAction.ToggleFavorite(destination)) },
-                )
-            }
+            XauxaTextAction(
+                label = if (destination.favorite) AppStrings.Favorito else AppStrings.MarcarFavorito,
+                onClick = { onAction(DestinationAction.ToggleFavorite(destination)) },
+            )
         },
     )
+}
+
+/**
+ * Subtítulo de la fila del destino: nota/categoría si existen; si el
+ * nombre es genérico ("Sin nombre" o "QR importado"), ORIGEN + FECHA —
+ * dos destinos con nombre genérico quedaban indistinguibles en la lista
+ * (defecto abierto registrado; decisión de esta pasada, no de spec).
+ */
+internal fun destinationSubtitle(destination: Destination): String? {
+    val generic = destination.name.isBlank() ||
+        destination.name.startsWith(AppStrings.QrImportado)
+    return when {
+        generic && destination.name.isBlank() ->
+            AppStrings.AnadidoEl + formatDate(destination.createdAt)
+        generic -> AppStrings.ImportadoEl + formatDate(destination.createdAt)
+        else -> destination.note ?: destination.category
+    }
 }

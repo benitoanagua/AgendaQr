@@ -228,6 +228,10 @@ internal object AppStrings {
     val ComprobanteAdjuntoVistaPreviaPendienteEnIos = "Comprobante adjunto (vista previa pendiente en iOS)"
     val PdfAdjuntoSinVistaPrevia = "PDF adjunto (sin vista previa)"
     val VistaPreviaNoDisponible = "Vista previa no disponible"
+    /** Subtítulo de fila para destinos sin nombre: origen "creado" + fecha. */
+    val AnadidoEl = "Añadido el "
+    /** Subtítulo de fila para destinos importados: origen "importado" + fecha. */
+    val ImportadoEl = "Importado el "
     val Contenido = "Contenido"
     val EditarOperacion = "Editar actividad"
     val AunNoHayDestinos = "Aún no hay QR"

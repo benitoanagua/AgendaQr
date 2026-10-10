@@ -162,6 +162,10 @@ fun XauxaListRow(
     accent: androidx.compose.ui.graphics.Color? = null,
     /** selección explícita con semántica `selected` (§11). */
     selected: Boolean = false,
+    /** Metadato en línea PROPIA, bajo el subtítulo (p. ej. el badge de
+     * sincronización): no compite por el ancho con la acción de la fila en
+     * pantallas estrechas (defecto de la auditoría, §8). */
+    meta: (@Composable () -> Unit)? = null,
 ) {
     val interaction = remember { MutableInteractionSource() }
     val clickableModifier = if (onClick == null) modifier else modifier
@@ -202,6 +206,7 @@ fun XauxaListRow(
             if (subtitle != null) {
                 Text(subtitle, style = XauxaTextStyles.Caption, color = XauxaColor.TextSecondary)
             }
+            meta?.invoke()
         }
         trailing?.invoke()
     }
