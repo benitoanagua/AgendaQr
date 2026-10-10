@@ -8,7 +8,7 @@ Este documento es la autoridad normativa para la expresión visual y el comporta
 
 ## Estado de conformidad
 
-La ronda 8 añade cobertura de contrato para campos deshabilitados, de solo lectura y actualización dinámica de errores. Estas pruebas permanecen no verificadas hasta ejecutarse en el entorno de build.
+La cobertura de contrato incluye campos deshabilitados, de solo lectura y actualización dinámica de errores.
 
 La conformidad del sistema se registra por capas: (1) contrato/documentación, (2) gate estático, (3) pruebas automatizadas, (4) regresión visual y (5) validación en dispositivos. Un PASS de una capa no implica PASS de las siguientes. El estado de ejecución y los bloqueos vigentes se mantienen en los checklists de `docs/08-validacion/`.
 
@@ -248,6 +248,6 @@ DEBE coincidir con esta tabla.
 
 ## Cobertura de auditoría
 
-### Ronda 10 — cobertura estática y responsive
+### Cobertura estática y responsive
 
 El gate `verifyDesignSystemCompliance` amplía el recorrido de primitivas visuales a los source sets de producción de `core:ui` y la prohibición de Material 3 directo a `feature`, `shared/src` y `androidApp/src`. El nuevo test responsive de 360 dp complementa la cobertura de 320 dp. El gate estático no acredita compilación ni ejecución de pruebas: la suite de CI las ejecuta en cada push.

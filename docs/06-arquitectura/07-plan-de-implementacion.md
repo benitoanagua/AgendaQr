@@ -1,6 +1,6 @@
 # Plan de implementación derivado de V1
 
-## Fase 1 — Base ya existente
+## Módulo 1 — Base ya existente
 
 - estructura KMP;
 - `androidApp` e `iosApp`;
@@ -9,7 +9,7 @@
 - version catalog;
 - gates.
 
-## Fase 2 — Destinos QR
+## Módulo 2 — Destinos QR
 
 - Destination;
 - persistencia local;
@@ -21,7 +21,7 @@
 - mostrar/compartir;
 - reemplazo y eliminación.
 
-## Fase 3 — Operaciones
+## Módulo 3 — Operaciones
 
 - Operation;
 - PAGO/COBRO;
@@ -30,7 +30,7 @@
 - persistencia local;
 - búsqueda por fecha/tipo/importe/persona-entidad.
 
-## Fase 4 — Comprobantes
+## Módulo 4 — Comprobantes
 
 - Comprobante first-class;
 - guardar sin operación;
@@ -42,14 +42,14 @@
 - eliminación;
 - detección de duplicados no bloqueante.
 
-## Fase 5 — Integridad
+## Módulo 5 — Integridad
 
 - advertencia de cambios sensibles;
 - eliminación de comprobantes al eliminar operación;
 - histórico mínimo;
 - preservación de contexto histórico de destino.
 
-## Fase 6 — Protección y validación
+## Módulo 6 — Protección y validación
 
 - biometría/PIN opcional;
 - pruebas funcionales;
