@@ -34,6 +34,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.toggleableState
 import com.agendaqr.core.ui.motion.LocalReducedMotion
 import com.agendaqr.core.ui.theme.XauxaAccent
 import com.agendaqr.core.ui.theme.XauxaAccents
@@ -128,9 +129,16 @@ enum class XauxaTileSize { SMALL, MEDIUM, WIDE }
  * - El tile ancho ([XauxaTileSize.WIDE]) muestra su [content] como texto
  *   (último QR o actividad reciente); el icono se omite y la etiqueta se
  *   mantiene visible (M3).
+ * - Geometría: el alto se DERIVA de [unit] (la unidad real calculada por
+ *   la rejilla) para que 1×1 siga siendo cuadrado por encima de ~360 dp;
+ *   [XauxaMetrics.TileUnit] queda como mínimo. El alto es MÍNIMO, no fijo:
+ *   crece con la fuente del usuario.
  *
  * Accesibilidad (M14): rol de botón, etiqueta visible textual, estado y
- * orden de foco lógico por posición.
+ * orden de foco lógico por posición. [selected] convierte el tile en un
+ * control de estado (p. ej. el filtro Favoritos): expone `selected` y
+ * `toggleableState` — el estado NUNCA depende solo del color (§11), así
+ * que el llamador lo expresa también con texto/glifo visible.
  */
 @Composable
 fun XauxaMetroTile(
@@ -140,6 +148,10 @@ fun XauxaMetroTile(
     modifier: Modifier = Modifier,
     size: XauxaTileSize = XauxaTileSize.SMALL,
     icon: ImageVector? = null,
+    /** Estado de conmutación del tile (Favoritos): null = no es un toggle. */
+    selected: Boolean? = null,
+    /** Unidad real de la rejilla; default el mínimo [XauxaMetrics.TileUnit]. */
+    unit: androidx.compose.ui.unit.Dp = XauxaMetrics.TileUnit,
     reducedMotion: Boolean = LocalReducedMotion.current,
     content: (@Composable () -> Unit)? = null,
 ) {
@@ -151,11 +163,9 @@ fun XauxaMetroTile(
         animationSpec = tween(XauxaMotion.DurationShortMs, easing = XauxaMotion.Easings.Standard),
         label = "xauxa_tile_tilt",
     )
-    val height = when (size) {
-        XauxaTileSize.SMALL -> XauxaMetrics.TileUnit
-        XauxaTileSize.MEDIUM -> XauxaMetrics.TileWideHeight
-        XauxaTileSize.WIDE -> XauxaMetrics.TileWideHeight
-    }
+    // Geometría derivada de la unidad calculada (1×1 cuadrado; 2×2/4×2 =
+    // dos unidades más la separación), nunca del mínimo fijo.
+    val height = tileHeight(size, unit)
     // ADR-0011: overlay OPUESTO al texto del acento (negro si onAccent es
     // blanco, blanco si es negro) — el contraste presionado nunca baja
     // de 4.5:1 (XauxaTileContractTest).
@@ -163,8 +173,8 @@ fun XauxaMetroTile(
     val fontScale = androidx.compose.ui.platform.LocalDensity.current.fontScale
     Box(
         modifier = modifier
-            // P1: el clickable va ANTES del graphicsLayer del tilt: el
-            // tilt NO encoje el área táctil (48dp intactos).
+            // El clickable va ANTES del graphicsLayer del tilt: el tilt NO
+            // encoje el área táctil (48dp intactos).
             .then(
                 if (onClick != null) {
                     Modifier
@@ -179,15 +189,26 @@ fun XauxaMetroTile(
                     Modifier
                 },
             )
-            // Ronda 2 (Área D): altura MÍNIMA, no fija — el tile crece con
-            // la fuente grande del usuario (§11 escalado) en vez de
-            // recortar su etiqueta.
+            // Altura MÍNIMA, no fija — el tile crece con la fuente grande
+            // del usuario (§11 escalado) en vez de recortar su etiqueta.
             .heightIn(min = height)
             .fillMaxWidth()
             .graphicsLayer { scaleX = scale; scaleY = scale }
             .background(accent.background, XauxaShape)
             .xauxaPressFeedback(interaction, overlayColor = pressOverlay)
-            .xauxaFocusRing(interaction, shape = XauxaShape, color = tileFocusRingColor(accent)),
+            .xauxaFocusRing(interaction, shape = XauxaShape, color = tileFocusRingColor(accent))
+            .then(
+                if (selected != null) {
+                    Modifier.semantics {
+                        this.selected = selected
+                        toggleableState =
+                            if (selected) androidx.compose.ui.state.ToggleableState.On
+                            else androidx.compose.ui.state.ToggleableState.Off
+                    }
+                } else {
+                    Modifier
+                },
+            ),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(XauxaSpacing.Sm),
@@ -225,9 +246,28 @@ data class XauxaTileItem(
     val accent: XauxaAccent = XauxaAccents.System,
     val size: XauxaTileSize = XauxaTileSize.SMALL,
     val icon: ImageVector? = null,
+    /** Estado de conmutación (p. ej. el filtro Favoritos); null = no toggle. */
+    val selected: Boolean? = null,
     val onClick: (() -> Unit)? = null,
     val content: (@Composable () -> Unit)? = null,
 )
+
+/**
+ * Geometría de tiles como función PURA: el alto se deriva de la unidad
+ * REAL de la rejilla ([unit]) — 1×1 cuadrado; 2×2 y 4×2, dos unidades más
+ * una separación — para que el tile siga siendo cuadrado cuando el ancho
+ * disponible excede el mínimo ([XauxaMetrics.TileUnit], que antes fijaba
+ * el alto a 76 dp mientras el ancho crecía: a 411 dp el 1×1 medía
+ * 88,75×76). Testeada en XauxaTileGridTest.
+ */
+internal fun tileHeight(
+    size: XauxaTileSize,
+    unit: androidx.compose.ui.unit.Dp,
+    gap: androidx.compose.ui.unit.Dp = XauxaSpacing.TileGap,
+): androidx.compose.ui.unit.Dp = when (size) {
+    XauxaTileSize.SMALL -> unit
+    XauxaTileSize.MEDIUM, XauxaTileSize.WIDE -> unit * 2 + gap
+}
 
 /**
  * Color del anillo de foco de un tile de acento: el color del CONTENIDO
@@ -288,6 +328,8 @@ fun XauxaTileGrid(
                                     modifier = Modifier.fillMaxWidth().fillMaxHeight(),
                                     size = item.size,
                                     icon = item.icon,
+                                    selected = item.selected,
+                                    unit = unit,
                                     reducedMotion = reducedMotion,
                                     content = item.content,
                                 )
@@ -451,14 +493,24 @@ internal fun pageTitleScaleFactor(fontScale: Float): Float =
 
 private const val FullScale = 1f
 private const val TiltScale = 0.96f
+/** M11: paso por tile de la entrada escalonada — 40 ms (rango 30–50). */
 private const val StaggerStepMs = 40
 private const val GridColumns = 4
 
 /**
- * Fase 3 (auditoría): matemática de la entrada escalonada como función
- * PURA — [index] * 30–50 ms por tile, total acotado a 300 ms (spec §12
- * Movimiento). Con reduced motion el retardo es 0 (aparición inmediata).
+ * Entrada escalonada (M11): retardo por índice — [index] * 30–50 ms por
+ * tile, ACOTADO para que retardo + fundido ([XauxaMotion.DurationShortMs])
+ * no exceda [XauxaMotion.DurationMediumMs] (300 ms totales de la spec
+ * §12 Movimiento; antes el último tile terminaba a 450 ms). Con reduced
+ * motion el retardo es 0 (aparición inmediata). Función PURA, cubierta
+ * por XauxaTileGridTest.
  */
 internal fun tileStaggerDelayMs(index: Int, reducedMotion: Boolean): Int =
-    if (reducedMotion) 0 else (index * StaggerStepMs).coerceAtMost(XauxaMotion.DurationMediumMs)
+    if (reducedMotion) {
+        0
+    } else {
+        (index * StaggerStepMs).coerceAtMost(
+            XauxaMotion.DurationMediumMs - XauxaMotion.DurationShortMs,
+        )
+    }
 

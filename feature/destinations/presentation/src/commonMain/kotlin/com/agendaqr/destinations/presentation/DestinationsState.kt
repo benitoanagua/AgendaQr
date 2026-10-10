@@ -26,6 +26,13 @@ sealed interface DestinationRoute {
 
 data class DestinationsUiState(
     val destinations: List<Destination> = emptyList(),
+    /**
+     * S01 (tile vivo): actividades recientes SIN filtrar. El tile muestra
+     * el elemento más reciente entre el último QR y la actividad más
+     * reciente ([latestTileDatum]); llega de la superficie de operaciones
+     * (el estado de la pantalla debe traer el dato, no omitir el requisito).
+     */
+    val recentOperations: List<com.agendaqr.destinations.domain.Operation> = emptyList(),
     val query: String = "",
     val favoriteOnly: Boolean = false,
     val category: String? = null,
@@ -42,6 +49,34 @@ data class DestinationsUiState(
             .filter { category == null || it.category == category }
             .sortedWith(compareBy<Destination> { it.name.lowercase() })
             .toList()
+}
+
+/**
+ * S01 (ADR-0005, spec §12 Rejilla): contenido del tile vivo — el elemento
+ * más reciente entre el último QR ([Destination.updatedAt]) y la actividad
+ * más reciente ([com.agendaqr.destinations.domain.Operation.occurredAt]),
+ * DERIVADO DE LOS DATOS SIN FILTRAR (independiente de la búsqueda y del
+ * filtro de favoritos; antes dependía de `visibleDestinations` y las
+ * actividades nunca aparecían). Función PURA: testeable en commonTest.
+ */
+sealed interface LatestTileDatum {
+    data class Qr(val destination: Destination) : LatestTileDatum
+
+    data class Activity(val operation: com.agendaqr.destinations.domain.Operation) : LatestTileDatum
+}
+
+fun latestTileDatum(
+    destinations: List<Destination>,
+    operations: List<com.agendaqr.destinations.domain.Operation>,
+): LatestTileDatum? {
+    val latestQr = destinations.maxByOrNull { it.updatedAt }
+    val latestActivity = operations.maxByOrNull { it.occurredAt }
+    return when {
+        latestQr == null -> latestActivity?.let(LatestTileDatum::Activity)
+        latestActivity == null -> LatestTileDatum.Qr(latestQr)
+        latestQr.updatedAt >= latestActivity.occurredAt -> LatestTileDatum.Qr(latestQr)
+        else -> LatestTileDatum.Activity(latestActivity)
+    }
 }
 
 sealed interface DestinationAction {

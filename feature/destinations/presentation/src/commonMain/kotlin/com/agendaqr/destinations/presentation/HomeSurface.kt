@@ -58,6 +58,13 @@ internal fun HomeSurface(
                 onOpenSearch = { onSearchOpened(); nav.push(AppRoute.Search) },
                 onOpenContexts = { nav.push(AppRoute.Contexts) },
                 onSignOut = onSignOut,
+                // S01 (tile vivo): la actividad reciente abre su detalle en
+                // la superficie de Operaciones (misma ruta que una fila de
+                // resultados de búsqueda).
+                onOpenOperation = { id ->
+                    graph.operationsViewModel.onAction(OperationAction.Open(id))
+                    nav.push(AppRoute.Operations)
+                },
                 syncLookup = syncLookup,
             )
             DestinationRoute.Add -> AddDestinationScreen(

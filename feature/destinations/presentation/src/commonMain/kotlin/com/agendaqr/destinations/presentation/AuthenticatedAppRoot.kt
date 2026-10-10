@@ -312,7 +312,10 @@ internal fun AuthenticatedAppRoot(
             justCreatedContextId = contextState.justCreatedContextId,
         )
         AppRoute.Home -> HomeSurface(
-            state = state,
+            // S01 (tile vivo): el estado de la pantalla necesita las
+            // actividades recientes; se fusionan aquí (la observación vive
+            // en la superficie de Operaciones).
+            state = state.copy(recentOperations = operationState.operations),
             contextState = contextState,
             onSearchOpened = { searchReturnDestinationId = null },
             onDetailBack = ::backFromDestinationDetail,

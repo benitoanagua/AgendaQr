@@ -1,6 +1,8 @@
 package com.agendaqr.core.ui.components
 
 import com.agendaqr.core.ui.theme.XauxaAccents
+import com.agendaqr.core.ui.theme.XauxaMetrics
+import com.agendaqr.core.ui.theme.XauxaMotion
 import com.agendaqr.core.ui.theme.XauxaShape
 import com.agendaqr.core.ui.theme.XauxaRadius
 import kotlin.math.pow
@@ -143,9 +145,18 @@ class XauxaTileContractTest {
 
     @Test
     fun tile_stagger_delay_capped_and_zero_with_reduced_motion() {
+        // M11: paso de 40 ms (30–50) por tile; el retardo se acota para
+        // que retardo + fundido (150 ms) no exceda los 300 ms totales.
         assertEquals(0, tileStaggerDelayMs(0, reducedMotion = false))
         assertEquals(40, tileStaggerDelayMs(1, reducedMotion = false))
-        assertEquals(300, tileStaggerDelayMs(8, reducedMotion = false)) // tope
+        assertEquals(150, tileStaggerDelayMs(8, reducedMotion = false)) // tope
         assertEquals(0, tileStaggerDelayMs(5, reducedMotion = true)) // siempre 0
+        (0..100).forEach { index ->
+            assertTrue(
+                tileStaggerDelayMs(index, reducedMotion = false) + XauxaMotion.DurationShortMs <=
+                    XauxaMotion.DurationMediumMs,
+                "retardo+fundido > 300 ms en index=$index",
+            )
+        }
     }
 }

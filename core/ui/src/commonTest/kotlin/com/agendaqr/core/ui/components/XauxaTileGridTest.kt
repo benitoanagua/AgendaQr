@@ -1,24 +1,42 @@
 package com.agendaqr.core.ui.components
 
 import com.agendaqr.core.ui.theme.XauxaAccents
+import com.agendaqr.core.ui.theme.XauxaMetrics
+import com.agendaqr.core.ui.theme.XauxaMotion
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
- * Fase 3 (auditoría): la matemática de la rejilla de tiles es PURA y se
- * fija aquí — el retardo escalonado (30–50 ms por tile, total <= 300 ms,
- * 0 con reduced motion) y el reparto de filas/span.
+ * Contrato de la rejilla de tiles: la matemática es PURA y se fija aquí —
+ * el retardo escalonado (30–50 ms por tile; retardo + fundido ≤ 300 ms
+ * totales de la spec §12 Movimiento; 0 con reduced motion), el reparto de
+ * filas/span y la GEOMETRÍA derivada de la unidad calculada (1×1
+ * cuadrado por encima del ancho mínimo).
  */
 class XauxaTileGridTest {
 
     @Test
-    fun stagger_delay_is_40ms_per_tile_capped_at_300ms() {
+    fun stagger_delay_is_40ms_per_tile_capped_so_total_fits_in_300ms() {
         assertEquals(0, tileStaggerDelayMs(0, reducedMotion = false))
         assertEquals(40, tileStaggerDelayMs(1, reducedMotion = false))
         assertEquals(80, tileStaggerDelayMs(2, reducedMotion = false))
-        // Tope total de la spec §12 Movimiento: 300 ms.
-        assertEquals(300, tileStaggerDelayMs(8, reducedMotion = false))
-        assertEquals(300, tileStaggerDelayMs(50, reducedMotion = false))
+        // Tope: retardo + fundido (DurationShortMs) = 300 ms totales (spec
+        // §12 Movimiento) — antes el último tile terminaba a 450 ms.
+        assertEquals(150, tileStaggerDelayMs(8, reducedMotion = false))
+        assertEquals(150, tileStaggerDelayMs(50, reducedMotion = false))
+    }
+
+    @Test
+    fun stagger_plus_fade_never_exceeds_the_300ms_budget() {
+        // M11 "total ≤ 300 ms": el presupuesto cubre retardo Y fundido.
+        (0..50).forEach { index ->
+            val total = tileStaggerDelayMs(index, reducedMotion = false) + XauxaMotion.DurationShortMs
+            assertTrue(
+                total <= XauxaMotion.DurationMediumMs,
+                "index=$index: retardo+fundido=$total > ${XauxaMotion.DurationMediumMs}",
+            )
+        }
     }
 
     @Test
@@ -27,6 +45,39 @@ class XauxaTileGridTest {
         (0..50).forEach { index ->
             assertEquals(0, tileStaggerDelayMs(index, reducedMotion = true), "index=$index")
         }
+    }
+
+    @Test
+    fun small_tile_height_is_square_with_the_computed_unit() {
+        // Geometría (defecto de la auditoría): a 411 dp de ancho la unidad
+        // real mide ~88,75 dp; con el alto FIJAdo a 76 el 1×1 dejaba de
+        // ser cuadrado. El alto se deriva de la unidad calculada.
+        val unit = androidx.compose.ui.unit.Dp(88.75f)
+        val height = tileHeight(XauxaTileSize.SMALL, unit)
+        assertEquals(unit, height, "1×1 debe medir lo mismo de alto que de ancho")
+    }
+
+    @Test
+    fun medium_and_wide_heights_are_two_units_plus_one_gap() {
+        val unit = androidx.compose.ui.unit.Dp(88f)
+        val gap = androidx.compose.ui.unit.Dp(12f)
+        val expected = unit * 2 + gap
+        assertEquals(expected, tileHeight(XauxaTileSize.MEDIUM, unit, gap))
+        assertEquals(expected, tileHeight(XauxaTileSize.WIDE, unit, gap))
+    }
+
+    @Test
+    fun minimum_unit_keeps_the_documented_compact_geometry() {
+        // Con la unidad MÍNIMA (XauxaMetrics.TileUnit) y el gap del token,
+        // el 2×2 mide el TileWideHeight documentado (2×76+8 = 160).
+        assertEquals(
+            XauxaMetrics.TileWideHeight,
+            tileHeight(XauxaTileSize.WIDE, XauxaMetrics.TileUnit),
+        )
+        assertEquals(
+            XauxaMetrics.TileUnit,
+            tileHeight(XauxaTileSize.SMALL, XauxaMetrics.TileUnit),
+        )
     }
 
     @Test

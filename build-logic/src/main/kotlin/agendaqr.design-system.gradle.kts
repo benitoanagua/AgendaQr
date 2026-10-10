@@ -218,8 +218,11 @@ tasks.register("recordVisualHashes") {
     description = "Regenerates SHA-256 manifest from Roborazzi captures."
     val outputDir = file("feature/destinations/presentation/build/roborazzi")
     val manifestFile = file("docs/04-ux/visual-hashes/manifest.json")
-    inputs.dir(outputDir)
-    outputs.file(manifestFile)
+    // SIN outputs.file: verifyVisualHashes lee el manifiesto como input;
+    // declararlo como output de ESTA tarea haría inválida la ejecución
+    // conjunta `recordVisualHashes verifyVisualHashes` (validación de
+    // dependencias implícitas de Gradle). Regenerar es una acción manual
+    // deliberada (ADR-0007): sin up-to-date, siempre reescribe.
     doLast {
         if (!outputDir.exists()) {
             throw GradleException("No Roborazzi output at ${outputDir}. Run :feature:destinations:presentation:recordRoborazzi first.")

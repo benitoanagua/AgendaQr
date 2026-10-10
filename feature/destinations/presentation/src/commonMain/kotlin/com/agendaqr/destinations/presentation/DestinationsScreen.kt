@@ -45,7 +45,6 @@ import com.agendaqr.core.ui.components.XauxaCategoryChip
 import com.agendaqr.core.ui.components.XauxaLoadMoreFooter
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaTone
-import com.agendaqr.core.ui.theme.XauxaAccents
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
@@ -59,6 +58,8 @@ fun DestinationsScreen(
     onOpenSearch: () -> Unit = {},
     onOpenContexts: () -> Unit = {},
     onSignOut: () -> Unit = {},
+    /** S01 (tile vivo): abre la actividad reciente del tile en su detalle. */
+    onOpenOperation: (String) -> Unit = {},
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
     var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
@@ -115,10 +116,18 @@ fun DestinationsScreen(
                 )
             }
             // M2: rejilla de tiles — Añadir, Registrar, Favoritos, Contextos y
-            // el tile ancho vivo (último QR o actividad reciente). La capacidad
-            // de filtrar por favoritos la conserva el tile Favoritos (misma
-            // acción ToggleFavorites que antes hacía el chip).
-            val latest = state.visibleDestinations.firstOrNull()
+            // el tile ancho vivo (último QR o actividad reciente).
+            //
+            // Tile Favoritos (contrato §5.1): el acento NO cambia para
+            // señalar el filtro (lime era un acento de contexto con otro
+            // significado y el estado dependía solo del color). El estado se
+            // expresa con TEXTO visible ("Favoritos: activado") y semántica
+            // selected/toggleableState (§11).
+            //
+            // Tile vivo (S01): derivado de los datos SIN filtrar — el más
+            // reciente entre el último QR y la actividad más reciente. Una
+            // sola transición por cambio de dato, sin bucles (M11).
+            val latest = latestTileDatum(state.destinations, state.recentOperations)
             XauxaTileGrid(
                 items = listOf(
                         XauxaTileItem(
@@ -132,9 +141,9 @@ fun DestinationsScreen(
                             onClick = onOpenOperations,
                         ),
                         XauxaTileItem(
-                            label = AppStrings.Favoritos,
+                            label = if (state.favoriteOnly) AppStrings.FavoritosActivado else AppStrings.Favoritos,
                             icon = XauxaIcons.Favorite,
-                            accent = if (state.favoriteOnly) XauxaAccents.Admitted.first() else XauxaAccents.System,
+                            selected = state.favoriteOnly,
                             onClick = { onAction(DestinationAction.ToggleFavorites) },
                         ),
                         XauxaTileItem(
@@ -147,12 +156,23 @@ fun DestinationsScreen(
                         XauxaTileItem(
                             label = AppStrings.UltimoQrOActividad,
                             size = XauxaTileSize.WIDE,
-                            onClick = latest?.let { d -> { onAction(DestinationAction.Open(d.id)) } },
+                            onClick = when (val datum = latest) {
+                                is LatestTileDatum.Qr -> datum.destination.id.let { id -> { onAction(DestinationAction.Open(id)) } }
+                                is LatestTileDatum.Activity -> datum.operation.id.let { id -> { onOpenOperation(id) } }
+                                null -> null
+                            },
                             content = {
-                                    XauxaLiveTile(data = latest?.id) {
+                                    XauxaLiveTile(data = latest?.let { if (it is LatestTileDatum.Qr) "qr:${it.destination.id}" else "op:${(it as LatestTileDatum.Activity).operation.id}" }) {
                                         XauxaText(
-                                                text = latest?.name?.ifBlank { AppStrings.SinNombre }
-                                                    ?: AppStrings.AunNoHayDestinos,
+                                                text = when (val datum = latest) {
+                                                    is LatestTileDatum.Qr ->
+                                                        datum.destination.name.ifBlank { AppStrings.SinNombre }
+                                                    is LatestTileDatum.Activity -> listOfNotNull(
+                                                        operationTypeLabel(datum.operation.type),
+                                                        datum.operation.amount,
+                                                    ).joinToString(" · ")
+                                                    null -> AppStrings.AunNoHayDestinos
+                                                },
                                                 color = XauxaColor.OnBrand,
                                         )
                                     }

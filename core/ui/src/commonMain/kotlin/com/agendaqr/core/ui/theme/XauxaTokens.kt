@@ -330,9 +330,12 @@ object XauxaMetrics {
     // columnas en compacto. Unidad base de tile y métricas derivadas en
     // múltiplos de 4 dp (Xauxa base 4px); la rejilla reduce columnas antes
     // de comprimir por debajo de la unidad mínima.
-    /** Unidad 1×1 de la rejilla de tiles (compacto, margen 16 + gaps 8). */
+    /** Unidad 1×1 MÍNIMA de la rejilla de tiles (compacto, margen 16 + gaps 8);
+     * el ancho/alto real se calcula desde el ancho disponible (XauxaTileGrid)
+     * y el alto se deriva en `tileHeight` — la unidad nunca baja de esto. */
     val TileUnit = 76.dp
-    /** Alto del tile ancho (4×2): dos unidades más una separación. */
+    /** Alto MÍNIMO del tile 2×2/4×2 con la unidad mínima (2×76+8); el alto
+     * real se deriva de la unidad calculada (`tileHeight`), no de aquí. */
     val TileWideHeight = 160.dp
     /** Tamaño de icono estándar en tiles y acciones (un solo color, línea). */
     val IconSize = 24.dp

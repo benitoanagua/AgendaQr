@@ -110,4 +110,83 @@ class DestinationsScreenA11yTest {
         compose.waitForIdle()
         compose.onNodeWithText("Pendiente").assertExists()
     }
+
+    @Test
+    fun favorites_tile_state_is_text_and_semantics_not_color() {
+        // Contrato §5.1/§11: el filtro Favoritos NO cambia el acento del
+        // tile (lime era un acento de contexto con otro significado); el
+        // estado se expresa con TEXTO visible y semántica selected/
+        // toggleableState.
+        compose.setContent {
+            XauxaTheme {
+                DestinationsScreen(
+                    state = DestinationsUiState(
+                        destinations = listOf(sample),
+                        favoriteOnly = true,
+                        isLoading = false,
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+        compose.waitForIdle()
+        compose.onNodeWithText("Favoritos: activado")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, true))
+            .assert(
+                SemanticsMatcher.expectValue(
+                    SemanticsProperties.ToggleableState,
+                    androidx.compose.ui.state.ToggleableState.On,
+                ),
+            )
+    }
+
+    @Test
+    fun favorites_tile_without_filter_returns_to_textual_rest_state() {
+        compose.setContent {
+            XauxaTheme {
+                DestinationsScreen(
+                    state = DestinationsUiState(
+                        destinations = listOf(sample),
+                        favoriteOnly = false,
+                        isLoading = false,
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+        compose.waitForIdle()
+        compose.onNodeWithText("Favoritos")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, false))
+    }
+
+    @Test
+    fun live_tile_shows_the_most_recent_activity_from_unfiltered_data() {
+        // S01 (tile vivo): la actividad MÁS RECIENTE aparece aunque la
+        // lista de QR no esté vacía (antes el tile solo mostraba QR y solo
+        // el primero del filtro visible).
+        compose.setContent {
+            XauxaTheme {
+                DestinationsScreen(
+                    state = DestinationsUiState(
+                        destinations = listOf(sample),
+                        recentOperations = listOf(
+                            com.agendaqr.destinations.domain.Operation(
+                                id = "o-1",
+                                type = com.agendaqr.destinations.domain.OperationType.COBRO,
+                                occurredAt = 900,
+                                createdAt = 900,
+                                updatedAt = 900,
+                                amount = "500",
+                            ),
+                        ),
+                        isLoading = false,
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+        compose.waitForIdle()
+        compose.onNodeWithText("Cobro · 500").assertExists()
+        compose.onNodeWithText("Último QR o actividad reciente").assertExists()
+    }
 }
