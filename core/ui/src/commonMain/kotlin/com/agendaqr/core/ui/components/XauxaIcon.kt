@@ -25,7 +25,7 @@ import com.composables.icons.lucide.Star
 import com.composables.icons.lucide.X
 
 /**
- * T2/V1.1 (ADR-0005, spec §12 Iconografía): único punto de entrada de
+ * V1.1 (ADR-0005, spec §12 Iconografía): único punto de entrada de
  * iconografía de producto. Set: Lucide (ISC — ver
  * `docs/05-design-system/06-licencias-terceros.md`), glifos de línea de
  * trazo uniforme, un solo color, sin relleno. Concesión registrada en

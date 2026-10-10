@@ -1,6 +1,6 @@
 /**
  * S07 — Registrar/Editar operación: draft con rememberSaveable, selector
- * de contexto (S08, semántica T4) y confirmación de cambio sensible.
+ * de contexto (S08, semántica explícita) y confirmación de cambio sensible.
  */
 package com.agendaqr.destinations.presentation
 
@@ -96,7 +96,7 @@ internal fun OperationEditorScreen(
         contextId = contextSelection.contextId,
     )
 
-    // V1.1 (M7/T7): Guardar vive como acción principal de la app bar
+    // V1.1 (M7): Guardar vive como acción principal de la app bar
     // inferior (nunca recortada al final del scroll) y Volver pasa a la
     // flecha de la barra (sin desbordar a dos líneas).
     XauxaScreenScaffold(

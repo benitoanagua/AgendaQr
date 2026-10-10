@@ -1,7 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 /**
- * Error listo para mostrar (T5) — spec congelada §10:
+ * Error listo para mostrar  — spec congelada §10:
  * "Todo error debe responder: qué ocurrió, qué pasó con los datos y qué
  * puede hacer el usuario."
  *
@@ -19,7 +19,7 @@ data class UserFacingError(
 ) {
     /** Texto visible: qué ocurrió y qué pasó con los datos. */
     fun display(): String =
-        if (dataStatus.isBlank()) what else "$what\n$dataStatus"
+        if (dataStatus.isBlank()) what else what + "\n" + dataStatus
 }
 
 /** Acciones que un error recuperable puede ofrecer. */

@@ -8,7 +8,7 @@ import com.agendaqr.destinations.data.SyncResource
 import androidx.compose.runtime.Composable
 
 /**
- * Estado de sincronización por elemento (T6) — contrato local-first §5:
+ * Estado de sincronización por elemento  — contrato local-first §5:
  *
  *     GUARDADO → PENDIENTE → SINCRONIZANDO → SINCRONIZADO (+ ERROR RECUPERABLE)
  *

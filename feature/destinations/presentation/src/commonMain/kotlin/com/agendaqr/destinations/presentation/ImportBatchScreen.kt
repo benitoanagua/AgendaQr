@@ -35,7 +35,7 @@ import com.agendaqr.destinations.domain.ImportKind
 
 /**
  * Vista previa del elemento existente con el que coincide un duplicado
- * (T7 — "Ver existente"). No navega: el usuario decide sin perder la
+ * ("Ver existente"). No navega: el usuario decide sin perder la
  * revisión del lote.
  */
 data class ExistingImportPreview(
@@ -50,7 +50,7 @@ fun ImportBatchScreen(
     onAction: (ImportBatchAction) -> Unit,
     existing: ExistingImportPreview? = null,
 ) {
-    // Ronda 2 (Área F): guardado del lote anunciado en la TRANSICIÓN al
+    // guardado del lote anunciado en la TRANSICIÓN al
     // estado Saved (por evento, no por estado).
     var savedEvent by remember { mutableStateOf<Any?>(null) }
     var wasSaving by remember { mutableStateOf(false) }

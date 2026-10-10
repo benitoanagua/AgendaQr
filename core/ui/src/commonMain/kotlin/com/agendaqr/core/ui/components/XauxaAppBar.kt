@@ -80,9 +80,9 @@ fun XauxaAppBar(
     modifier: Modifier = Modifier,
     overflowActions: List<XauxaOverflowAction> = emptyList(),
     onBack: (() -> Unit)? = null,
-    /** Fase 4: copy de la flecha atrás desde el llamador (core/ui no hardcodea). */
+    /** copy de la flecha atrás desde el llamador (core/ui no hardcodea). */
     backLabel: String,
-    /** Fase 4: copy del botón "…" (requerido si hay overflowActions). */
+    /** copy del botón "…" (requerido si hay overflowActions). */
     overflowLabel: String = "",
 ) {
     require(actions.size <= 4) {
@@ -157,7 +157,7 @@ fun XauxaAppBar(
                         DropdownMenu(
                             expanded = overflowOpen,
                             onDismissRequest = { overflowOpen = false },
-                            // Fase 4: el menú también habla Xauxa — radio 0
+                            // el menú también habla Xauxa — radio 0
                             // (red de seguridad del theme), sin elevación
                             // tonal ni sombra, superficie y borde Xauxa.
                             shape = XauxaShape,
@@ -197,7 +197,7 @@ private fun AppBarItem(action: XauxaAppBarAction) {
             )
             .then(
                 // Acción principal: bloque sólido de acento (M10); el resto
-                // texto + icono sin caja (M10). Fase 2: la primaria
+                // texto + icono sin caja (M10). la primaria
                 // DESHABILITADA es distinguible — Surface3 + TextTertiary
                 // (antes mantenía el acento y parecía activa).
                 if (action.primary) {
@@ -247,7 +247,7 @@ private fun AppBarItem(action: XauxaAppBarAction) {
             action.label,
             style = XauxaTextStyles.AppBarItem,
             color = tint,
-            // Ronda 2 (Área D): hasta dos líneas con fuente grande; la
+            // hasta dos líneas con fuente grande; la
             // acción nunca se queda sin etiqueta visible (§11).
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,

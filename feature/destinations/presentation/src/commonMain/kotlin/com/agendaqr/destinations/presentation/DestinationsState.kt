@@ -109,7 +109,7 @@ class DestinationsViewModel(
     private val delete: DeleteDestinationUseCase,
     private val toggleFavorite: ToggleFavoriteUseCase,
     /**
-     * Scope de la sesión (T12): lo aporta el grafo de la app; se cancela
+     * Scope de la sesión : lo aporta el grafo de la app; se cancela
      * al cerrar sesión, junto con todos los colecciones del ViewModel.
      */
     private val scope: CoroutineScope,
@@ -194,7 +194,7 @@ class DestinationsViewModel(
         }
     }
     /**
-     * Mapeo centralizado (T5): nunca se expone `error.message` crudo; el
+     * Mapeo centralizado : nunca se expone `error.message` crudo; el
      * estado lleva un error mostrable con qué/data/acción (spec §10).
      */
     private fun showError(error: Throwable, flow: ErrorFlow) {

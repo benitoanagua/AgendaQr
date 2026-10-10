@@ -27,7 +27,7 @@ import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.destinations.domain.Context
 
 /**
- * Semántica del selector de contexto (S08) — T4:
+ * Semántica del selector de contexto (S08) — 
  * - **Elegir** un elemento confirma y cierra: [ContextSelection.select].
  * - **Cancelar** cierra SIN tocar la selección previa.
  * - **Quitar contexto** es la única vía de limpiar la selección.
@@ -84,7 +84,7 @@ internal fun ContextPickerDialog(
     var step by rememberSaveable { mutableStateOf(ContextPickerStep.List) }
     var name by rememberSaveable { mutableStateOf("") }
     var note by rememberSaveable { mutableStateOf("") }
-    // Ronda 2 (Área C): sobrevive a recreación.
+    // sobrevive a recreación.
     var submitted by rememberSaveable { mutableStateOf(false) }
 
     // El contexto recién creado queda seleccionado y marcado en la lista.
@@ -190,7 +190,7 @@ internal fun ContextCreationDialog(
 ) {
     var name by rememberSaveable { mutableStateOf("") }
     var note by rememberSaveable { mutableStateOf("") }
-    // Ronda 2 (Área C): sobrevive a recreación.
+    // sobrevive a recreación.
     var submitted by rememberSaveable { mutableStateOf(false) }
     XauxaDialog(
         title = AppStrings.CrearContexto,

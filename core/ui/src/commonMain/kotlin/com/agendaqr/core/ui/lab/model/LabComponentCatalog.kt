@@ -30,7 +30,7 @@ object LabComponentCatalog {
     private fun commonPlatforms() = listOf(
         LabPlatformStatus("Android", true, "Composable commonMain renderizado en producción y en el laboratorio."),
         LabPlatformStatus("iOS", false, "Compila en el target iOS; pendiente de validación en hardware."),
-        LabPlatformStatus("Web (Wasm)", false, "Pendiente de revisión de renderizado en navegador (Fase 8)."),
+        LabPlatformStatus("Web (Wasm)", false, "Pendiente de revisión de renderizado en navegador ."),
     )
 
     /** Xauxa token foundations reviewed as tokens, not as composables. */
@@ -844,7 +844,7 @@ object LabComponentCatalog {
             name = "XauxaIcon",
             category = LabCategory.DATA,
             purpose = "Único punto de entrada de iconografía de producto (set Lucide, ISC).",
-            description = "T2/V1.1 (ADR-0005, spec §12): glifos de línea de un solo color, tamaño y " +
+            description = "V1.1 (ADR-0005, spec §12): glifos de línea de un solo color, tamaño y " +
                 "color por tokens. contentDescription nulo marca el icono como decorativo y lo " +
                 "excluye de la accesibilidad; los iconos interactivos siempre llevan etiqueta de " +
                 "texto visible compuesta por el llamador (nunca el icono solo).",
@@ -1081,7 +1081,7 @@ object LabComponentCatalog {
             name = "XauxaStatusBanner",
             category = LabCategory.FEEDBACK,
             purpose = "Mensaje persistente de estado.",
-            description = "Caja de ancho completo con borde; el tono se declara con tone (T12: danger se retiró). " +
+            description = "Caja de ancho completo con borde; en los tonos se expresan también con texto; el parámetro booleano danger fue retirado. " +
                 "fondo DangerBg y texto Danger.",
             props = listOf(
                 LabProp("message", "String"),
@@ -1451,7 +1451,7 @@ object LabComponentCatalog {
             category = LabCategory.DATA,
             purpose = "Indicador visual de favorito.",
             description = "Cuadrado (radio 0, Metro) de XauxaMetrics.FavoriteIndicatorSize con fondo Brand " +
-                "(marcado) o Surface2 (sin marcar). Fase 2 (auditoría a11y): glifo Favorito solo cuando está " +
+                "(marcado) o Surface2 (sin marcar). glifo Favorito solo cuando está " +
                 "marcado — el estado no depende solo del color (§11); contentDescription opcional para exponer " +
                 "su significado cuando el llamador lo necesita.",
             props = listOf(
@@ -1476,7 +1476,7 @@ object LabComponentCatalog {
             ),
             usage = listOf("Marcar visualmente un destino u obligación favorita en listas y detalles."),
             notes = listOf(
-                "Fase 2: la excepción histórica del círculo (CircleShape) se retiró — radio 0 en TODO, " +
+                "la excepción histórica del círculo (CircleShape) se retiró — radio 0 en TODO, " +
                     "incluidos los indicadores (el catálogo anterior documentaba el círculo como permitido).",
             ),
             tags = listOf("favorito", "indicador", "datos"),
@@ -1566,7 +1566,7 @@ object LabComponentCatalog {
                 LabState("Escaneando", "scanning = true: etiqueta de escaneo en curso.", LabReviewStatus.VERIFIED),
                 LabState(
                     "Escaneo real",
-                    "Android: INTEGRADO (T8: CameraX + análisis ZXing continuo; runtime de sesión OPENED " +
+                    "Android: INTEGRADO (CameraX + análisis ZXing continuo; runtime de sesión OPENED " +
                         "con primer frame verificado en el AVD; la detección de un QR real queda pendiente " +
                         "de hardware). iOS: implementado con AVFoundation (U2, runtime BLOCKED sin Xcode). " +
                         "Web: getUserMedia pendiente.",
@@ -1586,10 +1586,10 @@ object LabComponentCatalog {
             darkThemeSupport = LabDarkThemeSupport.PENDING,
             darkThemeNote = "Resuelve el esquema vía XauxaColor; el esquema oscuro aplica valores de referencia pendientes de validación visual.",
             whenToUse = "Captura con cámara. QR almacenado con XauxaQrPreview; archivo con XauxaFileUpload.",
-            androidMapping = "Preview + escaneo real con CameraX (T8); detección de QR real pendiente de hardware.",
+            androidMapping = "Preview + escaneo real con CameraX ; detección de QR real pendiente de hardware.",
             iosMapping = "AVFoundation implementado (U2); runtime pendiente de Xcode.",
             platforms = listOf(
-                LabPlatformStatus("Android", true, "Preview + escaneo CameraX integrados (T8)."),
+                LabPlatformStatus("Android", true, "Preview + escaneo CameraX integrados ."),
                 LabPlatformStatus("iOS", false, "AVFoundation implementado (U2); runtime pendiente de Xcode."),
                 LabPlatformStatus("Web (Wasm)", false, "Preview real; getUserMedia pendiente."),
             ),

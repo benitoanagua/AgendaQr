@@ -53,7 +53,7 @@ fun XauxaCommandBar(
     visibleActions: List<@Composable RowScope.() -> Unit>,
     modifier: Modifier = Modifier,
     overflowActions: List<XauxaOverflowAction> = emptyList(),
-    /** Ronda 2 (Área H/ADR-0008): nombre accesible del botón "…". */
+    /** ADR-0008: nombre accesible del botón "…". */
     overflowDescription: String = "",
 ) {
     require(visibleActions.size <= 3) {
@@ -86,7 +86,7 @@ fun XauxaCommandBar(
                     DropdownMenu(
                         expanded = overflowOpen,
                         onDismissRequest = { overflowOpen = false },
-                        // Fase 4: radio 0, sin elevaciones, superficie Xauxa.
+                        // radio 0, sin elevaciones, superficie Xauxa.
                         shape = XauxaShape,
                         containerColor = XauxaColor.Surface,
                         tonalElevation = XauxaSpacing.None,

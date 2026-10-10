@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 /**
- * Modelo de navegación único de la app autenticada (T2).
+ * Modelo de navegación único de la app autenticada .
  *
  * Un `AppRoute` es una SUPERFICIE completa. Las pantallas internas de cada
  * flujo (p. ej. Lista/Detalle de contextos, Lista/Registrar/Detalle de
@@ -50,7 +50,7 @@ sealed interface AppRoute {
 }
 
 /**
- * Ronda 2 (Área C): serialización del stack por NOMBRE de ruta. AppRoute
+ * serialización del stack por NOMBRE de ruta. AppRoute
  * son `data object` sin parámetros → el nombre ES el estado completo.
  * Conservador ante lo desconocido: rutas que no existen (versiones
  * futuras hacia atrás) se descartan; si la raíz no es Home, el stack se

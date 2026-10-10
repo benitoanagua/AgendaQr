@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 
 /**
  * ViewModel del flujo de operaciones (S07/…). El scope es el de la sesión
- * (T12): lo aporta el grafo y se cancela al cerrar sesión.
+ * : lo aporta el grafo y se cancela al cerrar sesión.
  */
 class OperationsViewModel(
     observeOperations: ObserveOperationsUseCase,
@@ -27,7 +27,7 @@ class OperationsViewModel(
     private val deleteComprobante: DeleteComprobanteUseCase,
     private val comprobanteFiles: ComprobanteFileStore,
     /**
-     * Scope de la sesión (T12): lo aporta el grafo de la app; se cancela
+     * Scope de la sesión : lo aporta el grafo de la app; se cancela
      * al cerrar sesión, junto con todos los colecciones del ViewModel.
      */
     private val scope: CoroutineScope,
@@ -338,7 +338,7 @@ class OperationsViewModel(
     }
 
     /**
-     * Mapeo centralizado (T5): nunca `error.message` crudo; el estado lleva
+     * Mapeo centralizado : nunca `error.message` crudo; el estado lleva
      * qué pasó, qué pasó con los datos y la acción (spec §10).
      */
     private fun showError(error: Throwable, flow: ErrorFlow) {

@@ -35,9 +35,9 @@ fun QrAsset.toShareUri(context: Context): Uri {
         "image/webp" -> "webp"
         else -> "png"
     }
-    val file = File(context.cacheDir, "shared_qr.$ext")
+    val file = File(context.cacheDir, "shared_qr." + ext)
     file.writeBytes(bytes)
-    return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+    return FileProvider.getUriForFile(context, context.packageName + ".fileprovider", file)
 }
 
 fun decodeQrAsset(bytes: ByteArray, mimeType: String): QrAsset? {
@@ -95,7 +95,7 @@ object AgendaQrAndroidImportLauncher {
 
     fun initialize(compActivity: ComponentActivity) {
         this.activity = compActivity
-        // T8 — S03: la captura con cámara ya no es `TakePicturePreview`
+        // S03: la captura con cámara ya no es `TakePicturePreview`
         // (cámara del sistema): es CameraX + análisis ZXing continuo dentro
         // de la app (CameraQrCaptureOverlay), con detección automática.
         gallery = compActivity.registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->

@@ -1,12 +1,12 @@
 /**
  * Detalle de la operación: datos, comprobantes, acciones y confirmación
- * de borrado. Muestra el estado de sincronización por elemento (T6).
+ * de borrado. Muestra el estado de sincronización por elemento .
  */
 package com.agendaqr.destinations.presentation
 
 /**
  * Detalle de la operación: datos, comprobantes, acciones y confirmación
- * de borrado. Estado de sincronización por elemento (T6).
+ * de borrado. Estado de sincronización por elemento .
  */
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -53,7 +53,7 @@ internal fun OperationDetailScreen(
         return
     }
     var showDeleteConfirm by remember { mutableStateOf(false) }
-    // Ronda 2 (Área F): anuncio de eliminación confirmada (por evento).
+    // anuncio de eliminación confirmada (por evento).
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
     XauxaFeedbackEvent(event = deleteDoneEvent, message = AppStrings.Eliminado)
     XauxaScreenScaffold(
@@ -78,9 +78,9 @@ internal fun OperationDetailScreen(
             XauxaPageTitle(text = AppStrings.Detalle)
             XauxaStatusBanner(
                 operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt) + " · " +
-                    operation.amount.orEmpty().ifBlank { "sin monto" }
+                    operation.amount.orEmpty().ifBlank { AppStrings.SinMonto }
             )
-        // T6: estado de sincronización del elemento (texto, no solo color).
+        // estado de sincronización del elemento (texto, no solo color).
         val operationSyncStatus = syncLookup.status(SyncResource.OPERATION, operation.id)
         ElementSyncBadge(operationSyncStatus)
         if (operationSyncStatus == ElementSyncStatus.ErrorRecoverable) {

@@ -1,7 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 /**
- * Ronda 2 (Área B) — política del permiso de cámara como función PURA
+ * Política del permiso de cámara como función PURA
  * (testeable sin plataforma). La detección de "denegado permanentemente"
  * es la heurística estándar de Android: se pidió antes y el sistema ya
  * no ofrece justificación (`shouldShowRequestPermissionRationale` =

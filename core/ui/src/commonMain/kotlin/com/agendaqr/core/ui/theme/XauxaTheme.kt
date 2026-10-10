@@ -12,7 +12,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalRippleConfiguration
 
-// Fase 4: la red de seguridad de shapes consume el token plano de la
+// la red de seguridad de shapes consume el token plano de la
 // capa de tokens (XauxaShape); RoundedCornerShape no aparece aquí.
 
 @Composable
@@ -30,7 +30,7 @@ fun XauxaTheme(
             LocalRippleConfiguration provides null,
         ) {
         MaterialTheme(
-            // Fase 4 (auditoría): red de seguridad — TODO componente M3 que
+            // red de seguridad — TODO componente M3 que
             // no pase shape explícita hereda radio 0 (invariante Metro). El
             // gate permite RoundedCornerShape SOLO en este archivo si algún
             // día se necesita; hoy ni se usa.

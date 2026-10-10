@@ -25,7 +25,7 @@ sealed interface ImportBatchAction {
     data object Back : ImportBatchAction
 
     // ------------------------------------------------------------------
-    // T7 — S12: resolución de pendientes por elemento (intención de UI).
+    // S12: resolución de pendientes por elemento (intención de UI).
     // El host de la app las traduce en los eventos del reducer de abajo.
     // ------------------------------------------------------------------
 

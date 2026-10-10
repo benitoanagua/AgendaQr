@@ -30,7 +30,7 @@ import platform.darwin.NSObject
 internal class IosQrCameraPresenter(
     private val onQr: (QrImportResult) -> Unit,
     private val onDismiss: () -> Unit,
-    /** Ronda 2 (Área B/K): permiso denegado o restringido. */
+    /** Permiso denegado o restringido. */
     private val onPermissionDenied: () -> Unit = {},
 ) : NSObject(), AVCaptureMetadataOutputObjectsDelegateProtocol {
 
@@ -38,7 +38,7 @@ internal class IosQrCameraPresenter(
     private var emitted = false
 
     fun present() {
-        // Ronda 2 (Área B/K): la API de autorización de AVFoundation
+        // La API de autorización de AVFoundation
         // (authorizationStatusForMediaType/requestAccessForMediaType) NO
         // está expuesta en los bindings precompilados de KMP usados aquí
         // (verificado por sonda de compilación; ver
@@ -94,7 +94,7 @@ internal class IosQrCameraPresenter(
         if (code.type != AVMetadataObjectTypeQRCode) return
         emitted = true
         val value = code.stringValue ?: return
-        // Ronda 2 (Área B): el feedback de lectura exitosa vive en la
+        // el feedback de lectura exitosa vive en la
         // entrada componible (XauxaFeedbackEvent) — háptica/anuncio
         // multiplataforma sin depender de bindings de UIKit.
         // El QR detectado se entrega como asset por el mismo canal; el

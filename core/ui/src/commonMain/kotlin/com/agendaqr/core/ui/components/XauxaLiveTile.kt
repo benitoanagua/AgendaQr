@@ -23,7 +23,7 @@ import com.agendaqr.core.ui.theme.XauxaMotion
  * - El contenido cambia SOLO cuando cambia [data]; cada cambio realiza UNA
  *   transición. No hay rotación en bucle ni timer (invariante Xauxa 6).
  * - Con reduced motion: corte directo (duración 0).
- * - P1 (contrato §11): el Box es una REGIÓN VIVA cortés — el lector anuncia
+ * - Contrato §11: el Box es una REGIÓN VIVA cortés — el lector anuncia
  *   el cambio del dato. El contenido SALIENTE del crossfade queda OCULTO
  *   a los lectores (clearAndSetSemantics en el slot de salida) para no
  *   leer el valor viejo y el nuevo a la vez. El nombre accesible es el

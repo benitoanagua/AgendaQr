@@ -91,7 +91,7 @@ fun DestinationsScreen(
             XauxaPageTitle(text = AppStrings.AgendaQr)
 
             // S01 — buscar domina visualmente (M2). La barra es la entrada
-            // a S04; el listado de Inicio no se filtra aquí. Fase 4: el
+            // a S04; el listado de Inicio no se filtra aquí. el
             // disparador vive en el DS (XauxaSearchTrigger — nodo único con
             // rol Button); el feature ya no compone clickable crudo.
             XauxaSearchTrigger(
@@ -165,7 +165,7 @@ fun DestinationsScreen(
                                 null -> null
                             },
                             content = {
-                                    XauxaLiveTile(data = latest?.let { if (it is LatestTileDatum.Qr) "qr:${it.destination.id}" else "op:${(it as LatestTileDatum.Activity).operation.id}" }) {
+                                    XauxaLiveTile(data = latest?.let { if (it is LatestTileDatum.Qr) "qr:" + it.destination.id else "op:" + (it as LatestTileDatum.Activity).operation.id }) {
                                         XauxaText(
                                                 text = when (val datum = latest) {
                                                     is LatestTileDatum.Qr ->
@@ -189,7 +189,7 @@ fun DestinationsScreen(
                 XauxaSectionHeader(text = AppStrings.Recientes)
             }
             when {
-                // Fase 4: la carga inicial de la lista se anuncia con el
+                // la carga inicial de la lista se anuncia con el
                 // skeleton del DS (XauxaSkeleton, sin bucles) — el spinner
                 // con mensaje se reserva para estados en curso de una
                 // acción (guardar/sincronizar). Cambio de presentación; el
@@ -233,7 +233,7 @@ fun DestinationRow(
         onClick = { onAction(DestinationAction.Open(destination.id)) },
         trailing = {
             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm), verticalAlignment = Alignment.CenterVertically) {
-                // T6: estado de sincronización por elemento (con texto).
+                // estado de sincronización por elemento (con texto).
                 ElementSyncBadge(
                     syncLookup.status(SyncResource.DESTINATION, destination.id),
                 )

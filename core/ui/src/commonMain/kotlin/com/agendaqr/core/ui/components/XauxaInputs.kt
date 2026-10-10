@@ -78,7 +78,7 @@ fun XauxaTextInput(
     keyboardActions: androidx.compose.foundation.text.KeyboardActions = androidx.compose.foundation.text.KeyboardActions.Default,
     visualTransformation: androidx.compose.ui.text.input.VisualTransformation = androidx.compose.ui.text.input.VisualTransformation.None,
     /**
-     * Ronda 2 (Área I): slot trailing DENTRO del campo (p. ej. el futuro
+     * slot trailing DENTRO del campo (p. ej. el futuro
      * mostrar/ocultar contraseña). El DS ofrece el hueco; el glifo y su
      * copy son decisión de producto pendiente (ADR-0005, Puntos abiertos)
      * — el slot existe con su test, sin inventar el icono.
@@ -107,7 +107,7 @@ fun XauxaTextInput(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    // Fase 2: deshabilitado distinguible — Surface3 (más
+                    // deshabilitado distinguible — Surface3 (más
                     // oscuro que el Surface2 de reposo), texto TextTertiary.
                     if (!enabled) XauxaColor.Surface3 else XauxaColor.Surface2,
                     XauxaShape,
@@ -127,7 +127,7 @@ fun XauxaTextInput(
                 modifier = Modifier
                     .weight(1f)
                     .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
-                    // Fase 2: asociación etiqueta-campo (la etiqueta fija
+                    // asociación etiqueta-campo (la etiqueta fija
                     // es visual; el campo la expone como nombre accesible).
                     .semantics {
                         contentDescription = visibleLabel
@@ -161,7 +161,7 @@ fun XauxaTextInput(
                     focusedTextColor = XauxaColor.TextPrimary,
                     unfocusedTextColor = XauxaColor.TextPrimary,
                     errorTextColor = XauxaColor.TextPrimary,
-                    // Fase 2: readOnly se distingue por texto secundario
+                    // readOnly se distingue por texto secundario
                     // (el campo sigue legible pero no editable); disabled
                     // hereda el Surface3 del contenedor + TextTertiary.
                     disabledTextColor = XauxaColor.TextTertiary,
@@ -173,7 +173,7 @@ fun XauxaTextInput(
             }
         }
         // §11/M8: el error informa con icono + texto, nunca solo por color.
-        // Fase 2: liveRegion cortés — el error se anuncia cuando aparece.
+        // liveRegion cortés — el error se anuncia cuando aparece.
         when {
             isError && errorMessage != null -> {
                 Row(
@@ -214,11 +214,11 @@ fun XauxaSearchBar(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    /** Fase 4: copy desde el llamador (sin defaults hardcodeados). */
+    /** copy desde el llamador (sin defaults hardcodeados). */
     label: String,
     placeholder: String,
     onClear: (() -> Unit)? = null,
-    /** Ronda 2 (Área H): copy de la acción de limpiar, del llamador. */
+    /** copy de la acción de limpiar, del llamador. */
     clearLabel: String = "",
 ) {
     if (onClear != null) require(clearLabel.isNotBlank()) {
@@ -280,11 +280,11 @@ fun XauxaSearchBar(
 }
 
 /**
- * Disparador de búsqueda (Fase 4): la BARRA que abre la pantalla de
+ * Disparador de búsqueda la BARRA que abre la pantalla de
  * búsqueda (S01) sin campo editable — la entrada real vive en S04. Un
  * ÚNICO nodo semántico con rol Button y nombre accesible (antes el campo
  * decorativo exponía su editable-node al lector de pantalla): el feature
- * nunca compone clickable crudo para esto (gate Fase 4).
+ * nunca compone clickable crudo para esto (gate del design system).
  */
 @Composable
 fun XauxaSearchTrigger(

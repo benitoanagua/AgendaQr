@@ -136,7 +136,7 @@ fun XauxaPrimaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
-    /** Fase 2: stateDescription de "ocupado" (texto del llamador, §5). */
+    /** stateDescription de "ocupado" (texto del llamador, §5). */
     busyDescription: String? = null,
 ) {
     XauxaLoadingButton(
@@ -154,7 +154,7 @@ fun XauxaPrimaryButton(
 }
 
 /**
- * Cuerpo compartido de los botones sólidos (Fase 2): con carga, la
+ * Cuerpo compartido de los botones sólidos con carga, la
  * etiqueta PERMANECE en el layout con alpha 0 y el spinner se superpone
  * centrado — sin salto de ancho; el estado "ocupado" se anuncia con
  * [busyDescription] (stateDescription, texto del llamador desde
@@ -255,7 +255,7 @@ fun XauxaTextAction(
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
     /**
-     * Ronda 2 (Área A): color del texto/icono. Por defecto brandText; el
+     * color del texto/icono. Por defecto brandText; el
      * llamador lo anula cuando la acción vive sobre un fondo donde brand
      * no cumple 4.5:1 (p. ej. las acciones DENTRO de un banner de tono,
      * que heredan el color de contenido del tono — par garantizado por
@@ -288,7 +288,7 @@ fun XauxaTextAction(
 /**
  * Banner de resultado embebido: marcador semántico + contenido + acciones.
  *
- * El tono se expresa SIEMPRE con [tone] (T12: el parámetro booleano
+ * El tono se expresa SIEMPRE con [tone] (el parámetro booleano
  * `danger` histórico se retiró; unifica Neutral/Danger/Success/…).
  */
 @Composable
@@ -299,7 +299,7 @@ fun XauxaStatusBanner(
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
     onDismiss: (() -> Unit)? = null,
-    /** Fase 4: copy del descarte desde el llamador (core/ui no hardcodea). */
+    /** copy del descarte desde el llamador (core/ui no hardcodea). */
     dismissLabel: String? = null,
 ) {
     if (onDismiss != null) {
@@ -335,7 +335,7 @@ fun XauxaStatusBanner(
             fontSize = XauxaType.Label,
         )
         // Acción del error recuperable (spec §10: el error ofrece qué
-        // hacer) antes que el descarte opcional. Ronda 2 (Área A): heredan
+        // hacer) antes que el descarte opcional. heredan
         // el color de CONTENIDO del tono — brandText sobre el contenedor
         // Danger fallaba 4.5:1 en ambos temas (4.47 claro / 3.45 oscuro).
         if (actionLabel != null && onAction != null) {
@@ -394,7 +394,7 @@ expect fun XauxaQrPreview(
 )
 
 /**
- * Indicador de favorito (Fase 2): cuadrado (radio 0, Metro) con glifo y
+ * Indicador de favorito cuadrado (radio 0, Metro) con glifo y
  * descripción accesible — el estado NO depende solo del color (§11).
  * El glifo Favorito aparece solo cuando está marcado; sin marca el
  * cuadro queda vacío y apagado.

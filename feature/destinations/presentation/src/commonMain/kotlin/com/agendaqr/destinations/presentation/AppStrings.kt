@@ -1,7 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 /**
- * T12 — copy centralizado de la app (UI en español).
+ * copy centralizado de la app (UI en español).
  *
  * El texto es copy CONGELADO de la spec UX (docs/04-ux): este objeto
  * no cambia una sola palabra, solo la centraliza para mantener una
@@ -64,7 +64,7 @@ internal object AppStrings {
     val Camara = "Cámara"
     val Desasociar = "Desasociar"
     val Descartar = "Descartar"
-    // Fase 4: copy que el DS exige al llamador (core/ui no hardcodea copy).
+    // copy que el DS exige al llamador (core/ui no hardcodea copy).
     val Mas = "Más"
     val CargarMas = "Cargar más"
     val NoHayMasElementos = "No hay más elementos"
@@ -156,10 +156,26 @@ internal object AppStrings {
     val VolverAResultado = "Volver a resultado"
     val VuelveEImportaDesdeCamara = "Vuelve e importa desde Cámara o Galería."
     val DestinationRouteTurnstile = "destination_route_turnstile"
-    // Fase 3: transición entre superficies (AppRoute) del stack raíz.
+    // transición entre superficies (AppRoute) del stack raíz.
     val SurfaceRouteTurnstile = "surface_route_turnstile"
     val QrSinNombre = "QR sin nombre"
     val SinNombre = "Sin nombre"
+    /** Monto vacío en texto de detalle/compartir de una actividad. */
+    val SinMonto = "sin monto"
+    /** Monto vacío en CompactUi de fila/lista (signo constante). */
+    val SinMontoCorto = "—"
+    /** ¿A cuál corresponde? — título del selector S11 con varias candidatas. */
+    val ACualCorresponde = "¿A cuál corresponde?"
+    /** Nombre visible de un elemento de importación con archivo conocido. */
+    val ArchivoPrefijo = "Archivo: "
+    /** Nombre visible de un elemento de importación sin extensión conocida. */
+    val ElementoImportado = "Elemento importado"
+    /** S09: conteo singular. */
+    val UnQrListoParaGuardar = "1 QR listo para guardar"
+    /** S09: conteo plural (se concatena al número). */
+    val QrListosParaGuardarSufijo = " QR listos para guardar"
+    /** S09: guardar varios a la vez. */
+    val GuardarTodo = "Guardar todo"
     val VerMas = "Ver más"
     val Reconocidos = "Reconocidos"
     val PosiblesDuplicados = "Posibles duplicados"
@@ -173,15 +189,15 @@ internal object AppStrings {
     val duplicateReceiptWarningPrefix = "Parece que este comprobante ya está guardado.\nArchivo: "
     val incomingReceiptExplanationPrefix = "Se guardará en tu bandeja de respaldos sin asociar.\nArchivo: "
     val Guardando = "Guardando…"
-    // Fase 2 (auditoría a11y): validación de auth + estado ocupado.
+    // validación de auth + estado ocupado.
     val IngresaUnCorreoValido = "Ingresa un correo válido"
-    // Fase 4: literales que esquivaban la regla D2 dentro de expresiones.
+    // literales que esquivaban la regla D2 dentro de expresiones.
     val FormatoFecha = "Usa el formato dd/mm/aaaa"
-    // Ronda 2 (Área B): permiso de cámara y lectura de QR.
+    // permiso de cámara y lectura de QR.
     val AbrirAjustes = "Abrir ajustes"
     val PermisoCamaraContexto = "Usamos la cámara solo para escanear códigos QR."
     val CodigoQrDetectado = "Código QR detectado"
-    // Ronda 2 (Área F): anuncios accesibles de estado (por evento).
+    // anuncios accesibles de estado (por evento).
     val SincronizacionCompletada = "Sincronización completada"
     val Eliminado = "Eliminado"
     val GuardadoOk = "Guardado"

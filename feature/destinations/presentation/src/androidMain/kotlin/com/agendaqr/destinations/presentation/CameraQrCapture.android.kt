@@ -58,7 +58,7 @@ import java.io.ByteArrayOutputStream
 import java.util.concurrent.Executors
 
 /**
- * T8 — S03 Cámara con detección automática.
+ * S03 Cámara con detección automática.
  *
  * Contrato (S03 congelado): "Intención: capturar un QR físico. La
  * detección debe ser automática cuando sea posible. No se muestran
@@ -80,7 +80,7 @@ internal fun CameraQrCaptureOverlay(
     val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
     val scanSession = remember { QrScanSession() }
     var detected by remember { mutableStateOf(false) }
-    // Ronda 2 (Área B): feedback de lectura exitosa — token por EVENTO
+    // feedback de lectura exitosa — token por EVENTO
     // (una lectura = un anuncio; sin repetición en recomposiciones).
     var detectionToken by remember { mutableStateOf<Any?>(null) }
     XauxaFeedbackEvent(event = detectionToken, message = AppStrings.CodigoQrDetectado)
@@ -255,13 +255,13 @@ private fun rotateBitmap(bitmap: Bitmap, degrees: Int): Bitmap {
 
 /**
  * Entrada S03 con manejo de permiso contextual: concedido abre la
- * captura; denegado muestra el error recuperable de T5 con REINTENTAR
+ * captura; denegado muestra el error recuperable de el error recuperable al leer la imagen con REINTENTAR
  * (volver a pedirlo) o volver a Galería (la entrada principal).
  */
 @Composable
 internal fun CameraQrEntry(onOpen: () -> Unit) {
     val context = LocalContext.current
-    // Ronda 2 (Área B): el estado de "ya se pidió" y el error del permiso
+    // el estado de "ya se pidió" y el error del permiso
     // sobreviven a la recreación de la pantalla (rotación).
     var permissionError by rememberSaveable { mutableStateOf<UserFacingError?>(null) }
     var requestedBefore by rememberSaveable { mutableStateOf(false) }

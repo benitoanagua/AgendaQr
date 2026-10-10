@@ -50,7 +50,7 @@ import com.agendaqr.core.ui.theme.XauxaShape
 
 /**
  * Botones y chips Xauxa (adaptaciones de Material con tokens).
- * (T12: dividido de XauxaExtendedComponents.kt por responsabilidad, sin cambio de comportamiento.)
+ * ((dividido por responsabilidad))
  */
 
 @Composable
@@ -60,7 +60,7 @@ fun XauxaDangerButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
-    /** Fase 2: stateDescription de "ocupado" (texto del llamador, §5). */
+    /** stateDescription de "ocupado" (texto del llamador, §5). */
     busyDescription: String? = null,
 ) {
     XauxaLoadingButton(
@@ -133,7 +133,7 @@ fun XauxaFilterChip(
         border = FilterChipDefaults.filterChipBorder(
             enabled = enabled,
             selected = selected,
-            // Fase 1: borde de control >= 3:1 (Border fallaba 3:1).
+            // borde de control >= 3:1 (Border fallaba 3:1).
             borderColor = XauxaColor.BorderControl,
             selectedBorderColor = XauxaColor.Brand,
             borderWidth = XauxaMetrics.Border,

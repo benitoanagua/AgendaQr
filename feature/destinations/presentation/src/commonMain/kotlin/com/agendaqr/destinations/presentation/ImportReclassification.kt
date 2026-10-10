@@ -4,7 +4,7 @@ import com.agendaqr.destinations.domain.ImportCandidate
 import com.agendaqr.destinations.domain.ImportKind
 
 /**
- * T7 — S12: reintentar la clasificación de un pendiente desde su payload
+ * S12: reintentar la clasificación de un pendiente desde su payload
  * retenido. La decisión de clasificación es de plataforma (la misma que
  * usa la importación); el resultado reemplaza al candidato en el lote.
  *
@@ -21,10 +21,10 @@ expect suspend fun reclassifyImportCandidate(
 
 /** Nombre visible del archivo pendiente (miniatura textual del elemento). */
 internal fun pendingItemName(candidate: ImportCandidate): String {
-    val extension = candidate.extension?.let { "Archivo: $it" } ?: "Elemento importado"
+    val extension = candidate.extension?.let { AppStrings.ArchivoPrefijo + it } ?: AppStrings.ElementoImportado
     return when (candidate.kind) {
-        ImportKind.QR -> "$extension · QR"
-        ImportKind.COMPROBANTE -> "$extension · comprobante"
+        ImportKind.QR -> extension + " · QR"
+        ImportKind.COMPROBANTE -> extension + " · comprobante"
         ImportKind.DESCONOCIDO -> extension
     }
 }

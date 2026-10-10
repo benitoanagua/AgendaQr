@@ -45,7 +45,7 @@ class ContextsViewModel(
      */
     private val save: SaveContextUseCase? = null,
     /**
-     * Scope de la sesión (T12): lo aporta el grafo de la app; se cancela
+     * Scope de la sesión : lo aporta el grafo de la app; se cancela
      * al cerrar sesión, junto con todos los colecciones del ViewModel.
      */
     private val scope: CoroutineScope,
@@ -140,7 +140,7 @@ class ContextsViewModel(
         contentsJob?.cancel()
         contentsJob = scope.launch {
             if (get(id) == null) {
-                // T5: error mostrable con qué/data/acción (spec §10).
+                // error mostrable con qué/data/acción (spec §10).
                 _state.value = _state.value.copy(error = userFacingError(IllegalStateException(), ErrorFlow.ContextOpen))
                 return@launch
             }

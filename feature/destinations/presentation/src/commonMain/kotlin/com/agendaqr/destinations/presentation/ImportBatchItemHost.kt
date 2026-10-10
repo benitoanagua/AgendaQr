@@ -15,7 +15,7 @@ import com.agendaqr.destinations.domain.newEntityId
 import com.agendaqr.destinations.domain.nowMillis
 
 /**
- * T7 — S12: efectos por elemento que la UI pide y el reducer no puede
+ * S12: efectos por elemento que la UI pide y el reducer no puede
  * hacer (persistencia, payload temporal, vista previa del existente).
  *
  * Sin doble guardado: cada acción es idempotente por elemento — la copia

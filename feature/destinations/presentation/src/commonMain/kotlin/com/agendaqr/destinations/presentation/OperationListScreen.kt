@@ -162,13 +162,13 @@ internal fun OperationListScreen(
                                 XauxaText(formatDate(operation.occurredAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
                                 XauxaText(operationTypeLabel(operation.type), fontWeight = FontWeight.SemiBold,
                                     color = if (operation.type == OperationType.COBRO) XauxaColor.Success else XauxaColor.Brand)
-                                // T6: estado de sincronización por elemento, con texto.
+                                // estado de sincronización por elemento, con texto.
                                 ElementSyncBadge(
                                     syncLookup.status(SyncResource.OPERATION, operation.id),
                                 )
                             }
                             Column(horizontalAlignment = Alignment.End) {
-                                XauxaText(operation.amount.orEmpty().ifBlank { "—" }, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
+                                XauxaText(operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto }, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
                                 operation.personOrEntity?.let { XauxaText(it, size = XauxaType.Label, color = XauxaColor.TextSecondary) }
                             }
                         }
@@ -220,7 +220,7 @@ internal fun UnassociatedScreen(
                             Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                                 XauxaText(AppStrings.receiptReceivedTitle, fontWeight = FontWeight.SemiBold)
                                 XauxaText(formatDate(receipt.createdAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
-                                // T6: estado de sincronización por comprobante, con texto.
+                                // estado de sincronización por comprobante, con texto.
                                 ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                                 // Acciones apiladas: dos etiquetas largas no caben lado a lado en 360dp.
                                 Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
@@ -243,7 +243,7 @@ internal fun UnassociatedScreen(
         XauxaDialog(
             title = when (suggestion?.kind) {
                 ReceiptMatchKind.SINGLE -> AppStrings.singleMatchTitle
-                ReceiptMatchKind.MULTIPLE -> "¿A cuál corresponde?"
+                ReceiptMatchKind.MULTIPLE -> AppStrings.ACualCorresponde
                 ReceiptMatchKind.NONE, null -> AppStrings.noMatchTitle
             },
             confirmLabel = AppStrings.Cancelar,
@@ -269,7 +269,7 @@ internal fun UnassociatedScreen(
                                     candidateOperations.forEach { operation ->
                                         XauxaListRow(
                                             title = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
-                                            subtitle = operation.amount.orEmpty().ifBlank { "—" },
+                                            subtitle = operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
                                             onClick = {
                                                 viewModel.onAction(OperationAction.Associate(receipt.id, operation.id))
                                                 selectedReceipt = null
@@ -286,7 +286,7 @@ internal fun UnassociatedScreen(
                         else -> candidateOperations.forEach { operation ->
                             XauxaListRow(
                                 title = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
-                                subtitle = operation.amount.orEmpty().ifBlank { "—" },
+                                subtitle = operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
                                 onClick = {
                                     viewModel.onAction(OperationAction.Associate(receipt.id, operation.id))
                                     selectedReceipt = null

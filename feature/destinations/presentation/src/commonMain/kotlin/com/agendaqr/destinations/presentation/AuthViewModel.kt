@@ -59,7 +59,7 @@ class AuthViewModel(
         viewModelScope.launch {
             runCatching { signIn(current.email, current.password) }
                 .onFailure { error ->
-                    // T5: el error de auth muestra qué/data/acción (spec §10);
+                    // el error de auth muestra qué/data/acción (spec §10);
                     // nunca el `error.message` de Supabase (inglés/técnico).
                     _state.value = _state.value.copy(
                         isSubmitting = false,

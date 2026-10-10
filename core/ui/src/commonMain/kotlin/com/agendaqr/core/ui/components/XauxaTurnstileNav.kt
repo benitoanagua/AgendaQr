@@ -28,24 +28,22 @@ import com.agendaqr.core.ui.theme.XauxaMotion
  * adelante (el lambda de `enterTransition` de `NavHost` es exactamente esa
  * especialización con `S = NavBackStackEntry`).
  *
- * - ts1: implementado acá — offset de contenido real, no solo fade.
- * - ts3 (regresión con predictive back, tarea bg1): esto NO la resuelve.
- *   Push/pop programático la usa; el gesto de predictive back en Android 14+
- *   pasa por su propio callback (`PredictiveBackHandler`) con una animación
- *   *interactiva* que no usa estas specs. Probar el swipe real antes de dar
- *   por resuelto ts3 — no asumir que "ya está" solo porque el botón atrás se
- *   ve bien.
- * - ts4: usa los mismos `XauxaMotion.DurationMediumMs` / `Easings.Standard`
+ * - Offset de contenido real, no solo fade: la pantalla entrante viene del
+ *   borde y la saliente se desplaza una fracción en dirección contraria.
+ * - Predictive back de Android 14+: el gesto pasa por su propio callback
+ *   (`PredictiveBackHandler`) con una animación interactiva que NO usa
+ *   estas specs; el turnstile cubre el push/pop programático y el de
+ *   [BackHandler]. Probado el botón atrás no implica el gesto — se obvía
+ *   en dispositivo físico.
+ * - Usa los mismos `XauxaMotion.DurationMediumMs` / `Easings.Standard`
  *   que [XauxaLiveTile], para que no se sienta como dos sistemas de
  *   animación distintos.
- * - ts2 (iOS) y ts5 (alcance: ¿toda navegación o solo lista↔detalle?) quedan
- *   fuera de este archivo — ts5 en particular es una decisión de producto.
- *   ReducedMotion está resuelto aquí: [xauxaReducedMotionEnter]/
+ * - ReducedMotion está resuelto aquí: [xauxaReducedMotionEnter]/
  *   [xauxaReducedMotionExit] fijan duración 0 y cero desplazamiento; el
  *   call-site lee `LocalReducedMotion` y elige con [xauxaTurnstileMotion].
  *
  * Uso previsto (pendiente de conectar en `AgendaQrApp.kt`, ver
- * docs/05-design-system/04-component-audit-register.md, Lote H):
+ * docs/05-design-system/04-component-audit-register.md):
  *
  *   AnimatedContent(
  *       targetState = currentScreen,
@@ -87,7 +85,7 @@ fun <S> AnimatedContentTransitionScope<S>.xauxaTurnstileExit(
 ): ExitTransition =
     slideOutHorizontally(
         animationSpec = tween(XauxaMotion.DurationMediumMs, easing = XauxaMotion.Easings.Standard),
-        // ts1: la pantalla que sale se mueve una fracción del ancho, no el
+        // La pantalla que sale se mueve una fracción del ancho, no el
         // 100% — es el "offset de contenido" que distingue turnstile de un
         // slide plano.
         targetOffsetX = { fullWidth ->

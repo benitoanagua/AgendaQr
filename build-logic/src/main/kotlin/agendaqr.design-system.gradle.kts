@@ -73,7 +73,14 @@ val borderAllowedFiles: Set<String> =
     }
 
 fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = buildList {
-    val bannedImports = listOf("androidx.compose.material.icons", "Icons.Filled", "Icons.Outlined", "Icons.Rounded")
+    // M12/§4.5: SOLO Lucide vía XauxaIcon — los APIs de iconos de Material
+    // están prohibidos en producción (Filled y Default son el mismo set;
+    // Outlined/Rounded/Sharp/TwoTone/AutoMirrored).
+    val bannedImports = listOf(
+        "androidx.compose.material.icons",
+        "Icons.Filled", "Icons.Outlined", "Icons.Rounded", "Icons.Default",
+        "Icons.AutoMirrored", "Icons.Sharp", "Icons.TwoTone",
+    )
     val rawHex = Regex("#[0-9A-Fa-f]{6,8}")
     val rawDp = Regex("(?<![A-Za-z0-9_])(\\d+(?:\\.\\d+)?)\\.dp\\b")
     val rawSp = Regex("(?<![A-Za-z0-9_])(\\d+(?:\\.\\d+)?)\\.sp\\b")
@@ -109,13 +116,30 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
             add("$location: forbidden radius/elevation API: $line")
         }
         // verify-xauxa.sh parity: CircleShape/RectangleShape también están
-        // prohibidos en componentes de core:ui (fuera de tokens/theme).
-        if (path.contains("/core/ui/") &&
-            !path.endsWith("XauxaTokens.kt") && !path.endsWith("XauxaTheme.kt") &&
+        // prohibidos FUERA de la capa de tokens/tema — en componentes de
+        // core:ui y en feature/, shared/, androidApp/. El lab exhibe
+        // tokens (entorno de validación, no producto): exento.
+        if (!path.endsWith("XauxaTokens.kt") && !path.endsWith("XauxaTheme.kt") &&
             !path.contains("/lab/") &&
             (line.contains("CircleShape") || line.contains("RectangleShape"))
         ) {
-            add("$location: production components must use XauxaShape/token API (no CircleShape/RectangleShape): $line")
+            add("$location: production code must use XauxaShape/token API (no CircleShape/RectangleShape): $line")
+        }
+        // Contrato §5: colores nombrados de Compose (Color.White/Black/
+        // Transparent/…) fuera de XauxaTokens.kt — todo literal visual va
+        // al token semántico (QrCanvas, Transparent, TextPrimary…).
+        if (!path.endsWith("XauxaTokens.kt") &&
+            Regex("\\bColor\\.(Black|White|Transparent|Red|Gray|LightGray|DarkGray|Yellow|Green|Blue|Cyan|Magenta|Unspecified)\\b")
+                .containsMatchIn(line)
+        ) {
+            add("$location: Color.<name> outside token layer (use a semantic token from XauxaTokens.kt): $line")
+        }
+        // Contrato §7: duraciones literales en animaciones — toda
+        // animación consume XauxaMotion (tween(150), durationMillis=150 o
+        // delayMillis=150 locales diluyen el lenguaje de movimiento).
+        val literalDuration = Regex("\\btween\\(\\s*\\d|\\bdurationMillis\\s*=\\s*\\d|\\bdelayMillis\\s*=\\s*\\d")
+        if (!path.endsWith("XauxaTokens.kt") && literalDuration.containsMatchIn(line)) {
+            add("$location: raw animation duration; use XauxaMotion tokens: $line")
         }
         if (!path.endsWith("XauxaTheme.kt") && forbiddenVisualAuthority.any(line::contains)) add("$location: MaterialTheme cannot be the visual authority outside XauxaTheme: $line")
         // Contrato §12: `.border(`/`BorderStroke(` solo en archivos de las
@@ -164,6 +188,48 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
             }
             if (line.contains("indication = null")) {
                 add("$location: raw indication override in feature/ (feedback lives in the DS): $line")
+            }
+        }
+        // D2 extendida: copy en EXPRESIONES que escapaban al regex —
+        // ifBlank { "…" }, Elvis `?: "frase"` y plantillas "…$var" en la
+        // capa de UI (presentation). No disparan: comentarios, mensajes de
+        // desarrollador (throw/require/check), defaults técnicos
+        // ("bin"/"new"/MIME vía la allowlist) y plantillas que SOLO
+        // interpolan variables (pegamento puro como " $index").
+        if (path.contains("/presentation/")) {
+            val trimmed = line.trim()
+            val isComment = trimmed.startsWith("//") || trimmed.startsWith("*") || trimmed.startsWith("/*")
+            val isDevMessage = line.contains("throw ") || line.contains("require(") ||
+                line.contains("check(") || line.contains("IllegalStateException") ||
+                // println/log de desarrollador: no es copy de UI.
+                line.contains("println(") || line.contains(".printStackTrace")
+            if (!isComment && !isDevMessage) {
+                Regex("ifBlank\\s*\\{\\s*\"([^\"]+)\"").find(line)?.let { match ->
+                    val literal = match.groupValues[1]
+                    if (!isUiLiteralAllowed(literal)) {
+                        add("$location: UI literal in ifBlank{} must come from AppStrings (D2): $literal")
+                    }
+                }
+                Regex("\\?:\\s*\"([^\"]+)\"").findAll(line).forEach { match ->
+                    val literal = match.groupValues[1]
+                    // Solo frases de texto (letras + espacio): los defaults
+                    // técnicos ("bin", "new", "image/png") no son copy.
+                    val looksLikeCopy = literal.contains(" ") && literal.any { it.isLetter() }
+                    if (looksLikeCopy && !isUiLiteralAllowed(literal)) {
+                        add("$location: UI literal in Elvis expression must come from AppStrings (D2): $literal")
+                    }
+                }
+                Regex("\"([^\"]*\\$\\{?\\w+[^\"]*)\"").findAll(line).forEach { match ->
+                    val literal = match.groupValues[1]
+                    // Quitar TODOS los segmentos interpolados: si lo que
+                    // queda no tiene letras, no hay copy que centralizar
+                    // ("qr:$id", "$what\n$dataStatus", " $index"…).
+                    val withoutVariables = Regex("\\$\\{?[A-Za-z_][A-Za-z0-9_.]*}?").replace(literal, "")
+                    val looksLikeCopy = withoutVariables.any { it.isLetter() }
+                    if (looksLikeCopy && !isUiLiteralAllowed(literal)) {
+                        add("$location: UI string template must come from AppStrings (D2): $literal")
+                    }
+                }
             }
         }
         // Ronda 2 (Área H/ADR-0008): core/ui no hardcodea COPY: en
@@ -409,6 +475,39 @@ tasks.register("verifyDocs") {
             }
         }
 
+        // (e) Marcadores transitorios en COMENTARIOS de código Kotlin
+        // (producción): "Fase N", "Ronda N", "P0/P1", "T<N>"/"tsN" como
+        // historia — el porqué permanente se conserva, el sello de la
+        // pasada no (la historia vive en git log). Se inspeccionan las
+        // líneas de comentario y el segmento tras "//" de las de código.
+        val ktMarkers = mapOf(
+            "Ronda \\d+" to "'Ronda N'",
+            "\\bFase \\d+" to "'Fase N'",
+            "\\bP[01]\\b" to "'P0/P1' como historia",
+            "\\bT\\d+\\b" to "'T<N>' como historia",
+            "\\bts\\d+\\b" to "'tsN' como historia",
+            "TODO:" to "TODO marker",
+            "\\bFIXME\\b" to "FIXME",
+        )
+        productionKotlinSources().forEach { file ->
+            file.readLines().forEachIndexed { index, line ->
+                val trimmed = line.trim()
+                val commentText = when {
+                    trimmed.startsWith("//") -> trimmed.removePrefix("//")
+                    trimmed.startsWith("/*") || trimmed.startsWith("*") -> trimmed
+                    "//" in line -> line.substring(line.lastIndexOf("//"))
+                    else -> null
+                }
+                if (commentText != null) {
+                    ktMarkers.forEach { (pattern, desc) ->
+                        if (Regex(pattern).containsMatchIn(commentText)) {
+                            violations.add("transient-kt: ${file.relativeTo(rootDir)}:${index + 1} has $desc")
+                        }
+                    }
+                }
+            }
+        }
+
         if (violations.isNotEmpty()) {
             throw GradleException(
                 "verifyDocs found ${violations.size} violations:\n" +
@@ -626,6 +725,114 @@ tasks.register("verifyDesignSystemFixtures") {
         }
         require(kotlinDesignViolations(themeShapePath, listOf(themeShapeFixture)).isEmpty()) {
             "theme layer must allow flat shapes"
+        }
+
+        // Contrato §12 — .border(/BorderStroke( solo en los archivos de
+        // excepciones del gate: en feature/ y en componentes ajenos DEBE
+        // fallar...
+        val borderInFeature = "Modifier.border(BorderStroke(XauxaMetrics.Focus, XauxaColor.Brand), XauxaShape)"
+        require(kotlinDesignViolations(featurePath, listOf(borderInFeature)).isNotEmpty()) {
+            "feature/ .border( must fail (contrato §12: solo archivos de excepción)"
+        }
+        require(kotlinDesignViolations("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/XauxaDialogs.kt", listOf(borderInFeature)).isNotEmpty()) {
+            "unordered components/ .border( must fail"
+        }
+        // ...y pasa en los archivos registrados (E-06, estado §4.2) y en
+        // el laboratorio (entorno de validación, tokens expuestos).
+        listOf(
+            "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/XauxaInputs.kt",
+            "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/XauxaTone.kt",
+            "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/lab/LabFoundationPreview.kt",
+        ).forEach { allowedPath ->
+            require(kotlinDesignViolations(allowedPath, listOf(borderInFeature)).isEmpty()) {
+                "border allowed file must pass: $allowedPath"
+            }
+        }
+
+        // Contrato §5/§7 — Color.<nombre> y duraciones literales DEBEN
+        // fallar fuera de la capa de tokens…
+        val colorFixtures = listOf("Color.White", "Color.Black", "Color.Transparent", "Color(0xFF000000)")
+        colorFixtures.forEach { colorLiteral ->
+            val line = "val bg = $colorLiteral"
+            require(kotlinDesignViolations(featurePath, listOf(line)).isNotEmpty()) {
+                "$colorLiteral outside tokens must fail"
+            }
+            require(kotlinDesignViolations(componentsPath, listOf(line)).isNotEmpty()) {
+                "$colorLiteral in components must fail"
+            }
+            require(kotlinDesignViolations(tokenShapePath, listOf(line)).isEmpty()) {
+                "$colorLiteral in token layer must pass"
+            }
+        }
+        require(kotlinDesignViolations(featurePath, listOf("val bg = XauxaColor.Transparent")).isEmpty()) {
+            "XauxaColor.Transparent must pass"
+        }
+        listOf(
+            "animateFloatAsState(1f, tween(150))",
+            "animateFloatAsState(1f, tween(durationMillis = 150))",
+            "animateFloatAsState(1f, tween(300, delayMillis = 100))",
+        ).forEach { durationLiteral ->
+            require(kotlinDesignViolations(featurePath, listOf(durationLiteral)).isNotEmpty()) {
+                "raw animation duration must fail: $durationLiteral"
+            }
+        }
+        require(kotlinDesignViolations(featurePath, listOf("animateFloatAsState(1f, tween(XauxaMotion.DurationShortMs))")).isEmpty()) {
+            "XauxaMotion token duration must pass"
+        }
+        // Shapes fuera del design system: en feature/ SHARED y androidApp/
+        // también están prohibidas.
+        listOf(
+            "RectangleShape",
+            "CircleShape",
+            "RoundedCornerShape(0.dp)",
+        ).forEach { shape ->
+            listOf(
+                featurePath,
+                componentsPath,
+                "/repo/shared/src/commonMain/kotlin/Fixture.kt",
+                "/repo/androidApp/src/main/kotlin/Fixture.kt",
+            ).forEach { bannedPath ->
+                require(kotlinDesignViolations(bannedPath, listOf("val s = $shape")).isNotEmpty()) {
+                    "$shape must fail in $bannedPath"
+                }
+            }
+        }
+        // Iconos: los presets de Material están prohibidos en producción;
+        // Lucide va por XauxaIcons.
+        listOf("Icons.Default", "Icons.AutoMirrored", "Icons.Sharp", "Icons.TwoTone").forEach { preset ->
+            require(kotlinDesignViolations(componentsPath, listOf("val i = ${preset}.Add")).isNotEmpty()) {
+                "$preset must fail (material icons are banned)"
+            }
+        }
+        require(kotlinDesignViolations(componentsPath, listOf("val i = XauxaIcons.Add")).isEmpty()) {
+            "XauxaIcons must pass"
+        }
+
+        // D2 extendida — ifBlank/Elvis/plantillas en la capa de UI
+        // (presentation) DEBEN fallar…
+        listOf(
+            "XauxaText(operation.amount.orEmpty().ifBlank { \"sin monto\" }, color = XauxaColor.TextPrimary)",
+            "val extension = candidate.extension ?: \"Elemento importado\"",
+            "val name = \"Archivo: " + "$" + "it\"",
+            "XauxaText(\"3 QR listos para guardar\")".replaceFirstChar { it }, // literal completo
+        ).forEach { line ->
+            // nota: los dos primeros son expresiones; el último es literal
+            // posicional (ya cubierto por D2) — todos deben fallar.
+            require(kotlinDesignViolations(featurePath, listOf(line)).isNotEmpty()) {
+                "D2 expression must fail: $line"
+            }
+        }
+        // …y el pegamento técnico / defaults de datos NO son copy.
+        val allowedExpressionsExtended = listOf(
+            "val file = candidate.extension ?: \"application/octet-stream\"",
+            "val key = existing?.id ?: \"new\"",
+            "saveImportedAssets(name = AppStrings.QrImportado + if (many) \" \" + (index + 1) else \"\")",
+        )
+        val falseD2Flags = allowedExpressionsExtended.filter {
+            kotlinDesignViolations(featurePath, listOf(it)).isNotEmpty()
+        }
+        require(falseD2Flags.isEmpty()) {
+            "Technical defaults failed enforcement (D2): ${falseD2Flags.joinToString()}"
         }
     }
 }

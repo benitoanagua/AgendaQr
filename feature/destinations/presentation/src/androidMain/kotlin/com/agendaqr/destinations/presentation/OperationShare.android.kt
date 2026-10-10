@@ -8,7 +8,7 @@ actual fun shareOperation(operation: Operation) {
     val text = buildString {
         append(operation.type.name)
         append(" | ")
-        append(operation.amount.orEmpty().ifBlank { "sin monto" })
+        append(operation.amount.orEmpty().ifBlank { AppStrings.SinMonto })
         operation.currency?.let { append(" " + it) }
         operation.personOrEntity?.let { append(" | " + it) }
         operation.concept?.let { append(" | " + it) }

@@ -59,7 +59,7 @@ internal object XauxaPrimitive {
     val lightInverseOnSurface = Color(0xFFFFFFFF)
     val lightInversePrimary = Color(0xFF4DA3EA)
 
-    // Fase 1 de la auditoría de accesibilidad: tonos de estado con par
+    // Tonos de estado con par propio (accesibilidad):
     // propio (>= 4.5:1 content/container), brand legible como TEXTO y
     // borde de control >= 3:1. Valores verificados por XauxaSchemeTest.
     val lightSuccess = Color(0xFF0B6B2E)
@@ -131,7 +131,7 @@ data class XauxaColorScheme(
     val textTertiary: Color,
     val brand: Color,
     val onBrand: Color,
-    // NOTA (Fase 4): brandContainer/onBrandContainer son ALIAS de brand/
+    // NOTA brandContainer/onBrandContainer son ALIAS de brand/
     // onBrand por diseño V1.1 ("la familia de marca es compartida entre
     // temas", XauxaSchemeTest la fija). Existen porque el esquema Material
     // pide un contenedor primario; no es un segundo acento.
@@ -153,7 +153,7 @@ data class XauxaColorScheme(
     val inverseOnSurface: Color,
     val inverseBrand: Color,
     val focusRing: Color,
-    // Fase 1 (auditoría a11y): estado con par propio, brand como texto y
+    // estado con par propio, brand como texto y
     // borde de control — ver primitivas y XauxaSchemeTest.
     val success: Color,
     val successContainer: Color,
@@ -251,7 +251,7 @@ val DarkXauxaColorScheme = XauxaColorScheme(
     qrCanvas = XauxaPrimitive.lightQrCanvas,
 )
 
-// NOTA (Fase 4): el default del CompositionLocal es el esquema OSCURO.
+// NOTA el default del CompositionLocal es el esquema OSCURO.
 // XauxaTheme SIEMPRE proporciona el esquema real (claro u oscuro según el
 // sistema); este default solo afecta a composiciones sin XauxaTheme
 // (tooling/previews). Se conserva oscuro por conservadurismo: cambiar el
@@ -284,7 +284,7 @@ object XauxaColor {
     val Danger: Color @Composable get() = LocalXauxaColorScheme.current.danger
     val OnDanger: Color @Composable get() = LocalXauxaColorScheme.current.onDanger
     val DangerBg: Color @Composable get() = LocalXauxaColorScheme.current.dangerBg
-    // Fase 1: el estado tiene par propio; el acento de marca ya no
+    // el estado tiene par propio; el acento de marca ya no
     // hace doble trabajo de "info" (el banner de confirmación era
     // invisible: Brand sobre BrandContainer daba 1:1).
     val Success: Color @Composable get() = LocalXauxaColorScheme.current.success
@@ -393,7 +393,7 @@ object XauxaType {
     val Label: TextUnit = 14.sp
     val Caption: TextUnit = 12.sp
     val LetterSpacingWide: TextUnit = 0.5.sp
-    // Fase 4: interlineados canónicos (sp — respetan el escalado, §11).
+    // interlineados canónicos (sp — respetan el escalado, §11).
     val LineHeightLabel: TextUnit = 20.sp
     val LineHeightBody: TextUnit = 24.sp
     val LineHeightCaption: TextUnit = 16.sp
@@ -405,7 +405,7 @@ object XauxaType {
      * acento. */
     val SectionHeader: TextUnit = 14.sp
     /**
-     * T9 — §12: "Archivo para display/encabezados" (V1.1: el display de
+     * §12: "Archivo para display/encabezados" (V1.1: el display de
      * página usa el peso Light 300). Empaquetada en
      * `composeResources/font` (5 pesos estáticos, subset latin, ~40 KB
      * cada uno); licencia OFL 1.1 documentada en
@@ -437,7 +437,7 @@ object XauxaType {
 }
 
 /**
- * Fase 4 (auditoría): estilos tipográficos canónicos. Reúnen fontSize,
+ * estilos tipográficos canónicos. Reúnen fontSize,
  * peso, tracking y LINE HEIGHT (la pieza que las repeticiones manuales de
  * los componentes nunca fijaban). Los componentes consumen estos estilos
  * en lugar de repetir tríos de tokens; los tamaños siguen siendo los de
@@ -494,7 +494,7 @@ object XauxaRadius {
 val XauxaShape = androidx.compose.foundation.shape.RoundedCornerShape(size = XauxaRadius.Base)
 
 /**
- * Fase 3 (auditoría): opacidades funcionales del lenguaje. [Pressed] es la
+ * opacidades funcionales del lenguaje. [Pressed] es la
  * capa de realimentación táctil (overlay sobre el contenido, nunca un
  * cambio de color local).
  */
@@ -593,7 +593,7 @@ fun accentFor(contextId: String?): XauxaAccent {
 }
 
 // ---------------------------------------------------------------------------------
-// Fase 1 (auditoría de accesibilidad): matemática de contraste en la capa
+// Matemática de contraste en la capa de tema (accesibilidad): el par
 // de tema. Funciones PURAS (no composable): las usan los componentes para
 // decidir colores legibles y los tests para fijar los umbrales (§11).
 // ---------------------------------------------------------------------------------
@@ -619,7 +619,7 @@ fun contrastRatio(a: Color, b: Color): Double {
 /**
  * Este color usado como TEXTO sobre [background]: se devuelve tal cual si
  * cumple >= 4.5:1 (umbral de texto normal, spec §11/§12) y si no cae al
- * [fallback] legible. Fase 1: los acentos de contexto marcan identidad
+ * [fallback] legible. los acentos de contexto marcan identidad
  * con el bloque/marcador de color, pero NUNCA como texto ilegible.
  */
 fun Color.asTextOn(background: Color, fallback: Color): Color =

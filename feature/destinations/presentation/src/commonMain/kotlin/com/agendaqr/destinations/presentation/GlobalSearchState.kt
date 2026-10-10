@@ -29,7 +29,7 @@ sealed interface GlobalSearchAction {
 class GlobalSearchViewModel(
     private val search: SearchAgendaQrUseCase,
     /**
-     * Scope de la sesión (T12): lo aporta el grafo de la app; se cancela
+     * Scope de la sesión : lo aporta el grafo de la app; se cancela
      * al cerrar sesión, junto con todos los colecciones del ViewModel.
      */
     private val scope: CoroutineScope,
@@ -66,7 +66,7 @@ class GlobalSearchViewModel(
                         if (currentCoroutineContext().isActive) {
                             _state.update { current ->
                                 if (current.query == action.value) {
-                                    // T5: nunca `error.message` crudo; el
+                                    // nunca `error.message` crudo; el
                                     // error ofrece REINTENTAR (spec §10).
                                     current.copy(
                                         isSearching = false,

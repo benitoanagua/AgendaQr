@@ -57,11 +57,11 @@ actual fun QrGalleryControls(
 actual fun QrCameraEntryControl(
     onResult: (QrImportResult) -> Unit,
 ) {
-    // Ronda 2 (Área B/K): misma política de permiso que Android — contexto
+    // Misma política de permiso que Android — contexto
     // antes de pedir, y "Abrir ajustes" cuando está denegado (la URL de
     // ajustes de la app; runtime pendiente de Xcode — checklist).
     var permissionError by rememberSaveable { mutableStateOf<UserFacingError?>(null) }
-    // Ronda 2 (Área B): feedback de lectura exitosa por EVENTO.
+    // feedback de lectura exitosa por EVENTO.
     var detectionToken by remember { mutableStateOf<Any?>(null) }
     XauxaFeedbackEvent(event = detectionToken, message = AppStrings.CodigoQrDetectado)
     Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {

@@ -57,7 +57,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 
 /**
- * Grafo de dependencias de una sesión autenticada (T2).
+ * Grafo de dependencias de una sesión autenticada .
  *
  * Construye y retiene TODO lo que depende del usuario: scope de sync, cola
  * durable, repositorios locales crudos compartidos, wrappers de escritura
@@ -100,7 +100,7 @@ class AuthenticatedSessionGraph(
  */
 @Composable
 fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph {
-    // T12 — UN scope cancelable ligado a la sesión: sync y ViewModels
+    // UN scope cancelable ligado a la sesión: sync y ViewModels
     // comparten ciclo de vida; el cierre de sesión cancela TODO.
     val sessionScope = remember(userId) { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
     DisposableEffect(sessionScope) {

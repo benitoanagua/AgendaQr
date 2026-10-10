@@ -107,9 +107,9 @@ internal object IosQrImportController {
                 // Los callbacks de PHPicker llegan serializados por la cola
                 // principal; sin race de recolección.
                 collected += ImportCandidate(
-                    id = "import-ios-$index",
+                    id = "import-ios-" + index,
                     kind = ImportKind.DESCONOCIDO,
-                    fingerprint = "ios-${index}-${data?.length ?: 0L}",
+                    fingerprint = "ios-" + index + "-" + (data?.length ?: 0L),
                     mimeType = mimeType,
                     extension = extensionFor(mimeType),
                     qrAsset = null,

@@ -11,7 +11,7 @@ import com.google.zxing.ReaderException
 import com.google.zxing.common.HybridBinarizer
 
 /**
- * T8 — S03: decodificación continua de frames de cámara.
+ * S03: decodificación continua de frames de cámara.
  *
  * Pura (sin Android): recibe los planos de luminancia que entrega
  * ImageAnalysis y devuelve el contenido del QR si el frame contiene uno.

@@ -49,13 +49,13 @@ import com.agendaqr.core.ui.theme.XauxaShape
 
 /**
  * Tono semántico Xauxa y anillo de foco: la base compartida de los componentes.
- * (T12: dividido de XauxaExtendedComponents.kt por responsabilidad, sin cambio de comportamiento.)
+ * ((dividido por responsabilidad))
  */
 
 /**
  * Tono semántico de Xauxa para componentes. Un solo acento decorativo de
  * marca (Brand); los demás colores tienen significado semántico (Regla 04,
- * ADR-0002: sin variación de acento por categoría). Fase 1: cada tono de
+ * ADR-0002: sin variación de acento por categoría). cada tono de
  * estado resuelve su par content/container desde el esquema
  * ([toneColors]); nada hereda de secondary/tertiary.
  */
@@ -68,7 +68,7 @@ enum class XauxaTone {
 }
 
 /**
- * Colores de un tono semántico sobre un esquema (Fase 1): función PURA a
+ * Colores de un tono semántico sobre un esquema función PURA a
  * partir de [com.agendaqr.core.ui.theme.XauxaColorScheme]; los pares
  * content/container cumplen >= 4.5:1 en ambos temas (XauxaSchemeTest).
  */
@@ -95,7 +95,7 @@ internal fun XauxaTone.container(): androidx.compose.ui.graphics.Color =
     com.agendaqr.core.ui.theme.LocalXauxaColorScheme.current.toneColors(this).container
 
 /**
- * Glifo del tono para feedback de estado (Fase 1 de la auditoría: el
+ * Glifo del tono para feedback de estado el
  * estado nunca solo por color, §11). Neutral no lleva: su texto ya es el
  * contenido y un glifo añadiría ruido.
  */
@@ -109,7 +109,7 @@ val XauxaTone.iconVector: androidx.compose.ui.graphics.vector.ImageVector?
     }
 
 /**
- * Fase 3 (auditoría): realimentación de pulsación como overlay con el token
+ * realimentación de pulsación como overlay con el token
  * [com.agendaqr.core.ui.theme.XauxaOpacity.Pressed] sobre el contenido —
  * nunca un cambio de color local. Respeta reduced motion: con la opción
  * activa el cambio es inmediato (sin animación, §11); sin ella funde con

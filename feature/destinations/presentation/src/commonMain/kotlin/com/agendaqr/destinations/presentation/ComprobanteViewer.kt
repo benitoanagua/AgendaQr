@@ -1,6 +1,6 @@
 /**
  * Visor de comprobante (diálogo): contenido, compartir y eliminación con
- * confirmación. Estado de sincronización por elemento (T6).
+ * confirmación. Estado de sincronización por elemento .
  */
 package com.agendaqr.destinations.presentation
 
@@ -33,7 +33,7 @@ internal fun ComprobanteViewerDialog(
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
-    // Ronda 2 (Área F): anuncio de eliminación confirmada (por evento).
+    // anuncio de eliminación confirmada (por evento).
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
     XauxaFeedbackEvent(event = deleteDoneEvent, message = AppStrings.Eliminado)
     if (showDeleteConfirm) {
@@ -66,7 +66,7 @@ internal fun ComprobanteViewerDialog(
             Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 XauxaText(formatDate(receipt.createdAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
                 XauxaText(AppStrings.Origen + receiptProvenanceLabel(receipt.provenance), size = XauxaType.Label, color = XauxaColor.TextSecondary)
-                // T6: estado de sincronización del comprobante, con texto.
+                // estado de sincronización del comprobante, con texto.
                 ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                 when {
                     state.isLoadingComprobante -> XauxaLoading(message = AppStrings.AbriendoComprobante)

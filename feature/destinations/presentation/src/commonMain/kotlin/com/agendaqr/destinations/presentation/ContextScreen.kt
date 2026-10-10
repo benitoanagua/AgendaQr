@@ -35,7 +35,7 @@ import androidx.compose.foundation.layout.Column
  * desde la Lista termina el flujo (vuelve a Inicio o a la Búsqueda que la
  * abrió); desde el Detalle el "Volver" existente regresa a la Lista.
  *
- * T11 — filas navegables: cada QR, actividad y comprobante del contexto es
+ * filas navegables: cada QR, actividad y comprobante del contexto es
  * una fila que reutiliza las rutas existentes (detalle de QR en Inicio;
  * detalle/visor en Operaciones). Criterio de acción primaria desde S06
  * (spec: "La acción primaria depende del flujo que llevó al usuario

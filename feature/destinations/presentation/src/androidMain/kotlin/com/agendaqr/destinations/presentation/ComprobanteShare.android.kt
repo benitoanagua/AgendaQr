@@ -8,9 +8,9 @@ actual fun shareComprobante(bytes: ByteArray, extension: String, mimeType: Strin
     if (bytes.isEmpty()) return
     val current = AgendaQrAndroidShareLauncher.requireActivity()
     val safeExtension = extension.trim().trimStart('.').takeIf { it.isNotBlank() } ?: "bin"
-    val file = File(current.cacheDir, "shared_comprobante.$safeExtension")
+    val file = File(current.cacheDir, "shared_comprobante." + safeExtension)
     file.writeBytes(bytes)
-    val uri = FileProvider.getUriForFile(current, "${current.packageName}.fileprovider", file)
+    val uri = FileProvider.getUriForFile(current, current.packageName + ".fileprovider", file)
     val type = mimeType?.takeIf { it.isNotBlank() } ?: "application/octet-stream"
     val intent = Intent(Intent.ACTION_SEND).apply {
         this.type = type

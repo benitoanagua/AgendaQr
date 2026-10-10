@@ -88,7 +88,7 @@ private fun DestinationEditorContent(
     val qrError = submitted && qr.encoded.isBlank()
     val canSave = name.isNotBlank() && qr.encoded.isNotBlank() && !isSaving
 
-    // V1.1 (M7/T7): Guardar como acción principal de la app bar; Volver
+    // V1.1 (M7): Guardar como acción principal de la app bar; Volver
     // pasa a la flecha de la barra (sin desbordar en dos líneas).
     XauxaScreenScaffold(
         scrollable = true,

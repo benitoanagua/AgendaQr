@@ -30,7 +30,7 @@ import com.agendaqr.destinations.domain.AgendaSearchResultType
 import kotlinx.coroutines.launch
 
 /**
- * Navegación de superficies de la app autenticada (T2).
+ * Navegación de superficies de la app autenticada .
  *
  * El back stack ([AppBackStack]) es la única autoridad de qué superficie
  * está visible; el Back del sistema pasa primero por el flujo interno de la
@@ -44,7 +44,7 @@ internal fun AuthenticatedAppRoot(
     graph: AuthenticatedSessionGraph,
     onSignOut: () -> Unit,
 ) {
-    // Ronda 2 (Área C): el back stack SOBREVIVE a rotación y a muerte de
+    // el back stack SOBREVIVE a rotación y a muerte de
     // proceso (rememberSaveable + Saver por nombre de ruta).
     val nav = rememberSaveable(saver = AppBackStackSaver) { AppBackStack() }
     val stack by nav.stack.collectAsStateWithLifecycle()
@@ -88,7 +88,7 @@ internal fun AuthenticatedAppRoot(
             hasFailed = items.any { it.state == SyncMutationState.FAILED }
         }
     }
-    // Ronda 2 (Área F): anuncio de sincronización COMPLETADA por evento:
+    // anuncio de sincronización COMPLETADA por evento:
     // la cola pasa de >0 a 0 (no se repite en recomposiciones; el token
     // solo cambia en la transición).
     var syncDoneEvent by remember { mutableStateOf<Any?>(null) }
@@ -100,7 +100,7 @@ internal fun AuthenticatedAppRoot(
         previousPendingCount = pendingCount
     }
     XauxaFeedbackEvent(event = syncDoneEvent, message = AppStrings.SincronizacionCompletada)
-    // T6: estado de sincronización por elemento (consulta indexada).
+    // estado de sincronización por elemento (consulta indexada).
     val syncLookup = remember(syncQueueItems) { ElementSyncLookup(syncQueueItems) }
     val retrySync = remember(graph) {
         { graph.sessionScope.launch { graph.syncProcessor.drain() }; Unit }
@@ -138,7 +138,7 @@ internal fun AuthenticatedAppRoot(
     }
 
     // ------------------------------------------------------------------
-    // Back del sistema (T2): flujo interno → pop de superficie → sistema.
+    // Back del sistema : flujo interno → pop de superficie → sistema.
     // ------------------------------------------------------------------
     val needsInnerBack: (AppRoute) -> Boolean = { route ->
         when (route) {
@@ -165,7 +165,7 @@ internal fun AuthenticatedAppRoot(
 
     Column {
         importError?.let { message ->
-            // T5: error recuperable con acción (spec §10): ELEGIR OTRA
+            // error recuperable con acción (spec §10): ELEGIR OTRA
             // IMAGEN despeja el error para volver a intentarlo desde la
             // pantalla de origen (Añadir/Galería).
             val error = importReadError(message)
@@ -198,12 +198,12 @@ internal fun AuthenticatedAppRoot(
         }
     }
 
-    // Fase 3 (auditoría): las SUPERFICIES (AppRoute) también transicionan
+    // las SUPERFICIES (AppRoute) también transicionan
     // con el turnstile — igual que las rutas internas de HomeSurface. La
     // dirección se decide por la profundidad del back stack: si la nueva
     // superficie está MENOS profunda que la anterior, es un regreso
     // (turnstile inverso). Con reduced motion: cambio inmediato en el
-    // sitio (§11). NOTA (ts3): el predictive back animado de Android 14+
+    // sitio (§11). NOTA: el predictive back animado de Android 14+
     // requiere verificación manual en dispositivo — ver changelog.
     val reducedMotion = com.agendaqr.core.ui.motion.LocalReducedMotion.current
     AnimatedContent(
@@ -271,7 +271,7 @@ internal fun AuthenticatedAppRoot(
             // Lista → pop: la superficie que queda debajo es el origen real
             // (Inicio o Búsqueda), no un estado aparte (S05).
             onBack = { nav.pop() },
-            // T11 — S06 utilizable: las filas reutilizan las rutas
+            // S06 utilizable: las filas reutilizan las rutas
             // existentes (las mismas que los resultados de búsqueda):
             // el QR abre su detalle en Inicio; la actividad y el
             // comprobante abren su superficie en Operaciones.

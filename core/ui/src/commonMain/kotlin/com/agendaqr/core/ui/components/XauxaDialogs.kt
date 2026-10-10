@@ -52,7 +52,7 @@ import com.agendaqr.core.ui.theme.XauxaShape
 
 /**
  * Diálogos y notificaciones Xauxa: confirmación, toast e inline result.
- * (T12: dividido de XauxaExtendedComponents.kt por responsabilidad, sin cambio de comportamiento.)
+ * ((dividido por responsabilidad))
  */
 
 /**
@@ -104,7 +104,7 @@ fun XauxaDialog(
      */
     confirmAsText: Boolean = false,
     /**
-     * Fase 2 (auditoría a11y): la confirmación es DESTRUCTIVA (eliminar
+     * la confirmación es DESTRUCTIVA (eliminar
      * QR/actividad/comprobante). Usa [XauxaDangerButton] y el foco
      * inicial cae en la acción conservativa (dismiss) para que el primer
      * toque no dispare lo irreversible.
@@ -173,7 +173,7 @@ fun XauxaToast(
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
     onDismiss: (() -> Unit)? = null,
-    /** Fase 4: nombre accesible del descarte, copy del llamador. */
+    /** nombre accesible del descarte, copy del llamador. */
     dismissDescription: String = "",
 ) {
     if (onDismiss != null) require(dismissDescription.isNotBlank()) {
@@ -185,7 +185,7 @@ fun XauxaToast(
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
             // Sin borde de reposo: el bloque tonal ya define el límite.
             .background(tone.container())
-            // Fase 1: región viva cortés — el toast se anuncia (antes
+            // región viva cortés — el toast se anuncia (antes
             // solo se veía).
             .semantics { liveRegion = LiveRegionMode.Polite }
             .padding(XauxaSpacing.Sm),
@@ -203,7 +203,7 @@ fun XauxaToast(
             fontSize = XauxaType.Label,
             color = XauxaColor.TextPrimary,
         )
-        // Ronda 2 (Área A): la acción hereda el color del tono (par
+        // la acción hereda el color del tono (par
         // content/container garantizado por test); brandText sobre el
         // contenedor de Danger no cumplía 4.5:1.
         if (actionLabel != null && onAction != null) {

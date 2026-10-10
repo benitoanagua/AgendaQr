@@ -46,7 +46,7 @@ import com.agendaqr.core.ui.theme.XauxaShape
 
 /**
  * Feedback y estados Xauxa: stats, skeleton, error, paginación, favorito, cabecera de tile, escáner y subida.
- * (T12: dividido de XauxaExtendedComponents.kt por responsabilidad, sin cambio de comportamiento.)
+ * ((dividido por responsabilidad))
  */
 
 /** Bloque de estadística centrado (patrón stats de Xauxa). */
@@ -134,7 +134,7 @@ fun XauxaLoadMoreFooter(
     isLoading: Boolean = false,
     endReached: Boolean = false,
     onLoadMore: (() -> Unit)? = null,
-    /** Fase 4: copy desde el llamador (core/ui no hardcodea copy). */
+    /** copy desde el llamador (core/ui no hardcodea copy). */
     loadMoreLabel: String = "",
     loadingLabel: String = "",
     endLabel: String = "",
@@ -166,7 +166,7 @@ fun XauxaLoadMoreFooter(
 fun XauxaFavoriteToggle(
     favorite: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    /** Fase 4: nombre accesible del control, copy del llamador (§11). */
+    /** nombre accesible del control, copy del llamador (§11). */
     contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
@@ -195,7 +195,7 @@ fun XauxaFavoriteToggle(
                 .border(BorderStroke(XauxaMetrics.Border, XauxaColor.BorderControl), XauxaShape),
             contentAlignment = Alignment.Center,
         ) {
-            // Fase 2 (§11): el estado no depende solo del color — el
+            // El estado no depende solo del color (§11) — el
             // glifo aparece solo cuando está marcado.
             if (favorite) {
                 XauxaIcon(
@@ -258,7 +258,7 @@ fun XauxaTileHeader(
 fun XauxaScannerViewport(
     modifier: Modifier = Modifier,
     scanning: Boolean = false,
-    /** Ronda 2 (Área H/ADR-0008): copy del llamador; el DS no hardcodea. */
+    /** ADR-0008: copy del llamador; el DS no hardcodea. */
     hint: String = "",
     /** Texto del estado "escaneando". */
     scanningLabel: String = "",
@@ -324,7 +324,7 @@ fun XauxaFileUpload(
     error: String? = null,
     onSelect: (() -> Unit)? = null,
     onClear: (() -> Unit)? = null,
-    /** Ronda 2 (Área H/ADR-0008): copy del llamador; el DS no hardcodea. */
+    /** ADR-0008: copy del llamador; el DS no hardcodea. */
     loadingLabel: String = "",
     clearLabel: String = "",
     placeholderTitle: String = "",

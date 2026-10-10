@@ -33,7 +33,7 @@ fun DestinationDetailScreen(
     onRetrySync: () -> Unit = {},
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
-    // Ronda 2 (Área F): anuncio de eliminación confirmada (por evento).
+    // anuncio de eliminación confirmada (por evento).
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
     XauxaFeedbackEvent(event = deleteDoneEvent, message = AppStrings.Eliminado)
     XauxaScreenScaffold(
@@ -68,10 +68,10 @@ fun DestinationDetailScreen(
             )
         },
     ) {
-            XauxaPageTitle(text = destination.name.ifBlank { "Sin nombre" })
+            XauxaPageTitle(text = destination.name.ifBlank { AppStrings.SinNombre })
             destination.category?.let { XauxaText(it, color = XauxaColor.TextSecondary) }
             destination.note?.takeIf { it.isNotBlank() }?.let { XauxaText(it, color = XauxaColor.TextSecondary) }
-            // T6: estado de sincronización del elemento (texto, no solo
+            // estado de sincronización del elemento (texto, no solo
             // color) con REINTENTAR cuando es un error recuperable.
             ElementSyncBadge(syncStatus, showWhenSynced = true)
             if (syncStatus == ElementSyncStatus.ErrorRecoverable) {

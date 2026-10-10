@@ -34,7 +34,7 @@ fun ImportReviewScreen(
     error: UserFacingError? = null,
     onClearError: () -> Unit = {},
 ) {
-    // V1.1 (M6/M7 + defecto T7): título ligero; Guardar como acción
+    // V1.1 (M6/M7): título ligero; Guardar como acción
     // principal de la app bar (nunca recortada) y Volver en la flecha.
     XauxaScreenScaffold(
         modifier = modifier,
@@ -44,8 +44,8 @@ fun ImportReviewScreen(
                     XauxaAppBarAction(
                         label = when {
                             isSaving -> AppStrings.Guardando
-                            assets.size == 1 -> "Guardar"
-                            else -> "Guardar todo"
+                            assets.size == 1 -> AppStrings.Guardar
+                            else -> AppStrings.GuardarTodo
                         },
                         icon = XauxaIcons.Save,
                         primary = true,
@@ -80,7 +80,8 @@ fun ImportReviewScreen(
             )
         } else {
             XauxaText(
-                if (assets.size == 1) "1 QR listo para guardar" else "${assets.size} QR listos para guardar",
+                if (assets.size == 1) AppStrings.UnQrListoParaGuardar
+                else assets.size.toString() + AppStrings.QrListosParaGuardarSufijo,
                 size = XauxaType.Label,
                 color = XauxaColor.TextSecondary,
             )
@@ -89,7 +90,7 @@ fun ImportReviewScreen(
                 verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
             ) {
                 itemsIndexed(assets) { _, asset ->
-                    // S09/T7: el código va centrado (antes quedaba pegado a
+                    // S09/el código va centrado (antes quedaba pegado a
                     // la izquierda) y sin depender de métricas técnicas.
                     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                         XauxaQrPreview(asset.encoded)

@@ -13,7 +13,7 @@ import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaType
 
 /**
- * Encabezado Xauxa (T9): todo título con semántica `heading()` usa la
+ * Encabezado Xauxa : todo título con semántica `heading()` usa la
  * familia display (Archivo, §12 del contrato visual) y los tokens
  * tipográficos del sistema.
  *
@@ -39,7 +39,7 @@ fun XauxaHeading(
 }
 
 /**
- * Texto Xauxa (T12): el cuerpo y la UI usan la familia de texto del
+ * Texto Xauxa : el cuerpo y la UI usan la familia de texto del
  * sistema (Roboto/SF, §12) con los tokens del design system. La capa
  * feature no importa androidx.compose.material3.Text: compone este (o
  * [XauxaHeading] para títulos).

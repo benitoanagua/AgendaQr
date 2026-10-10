@@ -19,7 +19,7 @@ import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.destinations.domain.QrAsset
 
 /**
- * T8 — S03: la Cámara ya no es la cámara del sistema
+ * S03: la Cámara ya no es la cámara del sistema
  * (`TakePicturePreview`): es captura propia con CameraX + análisis
  * continuo ([CameraQrCaptureOverlay]) con detección automática. Galería
  * sigue siendo la entrada principal (contrato S02).

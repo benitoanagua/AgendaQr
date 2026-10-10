@@ -49,7 +49,7 @@ import com.agendaqr.core.ui.theme.XauxaShape
 
 /**
  * Listas y tarjetas Xauxa: hero, badge y fila con marcador semántico.
- * (T12: dividido de XauxaExtendedComponents.kt por responsabilidad, sin cambio de comportamiento.)
+ * ((dividido por responsabilidad))
  */
 
 /**
@@ -158,7 +158,7 @@ fun XauxaListRow(
      * contexto; el estado sigue expresándose con texto en el contenido
      * (§11: nunca solo color). */
     accent: androidx.compose.ui.graphics.Color? = null,
-    /** Fase 2: selección explícita con semántica `selected` (§11). */
+    /** selección explícita con semántica `selected` (§11). */
     selected: Boolean = false,
 ) {
     val interaction = remember { MutableInteractionSource() }
@@ -184,7 +184,7 @@ fun XauxaListRow(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // Fase 2: la barra lateral SOLO con tono no Neutral o acento — una
+        // la barra lateral SOLO con tono no Neutral o acento — una
         // fila neutra sin estado no dibuja marcador (antes pintaba el
         // color de tono Neutral, ruido visual sin significado).
         if (showsMarker) {

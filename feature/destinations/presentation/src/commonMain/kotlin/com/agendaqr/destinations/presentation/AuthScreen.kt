@@ -35,11 +35,11 @@ fun AuthScreen(
     onSignUp: () -> Unit,
     onClearError: () -> Unit = {},
 ) {
-    // Ronda 2 (Área C): sobrevive a recreación.
+    // sobrevive a recreación.
     var submitted by rememberSaveable { mutableStateOf(false) }
     val emailError = submitted && !isValidEmail(state.email)
     val passwordError = submitted && state.password.length < 6
-    // Fase 2 (auditoría a11y): el botón NO se deshabilita por validación —
+    // el botón NO se deshabilita por validación —
     // se habilita mientras no se esté enviando y los errores se muestran
     // AL ENVIAR (un botón gris no explica qué falta; el error sí).
     fun submit(target: () -> Unit) {
@@ -117,7 +117,7 @@ fun AuthScreen(
                 isLoading = state.isSubmitting,
                 busyDescription = AppStrings.IniciandoSesion,
             )
-            // Fase 2: el secundario NO muestra spinner (un solo indicador
+            // el secundario NO muestra spinner (un solo indicador
             // de ocupado por pantalla — el del primario).
             XauxaSecondaryButton(
                 AppStrings.CrearCuenta,

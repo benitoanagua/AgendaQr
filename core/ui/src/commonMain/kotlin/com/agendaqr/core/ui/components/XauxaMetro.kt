@@ -50,7 +50,7 @@ import com.agendaqr.core.ui.theme.asTextOn
 import com.agendaqr.core.ui.theme.XauxaShape
 
 /**
- * T3/V1.1 (ADR-0005, spec §12): piezas del lenguaje Metro dentro de Xauxa.
+ * V1.1 (ADR-0005, spec §12): piezas del lenguaje Metro dentro de Xauxa.
  * Invariantes conservados: radio 0, sin sombras, full-bleed, foco visible,
  * targets ≥ [XauxaMetrics.ControlMinSize]; la separación es por espacio y
  * bloques de color (sin bordes de reposo).
@@ -67,7 +67,7 @@ fun XauxaPageTitle(
     modifier: Modifier = Modifier,
     color: Color = XauxaColor.TextPrimary,
 ) {
-    // P1: el display se acota a 1.3× (el CUERPO escala completo, §11): el
+    // el display se acota a 1.3× (el CUERPO escala completo, §11): el
     // título no consume el viewport con fuente al 200 %.
     val fontScale = androidx.compose.ui.platform.LocalDensity.current.fontScale
     val scaleFactor = pageTitleScaleFactor(fontScale)
@@ -87,7 +87,7 @@ fun XauxaPageTitle(
  * Encabezado de sección (M6): pequeño (14–16 sp) en color de acento —
  * acento de sistema por defecto, acento del contexto en S06 (M4).
  *
- * Fase 1 (auditoría a11y): el acento de contexto se usa como TEXTO solo si
+ * el acento de contexto se usa como TEXTO solo si
  * cumple 4.5:1 ([asTextOn] cae a `brandText` si no); la identidad del
  * contexto la marca el subrayado de 2 dp en el color crudo del acento.
  */
@@ -302,14 +302,14 @@ fun XauxaTileGrid(
         val fitUnits = ((maxWidth + XauxaSpacing.TileGap) / unitWithGap)
             .toInt().coerceIn(1, GridColumns)
         val fontScale = androidx.compose.ui.platform.LocalDensity.current.fontScale
-        // P1: columnas por escala de fuente (menos columnas con fuente
+        // columnas por escala de fuente (menos columnas con fuente
         // grande para que cada tile conserve ancho legible).
         val maxUnits = tileColumnsFor(fitUnits, fontScale)
         val unit = (maxWidth - XauxaSpacing.TileGap * (maxUnits - 1)) / maxUnits
         val rows = remember(items, maxUnits) { tileRows(items, maxUnits) }
         Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.TileGap)) {
             rows.forEach { rowItems ->
-                // P1: IntrinsicSize.Min — un tile que crece con fuente
+                // IntrinsicSize.Min — un tile que crece con fuente
                 // grande alinea la fila completa (sin desalineación).
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.TileGap),
@@ -345,7 +345,7 @@ fun XauxaTileGrid(
 }
 
 /**
- * Entrada escalonada de un tile (P0): alpha 0 → 1 con retardo por índice.
+ * Entrada escalonada de un tile: alpha 0 → 1 con retardo por índice.
  *
  * CORRECCIÓN: el [Animatable] se envuelve en [remember] — sin esto, cada
  * recomposición crea una NUEVA instancia en 0f y el tile parpadea o queda
@@ -477,7 +477,7 @@ fun XauxaPivot(
 }
 
 /**
- * P1: líneas máximas de la etiqueta del tile según la escala de fuente.
+ * líneas máximas de la etiqueta del tile según la escala de fuente.
  * Escala normal (≤1.3): 2 líneas. Fuente grande (>1.3): 4 líneas para no
  * truncar nombres largos con elipsis agresiva.
  */
@@ -485,7 +485,7 @@ internal fun tileLabelMaxLines(fontScale: Float): Int =
     if (fontScale > 1.3f) 4 else 2
 
 /**
- * P1: columnas de la rejilla según la escala de fuente del usuario. A
+ * columnas de la rejilla según la escala de fuente del usuario. A
  * mayor fuente, menos columnas para que cada tile tenga ancho legible.
  * >1.15 → 3 columnas; ≥1.5 → 2 columnas.
  */
@@ -496,7 +496,7 @@ internal fun tileColumnsFor(fitUnits: Int, fontScale: Float): Int = when {
 }
 
 /**
- * P1: factor de escala efectiva del título de página (display ligero).
+ * factor de escala efectiva del título de página (display ligero).
  * El CUERPO escala completo (§11); el display se acota a 1.3× para no
  * consumir el viewport con fuente grande.
  */

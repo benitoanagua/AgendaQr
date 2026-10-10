@@ -15,7 +15,7 @@ import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 
 /**
- * Ronda 2 (Áreas B/F) — punto ÚNICO de realimentación no visual del DS:
+ * Punto ÚNICO de realimentación no visual del DS:
  * háptica ligera + anuncio accesible de estado, disparados por EVENTO
  * (un token que cambia), nunca por estado persistente (así no se repite
  * en recomposiciones).
