@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -57,9 +58,18 @@ data class XauxaAppBarAction(
  * opcional (requerida en iOS; en Android el Back del sistema se mantiene y
  * la flecha es redundante — decisión del caller, no del componente).
  *
+ * Cómo se cumple el "2–4" de la spec: el total visible es flecha atrás +
+ * acciones + overflow. Una pantalla con Atrás + 1 acción cumple el mínimo
+ * de 2. Las pantallas raíz sin destino de retorno llevan su acción
+ * principal + overflow (S01) o son la excepción E-07 (AuthScreen, sin
+ * barra). El máximo de 4 acciones visibles se exige con require; el resto
+ * va a [overflowActions].
+ *
  * Aloja la acción PRINCIPAL de la pantalla (bloque sólido de acento, M10):
  * al vivir en la barra nunca queda recortada al final del scroll y respeta
- * los insets de navegación/teclado (la barra se ancla al borde seguro).
+ * los insets de navegación/teclado: el Surface2 se pinta HASTA el borde y
+ * el padding de la barra de navegación se aplica DENTRO (el contenido de
+ * la barra queda sobre el gesto/nav bar sin franja de fondo debajo).
  *
  * Sin sombra ni borde de reposo: la separación con el contenido es el
  * bloque de color de superficie (M9). Área táctil ≥ [XauxaMetrics.ControlMinSize].
@@ -94,6 +104,10 @@ fun XauxaAppBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                // Insets (D): DENTRO del Surface — el bloque Surface2 llega
+                // hasta el borde de la pantalla; solo el contenido se
+                // separa de la barra de navegación/gestos.
+                .navigationBarsPadding()
                 .defaultMinSize(minHeight = XauxaMetrics.AppBarHeight)
                 .padding(horizontal = XauxaSpacing.Xs),
             verticalAlignment = Alignment.CenterVertically,

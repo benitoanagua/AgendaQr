@@ -2,26 +2,14 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import com.agendaqr.destinations.presentation.AppStrings
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.XauxaAppBar
 import com.agendaqr.core.ui.components.XauxaPageTitle
-import com.agendaqr.core.ui.components.XauxaPrimaryButton
+import com.agendaqr.core.ui.components.XauxaScreenScaffold
 import com.agendaqr.core.ui.components.XauxaText
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
-import com.agendaqr.core.ui.components.XauxaHeading
 import com.agendaqr.core.ui.theme.XauxaColor
-import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
 
 /**
@@ -38,19 +26,15 @@ fun AddDestinationScreen(
 ) {
     // V1.1 (M7): Volver vive en la barra de aplicación inferior; el orden
     // congelado S02 (Galería → Desde otra app → Cámara) no cambia.
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .imePadding(),
+    XauxaScreenScaffold(
+        bottomBar = {
+            XauxaAppBar(
+                actions = emptyList(),
+                onBack = onBack,
+                backLabel = AppStrings.Volver,
+            )
+        },
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(XauxaSpacing.ScreenMargin),
-            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
-        ) {
         XauxaPageTitle(text = AppStrings.Anadir)
         XauxaText(
             AppStrings.TraeAAgendaQrAlgo,
@@ -76,14 +60,6 @@ fun AddDestinationScreen(
 
         QrCameraEntryControl(
             onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
-        )
-
-        }
-        XauxaAppBar(
-            modifier = Modifier.navigationBarsPadding(),
-            actions = emptyList(),
-            onBack = onBack,
-            backLabel = AppStrings.Volver,
         )
     }
 }

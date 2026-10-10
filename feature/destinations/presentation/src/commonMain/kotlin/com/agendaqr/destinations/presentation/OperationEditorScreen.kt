@@ -99,14 +99,45 @@ internal fun OperationEditorScreen(
     // V1.1 (M7/T7): Guardar vive como acción principal de la app bar
     // inferior (nunca recortada al final del scroll) y Volver pasa a la
     // flecha de la barra (sin desbordar a dos líneas).
-    Column(
-        Modifier.fillMaxSize().statusBarsPadding().imePadding(),
+    XauxaScreenScaffold(
+        scrollable = true,
+        bottomBar = {
+            XauxaAppBar(
+                actions = listOf(
+                    XauxaAppBarAction(
+                        label = if (saving) {
+                            AppStrings.Guardando
+                        } else if (existing == null) {
+                            AppStrings.Guardar
+                        } else {
+                            AppStrings.GuardarCambios
+                        },
+                        icon = XauxaIcons.Save,
+                        primary = true,
+                        enabled = !saving,
+                        onClick = {
+                            submitted = true
+                            val at = occurredAt ?: return@XauxaAppBarAction
+                            val candidate = buildCandidate(at)
+                            if (existing == null) {
+                                viewModel.onAction(
+                                    OperationAction.SaveNew(
+                                        type, at, amount, currency, person, null, concept, note, contextSelection.contextId, candidate.id,
+                                    ),
+                                )
+                            } else if (candidate.hasSensitiveChangesComparedTo(existing) && state.operationComprobantes.isNotEmpty()) {
+                                showSensitiveConfirm = true
+                            } else {
+                                viewModel.onAction(OperationAction.Update(candidate))
+                            }
+                        },
+                    ),
+                ),
+                onBack = { viewModel.onAction(OperationAction.Back) },
+                backLabel = AppStrings.Volver,
+            )
+        },
     ) {
-        Column(
-            Modifier.fillMaxWidth().weight(1f).padding(horizontal = XauxaSpacing.ScreenMargin)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
-        ) {
         XauxaPageTitle(
             text = if (existing == null) AppStrings.RegistrarOperacion else AppStrings.EditarOperacion,
         )
@@ -152,43 +183,6 @@ internal fun OperationEditorScreen(
                 onDismiss = { viewModel.onAction(OperationAction.ClearError) },
             )
         }
-        }
-
-        XauxaAppBar(
-            modifier = Modifier.navigationBarsPadding(),
-            actions = listOf(
-                XauxaAppBarAction(
-                    label = if (saving) {
-                        AppStrings.Guardando
-                    } else if (existing == null) {
-                        AppStrings.Guardar
-                    } else {
-                        AppStrings.GuardarCambios
-                    },
-                    icon = XauxaIcons.Save,
-                    primary = true,
-                    enabled = !saving,
-                    onClick = {
-                        submitted = true
-                        val at = occurredAt ?: return@XauxaAppBarAction
-                        val candidate = buildCandidate(at)
-                        if (existing == null) {
-                            viewModel.onAction(
-                                OperationAction.SaveNew(
-                                    type, at, amount, currency, person, null, concept, note, contextSelection.contextId, candidate.id,
-                                ),
-                            )
-                        } else if (candidate.hasSensitiveChangesComparedTo(existing) && state.operationComprobantes.isNotEmpty()) {
-                            showSensitiveConfirm = true
-                        } else {
-                            viewModel.onAction(OperationAction.Update(candidate))
-                        }
-                    },
-                ),
-            ),
-            onBack = { viewModel.onAction(OperationAction.Back) },
-            backLabel = AppStrings.Volver,
-        )
     }
 
     if (contextSelection.pickerOpen) {

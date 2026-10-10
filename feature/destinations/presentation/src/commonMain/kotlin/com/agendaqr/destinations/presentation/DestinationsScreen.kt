@@ -5,15 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,7 +14,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.Alignment
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.core.ui.components.XauxaAppBar
@@ -30,6 +22,7 @@ import com.agendaqr.core.ui.components.XauxaIcons
 import com.agendaqr.core.ui.components.XauxaLiveTile
 import com.agendaqr.core.ui.components.XauxaOverflowAction
 import com.agendaqr.core.ui.components.XauxaPageTitle
+import com.agendaqr.core.ui.components.XauxaScreenScaffold
 import com.agendaqr.core.ui.components.XauxaSearchTrigger
 import com.agendaqr.core.ui.components.XauxaSectionHeader
 import com.agendaqr.core.ui.components.XauxaSkeleton
@@ -47,7 +40,6 @@ import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
-import com.agendaqr.core.ui.theme.XauxaType
 import com.agendaqr.destinations.domain.Destination
 
 @Composable
@@ -69,22 +61,33 @@ fun DestinationsScreen(
     // las acciones de sesión en la barra de aplicación inferior. Ninguna
     // capacidad existente desaparece: favorito, filtro de favoritos,
     // estado de sincronización y cerrar sesión siguen accesibles.
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .imePadding(),
-    ) {
+    XauxaScreenScaffold(
         // Un único contenedor scrolleable (M1: contenido antes que cromo):
         // la pantalla entera desliza y la app bar queda anclada abajo.
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = XauxaSpacing.ScreenMargin),
-            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
-        ) {
+        scrollable = true,
+        bottomBar = {
+            // M7: las acciones de sesión viven en la barra de aplicación
+            // inferior (menú "…"), no sueltas en el cuerpo. "Buscar" domina
+            // como primer bloque y además es la acción principal de la barra.
+            XauxaAppBar(
+                actions = listOf(
+                    XauxaAppBarAction(
+                        label = AppStrings.BuscarEnAgendaQr,
+                        icon = XauxaIcons.Search,
+                        primary = true,
+                        onClick = onOpenSearch,
+                    ),
+                ),
+                overflowActions = listOf(
+                    XauxaOverflowAction(AppStrings.CerrarSesion, onClick = onSignOut),
+                ),
+                overflowLabel = AppStrings.Mas,
+                // S01 es la raíz: sin flecha atrás (Back del sistema sale), pero
+                // el copy del parámetro es contrato del componente.
+                backLabel = AppStrings.Volver,
+            )
+        },
+    ) {
             XauxaPageTitle(text = AppStrings.AgendaQr)
 
             // S01 — buscar domina visualmente (M2). La barra es la entrada
@@ -214,29 +217,6 @@ fun DestinationsScreen(
                     }
                 }
             }
-        }
-
-        // M7: las acciones de sesión viven en la barra de aplicación
-        // inferior (menú "…"), no sueltas en el cuerpo. "Buscar" domina
-        // como primer bloque y además es la acción principal de la barra.
-        XauxaAppBar(
-            modifier = Modifier.navigationBarsPadding(),
-            actions = listOf(
-                XauxaAppBarAction(
-                    label = AppStrings.BuscarEnAgendaQr,
-                    icon = XauxaIcons.Search,
-                    primary = true,
-                    onClick = onOpenSearch,
-                ),
-            ),
-            overflowActions = listOf(
-                XauxaOverflowAction(AppStrings.CerrarSesion, onClick = onSignOut),
-            ),
-            overflowLabel = AppStrings.Mas,
-            // S01 es la raíz: sin flecha atrás (Back del sistema sale), pero
-            // el copy del parámetro es contrato del componente.
-            backLabel = AppStrings.Volver,
-        )
     }
 }
 

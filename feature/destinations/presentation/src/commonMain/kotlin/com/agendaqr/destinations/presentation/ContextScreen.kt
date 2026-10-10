@@ -2,33 +2,23 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import com.agendaqr.destinations.presentation.AppStrings
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.XauxaAppBar
 import com.agendaqr.core.ui.components.XauxaAppBarAction
 import com.agendaqr.core.ui.components.XauxaEmptyState
-import com.agendaqr.core.ui.components.XauxaHeading
-import com.agendaqr.core.ui.components.XauxaIcons
 import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaPivot
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaLoading
+import com.agendaqr.core.ui.components.XauxaScreenScaffold
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaText
@@ -38,6 +28,7 @@ import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.accentFor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
+import androidx.compose.foundation.layout.Column
 
 /**
  * S06 — Contexto. `onBack` cierra la superficie según el punto de entrada:
@@ -100,13 +91,17 @@ private fun ContextList(
     onBack: () -> Unit,
     onCreateContext: () -> Unit = {},
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize().statusBarsPadding().imePadding(),
+    XauxaScreenScaffold(
+        bottomBar = {
+            // M7: Volver vive en la barra de aplicación inferior (flecha atrás,
+            // required en iOS; Back del sistema intacto en Android).
+            XauxaAppBar(
+                actions = emptyList(),
+                onBack = onBack,
+                backLabel = AppStrings.Volver,
+            )
+        },
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().weight(1f).padding(XauxaSpacing.ScreenMargin),
-            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
-        ) {
         XauxaPageTitle(text = AppStrings.Contextos)
         state.error?.let { err ->
             XauxaStatusBanner(
@@ -145,15 +140,6 @@ private fun ContextList(
                 }
             }
         }
-        }
-        // M7: Volver vive en la barra de aplicación inferior (flecha atrás,
-        // required en iOS; Back del sistema intacto en Android).
-        XauxaAppBar(
-            modifier = Modifier.navigationBarsPadding(),
-            actions = emptyList(),
-            onBack = onBack,
-            backLabel = AppStrings.Volver,
-        )
     }
 }
 
@@ -169,17 +155,17 @@ private fun ContextDetail(
     onOpenOperations: () -> Unit,
 ) {
     val contents = state.contents
-    Column(
-        modifier = Modifier.fillMaxSize().statusBarsPadding().imePadding(),
+    XauxaScreenScaffold(
+        scrollable = true,
+        bottomBar = {
+            // M7: Volver vive en la barra inferior (flecha atrás).
+            XauxaAppBar(
+                actions = emptyList(),
+                onBack = { onAction(ContextAction.Back) },
+                backLabel = AppStrings.Volver,
+            )
+        },
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().weight(1f)
-                .padding(horizontal = XauxaSpacing.ScreenMargin)
-                // §11: el detalle crece con sus filas (sin scroll el contenido
-                // quedaría cortado e inalcanzable).
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
-        ) {
         state.error?.let { err ->
             XauxaStatusBanner(
                 err.display(),
@@ -262,13 +248,5 @@ private fun ContextDetail(
                 }
             }
         } ?: XauxaLoading(message = AppStrings.CargandoContexto)
-        }
-        // M7: Volver vive en la barra inferior (flecha atrás).
-        XauxaAppBar(
-            modifier = Modifier.navigationBarsPadding(),
-            actions = emptyList(),
-            onBack = { onAction(ContextAction.Back) },
-            backLabel = AppStrings.Volver,
-        )
     }
 }

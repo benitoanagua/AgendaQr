@@ -2,41 +2,28 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import com.agendaqr.destinations.presentation.AppStrings
-import com.agendaqr.core.ui.components.XauxaText
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
-import com.agendaqr.core.ui.components.XauxaScreen
+import com.agendaqr.core.ui.components.XauxaScreenScaffold
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextInput
 import com.agendaqr.core.ui.components.XauxaTone
-import com.agendaqr.core.ui.components.XauxaHeading
-import com.agendaqr.core.ui.components.XauxaPageTitle
+import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.theme.XauxaColor
-import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
 
 @Composable
@@ -60,17 +47,14 @@ fun AuthScreen(
         if (isValidEmail(state.email) && state.password.length >= 6) target()
     }
 
-    XauxaScreen {
-        Column(
-            modifier = Modifier
-                .padding(XauxaSpacing.ScreenMargin)
-                .statusBarsPadding()
-                .navigationBarsPadding()
-                .imePadding()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
-        ) {
-            XauxaPageTitle(text = AppStrings.AgendaQr)
+    // E-07 (contrato §12): AuthScreen no lleva barra de aplicación
+    // inferior — no tiene destino de retorno y su acción principal es el
+    // bloque sólido de acento del CUERPO (M10). El scaffold gestiona igual
+    // los insets (estado/teclado/navegación).
+    XauxaScreenScaffold(
+        scrollable = true,
+    ) {
+        XauxaPageTitle(text = AppStrings.AgendaQr)
             XauxaText(
                 AppStrings.IniciaSesionParaAccederA,
                 size = XauxaType.Body,
@@ -141,7 +125,6 @@ fun AuthScreen(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !state.isSubmitting,
             )
-        }
     }
 }
 

@@ -109,11 +109,17 @@ internal fun OperationListScreen(
     val operations = viewModel.visibleOperations()
     var visibleCount by remember(operations.size) { mutableStateOf(50) }
     val paged = operations.take(visibleCount)
-    Column(Modifier.fillMaxSize().statusBarsPadding().imePadding()) {
-        Column(
-            Modifier.fillMaxWidth().weight(1f).padding(XauxaSpacing.ScreenMargin),
-            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
-        ) {
+    XauxaScreenScaffold(
+        bottomBar = {
+            XauxaAppBar(
+                actions = listOf(
+                    XauxaAppBarAction(AppStrings.Nuevo, XauxaIcons.Add, onClick = { viewModel.onAction(OperationAction.New) }, primary = true),
+                ),
+                onBack = onBack,
+                backLabel = AppStrings.Inicio,
+            )
+        },
+    ) {
             // M6: título de página en display ligero; M7: "Nuevo" es la
             // acción principal de la barra inferior (bloque de acento) y
             // "Inicio" pasa a la flecha atrás de la misma barra.
@@ -180,15 +186,6 @@ internal fun OperationListScreen(
                 }
             }
         }
-        }
-        XauxaAppBar(
-            modifier = Modifier.navigationBarsPadding(),
-            actions = listOf(
-                XauxaAppBarAction(AppStrings.Nuevo, XauxaIcons.Add, onClick = { viewModel.onAction(OperationAction.New) }, primary = true),
-            ),
-            onBack = onBack,
-            backLabel = AppStrings.Inicio,
-        )
     }
 }
 
@@ -199,11 +196,15 @@ internal fun UnassociatedScreen(
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
     var selectedReceipt by remember { mutableStateOf<Comprobante?>(null) }
-    Column(Modifier.fillMaxSize().statusBarsPadding().imePadding()) {
-        Column(
-            Modifier.fillMaxWidth().weight(1f).padding(XauxaSpacing.ScreenMargin),
-            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
-        ) {
+    XauxaScreenScaffold(
+        bottomBar = {
+            XauxaAppBar(
+                actions = emptyList(),
+                onBack = { viewModel.onAction(OperationAction.Back) },
+                backLabel = AppStrings.Volver,
+            )
+        },
+    ) {
             // M6: título de página en display ligero; M7: el Volver del
             // estado vacío vive en la flecha de la barra inferior.
             XauxaPageTitle(text = AppStrings.ComprobantesSinAsociar)
@@ -234,13 +235,6 @@ internal fun UnassociatedScreen(
                 }
             }
         }
-        XauxaAppBar(
-            modifier = Modifier.navigationBarsPadding(),
-            actions = emptyList(),
-            onBack = { viewModel.onAction(OperationAction.Back) },
-            backLabel = AppStrings.Volver,
-        )
-    }
     selectedReceipt?.let { receipt ->
         val suggestion = viewModel.receiptSuggestion(receipt.id)
         val suggestedOperations = suggestion?.operationIds.orEmpty()

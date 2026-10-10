@@ -3,30 +3,20 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.layout.Arrangement
 import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaText
-import com.agendaqr.core.ui.components.XauxaHeading
-import com.agendaqr.core.ui.components.XauxaPrimaryButton
+import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaQrPreview
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaAppBar
 import com.agendaqr.core.ui.components.XauxaAppBarAction
 import com.agendaqr.core.ui.components.XauxaIcons
-import com.agendaqr.core.ui.components.XauxaPageTitle
+import com.agendaqr.core.ui.components.XauxaScreenScaffold
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
@@ -46,18 +36,27 @@ fun ImportReviewScreen(
 ) {
     // V1.1 (M6/M7 + defecto T7): título ligero; Guardar como acción
     // principal de la app bar (nunca recortada) y Volver en la flecha.
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .imePadding(),
-    ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f)
-            .padding(horizontal = XauxaSpacing.ScreenMargin),
-        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
+    XauxaScreenScaffold(
+        modifier = modifier,
+        bottomBar = {
+            XauxaAppBar(
+                actions = listOf(
+                    XauxaAppBarAction(
+                        label = when {
+                            isSaving -> AppStrings.Guardando
+                            assets.size == 1 -> "Guardar"
+                            else -> "Guardar todo"
+                        },
+                        icon = XauxaIcons.Save,
+                        primary = true,
+                        enabled = !isSaving && assets.isNotEmpty(),
+                        onClick = onSaveAll,
+                    ),
+                ),
+                onBack = if (isSaving) null else onBack,
+                backLabel = AppStrings.Volver,
+            )
+        },
     ) {
         XauxaPageTitle(text = AppStrings.RevisarQr)
         error?.let { err ->
@@ -107,24 +106,5 @@ fun ImportReviewScreen(
                 }
             }
         }
-    }
-    XauxaAppBar(
-        modifier = Modifier.navigationBarsPadding(),
-        actions = listOf(
-            XauxaAppBarAction(
-                label = when {
-                    isSaving -> AppStrings.Guardando
-                    assets.size == 1 -> "Guardar"
-                    else -> "Guardar todo"
-                },
-                icon = XauxaIcons.Save,
-                primary = true,
-                enabled = !isSaving && assets.isNotEmpty(),
-                onClick = onSaveAll,
-            ),
-        ),
-        onBack = if (isSaving) null else onBack,
-        backLabel = AppStrings.Volver,
-    )
     }
 }

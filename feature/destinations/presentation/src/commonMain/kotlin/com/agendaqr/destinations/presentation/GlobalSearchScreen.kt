@@ -2,20 +2,11 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import com.agendaqr.destinations.presentation.AppStrings
-import com.agendaqr.core.ui.components.XauxaText
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
@@ -30,19 +21,15 @@ fun GlobalSearchScreen(
 ) {
     // V1.1 (M7): Volver en la app bar inferior; los resultados siguen
     // agrupados por tipo (ahora con encabezados de sección en acento).
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .imePadding(),
+    XauxaScreenScaffold(
+        bottomBar = {
+            XauxaAppBar(
+                actions = emptyList(),
+                onBack = onBack,
+                backLabel = AppStrings.Volver,
+            )
+        },
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(horizontal = XauxaSpacing.ScreenMargin),
-            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
-        ) {
         XauxaSearchBar(
             value = state.query,
             onValueChange = { onAction(GlobalSearchAction.QueryChanged(it)) },
@@ -92,7 +79,9 @@ fun GlobalSearchScreen(
                             XauxaListRow(
                                 title = searchResultTitle(result),
                                 subtitle = searchResultSubtitle(result),
-                                tone = XauxaTone.Info,
+                                // E-05: el marcador lateral solo aparece con
+                                // tono de estado o acento de contexto REALES;
+                                // un resultado de búsqueda no es ninguno.
                                 onClick = { onSelect(result) },
                             )
                         }
@@ -100,13 +89,6 @@ fun GlobalSearchScreen(
                 }
             }
         }
-        }
-        XauxaAppBar(
-            modifier = Modifier.navigationBarsPadding(),
-            actions = emptyList(),
-            onBack = onBack,
-            backLabel = AppStrings.Volver,
-        )
     }
 }
 
