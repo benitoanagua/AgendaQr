@@ -71,7 +71,7 @@ class LabSearchTest {
         assertEquals(catalog.size, counts.values.sum())
         assertEquals(LabComponentCatalog.foundations.size, counts[LabCategory.FOUNDATIONS])
         assertEquals(11, counts[LabCategory.SURFACES]) // T3/V1.1: +PageTitle/SectionHeader/MetroTile/TileGrid/Pivot
-        assertEquals(11, counts[LabCategory.ACTIONS]) // T3/V1.1: +XauxaAppBar
+        assertEquals(10, counts[LabCategory.ACTIONS]) // XauxaSettingRow retirado (auditoría): quedan 10
         assertEquals(8, counts[LabCategory.FEEDBACK])
         assertEquals(6, counts[LabCategory.DATA]) // T2/V1.1: +XauxaIcon
         assertEquals(3, counts[LabCategory.QR])

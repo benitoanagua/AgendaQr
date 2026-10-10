@@ -43,7 +43,7 @@ object XauxaTokenIndex {
         "XauxaColor.SuccessBg",
         "XauxaColor.WarningBg",
         "XauxaColor.InfoBg",
-        "XauxaColor.White",
+        "XauxaColor.QrCanvas",
         "XauxaColor.InverseSurface",
         "XauxaColor.InverseOnSurface",
         "XauxaColor.InverseBrand",

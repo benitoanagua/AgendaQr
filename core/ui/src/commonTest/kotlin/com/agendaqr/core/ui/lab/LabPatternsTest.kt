@@ -23,7 +23,6 @@ class LabPatternsTest {
                     "fallo-aplicacion",
                     "pantalla-completa",
                     "incorporacion",
-                    "bloqueo-opcional",
                     "confirmacion-destructiva",
                 ),
             ),

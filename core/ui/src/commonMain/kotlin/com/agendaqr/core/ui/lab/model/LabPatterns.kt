@@ -92,16 +92,6 @@ object LabPatterns {
                 "el flujo está compuesto pero no conectado.",
         ),
         LabPattern(
-            id = "bloqueo-opcional",
-            title = "Bloqueo opcional, desactivado por defecto",
-            description = "Una protección existe pero nace apagada y se explica sola.",
-            steps = listOf(
-                "XauxaSettingRow con checked = false inicial.",
-                "La descripción explica qué protege al activarse.",
-            ),
-            components = listOf("xauxa-setting-row"),
-        ),
-        LabPattern(
             id = "confirmacion-destructiva",
             title = "Confirmación destructiva con Deshacer",
             description = "Eliminar exige confirmación y ofrece reversión honesta.",

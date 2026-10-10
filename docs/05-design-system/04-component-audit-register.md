@@ -18,7 +18,7 @@
 | `XauxaErrorPage` | **Retirar**: spec §10 prohíbe ErrorScreen global; banners contextuales lo cubren. |
 | `XauxaToast` | **Sin uso**: feedback transitorio ya cubierto por banners liveRegion + XauxaFeedbackEvent. |
 | `XauxaInlineResult` | **Sin uso**: misma razón que Toast. |
-| `XauxaSettingRow` | **Retirar**: no existe pantalla de ajustes en V1. |
+| `XauxaSettingRow` | **Retirado** (2026-10-10): sin pantalla de ajustes en V1; código, catálogo del laboratorio y tests eliminados; la excepción E-04 del contrato §12 se retiró con él. |
 | `XauxaIconButton` | **Solo interno** (vía Toast/CommandBar); decisión conjunta con Toast. |
 | `XauxaFavoriteToggle` | **Conservar la acción de texto en filas** (§11); toggle para futura pantalla de favoritos. |
 | `XauxaDangerButton` | **En uso** vía `XauxaDialog(destructive)`. |

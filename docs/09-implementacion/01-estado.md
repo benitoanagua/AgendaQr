@@ -22,7 +22,6 @@
 
 - iOS runtime sin validar (requiere Xcode/simulador).
 - TalkBack/VoiceOver interactivo requiere dispositivo físico.
-- `XauxaPivot` no desplaza horizontalmente con fuente al 200 % (riesgo conocido).
 - Glifos "Editar", "Compartir", "Mostrar QR" sin icono asignado (ADR-0005, Puntos abiertos).
 
 ## Puertas de calidad (comandos actuales)

@@ -70,6 +70,10 @@ internal object XauxaPrimitive {
     val lightInfoContainer = Color(0xFFDCEBFA)
     val lightBrandText = Color(0xFF0067B8)
     val lightBorderControl = Color(0xFF858585)
+    /** Lienzo del QR: fondo claro GARANTIZADO en ambos temas (el código
+     * necesita zona clara para ser escaneable; el bloque tonal que lo
+     * enmarca cambia con el tema, el lienzo no). */
+    val lightQrCanvas = Color(0xFFFFFFFF)
 
     // Xauxa dark scheme
     val darkBackground = Color(0xFF000000)
@@ -159,6 +163,8 @@ data class XauxaColorScheme(
     val infoContainer: Color,
     val brandText: Color,
     val borderControl: Color,
+    /** Lienzo del QR (fondo claro garantizado en ambos temas). */
+    val qrCanvas: Color,
 )
 
 val LightXauxaColorScheme = XauxaColorScheme(
@@ -200,6 +206,7 @@ val LightXauxaColorScheme = XauxaColorScheme(
     infoContainer = XauxaPrimitive.lightInfoContainer,
     brandText = XauxaPrimitive.lightBrandText,
     borderControl = XauxaPrimitive.lightBorderControl,
+    qrCanvas = XauxaPrimitive.lightQrCanvas,
 )
 
 val DarkXauxaColorScheme = XauxaColorScheme(
@@ -241,6 +248,7 @@ val DarkXauxaColorScheme = XauxaColorScheme(
     infoContainer = XauxaPrimitive.darkInfoContainer,
     brandText = XauxaPrimitive.darkBrandText,
     borderControl = XauxaPrimitive.darkBorderControl,
+    qrCanvas = XauxaPrimitive.lightQrCanvas,
 )
 
 // NOTA (Fase 4): el default del CompositionLocal es el esquema OSCURO.
@@ -289,7 +297,13 @@ object XauxaColor {
     val BrandText: Color @Composable get() = LocalXauxaColorScheme.current.brandText
     /** Borde de control (>= 3:1 contra background/surface2; M9 funcional). */
     val BorderControl: Color @Composable get() = LocalXauxaColorScheme.current.borderControl
-    val White: Color = Color.White
+    /** Transparente funcional (p. ej. indicadores Material deshabilitados);
+     * único literal de color crudo permitido en la capa de tokens. */
+    val Transparent: Color = Color.Transparent
+    /** Lienzo del código QR: fondo claro garantizado en claro y oscuro
+     * (zona de silencio escaneable); el marco tonal lo aporta
+     * [XauxaMediaFrame]. Sustituye al antiguo alias `White`. */
+    val QrCanvas: Color @Composable get() = LocalXauxaColorScheme.current.qrCanvas
     val OnDangerBg: Color @Composable get() = LocalXauxaColorScheme.current.onDangerBg
     val InverseSurface: Color @Composable get() = LocalXauxaColorScheme.current.inverseSurface
     val InverseOnSurface: Color @Composable get() = LocalXauxaColorScheme.current.inverseOnSurface

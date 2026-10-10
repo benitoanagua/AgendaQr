@@ -62,27 +62,6 @@ class XauxaAccessibilityContractTest {
     }
 
     @Test
-    fun setting_row_switch_exposes_toggle_state_and_changes_value() {
-        var checked = false
-        compose.setContent {
-            XauxaTheme {
-                XauxaSettingRow(
-                    title = "Notificaciones",
-                    description = "Avisos de actividad",
-                    checked = checked,
-                    onCheckedChange = { checked = it },
-                )
-            }
-        }
-
-        val setting = compose.onNodeWithText("Notificaciones")
-        setting.assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Switch))
-        setting.assert(SemanticsMatcher.expectValue(SemanticsProperties.ToggleableState, ToggleableState.Off))
-        setting.performClick()
-        assert(checked) { "La fila de ajuste debe cambiar el estado al activarse" }
-    }
-
-    @Test
     fun text_input_exposes_required_label_and_error_message() {
         compose.setContent {
             XauxaTheme {

@@ -60,6 +60,28 @@ fun XauxaScreen(
     ) { content() }
 }
 
+/**
+ * Marco de medios (QR, comprobante): BLOQUE TONAL [XauxaColor.Surface2]
+ * SIN borde de reposo (M9: la separación es por espacio y bloques de
+ * color). El marco histórico de 1 dp con [XauxaColor.Border] no cumplía
+ * el límite perceptible (1,88:1 en claro) y se retiró: el límite del
+ * contenido es el bloque tonal. Los previews de plataforma (QR/comprobante)
+ * componen este componente; el fondo interno del contenido (p. ej. el
+ * lienzo claro del QR, [XauxaColor.QrCanvas]) lo aporta quien lo dibuja.
+ */
+@Composable
+fun XauxaMediaFrame(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Box(
+        modifier = modifier.background(XauxaColor.Surface2, XauxaShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        content()
+    }
+}
+
 @Composable
 fun XauxaSection(
     title: String,

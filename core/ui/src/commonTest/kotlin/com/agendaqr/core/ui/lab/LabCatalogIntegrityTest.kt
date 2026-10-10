@@ -97,7 +97,6 @@ class LabCatalogIntegrityTest {
             "xauxa-filter-chip",
             "xauxa-text-input",
             "xauxa-search-bar",
-            "xauxa-setting-row",
             "xauxa-favorite-toggle",
             "xauxa-toast",
             "xauxa-status-banner",

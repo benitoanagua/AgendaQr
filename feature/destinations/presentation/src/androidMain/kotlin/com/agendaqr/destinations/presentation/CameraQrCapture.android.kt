@@ -15,7 +15,6 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,8 +22,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -49,10 +46,10 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaFeedbackEvent
+import com.agendaqr.core.ui.components.XauxaScannerFrame
 import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.theme.XauxaColor
-import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
 import com.agendaqr.destinations.domain.QrAsset
@@ -127,8 +124,9 @@ internal fun CameraQrCaptureOverlay(
                         },
                     )
                     // Lenguaje visual del scanner Xauxa sobre la vista
-                    // previa: marco con borde de marca y hint textual; sin
-                    // métricas técnicas del scanner (S03).
+                    // previa: encuadre de marca del design system
+                    // (XauxaScannerFrame, excepción E-03) y hint textual;
+                    // sin métricas técnicas del scanner (S03).
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -136,16 +134,7 @@ internal fun CameraQrCaptureOverlay(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(XauxaMetrics.QrPreviewSize)
-                                .border(
-                                    androidx.compose.foundation.BorderStroke(
-                                        XauxaMetrics.BorderStrong,
-                                        XauxaColor.Brand,
-                                    ),
-                                ),
-                        )
+                        XauxaScannerFrame()
                         // El hint SE VUELVE el estado: "Código QR detectado"
                         // con liveRegion (§5/§11: el estado también se lee,
                         // nunca solo se ve).

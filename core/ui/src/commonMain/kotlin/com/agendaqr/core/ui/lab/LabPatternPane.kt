@@ -19,7 +19,6 @@ import com.agendaqr.core.ui.components.XauxaFileUpload
 import com.agendaqr.core.ui.components.XauxaHeroCard
 import com.agendaqr.core.ui.components.XauxaInlineResult
 import com.agendaqr.core.ui.components.XauxaScannerViewport
-import com.agendaqr.core.ui.components.XauxaSettingRow
 import com.agendaqr.core.ui.components.XauxaTextInput
 import com.agendaqr.core.ui.components.XauxaToast
 import com.agendaqr.core.ui.components.XauxaTone
@@ -185,18 +184,6 @@ private fun LabPatternScenario(pattern: LabPattern, onEvent: (String) -> Unit) {
                 label = "Pegar contenido",
                 value = manual,
                 onValueChange = { manual = it },
-            )
-        }
-        "bloqueo-opcional" -> {
-            var locked by rememberSaveable { mutableStateOf(false) }
-            XauxaSettingRow(
-                title = "Bloquear edición",
-                description = "Pide confirmación antes de modificar",
-                checked = locked,
-                onCheckedChange = {
-                    locked = it
-                    onEvent("Patrón bloqueo-opcional: checked=$it")
-                },
             )
         }
         "confirmacion-destructiva" -> XauxaDialog(

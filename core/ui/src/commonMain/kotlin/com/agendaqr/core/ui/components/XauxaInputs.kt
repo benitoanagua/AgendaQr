@@ -1,6 +1,5 @@
 package com.agendaqr.core.ui.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -31,7 +30,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -41,8 +39,6 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.toggleableState
-import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.agendaqr.core.ui.theme.XauxaColor
@@ -53,8 +49,8 @@ import com.agendaqr.core.ui.theme.XauxaShape
 
 
 /**
- * Entradas Xauxa: texto etiquetado, búsqueda y fila de ajuste.
- * (T12: dividido de XauxaExtendedComponents.kt por responsabilidad, sin cambio de comportamiento.)
+ * Entradas Xauxa: texto etiquetado y búsqueda.
+ * (XauxaSettingRow fue retirado: sin pantalla de ajustes en V1 — auditoría de componentes.)
  */
 
 /** Entrada de texto etiquetada con estado de error. Textarea con singleLine=false.
@@ -158,10 +154,10 @@ fun XauxaTextInput(
                     errorContainerColor = XauxaColor.Surface2,
                     // Sin indicador Material: el borde de 2 dp externo es la
                     // única señal de foco/error (M8).
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    errorIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = XauxaColor.Transparent,
+                    unfocusedIndicatorColor = XauxaColor.Transparent,
+                    disabledIndicatorColor = XauxaColor.Transparent,
+                    errorIndicatorColor = XauxaColor.Transparent,
                     focusedTextColor = XauxaColor.TextPrimary,
                     unfocusedTextColor = XauxaColor.TextPrimary,
                     errorTextColor = XauxaColor.TextPrimary,
@@ -271,10 +267,10 @@ fun XauxaSearchBar(
                     unfocusedContainerColor = XauxaColor.Surface2,
                     disabledContainerColor = XauxaColor.Surface2,
                     errorContainerColor = XauxaColor.Surface2,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    errorIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = XauxaColor.Transparent,
+                    unfocusedIndicatorColor = XauxaColor.Transparent,
+                    disabledIndicatorColor = XauxaColor.Transparent,
+                    errorIndicatorColor = XauxaColor.Transparent,
                     focusedTextColor = XauxaColor.TextPrimary,
                     unfocusedTextColor = XauxaColor.TextPrimary,
                 ),
@@ -334,69 +330,3 @@ fun XauxaSearchTrigger(
     }
 }
 
-/**
- * Fila de ajuste con toggle cuadrado (Selector + Toggle). checked==null la
- * convierte en fila de navegación. Toda la fila es el objetivo táctil.
- */
-@Composable
-fun XauxaSettingRow(
-    title: String,
-    description: String,
-    modifier: Modifier = Modifier,
-    checked: Boolean? = null,
-    onCheckedChange: ((Boolean) -> Unit)? = null,
-    onClick: (() -> Unit)? = null,
-) {
-    val interaction = remember { MutableInteractionSource() }
-    val action: (() -> Unit)? = when {
-        onCheckedChange != null && checked != null -> ({ onCheckedChange(!checked) })
-        else -> onClick
-    }
-    val clickableModifier = if (action == null) modifier else modifier
-        .semantics {
-            if (checked != null && onCheckedChange != null) {
-                toggleableState = if (checked) ToggleableState.On else ToggleableState.Off
-            }
-        }
-        .clickable(
-            interactionSource = interaction,
-            indication = null,
-            role = if (checked != null && onCheckedChange != null) Role.Switch else Role.Button,
-            onClick = action,
-        )
-        .focusable(interactionSource = interaction)
-    Row(
-        modifier = clickableModifier
-            .fillMaxWidth()
-            .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
-            .xauxaFocusRing(interaction)
-            // V1.1 (M9): la fila no lleva borde de reposo; la separación es
-            // por espacio. El borde queda reservado al foco
-            // (xauxaFocusRing) y al track del toggle (control funcional).
-            .padding(XauxaSpacing.Sm),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
-    ) {
-        Column(modifier = Modifier.weight(XauxaToneWeight)) {
-            Text(title, fontSize = XauxaType.Body, color = XauxaColor.TextPrimary)
-            Text(description, fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary)
-        }
-        if (checked != null) {
-            Box(
-                modifier = Modifier.size(width = XauxaMetrics.ControlMinSize, height = XauxaSpacing.Xxxl)
-                    .border(BorderStroke(XauxaMetrics.Border, XauxaColor.BorderControl), XauxaShape)
-                    .background(if (checked) XauxaColor.Brand else XauxaColor.Surface2)
-                    .padding(XauxaSpacing.Xs),
-                contentAlignment = if (checked) Alignment.CenterEnd else Alignment.CenterStart,
-            ) {
-                // Fase 1: la pastilla apagada (White sobre Surface2,
-                // 1.12:1) pasa a BorderControl: >= 3:1 contra el track en
-                // claro y oscuro (XauxaSchemeTest).
-                Box(
-                    modifier = Modifier.size(XauxaSpacing.Xl)
-                        .background(if (checked) XauxaColor.OnBrand else XauxaColor.BorderControl),
-                )
-            }
-        }
-    }
-}

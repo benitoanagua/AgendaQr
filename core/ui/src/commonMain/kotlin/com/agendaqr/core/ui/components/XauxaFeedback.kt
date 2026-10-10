@@ -276,11 +276,7 @@ fun XauxaScannerViewport(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
         ) {
-            Box(
-                modifier = Modifier.size(XauxaMetrics.QrPreviewSize)
-                    .border(BorderStroke(XauxaMetrics.BorderStrong, XauxaColor.Brand), XauxaShape),
-                contentAlignment = Alignment.Center,
-            ) {
+            XauxaScannerFrame {
                 Text(
                     if (scanning) scanningLabel else hint,
                     fontSize = XauxaType.Caption,
@@ -290,6 +286,29 @@ fun XauxaScannerViewport(
                 )
             }
         }
+    }
+}
+
+/**
+ * Encuadre del scanner (excepción E-03): marco funcional de marca de 2 dp
+ * ([XauxaMetrics.BorderStrong] + [XauxaColor.Brand]) — S03 congelado
+ * ("marco con borde de marca"), guía visual ACTIVA de captura, no
+ * decoración. Forma parte del contrato de [XauxaScannerViewport]: la
+ * cámara de S03 lo compone SOBRE su preview real (sin fondo propio,
+ * para no tapar la imagen de la cámara).
+ */
+@Composable
+fun XauxaScannerFrame(
+    modifier: Modifier = Modifier,
+    content: (@Composable () -> Unit)? = null,
+) {
+    Box(
+        modifier = modifier
+            .size(XauxaMetrics.QrPreviewSize)
+            .border(BorderStroke(XauxaMetrics.BorderStrong, XauxaColor.Brand), XauxaShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        content?.invoke()
     }
 }
 

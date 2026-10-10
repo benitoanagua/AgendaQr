@@ -51,7 +51,6 @@ import com.agendaqr.core.ui.components.XauxaScreen
 import com.agendaqr.core.ui.components.XauxaSearchBar
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaSection
-import com.agendaqr.core.ui.components.XauxaSettingRow
 import com.agendaqr.core.ui.components.XauxaSkeleton
 import com.agendaqr.core.ui.components.XauxaStatBlock
 import com.agendaqr.core.ui.components.XauxaStatusBanner
@@ -134,7 +133,6 @@ internal fun LabComponentPreview(
                 "xauxa-filter-chip" -> FilterChipPreview(onEvent)
                 "xauxa-text-input" -> TextInputPreview()
                 "xauxa-search-bar" -> SearchBarPreview(onEvent)
-                "xauxa-setting-row" -> SettingRowPreview(onEvent)
                 "xauxa-favorite-toggle" -> FavoriteTogglePreview(onEvent)
                 "xauxa-toast" -> ToastPreview(onEvent)
                 "xauxa-status-banner" -> StatusBannerPreview()
@@ -759,27 +757,6 @@ private fun SearchBarPreview(onEvent: (String) -> Unit) {
             "Texto actual: “$value”",
             fontSize = XauxaType.Caption,
             color = XauxaColor.TextSecondary,
-        )
-    }
-}
-
-@Composable
-private fun SettingRowPreview(onEvent: (String) -> Unit) {
-    var checked by rememberSaveable { mutableStateOf(false) }
-    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
-        XauxaSettingRow(
-            title = "Sincronización automática",
-            description = "Sube los comprobantes al conectarse",
-            checked = checked,
-            onCheckedChange = {
-                checked = it
-                onEvent("XauxaSettingRow.onCheckedChange checked=$it")
-            },
-        )
-        XauxaSettingRow(
-            title = "Acerca de",
-            description = "Versión y licencias",
-            onClick = { onEvent("XauxaSettingRow.onClick Acerca de") },
         )
     }
 }

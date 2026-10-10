@@ -63,7 +63,7 @@ private fun labColorEntries(): List<LabColorEntry> = listOf(
     LabColorEntry("BrandContainer", XauxaColor.BrandContainer, "Contenedor de marca"),
     LabColorEntry("OnBrand", XauxaColor.OnBrand, "Contenido sobre marca"),
     LabColorEntry("OnBrandContainer", XauxaColor.OnBrandContainer, "Contenido sobre contenedor de marca"),
-    LabColorEntry("White", XauxaColor.White, "Contenido sobre fondo de QR"),
+    LabColorEntry("QrCanvas", XauxaColor.QrCanvas, "Lienzo del QR: fondo claro garantizado para escaneo"),
     LabColorEntry("Success", XauxaColor.Success, "Uso primario"),
     LabColorEntry("SuccessBg", XauxaColor.SuccessBg, "Contenedor de estado"),
     LabColorEntry("Danger", XauxaColor.Danger, "Semántica de error/peligro"),

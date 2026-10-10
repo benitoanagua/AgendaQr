@@ -758,7 +758,7 @@ object LabComponentCatalog {
             events = listOf(LabEvent("onClick", "Evento de activación destructiva.")),
             tokens = listOf(
                 LabTokenRef("XauxaColor.Danger", "Contenedor del botón."),
-                LabTokenRef("XauxaColor.White", "Contenido sobre peligro."),
+                LabTokenRef("XauxaColor.OnDanger", "Contenido sobre peligro."),
                 LabTokenRef("XauxaMetrics.ControlMinSize", "Altura mínima de 48dp."),
                 LabTokenRef("XauxaType.LetterSpacingWide", "Tracking de la etiqueta en mayúsculas."),
             ),
@@ -995,45 +995,6 @@ object LabComponentCatalog {
             whenToUse = "Búsquedas. Formularios de captura con XauxaTextInput.",
             androidMapping = "Material3 OutlinedTextField singleLine con trailingIcon.",
             iosMapping = "SwiftUI .searchable o TextField con botón de limpieza.",
-            platforms = commonPlatforms(),
-        ),
-        LabComponentContract(
-            id = "xauxa-setting-row",
-            name = "XauxaSettingRow",
-            category = LabCategory.ACTIONS,
-            purpose = "Fila de ajuste con toggle cuadrado o navegación.",
-            description = "Fila con título, descripción y toggle rectangular de marca; con checked " +
-                "nulo actúa como fila de navegación. Toda la fila es el objetivo táctil.",
-            props = listOf(
-                LabProp("title", "String"),
-                LabProp("description", "String"),
-                LabProp("modifier", "Modifier"),
-                LabProp("checked", "Boolean?", "null"),
-                LabProp("onCheckedChange", "((Boolean) -> Unit)?", "null"),
-                LabProp("onClick", "(() -> Unit)?", "null"),
-            ),
-            states = listOf(
-                LabState("Default", "Presentación base apagada; checked = false con fondo Surface2.", LabReviewStatus.VERIFIED),
-                LabState("Encendido", "checked = true: toggle con fondo de marca.", LabReviewStatus.VERIFIED),
-                LabState("Navegación", "checked = null con onClick: fila de acción sin toggle.", LabReviewStatus.VERIFIED),
-            ),
-            events = listOf(
-                LabEvent("onCheckedChange", "Cambio del ajuste."),
-                LabEvent("onClick", "Activación en modo navegación."),
-            ),
-            tokens = listOf(
-                LabTokenRef("XauxaColor.Brand", "Fondo del toggle encendido."),
-                LabTokenRef("XauxaColor.Surface2", "Fondo del toggle apagado."),
-                LabTokenRef("XauxaColor.White", "Pastilla del toggle."),
-                LabTokenRef("XauxaMetrics.ControlMinSize", "Altura mínima de fila y toggle."),
-            ),
-            usage = listOf("Ajustes de AgendaQr (patrón setting-toggle de Xauxa, cuadrado por invariante 02)."),
-            tags = listOf("ajuste", "toggle", "selector", "preferencia"),
-            darkThemeSupport = LabDarkThemeSupport.PENDING,
-            darkThemeNote = "Resuelve el esquema vía XauxaColor; el esquema oscuro aplica valores de referencia pendientes de validación visual.",
-            whenToUse = "Ajustes binarios y filas de preferencia. Favoritos con XauxaFavoriteToggle.",
-            androidMapping = "Row clickable + toggle cuadrado personalizado.",
-            iosMapping = "SwiftUI Toggle o NavigationLink según modo.",
             platforms = commonPlatforms(),
         ),
         LabComponentContract(
@@ -1547,7 +1508,8 @@ object LabComponentCatalog {
                 ),
                 LabState(
                     "Placeholder",
-                    "Dato inválido o vacío: caja blanca con borde. Comportamiento verificado en Android.",
+                    "Dato inválido o vacío: lienzo claro (QrCanvas) enmarcado por el bloque tonal " +
+                        "XauxaMediaFrame, sin borde de reposo. Comportamiento verificado en Android.",
                     LabReviewStatus.VERIFIED,
                 ),
                 LabState(
@@ -1558,16 +1520,15 @@ object LabComponentCatalog {
                 ),
                 LabState(
                     "Render en web (Wasm)",
-                    "El host Wasm del laboratorio aún no decodifica: siempre muestra placeholder blanco hasta " +
+                    "El host Wasm del laboratorio aún no decodifica: siempre muestra placeholder claro hasta " +
                     "implementar la ruta de decodificación en navegador.",
                     LabReviewStatus.PENDING,
                 ),
             ),
             tokens = listOf(
-                LabTokenRef("XauxaColor.White", "Fondo del placeholder."),
-                LabTokenRef("XauxaColor.Border", "Borde del contenedor."),
+                LabTokenRef("XauxaColor.Surface2", "Marco tonal (XauxaMediaFrame), sin borde de reposo."),
+                LabTokenRef("XauxaColor.QrCanvas", "Lienzo claro garantizado del QR en ambos temas."),
                 LabTokenRef("XauxaMetrics.QrPreviewSize", "Tamaño del preview."),
-                LabTokenRef("XauxaMetrics.Border", "Grosor del borde."),
             ),
             usage = listOf(
                 "Confirmar el QR almacenado antes de compartir o reutilizar; detalle de destino.",

@@ -38,6 +38,40 @@ val uiLiteralAllowlist = listOf(
 fun isUiLiteralAllowed(text: String): Boolean =
     uiLiteralAllowlist.any { text.contains(it) }
 
+/**
+ * Contrato §12 — REGISTRO DE EXCEPCIONES del gate. Cada ID E-xx declarado
+ * en la tabla del contrato debe existir AQUÍ con su aplicación; la tarea
+ * verifyDesignSystemCompliance compara AMBOS conjuntos y falla si no
+ * coinciden ("la lista de excepciones del gate DEBE coincidir con esta
+ * tabla"). No existe excepción válida sin entrada en ambas partes.
+ *
+ * - "border:" — el/los archivos donde esa excepción permite `.border(`/`BorderStroke(`.
+ * - otros — excepciones sin borde (marcador/chrome): su aplicación es un
+ *   componente + prueba, no un archivo con borde.
+ */
+val exceptionRegistry: Map<String, List<String>> = mapOf(
+    "E-01" to listOf(
+        "border:XauxaAppBar.kt",
+        "border:XauxaCommandBar.kt",
+    ),
+    "E-02" to listOf("border:XauxaFeedback.kt"),
+    "E-03" to listOf("border:XauxaFeedback.kt"),
+    "E-05" to listOf("marker:XauxaListRow — barra lateral solo con tono no-Neutral o acento de contexto real (componente + Robolectric)"),
+    "E-06" to listOf("border:XauxaInputs.kt"),
+    "E-07" to listOf("chrome:AuthScreen sin barra inferior (capturas login claro/oscuro)"),
+)
+
+/** Archivos con `.border(`/`BorderStroke(` permitidos por las excepciones. */
+val borderAllowedFiles: Set<String> =
+    buildSet {
+        exceptionRegistry.values.forEach { rules ->
+            rules.forEach { rule -> if (rule.startsWith("border:")) add(rule.removePrefix("border:")) }
+        }
+        // Bordes de ESTADO del contrato §4.2/§7 (anillo de foco) — no son
+        // excepciones: son la implementación canónica del foco visible.
+        add("XauxaTone.kt")
+    }
+
 fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = buildList {
     val bannedImports = listOf("androidx.compose.material.icons", "Icons.Filled", "Icons.Outlined", "Icons.Rounded")
     val rawHex = Regex("#[0-9A-Fa-f]{6,8}")
@@ -84,6 +118,16 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
             add("$location: production components must use XauxaShape/token API (no CircleShape/RectangleShape): $line")
         }
         if (!path.endsWith("XauxaTheme.kt") && forbiddenVisualAuthority.any(line::contains)) add("$location: MaterialTheme cannot be the visual authority outside XauxaTheme: $line")
+        // Contrato §12: `.border(`/`BorderStroke(` solo en archivos de las
+        // EXCEPCIONES registradas (borderAllowedFiles) y del estado de foco
+        // (§4.2). El laboratorio exhibe tokens (entorno de validación, no
+        // producto): exento.
+        val hasBorderCall = line.contains(".border(") || Regex("\\bBorderStroke\\s*\\(").containsMatchIn(line)
+        if (hasBorderCall && !path.contains("/lab/") &&
+            borderAllowedFiles.none { path.endsWith(it) }
+        ) {
+            add("$location: .border(/BorderStroke( outside §12 exception files (register the exception or remove the border): $line")
+        }
         // verify-xauxa.sh parity: material3/colorScheme prohibido en
         // feature/, shared/src y androidApp/src (solo core:ui puede adaptarlo).
         val isAppSource = isFeatureSource || path.contains("/shared/src/") || path.contains("/androidApp/src/")
@@ -383,6 +427,27 @@ tasks.register("verifyDesignSystemCompliance") {
         val violations = checkViolations().toMutableList()
         if (file("design-tokens.json").exists()) {
             violations += "design-tokens.json was retired as an editable source (XauxaTokens.kt is canonical); delete it instead of editing"
+        }
+        // Contrato §12: "la lista de excepciones del gate DEBE coincidir
+        // con esta tabla" — se leen los IDs E-xx de la tabla del contrato y
+        // se comparan con el registro del gate (exceptionRegistry). Sin
+        // entrada en AMBAS partes, no existe excepción válida.
+        val contractFile = file("docs/05-design-system/00-xauxa-contrato-normativo.md")
+        if (contractFile.exists()) {
+            val tableIds = contractFile.readLines()
+                .mapNotNull { row -> Regex("^\\| (E-\\d+) \\|").find(row)?.groupValues?.get(1) }
+                .toSet()
+            val gateIds = exceptionRegistry.keys.toSet()
+            val missingInGate = tableIds - gateIds
+            val unknownInGate = gateIds - tableIds
+            if (missingInGate.isNotEmpty()) {
+                violations += "contrato §12: excepciones sin registro en el gate: ${missingInGate.sorted().joinToString()}"
+            }
+            if (unknownInGate.isNotEmpty()) {
+                violations += "contrato §12: el gate registra excepciones que NO están en la tabla: ${unknownInGate.sorted().joinToString()}"
+            }
+        } else {
+            violations += "contrato §12: no se encuentra ${contractFile.path} para verificar la tabla de excepciones"
         }
         require(violations.isEmpty()) { "Xauxa Design System violations:\n${violations.joinToString("\n")}" }
     }

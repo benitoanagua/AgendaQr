@@ -210,6 +210,8 @@ internal object AppStrings {
     val dupMark = "! "
     val pendingMark = "? "
     val ComprobanteAdjuntoVistaPreviaPendienteEnIos = "Comprobante adjunto (vista previa pendiente en iOS)"
+    val PdfAdjuntoSinVistaPrevia = "PDF adjunto (sin vista previa)"
+    val VistaPreviaNoDisponible = "Vista previa no disponible"
     val Contenido = "Contenido"
     val EditarOperacion = "Editar actividad"
     val AunNoHayDestinos = "Aún no hay QR"

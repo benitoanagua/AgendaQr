@@ -3,9 +3,9 @@ package com.agendaqr.core.ui.components
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -408,8 +410,12 @@ internal fun tileRows(items: List<XauxaTileItem>, maxUnits: Int): List<List<Xaux
  * caller). La conmutación es local: NO crea rutas ni navegación nueva
  * (§3: los estados técnicos no crean navegación artificial).
  *
- * Cada pestaña declara rol de pestaña con estado `selected` y etiqueta de
- * texto visible (§11/M14).
+ * Contrato §4.4 (tipografía al 100/150/200 %): las pestañas viven en un
+ * Row con DESPLAZAMIENTO HORIZONTAL — con fuente grande las etiquetas no
+ * se comprimen ni se recortan: la última pestaña se alcanza desplazando
+ * (test XauxaPivotLayoutTest a 320/360 dp). El grupo declara
+ * `selectableGroup()` y cada pestaña rol de pestaña con estado
+ * `selected` y etiqueta de texto visible (§11/M14).
  */
 @Composable
 fun XauxaPivot(
@@ -423,10 +429,16 @@ fun XauxaPivot(
     require(sections.isNotEmpty()) { "XauxaPivot necesita al menos una sección" }
     require(selectedIndex in sections.indices) { "XauxaPivot: índice fuera de rango" }
     Column(modifier.fillMaxWidth()) {
-        Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg)) {
-            // Fase 1: el acento solo es texto si es legible (>= 4.5:1); la
-            // sección activa lleva además un marcador de 2 dp con el color
-            // crudo del acento (identidad de contexto, M4).
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .selectableGroup(),
+            horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),
+        ) {
+            // El acento solo es texto si es legible (>= 4.5:1); la sección
+            // activa lleva además un marcador de 2 dp con el color crudo
+            // del acento (identidad de contexto, M4).
             val selectedTextColor = accent.asTextOn(XauxaColor.Background, XauxaColor.BrandText)
             sections.forEachIndexed { index, title ->
                 val selected = index == selectedIndex

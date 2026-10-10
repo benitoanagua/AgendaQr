@@ -35,7 +35,6 @@ object LabApiFreeze {
         "xauxa-category-chip",
         "xauxa-text-input",
         "xauxa-search-bar",
-        "xauxa-setting-row",
         "xauxa-dialog",
         "xauxa-toast",
         "xauxa-status-banner",
