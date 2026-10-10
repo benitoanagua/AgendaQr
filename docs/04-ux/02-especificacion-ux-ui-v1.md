@@ -1,6 +1,6 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — V1.1 para contrato funcional; contrato visual desarrollado por ADR-0010 y `docs/05-design-system/00-xauxa-contrato-normativo.md`  
+**Estado:** FROZEN — V1.1 para contrato funcional; contrato visual desarrollado por ADR-0011 y `docs/05-design-system/00-xauxa-contrato-normativo.md`  
 **Fecha:** 2026-10-05  
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
 
@@ -215,7 +215,7 @@ Reglas adicionales V1.1:
 
 ## 12. Contrato visual Xauxa (expresión Metro) — V1.1, ADR-0005
 
-> **Precedencia:** esta sección conserva la decisión de producto visual adoptada por ADR-0005. Para reglas transversales detalladas, estados, accesibilidad, pruebas, gobernanza y resolución de contradicciones, prevalece `docs/05-design-system/00-xauxa-contrato-normativo.md` (ADR-0010). Si un detalle de esta sección contradice el contrato normativo, se debe reconciliar documentalmente; no se permite implementar una mezcla tácita.
+> **Precedencia:** esta sección conserva la decisión de producto visual adoptada por ADR-0005. Para reglas transversales detalladas, estados, accesibilidad, pruebas, gobernanza y resolución de contradicciones, prevalece `docs/05-design-system/00-xauxa-contrato-normativo.md` (ADR-0011). Si un detalle de esta sección contradice el contrato normativo, se debe reconciliar documentalmente; no se permite implementar una mezcla tácita.
 
 Metro es referencia de lenguaje, no de assets: prohibido usar Segoe UI, Segoe MDL2 u otros assets/fuentes de Microsoft con licencia restringida; solo fuentes e iconos con licencia libre, registrados en `docs/05-design-system/06-licencias-terceros.md`. Xauxa sigue siendo el único sistema de diseño; Metro se expresa como enmienda de Xauxa.
 

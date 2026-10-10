@@ -1,14 +1,14 @@
 # Xauxa Design System — contrato normativo
 
 **Versión:** 1.0  
-**Estado:** Normativo para nuevas implementaciones y migraciones aprobadas por ADR-0010  
+**Estado:** Normativo para nuevas implementaciones y migraciones aprobadas por ADR-0011  
 **Ámbito:** Android e iOS; Compose Multiplatform. El laboratorio es un entorno de validación, no una fuente alternativa de diseño.
 
 Este documento es la autoridad normativa para la expresión visual y el comportamiento transversal de Xauxa. No reemplaza la especificación funcional de Agenda QR: la intención, los flujos, las reglas de negocio y la recuperación de errores siguen gobernados por los documentos de producto. Xauxa define cómo se representan y operan visualmente.
 
 ## Estado de conformidad
 
-La ronda 8 añade cobertura de contrato para campos deshabilitados, de solo lectura y actualización dinámica de errores. Estas pruebas permanecen no verificadas hasta ejecutarse en el entorno de build.
+La cobertura de contrato incluye campos deshabilitados, de solo lectura y actualización dinámica de errores.
 
 La conformidad del sistema se registra por capas: (1) contrato/documentación, (2) gate estático, (3) pruebas automatizadas, (4) regresión visual y (5) validación en dispositivos. Un PASS de una capa no implica PASS de las siguientes. El estado de ejecución y los bloqueos vigentes se mantienen en los checklists de `docs/08-validacion/`.
 
@@ -167,6 +167,11 @@ Los diálogos se reservan para decisiones que necesitan interrupción o foco mod
 
 ## 7. Interacción, foco y movimiento
 
+### Indicación global
+
+El feedback de pulsación es un OVERLAY PLANO (token `XauxaOpacity.Pressed`), nunca un ripple o state layer de Material 3. `XauxaTheme` desactiva el ripple de M3 (`LocalRippleConfiguration provides null`). Todos los componentes Xauxa usan el patrón: `clickable(indication = null)` + `xauxaPressFeedback` (Modifier separado que dibuja el overlay). Este patrón NO es un `indication = null` "huérfano": el feedback visual siempre existe, dibujado por el modifier.
+
+
 - Cada control interactivo ofrece respuesta perceptible sin depender del ripple Material.
 - La indicación de pulsación es plana y coherente con la superficie; foco de teclado/lector de pantalla es visible y no se reemplaza por feedback de pulsación.
 - El anillo de foco debe tener grosor, separación y contraste tokenizados; se verifica sobre cada color de tile/acento.
@@ -226,14 +231,23 @@ El sistema está alineado cuando el mismo rol visual tiene la misma apariencia y
 
 ## 12. Registro de excepciones
 
-Estado inicial: **sin excepciones visuales aprobadas**. Las diferencias obligatorias de plataforma deben registrarse en ADR o en la documentación del componente; no se consideran permiso para alterar tokens compartidos.
+Toda excepción visual tiene entrada en esta tabla con propietario, razón,
+alcance, condición de retirada y prueba. Sin entrada, no existe excepción
+válida. La lista de excepciones del gate (`verifyDesignSystemCompliance`)
+DEBE coincidir con esta tabla.
 
-
-El gate estático pasa; la suite se ejecuta en CI.
+| ID | Componente | Tipo | Token | Razón | Retirada | Prueba |
+|---|---|---|---|---|---|---|
+| E-01 | DropdownMenu (AppBar, CommandBar) | Borde funcional | `borderControl` | Límite del overlay del menú; el contenido flotante necesita límite visual ≥3:1 | Menú M3 interno sustituido por componente Xauxa propio | XauxaSchemeTest: borderControl ≥3:1 |
+| E-02 | XauxaFavoriteIndicator | Borde de control | `borderControl` | Límite del indicador de favorito (control visible ≥3:1) | Componente retirado o rediseñado | XauxaSchemeTest |
+| E-03 | XauxaScannerViewport | Marco funcional | `brand` (BorderStrong) | Encuadre del scanner (S03 congelado: "marco con borde de marca"); guia visual activa de captura | S03 rediseñado | XauxaSchemeTest: brand ≥4,5:1 |
+| E-04 | XauxaSettingRow switch | Borde de control | `borderControl` | Pista del switch visible en reposo ≥3:1 | Componente retirado | XauxaSchemeTest |
+| E-05 | XauxaListRow barra lateral | Marcador semántico | `tone.content()` o `accent` | Solo con tono no-Neutral o acento de contexto real; el estado se expresa también con texto (§11) | Spec §6.3 cambia | Robolectric: ListRow con `selected` semántico |
+| E-06 | XauxaTextInput / XauxaSearchBar | Borde de foco/error | `brand`/`danger` (Focus=2dp) | Solo en foco o error (M8); nunca en reposo | M8 cambia | XauxaAccessibilityContractTest |
 
 
 ## Cobertura de auditoría
 
-### Ronda 10 — cobertura estática y responsive
+### Cobertura estática y responsive
 
 El gate `verifyDesignSystemCompliance` amplía el recorrido de primitivas visuales a los source sets de producción de `core:ui` y la prohibición de Material 3 directo a `feature`, `shared/src` y `androidApp/src`. El nuevo test responsive de 360 dp complementa la cobertura de 320 dp. El gate estático no acredita compilación ni ejecución de pruebas: la suite de CI las ejecuta en cada push.

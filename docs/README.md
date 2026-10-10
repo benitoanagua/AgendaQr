@@ -28,12 +28,14 @@
 | [`04-ux/03-laboratorio-componentes-compose.md`](04-ux/03-laboratorio-componentes-compose.md) | Laboratorio de componentes (wasm) |
 | [`04-ux/04-capacidades-y-comportamientos.md`](04-ux/04-capacidades-y-comportamientos.md) | Capacidades y comportamientos |
 | [`04-ux/05-guia-de-voz.md`](04-ux/05-guia-de-voz.md) | Guía de voz (tuteo) |
+| [`04-ux/lab-captures/README.md`](04-ux/lab-captures/README.md) | Capturas del laboratorio (no versionadas) |
 
 ## Design System (Xauxa)
 
 | Documento | Contenido |
 |---|---|
 | [`05-design-system/00-xauxa-contrato-normativo.md`](05-design-system/00-xauxa-contrato-normativo.md) | Contrato normativo (fuente única) |
+| [`05-design-system/02-xauxa-implementation.md`](05-design-system/02-xauxa-implementation.md) | Reglas de implementación |
 | [`05-design-system/01-xauxa-source-snapshot.md`](05-design-system/01-xauxa-source-snapshot.md) | Snapshot de la fuente visual |
 | [`05-design-system/04-component-audit-register.md`](05-design-system/04-component-audit-register.md) | Auditoría de componentes (decisiones) |
 | [`05-design-system/05-xauxa-tipografia.md`](05-design-system/05-xauxa-tipografia.md) | Tipografía (Archivo OFL) |
@@ -68,6 +70,7 @@
 | [`07-decisiones/ADR-0008-guia-de-voz.md`](07-decisiones/ADR-0008-guia-de-voz.md) | ADR: guía de voz |
 | [`07-decisiones/ADR-0009-privacidad-en-pantalla.md`](07-decisiones/ADR-0009-privacidad-en-pantalla.md) | ADR: privacidad (propuesto) |
 | [`07-decisiones/ADR-0010-uiautomator-en-instrumentados.md`](07-decisiones/ADR-0010-uiautomator-en-instrumentados.md) | ADR: UiAutomator |
+| [`07-decisiones/ADR-0011-contrato-visual-xauxa.md`](07-decisiones/ADR-0011-contrato-visual-xauxa.md) | ADR: contrato visual Xauxa |
 
 ## Validación
 

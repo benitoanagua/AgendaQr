@@ -291,6 +291,88 @@ tasks.register("verifyVisualHashes") {
     }
 }
 
+
+/**
+ * Verificación de documentación:
+ * (a) enlaces/paths existen; (b) orphans desde README; (c) marcadores
+ * transitorios; (d) ADR citado existe; numeración.
+ */
+tasks.register("verifyDocs") {
+    group = "verification"
+    description = "Verifies docs: links, reachability, transient markers, ADR refs."
+    doLast {
+        val docs = file("docs")
+        val allMd = docs.walkTopDown().filter { it.extension == "md" }.toList()
+        val violations = mutableListOf<String>()
+
+        // (a) Dead links (relative .md paths).
+        allMd.forEach { file ->
+            val content = file.readText()
+            Regex("\\]\\(([^)#\\s]+\\.md)\\)").findAll(content).forEach { match ->
+                val linked = match.groupValues[1]
+                if (!linked.startsWith("http") && !File(file.parentFile, linked).exists()) {
+                    violations.add("dead-link: ${file.relativeTo(docs)} -> $linked")
+                }
+            }
+        }
+
+        // (b) Orphans (not reachable from docs/README.md).
+        val readme = File(docs, "README.md")
+        if (readme.exists()) {
+            val linked = Regex("\\]\\(([\\w./-]+\\.md)\\)").findAll(readme.readText())
+                .map { it.groupValues[1] }.toSet()
+            allMd.forEach { file ->
+                val rel = file.relativeTo(docs).path
+                if (rel != "README.md" && rel !in linked) {
+                    violations.add("orphan: $rel (not in docs/README.md)")
+                }
+            }
+        }
+
+        // (c) Transient markers.
+        val markers = mapOf(
+            "Ronda \\d+" to "'Ronda N'",
+            "Fase \\d+" to "'Fase N'",
+            "TODO:" to "TODO marker",
+            "\\bFIXME\\b" to "FIXME",
+        )
+        allMd.forEach { file ->
+            val content = file.readText()
+            val isAdr = file.name.startsWith("ADR-")
+            markers.forEach { (pattern, desc) ->
+                Regex(pattern).findAll(content).forEach { match ->
+                    // ADRs can mention "Ronda" in their context sections.
+                    if (!isAdr || desc == "TODO" || desc == "FIXME") {
+                        violations.add("transient: ${file.relativeTo(docs)} has $desc")
+                    }
+                }
+            }
+        }
+
+        // (d) ADR references exist.
+        val existingAdrs = allMd.filter { it.name.startsWith("ADR-") }
+            .mapNotNull { Regex("^ADR-(\\d+)").find(it.name)?.groupValues?.get(1)?.toInt() }
+            .toSet()
+        allMd.forEach { file ->
+            Regex("ADR-(\\d{4})").findAll(file.readText()).forEach { match ->
+                val num = match.groupValues[1].toIntOrNull()
+                if (num != null && num !in existingAdrs) {
+                    violations.add("missing-adr: ${file.relativeTo(docs)} cites ADR-${match.groupValues[1]} (not found)")
+                }
+            }
+        }
+
+        if (violations.isNotEmpty()) {
+            throw GradleException(
+                "verifyDocs found ${violations.size} violations:\n" +
+                    violations.take(30).joinToString("\n") { "  $it" } +
+                    if (violations.size > 30) "\n  ... and ${violations.size - 30} more" else ""
+            )
+        }
+        logger.lifecycle("verifyDocs: PASS (${allMd.size} documents)")
+    }
+}
+
 tasks.register("verifyDesignSystemCompliance") {
     group = "verification"
     description = "Enforces Xauxa Design System invariants in production Kotlin sources."
@@ -511,6 +593,6 @@ tasks.register("verifyArchitectureBoundaries") {
 
 tasks.register("verifyAgendaQrArchitecture") {
     group = "verification"
-    dependsOn("verifyDesignSystemCompliance", "verifyArchitectureBoundaries", "verifyWebDesignSystem", "verifyDesignSystemFixtures", "verifyNoScripts", "verifyControlMinSize")
+    dependsOn("verifyDesignSystemCompliance", "verifyArchitectureBoundaries", "verifyWebDesignSystem", "verifyDesignSystemFixtures", "verifyNoScripts", "verifyControlMinSize", "verifyDocs")
     description = "Runs the complete Agenda QR architecture and Xauxa design-system gates."
 }
