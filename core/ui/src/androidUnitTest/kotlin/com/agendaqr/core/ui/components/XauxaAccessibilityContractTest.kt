@@ -62,6 +62,25 @@ class XauxaAccessibilityContractTest {
     }
 
     @Test
+    fun selected_list_row_exposes_selected_semantics() {
+        // E-05: la barra lateral del ListRow solo aparece con acento de
+        // contexto o tono de estado REALES; la selección se expresa con la
+        // semántica `selected` (§11), no con un color.
+        compose.setContent {
+            XauxaTheme {
+                androidx.compose.foundation.layout.Column {
+                    XauxaListRow(title = "Mercado", selected = true, onClick = {})
+                    XauxaListRow(title = "Casa", onClick = {})
+                }
+            }
+        }
+        compose.onNodeWithText("Mercado")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, true))
+        compose.onNodeWithText("Casa")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, false).not())
+    }
+
+    @Test
     fun text_input_exposes_required_label_and_error_message() {
         compose.setContent {
             XauxaTheme {

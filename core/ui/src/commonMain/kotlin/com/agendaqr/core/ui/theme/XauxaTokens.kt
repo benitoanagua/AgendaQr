@@ -329,10 +329,16 @@ object XauxaSpacing {
 
 object XauxaMetrics {
     val Border = 1.dp
+    /** Borde fuerte FUNCIONAL (marco del encuadre del scanner, E-03). */
     val BorderStrong = 2.dp
-    /** §12 V1.1 (M8/M9): ancho de foco y de borde funcional — 2 dp, solo en
-     * foco, campo en foco/error o tile seleccionado; sin bordes de reposo. */
+    /** §12 V1.1 (M8/M9): ancho del anillo de FOCO y de bordes de estado
+     * foco/error — 2 dp, solo en foco, campo en foco/error o tile
+     * seleccionado; sin bordes de reposo. */
     val Focus = 2.dp
+    /** Marcador SEMÁNTICO (contrato §6.3): subrayado de sección/pivote y
+     * barra lateral de fila/toast — solo con acento de contexto o tono de
+     * estado REALES (E-05); no es un borde ni un indicador de foco. */
+    val Marker = 2.dp
     val ControlMinSize = 48.dp
     val ContentMaxWidth = 720.dp
     val QrPreviewSize = 240.dp
@@ -386,6 +392,9 @@ object XauxaMetrics {
 }
 
 object XauxaType {
+    /** Display de BLOQUE (32 sp): número/hero de una tarjeta de datos
+     * ([com.agendaqr.core.ui.components.XauxaHeroCard]); NO es el título de
+     * página (ese es [DisplayPage], M6). */
     val Display: TextUnit = 32.sp
     val Headline: TextUnit = 24.sp
     val Title: TextUnit = 20.sp
@@ -505,7 +514,6 @@ object XauxaOpacity {
 object XauxaMotion {
     const val DurationShortMs = 150
     const val DurationMediumMs = 300
-    const val DurationLongMs = 450
     /**
      * Duración de las transiciones con movimiento reducido activo: 0.
      * Reduced motion no significa "animación corta" sino "sin
@@ -514,13 +522,13 @@ object XauxaMotion {
     const val DurationReducedMs = 0
     // Curvas en STRING: las consume el inspector del laboratorio
     // (LabFoundationPreview las muestra como contrato documentado); las
-    // Easings reales (compose) están abajo. No son código muerto.
+    // Easings reales (compose) están abajo. No son código muerto. Una sola
+    // easing por rol (contrato §3.2: sin alias divergentes); la desacelera-
+    // ción es la curva de entrada (el resto de movimientos usa Standard).
     const val EasingStandard = "cubic-bezier(0.1, 0.9, 0.2, 1)"
-    const val EasingEmphasized = "cubic-bezier(0.1, 0.9, 0.2, 1)"
     const val EasingDecelerate = "cubic-bezier(0, 0, 0.2, 1)"
     object Easings {
         val Standard: Easing = CubicBezierEasing(0.1f, 0.9f, 0.2f, 1f)
-        val Emphasized: Easing = CubicBezierEasing(0.1f, 0.9f, 0.2f, 1f)
         val Decelerate: Easing = CubicBezierEasing(0f, 0f, 0.2f, 1f)
     }
 }

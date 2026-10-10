@@ -106,12 +106,12 @@ fun XauxaSectionHeader(
             fontFamily = XauxaType.FamilyUi,
             color = textColor,
         )
-        // Marcador de 2 dp con el acento crudo: identidad sin sacrificar
-        // la lectura del texto.
+        // Marcador de sección con el acento crudo: identidad sin
+        // sacrificar la lectura del texto (M4; contrato §6.3).
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(XauxaMetrics.Focus)
+                .height(XauxaMetrics.Marker)
                 .background(accent),
         )
     }
@@ -466,7 +466,7 @@ fun XauxaPivot(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(XauxaMetrics.Focus)
+                            .height(XauxaMetrics.Marker)
                             .background(if (selected) accent else XauxaColor.Background),
                     )
                 }

@@ -84,7 +84,9 @@ fun XauxaHeroCard(
                 Box(
                     modifier = Modifier.fillMaxWidth().padding(top = XauxaSpacing.Md)
                         .background(XauxaColor.Border)
-                        .height(XauxaMetrics.BorderStrong),
+                        // Separador de 1 dp entre el número y el footer —
+                        // hairline estructural de la tarjeta hero.
+                        .height(XauxaMetrics.Border),
                 )
                 Text(
                     footer,
@@ -189,7 +191,7 @@ fun XauxaListRow(
         // color de tono Neutral, ruido visual sin significado).
         if (showsMarker) {
             Box(
-                modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight()
+                modifier = Modifier.width(XauxaMetrics.Marker).fillMaxHeight()
                     .background(accent ?: tone.content()),
             )
         }

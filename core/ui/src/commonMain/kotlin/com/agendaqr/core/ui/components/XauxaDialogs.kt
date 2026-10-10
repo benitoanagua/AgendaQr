@@ -192,7 +192,7 @@ fun XauxaToast(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
-        Box(modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight().background(tone.content()))
+        Box(modifier = Modifier.width(XauxaMetrics.Marker).fillMaxHeight().background(tone.content()))
         // §11: icono por tono — el estado nunca solo por color.
         tone.iconVector?.let { glyph ->
             XauxaIcon(imageVector = glyph, contentDescription = null, tint = tone.content())
@@ -236,7 +236,7 @@ fun XauxaInlineResult(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
-        Box(modifier = Modifier.width(XauxaMetrics.BorderStrong).fillMaxHeight().background(tone.content()))
+        Box(modifier = Modifier.width(XauxaMetrics.Marker).fillMaxHeight().background(tone.content()))
         // §11: icono por tono — el estado nunca solo por color.
         tone.iconVector?.let { glyph ->
             XauxaIcon(imageVector = glyph, contentDescription = null, tint = tone.content())

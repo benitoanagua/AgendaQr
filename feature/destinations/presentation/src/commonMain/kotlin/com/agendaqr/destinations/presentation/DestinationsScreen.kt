@@ -229,7 +229,9 @@ fun DestinationRow(
     XauxaListRow(
         title = destination.name.ifBlank { AppStrings.SinNombre },
         subtitle = destination.note ?: destination.category,
-        tone = if (destination.favorite) XauxaTone.Info else XauxaTone.Neutral,
+        // E-05: el marcador lateral solo aparece con acento de contexto o
+        // tono de estado REALES — "favorito" ya se expresa con el texto de
+        // la acción (§11); Info aquí era otro significado del mismo color.
         onClick = { onAction(DestinationAction.Open(destination.id)) },
         trailing = {
             Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm), verticalAlignment = Alignment.CenterVertically) {

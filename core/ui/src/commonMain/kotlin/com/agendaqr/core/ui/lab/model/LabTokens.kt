@@ -68,6 +68,7 @@ object XauxaTokenIndex {
         "XauxaMetrics.Border",
         "XauxaMetrics.BorderStrong",
         "XauxaMetrics.Focus",
+        "XauxaMetrics.Marker",
         "XauxaMetrics.ControlMinSize",
         "XauxaMetrics.ContentMaxWidth",
         "XauxaMetrics.QrPreviewSize",
@@ -98,9 +99,7 @@ object XauxaTokenIndex {
     val motion: Set<String> = setOf(
         "XauxaMotion.DurationShortMs",
         "XauxaMotion.DurationMediumMs",
-        "XauxaMotion.DurationLongMs",
         "XauxaMotion.EasingStandard",
-        "XauxaMotion.EasingEmphasized",
         "XauxaMotion.EasingDecelerate",
     )
 

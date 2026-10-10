@@ -167,7 +167,10 @@ internal fun ContextPickerDialog(
                                 // M4: el acento derivado identifica el
                                 // contexto; Cancelar/Quitar/Back intactos.
                                 accent = accentFor(context.id).background,
-                                tone = if (context.id == selectedId) XauxaTone.Info else XauxaTone.Neutral,
+                                // E-05: la selección se expresa con la
+                                // semántica `selected` (no con el tono Info,
+                                // que es estado informativo, no selección).
+                                selected = context.id == selectedId,
                                 onClick = { onSelect(context.id) },
                             )
                         }

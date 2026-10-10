@@ -207,9 +207,7 @@ private fun MotionSpecimen() {
     Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
         LabLabelValue("DurationShortMs", "${com.agendaqr.core.ui.theme.XauxaMotion.DurationShortMs}ms")
         LabLabelValue("DurationMediumMs", "${com.agendaqr.core.ui.theme.XauxaMotion.DurationMediumMs}ms")
-        LabLabelValue("DurationLongMs", "${com.agendaqr.core.ui.theme.XauxaMotion.DurationLongMs}ms")
         LabLabelValue("EasingStandard", com.agendaqr.core.ui.theme.XauxaMotion.EasingStandard)
-        LabLabelValue("EasingEmphasized", com.agendaqr.core.ui.theme.XauxaMotion.EasingEmphasized)
         LabLabelValue("EasingDecelerate", com.agendaqr.core.ui.theme.XauxaMotion.EasingDecelerate)
         Text(
             "Movimiento con propósito y sin loops; respetar prefers-reduced-motion del sistema.",
