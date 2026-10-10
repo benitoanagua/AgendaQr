@@ -74,9 +74,24 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
         if (shapesAllowedFiles.none { path.endsWith(it) } && forbiddenShapes.any(line::contains)) {
             add("$location: forbidden radius/elevation API: $line")
         }
+        // verify-xauxa.sh parity: CircleShape/RectangleShape también están
+        // prohibidos en componentes de core:ui (fuera de tokens/theme).
+        if (path.contains("/core/ui/") &&
+            !path.endsWith("XauxaTokens.kt") && !path.endsWith("XauxaTheme.kt") &&
+            !path.contains("/lab/") &&
+            (line.contains("CircleShape") || line.contains("RectangleShape"))
+        ) {
+            add("$location: production components must use XauxaShape/token API (no CircleShape/RectangleShape): $line")
+        }
         if (!path.endsWith("XauxaTheme.kt") && forbiddenVisualAuthority.any(line::contains)) add("$location: MaterialTheme cannot be the visual authority outside XauxaTheme: $line")
-        if (isFeatureSource && bannedMaterialInFeature.any(line::contains)) {
-            add("$location: Material component imported from feature/ (compose Xauxa instead): $line")
+        // verify-xauxa.sh parity: material3/colorScheme prohibido en
+        // feature/, shared/src y androidApp/src (solo core:ui puede adaptarlo).
+        val isAppSource = isFeatureSource || path.contains("/shared/src/") || path.contains("/androidApp/src/")
+        if (isAppSource && (bannedMaterialInFeature.any(line::contains) ||
+                line.contains("androidx.compose.material3.") ||
+                line.contains("MaterialTheme.colorScheme"))
+        ) {
+            add("$location: app/feature code must use core:ui and Xauxa tokens: $line")
         }
         // D2 — copy de UI en feature/ debe salir de AppStrings.
         if (isFeatureSource) {
@@ -140,6 +155,140 @@ fun checkViolations(): List<String> {
         violations += kotlinDesignViolations(file.path, file.readLines())
     }
     return violations
+}
+
+/**
+ * verify-xauxa.sh parity: el mínimo interactivo canónico es 48dp.
+ * Si alguien baja este valor, la accesibilidad se rompe (§11).
+ */
+tasks.register("verifyControlMinSize") {
+    group = "verification"
+    description = "XauxaMetrics.ControlMinSize must remain 48.dp."
+    doLast {
+        val tokens = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/XauxaTokens.kt")
+        if (!tokens.exists()) return@doLast
+        val content = tokens.readText()
+        if (!content.contains("val ControlMinSize = 48.dp")) {
+            throw GradleException("Xauxa gate failed: XauxaMetrics.ControlMinSize must remain 48.dp.")
+        }
+    }
+}
+
+/**
+ * A.6 Guardia permanente: ningún script sh/py/js/mjs/ts/ps1/bat fuera de
+ * la lista de excepciones (gradlew, gradlew.bat, salidas en build/).
+ */
+tasks.register("verifyNoScripts") {
+    group = "verification"
+    description = "No shell/JS/TS scripts in the repo (Kotlin way)."
+    doLast {
+        val scriptExtensions = listOf(".sh", ".py", ".js", ".mjs", ".ts", ".ps1", ".bat")
+        val exceptions = listOf("gradlew", "gradlew.bat")
+        val root = project.rootDir
+        val violations = mutableListOf<String>()
+        root.walkTopDown().forEach { file ->
+            if (file.isFile && !file.path.contains("/build/") && !file.path.contains("/.git/")) {
+                val name = file.name
+                val isScript = scriptExtensions.any { name.endsWith(it) }
+                if (isScript && name !in exceptions) {
+                    violations.add("${file.relativeTo(root).path}")
+                }
+            }
+        }
+        if (violations.isNotEmpty()) {
+            throw GradleException(
+                "Kotlin way: shell/JS/TS scripts are forbidden. " +
+                    "Port them to Gradle tasks or Kotlin modules. Found:\n" +
+                    violations.joinToString("\n  ") { "  $it" }
+            )
+        }
+        logger.lifecycle("verifyNoScripts: PASS (no forbidden scripts)")
+    }
+}
+
+
+/**
+ * A.2: Visual hash tasks (replaces docs/04-ux/visual-hashes/verify.sh).
+ * SHA-256 of each Roborazzi PNG compared against manifest.json (text).
+ * SENSIBLE AL ENTORNO (ADR-0007): el render depende del JDK/OS; usar en
+ * el mismo entorno que generó el manifest o regenerarlo.
+ */
+tasks.register("recordVisualHashes") {
+    group = "verification"
+    description = "Regenerates SHA-256 manifest from Roborazzi captures."
+    val outputDir = file("feature/destinations/presentation/build/roborazzi")
+    val manifestFile = file("docs/04-ux/visual-hashes/manifest.json")
+    inputs.dir(outputDir)
+    outputs.file(manifestFile)
+    doLast {
+        if (!outputDir.exists()) {
+            throw GradleException("No Roborazzi output at ${outputDir}. Run :feature:destinations:presentation:recordRoborazzi first.")
+        }
+        val hashes = sortedMapOf<String, String>()
+        outputDir.listFiles()?.filter { it.extension == "png" }?.sortedBy { it.name }?.forEach { png ->
+            val digest = java.security.MessageDigest.getInstance("SHA-256")
+            png.inputStream().use { input ->
+                val buf = ByteArray(8192)
+                var read: Int
+                while (input.read(buf).also { read = it } > 0) {
+                    digest.update(buf, 0, read)
+                }
+            }
+            hashes[png.name] = digest.digest().joinToString("") { "%02x".format(it) }
+        }
+        manifestFile.parentFile.mkdirs()
+        manifestFile.writeText(
+            hashes.entries.joinToString("", "{\n", "\n}\n") { (k, v) ->
+                "  \"${k}\": \"${v}\"${if (k == hashes.keys.last()) "" else ","}\n"
+            },
+        )
+        logger.lifecycle("recordVisualHashes: ${hashes.size} hashes written to ${manifestFile.path}")
+    }
+}
+
+tasks.register("verifyVisualHashes") {
+    group = "verification"
+    description = "Compares Roborazzi captures against the SHA-256 manifest (ADR-0007)."
+    val outputDir = file("feature/destinations/presentation/build/roborazzi")
+    val manifestFile = file("docs/04-ux/visual-hashes/manifest.json")
+    inputs.dir(outputDir)
+    inputs.file(manifestFile)
+    doLast {
+        if (!manifestFile.exists()) {
+            throw GradleException("Manifest not found: ${manifestFile}. Run recordVisualHashes first.")
+        }
+        if (!outputDir.exists()) {
+            throw GradleException("No Roborazzi output at ${outputDir}. Run :feature:destinations:presentation:recordRoborazzi first.")
+        }
+        val expected = mutableMapOf<String, String>()
+        manifestFile.readLines().forEach { line ->
+            val m = Regex("\"([^\"]+)\": \"([a-f0-9]+)\"").find(line)
+            if (m != null) expected[m.groupValues[1]] = m.groupValues[2]
+        }
+        val actual = mutableMapOf<String, String>()
+        outputDir.listFiles()?.filter { it.extension == "png" }?.forEach { png ->
+            val digest = java.security.MessageDigest.getInstance("SHA-256")
+            png.inputStream().use { input ->
+                val buf = ByteArray(8192)
+                var read: Int
+                while (input.read(buf).also { read = it } > 0) {
+                    digest.update(buf, 0, read)
+                }
+            }
+            actual[png.name] = digest.digest().joinToString("") { "%02x".format(it) }
+        }
+        val missing = (expected.keys - actual.keys).sorted()
+        val extra = (actual.keys - expected.keys).sorted()
+        val changed = expected.filter { (k, v) -> k in actual && actual[k] != v }.keys.sorted()
+        if (missing.isNotEmpty() || extra.isNotEmpty() || changed.isNotEmpty()) {
+            val sb = StringBuilder("VISUAL_HASHES=FAIL\n")
+            missing.forEach { sb.append("  - missing: $it\n") }
+            extra.forEach { sb.append("  - new: $it\n") }
+            changed.forEach { sb.append("  - pixel changed: $it\n") }
+            throw GradleException(sb.toString())
+        }
+        logger.lifecycle("VISUAL_HASHES=PASS (${actual.size} captures)")
+    }
 }
 
 tasks.register("verifyDesignSystemCompliance") {
@@ -362,6 +511,6 @@ tasks.register("verifyArchitectureBoundaries") {
 
 tasks.register("verifyAgendaQrArchitecture") {
     group = "verification"
-    dependsOn("verifyDesignSystemCompliance", "verifyArchitectureBoundaries", "verifyWebDesignSystem", "verifyDesignSystemFixtures")
+    dependsOn("verifyDesignSystemCompliance", "verifyArchitectureBoundaries", "verifyWebDesignSystem", "verifyDesignSystemFixtures", "verifyNoScripts", "verifyControlMinSize")
     description = "Runs the complete Agenda QR architecture and Xauxa design-system gates."
 }

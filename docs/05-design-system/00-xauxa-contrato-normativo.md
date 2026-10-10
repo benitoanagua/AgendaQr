@@ -201,7 +201,7 @@ Un cambio de Xauxa no se considera terminado hasta cumplir las puertas aplicable
 4. **Integridad del laboratorio:** catálogo completo y sin duplicados.
 5. **Layout/accessibility:** font scale, tamaños compactos, targets, foco y semántica.
 6. **Regresión visual:** capturas/hash manifest de referencias actualizadas deliberadamente; revisar claro/oscuro y estados principales.
-7. **Gate de repositorio:** `verify-xauxa.sh` y CI correspondiente.
+7. **Gate de repositorio:** `verifyDesignSystemCompliance` y CI correspondiente.
 8. **Revisión en dispositivo:** cuando cambian insets, cámara, foco nativo, navegación, gestos, tipografía o motion.
 
 Si una puerta no puede ejecutarse por falta de red, SDK o dispositivo, el estado se registra como **NO VERIFICADO**, nunca como PASS. Un gate estático no sustituye compilación, tests ni revisión visual.
@@ -236,4 +236,4 @@ El gate estático pasa; la suite se ejecuta en CI.
 
 ### Ronda 10 — cobertura estática y responsive
 
-El gate `verify-xauxa.sh` amplía el recorrido de primitivas visuales a los source sets de producción de `core:ui` y la prohibición de Material 3 directo a `feature`, `shared/src` y `androidApp/src`. El nuevo test responsive de 360 dp complementa la cobertura de 320 dp. El gate estático no acredita compilación ni ejecución de pruebas: la suite de CI las ejecuta en cada push.
+El gate `verifyDesignSystemCompliance` amplía el recorrido de primitivas visuales a los source sets de producción de `core:ui` y la prohibición de Material 3 directo a `feature`, `shared/src` y `androidApp/src`. El nuevo test responsive de 360 dp complementa la cobertura de 320 dp. El gate estático no acredita compilación ni ejecución de pruebas: la suite de CI las ejecuta en cada push.

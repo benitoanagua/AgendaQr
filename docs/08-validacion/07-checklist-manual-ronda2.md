@@ -57,7 +57,7 @@ criterio de éxito. Marca con [ ] al validar y registra en
    **Éxito:** nada cortado ni solapado (los tests Round2FontScaleTest
    cubren componentes en 320/360dp; el dispositivo confirma pantallas
    completas y las capturas de referencia muestran el estado esperado:
-   `bash docs/04-ux/visual-hashes/verify.sh`).
+   `./gradlew verifyVisualHashes`).
 
 ## Rotación (decisión ADR-0006: rotación libre)
 
