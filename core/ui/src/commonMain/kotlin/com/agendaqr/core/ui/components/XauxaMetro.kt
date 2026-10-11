@@ -72,11 +72,12 @@ fun XauxaPageTitle(
     val fontScale = androidx.compose.ui.platform.LocalDensity.current.fontScale
     val scaleFactor = pageTitleScaleFactor(fontScale)
     val effectiveSp = XauxaType.DisplayPage.value * scaleFactor
+    val effectiveLineHeightSp = XauxaType.LineHeightDisplayPage.value * scaleFactor
     androidx.compose.material3.Text(
         text = text,
         modifier = modifier.semantics { heading() },
         fontSize = androidx.compose.ui.unit.TextUnit(effectiveSp, androidx.compose.ui.unit.TextUnitType.Sp),
-        
+        lineHeight = androidx.compose.ui.unit.TextUnit(effectiveLineHeightSp, androidx.compose.ui.unit.TextUnitType.Sp),
         fontFamily = XauxaType.FamilyDisplay,
         fontWeight = XauxaType.WeightDisplayPage,
         color = color,
@@ -212,11 +213,12 @@ fun XauxaMetroTile(
                 },
             ),
     ) {
+        val horizontalPadding = if (size == XauxaTileSize.SMALL) XauxaSpacing.Xs else XauxaSpacing.Sm
         Column(
-            modifier = Modifier.fillMaxWidth().padding(XauxaSpacing.Sm),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = horizontalPadding, vertical = XauxaSpacing.Sm),
         ) {
             // Zona flexible para icono/contenido.
-            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                 if (icon != null && size != XauxaTileSize.WIDE) {
                     XauxaIcon(
                         imageVector = icon,
@@ -230,9 +232,17 @@ fun XauxaMetroTile(
                 }
             }
             // Etiqueta debajo, siempre visible; maxLines según escala.
+            // D2 (medido en Robolectric NATIVE, Roboto real): el tile 1x1
+            // ofrece 68 px de texto (76 menos padding Xs) y "Contextos" a
+            // 14 sp ocupa ~64 px limpio pero ~69 px con el tracking ambiente
+            // (0.5 sp heredado de Material): partia ("Contexto/s"). La
+            // etiqueta del tile PEQUENO va en Caption (12 sp, ~55 px) con
+            // tracking neutro explicito: cabe a 1.0x y a 1.15x (63 px) sin
+            // partir; mediano/ancho conservan Label con tracking neutro.
             androidx.compose.material3.Text(
                 text = label,
-                fontSize = XauxaType.Label,
+                fontSize = if (size == XauxaTileSize.SMALL) XauxaType.Caption else XauxaType.Label,
+                letterSpacing = XauxaType.LetterSpacingNone,
                 fontFamily = XauxaType.FamilyUi,
                 color = accent.onAccent,
                 maxLines = tileLabelMaxLines(fontScale),
