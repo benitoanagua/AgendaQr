@@ -338,6 +338,7 @@ internal fun CameraQrEntry(onOpen: () -> Unit) {
         )
         XauxaSecondaryButton(
             label = AppStrings.Camara,
+            icon = com.agendaqr.core.ui.components.XauxaIcons.Camera,
             onClick = {
                 val granted = ContextCompat.checkSelfPermission(
                     context,

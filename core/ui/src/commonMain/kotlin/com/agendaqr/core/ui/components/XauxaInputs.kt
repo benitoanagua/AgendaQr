@@ -251,7 +251,21 @@ fun XauxaSearchBar(
                 value = value,
                 onValueChange = onValueChange,
                 modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
-                placeholder = { Text(placeholder, fontSize = XauxaType.Body, color = XauxaColor.TextTertiary) },
+                placeholder = {
+                    Text(
+                        placeholder,
+                        fontSize = XauxaType.Body,
+                        // Tracking neutro explicito: sin el, el 0.5 sp ambiente
+                        // ensancha el copy y resta margen en los 260 px
+                        // utiles del campo (medido, D6).
+                        letterSpacing = XauxaType.LetterSpacingNone,
+                        color = XauxaColor.TextTertiary,
+                        // D6: el placeholder vive en UNA linea (con ellipsis
+                        // si el copy no cupiera a otra escala o localizacion).
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                    )
+                },
                 singleLine = true,
                 interactionSource = interactionSource,
                 shape = XauxaShape,

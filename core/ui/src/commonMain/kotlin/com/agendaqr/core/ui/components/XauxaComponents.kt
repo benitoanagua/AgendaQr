@@ -7,6 +7,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -138,6 +139,9 @@ fun XauxaPrimaryButton(
     isLoading: Boolean = false,
     /** stateDescription de "ocupado" (texto del llamador, §5). */
     busyDescription: String? = null,
+    /** Glifo decorativo del mapeo minimo (M12, p. ej. Galeria en S02):
+     * la etiqueta visible sigue siendo el nombre accesible (§11). */
+    icon: ImageVector? = null,
 ) {
     XauxaLoadingButton(
         label = label,
@@ -146,6 +150,7 @@ fun XauxaPrimaryButton(
         enabled = enabled,
         isLoading = isLoading,
         busyDescription = busyDescription,
+        icon = icon,
         containerColor = XauxaColor.Brand,
         contentColor = XauxaColor.OnBrand,
         disabledContainerColor = XauxaColor.Surface3,
@@ -172,6 +177,7 @@ internal fun XauxaLoadingButton(
     contentColor: Color,
     disabledContainerColor: Color,
     disabledContentColor: Color,
+    icon: ImageVector? = null,
 ) {
     androidx.compose.material3.Button(
         modifier = modifier
@@ -186,6 +192,13 @@ internal fun XauxaLoadingButton(
         onClick = onClick,
         enabled = enabled && !isLoading,
         shape = XauxaShape,
+        // Padding vertical propio a cero: la altura la fija el contenido
+        // (48 dp, ver abajo), no el relleno interno de Material (8+8). El
+        // horizontal conserva el de Material (24 dp = Xxl).
+        contentPadding = PaddingValues(
+            horizontal = XauxaSpacing.Xxl,
+            vertical = XauxaSpacing.None,
+        ),
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             contentColor = contentColor,
@@ -194,11 +207,29 @@ internal fun XauxaLoadingButton(
         ),
     ) {
         Box(contentAlignment = Alignment.Center) {
-            Text(
-                label,
-                modifier = if (isLoading) Modifier.alpha(0f) else Modifier,
-                style = XauxaTextStyles.ButtonLabel,
-            )
+            // Altura DETERMINISTICA 48: el contenido manda sobre el nodo
+            // semantico del M3 (el floor externo no lo alcanza en todos los
+            // arboles) y con metricas degeneradas el contenido mide 44
+            // (defecto S02 en LEGACY). Con padding vertical cero, 48 del
+            // contenido = 48 del boton en claro/oscuro y a toda escala.
+            Row(
+                modifier = Modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
+                    .then(if (isLoading) Modifier.alpha(0f) else Modifier),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
+            ) {
+                if (!isLoading && icon != null) {
+                    XauxaIcon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = contentColor,
+                    )
+                }
+                Text(
+                    label,
+                    style = XauxaTextStyles.ButtonLabel,
+                )
+            }
             if (isLoading) {
                 XauxaDotProgress(color = contentColor)
             }
@@ -223,11 +254,18 @@ fun XauxaSecondaryButton(
         onClick = onClick,
         enabled = enabled && !isLoading,
         shape = XauxaShape,
+        // Igual que el primario: padding vertical cero (el horizontal
+        // conserva el de Material, 12 dp = Md) y 48 dp en el contenido.
+        contentPadding = PaddingValues(
+            horizontal = XauxaSpacing.Md,
+            vertical = XauxaSpacing.None,
+        ),
     ) {
         if (isLoading) {
             XauxaDotProgress(color = XauxaColor.Brand)
         } else {
             Row(
+                modifier = Modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
             ) {
@@ -268,8 +306,14 @@ fun XauxaTextAction(
         modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         onClick = onClick,
         shape = XauxaShape,
+        // 48 dp deterministicos como en los botones (ver XauxaLoadingButton).
+        contentPadding = PaddingValues(
+            horizontal = XauxaSpacing.Md,
+            vertical = XauxaSpacing.None,
+        ),
     ) {
         Row(
+            modifier = Modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
         ) {

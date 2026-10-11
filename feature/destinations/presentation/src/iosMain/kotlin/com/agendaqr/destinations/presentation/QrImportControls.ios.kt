@@ -38,16 +38,19 @@ actual fun QrGalleryControls(
         if (galleryAsPrimary) {
             XauxaPrimaryButton(
                 label = AppStrings.Galeria,
+                icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
                 onClick = { IosQrImportController.openGallery(onResult) },
             )
         } else {
             XauxaSecondaryButton(
                 label = AppStrings.Galeria,
+                icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
                 onClick = { IosQrImportController.openGallery(onResult) },
             )
         }
         XauxaSecondaryButton(
             label = AppStrings.GaleriaVarios,
+            icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
             onClick = { IosQrImportController.openMultiple(onResult) },
         )
     }
@@ -88,6 +91,7 @@ actual fun QrCameraEntryControl(
         )
         XauxaSecondaryButton(
             label = AppStrings.Camara,
+            icon = com.agendaqr.core.ui.components.XauxaIcons.Camera,
             onClick = {
                 IosQrCameraPresenter(
                     onQr = { result ->
@@ -118,17 +122,20 @@ actual fun QrImportControls(
         if (galleryAsPrimary) {
             XauxaPrimaryButton(
                 label = AppStrings.Galeria,
+                icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
                 onClick = { IosQrImportController.openGallery(onResult) },
             )
         } else {
             XauxaSecondaryButton(
                 label = AppStrings.Galeria,
+                icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
                 onClick = { IosQrImportController.openGallery(onResult) },
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
             XauxaSecondaryButton(
                 label = AppStrings.GaleriaVarios,
+                icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
                 onClick = { IosQrImportController.openMultiple(onResult) },
             )
             QrCameraEntryControl(onResult)
