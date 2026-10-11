@@ -39,11 +39,11 @@ actual fun QrImportControls(
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
         if (galleryAsPrimary) {
-            com.agendaqr.core.ui.components.XauxaPrimaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery)
+            com.agendaqr.core.ui.components.XauxaPrimaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery, icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery)
         } else {
-            XauxaSecondaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery)
+            XauxaSecondaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery, icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery)
         }
-        XauxaSecondaryButton(AppStrings.GaleriaVarios, AgendaQrAndroidImportLauncher::multiple)
+        XauxaSecondaryButton(AppStrings.GaleriaVarios, AgendaQrAndroidImportLauncher::multiple, icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery)
         CameraCaptureHost(onQr = { asset -> onResult(QrImportResult(listOf(asset))) })
     }
 }
@@ -62,11 +62,11 @@ actual fun QrGalleryControls(
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
     ) {
         if (galleryAsPrimary) {
-            com.agendaqr.core.ui.components.XauxaPrimaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery)
+            com.agendaqr.core.ui.components.XauxaPrimaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery, icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery)
         } else {
-            XauxaSecondaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery)
+            XauxaSecondaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery, icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery)
         }
-        XauxaSecondaryButton(AppStrings.GaleriaVarios, AgendaQrAndroidImportLauncher::multiple)
+        XauxaSecondaryButton(AppStrings.GaleriaVarios, AgendaQrAndroidImportLauncher::multiple, icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery)
     }
 }
 

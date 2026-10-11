@@ -4,13 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.XauxaAppBar
 import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaScreenScaffold
+import com.agendaqr.core.ui.components.XauxaSectionHeader
 import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.theme.XauxaColor
-import com.agendaqr.core.ui.theme.XauxaType
 
 /**
  * S02 — Añadir.
@@ -47,12 +46,7 @@ fun AddDestinationScreen(
             galleryAsPrimary = true,
         )
 
-        XauxaText(
-            AppStrings.DesdeOtraApp,
-            size = XauxaType.Title,
-            fontWeight = FontWeight.SemiBold,
-            color = XauxaColor.TextPrimary,
-        )
+        XauxaSectionHeader(text = AppStrings.DesdeOtraApp)
         XauxaText(
             AppStrings.shareFromAnotherAppHint,
             color = XauxaColor.TextSecondary,

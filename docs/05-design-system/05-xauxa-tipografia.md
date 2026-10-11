@@ -15,6 +15,15 @@ licencia registradas abajo y en `06-licencias-terceros.md`) y `XauxaType`
 añade `DisplayPage = 40.sp` (≥ 40 sp), `WeightDisplayPage = FontWeight.Light`
 y `SectionHeader = 14.sp` para los encabezados de sección (14–16 sp).
 
+**Pulido V1.1 (rama fix/ui-polish-v1-1):** el display de página fija su
+interlineado propio `LineHeightDisplayPage = 46.sp` (1.15×, escala junto
+con el tamaño efectivo acotado a 1.3×); `XauxaHeading` y `XauxaText` fijan
+interlineado proporcional a su tamaño (1.25× display / 1.5× cuerpo) en vez
+de heredar el ambiente de Material (24 sp: todo tamaño > 24 sp solapaba).
+El tracking ambiente heredado (0.5 sp) se neutraliza donde la medición es
+ajustada con `LetterSpacingNone = 0.sp` (etiqueta del tile 1×1,
+placeholder del buscador).
+
 ## Familias expuestas por `XauxaType`
 
 | Token | Familia | Origen | Dónde se usa |

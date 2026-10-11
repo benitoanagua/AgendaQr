@@ -34,7 +34,7 @@ internal object AppStrings {
     val searchIntroHint = "Busca QR, actividades, contextos o comprobantes."
     val BuscandoEnAgendaQr = "Buscando en Agenda QR…"
     val Buscar = "Buscar"
-    val searchPlaceholder = "Buscar QR, actividades, comprobantes o contextos"
+    val searchPlaceholder = "QR, actividades y más"
     val BuscarEnAgendaQr = "Buscar en Agenda QR"
     val BuscarOperaciones = "Buscar actividades"
     val changeOperationWithReceipts = "Cambiar actividad con comprobantes"
