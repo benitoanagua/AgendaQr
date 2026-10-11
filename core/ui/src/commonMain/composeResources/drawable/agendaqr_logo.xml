@@ -1,0 +1,193 @@
+<!--
+  Agenda QR — logo vector drawable para Compose Multiplatform (commonMain).
+  Fuente de verdad: docs/branding/agendaqr-logo.svg (viewport 512×512).
+  Conversión manual SVG→VectorDrawable:
+    - Todos los <rect rx> se expresan como <path> con esquinas redondeadas
+      usando arcos (a …) en SVG path syntax, que VectorDrawable admite.
+    - Sin <group> de transformación global; las coordenadas son absolutas.
+  Consumo: painterResource(Res.drawable.agendaqr_logo)
+  contentDescription: null cuando se usa como decorativo (el contexto de texto
+  adyacente ya describe la pantalla — regla I24 del contrato Xauxa).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="512dp"
+    android:height="512dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Fondo azul principal: rect 0,0 512×512 rx=112 -->
+    <path
+        android:fillColor="#0067B8"
+        android:pathData="
+          M112,0
+          L400,0
+          a112,112 0 0 1 112,112
+          L512,400
+          a112,112 0 0 1 -112,112
+          L112,512
+          a112,112 0 0 1 -112,-112
+          L0,112
+          a112,112 0 0 1 112,-112
+          Z"/>
+
+    <!-- Hoja blanca: rect x=112 y=88 w=288 h=336 rx=28 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="
+          M140,88
+          L372,88
+          a28,28 0 0 1 28,28
+          L400,396
+          a28,28 0 0 1 -28,28
+          L140,424
+          a28,28 0 0 1 -28,-28
+          L112,116
+          a28,28 0 0 1 28,-28
+          Z"/>
+
+    <!-- Marcador azul oscuro (bookmark): path M336 88 h40 v70 l-20-14 -20 14 z -->
+    <path
+        android:fillColor="#004A87"
+        android:pathData="M336,88 L376,88 L376,158 L356,144 L336,158 Z"/>
+
+    <!-- Marco QR superior: rect x=170 y=170 w=56 h=56 rx=8 (azul) -->
+    <path
+        android:fillColor="#0067B8"
+        android:pathData="
+          M178,170
+          L218,170
+          a8,8 0 0 1 8,8
+          L226,218
+          a8,8 0 0 1 -8,8
+          L178,226
+          a8,8 0 0 1 -8,-8
+          L170,178
+          a8,8 0 0 1 8,-8
+          Z"/>
+
+    <!-- Marco QR inferior: rect x=170 y=286 w=56 h=56 rx=8 (azul) -->
+    <path
+        android:fillColor="#0067B8"
+        android:pathData="
+          M178,286
+          L218,286
+          a8,8 0 0 1 8,8
+          L226,334
+          a8,8 0 0 1 -8,8
+          L178,342
+          a8,8 0 0 1 -8,-8
+          L170,294
+          a8,8 0 0 1 8,-8
+          Z"/>
+
+    <!-- Interior blanco marco sup: rect x=182 y=182 w=32 h=32 rx=4 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="
+          M186,182
+          L210,182
+          a4,4 0 0 1 4,4
+          L214,210
+          a4,4 0 0 1 -4,4
+          L186,214
+          a4,4 0 0 1 -4,-4
+          L182,186
+          a4,4 0 0 1 4,-4
+          Z"/>
+
+    <!-- Interior blanco marco inf: rect x=182 y=298 w=32 h=32 rx=4 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="
+          M186,298
+          L210,298
+          a4,4 0 0 1 4,4
+          L214,326
+          a4,4 0 0 1 -4,4
+          L186,330
+          a4,4 0 0 1 -4,-4
+          L182,302
+          a4,4 0 0 1 4,-4
+          Z"/>
+
+    <!-- Punto QR sup: rect x=191 y=191 w=14 h=14 rx=2 -->
+    <path
+        android:fillColor="#0067B8"
+        android:pathData="
+          M193,191
+          L203,191
+          a2,2 0 0 1 2,2
+          L205,203
+          a2,2 0 0 1 -2,2
+          L193,205
+          a2,2 0 0 1 -2,-2
+          L191,193
+          a2,2 0 0 1 2,-2
+          Z"/>
+
+    <!-- Punto QR inf: rect x=191 y=307 w=14 h=14 rx=2 -->
+    <path
+        android:fillColor="#0067B8"
+        android:pathData="
+          M193,307
+          L203,307
+          a2,2 0 0 1 2,2
+          L205,319
+          a2,2 0 0 1 -2,2
+          L193,321
+          a2,2 0 0 1 -2,-2
+          L191,309
+          a2,2 0 0 1 2,-2
+          Z"/>
+
+    <!-- Módulos QR libres (18×18 rx=3 en azul) -->
+
+    <!-- x=244 y=170 -->
+    <path android:fillColor="#0067B8"
+        android:pathData="M247,170 L259,170 a3,3 0 0 1 3,3 L262,182 a3,3 0 0 1 -3,3 L247,185 a3,3 0 0 1 -3,-3 L244,173 a3,3 0 0 1 3,-3 Z"/>
+
+    <!-- x=244 y=206 -->
+    <path android:fillColor="#0067B8"
+        android:pathData="M247,206 L259,206 a3,3 0 0 1 3,3 L262,218 a3,3 0 0 1 -3,3 L247,221 a3,3 0 0 1 -3,-3 L244,209 a3,3 0 0 1 3,-3 Z"/>
+
+    <!-- x=244 y=250 -->
+    <path android:fillColor="#0067B8"
+        android:pathData="M247,250 L259,250 a3,3 0 0 1 3,3 L262,262 a3,3 0 0 1 -3,3 L247,265 a3,3 0 0 1 -3,-3 L244,253 a3,3 0 0 1 3,-3 Z"/>
+
+    <!-- x=170 y=250 -->
+    <path android:fillColor="#0067B8"
+        android:pathData="M173,250 L185,250 a3,3 0 0 1 3,3 L188,262 a3,3 0 0 1 -3,3 L173,265 a3,3 0 0 1 -3,-3 L170,253 a3,3 0 0 1 3,-3 Z"/>
+
+    <!-- x=206 y=250 -->
+    <path android:fillColor="#0067B8"
+        android:pathData="M209,250 L221,250 a3,3 0 0 1 3,3 L224,262 a3,3 0 0 1 -3,3 L209,265 a3,3 0 0 1 -3,-3 L206,253 a3,3 0 0 1 3,-3 Z"/>
+
+    <!-- x=286 y=250 -->
+    <path android:fillColor="#0067B8"
+        android:pathData="M289,250 L301,250 a3,3 0 0 1 3,3 L304,262 a3,3 0 0 1 -3,3 L289,265 a3,3 0 0 1 -3,-3 L286,253 a3,3 0 0 1 3,-3 Z"/>
+
+    <!-- x=324 y=250 -->
+    <path android:fillColor="#0067B8"
+        android:pathData="M327,250 L339,250 a3,3 0 0 1 3,3 L342,262 a3,3 0 0 1 -3,3 L327,265 a3,3 0 0 1 -3,-3 L324,253 a3,3 0 0 1 3,-3 Z"/>
+
+    <!-- x=244 y=286 -->
+    <path android:fillColor="#0067B8"
+        android:pathData="M247,286 L259,286 a3,3 0 0 1 3,3 L262,298 a3,3 0 0 1 -3,3 L247,301 a3,3 0 0 1 -3,-3 L244,289 a3,3 0 0 1 3,-3 Z"/>
+
+    <!-- x=286 y=286 -->
+    <path android:fillColor="#0067B8"
+        android:pathData="M289,286 L301,286 a3,3 0 0 1 3,3 L304,298 a3,3 0 0 1 -3,3 L289,301 a3,3 0 0 1 -3,-3 L286,289 a3,3 0 0 1 3,-3 Z"/>
+
+    <!-- x=324 y=324 -->
+    <path android:fillColor="#0067B8"
+        android:pathData="M327,324 L339,324 a3,3 0 0 1 3,3 L342,336 a3,3 0 0 1 -3,3 L327,339 a3,3 0 0 1 -3,-3 L324,327 a3,3 0 0 1 3,-3 Z"/>
+
+    <!-- x=286 y=324 -->
+    <path android:fillColor="#0067B8"
+        android:pathData="M289,324 L301,324 a3,3 0 0 1 3,3 L304,336 a3,3 0 0 1 -3,3 L289,339 a3,3 0 0 1 -3,-3 L286,327 a3,3 0 0 1 3,-3 Z"/>
+
+    <!-- x=244 y=324 -->
+    <path android:fillColor="#0067B8"
+        android:pathData="M247,324 L259,324 a3,3 0 0 1 3,3 L262,336 a3,3 0 0 1 -3,3 L247,339 a3,3 0 0 1 -3,-3 L244,327 a3,3 0 0 1 3,-3 Z"/>
+
+</vector>
