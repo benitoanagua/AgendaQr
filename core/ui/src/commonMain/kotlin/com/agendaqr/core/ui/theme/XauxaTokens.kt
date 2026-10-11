@@ -402,6 +402,13 @@ object XauxaType {
     val Label: TextUnit = 14.sp
     val Caption: TextUnit = 12.sp
     val LetterSpacingWide: TextUnit = 0.5.sp
+    /** Tracking neutro EXPLICITO (0): neutraliza el 0.5 sp que Material 3
+     * hereda del estilo ambiente (bodyLarge) en cada Text sin tracking.
+     * Lo consumen superficies medidas al pixel (etiqueta del tile 1x1:
+     * "Contextos" a 14 sp mide ~64 px limpio pero ~69 px con el tracking
+     * ambiente y parte en 68 px — D2). Cero en cualquier unidad: no es un
+     * valor de diseno, es ausencia de tracking. */
+    val LetterSpacingNone: TextUnit = 0.sp
     // interlineados canónicos (sp — respetan el escalado, §11).
     val LineHeightLabel: TextUnit = 20.sp
     val LineHeightBody: TextUnit = 24.sp
@@ -410,6 +417,10 @@ object XauxaType {
     /** V1.1 (ADR-0005, spec §12 Tipografía): título de página en display
      * ligero (Archivo 300) y ≥ 40 sp. */
     val DisplayPage: TextUnit = 40.sp
+    /** Interlineado propio del display de pagina (46 sp = 1.15x): con el
+     * ambiente del cuerpo (24 sp) dos lineas a 40 sp se solapan (D1).
+     * Escala junto con el tamano efectivo acotado a 1.3x (§11). */
+    val LineHeightDisplayPage: TextUnit = 46.sp
     /** V1.1: encabezados de sección pequeños (14–16 sp) en color de
      * acento. */
     val SectionHeader: TextUnit = 14.sp
