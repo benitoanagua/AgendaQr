@@ -50,19 +50,61 @@ dispositivo físico o red). No se declaran PASS.
 
 ## Defectos abiertos de implementación
 
-Ninguno registrado. Los dos defectos previos —el badge de sincronización
+Ninguno pendiente. Los dos defectos previos —el badge de sincronización
 compitiendo por el ancho de la fila y los destinos "Sin nombre"/"QR
 importado" indistinguibles— están cerrados y cubiertos por
 `DestinationRowLayoutTest` y `DestinationSubtitleTest`.
+
+## Defectos de pulido UI V1.1 cerrados (rama fix/ui-polish-v1-1)
+
+Desvíos del código respecto a la spec confirmados en capturas Roborazzi y
+corregidos en el código (la spec manda). Pruebas de regresión en
+`XauxaUiPolishDefectsTest` (core:ui, Robolectric NATIVE a 360 dp) y
+`S02UiPolishTest` (feature, pantallas S01/S02):
+
+| ID | Defecto | Arreglo | Prueba |
+|---|---|---|---|
+| D1 | Títulos a dos líneas solapados ("Resultado de importación"): `XauxaPageTitle` heredaba el interlineado ambiente (24 sp) con 40 sp | Token `XauxaType.LineHeightDisplayPage` (46 sp, 1.15×) aplicado con el factor de escala del display; `XauxaHeading`/`XauxaText` fijan interlineado proporcional propio (1.25×/1.5×) en vez de heredar | Ratio ≥ 1.1× y altura de 2 líneas a fontScale 1.0/1.3/2.0; métricas single-line fijas |
+| D2 | Etiquetas de tiles partidas a mitad de palabra ("Registra/r", "Favorito/s", "Context/os") | Padding horizontal del tile pequeño a `Xs` (opción a) + etiqueta del tile pequeño en `Caption` 12 sp con tracking neutro `LetterSpacingNone` (opción b): medido, "Contextos" ocupa ~64 px limpio pero ~69 px con el tracking ambiente heredado (0.5 sp) en 68 px útiles. 4 columnas intactas; columnas por escala intactas | Rejilla S01 real a 360 dp, fontScale 1.0/1.15/1.3/2.0: ninguna línea parte palabras |
+| D3 | Icono del tile a la izquierda (M3 pide centrado) | La zona flexible del icono ocupa todo el ancho (`fillMaxWidth`) con contenido centrado; etiqueta abajo a la izquierda | Centro X del icono contra centro del tile (≤ 1 dp) + etiqueta abajo-izquierda |
+| D4 | "Desde otra app" (S02) como título 20 sp en texto primario; M6 pide encabezado de sección 14–16 sp en acento | `XauxaSectionHeader`, igual que "Recientes" en S01; contraste del acento ≥ 4.5:1 en claro y oscuro | Mismo tamaño/color/familia en S01 y S02 + contraste puro por tema |
+| D5 | Controles de S02 sin icono (M10/M12: Galería→Image, Cámara→Camera) | Icono en "Galería (varios)", entrada de Cámara (Android e iOS) y primario "Galería" (nuevo parámetro opcional `icon` en `XauxaPrimaryButton`; sin iconos nuevos) | Árbol sin fusionar: bloque 24 dp decorativo (sin rol/texto/descripción) junto a cada etiqueta |
+| D6 | Placeholder del buscador S01 en dos líneas | Copy "QR, actividades y más" (S04 conserva la enumeración completa en `searchIntroHint`) + `maxLines = 1` con ellipsis y tracking neutro en el placeholder | Componente: copy largo queda en 1 línea; S01 real: 1 línea sin truncarse a 360 dp/1.0 |
+
+Hallazgos de la investigación (verificados, no supuestos): en Robolectric
+LEGACY la medición de texto es degenerada (avances ~1 px; un mismo texto
+14 sp mide 28, 35 o 52 px según la pantalla) y sin qualifiers NATIVE mide
+ceros — la geometría solo se afirma en NATIVE con viewport declarado; los
+tests nuevos y los geométricos de S02 usan NATIVE a 360 dp. Los botones
+secundarios fijan ahora 48 dp en el contenido interno con padding vertical
+M3 a cero (el floor externo no alcanza el nodo semántico en todos los
+árboles; altura determinista en claro/oscuro y a toda escala). Superficie
+`Surface` propaga minConstraints al hijo directo (las cajas de ancho fijo
+de los tests viven bajo una `Column`).
+
+## Propuestas pendientes de decisión (solo reportadas, no implementadas)
+
+- Contraste no textual del relleno de campos en oscuro (`surfaceContainer`
+  #1A1A1A sobre fondo #000000, ~1.1:1): la spec M8 lo permite (campo plano
+  sin borde en reposo); se propone registrarlo en "Límites conocidos" con
+  esta justificación (el límite se percibe por bloque tonal + etiqueta, y
+  el borde de 2 dp aparece en foco/error).
+- Decisión UX pendiente (puntos abiertos de ADR-0005, sin cambio): logo en
+  login/inicio, mostrar/ocultar contraseña, helper "Mínimo 6 caracteres"
+  siempre visible, tamaño 12 sp de "Volver" y auxiliares (tokens Caption).
+- Cobertura de capturas: S12 solo se captura en Idle; se propone añadir
+  S12 Result y Review (claro/oscuro) y S01 con fontScale 1.3 (el conteo
+  seguiría en 8 hasta decidirlo).
 
 ## Puertas de calidad
 
 | Puerta | Comando | Resultado (esta pasada) |
 |---|---|---|
 | Arquitectura + design system + no-scripts | `./gradlew verifyAgendaQrArchitecture -PallowDebugSigningForRc=true` | PASS |
-| Tests de módulos | `./gradlew :core:ui:testDebugUnitTest :feature:destinations:presentation:testDebugUnitTest -PallowDebugSigningForRc=true` | PASS |
-| Regresión visual (Roborazzi + SHA-256) | `./gradlew :feature:destinations:presentation:recordRoborazziDebug recordVisualHashes verifyVisualHashes -PallowDebugSigningForRc=true` | PASS (8 capturas) |
-| Lint + release | `./gradlew :androidApp:lint :androidApp:assembleRelease -PallowDebugSigningForRc=true` | PASS |
+| Tests de módulos | `./gradlew :core:ui:testDebugUnitTest :feature:destinations:presentation:testDebugUnitTest -PallowDebugSigningForRc=true` | PASS (incluye `XauxaUiPolishDefectsTest` y `S02UiPolishTest`, D1–D6) |
+| Regresión visual (Roborazzi + SHA-256) | `./gradlew :feature:destinations:presentation:recordRoborazziDebug recordVisualHashes verifyVisualHashes -PallowDebugSigningForRc=true` | PASS (8 capturas, hashes renovados tras revisión visual) |
+| Lint + release | `./gradlew :androidApp:lint :androidApp:assembleRelease -PallowDebugSigningForRc=true` | PASS (sin ampliar baseline) |
 | Lab web (wasm) | `./gradlew componentLabWeb` | PASS |
+| Compilación iOS (simulador ARM64, sin runtime) | `./gradlew :core:ui:compileKotlinIosSimulatorArm64 :feature:destinations:presentation:compileKotlinIosSimulatorArm64` | PASS (compila; runtime NO VERIFICADO, sin Xcode) |
 | Supabase acceptance (JDBC) | `DATABASE_URL=jdbc:postgresql://... ./gradlew :supabase:acceptance:test` | NO VERIFICADO (sin base de datos) |
 | CI (4 jobs) | Push a `main` → Android validation workflow | NO VERIFICADO (fuera del entorno local) |
