@@ -29,6 +29,9 @@ import org.robolectric.annotation.Config
 /**
  * D3 — accesibilidad verificable ampliada: S02, S04, S06, S09, S10, S12,
  * selector S08 y editor de operación sobre Robolectric (gate de CI).
+ *
+ * Los tests geometricos de S02 van en NATIVE+w360 (ver esos metodos): en
+ * LEGACY los avances son degenerados y sin qualifiers NATIVE no mide.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
@@ -41,7 +44,11 @@ class ScreensA11yCoverageTest {
         SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading)
 
     // S02 — Añadir: título con heading, Galería primaria ≥48dp y entradas.
+    // NATIVE+w360: la geometria necesita fuentes reales (LEGACY degenera)
+    // y NATIVE necesita qualifiers explicitos (sin ellos mide ceros).
     @Test
+    @Config(sdk = [34], qualifiers = "w360dp-h800dp")
+    @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
     fun s02_add_screen_headings_and_touch_targets() {
         compose.setContent {
             XauxaTheme {
@@ -232,7 +239,10 @@ class ScreensA11yCoverageTest {
     }
 
     // S02 — orden congelado: Galería → Desde otra app → Cámara.
+    // Misma razon NATIVE+w360 que el test anterior (posiciones reales).
     @Test
+    @Config(sdk = [34], qualifiers = "w360dp-h800dp")
+    @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
     fun s02_frozen_order_gallery_share_camera() {
         compose.setContent {
             XauxaTheme {
