@@ -13,23 +13,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.XauxaSnackbarHost
-import com.agendaqr.core.ui.components.XauxaDialog
-import com.agendaqr.core.ui.components.XauxaFeedbackEvent
-import com.agendaqr.core.ui.components.XauxaListRow
-import com.agendaqr.core.ui.components.XauxaPrimaryButton
-import com.agendaqr.core.ui.components.XauxaQrPreview
-import com.agendaqr.core.ui.components.XauxaScreenScaffold
-import com.agendaqr.core.ui.components.XauxaTopBar
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
-import com.agendaqr.core.ui.components.XauxaStatusBanner
-import com.agendaqr.core.ui.components.XauxaText
-import com.agendaqr.core.ui.components.XauxaTextAction
-import com.agendaqr.core.ui.components.XauxaLoading
-import com.agendaqr.core.ui.components.XauxaTone
-import com.agendaqr.core.ui.theme.XauxaColor
-import com.agendaqr.core.ui.theme.XauxaSpacing
-import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.components.AmSnackbarHost
+import com.agendaqr.core.ui.components.AmDialog
+import com.agendaqr.core.ui.components.AmFeedbackEvent
+import com.agendaqr.core.ui.components.AmListRow
+import com.agendaqr.core.ui.components.AmPrimaryButton
+import com.agendaqr.core.ui.components.AmQrPreview
+import com.agendaqr.core.ui.components.AmScreenScaffold
+import com.agendaqr.core.ui.components.AmTopBar
+import com.agendaqr.core.ui.components.AmSecondaryButton
+import com.agendaqr.core.ui.components.AmStatusBanner
+import com.agendaqr.core.ui.components.AmText
+import com.agendaqr.core.ui.components.AmTextAction
+import com.agendaqr.core.ui.components.AmLoading
+import com.agendaqr.core.ui.components.AmTone
+import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmSpacing
+import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.destinations.domain.ImportBatch
 import com.agendaqr.destinations.domain.ImportCandidate
 import com.agendaqr.destinations.domain.ImportKind
@@ -63,7 +63,7 @@ fun ImportBatchScreen(
         }
         wasSaving = state is ImportBatchUiState.Saving || state is ImportBatchUiState.Saved
     }
-    XauxaFeedbackEvent(event = savedEvent, message = AppStrings.GuardadoOk)
+    AmFeedbackEvent(event = savedEvent, message = AppStrings.GuardadoOk)
     // V1.2 (§4 S12): barra superior con título y atrás; "Guardar
     // reconocidos" como botón principal FIJO abajo, solo cuando hay
     // elementos reconocibles; "Revisar N pendientes" en el cuerpo.
@@ -77,20 +77,20 @@ fun ImportBatchScreen(
         is ImportBatchUiState.Error -> state.batch
         else -> null
     }
-    XauxaScreenScaffold(
+    AmScreenScaffold(
         scrollable = true,
         topBar = {
-            XauxaTopBar(
+            AmTopBar(
                 title = AppStrings.ResultadoDeImportacion,
                 onBack = if (state is ImportBatchUiState.Saving) null else ({ onAction(ImportBatchAction.Back) }),
                 backLabel = if (state is ImportBatchUiState.Review) AppStrings.VolverAResultado else AppStrings.Volver,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
         bottomAction = if (currentBatch?.canSaveRecognized() == true) {
             {
-                XauxaPrimaryButton(
+                AmPrimaryButton(
                     label = AppStrings.GuardarReconocidos,
                     onClick = { onAction(ImportBatchAction.SaveRecognized) },
                     enabled = state !is ImportBatchUiState.Saving,
@@ -98,7 +98,7 @@ fun ImportBatchScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .navigationBarsPadding()
-                        .padding(horizontal = XauxaSpacing.ScreenMargin, vertical = XauxaSpacing.Sm),
+                        .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
                 )
             }
         } else {
@@ -111,24 +111,24 @@ fun ImportBatchScreen(
             // lleva una acción real ("Elegir imágenes"), no una pantalla
             // vacía.
             ImportBatchUiState.Idle -> {
-                XauxaText(AppStrings.TraeVariosElementosAAgenda, color = XauxaColor.TextSecondary)
+                AmText(AppStrings.TraeVariosElementosAAgenda, color = AmColor.TextSecondary)
                 ImportBatchPickerButton(label = AppStrings.ElegirImagenes)
             }
-            ImportBatchUiState.Importing -> XauxaLoading(message = AppStrings.Importando)
-            ImportBatchUiState.Analyzing -> XauxaLoading(message = AppStrings.Analizando)
+            ImportBatchUiState.Importing -> AmLoading(message = AppStrings.Importando)
+            ImportBatchUiState.Analyzing -> AmLoading(message = AppStrings.Analizando)
             is ImportBatchUiState.Result -> BatchResultContent(state.batch, onAction, isSaving = false)
             is ImportBatchUiState.Review -> BatchReviewContent(state.batch, onAction, isSaving = false)
             is ImportBatchUiState.Saving -> {
-                XauxaLoading(message = AppStrings.savingRecognizedItems)
+                AmLoading(message = AppStrings.savingRecognizedItems)
                 BatchResultContent(state.batch, onAction, isSaving = true)
             }
             is ImportBatchUiState.Saved -> {
-                XauxaStatusBanner(AppStrings.batchSavedKeepReviewNotice, tone = XauxaTone.Success)
+                AmStatusBanner(AppStrings.batchSavedKeepReviewNotice, tone = AmTone.Success)
             }
             is ImportBatchUiState.Error -> {
-                XauxaStatusBanner(
+                AmStatusBanner(
                     state.error.display(),
-                    tone = XauxaTone.Danger,
+                    tone = AmTone.Danger,
                     actionLabel = state.error.action.label,
                     onAction = { onAction(ImportBatchAction.SaveRecognized) },
                 )
@@ -138,18 +138,18 @@ fun ImportBatchScreen(
     }
 
     existing?.let { preview ->
-        XauxaDialog(
+        AmDialog(
             title = AppStrings.ElementoExistente,
             confirmLabel = AppStrings.Cerrar,
             onConfirm = { onAction(ImportBatchAction.CloseExisting) },
             onDismiss = { onAction(ImportBatchAction.CloseExisting) },
             content = {
-                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
                     when {
-                        preview.qrAsset != null -> XauxaQrPreview(preview.qrAsset.encoded)
+                        preview.qrAsset != null -> AmQrPreview(preview.qrAsset.encoded)
                         preview.comprobanteBytes != null ->
                             ComprobantePreview(preview.comprobanteBytes, preview.comprobanteMimeType)
-                        else -> XauxaText(AppStrings.NoPudimosMostrarElElemento, color = XauxaColor.TextSecondary)
+                        else -> AmText(AppStrings.NoPudimosMostrarElElemento, color = AmColor.TextSecondary)
                     }
                 }
             },
@@ -163,14 +163,14 @@ private fun BatchResultContent(
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
 ) {
-    XauxaText(AppStrings.checkMark + AppStrings.Reconocidos + ": " + batch.uniqueRecognized.size, color = XauxaColor.TextPrimary)
-    XauxaText(AppStrings.dupMark + AppStrings.PosiblesDuplicados + ": " + batch.duplicates.size, color = XauxaColor.TextSecondary)
-    XauxaText(AppStrings.pendingMark + AppStrings.PendientesDeRevision + ": " + batch.unknown.size, color = XauxaColor.TextSecondary)
+    AmText(AppStrings.checkMark + AppStrings.Reconocidos + ": " + batch.uniqueRecognized.size, color = AmColor.TextPrimary)
+    AmText(AppStrings.dupMark + AppStrings.PosiblesDuplicados + ": " + batch.duplicates.size, color = AmColor.TextSecondary)
+    AmText(AppStrings.pendingMark + AppStrings.PendientesDeRevision + ": " + batch.unknown.size, color = AmColor.TextSecondary)
 
     // Contrato S12: "Revisar N pendientes" como acción secundaria; "Guardar
     // reconocidos" vive fijo abajo (botón principal del scaffold).
     if (batch.pendingItems().isNotEmpty()) {
-        XauxaSecondaryButton(reviewPendingLabel(batch), onClick = { onAction(ImportBatchAction.ReviewPending) }, enabled = !isSaving)
+        AmSecondaryButton(reviewPendingLabel(batch), onClick = { onAction(ImportBatchAction.ReviewPending) }, enabled = !isSaving)
     }
 }
 
@@ -180,7 +180,7 @@ private fun BatchReviewContent(
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
 ) {
-    XauxaText(AppStrings.ElementosQueNecesitanRevision, color = XauxaColor.TextPrimary)
+    AmText(AppStrings.ElementosQueNecesitanRevision, color = AmColor.TextPrimary)
     batch.pendingItems().forEach { candidate ->
         PendingItemCard(candidate, batch, onAction, isSaving)
     }
@@ -196,7 +196,7 @@ private fun PendingItemCard(
     val isDuplicate = batch.duplicates.any { it.id == candidate.id }
     // §12 V1.2: pendiente como fila ListItem; las acciones de fila bajo el
     // contenido (etiquetas largas).
-    XauxaListRow(
+    AmListRow(
         title = pendingItemName(candidate),
         subtitle = when {
             isDuplicate -> AppStrings.elementoYaGuardado
@@ -204,19 +204,19 @@ private fun PendingItemCard(
             else -> AppStrings.elementoPendienteRevision
         },
         meta = {
-            Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
                 when {
-                    isDuplicate -> Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                        XauxaTextAction(label = AppStrings.VerExistente, onClick = { onAction(ImportBatchAction.ViewExisting(candidate.id)) })
-                        XauxaTextAction(label = AppStrings.GuardarDeTodosModos, onClick = { onAction(ImportBatchAction.SaveDuplicateAnyway(candidate.id)) })
+                    isDuplicate -> Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                        AmTextAction(label = AppStrings.VerExistente, onClick = { onAction(ImportBatchAction.ViewExisting(candidate.id)) })
+                        AmTextAction(label = AppStrings.GuardarDeTodosModos, onClick = { onAction(ImportBatchAction.SaveDuplicateAnyway(candidate.id)) })
                     }
-                    else -> Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                        XauxaTextAction(label = AppStrings.ReintentarClasificacion, onClick = { onAction(ImportBatchAction.RetryCandidate(candidate.id)) })
+                    else -> Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                        AmTextAction(label = AppStrings.ReintentarClasificacion, onClick = { onAction(ImportBatchAction.RetryCandidate(candidate.id)) })
                     }
                 }
                 // El descarte siempre está disponible: abandona la intención
                 // con este elemento y libera su payload temporal.
-                XauxaTextAction(
+                AmTextAction(
                     label = AppStrings.Descartar,
                     onClick = { onAction(ImportBatchAction.DiscardCandidate(candidate.id)) },
                 )

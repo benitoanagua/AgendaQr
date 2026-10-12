@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Color de fondo del ícono adaptativo de Agenda QR.
-         Coincide con el azul principal de marca (lightPrimary en XauxaTokens). -->
+         Coincide con el azul principal de marca (docs/branding/agendaqr-logo.svg). -->
     <color name="ic_launcher_background">#0067B8</color>
 </resources>

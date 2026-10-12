@@ -2,7 +2,7 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
-import com.agendaqr.core.ui.theme.XauxaTheme
+import com.agendaqr.core.ui.theme.AmTheme
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
@@ -31,7 +31,7 @@ class Round2ScreenshotTest {
     val compose = createComposeRule()
 
     private fun shot(name: String, dark: Boolean, content: @androidx.compose.runtime.Composable () -> Unit) {
-        compose.setContent { XauxaTheme(darkTheme = dark) { content() } }
+        compose.setContent { AmTheme(darkTheme = dark) { content() } }
         compose.waitForIdle()
         compose.onRoot().captureRoboImage("build/roborazzi/$name.png")
     }

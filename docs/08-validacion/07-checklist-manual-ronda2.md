@@ -8,8 +8,8 @@ criterio de éxito. Marca con [ ] al validar y registra en
 
 1. [ ] Activar TalkBack; abrir S01: el orden de lectura es título →
    barra de búsqueda (un solo nodo "Buscar en Agenda QR", rol botón) →
-   tiles (rol botón + etiqueta) → fila con su badge/acción.
-   **Éxito:** cero nodos duplicados; cada tile anuncia su etiqueta.
+   filas (rol botón + etiqueta) → fila con su badge/acción.
+   **Éxito:** cero nodos duplicados; cada fila anuncia su etiqueta.
 2. [ ] Denegar el permiso de cámara con "No volver a preguntar": el
    banner anuncia el error y la acción "Abrir ajustes" abre los ajustes
    de la app. **Éxito:** reachable sin ver la pantalla.
@@ -72,9 +72,9 @@ criterio de éxito. Marca con [ ] al validar y registra en
 
 1. [ ] Compilar y arrancar (checklist existente en
    `IOS_RUNTIME_CHECKLIST.md`).
-2. [ ] Áreas seguras en el lab de iOS si se habilita host; hoja de
-   compartir (UIActivityViewController) con un comprobante: se abre,
-   comparte y cierra sin crash (código compilado, runtime sin validar).
+2. [ ] Hoja de compartir (UIActivityViewController) con un
+   comprobante: se abre, comparte y cierra sin crash (código compilado,
+   runtime sin validar).
 3. [ ] `isReduceMotionEnabled` respetado: con la opción activa, el
    turnstile/tilt son instantáneos (ReducedMotion.ios.kt ya lo expone).
 

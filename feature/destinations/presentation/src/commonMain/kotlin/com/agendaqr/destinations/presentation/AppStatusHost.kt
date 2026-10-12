@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.XauxaBadge
-import com.agendaqr.core.ui.components.XauxaFeedbackHost
-import com.agendaqr.core.ui.components.XauxaStatusBanner
-import com.agendaqr.core.ui.components.XauxaTone
-import com.agendaqr.core.ui.theme.XauxaSpacing
+import com.agendaqr.core.ui.components.AmBadge
+import com.agendaqr.core.ui.components.AmFeedbackHost
+import com.agendaqr.core.ui.components.AmStatusBanner
+import com.agendaqr.core.ui.components.AmTone
+import com.agendaqr.core.ui.theme.AmSpacing
 
 /**
  * Hosts compartidos de la sesión (§12 V1.2): el estado persistente que se
@@ -23,7 +23,7 @@ class AppHosts(
     /** Estado persistente (banners/indicadores compactos) bajo la barra. */
     val status: (@Composable () -> Unit)? = null,
     /** Host del Snackbar para eventos transitorios. */
-    val feedback: XauxaFeedbackHost? = null,
+    val feedback: AmFeedbackHost? = null,
 )
 
 /**
@@ -50,9 +50,9 @@ internal fun AppStatusHost(
         if (error != null) {
             // Error recuperable de importación (spec §10): la acción despeja
             // el error para volver a intentarlo desde la pantalla de origen.
-            XauxaStatusBanner(
+            AmStatusBanner(
                 error.display(),
-                tone = XauxaTone.Danger,
+                tone = AmTone.Danger,
                 actionLabel = error.action.label,
                 onAction = onDismissImportError,
                 onDismiss = onDismissImportError,
@@ -61,9 +61,9 @@ internal fun AppStatusHost(
         } else if (hasFailed && pendingCount > 0) {
             // Banner completo SOLO con mutaciones FAILED: el usuario debe
             // poder reintentar AHORA (los datos están a salvo localmente).
-            XauxaStatusBanner(
+            AmStatusBanner(
                 syncPendingLabel(pendingCount, retrying = true),
-                tone = XauxaTone.Danger,
+                tone = AmTone.Danger,
                 actionLabel = AppStrings.ReintentarAhora,
                 onAction = onRetryNow,
             )
@@ -72,20 +72,20 @@ internal fun AppStatusHost(
             // depende solo del color, §11).
             Row(
                 modifier = Modifier.padding(
-                    start = XauxaSpacing.ScreenMargin,
-                    end = XauxaSpacing.ScreenMargin,
-                    top = XauxaSpacing.Sm,
+                    start = AmSpacing.ScreenMargin,
+                    end = AmSpacing.ScreenMargin,
+                    top = AmSpacing.Sm,
                 ),
-                horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm, Alignment.Start),
+                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm, Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (isOffline) {
-                    XauxaBadge(text = AppStrings.SinConexion, tone = XauxaTone.Warning)
+                    AmBadge(text = AppStrings.SinConexion, tone = AmTone.Warning)
                 }
                 if (pendingCount > 0) {
-                    XauxaBadge(
+                    AmBadge(
                         text = syncPendingLabel(pendingCount, retrying = false),
-                        tone = XauxaTone.Info,
+                        tone = AmTone.Info,
                     )
                 }
             }

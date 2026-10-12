@@ -1,88 +1,59 @@
-# Auditoría de componentes — decisiones y estado actual
+# Registro de auditoría y migración de componentes
 
-> La historia de auditorías vive en `git log`. Este documento fija las
-> DECISIONES vigentes (ADR-0012, diseño convencional sobre Material 3)
-> sobre cada componente del design system Xauxa.
+**Estado:** Histórico-decisivo (ADR-0013). Este registro documenta la sustitución del sistema visual anterior (Xauxa) por AgendaMobile: el mape componente a componente, los retiros y los contratos preservados. La autoridad activa es `00-agendamobile-contrato-normativo.md`.
 
-## Criterios de clasificación
+## 1. Mape de migración Xauxa → AgendaMobile
 
-- **Conservar:** cumple el contrato visual y sus estados/accesibilidad están cubiertos.
-- **Adaptar:** función válida; pasa a ser envoltorio fino del componente M3 equivalente.
-- **Reemplazar:** existe la necesidad; la implementación cambia de soporte.
-- **Retirar:** sin uso de producto ni valor de accesibilidad; eliminar sin romper compatibilidad.
-- **Sin uso:** sin consumidores en producción; decidir adoptar o retirar.
+Todos los componentes Xauxa migraron con contrato funcional y de accesibilidad intacto (rutas, eventos, ViewModels y copy sin cambios); el cambio es de presentación y tokens.
 
-## Decisiones por componente (V1.2, ADR-0012)
+| Componente Xauxa | Reemplazo AgendaMobile | Notas |
+|---|---|---|
+| `XauxaText` / `XauxaHeading` | `AmText` / `AmHeading` | Interlineado proporcional conservado |
+| `XauxaTheme` | `AmTheme` | Esquema M3 derivado completo (contenedores incluidos) |
+| `XauxaTokens` (`XauxaColor/Spacing/Metrics/Type/Shapes/Radius/Motion/Opacity/Tracking/TextStyles`) | `AmTokens` (`AmColor/…`) | Paleta nueva verificada; `Brand`→`Accent`, `BrandText`→`AccentText`, `Surface2`→`SurfaceSecondary` |
+| `XauxaColorScheme` / `Light/DarkXauxaColorScheme` | `AmColorScheme` / `Light/DarkAmColorScheme` | 34 roles semánticos por tema |
+| `XauxaAccent` / `XauxaAccents` / `accentFor` | `AmAccent` / `AmAccents` / `accentFor` | Nueva paleta de 12 tonos de etiqueta; FNV-1a sin cambio (asignación estable) |
+| `XauxaScreenScaffold` | `AmScreenScaffold` | Insets + IME + adaptación por WindowSizeClass |
+| `XauxaTopBar` / `AmTopBarAction` / `XauxaOverflowAction` | `AmTopBar` / `AmTopBarAction` / `AmOverflowAction` | Menú M3 estándar (sin borde manual) |
+| `XauxaNavBar` / `XauxaNavRail` / `XauxaNavDestination` / `XauxaNavChromeState` | `AmNavBar` / `AmNavRail` / `AmNavDestination` / `AmNavChromeState` | Etiqueta visible siempre |
+| `XauxaPrimaryButton` / `XauxaSecondaryButton` / `XauxaDangerButton` / `XauxaTextAction` | `AmPrimaryButton` / `AmSecondaryButton` / `AmDangerButton` / `AmTextAction` | Secundario pasa de outlined a TONAL (sin borde de reposo) |
+| `XauxaIconButton` / `XauxaFavoriteToggle` | `AmIconButton` / `AmFavoriteToggle` | 48 dp + semántica intacta |
+| `XauxaTextInput` | `AmTextField` | Outlined → tonal: sin borde de reposo, guía inferior en foco/error |
+| `XauxaSearchBar` / `XauxaSearchTrigger` | `AmSearchField` / `AmSearchTrigger` | Píldora tonal; disparador con nodo único |
+| `XauxaListRow` / `XauxaBadge` / `XauxaCategoryChip` / `XauxaFilterChip` | `AmListRow` / `AmBadge` / `AmCategoryChip` / `AmFilterChip` | Celda con divisor opt-in (`showDivider`); badges/chips píldora |
+| `XauxaSection` / `XauxaSectionHeader` / `XauxaPivot` | `AmSection` / `AmSectionHeader` / `AmPivot` | Pestañas desplazables conservadas |
+| `XauxaDialog` / `XauxaDialogList` | `AmDialog` / `AmDialogList` | Radio 24 por shapes; foco conservativo en destructivas |
+| `XauxaStatusBanner` / `AmLoading` / `XauxaEmptyState` | `AmStatusBanner` / `AmLoading` / `AmEmptyState` | Banner tonal redondeado; empty state con glifo decorativo (`icon`) |
+| `XauxaSkeleton` / `XauxaLoadMoreFooter` | `AmSkeleton` / `AmLoadMoreFooter` | Skeleton con radio 8 |
+| `XauxaScannerViewport` / `XauxaScannerFrame` | `AmScannerViewport` / `AmScannerFrame` | Marco de 2 dp → esquinas de acento en canvas |
+| `XauxaMediaFrame` / `XauxaQrPreview` | `AmMediaFrame` / `AmQrPreview` | Marco con radio 16 |
+| `XauxaFeedbackHost` / `XauxaSnackbarHost` / `XauxaFeedbackEvent` | `AmFeedbackHost` / `AmSnackbarHost` / `AmFeedbackEvent` | Háptica + anuncio + snackbar sin cambio |
+| `XauxaIcons` / `XauxaIcon` | `AmIcons` / `AmIcon` | Set ampliado (QrCode, SearchX, Inbox, FileText, ImageOff, PackageOpen, ScanLine, CircleCheck) |
+| `xauxaSurfaceEnter/Exit` (+reduced) / `XauxaSurfaceMotion` | `amSurfaceEnter/Exit` (+reduced) / `AmSurfaceMotion` | Tokens de movimiento equivalentes |
+| `LocalXauxaColorScheme` | `LocalAmColorScheme` | — |
+| `xauxaWindowWidthSizeClass` | `amWindowWidthSizeClass` | — |
+| `LocalReducedMotion` / `ProvideReducedMotion` | (sin cambio) | Nombres neutros conservados |
+| `contrastRatio` / `asTextOn` / `toneColors` | (sin cambio) | Matemática de contraste conservada |
 
-| Componente | Decisión |
+## 2. Retiros definitivos (sin reemplazo)
+
+Ya retirados por la auditoría V1.2 (ADR-0012) y confirmados como inexistentes: `XauxaMetroTile`, `XauxaTileGrid`, `XauxaLiveTile`, `XauxaTile`, `XauxaPageTitle`, `XauxaAppBar`, `XauxaCommandBar`, `XauxaToast`, `XauxaInlineResult`, `XauxaErrorPage`, `XauxaDotProgress`, `XauxaTurnstileNav`, `XauxaHeroCard`, `XauxaStatBlock`, `XauxaTileHeader`, `XauxaFileUpload`, tokens de rejilla de tiles y tipografía empaquetada (Archivo).
+
+Con la migración a AgendaMobile (ADR-0013) se retiran además, sin reemplazo:
+
+| Elemento | Motivo |
 |---|---|
-| `XauxaPrimaryButton` | **Adaptar**: envoltorio de `Button` M3 (≥48 dp, estado ocupado con etiqueta). |
-| `XauxaSecondaryButton` | **Adaptar**: envoltorio de `OutlinedButton` M3. |
-| `XauxaTextAction` | **Adaptar**: envoltorio de `TextButton` M3 para acciones compactas. |
-| `XauxaDangerButton` | **Adaptar**: `Button` M3 con tokens danger (usado por `XauxaDialog(destructive)`). |
-| `XauxaIconButton` | **Adaptar**: envoltorio de `IconButton` M3. |
-| `XauxaFavoriteToggle` | **Reemplazar**: el favorito por fila pasa a `IconToggleButton` M3 (estrella con estado seleccionado y descripción que cambia con el estado). |
-| `XauxaFavoriteIndicator` | **Retirar**: sustituido por el toggle anterior; la excepción E-02 se retira con él. |
-| `XauxaTextInput` | **Adaptar**: envoltorio de `OutlinedTextField` (etiqueta, apoyo, error icono+texto, borde reposo `borderControl` ≥3:1, IME/autofill, slot mostrar/ocultar contraseña); la excepción E-06 se retira con el campo plano. |
-| `XauxaSearchBar` | **Adaptar**: `OutlinedTextField` con glifo de búsqueda y limpieza etiquetada. |
-| `XauxaSearchTrigger` | **Conservar**: disparador de nodo único (rol Button) sobre la barra decorativa. |
-| `XauxaFilterChip` | **Adaptar**: `FilterChip` M3 con tokens (borde de control ≥3:1). |
-| `XauxaListRow` | **Adaptar**: `ListItem` M3 (título/subtítulo/meta/trailing; separación por divisor o espacio; punto de acento solo como identidad de contexto, E-05). |
-| `XauxaTile` | **Retirar**: las filas/tarjetas de datos pasan a `ListItem`/superficies M3. |
-| `XauxaMetroTile`, `XauxaTileGrid`, `XauxaLiveTile` | **Retirar**: sin tiles en producción (`TILES_EN_INICIO = false`). |
-| `XauxaPageTitle` | **Retirar**: el título de página pasa a la barra superior (`titleLarge` M3) o al titular de Auth (`headlineSmall`). |
-| `XauxaSectionHeader` | **Adaptar**: encabezado de sección estándar (`titleSmall`/`labelLarge`, color estándar); sin marcador subrayado. El acento de contexto en S06 tiñe los encabezados de SU superficie. |
-| `XauxaPivot` | **Adaptar**: pestañas estándar M3 (scrollable, estado seleccionado, acento de contexto legible como texto). |
-| `XauxaAppBar` | **Retirar**: la barra inferior desaparece; se sustituye por `XauxaTopBar` (`TopAppBar` M3) + `XauxaNavBar`/`XauxaNavRail` en raíces. |
-| `XauxaCommandBar` | **Retirar**: sin usos de producción; el overflow vive en la barra superior. |
-| `XauxaTopBar` | **Alta**: `TopAppBar` M3 pequeña (título a la izquierda, flecha atrás, máx. 2 acciones + menú "…"). |
-| `XauxaNavBar` / `XauxaNavRail` | **Alta**: `NavigationBar`/`NavigationRail` M3 con 4 destinos raíz, etiqueta + icono siempre. |
-| `XauxaScreenScaffold` | **Adaptar**: `Scaffold` M3 (`topBar`, `bottomBar`, `snackbarHost`, `floatingActionButton`, `contentWindowInsets`). |
-| `XauxaDialog` | **Adaptar**: `AlertDialog` M3 (mismos contratos: `destructive`, foco inicial conservativo, `onDismissRequest`). |
-| `XauxaDialogList` | **Conservar**: lista scrolleable dentro del diálogo. |
-| `XauxaStatusBanner` | **Conservar** para estados persistentes importantes, dentro del Scaffold; insets resueltos por el contenedor. |
-| `XauxaToast` | **Retirar**: el feedback transitorio pasa al `Snackbar` del `SnackbarHostState`. |
-| `XauxaInlineResult` | **Retirar**: sin usos; cubierto por banner/snackbar. |
-| `XauxaErrorPage` | **Retirar**: spec §10 prohíbe ErrorScreen global. |
-| `XauxaLoading` | **Adaptar**: indicadores de progreso M3 con mensaje. |
-| `XauxaDotProgress` | **Retirar**: sustituido por `CircularProgressIndicator`/`LinearProgressIndicator` M3. |
-| `XauxaSkeleton` | **Conservar**: placeholder de carga estático. |
-| `XauxaEmptyState` | **Conservar**: título, subtítulo y acción opcional. |
-| `XauxaLoadMoreFooter` | **Conservar**: paginación con copy del llamador. |
-| `XauxaBadge` | **Conservar**: etiqueta semántica de estado con texto (no interactiva). |
-| `XauxaCategoryChip` | **Conservar**: chip estático de clasificación (no interactiva). |
-| `XauxaHeroCard`, `XauxaStatBlock`, `XauxaTileHeader` | **Retirar**: sin usos de producción. |
-| `XauxaFileUpload` | **Retirar**: sin usos; la adquisición son los selectores de plataforma (S02). |
-| `XauxaScannerViewport` / `XauxaScannerFrame` | **Conservar**: lenguaje congelado de S03 (excepción E-03). |
-| `XauxaQrPreview` | **Conservar**: expect/actual por plataforma; lienzo claro garantizado. |
-| `XauxaFeedbackEvent` | **Conservar**: háptica + anuncio accesible por evento; la capa de feedback publica además en el `SnackbarHostState`. |
-| `XauxaSection` | **Conservar**: encabezado + contenido. |
-| `XauxaTurnstileNav` | **Retirar**: transición estándar corta (fundido + desplazamiento pequeño, tokens `XauxaMotion`). |
-| Tokens `BreakpointCompact`/`BreakpointMedium` | **Retirar**: la adaptación de ancho pasa a `WindowSizeClass`. |
-| Token `ContentMaxWidth` | **Conservar**: límite de contenido en ancho expandido. |
-| Tokens de rejilla (`TileUnit`, `TileWideHeight`, `TileGap`, `Catalog*`) | **Retirar** con los tiles (el catálogo del lab consume anchos propios de M3). |
-| Tokens `Marker`/`BorderStrong` | `Marker` se retira con los marcadores; `BorderStrong` se conserva (encuadre E-03). |
+| Laboratorio de componentes (`core/ui/…/lab/`, host wasm, tareas `componentLabWeb`/`syncComponentLabWeb`, paso de CI, capturas del lab) | Entorno de validación del sistema anterior; el nuevo sistema se valida con gates + Roborazzi + instrumentados |
+| Target WebAssembly de `core:ui` (bloque `wasmJs`, recursos web, repos Node/Yarn/binaryen) | Su única razón de existir era el laboratorio |
+| Paleta de acentos histórica (12 acentos de la plantilla V1.1) | Sustituida por la paleta de identidad de contextos de AgendaMobile |
+| `XauxaMetrics.CatalogCardMinWidth` / `CatalogTileMinHeight` | Métricas exclusivas del catálogo del laboratorio |
+| `XauxaTextStyles.AppBarItem` / `XauxaMotion` como strings de easing para el inspector del laboratorio | Sin consumidor en el producto |
+| Excepciones de borde E-01 (borde del menú), E-03 (borde del scanner), E-05/E-07 | El menú usa el contenedor M3 estándar y el scanner dibuja en canvas; el registro queda vacío |
 
-## Contratos de componente
+## 3. Contratos preservados
 
-- `XauxaStatusBanner`: `dismissLabel` (requerido con `onDismiss`); icono por tono; liveRegion.
-- `XauxaTopBar`: flecha atrás con descripción accesible; acciones con contentDescription; overflow con etiqueta del llamador.
-- `XauxaNavBar`: destino activo con etiqueta + icono (nunca solo icono); el cambio de destino conserva la raíz del back stack.
-- `XauxaLoadMoreFooter`: labels del llamador.
-- `XauxaSearchBar`: `label`/`placeholder` sin defaults.
-- `XauxaDialog`: `destructive` (botón peligro + foco inicial en Cancelar).
-- `XauxaListRow`: identidad de contexto solo como dato real (E-05); `selected` con semántica.
-- `XauxaTextInput`: etiqueta como nombre accesible; error liveRegion + semántica del campo; disabled distinguible.
-- `XauxaSearchTrigger`: disparador de búsqueda de nodo único.
-- `XauxaFeedbackEvent`: háptica + liveRegion por evento.
-
-## Excepciones de chrome (nivel pantalla)
-
-El registro normativo de excepciones vive en el contrato §12; el gate
-`verifyDesignSystemCompliance` compara sus IDs E-xx con su propio registro
-y falla si no coinciden. Esta auditoría y el contrato deben leerse juntos:
-
-- **E-07 — AuthScreen sin barra de navegación**: la autenticación no es un
-  destino raíz de sesión y su única acción legítima es el inicio/registro;
-  el botón principal del cuerpo es la acción principal. Retirada cuando
-  producto defina navegación o acciones secundarias en Auth (nuevo ADR).
+- Rutas, `AppRoute`, back-stack y restauración de estado: sin cambio.
+- ViewModels, StateFlow, eventos y reglas de dominio: sin cambio.
+- Copy de producto (`AppStrings`): sin cambio de una sola palabra.
+- Semántica de accesibilidad por componente: probada antes y después (`AmAccessibilityContractTest`, `ScreensA11yCoverageTest`, instrumentados).
+- Regresión visual: manifiesto de hashes renovado tras la migración (ADR-0007).

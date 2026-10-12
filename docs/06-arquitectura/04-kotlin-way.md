@@ -15,6 +15,6 @@ build, verificación y testing es Kotlin/Gradle. La tarea
 
 | Antes (script) | Después (tarea Gradle) |
 |---|---|
-| `docs/05-design-system/verify-xauxa.sh` | `./gradlew verifyDesignSystemCompliance` + `verifyControlMinSize` |
+| gate de design system (script de verificación retirado con el sistema anterior; el gate vive hoy en `build-logic`) | `./gradlew verifyDesignSystemCompliance` + `verifyControlMinSize` |
 | `docs/04-ux/visual-hashes/verify.sh` | `./gradlew recordVisualHashes` + `verifyVisualHashes` |
 | `supabase/tests/run-acceptance.sh` | `DATABASE_URL=... ./gradlew :supabase:acceptance:test` |

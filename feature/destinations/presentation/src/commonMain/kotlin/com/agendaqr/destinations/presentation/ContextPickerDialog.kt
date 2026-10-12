@@ -13,17 +13,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.XauxaDialog
-import com.agendaqr.core.ui.components.XauxaDialogList
-import com.agendaqr.core.ui.components.XauxaListRow
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
-import com.agendaqr.core.ui.components.XauxaText
-import com.agendaqr.core.ui.components.XauxaTextInput
-import com.agendaqr.core.ui.components.XauxaTextAction
-import com.agendaqr.core.ui.components.XauxaTone
-import com.agendaqr.core.ui.theme.XauxaColor
+import com.agendaqr.core.ui.components.AmDialog
+import com.agendaqr.core.ui.components.AmDialogList
+import com.agendaqr.core.ui.components.AmListRow
+import com.agendaqr.core.ui.components.AmSecondaryButton
+import com.agendaqr.core.ui.components.AmText
+import com.agendaqr.core.ui.components.AmTextField
+import com.agendaqr.core.ui.components.AmTextAction
+import com.agendaqr.core.ui.components.AmTone
+import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.accentFor
-import com.agendaqr.core.ui.theme.XauxaSpacing
+import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.destinations.domain.Context
 
 /**
@@ -91,7 +91,7 @@ internal fun ContextPickerDialog(
     val selectedId = justCreatedContextId ?: selection.contextId
 
     when (step) {
-        ContextPickerStep.Create -> XauxaDialog(
+        ContextPickerStep.Create -> AmDialog(
             title = AppStrings.CrearContexto,
             confirmLabel = AppStrings.Crear,
             onConfirm = {
@@ -108,15 +108,15 @@ internal fun ContextPickerDialog(
             // Back/fuera vuelve a la lista: nunca destruye el draft.
             onDismissRequest = { step = ContextPickerStep.List },
             content = {
-                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                    XauxaTextInput(
+                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                    AmTextField(
                         label = AppStrings.Nombre,
                         value = name,
                         onValueChange = { name = it },
                         isError = submitted && name.isBlank(),
                         errorMessage = if (submitted && name.isBlank()) AppStrings.ElNombreEsObligatorio else null,
                     )
-                    XauxaTextInput(
+                    AmTextField(
                         label = AppStrings.Nota,
                         value = note,
                         onValueChange = { note = it },
@@ -127,24 +127,24 @@ internal fun ContextPickerDialog(
             },
         )
 
-        ContextPickerStep.List -> XauxaDialog(
+        ContextPickerStep.List -> AmDialog(
             title = AppStrings.SeleccionarContexto,
             confirmLabel = AppStrings.Cancelar,
-            // La acción principal es elegir de la lista (§1); Cancelar y
+            // La acción principal es elegir de la lista; Cancelar y
             // Quitar contexto son salidas secundarias.
             confirmAsText = true,
             onConfirm = onCancel,
             dismissLabel = if (selection.canRemove) AppStrings.QuitarContexto else null,
             onDismiss = onRemove,
             // Back del sistema / toque fuera: cancelar, nunca quitar la
-            // selección por accidente (§3).
+            // selección por accidente.
             onDismissRequest = onCancel,
             content = {
-                XauxaDialogList {
-                    // U3/ADR-0003 (opción C): crear sin salir del draft.
-                    // Arriba de la lista: el slot de texto del diálogo
-                    // recorta el fondo en pantallas bajas.
-                    XauxaTextAction(
+                AmDialogList {
+                    // Crear sin salir del draft, arriba de la lista: el
+                    // slot de texto del diálogo recorta el fondo en
+                    // pantallas bajas.
+                    AmTextAction(
                         label = AppStrings.CrearContexto,
                         onClick = {
                             submitted = false
@@ -154,21 +154,20 @@ internal fun ContextPickerDialog(
                         },
                     )
                     if (contexts.isEmpty()) {
-                        XauxaText(
+                        AmText(
                             text = AppStrings.SinContextosDisponibles,
-                            color = XauxaColor.TextSecondary,
+                            color = AmColor.TextSecondary,
                         )
                     } else {
                         contexts.forEach { context ->
-                            XauxaListRow(
+                            AmListRow(
                                 title = context.name,
                                 subtitle = context.note?.takeIf { it.isNotBlank() },
-                                // M4: el acento derivado identifica el
-                                // contexto; Cancelar/Quitar/Back intactos.
+                                // El acento derivado identifica el contexto;
+                                // Cancelar/Quitar/Back intactos.
                                 accent = accentFor(context.id).background,
-                                // E-05: la selección se expresa con la
-                                // semántica `selected` (no con el tono Info,
-                                // que es estado informativo, no selección).
+                                // La selección se expresa con la semántica
+                                // `selected` (no con un tono de estado).
                                 selected = context.id == selectedId,
                                 onClick = { onSelect(context.id) },
                             )
@@ -194,7 +193,7 @@ internal fun ContextCreationDialog(
     var note by rememberSaveable { mutableStateOf("") }
     // sobrevive a recreación.
     var submitted by rememberSaveable { mutableStateOf(false) }
-    XauxaDialog(
+    AmDialog(
         title = AppStrings.CrearContexto,
         confirmLabel = AppStrings.Crear,
         onConfirm = {
@@ -205,15 +204,15 @@ internal fun ContextCreationDialog(
         onDismiss = onDismiss,
         onDismissRequest = onDismiss,
         content = {
-            Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                XauxaTextInput(
+            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                AmTextField(
                     label = AppStrings.Nombre,
                     value = name,
                     onValueChange = { name = it },
                     isError = submitted && name.isBlank(),
                     errorMessage = if (submitted && name.isBlank()) AppStrings.ElNombreEsObligatorio else null,
                 )
-                XauxaTextInput(
+                AmTextField(
                     label = AppStrings.Nota,
                     value = note,
                     onValueChange = { note = it },

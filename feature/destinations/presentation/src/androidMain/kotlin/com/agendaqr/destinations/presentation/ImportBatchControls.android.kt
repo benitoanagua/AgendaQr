@@ -2,7 +2,7 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import com.agendaqr.core.ui.components.XauxaPrimaryButton
+import com.agendaqr.core.ui.components.AmPrimaryButton
 import com.agendaqr.destinations.domain.ImportBatch
 import kotlinx.coroutines.flow.collect
 
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.collect
 actual fun ImportBatchPickerButton(
     label: String,
 ) {
-    XauxaPrimaryButton(
+    AmPrimaryButton(
         label = label,
         onClick = { AgendaQrAndroidImportLauncher.gallery() },
     )

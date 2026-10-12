@@ -1,7 +1,7 @@
 plugins { id("agendaqr.compose-library") }
 
-// T9 — tipografía Xauxa: los recursos de fuente (Archivo, OFL 1.1) viven en
-// composeResources y se exponen solo vía XauxaType.
+// AgendaMobile (ADR-0013): el sistema de diseño vive en este módulo. Los
+// recursos de Compose exponen el logo público del producto.
 compose {
     resources {
         publicResClass = true
@@ -13,54 +13,33 @@ android {
     namespace = "com.agendaqr.core.ui"
     testOptions {
         // Pruebas de UI Compose sobre Robolectric en androidUnitTest
-        // (XauxaAccessibilityContractTest, XauxaResponsiveLayoutContractTest):
+        // (AmAccessibilityContractTest, AmResponsiveLayoutContractTest):
         // necesitan el manifest de test (ComponentActivity) y los recursos.
         unitTests.isIncludeAndroidResources = true
     }
 }
 
-@OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
 kotlin {
-    // WebAssembly host of the component lab. It is a development tool that
-    // runs in the browser: the entrypoint lives in wasmJsMain and nothing in
-    // the Android/iOS production targets can reach it.
-    wasmJs {
-        browser {
-            commonWebpackConfig {
-                outputFileName = "agendaqr-component-lab.js"
-            }
-            // Executing the wasmJs commonTest suite in this environment requires
-            // a headless browser (Karma + Chrome), which is not part of the
-            // build contract of this repository. The suite still compiles for
-            // wasmJs and the same 26 model tests execute on the JVM in
-            // testDebugUnitTest / testReleaseUnitTest.
-            testTask {
-                enabled = false
-            }
-        }
-        binaries.executable()
-    }
-
     sourceSets {
         commonMain.dependencies {
             implementation(compose.material3)
-            // T9 — recursos Compose (fuentes Xauxa empaquetadas).
+            // Recursos Compose (logo público del producto).
             implementation(compose.components.resources)
-            // Xauxa motion tokens (Easing) and the LiveTile / turnstile-nav
-            // components consume androidx.compose.animation(.core) directly.
+            // Tokens de movimiento (Easing) y las transiciones de
+            // superficie consumen androidx.compose.animation(.core).
             implementation(compose.animation)
-            // T2/V1.1 (ADR-0005): iconografía Lucide (ISC) consumida solo a
-            // través de XauxaIcon. Objetivos: android/ios/wasmJs verificados
-            // por compilación en esta tarea.
+            // Iconografía Lucide (ISC) consumida SOLO a través de AmIcon.
+            // Licencia registrada en docs/05-design-system/06-licencias-terceros.md.
             implementation(libs.icons.lucide)
-            // V1.2 (ADR-0012): WindowSizeClass para la adaptación compacto/
-            // medium/expanded (NavigationBar vs NavigationRail, contenido
-            // centrado con ContentMaxWidth).
+            // WindowSizeClass para la adaptación compacto/medium/expanded
+            // (AmNavBar vs AmNavRail, contenido centrado con
+            // ContentMaxWidth).
             implementation(libs.material3.window.size)
         }
         androidUnitTest.dependencies {
             implementation(kotlin("test"))
-            // Pruebas semánticas de los componentes Xauxa bajo Robolectric.
+            // Pruebas semánticas de los componentes AgendaMobile bajo
+            // Robolectric.
             implementation("androidx.compose.ui:ui-test-junit4:${libs.versions.androidx.compose.get()}")
             implementation("androidx.compose.ui:ui-test-manifest:${libs.versions.androidx.compose.get()}")
             implementation("org.robolectric:robolectric:${libs.versions.robolectric.get()}")

@@ -44,14 +44,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
-import com.agendaqr.core.ui.components.XauxaStatusBanner
-import com.agendaqr.core.ui.components.XauxaFeedbackEvent
-import com.agendaqr.core.ui.components.XauxaScannerFrame
-import com.agendaqr.core.ui.components.XauxaText
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
-import com.agendaqr.core.ui.theme.XauxaColor
-import com.agendaqr.core.ui.theme.XauxaSpacing
-import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.components.AmStatusBanner
+import com.agendaqr.core.ui.components.AmFeedbackEvent
+import com.agendaqr.core.ui.components.AmScannerFrame
+import com.agendaqr.core.ui.components.AmText
+import com.agendaqr.core.ui.components.AmSecondaryButton
+import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmSpacing
+import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.destinations.domain.QrAsset
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.ByteArrayOutputStream
@@ -67,7 +67,7 @@ import java.util.concurrent.Executors
  * continuo. Al detectar un QR se emite una única vez y el flujo continúa
  * a S09 exactamente como Galería (misma canal de resultados).
  *
- * El lenguaje visual es el del scanner Xauxa (marco con borde de marca,
+ * El lenguaje visual es el del scanner AgendaMobile (marco con esquinas de acento,
  * hint textual, sin métricas), sobre la vista previa real de la cámara.
  */
 @Composable
@@ -83,7 +83,7 @@ internal fun CameraQrCaptureOverlay(
     // feedback de lectura exitosa — token por EVENTO
     // (una lectura = un anuncio; sin repetición en recomposiciones).
     var detectionToken by remember { mutableStateOf<Any?>(null) }
-    XauxaFeedbackEvent(event = detectionToken, message = AppStrings.CodigoQrDetectado)
+    AmFeedbackEvent(event = detectionToken, message = AppStrings.CodigoQrDetectado)
 
     DisposableEffect(Unit) {
         onDispose { analysisExecutor.shutdown() }
@@ -96,7 +96,7 @@ internal fun CameraQrCaptureOverlay(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(XauxaColor.Background),
+                .background(AmColor.Background),
         ) {
             if (!detected) {
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -123,28 +123,28 @@ internal fun CameraQrCaptureOverlay(
                             proxy
                         },
                     )
-                    // Lenguaje visual del scanner Xauxa sobre la vista
+                    // Lenguaje visual del scanner AgendaMobile sobre la vista
                     // previa: encuadre de marca del design system
-                    // (XauxaScannerFrame, excepción E-03) y hint textual;
+                    // (AmScannerFrame, excepción E-03) y hint textual;
                     // sin métricas técnicas del scanner (S03).
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(XauxaSpacing.Xxl),
+                            .padding(AmSpacing.Xxl),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
-                        XauxaScannerFrame()
+                        AmScannerFrame()
                         // El hint SE VUELVE el estado: "Código QR detectado"
                         // con liveRegion (§5/§11: el estado también se lee,
                         // nunca solo se ve).
-                        XauxaText(
+                        AmText(
                             if (detected) AppStrings.CodigoQrDetectado else AppStrings.EncuadreElCodigoQr,
-                            size = XauxaType.Label,
-                            color = XauxaColor.TextSecondary,
+                            size = AmType.Label,
+                            color = AmColor.TextSecondary,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
-                                .padding(top = XauxaSpacing.Lg)
+                                .padding(top = AmSpacing.Lg)
                                 .semantics { if (detected) liveRegion = LiveRegionMode.Polite },
                         )
                     }
@@ -153,10 +153,10 @@ internal fun CameraQrCaptureOverlay(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
-                        .padding(XauxaSpacing.Lg),
+                        .padding(AmSpacing.Lg),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    XauxaSecondaryButton(label = AppStrings.Volver, onClick = onDismiss)
+                    AmSecondaryButton(label = AppStrings.Volver, onClick = onDismiss)
                 }
             }
         }
@@ -302,11 +302,11 @@ internal fun CameraQrEntry(onOpen: () -> Unit) {
             }
         }
     }
-    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
         permissionError?.let { error ->
-            XauxaStatusBanner(
+            AmStatusBanner(
                 error.display(),
-                tone = com.agendaqr.core.ui.components.XauxaTone.Danger,
+                tone = com.agendaqr.core.ui.components.AmTone.Danger,
                 // Denegado permanentemente: la acción lleva a los ajustes de
                 // la app; si no, REINTENTAR vuelve a pedir el permiso.
                 actionLabel = if (permanentlyDenied) {
@@ -331,14 +331,14 @@ internal fun CameraQrEntry(onOpen: () -> Unit) {
         }
         // Contexto del permiso ANTES de pedirlo (una línea, sin diálogo
         // extra): el usuario sabe para qué es antes del diálogo del SO.
-        XauxaText(
+        AmText(
             AppStrings.PermisoCamaraContexto,
-            size = XauxaType.Caption,
-            color = XauxaColor.TextSecondary,
+            size = AmType.Caption,
+            color = AmColor.TextSecondary,
         )
-        XauxaSecondaryButton(
+        AmSecondaryButton(
             label = AppStrings.Camara,
-            icon = com.agendaqr.core.ui.components.XauxaIcons.Camera,
+            icon = com.agendaqr.core.ui.components.AmIcons.Camera,
             onClick = {
                 val granted = ContextCompat.checkSelfPermission(
                     context,

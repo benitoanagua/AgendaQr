@@ -6,15 +6,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.XauxaEmptyState
-import com.agendaqr.core.ui.components.XauxaQrPreview
-import com.agendaqr.core.ui.components.XauxaScreenScaffold
-import com.agendaqr.core.ui.components.XauxaTopBar
-import com.agendaqr.core.ui.theme.XauxaSpacing
+import com.agendaqr.core.ui.components.AmEmptyState
+import com.agendaqr.core.ui.components.AmQrPreview
+import com.agendaqr.core.ui.components.AmScreenScaffold
+import com.agendaqr.core.ui.components.AmTopBar
+import com.agendaqr.core.ui.theme.AmSpacing
 
 @Composable
 fun FirstUsePattern(onAdd: () -> Unit) {
-    XauxaEmptyState(
+    AmEmptyState(
         title = AppStrings.SinDestinos,
         subtitle = AppStrings.emptyDestinationsHint,
         actionLabel = AppStrings.Anadir,
@@ -24,14 +24,14 @@ fun FirstUsePattern(onAdd: () -> Unit) {
 
 @Composable
 fun OperationFailurePattern(message: String) {
-    com.agendaqr.core.ui.components.XauxaStatusBanner(message = message, tone = com.agendaqr.core.ui.components.XauxaTone.Danger)
+    com.agendaqr.core.ui.components.AmStatusBanner(message = message, tone = com.agendaqr.core.ui.components.AmTone.Danger)
 }
 
 @Composable
 fun DestinationNotFound(onBack: () -> Unit) {
-    XauxaScreenScaffold(
+    AmScreenScaffold(
         topBar = {
-            XauxaTopBar(
+            AmTopBar(
                 title = AppStrings.DestinoNoEncontrado,
                 onBack = onBack,
                 backLabel = AppStrings.Volver,
@@ -40,7 +40,7 @@ fun DestinationNotFound(onBack: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        XauxaEmptyState(
+        AmEmptyState(
             title = AppStrings.DestinoNoEncontrado,
             subtitle = AppStrings.PudoHaberSidoEliminadoEn,
             actionLabel = AppStrings.VolverALaLista,
@@ -55,17 +55,17 @@ fun QrFullscreenPattern(
     onBack: () -> Unit,
 ) {
     // V1.2 (§12): "QR" en la barra superior con flecha atrás.
-    XauxaScreenScaffold(
+    AmScreenScaffold(
         topBar = {
-            XauxaTopBar(
+            AmTopBar(
                 title = AppStrings.Qr,
                 onBack = onBack,
                 backLabel = AppStrings.Volver,
             )
         },
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(AmSpacing.Lg, Alignment.CenterVertically),
     ) {
-        XauxaQrPreview(encodedQr, modifier = Modifier.fillMaxWidth())
+        AmQrPreview(encodedQr, modifier = Modifier.fillMaxWidth())
     }
 }

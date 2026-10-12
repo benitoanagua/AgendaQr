@@ -10,18 +10,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import com.agendaqr.core.ui.components.XauxaSnackbarHost
-import com.agendaqr.core.ui.components.XauxaFeedbackEvent
-import com.agendaqr.core.ui.components.XauxaScreenScaffold
-import com.agendaqr.core.ui.components.XauxaTopBar
-import com.agendaqr.core.ui.components.XauxaTopBarAction
-import com.agendaqr.core.ui.components.XauxaDialog
-import com.agendaqr.core.ui.components.XauxaEmptyState
-import com.agendaqr.core.ui.components.XauxaOverflowAction
-import com.agendaqr.core.ui.components.XauxaQrPreview
-import com.agendaqr.core.ui.components.XauxaText
-import com.agendaqr.core.ui.components.XauxaTextAction
-import com.agendaqr.core.ui.theme.XauxaColor
+import com.agendaqr.core.ui.components.AmSnackbarHost
+import com.agendaqr.core.ui.components.AmFeedbackEvent
+import com.agendaqr.core.ui.components.AmScreenScaffold
+import com.agendaqr.core.ui.components.AmTopBar
+import com.agendaqr.core.ui.components.AmTopBarAction
+import com.agendaqr.core.ui.components.AmDialog
+import com.agendaqr.core.ui.components.AmEmptyState
+import com.agendaqr.core.ui.components.AmOverflowAction
+import com.agendaqr.core.ui.components.AmQrPreview
+import com.agendaqr.core.ui.components.AmText
+import com.agendaqr.core.ui.components.AmTextAction
+import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.destinations.domain.Destination
 
 @Composable
@@ -39,7 +39,7 @@ fun DestinationDetailScreen(
     var showDeleteConfirm by remember { mutableStateOf(false) }
     // anuncio de eliminación confirmada (por evento).
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
-    XauxaFeedbackEvent(
+    AmFeedbackEvent(
         event = deleteDoneEvent,
         message = AppStrings.Eliminado,
         feedbackHost = appHosts?.feedback,
@@ -47,49 +47,49 @@ fun DestinationDetailScreen(
     // V1.2 (§12): título del QR en la barra superior con flecha atrás;
     // Mostrar QR y Editar como acciones visibles, Compartir y Eliminar en
     // el menú "…" (destructiva, no a un toque).
-    XauxaScreenScaffold(
+    AmScreenScaffold(
         scrollable = true,
         topBar = {
-            XauxaTopBar(
+            AmTopBar(
                 title = destination.name.ifBlank { AppStrings.SinNombre },
                 onBack = onBack,
                 backLabel = AppStrings.Volver,
                 actions = listOf(
-                    XauxaTopBarAction(
+                    AmTopBarAction(
                         label = AppStrings.MostrarQr,
                         onClick = onShowQr,
                         enabled = destination.qr.encoded.isNotBlank(),
                     ),
-                    XauxaTopBarAction(label = AppStrings.Editar, onClick = onEdit),
+                    AmTopBarAction(label = AppStrings.Editar, onClick = onEdit),
                 ),
                 overflowActions = listOf(
-                    XauxaOverflowAction(AppStrings.Compartir, onClick = onShare),
-                    XauxaOverflowAction(AppStrings.Eliminar, { showDeleteConfirm = true }),
+                    AmOverflowAction(AppStrings.Compartir, onClick = onShare),
+                    AmOverflowAction(AppStrings.Eliminar, { showDeleteConfirm = true }),
                 ),
                 overflowLabel = AppStrings.Mas,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
-            destination.category?.let { XauxaText(it, color = XauxaColor.TextSecondary) }
-            destination.note?.takeIf { it.isNotBlank() }?.let { XauxaText(it, color = XauxaColor.TextSecondary) }
+            destination.category?.let { AmText(it, color = AmColor.TextSecondary) }
+            destination.note?.takeIf { it.isNotBlank() }?.let { AmText(it, color = AmColor.TextSecondary) }
             // estado de sincronización del elemento (texto, no solo
             // color) con REINTENTAR cuando es un error recuperable.
             ElementSyncBadge(syncStatus, showWhenSynced = true)
             if (syncStatus == ElementSyncStatus.ErrorRecoverable) {
-                XauxaTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
+                AmTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
             }
             if (syncStatus == ElementSyncStatus.Dead) {
-                XauxaText(
+                AmText(
                     text = AppStrings.TuInformacionEstaGuardadaEnElDispositivo,
-                    color = XauxaColor.TextSecondary,
+                    color = AmColor.TextSecondary,
                 )
             }
             if (destination.qr.encoded.isNotBlank()) {
-                XauxaQrPreview(destination.qr.encoded)
+                AmQrPreview(destination.qr.encoded)
             } else {
-                XauxaEmptyState(
+                AmEmptyState(
                     title = AppStrings.QrSinContenido,
                     subtitle = AppStrings.EditaElDestinoParaImportar,
                     actionLabel = AppStrings.Editar,
@@ -98,7 +98,7 @@ fun DestinationDetailScreen(
             }
     }
     if (showDeleteConfirm) {
-        XauxaDialog(
+        AmDialog(
             title = AppStrings.EliminarDestino,
             message = AppStrings.irreversibleActionWarning,
             confirmLabel = AppStrings.Eliminar,

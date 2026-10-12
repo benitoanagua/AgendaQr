@@ -51,6 +51,10 @@ androidx-test-core = { group = "androidx.test", name = "core-ktx", version = "1.
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit-ktx", version = "1.2.1" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version = "1.6.2" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version = "1.6.1" }
+# UiAutomator (instrumentados, ADR-0010): dependencia ausente en el build
+# original — los instrumentados no compilaban (job no bloqueante de CI).
+# Añadida en la migración AgendaMobile para poder ejecutar la suite real.
+uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version = "2.3.0" }
 camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
 camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
 camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
@@ -61,4 +65,3 @@ roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi
 roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
 lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 material3-window-size = { group = "org.jetbrains.compose.material3", name = "material3-window-size-class", version.ref = "compose" }
-roborazzi-plugin = { group = "io.github.takahirom.roborazzi", name = "io.github.takahirom.roborazzi.gradle.plugin", version.ref = "roborazzi" }

@@ -1,6 +1,7 @@
 # ADR-0012 — UI convencional sobre Material 3, idéntica en Android e iOS
 
-**Estado:** APROBADA — decisión humana registrada en el prompt de la pasada de migración (2026-10-11): "una UI convencional y poco disruptiva, basada en componentes estándar de Material 3, con el MISMO diseño en Android e iOS. La marca queda en el color de acento y poco más. Las reglas de accesibilidad se conservan íntegras."  
+**Estado:** REEMPLAZADA por ADR-0013 en la autoría del sistema visual (AgendaMobile, 2026-10-12) — la DIRECCIÓN de esta decisión se conserva íntegra: UI convencional sobre Material 3, idéntica en Android e iOS, tipografía de sistema, sin tiles. La marca de autoridad pasa de Xauxa a AgendaMobile.
+**Aprobación original:** decisión humana registrada en el prompt de la pasada de migración (2026-10-11): "una UI convencional y poco disruptiva, basada en componentes estándar de Material 3, con el MISMO diseño en Android e iOS. La marca queda en el color de acento y poco más. Las reglas de accesibilidad se conservan íntegras."  
 **Aprobación explícita de enmienda:** el mismo prompt aprueba "enmendar la especificación congelada (docs/04-ux/02-especificacion-ux-ui-v1.md) y revertir parcialmente ADR-0005"; esa aprobación se registra aquí.  
 **Fecha:** 2026-10-11  
 **Área:** UX/UI V1.2 / Xauxa Design System / core:ui, feature:destinations:presentation, androidApp  

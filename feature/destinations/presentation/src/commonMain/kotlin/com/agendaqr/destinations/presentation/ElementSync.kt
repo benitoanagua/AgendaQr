@@ -1,7 +1,7 @@
 package com.agendaqr.destinations.presentation
 
-import com.agendaqr.core.ui.components.XauxaBadge
-import com.agendaqr.core.ui.components.XauxaTone
+import com.agendaqr.core.ui.components.AmBadge
+import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.destinations.data.PendingSyncMutation
 import com.agendaqr.destinations.data.SyncMutationState
 import com.agendaqr.destinations.data.SyncResource
@@ -44,11 +44,11 @@ enum class ElementSyncStatus(val label: String) {
     Dead("No se pudo sincronizar"),
 }
 
-fun ElementSyncStatus.tone(): XauxaTone = when (this) {
-    ElementSyncStatus.Synced -> XauxaTone.Success
-    ElementSyncStatus.Pending -> XauxaTone.Neutral
-    ElementSyncStatus.Syncing -> XauxaTone.Info
-    ElementSyncStatus.ErrorRecoverable, ElementSyncStatus.Dead -> XauxaTone.Danger
+fun ElementSyncStatus.tone(): AmTone = when (this) {
+    ElementSyncStatus.Synced -> AmTone.Success
+    ElementSyncStatus.Pending -> AmTone.Neutral
+    ElementSyncStatus.Syncing -> AmTone.Info
+    ElementSyncStatus.ErrorRecoverable, ElementSyncStatus.Dead -> AmTone.Danger
 }
 
 /**
@@ -63,7 +63,7 @@ fun ElementSyncStatus.tone(): XauxaTone = when (this) {
 @Composable
 fun ElementSyncBadge(status: ElementSyncStatus, showWhenSynced: Boolean = false) {
     if (showWhenSynced || status != ElementSyncStatus.Synced) {
-        XauxaBadge(text = status.label, tone = status.tone())
+        AmBadge(text = status.label, tone = status.tone())
     }
 }
 

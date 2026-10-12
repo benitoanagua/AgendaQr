@@ -16,17 +16,17 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import com.agendaqr.core.ui.components.XauxaIconButton
-import com.agendaqr.core.ui.components.XauxaIcons
-import com.agendaqr.core.ui.components.XauxaPrimaryButton
-import com.agendaqr.core.ui.components.XauxaScreenScaffold
-import com.agendaqr.core.ui.components.XauxaStatusBanner
-import com.agendaqr.core.ui.components.XauxaText
-import com.agendaqr.core.ui.components.XauxaTextAction
-import com.agendaqr.core.ui.components.XauxaTextInput
-import com.agendaqr.core.ui.components.XauxaTone
-import com.agendaqr.core.ui.theme.XauxaColor
-import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.components.AmIconButton
+import com.agendaqr.core.ui.components.AmIcons
+import com.agendaqr.core.ui.components.AmPrimaryButton
+import com.agendaqr.core.ui.components.AmScreenScaffold
+import com.agendaqr.core.ui.components.AmStatusBanner
+import com.agendaqr.core.ui.components.AmText
+import com.agendaqr.core.ui.components.AmTextAction
+import com.agendaqr.core.ui.components.AmTextField
+import com.agendaqr.core.ui.components.AmTone
+import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmType
 
 @Composable
 fun AuthScreen(
@@ -54,20 +54,20 @@ fun AuthScreen(
     // volver: sin barra; su acción principal es el `Button` del cuerpo.
     // El titular usa el rol headlineMedium de M3 y los campos son
     // OutlinedTextField con autofill de credenciales.
-    XauxaScreenScaffold(
+    AmScreenScaffold(
         scrollable = true,
     ) {
-        XauxaText(
+        AmText(
             AppStrings.AgendaQr,
-            size = XauxaType.HeadlineMedium,
+            size = AmType.HeadlineMedium,
             fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
         )
-        XauxaText(
+        AmText(
             AppStrings.IniciaSesionParaAccederA,
-            size = XauxaType.Body,
-            color = XauxaColor.TextSecondary,
+            size = AmType.Body,
+            color = AmColor.TextSecondary,
         )
-        XauxaTextInput(
+        AmTextField(
             label = AppStrings.Correo,
             value = state.email,
             onValueChange = onEmailChanged,
@@ -84,7 +84,7 @@ fun AuthScreen(
             isError = emailError,
             errorMessage = if (emailError) AppStrings.IngresaUnCorreoValido else null,
         )
-        XauxaTextInput(
+        AmTextField(
             label = AppStrings.Contrasena,
             value = state.password,
             onValueChange = onPasswordChanged,
@@ -105,22 +105,22 @@ fun AuthScreen(
             errorMessage = if (passwordError) AppStrings.Minimo6Caracteres else null,
             helperMessage = if (!passwordError) AppStrings.Minimo6Caracteres else null,
             trailing = {
-                XauxaIconButton(
+                AmIconButton(
                     contentDescription = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
                     onClick = { passwordVisible = !passwordVisible },
                 ) {
-                    XauxaText(
+                    AmText(
                         if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
-                        size = XauxaType.Caption,
-                        color = XauxaColor.BrandText,
+                        size = AmType.Caption,
+                        color = AmColor.AccentText,
                     )
                 }
             },
         )
         state.errorMessage?.let { err ->
-            XauxaStatusBanner(
+            AmStatusBanner(
                 err.display(),
-                tone = XauxaTone.Danger,
+                tone = AmTone.Danger,
                 actionLabel = err.action.label,
                 // REINTENTAR repite el mismo paso que falló.
                 onAction = when (state.errorFlow) {
@@ -132,8 +132,8 @@ fun AuthScreen(
                 dismissLabel = AppStrings.Descartar,
             )
         }
-        state.confirmationMessage?.let { XauxaStatusBanner(it, tone = XauxaTone.Info) }
-        XauxaPrimaryButton(
+        state.confirmationMessage?.let { AmStatusBanner(it, tone = AmTone.Info) }
+        AmPrimaryButton(
             AppStrings.IniciarSesion,
             onClick = { submit(onSignIn) },
             modifier = Modifier.fillMaxWidth(),
@@ -143,7 +143,7 @@ fun AuthScreen(
         )
         // el secundario NO muestra spinner (un solo indicador
         // de ocupado por pantalla — el del primario).
-        XauxaTextAction(
+        AmTextAction(
             label = AppStrings.CrearCuenta,
             onClick = { submit(onSignUp) },
             enabled = !state.isSubmitting,

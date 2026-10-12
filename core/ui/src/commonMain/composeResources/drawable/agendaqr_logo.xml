@@ -7,7 +7,7 @@
     - Sin <group> de transformación global; las coordenadas son absolutas.
   Consumo: painterResource(Res.drawable.agendaqr_logo)
   contentDescription: null cuando se usa como decorativo (el contexto de texto
-  adyacente ya describe la pantalla — regla I24 del contrato Xauxa).
+  adyacente ya describe la pantalla — regla de iconografía decorativa del contrato AgendaMobile).
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="512dp"

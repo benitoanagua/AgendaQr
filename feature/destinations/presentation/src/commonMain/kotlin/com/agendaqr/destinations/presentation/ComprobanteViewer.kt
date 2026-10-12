@@ -36,13 +36,13 @@ internal fun ComprobanteViewerDialog(
     var showDeleteConfirm by remember { mutableStateOf(false) }
     // anuncio de eliminación confirmada (por evento).
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
-    XauxaFeedbackEvent(
+    AmFeedbackEvent(
         event = deleteDoneEvent,
         message = AppStrings.Eliminado,
         feedbackHost = appHosts?.feedback,
     )
     if (showDeleteConfirm) {
-        XauxaDialog(
+        AmDialog(
             title = AppStrings.EliminarComprobante,
             destructive = true,
             message = AppStrings.operationKeptOnReceiptDelete,
@@ -58,7 +58,7 @@ internal fun ComprobanteViewerDialog(
         return
     }
     val bytes = state.openedComprobanteBytes
-    XauxaDialog(
+    AmDialog(
         title = AppStrings.Comprobante,
         confirmLabel = AppStrings.Cerrar,
         onConfirm = { viewModel.onAction(OperationAction.CloseComprobante) },
@@ -68,21 +68,21 @@ internal fun ComprobanteViewerDialog(
         // solo se alcanza por su botón explícito (§3: Back ≠ destructivo).
         onDismissRequest = { viewModel.onAction(OperationAction.CloseComprobante) },
         content = {
-            Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                XauxaText(formatDate(receipt.createdAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
-                XauxaText(AppStrings.Origen + receiptProvenanceLabel(receipt.provenance), size = XauxaType.Label, color = XauxaColor.TextSecondary)
+            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                AmText(formatDate(receipt.createdAt), size = AmType.Label, color = AmColor.TextSecondary)
+                AmText(AppStrings.Origen + receiptProvenanceLabel(receipt.provenance), size = AmType.Label, color = AmColor.TextSecondary)
                 // estado de sincronización del comprobante, con texto.
                 ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                 when {
-                    state.isLoadingComprobante -> XauxaLoading(message = AppStrings.AbriendoComprobante)
+                    state.isLoadingComprobante -> AmLoading(message = AppStrings.AbriendoComprobante)
                     bytes != null -> {
                         ComprobantePreview(bytes, receipt.mimeType)
-                        XauxaSecondaryButton(
+                        AmSecondaryButton(
                             label = AppStrings.Compartir,
                             onClick = { shareComprobante(bytes, receipt.extension ?: "bin", receipt.mimeType) },
                         )
                     }
-                    else -> XauxaText(AppStrings.NoSePudoAbrirEl, size = XauxaType.Label, color = XauxaColor.TextSecondary)
+                    else -> AmText(AppStrings.NoSePudoAbrirEl, size = AmType.Label, color = AmColor.TextSecondary)
                 }
             }
         },

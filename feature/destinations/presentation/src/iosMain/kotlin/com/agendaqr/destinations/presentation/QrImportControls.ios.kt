@@ -8,15 +8,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import com.agendaqr.core.ui.components.XauxaFeedbackEvent
-import com.agendaqr.core.ui.components.XauxaPrimaryButton
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
-import com.agendaqr.core.ui.components.XauxaStatusBanner
-import com.agendaqr.core.ui.components.XauxaText
-import com.agendaqr.core.ui.components.XauxaTone
-import com.agendaqr.core.ui.theme.XauxaColor
-import com.agendaqr.core.ui.theme.XauxaSpacing
-import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.components.AmFeedbackEvent
+import com.agendaqr.core.ui.components.AmPrimaryButton
+import com.agendaqr.core.ui.components.AmSecondaryButton
+import com.agendaqr.core.ui.components.AmStatusBanner
+import com.agendaqr.core.ui.components.AmText
+import com.agendaqr.core.ui.components.AmTone
+import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmSpacing
+import com.agendaqr.core.ui.theme.AmType
 import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
 import platform.UIKit.UIApplicationOpenSettingsURLString
@@ -31,7 +31,7 @@ import platform.UIKit.UIApplicationOpenSettingsURLString
 actual fun QrImportControls(
     onResult: (QrImportResult) -> Unit,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
         QrGalleryControls(onResult = onResult)
         QrCameraEntryControl(onResult = onResult)
     }
@@ -47,9 +47,9 @@ actual fun QrImportControls(
 actual fun QrGalleryControls(
     onResult: (QrImportResult) -> Unit,
 ) {
-    XauxaPrimaryButton(
+    AmPrimaryButton(
         label = AppStrings.ElegirDeLaGaleria,
-        icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
+        icon = com.agendaqr.core.ui.components.AmIcons.Gallery,
         onClick = { IosQrImportController.openMultiple(onResult = onResult) },
     )
 }
@@ -64,12 +64,12 @@ actual fun QrCameraEntryControl(
     var permissionError by rememberSaveable { mutableStateOf<UserFacingError?>(null) }
     // feedback de lectura exitosa por EVENTO.
     var detectionToken by remember { mutableStateOf<Any?>(null) }
-    XauxaFeedbackEvent(event = detectionToken, message = AppStrings.CodigoQrDetectado)
-    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+    AmFeedbackEvent(event = detectionToken, message = AppStrings.CodigoQrDetectado)
+    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
         permissionError?.let { error ->
-            XauxaStatusBanner(
+            AmStatusBanner(
                 error.display(),
-                tone = XauxaTone.Danger,
+                tone = AmTone.Danger,
                 actionLabel = AppStrings.AbrirAjustes,
                 // UIApplicationOpenSettingsURLString: la constante C es
                 // la que exponen los bindings (openSettingsURLString de
@@ -84,14 +84,14 @@ actual fun QrCameraEntryControl(
         }
         // §4 S02: el texto de privacidad de la cámara es visible junto a
         // la acción de escanear.
-        XauxaText(
+        AmText(
             AppStrings.PermisoCamaraContexto,
-            size = XauxaType.Caption,
-            color = XauxaColor.TextSecondary,
+            size = AmType.Caption,
+            color = AmColor.TextSecondary,
         )
-        XauxaSecondaryButton(
+        AmSecondaryButton(
             label = AppStrings.Camara,
-            icon = com.agendaqr.core.ui.components.XauxaIcons.Camera,
+            icon = com.agendaqr.core.ui.components.AmIcons.Camera,
             onClick = {
                 IosQrCameraPresenter(
                     onQr = { result ->

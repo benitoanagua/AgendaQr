@@ -12,7 +12,7 @@
 |---|---|---|
 | Dominio (operaciones, comprobantes, contextos) | Implementado | domain tests |
 | Datos (Supabase local-first, sync queue) | Implementado | data tests |
-| UX/UI V1.2 (Material 3 convencional, S01–S12) | Implementado | Robolectric suite + hashes visuales + gate del design system |
+| UX/UI V1.3 (AgendaMobile sobre Material 3, S01–S12) | Implementado | Robolectric suite + hashes visuales + gate del design system |
 | Chrome e insets (TopBar, NavigationBar/NavigationRail, Scaffold con contentWindowInsets) | Implementado | Robolectric suite + gate |
 | Edge-to-edge Android (`enableEdgeToEdge`) | Implementado | ensamblado; runtime NO VERIFICADO (dispositivo) |
 | Predictive back (PredictiveBackHandler con progreso) | Implementado | compilación 3 targets; gesto NO VERIFICADO (dispositivo) |
@@ -22,7 +22,7 @@
 | Permisos de cámara (política de ajustes) | Implementado | Instrumentados |
 | Navegación (back stack restaurable + NavigationBar 4 destinos) | Implementado | commonTest + RootNavigationChromeTest |
 | Accesibilidad (contraste, foco visible, háptica, anuncios, targets 48dp) | Implementado | `core:ui` tests + Robolectric |
-| Iconografía (Lucide ISC) | Implementado | compilación 3 targets |
+| Iconografía (Lucide ISC vía AmIcon) | Implementado | compilación 2 targets (Android/iOS) + gate |
 | Feedback transitorio (Snackbar) y persistente (AppStatusHost) | Implementado | RootNavigationChromeTest + AppStatusHostTest |
 
 ## NO VERIFICADO en esta pasada
@@ -47,8 +47,9 @@ dispositivo físico o red). No se declaran PASS.
   de texto (con su descripción accesible como etiqueta) hasta una
   decisión de iconografía.
 - El contraste NO textual de algunos acentos de contexto contra el fondo
-  del tema es < 3:1 (contrato §5.2): se aceptan como identidad de dato
-  (encabezados de S06, punto de fila) siempre con texto legible.
+  del tema es < 3:1 (contrato AgendaMobile §4.2): se aceptan como
+  identidad de dato (encabezados de S06, punto de fila) siempre con
+  texto legible.
 - Autofill de credenciales: `KeyboardOptions.contentType` no existe en
   Compose 1.8.2 (llega con 1.9); el autofill funciona por `keyboardType`
   Email/Password (iOS lo mapea a `textContentType`).
@@ -74,7 +75,6 @@ dispositivo físico o red). No se declaran PASS.
 | Tests de módulos | `./gradlew :core:ui:testDebugUnitTest :feature:destinations:presentation:testDebugUnitTest :feature:destinations:domain:test :feature:destinations:data:testDebugUnitTest -PallowDebugSigningForRc=true` | PASS |
 | Regresión visual (Roborazzi + SHA-256) | `./gradlew :feature:destinations:presentation:recordRoborazziDebug recordVisualHashes verifyVisualHashes -PallowDebugSigningForRc=true` | PASS (8 capturas renovadas tras el rediseño; revisión visual pendiente — ver NO VERIFICADO) |
 | Ensamblado Android | `./gradlew :androidApp:assembleDebug -PallowDebugSigningForRc=true` | PASS |
-| Lab web (wasm) | `./gradlew componentLabWeb` | PASS |
 | Compilación iOS (simulador ARM64, sin runtime) | `./gradlew :core:ui:compileKotlinIosSimulatorArm64 :feature:destinations:presentation:compileKotlinIosSimulatorArm64` | PASS (compila; runtime NO VERIFICADO, sin Xcode) |
 | Supabase acceptance (JDBC) | `DATABASE_URL=jdbc:postgresql://... ./gradlew :supabase:acceptance:test` | NO VERIFICADO (sin base de datos) |
 | CI (4 jobs) | Push a `main` → Android validation workflow | NO VERIFICADO (fuera del entorno local) |

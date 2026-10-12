@@ -3,7 +3,7 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.agendaqr.core.ui.theme.XauxaTheme
+import com.agendaqr.core.ui.theme.AmTheme
 import com.agendaqr.destinations.domain.Destination
 import com.agendaqr.destinations.domain.QrAsset
 import org.junit.Rule
@@ -30,7 +30,7 @@ class ErrorRetryButtonsTest {
     fun destinations_list_retry_dispatches_retry_failed() {
         val received = mutableListOf<DestinationAction>()
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
                         destinations = listOf(
@@ -52,7 +52,7 @@ class ErrorRetryButtonsTest {
     fun destinations_list_close_only_dismisses() {
         val received = mutableListOf<DestinationAction>()
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
                         destinations = emptyList(),
@@ -72,7 +72,7 @@ class ErrorRetryButtonsTest {
     fun import_review_retry_saves_again() {
         var saves = 0
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 ImportReviewScreen(
                     assets = listOf(QrAsset("eA==")),
                     onSaveAll = { saves++ },

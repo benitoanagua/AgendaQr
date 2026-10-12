@@ -6,7 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.semantics.SemanticsProperties
-import com.agendaqr.core.ui.theme.XauxaTheme
+import com.agendaqr.core.ui.theme.AmTheme
 import com.agendaqr.destinations.domain.Context
 import org.junit.Rule
 import org.junit.Test
@@ -33,7 +33,7 @@ class ContextPickerDialogTest {
     fun picker_list_offers_create_and_selection_semantics() {
         var selection = ContextSelection()
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 ContextPickerDialog(
                     contexts = contexts,
                     selection = selection,
@@ -57,7 +57,7 @@ class ContextPickerDialogTest {
     fun create_step_opens_with_the_minimal_form_and_back_to_list() {
         var selection = ContextSelection(contextId = "ctx-1")
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 ContextPickerDialog(
                     contexts = contexts,
                     selection = selection,

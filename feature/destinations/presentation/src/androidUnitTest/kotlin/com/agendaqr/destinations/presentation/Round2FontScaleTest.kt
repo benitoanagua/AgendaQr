@@ -15,12 +15,12 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import com.agendaqr.core.ui.components.XauxaIcons
-import com.agendaqr.core.ui.components.XauxaListRow
-import com.agendaqr.core.ui.components.XauxaPrimaryButton
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
-import com.agendaqr.core.ui.components.XauxaTextInput
-import com.agendaqr.core.ui.theme.XauxaTheme
+import com.agendaqr.core.ui.components.AmIcons
+import com.agendaqr.core.ui.components.AmListRow
+import com.agendaqr.core.ui.components.AmPrimaryButton
+import com.agendaqr.core.ui.components.AmSecondaryButton
+import com.agendaqr.core.ui.components.AmTextField
+import com.agendaqr.core.ui.theme.AmTheme
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -36,9 +36,8 @@ import org.robolectric.annotation.Config
  *
  * Las tres escalas viven en la MISMA composición, una por vez, moviendo
  * el estado de la escala (setContent solo puede llamarse una vez por
- * test). La rejilla Metro deriva el alto del tile de la unidad calculada:
- * apilar las tres escalas a la vez consumía el espacio de las últimas
- * instancias.
+ * test). El layout crece con la fuente: apilar las tres escalas a la
+ * vez consumía el espacio de las últimas instancias.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], qualifiers = "w320dp-h640dp")
@@ -56,7 +55,7 @@ class Round2FontScaleTest {
     ) {
         var scale by mutableStateOf(1f)
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 CompositionLocalProvider(
                     LocalDensity provides Density(density = 1f, fontScale = scale),
                 ) {
@@ -85,7 +84,7 @@ class Round2FontScaleTest {
 
     @Test
     fun primary_button_wraps_without_overflow_at_every_scale() {
-        composeAtScales({ XauxaPrimaryButton(label = longLabel, onClick = {}) }) {
+        composeAtScales({ AmPrimaryButton(label = longLabel, onClick = {}) }) {
             compose.onAllNodesWithText(longLabel).fetchSemanticsNodes().forEach {
                 assertTrue(
                     "botón con fuente $it desborda",
@@ -102,7 +101,7 @@ class Round2FontScaleTest {
     fun text_input_keeps_label_error_and_target_at_every_scale() {
         composeAtScales(
             {
-                XauxaTextInput(
+                AmTextField(
                     label = "Persona o entidad del pago registrado",
                     value = "",
                     onValueChange = {},
@@ -122,19 +121,19 @@ class Round2FontScaleTest {
             {
                 Column {
                     // S02: acción única de galería (primaria con icono).
-                    XauxaPrimaryButton(
+                    AmPrimaryButton(
                         label = AppStrings.ElegirDeLaGaleria,
                         onClick = {},
-                        icon = XauxaIcons.Gallery,
+                        icon = AmIcons.Gallery,
                         modifier = Modifier.fillMaxWidth(),
                     )
                     // S12: guardado de reconocidos (principal fija abajo).
-                    XauxaPrimaryButton(
+                    AmPrimaryButton(
                         label = AppStrings.GuardarReconocidos,
                         onClick = {},
                         modifier = Modifier.fillMaxWidth(),
                     )
-                    XauxaSecondaryButton(
+                    AmSecondaryButton(
                         label = AppStrings.ElegirArchivoPdf,
                         onClick = {},
                         modifier = Modifier.fillMaxWidth(),
@@ -152,7 +151,7 @@ class Round2FontScaleTest {
     fun destination_rows_wrap_long_labels_at_every_scale() {
         composeAtScales(
             {
-                XauxaListRow(
+                AmListRow(
                     title = "Registrar actividad con comprobante",
                     subtitle = "Último QR o actividad reciente",
                     onClick = {},
@@ -176,7 +175,7 @@ class Round2FontScaleTest {
     fun list_row_wraps_long_subtitle_without_overflow_at_every_scale() {
         composeAtScales(
             {
-                XauxaListRow(
+                AmListRow(
                     title = "Carniceria Don Bife con nombre largo para la fila",
                     subtitle = longSubtitle,
                     onClick = {},
@@ -192,16 +191,16 @@ class Round2FontScaleTest {
     fun top_bar_actions_keep_target_at_every_scale() {
         composeAtScales(
             {
-                com.agendaqr.core.ui.components.XauxaTopBar(
+                com.agendaqr.core.ui.components.AmTopBar(
                     title = "Detalle con nombre largo de destino de ejemplo",
                     onBack = {},
                     backLabel = "Atrás",
                     actions = listOf(
-                        com.agendaqr.core.ui.components.XauxaTopBarAction(
+                        com.agendaqr.core.ui.components.AmTopBarAction(
                             label = "Guardar cambios",
                             onClick = {},
                         ),
-                        com.agendaqr.core.ui.components.XauxaTopBarAction(label = "Compartir", onClick = {}),
+                        com.agendaqr.core.ui.components.AmTopBarAction(label = "Compartir", onClick = {}),
                     ),
                 )
             },

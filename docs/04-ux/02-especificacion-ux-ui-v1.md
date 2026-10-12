@@ -1,6 +1,6 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — V1.2 para contrato funcional y visual; contrato visual definido por ADR-0012 (diseño convencional sobre Material 3) y desarrollado en `docs/05-design-system/00-xauxa-contrato-normativo.md`  
+**Estado:** FROZEN — V1.3 para contrato funcional y visual; contrato visual definido por ADR-0013 (AgendaMobile) y desarrollado en `docs/05-design-system/00-agendamobile-contrato-normativo.md`  
 **Fecha:** 2026-10-11  
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
 
@@ -11,6 +11,7 @@
 | V1.0 | 2026-09-23 | Congelación original. |
 | V1.1 | 2026-10-05 | Enmienda por ADR-0005 (lenguaje visual Metro dentro de Xauxa): S01, S06, §11 y §12 reescritos. |
 | V1.2 | 2026-10-11 | Enmienda por ADR-0012 (UI convencional sobre Material 3, misma en ambas plataformas): §12 reescrito como diseño convencional (M1–M13 eliminados), §4 S01/S02/S12 recompuestos, §3 y §11 ajustados donde cambian. Intención, navegación conceptual, modelo mental, reglas de negocio y recuperación de errores: intactos. Aprobación explícita del propietario para enmendar la congelación registrada en ADR-0012. |
+| V1.3 | 2026-10-12 | Enmienda por ADR-0013 (sistema de diseño propio AgendaMobile): §12 actualizado a la autoría, paleta, formas y modo oscuro de AgendaMobile. Intención, navegación, modelo mental, reglas de negocio, accesibilidad y copy: intactos. |
 
 La implementación de V1.2 está aplicada sobre `main` y verificada por las
 puertas del design system y de módulos (estado y cobertura reales en
@@ -253,16 +254,16 @@ Reglas V1.2:
 - **Escalado de fuente:** el contenido esencial y las acciones primarias
   no se truncan con la fuente del sistema al 200 %.
 
-## 12. Contrato visual — V1.2, ADR-0012
+## 12. Contrato visual — V1.3, ADR-0013
 
-> **Precedencia:** esta sección conserva la decisión de producto visual adoptada por ADR-0012 (diseño convencional sobre Material 3). Para reglas transversales detalladas, estados, accesibilidad, pruebas, gobernanza y resolución de contradicciones, prevalece `docs/05-design-system/00-xauxa-contrato-normativo.md`. Si un detalle de esta sección contradice el contrato normativo, se debe reconciliar documentalmente; no se permite implementar una mezcla tácita.
+> **Precedencia:** esta sección conserva la decisión de producto visual adoptada por ADR-0013 (AgendaMobile, sistema de diseño propio). Para reglas transversales detalladas, estados, accesibilidad, pruebas, gobernanza y resolución de contradicciones, prevalece `docs/05-design-system/00-agendamobile-contrato-normativo.md`. Si un detalle de esta sección contradice el contrato normativo, se debe reconciliar documentalmente; no se permite implementar una mezcla tácita.
 
-La UI es convencional y poco disruptiva: componentes estándar de Material 3 con el MISMO diseño en Android e iOS. La marca queda en el color de acento y poco más. Se conservan la paleta verificada, el lienzo claro del QR y las reglas de accesibilidad (§11). Xauxa sigue siendo el único sistema de diseño: la capa de tokens (`XauxaTokens.kt`) y los envoltorios `Xauxa*` siguen siendo la única API visual de las features.
+La UI es convencional, mobile-first y poco disruptiva: componentes estándar de Material 3 con el MISMO diseño en Android e iOS. La marca queda en el color de acento y poco más. Se conservan la paleta verificada, el lienzo claro del QR y las reglas de accesibilidad (§11). AgendaMobile es el único sistema de diseño: la capa de tokens (`AmTokens.kt`) y los envoltorios `Am*` son la única API visual de las features.
 
 ### Principios
 
-1. Contenido antes que cromo (se conserva de Xauxa).
-2. Componentes estándar: todo control interactivo es Material 3 o un envoltorio fino Xauxa con color, forma y tipografía del tema; sin mecánicas de interacción paralelas propias.
+1. Contenido antes que cromo.
+2. Componentes estándar: todo control interactivo es Material 3 o un envoltorio fino AgendaMobile con color, forma y tipografía del tema; sin mecánicas de interacción paralelas propias.
 3. Sin deriva de plataforma: la composición, el chrome y los componentes son idénticos en Android e iOS; solo la adquisición nativa (selectores, share) y las convenciones obligadas del sistema difieren.
 4. La accesibilidad es contrato, no refinamiento (§11).
 
@@ -277,18 +278,18 @@ La UI es convencional y poco disruptiva: componentes estándar de Material 3 con
 
 ### Campos de entrada
 
-- `OutlinedTextField` con etiqueta, texto de apoyo y error contextual debajo (icono + texto, no solo color). El borde en reposo cumple ≥ 3:1 (token `borderControl`).
+- Campo tonal (superficie secundaria, radio de tokens, sin borde de reposo) con etiqueta, texto de apoyo y error contextual debajo (icono + texto, no solo color); la guía inferior aparece en foco (acento) y error (danger). El borde funcional cumple ≥ 3:1 (rol `borderControl`).
 - Teclado e IME según el tipo de campo; autofill de credenciales; mostrar/ocultar contraseña con botón de descripción accesible.
 - La obligatoriedad se indica con texto/semántica accesible coherente con la guía de voz, no con asterisco decorativo.
 
 ### Listas y diálogos
 
-- Filas con `ListItem` (o equivalente M3), separación por divisor o espacio; acciones por fila como botones de icono (favorito = conmutador de estrella con estado y descripción accesible), no como enlace de texto.
-- Diálogos y hojas: `AlertDialog`/`ModalBottomSheet` estándar.
+- Filas con `ListItem` (o equivalente M3), separación por divisor opt-in o espacio; acciones por fila como botones de icono (favorito = conmutador de estrella con estado y descripción accesible), no como enlace de texto.
+- Diálogos y hojas: `AlertDialog` estándar para confirmaciones y selecciones acotadas (la hoja inferior como patrón de selector queda registrada como siguiente paso en ADR-0013).
 
 ### Botones
 
-- Acción principal: `Button`. Secundaria: `OutlinedButton` o `TextButton`. Icono: `IconButton`/`IconToggleButton` con descripción accesible. Mínimo 48 dp.
+- Acción principal: `Button` con relleno de acento. Secundaria: botón tonal (superficie secundaria, sin borde de reposo). Terciaria: `TextButton`. Icono: `IconButton`/`IconToggleButton` con descripción accesible. Mínimo 48 dp.
 - Estado deshabilitado y "guardando" expresados con etiqueta de texto (nunca solo con apariencia).
 
 ### Tipografía
@@ -298,50 +299,46 @@ La UI es convencional y poco disruptiva: componentes estándar de Material 3 con
 
 ### Color
 
-- Acento de sistema por defecto: `0067B8` (texto blanco, 5.78:1). Esquemas claro y oscuro propios, con pares de contenido verificados por pruebas.
-- Paleta de acentos asignables a contextos: el color se deriva de forma **determinista** del identificador del contexto, sin persistir el color ni cambiar el dominio; paleta acotada, sin ampliar. Elegir color manualmente queda como punto abierto, coherente con ADR-0003 (sin edición de contextos en V1).
-- Los colores de estado (error, advertencia, éxito) siguen siendo semánticos y distintos de los acentos; el significado nunca depende solo del color.
+- Acento del sistema: del linaje del logo de marca, recalibrado para contraste AA — claro `0059D6` (texto blanco, 6.18:1), oscuro `6FA5FF` con texto de tinta (7.63:1). Esquemas claro y oscuro propios con superficies neutras frías (nunca blanco/negro puro como lienzo), pares de contenido verificados por pruebas.
+- Paleta de identidad de contextos: el color se deriva de forma **determinista** del identificador del contexto, sin persistir el color ni cambiar el dominio; paleta acotada (12 + sistema), sin ampliar. Elegir color manualmente queda como punto abierto, coherente con ADR-0003 (sin edición de contextos en V1).
+- Los colores de estado (error, advertencia, éxito, información) siguen siendo semánticos y distintos del acento; el significado nunca depende solo del color.
 - El lienzo del código QR es claro en ambos temas (zona de silencio escaneable).
 
-Tabla de contraste calculada (WCAG 2.x sobre luminancia relativa; razón contra texto blanco y contra texto negro). Regla: texto normal ≥ 4.5:1; texto grande ≥ 3:1. Cada acento usa el color de texto que cumple; si ninguno cumple, se excluye.
+Tabla de contraste calculada (WCAG 2.x sobre luminancia relativa; razón del par texto asignado/fondo). Regla: texto normal ≥ 4.5:1. Todos los acentos de AgendaMobile usan texto blanco.
 
-| Acento | Hex | Texto blanco | Texto negro | Texto asignado | Estado |
-|---|---|---|---|---|---|
-| lime | A4C400 | 2.00 | 10.47 | negro | ADMITIDO |
-| green | 60A917 | 2.92 | 7.18 | negro | candidato no incluido (paleta acotada a 12) |
-| emerald | 008A00 | 4.53 | 4.64 | negro | ADMITIDO |
-| teal | 00ABA9 | 2.84 | 7.40 | negro | ADMITIDO |
-| cyan | 1BA1E2 | 2.90 | 7.24 | negro | ADMITIDO |
-| cobalt | 0050EF | 6.19 | 3.39 | blanco | ADMITIDO |
-| indigo | 6A00FF | 6.87 | 3.06 | blanco | ADMITIDO |
-| violet | AA00FF | 5.06 | 4.15 | blanco | ADMITIDO |
-| magenta | D80073 | 5.04 | 4.17 | blanco | ADMITIDO |
-| crimson | A20025 | 8.19 | 2.56 | blanco | ADMITIDO |
-| red | E51400 | 4.74 | 4.43 | blanco | ADMITIDO |
-| orange | FA6800 | 2.98 | 7.04 | negro | ADMITIDO |
-| amber | F0A30A | 2.11 | 9.95 | negro | ADMITIDO |
-| yellow | E3C800 | 1.68 | 12.53 | negro | candidato no incluido (paleta acotada a 12) |
-| brown | 825A2C | 6.09 | 3.45 | blanco | candidato no incluido (paleta acotada a 12) |
-| steel | 647687 | 4.68 | 4.48 | blanco | candidato no incluido (paleta acotada a 12) |
-| sistema | 0067B8 | 5.78 | 3.63 | blanco | acento por defecto |
+| Acento | Hex | Texto blanco | Texto asignado |
+|---|---|---|---|
+| blue | 1D4ED8 | 6.70 | blanco |
+| sky | 0369A1 | 5.93 | blanco |
+| teal | 0F766E | 5.47 | blanco |
+| cyan | 0E7490 | 5.36 | blanco |
+| emerald | 047857 | 5.48 | blanco |
+| green | 15803D | 5.02 | blanco |
+| lime | 4D7C0F | 4.99 | blanco |
+| amber | A16207 | 4.92 | blanco |
+| orange | C2410C | 5.18 | blanco |
+| red | B91C1C | 6.47 | blanco |
+| rose | BE123C | 6.29 | blanco |
+| violet | 6D28D9 | 7.10 | blanco |
+| sistema | 0059D6 | 6.18 | blanco |
 
-**Paleta final admitida: 12 acentos de contexto** (lime, emerald, teal, cyan, cobalt, indigo, violet, magenta, crimson, red, orange, amber) + el acento de sistema `0067B8`. Ningún candidato fue excluido por contraste; los 4 no incluidos se descartan solo por acotar la paleta al máximo de 12 y quedan documentados. Nota: emerald con texto negro (4.64) queda cerca del umbral — aceptado y registrado en ADR-0005.
+**Paleta final admitida: 12 acentos de contexto + el acento de sistema** (ADR-0013). Los pares están fijados por `AmAccentTest`; la asignación por identificador (FNV-1a) es estable entre plataformas.
 
 ### Formas y movimiento
 
-- Conjunto de formas explícito en tokens (extraSmall 4 dp, small 8 dp, medium 12 dp, large 16 dp, extraLarge 28 dp), consumido por `MaterialTheme.shapes`; ningún componente fija radios suyos.
+- Conjunto de formas explícito en tokens (extraSmall 4 dp, small 8 dp, medium 12 dp, large 16 dp, extraLarge 24 dp, píldora para chips/badges), consumido por `MaterialTheme.shapes`; ningún componente fija radios suyos.
 - Ripple/indicación de pulsación estándar de Material 3; sin overlay de pulsación propio ni `indication = null`.
 - Transición entre superficies: fundido con un desplazamiento horizontal pequeño, corto y con tokens de movimiento; con reduced motion el cambio es inmediato (§11).
 
 ### Iconografía
 
-- **Set: Lucide** (licencia ISC — texto del aviso en `docs/05-design-system/06-licencias-terceros.md`), encapsulado por `XauxaIcon`; tamaño desde tokens. El set de iconos de Material queda prohibido en producción.
+- **Set: Lucide** (licencia ISC — texto del aviso en `docs/05-design-system/06-licencias-terceros.md`), encapsulado por `AmIcon`; tamaño desde tokens. El set de iconos de Material queda prohibido en producción.
 - Glifos de línea, trazo uniforme, un solo color. Iconos decorativos fuera del árbol de accesibilidad; iconos interactivos con descripción accesible (§11).
 - Fuera del mapeo existente no se añaden iconos sin decisión.
 
 ### Modo oscuro
 
-- Esquema oscuro propio (fondo negro puro), con los mismos roles semánticos y umbrales de contraste que el claro; los componentes no cambian entre temas.
+- Esquema oscuro propio de tinta profunda (fondo `0C1016`, superficies elevadas `151B24`/`202836`), con los mismos roles semánticos y umbrales de contraste que el claro; el acento pasa a un azul claro con texto de tinta (par AA verificado).
 
 ## 13. Fuera de esta congelación
 
@@ -349,4 +346,4 @@ No definido en V1.2: implementación Kotlin/Compose concreta de esta enmienda, n
 
 ## 14. Estado
 
-**UX/UI V1.2: FROZEN** (enmienda ADR-0012, 2026-10-11).
+**UX/UI V1.3: FROZEN** (enmienda ADR-0013, 2026-10-12).

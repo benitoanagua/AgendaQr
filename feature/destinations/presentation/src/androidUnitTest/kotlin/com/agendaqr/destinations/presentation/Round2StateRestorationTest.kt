@@ -3,7 +3,7 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.agendaqr.core.ui.theme.XauxaTheme
+import com.agendaqr.core.ui.theme.AmTheme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,7 +26,7 @@ class Round2StateRestorationTest {
     fun auth_validation_errors_survive_recreation() {
         val restoration = StateRestorationTester(compose)
         restoration.setContent {
-            XauxaTheme {
+            AmTheme {
                 AuthScreen(
                     state = AuthUiState(email = "", password = "", isSubmitting = false),
                     onEmailChanged = { },

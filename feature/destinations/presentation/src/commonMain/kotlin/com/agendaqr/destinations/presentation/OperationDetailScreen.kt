@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import com.agendaqr.core.ui.components.XauxaSnackbarHost
+import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.data.SyncResource
@@ -41,11 +41,11 @@ internal fun OperationDetailScreen(
 ) {
     val operation = viewModel.selectedOperation()
     if (operation == null) {
-        XauxaScreenScaffold(
+        AmScreenScaffold(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            XauxaEmptyState(
+            AmEmptyState(
                 title = AppStrings.OperacionNoEncontrada,
                 subtitle = AppStrings.PudoHaberSidoEliminada,
                 actionLabel = AppStrings.Volver,
@@ -57,7 +57,7 @@ internal fun OperationDetailScreen(
     var showDeleteConfirm by remember { mutableStateOf(false) }
     // anuncio de eliminación confirmada (por evento).
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
-    XauxaFeedbackEvent(
+    AmFeedbackEvent(
         event = deleteDoneEvent,
         message = AppStrings.Eliminado,
         feedbackHost = appHosts?.feedback,
@@ -65,30 +65,30 @@ internal fun OperationDetailScreen(
     // V1.2 (§12): detalle con título y flecha atrás en la barra superior;
     // Compartir y Editar como acciones visibles (Editar es la principal),
     // Eliminar en el menú "…" (destructiva, no a un toque).
-    XauxaScreenScaffold(
+    AmScreenScaffold(
         scrollable = true,
         topBar = {
-            XauxaTopBar(
+            AmTopBar(
                 title = AppStrings.Detalle,
                 onBack = { viewModel.onAction(OperationAction.Back) },
                 backLabel = AppStrings.Volver,
                 actions = listOf(
-                    XauxaTopBarAction(label = AppStrings.Compartir, onClick = { shareOperation(operation) }),
-                    XauxaTopBarAction(
+                    AmTopBarAction(label = AppStrings.Compartir, onClick = { shareOperation(operation) }),
+                    AmTopBarAction(
                         label = AppStrings.Editar,
                         onClick = { viewModel.onAction(OperationAction.Edit(operation.id)) },
                     ),
                 ),
                 overflowActions = listOf(
-                    XauxaOverflowAction(AppStrings.EliminarOperacion, { showDeleteConfirm = true }),
+                    AmOverflowAction(AppStrings.EliminarOperacion, { showDeleteConfirm = true }),
                 ),
                 overflowLabel = AppStrings.Mas,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
-            XauxaStatusBanner(
+            AmStatusBanner(
                 operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt) + " · " +
                     operation.amount.orEmpty().ifBlank { AppStrings.SinMonto }
             )
@@ -97,34 +97,34 @@ internal fun OperationDetailScreen(
         ElementSyncBadge(operationSyncStatus)
         if (operationSyncStatus == ElementSyncStatus.ErrorRecoverable) {
             // El dato está a salvo localmente: el usuario puede reintentar.
-            XauxaTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
+            AmTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
         }
         if (operationSyncStatus == ElementSyncStatus.Dead) {
             // U4: el drain omite los errores permanentes; reintentar no
             // puede recuperarlos. El dato está a salvo localmente.
-            XauxaText(
+            AmText(
                 text = AppStrings.TuInformacionEstaGuardadaEnElDispositivo,
-                color = XauxaColor.TextSecondary,
+                color = AmColor.TextSecondary,
             )
         }
-        operation.personOrEntity?.let { XauxaText(AppStrings.PersonaOEntidad + it) }
-        operation.currency?.let { XauxaText(AppStrings.Moneda + it) }
-        operation.concept?.let { XauxaText(AppStrings.Concepto + it) }
-        operation.note?.let { XauxaText(AppStrings.Nota2 + it, color = XauxaColor.TextSecondary) }
+        operation.personOrEntity?.let { AmText(AppStrings.PersonaOEntidad + it) }
+        operation.currency?.let { AmText(AppStrings.Moneda + it) }
+        operation.concept?.let { AmText(AppStrings.Concepto + it) }
+        operation.note?.let { AmText(AppStrings.Nota2 + it, color = AmColor.TextSecondary) }
 
-        XauxaSection(AppStrings.SeccionComprobantes) {
+        AmSection(AppStrings.SeccionComprobantes) {
             if (state.operationComprobantes.isEmpty()) {
-                XauxaText(AppStrings.SinComprobanteAdjunto, color = XauxaColor.TextSecondary)
-                XauxaTextAction(label = AppStrings.attachReceiptNow, onClick = { viewModel.openUnassociatedForOperation(operation.id) })
+                AmText(AppStrings.SinComprobanteAdjunto, color = AmColor.TextSecondary)
+                AmTextAction(label = AppStrings.attachReceiptNow, onClick = { viewModel.openUnassociatedForOperation(operation.id) })
             } else {
                 for (receipt in state.operationComprobantes) {
                     // §12 V1.2: fila ListItem; "Desasociar" como acción de fila.
-                    XauxaListRow(
+                    AmListRow(
                         title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
                         subtitle = formatDate(receipt.createdAt),
                         onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) },
                         meta = {
-                            XauxaTextAction(
+                            AmTextAction(
                                 label = AppStrings.Desasociar,
                                 onClick = { viewModel.onAction(OperationAction.Disassociate(receipt.id)) },
                             )
@@ -133,10 +133,10 @@ internal fun OperationDetailScreen(
                 }
             }
         }
-        XauxaTextAction(label = AppStrings.EliminarOperacion, onClick = { showDeleteConfirm = true })
+        AmTextAction(label = AppStrings.EliminarOperacion, onClick = { showDeleteConfirm = true })
     }
     if (showDeleteConfirm) {
-        XauxaDialog(
+        AmDialog(
             title = AppStrings.EliminarOperacion,
             destructive = true,
             message = AppStrings.irreversibleActionWarning,

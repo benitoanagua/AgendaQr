@@ -10,7 +10,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.semantics.LiveRegionMode
-import com.agendaqr.core.ui.theme.XauxaTheme
+import com.agendaqr.core.ui.theme.AmTheme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,7 +36,7 @@ class Round2FeedbackEventsTest {
     fun batch_saved_transition_announces_once_and_not_before() {
         var state by mutableStateOf<ImportBatchUiState>(ImportBatchUiState.Idle)
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 ImportBatchScreen(state = state, onAction = {})
             }
         }
@@ -58,15 +58,15 @@ class Round2FeedbackEventsTest {
     @Test
     fun text_input_trailing_slot_renders_inside_the_field() {
         compose.setContent {
-            XauxaTheme {
-                com.agendaqr.core.ui.components.XauxaTextInput(
+            AmTheme {
+                com.agendaqr.core.ui.components.AmTextField(
                     label = "Contraseña",
                     value = "secreto",
                     onValueChange = {},
                     trailing = {
-                        com.agendaqr.core.ui.components.XauxaText(
+                        com.agendaqr.core.ui.components.AmText(
                             "Mostrar",
-                            size = com.agendaqr.core.ui.theme.XauxaType.Caption,
+                            size = com.agendaqr.core.ui.theme.AmType.Caption,
                         )
                     },
                 )

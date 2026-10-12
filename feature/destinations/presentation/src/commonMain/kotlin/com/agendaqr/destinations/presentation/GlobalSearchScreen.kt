@@ -7,17 +7,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.XauxaSnackbarHost
+import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.*
-import com.agendaqr.core.ui.components.XauxaNavChromeState
-import com.agendaqr.core.ui.theme.XauxaColor
-import com.agendaqr.core.ui.theme.XauxaSpacing
+import com.agendaqr.core.ui.components.AmNavChromeState
+import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.destinations.domain.AgendaSearchResult
 
 @Composable
 fun GlobalSearchScreen(
     state: GlobalSearchUiState,
-    navChrome: XauxaNavChromeState? = null,
+    navChrome: AmNavChromeState? = null,
     appHosts: AppHosts? = null,
     onAction: (GlobalSearchAction) -> Unit,
     onSelect: (AgendaSearchResult) -> Unit,
@@ -26,17 +26,17 @@ fun GlobalSearchScreen(
     // navegación inferior; el campo de búsqueda es el cuerpo de la
     // superficie. Los resultados siguen agrupados por tipo con
     // encabezados de sección estándar.
-    XauxaScreenScaffold(
+    AmScreenScaffold(
         topBar = {
-            XauxaTopBar(title = AppStrings.Buscar)
+            AmTopBar(title = AppStrings.Buscar)
         },
         navDestinations = navChrome?.destinations.orEmpty(),
         navSelectedId = navChrome?.selectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
-        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
-        XauxaSearchBar(
+        AmSearchField(
             value = state.query,
             onValueChange = { onAction(GlobalSearchAction.QueryChanged(it)) },
             label = AppStrings.BuscarEnAgendaQr,
@@ -45,9 +45,9 @@ fun GlobalSearchScreen(
             clearLabel = AppStrings.Limpiar,
         )
         state.error?.let { err ->
-            XauxaStatusBanner(
+            AmStatusBanner(
                 err.display(),
-                tone = XauxaTone.Danger,
+                tone = AmTone.Danger,
                 actionLabel = err.action.label,
                 // REINTENTAR: relanza la búsqueda con la misma consulta.
                 onAction = { onAction(GlobalSearchAction.QueryChanged(state.query)) },
@@ -56,12 +56,12 @@ fun GlobalSearchScreen(
             )
         }
         when {
-            state.query.isBlank() -> XauxaText(
+            state.query.isBlank() -> AmText(
                 AppStrings.searchIntroHint,
-                color = XauxaColor.TextSecondary,
+                color = AmColor.TextSecondary,
             )
-            state.isSearching -> XauxaLoading(message = AppStrings.BuscandoEnAgendaQr)
-            state.results.isEmpty() -> XauxaEmptyState(
+            state.isSearching -> AmLoading(message = AppStrings.BuscandoEnAgendaQr)
+            state.results.isEmpty() -> AmEmptyState(
                 title = AppStrings.SinResultados,
                 subtitle = AppStrings.PruebaConOtraPalabraO,
                 actionLabel = AppStrings.Limpiar,
@@ -69,7 +69,7 @@ fun GlobalSearchScreen(
             )
             else -> LazyColumn(
                 modifier = Modifier.fillMaxWidth().weight(1f),
-                verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+                verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
             ) {
                 // S04/S05 (M7): resultados heterogéneos agrupados por tipo,
                 // cada grupo con su encabezado de sección (§4: el tipo se
@@ -79,10 +79,10 @@ fun GlobalSearchScreen(
                     val group = groups[type].orEmpty()
                     if (group.isNotEmpty()) {
                         item(key = "header:" + type.name) {
-                            XauxaSectionHeader(text = searchResultTypeLabel(type))
+                            AmSectionHeader(text = searchResultTypeLabel(type))
                         }
                         items(group, key = { it.type.name + ":" + it.id }) { result ->
-                            XauxaListRow(
+                            AmListRow(
                                 title = searchResultTitle(result),
                                 subtitle = searchResultSubtitle(result),
                                 // E-05: el marcador lateral solo aparece con

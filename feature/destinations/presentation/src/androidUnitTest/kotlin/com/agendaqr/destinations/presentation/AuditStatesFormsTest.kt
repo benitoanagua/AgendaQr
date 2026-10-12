@@ -15,10 +15,10 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
-import com.agendaqr.core.ui.components.XauxaDialog
-import com.agendaqr.core.ui.components.XauxaListRow
-import com.agendaqr.core.ui.components.XauxaTextInput
-import com.agendaqr.core.ui.theme.XauxaTheme
+import com.agendaqr.core.ui.components.AmDialog
+import com.agendaqr.core.ui.components.AmListRow
+import com.agendaqr.core.ui.components.AmTextField
+import com.agendaqr.core.ui.theme.AmTheme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -43,7 +43,7 @@ class AuditStatesFormsTest {
         var email = ""
         var signIn = 0
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 AuthScreen(
                     state = AuthUiState(email = "", password = "", isSubmitting = false),
                     onEmailChanged = { email = it },
@@ -66,7 +66,7 @@ class AuditStatesFormsTest {
     fun auth_signs_in_with_valid_data_and_announces_busy_only_on_primary() {
         var signIn = 0
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 AuthScreen(
                     state = AuthUiState(
                         email = "e2e@example.com",
@@ -90,15 +90,15 @@ class AuditStatesFormsTest {
             .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.StateDescription))
     }
 
-    // --- 2.4 XauxaDialog destructivo: botón de peligro + foco en Cancelar ---
+    // --- 2.4 AmDialog destructivo: botón de peligro + foco en Cancelar ---
 
     @Test
     fun destructive_dialog_focuses_cancel_and_keeps_both_actions() {
         var deleted = false
         var cancelled = false
         compose.setContent {
-            XauxaTheme {
-                XauxaDialog(
+            AmTheme {
+                AmDialog(
                     title = "Eliminar destino",
                     message = "Esta acción no se puede deshacer.",
                     confirmLabel = "Eliminar",
@@ -116,13 +116,13 @@ class AuditStatesFormsTest {
         assert(!cancelled)
     }
 
-    // --- 2.5 XauxaTextInput: etiqueta asociada + error como liveRegion ---
+    // --- 2.5 AmTextField: etiqueta asociada + error como liveRegion ---
 
     @Test
     fun text_input_exposes_its_label_and_announces_errors() {
         compose.setContent {
-            XauxaTheme {
-                XauxaTextInput(
+            AmTheme {
+                AmTextField(
                     label = "Correo",
                     value = "no-correo",
                     onValueChange = { },
@@ -150,8 +150,8 @@ class AuditStatesFormsTest {
     @Test
     fun list_row_selected_is_exposed_to_accessibility() {
         compose.setContent {
-            XauxaTheme {
-                XauxaListRow(
+            AmTheme {
+                AmListRow(
                     title = "Mercado Central",
                     onClick = { },
                     selected = true,
@@ -170,8 +170,8 @@ class AuditStatesFormsTest {
         // conmuta dentro de la MISMA composición (como en producción).
         var event: Any? by mutableStateOf(null)
         compose.setContent {
-            XauxaTheme {
-                com.agendaqr.core.ui.components.XauxaFeedbackEvent(
+            AmTheme {
+                com.agendaqr.core.ui.components.AmFeedbackEvent(
                     event = event,
                     message = "Código QR detectado",
                 )
@@ -197,7 +197,7 @@ class AuditStatesFormsTest {
     @Test
     fun camera_entry_shows_permission_context_before_asking() {
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 // El entry real (androidMain, internal): el launcher se
                 // crea pero no se dispara — el contexto es visible ANTES
                 // del diálogo del sistema (B2).

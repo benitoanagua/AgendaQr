@@ -13,7 +13,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import com.agendaqr.core.ui.theme.XauxaTheme
+import com.agendaqr.core.ui.theme.AmTheme
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -41,7 +41,7 @@ class AuthFontScaleTest {
     private fun atScales(check: (Float) -> Unit) {
         var scale by androidx.compose.runtime.mutableStateOf(1f)
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 CompositionLocalProvider(
                     LocalDensity provides Density(density = 1f, fontScale = scale),
                 ) {
@@ -87,7 +87,7 @@ class AuthFontScaleTest {
     @Test
     fun the_password_helper_and_show_button_coexist_at_100_percent() {
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 AuthScreen(
                     state = state,
                     onEmailChanged = {},

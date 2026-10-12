@@ -1,11 +1,10 @@
 # ADR-0005 — Lenguaje visual Metro dentro de Xauxa
 
-**Estado:** REEMPLAZADA PARCIALMENTE por ADR-0012 (UI convencional sobre
-Material 3, 2026-10-11) — se conservan de esta decisión la paleta de
-acentos por contexto (M4/M5), Lucide, las reglas de accesibilidad y el
-contraste calculado; se revierten tiles, display ligero (Archivo), app
-bar inferior, radio 0, ripple desactivado, turnstile, campo plano y
-botón/acción sin caja.  
+**Estado:** REEMPLAZADA por ADR-0013 (AgendaMobile, 2026-10-12); antes
+REEMPLAZADA PARCIALMENTE por ADR-0012 (2026-10-11). De la cadena
+histórica se conservan en AgendaMobile: iconografía Lucide, reglas de
+accesibilidad y contraste calculado; la paleta de acentos por contexto
+fue sustituida por la de identidad de AgendaMobile (ADR-0013).  
 **Aprobación original:** Opción C (Metro completo), con Lucide como set de iconos  
 **Aprobación:** 2026-10-05, decisión humana registrada en los prompts de la pasada docs-only (UX Metro + complemento Lucide): "Quiero el espíritu Metro completo. Actualiza la especificación UX/UI congelada." y "Usaremos Lucide como set de iconos."  
 **Fecha:** 2026-10-05  

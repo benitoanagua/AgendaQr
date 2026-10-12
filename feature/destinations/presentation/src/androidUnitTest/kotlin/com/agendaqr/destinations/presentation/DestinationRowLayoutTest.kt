@@ -13,7 +13,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import com.agendaqr.core.ui.theme.XauxaTheme
+import com.agendaqr.core.ui.theme.AmTheme
 import com.agendaqr.destinations.data.PendingSyncMutation
 import com.agendaqr.destinations.data.SyncMutationState
 import com.agendaqr.destinations.data.SyncMutationType
@@ -70,7 +70,7 @@ class DestinationRowLayoutTest {
     private fun composeRowAtScales(scales: List<Float>, check: (Float) -> Unit) {
         var fontScale by mutableStateOf(scales.first())
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 CompositionLocalProvider(
                     LocalDensity provides Density(density = 1f, fontScale = fontScale),
                 ) {
@@ -134,7 +134,7 @@ class DestinationRowLayoutTest {
     @Test
     fun unnamed_and_imported_destinations_get_distinctive_origin_subtitles() {
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 Column {
                     DestinationRow(
                         destination = destination.copy(id = "d-a", name = "", createdAt = 1_700_000_000_000),

@@ -89,9 +89,6 @@ jobs:
       - name: Android release assembly
         run: ./gradlew :androidApp:assembleRelease --stacktrace
 
-      - name: Component lab WebAssembly
-        run: ./gradlew componentLabWeb --stacktrace
-
   instrumented-tests:
     # D4 — instrumentados en emulador (ACTION_SEND, singleTask, URI
     # revocada). NO BLOQUEANTE hasta 5 corridas estables en CI.

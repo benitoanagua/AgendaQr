@@ -14,9 +14,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.sp
-import com.agendaqr.core.ui.theme.DarkXauxaColorScheme
-import com.agendaqr.core.ui.theme.LightXauxaColorScheme
-import com.agendaqr.core.ui.theme.XauxaTheme
+import com.agendaqr.core.ui.theme.DarkAmColorScheme
+import com.agendaqr.core.ui.theme.LightAmColorScheme
+import com.agendaqr.core.ui.theme.AmTheme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -102,7 +102,7 @@ class S02UiPolishTest {
     @Test
     fun s01_recientes_is_a_section_header_in_standard_color() {
         compose.setContent {
-            XauxaTheme(darkTheme = false) {
+            AmTheme(darkTheme = false) {
                 DestinationsScreen(state = s01State(), onAction = {})
             }
         }
@@ -112,13 +112,13 @@ class S02UiPolishTest {
         compose.onNodeWithText(AppStrings.Recientes).assert(headingMatcher())
         val style = layoutOf(AppStrings.Recientes).layoutInput.style
         assertEquals(14.sp, style.fontSize)
-        assertEquals(LightXauxaColorScheme.textSecondary, style.color)
+        assertEquals(LightAmColorScheme.textSecondary, style.color)
     }
 
     @Test
     fun s02_share_hint_is_plain_secondary_text_not_a_heading() {
         compose.setContent {
-            XauxaTheme(darkTheme = false) {
+            AmTheme(darkTheme = false) {
                 AddDestinationScreen(onImport = {}, onBack = {})
             }
         }
@@ -128,20 +128,20 @@ class S02UiPolishTest {
         compose.onNodeWithText(AppStrings.shareFromAnotherAppHint)
             .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Heading))
         val style = layoutOf(AppStrings.shareFromAnotherAppHint).layoutInput.style
-        assertEquals(LightXauxaColorScheme.textSecondary, style.color)
+        assertEquals(LightAmColorScheme.textSecondary, style.color)
     }
 
     @Test
     fun s01_section_header_uses_readable_standard_color_in_dark_theme() {
         compose.setContent {
-            XauxaTheme(darkTheme = true) {
+            AmTheme(darkTheme = true) {
                 DestinationsScreen(state = s01State(), onAction = {})
             }
         }
         compose.waitForIdle()
         val style = layoutOf(AppStrings.Recientes).layoutInput.style
         assertEquals(14.sp, style.fontSize)
-        assertEquals(DarkXauxaColorScheme.textSecondary, style.color)
+        assertEquals(DarkAmColorScheme.textSecondary, style.color)
     }
 
     // --- D5: los 3 controles de S02 muestran icono + etiqueta (M10/M12) ---
@@ -183,7 +183,7 @@ class S02UiPolishTest {
     @Test
     fun d5_s02_controls_show_icon_with_label() {
         compose.setContent {
-            XauxaTheme(darkTheme = false) {
+            AmTheme(darkTheme = false) {
                 AddDestinationScreen(onImport = {}, onBack = {})
             }
         }

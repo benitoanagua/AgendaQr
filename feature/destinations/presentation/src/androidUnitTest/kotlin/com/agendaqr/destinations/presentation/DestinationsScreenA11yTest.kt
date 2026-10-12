@@ -10,7 +10,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.unit.dp
-import com.agendaqr.core.ui.theme.XauxaTheme
+import com.agendaqr.core.ui.theme.AmTheme
 import com.agendaqr.destinations.domain.Destination
 import com.agendaqr.destinations.domain.QrAsset
 import org.junit.Rule
@@ -40,7 +40,7 @@ class DestinationsScreenA11yTest {
 
     private fun setContent(onOpenSearch: () -> Unit = {}) {
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
                         destinations = listOf(sample),
@@ -89,7 +89,7 @@ class DestinationsScreenA11yTest {
         // QR muestra "Pendiente" (badge con texto) cuando su mutación está
         // en la cola, no solo un cambio de color.
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
                         destinations = listOf(sample),
@@ -121,7 +121,7 @@ class DestinationsScreenA11yTest {
         // estado se expresa con TEXTO visible ("Favoritos: activado") y
         // semántica selected/toggleableState, nunca solo con color.
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
                         destinations = listOf(sample),
@@ -140,7 +140,7 @@ class DestinationsScreenA11yTest {
     @Test
     fun favorites_filter_without_filter_returns_to_textual_rest_state() {
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
                         destinations = listOf(sample),
@@ -162,7 +162,7 @@ class DestinationsScreenA11yTest {
         // descripción accesible CAMBIA con el estado (marcar/quitar).
         var toggled: Boolean? = null
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
                         destinations = listOf(sample.copy(favorite = true)),

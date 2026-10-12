@@ -24,21 +24,17 @@
 | Documento | Contenido |
 |---|---|
 | [`04-ux/01-flujos-confirmados.md`](04-ux/01-flujos-confirmados.md) | Flujos confirmados |
-| [`04-ux/02-especificacion-ux-ui-v1.md`](04-ux/02-especificacion-ux-ui-v1.md) | Spec UX/UI V1.1 (FROZEN) |
-| [`04-ux/03-laboratorio-componentes-compose.md`](04-ux/03-laboratorio-componentes-compose.md) | Laboratorio de componentes (wasm) |
+| [`04-ux/02-especificacion-ux-ui-v1.md`](04-ux/02-especificacion-ux-ui-v1.md) | Spec UX/UI V1.2 (FROZEN) |
 | [`04-ux/04-capacidades-y-comportamientos.md`](04-ux/04-capacidades-y-comportamientos.md) | Capacidades y comportamientos |
 | [`04-ux/05-guia-de-voz.md`](04-ux/05-guia-de-voz.md) | Guía de voz (tuteo) |
-| [`04-ux/lab-captures/README.md`](04-ux/lab-captures/README.md) | Capturas del laboratorio (no versionadas) |
 
-## Design System (Xauxa)
+## Design System (AgendaMobile)
 
 | Documento | Contenido |
 |---|---|
-| [`05-design-system/00-xauxa-contrato-normativo.md`](05-design-system/00-xauxa-contrato-normativo.md) | Contrato normativo (fuente única) |
-| [`05-design-system/02-xauxa-implementation.md`](05-design-system/02-xauxa-implementation.md) | Reglas de implementación |
-| [`05-design-system/01-xauxa-source-snapshot.md`](05-design-system/01-xauxa-source-snapshot.md) | Snapshot de la fuente visual |
-| [`05-design-system/04-component-audit-register.md`](05-design-system/04-component-audit-register.md) | Auditoría de componentes (decisiones) |
-| [`05-design-system/05-xauxa-tipografia.md`](05-design-system/05-xauxa-tipografia.md) | Tipografía (Archivo OFL) |
+| [`05-design-system/00-agendamobile-contrato-normativo.md`](05-design-system/00-agendamobile-contrato-normativo.md) | Contrato normativo (fuente única) |
+| [`05-design-system/02-agendamobile-implementation.md`](05-design-system/02-agendamobile-implementation.md) | Reglas de implementación |
+| [`05-design-system/04-component-audit-register.md`](05-design-system/04-component-audit-register.md) | Auditoría y registro de migración de componentes |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros |
 
 ## Arquitectura
@@ -72,6 +68,7 @@
 | [`07-decisiones/ADR-0010-uiautomator-en-instrumentados.md`](07-decisiones/ADR-0010-uiautomator-en-instrumentados.md) | ADR: UiAutomator |
 | [`07-decisiones/ADR-0011-contrato-visual-xauxa.md`](07-decisiones/ADR-0011-contrato-visual-xauxa.md) | ADR: contrato visual Xauxa |
 | [`07-decisiones/ADR-0012-ui-convencional-material3.md`](07-decisiones/ADR-0012-ui-convencional-material3.md) | ADR: UI convencional sobre Material 3 |
+| [`07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md`](07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md) | ADR: sistema de diseño AgendaMobile |
 
 ## Validación
 

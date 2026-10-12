@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import com.agendaqr.core.ui.components.XauxaLoading
-import com.agendaqr.core.ui.theme.XauxaTheme
+import com.agendaqr.core.ui.components.AmLoading
+import com.agendaqr.core.ui.theme.AmTheme
 import com.agendaqr.destinations.data.createAuthRepository
 import com.agendaqr.destinations.domain.AuthState
 import com.agendaqr.destinations.domain.ObserveAuthStateUseCase
@@ -32,10 +32,10 @@ fun AgendaQrApp() {
     }
     val authState by authViewModel.state.collectAsStateWithLifecycle()
 
-    XauxaTheme {
+    AmTheme {
         val session = authState.authState
         when (session) {
-            AuthState.Loading -> XauxaLoading()
+            AuthState.Loading -> AmLoading()
             AuthState.SignedOut -> AuthScreen(
                 state = authState,
                 onEmailChanged = authViewModel::setEmail,

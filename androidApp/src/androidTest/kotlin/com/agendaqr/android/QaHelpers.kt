@@ -1,7 +1,6 @@
 package com.agendaqr.android
 
 import android.content.Context
-import android.graphics.Bitmap
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
@@ -54,11 +53,10 @@ object Qa {
 
     /** Captura a /sdcard (fuera del repo; se recupera con adb pull). */
     fun screenshot(name: String) {
-        val cap = device.takeScreenshot()
-        check(cap is Bitmap) { "screenshot nulo" }
         val dir = File("/sdcard/agendaqr-ronda2").apply { mkdirs() }
-        File(dir, "$name.png").outputStream().use { cap.compress(Bitmap.CompressFormat.PNG, 100, it) }
-        cap.recycle()
+        val output = File(dir, "$name.png")
+        val captured = device.takeScreenshot(output)
+        check(captured) { "screenshot fallido: $name" }
     }
 
     fun shell(cmd: String): String = device.executeShellCommand(cmd)

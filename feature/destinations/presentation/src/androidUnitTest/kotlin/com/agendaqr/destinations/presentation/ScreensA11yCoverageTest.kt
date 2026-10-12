@@ -12,7 +12,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.unit.dp
-import com.agendaqr.core.ui.theme.XauxaTheme
+import com.agendaqr.core.ui.theme.AmTheme
 import com.agendaqr.destinations.domain.Comprobante
 import com.agendaqr.destinations.domain.Destination
 import com.agendaqr.destinations.domain.Operation
@@ -51,7 +51,7 @@ class ScreensA11yCoverageTest {
     @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
     fun s02_add_screen_headings_and_touch_targets() {
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 AddDestinationScreen(
                     onImport = { },
                     onBack = { },
@@ -74,7 +74,7 @@ class ScreensA11yCoverageTest {
     @Test
     fun s04_search_intro_is_textual_and_heading_exists() {
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 GlobalSearchScreen(
                     state = GlobalSearchUiState(query = ""),
                     onAction = { },
@@ -92,7 +92,7 @@ class ScreensA11yCoverageTest {
     @Test
     fun s06_empty_state_primary_action_and_rows() {
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 ContextsScreen(
                     state = ContextsUiState(isLoading = false),
                     onAction = { },
@@ -110,7 +110,7 @@ class ScreensA11yCoverageTest {
     @Test
     fun s09_review_qr_headings_and_actions() {
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 ImportReviewScreen(
                     assets = listOf(QrAsset(encoded = "eA==")),
                     onSaveAll = { },
@@ -130,7 +130,7 @@ class ScreensA11yCoverageTest {
     @Test
     fun s07_editor_and_s08_picker_semantics() {
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 ContextPickerDialog(
                     contexts = listOf(
                         com.agendaqr.destinations.domain.Context("ctx-1", "Mercado", createdAt = 1, updatedAt = 1),
@@ -170,7 +170,7 @@ class ScreensA11yCoverageTest {
             ),
         )
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 ImportBatchScreen(
                     state = ImportBatchUiState.Result(batch),
                     onAction = { },
@@ -191,7 +191,7 @@ class ScreensA11yCoverageTest {
     @Test
     fun s10_receipt_preview_renders_without_crash() {
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 ComprobantePreview(
                     bytes = byteArrayOf(1, 2, 3),
                     mimeType = "image/png",
@@ -207,7 +207,7 @@ class ScreensA11yCoverageTest {
     @Test
     fun s01_destination_row_states_and_labels() {
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
                         destinations = listOf(
@@ -249,7 +249,7 @@ class ScreensA11yCoverageTest {
     @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
     fun s02_frozen_order_gallery_share_camera() {
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 AddDestinationScreen(
                     onImport = { },
                     onBack = { },
@@ -274,7 +274,7 @@ class ScreensA11yCoverageTest {
     fun s07_type_selector_shows_single_selection() {
         var selected = OperationType.PAGO
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 OperationTypeSelector(
                     type = selected,
                     onSelect = { selected = it },
@@ -293,13 +293,13 @@ class ScreensA11yCoverageTest {
     // T7 — defectos registrados en docs/09-implementacion/01-estado.md,
     // resueltos por V1.1 (verificación explícita): "Volver" ya no se parte
     // en dos líneas y el primario nunca queda recortado al final del
-    // scroll: ambos viven en la XauxaAppBar anclada a los insets.
+    // scroll: ambos viven en la AmScreenScaffold anclado a los insets.
     @Test
     fun t07_actions_live_in_the_top_bar_and_save_stays_reachable() {
         var saved = false
         var backed = false
         compose.setContent {
-            XauxaTheme {
+            AmTheme {
                 ImportReviewScreen(
                     assets = listOf(com.agendaqr.destinations.domain.QrAsset("eA==", content = "qr-real")),
                     onSaveAll = { saved = true },

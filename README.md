@@ -10,12 +10,12 @@ La implementación sigue una jerarquía explícita de fuentes de verdad:
 
 1. **Agenda QR** — producto, dominio, requisitos, alcance, decisiones y reglas de negocio.
 2. **UX/UI V1 de Agenda QR** — contrato de interacción congelado para la experiencia del producto.
-3. **Xauxa Design System + Xauxa** — lenguaje visual, tokens, componentes y patterns.
+3. **AgendaMobile** — sistema de diseño propio: lenguaje visual, tokens, componentes y patterns.
 4. **WaraWerse** — referencia técnica para Kotlin Multiplatform, Compose, modularización, build y prácticas de testing.
 
 Si dos fuentes entran en conflicto, prevalece la fuente de mayor autoridad indicada arriba.
 
-WaraWerse nunca introduce lógica de negocio en Agenda QR. Xauxa define por completo la UI/UX visual del producto.
+WaraWerse nunca introduce lógica de negocio en Agenda QR. AgendaMobile define por completo la UI/UX visual del producto.
 
 ## 2. UX/UI V1
 
@@ -45,7 +45,7 @@ Android es la plataforma que se valida primero. iOS forma parte de la arquitectu
     ├── build-logic/                # convention plugins
     ├── gradle/                     # version catalog / wrapper
     ├── docs/                       # documentación normativa y de implementación
-    └── core/ui/.../theme/XauxaTokens.kt  # fuente canónica de tokens (Kotlin)
+    └── core/ui/.../theme/AmTokens.kt  # fuente canónica de tokens (Kotlin)
 
 ## 5. Kotlin Way
 
@@ -73,11 +73,6 @@ La existencia de código no equivale a validación de plataforma. Android e iOS 
 La documentación está organizada por autoridad y ciclo de desarrollo. Comienza en `docs/README.md`.
 
 
-## Xauxa Design System
+## AgendaMobile Design System
 
-El contrato visual normativo está en [`docs/05-design-system/00-xauxa-contrato-normativo.md`](docs/05-design-system/00-xauxa-contrato-normativo.md). La decisión de gobierno y migración está en [ADR-0010](docs/07-decisiones/ADR-0010-contrato-normativo-xauxa-metro-sin-carbon.md). La aprobación documental no implica que todos los componentes estén ya migrados o que las pruebas hayan sido ejecutadas.
-
-
-## Estado de auditoría Xauxa
-
-La ronda 7 asocia el error de `XauxaTextInput` a la semántica del nodo editable y refuerza la prueba del rol/estado del switch de `XauxaSettingRow`. El gate estático pasa; los tests Android/JVM siguen pendientes de ejecución porque el entorno no pudo resolver `services.gradle.org`. Ver `docs/05-design-system/12-cierre-auditoria-ronda-7.md`.
+El contrato visual normativo está en [`docs/05-design-system/00-agendamobile-contrato-normativo.md`](docs/05-design-system/00-agendamobile-contrato-normativo.md). La decisión de gobierno y migración está en [ADR-0013](docs/07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md), que suplanta la autoría visual de ADR-0005/0011/0012. La aprobación documental no implica que todas las validaciones de runtime hayan sido ejecutadas.

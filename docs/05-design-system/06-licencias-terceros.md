@@ -14,8 +14,8 @@ Agenda QR, con la licencia verificada y el aviso requerido. Regla
   recursos empaquetados en la pasada de implementación.
 - Consumo vigente: `com.composables:icons-lucide:1.1.0`
   (wrapper no oficial) en `core:ui` commonMain, consumido SOLO vía
-  `XauxaIcon`. Verificado: compila en androidMain, iosSimulatorArm64 y
-  wasmJs con Kotlin 2.2.20 / Compose 1.8.2; publica las mismas
+  `AmIcon` (AgendaMobile). Verificado: compila en androidMain e
+  iosSimulatorArm64 con Kotlin 2.2.20 / Compose 1.8.2; publica las mismas
   coordenadas para los tres targets. La licencia del artefacto es la ISC
   del set (más MIT para los glifos derivados de Feather listados en su
   LICENSE): el aviso se conserva en este registro; **pendiente de

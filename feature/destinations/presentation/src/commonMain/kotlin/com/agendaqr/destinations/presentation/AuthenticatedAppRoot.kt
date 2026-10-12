@@ -17,13 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.PredictiveBackHandler
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.agendaqr.core.ui.components.XauxaNavChromeState
-import com.agendaqr.core.ui.components.XauxaNavDestination
-import com.agendaqr.core.ui.components.XauxaIcons
-import com.agendaqr.core.ui.components.xauxaReducedSurfaceEnter
-import com.agendaqr.core.ui.components.xauxaReducedSurfaceExit
-import com.agendaqr.core.ui.components.xauxaSurfaceEnter
-import com.agendaqr.core.ui.components.xauxaSurfaceExit
+import com.agendaqr.core.ui.components.AmNavChromeState
+import com.agendaqr.core.ui.components.AmNavDestination
+import com.agendaqr.core.ui.components.AmIcons
+import com.agendaqr.core.ui.components.amReducedSurfaceEnter
+import com.agendaqr.core.ui.components.amReducedSurfaceExit
+import com.agendaqr.core.ui.components.amSurfaceEnter
+import com.agendaqr.core.ui.components.amSurfaceExit
 import com.agendaqr.core.ui.motion.LocalReducedMotion
 import com.agendaqr.destinations.data.SyncMutationState
 import com.agendaqr.destinations.domain.AgendaSearchResultType
@@ -95,7 +95,7 @@ internal fun AuthenticatedAppRoot(
     // la cola pasa de >0 a 0 (no se repite en recomposiciones; el token
     // solo cambia en la transición). V1.2: se publica como Snackbar
     // transitorio (con háptico y anuncio accesible por evento).
-    val feedbackHost = remember { com.agendaqr.core.ui.components.XauxaFeedbackHost() }
+    val feedbackHost = remember { com.agendaqr.core.ui.components.AmFeedbackHost() }
     var syncDoneEvent by remember { mutableStateOf<Any?>(null) }
     var previousPendingCount by remember { mutableStateOf(0) }
     LaunchedEffect(pendingCount) {
@@ -104,7 +104,7 @@ internal fun AuthenticatedAppRoot(
         }
         previousPendingCount = pendingCount
     }
-    com.agendaqr.core.ui.components.XauxaFeedbackEvent(
+    com.agendaqr.core.ui.components.AmFeedbackEvent(
         event = syncDoneEvent,
         message = AppStrings.SincronizacionCompletada,
         feedbackHost = feedbackHost,
@@ -176,16 +176,16 @@ internal fun AuthenticatedAppRoot(
     // Inicio sale de la app).
     // ------------------------------------------------------------------
     val navChrome = remember(top) {
-        XauxaNavChromeState(
+        AmNavChromeState(
             destinations = listOf(
-                XauxaNavDestination(appRouteNameOf(AppRoute.Home), AppStrings.Inicio, XauxaIcons.Home),
-                XauxaNavDestination(appRouteNameOf(AppRoute.Search), AppStrings.Buscar, XauxaIcons.Search),
-                XauxaNavDestination(appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones, XauxaIcons.Register),
-                XauxaNavDestination(appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos, XauxaIcons.Context),
+                AmNavDestination(appRouteNameOf(AppRoute.Home), AppStrings.Inicio, AmIcons.Home),
+                AmNavDestination(appRouteNameOf(AppRoute.Search), AppStrings.Buscar, AmIcons.Search),
+                AmNavDestination(appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones, AmIcons.Register),
+                AmNavDestination(appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos, AmIcons.Context),
             ),
             selectedId = appRouteNameOf(top),
             onSelect = { name ->
-                val destination = appRouteForName(name) ?: return@XauxaNavChromeState
+                val destination = appRouteForName(name) ?: return@AmNavChromeState
                 nav.popToRoot()
                 if (destination != AppRoute.Home) nav.push(destination)
             },
@@ -253,9 +253,9 @@ internal fun AuthenticatedAppRoot(
                 val to = stack.indexOf(targetState)
                 val reverse = to in 0..from
                 if (reducedMotion) {
-                    xauxaReducedSurfaceEnter() togetherWith xauxaReducedSurfaceExit()
+                    amReducedSurfaceEnter() togetherWith amReducedSurfaceExit()
                 } else {
-                    xauxaSurfaceEnter(reverse = reverse) togetherWith xauxaSurfaceExit(reverse = reverse)
+                    amSurfaceEnter(reverse = reverse) togetherWith amSurfaceExit(reverse = reverse)
                 }
             },
             label = AppStrings.SurfaceRouteTurnstile,

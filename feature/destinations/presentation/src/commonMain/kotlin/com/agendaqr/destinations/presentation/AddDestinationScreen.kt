@@ -5,15 +5,15 @@ import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.XauxaListRow
-import com.agendaqr.core.ui.components.XauxaPrimaryButton
-import com.agendaqr.core.ui.components.XauxaScreenScaffold
-import com.agendaqr.core.ui.components.XauxaSnackbarHost
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
-import com.agendaqr.core.ui.components.XauxaText
-import com.agendaqr.core.ui.components.XauxaTopBar
-import com.agendaqr.core.ui.theme.XauxaColor
-import com.agendaqr.core.ui.theme.XauxaSpacing
+import com.agendaqr.core.ui.components.AmListRow
+import com.agendaqr.core.ui.components.AmPrimaryButton
+import com.agendaqr.core.ui.components.AmScreenScaffold
+import com.agendaqr.core.ui.components.AmSnackbarHost
+import com.agendaqr.core.ui.components.AmSecondaryButton
+import com.agendaqr.core.ui.components.AmText
+import com.agendaqr.core.ui.components.AmTopBar
+import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmSpacing
 
 /**
  * S02 — Añadir (V1.2, ADR-0012).
@@ -36,20 +36,20 @@ fun AddDestinationScreen(
     // V1.2 (§12): la flecha atrás vive en la barra superior (la misma en
     // ambas plataformas); el orden congelado S02 (Galería → Desde otra app
     // → Cámara) no cambia.
-    XauxaScreenScaffold(
+    AmScreenScaffold(
         topBar = {
-            XauxaTopBar(
+            AmTopBar(
                 title = AppStrings.Anadir,
                 onBack = onBack,
                 backLabel = AppStrings.Volver,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
-        XauxaText(
+        AmText(
             AppStrings.TraeAAgendaQrAlgo,
-            color = XauxaColor.TextSecondary,
+            color = AmColor.TextSecondary,
         )
 
         // Orden congelado S02: Galería → (Desde otra app) → Cámara.
@@ -66,9 +66,9 @@ fun AddDestinationScreen(
         // soporta (Android: share intents; iOS: pendiente de Share
         // Extension, no se muestra).
         if (sharedImportsSupported()) {
-            XauxaText(
+            AmText(
                 AppStrings.shareFromAnotherAppHint,
-                color = XauxaColor.TextSecondary,
+                color = AmColor.TextSecondary,
             )
         }
 

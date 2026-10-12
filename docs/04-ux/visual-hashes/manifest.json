@@ -1,11 +1,11 @@
 {
-  "import-batch-dark.png": "77609f86ce75a1e53a13a830ec14f1248337c80b3b9e216f9085b1cd978ccef9",
-  "import-batch-light.png": "7dace5dadd4a47614d471303e9b5b6b4692172a6272f755fd6bda04cc92fc777",
-  "login-dark.png": "906515f8ce23b3d8b5f3760d651b79acf4f51292eb4abf81264075c5c6e32845",
-  "login-light.png": "cbac98dc8b1398b7bec3eb129a8feddf8a157561b9c8f6560e878c4bb0351573",
-  "s01-dark.png": "8a5b5b51db61eebade9629bcf547fc48026dd07dfe57718bdb381bfa04a8cf9f",
-  "s01-light.png": "34e3faf0a6394a959c1c60365533ec9965ed3933a496ccf67bf783dba2082802",
-  "s02-add-dark.png": "f4db9b5e1ba1abe0aa596e9bb94fa03edfcd009cd70c9721cb530cf4c7df1614",
-  "s02-add-light.png": "f178e15de9a7c964f76aafcd68215f15a21cd4cab58eea2c809d8bd256625f88"
+  "import-batch-dark.png": "4a50d4d6c419f9b7fd7a4d57bb4449514c2dac00c4727583da7d627e8d160532",
+  "import-batch-light.png": "48b698a8839e707c1b99c4f3c5a5b5d64cbfa526ccc860a09a794916dbba97ce",
+  "login-dark.png": "d9c3a925e633c8c3ca3d43b308a5f4652d37654f637d70fd32b9c3f7ab3a271b",
+  "login-light.png": "24d5c1e788e69b884a2f65ad30cf56bb12d06453fb3f14ca25ba84481fa34487",
+  "s01-dark.png": "0a37692d2b8e3a459d7af6c0155bbb11939bce364c6a0604da472a290f83a840",
+  "s01-light.png": "cd692ba4d81221e7c66e672b7499bbf24de416c844666dfd912a2abfc51b5d19",
+  "s02-add-dark.png": "c479601ffc59d47049ad6f1388cff0bd8fd02d007b81cbab2ca5b7e0c6148244",
+  "s02-add-light.png": "c95a33ed9462f675794f3ef73493c6943d8694305b57781286d73f4ad999b16e"
 
 }

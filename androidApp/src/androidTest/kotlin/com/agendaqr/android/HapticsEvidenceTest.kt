@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
  * (eliminación confirmada), el registro debe contener al menos un efecto
  * de `com.agendaqr.app`. La lectura de QR no es automatizable sin un QR
  * físico real: queda como PENDIENTE/manual en el informe (se valida el
- * MISMO mecanismo XauxaFeedbackEvent con la acción de eliminar).
+ * MISMO mecanismo AmFeedbackEvent con la acción de eliminar).
  */
 @RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
 class HapticsEvidenceTest {

@@ -62,7 +62,7 @@ CRM, obligaciones, saldos, pagos parciales, reembolsos especializados, contabili
 
 ## D-16 — UX
 
-La UI/UX permanece bajo Xauxa Design System; esta consolidación no crea un sistema visual paralelo. (Enmienda 2026-10-05, ADR-0005: Xauxa sigue siendo el único sistema de diseño. Enmienda 2026-10-11, ADR-0012: Xauxa expresa el diseño convencional sobre Material 3, idéntico en Android e iOS; sigue siendo el único sistema de diseño.)
+La UI/UX permanece bajo un único sistema de diseño; esta consolidación no crea un sistema visual paralelo. (Historial: D-16 nombraba a Xauxa; ADR-0005/0012 lo mantuvieron como único sistema. Enmienda 2026-10-12, ADR-0013: el sistema de diseño propio AgendaMobile es el único sistema visual; Xauxa queda retirado.)
 
 ## D-17 — UX/UI V1 congelada
 

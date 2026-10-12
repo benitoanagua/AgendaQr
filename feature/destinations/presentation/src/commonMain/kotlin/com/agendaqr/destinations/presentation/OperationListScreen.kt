@@ -15,11 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import com.agendaqr.core.ui.components.XauxaSnackbarHost
+import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.*
-import com.agendaqr.core.ui.components.XauxaExtendedFab
-import com.agendaqr.core.ui.components.XauxaNavChromeState
-import com.agendaqr.core.ui.components.XauxaTopBar
+import com.agendaqr.core.ui.components.AmExtendedFab
+import com.agendaqr.core.ui.components.AmNavChromeState
+import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.destinations.domain.*
@@ -31,7 +31,7 @@ import kotlinx.datetime.toLocalDateTime
 
 import androidx.compose.foundation.layout.*
 import com.agendaqr.destinations.presentation.AppStrings
-import com.agendaqr.core.ui.components.XauxaText
+import com.agendaqr.core.ui.components.AmText
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.*
@@ -42,7 +42,7 @@ import com.agendaqr.destinations.domain.*
 fun OperationsScreen(
     state: OperationsUiState,
     viewModel: OperationsViewModel,
-    navChrome: XauxaNavChromeState? = null,
+    navChrome: AmNavChromeState? = null,
     appHosts: AppHosts? = null,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
     onRetrySync: () -> Unit = {},
@@ -60,7 +60,7 @@ fun OperationsScreen(
     state.pendingIncoming?.let { incoming ->
         val duplicate = state.pendingDuplicates.isNotEmpty()
         val saving = state.isSavingReceipt
-        XauxaDialog(
+        AmDialog(
             title = if (duplicate)  AppStrings.ComprobanteDuplicado else AppStrings.receiptReceivedTitle,
             message = if (duplicate) {
                 AppStrings.duplicateReceiptWarningPrefix + incoming.extension
@@ -108,7 +108,7 @@ fun OperationsScreen(
 internal fun OperationListScreen(
     state: OperationsUiState,
     viewModel: OperationsViewModel,
-    navChrome: XauxaNavChromeState? = null,
+    navChrome: AmNavChromeState? = null,
     appHosts: AppHosts? = null,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
@@ -118,32 +118,32 @@ internal fun OperationListScreen(
     // V1.2 (§12): Actividades es destino raíz — barra superior con título,
     // navegación inferior y FAB extendido "Registrar" (la acción de
     // creación vive en el FAB, no en la barra).
-    XauxaScreenScaffold(
+    AmScreenScaffold(
         topBar = {
-            XauxaTopBar(title = AppStrings.Operaciones)
+            AmTopBar(title = AppStrings.Operaciones)
         },
         navDestinations = navChrome?.destinations.orEmpty(),
         navSelectedId = navChrome?.selectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
-        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
         floatingActionButton = {
-            XauxaExtendedFab(
+            AmExtendedFab(
                 label = AppStrings.RegistrarOperacion,
-                icon = XauxaIcons.Add,
+                icon = AmIcons.Add,
                 onClick = { viewModel.onAction(OperationAction.New) },
             )
         },
     ) {
-            XauxaSearchBar(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = AppStrings.Buscar, placeholder = AppStrings.BuscarOperaciones, onClear = { viewModel.onAction(OperationAction.Search("")) }, clearLabel = AppStrings.Limpiar)
+            AmSearchField(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = AppStrings.Buscar, placeholder = AppStrings.BuscarOperaciones, onClear = { viewModel.onAction(OperationAction.Search("")) }, clearLabel = AppStrings.Limpiar)
         if (state.unassociated.isNotEmpty()) {
-            XauxaStatusBanner(unassociatedReceiptsLabel(state.unassociated.size))
-            XauxaSecondaryButton(label = AppStrings.VerBandejaDeRespaldos, onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
+            AmStatusBanner(unassociatedReceiptsLabel(state.unassociated.size))
+            AmSecondaryButton(label = AppStrings.VerBandejaDeRespaldos, onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
         }
         state.error?.let { err ->
-            XauxaStatusBanner(
+            AmStatusBanner(
                 err.display(),
-                tone = XauxaTone.Danger,
+                tone = AmTone.Danger,
                 actionLabel = err.action.label,
                 onAction = {
                     viewModel.onAction(
@@ -155,7 +155,7 @@ internal fun OperationListScreen(
             )
         }
         if (operations.isEmpty()) {
-            XauxaEmptyState(
+            AmEmptyState(
                 title = if (state.query.isBlank()) AppStrings.AunNoHayOperaciones else AppStrings.NoHayCoincidencias,
                 subtitle = if (state.query.isBlank()) AppStrings.registerFirstPaymentHint else AppStrings.tryAnotherSearchHint,
                 actionLabel = if (state.query.isBlank()) AppStrings.RegistrarOperacion else AppStrings.LimpiarBusqueda,
@@ -165,11 +165,11 @@ internal fun OperationListScreen(
                 }
             )
         } else {
-            LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+            LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
                 items(paged, key = { it.id }) { operation ->
                     // §12 V1.2: fila ListItem convencional con el contenido
                     // a la derecha; el estado de sincronización con texto.
-                    XauxaListRow(
+                    AmListRow(
                         title = listOfNotNull(
                             operationTypeLabel(operation.type),
                             operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
@@ -186,7 +186,7 @@ internal fun OperationListScreen(
                 }
                 if (paged.size < operations.size) {
                     item {
-                        XauxaLoadMoreFooter(
+                        AmLoadMoreFooter(
                             onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(operations.size) },
                             loadMoreLabel = AppStrings.CargarMas,
                             loadingLabel = AppStrings.Cargando,
@@ -209,37 +209,37 @@ internal fun UnassociatedScreen(
     var selectedReceipt by remember { mutableStateOf<Comprobante?>(null) }
     // V1.2 (§12): bandeja con título y flecha atrás en la barra superior
     // (no es destino raíz: no lleva navegación inferior).
-    XauxaScreenScaffold(
+    AmScreenScaffold(
         topBar = {
-            XauxaTopBar(
+            AmTopBar(
                 title = AppStrings.ComprobantesSinAsociar,
                 onBack = { viewModel.onAction(OperationAction.Back) },
                 backLabel = AppStrings.Volver,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
             if (state.unassociated.isEmpty()) {
-                XauxaEmptyState(title = AppStrings.noUnassociatedReceipts)
+                AmEmptyState(title = AppStrings.noUnassociatedReceipts)
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth().weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+                    verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
                 ) {
                     items(state.unassociated, key = { it.id }) { receipt ->
                         // §12 V1.2: fila ListItem; las acciones de fila viven
                         // apiladas bajo el contenido (dos etiquetas largas no
                         // caben lado a lado en 360 dp).
-                        XauxaListRow(
+                        AmListRow(
                             title = AppStrings.receiptReceivedTitle,
                             subtitle = formatDate(receipt.createdAt),
                             onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) },
                             meta = {
-                                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
                                     ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
-                                    XauxaPrimaryButton(label = AppStrings.associateToExistingOperation, onClick = { selectedReceipt = receipt })
-                                    XauxaSecondaryButton(label = AppStrings.createOperationFromThis, onClick = {
+                                    AmPrimaryButton(label = AppStrings.associateToExistingOperation, onClick = { selectedReceipt = receipt })
+                                    AmSecondaryButton(label = AppStrings.createOperationFromThis, onClick = {
                                         viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
                                     })
                                 }
@@ -254,34 +254,35 @@ internal fun UnassociatedScreen(
         val suggestedOperations = suggestion?.operationIds.orEmpty()
             .mapNotNull { id -> state.operations.firstOrNull { it.id == id } }
         val candidateOperations = suggestedOperations.ifEmpty { state.operations }
-        XauxaDialog(
+        // Selector de operación: elige de la lista en el propio diálogo
+        // (la acción principal es elegir; Cancelar y Back son salidas).
+        AmDialog(
             title = when (suggestion?.kind) {
                 ReceiptMatchKind.SINGLE -> AppStrings.singleMatchTitle
                 ReceiptMatchKind.MULTIPLE -> AppStrings.ACualCorresponde
                 ReceiptMatchKind.NONE, null -> AppStrings.noMatchTitle
             },
             confirmLabel = AppStrings.Cancelar,
-            // La primaria es elegir de la lista (§1).
             confirmAsText = true,
             onConfirm = { selectedReceipt = null },
             onDismiss = { selectedReceipt = null },
             content = {
-                // §11: el slot de texto del diálogo recorta el fondo; con
-                // muchas operaciones candidatas la lista queda inalcanzable.
-                XauxaDialogList {
+                // Con muchas operaciones candidatas la lista queda
+                // alcanzable por scroll (accesibilidad).
+                AmDialogList {
                     when {
-                        suggestion == null -> XauxaText(AppStrings.analyzingReceipt, color = XauxaColor.TextSecondary)
+                        suggestion == null -> AmText(AppStrings.analyzingReceipt, color = AmColor.TextSecondary)
                         suggestion.kind == ReceiptMatchKind.NONE ->
-                            Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                                XauxaText(
+                            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                                AmText(
                                     AppStrings.noAutomaticMatch,
-                                    color = XauxaColor.TextSecondary,
+                                    color = AmColor.TextSecondary,
                                 )
                                 if (candidateOperations.isEmpty()) {
-                                    XauxaText(AppStrings.noOperationsAvailable, color = XauxaColor.TextSecondary)
+                                    AmText(AppStrings.noOperationsAvailable, color = AmColor.TextSecondary)
                                 } else {
                                     candidateOperations.forEach { operation ->
-                                        XauxaListRow(
+                                        AmListRow(
                                             title = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
                                             subtitle = operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
                                             onClick = {
@@ -293,12 +294,12 @@ internal fun UnassociatedScreen(
                                 }
                             }
                         candidateOperations.isEmpty() ->
-                            XauxaText(
+                            AmText(
                                 AppStrings.LasOperacionesCandidatasYaNo,
-                                color = XauxaColor.TextSecondary,
+                                color = AmColor.TextSecondary,
                             )
                         else -> candidateOperations.forEach { operation ->
-                            XauxaListRow(
+                            AmListRow(
                                 title = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
                                 subtitle = operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
                                 onClick = {

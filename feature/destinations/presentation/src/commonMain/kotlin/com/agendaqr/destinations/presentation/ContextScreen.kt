@@ -11,23 +11,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.XauxaSnackbarHost
-import com.agendaqr.core.ui.components.XauxaNavChromeState
-import com.agendaqr.core.ui.components.XauxaEmptyState
-import com.agendaqr.core.ui.components.XauxaPivot
-import com.agendaqr.core.ui.components.XauxaListRow
-import com.agendaqr.core.ui.components.XauxaLoading
-import com.agendaqr.core.ui.components.XauxaScreenScaffold
-import com.agendaqr.core.ui.components.XauxaTopBar
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
-import com.agendaqr.core.ui.components.XauxaStatusBanner
-import com.agendaqr.core.ui.components.XauxaText
-import com.agendaqr.core.ui.components.XauxaTextAction
-import com.agendaqr.core.ui.components.XauxaTone
-import com.agendaqr.core.ui.theme.XauxaColor
+import com.agendaqr.core.ui.components.AmSnackbarHost
+import com.agendaqr.core.ui.components.AmNavChromeState
+import com.agendaqr.core.ui.components.AmEmptyState
+import com.agendaqr.core.ui.components.AmPivot
+import com.agendaqr.core.ui.components.AmListRow
+import com.agendaqr.core.ui.components.AmLoading
+import com.agendaqr.core.ui.components.AmScreenScaffold
+import com.agendaqr.core.ui.components.AmTopBar
+import com.agendaqr.core.ui.components.AmSecondaryButton
+import com.agendaqr.core.ui.components.AmStatusBanner
+import com.agendaqr.core.ui.components.AmText
+import com.agendaqr.core.ui.components.AmTextAction
+import com.agendaqr.core.ui.components.AmTone
+import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.accentFor
-import com.agendaqr.core.ui.theme.XauxaSpacing
-import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.theme.AmSpacing
+import com.agendaqr.core.ui.theme.AmType
 import androidx.compose.foundation.layout.Column
 
 /**
@@ -49,7 +49,7 @@ fun ContextsScreen(
     state: ContextsUiState,
     onAction: (ContextAction) -> Unit,
     onBack: () -> Unit,
-    navChrome: XauxaNavChromeState? = null,
+    navChrome: AmNavChromeState? = null,
     appHosts: AppHosts? = null,
     onOpenDestination: (String) -> Unit = {},
     onOpenOperation: (String) -> Unit = {},
@@ -94,27 +94,27 @@ private fun ContextList(
     state: ContextsUiState,
     onAction: (ContextAction) -> Unit,
     onBack: () -> Unit,
-    navChrome: XauxaNavChromeState?,
+    navChrome: AmNavChromeState?,
     appHosts: AppHosts? = null,
     onCreateContext: () -> Unit = {},
 ) {
     // V1.2 (§12): Contextos es destino raíz — barra superior con título y
     // navegación inferior; sin flecha atrás (la navegación raíz y el Back
     // del sistema cubren el regreso a Inicio).
-    XauxaScreenScaffold(
+    AmScreenScaffold(
         topBar = {
-            XauxaTopBar(title = AppStrings.Contextos)
+            AmTopBar(title = AppStrings.Contextos)
         },
         navDestinations = navChrome?.destinations.orEmpty(),
         navSelectedId = navChrome?.selectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
-        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
         state.error?.let { err ->
-            XauxaStatusBanner(
+            AmStatusBanner(
                 err.display(),
-                tone = XauxaTone.Danger,
+                tone = AmTone.Danger,
                 actionLabel = err.action.label,
                 onAction = {
                     onAction(
@@ -127,8 +127,8 @@ private fun ContextList(
             )
         }
         when {
-            state.isLoading -> XauxaLoading(message = AppStrings.CargandoContextos)
-            state.contexts.isEmpty() -> XauxaEmptyState(
+            state.isLoading -> AmLoading(message = AppStrings.CargandoContextos)
+            state.contexts.isEmpty() -> AmEmptyState(
                 title = AppStrings.SinContextos,
                 subtitle = AppStrings.LosContextosAgrupanTusQr,
                 // U3/ADR-0003 (opción B/C): la acción primaria del vacío es
@@ -136,10 +136,10 @@ private fun ContextList(
                 actionLabel = AppStrings.CrearContexto,
                 onAction = onCreateContext,
             )
-            else -> LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+            else -> LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
                 items(state.contexts, key = { it.id }) { context ->
                     // M4: bloque de acento derivado del id del contexto.
-                    XauxaListRow(
+                    AmListRow(
                         title = context.name,
                         subtitle = context.note?.takeIf { it.isNotBlank() },
                         onClick = { onAction(ContextAction.Open(context.id)) },
@@ -167,22 +167,22 @@ private fun ContextDetail(
     // V1.2 (§12): detalle de contexto con título en la barra superior y
     // flecha atrás; las secciones siguen siendo QR · Actividades ·
     // Comprobantes (pestañas estándar).
-    XauxaScreenScaffold(
+    AmScreenScaffold(
         scrollable = true,
         topBar = {
-            XauxaTopBar(
+            AmTopBar(
                 title = contents?.context?.name ?: AppStrings.Contextos,
                 onBack = { onAction(ContextAction.Back) },
                 backLabel = AppStrings.Volver,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
         state.error?.let { err ->
-            XauxaStatusBanner(
+            AmStatusBanner(
                 err.display(),
-                tone = XauxaTone.Danger,
+                tone = AmTone.Danger,
                 actionLabel = err.action.label,
                 onAction = {
                     onAction(
@@ -199,24 +199,24 @@ private fun ContextDetail(
             // encabezados de SU superficie cuando es legible como texto.
             val contextAccent = accentFor(data.context.id).background
             data.context.note?.takeIf { it.isNotBlank() }?.let {
-                XauxaText(it, size = XauxaType.Label, color = XauxaColor.TextSecondary)
+                AmText(it, size = AmType.Label, color = AmColor.TextSecondary)
             }
             // Pestañas estándar QR · Actividades · Comprobantes (modelo
             // mental §2; sin crear navegación nueva — la conmutación es local).
             var pivotSection by remember { mutableStateOf(0) }
-            XauxaPivot(
+            AmPivot(
                 sections = listOf(AppStrings.Qr, AppStrings.Operaciones, AppStrings.Comprobantes),
                 selectedIndex = pivotSection,
                 onSelect = { pivotSection = it },
                 accent = contextAccent,
             ) { section ->
-                Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
                     when (section) {
                         0 -> {
                             // U1: QR es invariable en español; conteo vía helper.
-                            XauxaText(contextSectionLabel("QR", "QR", data.destinations.size), size = XauxaType.Label, color = XauxaColor.TextSecondary)
+                            AmText(contextSectionLabel("QR", "QR", data.destinations.size), size = AmType.Label, color = AmColor.TextSecondary)
                             data.destinations.forEach { destination ->
-                                XauxaListRow(
+                                AmListRow(
                                     title = destination.name.ifBlank { AppStrings.QrSinNombre },
                                     onClick = { onOpenDestination(destination.id) },
                                 )
@@ -224,9 +224,9 @@ private fun ContextDetail(
                         }
                         1 -> {
                             // U1: singular honesto para N=1 ("Actividad reciente · 1").
-                            XauxaText(contextSectionLabel(AppStrings.ActividadReciente, AppStrings.ActividadesRecientes, data.operations.size), size = XauxaType.Label, color = XauxaColor.TextSecondary)
+                            AmText(contextSectionLabel(AppStrings.ActividadReciente, AppStrings.ActividadesRecientes, data.operations.size), size = AmType.Label, color = AmColor.TextSecondary)
                             data.operations.take(RECENT_ACTIVITIES_SHOWN).forEach { operation ->
-                                XauxaListRow(
+                                AmListRow(
                                     title = listOfNotNull(
                                         when (operation.type) {
                                             com.agendaqr.destinations.domain.OperationType.PAGO -> AppStrings.Pago
@@ -240,16 +240,16 @@ private fun ContextDetail(
                                 )
                             }
                             if (data.operations.size > RECENT_ACTIVITIES_SHOWN) {
-                                XauxaTextAction(
+                                AmTextAction(
                                     label = AppStrings.VerMas,
                                     onClick = onOpenOperations,
                                 )
                             }
                         }
                         else -> {
-                            XauxaText(contextSectionLabel(AppStrings.Comprobante, AppStrings.Comprobantes, data.comprobantes.size), size = XauxaType.Label, color = XauxaColor.TextSecondary)
+                            AmText(contextSectionLabel(AppStrings.Comprobante, AppStrings.Comprobantes, data.comprobantes.size), size = AmType.Label, color = AmColor.TextSecondary)
                             data.comprobantes.forEach { receipt ->
-                                XauxaListRow(
+                                AmListRow(
                                     title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
                                     subtitle = receipt.file.takeIf { it.isNotBlank() },
                                     onClick = { onOpenComprobante(receipt.id) },
@@ -259,6 +259,6 @@ private fun ContextDetail(
                     }
                 }
             }
-        } ?: XauxaLoading(message = AppStrings.CargandoContexto)
+        } ?: AmLoading(message = AppStrings.CargandoContexto)
     }
 }

@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import com.agendaqr.core.ui.components.XauxaSnackbarHost
+import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.data.SyncResource
@@ -37,13 +37,13 @@ internal fun OperationTypeSelector(
     onSelect: (OperationType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-        XauxaFilterChip(
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+        AmFilterChip(
             label = AppStrings.Pago,
             selected = type == OperationType.PAGO,
             onClick = { onSelect(OperationType.PAGO) },
         )
-        XauxaFilterChip(
+        AmFilterChip(
             label = AppStrings.Cobro,
             selected = type == OperationType.COBRO,
             onClick = { onSelect(OperationType.COBRO) },
@@ -101,19 +101,19 @@ internal fun OperationEditorScreen(
     // V1.2 (§12): "Registrar actividad"/"Editar actividad" en la barra
     // superior; Guardar es el botón principal FIJO abajo (acción real de
     // guardado), nunca recortado por el scroll.
-    XauxaScreenScaffold(
+    AmScreenScaffold(
         scrollable = true,
         topBar = {
-            XauxaTopBar(
+            AmTopBar(
                 title = if (existing == null) AppStrings.RegistrarOperacion else AppStrings.EditarOperacion,
                 onBack = { viewModel.onAction(OperationAction.Back) },
                 backLabel = AppStrings.Volver,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
         bottomAction = {
-            XauxaPrimaryButton(
+            AmPrimaryButton(
                 label = if (saving) {
                     AppStrings.Guardando
                 } else if (existing == null) {
@@ -123,7 +123,7 @@ internal fun OperationEditorScreen(
                 },
                 onClick = {
                     submitted = true
-                    val at = occurredAt ?: return@XauxaPrimaryButton
+                    val at = occurredAt ?: return@AmPrimaryButton
                     val candidate = buildCandidate(at)
                     if (existing == null) {
                         viewModel.onAction(
@@ -142,7 +142,7 @@ internal fun OperationEditorScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
-                    .padding(horizontal = XauxaSpacing.ScreenMargin, vertical = XauxaSpacing.Sm),
+                    .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
             )
         },
     ) {
@@ -152,8 +152,8 @@ internal fun OperationEditorScreen(
             type = type,
             onSelect = { type = it },
         )
-        XauxaTextInput(label = AppStrings.MontoOpcional, value = amount, onValueChange = { amount = it }, modifier = Modifier.fillMaxWidth())
-        XauxaTextInput(
+        AmTextField(label = AppStrings.MontoOpcional, value = amount, onValueChange = { amount = it }, modifier = Modifier.fillMaxWidth())
+        AmTextField(
             label = AppStrings.Fecha,
             value = dateText,
             onValueChange = { dateText = it },
@@ -161,22 +161,22 @@ internal fun OperationEditorScreen(
             isError = dateError,
             errorMessage = if (dateError) AppStrings.FormatoFecha else null,
         )
-        XauxaTextInput(label = AppStrings.MonedaOpcional, value = currency, onValueChange = { currency = it }, modifier = Modifier.fillMaxWidth())
-        XauxaTextInput(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, modifier = Modifier.fillMaxWidth())
-        XauxaSecondaryButton(
+        AmTextField(label = AppStrings.MonedaOpcional, value = currency, onValueChange = { currency = it }, modifier = Modifier.fillMaxWidth())
+        AmTextField(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, modifier = Modifier.fillMaxWidth())
+        AmSecondaryButton(
             label = contextSelection.contextId?.let { id -> AppStrings.ParaContextoElegido + (state.contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico) }
                 ?: AppStrings.ParaElegirContexto,
             onClick = { contextSelection = contextSelection.openPicker() },
         )
-        XauxaTextInput(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, modifier = Modifier.fillMaxWidth())
-        XauxaTextInput(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, modifier = Modifier.fillMaxWidth())
+        AmTextField(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, modifier = Modifier.fillMaxWidth())
+        AmTextField(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, modifier = Modifier.fillMaxWidth())
         if (existing == null) {
-            XauxaText(AppStrings.PodrasAdjuntarComprobantesMasAdelante, color = XauxaColor.TextSecondary, size = XauxaType.Label)
+            AmText(AppStrings.PodrasAdjuntarComprobantesMasAdelante, color = AmColor.TextSecondary, size = AmType.Label)
         }
         state.error?.let { err ->
-            XauxaStatusBanner(
+            AmStatusBanner(
                 err.display(),
-                tone = XauxaTone.Danger,
+                tone = AmTone.Danger,
                 actionLabel = err.action.label,
                 onAction = {
                     viewModel.onAction(
@@ -202,7 +202,7 @@ internal fun OperationEditorScreen(
     }
 
     if (showSensitiveConfirm) {
-        XauxaDialog(
+        AmDialog(
             title = AppStrings.changeOperationWithReceipts,
             message = AppStrings.sensitiveChangeWarning,
             confirmLabel = AppStrings.GuardarCambio,

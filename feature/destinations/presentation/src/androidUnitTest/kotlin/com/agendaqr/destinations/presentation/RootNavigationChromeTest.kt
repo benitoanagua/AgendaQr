@@ -3,13 +3,13 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.agendaqr.core.ui.components.XauxaFeedbackHost
-import com.agendaqr.core.ui.components.XauxaIcons
-import com.agendaqr.core.ui.components.XauxaNavDestination
-import com.agendaqr.core.ui.components.XauxaNavBar
-import com.agendaqr.core.ui.components.XauxaSnackbarHost
-import com.agendaqr.core.ui.components.XauxaFeedbackEvent
-import com.agendaqr.core.ui.theme.XauxaTheme
+import com.agendaqr.core.ui.components.AmFeedbackHost
+import com.agendaqr.core.ui.components.AmIcons
+import com.agendaqr.core.ui.components.AmNavDestination
+import com.agendaqr.core.ui.components.AmNavBar
+import com.agendaqr.core.ui.components.AmSnackbarHost
+import com.agendaqr.core.ui.components.AmFeedbackEvent
+import com.agendaqr.core.ui.theme.AmTheme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -29,17 +29,17 @@ class RootNavigationChromeTest {
     val compose = createComposeRule()
 
     private fun destinations() = listOf(
-        XauxaNavDestination(appRouteNameOf(AppRoute.Home), AppStrings.Inicio, XauxaIcons.Home),
-        XauxaNavDestination(appRouteNameOf(AppRoute.Search), AppStrings.Buscar, XauxaIcons.Search),
-        XauxaNavDestination(appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones, XauxaIcons.Register),
-        XauxaNavDestination(appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos, XauxaIcons.Context),
+        AmNavDestination(appRouteNameOf(AppRoute.Home), AppStrings.Inicio, AmIcons.Home),
+        AmNavDestination(appRouteNameOf(AppRoute.Search), AppStrings.Buscar, AmIcons.Search),
+        AmNavDestination(appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones, AmIcons.Register),
+        AmNavDestination(appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos, AmIcons.Context),
     )
 
     @Test
     fun nav_bar_shows_all_four_destinations_with_labels() {
         compose.setContent {
-            XauxaTheme {
-                XauxaNavBar(
+            AmTheme {
+                AmNavBar(
                     destinations = destinations(),
                     selectedId = appRouteNameOf(AppRoute.Home),
                     onSelect = {},
@@ -58,8 +58,8 @@ class RootNavigationChromeTest {
     fun switching_destination_keeps_home_as_root_and_back_returns_to_it() {
         val nav = AppBackStack()
         compose.setContent {
-            XauxaTheme {
-                XauxaNavBar(
+            AmTheme {
+                AmNavBar(
                     destinations = destinations(),
                     selectedId = appRouteNameOf(nav.top),
                     onSelect = { name ->
@@ -84,37 +84,37 @@ class RootNavigationChromeTest {
 
     @Test
     fun transient_feedback_publishes_to_the_snackbar_host() {
-        val host = XauxaFeedbackHost()
+        val host = AmFeedbackHost()
         compose.setContent {
-            XauxaTheme {
-                XauxaFeedbackEvent(
+            AmTheme {
+                AmFeedbackEvent(
                     event = Any(),
                     message = AppStrings.SincronizacionCompletada,
                     feedbackHost = host,
                 )
-                XauxaSnackbarHost(host)
+                AmSnackbarHost(host)
             }
         }
         compose.waitForIdle()
         // El evento transitorio vive en el Snackbar del Scaffold; el
-        // anuncio accesible lo mantiene el propio XauxaFeedbackEvent.
+        // anuncio accesible lo mantiene el propio AmFeedbackEvent.
         compose.onNodeWithText(AppStrings.SincronizacionCompletada).assertExists()
     }
 
     @Test
     fun snackbar_action_runs_the_callback_when_tapped() {
-        val host = XauxaFeedbackHost()
+        val host = AmFeedbackHost()
         var acted = false
         compose.setContent {
-            XauxaTheme {
-                XauxaFeedbackEvent(
+            AmTheme {
+                AmFeedbackEvent(
                     event = Any(),
                     message = "No pudimos sincronizar.",
                     feedbackHost = host,
                     actionLabel = AppStrings.Reintentar,
                     onAction = { acted = true },
                 )
-                XauxaSnackbarHost(host)
+                AmSnackbarHost(host)
             }
         }
         compose.waitForIdle()

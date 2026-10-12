@@ -12,20 +12,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.XauxaSnackbarHost
-import com.agendaqr.core.ui.components.XauxaPrimaryButton
-import com.agendaqr.core.ui.components.XauxaScreenScaffold
-import com.agendaqr.core.ui.components.XauxaQrPreview
-import com.agendaqr.core.ui.components.XauxaScannerViewport
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
-import com.agendaqr.core.ui.components.XauxaStatusBanner
-import com.agendaqr.core.ui.components.XauxaText
-import com.agendaqr.core.ui.components.XauxaTextInput
-import com.agendaqr.core.ui.components.XauxaTopBar
-import com.agendaqr.core.ui.components.XauxaTone
-import com.agendaqr.core.ui.theme.XauxaColor
-import com.agendaqr.core.ui.theme.XauxaSpacing
-import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.components.AmSnackbarHost
+import com.agendaqr.core.ui.components.AmPrimaryButton
+import com.agendaqr.core.ui.components.AmScreenScaffold
+import com.agendaqr.core.ui.components.AmQrPreview
+import com.agendaqr.core.ui.components.AmScannerViewport
+import com.agendaqr.core.ui.components.AmSecondaryButton
+import com.agendaqr.core.ui.components.AmStatusBanner
+import com.agendaqr.core.ui.components.AmText
+import com.agendaqr.core.ui.components.AmTextField
+import com.agendaqr.core.ui.components.AmTopBar
+import com.agendaqr.core.ui.components.AmTone
+import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmSpacing
+import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.destinations.domain.Context
 import com.agendaqr.destinations.domain.Destination
 import com.agendaqr.destinations.domain.QrAsset
@@ -96,23 +96,23 @@ private fun DestinationEditorContent(
     // V1.2 (§12): "Editar QR" en la barra superior con flecha atrás; Guardar
     // es el botón principal FIJO abajo (acción real de guardado), nunca
     // recortado por el scroll. Mientras se guarda no hay vuelta (§3).
-    XauxaScreenScaffold(
+    AmScreenScaffold(
         scrollable = true,
         topBar = {
-            XauxaTopBar(
+            AmTopBar(
                 title = AppStrings.EditarQr,
                 onBack = if (isSaving) null else onBack,
                 backLabel = AppStrings.Volver,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
         bottomAction = {
-            XauxaPrimaryButton(
+            AmPrimaryButton(
                 label = if (isSaving) AppStrings.Guardando else AppStrings.Guardar,
                 onClick = {
                     submitted = true
-                    if (name.isBlank() || qr.encoded.isBlank()) return@XauxaPrimaryButton
+                    if (name.isBlank() || qr.encoded.isBlank()) return@AmPrimaryButton
                     val now = com.agendaqr.destinations.domain.nowMillis()
                     onSave(
                         existing.copy(
@@ -130,30 +130,30 @@ private fun DestinationEditorContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
-                    .padding(horizontal = XauxaSpacing.ScreenMargin, vertical = XauxaSpacing.Sm),
+                    .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
             )
         },
     ) {
         error?.let { err ->
-            XauxaStatusBanner(
+            AmStatusBanner(
                 err.display(),
-                tone = XauxaTone.Danger,
+                tone = AmTone.Danger,
                 actionLabel = err.action.label,
                 onAction = { if (err.action == ErrorAction.Retry) onRetryError() else onClearError() },
                 onDismiss = onClearError,
                 dismissLabel = AppStrings.Descartar,
             )
         }
-        XauxaTextInput(
+        AmTextField(
             label = AppStrings.Nombre,
             value = name,
             onValueChange = { name = it },
             isError = nameError,
             errorMessage = if (nameError) AppStrings.ElNombreEsObligatorio else null,
         )
-        XauxaTextInput(label = AppStrings.Categoria, value = category, onValueChange = { category = it })
-        XauxaTextInput(label = AppStrings.Nota, value = note, onValueChange = { note = it }, singleLine = false, minLines = 3)
-        XauxaSecondaryButton(
+        AmTextField(label = AppStrings.Categoria, value = category, onValueChange = { category = it })
+        AmTextField(label = AppStrings.Nota, value = note, onValueChange = { note = it }, singleLine = false, minLines = 3)
+        AmSecondaryButton(
             label = selection.contextId?.let { id -> AppStrings.ParaContextoElegido + (contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico) } ?: AppStrings.ParaElegirContexto,
             onClick = { selection = selection.openPicker() },
         )
@@ -166,15 +166,15 @@ private fun DestinationEditorContent(
             }
         })
         if (qr.encoded.isBlank()) {
-            XauxaScannerViewport(
+            AmScannerViewport(
                 scanning = false,
                 hint = AppStrings.ImportaUnQrConCamara,
             )
             if (qrError) {
-                XauxaText(AppStrings.FaltaElCodigoQrUsa, size = XauxaType.Caption, color = XauxaColor.Danger)
+                AmText(AppStrings.FaltaElCodigoQrUsa, size = AmType.Caption, color = AmColor.Danger)
             }
         } else {
-            XauxaQrPreview(qr.encoded)
+            AmQrPreview(qr.encoded)
         }
     }
     if (selection.pickerOpen) {

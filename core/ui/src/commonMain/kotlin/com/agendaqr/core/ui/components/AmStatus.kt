@@ -1,0 +1,176 @@
+package com.agendaqr.core.ui.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmMetrics
+import com.agendaqr.core.ui.theme.AmShapes
+import com.agendaqr.core.ui.theme.AmSpacing
+import com.agendaqr.core.ui.theme.AmTextStyles
+import com.agendaqr.core.ui.theme.AmType
+
+/**
+ * Estados de AgendaMobile: banner de estado (alerta tonal redondeada),
+ * carga, estado vacío con glifo y agrupador de sección.
+ */
+
+/**
+ * Banner de resultado embebido (patrón Alert): marcador semántico +
+ * contenido + acciones sobre un bloque tonal con radio de tokens — sin
+ * borde de reposo (el bloque define el límite).
+ *
+ * El tono se expresa SIEMPRE con [tone]; las acciones heredan el color de
+ * CONTENIDO del tono (par garantizado por AmSchemeTest).
+ */
+@Composable
+fun AmStatusBanner(
+    message: String,
+    modifier: Modifier = Modifier,
+    tone: AmTone? = null,
+    actionLabel: String? = null,
+    onAction: (() -> Unit)? = null,
+    onDismiss: (() -> Unit)? = null,
+    /** copy del descarte desde el llamador (el DS no hardcodea). */
+    dismissLabel: String? = null,
+) {
+    if (onDismiss != null) {
+        requireNotNull(dismissLabel) {
+            "AmStatusBanner: onDismiss necesita dismissLabel (copy del llamador)"
+        }
+    }
+    val resolvedTone = tone ?: AmTone.Neutral
+    val background = resolvedTone.container()
+    val foreground = resolvedTone.content()
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(background, AmShapes.Medium)
+            .semantics { liveRegion = LiveRegionMode.Polite }
+            .padding(AmSpacing.Lg),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+    ) {
+        // El estado nunca se comunica solo por color — icono por tono.
+        resolvedTone.iconVector?.let { glyph ->
+            AmIcon(
+                imageVector = glyph,
+                contentDescription = null,
+                tint = foreground,
+            )
+        }
+        Text(
+            message,
+            modifier = Modifier.weight(1f),
+            color = foreground,
+            fontSize = AmType.Label,
+        )
+        // Acción del error recuperable (el error ofrece qué hacer) antes
+        // que el descarte opcional.
+        if (actionLabel != null && onAction != null) {
+            AmTextAction(label = actionLabel, onClick = onAction, color = foreground)
+        }
+        if (onDismiss != null && dismissLabel != null) {
+            AmTextAction(label = dismissLabel, onClick = onDismiss, color = foreground)
+        }
+    }
+}
+
+/** Indicador de carga con mensaje opcional y anuncio cortés. */
+@Composable
+fun AmLoading(modifier: Modifier = Modifier, message: String? = null) {
+    Column(
+        modifier = modifier.fillMaxWidth().padding(AmSpacing.Xxxl)
+            .semantics { liveRegion = LiveRegionMode.Polite },
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(AmSpacing.Md),
+    ) {
+        CircularProgressIndicator(color = AmColor.Accent)
+        message?.let { Text(it, color = AmColor.TextSecondary, fontSize = AmType.Label) }
+    }
+}
+
+/**
+ * Estado vacío: glifo decorativo en círculo tonal + título + subtítulo +
+ * acción opcional. El glifo no se anuncia al lector de pantalla (el
+ * título y el subtítulo comunican); la acción es la acción primaria del
+ * estado cuando la acción viable no vive en el chrome.
+ */
+@Composable
+fun AmEmptyState(
+    title: String,
+    modifier: Modifier = Modifier,
+    subtitle: String? = null,
+    /** Glifo decorativo del estado (p. ej. [AmIcons.QrCode]). */
+    icon: ImageVector? = null,
+    actionLabel: String? = null,
+    onAction: (() -> Unit)? = null,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth().padding(AmSpacing.Huge),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(AmSpacing.Lg),
+    ) {
+        icon?.let { glyph ->
+            Box(
+                modifier = Modifier
+                    .size(AmMetrics.EmptyStateGlyphSize)
+                    .background(AmColor.SurfaceSecondary, AmShapes.Pill),
+                contentAlignment = Alignment.Center,
+            ) {
+                AmIcon(
+                    imageVector = glyph,
+                    contentDescription = null,
+                    tint = AmColor.TextTertiary,
+                )
+            }
+        }
+        AmHeading(text = title, size = AmType.Title, fontWeight = FontWeight.SemiBold)
+        subtitle?.let { Text(it, color = AmColor.TextSecondary, fontSize = AmType.Label) }
+        if (actionLabel != null && onAction != null) {
+            AmPrimaryButton(actionLabel, onAction)
+        }
+    }
+}
+
+/**
+ * Agrupador de sección: encabezado + contenido con el espaciado del
+ * sistema.
+ */
+@Composable
+fun AmSection(
+    title: String,
+    modifier: Modifier = Modifier,
+    trailing: (@Composable (() -> Unit))? = null,
+    content: @Composable () -> Unit,
+) {
+    Column(modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            AmSectionHeader(text = title)
+            trailing?.invoke()
+        }
+        Spacer(Modifier.height(AmSpacing.Md))
+        content()
+    }
+}

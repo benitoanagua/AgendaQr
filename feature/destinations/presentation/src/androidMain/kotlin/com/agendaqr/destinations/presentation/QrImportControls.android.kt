@@ -8,10 +8,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.agendaqr.core.ui.components.XauxaPrimaryButton
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
-import com.agendaqr.core.ui.components.XauxaIcons
-import com.agendaqr.core.ui.theme.XauxaSpacing
+import com.agendaqr.core.ui.components.AmPrimaryButton
+import com.agendaqr.core.ui.components.AmSecondaryButton
+import com.agendaqr.core.ui.components.AmIcons
+import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.destinations.domain.QrAsset
 
 /**
@@ -27,11 +27,11 @@ actual fun QrImportControls(
     LaunchedEffect(Unit) {
         AgendaQrAndroidImportLauncher.results.collect(onResult)
     }
-    Column(verticalArrangement = Arrangement.spacedBy(com.agendaqr.core.ui.theme.XauxaSpacing.Sm)) {
-        XauxaPrimaryButton(
+    Column(verticalArrangement = Arrangement.spacedBy(com.agendaqr.core.ui.theme.AmSpacing.Sm)) {
+        AmPrimaryButton(
             label = AppStrings.ElegirDeLaGaleria,
             onClick = AgendaQrAndroidImportLauncher::gallery,
-            icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
+            icon = com.agendaqr.core.ui.components.AmIcons.Gallery,
         )
         CameraCaptureHost(onQr = { asset -> onResult(QrImportResult(listOf(asset))) })
     }
@@ -49,10 +49,10 @@ actual fun QrGalleryControls(
     LaunchedEffect(Unit) {
         AgendaQrAndroidImportLauncher.results.collect(onResult)
     }
-    XauxaPrimaryButton(
+    AmPrimaryButton(
         label = AppStrings.ElegirDeLaGaleria,
         onClick = AgendaQrAndroidImportLauncher::gallery,
-        icon = XauxaIcons.Gallery,
+        icon = AmIcons.Gallery,
     )
 }
 
@@ -66,7 +66,7 @@ actual fun QrCameraEntryControl(
 /** Android: PDF vía OpenDocument por el canal de comprobantes entrantes. */
 @Composable
 actual fun QrPdfPickerControl() {
-    XauxaSecondaryButton(
+    AmSecondaryButton(
         label = AppStrings.ElegirArchivoPdf,
         onClick = AgendaQrAndroidImportLauncher::pdf,
     )
