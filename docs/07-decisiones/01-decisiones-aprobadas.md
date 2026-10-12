@@ -84,17 +84,8 @@ Quedan consolidados, sin alterar las reglas de negocio existentes:
 
 La implementación debe adaptarse al contrato UX/UI; un fallo de implementación no modifica automáticamente la especificación.
 
-## D-18 — Lenguaje visual de la UI (UX/UI V1.1 → V1.2)
+## D-18 — Sistema visual de la UI (UX/UI V1.3)
 
-D-17 queda enmendado en **jerarquía visual y composición** (S01, S02, S06,
-S12, §11, §12 de la especificación): V1.1 (ADR-0005, 2026-10-05) adoptó el
-lenguaje Metro dentro de Xauxa; **V1.2 (ADR-0012, 2026-10-11) revierte
-parcialmente esa decisión** y adopta una UI convencional sobre componentes
-estándar de Material 3, con el mismo diseño en Android e iOS y la marca
-en el color de acento (`TILES_EN_INICIO = false`). No se alteran intención,
-navegación conceptual, modelo mental, reglas de negocio ni recuperación
-de errores; las reglas de accesibilidad se conservan íntegras. Lucide
-(ISC) sigue siendo el set de iconos. La enmienda de la especificación
-congelada fue aprobada explícitamente por el propietario (registrada en
-ADR-0012). La implementación debe adaptarse a V1.2 en la pasada de
-migración; hasta completarla, el código está declarado desalineado.
+AgendaMobile es el único sistema visual vigente de Agenda QR, conforme a ADR-0013 y al contrato normativo `docs/05-design-system/00-agendamobile-contrato-normativo.md`. Está implementado en Kotlin/Compose Multiplatform dentro de `core/ui`, con tokens semánticos, tema claro/oscuro y componentes compartidos. Ant Design Mobile y Vant son referencias de patrones de interacción, no dependencias de Compose.
+
+La interfaz utiliza componentes convencionales adaptados con Material 3, mantiene una experiencia coherente entre Android e iOS y aplica las reglas de accesibilidad del contrato. Metro y Xauxa son decisiones históricas sustituidas; no forman parte de la arquitectura visual activa. La especificación UX/UI vigente es V1.3. El estado real de validación por plataforma se documenta únicamente en `docs/09-implementacion/01-estado.md`.
