@@ -1,13 +1,8 @@
 plugins { id("agendaqr.compose-library") }
 
-// AgendaMobile (ADR-0013): el sistema de diseño vive en este módulo. Los
-// recursos de Compose exponen el logo público del producto.
-compose {
-    resources {
-        publicResClass = true
-        packageOfResClass = "com.agendaqr.core.ui"
-    }
-}
+// AgendaMobile (ADR-0013): el sistema de diseño vive en este módulo. Sin
+// recursos empaquetados: la iconografía es Lucide vía AmIcon y el logo de
+// marca vive en docs/branding (SVG, fuente de verdad del ícono).
 
 android {
     namespace = "com.agendaqr.core.ui"
@@ -23,8 +18,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(compose.material3)
-            // Recursos Compose (logo público del producto).
-            implementation(compose.components.resources)
             // Tokens de movimiento (Easing) y las transiciones de
             // superficie consumen androidx.compose.animation(.core).
             implementation(compose.animation)

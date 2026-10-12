@@ -44,21 +44,18 @@ fun isUiLiteralAllowed(text: String): Boolean =
  * REGISTRO DE EXCEPCIONES del gate. El contrato normativo
  * (docs/05-design-system/00-agendamobile-contrato-normativo.md) declara la
  * tabla de excepciones E-xx; esta tarea compara AMBOS conjuntos y falla si
- * no coinciden. AgendaMobile arranca sin excepciones de borde: el anillo
- * de foco (AmTone.kt) es la implementación canónica del foco visible, no
- * una excepción.
+ * no coinciden. AgendaMobile no tiene excepciones: ningún archivo de
+ * producción dibuja bordes con `.border(`/`BorderStroke(` (la indicación
+ * de foco y de estado vive en los componentes M3 y en el canvas).
  */
 val exceptionRegistry: Map<String, List<String>> = emptyMap()
 
-/** Archivos con `.border(`/`BorderStroke(` permitidos. */
+/** Archivos con `.border(`/`BorderStroke(` permitidos: ninguno. */
 val borderAllowedFiles: Set<String> =
     buildSet {
         exceptionRegistry.values.forEach { rules ->
             rules.forEach { rule -> if (rule.startsWith("border:")) add(rule.removePrefix("border:")) }
         }
-        // Anillo de foco visible: implementación canónica del estado de
-        // foco, no una excepción del sistema.
-        add("AmTone.kt")
     }
 
 fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = buildList {
@@ -122,8 +119,8 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
             add("$location: raw animation duration; use AmMotion tokens: $line")
         }
         if (!path.endsWith(ThemeLayerFile) && forbiddenVisualAuthority.any(line::contains)) add("$location: MaterialTheme cannot be the visual authority outside AmTheme: $line")
-        // `.border(`/`BorderStroke(` solo en el archivo canónico del foco
-        // (AmTone.kt) y en las excepciones registradas.
+        // `.border(`/`BorderStroke(` prohibidos en todo el código de
+        // producción (las excepciones registradas son la única vía).
         val hasBorderCall = line.contains(".border(") || Regex("\\bBorderStroke\\s*\\(").containsMatchIn(line)
         if (hasBorderCall && borderAllowedFiles.none { path.endsWith(it) }) {
             add("$location: .border(/BorderStroke( outside the canonical focus file (register an exception or remove the border): $line")
@@ -636,19 +633,19 @@ tasks.register("verifyDesignSystemFixtures") {
             "token layer must allow the shape set"
         }
 
-        // Bordes fuera del archivo canónico del foco DEBEN fallar…
-        val borderInFeature = "Modifier.border(BorderStroke(AmMetrics.Focus, AmColor.Accent), AmShapes.Medium)"
-        require(kotlinDesignViolations(featurePath, listOf(borderInFeature)).isNotEmpty()) {
-            "feature/ .border( must fail (only the canonical focus file may draw borders)"
-        }
-        require(kotlinDesignViolations("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/AmDialogs.kt", listOf(borderInFeature)).isNotEmpty()) {
-            "unordered components/ .border( must fail"
-        }
-        // …y pasa en el archivo canónico del anillo de foco (AmTone.kt).
-        require(
-            kotlinDesignViolations("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/AmTone.kt", listOf(borderInFeature)).isEmpty()
-        ) {
-            "the canonical focus file must allow the focus ring"
+        // Bordes: `.border(`/`BorderStroke(` DEBEN fallar en todo el
+        // código de producción (AgendaMobile no dibuja bordes; el foco y
+        // el estado viven en los componentes M3 y en el canvas).
+        val borderInFeature = "Modifier.border(BorderStroke(AmMetrics.Border, AmColor.Accent), AmShapes.Medium)"
+        listOf(
+            featurePath,
+            "/repo/shared/src/commonMain/kotlin/Fixture.kt",
+            "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/AmTone.kt",
+            "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/AmDialogs.kt",
+        ).forEach { bannedPath ->
+            require(kotlinDesignViolations(bannedPath, listOf(borderInFeature)).isNotEmpty()) {
+                ".border( must fail in production code: $bannedPath"
+            }
         }
 
         // Color.<nombre> y duraciones literales DEBEN fallar fuera de la

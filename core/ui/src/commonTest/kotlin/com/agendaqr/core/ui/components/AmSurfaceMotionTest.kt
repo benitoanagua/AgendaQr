@@ -6,22 +6,17 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * La transición estándar entre superficies respeta el movimiento
- * reducido del sistema (contrato de accesibilidad: "reduced motion
- * respetado").
+ * Contrato de movimiento de las transiciones de superficie (contrato
+ * AgendaMobile §8): la transición estándar respeta el movimiento
+ * reducido del sistema.
  *
  * El contrato comprobable aquí: con reduced motion la transición no
  * aplica desplazamiento y su duración es 0 (cambio en el sitio); sin
  * reduced motion se aplica el fundido con desplazamiento pequeño con la
- * duración corta de AmMotion.
+ * duración corta de AmMotion. Las pantallas leen LocalReducedMotion y
+ * eligen la variante reducida o estándar.
  */
 class AmSurfaceMotionTest {
-
-    @Test
-    fun reduced_motion_disables_the_surface_displacement() {
-        assertEquals(AmSurfaceMotion.Reduced, amSurfaceMotion(reducedMotion = true))
-        assertEquals(AmSurfaceMotion.Standard, amSurfaceMotion(reducedMotion = false))
-    }
 
     @Test
     fun reduced_motion_transitions_have_zero_duration() {

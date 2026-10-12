@@ -379,21 +379,3 @@ fun AmFavoriteToggle(
         )
     }
 }
-
-/** Chip de categoría estático: clasifica, no filtra. Sin interacción. */
-@Composable
-fun AmCategoryChip(
-    label: String,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            // Sin borde de reposo: el bloque tonal SurfaceSecondary define
-            // el límite.
-            .background(AmColor.SurfaceSecondary, AmShapes.Pill)
-            .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(label, fontSize = AmType.Caption, color = AmColor.TextSecondary)
-    }
-}
