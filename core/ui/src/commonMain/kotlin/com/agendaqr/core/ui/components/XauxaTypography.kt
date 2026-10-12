@@ -14,9 +14,9 @@ import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaType
 
 /**
- * Proporcion display/titular (Archivo): interlineado mas prieto que el
- * cuerpo, pero siempre > 1.1x del tamano (D1: heredar el ambiente de 24 sp
- * dejaba titulares de 24 sp a 1.0x, pegados).
+ * Proporción display/titular: interlineado más prieto que el cuerpo,
+ * pero siempre > 1.1× del tamaño (un titular no hereda el interlineado
+ * del cuerpo).
  */
 private const val HeadingLineHeightRatio = 1.25f
 
@@ -28,14 +28,13 @@ private const val HeadingLineHeightRatio = 1.25f
 private const val BodyLineHeightRatio = 1.5f
 
 /**
- * Encabezado Xauxa : todo título con semántica `heading()` usa la
- * familia display (Archivo, §12 del contrato visual) y los tokens
- * tipográficos del sistema.
+ * Encabezado Xauxa: todo título con semántica `heading()` usa la familia
+ * de sistema (§12 V1.2) y los tokens tipográficos del sistema.
  *
  * El tamaño sigue en `sp`: el escalado de fuente del sistema se respeta
- * (§11 accesibilidad). El interlineado es PROPORCIONAL al tamano (nunca
- * el ambiente del cuerpo): sin el, un titular a dos lineas se solapa en
- * cuanto supera 24 sp (D1).
+ * (§11 accesibilidad). El interlineado es PROPORCIONAL al tamaño (nunca
+ * el ambiente del cuerpo): sin él, un titular a dos líneas se solapa en
+ * cuanto supera 24 sp.
  */
 @Composable
 fun XauxaHeading(
@@ -50,7 +49,7 @@ fun XauxaHeading(
         modifier = modifier.semantics { heading() },
         fontSize = size,
         lineHeight = TextUnit(size.value * HeadingLineHeightRatio, TextUnitType.Sp),
-        fontFamily = XauxaType.FamilyDisplay,
+        fontFamily = XauxaType.FamilyUi,
         fontWeight = fontWeight,
         color = color,
     )

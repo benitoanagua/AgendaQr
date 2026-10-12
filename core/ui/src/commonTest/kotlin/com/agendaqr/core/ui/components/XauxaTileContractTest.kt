@@ -1,10 +1,7 @@
 package com.agendaqr.core.ui.components
 
 import com.agendaqr.core.ui.theme.XauxaAccents
-import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaMotion
-import com.agendaqr.core.ui.theme.XauxaShape
-import com.agendaqr.core.ui.theme.XauxaRadius
 import kotlin.math.pow
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -40,21 +37,6 @@ class XauxaTileContractTest {
         assertEquals(2, tileColumnsFor(4, 1.5f))
         assertEquals(2, tileColumnsFor(3, 1.5f))
         assertEquals(1, tileColumnsFor(1, 1.5f))
-    }
-
-    // --- pageTitleScaleFactor ---
-
-    @Test
-    fun page_title_scale_capped_at_1_3x() {
-        // Escala normal: factor 1 (sin ajuste).
-        assertEquals(1.0f, pageTitleScaleFactor(1.0f))
-        assertEquals(1.0f, pageTitleScaleFactor(1.3f))
-        // Fuente grande: el factor reduce la escala efectiva del DISPLAY
-        // a 1.3x; el cuerpo sigue escalando completo (§11).
-        // fontScale=2 → factor = 1.3/2 = 0.65 → display efectivo = 2*0.65 = 1.3x
-        val f = pageTitleScaleFactor(2.0f)
-        assertTrue(f < 1.0f, "factor < 1 con fuente grande: $f")
-        assertEquals(1.3f, 2.0f * f, 0.01f, "escala efectiva del display = 1.3x")
     }
 
     // --- tileRows con 2 y 3 columnas ---

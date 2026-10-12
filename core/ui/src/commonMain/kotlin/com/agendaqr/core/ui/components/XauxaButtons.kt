@@ -45,7 +45,7 @@ import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
-import com.agendaqr.core.ui.theme.XauxaShape
+import com.agendaqr.core.ui.theme.XauxaTracking
 
 
 /**
@@ -125,11 +125,10 @@ fun XauxaFilterChip(
             Text(
                 label,
                 fontSize = XauxaType.Label,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = XauxaType.LetterSpacingWide,
+                fontWeight = FontWeight.Medium,
+                letterSpacing = XauxaTracking.LabelLarge,
             )
         },
-        shape = XauxaShape,
         border = FilterChipDefaults.filterChipBorder(
             enabled = enabled,
             selected = selected,

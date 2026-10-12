@@ -44,7 +44,7 @@ import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
-import com.agendaqr.core.ui.theme.XauxaShape
+import com.agendaqr.core.ui.theme.XauxaShapes
 
 
 /**
@@ -131,7 +131,7 @@ fun XauxaBadge(
     // estado sigue expresándose con texto + tono, nunca solo por color.
     Box(
         modifier = modifier
-            .background(background, XauxaShape)
+            .background(background, XauxaShapes.ExtraSmall)
             .padding(horizontal = XauxaSpacing.Sm, vertical = XauxaSpacing.Xs),
         contentAlignment = Alignment.Center,
     ) {

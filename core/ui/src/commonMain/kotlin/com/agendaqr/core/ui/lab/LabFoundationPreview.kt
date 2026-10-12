@@ -195,7 +195,8 @@ private fun TypeSpecimen() {    Column(verticalArrangement = Arrangement.spacedB
             }
         }
         Text(
-            "Xauxa documenta Archivo (display) y Roboto (UI); la implementación usa la pila del sistema como Xauxa (FamilyUi) y monoespaciada para valores (FamilyMono). Tracking amplio en XauxaType.LetterSpacingWide.",
+            "Familia de sistema en todos los estilos (Roboto en Android, San Francisco en iOS; ADR-0012): " +
+                "FamilyUi para UI/cuerpo y FamilyMono para valores. Sin fuentes empaquetadas.",
             fontSize = XauxaType.Caption,
             color = XauxaColor.TextSecondary,
         )

@@ -47,19 +47,19 @@ import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
 import com.agendaqr.core.ui.theme.asTextOn
-import com.agendaqr.core.ui.theme.XauxaShape
+import com.agendaqr.core.ui.theme.XauxaShapes
 
 /**
- * V1.1 (ADR-0005, spec §12): piezas del lenguaje Metro dentro de Xauxa.
- * Invariantes conservados: radio 0, sin sombras, full-bleed, foco visible,
- * targets ≥ [XauxaMetrics.ControlMinSize]; la separación es por espacio y
- * bloques de color (sin bordes de reposo).
+ * Piezas de presentación de página y sección dentro de Xauxa.
+ * Invariantes conservados: foco visible, targets ≥
+ * [XauxaMetrics.ControlMinSize].
  */
 
 /**
- * Título de página (M6): display ligero — Archivo peso Light (300),
- * [XauxaType.DisplayPage] (≥ 40 sp). Capitalización de oración (la cadena
- * se respeta tal cual; ningún componente Xauxa la transforma).
+ * Título de página (§12 V1.2): el rol `titleLarge` de M3 con la familia de
+ * sistema, tal como lo mostrará la barra superior. Capitalización de
+ * oración (la cadena se respeta tal cual; ningún componente Xauxa la
+ * transforma).
  */
 @Composable
 fun XauxaPageTitle(
@@ -67,19 +67,11 @@ fun XauxaPageTitle(
     modifier: Modifier = Modifier,
     color: Color = XauxaColor.TextPrimary,
 ) {
-    // el display se acota a 1.3× (el CUERPO escala completo, §11): el
-    // título no consume el viewport con fuente al 200 %.
-    val fontScale = androidx.compose.ui.platform.LocalDensity.current.fontScale
-    val scaleFactor = pageTitleScaleFactor(fontScale)
-    val effectiveSp = XauxaType.DisplayPage.value * scaleFactor
-    val effectiveLineHeightSp = XauxaType.LineHeightDisplayPage.value * scaleFactor
     androidx.compose.material3.Text(
         text = text,
         modifier = modifier.semantics { heading() },
-        fontSize = androidx.compose.ui.unit.TextUnit(effectiveSp, androidx.compose.ui.unit.TextUnitType.Sp),
-        lineHeight = androidx.compose.ui.unit.TextUnit(effectiveLineHeightSp, androidx.compose.ui.unit.TextUnitType.Sp),
-        fontFamily = XauxaType.FamilyDisplay,
-        fontWeight = XauxaType.WeightDisplayPage,
+        style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
+        fontFamily = XauxaType.FamilyUi,
         color = color,
     )
 }
@@ -197,9 +189,9 @@ fun XauxaMetroTile(
             .heightIn(min = height)
             .fillMaxWidth()
             .graphicsLayer { scaleX = scale; scaleY = scale }
-            .background(accent.background, XauxaShape)
+            .background(accent.background, XauxaShapes.Medium)
             .xauxaPressFeedback(interaction, overlayColor = pressOverlay)
-            .xauxaFocusRing(interaction, shape = XauxaShape, color = tileFocusRingColor(accent))
+            .xauxaFocusRing(interaction, shape = XauxaShapes.Medium, color = tileFocusRingColor(accent))
             .then(
                 if (selected != null) {
                     Modifier.semantics {
@@ -504,14 +496,6 @@ internal fun tileColumnsFor(fitUnits: Int, fontScale: Float): Int = when {
     fontScale > 1.15f -> fitUnits.coerceAtMost(3)
     else -> fitUnits
 }
-
-/**
- * factor de escala efectiva del título de página (display ligero).
- * El CUERPO escala completo (§11); el display se acota a 1.3× para no
- * consumir el viewport con fuente grande.
- */
-internal fun pageTitleScaleFactor(fontScale: Float): Float =
-    if (fontScale > 1.3f) 1.3f / fontScale else 1f
 
 private const val FullScale = 1f
 private const val TiltScale = 0.96f

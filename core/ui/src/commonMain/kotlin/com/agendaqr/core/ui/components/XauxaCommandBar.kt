@@ -15,7 +15,6 @@ import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
-import com.agendaqr.core.ui.theme.XauxaShape
 
 data class XauxaOverflowAction(
     val label: String,
@@ -86,8 +85,8 @@ fun XauxaCommandBar(
                     DropdownMenu(
                         expanded = overflowOpen,
                         onDismissRequest = { overflowOpen = false },
-                        // radio 0, sin elevaciones, superficie Xauxa.
-                        shape = XauxaShape,
+                        // superficie y borde Xauxa (excepción E-01);
+                        // la forma hereda MaterialTheme.shapes.
                         containerColor = XauxaColor.Surface,
                         tonalElevation = XauxaSpacing.None,
                         shadowElevation = XauxaSpacing.None,

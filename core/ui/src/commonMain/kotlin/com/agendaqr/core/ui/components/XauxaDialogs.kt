@@ -47,7 +47,6 @@ import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
-import com.agendaqr.core.ui.theme.XauxaShape
 
 
 /**
@@ -120,7 +119,6 @@ fun XauxaDialog(
     androidx.compose.material3.AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest ?: onDismiss,
-        shape = XauxaShape,
         containerColor = XauxaColor.Surface,
         title = {
             Text(

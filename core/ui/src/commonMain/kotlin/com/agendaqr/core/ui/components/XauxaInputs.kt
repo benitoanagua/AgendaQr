@@ -45,7 +45,7 @@ import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
-import com.agendaqr.core.ui.theme.XauxaShape
+import com.agendaqr.core.ui.theme.XauxaShapes
 
 
 /**
@@ -110,11 +110,11 @@ fun XauxaTextInput(
                     // deshabilitado distinguible — Surface3 (más
                     // oscuro que el Surface2 de reposo), texto TextTertiary.
                     if (!enabled) XauxaColor.Surface3 else XauxaColor.Surface2,
-                    XauxaShape,
+                    XauxaShapes.ExtraSmall,
                 )
                 .then(
                     if (borderColor != null) {
-                        Modifier.border(XauxaMetrics.Focus, borderColor, XauxaShape)
+                        Modifier.border(XauxaMetrics.Focus, borderColor, XauxaShapes.ExtraSmall)
                     } else {
                         Modifier
                     },
@@ -145,7 +145,6 @@ fun XauxaTextInput(
                 keyboardActions = keyboardActions,
                 visualTransformation = visualTransformation,
                 interactionSource = interactionSource,
-                shape = XauxaShape,
                 textStyle = androidx.compose.ui.text.TextStyle(fontSize = XauxaType.Body),
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = XauxaColor.Surface2,
@@ -238,10 +237,10 @@ fun XauxaSearchBar(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(XauxaColor.Surface2, XauxaShape)
+                .background(XauxaColor.Surface2, XauxaShapes.ExtraSmall)
                 .then(
                     if (focused) {
-                        Modifier.border(XauxaMetrics.Focus, XauxaColor.Brand, XauxaShape)
+                        Modifier.border(XauxaMetrics.Focus, XauxaColor.Brand, XauxaShapes.ExtraSmall)
                     } else {
                         Modifier
                     },
@@ -268,7 +267,6 @@ fun XauxaSearchBar(
                 },
                 singleLine = true,
                 interactionSource = interactionSource,
-                shape = XauxaShape,
                 textStyle = androidx.compose.ui.text.TextStyle(fontSize = XauxaType.Body),
                 leadingIcon = { XauxaIcon(imageVector = XauxaIcons.Search, contentDescription = null) },
                 trailingIcon = if (onClear != null && value.isNotEmpty()) {

@@ -6,18 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
 import kotlin.math.pow
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.agendaqr.core.ui.Res
-import com.agendaqr.core.ui.archivo_bold
-import com.agendaqr.core.ui.archivo_light
-import com.agendaqr.core.ui.archivo_medium
-import com.agendaqr.core.ui.archivo_regular
-import com.agendaqr.core.ui.archivo_semibold
-import org.jetbrains.compose.resources.Font
+import androidx.compose.material3.Typography
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 /**
  * Xauxa semantic tokens. The feature layer must consume only this semantic
@@ -393,82 +389,165 @@ object XauxaMetrics {
 
 object XauxaType {
     /** Display de BLOQUE (32 sp): número/hero de una tarjeta de datos
-     * ([com.agendaqr.core.ui.components.XauxaHeroCard]); NO es el título de
-     * página (ese es [DisplayPage], M6). */
+     * ([com.agendaqr.core.ui.components.XauxaHeroCard]); corresponde al rol
+     * `headlineLarge` de M3. */
     val Display: TextUnit = 32.sp
+    /** Titular de autenticación (rol `headlineMedium` de M3, 28 sp). */
+    val HeadlineMedium: TextUnit = 28.sp
+    /** Encabezado de sección grande (rol `headlineSmall` de M3, 24 sp). */
     val Headline: TextUnit = 24.sp
+    /** Título de página en la barra superior (rol `titleLarge` de M3, 22 sp). */
+    val TitleLarge: TextUnit = 22.sp
+    /** Título de diálogo/tarjeta (20 sp; tamaño propio del sistema). */
     val Title: TextUnit = 20.sp
+    /** Cuerpo (rol `bodyLarge` de M3, 16 sp). */
     val Body: TextUnit = 16.sp
+    /** Etiqueta de botón/fila (roles `labelLarge`/`bodyMedium`/`titleSmall` de M3, 14 sp). */
     val Label: TextUnit = 14.sp
+    /** Badge/apoyo (rol `labelMedium` de M3, 12 sp). */
     val Caption: TextUnit = 12.sp
+    /** Caption mínima (rol `labelSmall` de M3, 11 sp). */
+    val CaptionSmall: TextUnit = 11.sp
+    /** Tracking amplio de etiquetas históricas; se retira con los
+     * componentes sin uso que aún lo consumen (herocard/stat/tileheader). */
     val LetterSpacingWide: TextUnit = 0.5.sp
-    /** Tracking neutro EXPLICITO (0): neutraliza el 0.5 sp que Material 3
-     * hereda del estilo ambiente (bodyLarge) en cada Text sin tracking.
-     * Lo consumen superficies medidas al pixel (etiqueta del tile 1x1:
-     * "Contextos" a 14 sp mide ~64 px limpio pero ~69 px con el tracking
-     * ambiente y parte en 68 px — D2). Cero en cualquier unidad: no es un
-     * valor de diseno, es ausencia de tracking. */
+    /** Tracking neutro EXPLÍCITO (0): neutraliza herencias del ambiente
+     * en superficies medidas al pixel. Cero en cualquier unidad: no es un
+     * valor de diseño, es ausencia de tracking. */
     val LetterSpacingNone: TextUnit = 0.sp
-    // interlineados canónicos (sp — respetan el escalado, §11).
+    // interlineados canónicos (sp — respetan el escalado, §11). Los roles
+    // M3 fijan los suyos; estos tokens alimentan XauxaMaterialTypography.
     val LineHeightLabel: TextUnit = 20.sp
     val LineHeightBody: TextUnit = 24.sp
     val LineHeightCaption: TextUnit = 16.sp
     val LineHeightSection: TextUnit = 20.sp
-    /** V1.1 (ADR-0005, spec §12 Tipografía): título de página en display
-     * ligero (Archivo 300) y ≥ 40 sp. */
-    val DisplayPage: TextUnit = 40.sp
-    /** Interlineado propio del display de pagina (46 sp = 1.15x): con el
-     * ambiente del cuerpo (24 sp) dos lineas a 40 sp se solapan (D1).
-     * Escala junto con el tamano efectivo acotado a 1.3x (§11). */
-    val LineHeightDisplayPage: TextUnit = 46.sp
-    /** V1.1: encabezados de sección pequeños (14–16 sp) en color de
-     * acento. */
+    val LineHeightHeadlineLarge: TextUnit = 40.sp
+    val LineHeightHeadlineMedium: TextUnit = 36.sp
+    val LineHeightHeadlineSmall: TextUnit = 32.sp
+    val LineHeightTitleLarge: TextUnit = 28.sp
+    val LineHeightTitleMedium: TextUnit = 24.sp
+    val LineHeightTitleSmall: TextUnit = 20.sp
+    val LineHeightLabelSmall: TextUnit = 16.sp
+    /** Encabezados de sección (14 sp). */
     val SectionHeader: TextUnit = 14.sp
     /**
-     * §12: "Archivo para display/encabezados" (V1.1: el display de
-     * página usa el peso Light 300). Empaquetada en
-     * `composeResources/font` (5 pesos estáticos, subset latin, ~40 KB
-     * cada uno); licencia OFL 1.1 documentada en
-     * `docs/05-design-system/05-xauxa-tipografia.md` y
-     * `06-licencias-terceros.md`. Solo se consume a través de
-     * [com.agendaqr.core.ui.components.XauxaHeading] y
-     * [com.agendaqr.core.ui.components.XauxaPageTitle].
-     *
-     * Acceso componible (mismo patrón que [XauxaColor]): el cargador de
-     * fuentes de Compose retiene los typefaces.
-     */
-    val FamilyDisplay: FontFamily
-        @Composable get() = FontFamily(
-            Font(Res.font.archivo_light, FontWeight.Light),
-            Font(Res.font.archivo_regular, FontWeight.Normal),
-            Font(Res.font.archivo_medium, FontWeight.Medium),
-            Font(Res.font.archivo_semibold, FontWeight.SemiBold),
-            Font(Res.font.archivo_bold, FontWeight.Bold),
-        )
-    /** V1.1: peso del título de página (display ligero). */
-    val WeightDisplayPage: FontWeight = FontWeight.Light
-    /**
-     * §12: "Roboto/San Francisco para UI/cuerpo": la sans del sistema
-     * (Roboto en Android, SF en iOS) es la fuente de UI correcta sin
-     * empaquetar una copia redundante; resperta el escalado del usuario.
+     * §12 V1.2: familia de sistema en TODOS los estilos — Roboto en
+     * Android, San Francisco en iOS (`FontFamily.Default`); ninguna fuente
+     * se empaqueta. Respeta el escalado de fuente del usuario.
      */
     val FamilyUi: FontFamily = FontFamily.Default
     val FamilyMono: FontFamily = FontFamily.Monospace
 }
 
 /**
+ * Tracking de los roles tipográficos de Material 3 (spec §12 V1.2: valores
+ * por defecto de M3; nada de tracking amplio propio en el cuerpo).
+ */
+object XauxaTracking {
+    val TitleMedium: TextUnit = 0.15.sp
+    val TitleSmall: TextUnit = 0.1.sp
+    val BodyLarge: TextUnit = 0.5.sp
+    val BodyMedium: TextUnit = 0.25.sp
+    val BodySmall: TextUnit = 0.4.sp
+    val LabelLarge: TextUnit = 0.1.sp
+    val LabelMedium: TextUnit = 0.5.sp
+    val LabelSmall: TextUnit = 0.5.sp
+}
+
+/**
+ * Tipografía Material 3 de Xauxa (§12 V1.2): familia de sistema y valores
+ * de los roles M3, todos definidos como tokens. [XauxaTheme] la entrega a
+ * `MaterialTheme(typography = …)`, de modo que cada componente M3 hereda
+ * la misma tipografía.
+ */
+val XauxaMaterialTypography: Typography = Typography(
+    headlineLarge = TextStyle(
+        fontSize = XauxaType.Display,
+        lineHeight = XauxaType.LineHeightHeadlineLarge,
+        fontFamily = XauxaType.FamilyUi,
+    ),
+    headlineMedium = TextStyle(
+        fontSize = XauxaType.HeadlineMedium,
+        lineHeight = XauxaType.LineHeightHeadlineMedium,
+        fontFamily = XauxaType.FamilyUi,
+    ),
+    headlineSmall = TextStyle(
+        fontSize = XauxaType.Headline,
+        lineHeight = XauxaType.LineHeightHeadlineSmall,
+        fontFamily = XauxaType.FamilyUi,
+    ),
+    titleLarge = TextStyle(
+        fontSize = XauxaType.TitleLarge,
+        lineHeight = XauxaType.LineHeightTitleLarge,
+        fontFamily = XauxaType.FamilyUi,
+    ),
+    titleMedium = TextStyle(
+        fontSize = XauxaType.Body,
+        lineHeight = XauxaType.LineHeightTitleMedium,
+        letterSpacing = XauxaTracking.TitleMedium,
+        fontWeight = FontWeight.Medium,
+        fontFamily = XauxaType.FamilyUi,
+    ),
+    titleSmall = TextStyle(
+        fontSize = XauxaType.Label,
+        lineHeight = XauxaType.LineHeightTitleSmall,
+        letterSpacing = XauxaTracking.TitleSmall,
+        fontWeight = FontWeight.Medium,
+        fontFamily = XauxaType.FamilyUi,
+    ),
+    bodyLarge = TextStyle(
+        fontSize = XauxaType.Body,
+        lineHeight = XauxaType.LineHeightBody,
+        letterSpacing = XauxaTracking.BodyLarge,
+        fontFamily = XauxaType.FamilyUi,
+    ),
+    bodyMedium = TextStyle(
+        fontSize = XauxaType.Label,
+        lineHeight = XauxaType.LineHeightTitleSmall,
+        letterSpacing = XauxaTracking.BodyMedium,
+        fontFamily = XauxaType.FamilyUi,
+    ),
+    bodySmall = TextStyle(
+        fontSize = XauxaType.Caption,
+        lineHeight = XauxaType.LineHeightCaption,
+        letterSpacing = XauxaTracking.BodySmall,
+        fontFamily = XauxaType.FamilyUi,
+    ),
+    labelLarge = TextStyle(
+        fontSize = XauxaType.Label,
+        lineHeight = XauxaType.LineHeightLabel,
+        letterSpacing = XauxaTracking.LabelLarge,
+        fontWeight = FontWeight.Medium,
+        fontFamily = XauxaType.FamilyUi,
+    ),
+    labelMedium = TextStyle(
+        fontSize = XauxaType.Caption,
+        lineHeight = XauxaType.LineHeightCaption,
+        letterSpacing = XauxaTracking.LabelMedium,
+        fontWeight = FontWeight.Medium,
+        fontFamily = XauxaType.FamilyUi,
+    ),
+    labelSmall = TextStyle(
+        fontSize = XauxaType.CaptionSmall,
+        lineHeight = XauxaType.LineHeightLabelSmall,
+        letterSpacing = XauxaTracking.LabelSmall,
+        fontWeight = FontWeight.Medium,
+        fontFamily = XauxaType.FamilyUi,
+    ),
+)
+
+/**
  * estilos tipográficos canónicos. Reúnen fontSize,
- * peso, tracking y LINE HEIGHT (la pieza que las repeticiones manuales de
- * los componentes nunca fijaban). Los componentes consumen estos estilos
+ * peso, tracking y LINE HEIGHT. Los componentes consumen estos estilos
  * en lugar de repetir tríos de tokens; los tamaños siguen siendo los de
  * XauxaType (en sp: escalado del sistema, §11).
  */
 object XauxaTextStyles {
-    /** Etiqueta de botón (Body de acción): Label/Bold/tracking wide. */
+    /** Etiqueta de botón (rol labelLarge de M3: Label/Medium/tracking 0.1). */
     val ButtonLabel = androidx.compose.ui.text.TextStyle(
         fontSize = XauxaType.Label,
-        fontWeight = FontWeight.Bold,
-        letterSpacing = XauxaType.LetterSpacingWide,
+        fontWeight = FontWeight.Medium,
+        letterSpacing = XauxaTracking.LabelLarge,
         lineHeight = XauxaType.LineHeightLabel,
     )
 
@@ -484,11 +563,11 @@ object XauxaTextStyles {
         lineHeight = XauxaType.LineHeightCaption,
     )
 
-    /** Texto de apoyo (errores, helpers, badges). */
+    /** Texto de apoyo (errores, helpers, badges) — rol labelMedium de M3. */
     val Support = androidx.compose.ui.text.TextStyle(
         fontSize = XauxaType.Caption,
-        fontWeight = FontWeight.SemiBold,
-        letterSpacing = XauxaType.LetterSpacingWide,
+        fontWeight = FontWeight.Medium,
+        letterSpacing = XauxaTracking.LabelMedium,
         lineHeight = XauxaType.LineHeightCaption,
     )
 
@@ -498,20 +577,34 @@ object XauxaTextStyles {
         lineHeight = XauxaType.LineHeightCaption,
     )
 
-    /** Encabezado de sección (14 sp en acento, M6). */
+    /** Encabezado de sección (14 sp). */
     val SectionHeader = androidx.compose.ui.text.TextStyle(
         fontSize = XauxaType.SectionHeader,
         lineHeight = XauxaType.LineHeightSection,
     )
 }
 
-/** Radio base único de Xauxa. Cambiarlo requiere revisión visual global. */
-object XauxaRadius {
-    val Base = 0.dp
+/**
+ * Conjunto de formas de Xauxa (spec §12 V1.2): los cinco radios estándar
+ * como tokens. [XauxaTheme] los entrega a `MaterialTheme.shapes`, de modo
+ * que los componentes M3 heredan las formas sin parámetros locales.
+ */
+object XauxaShapes {
+    val ExtraSmall = RoundedCornerShape(XauxaRadius.ExtraSmall)
+    val Small = RoundedCornerShape(XauxaRadius.Small)
+    val Medium = RoundedCornerShape(XauxaRadius.Medium)
+    val Large = RoundedCornerShape(XauxaRadius.Large)
+    val ExtraLarge = RoundedCornerShape(XauxaRadius.ExtraLarge)
 }
 
-/** Forma canónica para superficies y controles rectangulares del sistema. */
-val XauxaShape = androidx.compose.foundation.shape.RoundedCornerShape(size = XauxaRadius.Base)
+/** Radios del conjunto de formas ([XauxaShapes]), en dp. */
+object XauxaRadius {
+    val ExtraSmall = 4.dp
+    val Small = 8.dp
+    val Medium = 12.dp
+    val Large = 16.dp
+    val ExtraLarge = 28.dp
+}
 
 /**
  * opacidades funcionales del lenguaje. [Pressed] es la

@@ -44,7 +44,7 @@ import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
-import com.agendaqr.core.ui.theme.XauxaShape
+import com.agendaqr.core.ui.theme.XauxaShapes
 
 
 /**
@@ -157,8 +157,8 @@ fun Modifier.xauxaPressFeedback(
 @Composable
 fun Modifier.xauxaFocusRing(
     source: MutableInteractionSource,
-    /** Forma del anillo (default XauxaShape). */
-    shape: androidx.compose.ui.graphics.Shape = XauxaShape,
+    /** Forma del anillo (default XauxaShapes.Small). */
+    shape: androidx.compose.ui.graphics.Shape = XauxaShapes.Small,
     /**
      * Color del anillo. Default: [XauxaColor.FocusRing] (marca) sobre las
      * superficies del tema (>= 3:1, XauxaFocusRingContrastTest). Sobre un

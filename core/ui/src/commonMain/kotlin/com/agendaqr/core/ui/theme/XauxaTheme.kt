@@ -9,37 +9,31 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalRippleConfiguration
+import androidx.compose.ui.Modifier
 
-// la red de seguridad de shapes consume el token plano de la
-// capa de tokens (XauxaShape); RoundedCornerShape no aparece aquí.
-
+/**
+ * Tema Xauxa (spec §12 V1.2, ADR-0012): Material 3 con el esquema de color
+ * derivado de [XauxaColorScheme], la tipografía y las formas definidas como
+ * tokens. La indicación de pulsación es la estándar de M3 (ripple del tema);
+ * los componentes heredan `typography` y `shapes` de `MaterialTheme`.
+ */
 @Composable
 fun XauxaTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
     val scheme = if (darkTheme) DarkXauxaColorScheme else LightXauxaColorScheme
-    // Desactiva el ripple de Material 3 (contrato §7: overlay plano, no
-        // gradientes). Los componentes Xauxa dibujan su propio feedback con
-        // xauxaPressFeedback; por eso los clickable llevan indication = null.
-        @OptIn(ExperimentalMaterial3Api::class)
-        CompositionLocalProvider(
-            LocalXauxaColorScheme provides scheme,
-            LocalRippleConfiguration provides null,
-        ) {
+    CompositionLocalProvider(
+        LocalXauxaColorScheme provides scheme,
+    ) {
         MaterialTheme(
-            // red de seguridad — TODO componente M3 que
-            // no pase shape explícita hereda radio 0 (invariante Metro). El
-            // gate permite RoundedCornerShape SOLO en este archivo si algún
-            // día se necesita; hoy ni se usa.
+            typography = XauxaMaterialTypography,
             shapes = Shapes(
-                extraSmall = XauxaShape,
-                small = XauxaShape,
-                medium = XauxaShape,
-                large = XauxaShape,
-                extraLarge = XauxaShape,
+                extraSmall = XauxaShapes.ExtraSmall,
+                small = XauxaShapes.Small,
+                medium = XauxaShapes.Medium,
+                large = XauxaShapes.Large,
+                extraLarge = XauxaShapes.ExtraLarge,
             ),
             colorScheme = if (darkTheme) {
                 darkColorScheme(
@@ -104,7 +98,7 @@ fun XauxaTheme(
             },
         ) {
             Surface(
-                modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize(),
                 color = scheme.background,
                 content = content,
             )

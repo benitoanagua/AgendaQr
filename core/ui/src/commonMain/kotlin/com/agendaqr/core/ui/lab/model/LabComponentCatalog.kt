@@ -138,32 +138,32 @@ object LabComponentCatalog {
             id = "xauxa-type",
             name = "XauxaType",
             category = LabCategory.FOUNDATIONS,
-            purpose = "Escala tipográfica de Xauxa para display, títulos, cuerpo y etiquetas.",
-            description = "Seis tamaños (Display 32, Headline 24, Title 20, Body 16, Label 14, Caption 12).",
+            purpose = "Escala tipográfica de Xauxa para títulos, cuerpo y etiquetas.",
+            description = "Tamaños en sp mapeados a los roles de Material 3 (titleLarge, headlineMedium, " +
+                "bodyLarge, labelLarge, …) con la familia de sistema en todos los estilos.",
             states = listOf(
                 LabState(
                     "Escala tipográfica",
-                    "Los seis tamaños están declarados y se consumen en componentes.",
+                    "Los tamaños están declarados, en sp, y se consumen en componentes.",
                     LabReviewStatus.VERIFIED,
                 ),
                 LabState(
                     "Familias tipográficas",
-                    "Como Xauxa: pila del sistema para UI (FamilyUi) y monoespaciada para " +
-                        "valores (FamilyMono). Las webfonts Archivo/Roboto de la referencia " +
-                        "complementaria siguen pendientes por decisión de producto.",
+                    "Familia del sistema en todos los estilos (FamilyUi: Roboto en Android, " +
+                        "San Francisco en iOS) y monoespaciada para valores (FamilyMono). " +
+                        "Sin fuentes empaquetadas (ADR-0012).",
                     LabReviewStatus.VERIFIED,
                 ),
             ),
             tokens = listOf(
-                LabTokenRef("XauxaType.Title", "Tamaño de título de sección y estado vacío."),
-                LabTokenRef("XauxaType.LetterSpacingWide", "Tracking de etiquetas en mayúsculas."),
+                LabTokenRef("XauxaType.TitleLarge", "Tamaño del título de página (22 sp)."),
                 LabTokenRef("XauxaType.FamilyMono", "Valores numéricos monoespaciados."),
             ),
             usage = listOf("Jerarquía textual de pantallas, secciones, etiquetas y metadatos."),
             tags = listOf("tipografía", "tokens"),
             darkThemeSupport = LabDarkThemeSupport.NOT_APPLICABLE,
             darkThemeNote = "Token no cromático: el tema no aplica.",
-            whenToUse = "Todo tamaño de texto. Display solo para encabezados y números hero (patrón Xauxa).",
+            whenToUse = "Todo tamaño de texto. Los roles M3 se consumen vía XauxaTextStyles/XauxaMaterialTypography.",
             androidMapping = "androidx.compose.ui.unit.TextUnit (sp) en object XauxaType.",
             iosMapping = "UIFont.preferredFont pendiente de mapear; hoy solo existe la capa Kotlin.",
         ),
@@ -333,28 +333,28 @@ object LabComponentCatalog {
             id = "xauxa-page-title",
             name = "XauxaPageTitle",
             category = LabCategory.SURFACES,
-            purpose = "Título de página Metro: display ligero (M6).",
-            description = "Archivo peso Light 300 a XauxaType.DisplayPage (>= 40 sp), capitalización de " +
-                "oración y semántica heading(). V1.1 (ADR-0005, spec §12 Tipografía).",
+            purpose = "Título de página con el rol titleLarge de Material 3.",
+            description = "Rol titleLarge de M3 (22 sp) con la familia de sistema, capitalización de " +
+                "oración y semántica heading(). V1.2 (ADR-0012, spec §12 Tipografía).",
             props = listOf(
                 LabProp("text", "String"),
                 LabProp("modifier", "Modifier"),
                 LabProp("color", "Color", "XauxaColor.TextPrimary"),
             ),
             states = listOf(
-                LabState("Default", "Título de página en display ligero.", LabReviewStatus.VERIFIED),
+                LabState("Default", "Título de página estándar.", LabReviewStatus.VERIFIED),
             ),
             tokens = listOf(
-                LabTokenRef("XauxaType.DisplayPage", "Tamaño del título de página (>= 40 sp)."),
+                LabTokenRef("XauxaType.TitleLarge", "Tamaño del título de página (22 sp)."),
                 LabTokenRef("XauxaColor.TextPrimary", "Color del título."),
             ),
-            usage = listOf("Título raíz de cada pantalla V1.1 (S01 Agenda QR, S06 nombre de contexto)."),
-            tags = listOf("título", "tipografía", "metro"),
+            usage = listOf("Titular de pantallas sin barra superior (Auth) y transición al chrome V1.2."),
+            tags = listOf("título", "tipografía"),
             darkThemeSupport = LabDarkThemeSupport.PENDING,
-            darkThemeNote = "Resuelve el esquema vía XauxaColor; validación visual de oscuro pendiente en T8.",
-            whenToUse = "Título raíz de pantalla. Encabezados de sección con XauxaSectionHeader.",
-            androidMapping = "Material3 Text con FontFamily Archivo Light.",
-            iosMapping = "Mismo typeface empaquetado; no SF Display de plataforma.",
+            darkThemeNote = "Resuelve el esquema vía XauxaColor; validación visual de oscuro pendiente en dispositivo.",
+            whenToUse = "Titular de pantalla. En superficies con barra superior, el título vive en la barra.",
+            androidMapping = "Material3 Text con MaterialTheme.typography.titleLarge.",
+            iosMapping = "Mismo estilo compartido; familia de sistema (San Francisco).",
             platforms = commonPlatforms(),
         ),
         LabComponentContract(

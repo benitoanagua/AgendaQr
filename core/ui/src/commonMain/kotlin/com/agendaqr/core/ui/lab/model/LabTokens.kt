@@ -85,15 +85,18 @@ object XauxaTokenIndex {
     val type: Set<String> = setOf(
         "XauxaType.Display",
         "XauxaType.Headline",
+        "XauxaType.HeadlineMedium",
         "XauxaType.Title",
+        "XauxaType.TitleLarge",
         "XauxaType.Body",
         "XauxaType.Label",
         "XauxaType.Caption",
         "XauxaType.LetterSpacingWide",
-        "XauxaType.DisplayPage",
         "XauxaType.SectionHeader",
         "XauxaType.FamilyUi",
         "XauxaType.FamilyMono",
+        "XauxaTracking.BodyLarge",
+        "XauxaTracking.LabelLarge",
     )
 
     val motion: Set<String> = setOf(

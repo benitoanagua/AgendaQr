@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.motion.LocalReducedMotion
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMotion
-import com.agendaqr.core.ui.theme.XauxaShape
+import com.agendaqr.core.ui.theme.XauxaShapes
 import com.agendaqr.core.ui.theme.XauxaSpacing
 
 /**
@@ -61,7 +61,7 @@ fun XauxaDotProgress(
         if (reducedMotion) {
             // Reduced motion: un punto encendido, estático — informativo.
             androidx.compose.foundation.layout.Box(
-                modifier = Modifier.size(XauxaSpacing.Sm).background(color, XauxaShape),
+                modifier = Modifier.size(XauxaSpacing.Sm).background(color, XauxaShapes.Small),
             )
         } else {
             // Tres puntos con parpadeo desfasado (una vuelta por ciclo).
@@ -78,7 +78,7 @@ fun XauxaDotProgress(
                 androidx.compose.foundation.layout.Box(
                     modifier = Modifier.size(XauxaSpacing.Sm)
                         .graphicsLayer { this.alpha = alpha }
-                        .background(color, XauxaShape),
+                        .background(color, XauxaShapes.Small),
                 )
             }
         }

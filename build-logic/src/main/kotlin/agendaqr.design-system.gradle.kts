@@ -87,10 +87,10 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
     val rawColor = Regex("\\bColor\\s*\\(")
     val forbiddenShapes = listOf("RoundedCornerShape", "CutCornerShape", "shadow(", ".shadow(")
     val forbiddenVisualAuthority = listOf("MaterialTheme.colorScheme")
-    // Fase 4: las formas con esquinas solo existen en la capa de tokens
-    // (XauxaShapeFlat, la única, aplanada a 0) y en XauxaTheme.kt como red
-    // de seguridad. Fuera de ahí, ni siquiera aplanadas: radio 0 se dice
-    // con RectangleShape.
+    // V1.2 (ADR-0012): las formas con esquinas viven SOLO en la capa de
+    // tokens (XauxaShapes, el conjunto 4/8/12/16/28 dp) y en XauxaTheme.kt
+    // como red de seguridad (Shapes(...)). Fuera de ahí, ningún componente
+    // fija radios: heredan MaterialTheme.shapes.
     val shapesAllowedFiles = listOf("XauxaTokens.kt", "XauxaTheme.kt")
     // T12 — la capa feature compone Xauxa; los componentes Material solo
     // viven en core:ui (que los adapta con tokens). Un import directo de
@@ -702,26 +702,26 @@ tasks.register("verifyDesignSystemFixtures") {
             "core:ui interaction must not be banned: ${falseInteractionFlags.joinToString()}"
         }
 
-        // Fase 4 — RoundedCornerShape solo en tokens/tema: en feature/ y en
-        // componentes DEBE fallar (radio 0 se dice con RectangleShape)...
-        val flatShapeInFeature = "val card = RoundedCornerShape(0.dp)"
-        require(kotlinDesignViolations(featurePath, listOf(flatShapeInFeature)).isNotEmpty()) {
-            "feature/ RoundedCornerShape(0.dp) must fail (use RectangleShape/tokens)"
+        // V1.2 — RoundedCornerShape solo en tokens/tema: en feature/ y en
+        // componentes DEBE fallar (las formas son tokens: XauxaShapes)...
+        val shapeInFeature = "val card = RoundedCornerShape(12.dp)"
+        require(kotlinDesignViolations(featurePath, listOf(shapeInFeature)).isNotEmpty()) {
+            "feature/ RoundedCornerShape(12.dp) must fail (shapes are tokens)"
         }
         val componentShapePath = "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/FixtureShape.kt"
-        require(kotlinDesignViolations(componentShapePath, listOf(flatShapeInFeature)).isNotEmpty()) {
+        require(kotlinDesignViolations(componentShapePath, listOf(shapeInFeature)).isNotEmpty()) {
             "components/ RoundedCornerShape must fail"
         }
-        // ...y en la capa de tokens/tema pasa (XauxaShapeFlat + red de
+        // ...y en la capa de tokens/tema pasa (XauxaShapes + red de
         // seguridad de Shapes). El fixture de tokens usa el constructor
-        // real (0.dp vive ahí); el del tema usa el import, para no tocar la
-        // regla de literales dp (que en el tema sigue prohibida).
-        val tokenShapeFixture = "val XauxaShapeFlat = RoundedCornerShape(size = 0.dp)"
+        // real (los dp viven ahí); el del tema usa el import, para no
+        // tocar la regla de literales dp (que en el tema sigue prohibida).
+        val tokenShapeFixture = "val XauxaShapeMedium = RoundedCornerShape(size = XauxaRadius.Medium)"
         val themeShapeFixture = "import androidx.compose.foundation.shape.RoundedCornerShape"
         val tokenShapePath = "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/XauxaTokens.kt"
         val themeShapePath = "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/XauxaTheme.kt"
         require(kotlinDesignViolations(tokenShapePath, listOf(tokenShapeFixture)).isEmpty()) {
-            "token layer must allow flat shapes"
+            "token layer must allow the shape set"
         }
         require(kotlinDesignViolations(themeShapePath, listOf(themeShapeFixture)).isEmpty()) {
             "theme layer must allow flat shapes"

@@ -45,7 +45,7 @@ import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
-import com.agendaqr.core.ui.theme.XauxaShape
+import com.agendaqr.core.ui.theme.XauxaShapes
 
 @Composable
 fun XauxaScreen(
@@ -55,7 +55,6 @@ fun XauxaScreen(
     Surface(
         modifier = modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing),
         color = XauxaColor.Background,
-        shape = XauxaShape,
         tonalElevation = XauxaSpacing.None,
         shadowElevation = XauxaSpacing.None,
     ) { content() }
@@ -76,7 +75,7 @@ fun XauxaMediaFrame(
     content: @Composable () -> Unit,
 ) {
     Box(
-        modifier = modifier.background(XauxaColor.Surface2, XauxaShape),
+        modifier = modifier.background(XauxaColor.Surface2, XauxaShapes.Medium),
         contentAlignment = Alignment.Center,
     ) {
         content()
@@ -123,7 +122,6 @@ fun XauxaTile(
             .fillMaxWidth()
             .xauxaFocusRing(interaction)
             .xauxaPressFeedback(interaction),
-        shape = XauxaShape,
         color = XauxaColor.Surface2,
         tonalElevation = XauxaSpacing.None,
         shadowElevation = XauxaSpacing.None,
@@ -191,7 +189,6 @@ internal fun XauxaLoadingButton(
             ),
         onClick = onClick,
         enabled = enabled && !isLoading,
-        shape = XauxaShape,
         // Padding vertical propio a cero: la altura la fija el contenido
         // (48 dp, ver abajo), no el relleno interno de Material (8+8). El
         // horizontal conserva el de Material (24 dp = Xxl).
@@ -253,7 +250,6 @@ fun XauxaSecondaryButton(
         modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         onClick = onClick,
         enabled = enabled && !isLoading,
-        shape = XauxaShape,
         // Igual que el primario: padding vertical cero (el horizontal
         // conserva el de Material, 12 dp = Md) y 48 dp en el contenido.
         contentPadding = PaddingValues(
@@ -305,8 +301,7 @@ fun XauxaTextAction(
     TextButton(
         modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         onClick = onClick,
-        shape = XauxaShape,
-        // 48 dp deterministicos como en los botones (ver XauxaLoadingButton).
+        // 48 dp determinísticos como en los botones (ver XauxaLoadingButton).
         contentPadding = PaddingValues(
             horizontal = XauxaSpacing.Md,
             vertical = XauxaSpacing.None,

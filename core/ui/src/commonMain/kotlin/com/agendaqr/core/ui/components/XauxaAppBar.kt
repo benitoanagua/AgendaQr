@@ -32,7 +32,7 @@ import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
-import com.agendaqr.core.ui.theme.XauxaShape
+import com.agendaqr.core.ui.theme.XauxaShapes
 
 /** Acción visible de la app bar inferior: icono + etiqueta SIEMPRE visible
  * (§11/M12: decisión de accesibilidad y desviación consciente de Metro —
@@ -97,7 +97,6 @@ fun XauxaAppBar(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = XauxaColor.Surface2,
-        shape = XauxaShape,
         tonalElevation = XauxaSpacing.None,
         shadowElevation = XauxaSpacing.None,
     ) {
@@ -157,10 +156,9 @@ fun XauxaAppBar(
                         DropdownMenu(
                             expanded = overflowOpen,
                             onDismissRequest = { overflowOpen = false },
-                            // el menú también habla Xauxa — radio 0
-                            // (red de seguridad del theme), sin elevación
-                            // tonal ni sombra, superficie y borde Xauxa.
-                            shape = XauxaShape,
+                            // el menú también habla Xauxa: superficie y
+                            // borde propios (excepción E-01 del contrato §12);
+                            // la forma hereda MaterialTheme.shapes.
                             containerColor = XauxaColor.Surface,
                             tonalElevation = XauxaSpacing.None,
                             shadowElevation = XauxaSpacing.None,
@@ -203,7 +201,7 @@ private fun AppBarItem(action: XauxaAppBarAction) {
                 if (action.primary) {
                     Modifier.background(
                         if (action.enabled) XauxaColor.Brand else XauxaColor.Surface3,
-                        XauxaShape,
+                        XauxaShapes.ExtraSmall,
                     )
                 } else {
                     Modifier

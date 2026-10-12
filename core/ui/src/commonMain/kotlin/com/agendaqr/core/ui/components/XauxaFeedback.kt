@@ -41,7 +41,7 @@ import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
-import com.agendaqr.core.ui.theme.XauxaShape
+import com.agendaqr.core.ui.theme.XauxaShapes
 
 
 /**
@@ -192,7 +192,7 @@ fun XauxaFavoriteToggle(
         Box(
             modifier = Modifier.size(XauxaMetrics.FavoriteIndicatorSize)
                 .background(if (favorite) XauxaColor.Brand else XauxaColor.Surface2)
-                .border(BorderStroke(XauxaMetrics.Border, XauxaColor.BorderControl), XauxaShape),
+                .border(BorderStroke(XauxaMetrics.Border, XauxaColor.BorderControl), XauxaShapes.ExtraSmall),
             contentAlignment = Alignment.Center,
         ) {
             // El estado no depende solo del color (§11) — el
@@ -305,7 +305,7 @@ fun XauxaScannerFrame(
     Box(
         modifier = modifier
             .size(XauxaMetrics.QrPreviewSize)
-            .border(BorderStroke(XauxaMetrics.BorderStrong, XauxaColor.Brand), XauxaShape),
+            .border(BorderStroke(XauxaMetrics.BorderStrong, XauxaColor.Brand), XauxaShapes.Medium),
         contentAlignment = Alignment.Center,
     ) {
         content?.invoke()

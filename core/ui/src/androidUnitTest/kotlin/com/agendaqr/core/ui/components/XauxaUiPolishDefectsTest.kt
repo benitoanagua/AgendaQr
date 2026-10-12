@@ -156,37 +156,19 @@ class XauxaUiPolishDefectsTest {
         }
     }
 
-    // --- D1: interlineado del display de pagina ---
-
-    private fun pageTitleNoOverlapAt(fontScale: Float) {
-        val title = "Resultado de importación"
-        setScaledContent(fontScale) {
-            // S12 a 360 dp: contenedor de 328 dp (margen 16 por lado).
-            Box(modifier = Modifier.width(328.dp)) { XauxaPageTitle(title) }
-        }
-        assertLinesDoNotOverlap(title, layoutOf(title))
-    }
+    // --- D1: interlineado de títulos y cuerpo (familia de sistema, V1.2) ---
 
     @Test
-    fun d1_pageTitle_twoLines_doNotOverlap_at100() = pageTitleNoOverlapAt(1.0f)
-
-    @Test
-    fun d1_pageTitle_twoLines_doNotOverlap_at130() = pageTitleNoOverlapAt(1.3f)
-
-    @Test
-    fun d1_pageTitle_twoLines_doNotOverlap_at200() = pageTitleNoOverlapAt(2.0f)
-
-    @Test
-    fun d1_pageTitle_singleLine_keeps_display_metrics() {
+    fun d1_pageTitle_uses_the_standard_titleLarge_metrics() {
         setScaledContent(1.0f) { XauxaPageTitle("Agenda QR") }
         val style = layoutOf("Agenda QR").layoutInput.style
-        // Display ligero M6: 40 sp / Archivo Light; interlineado propio 46 sp.
-        assertEquals(40.sp, style.fontSize)
-        assertEquals(46.sp, style.lineHeight)
-        assertEquals(FontWeight.Light, style.fontWeight)
+        // V1.2 (ADR-0012): título de página = rol titleLarge de M3, 22/28,
+        // con la familia de sistema (sin fuente empaquetada).
+        assertEquals(22.sp, style.fontSize)
+        assertEquals(28.sp, style.lineHeight)
         assertTrue(
-            style.fontFamily != null && style.fontFamily != androidx.compose.ui.text.font.FontFamily.Default,
-            "el titulo de pagina usa la familia display empaquetada, no la del sistema",
+            style.fontFamily == null || style.fontFamily == androidx.compose.ui.text.font.FontFamily.Default,
+            "el título de página usa la familia de sistema",
         )
     }
 
