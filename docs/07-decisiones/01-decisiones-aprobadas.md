@@ -62,7 +62,7 @@ CRM, obligaciones, saldos, pagos parciales, reembolsos especializados, contabili
 
 ## D-16 — UX
 
-La UI/UX permanece bajo Xauxa Design System; esta consolidación no crea un sistema visual paralelo. (Enmienda 2026-10-05, ADR-0005: Xauxa sigue siendo el único sistema de diseño; su expresión visual en Agenda QR es el lenguaje Metro, definido como enmienda del contrato Xauxa — no un segundo sistema.)
+La UI/UX permanece bajo Xauxa Design System; esta consolidación no crea un sistema visual paralelo. (Enmienda 2026-10-05, ADR-0005: Xauxa sigue siendo el único sistema de diseño. Enmienda 2026-10-11, ADR-0012: Xauxa expresa el diseño convencional sobre Material 3, idéntico en Android e iOS; sigue siendo el único sistema de diseño.)
 
 ## D-17 — UX/UI V1 congelada
 
@@ -84,6 +84,17 @@ Quedan consolidados, sin alterar las reglas de negocio existentes:
 
 La implementación debe adaptarse al contrato UX/UI; un fallo de implementación no modifica automáticamente la especificación.
 
-## D-18 — Lenguaje visual Metro dentro de Xauxa (UX/UI V1.1)
+## D-18 — Lenguaje visual de la UI (UX/UI V1.1 → V1.2)
 
-Se adopta el lenguaje visual Metro completo como expresión de Xauxa, según ADR-0005. D-17 queda enmendado en **jerarquía visual y composición** (S01, S06, §11, §12 de la especificación): el contrato pasa de V1.0 a V1.1 FROZEN el 2026-10-05. No se alteran intención, navegación conceptual, modelo mental, reglas de negocio ni recuperación de errores. Se adopta Lucide (licencia ISC) como set de iconos, con etiqueta de texto visible en todo icono interactivo (decisión de accesibilidad y desviación consciente de Metro). La implementación debe adaptarse a V1.1 en una pasada posterior; hasta entonces el código está declarado desalineado.
+D-17 queda enmendado en **jerarquía visual y composición** (S01, S02, S06,
+S12, §11, §12 de la especificación): V1.1 (ADR-0005, 2026-10-05) adoptó el
+lenguaje Metro dentro de Xauxa; **V1.2 (ADR-0012, 2026-10-11) revierte
+parcialmente esa decisión** y adopta una UI convencional sobre componentes
+estándar de Material 3, con el mismo diseño en Android e iOS y la marca
+en el color de acento (`TILES_EN_INICIO = false`). No se alteran intención,
+navegación conceptual, modelo mental, reglas de negocio ni recuperación
+de errores; las reglas de accesibilidad se conservan íntegras. Lucide
+(ISC) sigue siendo el set de iconos. La enmienda de la especificación
+congelada fue aprobada explícitamente por el propietario (registrada en
+ADR-0012). La implementación debe adaptarse a V1.2 en la pasada de
+migración; hasta completarla, el código está declarado desalineado.

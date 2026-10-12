@@ -1,61 +1,46 @@
-# Xauxa — Tipografía (T9)
+# Xauxa — Tipografía
 
-**Contrato (spec congelada §12, V1.0):** "Archivo para display/encabezados;
-Roboto/San Francisco para UI/cuerpo."
+**Contrato (spec V1.2 §12, ADR-0012):** familia del sistema en todos los
+estilos — **Roboto** en Android, **San Francisco** en iOS — con los roles
+tipográficos estándar de Material 3. No se empaqueta ninguna fuente
+propia; la marca vive en el color de acento.
 
-**Enmienda V1.1 (ADR-0005, 2026-10-05):** los títulos de página usan
-**Archivo peso Light (300), ≥ 40 sp**, en lugar de negrita; los
-encabezados de sección pasan a 14–16 sp en color de acento. El cuerpo
-sigue en Roboto/San Francisco. Capitalización de oración (sin
-mayúsculas forzadas). El escalado de fuente del sistema se mantiene.
-
-**Implementado en T1 (2026-10-05, feat/metro-T1):** el peso Light (300)
-de Archivo está empaquetado (`archivo_light.ttf`, OFL 1.1, misma fuente y
-licencia registradas abajo y en `06-licencias-terceros.md`) y `XauxaType`
-añade `DisplayPage = 40.sp` (≥ 40 sp), `WeightDisplayPage = FontWeight.Light`
-y `SectionHeader = 14.sp` para los encabezados de sección (14–16 sp).
-
-**Pulido V1.1 (rama fix/ui-polish-v1-1):** el display de página fija su
-interlineado propio `LineHeightDisplayPage = 46.sp` (1.15×, escala junto
-con el tamaño efectivo acotado a 1.3×); `XauxaHeading` y `XauxaText` fijan
-interlineado proporcional a su tamaño (1.25× display / 1.5× cuerpo) en vez
-de heredar el ambiente de Material (24 sp: todo tamaño > 24 sp solapaba).
-El tracking ambiente heredado (0.5 sp) se neutraliza donde la medición es
-ajustada con `LetterSpacingNone = 0.sp` (etiqueta del tile 1×1,
-placeholder del buscador).
-
-## Familias expuestas por `XauxaType`
+## Familia única
 
 | Token | Familia | Origen | Dónde se usa |
 |---|---|---|---|
-| `FamilyDisplay` | **Archivo** | Empaquetada en `core/ui/src/commonMain/composeResources/font/` | `XauxaHeading` (todos los títulos con semántica `heading()`) |
-| `FamilyUi` | Sans del sistema | No se empaqueta | Cuerpo/UI: **Roboto** en Android, **San Francisco** en iOS (fuente por defecto de cada plataforma) |
-| `FamilyMono` | Monospace del sistema | No se empaqueta | Números/identificadores (hero cards, stats) |
+| `FamilyUi` | Sans del sistema (`FontFamily.Default`) | No se empaqueta | Todos los estilos: títulos, cuerpo, etiquetas, números |
+| `FamilyMono` | Monospace del sistema | No se empaqueta | Números/identificadores (hero, stats) |
 
-## Por qué Archivo se empaqueta y Roboto no
+- `XauxaType.FamilyDisplay` ya no existe: el título de página usa el rol
+  `titleLarge`/`headlineSmall` de M3 con familia de sistema.
+- La fuente Archivo (OFL 1.1) empaquetada en V1.1 fue retirada del
+  binario en la migración a V1.2 (ADR-0012); el registro de licencias
+  (`06-licencias-terceros.md`) la dio de baja con ella.
 
-- Archivo no es fuente del sistema en ninguna plataforma objetivo: se
-  empaquetan 5 pesos estáticos (300/400/500/600/700) instanciados de la
-  familia variable oficial, subset latin, ~40 KB cada uno. V1.1 añade
-  empaquetación del peso 300 realizada en V1.1/T1.
-- Roboto ES la fuente por defecto de Android y SF la de iOS: empaquetar
-  una copia de Roboto añadiría peso al APK sin ningún cambio visual ni de
-  contrato (§12 pide literalmente "Roboto/San Francisco"). `FamilyUi =
-  FontFamily.Default` cumple la regla y respeta además las preferencias
-  del sistema.
+## Roles sobre Material 3
+
+`XauxaTheme` entrega a `MaterialTheme(typography = …)` un mapeo desde
+`XauxaType`/`XauxaTextStyles` a los roles estándar de M3, de modo que
+todos los componentes hereden la misma tipografía:
+
+| Rol M3 | Uso | Tamaño (sp) |
+|---|---|---|
+| `headlineSmall` | Titular de Auth | 24 |
+| `titleLarge` | Título de página en la barra superior | 22 |
+| `titleMedium` | Título de sección/dialog | 16 |
+| `bodyLarge` | Cuerpo | 16 |
+| `bodyMedium` | Fila/subtítulo | 14 |
+| `labelLarge` | Botones/acciones | 14 |
+| `labelMedium` | Badge/soporte | 12 |
+| `labelSmall` | Caption/pistas | 11 |
+
+Los tamaños viven como tokens (`XauxaType`) en `sp` y se respetan las
+alturas de línea de M3; el tracking es el estándar del rol (sin
+`LetterSpacingWide` en cuerpo).
 
 ## Escalado de fuente del sistema
 
-Todos los tamaños de `XauxaType` están en `sp` y los `XauxaHeading`
-heredan ese comportamiento: el escalado de fuente del usuario se aplica
-sin configuración adicional (§11).
-
-## Origen y licencia
-
-- Familia: [Archivo](https://fonts.google.com/specimen/Archivo), de
-  Omnibus-Type (The Archivo Project Authors).
-- Licencia: **SIL Open Font License 1.1** (permitido usar, empaquetar y
-  redistribuir; la propia licencia acompaña al repo:
-  <http://scripts.sil.org/OFL>).
-- Instancias estáticas obtenidas de la distribución oficial de la familia
-  (fontsource, subset latin, mismos glifos que la variable upstream).
+Todos los tamaños están en `sp`: el escalado de fuente del usuario se
+aplica sin configuración adicional (§11). Las pantallas se prueban a
+100/150/200 % sin recortar contenido esencial ni acciones primarias.

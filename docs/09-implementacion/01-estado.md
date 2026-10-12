@@ -6,6 +6,20 @@
 > respalda; lo que no puede ejecutarse se registra como **NO VERIFICADO**,
 > nunca como PASS (contrato §10).
 
+## Desvío declarado: migración a UX/UI V1.2 (ADR-0012)
+
+La spec UX/UI está enmendada a **V1.2** (diseño convencional sobre
+Material 3, misma en ambas plataformas; ADR-0012 revierte parcialmente
+ADR-0005/ADR-0011). La implementación en `main` queda **DESALINEADA de
+V1.2** hasta completar la pasada de migración: hoy el código aún expresa
+V1.1 (tiles en S01, app bar inferior, radio 0, ripple desactivado,
+turnstile, campos planos, turnstile de navegación, Archivo Light). Los
+documentos normativos (spec V1.2, contrato normativo, auditoría de
+componentes, tipografía, licencias) ya describen el estado final; el
+código converge a ellos por fases y este documento se actualiza al
+cerrar cada fase. Las excepciones E-02 y E-06 del contrato §12 se retiran
+del código y del gate cuando los componentes correspondientes migren.
+
 ## Capacidades implementadas y verificadas
 
 | Área | Estado | Verificación |

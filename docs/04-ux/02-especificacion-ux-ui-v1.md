@@ -1,7 +1,7 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — V1.1 para contrato funcional; contrato visual desarrollado por ADR-0011 y `docs/05-design-system/00-xauxa-contrato-normativo.md`  
-**Fecha:** 2026-10-05  
+**Estado:** FROZEN — V1.2 para contrato funcional y visual; contrato visual definido por ADR-0012 (diseño convencional sobre Material 3) y desarrollado en `docs/05-design-system/00-xauxa-contrato-normativo.md`  
+**Fecha:** 2026-10-11  
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
 
 ## Historial de enmiendas
@@ -9,9 +9,10 @@
 | Versión | Fecha | Alcance |
 |---|---|---|
 | V1.0 | 2026-09-23 | Congelación original. |
-| V1.1 | 2026-10-05 | Enmienda por ADR-0005 (lenguaje visual Metro dentro de Xauxa): S01, S06, §11 y §12 reescritos. El resto de secciones (§§1–10, S02–S05, S07–S12) queda sin cambios. Intención, navegación conceptual, modelo mental, reglas de negocio y recuperación de errores: intactos. |
+| V1.1 | 2026-10-05 | Enmienda por ADR-0005 (lenguaje visual Metro dentro de Xauxa): S01, S06, §11 y §12 reescritos. |
+| V1.2 | 2026-10-11 | Enmienda por ADR-0012 (UI convencional sobre Material 3, misma en ambas plataformas): §12 reescrito como diseño convencional (M1–M13 eliminados), §4 S01/S02/S12 recompuestos, §3 y §11 ajustados donde cambian. Intención, navegación conceptual, modelo mental, reglas de negocio y recuperación de errores: intactos. Aprobación explícita del propietario para enmendar la congelación registrada en ADR-0012. |
 
-La implementación de V1.1 está aplicada sobre `main` y verificada por las
+La implementación de V1.2 está aplicada sobre `main` y verificada por las
 puertas del design system y de módulos (estado y cobertura reales en
 `docs/09-implementacion/01-estado.md`). Si en el futuro la implementación
 se aparta de esta spec, el desvío se registra allí y se corrige la fuente
@@ -42,7 +43,7 @@ Contexto es una superficie de continuidad, no una nueva taxonomía de navegació
 - Buscar es global: contexto, QR, actividad y comprobante.
 - Buscar no exige elegir primero el tipo de resultado.
 - Galería es la entrada principal para imágenes que ya existen.
-- Desde otra app es una entrada de primer nivel.
+- Desde otra app es una entrada de primer nivel donde la plataforma lo soporta (Android: share intents; iOS: pendiente de Share Extension, V1.2 no la muestra).
 - Cámara es un medio de captura, no el modelo mental principal.
 - El sistema clasifica automáticamente cuando tiene confianza suficiente.
 - Una importación válida no queda bloqueada por otra inválida.
@@ -61,30 +62,46 @@ Contexto es una superficie de continuidad, no una nueva taxonomía de navegació
 
 ## 4. Pantallas
 
-### S01 — Inicio (V1.1, ADR-0005)
+### S01 — Inicio (V1.2, ADR-0012)
 Intención: encontrar o iniciar algo. Buscar domina visualmente; Añadir y Registrar son acciones secundarias.
 
 Composición (la intención no cambia; solo cambia la presentación):
 
-    [título de página: Agenda QR — display ligero]
-    [barra de búsqueda — primer bloque, dominante]
-    [rejilla de tiles]
-      Añadir · Registrar · Favoritos · Contextos
-      [tile ancho vivo: último QR o actividad reciente]
-    [sección "recientes": filas abiertas SIN borde]
+    [barra superior: título "Agenda QR" — título estándar]
+    [campo de búsqueda como entrada a Buscar — primer bloque, dominante]
+    [sección "Recientes": lista convencional de filas]
+      [favorito: conmutador de estrella por fila]
+      [estado vacío con acción "Añadir" cuando no hay nada]
+    [botón flotante extendido "Añadir"]
 
-- Tiles iniciales: Añadir, Registrar, Favoritos, Contextos y un tile ancho vivo (último QR o actividad reciente). Ninguna capacidad actual se elimina; solo cambia su presentación.
-- La acción principal de la pantalla y las secundarias viven en la barra de aplicación inferior (§12, Navegación y chrome).
-- El tile vivo cambia su contenido SOLO cuando cambia el dato; no hay rotación en bucle (§12, Movimiento).
+- Inicio es una lista convencional (sin tiles, sin tile vivo): una sola
+  entrada de búsqueda (sin duplicar campo superior y acción inferior) y
+  las acciones de pantalla viven en la barra superior, el FAB y la
+  barra de navegación inferior.
+- Favoritos es un filtro de la propia lista (y del cuerpo de Inicio),
+  no un destino aparte.
+- Navegación inferior (Inicio · Buscar · Actividades · Contextos) solo
+  en las superficies raíz; cambiar de destino conserva la raíz del back
+  stack (Back desde otro destino vuelve a Inicio; desde Inicio sale de
+  la app).
+- Cerrar sesión vive en el menú "…" de la barra superior.
 
-### S02 — Añadir
+### S02 — Añadir (V1.2, ADR-0012)
 Intención: traer algo que el usuario ya tiene.
 
-    GALERÍA
-    DESDE OTRA APP
-    CÁMARA
+    ELEGIR DE LA GALERÍA (una o varias imágenes)
+    ELEGIR ARCHIVO (PDF, opcional; solo donde la plataforma lo soporta)
+    ESCANEAR CON LA CÁMARA
+    [texto de privacidad de la cámara junto a esta acción]
+    ["Desde otra app": ayuda breve, solo donde la plataforma lo soporta]
 
-Jerarquía: Galería → Desde otra app → Cámara.
+- Galería es una única acción con selección múltiple: 1 elemento →
+  revisión única (S09); 2 o más → lote (S12). No existe el par
+  "Galería / Galería (varios)".
+- El bloque "Desde otra app" es una ayuda breve, no una sección
+  permanente destacada, y solo aparece donde la plataforma soporta
+  compartir hacia Agenda QR.
+- Jerarquía conservada: Galería → Cámara.
 
 ### S03 — Cámara
 Intención: capturar un QR físico. La detección debe ser automática cuando sea posible. No se muestran métricas técnicas del scanner.
@@ -95,10 +112,10 @@ Intención: encontrar cualquier cosa de Agenda QR. Los resultados pueden ser het
 ### S05 — Resultados
 Superficie de decisión. Al volver se conserva la consulta.
 
-### S06 — Contexto (V1.1, ADR-0005)
+### S06 — Contexto (V1.2, ADR-0012)
 Intención: comprender y continuar dentro de un contexto. No es un dashboard financiero. La acción primaria depende del flujo que llevó al usuario allí.
 
-Composición: la superficie del contexto se estructura como **pivot de secciones QR · Actividades · Comprobantes**, reflejando directamente el modelo mental de §2; no crea taxonomía nueva de navegación. El acento del contexto (§12, Color) tiñe sus encabezados de sección y elementos de foco. Volver/guardar y acciones de la pantalla viven en la barra de aplicación inferior (§12, Navegación y chrome).
+Composición: la superficie del contexto se estructura como **secciones QR · Actividades · Comprobantes** (pestañas estándar), reflejando directamente el modelo mental de §2; no crea taxonomía nueva de navegación. El acento del contexto (§12, Color) tiñe sus encabezados de sección y elementos de foco. La barra superior lleva el título y la flecha atrás; las acciones de la pantalla viven en el cuerpo (§12, Navegación y chrome).
 
 ### S07 — Registrar
 Intención: registrar una actividad. El contexto ayuda pero no bloquea el registro.
@@ -120,16 +137,21 @@ Ambos son resultados legítimos.
 ### S11 — Resolver ambigüedad
 Intención: resolver una única duda que el sistema no puede decidir con seguridad.
 
-### S12 — Resultado de importación masiva
+### S12 — Resultado de importación masiva (V1.2, ADR-0012)
 Superficie de decisión derivada de Añadir.
 
-    ✓ reconocidos
-    ! duplicados
-    ? pendientes
-    [ GUARDAR RECONOCIDOS ]
-    Revisar N pendientes
+    [barra superior: título "Resultado de importación" + atrás]
+    [lista agrupada]
+      ✓ reconocidos
+      ! duplicados
+      ? pendientes
+    [ GUARDAR RECONOCIDOS — botón principal fijo abajo,
+      solo cuando hay elementos reconocibles ]
+    [ Revisar N pendientes — botón secundario ]
 
-Los válidos no dependen de los pendientes.
+Los válidos no dependen de los pendientes. Mientras se guarda no hay
+vuelta (el lote se perdería); el Back del estado de revisión regresa al
+resultado (flujo padre).
 
 ## 5. Estados transversales
 
@@ -200,7 +222,7 @@ Ejemplos:
 
 No existe un ErrorScreen global como destino de navegación.
 
-## 11. Accesibilidad y movimiento (V1.1, ADR-0005)
+## 11. Accesibilidad y movimiento (V1.2, ADR-0012)
 
 - targets interactivos de 44–48dp como mínimo según plataforma;
 - significado independiente del color;
@@ -209,46 +231,79 @@ No existe un ErrorScreen global como destino de navegación.
 - reduced motion respetado;
 - comprensión independiente de la animación.
 
-Reglas adicionales V1.1:
+Reglas V1.2:
 
-- **Contraste:** cada acento de la paleta Metro usa el color de texto (blanco o negro) cuya razón WCAG cumpla texto normal ≥ 4.5:1 y texto grande ≥ 3:1 (tabla calculada en §12, Color). La misma regla aplica en modo oscuro. Los colores de estado (error, advertencia, éxito) son semánticos, distintos de los acentos, y el significado nunca depende solo del color.
-- **Tiles accesibles:** cada tile expone rol de botón, etiqueta de texto visible, estado y orden de foco lógico. El foco por teclado/TalkBack es visible sobre el color del tile en ambos temas.
-- **Etiqueta visible en iconos:** TODO icono interactivo va acompañado de etiqueta de texto visible, también en la barra de aplicación inferior. Es una **decisión de accesibilidad** (el significado no depende solo de un símbolo) y una **desviación consciente de Metro**, cuya barra solo mostraba las etiquetas al expandirse. Los iconos sin acción (decorativos) se marcan como no accesibles para lectores de pantalla.
-- **Errores de campo:** texto de error contextual debajo del campo, con icono + texto (no solo color).
-- **Reduced motion:** sin tilt, sin entrada escalonada, sin flip de live tile; solo cambio de estado inmediato (transición de duración 0). La comprensión no depende de la animación.
-- **Sin bucles de animación:** los loops decorativos no forman parte del lenguaje (invariante Xauxa 6); el live tile realiza una única transición por cambio de dato.
+- **Contraste:** texto normal ≥ 4.5:1 y texto grande ≥ 3:1 (WCAG), en
+  claro y en oscuro; los límites de controles y bordes en reposo ≥ 3:1.
+  Los colores de estado (error, advertencia, éxito) son semánticos,
+  distintos de los acentos, y el significado nunca depende solo del
+  color.
+- **Iconos:** todo icono interactivo tiene descripción accesible; los
+  destinos de navegación llevan siempre etiqueta + icono (nunca solo
+  icono). Los iconos decorativos se marcan como no accesibles para
+  lectores de pantalla.
+- **Errores de campo:** texto de error contextual debajo del campo, con
+  icono + texto (no solo color), asociado también a la semántica del
+  campo editable.
+- **Reduced motion:** las transiciones son sustituidas por el cambio
+  inmediato (duración 0). La comprensión no depende de la animación.
+- **Sin bucles de animación:** las animaciones decorativas en bucle no
+  forman parte del lenguaje; un indicador de actividad persistente usa
+  el componente estándar del sistema.
+- **Escalado de fuente:** el contenido esencial y las acciones primarias
+  no se truncan con la fuente del sistema al 200 %.
 
-## 12. Contrato visual Xauxa (expresión Metro) — V1.1, ADR-0005
+## 12. Contrato visual — V1.2, ADR-0012
 
-> **Precedencia:** esta sección conserva la decisión de producto visual adoptada por ADR-0005. Para reglas transversales detalladas, estados, accesibilidad, pruebas, gobernanza y resolución de contradicciones, prevalece `docs/05-design-system/00-xauxa-contrato-normativo.md` (ADR-0011). Si un detalle de esta sección contradice el contrato normativo, se debe reconciliar documentalmente; no se permite implementar una mezcla tácita.
+> **Precedencia:** esta sección conserva la decisión de producto visual adoptada por ADR-0012 (diseño convencional sobre Material 3). Para reglas transversales detalladas, estados, accesibilidad, pruebas, gobernanza y resolución de contradicciones, prevalece `docs/05-design-system/00-xauxa-contrato-normativo.md`. Si un detalle de esta sección contradice el contrato normativo, se debe reconciliar documentalmente; no se permite implementar una mezcla tácita.
 
-Metro es referencia de lenguaje, no de assets: prohibido usar Segoe UI, Segoe MDL2 u otros assets/fuentes de Microsoft con licencia restringida; solo fuentes e iconos con licencia libre, registrados en `docs/05-design-system/06-licencias-terceros.md`. Xauxa sigue siendo el único sistema de diseño; Metro se expresa como enmienda de Xauxa.
+La UI es convencional y poco disruptiva: componentes estándar de Material 3 con el MISMO diseño en Android e iOS. La marca queda en el color de acento y poco más. Se conservan la paleta verificada, el lienzo claro del QR y las reglas de accesibilidad (§11). Xauxa sigue siendo el único sistema de diseño: la capa de tokens (`XauxaTokens.kt`) y los envoltorios `Xauxa*` siguen siendo la única API visual de las features.
 
-Se conservan los invariantes Xauxa: radio 0 en contenedores rectangulares (los círculos reales siguen siendo círculos), sin sombras/elevación decorativa, composición full-bleed, foco visible, targets 44–48 dp, tokens semánticos (no valores crudos en features).
+### Principios
 
-### Principios (M1)
+1. Contenido antes que cromo (se conserva de Xauxa).
+2. Componentes estándar: todo control interactivo es Material 3 o un envoltorio fino Xauxa con color, forma y tipografía del tema; sin mecánicas de interacción paralelas propias.
+3. Sin deriva de plataforma: la composición, el chrome y los componentes son idénticos en Android e iOS; solo la adquisición nativa (selectores, share) y las convenciones obligadas del sistema difieren.
+4. La accesibilidad es contrato, no refinamiento (§11).
 
-1. Contenido antes que cromo.
-2. La tipografía es la interfaz.
-3. Los tiles son la superficie de entrada.
-4. El movimiento es identidad (con propósito).
+### Navegación y chrome
 
-Reglas base que se mantienen: composición antes de crear componentes; lenguaje visual del scanner Xauxa para cámara, sin métricas técnicas; los restos históricos rounded/shadow de Xauxa no sustituyen el Design System normativo.
+- Barra superior (`TopAppBar` pequeña, título a la izquierda, estilo estándar) en cada superficie: flecha atrás cuando haya a dónde volver — la misma en ambas plataformas —, acciones de la pantalla (máx. 2 visibles + menú "…").
+- Barra de navegación inferior (`NavigationBar`) SOLO en las superficies raíz: Inicio, Buscar, Actividades y Contextos; cada destino con etiqueta + icono (nunca solo icono). No aparece en detalle/edición/importación. Cambiar de destino conserva la raíz del back stack (Back desde otro destino vuelve a Inicio; desde Inicio sale de la app).
+- La acción principal contextual vive en el cuerpo como `Button`, o fija abajo solo cuando existe una acción real de guardado (p. ej. "Guardar reconocidos" en S12). Una pantalla cuya barra solo tiene "Volver" no lleva barra inferior.
+- El Back del sistema conserva su orden (flujo interno → pop de superficie → sistema); el predictive back de Android 14+ anima con el progreso del gesto.
+- Tablet/plegables: adaptación por `WindowSizeClass`; el ancho expandido limita el contenido (`ContentMaxWidth`) y la navegación raíz pasa a riel (`NavigationRail`).
+- S06 conserva sus secciones QR · Actividades · Comprobantes (pestañas estándar). S04/S05 conservan resultados agrupados por tipo con encabezados de sección.
 
-### Rejilla y tiles (M3)
+### Campos de entrada
 
-- Unidad base 4 dp (la de Xauxa). Margen de pantalla y separación entre tiles definidas como tokens en múltiplos de 4 en `XauxaTokens.kt`.
-- Rejilla de 4 columnas en compacto; tamaños de tile: pequeño (1×1), mediano (2×2) y ancho (4×2).
-- Cada tile = un solo bloque de color plano, con el **icono centrado** y la **etiqueta de texto siempre visible, abajo a la izquierda**. Sin borde, sin sombra.
-- El tile ancho y el tile vivo muestran su contenido (último QR o actividad reciente) en texto; el icono se reduce o se omite, pero la etiqueta se mantiene siempre visible.
+- `OutlinedTextField` con etiqueta, texto de apoyo y error contextual debajo (icono + texto, no solo color). El borde en reposo cumple ≥ 3:1 (token `borderControl`).
+- Teclado e IME según el tipo de campo; autofill de credenciales; mostrar/ocultar contraseña con botón de descripción accesible.
+- La obligatoriedad se indica con texto/semántica accesible coherente con la guía de voz, no con asterisco decorativo.
 
-### Color (M4/M5)
+### Listas y diálogos
 
-- Acento de sistema por defecto: `0067B8` (texto blanco, 5.78:1).
-- Paleta Metro de acentos asignables a contextos: el color se deriva de forma **determinista** del identificador del contexto, sin persistir el color ni cambiar el dominio. Elegir color manualmente queda como punto abierto (ADR-0005), coherente con ADR-0003 (sin edición de contextos en V1).
+- Filas con `ListItem` (o equivalente M3), separación por divisor o espacio; acciones por fila como botones de icono (favorito = conmutador de estrella con estado y descripción accesible), no como enlace de texto.
+- Diálogos y hojas: `AlertDialog`/`ModalBottomSheet` estándar.
+
+### Botones
+
+- Acción principal: `Button`. Secundaria: `OutlinedButton` o `TextButton`. Icono: `IconButton`/`IconToggleButton` con descripción accesible. Mínimo 48 dp.
+- Estado deshabilitado y "guardando" expresados con etiqueta de texto (nunca solo con apariencia).
+
+### Tipografía
+
+- Familia del sistema en todos los estilos (Roboto en Android, San Francisco en iOS): sin fuente empaquetada propia. Tamaños en sp; roles estándar de Material 3 (el título de página es `titleLarge`/`headlineSmall`, el cuerpo `bodyLarge`).
+- Capitalización de oración. El escalado de fuente del sistema se mantiene (§11).
+
+### Color
+
+- Acento de sistema por defecto: `0067B8` (texto blanco, 5.78:1). Esquemas claro y oscuro propios, con pares de contenido verificados por pruebas.
+- Paleta de acentos asignables a contextos: el color se deriva de forma **determinista** del identificador del contexto, sin persistir el color ni cambiar el dominio; paleta acotada, sin ampliar. Elegir color manualmente queda como punto abierto, coherente con ADR-0003 (sin edición de contextos en V1).
 - Los colores de estado (error, advertencia, éxito) siguen siendo semánticos y distintos de los acentos; el significado nunca depende solo del color.
+- El lienzo del código QR es claro en ambos temas (zona de silencio escaneable).
 
-Tabla de contraste calculada (script Python sin dependencias, WCAG 2.x sobre luminancia relativa; razón contra texto blanco y contra texto negro). Regla: texto normal ≥ 4.5:1; texto grande ≥ 3:1. Cada acento usa el color de texto que cumple; si ninguno cumple, se excluye.
+Tabla de contraste calculada (WCAG 2.x sobre luminancia relativa; razón contra texto blanco y contra texto negro). Regla: texto normal ≥ 4.5:1; texto grande ≥ 3:1. Cada acento usa el color de texto que cumple; si ninguno cumple, se excluye.
 
 | Acento | Hex | Texto blanco | Texto negro | Texto asignado | Estado |
 |---|---|---|---|---|---|
@@ -270,65 +325,28 @@ Tabla de contraste calculada (script Python sin dependencias, WCAG 2.x sobre lum
 | steel | 647687 | 4.68 | 4.48 | blanco | candidato no incluido (paleta acotada a 12) |
 | sistema | 0067B8 | 5.78 | 3.63 | blanco | acento por defecto |
 
-**Paleta final admitida: 12 acentos futuros de contexto** (lime, emerald, teal, cyan, cobalt, indigo, violet, magenta, crimson, red, orange, amber) + el acento de sistema `0067B8`. Ningún candidato fue excluido por contraste; los 4 no incluidos se descartan solo por acotar la paleta al máximo de 12 y quedan documentados. Nota: emerald con texto negro (4.64) queda cerca del umbral — aceptado y registrado en ADR-0005.
+**Paleta final admitida: 12 acentos de contexto** (lime, emerald, teal, cyan, cobalt, indigo, violet, magenta, crimson, red, orange, amber) + el acento de sistema `0067B8`. Ningún candidato fue excluido por contraste; los 4 no incluidos se descartan solo por acotar la paleta al máximo de 12 y quedan documentados. Nota: emerald con texto negro (4.64) queda cerca del umbral — aceptado y registrado en ADR-0005.
 
-### Tipografía (M6)
+### Formas y movimiento
 
-- Títulos de página en **display ligero** (Archivo peso 300, ≥ 40 sp), en lugar de negrita. Requiere empaquetar un peso Light de Archivo (OFL 1.1): tarea de implementación registrada en `docs/05-design-system/05-xauxa-tipografia.md` y en `docs/05-design-system/06-licencias-terceros.md`.
-- Encabezados de sección pequeños (14–16 sp) en color de acento (acento de sistema o del contexto).
-- Cuerpo en Roboto/San Francisco (familia de sistema), sin cambios.
-- Capitalización de oración: sin mayúsculas forzadas ni minúsculas forzadas.
-- El escalado de fuente del sistema se mantiene (§11).
+- Conjunto de formas explícito en tokens (extraSmall 4 dp, small 8 dp, medium 12 dp, large 16 dp, extraLarge 28 dp), consumido por `MaterialTheme.shapes`; ningún componente fija radios suyos.
+- Ripple/indicación de pulsación estándar de Material 3; sin overlay de pulsación propio ni `indication = null`.
+- Transición entre superficies: fundido con un desplazamiento horizontal pequeño, corto y con tokens de movimiento; con reduced motion el cambio es inmediato (§11).
 
-### Navegación y chrome (M7)
+### Iconografía
 
-- **Barra de aplicación inferior** en cada pantalla: 2–4 acciones con **icono + etiqueta de texto** y menú "…" para el resto. Aloja la acción principal y las secundarias de la pantalla; sustituye a los botones "Volver/Guardar/Cerrar sesión" sueltos en el cuerpo.
-- Flecha atrás en la barra: requerida en iOS; en Android es redundante y el Back del sistema se mantiene.
-- S06 usa pivot QR · Actividades · Comprobantes (ver S06). S04/S05 conservan resultados agrupados por tipo con encabezados de sección.
-- No hay panorama horizontal en V1.1.
+- **Set: Lucide** (licencia ISC — texto del aviso en `docs/05-design-system/06-licencias-terceros.md`), encapsulado por `XauxaIcon`; tamaño desde tokens. El set de iconos de Material queda prohibido en producción.
+- Glifos de línea, trazo uniforme, un solo color. Iconos decorativos fuera del árbol de accesibilidad; iconos interactivos con descripción accesible (§11).
+- Fuera del mapeo existente no se añaden iconos sin decisión.
 
-### Campos de entrada (M8)
+### Modo oscuro
 
-- Relleno plano (`surfaceContainer`), etiqueta fija pequeña encima del campo (no flotante).
-- Borde de 2 dp con acento solo en foco o error; sin outline Material en reposo.
-- Texto de error contextual debajo, con icono + texto (no solo color).
-
-### Bordes (M9)
-
-- Los bordes pasan a uso **funcional**: foco, campo en foco/error, tile seleccionado.
-- Se elimina el borde de reposo en filas, botones, badges y tiles.
-- La separación estructural se logra **mediante espacio y bloques de color**.
-
-### Botones (M10)
-
-- Acción principal: bloque sólido de acento o acción en la app bar.
-- Acciones secundarias: texto con icono, sin caja.
-
-### Movimiento (M11)
-
-- Turnstile entre pantallas (ya existe en `XauxaTurnstileNav`).
-- Tilt al presionar un tile: ≤150 ms.
-- Entrada escalonada de tiles: 30–50 ms por tile, total ≤300 ms.
-- El live tile cambia su contenido SOLO cuando cambia el dato, con una transición por cambio; no hay rotación en bucle (los loops decorativos no forman parte del lenguaje).
-- Con reduced motion: sin tilt, sin escalonado, sin flip; solo cambio de estado inmediato. La comprensión no depende de la animación (§11).
-
-### Iconografía (M12)
-
-- **Set: Lucide** (licencia ISC — texto del aviso en `docs/05-design-system/06-licencias-terceros.md`). Se consume mediante una dependencia KMP que cubra Android, iOS y wasm (el laboratorio corre en wasm). Candidata: `com.composables:icons-lucide` — documentada; verificación de versión, compatibilidad con Kotlin 2.2.20 y target wasm pendiente en la pasada de implementación (no se modifican archivos de build en esta pasada documental).
-- Estilo: glifos de línea, trazo uniforme, un solo color, sin relleno. Concesión registrada: Lucide usa terminales redondeadas, menos angulosas que el Metro original; se acepta (punto abierto en ADR-0005).
-- Etiqueta visible: ver §11 (decisión de accesibilidad y desviación consciente de Metro).
-- Tamaños de icono como tokens en `XauxaTokens.kt` (múltiplos de 4 dp); nunca literales en `core/ui` (el gate `verifyDesignSystemCompliance` los rechaza).
-- Mapeo mínimo (candidatos a confirmar contra el catálogo real de Lucide durante la implementación; no se dan por existentes): buscar → `Search`; añadir → `Plus`; registrar → icono de recibo o lápiz sobre cuadrado (`Receipt`/`SquarePen`); favorito → `Star`; contexto → `Folder` o `Layers`; atrás → `ArrowLeft`; guardar → `Check`; cancelar → `X`; más → `Ellipsis`; Galería → `Image`; Cámara → `Camera`.
-- Fuera de la lista mínima no se añaden iconos sin decisión; los iconos en cada fila de una lista no forman parte de Metro.
-
-### Modo oscuro (M13)
-
-- Fondo negro puro; los tiles conservan los mismos acentos. La regla de contraste de cada acento con su texto (tabla de Color) es válida también contra el fondo negro del tema oscuro. El foco visible debe mantenerse sobre el color del tile en ambos temas (§11).
+- Esquema oscuro propio (fondo negro puro), con los mismos roles semánticos y umbrales de contraste que el claro; los componentes no cambian entre temas.
 
 ## 13. Fuera de esta congelación
 
-No definido en V1.1: implementación Kotlin/Compose de esta enmienda (rejilla, app bar, pivot, campos planos, integración Lucide, Archivo Light), navegación concreta, ViewModels/state holders, persistencia concreta, nuevos componentes, tests instrumentados ni validación runtime de accesibilidad de los tiles. El código actual queda desalineado de V1.1 hasta la pasada de implementación dedicada (registrado en `docs/09-implementacion/01-estado.md`).
+No definido en V1.2: implementación Kotlin/Compose concreta de esta enmienda, navegación interna de pantallas, ViewModels/state holders, persistencia concreta, tests instrumentados ni validación runtime en dispositivo. La implementación se alinea a V1.2 en la pasada de migración dedicada (registrado en `docs/09-implementacion/01-estado.md`).
 
 ## 14. Estado
 
-**UX/UI V1.1: FROZEN** (enmienda ADR-0005, 2026-10-05).
+**UX/UI V1.2: FROZEN** (enmienda ADR-0012, 2026-10-11).

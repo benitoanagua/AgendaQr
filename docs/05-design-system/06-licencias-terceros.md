@@ -1,19 +1,8 @@
 # Licencias de terceros
 
-Registro de las fuentes e iconos empaquetados o consumidos por Agenda QR,
-con la licencia verificada y el aviso requerido. Regla (ADR-0005): solo
-licencias libres; prohibido usar Segoe UI, Segoe MDL2 u otros assets de
-Microsoft con licencia restringida.
-
-## Archivo (títulos display) — OFL 1.1
-
-- Familia: [Archivo](https://fonts.google.com/specimen/Archivo), de
-  Omnibus-Type (The Archivo Project Authors).
-- Licencia: **SIL Open Font License 1.1** — permite usar, empaquetar y
-  redistribuir; texto completo: <http://scripts.sil.org/OFL>.
-- Pesos empaquetados: 400/500/600/700; **peso 300 (Light) pendiente**
-  para el display ligero de V1.1 (`05-xauxa-tipografia.md`).
-- Detalle técnico: `05-xauxa-tipografia.md`.
+Registro de los iconos y dependencias empaquetados o consumidos por
+Agenda QR, con la licencia verificada y el aviso requerido. Regla
+(heredada de ADR-0005 y vigente): solo licencias libres.
 
 ## Lucide (iconografía) — ISC
 
@@ -21,9 +10,9 @@ Microsoft con licencia restringida.
 - Licencia: **ISC** (los glifos derivados del proyecto Feather además
   bajo **MIT**, Copyright (c) 2013-present Cole Bemis, según la lista del
   propio repositorio). Ambas exigen conservar el aviso de copyright y el
-  permiso en copias: el archivo LICENSE del set se conservará junto a los
+  permiso en copias: el archivo LICENSE del set se conserva junto a los
   recursos empaquetados en la pasada de implementación.
-- Consumo vigente (T2, 2026-10-08): `com.composables:icons-lucide:1.1.0`
+- Consumo vigente: `com.composables:icons-lucide:1.1.0`
   (wrapper no oficial) en `core:ui` commonMain, consumido SOLO vía
   `XauxaIcon`. Verificado: compila en androidMain, iosSimulatorArm64 y
   wasmJs con Kotlin 2.2.20 / Compose 1.8.2; publica las mismas

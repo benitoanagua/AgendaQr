@@ -1,6 +1,12 @@
 # ADR-0005 — Lenguaje visual Metro dentro de Xauxa
 
-**Estado:** APROBADA — Opción C (Metro completo), con Lucide como set de iconos  
+**Estado:** REEMPLAZADA PARCIALMENTE por ADR-0012 (UI convencional sobre
+Material 3, 2026-10-11) — se conservan de esta decisión la paleta de
+acentos por contexto (M4/M5), Lucide, las reglas de accesibilidad y el
+contraste calculado; se revierten tiles, display ligero (Archivo), app
+bar inferior, radio 0, ripple desactivado, turnstile, campo plano y
+botón/acción sin caja.  
+**Aprobación original:** Opción C (Metro completo), con Lucide como set de iconos  
 **Aprobación:** 2026-10-05, decisión humana registrada en los prompts de la pasada docs-only (UX Metro + complemento Lucide): "Quiero el espíritu Metro completo. Actualiza la especificación UX/UI congelada." y "Usaremos Lucide como set de iconos."  
 **Fecha:** 2026-10-05  
 **Área:** UX/UI V1.1 (S01, S06, §11, §12) / Xauxa Design System  

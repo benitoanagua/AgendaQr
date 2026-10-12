@@ -1,6 +1,12 @@
 # Laboratorio de componentes UI (Compose)
 
-> **Nota V1.1 (2026-10-05, ADR-0005):** el laboratorio debe actualizarse para reflejar la especificación V1.1 (tiles Metro, app bar inferior, pivot, campos planos, iconos Lucide, Archivo Light). Esta pasada es solo documental: no se edita el código del lab. Las altas de catálogo correspondientes están registradas en `docs/05-design-system/04-component-audit-register.md` (sección V1.1, PENDIENTE).
+> **Nota V1.2 (2026-10-11, ADR-0012):** el catálogo del laboratorio refleja
+> el diseño convencional sobre Material 3: envoltorios finos de los
+> componentes M3 (botones, campos, listas, diálogos, chrome de
+> navegación) y los mismos tokens de color/espaciado/forma/movimiento.
+> Las entradas de componentes retirados (tiles, app bar inferior,
+> turnstile, dot-progress, toast propio) se eliminan del catálogo con la
+> migración.
 
 ## Propósito
 
@@ -46,7 +52,7 @@ El host original era una actividad Android solo-debug (`ComponentLabActivity`). 
 
 | Archivo | Responsabilidad |
 |---|---|
-| `AgendaQrComponentLab.kt` | Entrada pública. Layout adaptable: por debajo de 640 dp (breakpoint documentado por Xauxa §07, expuesto como `XauxaMetrics.BreakpointMedium`) la página colapsa a una única columna con un solo dueño de scroll; por encima, catálogo e inspector en dos paneles con scroll independiente. Toggle de preview claro/oscuro. Navegación por secciones Fundamentos/Componentes/Patrones. |
+| `AgendaQrComponentLab.kt` | Entrada pública. Layout adaptable por `WindowSizeClass`: en compacto la página colapsa a una única columna con un solo dueño de scroll; en medium/expanded, catálogo e inspector en dos paneles con scroll independiente. Toggle de preview claro/oscuro. Navegación por secciones Fundamentos/Componentes/Patrones. |
 | `LabCatalogPane.kt` | Secciones (Fundamentos/Componentes/Patrones con conteos), búsqueda por nombre/propósito/uso/estados/tags, filtros por categoría con conteo de componentes, indicador de selección y estado vacío explícito de búsqueda. Las selecciones usan tokens Xauxa (Brand), no el tinte Material. |
 | `LabInspectorPane.kt` | Inspector derivado 100 % del contrato: identidad, propósito, preview, matriz de interacción, estados declarados con su clasificación, API (props/eventos), guía de uso, mapeo nativo y plataformas, gobierno (puerta a11y + auditoría API), tokens Xauxa, uso en AgendaQr, restricciones y registro de eventos. |
 | `LabPatternPane.kt` | Detalle de patrón: escenario vivo con los contratos reales compuestos y datos ficticios, pasos, contratos que compone (resueltos contra el inventario, con salto a su inspector) y nota explícita de demo cuando aplica. |
@@ -98,22 +104,22 @@ Categorías reales tras inspección del código (no se registran componentes que
 
 | Categoría | Entradas |
 |---|---|
-| Fundamentos | `XauxaColor`, `XauxaSpacing`, `XauxaMetrics`, `XauxaType`, `XauxaMotion`, `XauxaFocus` |
-| Superficies | `XauxaScreen`, `XauxaSection`, `XauxaTile`, `XauxaTileHeader`, `XauxaHeroCard`, `XauxaDialog` |
-| Acciones | `XauxaPrimaryButton`, `XauxaSecondaryButton`, `XauxaDangerButton`, `XauxaTextAction`, `XauxaIconButton`, `XauxaFilterChip`, `XauxaTextInput`, `XauxaSearchBar`, `XauxaFavoriteToggle` |
-| Feedback | `XauxaToast`, `XauxaStatusBanner`, `XauxaInlineResult`, `XauxaLoading`, `XauxaSkeleton`, `XauxaEmptyState`, `XauxaErrorPage`, `XauxaLoadMoreFooter` |
-| Datos | `XauxaListRow`, `XauxaStatBlock`, `XauxaBadge`, `XauxaCategoryChip`, `XauxaFavoriteIndicator` |
-| QR y comprobantes | `XauxaQrPreview`, `XauxaScannerViewport`, `XauxaFileUpload` |
-| Patrones | primera-vez, fallo-puntual, fallo-contenido, fallo-aplicacion, pantalla-completa, incorporacion (demo), bloqueo-opcional, confirmacion-destructiva (demo) |
+| Fundamentos | `XauxaColor`, `XauxaSpacing`, `XauxaMetrics`, `XauxaType`, `XauxaMotion`, `XauxaShapes` |
+| Superficies | `XauxaScreen`, `XauxaSection`, `XauxaDialog` |
+| Acciones | `XauxaPrimaryButton`, `XauxaSecondaryButton`, `XauxaDangerButton`, `XauxaTextAction`, `XauxaIconButton`, `XauxaFavoriteToggle`, `XauxaFilterChip`, `XauxaTextInput`, `XauxaSearchBar`, `XauxaSearchTrigger` |
+| Chrome | `XauxaTopBar`, `XauxaNavBar`, `XauxaNavRail`, `XauxaScreenScaffold` |
+| Feedback | `XauxaStatusBanner`, `XauxaLoading`, `XauxaSkeleton`, `XauxaEmptyState`, `XauxaLoadMoreFooter`, `XauxaFeedbackEvent` |
+| Datos | `XauxaListRow`, `XauxaBadge`, `XauxaCategoryChip` |
+| QR y comprobantes | `XauxaQrPreview`, `XauxaScannerViewport`, `XauxaMediaFrame` |
 
-La paginación se compone de `XauxaLoadMoreFooter`: no existe un componente de paginación duplicado. `XauxaHeroCard` compone `XauxaTile`. Las integraciones reales pendientes (picker de archivos, cámara, persistencia de favorito, decodificación QR en web/iOS) están marcadas PENDING o demo en sus contratos, nunca como implementadas.
+La paginación se compone de `XauxaLoadMoreFooter`: no existe un componente de paginación duplicado. Las integraciones reales pendientes (cámara, decodificación QR en web/iOS) están marcadas PENDING o demo en sus contratos, nunca como implementadas.
 
 ## Clasificación honesta (resumen)
 
-- **Verificado en código**: estados Default/Estático/Interactivo/Neutro/Peligro/Marcado/Sin marcar, Deshabilitado en botones/inputs/chips/icono con `enabled`, Carga con `isLoading` en botones y footer, placeholder de QR, render de QR en Android (decodificación base64 → bitmap), fondos `-bg` y anillo de foco.
-- **Documentado en Xauxa, sin implementar**: tercer tono del banner (success/info/warning existen como tokens pero el banner solo distingue neutro/peligro), integración de producto del favorite toggle (control real, demo sin persistencia).
-- **Pendiente**: render de QR en iOS y web, escaneo real (cámara), picker real de archivos, familias tipográficas Archivo/Roboto, adopción de `XauxaMotion` en componentes.
-- **Pendiente de validación visual**: `enabled` en `XauxaTextAction`, carga determinada en `XauxaLoading` (brechas de API) y el **esquema oscuro de los 31 componentes** (resuelven el esquema vía `XauxaColor`; valores de referencia pendientes de QA de producto).
+- **Verificado en código**: estados Default/Estático/Interactivo/Neutro/Peligro/Marcado/Sin marcar, Deshabilitado en botones/inputs/chips con `enabled`, Carga con `isLoading` en botones y footer, placeholder de QR, render de QR en Android (decodificación base64 → bitmap), y los pares de contraste del esquema.
+- **Heredado de M3**: los estados del componente subyacente (ripple, foco, selección) se muestran tal cual; la matriz de interacción los declara heredados del envoltorio.
+- **Pendiente**: render de QR en iOS y web, escaneo real (cámara).
+- **Pendiente de validación visual**: esquema oscuro de los componentes en dispositivo.
 
 La matriz de interacción del inspector distingue además estado `REAL`, lente `SIMULADA` (foco/presionado, observables en el preview pero no forzables por API) y `NO APLICA`.
 
@@ -127,46 +133,35 @@ El detalle token por token y componente documentado vs implementado está en `do
 - Compose Multiplatform según las convenciones del repositorio; el lab compila en los targets configurados de `core:ui` (Android + iOS + Wasm, donde Wasm es el host del laboratorio).
 - Las muestras no importan repositorios ni casos de uso de negocio.
 - Los componentes reciben sus valores y callbacks desde parámetros; no acceden a singletons o servicios globales.
-- El chrome del lab usa Material 3 como infraestructura (no hay equivalentes Xauxa de campo de búsqueda o chips) con los colores de `MaterialTheme`, que siguen al esquema; los componentes bajo inspección usan sus tokens Xauxa reales del esquema vigente. El preview oscuro aplica el esquema de referencia pendiente de validación, marcado PENDING en cada contrato.
-- Sin valores crudos: sin `dp`/`sp`/hex/`Color(...)` fuera de la capa de tokens, sin radios (Xauxa regla 02), sin iconos Material (invariante del set de iconos). Las compuertas `verifyDesignSystemCompliance` (Kotlin), `verifyWebDesignSystem` (CSS del host) y `verifyDesignSystemFixtures` (autoprueba de las reglas) lo verifican. La fuente canónica es `XauxaTokens.kt`; no existe snapshot JSON que sincronizar.
+- El chrome del lab usa Material 3 como infraestructura con los colores de `MaterialTheme`, que siguen al esquema; los componentes bajo inspección usan sus tokens Xauxa reales del esquema vigente.
+- Sin valores crudos: sin `dp`/`sp`/hex/`Color(...)` fuera de la capa de tokens, sin iconos Material (invariante del set de iconos). Las compuertas `verifyDesignSystemCompliance` (Kotlin), `verifyWebDesignSystem` (CSS del host) y `verifyDesignSystemFixtures` (autoprueba de las reglas) lo verifican. La fuente canónica es `XauxaTokens.kt`; no existe snapshot JSON que sincronizar.
 
-## Validación ejecutada (host Linux x86_64, JDK 17, rama feat/xauxa-design-system-catalog)
+## Validación
 
-| Comando | Resultado |
-|---|---|
-| `./gradlew :core:ui:testDebugUnitTest` (con `--rerun-tasks`) | **PASS** — 40 tests (12 integridad + 8 búsqueda + 7 matriz + 5 gobierno + 3 patrones + 5 esquemas), 0 fallos. |
-| `./gradlew :feature:destinations:domain/data/presentation:testDebugUnitTest` | **PASS** — 43 + 35 + 3 tests, 0 fallos (sin cambios de lógica; solo tipografía de componentes compartidos). |
-| `./gradlew :androidApp:assembleDebug` y `assembleRelease` | **PASS** — producción compila en ambas variantes con los componentes actualizados. |
-| `./gradlew componentLabWeb` | **PASS** — target Wasm compilado y empaquetado; `build/web/component-lab/` con `index.html`, `styles.css`, `agendaqr-component-lab.js` y los `.wasm`. |
-| `./gradlew verifyAgendaQrArchitecture` | **PASS** — compliance Kotlin, boundaries, CSS web (`verifyWebDesignSystem`) y autofixtures (`verifyDesignSystemFixtures`). |
-| `./gradlew :androidApp:assembleDebug` | **PASS** — producción sin el lab. |
-| `python3 -m http.server` + Chromium headless | **200 OK** — renderizado real revisado (ver «Revisión visual»): secciones, inspector completo, patrones, preview oscuro, layout 390px y foco por teclado en el chrome. |
-| Revisión visual en navegador | **EJECUTADA (headless)** — Chromium headless vía `chrome-headless-shell` + `puppeteer-core` sobre el build actual (verificado con `38 entradas` en el encabezado). Evidencia en `/tmp/opencode/shots/` (no versionadas): `v3-foundations` (sección Fundamentos), `v2/v3-button` (botones con toggles enabled/isLoading), `v2/v3-button→textinput` (campo con estados error/textarea), `v2-toast` + `v2-rowagg→stat` (feedback y stats mono), `v9-tileheader` (banda de marca), `v3-pattern(-tall)` (escenario vivo fallo-puntual), `v5/v3-dark*` (oscuro real), `lab-390` (compacto), `lab-focus` (foco por teclado). Pendiente: tab-through completo y pixel-review del anillo teal sobre un componente. |
+El lab es un entorno de inspección, no una puerta de calidad por sí
+mismo; su contrato (integridad del inventario, búsqueda, matriz de
+interacción, gobierno, patrones) corre en
+`./gradlew :core:ui:testDebugUnitTest` y la compilación de los tres
+targets se valida con `./gradlew :core:ui:build`. La regresión visual de
+las pantallas de producto vive en Roborazzi (ADR-0007) sobre la suite
+Robolectric del feature, no en el lab.
 
-Pruebas del modelo (`core/ui/src/commonTest/kotlin/com/agendaqr/core/ui/lab/`):
-
-- `LabCatalogIntegrityTest` (12): ids únicos, metadatos obligatorios, estados clasificados y descritos, tokens referenciados existentes, cobertura exacta de los componentes y fundamentos reales de `core:ui`, honestidad del soporte de tema oscuro, categorías válidas y honestidad del render web del QR (PENDING hasta que exista decodificación real en navegador).
-- `LabSearchTest` (8): búsqueda por nombre/propósito/uso/tags/estados, insensibilidad a mayúsculas, filtros por categoría, combinación de filtros, estado vacío, conteos por categoría (5 superficies, 10 acciones, 8 feedback, 5 datos, 3 QR, 6 fundamentos).
-- `LabInteractionMatrixTest` (7): Normal real para todo, Disabled real solo con `enabled` en API, la brecha de `XauxaTextAction` sin `enabled`, Loading real en `XauxaLoading` y en botones con `isLoading`, foco/presionado simulados solo en interactivos, los estados `NOT_SUPPORTED` nunca resuelven a estado real, fundamentos sin lentes transitorias.
-- `LabGovernanceTest` (5): congelado del inventario, auditoría sin errores, puerta de accesibilidad para todo el catálogo, token 48dp en acciones interactivas, guía/mapeos/plataformas documentados por componente.
-- `LabPatternsTest` (3): los patrones solo referencian contratos reales, cubren las 8 composiciones exigidas y las demos declaran su limitación.
-- `XauxaSchemeTest` (5): el esquema claro fija la apariencia de producción (sin cambios ciegos), `surface3` documenta la propuesta nueva, el esquema oscuro porta los valores de referencia, ambos esquemas están completos y conmutan, y ambos exponen el mismo conjunto de 21 campos semánticos requeridos (sin tokens solo-dark).
+- `LabCatalogIntegrityTest`: ids únicos, metadatos obligatorios, estados clasificados, tokens referenciados existentes, cobertura exacta de los componentes y fundamentos reales de `core:ui`, honestidad del soporte de tema oscuro y del render web del QR (PENDING hasta que exista decodificación real en navegador).
+- `LabSearchTest`: búsqueda y filtros por categoría con conteos coherentes con el inventario.
+- `LabInteractionMatrixTest`: la matriz distingue estado `REAL`, lente `SIMULADA` y `NO APLICA`; los estados del componente M3 subyacente se declaran heredados del envoltorio.
+- `LabGovernanceTest`: congelado del inventario, auditoría de API, puerta de accesibilidad (target 48 dp, contentDescription) y documentación por componente.
+- `LabPatternsTest` / `XauxaSchemeTest`: patrones contra contratos reales y esquemas completos con pares de contraste verificados.
 
 ## Limitaciones conocidas
 
-1. **Pixel-review manual pendiente (parcial)**: el renderizado se revisó en Chromium headless (secciones, inspector, patrones, oscuro, 390px, foco en chrome). Queda tab-through completo y pixel-review del anillo teal sobre un componente Xauxa.
+1. **Pixel-review manual pendiente (parcial)**: queda tab-through completo del lab en navegador y revisión del foco sobre componentes concretos.
 2. **Ejecución de tests iOS**: los tests compilan para los tres targets iOS (klibrary) pero no pueden ejecutarse en este host Linux (requieren macOS + simulador). La compilación de los targets iOS sigue validada por `:core:ui:build`.
-3. **iOS sin host del lab**: el framework de iOS solo expone la app de producción; abrir el lab en iOS requeriría un host dedicado (p. ej. pantalla de debug tras una build flag) — pendiente.
-4. **Sin pruebas visuales/screenshot**: no existe infraestructura de screenshot tests en el repositorio (sin Roborazzi/Paparazzi). Propuesta en Próximos pasos.
-5. **El lab muestra el estado, no lo maquilla**: el preview oscuro aplica el esquema de referencia (PENDING de validación) en lugar de simular un oscuro verificado.
-6. **QR placeholder en el host web**: el `actual` wasm de `XauxaQrPreview` no decodifica (como el de iOS); el catálogo lo registra como PENDIENTE y el preview avisa en pantalla. Igual para escaneo real (cámara) y picker de archivos.
-7. **Wasm sin navegación/hash**: a diferencia de la referencia, el host web de AgendaQr no implementa deep links por hash; la selección no es compartible por URL.
+3. **iOS sin host del lab**: el framework de iOS solo expone la app de producción; abrir el lab en iOS requeriría un host dedicado — pendiente.
+4. **Wasm sin navegación/hash**: el host web no implementa deep links por hash; la selección no es compartible por URL.
+5. **QR placeholder en el host web**: el `actual` wasm de `XauxaQrPreview` no decodifica (como el de iOS); el catálogo lo registra como PENDIENTE y el preview avisa en pantalla. Igual para escaneo real (cámara).
 
 ## Próximos pasos concretos
 
-1. Pixel-review manual del anillo de foco teal y tab-through completo en el navegador usando los comandos de «Cómo abrirlo».
-2. Validación visual del esquema oscuro de referencia (hoy PENDING en los 31 componentes); hasta entonces, el preview oscuro del lab lo aplica como referencia, no como verificado.
-3. Cerrar brechas de API priorizadas: `enabled` en `XauxaTextAction` y tercer tono del banner (tokens `-bg` ya existen).
-4. Integrar cámara (CameraX/AVFoundation/getUserMedia), picker de archivos y persistencia de favorito para convertir los PENDING/demos en implementaciones.
-5. Habilitar screenshot tests para `core:ui` con Roborazzi (multiplataforma, se ejecuta en el host JVM de Android): registrar previews del lab como fixtures doradas y validar tema claro/oscuro sin dispositivo. Requiere añadir la dependencia y una tarea de CI; hoy no existe.
-6. Host iOS del lab para inspección en simulador cuando haya acceso a macOS.
+1. Tab-through completo y pixel-review del foco en el navegador usando los comandos de «Cómo abrirlo».
+2. Integrar cámara (CameraX/AVFoundation/getUserMedia) y decodificación QR en iOS/web para convertir los PENDING en implementaciones.
+3. Host iOS del lab para inspección en simulador cuando haya acceso a macOS.

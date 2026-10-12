@@ -1,6 +1,11 @@
 # ADR-0011 — Contrato visual Xauxa: Metro sin Carbon, radio conmutable y calidad de tiles
 
-**Estado:** APROBADA  
+**Estado:** REEMPLAZADA PARCIALMENTE por ADR-0012 (2026-10-11) — se
+conservan la paleta M3 neutralizada (punto 2) y la ampliación del gate
+(punto 5); se revierten el radio base 0 conmutable (punto 1), la
+sustitución de `CircularProgressIndicator` por `XauxaDotProgress`
+(punto 3) y las reglas de calidad de tiles (punto 4, sin tiles en
+producción con `TILES_EN_INICIO = false`).  
 **Fecha:** 2026-10-10  
 **Ámbito:** Xauxa Design System (core:ui); Android e iOS  
 

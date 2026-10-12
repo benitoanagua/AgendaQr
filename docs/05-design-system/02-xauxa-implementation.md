@@ -6,9 +6,9 @@ Xauxa es la autoridad visual completa de Agenda QR. El código de producto no co
 
 ## Capas
 
-- `XauxaTokens.kt`: única fuente editable de tokens.
-- `XauxaTheme.kt`: adaptación del esquema Xauxa al runtime Compose.
-- `components/`: primitives y componentes compartidos (`XauxaComponents.kt`, `XauxaMetro.kt`, `XauxaAppBar.kt`, `XauxaLists.kt`, `XauxaInputs.kt`, `XauxaFeedback.kt`, `XauxaTone.kt`, entre otros).
+- `XauxaTokens.kt`: única fuente editable de tokens (color, espaciado, métricas, tipografía, movimiento y el conjunto de formas `XauxaShapes`).
+- `XauxaTheme.kt`: adaptación del esquema Xauxa al runtime Compose (`MaterialTheme` con colorScheme, typography y shapes).
+- `components/`: envoltorios finos de los componentes M3 (`XauxaComponents.kt`, `XauxaButtons.kt`, `XauxaInputs.kt`, `XauxaLists.kt`, `XauxaFeedback.kt`, `XauxaChrome.kt`, `XauxaDialogs.kt`, `XauxaTone.kt`, entre otros).
 - `lab/`: validación visual y contractual del mismo sistema.
 
 ## Reglas
@@ -16,27 +16,26 @@ Xauxa es la autoridad visual completa de Agenda QR. El código de producto no co
 - Todo color sale de `XauxaColor`.
 - Todo spacing sale de `XauxaSpacing`.
 - Toda métrica sale de `XauxaMetrics`.
-- Toda jerarquía tipográfica sale de `XauxaType`.
+- Toda forma sale de `XauxaShapes` (vía `MaterialTheme.shapes`).
+- Toda jerarquía tipográfica sale de `XauxaType`/`XauxaTextStyles` mapeada a los roles de M3.
 - Todo movimiento sale de `XauxaMotion`.
 - No usar `MaterialTheme.colorScheme` como fuente visual fuera de `XauxaTheme.kt`.
-- No usar `OutlinedTextField`, `AlertDialog`, chips o botones Material directamente desde features: deben pasar por componentes Xauxa.
+- No llamar componentes Material visuales directamente desde features: deben pasar por componentes Xauxa.
 - No introducir sombras, radios ni colores locales.
 
-## Estado de implementación de reglas históricas (ADR-0005)
+## Reglas de la migración convencional (ADR-0012)
 
 - Un acento por contexto, derivado de forma determinista del identificador del contexto; el acento de sistema `0067B8` es el valor por defecto. El color nunca se persiste en el dominio.
-- Sin bordes de reposo en filas, botones, badges y tiles: los bordes son solo funcionales (foco, campo en foco/error, tile seleccionado).
-- Campos de entrada planos: relleno `surfaceContainer`, etiqueta fija pequeña encima (no flotante), borde de 2 dp con acento solo en foco/error.
-- Acciones: principal como bloque sólido de acento o en la app bar inferior; secundarias como texto con icono, sin caja.
-- Iconografía: únicamente el set Lucide mediante el wrapper `XauxaIcon` (tamaños desde tokens; etiqueta visible en todo icono interactivo). Prohibido introducir otros sets.
-- Movimiento: turnstile entre pantallas, tilt ≤150 ms en tiles, entrada escalonada 30–50 ms por tile (total ≤300 ms); live tile sin bucles; reduced motion = cambio de estado inmediato.
-- Los tamaños de icono y las métricas de la rejilla de tiles viven como tokens en `XauxaTokens.kt` (múltiplos de 4 dp); el gate `verifyDesignSystemCompliance` rechaza literales en `core/ui`.
+- Los controles interactivos son componentes M3 (o envoltorios finos): `Button`/`OutlinedButton`/`TextButton`/`IconButton`/`IconToggleButton`/`OutlinedTextField`/`ListItem`/`AlertDialog`/`NavigationBar`/`TopAppBar`/`Scaffold`, con tokens del tema; ningún `clickable(indication = null)` ni overlay de pulsación propio.
+- Iconografía: únicamente el set Lucide mediante el wrapper `XauxaIcon` (tamaños desde tokens; descripción accesible en todo icono interactivo). Prohibido introducir otros sets.
+- Movimiento: transición estándar corta entre superficies (fundido + desplazamiento pequeño); predictive back con progreso; reduced motion = cambio inmediato.
+- Los tamaños de icono y las métricas viven como tokens en `XauxaTokens.kt`; el gate `verifyDesignSystemCompliance` rechaza literales en `core/ui`.
 
-Estas reglas históricas deben leerse junto al contrato normativo Xauxa y ADR-0011. No se consideran implementadas por el mero hecho de estar documentadas; verificar código, pruebas y consumidores antes de declarar alineación.
+Estas reglas deben leerse junto al contrato normativo Xauxa y ADR-0012. No se consideran implementadas por el mero hecho de estar documentadas; verificar código, pruebas y consumidores antes de declarar alineación.
 
 ## Adaptación de plataforma
 
-Material 3 puede seguir siendo infraestructura interna de los componentes Xauxa. La apariencia se determina exclusivamente por los tokens y contratos Xauxa.
+Material 3 es a la vez infraestructura y lenguaje: los componentes Xauxa delegan en los M3 con color, forma y tipografía del tema. La apariencia se determina exclusivamente por los tokens y contratos Xauxa.
 
 ## Terminación
 
