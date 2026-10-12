@@ -7,7 +7,7 @@ Agenda QR persiste primero en almacenamiento local y registra una mutación dura
 - PENDING: pendiente de ejecución.
 - PROCESSING: tomado por el procesador.
 - FAILED: falló con error transitorio y espera el próximo intento (backoff exponencial acotado).
-- DEAD_LETTER: error permanente (auth/RLS/validación) o sin reintentos; no se reclama hasta redrive manual.
+- DEAD_LETTER: error permanente (auth/RLS/validación) o sin reintentos; el drain no lo reclama — la recuperación requiere re-encolar (ADR-0004, propuesta).
 
 ## Resolución de conflictos
 

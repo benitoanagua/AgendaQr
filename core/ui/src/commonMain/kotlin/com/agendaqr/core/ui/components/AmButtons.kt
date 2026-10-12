@@ -307,7 +307,7 @@ fun AmIconButton(
 /**
  * Chip de filtro interactivo TONAL (píldora, sin borde de reposo):
  * seleccionado se expresa con el bloque de acento; la selección también
- * vive en la semántica. Distinto de [AmCategoryChip].
+ * vive en la semántica.
  */
 @Composable
 fun AmFilterChip(
