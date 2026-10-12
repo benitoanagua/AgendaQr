@@ -74,17 +74,12 @@ import kotlinx.coroutines.cancel
  */
 @Suppress("LongParameterList", "TooManyFunctions")
 class AuthenticatedSessionGraph(
-    val userId: String,
     val sessionScope: CoroutineScope,
-    val syncQueue: LocalSyncQueue,
     val syncProcessor: SyncMutationProcessor,
-    val recovery: SyncRecoveryCoordinator,
     val queueObserver: SyncQueueObserver,
     val destinationRepository: com.agendaqr.destinations.domain.DestinationRepository,
-    val operationRepository: com.agendaqr.destinations.domain.OperationRepository,
     val comprobanteRepository: com.agendaqr.destinations.domain.ComprobanteRepository,
     val comprobanteFiles: com.agendaqr.destinations.domain.ComprobanteFileStore,
-    val contextRepository: com.agendaqr.destinations.domain.ContextRepository,
     val importPayloadStore: ImportPayloadStore,
     val saveImportBatch: SaveImportBatchUseCase,
     val destinationsViewModel: DestinationsViewModel,
@@ -217,24 +212,18 @@ fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph
         )
     }
     return remember(
-        userId, sessionScope, syncQueue, syncProcessor, recovery, queueObserver,
-        destinationRepository, operationRepository, comprobanteRepository, fileStore,
-        contextRepository,
+        sessionScope, syncProcessor, queueObserver,
+        destinationRepository, comprobanteRepository, fileStore,
         importPayloadStore, saveImportBatch,
         destinationsViewModel, operationsViewModel, contextsViewModel, globalSearchViewModel,
     ) {
         AuthenticatedSessionGraph(
-            userId = userId,
             sessionScope = sessionScope,
-            syncQueue = syncQueue,
             syncProcessor = syncProcessor,
-            recovery = recovery,
             queueObserver = queueObserver,
             destinationRepository = destinationRepository,
-            operationRepository = operationRepository,
             comprobanteRepository = comprobanteRepository,
             comprobanteFiles = fileStore,
-            contextRepository = contextRepository,
             importPayloadStore = importPayloadStore,
             saveImportBatch = saveImportBatch,
             destinationsViewModel = destinationsViewModel,

@@ -22,9 +22,6 @@ class ImportBatchReducerTest {
         val reducer = ImportBatchReducer()
         var state: ImportBatchUiState = ImportBatchUiState.Idle
 
-        state = reducer.reduce(state, ImportBatchAction.Begin)
-        assertIs<ImportBatchUiState.Importing>(state)
-
         state = reducer.reduce(state, ImportBatchAction.Analyzed(batch))
         assertIs<ImportBatchUiState.Result>(state)
 

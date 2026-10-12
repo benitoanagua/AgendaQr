@@ -16,7 +16,6 @@ import platform.AVFoundation.AVCaptureSession
 import platform.AVFoundation.AVCaptureVideoPreviewLayer
 import platform.AVFoundation.AVMetadataMachineReadableCodeObject
 import platform.AVFoundation.AVMetadataObjectTypeQRCode
-import platform.UIKit.UIApplication
 import platform.UIKit.UIColor
 import platform.UIKit.UIViewController
 import platform.darwin.NSObject

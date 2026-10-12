@@ -23,12 +23,10 @@ class SystemSettingsRule : TestRule {
         get() = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     private val backups = linkedMapOf<String, String>()
-    private var restoreAsRoot: String? = null
 
     /** Aplica cambios de sistema; [block] corre con ellos activos. */
     fun apply(
         fontScale: Float? = null,
-        nightMode: Boolean? = null,
         userRotation: Int? = null,
         animations: Float? = null,
         airplane: Boolean? = null,
@@ -79,7 +77,6 @@ class SystemSettingsRule : TestRule {
                 shell("settings put $ns $k $value")
             }
         }
-        restoreAsRoot?.let { shell(it) }
         backups.clear()
     }
 

@@ -1,7 +1,6 @@
 package com.agendaqr.destinations.presentation
 
 import android.Manifest
-import com.agendaqr.destinations.presentation.AppStrings
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
@@ -35,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -235,7 +233,7 @@ internal fun assetFromFrame(proxy: ImageProxy, content: String): QrAsset {
     }
 }
 
-/** Bitmap en grises del plano Y (stride ya corregido por [planeY]). */
+/** Bitmap en grises del plano Y (stride corregido por [planeY]). */
 private fun ImageProxy.toGrayscaleBitmap(): Bitmap {
     val y = planeY(this)
     val argb = IntArray(width * height) { i ->
@@ -354,10 +352,21 @@ internal fun CameraQrEntry(onOpen: () -> Unit) {
     }
 }
 
-/** Copia el plano de luminancia del frame (sin extensiones de CameraX). */
+/**
+ * Copia el plano de luminancia del frame (sin extensiones de CameraX) y
+ * quita el padding de fin de fila cuando el sensor entrega
+ * `rowStride > width`: copiar el buffer crudo cizalla la imagen y en
+ * físicos eso rompía TODA la decodificación ([QrFrameAnalyzer.stripStride]).
+ * Con `rowStride == width` (típico en emulador) el buffer pasa igual.
+ */
 private fun planeY(proxy: ImageProxy): ByteArray {
-    val buffer = proxy.planes[0].buffer
+    val plane = proxy.planes[0]
+    val buffer = plane.buffer
     val bytes = ByteArray(buffer.remaining())
     buffer.get(bytes)
-    return bytes
+    return if (plane.rowStride == proxy.width) {
+        bytes
+    } else {
+        QrFrameAnalyzer.stripStride(bytes, proxy.width, proxy.height, plane.rowStride)
+    }
 }

@@ -82,21 +82,16 @@ class QrFrameAnalyzerTest {
     fun scan_session_emits_only_the_first_detection() {
         val session = QrScanSession()
         assertEquals(content, session.onFrame(content))
-        assertTrue(session.hasEmitted)
         // El mismo QR detectado de nuevo no re-dispara el flujo (sin doble
         // navegación a S09 con el mismo código).
         assertNull(session.onFrame(content))
         assertNull(session.onFrame("otro"))
-        session.reset()
-        assertFalse(session.hasEmitted)
-        assertEquals("otro", session.onFrame("otro"))
     }
 
     @Test
     fun scan_session_ignores_empty_frames_until_a_real_one() {
         val session = QrScanSession()
         assertNull(session.onFrame(null))
-        assertFalse(session.hasEmitted)
         assertEquals(content, session.onFrame(content))
     }
 }

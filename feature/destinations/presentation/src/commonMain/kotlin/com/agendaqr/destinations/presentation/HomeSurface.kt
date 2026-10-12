@@ -11,7 +11,6 @@ import com.agendaqr.core.ui.components.amReducedSurfaceExit
 import com.agendaqr.core.ui.components.amSurfaceEnter
 import com.agendaqr.core.ui.components.amSurfaceExit
 import com.agendaqr.core.ui.motion.LocalReducedMotion
-import com.agendaqr.destinations.data.SyncResource
 
 
 /**
@@ -55,20 +54,9 @@ internal fun HomeSurface(
                 graph.destinationsViewModel::onAction,
                 navChrome = navChrome,
                 appHosts = appHosts,
-                onOpenOperations = {
-                    graph.operationsViewModel.onAction(OperationAction.New)
-                    nav.push(AppRoute.Operations)
-                },
                 onOpenSearch = { onSearchOpened(); nav.push(AppRoute.Search) },
                 onOpenContexts = { nav.push(AppRoute.Contexts) },
                 onSignOut = onSignOut,
-                // S01 (tile vivo): la actividad reciente abre su detalle en
-                // la superficie de Operaciones (misma ruta que una fila de
-                // resultados de búsqueda).
-                onOpenOperation = { id ->
-                    graph.operationsViewModel.onAction(OperationAction.Open(id))
-                    nav.push(AppRoute.Operations)
-                },
                 syncLookup = syncLookup,
             )
             DestinationRoute.Add -> AddDestinationScreen(

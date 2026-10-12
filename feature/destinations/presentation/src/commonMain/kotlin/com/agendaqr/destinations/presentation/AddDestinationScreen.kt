@@ -1,12 +1,8 @@
 package com.agendaqr.destinations.presentation
 
-import androidx.compose.foundation.layout.Arrangement
 import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AmListRow
-import com.agendaqr.core.ui.components.AmPrimaryButton
 import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.AmSecondaryButton

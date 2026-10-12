@@ -151,9 +151,4 @@ class QrScanSession {
         return content
     }
 
-    val hasEmitted: Boolean get() = emitted
-
-    fun reset() {
-        emitted = false
-    }
 }

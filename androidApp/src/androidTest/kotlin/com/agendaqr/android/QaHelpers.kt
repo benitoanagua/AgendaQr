@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.UiObject2
 import java.io.File
 import kotlin.test.fail
 
@@ -67,5 +66,4 @@ object Qa {
         return px / (densityDpi / 160f)
     }
 
-    fun dumpNodes(): List<UiObject2> = device.findObjects(By.clazz("android.view.View"))
 }

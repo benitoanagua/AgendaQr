@@ -36,11 +36,6 @@ import platform.darwin.NSObject
 @OptIn(ExperimentalForeignApi::class)
 internal object IosQrImportController {
 
-    /** Galería: selección única (misma superficie que "Galería" en Android). */
-    fun openGallery(onResult: (QrImportResult) -> Unit) {
-        presentPicker(selectionLimit = 1L) { providers -> emitSingle(providers, onResult) }
-    }
-
     /** Galería (varios): alimenta S12 con un lote. */
     fun openMultiple(
         onResult: (QrImportResult) -> Unit,

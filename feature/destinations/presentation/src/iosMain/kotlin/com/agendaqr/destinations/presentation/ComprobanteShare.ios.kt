@@ -10,7 +10,6 @@ import platform.Foundation.NSUUID
 import platform.Foundation.NSURL
 import platform.Foundation.create
 import platform.UIKit.UIActivityViewController
-import platform.UIKit.UIApplication
 import platform.UIKit.UIDevice
 import platform.UIKit.UIModalPresentationFormSheet
 import platform.UIKit.UIUserInterfaceIdiomPad

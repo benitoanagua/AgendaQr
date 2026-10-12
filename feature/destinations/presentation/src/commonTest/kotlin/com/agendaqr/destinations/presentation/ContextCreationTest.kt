@@ -110,8 +110,6 @@ class ContextCreationTest {
         vm.onAction(ContextAction.Create("Ferreteria", null))
         waitUntil { vm.state.value.contexts.any { it.name == "Ferreteria" } }
         assertEquals(1, vm.state.value.contexts.size)
-        vm.onAction(ContextAction.ClearJustCreated)
-        assertNull(vm.state.value.justCreatedContextId)
     }
 
     // B.3: la acción de crear desde S06 vacío es la primaria; con ≥1

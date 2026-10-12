@@ -32,7 +32,7 @@ class ElementSyncStatusTest {
 
     @Test
     fun absent_mutation_means_synced() {
-        val status = elementSyncStatus(emptyList(), SyncResource.OPERATION, "op-1")
+        val status = ElementSyncLookup.Empty.status(SyncResource.OPERATION, "op-1")
         assertEquals(ElementSyncStatus.Synced, status)
         assertEquals("Sincronizado", status.label)
     }
@@ -40,7 +40,7 @@ class ElementSyncStatusTest {
     @Test
     fun pending_mutation_shows_pendiente() {
         val queue = listOf(mutation(SyncResource.OPERATION, "op-1", SyncMutationState.PENDING))
-        val status = elementSyncStatus(queue, SyncResource.OPERATION, "op-1")
+        val status = ElementSyncLookup(queue).status(SyncResource.OPERATION, "op-1")
         assertEquals(ElementSyncStatus.Pending, status)
         // "Guardado" localmente + esperando: el dato está a salvo.
         assertEquals("Pendiente", status.label)
@@ -51,7 +51,7 @@ class ElementSyncStatusTest {
         val queue = listOf(mutation(SyncResource.DESTINATION, "d-1", SyncMutationState.PROCESSING))
         assertEquals(
             ElementSyncStatus.Syncing,
-            elementSyncStatus(queue, SyncResource.DESTINATION, "d-1"),
+            ElementSyncLookup(queue).status(SyncResource.DESTINATION, "d-1"),
         )
         assertEquals("Sincronizando", ElementSyncStatus.Syncing.label)
     }
@@ -61,7 +61,7 @@ class ElementSyncStatusTest {
         val queue = listOf(mutation(SyncResource.COMPROBANTE, "r-1", SyncMutationState.FAILED))
         assertEquals(
             ElementSyncStatus.ErrorRecoverable,
-            elementSyncStatus(queue, SyncResource.COMPROBANTE, "r-1"),
+            ElementSyncLookup(queue).status(SyncResource.COMPROBANTE, "r-1"),
         )
         assertEquals("Error recuperable", ElementSyncStatus.ErrorRecoverable.label)
     }
@@ -71,7 +71,7 @@ class ElementSyncStatusTest {
         val queue = listOf(mutation(SyncResource.OPERATION, "op-1", SyncMutationState.FAILED))
         assertEquals(
             ElementSyncStatus.ErrorRecoverable,
-            elementSyncStatus(queue, SyncResource.OPERATION, "op-1"),
+            ElementSyncLookup(queue).status(SyncResource.OPERATION, "op-1"),
         )
         // FAILED: el drain reintenta; REINTENTAR es una acción real.
         assertEquals("Error recuperable", ElementSyncStatus.ErrorRecoverable.label)
@@ -80,13 +80,13 @@ class ElementSyncStatusTest {
     @Test
     fun dead_letter_permanent_maps_to_its_own_honest_state() {
         val queue = listOf(mutation(SyncResource.OPERATION, "op-1", SyncMutationState.DEAD_LETTER))
-        val status = elementSyncStatus(queue, SyncResource.OPERATION, "op-1")
+        val status = ElementSyncLookup(queue).status(SyncResource.OPERATION, "op-1")
         // U4: DEAD_LETTER ya NO se disfraza de "recuperable" — el drain lo
         // omite y REINTENTAR no puede recuperarlo; su etiqueta lo dice.
         assertEquals(ElementSyncStatus.Dead, status)
         assertEquals("No se pudo sincronizar", status.label)
         // Distinto del transitorio (FAILED): cada estado con su texto.
-        assertEquals(ElementSyncStatus.ErrorRecoverable, elementSyncStatus(listOf(mutation(SyncResource.OPERATION, "op-2", SyncMutationState.FAILED)), SyncResource.OPERATION, "op-2"))
+        assertEquals(ElementSyncStatus.ErrorRecoverable, ElementSyncLookup(listOf(mutation(SyncResource.OPERATION, "op-2", SyncMutationState.FAILED))).status(SyncResource.OPERATION, "op-2"))
     }
 
     @Test
@@ -115,7 +115,7 @@ class ElementSyncStatusTest {
         )
         assertEquals(
             ElementSyncStatus.ErrorRecoverable,
-            elementSyncStatus(queue, SyncResource.OPERATION, "op-1"),
+            ElementSyncLookup(queue).status(SyncResource.OPERATION, "op-1"),
         )
     }
 

@@ -1,15 +1,10 @@
 package com.agendaqr.destinations.presentation
 
-import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.AmFeedbackEvent
 import com.agendaqr.core.ui.components.AmScreenScaffold
@@ -17,6 +12,7 @@ import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.components.AmTopBarAction
 import com.agendaqr.core.ui.components.AmDialog
 import com.agendaqr.core.ui.components.AmEmptyState
+import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmOverflowAction
 import com.agendaqr.core.ui.components.AmQrPreview
 import com.agendaqr.core.ui.components.AmText
@@ -90,6 +86,7 @@ fun DestinationDetailScreen(
                 AmQrPreview(destination.qr.encoded)
             } else {
                 AmEmptyState(
+                    icon = AmIcons.ImageOff,
                     title = AppStrings.QrSinContenido,
                     subtitle = AppStrings.EditaElDestinoParaImportar,
                     actionLabel = AppStrings.Editar,

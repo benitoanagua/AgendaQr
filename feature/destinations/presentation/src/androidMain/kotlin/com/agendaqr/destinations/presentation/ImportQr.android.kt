@@ -41,7 +41,7 @@ fun QrAsset.toShareUri(context: Context): Uri {
     return FileProvider.getUriForFile(context, context.packageName + ".fileprovider", file)
 }
 
-fun decodeQrAsset(bytes: ByteArray, mimeType: String): QrAsset? {
+private fun decodeQrAsset(bytes: ByteArray, mimeType: String): QrAsset? {
     val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: return null
     val pixels = IntArray(bitmap.width * bitmap.height)
     bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)

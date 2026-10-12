@@ -1,7 +1,6 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
-import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -62,6 +61,7 @@ fun GlobalSearchScreen(
             )
             state.isSearching -> AmLoading(message = AppStrings.BuscandoEnAgendaQr)
             state.results.isEmpty() -> AmEmptyState(
+                icon = AmIcons.SearchX,
                 title = AppStrings.SinResultados,
                 subtitle = AppStrings.PruebaConOtraPalabraO,
                 actionLabel = AppStrings.Limpiar,

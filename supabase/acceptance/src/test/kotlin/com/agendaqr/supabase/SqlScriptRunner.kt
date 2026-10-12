@@ -11,8 +11,6 @@ import java.sql.Statement
  */
 object SqlScriptRunner {
 
-    data class Statement_(val sql: String, val index: Int)
-
     /**
      * Divide el contenido SQL en sentencias individuales.
      * Respeta: 'string literals', "quoted identifiers", $$dollar$$ blocks,

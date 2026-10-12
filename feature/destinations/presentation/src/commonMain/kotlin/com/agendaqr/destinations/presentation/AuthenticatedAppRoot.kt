@@ -368,10 +368,7 @@ internal fun AuthenticatedAppRoot(
                         justCreatedContextId = contextState.justCreatedContextId,
                     )
                     AppRoute.Home -> HomeSurface(
-                        // S01 (lista convencional): el estado de la pantalla
-                        // necesita las actividades recientes; se fusionan aquí (la
-                        // observación vive en la superficie de Operaciones).
-                        state = state.copy(recentOperations = operationState.operations),
+                        state = state,
                         contextState = contextState,
                         navChrome = navChrome,
                         appHosts = appHosts,

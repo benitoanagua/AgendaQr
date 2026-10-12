@@ -1,7 +1,6 @@
 package com.agendaqr.destinations.presentation
 
 import android.graphics.BitmapFactory
-import com.agendaqr.destinations.presentation.AppStrings
 import com.agendaqr.core.ui.components.AmMediaFrame
 import com.agendaqr.core.ui.components.AmText
 import androidx.compose.foundation.Image

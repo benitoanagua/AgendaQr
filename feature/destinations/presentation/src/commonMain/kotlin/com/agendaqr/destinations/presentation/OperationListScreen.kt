@@ -5,16 +5,11 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.components.AmExtendedFab
@@ -22,20 +17,6 @@ import com.agendaqr.core.ui.components.AmNavChromeState
 import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.data.SyncResource
-import com.agendaqr.destinations.domain.*
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.toLocalDateTime
-
-import androidx.compose.foundation.layout.*
-import com.agendaqr.destinations.presentation.AppStrings
-import com.agendaqr.core.ui.components.AmText
-import androidx.compose.runtime.*
-import androidx.compose.ui.text.font.FontWeight
-import com.agendaqr.core.ui.components.*
-import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.domain.*
 
 @Composable
@@ -156,6 +137,7 @@ internal fun OperationListScreen(
         }
         if (operations.isEmpty()) {
             AmEmptyState(
+                icon = AmIcons.Register,
                 title = if (state.query.isBlank()) AppStrings.AunNoHayOperaciones else AppStrings.NoHayCoincidencias,
                 subtitle = if (state.query.isBlank()) AppStrings.registerFirstPaymentHint else AppStrings.tryAnotherSearchHint,
                 actionLabel = if (state.query.isBlank()) AppStrings.RegistrarOperacion else AppStrings.LimpiarBusqueda,
@@ -221,7 +203,7 @@ internal fun UnassociatedScreen(
         statusContent = appHosts?.status,
     ) {
             if (state.unassociated.isEmpty()) {
-                AmEmptyState(title = AppStrings.noUnassociatedReceipts)
+                AmEmptyState(icon = AmIcons.Inbox, title = AppStrings.noUnassociatedReceipts)
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth().weight(1f),

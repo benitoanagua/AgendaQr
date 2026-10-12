@@ -11,7 +11,6 @@ import androidx.compose.runtime.setValue
 import com.agendaqr.core.ui.components.AmPrimaryButton
 import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmIcons
-import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.destinations.domain.QrAsset
 
 /**
