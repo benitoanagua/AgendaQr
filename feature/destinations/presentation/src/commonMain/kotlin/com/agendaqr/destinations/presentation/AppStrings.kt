@@ -10,13 +10,11 @@ package com.agendaqr.destinations.presentation
  * porque su valor es dinámico.
  *
  * DECISIÓN (D2): se evaluó migrar a composeResources/values/strings.xml
- * para i18n automático; se queda el objeto centralizado porque (1) el
- * módulo presentation aún no expone el accessor `Res` a las features que
- * comparten los literales (iosMain incluido), (2) strings.xml exige
- * regenerar el accessors por módulo y trasladar también los androidMain/
- * iosMain actuales, y (3) el copy está congelado (no hay i18n en V1).
- * La migración queda registrada como paso previo obligatorio cuando V2
- * necesite idiomas.
+ * para i18n automático; se queda el objeto centralizado porque (1)
+ * strings.xml exige regenerar los accessors por módulo y trasladar
+ * también los androidMain/iosMain actuales, y (2) el copy está
+ * congelado (no hay i18n en V1). La migración queda registrada como
+ * paso previo obligatorio cuando V2 necesite idiomas.
  */
 internal object AppStrings {
     val AbriendoComprobante = "Abriendo comprobante…"

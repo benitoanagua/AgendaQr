@@ -24,28 +24,6 @@
     </issue>
 
     <issue
-        id="AndroidGradlePluginVersion"
-        message="A newer version of com.android.application than 8.11.1 is available: 9.4.1. (There is also a newer version of 8.11.𝑥 available, if upgrading to 9.4.1 is difficult: 8.11.2)"
-        errorLine1="agp = &quot;8.11.1&quot;"
-        errorLine2="      ~~~~~~~~">
-        <location
-            file="$HOME/Code/benitoanagua/AgendaQr/gradle/libs.versions.toml"
-            line="2"
-            column="7"/>
-    </issue>
-
-    <issue
-        id="AndroidGradlePluginVersion"
-        message="A newer version of com.android.library than 8.11.1 is available: 9.4.1. (There is also a newer version of 8.11.𝑥 available, if upgrading to 9.4.1 is difficult: 8.11.2)"
-        errorLine1="agp = &quot;8.11.1&quot;"
-        errorLine2="      ~~~~~~~~">
-        <location
-            file="$HOME/Code/benitoanagua/AgendaQr/gradle/libs.versions.toml"
-            line="2"
-            column="7"/>
-    </issue>
-
-    <issue
         id="GradleDependency"
         message="A newer version of androidx.activity:activity-compose than 1.10.1 is available: 1.13.0"
         errorLine1="activity = &quot;1.10.1&quot;"
@@ -118,7 +96,7 @@
         errorLine2="                                                                             ~~~~~~~">
         <location
             file="$HOME/Code/benitoanagua/AgendaQr/gradle/libs.versions.toml"
-            line="50"
+            line="47"
             column="78"/>
     </issue>
 
@@ -129,7 +107,7 @@
         errorLine2="                                                                                       ~~~~~~~">
         <location
             file="$HOME/Code/benitoanagua/AgendaQr/gradle/libs.versions.toml"
-            line="51"
+            line="48"
             column="88"/>
     </issue>
 
@@ -140,7 +118,7 @@
         errorLine2="                                                                             ~~~~~~~">
         <location
             file="$HOME/Code/benitoanagua/AgendaQr/gradle/libs.versions.toml"
-            line="52"
+            line="49"
             column="78"/>
     </issue>
 
@@ -151,41 +129,19 @@
         errorLine2="                                                                           ~~~~~~~">
         <location
             file="$HOME/Code/benitoanagua/AgendaQr/gradle/libs.versions.toml"
-            line="53"
+            line="50"
             column="76"/>
     </issue>
 
     <issue
-        id="NewerVersionAvailable"
-        message="A newer version of org.jetbrains.kotlin.android than 2.2.20 is available: 2.4.21"
-        errorLine1="kotlin = &quot;2.2.20&quot;"
-        errorLine2="         ~~~~~~~~">
+        id="GradleDependency"
+        message="A newer version of androidx.test.uiautomator:uiautomator than 2.3.0 is available: 2.4.0"
+        errorLine1="uiautomator = { group = &quot;androidx.test.uiautomator&quot;, name = &quot;uiautomator&quot;, version = &quot;2.3.0&quot; }"
+        errorLine2="                                                                                     ~~~~~~~">
         <location
             file="$HOME/Code/benitoanagua/AgendaQr/gradle/libs.versions.toml"
-            line="3"
-            column="10"/>
-    </issue>
-
-    <issue
-        id="NewerVersionAvailable"
-        message="A newer version of org.jetbrains.kotlin.multiplatform than 2.2.20 is available: 2.4.21"
-        errorLine1="kotlin = &quot;2.2.20&quot;"
-        errorLine2="         ~~~~~~~~">
-        <location
-            file="$HOME/Code/benitoanagua/AgendaQr/gradle/libs.versions.toml"
-            line="3"
-            column="10"/>
-    </issue>
-
-    <issue
-        id="NewerVersionAvailable"
-        message="A newer version of org.jetbrains.kotlin.plugin.compose than 2.2.20 is available: 2.4.21"
-        errorLine1="kotlin = &quot;2.2.20&quot;"
-        errorLine2="         ~~~~~~~~">
-        <location
-            file="$HOME/Code/benitoanagua/AgendaQr/gradle/libs.versions.toml"
-            line="3"
-            column="10"/>
+            line="54"
+            column="86"/>
     </issue>
 
     <issue
@@ -197,17 +153,6 @@
             file="$HOME/Code/benitoanagua/AgendaQr/gradle/libs.versions.toml"
             line="3"
             column="10"/>
-    </issue>
-
-    <issue
-        id="NewerVersionAvailable"
-        message="A newer version of org.jetbrains.compose than 1.8.2 is available: 1.12.1"
-        errorLine1="compose = &quot;1.8.2&quot;"
-        errorLine2="          ~~~~~~~">
-        <location
-            file="$HOME/Code/benitoanagua/AgendaQr/gradle/libs.versions.toml"
-            line="4"
-            column="11"/>
     </issue>
 
     <issue
