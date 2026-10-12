@@ -274,6 +274,7 @@ fun XauxaTextAction(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
+    enabled: Boolean = true,
     /**
      * color del texto/icono. Por defecto brandText; el
      * llamador lo anula cuando la acción vive sobre un fondo donde brand
@@ -287,6 +288,7 @@ fun XauxaTextAction(
     TextButton(
         modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         onClick = onClick,
+        enabled = enabled,
         // 48 dp determinísticos como en los botones (ver XauxaLoadingButton).
         contentPadding = PaddingValues(
             horizontal = XauxaSpacing.Md,
@@ -299,12 +301,16 @@ fun XauxaTextAction(
             horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
         ) {
             if (icon != null) {
-                XauxaIcon(imageVector = icon, contentDescription = null, tint = actionColor)
+                XauxaIcon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = if (enabled) actionColor else XauxaColor.TextTertiary,
+                )
             }
             Text(
                 label,
                 style = XauxaTextStyles.ButtonLabel,
-                color = actionColor,
+                color = if (enabled) actionColor else XauxaColor.TextTertiary,
             )
         }
     }

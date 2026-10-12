@@ -69,7 +69,7 @@ class LabSearchTest {
         assertEquals(catalog.size, counts.values.sum())
         assertEquals(LabComponentCatalog.foundations.size, counts[LabCategory.FOUNDATIONS])
         assertEquals(8, counts[LabCategory.SURFACES])
-        assertEquals(10, counts[LabCategory.ACTIONS])
+        assertEquals(11, counts[LabCategory.ACTIONS]) // V1.2: +TopBar/NavBar
         assertEquals(5, counts[LabCategory.FEEDBACK])
         assertEquals(4, counts[LabCategory.DATA])
         assertEquals(2, counts[LabCategory.QR])

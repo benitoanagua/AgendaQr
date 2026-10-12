@@ -155,9 +155,9 @@ internal object AppStrings {
     val VolverALaLista = "Volver a la lista"
     val VolverAResultado = "Volver a resultado"
     val VuelveEImportaDesdeCamara = "Vuelve e importa desde Cámara o Galería."
-    val DestinationRouteTurnstile = "destination_route_turnstile"
+    val DestinationRouteTurnstile = "destination_route_transition"
     // transición entre superficies (AppRoute) del stack raíz.
-    val SurfaceRouteTurnstile = "surface_route_turnstile"
+    val SurfaceRouteTurnstile = "surface_route_transition"
     val QrSinNombre = "QR sin nombre"
     val SinNombre = "Sin nombre"
     /** Monto vacío en texto de detalle/compartir de una actividad. */

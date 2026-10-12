@@ -7,11 +7,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.XauxaAppBar
-import com.agendaqr.core.ui.components.XauxaAppBarAction
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import com.agendaqr.core.ui.components.XauxaFeedbackEvent
-import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaScreenScaffold
+import com.agendaqr.core.ui.components.XauxaTopBar
+import com.agendaqr.core.ui.components.XauxaTopBarAction
 import com.agendaqr.core.ui.components.XauxaDialog
 import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaOverflowAction
@@ -36,39 +38,32 @@ fun DestinationDetailScreen(
     // anuncio de eliminación confirmada (por evento).
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
     XauxaFeedbackEvent(event = deleteDoneEvent, message = AppStrings.Eliminado)
+    // V1.2 (§12): título del QR en la barra superior con flecha atrás;
+    // Mostrar QR y Editar como acciones visibles, Compartir y Eliminar en
+    // el menú "…" (destructiva, no a un toque).
     XauxaScreenScaffold(
         scrollable = true,
-        bottomBar = {
-            // M7 (V1.1): acciones de detalle en la barra de aplicación
-            // inferior — principal "Mostrar QR" en bloque de acento; Editar y
-            // Compartir como acciones etiquetadas; Eliminar en el menú "…"
-            // (destructiva, no a un toque), mismo criterio que la command bar
-            // V1 (cb1/cb2) ahora expresado en el chrome Metro.
-            XauxaAppBar(
+        topBar = {
+            XauxaTopBar(
+                title = destination.name.ifBlank { AppStrings.SinNombre },
+                onBack = onBack,
+                backLabel = AppStrings.Volver,
                 actions = listOf(
-                    // Sin glifo asignado aún en el mapeo mínimo (spec §12): la
-                    // acción va etiquetada en texto (la etiqueta siempre se ve,
-                    // §11) hasta una decisión de iconografía nueva.
-                    XauxaAppBarAction(
+                    XauxaTopBarAction(
                         label = AppStrings.MostrarQr,
-                        icon = null,
-                        primary = true,
-                        enabled = destination.qr.encoded.isNotBlank(),
                         onClick = onShowQr,
+                        enabled = destination.qr.encoded.isNotBlank(),
                     ),
-                    XauxaAppBarAction(AppStrings.Editar, icon = null, onClick = onEdit),
-                    XauxaAppBarAction(AppStrings.Compartir, icon = null, onClick = onShare),
+                    XauxaTopBarAction(label = AppStrings.Editar, onClick = onEdit),
                 ),
                 overflowActions = listOf(
+                    XauxaOverflowAction(AppStrings.Compartir, onClick = onShare),
                     XauxaOverflowAction(AppStrings.Eliminar, { showDeleteConfirm = true }),
                 ),
                 overflowLabel = AppStrings.Mas,
-                onBack = onBack,
-                backLabel = AppStrings.Volver,
             )
         },
     ) {
-            XauxaPageTitle(text = destination.name.ifBlank { AppStrings.SinNombre })
             destination.category?.let { XauxaText(it, color = XauxaColor.TextSecondary) }
             destination.note?.takeIf { it.isNotBlank() }?.let { XauxaText(it, color = XauxaColor.TextSecondary) }
             // estado de sincronización del elemento (texto, no solo

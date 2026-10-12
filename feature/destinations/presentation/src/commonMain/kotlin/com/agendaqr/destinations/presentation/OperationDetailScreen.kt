@@ -56,26 +56,30 @@ internal fun OperationDetailScreen(
     // anuncio de eliminación confirmada (por evento).
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
     XauxaFeedbackEvent(event = deleteDoneEvent, message = AppStrings.Eliminado)
+    // V1.2 (§12): detalle con título y flecha atrás en la barra superior;
+    // Compartir y Editar como acciones visibles (Editar es la principal),
+    // Eliminar en el menú "…" (destructiva, no a un toque).
     XauxaScreenScaffold(
         scrollable = true,
-        bottomBar = {
-            // M7: Compartir y Editar viven en la barra de aplicación inferior;
-            // Editar es la acción principal (bloque sólido de acento, M10).
-            // Sus glifos siguen SIN icono aprobado (ADR-0005, puntos abiertos):
-            // la etiqueta visible se mantiene (§11).
-            XauxaAppBar(
-                actions = listOf(
-                    XauxaAppBarAction(AppStrings.Compartir, icon = null, onClick = { shareOperation(operation) }),
-                    XauxaAppBarAction(AppStrings.Editar, icon = null, primary = true, onClick = { viewModel.onAction(OperationAction.Edit(operation.id)) }),
-                ),
+        topBar = {
+            XauxaTopBar(
+                title = AppStrings.Detalle,
                 onBack = { viewModel.onAction(OperationAction.Back) },
                 backLabel = AppStrings.Volver,
+                actions = listOf(
+                    XauxaTopBarAction(label = AppStrings.Compartir, onClick = { shareOperation(operation) }),
+                    XauxaTopBarAction(
+                        label = AppStrings.Editar,
+                        onClick = { viewModel.onAction(OperationAction.Edit(operation.id)) },
+                    ),
+                ),
+                overflowActions = listOf(
+                    XauxaOverflowAction(AppStrings.EliminarOperacion, { showDeleteConfirm = true }),
+                ),
+                overflowLabel = AppStrings.Mas,
             )
         },
     ) {
-            // M6: título de página en display ligero (no XauxaHeading en
-            // negrita); M7: Compartir/Editar viven en la barra inferior.
-            XauxaPageTitle(text = AppStrings.Detalle)
             XauxaStatusBanner(
                 operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt) + " · " +
                     operation.amount.orEmpty().ifBlank { AppStrings.SinMonto }

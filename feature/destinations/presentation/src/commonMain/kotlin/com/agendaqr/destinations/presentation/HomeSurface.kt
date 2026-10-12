@@ -5,18 +5,19 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.agendaqr.core.ui.components.xauxaReducedMotionEnter
-import com.agendaqr.core.ui.components.xauxaReducedMotionExit
-import com.agendaqr.core.ui.components.xauxaTurnstileEnter
-import com.agendaqr.core.ui.components.xauxaTurnstileExit
+import com.agendaqr.core.ui.components.XauxaNavChromeState
+import com.agendaqr.core.ui.components.xauxaReducedSurfaceEnter
+import com.agendaqr.core.ui.components.xauxaReducedSurfaceExit
+import com.agendaqr.core.ui.components.xauxaSurfaceEnter
+import com.agendaqr.core.ui.components.xauxaSurfaceExit
 import com.agendaqr.core.ui.motion.LocalReducedMotion
 import com.agendaqr.destinations.data.SyncResource
 
 
 /**
  * S01 — Inicio y el flujo de destinos completo (S02/S09). Las rutas internas
- * de destinos siguen viviendo en [DestinationsUiState.route] con su
- * transición turnstile, que respeta el movimiento reducido del sistema.
+ * de destinos siguen viviendo en [DestinationsUiState.route] con la
+ * transición estándar corta, que respeta el movimiento reducido del sistema.
  */
 @Composable
 internal fun HomeSurface(
@@ -25,6 +26,7 @@ internal fun HomeSurface(
     graph: AuthenticatedSessionGraph,
     onSignOut: () -> Unit,
     nav: AppBackStack,
+    navChrome: XauxaNavChromeState? = null,
     syncLookup: ElementSyncLookup,
     onRetrySync: () -> Unit,
     onSearchOpened: () -> Unit = {},
@@ -39,10 +41,9 @@ internal fun HomeSurface(
             if (reducedMotion) {
                 // ReducedMotion (§11): sin desplazamiento; la pantalla cambia
                 // en el sitio y la comprensión no depende de la animación.
-                xauxaReducedMotionEnter() togetherWith xauxaReducedMotionExit()
+                xauxaReducedSurfaceEnter() togetherWith xauxaReducedSurfaceExit()
             } else {
-                xauxaTurnstileEnter(reverse = reverse) togetherWith
-                    xauxaTurnstileExit(reverse = reverse)
+                xauxaSurfaceEnter(reverse = reverse) togetherWith xauxaSurfaceExit(reverse = reverse)
             }
         },
         label = AppStrings.DestinationRouteTurnstile,
@@ -51,6 +52,7 @@ internal fun HomeSurface(
             DestinationRoute.List -> DestinationsScreen(
                 state,
                 graph.destinationsViewModel::onAction,
+                navChrome = navChrome,
                 onOpenOperations = {
                     graph.operationsViewModel.onAction(OperationAction.New)
                     nav.push(AppRoute.Operations)

@@ -53,6 +53,10 @@ kotlin {
             // través de XauxaIcon. Objetivos: android/ios/wasmJs verificados
             // por compilación en esta tarea.
             implementation(libs.icons.lucide)
+            // V1.2 (ADR-0012): WindowSizeClass para la adaptación compacto/
+            // medium/expanded (NavigationBar vs NavigationRail, contenido
+            // centrado con ContentMaxWidth).
+            implementation(libs.material3.window.size)
         }
         androidUnitTest.dependencies {
             implementation(kotlin("test"))

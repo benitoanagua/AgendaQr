@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.*
+import com.agendaqr.core.ui.components.XauxaNavChromeState
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.destinations.domain.AgendaSearchResult
@@ -15,20 +16,21 @@ import com.agendaqr.destinations.domain.AgendaSearchResult
 @Composable
 fun GlobalSearchScreen(
     state: GlobalSearchUiState,
+    navChrome: XauxaNavChromeState? = null,
     onAction: (GlobalSearchAction) -> Unit,
     onSelect: (AgendaSearchResult) -> Unit,
-    onBack: () -> Unit,
 ) {
-    // V1.1 (M7): Volver en la app bar inferior; los resultados siguen
-    // agrupados por tipo (ahora con encabezados de sección en acento).
+    // V1.2 (§12): Buscar es destino raíz — barra superior con título y
+    // navegación inferior; el campo de búsqueda es el cuerpo de la
+    // superficie. Los resultados siguen agrupados por tipo con
+    // encabezados de sección estándar.
     XauxaScreenScaffold(
-        bottomBar = {
-            XauxaAppBar(
-                actions = emptyList(),
-                onBack = onBack,
-                backLabel = AppStrings.Volver,
-            )
+        topBar = {
+            XauxaTopBar(title = AppStrings.Buscar)
         },
+        navDestinations = navChrome?.destinations.orEmpty(),
+        navSelectedId = navChrome?.selectedId,
+        onNavSelect = { navChrome?.onSelect?.invoke(it) },
     ) {
         XauxaSearchBar(
             value = state.query,

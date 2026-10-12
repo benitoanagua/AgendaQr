@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -11,12 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaText
-import com.agendaqr.core.ui.components.XauxaPageTitle
+import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaQrPreview
-import com.agendaqr.core.ui.components.XauxaAppBar
-import com.agendaqr.core.ui.components.XauxaAppBarAction
-import com.agendaqr.core.ui.components.XauxaIcons
 import com.agendaqr.core.ui.components.XauxaScreenScaffold
+import com.agendaqr.core.ui.components.XauxaTopBar
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
@@ -34,31 +34,39 @@ fun ImportReviewScreen(
     error: UserFacingError? = null,
     onClearError: () -> Unit = {},
 ) {
-    // V1.1 (M6/M7): título ligero; Guardar como acción
-    // principal de la app bar (nunca recortada) y Volver en la flecha.
+    // V1.2 (§12): "Revisar QR" en la barra superior; Guardar/Guardar todo es
+    // el botón principal FIJO abajo (acción real de guardado). Mientras se
+    // guarda no hay vuelta (§3).
     XauxaScreenScaffold(
         modifier = modifier,
-        bottomBar = {
-            XauxaAppBar(
-                actions = listOf(
-                    XauxaAppBarAction(
-                        label = when {
-                            isSaving -> AppStrings.Guardando
-                            assets.size == 1 -> AppStrings.Guardar
-                            else -> AppStrings.GuardarTodo
-                        },
-                        icon = XauxaIcons.Save,
-                        primary = true,
-                        enabled = !isSaving && assets.isNotEmpty(),
-                        onClick = onSaveAll,
-                    ),
-                ),
+        topBar = {
+            XauxaTopBar(
+                title = AppStrings.RevisarQr,
                 onBack = if (isSaving) null else onBack,
                 backLabel = AppStrings.Volver,
             )
         },
+        bottomAction = if (assets.isNotEmpty()) {
+            {
+                XauxaPrimaryButton(
+                    label = when {
+                        isSaving -> AppStrings.Guardando
+                        assets.size == 1 -> AppStrings.Guardar
+                        else -> AppStrings.GuardarTodo
+                    },
+                    onClick = onSaveAll,
+                    enabled = !isSaving,
+                    isLoading = isSaving,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .padding(horizontal = XauxaSpacing.ScreenMargin, vertical = XauxaSpacing.Sm),
+                )
+            }
+        } else {
+            null
+        },
     ) {
-        XauxaPageTitle(text = AppStrings.RevisarQr)
         error?.let { err ->
             XauxaStatusBanner(
                 err.display(),

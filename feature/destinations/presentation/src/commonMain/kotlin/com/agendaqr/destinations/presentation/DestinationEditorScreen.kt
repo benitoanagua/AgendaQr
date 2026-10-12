@@ -2,6 +2,9 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import com.agendaqr.destinations.presentation.AppStrings
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,10 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.XauxaAppBar
-import com.agendaqr.core.ui.components.XauxaAppBarAction
-import com.agendaqr.core.ui.components.XauxaIcons
-import com.agendaqr.core.ui.components.XauxaPageTitle
+import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaScreenScaffold
 import com.agendaqr.core.ui.components.XauxaQrPreview
 import com.agendaqr.core.ui.components.XauxaScannerViewport
@@ -20,8 +20,10 @@ import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaTextInput
+import com.agendaqr.core.ui.components.XauxaTopBar
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
+import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaType
 import com.agendaqr.destinations.domain.Context
 import com.agendaqr.destinations.domain.Destination
@@ -88,43 +90,45 @@ private fun DestinationEditorContent(
     val qrError = submitted && qr.encoded.isBlank()
     val canSave = name.isNotBlank() && qr.encoded.isNotBlank() && !isSaving
 
-    // V1.1 (M7): Guardar como acción principal de la app bar; Volver
-    // pasa a la flecha de la barra (sin desbordar en dos líneas).
+    // V1.2 (§12): "Editar QR" en la barra superior con flecha atrás; Guardar
+    // es el botón principal FIJO abajo (acción real de guardado), nunca
+    // recortado por el scroll. Mientras se guarda no hay vuelta (§3).
     XauxaScreenScaffold(
         scrollable = true,
-        bottomBar = {
-            XauxaAppBar(
-                actions = listOf(
-                    XauxaAppBarAction(
-                        label = if (isSaving) AppStrings.Guardando else AppStrings.Guardar,
-                        icon = XauxaIcons.Save,
-                        primary = true,
-                        enabled = canSave,
-                        onClick = {
-                            submitted = true
-                            if (name.isBlank() || qr.encoded.isBlank()) return@XauxaAppBarAction
-                            val now = com.agendaqr.destinations.domain.nowMillis()
-                            onSave(
-                                existing.copy(
-                                    name = name.trim(),
-                                    category = category.trim().ifBlank { null },
-                                    note = note.trim().ifBlank { null },
-                                    qr = qr,
-                                    contextId = selection.contextId,
-                                    updatedAt = now,
-                                ),
-                            )
-                        },
-                    ),
-                ),
+        topBar = {
+            XauxaTopBar(
+                title = AppStrings.EditarQr,
                 onBack = if (isSaving) null else onBack,
                 backLabel = AppStrings.Volver,
             )
         },
+        bottomAction = {
+            XauxaPrimaryButton(
+                label = if (isSaving) AppStrings.Guardando else AppStrings.Guardar,
+                onClick = {
+                    submitted = true
+                    if (name.isBlank() || qr.encoded.isBlank()) return@XauxaPrimaryButton
+                    val now = com.agendaqr.destinations.domain.nowMillis()
+                    onSave(
+                        existing.copy(
+                            name = name.trim(),
+                            category = category.trim().ifBlank { null },
+                            note = note.trim().ifBlank { null },
+                            qr = qr,
+                            contextId = selection.contextId,
+                            updatedAt = now,
+                        ),
+                    )
+                },
+                enabled = canSave,
+                isLoading = isSaving,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .padding(horizontal = XauxaSpacing.ScreenMargin, vertical = XauxaSpacing.Sm),
+            )
+        },
     ) {
-        XauxaPageTitle(
-            text = AppStrings.EditarQr,
-        )
         error?.let { err ->
             XauxaStatusBanner(
                 err.display(),

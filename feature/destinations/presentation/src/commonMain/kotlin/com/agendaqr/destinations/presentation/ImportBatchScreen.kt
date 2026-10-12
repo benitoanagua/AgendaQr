@@ -5,6 +5,7 @@ import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,11 +15,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.XauxaDialog
 import com.agendaqr.core.ui.components.XauxaFeedbackEvent
-import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaQrPreview
-import com.agendaqr.core.ui.components.XauxaAppBar
 import com.agendaqr.core.ui.components.XauxaScreenScaffold
+import com.agendaqr.core.ui.components.XauxaTopBar
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaText
@@ -62,23 +62,45 @@ fun ImportBatchScreen(
         wasSaving = state is ImportBatchUiState.Saving || state is ImportBatchUiState.Saved
     }
     XauxaFeedbackEvent(event = savedEvent, message = AppStrings.GuardadoOk)
-    // M7: la barra de aplicación inferior aloja Volver/Volver a resultado;
-    // el cuerpo conserva solo las acciones del contrato S12 ("Guardar
-    // reconocidos" como bloque sólido de acento, M10, y "Revisar N
-    // pendientes").
+    // V1.2 (§4 S12): barra superior con título y atrás; "Guardar
+    // reconocidos" como botón principal FIJO abajo, solo cuando hay
+    // elementos reconocibles; "Revisar N pendientes" en el cuerpo.
+    // Mientras se guarda NO hay vuelta (el lote se perdería); el Back del
+    // estado de revisión regresa al RESULTADO (flujo padre), no al origen.
+    val currentBatch = when (state) {
+        is ImportBatchUiState.Result -> state.batch
+        is ImportBatchUiState.Review -> state.batch
+        is ImportBatchUiState.Saving -> state.batch
+        is ImportBatchUiState.Saved -> state.batch
+        is ImportBatchUiState.Error -> state.batch
+        else -> null
+    }
     XauxaScreenScaffold(
         scrollable = true,
-        bottomBar = {
-            XauxaAppBar(
-                actions = emptyList(),
-                // M7/§3: mientras se guarda NO hay vuelta (el lote se perdería); el
-                // Volver de Review regresa al RESULTADO (flujo padre), no al origen.
+        topBar = {
+            XauxaTopBar(
+                title = AppStrings.ResultadoDeImportacion,
                 onBack = if (state is ImportBatchUiState.Saving) null else ({ onAction(ImportBatchAction.Back) }),
                 backLabel = if (state is ImportBatchUiState.Review) AppStrings.VolverAResultado else AppStrings.Volver,
             )
         },
+        bottomAction = if (currentBatch?.canSaveRecognized() == true) {
+            {
+                XauxaPrimaryButton(
+                    label = AppStrings.GuardarReconocidos,
+                    onClick = { onAction(ImportBatchAction.SaveRecognized) },
+                    enabled = state !is ImportBatchUiState.Saving,
+                    isLoading = state is ImportBatchUiState.Saving,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .padding(horizontal = XauxaSpacing.ScreenMargin, vertical = XauxaSpacing.Sm),
+                )
+            }
+        } else {
+            null
+        },
     ) {
-        XauxaPageTitle(text = AppStrings.ResultadoDeImportacion)
         when (state) {
             ImportBatchUiState.Idle -> {
                 XauxaText(AppStrings.TraeVariosElementosAAgenda, color = XauxaColor.TextSecondary)
@@ -136,16 +158,9 @@ private fun BatchResultContent(
     XauxaText(AppStrings.dupMark + AppStrings.PosiblesDuplicados + ": " + batch.duplicates.size, color = XauxaColor.TextSecondary)
     XauxaText(AppStrings.pendingMark + AppStrings.PendientesDeRevision + ": " + batch.unknown.size, color = XauxaColor.TextSecondary)
 
-    if (batch.canSaveRecognized()) {
-        XauxaPrimaryButton(
-            AppStrings.GuardarReconocidos,
-            onClick = { onAction(ImportBatchAction.SaveRecognized) },
-            enabled = !isSaving,
-            isLoading = isSaving,
-        )
-    }
+    // Contrato S12: "Revisar N pendientes" como acción secundaria; "Guardar
+    // reconocidos" vive fijo abajo (botón principal del scaffold).
     if (batch.pendingItems().isNotEmpty()) {
-        // Contrato S12: "Revisar N pendientes".
         XauxaSecondaryButton(reviewPendingLabel(batch), onClick = { onAction(ImportBatchAction.ReviewPending) }, enabled = !isSaving)
     }
 }
@@ -159,15 +174,6 @@ private fun BatchReviewContent(
     XauxaText(AppStrings.ElementosQueNecesitanRevision, color = XauxaColor.TextPrimary)
     batch.pendingItems().forEach { candidate ->
         PendingItemCard(candidate, batch, onAction, isSaving)
-    }
-    if (batch.canSaveRecognized()) {
-        // Los válidos nunca dependen de los pendientes (contrato S12).
-        XauxaPrimaryButton(
-            AppStrings.GuardarReconocidos,
-            onClick = { onAction(ImportBatchAction.SaveRecognized) },
-            enabled = !isSaving,
-            isLoading = isSaving,
-        )
     }
 }
 

@@ -14,6 +14,7 @@ import com.composables.icons.lucide.Camera
 import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Ellipsis
 import com.composables.icons.lucide.Folder
+import com.composables.icons.lucide.House
 import com.composables.icons.lucide.Image
 import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.TriangleAlert
@@ -94,8 +95,11 @@ object XauxaIcons {
     val Save: ImageVector get() = Lucide.Check
     /** cancelar. */
     val Cancel: ImageVector get() = Lucide.X
-    /** menú "…" de la app bar. */
+    /** menú "…" de la barra superior. */
     val More: ImageVector get() = Lucide.Ellipsis
+    /** Inicio (destino raíz de la NavigationBar, §12 V1.2; "house" en el
+     * catálogo de Lucide 1.1.0). */
+    val Home: ImageVector get() = Lucide.House
     /** Galería (S02). */
     val Gallery: ImageVector get() = Lucide.Image
     /** Cámara (S02/S03). */

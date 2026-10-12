@@ -16,20 +16,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import com.agendaqr.destinations.data.SyncResource
-import com.agendaqr.core.ui.components.XauxaAppBar
-import com.agendaqr.core.ui.components.XauxaAppBarAction
 import com.agendaqr.core.ui.components.XauxaIcons
-import com.agendaqr.core.ui.components.XauxaLiveTile
+import com.agendaqr.core.ui.components.XauxaExtendedFab
+import com.agendaqr.core.ui.components.XauxaNavChromeState
 import com.agendaqr.core.ui.components.XauxaOverflowAction
-import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaScreenScaffold
 import com.agendaqr.core.ui.components.XauxaSearchTrigger
 import com.agendaqr.core.ui.components.XauxaSectionHeader
 import com.agendaqr.core.ui.components.XauxaSkeleton
 import com.agendaqr.core.ui.components.XauxaText
-import com.agendaqr.core.ui.components.XauxaTileGrid
-import com.agendaqr.core.ui.components.XauxaTileItem
-import com.agendaqr.core.ui.components.XauxaTileSize
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaLoading
@@ -37,6 +32,10 @@ import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaCategoryChip
 import com.agendaqr.core.ui.components.XauxaLoadMoreFooter
 import com.agendaqr.core.ui.components.XauxaListRow
+import com.agendaqr.core.ui.components.XauxaTileGrid
+import com.agendaqr.core.ui.components.XauxaTileItem
+import com.agendaqr.core.ui.components.XauxaTileSize
+import com.agendaqr.core.ui.components.XauxaTopBar
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaSpacing
@@ -46,6 +45,7 @@ import com.agendaqr.destinations.domain.Destination
 fun DestinationsScreen(
     state: DestinationsUiState,
     onAction: (DestinationAction) -> Unit,
+    navChrome: XauxaNavChromeState? = null,
     onOpenOperations: () -> Unit = {},
     onOpenSearch: () -> Unit = {},
     onOpenContexts: () -> Unit = {},
@@ -56,42 +56,34 @@ fun DestinationsScreen(
 ) {
     var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
     val paged = state.visibleDestinations.take(visibleCount)
-    // S01 V1.1 (ADR-0005): título ligero, búsqueda como primer bloque,
-    // rejilla de tiles, sección Recientes con filas abiertas sin borde y
-    // las acciones de sesión en la barra de aplicación inferior. Ninguna
-    // capacidad existente desaparece: favorito, filtro de favoritos,
-    // estado de sincronización y cerrar sesión siguen accesibles.
+    // S01 V1.2 (ADR-0012): barra superior con el título, navegación raíz
+    // (Inicio · Buscar · Actividades · Contextos), búsqueda como entrada y
+    // FAB extendido "Añadir". El cuerpo conserva su contenido hasta la
+    // pasada de pantallas.
     XauxaScreenScaffold(
-        // Un único contenedor scrolleable (M1: contenido antes que cromo):
-        // la pantalla entera desliza y la app bar queda anclada abajo.
         scrollable = true,
-        bottomBar = {
-            // M7: las acciones de sesión viven en la barra de aplicación
-            // inferior (menú "…"), no sueltas en el cuerpo. "Buscar" domina
-            // como primer bloque y además es la acción principal de la barra.
-            XauxaAppBar(
-                actions = listOf(
-                    XauxaAppBarAction(
-                        label = AppStrings.BuscarEnAgendaQr,
-                        icon = XauxaIcons.Search,
-                        primary = true,
-                        onClick = onOpenSearch,
-                    ),
-                ),
+        topBar = {
+            XauxaTopBar(
+                title = AppStrings.AgendaQr,
                 overflowActions = listOf(
                     XauxaOverflowAction(AppStrings.CerrarSesion, onClick = onSignOut),
                 ),
                 overflowLabel = AppStrings.Mas,
-                // S01 es la raíz: sin flecha atrás (Back del sistema sale), pero
-                // el copy del parámetro es contrato del componente.
-                backLabel = AppStrings.Volver,
+            )
+        },
+        navDestinations = navChrome?.destinations.orEmpty(),
+        navSelectedId = navChrome?.selectedId,
+        onNavSelect = { navChrome?.onSelect?.invoke(it) },
+        floatingActionButton = {
+            XauxaExtendedFab(
+                label = AppStrings.Anadir,
+                icon = XauxaIcons.Add,
+                onClick = { onAction(DestinationAction.Edit(null)) },
             )
         },
     ) {
-            XauxaPageTitle(text = AppStrings.AgendaQr)
-
-            // S01 — buscar domina visualmente (M2). La barra es la entrada
-            // a S04; el listado de Inicio no se filtra aquí. el
+            // S01 — buscar domina visualmente (§4). La barra es la entrada
+            // a S04; el listado de Inicio no se filtra aquí. El
             // disparador vive en el DS (XauxaSearchTrigger — nodo único con
             // rol Button); el feature ya no compone clickable crudo.
             XauxaSearchTrigger(
@@ -118,18 +110,9 @@ fun DestinationsScreen(
                     dismissLabel = AppStrings.Descartar,
                 )
             }
-            // M2: rejilla de tiles — Añadir, Registrar, Favoritos, Contextos y
-            // el tile ancho vivo (último QR o actividad reciente).
-            //
-            // Tile Favoritos (contrato §5.1): el acento NO cambia para
-            // señalar el filtro (lime era un acento de contexto con otro
-            // significado y el estado dependía solo del color). El estado se
-            // expresa con TEXTO visible ("Favoritos: activado") y semántica
-            // selected/toggleableState (§11).
-            //
-            // Tile vivo (S01): derivado de los datos SIN filtrar — el más
-            // reciente entre el último QR y la actividad más reciente. Una
-            // sola transición por cambio de dato, sin bucles (M11).
+            // El cuerpo conserva la composición V1.1 (rejilla de tiles y
+            // recientes) hasta la pasada de pantallas; el chrome ya es el
+            // convencional de la V1.2.
             val latest = latestTileDatum(state.destinations, state.recentOperations)
             XauxaTileGrid(
                 items = listOf(
@@ -165,7 +148,7 @@ fun DestinationsScreen(
                                 null -> null
                             },
                             content = {
-                                    XauxaLiveTile(data = latest?.let { if (it is LatestTileDatum.Qr) "qr:" + it.destination.id else "op:" + (it as LatestTileDatum.Activity).operation.id }) {
+                                    com.agendaqr.core.ui.components.XauxaLiveTile(data = latest?.let { if (it is LatestTileDatum.Qr) "qr:" + it.destination.id else "op:" + (it as LatestTileDatum.Activity).operation.id }) {
                                         XauxaText(
                                                 text = when (val datum = latest) {
                                                     is LatestTileDatum.Qr ->

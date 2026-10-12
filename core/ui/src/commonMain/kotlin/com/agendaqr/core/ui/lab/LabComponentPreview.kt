@@ -27,10 +27,12 @@ import com.agendaqr.core.ui.components.XauxaDialog
 import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaFavoriteToggle
 import com.agendaqr.core.ui.components.XauxaFilterChip
-import com.agendaqr.core.ui.components.XauxaAppBar
-import com.agendaqr.core.ui.components.XauxaAppBarAction
 import com.agendaqr.core.ui.components.XauxaIcon
 import com.agendaqr.core.ui.components.XauxaIconButton
+import com.agendaqr.core.ui.components.XauxaNavDestination
+import com.agendaqr.core.ui.components.XauxaNavBar
+import com.agendaqr.core.ui.components.XauxaTopBar
+import com.agendaqr.core.ui.components.XauxaTopBarAction
 import com.agendaqr.core.ui.components.XauxaIcons
 import com.agendaqr.core.ui.components.XauxaMetroTile
 import com.agendaqr.core.ui.components.XauxaOverflowAction
@@ -110,7 +112,8 @@ internal fun LabComponentPreview(
                 "xauxa-metro-tile" -> MetroTilePreview(onEvent)
                 "xauxa-tile-grid" -> TileGridPreview(onEvent)
                 "xauxa-pivot" -> PivotPreview(onEvent)
-                "xauxa-app-bar" -> AppBarPreview(onEvent)
+                "xauxa-top-bar" -> TopBarPreview(onEvent)
+                "xauxa-nav-bar" -> NavBarPreview(onEvent)
                 "xauxa-dialog" -> DialogPreview(onEvent)
                 "xauxa-primary-button" -> PrimaryButtonPreview(onEvent)
                 "xauxa-secondary-button" -> SecondaryButtonPreview(onEvent)
@@ -549,24 +552,45 @@ private fun PivotPreview(onEvent: (String) -> Unit) {
 }
 
 @Composable
-private fun AppBarPreview(onEvent: (String) -> Unit) {
+private fun TopBarPreview(onEvent: (String) -> Unit) {
     var last by rememberSaveable { mutableStateOf("(ninguna)") }
-    XauxaAppBar(
-        actions = listOf(
-            XauxaAppBarAction("Guardar", XauxaIcons.Save, primary = true, onClick = { last = "Guardar"; onEvent("AppBar Guardar") }),
-            XauxaAppBarAction("Compartir", XauxaIcons.More, onClick = { last = "Compartir"; onEvent("AppBar Compartir") }),
+    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
+        XauxaTopBar(
+            title = "Detalle",
+            onBack = { last = "Atrás"; onEvent("TopBar onBack") },
+            backLabel = "Atrás",
+            actions = listOf(
+                XauxaTopBarAction("Mostrar QR", onClick = { last = "Mostrar QR"; onEvent("TopBar Mostrar QR") }),
+                XauxaTopBarAction("Editar", onClick = { last = "Editar"; onEvent("TopBar Editar") }),
+            ),
+            overflowActions = listOf(
+                XauxaOverflowAction("Compartir", onClick = { last = "Compartir"; onEvent("TopBar Compartir") }),
+            ),
+            overflowLabel = "Más",
+        )
+        Text(
+            "Última acción: $last",
+            fontSize = XauxaType.Caption,
+            color = XauxaColor.TextSecondary,
+        )
+    }
+}
+
+@Composable
+private fun NavBarPreview(onEvent: (String) -> Unit) {
+    var selected by rememberSaveable { mutableStateOf("inicio") }
+    XauxaNavBar(
+        destinations = listOf(
+            XauxaNavDestination("inicio", "Inicio", XauxaIcons.Home),
+            XauxaNavDestination("buscar", "Buscar", XauxaIcons.Search),
+            XauxaNavDestination("actividades", "Actividades", XauxaIcons.Register),
+            XauxaNavDestination("contextos", "Contextos", XauxaIcons.Context),
         ),
-        overflowActions = listOf(
-            XauxaOverflowAction("Cerrar sesión", onClick = { last = "Cerrar sesión"; onEvent("AppBar overflow Cerrar sesión") }),
-        ),
-        onBack = { last = "Atrás"; onEvent("AppBar onBack") },
-        backLabel = "Atrás",
-        overflowLabel = "Más",
-    )
-    Text(
-        "Última acción: $last",
-        fontSize = XauxaType.Caption,
-        color = XauxaColor.TextSecondary,
+        selectedId = selected,
+        onSelect = { id ->
+            selected = id
+            onEvent("XauxaNavBar.onSelect $id")
+        },
     )
 }
 

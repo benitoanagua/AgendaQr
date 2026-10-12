@@ -51,7 +51,7 @@ fun isUiLiteralAllowed(text: String): Boolean =
  */
 val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-01" to listOf(
-        "border:XauxaAppBar.kt",
+        "border:XauxaChrome.kt",
     ),
     "E-03" to listOf("border:XauxaFeedback.kt"),
     "E-05" to listOf("marker:XauxaListRow — punto de acento solo como identidad de contexto real (componente + Robolectric)"),

@@ -4,11 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.XauxaAppBar
-import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaScreenScaffold
 import com.agendaqr.core.ui.components.XauxaSectionHeader
 import com.agendaqr.core.ui.components.XauxaText
+import com.agendaqr.core.ui.components.XauxaTopBar
 import com.agendaqr.core.ui.theme.XauxaColor
 
 /**
@@ -23,18 +22,18 @@ fun AddDestinationScreen(
     onImport: (List<com.agendaqr.destinations.domain.QrAsset>) -> Unit,
     onBack: () -> Unit,
 ) {
-    // V1.1 (M7): Volver vive en la barra de aplicación inferior; el orden
-    // congelado S02 (Galería → Desde otra app → Cámara) no cambia.
+    // V1.2 (§12): la flecha atrás vive en la barra superior (la misma en
+    // ambas plataformas); el orden congelado S02 (Galería → Desde otra app
+    // → Cámara) no cambia.
     XauxaScreenScaffold(
-        bottomBar = {
-            XauxaAppBar(
-                actions = emptyList(),
+        topBar = {
+            XauxaTopBar(
+                title = AppStrings.Anadir,
                 onBack = onBack,
                 backLabel = AppStrings.Volver,
             )
         },
     ) {
-        XauxaPageTitle(text = AppStrings.Anadir)
         XauxaText(
             AppStrings.TraeAAgendaQrAlgo,
             color = XauxaColor.TextSecondary,

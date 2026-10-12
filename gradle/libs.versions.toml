@@ -60,4 +60,5 @@ roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", versi
 roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
 roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
 lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
+material3-window-size = { group = "org.jetbrains.compose.material3", name = "material3-window-size-class", version.ref = "compose" }
 roborazzi-plugin = { group = "io.github.takahirom.roborazzi", name = "io.github.takahirom.roborazzi.gradle.plugin", version.ref = "roborazzi" }

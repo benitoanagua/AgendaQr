@@ -96,51 +96,52 @@ internal fun OperationEditorScreen(
         contextId = contextSelection.contextId,
     )
 
-    // V1.1 (M7): Guardar vive como acción principal de la app bar
-    // inferior (nunca recortada al final del scroll) y Volver pasa a la
-    // flecha de la barra (sin desbordar a dos líneas).
+    // V1.2 (§12): "Registrar actividad"/"Editar actividad" en la barra
+    // superior; Guardar es el botón principal FIJO abajo (acción real de
+    // guardado), nunca recortado por el scroll.
     XauxaScreenScaffold(
         scrollable = true,
-        bottomBar = {
-            XauxaAppBar(
-                actions = listOf(
-                    XauxaAppBarAction(
-                        label = if (saving) {
-                            AppStrings.Guardando
-                        } else if (existing == null) {
-                            AppStrings.Guardar
-                        } else {
-                            AppStrings.GuardarCambios
-                        },
-                        icon = XauxaIcons.Save,
-                        primary = true,
-                        enabled = !saving,
-                        onClick = {
-                            submitted = true
-                            val at = occurredAt ?: return@XauxaAppBarAction
-                            val candidate = buildCandidate(at)
-                            if (existing == null) {
-                                viewModel.onAction(
-                                    OperationAction.SaveNew(
-                                        type, at, amount, currency, person, null, concept, note, contextSelection.contextId, candidate.id,
-                                    ),
-                                )
-                            } else if (candidate.hasSensitiveChangesComparedTo(existing) && state.operationComprobantes.isNotEmpty()) {
-                                showSensitiveConfirm = true
-                            } else {
-                                viewModel.onAction(OperationAction.Update(candidate))
-                            }
-                        },
-                    ),
-                ),
+        topBar = {
+            XauxaTopBar(
+                title = if (existing == null) AppStrings.RegistrarOperacion else AppStrings.EditarOperacion,
                 onBack = { viewModel.onAction(OperationAction.Back) },
                 backLabel = AppStrings.Volver,
             )
         },
+        bottomAction = {
+            XauxaPrimaryButton(
+                label = if (saving) {
+                    AppStrings.Guardando
+                } else if (existing == null) {
+                    AppStrings.Guardar
+                } else {
+                    AppStrings.GuardarCambios
+                },
+                onClick = {
+                    submitted = true
+                    val at = occurredAt ?: return@XauxaPrimaryButton
+                    val candidate = buildCandidate(at)
+                    if (existing == null) {
+                        viewModel.onAction(
+                            OperationAction.SaveNew(
+                                type, at, amount, currency, person, null, concept, note, contextSelection.contextId, candidate.id,
+                            ),
+                        )
+                    } else if (candidate.hasSensitiveChangesComparedTo(existing) && state.operationComprobantes.isNotEmpty()) {
+                        showSensitiveConfirm = true
+                    } else {
+                        viewModel.onAction(OperationAction.Update(candidate))
+                    }
+                },
+                enabled = !saving,
+                isLoading = saving,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .padding(horizontal = XauxaSpacing.ScreenMargin, vertical = XauxaSpacing.Sm),
+            )
+        },
     ) {
-        XauxaPageTitle(
-            text = if (existing == null) AppStrings.RegistrarOperacion else AppStrings.EditarOperacion,
-        )
         // Tipo con semántica de selección (no dos botones primarios
         // compitiendo): Guardar queda como única acción principal (§1).
         OperationTypeSelector(

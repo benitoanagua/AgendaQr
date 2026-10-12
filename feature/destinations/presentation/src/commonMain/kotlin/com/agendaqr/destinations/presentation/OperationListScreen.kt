@@ -16,6 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.components.*
+import com.agendaqr.core.ui.components.XauxaExtendedFab
+import com.agendaqr.core.ui.components.XauxaNavChromeState
+import com.agendaqr.core.ui.components.XauxaTopBar
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.destinations.domain.*
@@ -38,7 +41,7 @@ import com.agendaqr.destinations.domain.*
 fun OperationsScreen(
     state: OperationsUiState,
     viewModel: OperationsViewModel,
-    onBack: () -> Unit,
+    navChrome: XauxaNavChromeState? = null,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
     onRetrySync: () -> Unit = {},
     /** U3/ADR-0003: crear contexto desde S08 sin perder el draft. */
@@ -46,7 +49,7 @@ fun OperationsScreen(
     justCreatedContextId: String? = null,
 ) {
     when (state.route) {
-        OperationRoute.List -> OperationListScreen(state, viewModel, onBack, syncLookup)
+        OperationRoute.List -> OperationListScreen(state, viewModel, navChrome, syncLookup)
         OperationRoute.Unassociated -> UnassociatedScreen(state, viewModel, syncLookup)
         OperationRoute.New -> OperationEditorScreen(state, viewModel, existing = null, onCreateContext = onCreateContext, justCreatedContextId = justCreatedContextId)
         is OperationRoute.Edit -> OperationEditorScreen(state, viewModel, existing = viewModel.selectedOperation(), onCreateContext = onCreateContext, justCreatedContextId = justCreatedContextId)
@@ -103,27 +106,30 @@ fun OperationsScreen(
 internal fun OperationListScreen(
     state: OperationsUiState,
     viewModel: OperationsViewModel,
-    onBack: () -> Unit = {},
+    navChrome: XauxaNavChromeState? = null,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
     val operations = viewModel.visibleOperations()
     var visibleCount by remember(operations.size) { mutableStateOf(50) }
     val paged = operations.take(visibleCount)
+    // V1.2 (§12): Actividades es destino raíz — barra superior con título,
+    // navegación inferior y FAB extendido "Registrar" (la acción de
+    // creación vive en el FAB, no en la barra).
     XauxaScreenScaffold(
-        bottomBar = {
-            XauxaAppBar(
-                actions = listOf(
-                    XauxaAppBarAction(AppStrings.Nuevo, XauxaIcons.Add, onClick = { viewModel.onAction(OperationAction.New) }, primary = true),
-                ),
-                onBack = onBack,
-                backLabel = AppStrings.Inicio,
+        topBar = {
+            XauxaTopBar(title = AppStrings.Operaciones)
+        },
+        navDestinations = navChrome?.destinations.orEmpty(),
+        navSelectedId = navChrome?.selectedId,
+        onNavSelect = { navChrome?.onSelect?.invoke(it) },
+        floatingActionButton = {
+            XauxaExtendedFab(
+                label = AppStrings.RegistrarOperacion,
+                icon = XauxaIcons.Add,
+                onClick = { viewModel.onAction(OperationAction.New) },
             )
         },
     ) {
-            // M6: título de página en display ligero; M7: "Nuevo" es la
-            // acción principal de la barra inferior (bloque de acento) y
-            // "Inicio" pasa a la flecha atrás de la misma barra.
-            XauxaPageTitle(text = AppStrings.Operaciones)
             XauxaSearchBar(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = AppStrings.Buscar, placeholder = AppStrings.BuscarOperaciones, onClear = { viewModel.onAction(OperationAction.Search("")) }, clearLabel = AppStrings.Limpiar)
         if (state.unassociated.isNotEmpty()) {
             XauxaStatusBanner(unassociatedReceiptsLabel(state.unassociated.size))
@@ -196,18 +202,17 @@ internal fun UnassociatedScreen(
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
     var selectedReceipt by remember { mutableStateOf<Comprobante?>(null) }
+    // V1.2 (§12): bandeja con título y flecha atrás en la barra superior
+    // (no es destino raíz: no lleva navegación inferior).
     XauxaScreenScaffold(
-        bottomBar = {
-            XauxaAppBar(
-                actions = emptyList(),
+        topBar = {
+            XauxaTopBar(
+                title = AppStrings.ComprobantesSinAsociar,
                 onBack = { viewModel.onAction(OperationAction.Back) },
                 backLabel = AppStrings.Volver,
             )
         },
     ) {
-            // M6: título de página en display ligero; M7: el Volver del
-            // estado vacío vive en la flecha de la barra inferior.
-            XauxaPageTitle(text = AppStrings.ComprobantesSinAsociar)
             if (state.unassociated.isEmpty()) {
                 XauxaEmptyState(title = AppStrings.noUnassociatedReceipts)
             } else {

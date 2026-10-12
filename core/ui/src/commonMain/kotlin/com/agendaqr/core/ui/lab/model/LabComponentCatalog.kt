@@ -511,46 +511,81 @@ object LabComponentCatalog {
             platforms = commonPlatforms(),
         ),
         LabComponentContract(
-            id = "xauxa-app-bar",
-            name = "XauxaAppBar",
+            id = "xauxa-top-bar",
+            name = "XauxaTopBar",
             category = LabCategory.ACTIONS,
-            purpose = "Barra de aplicacion inferior: 2-4 acciones con icono + etiqueta visible y menu ... .",
-            description = "Aloja la accion principal (bloque solido de acento, M10) y las secundarias de " +
-                "la pantalla (M7). Sustituye a botones sueltos de Volver/Guardar/Cerrar sesion en el " +
-                "cuerpo. Respeta insets de navegacion/teclado: la accion principal nunca queda recortada. " +
-                "Etiqueta visible en TODO icono (§11/M12: desviacion consciente de Metro).",
+            purpose = "Barra superior estándar: TopAppBar pequeña con título a la izquierda.",
+            description = "Flecha atrás cuando hay a dónde volver (la misma en ambas plataformas), " +
+                "máximo 2 acciones visibles y menú \"…\" para el resto (§12 V1.2). Las acciones sin " +
+                "glifo aprobado se pintan como acción de texto; las descripciones accesibles son " +
+                "siempre la etiqueta (§11).",
             props = listOf(
-                LabProp("actions", "List<XauxaAppBarAction>", "2-4 con icono + etiqueta"),
+                LabProp("title", "String"),
                 LabProp("modifier", "Modifier"),
-                LabProp("overflowActions", "List<XauxaOverflowAction>", "emptyList()"),
                 LabProp("onBack", "(() -> Unit)?", "null"),
-                LabProp("backLabel", "String", "'Atrás'"),
+                LabProp("backLabel", "String"),
+                LabProp("actions", "List<XauxaTopBarAction>", "máximo 2 visibles"),
+                LabProp("overflowActions", "List<XauxaOverflowAction>", "emptyList()"),
+                LabProp("overflowLabel", "String"),
             ),
             states = listOf(
-                LabState("Default", "Acciones con icono + etiqueta; principal en bloque de acento.", LabReviewStatus.VERIFIED),
-                LabState("Interactivo", "Activacion de acciones, overflow y atras.", LabReviewStatus.VERIFIED),
+                LabState("Default", "Título titleLarge y flecha atrás cuando onBack != null.", LabReviewStatus.VERIFIED),
+                LabState("Interactivo", "Acciones, overflow y atrás con ripple estándar.", LabReviewStatus.VERIFIED),
             ),
             events = listOf(
-                LabEvent("action.onClick", "Ejecuta la accion etiquetada."),
-                LabEvent("onBack", "Atras (requerido en iOS; en Android el Back del sistema se mantiene)."),
+                LabEvent("action.onClick", "Ejecuta la acción etiquetada."),
+                LabEvent("onBack", "Atrás — misma flecha en Android e iOS."),
             ),
             tokens = listOf(
-                LabTokenRef("XauxaMetrics.AppBarHeight", "Altura minima de la barra."),
-                LabTokenRef("XauxaMetrics.ControlMinSize", "Objetivo tactil de cada accion."),
-                LabTokenRef("XauxaColor.Brand", "Bloque de acento de la accion principal."),
-                LabTokenRef("XauxaColor.FocusRing", "Anillo de foco sobre cada accion."),
+                LabTokenRef("XauxaMetrics.ControlMinSize", "Objetivo táctil de cada acción."),
+                LabTokenRef("XauxaColor.BorderControl", "Límite del overlay del menú (E-01)."),
             ),
-            usage = listOf("Barra inferior de cada pantalla V1.1 (accion principal + secundarias + ...)."),
+            usage = listOf("Barra superior de todas las superficies de la V1.2."),
             notes = listOf(
-                "El boton ... expone XauxaOverflowAction con la misma semantica de menu.",
-                "La flecha atras es requerida en iOS y redundante en Android (spec §12).",
+                "El botón … expone XauxaOverflowAction con la misma semántica de menú.",
+                "Las superficies raíz no llevan flecha atrás: la navegación inferior cubre el regreso.",
             ),
-            tags = listOf("appbar", "navegacion", "acciones", "metro"),
+            tags = listOf("topbar", "navegación", "acciones"),
             darkThemeSupport = LabDarkThemeSupport.PENDING,
-            darkThemeNote = "Resuelve el esquema vía XauxaColor; validacion visual en T8.",
-            whenToUse = "Acciones primaria/secundarias de pantalla. Secciones internas con XauxaPivot.",
-            androidMapping = "Surface rectangular anclada a bottomBar del scaffold.",
-            iosMapping = "SwiftUI safeArea bottom bar con etiqueta e icono.",
+            darkThemeNote = "Colores del esquema vía MaterialTheme; validación visual en dispositivo.",
+            whenToUse = "Barra superior de cada pantalla. Navegación raíz con XauxaNavBar.",
+            androidMapping = "Material3 TopAppBar con IconButton/DropdownMenu.",
+            iosMapping = "Mismo componente compartido (Material3).",
+            platforms = commonPlatforms(),
+        ),
+        LabComponentContract(
+            id = "xauxa-nav-bar",
+            name = "XauxaNavBar",
+            category = LabCategory.ACTIONS,
+            purpose = "Navegación raíz: NavigationBar con 4 destinos etiquetados.",
+            description = "Cada destino lleva etiqueta + icono SIEMPRE (nunca solo icono, §12 V1.2). " +
+                "Solo aparece en las superficies raíz cuando están en su lista raíz; en ancho " +
+                "expandido el scaffold la sustituye por XauxaNavRail. Cambiar de destino conserva " +
+                "la raíz del back stack.",
+            props = listOf(
+                LabProp("destinations", "List<XauxaNavDestination>"),
+                LabProp("selectedId", "String"),
+                LabProp("onSelect", "(String) -> Unit"),
+                LabProp("modifier", "Modifier"),
+            ),
+            states = listOf(
+                LabState("Default", "Destino seleccionado con etiqueta e icono.", LabReviewStatus.VERIFIED),
+                LabState("Interactivo", "Cambio de destino con ripple estándar.", LabReviewStatus.VERIFIED),
+            ),
+            events = listOf(LabEvent("onSelect", "Selección de destino raíz (popToRoot + push).")),
+            tokens = listOf(
+                LabTokenRef("XauxaMetrics.ControlMinSize", "Objetivo táctil de cada destino."),
+                LabTokenRef("XauxaColor.OnBrand", "Icono del destino activo."),
+                LabTokenRef("XauxaColor.TextSecondary", "Icono de destinos inactivos."),
+            ),
+            usage = listOf("Superficies raíz: Inicio · Buscar · Actividades · Contextos."),
+            notes = listOf("La etiqueta es visible siempre; el significado nunca depende solo del icono."),
+            tags = listOf("navbar", "navegación", "raíz"),
+            darkThemeSupport = LabDarkThemeSupport.PENDING,
+            darkThemeNote = "Colores del esquema vía MaterialTheme; validación visual en dispositivo.",
+            whenToUse = "Solo superficies raíz en su lista raíz. En expandido, XauxaNavRail.",
+            androidMapping = "Material3 NavigationBar/NavigationRail.",
+            iosMapping = "Mismo componente compartido (Material3).",
             platforms = commonPlatforms(),
         ),
         LabComponentContract(

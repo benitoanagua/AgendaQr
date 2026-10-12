@@ -12,8 +12,6 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import com.agendaqr.core.ui.components.XauxaAppBar
-import com.agendaqr.core.ui.components.XauxaAppBarAction
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaTextInput
@@ -185,20 +183,20 @@ class Round2FontScaleTest {
     }
 
     @Test
-    fun app_bar_actions_keep_two_lines_and_target_at_every_scale() {
+    fun top_bar_actions_keep_target_at_every_scale() {
         composeAtScales(
             {
-                XauxaAppBar(
+                com.agendaqr.core.ui.components.XauxaTopBar(
+                    title = "Detalle con nombre largo de destino de ejemplo",
+                    onBack = {},
+                    backLabel = "Atrás",
                     actions = listOf(
-                        XauxaAppBarAction(
+                        com.agendaqr.core.ui.components.XauxaTopBarAction(
                             label = "Guardar cambios",
-                            icon = null,
-                            primary = true,
                             onClick = {},
                         ),
-                        XauxaAppBarAction(label = "Compartir", icon = null, onClick = {}),
+                        com.agendaqr.core.ui.components.XauxaTopBarAction(label = "Compartir", onClick = {}),
                     ),
-                    backLabel = "Atrás",
                 )
             },
         ) {

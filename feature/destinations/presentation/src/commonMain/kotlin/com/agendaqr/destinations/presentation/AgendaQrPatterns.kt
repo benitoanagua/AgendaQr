@@ -6,13 +6,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.XauxaAppBar
 import com.agendaqr.core.ui.components.XauxaEmptyState
-import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaQrPreview
 import com.agendaqr.core.ui.components.XauxaScreenScaffold
-import com.agendaqr.core.ui.components.XauxaStatusBanner
-import com.agendaqr.core.ui.components.XauxaTone
+import com.agendaqr.core.ui.components.XauxaTopBar
 import com.agendaqr.core.ui.theme.XauxaSpacing
 
 @Composable
@@ -27,12 +24,19 @@ fun FirstUsePattern(onAdd: () -> Unit) {
 
 @Composable
 fun OperationFailurePattern(message: String) {
-    XauxaStatusBanner(message = message, tone = XauxaTone.Danger)
+    com.agendaqr.core.ui.components.XauxaStatusBanner(message = message, tone = com.agendaqr.core.ui.components.XauxaTone.Danger)
 }
 
 @Composable
 fun DestinationNotFound(onBack: () -> Unit) {
     XauxaScreenScaffold(
+        topBar = {
+            XauxaTopBar(
+                title = AppStrings.DestinoNoEncontrado,
+                onBack = onBack,
+                backLabel = AppStrings.Volver,
+            )
+        },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -50,20 +54,18 @@ fun QrFullscreenPattern(
     encodedQr: String,
     onBack: () -> Unit,
 ) {
-    // M6/M7: título de página en display ligero; Volver vive en la barra
-    // de aplicación inferior, no suelto en el cuerpo.
+    // V1.2 (§12): "QR" en la barra superior con flecha atrás.
     XauxaScreenScaffold(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg, Alignment.CenterVertically),
-        bottomBar = {
-            XauxaAppBar(
-                actions = emptyList(),
+        topBar = {
+            XauxaTopBar(
+                title = AppStrings.Qr,
                 onBack = onBack,
                 backLabel = AppStrings.Volver,
             )
         },
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg, Alignment.CenterVertically),
     ) {
-        XauxaPageTitle(text = AppStrings.Qr)
         XauxaQrPreview(encodedQr, modifier = Modifier.fillMaxWidth())
     }
 }

@@ -63,10 +63,13 @@ class ScreensA11yCoverageTest {
         compose.onNodeWithText("Galería").assertHeightIsAtLeast(48.dp)
         compose.onNodeWithText("Galería (varios)").assertHeightIsAtLeast(48.dp)
         compose.onNodeWithText("Cámara").assertHeightIsAtLeast(48.dp)
-        compose.onNodeWithText("Volver").assertHeightIsAtLeast(48.dp)
+        // V1.2: la flecha atrás de la barra superior es un IconButton con
+        // descripción accesible (M3 garantiza el target táctil de 48 dp).
+        compose.onNodeWithContentDescription("Volver").assertExists()
     }
 
-    // S04 — Buscar: título de sección legible; el estado vacío es textual.
+    // S04 — Buscar: destino raíz con barra de navegación; el estado vacío
+    // es textual.
     @Test
     fun s04_search_intro_is_textual_and_heading_exists() {
         compose.setContent {
@@ -75,12 +78,10 @@ class ScreensA11yCoverageTest {
                     state = GlobalSearchUiState(query = ""),
                     onAction = { },
                     onSelect = { },
-                    onBack = { },
                 )
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("Volver").assertHeightIsAtLeast(48.dp)
         // §11: el estado se expresa con texto, no solo con color.
         compose.onNodeWithText("Busca QR, actividades, contextos o comprobantes.")
             .assertIsDisplayed()
@@ -119,7 +120,9 @@ class ScreensA11yCoverageTest {
         compose.waitForIdle()
         compose.onNodeWithText("Revisar QR").assert(headingMatcher())
         compose.onNodeWithText("Guardar").assertHeightIsAtLeast(48.dp)
-        compose.onNodeWithText("Volver").assertHeightIsAtLeast(48.dp)
+        // V1.2: la flecha atrás de la barra superior es un IconButton con
+        // descripción accesible (M3 garantiza el target táctil de 48 dp).
+        compose.onNodeWithContentDescription("Volver").assertExists()
     }
 
     // S10/S07 — editor de operación: selector S08 con semántica y targets.
@@ -286,23 +289,27 @@ class ScreensA11yCoverageTest {
     // en dos líneas y el primario nunca queda recortado al final del
     // scroll: ambos viven en la XauxaAppBar anclada a los insets.
     @Test
-    fun t07_actions_live_in_the_bottom_app_bar() {
+    fun t07_actions_live_in_the_top_bar_and_save_stays_reachable() {
         var saved = false
+        var backed = false
         compose.setContent {
             XauxaTheme {
                 ImportReviewScreen(
                     assets = listOf(com.agendaqr.destinations.domain.QrAsset("eA==", content = "qr-real")),
                     onSaveAll = { saved = true },
-                    onBack = { },
+                    onBack = { backed = true },
                 )
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("Volver").assertHeightIsAtLeast(48.dp)
+        // V1.2: la flecha atrás vive en la barra superior (misma en ambas
+        // plataformas) y Guardar es el botón principal FIJO abajo (acción
+        // real de guardado, nunca recortada). M3 garantiza el target de la
+        // flecha (minimumInteractiveComponentSize).
+        compose.onNodeWithContentDescription("Volver").assertExists().performClick()
+        assertTrue(backed, "La flecha atrás ejecuta el pop de superficie")
         compose.onNodeWithText("Guardar").assertHeightIsAtLeast(48.dp).performClick()
-        assertTrue(saved, "Guardar es la acción principal de la app bar (nunca recortada)")
-        // El preview del QR va centrado (S09/T7), no pegado a la izquierda.
-        // (Verificación visual adicional en T8 con capturas.)
+        assertTrue(saved, "Guardar es la acción principal fija abajo (nunca recortada)")
     }
 }
 

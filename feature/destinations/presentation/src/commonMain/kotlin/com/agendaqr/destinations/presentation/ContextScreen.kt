@@ -11,14 +11,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.XauxaAppBar
-import com.agendaqr.core.ui.components.XauxaAppBarAction
+import com.agendaqr.core.ui.components.XauxaNavChromeState
 import com.agendaqr.core.ui.components.XauxaEmptyState
-import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaPivot
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.components.XauxaScreenScaffold
+import com.agendaqr.core.ui.components.XauxaTopBar
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaText
@@ -49,6 +48,7 @@ fun ContextsScreen(
     state: ContextsUiState,
     onAction: (ContextAction) -> Unit,
     onBack: () -> Unit,
+    navChrome: XauxaNavChromeState? = null,
     onOpenDestination: (String) -> Unit = {},
     onOpenOperation: (String) -> Unit = {},
     onOpenComprobante: (String) -> Unit = {},
@@ -60,6 +60,7 @@ fun ContextsScreen(
             state = state,
             onAction = onAction,
             onBack = onBack,
+            navChrome = navChrome,
             onCreateContext = { showCreateDialog = true },
         )
         is ContextRoute.Detail -> ContextDetail(
@@ -89,20 +90,20 @@ private fun ContextList(
     state: ContextsUiState,
     onAction: (ContextAction) -> Unit,
     onBack: () -> Unit,
+    navChrome: XauxaNavChromeState?,
     onCreateContext: () -> Unit = {},
 ) {
+    // V1.2 (§12): Contextos es destino raíz — barra superior con título y
+    // navegación inferior; sin flecha atrás (la navegación raíz y el Back
+    // del sistema cubren el regreso a Inicio).
     XauxaScreenScaffold(
-        bottomBar = {
-            // M7: Volver vive en la barra de aplicación inferior (flecha atrás,
-            // required en iOS; Back del sistema intacto en Android).
-            XauxaAppBar(
-                actions = emptyList(),
-                onBack = onBack,
-                backLabel = AppStrings.Volver,
-            )
+        topBar = {
+            XauxaTopBar(title = AppStrings.Contextos)
         },
+        navDestinations = navChrome?.destinations.orEmpty(),
+        navSelectedId = navChrome?.selectedId,
+        onNavSelect = { navChrome?.onSelect?.invoke(it) },
     ) {
-        XauxaPageTitle(text = AppStrings.Contextos)
         state.error?.let { err ->
             XauxaStatusBanner(
                 err.display(),
@@ -155,12 +156,14 @@ private fun ContextDetail(
     onOpenOperations: () -> Unit,
 ) {
     val contents = state.contents
+    // V1.2 (§12): detalle de contexto con título en la barra superior y
+    // flecha atrás; las secciones siguen siendo QR · Actividades ·
+    // Comprobantes (pestañas estándar).
     XauxaScreenScaffold(
         scrollable = true,
-        bottomBar = {
-            // M7: Volver vive en la barra inferior (flecha atrás).
-            XauxaAppBar(
-                actions = emptyList(),
+        topBar = {
+            XauxaTopBar(
+                title = contents?.context?.name ?: AppStrings.Contextos,
                 onBack = { onAction(ContextAction.Back) },
                 backLabel = AppStrings.Volver,
             )
@@ -182,21 +185,20 @@ private fun ContextDetail(
             )
         }
         contents?.let { data ->
-            // V1.1 (ADR-0005, S06): título ligero; el acento del contexto
-            // (M4, derivado del id) tiñe los encabezados del pivot.
-            val contextAccent = accentFor(data.context.id)
-            XauxaPageTitle(text = data.context.name)
+            // El acento del contexto (M4, derivado del id) tiñe los
+            // encabezados de SU superficie cuando es legible como texto.
+            val contextAccent = accentFor(data.context.id).background
             data.context.note?.takeIf { it.isNotBlank() }?.let {
                 XauxaText(it, size = XauxaType.Label, color = XauxaColor.TextSecondary)
             }
-            // M7: pivot QR · Actividades · Comprobantes (modelo mental §2;
-            // sin crear navegación nueva — la conmutación es local).
+            // Pestañas estándar QR · Actividades · Comprobantes (modelo
+            // mental §2; sin crear navegación nueva — la conmutación es local).
             var pivotSection by remember { mutableStateOf(0) }
             XauxaPivot(
                 sections = listOf(AppStrings.Qr, AppStrings.Operaciones, AppStrings.Comprobantes),
                 selectedIndex = pivotSection,
                 onSelect = { pivotSection = it },
-                accent = contextAccent.background,
+                accent = contextAccent,
             ) { section ->
                 Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                     when (section) {
