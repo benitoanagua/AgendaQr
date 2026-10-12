@@ -12,10 +12,8 @@ import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.Camera
-import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.CircleCheck
 import com.composables.icons.lucide.Ellipsis
-import com.composables.icons.lucide.FileText
 import com.composables.icons.lucide.Folder
 import com.composables.icons.lucide.House
 import com.composables.icons.lucide.Image
@@ -23,7 +21,6 @@ import com.composables.icons.lucide.ImageOff
 import com.composables.icons.lucide.Inbox
 import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.PackageOpen
 import com.composables.icons.lucide.Plus
 import com.composables.icons.lucide.QrCode
 import com.composables.icons.lucide.Receipt
@@ -92,8 +89,6 @@ object AmIcons {
     val Context: ImageVector get() = Lucide.Folder
     /** atrás (flecha de la barra superior). */
     val Back: ImageVector get() = Lucide.ArrowLeft
-    /** guardar (check). */
-    val Save: ImageVector get() = Lucide.Check
     /** cancelar. */
     val Cancel: ImageVector get() = Lucide.X
     /** menú "…" de la barra superior. */
@@ -122,12 +117,8 @@ object AmIcons {
     val SearchX: ImageVector get() = Lucide.SearchX
     /** Bandeja vacía (sin actividad asociada). */
     val Inbox: ImageVector get() = Lucide.Inbox
-    /** Sin comprobantes. */
-    val FileText: ImageVector get() = Lucide.FileText
     /** Imagen no disponible. */
     val ImageOff: ImageVector get() = Lucide.ImageOff
-    /** Nada pendiente de importar. */
-    val PackageOpen: ImageVector get() = Lucide.PackageOpen
     /** Escanear (entrada de captura). */
     val ScanLine: ImageVector get() = Lucide.ScanLine
 }

@@ -130,9 +130,9 @@ class ImportBatchPendingItemsTest {
     fun save_duplicate_qr_persists_a_new_copy() = runBlocking {
         val destinations = RecordingDestinations()
         val host = ImportBatchItemHost(destinations, NoopReceipts(), NoopFiles(), RecordingPayloads())
-        val outcome = host.saveDuplicateAnyway(qrDuplicate)
 
-        assertEquals(ImportBatchItemHost.SaveOutcome.Saved(ImportKind.QR), outcome)
+        host.saveDuplicateAnyway(qrDuplicate)
+        // Efecto: se persiste exactamente una copia nueva.
         val saved = destinations.saved.single()
         // Copia deliberada con id NUEVO: el original y la copia conviven.
         assertTrue(saved.id != qrDuplicate.id, "La copia no debe pisar al original")
@@ -154,9 +154,9 @@ class ImportBatchPendingItemsTest {
         )
         val host = ImportBatchItemHost(NoopDestinations(), receipts, NoopFiles(), payloads)
 
-        val outcome = host.saveDuplicateAnyway(duplicateReceipt)
+        host.saveDuplicateAnyway(duplicateReceipt)
 
-        assertEquals(ImportBatchItemHost.SaveOutcome.Saved(ImportKind.COMPROBANTE), outcome)
+        // Efecto: se persiste el comprobante y el payload temporal desaparece.
         assertEquals(1, receipts.saved.size)
         assertNotNull(receipts.saved.single())
         // El payload temporal se elimina al guardar.
@@ -164,16 +164,16 @@ class ImportBatchPendingItemsTest {
     }
 
     @Test
-    fun save_without_payload_reports_missing_payload() = runBlocking {
-        val host = ImportBatchItemHost(NoopDestinations(), NoopReceipts(), NoopFiles(), RecordingPayloads())
-        val outcome = host.saveDuplicateAnyway(
+    fun save_without_payload_or_unknown_kind_persists_nothing() = runBlocking {
+        val receipts = NoopReceipts()
+        val host = ImportBatchItemHost(NoopDestinations(), receipts, NoopFiles(), RecordingPayloads())
+        // Sin payload retenido: nada se persiste.
+        host.saveDuplicateAnyway(
             ImportCandidate("rec-x", ImportKind.COMPROBANTE, "fp-x", payloadRef = "missing"),
         )
-        assertEquals(ImportBatchItemHost.SaveOutcome.MissingPayload, outcome)
-        assertEquals(
-            ImportBatchItemHost.SaveOutcome.NotApplicable,
-            host.saveDuplicateAnyway(unknown),
-        )
+        // Tipo DESCONOCIDO: nada se persiste.
+        host.saveDuplicateAnyway(unknown)
+        assertEquals(0, receipts.saved.size)
     }
 
     @Test

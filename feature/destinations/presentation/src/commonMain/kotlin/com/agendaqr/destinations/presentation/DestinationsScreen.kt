@@ -2,19 +2,13 @@ package com.agendaqr.destinations.presentation
 
 import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.Alignment
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.AmFavoriteToggle
@@ -29,9 +23,7 @@ import com.agendaqr.core.ui.components.AmSectionHeader
 import com.agendaqr.core.ui.components.AmSkeleton
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmStatusBanner
-import com.agendaqr.core.ui.components.AmLoading
 import com.agendaqr.core.ui.components.AmEmptyState
-import com.agendaqr.core.ui.components.AmCategoryChip
 import com.agendaqr.core.ui.components.AmLoadMoreFooter
 import com.agendaqr.core.ui.components.AmListRow
 import com.agendaqr.core.ui.components.AmTopBar
@@ -46,12 +38,9 @@ fun DestinationsScreen(
     onAction: (DestinationAction) -> Unit,
     navChrome: AmNavChromeState? = null,
     appHosts: AppHosts? = null,
-    onOpenOperations: () -> Unit = {},
     onOpenSearch: () -> Unit = {},
     onOpenContexts: () -> Unit = {},
     onSignOut: () -> Unit = {},
-    /** S01 (tile vivo): abre la actividad reciente del tile en su detalle. */
-    onOpenOperation: (String) -> Unit = {},
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
     var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
@@ -120,7 +109,6 @@ fun DestinationsScreen(
                 horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
             ) {
-                state.category?.let { AmCategoryChip(it) }
                 AmFilterChip(
                     label = if (state.favoriteOnly) AppStrings.FavoritosActivado else AppStrings.Favoritos,
                     selected = state.favoriteOnly,
@@ -136,6 +124,7 @@ fun DestinationsScreen(
                 // flujo de datos no se toca.
                 state.isLoading -> AmSkeleton(lines = 4)
                 state.visibleDestinations.isEmpty() -> AmEmptyState(
+                    icon = AmIcons.QrCode,
                     title = if (state.destinations.isEmpty()) AppStrings.AunNoHayDestinos else AppStrings.NoSeEncontraronDestinos,
                     subtitle = if (state.destinations.isEmpty()) AppStrings.emptyDestinationsHint else AppStrings.PruebaConOtraBusquedaOLimpia,
                     actionLabel = if (state.destinations.isEmpty()) AppStrings.Anadir else AppStrings.LimpiarBusqueda,

@@ -117,7 +117,6 @@ class OperationsViewModel(
             }
             OperationAction.ClearIncoming -> _state.update { it.copy(pendingIncoming = null, pendingDuplicates = emptyList()) }
             is OperationAction.SaveIncoming -> saveIncoming(action.openInbox, action.allowDuplicate)
-            OperationAction.DismissDuplicateWarning -> _state.update { it.copy(pendingDuplicates = emptyList()) }
             OperationAction.OpenUnassociated -> _state.update { it.copy(route = OperationRoute.Unassociated, error = null) }
             OperationAction.Back -> back()
             OperationAction.ClearError -> _state.update { it.copy(error = null) }

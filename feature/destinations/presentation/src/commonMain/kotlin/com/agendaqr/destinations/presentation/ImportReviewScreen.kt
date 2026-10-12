@@ -1,7 +1,6 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
-import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -13,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.AmEmptyState
+import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmPrimaryButton
 import com.agendaqr.core.ui.components.AmQrPreview
@@ -85,6 +85,7 @@ fun ImportReviewScreen(
         }
         if (assets.isEmpty()) {
             AmEmptyState(
+                icon = AmIcons.ScanLine,
                 title = AppStrings.NoHayQrParaRevisar,
                 subtitle = AppStrings.VuelveEImportaDesdeCamara,
                 actionLabel = AppStrings.Volver,

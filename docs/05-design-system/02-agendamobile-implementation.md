@@ -15,7 +15,7 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 └── components/
     ├── AmText.kt          # AmText, AmHeading (texto con interlineado propio)
     ├── AmIcon.kt          # AmIcon + AmIcons (Lucide, único punto de entrada)
-    ├── AmTone.kt           # AmTone + toneColors + amPressFeedback + amFocusRing (canon del foco)
+    ├── AmTone.kt           # AmTone + toneColors + glifo por tono
     ├── AmButtons.kt       # botones, chips, toggle de favorito
     ├── AmInputs.kt        # AmTextField (tonal), AmSearchField, AmSearchTrigger
     ├── AmLists.kt         # AmListRow (celda), AmBadge
@@ -33,7 +33,7 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 
 - TODO literal visual (hex, `dp`, `sp`, `Color(...)`, `Color.<nombre>`, formas con esquinas) vive en `AmTokens.kt`. El resto del repositorio consume `AmColor`/`AmSpacing`/`AmShapes`/`AmRadius`/`AmMetrics`/`AmType`/`AmTextStyles`/`AmMotion`.
 - Un cambio visual es un cambio de token + pin actualizado en `AmSchemeTest` + capturas regeneradas; nunca un literal nuevo en una pantalla.
-- Los pares de color llegan verificados: `AmSchemeTest` fija los umbrales (4.5:1 contenido, 3:1 bordes/foco, 3:1 suelo deshabilitado, 7:1 overlay de pulsación).
+- Los pares de color llegan verificados: `AmSchemeTest` fija los umbrales (4.5:1 contenido, 3:1 bordes/foco, 3:1 suelo deshabilitado); `AmContrastPairsTest` fija los bloques de identidad de contexto, el par del botón primario y el rol focus.
 
 ## 3. Reglas de componente
 
@@ -52,6 +52,6 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 ## 5. Validación
 
 - Gates estáticos: `verifyDesignSystemCompliance`, `verifyDesignSystemFixtures`, `verifyControlMinSize`.
-- Contratos de sistema: `AmSchemeTest`, `AmTypographyTest`, `AmAccentTest`, `AmSurfaceMotionTest`, `AmFocusRingContrastTest` (commonTest); `AmAccessibilityContractTest`, `AmPivotLayoutTest`, `AmUiPolishContractTest` (androidUnitTest/Robolectric).
+- Contratos de sistema: `AmSchemeTest`, `AmTypographyTest`, `AmAccentTest`, `AmSurfaceMotionTest`, `AmContrastPairsTest` (commonTest); `AmAccessibilityContractTest`, `AmPivotLayoutTest`, `AmUiPolishContractTest` (androidUnitTest/Robolectric).
 - Regresión visual: `recordRoborazzi` → `recordVisualHashes`/`verifyVisualHashes` (ADR-0007).
 - Agregador: `verifyAgendaQrArchitecture`.

@@ -272,17 +272,6 @@ fun AmNavRail(
     }
 }
 
-/**
- * Transición estándar entre superficies: fundido con un desplazamiento
- * horizontal pequeño, corto y con tokens de movimiento; con reduced
- * motion el cambio es inmediato (duración 0).
- */
-enum class AmSurfaceMotion { Standard, Reduced }
-
-/** Decisión pura y testeable del movimiento de la transición. */
-fun amSurfaceMotion(reducedMotion: Boolean): AmSurfaceMotion =
-    if (reducedMotion) AmSurfaceMotion.Reduced else AmSurfaceMotion.Standard
-
 /** Fracción del ancho que se desplaza la superficie saliente (1/8). */
 internal const val AmSurfaceSlideFraction = 8
 

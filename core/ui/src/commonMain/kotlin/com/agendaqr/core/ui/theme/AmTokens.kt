@@ -239,36 +239,20 @@ val LocalAmColorScheme = compositionLocalOf { DarkAmColorScheme }
  */
 object AmColor {
     val Background: Color @Composable get() = LocalAmColorScheme.current.background
-    val Surface: Color @Composable get() = LocalAmColorScheme.current.surface
     val SurfaceSecondary: Color @Composable get() = LocalAmColorScheme.current.surfaceSecondary
-    val Border: Color @Composable get() = LocalAmColorScheme.current.border
     val Divider: Color @Composable get() = LocalAmColorScheme.current.divider
-    /** Borde FUNCIONAL de control (≥ 3:1 contra background/surface). */
-    val BorderControl: Color @Composable get() = LocalAmColorScheme.current.borderControl
     val TextPrimary: Color @Composable get() = LocalAmColorScheme.current.textPrimary
     val TextSecondary: Color @Composable get() = LocalAmColorScheme.current.textSecondary
     val TextTertiary: Color @Composable get() = LocalAmColorScheme.current.textTertiary
     val Accent: Color @Composable get() = LocalAmColorScheme.current.accent
     val OnAccent: Color @Composable get() = LocalAmColorScheme.current.onAccent
-    val AccentContainer: Color @Composable get() = LocalAmColorScheme.current.accentContainer
-    val OnAccentContainer: Color @Composable get() = LocalAmColorScheme.current.onAccentContainer
     /** Acento legible como texto (≥ 4.5:1 sobre background y surface). */
     val AccentText: Color @Composable get() = LocalAmColorScheme.current.accentText
     val Danger: Color @Composable get() = LocalAmColorScheme.current.danger
     val OnDanger: Color @Composable get() = LocalAmColorScheme.current.onDanger
-    val DangerContainer: Color @Composable get() = LocalAmColorScheme.current.dangerContainer
-    val Success: Color @Composable get() = LocalAmColorScheme.current.success
-    val SuccessContainer: Color @Composable get() = LocalAmColorScheme.current.successContainer
-    val Warning: Color @Composable get() = LocalAmColorScheme.current.warning
-    val WarningContainer: Color @Composable get() = LocalAmColorScheme.current.warningContainer
-    val Info: Color @Composable get() = LocalAmColorScheme.current.info
-    val InfoContainer: Color @Composable get() = LocalAmColorScheme.current.infoContainer
     val Focus: Color @Composable get() = LocalAmColorScheme.current.focus
     val Disabled: Color @Composable get() = LocalAmColorScheme.current.disabled
     val OnDisabled: Color @Composable get() = LocalAmColorScheme.current.onDisabled
-    val InverseSurface: Color @Composable get() = LocalAmColorScheme.current.inverseSurface
-    val InverseOnSurface: Color @Composable get() = LocalAmColorScheme.current.inverseOnSurface
-    val InverseAccent: Color @Composable get() = LocalAmColorScheme.current.inverseAccent
     /** Lienzo del QR: fondo claro garantizado en claro y oscuro. */
     val QrCanvas: Color @Composable get() = LocalAmColorScheme.current.qrCanvas
     /** Transparente funcional (indicadores deshabilitados de M3); único
@@ -301,8 +285,6 @@ object AmMetrics {
     val Border = 1.dp
     /** Borde fuerte FUNCIONAL (marco del encuadre del scanner). */
     val BorderStrong = 3.dp
-    /** Ancho del anillo de FOCO de los controles personalizados. */
-    val Focus = 2.dp
     /** Área táctil mínima (accesibilidad, invariante del gate). */
     val ControlMinSize = 48.dp
     /** Ancho máximo del contenido en medium/expanded. */
@@ -341,11 +323,6 @@ object AmShapes {
     val ExtraLarge = RoundedCornerShape(AmRadius.ExtraLarge)
     /** Chips, badges y pastillas: media píldora. */
     val Pill = RoundedCornerShape(percent = 50)
-    /** Hoja inferior: esquinas superiores redondeadas. */
-    val SheetTop = RoundedCornerShape(
-        topStart = AmRadius.ExtraLarge,
-        topEnd = AmRadius.ExtraLarge,
-    )
 }
 
 /**
@@ -376,8 +353,6 @@ object AmType {
     val Caption: TextUnit = 12.sp
     /** Caption mínima (11 sp). */
     val CaptionSmall: TextUnit = 11.sp
-    /** Tracking neutro EXPLÍCITO (0): ausencia de tracking, no un valor. */
-    val LetterSpacingNone: TextUnit = 0.sp
     /** Encabezados de sección (14 sp). */
     val SectionHeader: TextUnit = 14.sp
     // Interlineados canónicos en sp (respetan el escalado, §accesibilidad).
@@ -397,7 +372,6 @@ object AmType {
      * Francisco en iOS; ninguna fuente se empaqueta (ADR-0012, ADR-0013).
      */
     val FamilyUi: FontFamily = FontFamily.Default
-    val FamilyMono: FontFamily = FontFamily.Monospace
 }
 
 /** Tracking de los roles tipográficos de Material 3 (valores por defecto). */
@@ -534,28 +508,18 @@ object AmTextStyles {
     )
 }
 
-/**
- * Opacidades funcionales del lenguaje. [Pressed] es la capa de
- * realimentación táctil (overlay sobre el contenido, nunca un cambio de
- * color local).
- */
-object AmOpacity {
-    const val Pressed = 0.08f
-}
 
 /**
  * Movimiento de AgendaMobile: transiciones cortas y justificadas; con
  * movimiento reducido la duración es 0 (cambio en el sitio, §accesibilidad
- * — reducir no es "animar más rápido"). Una sola easing por rol.
+ * — reducir no es "animar más rápido"). Una sola easing.
  */
 object AmMotion {
     const val DurationShortMs = 150
-    const val DurationMediumMs = 300
     const val DurationReducedMs = 0
 
     object Easings {
         val Standard: Easing = CubicBezierEasing(0.1f, 0.9f, 0.2f, 1f)
-        val Decelerate: Easing = CubicBezierEasing(0f, 0f, 0.2f, 1f)
     }
 }
 

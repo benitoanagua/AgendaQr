@@ -1,7 +1,6 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
-import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +13,7 @@ import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.AmNavChromeState
 import com.agendaqr.core.ui.components.AmEmptyState
+import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmPivot
 import com.agendaqr.core.ui.components.AmListRow
 import com.agendaqr.core.ui.components.AmLoading
@@ -129,6 +129,7 @@ private fun ContextList(
         when {
             state.isLoading -> AmLoading(message = AppStrings.CargandoContextos)
             state.contexts.isEmpty() -> AmEmptyState(
+                icon = AmIcons.Context,
                 title = AppStrings.SinContextos,
                 subtitle = AppStrings.LosContextosAgrupanTusQr,
                 // U3/ADR-0003 (opción B/C): la acción primaria del vacío es

@@ -5,8 +5,6 @@ import com.agendaqr.destinations.domain.ImportCandidate
 
 sealed interface ImportBatchUiState {
     data object Idle : ImportBatchUiState
-    data object Importing : ImportBatchUiState
-    data object Analyzing : ImportBatchUiState
     data class Result(val batch: ImportBatch) : ImportBatchUiState
     data class Review(val batch: ImportBatch) : ImportBatchUiState
     data class Saving(val batch: ImportBatch) : ImportBatchUiState
@@ -15,7 +13,6 @@ sealed interface ImportBatchUiState {
 }
 
 sealed interface ImportBatchAction {
-    data object Begin : ImportBatchAction
     data class Analyzed(val batch: ImportBatch) : ImportBatchAction
     data object ReviewPending : ImportBatchAction
     data object SaveRecognized : ImportBatchAction
@@ -52,7 +49,6 @@ sealed interface ImportBatchAction {
 class ImportBatchReducer {
     fun reduce(state: ImportBatchUiState, action: ImportBatchAction): ImportBatchUiState =
         when (action) {
-            ImportBatchAction.Begin -> ImportBatchUiState.Importing
             is ImportBatchAction.Analyzed -> ImportBatchUiState.Result(action.batch)
             ImportBatchAction.ReviewPending -> when (state) {
                 is ImportBatchUiState.Result -> ImportBatchUiState.Review(state.batch)

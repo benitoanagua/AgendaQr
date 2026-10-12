@@ -9,9 +9,9 @@
 2. **Una sola autoridad visual**: AgendaMobile es el único sistema de diseño del producto. No hay fachadas, alias ni capas de compatibilidad con sistemas anteriores.
 3. **Material 3 es implementación, no autoridad**: los componentes M3 se adaptan con tokens; ningún color, radio, altura o tipografía se define por defecto de la plantilla.
 4. **El estado nunca es solo color**: tono + texto/icono + semántica accesible en cada estado (carga, error, selección, deshabilitado, foco).
-5. **Contraste como contrato**: texto ≥ 4.5:1, bordes/foco ≥ 3:1, verificado por `AmSchemeTest` y `AmFocusRingContrastTest`.
+5. **Contraste como contrato**: texto ≥ 4.5:1, bordes/foco ≥ 3:1, verificado por `AmSchemeTest` y `AmContrastPairsTest`.
 6. **Radios moderados y consistentes**: 4/8/12/16/24 dp (`AmRadius`) como única escala de forma.
-7. **Movimiento corto y justificado**: 150/300 ms con `AmMotion`; movimiento reducido = cambio inmediato (duración 0), nunca "una animación más corta".
+7. **Movimiento corto y justificado**: 150 ms con `AmMotion`; movimiento reducido = cambio inmediato (duración 0), nunca "una animación más corta".
 
 ## 2. Arquitectura de capas
 
@@ -68,7 +68,7 @@
 ## 6. Espaciado y métrica
 
 - Escala: 4 · 8 · 12 · 16 · 20 · 24 · 32 (+40 excepcional) — `AmSpacing`; margen de pantalla 16.
-- `AmMetrics`: área táctil mínima 48 dp (`ControlMinSize`, invariante del gate), icono estándar 24 dp, `QrPreviewSize` 240, `ContentMaxWidth` 720 (medium/expanded), `DialogListMaxHeight` 320, marco del scanner 3 dp (`BorderStrong`), anillo de foco 2 dp, glifo del estado vacío 64 dp.
+- `AmMetrics`: área táctil mínima 48 dp (`ControlMinSize`, invariante del gate), icono estándar 24 dp, `QrPreviewSize` 240, `ContentMaxWidth` 720 (medium/expanded), `DialogListMaxHeight` 320, marco del scanner 3 dp (`BorderStrong`), glifo del estado vacío 64 dp.
 
 ## 7. Iconografía
 
@@ -78,7 +78,7 @@
 
 ## 8. Movimiento
 
-- `AmMotion`: 150 ms corto / 300 ms medio; easing estándar `cubic-bezier(0.1, 0.9, 0.2, 1)` y deceleración `cubic-bezier(0, 0, 0.2, 1)`.
+- `AmMotion`: 150 ms corto; easing estándar `cubic-bezier(0.1, 0.9, 0.2, 1)`.
 - Transición de superficies: fundido + desplazamiento de 1/8 del ancho (`AmSurfaceSlideFraction`); con movimiento reducido: duración 0 (`LocalReducedMotion`/`ProvideReducedMotion`).
 - Ningún patrón de la etapa visual anterior (tiles, turnstile, tilt) se conserva.
 
@@ -87,7 +87,7 @@
 | Grupo | Componentes |
 |---|---|
 | Estructura | `AmScreenScaffold`, `AmTopBar` (+ `AmTopBarAction`, `AmOverflowAction`), `AmNavBar`/`AmNavRail` (+ `AmNavDestination`, `AmNavChromeState`), `AmExtendedFab` |
-| Acciones | `AmPrimaryButton`, `AmSecondaryButton` (tonal, sin borde), `AmTextAction`, `AmDangerButton`, `AmIconButton`, `AmFilterChip`, `AmFavoriteToggle`, `AmCategoryChip` |
+| Acciones | `AmPrimaryButton`, `AmSecondaryButton` (tonal, sin borde), `AmTextAction`, `AmDangerButton`, `AmIconButton`, `AmFilterChip`, `AmFavoriteToggle` |
 | Formularios | `AmTextField` (tonal: guía inferior solo en foco/error; label + helper + error accesible), `AmSearchField`, `AmSearchTrigger` |
 | Superposiciones | `AmDialog` (confirmación; foco conservativo en destructivas), `AmDialogList` |
 | Datos | `AmListRow` (celda con subtítulo, `meta` en línea propia, identidad de contexto, divisor opt-in, semántica `selected`), `AmBadge`, `AmSectionHeader`, `AmSection`, `AmPivot` |
@@ -96,7 +96,7 @@
 | Medios | `AmQrPreview` (expect/actual), `AmMediaFrame`, `AmScannerViewport`, `AmScannerFrame` (esquinas de acento en canvas) |
 | Tono | `AmTone` (Neutral/Success/Danger/Warning/Info) con par content/container y glifo por tono |
 
-Estados obligatorios: normal, pressed (overlay `AmOpacity.Pressed`), focused (anillo `AmColor.Focus` 2 dp), selected (semántica + bloque tonal/acento), error (icono + texto + `error()` semántica), disabled (par `Disabled/OnDisabled`), loading (spinner superpuesto sin salto de ancho + `stateDescription`).
+Estados obligatorios: normal, pressed (ripple estándar de Material 3), focused (indicación de foco del componente M3 con el rol `AmColor.Focus`), selected (semántica + bloque tonal/acento), error (icono + texto + `error()` semántica), disabled (par `Disabled/OnDisabled`), loading (spinner superpuesto sin salto de ancho + `stateDescription`).
 
 ### Nota sobre la hoja inferior
 
@@ -124,7 +124,7 @@ El gate compara esta tabla con `exceptionRegistry` en `build-logic/agendaqr.desi
 
 | ID | Regla | Aplicación |
 |---|---|---|
-| — | — | AgendaMobile no registra excepciones de borde. El anillo de foco (`AmTone.kt`) es la implementación canónica del foco visible, no una excepción. |
+| — | — | AgendaMobile no registra excepciones: ningún archivo de producción dibuja `.border(`/`BorderStroke(`; la indicación de foco y de estado vive en los componentes M3 y en el canvas. |
 
 Para proponer una excepción: registrarla aquí y en el gate en el MISMO cambio, con justificación de accesibilidad y prueba asociada.
 
@@ -134,7 +134,7 @@ Para proponer una excepción: registrarla aquí y en el gate en el MISMO cambio,
 |---|---|
 | Compliance del sistema | `verifyDesignSystemCompliance` (+ autotest `verifyDesignSystemFixtures`) |
 | Área táctil mínima | `verifyControlMinSize` (AmMetrics.ControlMinSize = 48.dp) |
-| Contraste y esquema | `AmSchemeTest`, `AmFocusRingContrastTest`, `AmAccentTest` |
+| Contraste y esquema | `AmSchemeTest`, `AmContrastPairsTest`, `AmAccentTest` |
 | Tipografía y layout | `AmTypographyTest`, `AmPivotLayoutTest`, `AmUiPolishContractTest` |
 | Accesibilidad de componentes | `AmAccessibilityContractTest`, `ScreensA11yCoverageTest` |
 | Regresión visual | `recordVisualHashes`/`verifyVisualHashes` (ADR-0007) |
@@ -145,5 +145,5 @@ Para proponer una excepción: registrarla aquí y en el gate en el MISMO cambio,
 
 1. Cambio visual = cambio de token en `AmTokens.kt` + actualización del pin en `AmSchemeTest` + regeneración de capturas (`recordRoborazzi` → `recordVisualHashes`) — nunca un literal en la pantalla.
 2. Componente nuevo: consumidor real, contrato documentado aquí, pruebas de estado/accesibilidad; sin abstracciones sin consumidor.
-3. Los retiros de componentes se registran en `04-component-audit-register.md`.
+3. Los retiros de componentes se registran en el ADR que los decide.
 4. Decisiones estructurales del sistema visual: ADR.

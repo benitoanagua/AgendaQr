@@ -1,7 +1,6 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
-import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -114,8 +113,6 @@ fun ImportBatchScreen(
                 AmText(AppStrings.TraeVariosElementosAAgenda, color = AmColor.TextSecondary)
                 ImportBatchPickerButton(label = AppStrings.ElegirImagenes)
             }
-            ImportBatchUiState.Importing -> AmLoading(message = AppStrings.Importando)
-            ImportBatchUiState.Analyzing -> AmLoading(message = AppStrings.Analizando)
             is ImportBatchUiState.Result -> BatchResultContent(state.batch, onAction, isSaving = false)
             is ImportBatchUiState.Review -> BatchReviewContent(state.batch, onAction, isSaving = false)
             is ImportBatchUiState.Saving -> {

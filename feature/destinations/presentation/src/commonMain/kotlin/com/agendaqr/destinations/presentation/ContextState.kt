@@ -30,7 +30,6 @@ sealed interface ContextAction {
     data object ClearError : ContextAction
     /** U3/ADR-0003 (opción C): crear contexto (Nombre obligatorio). */
     data class Create(val name: String, val note: String?) : ContextAction
-    data object ClearJustCreated : ContextAction
     /** Re-ejecuta la creación fallida (el banner REINTENTAR reintenta). */
     data object RetryFailed : ContextAction
 }
@@ -70,8 +69,6 @@ class ContextsViewModel(
         if (action != ContextAction.RetryFailed) retryBlock = null
         when (action) {
             is ContextAction.Create -> create(action)
-            ContextAction.ClearJustCreated ->
-                _state.value = _state.value.copy(justCreatedContextId = null)
             ContextAction.RetryFailed -> retryBlock?.invoke()
             is ContextAction.Open -> open(action.id)
             ContextAction.Back -> {

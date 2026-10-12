@@ -10,13 +10,11 @@ package com.agendaqr.destinations.presentation
  * porque su valor es dinámico.
  *
  * DECISIÓN (D2): se evaluó migrar a composeResources/values/strings.xml
- * para i18n automático; se queda el objeto centralizado porque (1) el
- * módulo presentation aún no expone el accessor `Res` a las features que
- * comparten los literales (iosMain incluido), (2) strings.xml exige
- * regenerar el accessors por módulo y trasladar también los androidMain/
- * iosMain actuales, y (3) el copy está congelado (no hay i18n en V1).
- * La migración queda registrada como paso previo obligatorio cuando V2
- * necesite idiomas.
+ * para i18n automático; se queda el objeto centralizado porque (1)
+ * strings.xml exige regenerar los accessors por módulo y trasladar
+ * también los androidMain/iosMain actuales, y (2) el copy está
+ * congelado (no hay i18n en V1). La migración queda registrada como
+ * paso previo obligatorio cuando V2 necesite idiomas.
  */
 internal object AppStrings {
     val AbriendoComprobante = "Abriendo comprobante…"
@@ -27,7 +25,6 @@ internal object AppStrings {
     // V1.1 (ADR-0005, S01): sección de entradas recientes y tile vivo.
     val Recientes = "Recientes"
     val emptyDestinationsHint = "Agrega tu primer QR para empezar."
-    val Analizando = "Analizando…"
     val associateToExistingOperation = "Asociar a actividad existente"
     val Anadir = "Añadir"
     val searchIntroHint = "Busca QR, actividades, contextos o comprobantes."
@@ -40,7 +37,6 @@ internal object AppStrings {
     val Cancelar = "Cancelar"
     val CargandoContextos = "Cargando contextos…"
     val CargandoContexto = "Cargando contexto…"
-    val CargandoDestinosQr = "Cargando QR…"
     val Categoria = "Categoría"
     val Cerrar = "Cerrar"
     val CerrarSesion = "Cerrar sesión"
@@ -51,7 +47,6 @@ internal object AppStrings {
     val receiptReceivedTitle = "Comprobante recibido"
     val Comprobante2 = "Comprobante · "
     val ComprobantesSinAsociar = "Comprobantes sin asociar"
-    val ComprobantesSinAsociar2 = "Comprobantes sin asociar: "
     val Comprobantes = "Comprobantes"
     val ConceptoOpcional = "Concepto (opcional)"
     val Concepto = "Concepto: "
@@ -68,7 +63,6 @@ internal object AppStrings {
     val CargarMas = "Cargar más"
     val NoHayMasElementos = "No hay más elementos"
     val Cargando = "Cargando…"
-    val DesdeOtraApp = "Desde otra app"
     val DestinoNoEncontrado = "QR no encontrado"
     val Inicio = "Inicio"
     val Detalle = "Detalle"
@@ -87,7 +81,6 @@ internal object AppStrings {
     val analyzingReceipt = "Estamos analizando el comprobante."
     val FaltaElCodigoQrUsa = "Falta el código QR: usa Cámara o Galería"
     val Fecha = "Fecha"
-    val Galeria = "Galería"
     /** S02 V1.2: acción única de galería con selección múltiple. */
     val ElegirDeLaGaleria = "Elegir de la galería"
     /** S12 Idle: acción para elegir un lote de imágenes. */
@@ -102,7 +95,6 @@ internal object AppStrings {
     val GuardarDeTodosModos = "Guardar de todos modos"
     val GuardarReconocidos = "Guardar reconocidos"
     val ImportaUnQrConCamara = "Importa un QR con Cámara o Galería para previsualizarlo aquí"
-    val Importando = "Importando…"
     val IniciaSesionParaAccederA = "Inicia sesión para acceder a tu agenda."
     val IniciarSesion = "Iniciar sesión"
     val operationKeptOnReceiptDelete = "La actividad asociada se conservará."
@@ -123,7 +115,6 @@ internal object AppStrings {
     val Nota = "Nota"
     val NotaOpcional = "Nota (opcional)"
     val Nota2 = "Nota: "
-    val Nuevo = "Nuevo"
     val Operaciones = "Actividades"
     val OperacionNoEncontrada = "Actividad no encontrada"
     val Origen = "Origen: "
@@ -136,9 +127,7 @@ internal object AppStrings {
     val PudoHaberSidoEliminadoEn = "Pudo haber sido eliminado en otro dispositivo."
     val Qr = "QR"
     val QrSinContenido = "QR sin contenido"
-    val Qr2 = "QR · "
     val Reintentar = "REINTENTAR"
-    val Registrar = "Registrar"
     val ReintentarAhora = "Reintentar ahora"
     val ReintentarClasificacion = "Reintentar clasificación"
     val ResultadoDeImportacion = "Resultado de importación"
@@ -149,7 +138,6 @@ internal object AppStrings {
     val SinConexion = "Sin conexión"
     val SinContextos = "Sin contextos"
     val SinContextosDisponibles = "Sin contextos disponibles."
-    val SinDestinos = "Sin QR"
     val SinResultados = "Sin resultados"
     val TraeAAgendaQrAlgo = "Trae a Agenda QR algo que ya tienes."
     val TraeVariosElementosAAgenda = "Trae varios elementos a Agenda QR."

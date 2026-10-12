@@ -49,9 +49,7 @@ sealed interface OperationAction {
     data class Disassociate(val comprobanteId: String) : OperationAction
     data class CreateOperationFromReceipt(val comprobanteId: String) : OperationAction
     data object ClearIncoming : OperationAction
-    data class SaveIncoming(val openInbox: Boolean = false, val allowDuplicate: Boolean = false) : OperationAction
-    data object DismissDuplicateWarning : OperationAction
-    data object OpenUnassociated : OperationAction
+    data class SaveIncoming(val openInbox: Boolean = false, val allowDuplicate: Boolean = false) : OperationAction    data object OpenUnassociated : OperationAction
     data object Back : OperationAction
     data object ClearError : OperationAction
     /**

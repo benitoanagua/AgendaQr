@@ -61,8 +61,6 @@ class SyncRecoveryCoordinator @OptIn(ExperimentalTime::class) constructor(
         job = null
     }
 
-    fun triggerNow(): Job = scope.launch { drainAndReport() }
-
     private suspend fun drainAndReport(): DrainResult {
         val result = processor.drainWithReport()
         runCatching { onResult(result) }

@@ -68,8 +68,11 @@ fun ElementSyncBadge(status: ElementSyncStatus, showWhenSynced: Boolean = false)
 }
 
 /**
- * Mapeo cola → estado por (resource, entityId). Puro y testeable.
+ * Consulta por elemento para la UI: indexa la cola una vez por emisión
+ * del observador (una instancia por snapshot) en lugar de recorrerla
+ * por fila.
  *
+ * Mapeo cola → estado por (resource, entityId):
  * - Sin mutación en cola → [ElementSyncStatus.Synced].
  * - PENDING → [ElementSyncStatus.Pending] (guardado localmente, esperando).
  * - PROCESSING → [ElementSyncStatus.Syncing].
@@ -79,27 +82,9 @@ fun ElementSyncBadge(status: ElementSyncStatus, showWhenSynced: Boolean = false)
  *   reintentos agotados; el drain lo omite, así que REINTENTAR no se
  *   ofrece para estos elementos — la recuperación requeriría re-encolar
  *   (acción nueva: ADR-0004). El dato está a salvo localmente.
- */
-fun elementSyncStatus(
-    queue: List<PendingSyncMutation>,
-    resource: SyncResource,
-    entityId: String,
-): ElementSyncStatus {
-    // La cola deduplica por (resource, entityId); ante una snapshot anómala
-    // la última posición es la más reciente.
-    val mutation = queue.lastOrNull { it.resource == resource && it.entityId == entityId }
-        ?: return ElementSyncStatus.Synced
-    return when (mutation.state) {
-        SyncMutationState.PENDING -> ElementSyncStatus.Pending
-        SyncMutationState.PROCESSING -> ElementSyncStatus.Syncing
-        SyncMutationState.FAILED -> ElementSyncStatus.ErrorRecoverable
-        SyncMutationState.DEAD_LETTER -> ElementSyncStatus.Dead
-    }
-}
-
-/**
- * Consulta barata por elemento para la UI: indexa la cola una vez por
- * emisión del observador en lugar de recorrerla por fila.
+ *
+ * La cola deduplica por (resource, entityId); ante una snapshot anómala
+ * la última posición es la más reciente (associateBy conserva la última).
  */
 class ElementSyncLookup(private val queue: List<PendingSyncMutation>) {
     private val byEntity: Map<Pair<SyncResource, String>, PendingSyncMutation> =

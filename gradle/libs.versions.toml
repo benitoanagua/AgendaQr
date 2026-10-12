@@ -30,14 +30,11 @@ roborazzi = "1.26.0"
 lifecycle = "2.9.4"
 
 [plugins]
+# Solo los alias con uso real (alias(libs.plugins.*)): los módulos
+# aplican Kotlin/AGP/Compose mediante los convention plugins de
+# build-logic, que fijan sus propias coordenadas.
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
-kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-compose = { id = "org.jetbrains.compose", version.ref = "compose" }
-kotlinCompose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-androidApplication = { id = "com.android.application", version.ref = "agp" }
-androidLibrary = { id = "com.android.library", version.ref = "agp" }
 
 [libraries]
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }

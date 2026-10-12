@@ -307,7 +307,7 @@ fun AmIconButton(
 /**
  * Chip de filtro interactivo TONAL (píldora, sin borde de reposo):
  * seleccionado se expresa con el bloque de acento; la selección también
- * vive en la semántica. Distinto de [AmCategoryChip].
+ * vive en la semántica.
  */
 @Composable
 fun AmFilterChip(
@@ -377,23 +377,5 @@ fun AmFavoriteToggle(
             contentDescription = null,
             tint = if (favorite) AmColor.Accent else AmColor.TextTertiary,
         )
-    }
-}
-
-/** Chip de categoría estático: clasifica, no filtra. Sin interacción. */
-@Composable
-fun AmCategoryChip(
-    label: String,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            // Sin borde de reposo: el bloque tonal SurfaceSecondary define
-            // el límite.
-            .background(AmColor.SurfaceSecondary, AmShapes.Pill)
-            .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(label, fontSize = AmType.Caption, color = AmColor.TextSecondary)
     }
 }

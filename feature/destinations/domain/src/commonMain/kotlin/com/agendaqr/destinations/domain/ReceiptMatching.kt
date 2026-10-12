@@ -15,10 +15,7 @@ data class ReceiptAssociationSuggestion(
     val kind: ReceiptMatchKind,
     val receiptId: String,
     val operationIds: List<String>,
-) {
-    val proposedOperationId: String?
-        get() = operationIds.singleOrNull()
-}
+)
 
 class SuggestReceiptAssociationUseCase(
     private val comprobantes: ComprobanteRepository,

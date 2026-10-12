@@ -1,7 +1,6 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
-import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -11,21 +10,6 @@ import com.agendaqr.core.ui.components.AmQrPreview
 import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.theme.AmSpacing
-
-@Composable
-fun FirstUsePattern(onAdd: () -> Unit) {
-    AmEmptyState(
-        title = AppStrings.SinDestinos,
-        subtitle = AppStrings.emptyDestinationsHint,
-        actionLabel = AppStrings.Anadir,
-        onAction = onAdd,
-    )
-}
-
-@Composable
-fun OperationFailurePattern(message: String) {
-    com.agendaqr.core.ui.components.AmStatusBanner(message = message, tone = com.agendaqr.core.ui.components.AmTone.Danger)
-}
 
 @Composable
 fun DestinationNotFound(onBack: () -> Unit) {

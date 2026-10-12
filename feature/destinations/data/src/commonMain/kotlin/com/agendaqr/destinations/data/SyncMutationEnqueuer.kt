@@ -8,12 +8,6 @@ class SyncMutationEnqueuer(
     private val queue: LocalSyncQueue,
     private val idFactory: () -> String = { Clock.System.now().toEpochMilliseconds().toString() },
 ) {
-    suspend fun upsert(resource: SyncResource, entityId: String) =
-        enqueue(resource, SyncMutationType.UPSERT, entityId, localUpdatedAt = null, baseUpdatedAt = null)
-
-    suspend fun delete(resource: SyncResource, entityId: String) =
-        enqueue(resource, SyncMutationType.DELETE, entityId, localUpdatedAt = null, baseUpdatedAt = null)
-
     /**
      * Variante con versiones: [localUpdatedAt] es el `updatedAt` del registro
      * tras la escritura local y [baseUpdatedAt] la versión conocida del
@@ -55,10 +49,6 @@ class SyncMutationEnqueuer(
             )
         )
     }
-
-    /** Para que `syncFromRemote` no pise entidades con mutaciones pendientes. */
-    suspend fun hasPending(resource: SyncResource, entityId: String): Boolean =
-        queue.hasPending(resource, entityId)
 
     suspend fun pendingIds(resource: SyncResource): Set<String> =
         queue.pendingIds(resource)

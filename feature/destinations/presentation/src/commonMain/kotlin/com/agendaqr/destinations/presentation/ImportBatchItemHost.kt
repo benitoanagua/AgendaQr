@@ -28,21 +28,16 @@ internal class ImportBatchItemHost(
     private val comprobanteFiles: ComprobanteFileStore,
     private val payloads: ImportPayloadStore,
 ) {
-    /** Resultado de la copia deliberada de un duplicado. */
-    sealed interface SaveOutcome {
-        data class Saved(val kind: ImportKind) : SaveOutcome
-        data object MissingPayload : SaveOutcome
-        data object NotApplicable : SaveOutcome
-    }
-
     /**
      * "Guardar de todos modos": copia deliberada (RF-14) con id nuevo.
-     * El payload temporal se elimina tras persistir.
+     * El payload temporal se elimina tras persistir. Sin payload o con
+     * tipo DESCONOCIDO no persiste nada (el elemento sale del lote igual:
+     * ver [ImportBatchCoordinator.saveDuplicateAnyway]).
      */
-    suspend fun saveDuplicateAnyway(candidate: ImportCandidate): SaveOutcome {
+    suspend fun saveDuplicateAnyway(candidate: ImportCandidate) {
         when (candidate.kind) {
             ImportKind.QR -> {
-                val asset = candidate.qrAsset ?: return SaveOutcome.MissingPayload
+                val asset = candidate.qrAsset ?: return
                 val now = nowMillis()
                 destinations.save(
                     Destination(
@@ -53,11 +48,10 @@ internal class ImportBatchItemHost(
                         updatedAt = now,
                     ),
                 )
-                return SaveOutcome.Saved(ImportKind.QR)
             }
             ImportKind.COMPROBANTE -> {
-                val reference = candidate.payloadRef ?: return SaveOutcome.MissingPayload
-                val bytes = payloads.read(reference) ?: return SaveOutcome.MissingPayload
+                val reference = candidate.payloadRef ?: return
+                val bytes = payloads.read(reference) ?: return
                 SaveComprobanteUseCase(comprobantes, comprobanteFiles)(
                     Comprobante(
                         id = newEntityId("comprobante"),
@@ -71,9 +65,8 @@ internal class ImportBatchItemHost(
                     candidate.mimeType ?: "application/octet-stream",
                 )
                 payloads.delete(reference)
-                return SaveOutcome.Saved(ImportKind.COMPROBANTE)
             }
-            ImportKind.DESCONOCIDO -> return SaveOutcome.NotApplicable
+            ImportKind.DESCONOCIDO -> return
         }
     }
 
