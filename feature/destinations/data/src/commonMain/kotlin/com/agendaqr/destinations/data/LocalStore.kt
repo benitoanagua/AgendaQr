@@ -67,5 +67,3 @@ class LocalDestinationRepository(
 
 @Serializable
 private data class DestinationList(val items: List<Destination>)
-
-expect fun createDestinationRepository(): DestinationRepository

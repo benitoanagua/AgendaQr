@@ -95,7 +95,6 @@ object SyncErrorClassifier {
         return true
     }
 
-    fun isPermanent(error: Throwable): Boolean = !isTransient(error)
 }
 
 interface SyncQueueStore {
@@ -189,35 +188,11 @@ class LocalSyncQueue(private val store: SyncQueueStore = platformSyncQueueStore(
 
     suspend fun all(): List<PendingSyncMutation> = mutex.withLock { store.read() }
 
-    /** true si hay una mutación pendiente/reintentable para este recurso+entidad. */
-    suspend fun hasPending(resource: SyncResource, entityId: String): Boolean = mutex.withLock {
-        store.read().any {
-            it.resource == resource && it.entityId == entityId &&
-                it.state != SyncMutationState.DEAD_LETTER
-        }
-    }
-
     /** Ids con mutaciones pendientes por recurso (para que `syncFromRemote` no las pise). */
     suspend fun pendingIds(resource: SyncResource): Set<String> = mutex.withLock {
         store.read()
             .filter { it.resource == resource && it.state != SyncMutationState.DEAD_LETTER }
             .mapTo(mutableSetOf()) { it.entityId }
-    }
-
-    /** Mueve una mutación a DLQ manual (p. ej. desde UI tras mostrar el conflicto). */
-    suspend fun deadLetter(id: String, error: String) = mutex.withLock {
-        store.write(store.read().map {
-            if (it.id == id) it.copy(state = SyncMutationState.DEAD_LETTER, lastError = error.take(500))
-            else it
-        })
-    }
-
-    /** Reencola una mutación de DLQ para reintentarla (soporte / debug). */
-    suspend fun redrive(id: String, now: Long) = mutex.withLock {
-        store.write(store.read().map {
-            if (it.id == id) it.copy(state = SyncMutationState.PENDING, attempts = 0, nextAttemptAt = now, lastError = null)
-            else it
-        })
     }
 }
 

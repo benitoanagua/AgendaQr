@@ -78,15 +78,6 @@ interface DeletedOperationHistoryRepository {
     suspend fun save(history: DeletedOperationHistory)
 }
 
-enum class SensitiveOperationField {
-    TYPE,
-    OCCURRED_AT,
-    AMOUNT,
-    CURRENCY,
-    PERSON_OR_ENTITY,
-    DESTINATION,
-}
-
 fun Operation.hasSensitiveChangesComparedTo(other: Operation): Boolean =
     type != other.type ||
         occurredAt != other.occurredAt ||
@@ -109,50 +100,12 @@ class GetOperationUseCase(private val repository: OperationRepository) {
     suspend operator fun invoke(id: String): Operation? = repository.get(id)
 }
 
-data class OperationSearchQuery(
-    val text: String = "",
-    val type: OperationType? = null,
-    val occurredFrom: Long? = null,
-    val occurredTo: Long? = null,
-)
-
-class SearchOperationsUseCase(private val repository: OperationRepository) {
-    operator fun invoke(query: OperationSearchQuery): Flow<List<Operation>> =
-        repository.observe().map { operations ->
-            val text = query.text.trim().lowercase()
-            operations
-                .asSequence()
-                .filter { operation -> query.type == null || operation.type == query.type }
-                .filter { operation -> query.occurredFrom == null || operation.occurredAt >= query.occurredFrom }
-                .filter { operation -> query.occurredTo == null || operation.occurredAt <= query.occurredTo }
-                .filter { operation ->
-                    text.isEmpty() || listOfNotNull(
-                        operation.amount,
-                        operation.currency,
-                        operation.personOrEntity,
-                        operation.concept,
-                        operation.note,
-                    ).any { it.lowercase().contains(text) }
-                }
-                .sortedByDescending { it.occurredAt }
-                .toList()
-        }
-}
-
 class SaveOperationUseCase(private val repository: OperationRepository) {
     suspend operator fun invoke(operation: Operation) = repository.save(operation)
 }
 
 class UpdateOperationUseCase(private val repository: OperationRepository) {
     suspend operator fun invoke(operation: Operation) = repository.update(operation.copy(updatedAt = nowMillis()))
-}
-
-class DeleteOperationUseCase(private val repository: OperationRepository) {
-    suspend operator fun invoke(id: String) = repository.delete(id)
-}
-
-class ObserveComprobantesUseCase(private val repository: ComprobanteRepository) {
-    operator fun invoke(): Flow<List<Comprobante>> = repository.observe()
 }
 
 class GetComprobanteUseCase(private val repository: ComprobanteRepository) {
@@ -247,10 +200,6 @@ class SaveComprobanteUseCase(
             throw error
         }
     }
-}
-
-class UpdateComprobanteUseCase(private val repository: ComprobanteRepository) {
-    suspend operator fun invoke(comprobante: Comprobante) = repository.update(comprobante)
 }
 
 class DeleteComprobanteUseCase(

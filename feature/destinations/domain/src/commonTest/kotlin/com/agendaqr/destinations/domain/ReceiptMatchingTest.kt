@@ -34,7 +34,7 @@ class ReceiptMatchingTest {
         val result = useCase("r1")
 
         assertEquals(ReceiptMatchKind.SINGLE, result.kind)
-        assertEquals("op1", result.proposedOperationId)
+        assertEquals(listOf("op1"), result.operationIds)
     }
 
     @Test
@@ -69,7 +69,7 @@ class ReceiptMatchingTest {
         val result = useCase("r1")
 
         assertEquals(ReceiptMatchKind.SINGLE, result.kind)
-        assertEquals("op1", result.proposedOperationId)
+        assertEquals(listOf("op1"), result.operationIds)
     }
 
     @Test
@@ -94,7 +94,7 @@ class ReceiptMatchingTest {
         val result = useCase("r1")
 
         assertEquals(ReceiptMatchKind.SINGLE, result.kind)
-        assertEquals("op1", result.proposedOperationId)
+        assertEquals(listOf("op1"), result.operationIds)
     }
 
     @Test
@@ -166,7 +166,7 @@ class ReceiptMatchingTest {
         val result = useCase("r1")
 
         assertEquals(ReceiptMatchKind.SINGLE, result.kind)
-        assertEquals("op1", result.proposedOperationId)
+        assertEquals(listOf("op1"), result.operationIds)
     }
 
     @Test

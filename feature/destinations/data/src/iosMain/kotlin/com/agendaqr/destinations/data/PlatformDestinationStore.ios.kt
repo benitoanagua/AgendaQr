@@ -14,8 +14,6 @@ private object IosDestinationStore : DestinationStore {
 
 actual fun platformDestinationStore(): DestinationStore = IosDestinationStore
 
-actual fun createDestinationRepository(): DestinationRepository = createSyncedDestinationRepository()
-
 
 private const val SYNC_QUEUE_PREFIX = "agendaqr.sync.queue.v1"
 

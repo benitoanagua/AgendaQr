@@ -121,6 +121,3 @@ private data class OperationList(val items: List<Operation>)
 
 @Serializable
 private data class ComprobanteList(val items: List<Comprobante>)
-
-expect fun createOperationRepository(): OperationRepository
-expect fun createComprobanteRepository(): ComprobanteRepository

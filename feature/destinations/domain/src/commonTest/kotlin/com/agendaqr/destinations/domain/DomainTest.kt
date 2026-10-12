@@ -143,44 +143,6 @@ class DomainTest {
 
 class OperationUseCaseTest {
     @Test
-    fun search_matches_entity_or_amount_and_orders_newest_first() = runTest {
-        val repository = FakeOperationRepository(
-            listOf(
-                Operation("old", OperationType.PAGO, occurredAt = 100, createdAt = 101, amount = "120", currency = "BOB", personOrEntity = "Mercado"),
-                Operation("new", OperationType.PAGO, occurredAt = 200, createdAt = 201, amount = "850", currency = "BOB", personOrEntity = "Colegio San José"),
-                Operation("other", OperationType.COBRO, occurredAt = 300, createdAt = 301, amount = "50", currency = "USD", personOrEntity = "Juan"),
-            )
-        )
-
-        val results = SearchOperationsUseCase(repository)(
-            OperationSearchQuery(text = "850")
-        ).first()
-
-        assertEquals(listOf("new"), results.map { it.id })
-    }
-
-    @Test
-    fun search_can_filter_by_type_and_date_range() = runTest {
-        val repository = FakeOperationRepository(
-            listOf(
-                Operation("p1", OperationType.PAGO, 100, 101),
-                Operation("p2", OperationType.PAGO, 200, 201),
-                Operation("c1", OperationType.COBRO, 250, 251),
-            )
-        )
-
-        val results = SearchOperationsUseCase(repository)(
-            OperationSearchQuery(
-                type = OperationType.PAGO,
-                occurredFrom = 150,
-                occurredTo = 220,
-            )
-        ).first()
-
-        assertEquals(listOf("p2"), results.map { it.id })
-    }
-
-    @Test
     fun association_is_reversible_and_does_not_change_file() = runTest {
         val operations = FakeOperationRepository(
             listOf(Operation("op-1", OperationType.PAGO, 100, 101, contextId = "context-1"))

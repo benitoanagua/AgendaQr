@@ -87,24 +87,6 @@ class SyncOperationRepository(
     }
 }
 
-fun createSyncedOperationRepository(
-    queue: LocalSyncQueue = LocalSyncQueue(),
-): OperationRepository =
-    SyncOperationRepository(
-        local = LocalOperationRepository(storageKey = userScopedKey("agendaqr.operations.v1")),
-        remote = createRemoteOperationRepository(),
-        enqueuer = SyncMutationEnqueuer(queue),
-    )
-
-fun createSyncedOperationRepository(
-    enqueuer: SyncMutationEnqueuer,
-): OperationRepository =
-    SyncOperationRepository(
-        local = LocalOperationRepository(storageKey = userScopedKey("agendaqr.operations.v1")),
-        remote = createRemoteOperationRepository(),
-        enqueuer = enqueuer,
-    )
-
 /** Variante con [local] compartido con el [SyncMutationProcessor] (ver contexts). */
 fun createSyncedOperationRepository(
     enqueuer: SyncMutationEnqueuer,

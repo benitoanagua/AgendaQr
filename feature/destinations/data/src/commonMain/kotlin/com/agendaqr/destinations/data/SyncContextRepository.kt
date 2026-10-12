@@ -72,13 +72,6 @@ class SyncContextRepository(
     }
 }
 
-fun createSyncedContextRepository(queue: LocalSyncQueue): ContextRepository =
-    SyncContextRepository(
-        local = LocalContextRepository(storageKey = userScopedKey("agendaqr.contexts.v1")),
-        remote = createRemoteContextRepository(),
-        enqueuer = SyncMutationEnqueuer(queue),
-    )
-
 /**
  * Variante que comparte el [local] con el [SyncMutationProcessor]: el procesador
  * debe operar sobre el repositorio crudo (sin re-encolado) para que aplicar un

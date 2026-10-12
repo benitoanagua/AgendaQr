@@ -38,11 +38,3 @@ class SaveContextUseCase(private val repository: ContextRepository) {
     suspend operator fun invoke(context: Context) = repository.save(context)
 }
 
-class UpdateContextUseCase(private val repository: ContextRepository) {
-    suspend operator fun invoke(context: Context) =
-        repository.update(context.copy(updatedAt = nowMillis()))
-}
-
-class DeleteContextUseCase(private val repository: ContextRepository) {
-    suspend operator fun invoke(id: String) = repository.delete(id)
-}

@@ -34,12 +34,6 @@ data class ImportBatch(
     val recognized: List<ImportCandidate>
         get() = candidates.filter { it.kind != ImportKind.DESCONOCIDO }
 
-    val qr: List<ImportCandidate>
-        get() = candidates.filter { it.kind == ImportKind.QR }
-
-    val comprobantes: List<ImportCandidate>
-        get() = candidates.filter { it.kind == ImportKind.COMPROBANTE }
-
     val unknown: List<ImportCandidate>
         get() = candidates.filter { it.kind == ImportKind.DESCONOCIDO }
 
@@ -85,15 +79,4 @@ data class ImportBatch(
             val duplicateIds = duplicates.mapTo(mutableSetOf()) { it.id }
             return recognized.filter { it.id !in duplicateIds }
         }
-}
-
-/**
- * Clasifica y normaliza un lote sin descartar elementos válidos por errores ajenos.
- *
- * Si un elemento no puede analizarse, permanece en el lote como DESCONOCIDO.
- * La deduplicación se basa en una huella estable producida por la capa de entrada.
- */
-class AnalyzeImportBatchUseCase {
-    operator fun invoke(candidates: List<ImportCandidate>): ImportBatch =
-        ImportBatch(candidates = candidates)
 }
