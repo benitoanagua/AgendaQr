@@ -26,7 +26,6 @@ internal object AppStrings {
     val AgendaQr = "Agenda QR"
     // V1.1 (ADR-0005, S01): sección de entradas recientes y tile vivo.
     val Recientes = "Recientes"
-    val UltimoQrOActividad = "Último QR o actividad reciente"
     val emptyDestinationsHint = "Agrega tu primer QR para empezar."
     val Analizando = "Analizando…"
     val associateToExistingOperation = "Asociar a actividad existente"
@@ -70,7 +69,6 @@ internal object AppStrings {
     val NoHayMasElementos = "No hay más elementos"
     val Cargando = "Cargando…"
     val DesdeOtraApp = "Desde otra app"
-    val shareFromAnotherAppLabel = "Desde otra app: comparte una imagen o PDF con Agenda QR."
     val DestinoNoEncontrado = "QR no encontrado"
     val Inicio = "Inicio"
     val Detalle = "Detalle"
@@ -96,7 +94,6 @@ internal object AppStrings {
     val ElegirImagenes = "Elegir imágenes"
     /** S02 V1.2: PDF opcional (solo donde la plataforma lo soporta). */
     val ElegirArchivoPdf = "Elegir archivo (PDF)"
-    val GaleriaVarios = "Galería (varios)"
     val batchSavedKeepReviewNotice = "Guardado. Los elementos pendientes conservan su revisión."
     val savingRecognizedItems = "Guardando elementos reconocidos…"
     val Guardar = "Guardar"
@@ -148,7 +145,6 @@ internal object AppStrings {
     val RevisarQr = "Revisar QR"
     val SeleccionarContexto = "Seleccionar contexto"
     val SinComprobanteAdjunto = "Sin comprobante adjunto"
-    val SinConexionLosCambiosSe = "Sin conexión — los cambios se guardan localmente y se sincronizarán al recuperar conectividad."
     /** Indicador compacto de sin conexión (chip del AppStatusHost, §12 V1.2). */
     val SinConexion = "Sin conexión"
     val SinContextos = "Sin contextos"
@@ -235,7 +231,6 @@ internal object AppStrings {
     val elementoSinClasificar = "No pudimos clasificar este elemento."
     val elementoPendienteRevision = "Elemento pendiente de revisión."
     val QuitarFavorito = "Quitar favorito"
-    val Favorito = "Favorito"
     val MarcarFavorito = "Marcar favorito"
     val SeccionComprobantes = "Comprobantes"
     val checkMark = "✓ "

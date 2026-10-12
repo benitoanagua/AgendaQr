@@ -22,8 +22,8 @@ import androidx.compose.runtime.compositionLocalOf
  * que pidió este pase.
  *
  * Uso: envolver el contenido raíz una sola vez con [ProvideReducedMotion], y
- * leer [LocalReducedMotion] donde haga falta ([XauxaLiveTile] ya lo hace por
- * default).
+ * leer [LocalReducedMotion] donde haga falta (la transición estándar de
+ * superficies lo hace por default).
  */
 val LocalReducedMotion = compositionLocalOf { false }
 

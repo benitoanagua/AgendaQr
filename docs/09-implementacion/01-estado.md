@@ -6,35 +6,24 @@
 > respalda; lo que no puede ejecutarse se registra como **NO VERIFICADO**,
 > nunca como PASS (contrato §10).
 
-## Desvío declarado: migración a UX/UI V1.2 (ADR-0012)
-
-La spec UX/UI está enmendada a **V1.2** (diseño convencional sobre
-Material 3, misma en ambas plataformas; ADR-0012 revierte parcialmente
-ADR-0005/ADR-0011). La implementación en `main` queda **DESALINEADA de
-V1.2** hasta completar la pasada de migración: hoy el código aún expresa
-V1.1 (tiles en S01, app bar inferior, radio 0, ripple desactivado,
-turnstile, campos planos, turnstile de navegación, Archivo Light). Los
-documentos normativos (spec V1.2, contrato normativo, auditoría de
-componentes, tipografía, licencias) ya describen el estado final; el
-código converge a ellos por fases y este documento se actualiza al
-cerrar cada fase. Las excepciones E-02 y E-06 del contrato §12 se retiran
-del código y del gate cuando los componentes correspondientes migren.
-
 ## Capacidades implementadas y verificadas
 
 | Área | Estado | Verificación |
 |---|---|---|
 | Dominio (operaciones, comprobantes, contextos) | Implementado | domain tests |
 | Datos (Supabase local-first, sync queue) | Implementado | data tests |
-| UX/UI V1.1 (Metro/Xauxa, S01–S12) | Implementado | Robolectric suite + hashes visuales + gate del design system |
-| Chrome e insets (barra inferior M7, `XauxaScreenScaffold`) | Implementado | Robolectric suite + gate |
+| UX/UI V1.2 (Material 3 convencional, S01–S12) | Implementado | Robolectric suite + hashes visuales + gate del design system |
+| Chrome e insets (TopBar, NavigationBar/NavigationRail, Scaffold con contentWindowInsets) | Implementado | Robolectric suite + gate |
+| Edge-to-edge Android (`enableEdgeToEdge`) | Implementado | ensamblado; runtime NO VERIFICADO (dispositivo) |
+| Predictive back (PredictiveBackHandler con progreso) | Implementado | compilación 3 targets; gesto NO VERIFICADO (dispositivo) |
 | Búsqueda global (S04/S05) | Implementado | Robolectric suite |
-| Importación QR (galería/cámara/share) | Implementado | Instrumentados + unit |
+| Importación QR (Photo Picker Android/PHPicker iOS, cámara, share Android) | Implementado | Instrumentados + unit |
 | Registro de actividad (S07) | Implementado | Robolectric suite |
 | Permisos de cámara (política de ajustes) | Implementado | Instrumentados |
-| Navegación (back stack restaurable) | Implementado | commonTest |
-| Accesibilidad (contraste, foco visible, pulsación, háptica, anuncios) | Implementado | `core:ui` tests + Robolectric |
+| Navegación (back stack restaurable + NavigationBar 4 destinos) | Implementado | commonTest + RootNavigationChromeTest |
+| Accesibilidad (contraste, foco visible, háptica, anuncios, targets 48dp) | Implementado | `core:ui` tests + Robolectric |
 | Iconografía (Lucide ISC) | Implementado | compilación 3 targets |
+| Feedback transitorio (Snackbar) y persistente (AppStatusHost) | Implementado | RootNavigationChromeTest + AppStatusHostTest |
 
 ## NO VERIFICADO en esta pasada
 
@@ -45,79 +34,46 @@ dispositivo físico o red). No se declaran PASS.
 |---|---|---|
 | Runtime iOS (arranque y render) | Requiere Xcode/simulador | `IOS_RUNTIME_CHECKLIST.md` |
 | TalkBack/VoiceOver interactivo | Requiere dispositivo físico | checklist manual (ronda 2) |
-| Insets, cámara, foco nativo y motion en dispositivo | Requiere dispositivo físico | `ANDROID_PHYSICAL_DEVICE_TEST.md` |
+| Insets/notch, cámara, foco nativo y motion en dispositivo | Requiere dispositivo físico | `ANDROID_PHYSICAL_DEVICE_TEST.md` |
+| Predictive back en Android 14+ (gesto real con progreso) | Requiere dispositivo físico | `ANDROID_PHYSICAL_DEVICE_TEST.md` |
+| Photo Picker en dispositivo (contractos del sistema) | Robolectric ejecuta el flujo unitario; el picker visual requiere dispositivo | `ANDROID_PHYSICAL_DEVICE_TEST.md` |
+| Revisión visual de las capturas Roborazzi regeneradas | El hash PASS es determinista; el ojo humano valida la composición | abrir `feature/destinations/presentation/build/roborazzi/*.png` (s01/login/s02-add/import-batch × claro/oscuro) |
 | Supabase acceptance (JDBC) | Requiere base de datos | `:supabase:acceptance:test` con `DATABASE_URL` |
 
 ## Límites conocidos (decisiones, no bugs)
 
 - Glifos "Editar", "Compartir" y "Mostrar QR" sin icono asignado
-  (ADR-0005, punto 6): esas acciones de la app bar llevan etiqueta de
-  texto visible; no se deduce la acción de un glifo sin decisión de
-  producto.
-- El contraste NO textual de algunos tiles de acento contra el fondo del
-  tema es < 3:1 (contrato §5.2, ADR-0005 punto 7). Se acepta porque el
-  tile siempre lleva etiqueta visible, su foco usa el color del contenido
-  (≥3:1 contra el acento) y su pulsación el overlay opuesto; la separación
-  entre tiles la da el `tileGap`, no un borde.
-- Chips de filtro con contorno de selección: son controles con estado
-  (borde funcional de M9), no contenedores (ADR-0005, punto 9).
+  (ADR-0005, punto 6): esas acciones de la barra superior van como acción
+  de texto (con su descripción accesible como etiqueta) hasta una
+  decisión de iconografía.
+- El contraste NO textual de algunos acentos de contexto contra el fondo
+  del tema es < 3:1 (contrato §5.2): se aceptan como identidad de dato
+  (encabezados de S06, punto de fila) siempre con texto legible.
+- Autofill de credenciales: `KeyboardOptions.contentType` no existe en
+  Compose 1.8.2 (llega con 1.9); el autofill funciona por `keyboardType`
+  Email/Password (iOS lo mapea a `textContentType`).
 
-## Defectos abiertos de implementación
+## Pendientes conocidos
 
-Ninguno pendiente. Los dos defectos previos —el badge de sincronización
-compitiendo por el ancho de la fila y los destinos "Sin nombre"/"QR
-importado" indistinguibles— están cerrados y cubiertos por
-`DestinationRowLayoutTest` y `DestinationSubtitleTest`.
-
-## Defectos de pulido UI V1.1 cerrados (rama fix/ui-polish-v1-1)
-
-Desvíos del código respecto a la spec confirmados en capturas Roborazzi y
-corregidos en el código (la spec manda). Pruebas de regresión en
-`XauxaUiPolishDefectsTest` (core:ui, Robolectric NATIVE a 360 dp) y
-`S02UiPolishTest` (feature, pantallas S01/S02):
-
-| ID | Defecto | Arreglo | Prueba |
-|---|---|---|---|
-| D1 | Títulos a dos líneas solapados ("Resultado de importación"): `XauxaPageTitle` heredaba el interlineado ambiente (24 sp) con 40 sp | Token `XauxaType.LineHeightDisplayPage` (46 sp, 1.15×) aplicado con el factor de escala del display; `XauxaHeading`/`XauxaText` fijan interlineado proporcional propio (1.25×/1.5×) en vez de heredar | Ratio ≥ 1.1× y altura de 2 líneas a fontScale 1.0/1.3/2.0; métricas single-line fijas |
-| D2 | Etiquetas de tiles partidas a mitad de palabra ("Registra/r", "Favorito/s", "Context/os") | Padding horizontal del tile pequeño a `Xs` (opción a) + etiqueta del tile pequeño en `Caption` 12 sp con tracking neutro `LetterSpacingNone` (opción b): medido, "Contextos" ocupa ~64 px limpio pero ~69 px con el tracking ambiente heredado (0.5 sp) en 68 px útiles. 4 columnas intactas; columnas por escala intactas | Rejilla S01 real a 360 dp, fontScale 1.0/1.15/1.3/2.0: ninguna línea parte palabras |
-| D3 | Icono del tile a la izquierda (M3 pide centrado) | La zona flexible del icono ocupa todo el ancho (`fillMaxWidth`) con contenido centrado; etiqueta abajo a la izquierda | Centro X del icono contra centro del tile (≤ 1 dp) + etiqueta abajo-izquierda |
-| D4 | "Desde otra app" (S02) como título 20 sp en texto primario; M6 pide encabezado de sección 14–16 sp en acento | `XauxaSectionHeader`, igual que "Recientes" en S01; contraste del acento ≥ 4.5:1 en claro y oscuro | Mismo tamaño/color/familia en S01 y S02 + contraste puro por tema |
-| D5 | Controles de S02 sin icono (M10/M12: Galería→Image, Cámara→Camera) | Icono en "Galería (varios)", entrada de Cámara (Android e iOS) y primario "Galería" (nuevo parámetro opcional `icon` en `XauxaPrimaryButton`; sin iconos nuevos) | Árbol sin fusionar: bloque 24 dp decorativo (sin rol/texto/descripción) junto a cada etiqueta |
-| D6 | Placeholder del buscador S01 en dos líneas | Copy "QR, actividades y más" (S04 conserva la enumeración completa en `searchIntroHint`) + `maxLines = 1` con ellipsis y tracking neutro en el placeholder | Componente: copy largo queda en 1 línea; S01 real: 1 línea sin truncarse a 360 dp/1.0 |
-
-Hallazgos de la investigación (verificados, no supuestos): en Robolectric
-LEGACY la medición de texto es degenerada (avances ~1 px; un mismo texto
-14 sp mide 28, 35 o 52 px según la pantalla) y sin qualifiers NATIVE mide
-ceros — la geometría solo se afirma en NATIVE con viewport declarado; los
-tests nuevos y los geométricos de S02 usan NATIVE a 360 dp. Los botones
-secundarios fijan ahora 48 dp en el contenido interno con padding vertical
-M3 a cero (el floor externo no alcanza el nodo semántico en todos los
-árboles; altura determinista en claro/oscuro y a toda escala). Superficie
-`Surface` propaga minConstraints al hijo directo (las cajas de ancho fijo
-de los tests viven bajo una `Column`).
-
-## Propuestas pendientes de decisión (solo reportadas, no implementadas)
-
-- Contraste no textual del relleno de campos en oscuro (`surfaceContainer`
-  #1A1A1A sobre fondo #000000, ~1.1:1): la spec M8 lo permite (campo plano
-  sin borde en reposo); se propone registrarlo en "Límites conocidos" con
-  esta justificación (el límite se percibe por bloque tonal + etiqueta, y
-  el borde de 2 dp aparece en foco/error).
-- Decisión UX pendiente (puntos abiertos de ADR-0005, sin cambio): logo en
-  login/inicio, mostrar/ocultar contraseña, helper "Mínimo 6 caracteres"
-  siempre visible, tamaño 12 sp de "Volver" y auxiliares (tokens Caption).
-- Cobertura de capturas: S12 solo se captura en Idle; se propone añadir
-  S12 Result y Review (claro/oscuro) y S01 con fontScale 1.3 (el conteo
-  seguiría en 8 hasta decidirlo).
+- **Share Extension de iOS**: `sharedImportsSupported()` devuelve false en
+  iOS; el bloque "Desde otra app" de S02 no se muestra hasta que la
+  extensión exista (ADR-0012).
+- **Selector de PDF en iOS** (`UIDocumentPickerViewController`): la acción
+  "Elegir archivo (PDF)" solo existe en Android (OpenDocument por el canal
+  de comprobantes entrantes); en iOS queda pendiente de la pasada nativa
+  con Xcode.
+- **NavigationRail**: implementado para ancho expandido vía
+  `WindowSizeClass`; su render real en tablet/plegable es NO VERIFICADO
+  (no hay dispositivo).
 
 ## Puertas de calidad
 
 | Puerta | Comando | Resultado (esta pasada) |
 |---|---|---|
 | Arquitectura + design system + no-scripts | `./gradlew verifyAgendaQrArchitecture -PallowDebugSigningForRc=true` | PASS |
-| Tests de módulos | `./gradlew :core:ui:testDebugUnitTest :feature:destinations:presentation:testDebugUnitTest -PallowDebugSigningForRc=true` | PASS (incluye `XauxaUiPolishDefectsTest` y `S02UiPolishTest`, D1–D6) |
-| Regresión visual (Roborazzi + SHA-256) | `./gradlew :feature:destinations:presentation:recordRoborazziDebug recordVisualHashes verifyVisualHashes -PallowDebugSigningForRc=true` | PASS (8 capturas, hashes renovados tras revisión visual) |
-| Lint + release | `./gradlew :androidApp:lint :androidApp:assembleRelease -PallowDebugSigningForRc=true` | PASS (sin ampliar baseline) |
+| Tests de módulos | `./gradlew :core:ui:testDebugUnitTest :feature:destinations:presentation:testDebugUnitTest :feature:destinations:domain:test :feature:destinations:data:testDebugUnitTest -PallowDebugSigningForRc=true` | PASS |
+| Regresión visual (Roborazzi + SHA-256) | `./gradlew :feature:destinations:presentation:recordRoborazziDebug recordVisualHashes verifyVisualHashes -PallowDebugSigningForRc=true` | PASS (8 capturas renovadas tras el rediseño; revisión visual pendiente — ver NO VERIFICADO) |
+| Ensamblado Android | `./gradlew :androidApp:assembleDebug -PallowDebugSigningForRc=true` | PASS |
 | Lab web (wasm) | `./gradlew componentLabWeb` | PASS |
 | Compilación iOS (simulador ARM64, sin runtime) | `./gradlew :core:ui:compileKotlinIosSimulatorArm64 :feature:destinations:presentation:compileKotlinIosSimulatorArm64` | PASS (compila; runtime NO VERIFICADO, sin Xcode) |
 | Supabase acceptance (JDBC) | `DATABASE_URL=jdbc:postgresql://... ./gradlew :supabase:acceptance:test` | NO VERIFICADO (sin base de datos) |

@@ -620,12 +620,10 @@ object XauxaMotion {
  */
 data class XauxaAccent(val id: String, val background: Color, val onAccent: Color) {
     /**
-     * ADR-0011 (calidad de tiles): overlay de pulsación del bloque de
-     * acento — el color OPUESTO al texto. El overlay por defecto del tema
-     * ([XauxaColor.TextPrimary]) no vale aquí: sobre el propio bloque el
-     * color del tema puede repetir el fondo y dejar la pulsación invisible.
-     * El par onAccent/pressOverlay garantiza que el estado presionado
-     * nunca baje de 4.5:1 (XauxaTileContractTest).
+     * ADR-0011 (contraste del par de acento): overlay de pulsación del
+     * bloque de acento — el color OPUESTO al texto. Reservado al uso de
+     * los acentos como bloques de identidad (p. ej. marcadores del lab);
+     * el producto usa la indicación estándar de M3.
      */
     val pressOverlay: Color
         get() = if (onAccent == Color.White) Color.Black else Color.White

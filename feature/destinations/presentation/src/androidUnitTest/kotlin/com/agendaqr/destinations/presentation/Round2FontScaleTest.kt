@@ -1,6 +1,9 @@
 package com.agendaqr.destinations.presentation
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,8 +15,10 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import com.agendaqr.core.ui.components.XauxaIcons
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
+import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaTextInput
 import com.agendaqr.core.ui.theme.XauxaTheme
 import org.junit.Assert.assertTrue
@@ -108,6 +113,38 @@ class Round2FontScaleTest {
         ) {
             assertInsideScreenWidth("Persona o entidad del pago registrado")
             assertInsideScreenWidth("Usa el formato dd/mm/aaaa")
+        }
+    }
+
+    @Test
+    fun s02_and_s12_primary_actions_stay_uncut_at_every_scale() {
+        composeAtScales(
+            {
+                Column {
+                    // S02: acción única de galería (primaria con icono).
+                    XauxaPrimaryButton(
+                        label = AppStrings.ElegirDeLaGaleria,
+                        onClick = {},
+                        icon = XauxaIcons.Gallery,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    // S12: guardado de reconocidos (principal fija abajo).
+                    XauxaPrimaryButton(
+                        label = AppStrings.GuardarReconocidos,
+                        onClick = {},
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    XauxaSecondaryButton(
+                        label = AppStrings.ElegirArchivoPdf,
+                        onClick = {},
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            },
+        ) {
+            assertInsideScreenWidth("Elegir de la galería")
+            assertInsideScreenWidth("Guardar reconocidos")
+            assertInsideScreenWidth("Elegir archivo (PDF)")
         }
     }
 

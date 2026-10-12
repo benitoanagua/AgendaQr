@@ -200,7 +200,7 @@ class S02UiPolishTest {
         }
         // La pareja histórica Galería/Galería (varios) ya no existe.
         assertTrue(
-            compose.onAllNodesWithText(AppStrings.GaleriaVarios).fetchSemanticsNodes().isEmpty(),
+            compose.onAllNodesWithText("Galería (varios)").fetchSemanticsNodes().isEmpty(),
             "S02 ya no muestra 'Galería (varios)'",
         )
     }
