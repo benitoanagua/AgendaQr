@@ -10,7 +10,7 @@ La implementación sigue una jerarquía explícita de fuentes de verdad:
 
 1. **Agenda QR** — producto, dominio, requisitos, alcance, decisiones y reglas de negocio.
 2. **UX/UI V1 de Agenda QR** — contrato de interacción congelado para la experiencia del producto.
-3. **AgendaMobile** — sistema de diseño propio: lenguaje visual, tokens, componentes y patterns.
+3. **AgendaMobile** — sistema de diseño propio: lenguaje visual, tokens, componentes y patrones.
 4. **WaraWerse** — referencia técnica para Kotlin Multiplatform, Compose, modularización, build y prácticas de testing.
 
 Si dos fuentes entran en conflicto, prevalece la fuente de mayor autoridad indicada arriba.
@@ -75,4 +75,4 @@ La documentación está organizada por autoridad y ciclo de desarrollo. Comienza
 
 ## AgendaMobile Design System
 
-El contrato visual normativo está en [`docs/05-design-system/00-agendamobile-contrato-normativo.md`](docs/05-design-system/00-agendamobile-contrato-normativo.md). La decisión de gobierno y migración está en [ADR-0013](docs/07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md), que suplanta la autoría visual de ADR-0005/0011/0012. La aprobación documental no implica que todas las validaciones de runtime hayan sido ejecutadas.
+El contrato visual vigente está en [`docs/05-design-system/00-agendamobile-contrato-normativo.md`](docs/05-design-system/00-agendamobile-contrato-normativo.md). [ADR-0013](docs/07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md) establece AgendaMobile como único sistema visual y sustituye las decisiones visuales anteriores. El estado de verificación por plataforma se mantiene en [`docs/09-implementacion/01-estado.md`](docs/09-implementacion/01-estado.md).

@@ -43,7 +43,7 @@ dispositivo físico o red). No se declaran PASS.
 ## Límites conocidos (decisiones, no bugs)
 
 - Glifos "Editar", "Compartir" y "Mostrar QR" sin icono asignado
-  (ADR-0005, punto 6): esas acciones de la barra superior van como acción
+  (contrato AgendaMobile §7): esas acciones de la barra superior van como acción
   de texto (con su descripción accesible como etiqueta) hasta una
   decisión de iconografía.
 - El contraste NO textual de algunos acentos de contexto contra el fondo
@@ -58,7 +58,7 @@ dispositivo físico o red). No se declaran PASS.
 
 - **Share Extension de iOS**: `sharedImportsSupported()` devuelve false en
   iOS; el bloque "Desde otra app" de S02 no se muestra hasta que la
-  extensión exista (ADR-0012).
+  extensión exista (ADR-0013).
 - **Selector de PDF en iOS** (`UIDocumentPickerViewController`): la acción
   "Elegir archivo (PDF)" solo existe en Android (OpenDocument por el canal
   de comprobantes entrantes); en iOS queda pendiente de la pasada nativa

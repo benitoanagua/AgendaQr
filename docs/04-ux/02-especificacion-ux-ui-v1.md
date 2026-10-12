@@ -13,12 +13,7 @@
 | V1.2 | 2026-10-11 | Enmienda por ADR-0012 (UI convencional sobre Material 3, misma en ambas plataformas): §12 reescrito como diseño convencional (M1–M13 eliminados), §4 S01/S02/S12 recompuestos, §3 y §11 ajustados donde cambian. Intención, navegación conceptual, modelo mental, reglas de negocio y recuperación de errores: intactos. Aprobación explícita del propietario para enmendar la congelación registrada en ADR-0012. |
 | V1.3 | 2026-10-12 | Enmienda por ADR-0013 (sistema de diseño propio AgendaMobile): §12 actualizado a la autoría, paleta, formas y modo oscuro de AgendaMobile. Intención, navegación, modelo mental, reglas de negocio, accesibilidad y copy: intactos. |
 
-La implementación de V1.2 está aplicada sobre `main` y verificada por las
-puertas del design system y de módulos (estado y cobertura reales en
-`docs/09-implementacion/01-estado.md`). Si en el futuro la implementación
-se aparta de esta spec, el desvío se registra allí y se corrige la fuente
-menos específica (contrato §2); la spec manda sobre el código en intención,
-composición funcional y flujos.
+La implementación vigente corresponde a V1.3. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/09-implementacion/01-estado.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
 ## 1. Contrato principal
 
@@ -63,7 +58,7 @@ Contexto es una superficie de continuidad, no una nueva taxonomía de navegació
 
 ## 4. Pantallas
 
-### S01 — Inicio (V1.2, ADR-0012)
+### S01 — Inicio (V1.3, ADR-0013)
 Intención: encontrar o iniciar algo. Buscar domina visualmente; Añadir y Registrar son acciones secundarias.
 
 Composición (la intención no cambia; solo cambia la presentación):
@@ -87,7 +82,7 @@ Composición (la intención no cambia; solo cambia la presentación):
   la app).
 - Cerrar sesión vive en el menú "…" de la barra superior.
 
-### S02 — Añadir (V1.2, ADR-0012)
+### S02 — Añadir (V1.3, ADR-0013)
 Intención: traer algo que el usuario ya tiene.
 
     ELEGIR DE LA GALERÍA (una o varias imágenes)
@@ -113,7 +108,7 @@ Intención: encontrar cualquier cosa de Agenda QR. Los resultados pueden ser het
 ### S05 — Resultados
 Superficie de decisión. Al volver se conserva la consulta.
 
-### S06 — Contexto (V1.2, ADR-0012)
+### S06 — Contexto (V1.3, ADR-0013)
 Intención: comprender y continuar dentro de un contexto. No es un dashboard financiero. La acción primaria depende del flujo que llevó al usuario allí.
 
 Composición: la superficie del contexto se estructura como **secciones QR · Actividades · Comprobantes** (pestañas estándar), reflejando directamente el modelo mental de §2; no crea taxonomía nueva de navegación. El acento del contexto (§12, Color) tiñe sus encabezados de sección y elementos de foco. La barra superior lleva el título y la flecha atrás; las acciones de la pantalla viven en el cuerpo (§12, Navegación y chrome).
@@ -138,7 +133,7 @@ Ambos son resultados legítimos.
 ### S11 — Resolver ambigüedad
 Intención: resolver una única duda que el sistema no puede decidir con seguridad.
 
-### S12 — Resultado de importación masiva (V1.2, ADR-0012)
+### S12 — Resultado de importación masiva (V1.3, ADR-0013)
 Superficie de decisión derivada de Añadir.
 
     [barra superior: título "Resultado de importación" + atrás]
@@ -223,7 +218,7 @@ Ejemplos:
 
 No existe un ErrorScreen global como destino de navegación.
 
-## 11. Accesibilidad y movimiento (V1.2, ADR-0012)
+## 11. Accesibilidad y movimiento (V1.3, ADR-0013)
 
 - targets interactivos de 44–48dp como mínimo según plataforma;
 - significado independiente del color;
@@ -232,7 +227,7 @@ No existe un ErrorScreen global como destino de navegación.
 - reduced motion respetado;
 - comprensión independiente de la animación.
 
-Reglas V1.2:
+Reglas vigentes V1.3:
 
 - **Contraste:** texto normal ≥ 4.5:1 y texto grande ≥ 3:1 (WCAG), en
   claro y en oscuro; los límites de controles y bordes en reposo ≥ 3:1.
@@ -342,7 +337,7 @@ Tabla de contraste calculada (WCAG 2.x sobre luminancia relativa; razón del par
 
 ## 13. Fuera de esta congelación
 
-No definido en V1.2: implementación Kotlin/Compose concreta de esta enmienda, navegación interna de pantallas, ViewModels/state holders, persistencia concreta, tests instrumentados ni validación runtime en dispositivo. La implementación se alinea a V1.2 en la pasada de migración dedicada (registrado en `docs/09-implementacion/01-estado.md`).
+Fuera del alcance de esta especificación conceptual: detalles internos de Kotlin/Compose, implementación de ViewModels y state holders, persistencia concreta y resultados de pruebas por plataforma. Esos detalles y su estado de verificación se documentan en `docs/09-implementacion/01-estado.md`.
 
 ## 14. Estado
 

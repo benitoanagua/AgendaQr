@@ -32,7 +32,7 @@ criterio de éxito. Marca con [ ] al validar y registra en
 2. [ ] Permisos de cámara iOS: pedir por primera vez (NotDetermined),
    denegar y reintentar: el banner ofrece "Abrir ajustes" y abre los
    ajustes del SO. **Nota:** el pedido explícito AVFoundation no está en
-   los bindings precompilados de KMP (triage B7) — puede requerir
+   los bindings precompilados de KMP  — puede requerir
    wrapper nativo; validar con Xcode.
 3. [ ] Escalado de texto Dynamic Type al máximo: S01/S07 sin recortes
    (equivalente iOS del test Round2FontScaleTest).
@@ -41,14 +41,13 @@ criterio de éxito. Marca con [ ] al validar y registra en
 
 1. [ ] `enableOnBackInvokedCallback=true` ya está en el manifest. Con el
    gesto desde el borde: S04 → Inicio muestra la ANIMACIÓN de vuelta
-   progresiva y el turnstile no la bloquea. **Éxito:** la vista previa
-   del gesto funciona; el turno confirmado respeta reduced motion.
+   progresiva y ninguna transición propia interfiere con ella. **Éxito:** la vista previa
+   del gesto funciona; la navegación confirmada respeta reduced motion.
 2. [ ] Durante un flujo con draft (S07 → S08): la vista previa del
    gesto NO consume el draft hasta soltar (el BackHandler interno
    decide). **Éxito:** Cancelar el gesto a mitad conserva el draft.
 3. [ ] Raíz (S01): el gesto cierra la app sin animación rota.
-4. [ ] Reduced motion activado: la transición es instantánea (ya
-   verificado en runtime V1; re-validar con predictive back).
+4. [ ] Reduced motion activado: la transición es instantánea; verificar también el gesto predictivo.
 
 ## Fuente al 200 % (dispositivo Android)
 
@@ -75,12 +74,5 @@ criterio de éxito. Marca con [ ] al validar y registra en
 2. [ ] Hoja de compartir (UIActivityViewController) con un
    comprobante: se abre, comparte y cierra sin crash (código compilado,
    runtime sin validar).
-3. [ ] `isReduceMotionEnabled` respetado: con la opción activa, el
-   turnstile/tilt son instantáneos (ReducedMotion.ios.kt ya lo expone).
+3. [ ] La opción de movimiento reducido del sistema se respeta: las transiciones propias no animan cuando está activa.
 
-## Rendimiento (opcional, cuando se cablee el reporte)
-
-1. [ ] Añadir `compose.compiler` reports de estabilidad/skippability y
-   comparar antes/después de la migración a
-   `collectAsStateWithLifecycle` (triage E2): no se aplicaron
-   @Stable/@Immutable sin evidencia — medir primero.

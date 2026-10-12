@@ -1,8 +1,6 @@
 # Licencias de terceros
 
-Registro de los iconos y dependencias empaquetados o consumidos por
-Agenda QR, con la licencia verificada y el aviso requerido. Regla
-(heredada de ADR-0005 y vigente): solo licencias libres.
+Registro de licencias de los recursos y dependencias consumidos por Agenda QR, con sus avisos y obligaciones de distribución. La revisión de licencia es parte del mantenimiento del sistema; no define el lenguaje visual.
 
 ## Lucide (iconografía) — ISC
 
