@@ -60,8 +60,9 @@ class ScreensA11yCoverageTest {
         }
         compose.waitForIdle()
         compose.onNodeWithText("Añadir").assert(headingMatcher())
-        compose.onNodeWithText("Galería").assertHeightIsAtLeast(48.dp)
-        compose.onNodeWithText("Galería (varios)").assertHeightIsAtLeast(48.dp)
+        // V1.2: una única acción de galería con selección múltiple (sin
+        // "Galería (varios)") y la cámara después de la ayuda de share.
+        compose.onNodeWithText("Elegir de la galería").assertHeightIsAtLeast(48.dp)
         compose.onNodeWithText("Cámara").assertHeightIsAtLeast(48.dp)
         // V1.2: la flecha atrás de la barra superior es un IconButton con
         // descripción accesible (M3 garantiza el target táctil de 48 dp).
@@ -227,14 +228,14 @@ class ScreensA11yCoverageTest {
         }
         compose.waitForIdle()
         compose.onNodeWithText("Agenda QR").assert(headingMatcher())
-        // V1.1 (ADR-0005, S01): el nombre del último QR aparece dos veces —
-        // en su fila de Recientes y en el tile vivo ancho (M2). El test fija
-        // ahora esa composición: ambas presentaciones existen y la acción
-        // de favorito sigue etiquetada y con target de 48 dp.
+        // V1.2 (ADR-0012, S01): lista convencional — el nombre aparece UNA
+        // sola vez (su fila de Recientes; sin tile vivo que lo duplique) y
+        // el favorito es un IconToggleButton con descripción accesible.
         val nameNodes = compose.onAllNodesWithText("Carniceria Don Bife").fetchSemanticsNodes()
-        assert(nameNodes.size == 2) { "Se esperan fila de Recientes + tile vivo con el último QR" }
-        compose.onNodeWithText("Último QR o actividad reciente").assertExists()
-        compose.onNodeWithText("Favorito").assertHeightIsAtLeast(48.dp)
+        assert(nameNodes.size == 1) { "S01 sin tiles: solo la fila de Recientes" }
+        compose.onNodeWithContentDescription("Quitar favorito").assertExists()
+        // V1.2: sin tiles — el botón de texto "Favorito" por fila desapareció
+        // con el IconToggleButton de estrella (48 dp garantizado por M3).
         // T6/U4: el estado de sync ES texto cuando hay algo que informar.
         // Defecto F-1: el estado SINCRONIZADO es el normal (silencio = OK);
         // el badge solo aparece para Pendiente/Error/Sincronizando.
@@ -256,11 +257,16 @@ class ScreensA11yCoverageTest {
             }
         }
         compose.waitForIdle()
-        val gallery = compose.onNodeWithText("Galería").getBoundsInRoot().top
-        val share = compose.onNodeWithText("Desde otra app").getBoundsInRoot().top
+        // V1.2: Galería (única, multi-selección) → ayuda breve de share →
+        // Cámara. En Robolectric corre el actual Android
+        // (sharedImportsSupported = true), así que la ayuda es visible.
+        val gallery = compose.onNodeWithText("Elegir de la galería").getBoundsInRoot().top
+        val share = compose.onNodeWithText(
+            "Comparte una imagen o PDF desde otra app con Agenda QR. La importación continuará aquí para revisar lo que se encontró.",
+        ).getBoundsInRoot().top
         val camera = compose.onNodeWithText("Cámara").getBoundsInRoot().top
-        assertTrue(gallery < share, "Galería debe estar sobre Desde otra app")
-        assertTrue(share < camera, "Desde otra app debe estar sobre Cámara")
+        assertTrue(gallery < share, "Galería debe estar sobre la ayuda de share")
+        assertTrue(share < camera, "La ayuda de share debe estar sobre Cámara")
     }
 
     // S07 — tipo con semántica de selección: un chip marcado, 48dp.

@@ -116,15 +116,14 @@ object LabComponentCatalog {
                     LabReviewStatus.VERIFIED,
                 ),
                 LabState(
-                    "Breakpoints históricos",
-                    "BreakpointCompact y BreakpointMedium existen en tokens y el laboratorio aún los consume " +
-                    "para su layout adaptable; la producción usa WindowSizeClass.",
+                    "Adaptación de ancho",
+                    "La producción usa WindowSizeClass (NavigationBar/NavigationRail); el lab decide su " +
+                    "layout con el mismo cálculo multiplataforma de core:ui.",
                     LabReviewStatus.VERIFIED,
                 ),
             ),
             tokens = listOf(
                 LabTokenRef("XauxaMetrics.ControlMinSize", "Altura mínima de controles interactivos."),
-                LabTokenRef("XauxaMetrics.BreakpointMedium", "Breakpoint 640 de Xauxa §07."),
             ),
             usage = listOf("defaultMinSize de botones y targets interactivos; layout adaptable del laboratorio."),
             tags = listOf("métricas", "tokens", "accesibilidad"),
@@ -261,76 +260,12 @@ object LabComponentCatalog {
             tags = listOf("sección", "encabezado"),
             darkThemeSupport = LabDarkThemeSupport.PENDING,
             darkThemeNote = "Resuelve el esquema vía XauxaColor; el esquema oscuro aplica valores de referencia pendientes de validación visual.",
-            whenToUse = "Para agrupar contenido con título. Sin título preferir XauxaTile directamente.",
+            whenToUse = "Para agrupar contenido con título.",
             androidMapping = "Column + Row de encabezado (SpaceBetween) Material3 Text.",
             iosMapping = "SwiftUI VStack + HStack de encabezado.",
             platforms = commonPlatforms(),
         ),
-        LabComponentContract(
-            id = "xauxa-tile",
-            name = "XauxaTile",
-            category = LabCategory.SURFACES,
-            purpose = "Superficie rectangular para una entidad o bloque de contenido.",
-            description = "Surface plana SIN borde de reposo (V1.1 M9) con fondo XauxaColor.Surface2. Con " +
-                "onClick no nulo añade rol Button, foco y anillo xauxaFocusRing.",
-            props = listOf(
-                LabProp("modifier", "Modifier"),
-                LabProp("onClick", "(() -> Unit)?", "null"),
-                LabProp("content", "@Composable () -> Unit"),
-            ),
-            states = listOf(
-                LabState("Estático", "Tile de presentación sin acción.", LabReviewStatus.VERIFIED),
-                LabState("Interactivo", "Tile con onClick: rol Button y foco activables.", LabReviewStatus.VERIFIED),
-            ),
-            events = listOf(LabEvent("onClick", "Activación del tile; solo se emite cuando onClick != null.")),
-            tokens = listOf(
-                LabTokenRef("XauxaColor.Surface2", "Fondo del tile (bloque de color, M9)."),
-                LabTokenRef("XauxaColor.FocusRing", "Anillo de foco en modo interactivo (borde funcional, M9)."),
-            ),
-            usage = listOf(
-                "Obligación, destino QR, comprobante, contacto o bloque resumen dentro de una sección.",
-            ),
-            notes = listOf(
-                "El contenido debe aportar su propia semántica textual; el tile solo aporta rol Button.",
-                "Bloques de contenido y entidades.",
-            ),
-            tags = listOf("superficie", "tarjeta", "tile"),
-            darkThemeSupport = LabDarkThemeSupport.PENDING,
-            darkThemeNote = "Resuelve el esquema vía XauxaColor; el esquema oscuro aplica valores de referencia pendientes de validación visual.",
-            whenToUse = "Bloques de contenido y entidades.",
-            androidMapping = "Material3 Surface rectangular con clickable + focusable.",
-            iosMapping = "SwiftUI RoundedRectangle radius 0 + .border + .onTapGesture + .focusable().",
-            platforms = commonPlatforms(),
-        ),
-        LabComponentContract(
-            id = "xauxa-page-title",
-            name = "XauxaPageTitle",
-            category = LabCategory.SURFACES,
-            purpose = "Título de página con el rol titleLarge de Material 3.",
-            description = "Rol titleLarge de M3 (22 sp) con la familia de sistema, capitalización de " +
-                "oración y semántica heading(). V1.2 (ADR-0012, spec §12 Tipografía).",
-            props = listOf(
-                LabProp("text", "String"),
-                LabProp("modifier", "Modifier"),
-                LabProp("color", "Color", "XauxaColor.TextPrimary"),
-            ),
-            states = listOf(
-                LabState("Default", "Título de página estándar.", LabReviewStatus.VERIFIED),
-            ),
-            tokens = listOf(
-                LabTokenRef("XauxaType.TitleLarge", "Tamaño del título de página (22 sp)."),
-                LabTokenRef("XauxaColor.TextPrimary", "Color del título."),
-            ),
-            usage = listOf("Titular de pantallas sin barra superior (Auth) y transición al chrome V1.2."),
-            tags = listOf("título", "tipografía"),
-            darkThemeSupport = LabDarkThemeSupport.PENDING,
-            darkThemeNote = "Resuelve el esquema vía XauxaColor; validación visual de oscuro pendiente en dispositivo.",
-            whenToUse = "Titular de pantalla. En superficies con barra superior, el título vive en la barra.",
-            androidMapping = "Material3 Text con MaterialTheme.typography.titleLarge.",
-            iosMapping = "Mismo estilo compartido; familia de sistema (San Francisco).",
-            platforms = commonPlatforms(),
-        ),
-        LabComponentContract(
+                        LabComponentContract(
             id = "xauxa-section-header",
             name = "XauxaSectionHeader",
             category = LabCategory.SURFACES,
@@ -359,84 +294,7 @@ object LabComponentCatalog {
             iosMapping = "SwiftUI Text con tinte de acento.",
             platforms = commonPlatforms(),
         ),
-        LabComponentContract(
-            id = "xauxa-metro-tile",
-            name = "XauxaMetroTile",
-            category = LabCategory.SURFACES,
-            purpose = "Tile Metro: bloque plano de acento, icono centrado, etiqueta abajo a la izquierda.",
-            description = "Bloque de color plano sin borde ni sombra (M3/M9), tilt <=150 ms al presionar " +
-                "(M11; sin tilt con reduced motion) y etiqueta siempre visible (M14: rol Button, nombre, " +
-                "estado y orden de foco). V1.1 (ADR-0005).",
-            props = listOf(
-                LabProp("label", "String"),
-                LabProp("accent", "XauxaAccent"),
-                LabProp("onClick", "(() -> Unit)?"),
-                LabProp("size", "XauxaTileSize", "SMALL"),
-                LabProp("icon", "ImageVector?", "null"),
-                LabProp("content", "(@Composable () -> Unit)?", "null"),
-            ),
-            states = listOf(
-                LabState("Default", "Bloque plano con etiqueta visible.", LabReviewStatus.VERIFIED),
-                LabState("Interactivo", "Con onClick: rol Button, foco y tilt al presionar.", LabReviewStatus.VERIFIED),
-                LabState("Ancho con contenido", "WIDE: contenido en texto (último QR/actividad), etiqueta visible.", LabReviewStatus.VERIFIED),
-            ),
-            events = listOf(LabEvent("onClick", "Activación del tile (cuando onClick != null).")),
-            tokens = listOf(
-                LabTokenRef("XauxaMetrics.TileUnit", "Unidad 1x1 de la rejilla."),
-                LabTokenRef("XauxaMetrics.TileWideHeight", "Alto de los tiles 2x2 y 4x2."),
-                LabTokenRef("XauxaMetrics.ControlMinSize", "Objetivo táctil mínimo."),
-                LabTokenRef("XauxaMetrics.IconSizeTile", "Tamaño del icono centrado."),
-                LabTokenRef("XauxaColor.FocusRing", "Anillo de foco sobre el acento (M9/M14)."),
-                LabTokenRef("XauxaMotion.DurationShortMs", "Tilt <=150 ms y entrada del tile."),
-            ),
-            usage = listOf("Rejilla de S01: Añadir, Registrar, Favoritos, Contextos y tile vivo ancho."),
-            notes = listOf(
-                "El tile ancho omite el icono y muestra contenido textual; la etiqueta nunca desaparece.",
-                "El acento viene de XauxaAccents: par fondo/texto fijo por contraste calculado (M5).",
-            ),
-            tags = listOf("tile", "metro", "rejilla"),
-            darkThemeSupport = LabDarkThemeSupport.PENDING,
-            darkThemeNote = "Acentos idénticos en ambos temas por diseño (spec §12 Modo oscuro); validación visual en T8.",
-            whenToUse = "Entradas de acción de S01. Bloques de contenido sin acción con XauxaTile.",
-            androidMapping = "Box + background plano + clickable con rol Button.",
-            iosMapping = "SwiftUI Rectangle + onTapGesture + accessibilityLabel.",
-            platforms = commonPlatforms(),
-        ),
-        LabComponentContract(
-            id = "xauxa-tile-grid",
-            name = "XauxaTileGrid",
-            category = LabCategory.SURFACES,
-            purpose = "Rejilla Metro de 4 columnas con entrada escalonada (M3/M11).",
-            description = "Coloca XauxaTileItem en 4 columnas en compacto (reduce columnas antes que " +
-                "comprimir); el tile ancho ocupa la fila. Entrada escalonada de 30-50 ms por tile, total " +
-                "<=300 ms; con reduced motion aparece de inmediato.",
-            props = listOf(
-                LabProp("items", "List<XauxaTileItem>"),
-                LabProp("modifier", "Modifier"),
-                LabProp("reducedMotion", "Boolean", "LocalReducedMotion.current"),
-            ),
-            states = listOf(
-                LabState("Default", "Rejilla compuesta por unidades de 4 columnas.", LabReviewStatus.VERIFIED),
-                LabState("Entrada escalonada", "Fade por tile, total <=300 ms (sin reduced motion).", LabReviewStatus.VERIFIED),
-                LabState("Reduced motion", "Sin escalonado ni transición: estado inmediato.", LabReviewStatus.VERIFIED),
-            ),
-            tokens = listOf(
-                LabTokenRef("XauxaMetrics.TileUnit", "Unidad base de la rejilla (1x1)."),
-                LabTokenRef("XauxaSpacing.TileGap", "Separación entre tiles (multiplo de 4 dp)."),
-                LabTokenRef("XauxaSpacing.ScreenMargin", "Margen de pantalla (multiplo de 4 dp)."),
-                LabTokenRef("XauxaMotion.DurationMediumMs", "Tope total del escalonado (300 ms)."),
-            ),
-            usage = listOf("S01: rejilla de acciones principales."),
-            notes = listOf("La comprension nunca depende de la animacion (spec §11)."),
-            tags = listOf("rejilla", "tile", "metro", "motion"),
-            darkThemeSupport = LabDarkThemeSupport.PENDING,
-            darkThemeNote = "Composición de acentos fijos; validación visual en T8.",
-            whenToUse = "S01 y cualquier superficie de entrada con tiles.",
-            androidMapping = "Column/Row manual con spans (sin LazyGrid: el conjunto de S01 es finito y corto).",
-            iosMapping = "SwiftUI Grid con columnas adaptadas.",
-            platforms = commonPlatforms(),
-        ),
-        LabComponentContract(
+                        LabComponentContract(
             id = "xauxa-dialog",
             name = "XauxaDialog",
             category = LabCategory.SURFACES,

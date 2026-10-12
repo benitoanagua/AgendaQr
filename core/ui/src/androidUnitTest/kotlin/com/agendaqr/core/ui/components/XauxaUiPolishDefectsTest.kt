@@ -159,20 +159,6 @@ class XauxaUiPolishDefectsTest {
     // --- D1: interlineado de títulos y cuerpo (familia de sistema, V1.2) ---
 
     @Test
-    fun d1_pageTitle_uses_the_standard_titleLarge_metrics() {
-        setScaledContent(1.0f) { XauxaPageTitle("Agenda QR") }
-        val style = layoutOf("Agenda QR").layoutInput.style
-        // V1.2 (ADR-0012): título de página = rol titleLarge de M3, 22/28,
-        // con la familia de sistema (sin fuente empaquetada).
-        assertEquals(22.sp, style.fontSize)
-        assertEquals(28.sp, style.lineHeight)
-        assertTrue(
-            style.fontFamily == null || style.fontFamily == androidx.compose.ui.text.font.FontFamily.Default,
-            "el título de página usa la familia de sistema",
-        )
-    }
-
-    @Test
     fun d1_heading_does_not_inherit_body_lineheight() {
         setScaledContent(1.0f) {
             Column {
@@ -233,53 +219,6 @@ class XauxaUiPolishDefectsTest {
      * pantalla): 4 columnas a fontScale <= 1.15, 3 a 1.3 y 2 a 2.0. La
      * rejilla reduce columnas; la etiqueta nunca parte palabras.
      */
-    private fun tileGridLabelsDoNotSplitAt(fontScale: Float) {
-        val labels = s01TileLabels + activatedLabel + wideTileLabel
-        setScaledContent(fontScale) {
-            // Altura acotada: la zona flexible del tile (weight 1f) comeria
-            // todo el alto libre de una Column sin limite y empujaria los
-            // tiles fuera de la pantalla (layouts de altura 0).
-            Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-                XauxaTileGrid(
-                    items = buildList {
-                        (s01TileLabels + activatedLabel).forEach { label ->
-                            add(
-                                XauxaTileItem(
-                                    label = label,
-                                    accent = XauxaAccents.System,
-                                    icon = XauxaIcons.Favorite,
-                                    onClick = {},
-                                ),
-                            )
-                        }
-                        add(
-                            XauxaTileItem(
-                                label = wideTileLabel,
-                                accent = XauxaAccents.System,
-                                size = XauxaTileSize.WIDE,
-                                onClick = {},
-                            ),
-                        )
-                    },
-                )
-            }
-        }
-        compose.waitForIdle()
-        labels.forEach { label -> assertNoBrokenWords(layoutOf(label), label) }
-    }
-
-    @Test
-    fun d2_tile_labels_do_not_split_words_at100() = tileGridLabelsDoNotSplitAt(1.0f)
-
-    @Test
-    fun d2_tile_labels_do_not_split_words_at115() = tileGridLabelsDoNotSplitAt(1.15f)
-
-    @Test
-    fun d2_tile_labels_do_not_split_words_at130() = tileGridLabelsDoNotSplitAt(1.3f)
-
-    @Test
-    fun d2_tile_labels_do_not_split_words_at200() = tileGridLabelsDoNotSplitAt(2.0f)
-
     // --- D3: icono del tile centrado (M3) ---
 
     private fun unmergedNodes(): List<SemanticsNode> {
@@ -291,59 +230,6 @@ class XauxaUiPolishDefectsTest {
         walk(compose.onRoot(useUnmergedTree = true).fetchSemanticsNode())
         return all
     }
-
-    @Test
-    fun d3_tile_icon_is_centered_over_flex_zone() {
-        setScaledContent(1.0f) {
-            // Caja acotada en ambas dimensiones (ver D2): el alto libre
-            // desboca la zona flexible del tile.
-            Box(modifier = Modifier.width(200.dp).height(76.dp)) {
-                XauxaMetroTile(
-                    label = "Probe",
-                    accent = XauxaAccents.System,
-                    icon = XauxaIcons.Favorite,
-                    onClick = {},
-                )
-            }
-        }
-        val all = unmergedNodes()
-        val tile = all.singleOrNull { it.config.getOrNull(SemanticsProperties.Role) == Role.Button }
-        assertNotNull(tile, "tile con rol Button no encontrado en el arbol sin fusionar")
-        val pxPerDp = tile.size.width / 200f
-        // El icono es el unico bloque de 32 dp (IconSizeTile) del tile.
-        val icon = all.singleOrNull {
-            it != tile &&
-                kotlin.math.abs(it.size.width - 32f * pxPerDp) <= 1f &&
-                kotlin.math.abs(it.size.height - 32f * pxPerDp) <= 1f
-        }
-        assertNotNull(icon, "icono de 32 dp no encontrado en el tile")
-        // Decorativo: sin rol, sin texto y sin descripcion (la etiqueta del
-        // tile ya es el nombre accesible, §11/M12).
-        assertNull(icon.config.getOrNull(SemanticsProperties.Role))
-        assertNull(icon.config.getOrNull(SemanticsProperties.Text))
-        assertNull(icon.config.getOrNull(SemanticsProperties.ContentDescription))
-        val tileCenterX = tile.positionInRoot.x + tile.size.width / 2f
-        val iconCenterX = icon.positionInRoot.x + icon.size.width / 2f
-        assertTrue(
-            abs(iconCenterX - tileCenterX) <= pxPerDp,
-            "icono descentrado: centro del icono=$iconCenterX, centro del tile=$tileCenterX (tolerancia 1 dp)",
-        )
-        // La etiqueta sigue abajo a la izquierda (M3).
-        val label = all.singleOrNull {
-            it.config.getOrNull(SemanticsProperties.Text)?.any { t -> t.text == "Probe" } == true
-        }
-        assertNotNull(label, "etiqueta 'Probe' no encontrada en el tile")
-        assertTrue(
-            label.positionInRoot.x - tile.positionInRoot.x <= 8f * pxPerDp,
-            "la etiqueta ya no esta abajo a la izquierda",
-        )
-        assertTrue(
-            label.positionInRoot.y > icon.positionInRoot.y,
-            "la etiqueta ya no esta debajo del icono",
-        )
-    }
-
-    // --- D4 (contraste del texto de encabezado de sección, puro) ---
 
     @Test
     fun d4_section_header_accent_meets_text_contrast_in_both_themes() {

@@ -18,14 +18,13 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import com.agendaqr.core.ui.components.XauxaBadge
+import com.agendaqr.core.ui.components.XauxaFavoriteToggle
+import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaTextInput
-import com.agendaqr.core.ui.components.XauxaTileGrid
-import com.agendaqr.core.ui.components.XauxaTileItem
-import com.agendaqr.core.ui.components.XauxaTileSize
-import com.agendaqr.core.ui.theme.XauxaAccents
+import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaTheme
-import com.agendaqr.core.ui.theme.accentFor
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -117,45 +116,36 @@ class XauxaResponsiveLayoutContractTest {
     }
 
     @Test
-    fun metro_tiles_grow_at_large_font_scale_without_horizontal_overflow() {
+    fun s01_rows_grow_at_large_font_scale_without_horizontal_overflow() {
         composeAtScales(
             {
-                XauxaTileGrid(
-                    items = listOf(
-                        XauxaTileItem(
-                            label = tileLabel,
-                            accent = accentFor("responsive-test"),
-                            onClick = {},
-                        ),
-                        XauxaTileItem(
-                            label = "Favoritos",
-                            accent = XauxaAccents.System,
-                            onClick = {},
-                        ),
-                        XauxaTileItem(
-                            label = wideLabel,
-                            accent = XauxaAccents.System,
-                            size = XauxaTileSize.WIDE,
-                            onClick = {},
-                        ),
+                Column {
+                    XauxaListRow(
+                        title = tileLabel,
+                        subtitle = wideLabel,
+                        onClick = {},
+                        meta = { XauxaBadge(text = "Pendiente", tone = XauxaTone.Info) },
+                        trailing = {
+                            XauxaFavoriteToggle(
+                                favorite = false,
+                                contentDescription = "Marcar favorito",
+                                onCheckedChange = {},
+                            )
+                        },
                     )
-                )
+                    XauxaListRow(title = "Favoritos", onClick = {})
+                }
             },
         ) { scale ->
             assertTextStaysInsideViewport(tileLabel)
             assertTextStaysInsideViewport("Favoritos")
             assertTextStaysInsideViewport(wideLabel)
-            // El alto del 1×1 se deriva de la unidad calculada: nunca baja
-            // del objetivo mínimo (76 dp) y acompaña al ancho (cuadrado).
-            val tile = compose.onAllNodesWithText(tileLabel, substring = true)
+            // §8: la altura de la fila crece con la fuente; nunca recorta.
+            val row = compose.onAllNodesWithText(tileLabel, substring = true)
                 .fetchSemanticsNodes().single()
             assertTrue(
-                "El tile queda por debajo del objetivo mínimo con escala $scale: ${tile.boundsInRoot}",
-                tile.boundsInRoot.height >= 76f,
-            )
-            assertTrue(
-                "El tile 1×1 deja de ser cuadrado con escala $scale: ${tile.boundsInRoot}",
-                kotlin.math.abs(tile.boundsInRoot.height - tile.boundsInRoot.width) <= 2f,
+                "La fila queda por debajo del objetivo mínimo con escala $scale: ${row.boundsInRoot}",
+                row.boundsInRoot.height >= 48f,
             )
         }
     }

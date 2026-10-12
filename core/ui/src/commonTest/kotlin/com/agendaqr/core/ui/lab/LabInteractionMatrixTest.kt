@@ -84,10 +84,10 @@ class LabInteractionMatrixTest {
     }
 
     @Test
-    fun tile_without_onclick_still_declares_interactivity_through_its_event() {
-        val tile = contract("xauxa-tile")
-        assertTrue(LabInteractionMatrix.applicableLenses(tile).contains(LabInteractionLens.PRESSED))
-        assertTrue(LabInteractionMatrix.applicableLenses(tile).contains(LabInteractionLens.FOCUS))
+    fun pivot_without_onclick_still_declares_interactivity_through_its_event() {
+        val pivot = contract("xauxa-pivot")
+        assertTrue(LabInteractionMatrix.applicableLenses(pivot).contains(LabInteractionLens.PRESSED))
+        assertTrue(LabInteractionMatrix.applicableLenses(pivot).contains(LabInteractionLens.FOCUS))
     }
 
     @Test

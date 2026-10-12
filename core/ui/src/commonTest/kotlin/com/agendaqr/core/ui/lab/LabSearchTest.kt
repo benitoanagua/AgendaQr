@@ -21,10 +21,10 @@ class LabSearchTest {
 
     @Test
     fun search_matches_component_name_case_insensitively() {
-        val results = filterCatalog(catalog, LabCatalogQuery(text = "xauxatile"))
-        assertTrue(results.any { it.id == "xauxa-tile" })
+        val results = filterCatalog(catalog, LabCatalogQuery(text = "xauxalistrow"))
+        assertTrue(results.any { it.id == "xauxa-list-row" })
         assertTrue(results.all {
-            (it.id + it.name + it.purpose + it.description).contains("xauxatile", ignoreCase = true)
+            (it.id + it.name + it.purpose + it.description).contains("xauxalistrow", ignoreCase = true)
         })
     }
 
@@ -68,7 +68,7 @@ class LabSearchTest {
         val counts = categoryCounts(catalog)
         assertEquals(catalog.size, counts.values.sum())
         assertEquals(LabComponentCatalog.foundations.size, counts[LabCategory.FOUNDATIONS])
-        assertEquals(8, counts[LabCategory.SURFACES])
+        assertEquals(4, counts[LabCategory.SURFACES])
         assertEquals(11, counts[LabCategory.ACTIONS]) // V1.2: +TopBar/NavBar
         assertEquals(5, counts[LabCategory.FEEDBACK])
         assertEquals(4, counts[LabCategory.DATA])

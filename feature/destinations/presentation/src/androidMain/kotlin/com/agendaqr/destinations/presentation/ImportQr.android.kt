@@ -155,6 +155,13 @@ object AgendaQrAndroidImportLauncher {
     }
 
     private fun decodeMultiple(uris: List<Uri>, sourceActivity: Activity) {
+        // Contrato de cantidad (§4 S02 V1.2): una única acción de galería
+        // con selección múltiple. 1 elemento → flujo de selección única
+        // (S09 / diálogo de comprobante); 2 o más → lote (S12).
+        if (uris.size == 1) {
+            decodeAndEmit(uris.first(), sourceActivity)
+            return
+        }
         scope.launch {
             val candidates = mutableListOf<ImportCandidate>()
             uris.forEach { uri ->

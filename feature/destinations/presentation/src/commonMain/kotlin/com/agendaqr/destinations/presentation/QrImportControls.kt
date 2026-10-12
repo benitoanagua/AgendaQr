@@ -7,28 +7,22 @@ import kotlinx.coroutines.flow.flowOf
 
 data class QrImportResult(val assets: List<QrAsset>)
 
+/**
+ * Entradas de adquisición de QR (§4 S02 V1.2).
+ */
 @Composable
 expect fun QrImportControls(
     onResult: (QrImportResult) -> Unit,
-    /**
-     * S02: cuando la superficie es Añadir, Galería es la acción
-     * principal (§3: "Galería es la entrada principal para imágenes que
-     * ya existen") sin alterar el orden congelado Galería → Galería
-     * (varios) → Cámara. En el editor queda en secundario: su primaria
-     * es Guardar.
-     */
-    galleryAsPrimary: Boolean = false,
 )
 
 /**
- * Solo Galería (+ varios): la entrada principal de S02. La pantalla
- * Añadir la compone separada de la cámara para respetar el orden
- * congelado Galería → Desde otra app → Cámara.
+ * "Elegir de la galería": UNA acción con selección múltiple (1 elemento →
+ * revisión única S09; 2 o más → lote S12). No existe el par
+ * "Galería / Galería (varios)".
  */
 @Composable
 expect fun QrGalleryControls(
     onResult: (QrImportResult) -> Unit,
-    galleryAsPrimary: Boolean = false,
 )
 
 /** Solo Cámara: captura propia con detección (S03). */
@@ -36,6 +30,13 @@ expect fun QrGalleryControls(
 expect fun QrCameraEntryControl(
     onResult: (QrImportResult) -> Unit,
 )
+
+/**
+ * ¿Soporta esta plataforma recibir compartidos desde otras apps?
+ * Android: sí (SEND/SEND_MULTIPLE). iOS: pendiente de Share Extension;
+ * el bloque "Desde otra app" no se muestra hasta que exista.
+ */
+expect fun sharedImportsSupported(): Boolean
 
 /**
  * QR imports delivered from OUTSIDE the app (share intents). Unlike in-app

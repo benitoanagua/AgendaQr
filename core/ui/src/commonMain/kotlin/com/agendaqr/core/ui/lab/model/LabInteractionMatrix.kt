@@ -27,7 +27,7 @@ object LabInteractionMatrix {
 
     val lenses: List<LabInteractionLens> = LabInteractionLens.entries
 
-    private val pointerEvents = setOf("onClick", "onAction")
+    private val pointerEvents = setOf("onClick", "onAction", "onSelect")
     private val textEvents = pointerEvents + setOf("onValueChange")
 
     private fun LabComponentContract.hasEvent(names: Set<String>): Boolean =

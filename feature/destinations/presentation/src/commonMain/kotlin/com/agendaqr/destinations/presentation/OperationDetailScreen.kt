@@ -118,16 +118,18 @@ internal fun OperationDetailScreen(
                 XauxaTextAction(label = AppStrings.attachReceiptNow, onClick = { viewModel.openUnassociatedForOperation(operation.id) })
             } else {
                 for (receipt in state.operationComprobantes) {
-                    XauxaTile(onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) }) {
-                        Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg)) {
-                            XauxaText(AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance), fontWeight = FontWeight.SemiBold)
-                            XauxaText(formatDate(receipt.createdAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
+                    // §12 V1.2: fila ListItem; "Desasociar" como acción de fila.
+                    XauxaListRow(
+                        title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
+                        subtitle = formatDate(receipt.createdAt),
+                        onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) },
+                        meta = {
                             XauxaTextAction(
                                 label = AppStrings.Desasociar,
                                 onClick = { viewModel.onAction(OperationAction.Disassociate(receipt.id)) },
                             )
-                        }
-                    }
+                        },
+                    )
                 }
             }
         }

@@ -63,7 +63,6 @@ object XauxaTokenIndex {
         "XauxaSpacing.Xxxl",
         "XauxaSpacing.Huge",
         "XauxaSpacing.ScreenMargin",
-        "XauxaSpacing.TileGap",
     )
 
     val metrics: Set<String> = setOf(
@@ -73,13 +72,7 @@ object XauxaTokenIndex {
         "XauxaMetrics.ControlMinSize",
         "XauxaMetrics.ContentMaxWidth",
         "XauxaMetrics.QrPreviewSize",
-        "XauxaMetrics.BreakpointCompact",
-        "XauxaMetrics.BreakpointMedium",
-        "XauxaMetrics.TileUnit",
-        "XauxaMetrics.TileWideHeight",
         "XauxaMetrics.IconSize",
-        "XauxaMetrics.IconSizeTile",
-        "XauxaMetrics.AppBarHeight",
     )
 
     val type: Set<String> = setOf(

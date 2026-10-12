@@ -157,11 +157,8 @@ private fun DestinationEditorContent(
             label = selection.contextId?.let { id -> AppStrings.ParaContextoElegido + (contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico) } ?: AppStrings.ParaElegirContexto,
             onClick = { selection = selection.openPicker() },
         )
-        XauxaText(
-            AppStrings.shareFromAnotherAppLabel,
-            size = XauxaType.Label,
-            color = XauxaColor.TextSecondary,
-        )
+        // Entradas de importación del QR del destino: galería (una o
+        // varias imágenes) y cámara; la primaria de esta pantalla es Guardar.
         QrImportControls(onResult = { result ->
             when {
                 result.assets.size > 1 -> onImportMany(result.assets)

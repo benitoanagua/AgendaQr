@@ -77,11 +77,7 @@ class LabCatalogIntegrityTest {
     fun catalog_covers_every_real_component_in_core_ui() {
         val expected = setOf(
             "xauxa-section",
-            "xauxa-tile",
-            "xauxa-page-title",
             "xauxa-section-header",
-            "xauxa-metro-tile",
-            "xauxa-tile-grid",
             "xauxa-pivot",
             "xauxa-dialog",
             "xauxa-primary-button",

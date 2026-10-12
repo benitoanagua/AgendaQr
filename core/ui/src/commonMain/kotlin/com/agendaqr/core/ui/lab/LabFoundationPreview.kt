@@ -161,8 +161,6 @@ private fun MetricsSpecimen() {
         LabLabelValue("XauxaMetrics.ControlMinSize", "Target táctil mínimo (48dp)")
         LabLabelValue("XauxaMetrics.ContentMaxWidth", "Ancho máximo de contenido")
         LabLabelValue("XauxaMetrics.QrPreviewSize", "Tamaño del preview de QR")
-        LabLabelValue("XauxaMetrics.BreakpointCompact", "Breakpoint histórico 480 (lab-only)")
-        LabLabelValue("XauxaMetrics.BreakpointMedium", "Breakpoint histórico 640 (lab-only)")
     }
 }
 

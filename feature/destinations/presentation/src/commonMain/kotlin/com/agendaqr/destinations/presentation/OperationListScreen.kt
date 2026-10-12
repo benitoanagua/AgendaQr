@@ -167,23 +167,22 @@ internal fun OperationListScreen(
         } else {
             LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 items(paged, key = { it.id }) { operation ->
-                    XauxaTile(onClick = { viewModel.onAction(OperationAction.Open(operation.id)) }) {
-                        Row(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                                XauxaText(formatDate(operation.occurredAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
-                                XauxaText(operationTypeLabel(operation.type), fontWeight = FontWeight.SemiBold,
-                                    color = if (operation.type == OperationType.COBRO) XauxaColor.Success else XauxaColor.Brand)
-                                // estado de sincronización por elemento, con texto.
-                                ElementSyncBadge(
-                                    syncLookup.status(SyncResource.OPERATION, operation.id),
-                                )
-                            }
-                            Column(horizontalAlignment = Alignment.End) {
-                                XauxaText(operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto }, fontWeight = FontWeight.SemiBold, color = XauxaColor.TextPrimary)
-                                operation.personOrEntity?.let { XauxaText(it, size = XauxaType.Label, color = XauxaColor.TextSecondary) }
-                            }
-                        }
-                    }
+                    // §12 V1.2: fila ListItem convencional con el contenido
+                    // a la derecha; el estado de sincronización con texto.
+                    XauxaListRow(
+                        title = listOfNotNull(
+                            operationTypeLabel(operation.type),
+                            operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
+                        ).joinToString(" · "),
+                        subtitle = formatDate(operation.occurredAt) +
+                            (operation.personOrEntity?.let { " · $it" } ?: ""),
+                        onClick = { viewModel.onAction(OperationAction.Open(operation.id)) },
+                        meta = {
+                            ElementSyncBadge(
+                                syncLookup.status(SyncResource.OPERATION, operation.id),
+                            )
+                        },
+                    )
                 }
                 if (paged.size < operations.size) {
                     item {
@@ -229,21 +228,23 @@ internal fun UnassociatedScreen(
                     verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
                 ) {
                     items(state.unassociated, key = { it.id }) { receipt ->
-                        XauxaTile(onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) }) {
-                            Column(Modifier.fillMaxWidth().padding(XauxaSpacing.Lg), verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                                XauxaText(AppStrings.receiptReceivedTitle, fontWeight = FontWeight.SemiBold)
-                                XauxaText(formatDate(receipt.createdAt), size = XauxaType.Label, color = XauxaColor.TextSecondary)
-                                // estado de sincronización por comprobante, con texto.
-                                ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
-                                // Acciones apiladas: dos etiquetas largas no caben lado a lado en 360dp.
+                        // §12 V1.2: fila ListItem; las acciones de fila viven
+                        // apiladas bajo el contenido (dos etiquetas largas no
+                        // caben lado a lado en 360 dp).
+                        XauxaListRow(
+                            title = AppStrings.receiptReceivedTitle,
+                            subtitle = formatDate(receipt.createdAt),
+                            onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) },
+                            meta = {
                                 Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                                    ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                                     XauxaPrimaryButton(label = AppStrings.associateToExistingOperation, onClick = { selectedReceipt = receipt })
                                     XauxaSecondaryButton(label = AppStrings.createOperationFromThis, onClick = {
                                         viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
                                     })
                                 }
-                            }
-                        }
+                            },
+                        )
                     }
                 }
             }

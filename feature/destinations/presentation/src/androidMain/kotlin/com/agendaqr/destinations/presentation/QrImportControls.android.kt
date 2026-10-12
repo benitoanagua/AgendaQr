@@ -1,20 +1,15 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
-import com.agendaqr.destinations.presentation.AppStrings
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
+import com.agendaqr.core.ui.components.XauxaPrimaryButton
+import com.agendaqr.core.ui.components.XauxaIcons
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.destinations.domain.QrAsset
 
@@ -24,50 +19,40 @@ import com.agendaqr.destinations.domain.QrAsset
  * continuo ([CameraQrCaptureOverlay]) con detección automática. Galería
  * sigue siendo la entrada principal (contrato S02).
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 actual fun QrImportControls(
     onResult: (QrImportResult) -> Unit,
-    galleryAsPrimary: Boolean,
 ) {
     LaunchedEffect(Unit) {
         AgendaQrAndroidImportLauncher.results.collect(onResult)
     }
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
-        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
-    ) {
-        if (galleryAsPrimary) {
-            com.agendaqr.core.ui.components.XauxaPrimaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery, icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery)
-        } else {
-            XauxaSecondaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery, icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery)
-        }
-        XauxaSecondaryButton(AppStrings.GaleriaVarios, AgendaQrAndroidImportLauncher::multiple, icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery)
+    Column(verticalArrangement = Arrangement.spacedBy(com.agendaqr.core.ui.theme.XauxaSpacing.Sm)) {
+        XauxaPrimaryButton(
+            label = AppStrings.ElegirDeLaGaleria,
+            onClick = AgendaQrAndroidImportLauncher::gallery,
+            icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
+        )
         CameraCaptureHost(onQr = { asset -> onResult(QrImportResult(listOf(asset))) })
     }
 }
 
+/**
+ * "Elegir de la galería" (§4 S02 V1.2): UNA acción de selección múltiple.
+ * El enrutado por cantidad vive en el canal: 1 elemento → flujo de
+ * selección única (S09); 2 o más → lote (S12).
+ */
 @Composable
 actual fun QrGalleryControls(
     onResult: (QrImportResult) -> Unit,
-    galleryAsPrimary: Boolean,
 ) {
     LaunchedEffect(Unit) {
         AgendaQrAndroidImportLauncher.results.collect(onResult)
     }
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
-        verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
-    ) {
-        if (galleryAsPrimary) {
-            com.agendaqr.core.ui.components.XauxaPrimaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery, icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery)
-        } else {
-            XauxaSecondaryButton(AppStrings.Galeria, AgendaQrAndroidImportLauncher::gallery, icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery)
-        }
-        XauxaSecondaryButton(AppStrings.GaleriaVarios, AgendaQrAndroidImportLauncher::multiple, icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery)
-    }
+    XauxaPrimaryButton(
+        label = AppStrings.ElegirDeLaGaleria,
+        onClick = AgendaQrAndroidImportLauncher::gallery,
+        icon = XauxaIcons.Gallery,
+    )
 }
 
 @Composable
@@ -77,6 +62,9 @@ actual fun QrCameraEntryControl(
     CameraCaptureHost(onQr = { asset -> onResult(QrImportResult(listOf(asset))) })
 }
 
+/** Android recibe SEND/SEND_MULTIPLE de otras apps: el bloque S02 se muestra. */
+actual fun sharedImportsSupported(): Boolean = true
+
 /**
  * Entrada de cámara con su overlay (estado propio): compartida entre el
  * editor (todo junto) y S02 (cámara separada de la galería por el orden
@@ -84,7 +72,9 @@ actual fun QrCameraEntryControl(
  */
 @Composable
 internal fun CameraCaptureHost(onQr: (QrAsset) -> Unit) {
-    var cameraOpen by remember { mutableStateOf(false) }
+    var cameraOpen by androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf(false)
+    }
     CameraQrEntry(onOpen = { cameraOpen = true })
     if (cameraOpen) {
         CameraQrCaptureOverlay(

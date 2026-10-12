@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.XauxaSnackbarHost
 import com.agendaqr.core.ui.components.XauxaDialog
 import com.agendaqr.core.ui.components.XauxaFeedbackEvent
+import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaQrPreview
 import com.agendaqr.core.ui.components.XauxaScreenScaffold
@@ -24,7 +25,6 @@ import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaTextAction
-import com.agendaqr.core.ui.components.XauxaTile
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
@@ -106,8 +106,13 @@ fun ImportBatchScreen(
         },
     ) {
         when (state) {
+            // Idle es alcanzable por restauración tras muerte de proceso
+            // (stack restaurado con S12 arriba y holder nuevo): el estado
+            // lleva una acción real ("Elegir imágenes"), no una pantalla
+            // vacía.
             ImportBatchUiState.Idle -> {
                 XauxaText(AppStrings.TraeVariosElementosAAgenda, color = XauxaColor.TextSecondary)
+                ImportBatchPickerButton(label = AppStrings.ElegirImagenes)
             }
             ImportBatchUiState.Importing -> XauxaLoading(message = AppStrings.Importando)
             ImportBatchUiState.Analyzing -> XauxaLoading(message = AppStrings.Analizando)
@@ -189,36 +194,33 @@ private fun PendingItemCard(
     isSaving: Boolean,
 ) {
     val isDuplicate = batch.duplicates.any { it.id == candidate.id }
-    XauxaTile {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(XauxaSpacing.Lg),
-            verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
-        ) {
-            XauxaText(pendingItemName(candidate), fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold)
-            XauxaText(
+    // §12 V1.2: pendiente como fila ListItem; las acciones de fila bajo el
+    // contenido (etiquetas largas).
+    XauxaListRow(
+        title = pendingItemName(candidate),
+        subtitle = when {
+            isDuplicate -> AppStrings.elementoYaGuardado
+            candidate.kind == ImportKind.DESCONOCIDO -> AppStrings.elementoSinClasificar
+            else -> AppStrings.elementoPendienteRevision
+        },
+        meta = {
+            Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
                 when {
-                    isDuplicate -> "! Parece que este elemento ya está guardado."
-                    candidate.kind == ImportKind.DESCONOCIDO -> "? No pudimos clasificar este elemento."
-                    else -> "Elemento pendiente de revisión."
-                },
-                color = XauxaColor.TextSecondary,
-                size = XauxaType.Label,
-            )
-            when {
-                isDuplicate -> Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                    XauxaTextAction(label = AppStrings.VerExistente, onClick = { onAction(ImportBatchAction.ViewExisting(candidate.id)) })
-                    XauxaTextAction(label = AppStrings.GuardarDeTodosModos, onClick = { onAction(ImportBatchAction.SaveDuplicateAnyway(candidate.id)) })
+                    isDuplicate -> Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                        XauxaTextAction(label = AppStrings.VerExistente, onClick = { onAction(ImportBatchAction.ViewExisting(candidate.id)) })
+                        XauxaTextAction(label = AppStrings.GuardarDeTodosModos, onClick = { onAction(ImportBatchAction.SaveDuplicateAnyway(candidate.id)) })
+                    }
+                    else -> Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+                        XauxaTextAction(label = AppStrings.ReintentarClasificacion, onClick = { onAction(ImportBatchAction.RetryCandidate(candidate.id)) })
+                    }
                 }
-                else -> Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-                    XauxaTextAction(label = AppStrings.ReintentarClasificacion, onClick = { onAction(ImportBatchAction.RetryCandidate(candidate.id)) })
-                }
+                // El descarte siempre está disponible: abandona la intención
+                // con este elemento y libera su payload temporal.
+                XauxaTextAction(
+                    label = AppStrings.Descartar,
+                    onClick = { onAction(ImportBatchAction.DiscardCandidate(candidate.id)) },
+                )
             }
-            // El descarte siempre está disponible: abandona la intención
-            // con este elemento y libera su payload temporal.
-            XauxaTextAction(
-                label = AppStrings.Descartar,
-                onClick = { onAction(ImportBatchAction.DiscardCandidate(candidate.id)) },
-            )
-        }
-    }
+        },
+    )
 }

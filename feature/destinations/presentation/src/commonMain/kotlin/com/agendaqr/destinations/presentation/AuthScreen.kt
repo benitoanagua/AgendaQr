@@ -1,7 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
-import com.agendaqr.destinations.presentation.AppStrings
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,14 +15,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import com.agendaqr.core.ui.components.XauxaPageTitle
+import androidx.compose.ui.text.input.VisualTransformation
+import com.agendaqr.core.ui.components.XauxaIconButton
+import com.agendaqr.core.ui.components.XauxaIcons
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaScreenScaffold
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
+import com.agendaqr.core.ui.components.XauxaText
+import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaTextInput
 import com.agendaqr.core.ui.components.XauxaTone
-import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaType
 
@@ -37,6 +39,7 @@ fun AuthScreen(
 ) {
     // sobrevive a recreación.
     var submitted by rememberSaveable { mutableStateOf(false) }
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
     val emailError = submitted && !isValidEmail(state.email)
     val passwordError = submitted && state.password.length < 6
     // el botón NO se deshabilita por validación —
@@ -47,82 +50,105 @@ fun AuthScreen(
         if (isValidEmail(state.email) && state.password.length >= 6) target()
     }
 
-    // E-07 (contrato §12): AuthScreen no lleva barra de aplicación
-    // inferior — no tiene destino de retorno y su acción principal es el
-    // bloque sólido de acento del CUERPO (M10). El scaffold gestiona igual
-    // los insets (estado/teclado/navegación).
+    // V1.2 (§12): la autenticación no es un destino raíz ni tiene a dónde
+    // volver: sin barra; su acción principal es el `Button` del cuerpo.
+    // El titular usa el rol headlineMedium de M3 y los campos son
+    // OutlinedTextField con autofill de credenciales.
     XauxaScreenScaffold(
         scrollable = true,
     ) {
-        XauxaPageTitle(text = AppStrings.AgendaQr)
-            XauxaText(
-                AppStrings.IniciaSesionParaAccederA,
-                size = XauxaType.Body,
-                color = XauxaColor.TextSecondary,
+        XauxaText(
+            AppStrings.AgendaQr,
+            size = XauxaType.HeadlineMedium,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+        )
+        XauxaText(
+            AppStrings.IniciaSesionParaAccederA,
+            size = XauxaType.Body,
+            color = XauxaColor.TextSecondary,
+        )
+        XauxaTextInput(
+            label = AppStrings.Correo,
+            value = state.email,
+            onValueChange = onEmailChanged,
+            // imeAction Next: el flujo natural es saltar a la contraseña;
+            // sin mayúsculas automáticas ni autocorrección (es correo).
+            // El autofill llega por el keyboardType Email (iOS lo mapea a
+            // textContentType emailAddress; Android a los hints del IME).
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next,
+                capitalization = KeyboardCapitalization.None,
+                autoCorrect = false,
+            ),
+            isError = emailError,
+            errorMessage = if (emailError) AppStrings.IngresaUnCorreoValido else null,
+        )
+        XauxaTextInput(
+            label = AppStrings.Contrasena,
+            value = state.password,
+            onValueChange = onPasswordChanged,
+            // Done envía el formulario (KeyboardActions); el error de
+            // validación aparece al intentar, no bloqueando antes. El
+            // autofill de contraseñas llega por el keyboardType Password.
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done,
+            ),
+            keyboardActions = KeyboardActions(onDone = { submit(onSignIn) }),
+            visualTransformation = if (passwordVisible) {
+                VisualTransformation.None
+            } else {
+                PasswordVisualTransformation()
+            },
+            isError = passwordError,
+            errorMessage = if (passwordError) AppStrings.Minimo6Caracteres else null,
+            helperMessage = if (!passwordError) AppStrings.Minimo6Caracteres else null,
+            trailing = {
+                XauxaIconButton(
+                    contentDescription = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
+                    onClick = { passwordVisible = !passwordVisible },
+                ) {
+                    XauxaText(
+                        if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
+                        size = XauxaType.Caption,
+                        color = XauxaColor.BrandText,
+                    )
+                }
+            },
+        )
+        state.errorMessage?.let { err ->
+            XauxaStatusBanner(
+                err.display(),
+                tone = XauxaTone.Danger,
+                actionLabel = err.action.label,
+                // REINTENTAR repite el mismo paso que falló.
+                onAction = when (state.errorFlow) {
+                    ErrorFlow.SignIn -> onSignIn
+                    ErrorFlow.SignUp -> onSignUp
+                    else -> onClearError
+                },
+                onDismiss = onClearError,
+                dismissLabel = AppStrings.Descartar,
             )
-            XauxaTextInput(
-                label = AppStrings.Correo,
-                value = state.email,
-                onValueChange = onEmailChanged,
-                // imeAction Next: el flujo natural es saltar a la contraseña;
-                // sin mayúsculas automáticas ni autocorrección (es correo).
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next,
-                    capitalization = KeyboardCapitalization.None,
-                    autoCorrect = false,
-                ),
-                isError = emailError,
-                errorMessage = if (emailError) AppStrings.IngresaUnCorreoValido else null,
-            )
-            XauxaTextInput(
-                label = AppStrings.Contrasena,
-                value = state.password,
-                onValueChange = onPasswordChanged,
-                // Done envía el formulario (KeyboardActions); el error de
-                // validación aparece al intentar, no bloqueando antes.
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(onDone = { submit(onSignIn) }),
-                visualTransformation = PasswordVisualTransformation(),
-                isError = passwordError,
-                errorMessage = if (passwordError) AppStrings.Minimo6Caracteres else null,
-                helperMessage = if (!passwordError) AppStrings.Minimo6Caracteres else null,
-            )
-            state.errorMessage?.let { err ->
-                XauxaStatusBanner(
-                    err.display(),
-                    tone = XauxaTone.Danger,
-                    actionLabel = err.action.label,
-                    // REINTENTAR repite el mismo paso que falló.
-                    onAction = when (state.errorFlow) {
-                        ErrorFlow.SignIn -> onSignIn
-                        ErrorFlow.SignUp -> onSignUp
-                        else -> onClearError
-                    },
-                    onDismiss = onClearError,
-                    dismissLabel = AppStrings.Descartar,
-                )
-            }
-            state.confirmationMessage?.let { XauxaStatusBanner(it, tone = XauxaTone.Info) }
-            XauxaPrimaryButton(
-                AppStrings.IniciarSesion,
-                onClick = { submit(onSignIn) },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !state.isSubmitting,
-                isLoading = state.isSubmitting,
-                busyDescription = AppStrings.IniciandoSesion,
-            )
-            // el secundario NO muestra spinner (un solo indicador
-            // de ocupado por pantalla — el del primario).
-            XauxaSecondaryButton(
-                AppStrings.CrearCuenta,
-                onClick = { submit(onSignUp) },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !state.isSubmitting,
-            )
+        }
+        state.confirmationMessage?.let { XauxaStatusBanner(it, tone = XauxaTone.Info) }
+        XauxaPrimaryButton(
+            AppStrings.IniciarSesion,
+            onClick = { submit(onSignIn) },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !state.isSubmitting,
+            isLoading = state.isSubmitting,
+            busyDescription = AppStrings.IniciandoSesion,
+        )
+        // el secundario NO muestra spinner (un solo indicador
+        // de ocupado por pantalla — el del primario).
+        XauxaTextAction(
+            label = AppStrings.CrearCuenta,
+            onClick = { submit(onSignUp) },
+            enabled = !state.isSubmitting,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 

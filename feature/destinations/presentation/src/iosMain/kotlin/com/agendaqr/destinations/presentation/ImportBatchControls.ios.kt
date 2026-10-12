@@ -2,8 +2,22 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import com.agendaqr.core.ui.components.XauxaSecondaryButton
+import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.destinations.domain.ImportBatch
+
+/**
+ * Botón que abre el selector de imágenes del lote (S12): PHPicker con
+ * selectionLimit coherente con el lote.
+ */
+@Composable
+actual fun ImportBatchPickerButton(
+    label: String,
+) {
+    XauxaPrimaryButton(
+        label = label,
+        onClick = { IosQrImportController.openForBatch() },
+    )
+}
 
 /**
  * U2 — adquisición por lote REAL en iOS: PHPicker múltiple → lote S12 con
@@ -13,13 +27,9 @@ import com.agendaqr.destinations.domain.ImportBatch
 actual fun ImportBatchControls(onBatch: (ImportBatch) -> Unit) {
     // El lote elegido en PHPicker llega por el canal compartido del
     // controlador (misma superficie que Android: S12 con pendientes).
-    androidx.compose.runtime.LaunchedEffect(Unit) {
+    LaunchedEffect(Unit) {
         IosQrImportController.collectBatches { candidates ->
-            onBatch(com.agendaqr.destinations.domain.ImportBatch(candidates))
+            onBatch(ImportBatch(candidates))
         }
     }
-    XauxaSecondaryButton(
-        label = AppStrings.GaleriaVarios,
-        onClick = { IosQrImportController.openForBatch() },
-    )
 }

@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.core.ui.components.XauxaSnackbarHost
+import com.agendaqr.core.ui.components.XauxaFavoriteToggle
+import com.agendaqr.core.ui.components.XauxaFilterChip
 import com.agendaqr.core.ui.components.XauxaIcons
 import com.agendaqr.core.ui.components.XauxaExtendedFab
 import com.agendaqr.core.ui.components.XauxaNavChromeState
@@ -27,15 +29,11 @@ import com.agendaqr.core.ui.components.XauxaSectionHeader
 import com.agendaqr.core.ui.components.XauxaSkeleton
 import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaStatusBanner
-import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaLoading
 import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaCategoryChip
 import com.agendaqr.core.ui.components.XauxaLoadMoreFooter
 import com.agendaqr.core.ui.components.XauxaListRow
-import com.agendaqr.core.ui.components.XauxaTileGrid
-import com.agendaqr.core.ui.components.XauxaTileItem
-import com.agendaqr.core.ui.components.XauxaTileSize
 import com.agendaqr.core.ui.components.XauxaTopBar
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.theme.XauxaColor
@@ -98,7 +96,7 @@ fun DestinationsScreen(
 
             // §10: los errores son recuperables y contextuales — el banner
             // queda junto a la acción que lo provocó, visible sin scroll.
-                        state.error?.let { error ->
+            state.error?.let { error ->
                 XauxaStatusBanner(
                     error.display(),
                     tone = XauxaTone.Danger,
@@ -114,67 +112,22 @@ fun DestinationsScreen(
                     dismissLabel = AppStrings.Descartar,
                 )
             }
-            // El cuerpo conserva la composición V1.1 (rejilla de tiles y
-            // recientes) hasta la pasada de pantallas; el chrome ya es el
-            // convencional de la V1.2.
-            val latest = latestTileDatum(state.destinations, state.recentOperations)
-            XauxaTileGrid(
-                items = listOf(
-                        XauxaTileItem(
-                            label = AppStrings.Anadir,
-                            icon = XauxaIcons.Add,
-                            onClick = { onAction(DestinationAction.Edit(null)) },
-                        ),
-                        XauxaTileItem(
-                            label = AppStrings.Registrar,
-                            icon = XauxaIcons.Register,
-                            onClick = onOpenOperations,
-                        ),
-                        XauxaTileItem(
-                            label = if (state.favoriteOnly) AppStrings.FavoritosActivado else AppStrings.Favoritos,
-                            icon = XauxaIcons.Favorite,
-                            selected = state.favoriteOnly,
-                            onClick = { onAction(DestinationAction.ToggleFavorites) },
-                        ),
-                        XauxaTileItem(
-                            label = AppStrings.Contextos,
-                            icon = XauxaIcons.Context,
-                            onClick = onOpenContexts,
-                        ),
-                        // M2/M11: el tile vivo cambia de contenido SOLO cuando
-                        // cambia el dato (una transición por cambio, sin bucles).
-                        XauxaTileItem(
-                            label = AppStrings.UltimoQrOActividad,
-                            size = XauxaTileSize.WIDE,
-                            onClick = when (val datum = latest) {
-                                is LatestTileDatum.Qr -> datum.destination.id.let { id -> { onAction(DestinationAction.Open(id)) } }
-                                is LatestTileDatum.Activity -> datum.operation.id.let { id -> { onOpenOperation(id) } }
-                                null -> null
-                            },
-                            content = {
-                                    com.agendaqr.core.ui.components.XauxaLiveTile(data = latest?.let { if (it is LatestTileDatum.Qr) "qr:" + it.destination.id else "op:" + (it as LatestTileDatum.Activity).operation.id }) {
-                                        XauxaText(
-                                                text = when (val datum = latest) {
-                                                    is LatestTileDatum.Qr ->
-                                                        datum.destination.name.ifBlank { AppStrings.SinNombre }
-                                                    is LatestTileDatum.Activity -> listOfNotNull(
-                                                        operationTypeLabel(datum.operation.type),
-                                                        datum.operation.amount,
-                                                    ).joinToString(" · ")
-                                                    null -> AppStrings.AunNoHayDestinos
-                                                },
-                                                color = XauxaColor.OnBrand,
-                                        )
-                                    }
-                            },
-                        ),
-                ),
-            )
-
-            Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
+            // S01 V1.2 (ADR-0012): Inicio es una LISTA convencional. Sin
+            // tiles ni tile vivo; las entradas viven en la barra superior
+            // (Cerrar sesión), el FAB (Añadir), la navegación raíz y las
+            // filas. Favoritos es un filtro de la propia lista.
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            ) {
                 state.category?.let { XauxaCategoryChip(it) }
-                XauxaSectionHeader(text = AppStrings.Recientes)
+                XauxaFilterChip(
+                    label = if (state.favoriteOnly) AppStrings.FavoritosActivado else AppStrings.Favoritos,
+                    selected = state.favoriteOnly,
+                    onClick = { onAction(DestinationAction.ToggleFavorites) },
+                )
             }
+            XauxaSectionHeader(text = AppStrings.Recientes)
             when {
                 // la carga inicial de la lista se anuncia con el
                 // skeleton del DS (XauxaSkeleton, sin bucles) — el spinner
@@ -213,12 +166,15 @@ fun DestinationRow(
     onAction: (DestinationAction) -> Unit,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
+    // §12 V1.2: fila ListItem con la acción de favorito como
+    // IconToggleButton de estrella (estado en semántica; la descripción
+    // accesible cambia con el estado, §11).
     XauxaListRow(
         title = destination.name.ifBlank { AppStrings.SinNombre },
         subtitle = destinationSubtitle(destination),
         onClick = { onAction(DestinationAction.Open(destination.id)) },
         // Badge bajo el texto (línea propia vía `meta`): no compite por el
-        // ancho con la acción en pantallas estrechas (defecto abierto).
+        // ancho con la acción en pantallas estrechas.
         meta = {
             // Estado de sincronización por elemento (con texto).
             ElementSyncBadge(
@@ -226,9 +182,14 @@ fun DestinationRow(
             )
         },
         trailing = {
-            XauxaTextAction(
-                label = if (destination.favorite) AppStrings.Favorito else AppStrings.MarcarFavorito,
-                onClick = { onAction(DestinationAction.ToggleFavorite(destination)) },
+            XauxaFavoriteToggle(
+                favorite = destination.favorite,
+                contentDescription = if (destination.favorite) {
+                    AppStrings.QuitarFavorito
+                } else {
+                    AppStrings.MarcarFavorito
+                },
+                onCheckedChange = { onAction(DestinationAction.ToggleFavorite(destination)) },
             )
         },
     )

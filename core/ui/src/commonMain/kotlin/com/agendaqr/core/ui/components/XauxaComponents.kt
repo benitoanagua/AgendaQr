@@ -77,37 +77,13 @@ fun XauxaSection(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            // V1.1 (M6): encabezado de sección pequeño en color de acento.
+            // Encabezado de sección estándar (§12 V1.2).
             XauxaSectionHeader(text = title)
             trailing?.invoke()
         }
         Spacer(Modifier.height(XauxaSpacing.Md))
         content()
     }
-}
-
-@Composable
-fun XauxaTile(
-    modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
-    content: @Composable () -> Unit,
-) {
-    val interaction = remember { MutableInteractionSource() }
-    val clickableModifier = if (onClick == null) modifier else modifier
-        .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onClick)
-        .focusable(interactionSource = interaction)
-    // V1.1 (M9): sin borde de reposo — la separación es por bloque de
-    // color (Surface2 sobre Background); el borde queda reservado al foco
-    // (xauxaFocusRing) y a la selección (M9 funcional).
-    Surface(
-        modifier = clickableModifier
-            .fillMaxWidth()
-            .xauxaFocusRing(interaction)
-            .xauxaPressFeedback(interaction),
-        color = XauxaColor.Surface2,
-        tonalElevation = XauxaSpacing.None,
-        shadowElevation = XauxaSpacing.None,
-    ) { content() }
 }
 
 @Composable

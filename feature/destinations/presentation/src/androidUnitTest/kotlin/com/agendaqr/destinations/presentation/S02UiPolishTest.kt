@@ -9,6 +9,7 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.text.TextLayoutResult
@@ -99,49 +100,46 @@ class S02UiPolishTest {
     )
 
     @Test
-    fun d4_s02_share_entry_is_a_section_header() {
+    fun s01_recientes_is_a_section_header_in_standard_color() {
         compose.setContent {
             XauxaTheme(darkTheme = false) {
-                AddDestinationScreen(onImport = {}, onBack = {})
+                DestinationsScreen(state = s01State(), onAction = {})
             }
         }
         compose.waitForIdle()
         // Encabezado de sección V1.2: semántica heading + 14 sp en color
         // estándar (§12), no título de 20 sp en texto primario.
-        compose.onNodeWithText(AppStrings.DesdeOtraApp).assert(headingMatcher())
-        val style = layoutOf(AppStrings.DesdeOtraApp).layoutInput.style
+        compose.onNodeWithText(AppStrings.Recientes).assert(headingMatcher())
+        val style = layoutOf(AppStrings.Recientes).layoutInput.style
         assertEquals(14.sp, style.fontSize)
         assertEquals(LightXauxaColorScheme.textSecondary, style.color)
     }
 
     @Test
-    fun d4_s02_and_s01_section_headers_share_style() {
+    fun s02_share_hint_is_plain_secondary_text_not_a_heading() {
         compose.setContent {
             XauxaTheme(darkTheme = false) {
-                Column {
-                    AddDestinationScreen(onImport = {}, onBack = {})
-                    DestinationsScreen(state = s01State(), onAction = {})
-                }
-            }
-        }
-        compose.waitForIdle()
-        val s02 = layoutOf(AppStrings.DesdeOtraApp).layoutInput.style
-        val s01 = layoutOf(AppStrings.Recientes).layoutInput.style
-
-        assertEquals(s01.fontSize, s02.fontSize, "S02 y S01 usan el mismo tamano de seccion")
-        assertEquals(s01.color, s02.color, "S02 y S01 usan el mismo color de seccion")
-        assertEquals(s01.fontFamily, s02.fontFamily, "S02 y S01 usan la misma familia de seccion")
-    }
-
-    @Test
-    fun d4_section_header_uses_readable_standard_color_in_dark_theme() {
-        compose.setContent {
-            XauxaTheme(darkTheme = true) {
                 AddDestinationScreen(onImport = {}, onBack = {})
             }
         }
         compose.waitForIdle()
-        val style = layoutOf(AppStrings.DesdeOtraApp).layoutInput.style
+        // V1.2: "Desde otra app" es una ayuda breve de texto secundario,
+        // no una sección permanente destacada.
+        compose.onNodeWithText(AppStrings.shareFromAnotherAppHint)
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Heading))
+        val style = layoutOf(AppStrings.shareFromAnotherAppHint).layoutInput.style
+        assertEquals(LightXauxaColorScheme.textSecondary, style.color)
+    }
+
+    @Test
+    fun s01_section_header_uses_readable_standard_color_in_dark_theme() {
+        compose.setContent {
+            XauxaTheme(darkTheme = true) {
+                DestinationsScreen(state = s01State(), onAction = {})
+            }
+        }
+        compose.waitForIdle()
+        val style = layoutOf(AppStrings.Recientes).layoutInput.style
         assertEquals(14.sp, style.fontSize)
         assertEquals(DarkXauxaColorScheme.textSecondary, style.color)
     }
@@ -193,12 +191,17 @@ class S02UiPolishTest {
         val all = unmergedNodes()
         val root = compose.onRoot(useUnmergedTree = true).fetchSemanticsNode()
         val pxPerDp = root.size.width / 360f
-        // Orden congelado intacto: Galeria (principal con icono), Galeria
-        // (varios) y Camara, cada uno con glifo decorativo + etiqueta.
-        listOf(AppStrings.Galeria, AppStrings.GaleriaVarios, AppStrings.Camara).forEach { label ->
+        // V1.2: UNA acción de galería con selección múltiple (sin "Galería
+        // (varios)") y la cámara, cada una con glifo decorativo + etiqueta.
+        listOf(AppStrings.ElegirDeLaGaleria, AppStrings.Camara).forEach { label ->
             val icon = iconForLabel(all, label, pxPerDp)
             assertNotNull(icon, "S02: el control '$label' no muestra icono junto a la etiqueta")
             assertNull(icon.config.getOrNull(SemanticsProperties.ContentDescription))
         }
+        // La pareja histórica Galería/Galería (varios) ya no existe.
+        assertTrue(
+            compose.onAllNodesWithText(AppStrings.GaleriaVarios).fetchSemanticsNodes().isEmpty(),
+            "S02 ya no muestra 'Galería (varios)'",
+        )
     }
 }

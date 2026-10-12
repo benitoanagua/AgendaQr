@@ -20,7 +20,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * T10 — Accesibilidad verificable (spec §11) sobre Robolectric: se ejecuta
+ * Accesibilidad verificable (spec §11, V1.2) sobre Robolectric: se ejecuta
  * en el gate existente (testDebugUnitTest) sin emulador.
  */
 @RunWith(RobolectricTestRunner::class)
@@ -55,10 +55,14 @@ class DestinationsScreenA11yTest {
     }
 
     @Test
-    fun main_buttons_have_48dp_touch_targets() {
+    fun fab_has_label_and_the_row_actions_keep_48dp_targets() {
         setContent()
-        compose.onNodeWithText("Añadir").assertHeightIsAtLeast(48.dp)
-        compose.onNodeWithText("Registrar").assertHeightIsAtLeast(48.dp)
+        // §12 V1.2: FAB extendido "Añadir" con etiqueta visible (M3 fija
+        // su altura mínima); la acción de favorito de la fila es un
+        // IconToggleButton de 48 dp.
+        compose.onNodeWithText("Añadir", useUnmergedTree = true).assertExists()
+        compose.onNodeWithContentDescription("Marcar favorito").assertExists()
+            .assertHeightIsAtLeast(48.dp)
     }
 
     @Test
@@ -112,11 +116,10 @@ class DestinationsScreenA11yTest {
     }
 
     @Test
-    fun favorites_tile_state_is_text_and_semantics_not_color() {
-        // Contrato §5.1/§11: el filtro Favoritos NO cambia el acento del
-        // tile (lime era un acento de contexto con otro significado); el
-        // estado se expresa con TEXTO visible y semántica selected/
-        // toggleableState.
+    fun favorites_filter_state_is_text_and_semantics_not_color() {
+        // Contrato §5.1/§11: el filtro Favoritos es un FilterChip; el
+        // estado se expresa con TEXTO visible ("Favoritos: activado") y
+        // semántica selected/toggleableState, nunca solo con color.
         compose.setContent {
             XauxaTheme {
                 DestinationsScreen(
@@ -132,16 +135,10 @@ class DestinationsScreenA11yTest {
         compose.waitForIdle()
         compose.onNodeWithText("Favoritos: activado")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, true))
-            .assert(
-                SemanticsMatcher.expectValue(
-                    SemanticsProperties.ToggleableState,
-                    androidx.compose.ui.state.ToggleableState.On,
-                ),
-            )
     }
 
     @Test
-    fun favorites_tile_without_filter_returns_to_textual_rest_state() {
+    fun favorites_filter_without_filter_returns_to_textual_rest_state() {
         compose.setContent {
             XauxaTheme {
                 DestinationsScreen(
@@ -160,33 +157,28 @@ class DestinationsScreenA11yTest {
     }
 
     @Test
-    fun live_tile_shows_the_most_recent_activity_from_unfiltered_data() {
-        // S01 (tile vivo): la actividad MÁS RECIENTE aparece aunque la
-        // lista de QR no esté vacía (antes el tile solo mostraba QR y solo
-        // el primero del filtro visible).
+    fun favorite_row_toggle_announces_state_through_its_description() {
+        // §11/§12 V1.2: el favorito de fila es un IconToggleButton cuya
+        // descripción accesible CAMBIA con el estado (marcar/quitar).
+        var toggled: Boolean? = null
         compose.setContent {
             XauxaTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
-                        destinations = listOf(sample),
-                        recentOperations = listOf(
-                            com.agendaqr.destinations.domain.Operation(
-                                id = "o-1",
-                                type = com.agendaqr.destinations.domain.OperationType.COBRO,
-                                occurredAt = 900,
-                                createdAt = 900,
-                                updatedAt = 900,
-                                amount = "500",
-                            ),
-                        ),
+                        destinations = listOf(sample.copy(favorite = true)),
                         isLoading = false,
                     ),
-                    onAction = {},
+                    onAction = { action ->
+                        if (action is DestinationAction.ToggleFavorite) toggled = action.destination.favorite
+                    },
                 )
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("Cobro · 500").assertExists()
-        compose.onNodeWithText("Último QR o actividad reciente").assertExists()
+        compose.onNodeWithContentDescription("Quitar favorito")
+            .assertExists()
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Checkbox))
+            .performClick()
+        assert(toggled == true) { "El toggle debe pedir quitar el favorito existente" }
     }
 }

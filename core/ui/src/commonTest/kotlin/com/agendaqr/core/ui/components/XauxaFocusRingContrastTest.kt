@@ -21,10 +21,13 @@ class XauxaFocusRingContrastTest {
         mapOf("claro" to LightXauxaColorScheme, "oscuro" to DarkXauxaColorScheme)
 
     @Test
-    fun tile_focus_ring_meets_3_to_1_against_every_accent() {
+    fun accent_content_meets_3_to_1_against_every_accent_block() {
+        // El par onAccent/background de cada acento (tabla spec §12) sigue
+        // siendo el color de CONTENIDO legible sobre el bloque de acento
+        // (encabezados de S06, elemento de identidad de fila).
         (XauxaAccents.Admitted + XauxaAccents.System).forEach { accent ->
-            val ratio = contrastRatio(tileFocusRingColor(accent), accent.background)
-            assertTrue(ratio >= 3.0, "anillo de foco sobre ${accent.id}: $ratio < 3:1")
+            val ratio = contrastRatio(accent.onAccent, accent.background)
+            assertTrue(ratio >= 3.0, "contenido sobre ${accent.id}: $ratio < 3:1")
         }
     }
 

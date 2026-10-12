@@ -15,12 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaTextInput
-import com.agendaqr.core.ui.components.XauxaTileGrid
-import com.agendaqr.core.ui.components.XauxaTileItem
-import com.agendaqr.core.ui.components.XauxaTileSize
 import com.agendaqr.core.ui.theme.XauxaTheme
-import com.agendaqr.core.ui.theme.XauxaAccents
-import com.agendaqr.core.ui.theme.accentFor
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -117,50 +112,24 @@ class Round2FontScaleTest {
     }
 
     @Test
-    fun tile_grid_grows_instead_of_clipping_at_every_scale() {
+    fun destination_rows_wrap_long_labels_at_every_scale() {
         composeAtScales(
             {
-                XauxaTileGrid(
-                    items = listOf(
-                        XauxaTileItem(
-                            label = "Registrar actividad con comprobante",
-                            accent = accentFor("ctx"),
-                            icon = null,
-                            onClick = {},
-                        ),
-                        XauxaTileItem(
-                            label = "Último QR o actividad reciente",
-                            accent = XauxaAccents.System,
-                            size = XauxaTileSize.WIDE,
-                            onClick = {},
-                        ),
-                    ),
+                XauxaListRow(
+                    title = "Registrar actividad con comprobante",
+                    subtitle = "Último QR o actividad reciente",
+                    onClick = {},
                 )
             },
         ) { scale ->
             // Criterio de la spec §11 (aceptación): nada se corta ni superpone.
-            // - El alto del tile se DERIVA de la unidad calculada (1×1
-            //   cuadrado; el alto es mínimo, no fijo: crece con la fuente).
-            // - El objetivo del tile sigue siendo alcanzable (>= TileUnit).
-            // - La etiqueta no desborda el ancho (elipsis a las 2 líneas).
-            val tile = compose.onAllNodesWithText("Registrar actividad", substring = true)
-                .fetchSemanticsNodes().single()
-            val wide = compose.onAllNodesWithText("Último QR o actividad reciente")
+            // §12 V1.2: la fila (ListItem) crece con la fuente; la etiqueta
+            // desborda hacia el alto, nunca hacia el ancho.
+            val row = compose.onAllNodesWithText("Registrar actividad", substring = true)
                 .fetchSemanticsNodes().single()
             assertTrue(
-                "tile 1×1 por debajo del objetivo (escala $scale): ${tile.boundsInRoot.height}",
-                tile.boundsInRoot.height >= 76f,
-            )
-            // 1×1 cuadrado: el alto derivado acompaña al ancho calculado
-            // (a 320 dp y escala 1: 101×101; a 150/200 %: 156×156).
-            assertTrue(
-                "tile 1×1 deja de ser cuadrado (escala $scale): ${tile.boundsInRoot}",
-                kotlin.math.abs(tile.boundsInRoot.height - tile.boundsInRoot.width) <= 2f,
-            )
-            // 2×2/4×2: dos unidades más una separación.
-            assertTrue(
-                "tile ancho no mide dos unidades más el gap (escala $scale): ${wide.boundsInRoot}",
-                wide.boundsInRoot.height >= tile.boundsInRoot.height * 2f,
+                "fila por debajo del objetivo (escala $scale): ${row.boundsInRoot.height}",
+                row.boundsInRoot.height >= 48f,
             )
             assertInsideScreenWidth("Registrar actividad con comprobante")
         }

@@ -90,6 +90,10 @@ internal object AppStrings {
     val FaltaElCodigoQrUsa = "Falta el código QR: usa Cámara o Galería"
     val Fecha = "Fecha"
     val Galeria = "Galería"
+    /** S02 V1.2: acción única de galería con selección múltiple. */
+    val ElegirDeLaGaleria = "Elegir de la galería"
+    /** S12 Idle: acción para elegir un lote de imágenes. */
+    val ElegirImagenes = "Elegir imágenes"
     val GaleriaVarios = "Galería (varios)"
     val batchSavedKeepReviewNotice = "Guardado. Los elementos pendientes conservan su revisión."
     val savingRecognizedItems = "Guardando elementos reconocidos…"
@@ -204,6 +208,9 @@ internal object AppStrings {
     val Eliminado = "Eliminado"
     val GuardadoOk = "Guardado"
     val Minimo6Caracteres = "Mínimo 6 caracteres"
+    /** Mostrar/ocultar contraseña (descripción accesible del botón). */
+    val Mostrar = "Mostrar"
+    val Ocultar = "Ocultar"
     val IniciandoSesion = "Iniciando sesión…"
     val AsociarAhora = "Asociar ahora"
     val AunNoHayOperaciones = "Aún no hay actividades"
@@ -221,6 +228,11 @@ internal object AppStrings {
      * (§11) — el acento del tile ya no cambia para no reutilizar un acento
      * de contexto con otro significado (contrato §5.1). */
     val FavoritosActivado = "Favoritos: activado"
+    /** S12: descripciones honestas de cada pendiente (guía de voz). */
+    val elementoYaGuardado = "Parece que este elemento ya está guardado."
+    val elementoSinClasificar = "No pudimos clasificar este elemento."
+    val elementoPendienteRevision = "Elemento pendiente de revisión."
+    val QuitarFavorito = "Quitar favorito"
     val Favorito = "Favorito"
     val MarcarFavorito = "Marcar favorito"
     val SeccionComprobantes = "Comprobantes"

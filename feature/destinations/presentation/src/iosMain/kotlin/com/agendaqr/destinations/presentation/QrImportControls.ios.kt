@@ -2,14 +2,12 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.XauxaFeedbackEvent
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaSecondaryButton
@@ -30,30 +28,30 @@ import platform.UIKit.UIApplicationOpenSettingsURLString
  * botón muerto y compila contra los bindings reales.
  */
 @Composable
-actual fun QrGalleryControls(
+actual fun QrImportControls(
     onResult: (QrImportResult) -> Unit,
-    galleryAsPrimary: Boolean,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-        if (galleryAsPrimary) {
-            XauxaPrimaryButton(
-                label = AppStrings.Galeria,
-                icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
-                onClick = { IosQrImportController.openGallery(onResult) },
-            )
-        } else {
-            XauxaSecondaryButton(
-                label = AppStrings.Galeria,
-                icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
-                onClick = { IosQrImportController.openGallery(onResult) },
-            )
-        }
-        XauxaSecondaryButton(
-            label = AppStrings.GaleriaVarios,
-            icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
-            onClick = { IosQrImportController.openMultiple(onResult) },
-        )
+        QrGalleryControls(onResult = onResult)
+        QrCameraEntryControl(onResult = onResult)
     }
+}
+
+/**
+ * "Elegir de la galería" (§4 S02 V1.2): UNA acción con selección múltiple
+ * (PHPicker, selectionLimit coherente con el lote). El enrutado por
+ * cantidad vive en el controlador: 1 elemento → flujo de selección única
+ * (S09); 2 o más → lote (S12).
+ */
+@Composable
+actual fun QrGalleryControls(
+    onResult: (QrImportResult) -> Unit,
+) {
+    XauxaPrimaryButton(
+        label = AppStrings.ElegirDeLaGaleria,
+        icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
+        onClick = { IosQrImportController.openMultiple(onResult = onResult) },
+    )
 }
 
 @Composable
@@ -84,6 +82,8 @@ actual fun QrCameraEntryControl(
                 dismissLabel = AppStrings.Descartar,
             )
         }
+        // §4 S02: el texto de privacidad de la cámara es visible junto a
+        // la acción de escanear.
         XauxaText(
             AppStrings.PermisoCamaraContexto,
             size = XauxaType.Caption,
@@ -113,32 +113,9 @@ actual fun QrCameraEntryControl(
     }
 }
 
-@Composable
-actual fun QrImportControls(
-    onResult: (QrImportResult) -> Unit,
-    galleryAsPrimary: Boolean,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-        if (galleryAsPrimary) {
-            XauxaPrimaryButton(
-                label = AppStrings.Galeria,
-                icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
-                onClick = { IosQrImportController.openGallery(onResult) },
-            )
-        } else {
-            XauxaSecondaryButton(
-                label = AppStrings.Galeria,
-                icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
-                onClick = { IosQrImportController.openGallery(onResult) },
-            )
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm)) {
-            XauxaSecondaryButton(
-                label = AppStrings.GaleriaVarios,
-                icon = com.agendaqr.core.ui.components.XauxaIcons.Gallery,
-                onClick = { IosQrImportController.openMultiple(onResult) },
-            )
-            QrCameraEntryControl(onResult)
-        }
-    }
-}
+/**
+ * iOS sin Share Extension: `observeSharedQrImports` nunca emite, así que el
+ * bloque "Desde otra app" de S02 no se muestra hasta que la extensión
+ * exista (pendiente registrado en el estado de implementación).
+ */
+actual fun sharedImportsSupported(): Boolean = false

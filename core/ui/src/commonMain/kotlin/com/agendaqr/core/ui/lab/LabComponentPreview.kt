@@ -34,9 +34,7 @@ import com.agendaqr.core.ui.components.XauxaNavBar
 import com.agendaqr.core.ui.components.XauxaTopBar
 import com.agendaqr.core.ui.components.XauxaTopBarAction
 import com.agendaqr.core.ui.components.XauxaIcons
-import com.agendaqr.core.ui.components.XauxaMetroTile
 import com.agendaqr.core.ui.components.XauxaOverflowAction
-import com.agendaqr.core.ui.components.XauxaPageTitle
 import com.agendaqr.core.ui.components.XauxaPivot
 import com.agendaqr.core.ui.components.XauxaListRow
 import com.agendaqr.core.ui.components.XauxaLoadMoreFooter
@@ -51,10 +49,6 @@ import com.agendaqr.core.ui.components.XauxaSkeleton
 import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextAction
 import com.agendaqr.core.ui.components.XauxaTextInput
-import com.agendaqr.core.ui.components.XauxaTile
-import com.agendaqr.core.ui.components.XauxaTileGrid
-import com.agendaqr.core.ui.components.XauxaTileItem
-import com.agendaqr.core.ui.components.XauxaTileSize
 import com.agendaqr.core.ui.components.XauxaSectionHeader
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.lab.model.LabComponentContract
@@ -106,11 +100,7 @@ internal fun LabComponentPreview(
         ) {
             when (contract.id) {
                 "xauxa-section" -> SectionPreview(onEvent)
-                "xauxa-tile" -> TilePreview(onEvent)
-                "xauxa-page-title" -> XauxaPageTitle("Agenda QR")
                 "xauxa-section-header" -> XauxaSectionHeader("Recientes")
-                "xauxa-metro-tile" -> MetroTilePreview(onEvent)
-                "xauxa-tile-grid" -> TileGridPreview(onEvent)
                 "xauxa-pivot" -> PivotPreview(onEvent)
                 "xauxa-top-bar" -> TopBarPreview(onEvent)
                 "xauxa-nav-bar" -> NavBarPreview(onEvent)
@@ -216,33 +206,6 @@ private fun SectionPreview(onEvent: (String) -> Unit) {
     }
 }
 
-@Composable
-private fun TilePreview(onEvent: (String) -> Unit) {
-    var interactive by rememberSaveable { mutableStateOf(true) }
-    var clicks by rememberSaveable { mutableStateOf(0) }
-    Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
-        LabControlRow("Tile con onClick") {
-            LabToggle("interactivo", interactive) { interactive = it }
-        }
-        XauxaTile(
-            onClick = if (interactive) {
-                {
-                    clicks++
-                    onEvent("XauxaTile.onClick #$clicks")
-                }
-            } else {
-                null
-            },
-        ) {
-            Text(
-                "Mensualidad escolar · Bs 450" + if (interactive) " · activaciones: $clicks" else "",
-                modifier = Modifier.padding(XauxaSpacing.Lg),
-                fontSize = XauxaType.Body,
-                color = XauxaColor.TextPrimary,
-            )
-        }
-    }
-}
 
 @Composable
 private fun PrimaryButtonPreview(onEvent: (String) -> Unit) {
@@ -463,7 +426,6 @@ private fun IconGlyphPreview() {
         XauxaIcon(
             imageVector = XauxaIcons.Favorite,
             contentDescription = null,
-            size = XauxaMetrics.IconSizeTile,
             tint = XauxaColor.Brand,
         )
         XauxaIcon(
@@ -479,57 +441,7 @@ private fun IconGlyphPreview() {
     }
 }
 
-@Composable
-private fun MetroTilePreview(onEvent: (String) -> Unit) {
-    var clicks by rememberSaveable { mutableStateOf(0) }
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(modifier = Modifier.width(XauxaMetrics.TileUnit)) {
-            XauxaMetroTile(
-                label = "Añadir",
-                accent = accentFor(null),
-                onClick = {
-                    clicks++
-                    onEvent("XauxaMetroTile.onClick #$clicks")
-                },
-                icon = XauxaIcons.Add,
-            )
-        }
-        Text(
-            "Bloque plano de acento, icono centrado y etiqueta visible. Activaciones: $clicks",
-            fontSize = XauxaType.Caption,
-            color = XauxaColor.TextSecondary,
-        )
-    }
-}
 
-@Composable
-private fun TileGridPreview(onEvent: (String) -> Unit) {
-    var last by rememberSaveable { mutableStateOf("(ninguna)") }
-    XauxaTileGrid(
-        items = listOf(
-            XauxaTileItem("Añadir", icon = XauxaIcons.Add, onClick = { last = "Añadir"; onEvent("TileGrid Añadir") }),
-            XauxaTileItem("Registrar", icon = XauxaIcons.Register, onClick = { last = "Registrar"; onEvent("TileGrid Registrar") }),
-            XauxaTileItem("Favoritos", icon = XauxaIcons.Favorite, onClick = { last = "Favoritos"; onEvent("TileGrid Favoritos") }),
-            XauxaTileItem("Contextos", icon = XauxaIcons.Context, onClick = { last = "Contextos"; onEvent("TileGrid Contextos") }),
-            XauxaTileItem(
-                "Actividad reciente",
-                size = XauxaTileSize.WIDE,
-                content = {
-                    Text("Último movimiento de ejemplo", fontSize = XauxaType.Label, color = XauxaColor.OnBrand)
-                },
-                onClick = { last = "Actividad"; onEvent("TileGrid Actividad") },
-            ),
-        ),
-    )
-    Text(
-        "Última activación: $last",
-        fontSize = XauxaType.Caption,
-        color = XauxaColor.TextSecondary,
-    )
-}
 
 @Composable
 private fun PivotPreview(onEvent: (String) -> Unit) {

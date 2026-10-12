@@ -84,7 +84,8 @@ fun AgendaQrComponentLab(
             color = XauxaColor.Background,
         ) {
             BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(XauxaSpacing.Lg)) {
-                val compact = maxWidth < XauxaMetrics.BreakpointMedium
+                val compact = com.agendaqr.core.ui.theme.xauxaWindowWidthSizeClass() ==
+                    androidx.compose.material3.windowsizeclass.WindowWidthSizeClass.Compact
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Lg),

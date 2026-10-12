@@ -317,10 +317,8 @@ object XauxaSpacing {
     val Xxl = 24.dp
     val Xxxl = 32.dp
     val Huge = 40.dp
-    /** V1.1 (ADR-0005, spec §12 Rejilla): margen de pantalla — múltiplo de 4. */
+    /** Margen de pantalla (múltiplo de 4). */
     val ScreenMargin = 16.dp
-    /** V1.1: separación entre tiles de la rejilla — múltiplo de 4. */
-    val TileGap = 8.dp
 }
 
 object XauxaMetrics {
@@ -333,28 +331,13 @@ object XauxaMetrics {
     val ControlMinSize = 48.dp
     val ContentMaxWidth = 720.dp
     val QrPreviewSize = 240.dp
-    val BreakpointCompact = 480.dp
-    val BreakpointMedium = 640.dp
 
     // V1.1 (ADR-0005, spec §12 Rejilla y tiles) — rejilla Metro de 4
     // columnas en compacto. Unidad base de tile y métricas derivadas en
     // múltiplos de 4 dp (Xauxa base 4px); la rejilla reduce columnas antes
     // de comprimir por debajo de la unidad mínima.
-    /** Unidad 1×1 MÍNIMA de la rejilla de tiles (compacto, margen 16 + gaps 8);
-     * el ancho/alto real se calcula desde el ancho disponible (XauxaTileGrid)
-     * y el alto se deriva en `tileHeight` — la unidad nunca baja de esto. */
-    val TileUnit = 76.dp
-    /** Alto MÍNIMO del tile 2×2/4×2 con la unidad mínima (2×76+8); el alto
-     * real se deriva de la unidad calculada (`tileHeight`), no de aquí. */
-    val TileWideHeight = 160.dp
     /** Tamaño de icono estándar en tiles y acciones (un solo color, línea). */
     val IconSize = 24.dp
-    /** Icono grande de tile (pequeño/mediano: glifo centrado dominante). */
-    val IconSizeTile = 32.dp
-    /** Altura de la barra de aplicación inferior (M7): 2–4 acciones con
-     * icono + etiqueta visible; admite dos líneas de contenido y respeta
-     * el objetivo táctil mínimo. */
-    val AppBarHeight = 64.dp
     /**
      * Ancho mínimo de tile del catálogo del laboratorio. Existe para que
      * la cuadrícula adaptativa (`GridCells.Adaptive`) consuma un token
