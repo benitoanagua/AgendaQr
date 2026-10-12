@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.agendaqr.core.ui.components.XauxaSnackbarHost
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
 import com.agendaqr.core.ui.components.XauxaScreenScaffold
 import com.agendaqr.core.ui.components.XauxaQrPreview
@@ -37,6 +38,7 @@ import com.agendaqr.destinations.domain.QrAsset
 @Composable
 fun DestinationEditorScreen(
     existing: Destination,
+    appHosts: AppHosts? = null,
     onSave: (Destination) -> Unit,
     onImportMany: (List<QrAsset>) -> Unit,
     contexts: List<Context> = emptyList(),
@@ -51,7 +53,7 @@ fun DestinationEditorScreen(
     justCreatedContextId: String? = null,
 ) {
     DestinationEditorContent(
-        existing, onSave, onImportMany, contexts, onBack, isSaving, error, onClearError,
+        existing, appHosts, onSave, onImportMany, contexts, onBack, isSaving, error, onClearError,
         onCreateContext, justCreatedContextId, onRetryError,
     )
 }
@@ -59,6 +61,7 @@ fun DestinationEditorScreen(
 @Composable
 private fun DestinationEditorContent(
     existing: Destination,
+    appHosts: AppHosts? = null,
     onSave: (Destination) -> Unit,
     onImportMany: (List<QrAsset>) -> Unit,
     contexts: List<Context>,
@@ -102,6 +105,8 @@ private fun DestinationEditorContent(
                 backLabel = AppStrings.Volver,
             )
         },
+        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        statusContent = appHosts?.status,
         bottomAction = {
             XauxaPrimaryButton(
                 label = if (isSaving) AppStrings.Guardando else AppStrings.Guardar,

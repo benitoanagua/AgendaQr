@@ -93,7 +93,9 @@ internal fun AuthenticatedAppRoot(
     }
     // anuncio de sincronización COMPLETADA por evento:
     // la cola pasa de >0 a 0 (no se repite en recomposiciones; el token
-    // solo cambia en la transición).
+    // solo cambia en la transición). V1.2: se publica como Snackbar
+    // transitorio (con háptico y anuncio accesible por evento).
+    val feedbackHost = remember { com.agendaqr.core.ui.components.XauxaFeedbackHost() }
     var syncDoneEvent by remember { mutableStateOf<Any?>(null) }
     var previousPendingCount by remember { mutableStateOf(0) }
     LaunchedEffect(pendingCount) {
@@ -102,7 +104,11 @@ internal fun AuthenticatedAppRoot(
         }
         previousPendingCount = pendingCount
     }
-    com.agendaqr.core.ui.components.XauxaFeedbackEvent(event = syncDoneEvent, message = AppStrings.SincronizacionCompletada)
+    com.agendaqr.core.ui.components.XauxaFeedbackEvent(
+        event = syncDoneEvent,
+        message = AppStrings.SincronizacionCompletada,
+        feedbackHost = feedbackHost,
+    )
     // estado de sincronización por elemento (consulta indexada).
     val syncLookup = remember(syncQueueItems) { ElementSyncLookup(syncQueueItems) }
     val retrySync = remember(graph) {
@@ -139,6 +145,29 @@ internal fun AuthenticatedAppRoot(
         importBatch.onAnalyzed(batch)
         nav.push(AppRoute.ImportBatch)
     }
+
+    // ------------------------------------------------------------------
+    // Hosts compartidos de la sesión (§12 V1.2): el AppStatusHost (estados
+    // persistentes bajo la barra superior de cada superficie) y el host
+    // del Snackbar (eventos transitorios). La superficie activa los monta
+    // en su Scaffold.
+    // ------------------------------------------------------------------
+    val retryNow: () -> Unit = remember(graph) {
+        { graph.sessionScope.launch { graph.syncProcessor.drain() }; Unit }
+    }
+    val appHosts = AppHosts(
+        status = {
+            AppStatusHost(
+                importError = importError,
+                isOffline = isOffline,
+                pendingCount = pendingCount,
+                hasFailed = hasFailed,
+                onDismissImportError = { importError = null },
+                onRetryNow = retryNow,
+            )
+        },
+        feedback = feedbackHost,
+    )
 
     // ------------------------------------------------------------------
     // Navegación raíz (§4 S01 V1.2): Inicio · Buscar · Actividades ·
@@ -210,45 +239,7 @@ internal fun AuthenticatedAppRoot(
 
     val reducedMotion = LocalReducedMotion.current
 
-    androidx.compose.foundation.layout.Column(modifier = Modifier.fillMaxSize()) {
-        // Estados transversales persistentes (importación): visibles sobre
-        // la superficie; la consolidación en el host de estados del
-        // scaffold (bajo la barra superior, insets del contenedor) es parte
-        // de esta misma migración.
-        importError?.let { message ->
-            // error recuperable con acción (spec §10): ELEGIR OTRA
-            // IMAGEN despeja el error para volver a intentarlo desde la
-            // pantalla de origen (Añadir/Galería).
-            val error = importReadError(message)
-            com.agendaqr.core.ui.components.XauxaStatusBanner(
-                error.display(),
-                tone = com.agendaqr.core.ui.components.XauxaTone.Danger,
-                actionLabel = error.action.label,
-                onAction = { importError = null },
-                onDismiss = { importError = null },
-                dismissLabel = AppStrings.Descartar,
-            )
-        }
-        if (isOffline) {
-            com.agendaqr.core.ui.components.XauxaStatusBanner(
-                AppStrings.SinConexionLosCambiosSe,
-                tone = com.agendaqr.core.ui.components.XauxaTone.Neutral,
-            )
-        }
-        if (pendingCount > 0) {
-            com.agendaqr.core.ui.components.XauxaStatusBanner(
-                syncPendingLabel(pendingCount, retrying = hasFailed),
-                tone = if (hasFailed) com.agendaqr.core.ui.components.XauxaTone.Danger else com.agendaqr.core.ui.components.XauxaTone.Neutral,
-            )
-            if (hasFailed) {
-                com.agendaqr.core.ui.components.XauxaTextAction(
-                    label = AppStrings.ReintentarAhora,
-                    onClick = { graph.sessionScope.launch { graph.syncProcessor.drain() } },
-                )
-            }
-        }
-
-        Box(modifier = Modifier.weight(1f)) {
+    Box(Modifier.fillMaxSize()) {
         // Las SUPERFICIES (AppRoute) transicionan con la transición
         // estándar corta (fundido + desplazamiento pequeño). La dirección
         // se decide por la profundidad del back stack: si la nueva
@@ -287,11 +278,13 @@ internal fun AuthenticatedAppRoot(
                     AppRoute.ImportBatch -> ImportBatchScreen(
                         state = importBatchState,
                         existing = existingPreview,
+                        appHosts = appHosts,
                         onAction = { action -> importBatch.onAction(action) },
                     )
                     AppRoute.Search -> GlobalSearchScreen(
                         state = globalSearchState,
                         navChrome = navChrome,
+                        appHosts = appHosts,
                         onAction = graph.globalSearchViewModel::onAction,
                         onSelect = { result ->
                             when (result.type) {
@@ -328,6 +321,7 @@ internal fun AuthenticatedAppRoot(
                     AppRoute.Contexts -> ContextsScreen(
                         state = contextState,
                         navChrome = navChrome,
+                        appHosts = appHosts,
                         onAction = graph.contextsViewModel::onAction,
                         // Lista → pop: la superficie que queda debajo es el origen real
                         // (Inicio o Búsqueda), no un estado aparte (S05).
@@ -363,6 +357,7 @@ internal fun AuthenticatedAppRoot(
                         state = operationState,
                         viewModel = graph.operationsViewModel,
                         navChrome = navChrome,
+                        appHosts = appHosts,
                         syncLookup = syncLookup,
                         onRetrySync = retrySync,
                         // U3/ADR-0003: el selector S08 puede crear contexto; el draft
@@ -379,6 +374,7 @@ internal fun AuthenticatedAppRoot(
                         state = state.copy(recentOperations = operationState.operations),
                         contextState = contextState,
                         navChrome = navChrome,
+                        appHosts = appHosts,
                         onSearchOpened = { searchReturnDestinationId = null },
                         onDetailBack = ::backFromDestinationDetail,
                         graph = graph,
@@ -391,7 +387,6 @@ internal fun AuthenticatedAppRoot(
             }
         }
     }
-}
 }
 
 /** Cuánto se encoge la superficie con el predictive back (fracción 0–1). */

@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import com.agendaqr.core.ui.components.XauxaSnackbarHost
 import com.agendaqr.core.ui.components.XauxaFeedbackEvent
 import com.agendaqr.core.ui.components.XauxaScreenScaffold
 import com.agendaqr.core.ui.components.XauxaTopBar
@@ -26,6 +27,7 @@ import com.agendaqr.destinations.domain.Destination
 @Composable
 fun DestinationDetailScreen(
     destination: Destination,
+    appHosts: AppHosts? = null,
     onShowQr: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
@@ -37,7 +39,11 @@ fun DestinationDetailScreen(
     var showDeleteConfirm by remember { mutableStateOf(false) }
     // anuncio de eliminación confirmada (por evento).
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
-    XauxaFeedbackEvent(event = deleteDoneEvent, message = AppStrings.Eliminado)
+    XauxaFeedbackEvent(
+        event = deleteDoneEvent,
+        message = AppStrings.Eliminado,
+        feedbackHost = appHosts?.feedback,
+    )
     // V1.2 (§12): título del QR en la barra superior con flecha atrás;
     // Mostrar QR y Editar como acciones visibles, Compartir y Eliminar en
     // el menú "…" (destructiva, no a un toque).
@@ -63,6 +69,8 @@ fun DestinationDetailScreen(
                 overflowLabel = AppStrings.Mas,
             )
         },
+        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        statusContent = appHosts?.status,
     ) {
             destination.category?.let { XauxaText(it, color = XauxaColor.TextSecondary) }
             destination.note?.takeIf { it.isNotBlank() }?.let { XauxaText(it, color = XauxaColor.TextSecondary) }

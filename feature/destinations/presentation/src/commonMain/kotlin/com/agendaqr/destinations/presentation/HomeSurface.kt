@@ -27,6 +27,7 @@ internal fun HomeSurface(
     onSignOut: () -> Unit,
     nav: AppBackStack,
     navChrome: XauxaNavChromeState? = null,
+    appHosts: AppHosts? = null,
     syncLookup: ElementSyncLookup,
     onRetrySync: () -> Unit,
     onSearchOpened: () -> Unit = {},
@@ -53,6 +54,7 @@ internal fun HomeSurface(
                 state,
                 graph.destinationsViewModel::onAction,
                 navChrome = navChrome,
+                appHosts = appHosts,
                 onOpenOperations = {
                     graph.operationsViewModel.onAction(OperationAction.New)
                     nav.push(AppRoute.Operations)
@@ -70,6 +72,7 @@ internal fun HomeSurface(
                 syncLookup = syncLookup,
             )
             DestinationRoute.Add -> AddDestinationScreen(
+                appHosts = appHosts,
                 onImport = { assets ->
                     graph.destinationsViewModel.onAction(
                         DestinationAction.ImportAssets(assets),
@@ -84,6 +87,7 @@ internal fun HomeSurface(
                 } else {
                     DestinationEditorScreen(
                         existing = target,
+                appHosts = appHosts,
                 onSave = { destination ->
                     graph.destinationsViewModel.onAction(DestinationAction.Update(destination))
                 },
@@ -111,6 +115,7 @@ internal fun HomeSurface(
                     DestinationNotFound(onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) })
                 } else {
                     DestinationDetailScreen(
+                        appHosts = appHosts,
                         destination = destination,
                         onShowQr = {
                             graph.destinationsViewModel.onAction(DestinationAction.ShowQr(destination.id))
@@ -142,6 +147,7 @@ internal fun HomeSurface(
                 }
             }
             DestinationRoute.ImportReview -> ImportReviewScreen(
+                appHosts = appHosts,
                 assets = graph.destinationsViewModel.importedAssets(),
                 onSaveAll = graph.destinationsViewModel::saveImportedAssets,
                 onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },

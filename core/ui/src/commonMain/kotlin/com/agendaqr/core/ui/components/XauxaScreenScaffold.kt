@@ -53,6 +53,12 @@ fun XauxaScreenScaffold(
     floatingActionButton: (@Composable () -> Unit)? = null,
     /** Botón principal fijo abajo (acción real de guardado). */
     bottomAction: (@Composable () -> Unit)? = null,
+    /**
+     * Host de estados persistentes (§12 V1.2): se renderiza a ancho
+     * completo BAJO la barra superior, dentro del Scaffold (los insets
+     * los resuelve el contenedor, no el contenido del host).
+     */
+    statusContent: (@Composable () -> Unit)? = null,
     scrollable: Boolean = false,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(XauxaSpacing.Lg),
@@ -72,6 +78,9 @@ fun XauxaScreenScaffold(
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            // Estados persistentes del host: a ancho completo, bajo la
+            // barra superior (sin el margen del contenido).
+            statusContent?.invoke()
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import com.agendaqr.core.ui.components.XauxaSnackbarHost
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.data.SyncResource
@@ -34,6 +35,7 @@ import kotlinx.datetime.toLocalDateTime
 internal fun OperationDetailScreen(
     state: OperationsUiState,
     viewModel: OperationsViewModel,
+    appHosts: AppHosts? = null,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
     onRetrySync: () -> Unit = {},
 ) {
@@ -55,7 +57,11 @@ internal fun OperationDetailScreen(
     var showDeleteConfirm by remember { mutableStateOf(false) }
     // anuncio de eliminación confirmada (por evento).
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
-    XauxaFeedbackEvent(event = deleteDoneEvent, message = AppStrings.Eliminado)
+    XauxaFeedbackEvent(
+        event = deleteDoneEvent,
+        message = AppStrings.Eliminado,
+        feedbackHost = appHosts?.feedback,
+    )
     // V1.2 (§12): detalle con título y flecha atrás en la barra superior;
     // Compartir y Editar como acciones visibles (Editar es la principal),
     // Eliminar en el menú "…" (destructiva, no a un toque).
@@ -79,6 +85,8 @@ internal fun OperationDetailScreen(
                 overflowLabel = AppStrings.Mas,
             )
         },
+        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        statusContent = appHosts?.status,
     ) {
             XauxaStatusBanner(
                 operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt) + " · " +

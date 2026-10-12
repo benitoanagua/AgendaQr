@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.agendaqr.core.ui.components.XauxaSnackbarHost
 import com.agendaqr.core.ui.components.XauxaDialog
 import com.agendaqr.core.ui.components.XauxaFeedbackEvent
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
@@ -49,6 +50,7 @@ fun ImportBatchScreen(
     state: ImportBatchUiState,
     onAction: (ImportBatchAction) -> Unit,
     existing: ExistingImportPreview? = null,
+    appHosts: AppHosts? = null,
 ) {
     // guardado del lote anunciado en la TRANSICIÓN al
     // estado Saved (por evento, no por estado).
@@ -84,6 +86,8 @@ fun ImportBatchScreen(
                 backLabel = if (state is ImportBatchUiState.Review) AppStrings.VolverAResultado else AppStrings.Volver,
             )
         },
+        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        statusContent = appHosts?.status,
         bottomAction = if (currentBatch?.canSaveRecognized() == true) {
             {
                 XauxaPrimaryButton(

@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.agendaqr.core.ui.components.XauxaSnackbarHost
 import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaText
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
@@ -26,6 +27,7 @@ import com.agendaqr.destinations.domain.QrAsset
 
 @Composable
 fun ImportReviewScreen(
+    appHosts: AppHosts? = null,
     assets: List<QrAsset>,
     onSaveAll: () -> Unit,
     onBack: () -> Unit,
@@ -46,6 +48,8 @@ fun ImportReviewScreen(
                 backLabel = AppStrings.Volver,
             )
         },
+        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        statusContent = appHosts?.status,
         bottomAction = if (assets.isNotEmpty()) {
             {
                 XauxaPrimaryButton(

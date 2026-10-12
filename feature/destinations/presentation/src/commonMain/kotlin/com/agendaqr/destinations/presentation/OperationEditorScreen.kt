@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import com.agendaqr.core.ui.components.XauxaSnackbarHost
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.data.SyncResource
@@ -55,6 +56,7 @@ internal fun OperationEditorScreen(
     state: OperationsUiState,
     viewModel: OperationsViewModel,
     existing: Operation?,
+    appHosts: AppHosts? = null,
     onCreateContext: (name: String, note: String?) -> Unit = { _, _ -> },
     justCreatedContextId: String? = null,
 ) {
@@ -108,6 +110,8 @@ internal fun OperationEditorScreen(
                 backLabel = AppStrings.Volver,
             )
         },
+        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        statusContent = appHosts?.status,
         bottomAction = {
             XauxaPrimaryButton(
                 label = if (saving) {

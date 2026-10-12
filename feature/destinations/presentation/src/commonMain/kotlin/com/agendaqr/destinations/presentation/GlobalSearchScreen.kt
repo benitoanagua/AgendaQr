@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.agendaqr.core.ui.components.XauxaSnackbarHost
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.components.XauxaNavChromeState
 import com.agendaqr.core.ui.theme.XauxaColor
@@ -17,6 +18,7 @@ import com.agendaqr.destinations.domain.AgendaSearchResult
 fun GlobalSearchScreen(
     state: GlobalSearchUiState,
     navChrome: XauxaNavChromeState? = null,
+    appHosts: AppHosts? = null,
     onAction: (GlobalSearchAction) -> Unit,
     onSelect: (AgendaSearchResult) -> Unit,
 ) {
@@ -31,6 +33,8 @@ fun GlobalSearchScreen(
         navDestinations = navChrome?.destinations.orEmpty(),
         navSelectedId = navChrome?.selectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
+        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        statusContent = appHosts?.status,
     ) {
         XauxaSearchBar(
             value = state.query,

@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import com.agendaqr.core.ui.components.XauxaSnackbarHost
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.components.XauxaExtendedFab
 import com.agendaqr.core.ui.components.XauxaNavChromeState
@@ -42,6 +43,7 @@ fun OperationsScreen(
     state: OperationsUiState,
     viewModel: OperationsViewModel,
     navChrome: XauxaNavChromeState? = null,
+    appHosts: AppHosts? = null,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
     onRetrySync: () -> Unit = {},
     /** U3/ADR-0003: crear contexto desde S08 sin perder el draft. */
@@ -49,11 +51,11 @@ fun OperationsScreen(
     justCreatedContextId: String? = null,
 ) {
     when (state.route) {
-        OperationRoute.List -> OperationListScreen(state, viewModel, navChrome, syncLookup)
-        OperationRoute.Unassociated -> UnassociatedScreen(state, viewModel, syncLookup)
-        OperationRoute.New -> OperationEditorScreen(state, viewModel, existing = null, onCreateContext = onCreateContext, justCreatedContextId = justCreatedContextId)
-        is OperationRoute.Edit -> OperationEditorScreen(state, viewModel, existing = viewModel.selectedOperation(), onCreateContext = onCreateContext, justCreatedContextId = justCreatedContextId)
-        is OperationRoute.Detail -> OperationDetailScreen(state, viewModel, syncLookup, onRetrySync)
+        OperationRoute.List -> OperationListScreen(state, viewModel, navChrome, appHosts, syncLookup)
+        OperationRoute.Unassociated -> UnassociatedScreen(state, viewModel, appHosts, syncLookup)
+        OperationRoute.New -> OperationEditorScreen(state, viewModel, existing = null, appHosts = appHosts, onCreateContext = onCreateContext, justCreatedContextId = justCreatedContextId)
+        is OperationRoute.Edit -> OperationEditorScreen(state, viewModel, existing = viewModel.selectedOperation(), appHosts = appHosts, onCreateContext = onCreateContext, justCreatedContextId = justCreatedContextId)
+        is OperationRoute.Detail -> OperationDetailScreen(state, viewModel, appHosts, syncLookup, onRetrySync)
     }
     state.pendingIncoming?.let { incoming ->
         val duplicate = state.pendingDuplicates.isNotEmpty()
@@ -98,7 +100,7 @@ fun OperationsScreen(
         )
     }
     state.openedComprobante?.let { receipt ->
-        ComprobanteViewerDialog(state, receipt, viewModel, syncLookup)
+        ComprobanteViewerDialog(state, receipt, viewModel, appHosts, syncLookup)
     }
 }
 
@@ -107,6 +109,7 @@ internal fun OperationListScreen(
     state: OperationsUiState,
     viewModel: OperationsViewModel,
     navChrome: XauxaNavChromeState? = null,
+    appHosts: AppHosts? = null,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
     val operations = viewModel.visibleOperations()
@@ -122,6 +125,8 @@ internal fun OperationListScreen(
         navDestinations = navChrome?.destinations.orEmpty(),
         navSelectedId = navChrome?.selectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
+        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        statusContent = appHosts?.status,
         floatingActionButton = {
             XauxaExtendedFab(
                 label = AppStrings.RegistrarOperacion,
@@ -199,6 +204,7 @@ internal fun OperationListScreen(
 internal fun UnassociatedScreen(
     state: OperationsUiState,
     viewModel: OperationsViewModel,
+    appHosts: AppHosts? = null,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
     var selectedReceipt by remember { mutableStateOf<Comprobante?>(null) }
@@ -212,6 +218,8 @@ internal fun UnassociatedScreen(
                 backLabel = AppStrings.Volver,
             )
         },
+        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        statusContent = appHosts?.status,
     ) {
             if (state.unassociated.isEmpty()) {
                 XauxaEmptyState(title = AppStrings.noUnassociatedReceipts)

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.agendaqr.core.ui.components.XauxaSnackbarHost
 import com.agendaqr.core.ui.components.XauxaScreenScaffold
 import com.agendaqr.core.ui.components.XauxaSectionHeader
 import com.agendaqr.core.ui.components.XauxaText
@@ -19,6 +20,7 @@ import com.agendaqr.core.ui.theme.XauxaColor
  */
 @Composable
 fun AddDestinationScreen(
+    appHosts: AppHosts? = null,
     onImport: (List<com.agendaqr.destinations.domain.QrAsset>) -> Unit,
     onBack: () -> Unit,
 ) {
@@ -33,6 +35,8 @@ fun AddDestinationScreen(
                 backLabel = AppStrings.Volver,
             )
         },
+        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        statusContent = appHosts?.status,
     ) {
         XauxaText(
             AppStrings.TraeAAgendaQrAlgo,

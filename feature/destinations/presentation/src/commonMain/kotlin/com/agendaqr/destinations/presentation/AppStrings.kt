@@ -143,6 +143,8 @@ internal object AppStrings {
     val SeleccionarContexto = "Seleccionar contexto"
     val SinComprobanteAdjunto = "Sin comprobante adjunto"
     val SinConexionLosCambiosSe = "Sin conexión — los cambios se guardan localmente y se sincronizarán al recuperar conectividad."
+    /** Indicador compacto de sin conexión (chip del AppStatusHost, §12 V1.2). */
+    val SinConexion = "Sin conexión"
     val SinContextos = "Sin contextos"
     val SinContextosDisponibles = "Sin contextos disponibles."
     val SinDestinos = "Sin QR"

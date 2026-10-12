@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.agendaqr.core.ui.components.XauxaSnackbarHost
 import com.agendaqr.core.ui.components.XauxaNavChromeState
 import com.agendaqr.core.ui.components.XauxaEmptyState
 import com.agendaqr.core.ui.components.XauxaPivot
@@ -49,6 +50,7 @@ fun ContextsScreen(
     onAction: (ContextAction) -> Unit,
     onBack: () -> Unit,
     navChrome: XauxaNavChromeState? = null,
+    appHosts: AppHosts? = null,
     onOpenDestination: (String) -> Unit = {},
     onOpenOperation: (String) -> Unit = {},
     onOpenComprobante: (String) -> Unit = {},
@@ -61,10 +63,12 @@ fun ContextsScreen(
             onAction = onAction,
             onBack = onBack,
             navChrome = navChrome,
+            appHosts = appHosts,
             onCreateContext = { showCreateDialog = true },
         )
         is ContextRoute.Detail -> ContextDetail(
             state = state,
+            appHosts = appHosts,
             onAction = onAction,
             onOpenDestination = onOpenDestination,
             onOpenOperation = onOpenOperation,
@@ -91,6 +95,7 @@ private fun ContextList(
     onAction: (ContextAction) -> Unit,
     onBack: () -> Unit,
     navChrome: XauxaNavChromeState?,
+    appHosts: AppHosts? = null,
     onCreateContext: () -> Unit = {},
 ) {
     // V1.2 (§12): Contextos es destino raíz — barra superior con título y
@@ -103,6 +108,8 @@ private fun ContextList(
         navDestinations = navChrome?.destinations.orEmpty(),
         navSelectedId = navChrome?.selectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
+        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        statusContent = appHosts?.status,
     ) {
         state.error?.let { err ->
             XauxaStatusBanner(
@@ -149,6 +156,7 @@ private const val RECENT_ACTIVITIES_SHOWN = 5
 @Composable
 private fun ContextDetail(
     state: ContextsUiState,
+    appHosts: AppHosts? = null,
     onAction: (ContextAction) -> Unit,
     onOpenDestination: (String) -> Unit,
     onOpenOperation: (String) -> Unit,
@@ -168,6 +176,8 @@ private fun ContextDetail(
                 backLabel = AppStrings.Volver,
             )
         },
+        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        statusContent = appHosts?.status,
     ) {
         state.error?.let { err ->
             XauxaStatusBanner(

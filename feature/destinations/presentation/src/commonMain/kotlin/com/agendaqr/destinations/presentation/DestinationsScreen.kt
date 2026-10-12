@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import com.agendaqr.destinations.data.SyncResource
+import com.agendaqr.core.ui.components.XauxaSnackbarHost
 import com.agendaqr.core.ui.components.XauxaIcons
 import com.agendaqr.core.ui.components.XauxaExtendedFab
 import com.agendaqr.core.ui.components.XauxaNavChromeState
@@ -46,6 +47,7 @@ fun DestinationsScreen(
     state: DestinationsUiState,
     onAction: (DestinationAction) -> Unit,
     navChrome: XauxaNavChromeState? = null,
+    appHosts: AppHosts? = null,
     onOpenOperations: () -> Unit = {},
     onOpenSearch: () -> Unit = {},
     onOpenContexts: () -> Unit = {},
@@ -71,7 +73,9 @@ fun DestinationsScreen(
                 overflowLabel = AppStrings.Mas,
             )
         },
-        navDestinations = navChrome?.destinations.orEmpty(),
+        navDestinations = navChrome?.destinations.orEmpty(),        snackbarHost = appHosts?.feedback?.let { host -> { XauxaSnackbarHost(host) } },
+        statusContent = appHosts?.status,
+
         navSelectedId = navChrome?.selectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
         floatingActionButton = {

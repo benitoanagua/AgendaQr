@@ -2,8 +2,11 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -12,13 +15,36 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarResult
 import com.agendaqr.core.ui.theme.XauxaSpacing
+
+/**
+ * Host de feedback transitorio (§12 V1.2): un [SnackbarHostState] que las
+ * superficies montan en el slot `snackbarHost` de su Scaffold mediante
+ * [XauxaSnackbarHost]. Los eventos transitorios (sincronización
+ * completada, eliminado, favorito) se publican aquí vía
+ * [XauxaFeedbackEvent]; el host es compartido por la sesión para que el
+ * Snackbar lo muestre la superficie activa.
+ */
+@Stable
+class XauxaFeedbackHost {
+    val snackbarHostState: SnackbarHostState = SnackbarHostState()
+}
+
+/** Monta el Snackbar del host en el slot del Scaffold. */
+@Composable
+fun XauxaSnackbarHost(host: XauxaFeedbackHost) {
+    SnackbarHost(hostState = host.snackbarHostState)
+}
 
 /**
  * Punto ÚNICO de realimentación no visual del DS:
  * háptica ligera + anuncio accesible de estado, disparados por EVENTO
  * (un token que cambia), nunca por estado persistente (así no se repite
- * en recomposiciones).
+ * en recomposiciones). Con [feedbackHost] el evento también se publica
+ * como Snackbar transitorio (con acción opcional); el anuncio accesible
+ * y el háptico se conservan siempre.
  *
  * - `event`: null mientras no ocurre; el llamador pasa un token nuevo
  *   (contador, id de operación) cada vez que quiere anunciar.
@@ -33,11 +59,29 @@ fun XauxaFeedbackEvent(
     event: Any?,
     message: String,
     haptic: Boolean = true,
+    /** Host del Snackbar: cuando se provee, el evento también se publica ahí. */
+    feedbackHost: XauxaFeedbackHost? = null,
+    /** Acción opcional del Snackbar (copy + callback del llamador). */
+    actionLabel: String? = null,
+    onAction: (() -> Unit)? = null,
 ) {
     val haptics = LocalHapticFeedback.current
-    LaunchedEffect(event) {
-        if (event != null && haptic) {
-            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+    LaunchedEffect(event, feedbackHost) {
+        if (event != null) {
+            if (haptic) {
+                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+            }
+            if (feedbackHost != null) {
+                val result = feedbackHost.snackbarHostState.showSnackbar(
+                    message = message,
+                    actionLabel = actionLabel,
+                    withDismissAction = false,
+                    duration = SnackbarDuration.Short,
+                )
+                if (result == SnackbarResult.ActionPerformed) {
+                    onAction?.invoke()
+                }
+            }
         }
     }
     // Nodo de anuncio: existe siempre (estable en el árbol), pero su
