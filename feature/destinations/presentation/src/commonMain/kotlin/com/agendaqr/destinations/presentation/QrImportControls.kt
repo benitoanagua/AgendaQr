@@ -32,6 +32,15 @@ expect fun QrCameraEntryControl(
 )
 
 /**
+ * "Elegir archivo (PDF)" (opcional, §4 S02 V1.2): solo donde la plataforma
+ * lo soporta con bajo riesgo. Android: OpenDocument(application/pdf) por el
+ * canal de comprobantes entrantes. iOS: pendiente (documentado en el
+ * estado de implementación).
+ */
+@Composable
+expect fun QrPdfPickerControl()
+
+/**
  * ¿Soporta esta plataforma recibir compartidos desde otras apps?
  * Android: sí (SEND/SEND_MULTIPLE). iOS: pendiente de Share Extension;
  * el bloque "Desde otra app" no se muestra hasta que exista.

@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.agendaqr.core.ui.components.XauxaPrimaryButton
+import com.agendaqr.core.ui.components.XauxaSecondaryButton
 import com.agendaqr.core.ui.components.XauxaIcons
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.destinations.domain.QrAsset
@@ -60,6 +61,15 @@ actual fun QrCameraEntryControl(
     onResult: (QrImportResult) -> Unit,
 ) {
     CameraCaptureHost(onQr = { asset -> onResult(QrImportResult(listOf(asset))) })
+}
+
+/** Android: PDF vía OpenDocument por el canal de comprobantes entrantes. */
+@Composable
+actual fun QrPdfPickerControl() {
+    XauxaSecondaryButton(
+        label = AppStrings.ElegirArchivoPdf,
+        onClick = AgendaQrAndroidImportLauncher::pdf,
+    )
 }
 
 /** Android recibe SEND/SEND_MULTIPLE de otras apps: el bloque S02 se muestra. */

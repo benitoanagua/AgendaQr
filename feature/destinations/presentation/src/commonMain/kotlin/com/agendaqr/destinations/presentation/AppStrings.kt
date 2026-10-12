@@ -94,6 +94,8 @@ internal object AppStrings {
     val ElegirDeLaGaleria = "Elegir de la galería"
     /** S12 Idle: acción para elegir un lote de imágenes. */
     val ElegirImagenes = "Elegir imágenes"
+    /** S02 V1.2: PDF opcional (solo donde la plataforma lo soporta). */
+    val ElegirArchivoPdf = "Elegir archivo (PDF)"
     val GaleriaVarios = "Galería (varios)"
     val batchSavedKeepReviewNotice = "Guardado. Los elementos pendientes conservan su revisión."
     val savingRecognizedItems = "Guardando elementos reconocidos…"

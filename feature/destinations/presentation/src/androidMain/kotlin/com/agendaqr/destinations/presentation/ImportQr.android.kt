@@ -6,6 +6,7 @@ import android.net.Uri
 import android.util.Base64
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import android.content.Context
@@ -58,8 +59,8 @@ fun decodeQrAsset(bytes: ByteArray, mimeType: String): QrAsset? {
 }
 
 object AgendaQrAndroidImportLauncher {
-    private var gallery: ActivityResultLauncher<String>? = null
-    private var multiple: ActivityResultLauncher<String>? = null
+    private var gallery: ActivityResultLauncher<PickVisualMediaRequest>? = null
+    private var pdf: ActivityResultLauncher<Array<String>>? = null
     private var activity: Activity? = null
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val payloadStore = createImportPayloadStore()
@@ -95,19 +96,32 @@ object AgendaQrAndroidImportLauncher {
 
     fun initialize(compActivity: ComponentActivity) {
         this.activity = compActivity
-        // S03: la captura con cámara ya no es `TakePicturePreview`
-        // (cámara del sistema): es CameraX + análisis ZXing continuo dentro
-        // de la app (CameraQrCaptureOverlay), con detección automática.
-        gallery = compActivity.registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            uri?.let { decodeAndEmit(it) }
-        }
-        multiple = compActivity.registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
+        // V1.2 (§12/F7): Photo Picker del sistema (sin permiso de
+        // almacenamiento); una sola acción de galería con selección
+        // múltiple — el enrutado por cantidad vive en decodeMultiple
+        // (1 → flujo único S09; ≥2 → lote S12).
+        gallery = compActivity.registerForActivityResult(
+            ActivityResultContracts.PickMultipleVisualMedia(),
+        ) { uris ->
             decodeMultiple(uris)
+        }
+        // F7 (PDF, opcional): "Elegir archivo (PDF)" por OpenDocument; el
+        // PDF no es decodificable como QR → canal de comprobante entrante
+        // (el mismo que un PDF compartido, sin cambios de dominio).
+        pdf = compActivity.registerForActivityResult(
+            ActivityResultContracts.OpenDocument(),
+        ) { uri ->
+            uri?.let { importPdf(it) }
         }
     }
 
-    fun gallery() { gallery?.launch("image/*") }
-    fun multiple() { multiple?.launch("image/*") }
+    fun gallery() {
+        gallery?.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+
+    fun pdf() {
+        pdf?.launch(arrayOf("application/pdf"))
+    }
 
     /**
      * Share entry point (ACTION_SEND / ACTION_SEND_MULTIPLE). Single files go
@@ -208,6 +222,25 @@ object AgendaQrAndroidImportLauncher {
 
     private fun decodeAndEmit(uri: Uri) {
         activity?.let { decodeAndEmit(uri, it) }
+    }
+
+    /**
+     * F7 (PDF, opcional): un PDF elegido en la app viaja por el MISMO
+     * canal que un PDF compartido (comprobante entrante) — sin cambios de
+     * dominio. Si el archivo no es legible, el error es recuperable.
+     */
+    private fun importPdf(uri: Uri) {
+        val source = activity ?: return
+        scope.launch {
+            val bytes = runCatching { readUriBytes(uri, source) }.getOrNull()
+            if (bytes == null) {
+                _importErrors.value = "No se pudo abrir el archivo seleccionado."
+                return@launch
+            }
+            // Un QR nunca viene en un PDF elegido a mano: el contrato de
+            // comprobantes entrantes decide el flujo (S10, bandeja).
+            _receiptResults.value = IncomingComprobante(bytes, "application/pdf", "pdf")
+        }
     }
 
     private fun decodeAndEmit(uri: Uri, sourceActivity: Activity) {

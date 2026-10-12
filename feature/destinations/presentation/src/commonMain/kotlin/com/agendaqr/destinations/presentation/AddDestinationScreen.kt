@@ -59,6 +59,9 @@ fun AddDestinationScreen(
             onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
         )
 
+        // PDF (opcional): solo donde la plataforma lo soporta (F7).
+        QrPdfPickerControl()
+
         // "Desde otra app": ayuda breve, solo donde la plataforma lo
         // soporta (Android: share intents; iOS: pendiente de Share
         // Extension, no se muestra).

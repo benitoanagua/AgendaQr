@@ -119,3 +119,12 @@ actual fun QrCameraEntryControl(
  * exista (pendiente registrado en el estado de implementación).
  */
 actual fun sharedImportsSupported(): Boolean = false
+
+/**
+ * iOS: el selector de PDF (UIDocumentPickerViewController) queda pendiente
+ * de la pasada nativa con Xcode (riesgo sin verificación en dispositivo);
+ * la acción no se muestra hasta que exista.
+ */
+@Composable
+actual fun QrPdfPickerControl() {
+}
