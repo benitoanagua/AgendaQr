@@ -1,56 +1,32 @@
 package com.agendaqr.core.ui.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.semantics.toggleableState
-import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
-import com.agendaqr.core.ui.theme.XauxaTextStyles
-import com.agendaqr.core.ui.theme.XauxaType
 import com.agendaqr.core.ui.theme.XauxaTracking
+import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.theme.asTextOn
 
 
 /**
- * Botones y chips Xauxa (adaptaciones de Material con tokens).
- * ((dividido por responsabilidad))
+ * Botones y chips Xauxa (spec §12 V1.2): envoltorios finos de los
+ * componentes M3 con color/forma/tipografía del tema.
  */
 
 @Composable
@@ -77,7 +53,10 @@ fun XauxaDangerButton(
     )
 }
 
-/** Botón solo-icono con etiqueta accesible y área táctil de 48dp. */
+/**
+ * Botón solo-icono: `IconButton` M3 con descripción accesible y área
+ * táctil de 48 dp. El glifo lo aporta el llamador vía [content].
+ */
 @Composable
 fun XauxaIconButton(
     contentDescription: String,
@@ -86,22 +65,12 @@ fun XauxaIconButton(
     enabled: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    val interaction = remember { MutableInteractionSource() }
-    Box(
+    IconButton(
+        onClick = onClick,
         modifier = modifier
             .size(XauxaMetrics.ControlMinSize)
-            .semantics { this.contentDescription = contentDescription }
-            .clickable(
-                interactionSource = interaction,
-                indication = null,
-                role = Role.Button,
-                enabled = enabled,
-                onClick = onClick,
-            )
-            .focusable(interactionSource = interaction)
-            .xauxaFocusRing(interaction)
-            .xauxaPressFeedback(interaction),
-        contentAlignment = Alignment.Center,
+            .semantics { this.contentDescription = contentDescription },
+        enabled = enabled,
     ) {
         content()
     }
@@ -146,6 +115,35 @@ fun XauxaFilterChip(
     )
 }
 
+/**
+ * Conmutador de favorito: `IconToggleButton` M3 con la estrella de Lucide.
+ * El estado seleccionado se expone en la semántica del control y la
+ * descripción accesible la aporta el llamador (debe cambiar con el
+ * estado, §11). El color acompaña; nunca es la única señal.
+ */
+@Composable
+fun XauxaFavoriteToggle(
+    favorite: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    /** nombre accesible del control, copy del llamador (§11). */
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+) {
+    IconToggleButton(
+        checked = favorite,
+        onCheckedChange = onCheckedChange,
+        modifier = modifier
+            .size(XauxaMetrics.ControlMinSize)
+            .semantics { this.contentDescription = contentDescription },
+    ) {
+        XauxaIcon(
+            imageVector = XauxaIcons.Favorite,
+            contentDescription = null,
+            tint = if (favorite) XauxaColor.Brand else XauxaColor.TextTertiary,
+        )
+    }
+}
+
 /** Chip de categoría estático: clasifica, no filtra. Sin interacción. */
 @Composable
 fun XauxaCategoryChip(
@@ -155,7 +153,7 @@ fun XauxaCategoryChip(
     Box(
         modifier = modifier
             // Sin borde de reposo: el bloque tonal Surface2 ya define el límite.
-            .background(XauxaColor.Surface2)
+            .background(XauxaColor.Surface2, com.agendaqr.core.ui.theme.XauxaShapes.ExtraSmall)
             .padding(horizontal = XauxaSpacing.Sm, vertical = XauxaSpacing.Xs),
         contentAlignment = Alignment.Center,
     ) {

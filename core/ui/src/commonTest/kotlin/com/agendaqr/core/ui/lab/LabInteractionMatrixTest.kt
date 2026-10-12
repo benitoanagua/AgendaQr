@@ -72,7 +72,7 @@ class LabInteractionMatrixTest {
         assertEquals(LabLensVerdict.SIMULATED, LabInteractionMatrix.verdict(interactive, LabInteractionLens.FOCUS))
         assertEquals(LabLensVerdict.SIMULATED, LabInteractionMatrix.verdict(interactive, LabInteractionLens.PRESSED))
 
-        val passive = contract("xauxa-screen")
+        val passive = contract("xauxa-skeleton")
         assertEquals(
             LabLensVerdict.NOT_APPLICABLE,
             LabInteractionMatrix.verdict(passive, LabInteractionLens.FOCUS),

@@ -139,7 +139,6 @@ private fun DestinationEditorContent(
             label = AppStrings.Nombre,
             value = name,
             onValueChange = { name = it },
-            isRequired = true,
             isError = nameError,
             errorMessage = if (nameError) AppStrings.ElNombreEsObligatorio else null,
         )

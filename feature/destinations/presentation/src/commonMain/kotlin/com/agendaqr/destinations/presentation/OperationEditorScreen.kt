@@ -153,7 +153,6 @@ internal fun OperationEditorScreen(
             value = dateText,
             onValueChange = { dateText = it },
             modifier = Modifier.fillMaxWidth(),
-            isRequired = true,
             isError = dateError,
             errorMessage = if (dateError) AppStrings.FormatoFecha else null,
         )

@@ -327,18 +327,12 @@ object XauxaMetrics {
     val Border = 1.dp
     /** Borde fuerte FUNCIONAL (marco del encuadre del scanner, E-03). */
     val BorderStrong = 2.dp
-    /** §12 V1.1 (M8/M9): ancho del anillo de FOCO y de bordes de estado
-     * foco/error — 2 dp, solo en foco, campo en foco/error o tile
-     * seleccionado; sin bordes de reposo. */
+    /** §12 V1.2: ancho del anillo de FOCO de los controles personalizados
+     * que quedan (p. ej. el disparador de búsqueda). */
     val Focus = 2.dp
-    /** Marcador SEMÁNTICO (contrato §6.3): subrayado de sección/pivote y
-     * barra lateral de fila/toast — solo con acento de contexto o tono de
-     * estado REALES (E-05); no es un borde ni un indicador de foco. */
-    val Marker = 2.dp
     val ControlMinSize = 48.dp
     val ContentMaxWidth = 720.dp
     val QrPreviewSize = 240.dp
-    val FavoriteIndicatorSize = 24.dp
     val BreakpointCompact = 480.dp
     val BreakpointMedium = 640.dp
 
@@ -408,9 +402,6 @@ object XauxaType {
     val Caption: TextUnit = 12.sp
     /** Caption mínima (rol `labelSmall` de M3, 11 sp). */
     val CaptionSmall: TextUnit = 11.sp
-    /** Tracking amplio de etiquetas históricas; se retira con los
-     * componentes sin uso que aún lo consumen (herocard/stat/tileheader). */
-    val LetterSpacingWide: TextUnit = 0.5.sp
     /** Tracking neutro EXPLÍCITO (0): neutraliza herencias del ambiente
      * en superficies medidas al pixel. Cero en cualquier unidad: no es un
      * valor de diseño, es ausencia de tracking. */

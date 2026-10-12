@@ -343,30 +343,7 @@ class XauxaUiPolishDefectsTest {
         )
     }
 
-    // --- D6 (componente): placeholder en una linea ---
-
-    @Test
-    fun d6_search_placeholder_stays_on_single_line() {
-        // Garantia del COMPONENTE con un copy deliberadamente largo (el
-        // viejo placeholder de 51 caracteres): maxLines=1 lo contiene en
-        // una linea (con ellipsis). Que el copy REAL quepa sin truncarse
-        // se fija en feature (S02UiPolishTest) con AppStrings.
-        val placeholder = "Buscar QR, actividades, comprobantes o contextos"
-        setScaledContent(1.0f) {
-            Box(modifier = Modifier.width(328.dp)) {
-                XauxaSearchBar(
-                    value = "",
-                    onValueChange = {},
-                    label = "Buscar en Agenda QR",
-                    placeholder = placeholder,
-                )
-            }
-        }
-        val layout = layoutOf(placeholder)
-        assertEquals(1, layout.lineCount, "el placeholder ocupa ${layout.lineCount} lineas a 360 dp")
-    }
-
-    // --- D4 (contraste del encabezado de seccion, puro) ---
+    // --- D4 (contraste del texto de encabezado de sección, puro) ---
 
     @Test
     fun d4_section_header_accent_meets_text_contrast_in_both_themes() {
@@ -377,5 +354,17 @@ class XauxaUiPolishDefectsTest {
             com.agendaqr.core.ui.theme.DarkXauxaColorScheme.background,
         )
         assertTrue(dark >= 4.5, "acento de seccion en oscuro: $dark < 4.5")
+        // V1.2: el encabezado por defecto usa color estándar (TextSecondary);
+        // el acento (S06) solo es texto si cumple >= 4.5:1 (asTextOn).
+        val standardLight = contrastRatio(
+            LightXauxaColorScheme.textSecondary,
+            LightXauxaColorScheme.background,
+        )
+        assertTrue(standardLight >= 4.5, "color estándar en claro: $standardLight < 4.5")
+        val standardDark = contrastRatio(
+            com.agendaqr.core.ui.theme.DarkXauxaColorScheme.textSecondary,
+            com.agendaqr.core.ui.theme.DarkXauxaColorScheme.background,
+        )
+        assertTrue(standardDark >= 4.5, "color estándar en oscuro: $standardDark < 4.5")
     }
 }

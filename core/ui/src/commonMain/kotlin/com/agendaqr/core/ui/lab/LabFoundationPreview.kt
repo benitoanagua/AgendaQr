@@ -156,14 +156,13 @@ private fun SpacingSpecimen() {
 private fun MetricsSpecimen() {
     Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs)) {
         LabLabelValue("XauxaMetrics.Border", "Grosor de borde estructural (1px)")
-        LabLabelValue("XauxaMetrics.BorderStrong", "Borde fuerte: marcadores, marcos y footers (2px)")
-        LabLabelValue("XauxaMetrics.Focus", "Ancho del anillo de foco")
-        LabLabelValue("XauxaMetrics.ControlMinSize", "Target táctil mínimo (invariante 09)")
+        LabLabelValue("XauxaMetrics.BorderStrong", "Borde fuerte: marcos y encuadres (2px)")
+        LabLabelValue("XauxaMetrics.Focus", "Anillo de foco de controles propios")
+        LabLabelValue("XauxaMetrics.ControlMinSize", "Target táctil mínimo (48dp)")
         LabLabelValue("XauxaMetrics.ContentMaxWidth", "Ancho máximo de contenido")
         LabLabelValue("XauxaMetrics.QrPreviewSize", "Tamaño del preview de QR")
-        LabLabelValue("XauxaMetrics.FavoriteIndicatorSize", "Diámetro del indicador de favorito")
-        LabLabelValue("XauxaMetrics.BreakpointCompact", "Breakpoint 480 documentado por Xauxa (§07)")
-        LabLabelValue("XauxaMetrics.BreakpointMedium", "Breakpoint 640 documentado por Xauxa (§07)")
+        LabLabelValue("XauxaMetrics.BreakpointCompact", "Breakpoint histórico 480 (lab-only)")
+        LabLabelValue("XauxaMetrics.BreakpointMedium", "Breakpoint histórico 640 (lab-only)")
     }
 }
 

@@ -48,6 +48,8 @@ object XauxaTokenIndex {
         "XauxaColor.InverseOnSurface",
         "XauxaColor.InverseBrand",
         "XauxaColor.FocusRing",
+        "XauxaColor.BrandText",
+        "XauxaColor.BorderControl",
     )
 
     val spacing: Set<String> = setOf(
@@ -68,11 +70,9 @@ object XauxaTokenIndex {
         "XauxaMetrics.Border",
         "XauxaMetrics.BorderStrong",
         "XauxaMetrics.Focus",
-        "XauxaMetrics.Marker",
         "XauxaMetrics.ControlMinSize",
         "XauxaMetrics.ContentMaxWidth",
         "XauxaMetrics.QrPreviewSize",
-        "XauxaMetrics.FavoriteIndicatorSize",
         "XauxaMetrics.BreakpointCompact",
         "XauxaMetrics.BreakpointMedium",
         "XauxaMetrics.TileUnit",
@@ -91,12 +91,12 @@ object XauxaTokenIndex {
         "XauxaType.Body",
         "XauxaType.Label",
         "XauxaType.Caption",
-        "XauxaType.LetterSpacingWide",
         "XauxaType.SectionHeader",
         "XauxaType.FamilyUi",
         "XauxaType.FamilyMono",
         "XauxaTracking.BodyLarge",
         "XauxaTracking.LabelLarge",
+        "XauxaTracking.LabelMedium",
     )
 
     val motion: Set<String> = setOf(

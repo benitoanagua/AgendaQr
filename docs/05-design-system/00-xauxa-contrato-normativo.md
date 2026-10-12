@@ -256,11 +256,11 @@ DEBE coincidir con esta tabla.
 | ID | Componente | Tipo | Token | Razón | Retirada | Prueba |
 |---|---|---|---|---|---|---|
 | E-01 | Menú "…" de la barra superior (`XauxaAppBar` hoy, `XauxaTopBar` tras la migración ADR-0012) | Borde funcional | `borderControl` | Límite del overlay del menú; el contenido flotante necesita límite visual ≥3:1 | Menú M3 sustituido por componente propio | XauxaSchemeTest: borderControl ≥3:1 |
-| E-02 | `XauxaFavoriteIndicator` | Borde de control | `borderControl` | Límite del indicador de favorito (control visible ≥3:1) | Migración ADR-0012 (el indicador pasa a `IconToggleButton` estándar) | XauxaSchemeTest |
 | E-03 | `XauxaScannerViewport` (y su encuadre `XauxaScannerFrame`) | Marco funcional | `brand` (BorderStrong) | Encuadre del scanner (S03 congelado: "marco con borde de marca"); guía visual activa de captura | S03 rediseñado | XauxaSchemeTest: brand ≥4,5:1 |
 | E-05 | Identidad de contexto en filas | Elemento de identidad | acento de contexto | Identidad visual real del contexto derivada del ID (M4/M5 conservado); no es estado ni decoración; el nombre siempre es texto | Producto retira la identidad por contexto | Robolectric: fila con nombre accesible + contraste del par acento/texto |
-| E-06 | `XauxaTextInput` / `XauxaSearchBar` | Borde de foco/error | `brand`/`danger` | Borde de 2 dp solo en foco/error del campo plano actual | Migración ADR-0012 (`OutlinedTextField` con indicador estándar ≥3:1) | XauxaAccessibilityContractTest |
 | E-07 | AuthScreen sin barra de navegación | Excepción de chrome | — | La autenticación no es un destino raíz de sesión y su única acción legítima es iniciar/crear: el botón principal del cuerpo es la acción principal | Producto define navegación o acciones secundarias en Auth (nuevo ADR) | Round2ScreenshotTest login claro/oscuro (capturas de referencia) |
+
+Excepciones retiradas por ADR-0012: **E-02** (`XauxaFavoriteIndicator`; el favorito pasa a `IconToggleButton` estándar) y **E-06** (borde de foco/error del campo plano; el campo es `OutlinedTextField` con indicador estándar ≥3:1).
 
 
 ## Cobertura de auditoría

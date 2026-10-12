@@ -29,10 +29,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
+import com.agendaqr.core.ui.theme.XauxaShapes
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
-import com.agendaqr.core.ui.theme.XauxaShapes
+
+/** Acción de menú "…" (etiqueta + onClick); copy del llamador. */
+data class XauxaOverflowAction(
+    val label: String,
+    val onClick: () -> Unit,
+)
 
 /** Acción visible de la app bar inferior: icono + etiqueta SIEMPRE visible
  * (§11/M12: decisión de accesibilidad y desviación consciente de Metro —

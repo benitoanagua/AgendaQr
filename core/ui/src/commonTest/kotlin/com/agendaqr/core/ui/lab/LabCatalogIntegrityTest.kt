@@ -76,7 +76,6 @@ class LabCatalogIntegrityTest {
     @Test
     fun catalog_covers_every_real_component_in_core_ui() {
         val expected = setOf(
-            "xauxa-screen",
             "xauxa-section",
             "xauxa-tile",
             "xauxa-page-title",
@@ -84,8 +83,6 @@ class LabCatalogIntegrityTest {
             "xauxa-metro-tile",
             "xauxa-tile-grid",
             "xauxa-pivot",
-            "xauxa-tile-header",
-            "xauxa-hero-card",
             "xauxa-dialog",
             "xauxa-primary-button",
             "xauxa-secondary-button",
@@ -98,22 +95,16 @@ class LabCatalogIntegrityTest {
             "xauxa-text-input",
             "xauxa-search-bar",
             "xauxa-favorite-toggle",
-            "xauxa-toast",
             "xauxa-status-banner",
-            "xauxa-inline-result",
             "xauxa-loading",
             "xauxa-skeleton",
             "xauxa-empty-state",
-            "xauxa-error-page",
             "xauxa-load-more",
             "xauxa-list-row",
-            "xauxa-stat-block",
             "xauxa-badge",
             "xauxa-category-chip",
-            "xauxa-favorite-indicator",
             "xauxa-qr-preview",
             "xauxa-scanner-viewport",
-            "xauxa-file-upload",
         )
         assertEquals(expected, LabComponentCatalog.components.map { it.id }.toSet())
     }

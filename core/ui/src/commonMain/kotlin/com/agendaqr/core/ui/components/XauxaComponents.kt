@@ -1,7 +1,6 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,16 +10,15 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -42,32 +40,16 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
+import com.agendaqr.core.ui.theme.XauxaShapes
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaTextStyles
 import com.agendaqr.core.ui.theme.XauxaType
-import com.agendaqr.core.ui.theme.XauxaShapes
-
-@Composable
-fun XauxaScreen(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    Surface(
-        modifier = modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing),
-        color = XauxaColor.Background,
-        tonalElevation = XauxaSpacing.None,
-        shadowElevation = XauxaSpacing.None,
-    ) { content() }
-}
 
 /**
- * Marco de medios (QR, comprobante): BLOQUE TONAL [XauxaColor.Surface2]
- * SIN borde de reposo (M9: la separación es por espacio y bloques de
- * color). El marco histórico de 1 dp con [XauxaColor.Border] no cumplía
- * el límite perceptible (1,88:1 en claro) y se retiró: el límite del
- * contenido es el bloque tonal. Los previews de plataforma (QR/comprobante)
- * componen este componente; el fondo interno del contenido (p. ej. el
- * lienzo claro del QR, [XauxaColor.QrCanvas]) lo aporta quien lo dibuja.
+ * Marco de medios (QR, comprobante): contenedor tonal [XauxaColor.Surface2]
+ * con la forma media de tokens. El límite del contenido es el bloque
+ * tonal; el fondo interno del contenido (p. ej. el lienzo claro del QR,
+ * [XauxaColor.QrCanvas]) lo aporta quien lo dibuja.
  */
 @Composable
 fun XauxaMediaFrame(
@@ -204,11 +186,9 @@ internal fun XauxaLoadingButton(
         ),
     ) {
         Box(contentAlignment = Alignment.Center) {
-            // Altura DETERMINISTICA 48: el contenido manda sobre el nodo
-            // semantico del M3 (el floor externo no lo alcanza en todos los
-            // arboles) y con metricas degeneradas el contenido mide 44
-            // (defecto S02 en LEGACY). Con padding vertical cero, 48 del
-            // contenido = 48 del boton en claro/oscuro y a toda escala.
+            // Altura DETERMINÍSTICA 48: el contenido manda sobre el nodo
+            // semántico del M3 (el floor externo no lo alcanza en todos los
+            // árboles) y con métricas degeneradas el contenido mide 44.
             Row(
                 modifier = Modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
                     .then(if (isLoading) Modifier.alpha(0f) else Modifier),
@@ -228,7 +208,10 @@ internal fun XauxaLoadingButton(
                 )
             }
             if (isLoading) {
-                XauxaDotProgress(color = contentColor)
+                CircularProgressIndicator(
+                    modifier = Modifier.size(XauxaSpacing.Xxl),
+                    color = contentColor,
+                )
             }
         }
     }
@@ -243,10 +226,10 @@ fun XauxaSecondaryButton(
     isLoading: Boolean = false,
     icon: ImageVector? = null,
 ) {
-    // V1.1 (M10): las secundarias son texto con icono, SIN caja (nada de
-    // outline Material en reposo). La acción principal es bloque sólido de
-    // acento o acción de la app bar.
-    TextButton(
+    // §12 V1.2: la acción secundaria es `OutlinedButton` estándar; el
+    // borde de reposo es el del tema (outline = borderVariant, >= 3:1 en
+    // claro y oscuro, verificado por XauxaSchemeTest).
+    OutlinedButton(
         modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         onClick = onClick,
         enabled = enabled && !isLoading,
@@ -258,7 +241,10 @@ fun XauxaSecondaryButton(
         ),
     ) {
         if (isLoading) {
-            XauxaDotProgress(color = XauxaColor.Brand)
+            CircularProgressIndicator(
+                modifier = Modifier.size(XauxaSpacing.Xxl),
+                color = XauxaColor.Brand,
+            )
         } else {
             Row(
                 modifier = Modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
@@ -275,7 +261,7 @@ fun XauxaSecondaryButton(
                 Text(
                     label,
                     style = XauxaTextStyles.ButtonLabel,
-                    color = if (enabled) XauxaColor.BrandText else XauxaColor.TextTertiary,
+                    color = if (enabled) XauxaColor.TextPrimary else XauxaColor.TextTertiary,
                 )
             }
         }
@@ -394,7 +380,7 @@ fun XauxaLoading(modifier: Modifier = Modifier, message: String? = null) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md),
     ) {
-        XauxaDotProgress(color = XauxaColor.Brand)
+        CircularProgressIndicator(color = XauxaColor.Brand)
         message?.let { Text(it, color = XauxaColor.TextSecondary, fontSize = XauxaType.Label) }
     }
 }
@@ -405,10 +391,9 @@ fun XauxaEmptyState(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     /**
-     * Acción primaria del estado vacío. Opcional (M7): cuando la acción
-     * viable vive en la barra de aplicación inferior (p. ej. Volver en la
-     * flecha), el cuerpo no duplica el botón — el empty state solo explica
-     * qué ocurrió (§10/§6.4).
+     * Acción primaria del estado vacío. Opcional: cuando la acción viable
+     * vive en el chrome (flecha atrás, FAB) el cuerpo no la duplica; el
+     * empty state solo explica qué ocurrió (§10/§6.4).
      */
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
@@ -431,39 +416,3 @@ expect fun XauxaQrPreview(
     encodedQr: String,
     modifier: Modifier = Modifier,
 )
-
-/**
- * Indicador de favorito cuadrado (radio 0, Metro) con glifo y
- * descripción accesible — el estado NO depende solo del color (§11).
- * El glifo Favorito aparece solo cuando está marcado; sin marca el
- * cuadro queda vacío y apagado.
- */
-@Composable
-fun XauxaFavoriteIndicator(
-    favorite: Boolean,
-    modifier: Modifier = Modifier,
-    contentDescription: String? = null,
-) {
-    Box(
-        modifier = modifier
-            .size(XauxaMetrics.FavoriteIndicatorSize)
-            .background(if (favorite) XauxaColor.Brand else XauxaColor.Surface2)
-            .then(
-                if (contentDescription != null) {
-                    Modifier.semantics { this.contentDescription = contentDescription }
-                } else {
-                    Modifier
-                },
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
-        if (favorite) {
-            XauxaIcon(
-                imageVector = XauxaIcons.Favorite,
-                contentDescription = null,
-                size = XauxaMetrics.IconSize,
-                tint = XauxaColor.OnBrand,
-            )
-        }
-    }
-}

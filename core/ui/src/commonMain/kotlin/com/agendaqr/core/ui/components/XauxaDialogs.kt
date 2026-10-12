@@ -1,57 +1,31 @@
 package com.agendaqr.core.ui.components
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.toggleableState
-import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import com.agendaqr.core.ui.theme.XauxaColor
 import com.agendaqr.core.ui.theme.XauxaMetrics
 import com.agendaqr.core.ui.theme.XauxaSpacing
-import com.agendaqr.core.ui.theme.XauxaType
+import com.agendaqr.core.ui.theme.XauxaTextStyles
 
 
 /**
- * Diálogos y notificaciones Xauxa: confirmación, toast e inline result.
- * ((dividido por responsabilidad))
+ * Diálogos Xauxa (spec §12 V1.2): `AlertDialog` de M3 con los contratos
+ * de foco/acciones del sistema.
  */
 
 /**
@@ -66,7 +40,6 @@ fun XauxaDialogList(
 ) {
     Column(
         modifier = modifier
-            .fillMaxWidth()
             .heightIn(max = XauxaMetrics.DialogListMaxHeight)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
@@ -76,8 +49,7 @@ fun XauxaDialogList(
 }
 
 /**
- * Diálogo de confirmación destructiva con exactamente dos acciones.
- * Sin loops ni sombras: superficie plana con borde.
+ * Diálogo de confirmación con exactamente dos acciones.
  *
  * [onDismissRequest] cubre las vías de cierre que NO son el botón
  * dismiss (Back del sistema, toque fuera). Por defecto equivale a
@@ -103,28 +75,26 @@ fun XauxaDialog(
      */
     confirmAsText: Boolean = false,
     /**
-     * la confirmación es DESTRUCTIVA (eliminar
-     * QR/actividad/comprobante). Usa [XauxaDangerButton] y el foco
-     * inicial cae en la acción conservativa (dismiss) para que el primer
-     * toque no dispare lo irreversible.
+     * La confirmación es DESTRUCTIVA (eliminar QR/actividad/comprobante).
+     * Usa [XauxaDangerButton] y el foco inicial cae en la acción
+     * conservativa (dismiss) para que el primer toque no dispare lo
+     * irreversible.
      */
     destructive: Boolean = false,
 ) {
-    val dismissFocus = androidx.compose.runtime.remember { androidx.compose.ui.focus.FocusRequester() }
+    val dismissFocus = remember { androidx.compose.ui.focus.FocusRequester() }
     if (destructive) {
-        androidx.compose.runtime.LaunchedEffect(Unit) {
+        LaunchedEffect(Unit) {
             runCatching { dismissFocus.requestFocus() }
         }
     }
-    androidx.compose.material3.AlertDialog(
+    AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest ?: onDismiss,
-        containerColor = XauxaColor.Surface,
         title = {
             Text(
                 title,
-                fontSize = XauxaType.Title,
-                fontWeight = FontWeight.SemiBold,
+                style = androidx.compose.material3.MaterialTheme.typography.headlineSmall,
                 color = XauxaColor.TextPrimary,
             )
         },
@@ -134,7 +104,7 @@ fun XauxaDialog(
             } else {
                 Text(
                     message.orEmpty(),
-                    fontSize = XauxaType.Body,
+                    style = XauxaTextStyles.Body,
                     color = XauxaColor.TextSecondary,
                 )
             }
@@ -160,91 +130,4 @@ fun XauxaDialog(
             }
         },
     )
-}
-
-/** Notificación con acción y descarte. Sin auto-cierre en loop: el llamador decide. */
-@Composable
-fun XauxaToast(
-    message: String,
-    modifier: Modifier = Modifier,
-    tone: XauxaTone = XauxaTone.Neutral,
-    actionLabel: String? = null,
-    onAction: (() -> Unit)? = null,
-    onDismiss: (() -> Unit)? = null,
-    /** nombre accesible del descarte, copy del llamador. */
-    dismissDescription: String = "",
-) {
-    if (onDismiss != null) require(dismissDescription.isNotBlank()) {
-        "XauxaToast: onDismiss necesita dismissDescription (copy del llamador)"
-    }
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
-            // Sin borde de reposo: el bloque tonal ya define el límite.
-            .background(tone.container())
-            // región viva cortés — el toast se anuncia (antes
-            // solo se veía).
-            .semantics { liveRegion = LiveRegionMode.Polite }
-            .padding(XauxaSpacing.Sm),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
-    ) {
-        Box(modifier = Modifier.width(XauxaMetrics.Marker).fillMaxHeight().background(tone.content()))
-        // §11: icono por tono — el estado nunca solo por color.
-        tone.iconVector?.let { glyph ->
-            XauxaIcon(imageVector = glyph, contentDescription = null, tint = tone.content())
-        }
-        Text(
-            message,
-            modifier = Modifier.weight(XauxaToneWeight),
-            fontSize = XauxaType.Label,
-            color = XauxaColor.TextPrimary,
-        )
-        // la acción hereda el color del tono (par
-        // content/container garantizado por test); brandText sobre el
-        // contenedor de Danger no cumplía 4.5:1.
-        if (actionLabel != null && onAction != null) {
-            XauxaTextAction(label = actionLabel, onClick = onAction, color = tone.content())
-        }
-        if (onDismiss != null) {
-            XauxaIconButton(contentDescription = dismissDescription, onClick = onDismiss) {
-                Text("×", fontSize = XauxaType.Title, color = tone.content())
-            }
-        }
-    }
-}
-
-/** Banner de resultado embebido: marcador semántico + contenido + acciones. */
-@Composable
-fun XauxaInlineResult(
-    title: String,
-    modifier: Modifier = Modifier,
-    meta: String? = null,
-    tone: XauxaTone = XauxaTone.Info,
-    actions: (@Composable () -> Unit)? = null,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
-            // Sin borde de reposo.
-            .background(tone.container())
-            .padding(XauxaSpacing.Sm),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(XauxaSpacing.Sm),
-    ) {
-        Box(modifier = Modifier.width(XauxaMetrics.Marker).fillMaxHeight().background(tone.content()))
-        // §11: icono por tono — el estado nunca solo por color.
-        tone.iconVector?.let { glyph ->
-            XauxaIcon(imageVector = glyph, contentDescription = null, tint = tone.content())
-        }
-        Column(modifier = Modifier.weight(XauxaToneWeight)) {
-            Text(title, fontSize = XauxaType.Body, color = XauxaColor.TextPrimary)
-            if (meta != null) {
-                Text(meta, fontSize = XauxaType.Caption, color = XauxaColor.TextSecondary)
-            }
-        }
-        actions?.invoke()
-    }
 }

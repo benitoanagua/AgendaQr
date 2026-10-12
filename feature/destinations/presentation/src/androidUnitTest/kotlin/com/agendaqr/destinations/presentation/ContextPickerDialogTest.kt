@@ -72,7 +72,7 @@ class ContextPickerDialogTest {
         compose.onNodeWithText("Crear contexto").performClick()
         compose.waitForIdle()
         // Formulario mínimo: Nombre obligatorio + Nota.
-        compose.onNodeWithText("Nombre *").assertExists()
+        compose.onNodeWithText("Nombre").assertExists()
         compose.onNodeWithText("Nota").assertExists()
         compose.onNodeWithText("Crear").assertExists()
         // Cancelar vuelve a la lista sin tocar la selección.

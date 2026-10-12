@@ -446,7 +446,7 @@ internal fun LabCatalogTile(
             Text(
                 component.category.label,
                 fontSize = XauxaType.Caption,
-                letterSpacing = XauxaType.LetterSpacingWide,
+                letterSpacing = com.agendaqr.core.ui.theme.XauxaTracking.LabelLarge,
                 color = XauxaColor.TextTertiary,
             )
             Text(
@@ -461,7 +461,7 @@ internal fun LabCatalogTile(
                     "Seleccionado",
                     fontSize = XauxaType.Caption,
                     fontWeight = FontWeight.SemiBold,
-                    letterSpacing = XauxaType.LetterSpacingWide,
+                    letterSpacing = com.agendaqr.core.ui.theme.XauxaTracking.LabelLarge,
                     color = XauxaColor.Brand,
                 )
             }

@@ -87,7 +87,7 @@ internal fun LabChoiceChip(label: String, selected: Boolean, onClick: () -> Unit
     FilterChip(
         selected = selected,
         onClick = onClick,
-        label = { Text(label, fontSize = XauxaType.Label, fontWeight = FontWeight.Bold, letterSpacing = XauxaType.LetterSpacingWide) },
+        label = { Text(label, fontSize = XauxaType.Label, fontWeight = FontWeight.Bold, letterSpacing = com.agendaqr.core.ui.theme.XauxaTracking.LabelLarge) },
         modifier = modifier.defaultMinSize(minHeight = XauxaMetrics.ControlMinSize),
         shape = RectangleShape,
         border = FilterChipDefaults.filterChipBorder(enabled = true, selected = selected, borderColor = XauxaColor.Border, selectedBorderColor = XauxaColor.Brand, borderWidth = XauxaMetrics.Border),

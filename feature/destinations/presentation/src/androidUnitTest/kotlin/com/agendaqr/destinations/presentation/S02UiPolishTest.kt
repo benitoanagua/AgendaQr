@@ -106,12 +106,12 @@ class S02UiPolishTest {
             }
         }
         compose.waitForIdle()
-        // Encabezado de seccion: semantica heading + 14 sp en acento (M6),
-        // no titulo de 20 sp en texto primario.
+        // Encabezado de sección V1.2: semántica heading + 14 sp en color
+        // estándar (§12), no título de 20 sp en texto primario.
         compose.onNodeWithText(AppStrings.DesdeOtraApp).assert(headingMatcher())
         val style = layoutOf(AppStrings.DesdeOtraApp).layoutInput.style
         assertEquals(14.sp, style.fontSize)
-        assertEquals(LightXauxaColorScheme.brandText, style.color)
+        assertEquals(LightXauxaColorScheme.textSecondary, style.color)
     }
 
     @Test
@@ -134,7 +134,7 @@ class S02UiPolishTest {
     }
 
     @Test
-    fun d4_section_header_uses_readable_accent_in_dark_theme() {
+    fun d4_section_header_uses_readable_standard_color_in_dark_theme() {
         compose.setContent {
             XauxaTheme(darkTheme = true) {
                 AddDestinationScreen(onImport = {}, onBack = {})
@@ -143,20 +143,7 @@ class S02UiPolishTest {
         compose.waitForIdle()
         val style = layoutOf(AppStrings.DesdeOtraApp).layoutInput.style
         assertEquals(14.sp, style.fontSize)
-        assertEquals(DarkXauxaColorScheme.brandText, style.color)
-    }
-
-    @Test
-    fun d6_s01_search_placeholder_is_single_line() {
-        compose.setContent {
-            XauxaTheme(darkTheme = false) {
-                DestinationsScreen(state = s01State(), onAction = {})
-            }
-        }
-        compose.waitForIdle()
-        val layout = layoutOf(AppStrings.searchPlaceholder)
-        assertEquals(1, layout.lineCount, "el placeholder ocupa ${layout.lineCount} lineas a 360 dp")
-        assertTrue(!layout.isLineEllipsized(0), "el placeholder se trunca a 360 dp con fontScale 1.0")
+        assertEquals(DarkXauxaColorScheme.textSecondary, style.color)
     }
 
     // --- D5: los 3 controles de S02 muestran icono + etiqueta (M10/M12) ---

@@ -81,22 +81,22 @@ class XauxaAccessibilityContractTest {
     }
 
     @Test
-    fun text_input_exposes_required_label_and_error_message() {
+    fun text_input_exposes_label_and_error_message() {
         compose.setContent {
             XauxaTheme {
                 XauxaTextInput(
                     label = "Correo",
                     value = "incorrecto",
                     onValueChange = {},
-                    isRequired = true,
                     isError = true,
                     errorMessage = "Ingresa un correo válido",
                 )
             }
         }
 
-        compose.onNodeWithContentDescription("Correo *")
-            .assertExists()
+        // El label del OutlinedTextField se fusiona con el nodo del campo
+        // (nombre accesible) y el error se asocia a esa misma semántica.
+        compose.onNodeWithText("Correo")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Error, "Ingresa un correo válido"))
         compose.onNodeWithText("Ingresa un correo válido").assertExists()
     }
@@ -114,7 +114,7 @@ class XauxaAccessibilityContractTest {
             }
         }
 
-        compose.onNodeWithContentDescription("Código de reserva")
+        compose.onNodeWithText("Código de reserva")
             .assertExists()
             .assertIsNotEnabled()
     }
@@ -133,7 +133,7 @@ class XauxaAccessibilityContractTest {
         }
 
         // readOnly permite foco/selección y copia; no equivale a disabled.
-        compose.onNodeWithContentDescription("Referencia")
+        compose.onNodeWithText("Referencia")
             .assertExists()
             .assertIsEnabled()
         compose.onNodeWithText("REF-456").assertExists()
@@ -154,13 +154,13 @@ class XauxaAccessibilityContractTest {
             }
         }
 
-        compose.onNodeWithContentDescription("Identificador")
+        compose.onNodeWithText("Identificador")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Error, "Formato inválido"))
         compose.onNodeWithText("Formato inválido").assertExists()
 
         compose.runOnIdle { message.value = "Usa al menos 8 caracteres" }
 
-        compose.onNodeWithContentDescription("Identificador")
+        compose.onNodeWithText("Identificador")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Error, "Usa al menos 8 caracteres"))
         compose.onNodeWithText("Usa al menos 8 caracteres").assertExists()
     }

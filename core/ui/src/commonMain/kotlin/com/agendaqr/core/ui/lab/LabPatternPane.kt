@@ -14,13 +14,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.XauxaDialog
 import com.agendaqr.core.ui.components.XauxaEmptyState
-import com.agendaqr.core.ui.components.XauxaErrorPage
-import com.agendaqr.core.ui.components.XauxaFileUpload
-import com.agendaqr.core.ui.components.XauxaHeroCard
-import com.agendaqr.core.ui.components.XauxaInlineResult
 import com.agendaqr.core.ui.components.XauxaScannerViewport
+import com.agendaqr.core.ui.components.XauxaSection
+import com.agendaqr.core.ui.components.XauxaListRow
+import com.agendaqr.core.ui.components.XauxaStatusBanner
 import com.agendaqr.core.ui.components.XauxaTextInput
-import com.agendaqr.core.ui.components.XauxaToast
 import com.agendaqr.core.ui.components.XauxaTone
 import com.agendaqr.core.ui.lab.model.LabComponentCatalog
 import com.agendaqr.core.ui.lab.model.LabPattern
@@ -143,42 +141,31 @@ private fun LabPatternScenario(pattern: LabPattern, onEvent: (String) -> Unit) {
             actionLabel = "Añadir destino",
             onAction = { onEvent("Patrón primera-vez: XauxaEmptyState.onAction") },
         )
-        "fallo-puntual" -> XauxaToast(
+        "fallo-puntual" -> XauxaStatusBanner(
             message = "No se pudo sincronizar",
             tone = XauxaTone.Danger,
             actionLabel = "Reintentar",
-            onAction = { onEvent("Patrón fallo-puntual: XauxaToast.onAction") },
-            onDismiss = { onEvent("Patrón fallo-puntual: XauxaToast.onDismiss") },
-            dismissDescription = "Descartar notificación",
+            onAction = { onEvent("Patrón fallo-puntual: Reintentar") },
         )
-        "fallo-contenido" -> XauxaInlineResult(
-            title = "Comprobante ilegible",
-            meta = "IMG_042.png · reintenta la captura",
+        "fallo-contenido" -> XauxaStatusBanner(
+            message = "Comprobante ilegible · reintenta la captura",
             tone = XauxaTone.Danger,
         )
-        "fallo-aplicacion" -> XauxaErrorPage(
+        "fallo-aplicacion" -> XauxaEmptyState(
             title = "No se pudo cargar",
-            message = "La sincronización falló. Revisa tu conexión.",
+            subtitle = "La sincronización falló. Revisa tu conexión.",
             actionLabel = "Reintentar",
-            onAction = { onEvent("Patrón fallo-aplicacion: XauxaErrorPage.onAction") },
-            secondaryLabel = "Volver",
-            onSecondary = { onEvent("Patrón fallo-aplicacion: XauxaErrorPage.onSecondary") },
+            onAction = { onEvent("Patrón fallo-aplicacion: Reintentar") },
         )
-        "pantalla-completa" -> XauxaHeroCard(
-            value = "Bs 1.250",
-            label = "Total de obligaciones",
-            footer = "3 pendientes · 2 al día",
-        )
+        "pantalla-completa" -> XauxaSection(title = "Detalle") {
+            XauxaListRow(
+                title = "Mensualidad escolar",
+                subtitle = "Vence el día 5 · Bs 450",
+                onClick = { onEvent("Patrón pantalla-completa: XauxaListRow.onClick") },
+            )
+        }
         "incorporacion" -> Column(verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Md)) {
             XauxaScannerViewport(hint = "Encuadra el código QR", scanningLabel = "Escaneando…")
-            XauxaFileUpload(
-                loadingLabel = "Cargando archivo…",
-                clearLabel = "Quitar",
-                placeholderTitle = "Toca para seleccionar un archivo",
-                placeholderMeta = "PNG, JPG o PDF · máx. 10 MB",
-                onSelect = { onEvent("Patrón incorporacion: XauxaFileUpload.onSelect (simulado)") },
-                onClear = { onEvent("Patrón incorporacion: XauxaFileUpload.onClear") },
-            )
             var manual by rememberSaveable { mutableStateOf("") }
             XauxaTextInput(
                 label = "Pegar contenido",

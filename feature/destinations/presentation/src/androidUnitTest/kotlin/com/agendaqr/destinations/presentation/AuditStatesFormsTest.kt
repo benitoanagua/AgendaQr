@@ -126,15 +126,15 @@ class AuditStatesFormsTest {
                     label = "Correo",
                     value = "no-correo",
                     onValueChange = { },
-                    isRequired = true,
                     isError = true,
                     errorMessage = "Ingresa un correo válido",
                 )
             }
         }
         compose.waitForIdle()
-        // La etiqueta fija (visual) es también el nombre accesible del campo.
-        compose.onNodeWithContentDescription("Correo *").assertExists()
+        // La etiqueta del OutlinedTextField es el nombre accesible del campo
+        // (nodo fusionado, sin asterisco: la obligatoriedad va en copy).
+        compose.onNodeWithText("Correo").assertExists()
         // El error se anuncia cuando aparece (liveRegion cortés, §11).
         compose.onNodeWithText("Ingresa un correo válido")
             .assert(

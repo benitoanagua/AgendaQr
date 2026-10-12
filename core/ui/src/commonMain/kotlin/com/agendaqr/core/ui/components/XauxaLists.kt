@@ -1,215 +1,125 @@
 package com.agendaqr.core.ui.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.toggleableState
-import androidx.compose.ui.state.ToggleableState
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.theme.XauxaColor
-import com.agendaqr.core.ui.theme.XauxaMetrics
+import com.agendaqr.core.ui.theme.XauxaShapes
 import com.agendaqr.core.ui.theme.XauxaSpacing
 import com.agendaqr.core.ui.theme.XauxaTextStyles
-import com.agendaqr.core.ui.theme.XauxaType
-import com.agendaqr.core.ui.theme.XauxaShapes
 
 
 /**
- * Listas y tarjetas Xauxa: hero, badge y fila con marcador semántico.
- * ((dividido por responsabilidad))
+ * Listas y etiquetas Xauxa (spec §12 V1.2): filas con `ListItem` de M3 y
+ * badge semántico.
  */
 
 /**
- * Tarjeta hero con número grande y footer de estadísticas. Compone
- * [XauxaTile]: no duplica superficie, solo la jerarquía display + footer
- * con borde superior (patrón tile-stats de Xauxa).
+ * Etiqueta semántica de estado: texto con el color del tono (par
+ * content/container garantizado por XauxaSchemeTest). No interactiva; el
+ * estado se expresa con TEXTO (§11: nunca solo color).
  */
-@Composable
-fun XauxaHeroCard(
-    value: String,
-    label: String,
-    modifier: Modifier = Modifier,
-    footer: String? = null,
-    onClick: (() -> Unit)? = null,
-) {
-    XauxaTile(modifier = modifier, onClick = onClick) {
-        Column(modifier = Modifier.padding(XauxaSpacing.Lg)) {
-            Text(
-                value,
-                fontSize = XauxaType.Display,
-                fontWeight = FontWeight.Bold,
-                fontFamily = XauxaType.FamilyMono,
-                color = XauxaColor.TextPrimary,
-            )
-            Text(
-                label,
-                fontSize = XauxaType.Label,
-                letterSpacing = XauxaType.LetterSpacingWide,
-                color = XauxaColor.TextSecondary,
-            )
-            if (footer != null) {
-                Box(
-                    modifier = Modifier.fillMaxWidth().padding(top = XauxaSpacing.Md)
-                        .background(XauxaColor.Border)
-                        // Separador de 1 dp entre el número y el footer —
-                        // hairline estructural de la tarjeta hero.
-                        .height(XauxaMetrics.Border),
-                )
-                Text(
-                    footer,
-                    modifier = Modifier.padding(top = XauxaSpacing.Sm),
-                    fontSize = XauxaType.Caption,
-                    color = XauxaColor.TextSecondary,
-                )
-            }
-        }
-    }
-}
-
-/** Etiqueta semántica outline o sólida. Solo indicadores circulares reales pueden ser circulares. */
 @Composable
 fun XauxaBadge(
     text: String,
     modifier: Modifier = Modifier,
     tone: XauxaTone = XauxaTone.Neutral,
-    solid: Boolean = false,
 ) {
-    val background = if (solid) {
-        if (tone == XauxaTone.Neutral) XauxaColor.Surface2 else tone.content()
-    } else {
-        XauxaColor.Surface
-    }
-    val foreground = if (solid) {
-        // Contenido sobre fondo sólido: usa el on-color del rol de fondo.
-        // En light todos son blancos (sin cambio visual); en dark son texto
-        // oscuro sobre contenedor claro (White fijo daba 1.70:1 en dark).
-        when (tone) {
-            XauxaTone.Neutral -> XauxaColor.TextPrimary
-            XauxaTone.Success -> XauxaColor.OnSecondary
-            XauxaTone.Danger -> XauxaColor.OnDanger
-            XauxaTone.Warning -> XauxaColor.OnTertiary
-            XauxaTone.Info -> XauxaColor.OnBrand
-        }
-    } else {
-        tone.content()
-    }
-    // V1.1 (M9): sin caja ni borde de reposo. solid=true mantiene un
-    // bloque de color funcional (separación por bloques, permitida); el
-    // estado sigue expresándose con texto + tono, nunca solo por color.
     Box(
         modifier = modifier
-            .background(background, XauxaShapes.ExtraSmall)
+            .background(
+                if (tone == XauxaTone.Neutral) XauxaColor.Surface2 else tone.container(),
+                XauxaShapes.ExtraSmall,
+            )
             .padding(horizontal = XauxaSpacing.Sm, vertical = XauxaSpacing.Xs),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text,
             style = XauxaTextStyles.Support,
-            color = foreground,
+            color = if (tone == XauxaTone.Neutral) XauxaColor.TextPrimary else tone.content(),
         )
     }
 }
 
 /**
- * Fila de lista: separador por borde inferior y marcador semántico lateral
- * de 2px (el sistema Xauxa permite un marcador estructural de 2px).
+ * Fila de lista (§12 V1.2): `ListItem` de M3 con título, subtítulo, meta
+ * en línea propia, acción final e identidad de contexto opcional.
+ *
+ * - La altura crece con el contenido y la escala de fuente; se prohíben
+ *   alturas fijas que recorten (§8).
+ * - [accent] es la identidad REAL del contexto (derivada del id, E-05):
+ *   un punto de acento a la izquierda; nunca una barra ornamental.
+ * - [selected] expone la selección en la semántica (§11).
+ * - [trailing] son las acciones de fila: botones de icono, no enlaces de
+ *   texto.
  */
 @Composable
 fun XauxaListRow(
     title: String,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
-    tone: XauxaTone = XauxaTone.Neutral,
     onClick: (() -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
-    /** V1.1 (M4): bloque de acento del contexto. Cuando no es nulo
-     * sustituye al marcador de tono semántico: el acento identifica el
-     * contexto; el estado sigue expresándose con texto en el contenido
-     * (§11: nunca solo color). */
-    accent: androidx.compose.ui.graphics.Color? = null,
+    /** Identidad de contexto (E-05): punto de acento derivado del id. */
+    accent: Color? = null,
     /** selección explícita con semántica `selected` (§11). */
     selected: Boolean = false,
     /** Metadato en línea PROPIA, bajo el subtítulo (p. ej. el badge de
-     * sincronización): no compite por el ancho con la acción de la fila en
-     * pantallas estrechas (defecto de la auditoría, §8). */
+     * sincronización): no compite por el ancho con la acción de la fila. */
     meta: (@Composable () -> Unit)? = null,
 ) {
-    val interaction = remember { MutableInteractionSource() }
-    val clickableModifier = if (onClick == null) modifier else modifier
-        .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onClick)
-        .focusable(interactionSource = interaction)
-    val showsMarker = accent != null || tone != XauxaTone.Neutral
-    Row(
-        modifier = clickableModifier
-            .fillMaxWidth()
-            // La altura de la fila la fija su CONTENIDO (48dp mínimo): sin
-            // esto, el marcador `fillMaxHeight` dentro de un contenedor con
-            // alto no acotado (slot scrolleable de un diálogo) estira la
-            // fila a TODO el alto disponible y empuja a las demás fuera
-            // del pliegue (hallado en runtime: el selector S08 solo
-            // mostraba la primera fila).
-            .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
-            .defaultMinSize(minHeight = XauxaMetrics.ControlMinSize)
-            .xauxaFocusRing(interaction)
-            .xauxaPressFeedback(interaction)
+    ListItem(
+        modifier = modifier
+            .then(
+                if (onClick != null) {
+                    Modifier.clickable(role = Role.Button, onClick = onClick)
+                } else {
+                    Modifier
+                },
+            )
             .then(
                 if (selected) Modifier.semantics { this.selected = true } else Modifier,
             ),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        // la barra lateral SOLO con tono no Neutral o acento — una
-        // fila neutra sin estado no dibuja marcador (antes pintaba el
-        // color de tono Neutral, ruido visual sin significado).
-        if (showsMarker) {
-            Box(
-                modifier = Modifier.width(XauxaMetrics.Marker).fillMaxHeight()
-                    .background(accent ?: tone.content()),
-            )
-        }
-        Column(
-            modifier = Modifier.weight(XauxaToneWeight).padding(XauxaSpacing.Sm),
-        ) {
+        headlineContent = {
             Text(title, style = XauxaTextStyles.Body, color = XauxaColor.TextPrimary)
-            if (subtitle != null) {
-                Text(subtitle, style = XauxaTextStyles.Caption, color = XauxaColor.TextSecondary)
+        },
+        supportingContent = if (subtitle != null || meta != null) {
+            {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(XauxaSpacing.Xs),
+                ) {
+                    subtitle?.let {
+                        Text(it, style = XauxaTextStyles.Caption, color = XauxaColor.TextSecondary)
+                    }
+                    meta?.invoke()
+                }
             }
-            meta?.invoke()
-        }
-        trailing?.invoke()
-    }
+        } else {
+            null
+        },
+        leadingContent = accent?.let { color ->
+            {
+                Box(
+                    modifier = Modifier
+                        .size(XauxaSpacing.Md)
+                        .background(color, XauxaShapes.ExtraSmall),
+                )
+            }
+        },
+        trailingContent = trailing,
+    )
 }
-
-internal const val XauxaToneWeight = 1f

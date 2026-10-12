@@ -74,8 +74,8 @@ class Round2FeedbackEventsTest {
         }
         compose.waitForIdle()
         // El slot vive DENTRO del campo: coexiste con la etiqueta asociada
-        // (el campo conserva su nombre accesible).
-        compose.onNodeWithContentDescription("Contraseña").assertExists()
+        // (el campo conserva su nombre accesible en el nodo fusionado).
+        compose.onNodeWithText("Contraseña").assertExists()
         compose.onNodeWithText("Mostrar").assertExists()
     }
 }

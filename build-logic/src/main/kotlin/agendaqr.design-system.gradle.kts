@@ -52,13 +52,10 @@ fun isUiLiteralAllowed(text: String): Boolean =
 val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-01" to listOf(
         "border:XauxaAppBar.kt",
-        "border:XauxaCommandBar.kt",
     ),
-    "E-02" to listOf("border:XauxaFeedback.kt"),
     "E-03" to listOf("border:XauxaFeedback.kt"),
-    "E-05" to listOf("marker:XauxaListRow — barra lateral solo con tono no-Neutral o acento de contexto real (componente + Robolectric)"),
-    "E-06" to listOf("border:XauxaInputs.kt"),
-    "E-07" to listOf("chrome:AuthScreen sin barra inferior (capturas login claro/oscuro)"),
+    "E-05" to listOf("marker:XauxaListRow — punto de acento solo como identidad de contexto real (componente + Robolectric)"),
+    "E-07" to listOf("chrome:AuthScreen sin barra de navegación (capturas login claro/oscuro)"),
 )
 
 /** Archivos con `.border(`/`BorderStroke(` permitidos por las excepciones. */
@@ -737,10 +734,15 @@ tasks.register("verifyDesignSystemFixtures") {
         require(kotlinDesignViolations("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/XauxaDialogs.kt", listOf(borderInFeature)).isNotEmpty()) {
             "unordered components/ .border( must fail"
         }
-        // ...y pasa en los archivos registrados (E-06, estado §4.2) y en
-        // el laboratorio (entorno de validación, tokens expuestos).
+        // E-06 retirada (ADR-0012): el campo es OutlinedTextField estándar;
+        // un borde manual en XauxaInputs.kt debe volver a fallar.
+        require(kotlinDesignViolations("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/XauxaInputs.kt", listOf(borderInFeature)).isNotEmpty()) {
+            "XauxaInputs .border( must fail (E-06 retirada: OutlinedTextField estándar)"
+        }
+        // ...y pasa en los archivos registrados (E-03, estado §4.2/E-01
+        // menú) y en el laboratorio (entorno de validación, tokens
+        // expuestos).
         listOf(
-            "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/XauxaInputs.kt",
             "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/XauxaTone.kt",
             "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/lab/LabFoundationPreview.kt",
         ).forEach { allowedPath ->

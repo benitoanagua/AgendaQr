@@ -72,7 +72,6 @@ fun AuthScreen(
                     capitalization = KeyboardCapitalization.None,
                     autoCorrect = false,
                 ),
-                isRequired = true,
                 isError = emailError,
                 errorMessage = if (emailError) AppStrings.IngresaUnCorreoValido else null,
             )
@@ -88,7 +87,6 @@ fun AuthScreen(
                 ),
                 keyboardActions = KeyboardActions(onDone = { submit(onSignIn) }),
                 visualTransformation = PasswordVisualTransformation(),
-                isRequired = true,
                 isError = passwordError,
                 errorMessage = if (passwordError) AppStrings.Minimo6Caracteres else null,
                 helperMessage = if (!passwordError) AppStrings.Minimo6Caracteres else null,

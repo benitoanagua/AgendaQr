@@ -113,7 +113,6 @@ internal fun ContextPickerDialog(
                         label = AppStrings.Nombre,
                         value = name,
                         onValueChange = { name = it },
-                        isRequired = true,
                         isError = submitted && name.isBlank(),
                         errorMessage = if (submitted && name.isBlank()) AppStrings.ElNombreEsObligatorio else null,
                     )
@@ -211,7 +210,6 @@ internal fun ContextCreationDialog(
                     label = AppStrings.Nombre,
                     value = name,
                     onValueChange = { name = it },
-                    isRequired = true,
                     isError = submitted && name.isBlank(),
                     errorMessage = if (submitted && name.isBlank()) AppStrings.ElNombreEsObligatorio else null,
                 )
