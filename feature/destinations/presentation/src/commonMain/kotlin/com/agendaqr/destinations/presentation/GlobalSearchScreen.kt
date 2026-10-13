@@ -41,6 +41,13 @@ fun GlobalSearchScreen(
             placeholder = AppStrings.Buscar,
             onClear = { onAction(GlobalSearchAction.Clear) },
             clearLabel = AppStrings.Limpiar,
+            // Entrar a Buscar es intención explícita de búsqueda: foco
+            // inmediato con teclado de texto (sin autocompletado agresivo).
+            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                keyboardType = androidx.compose.ui.text.input.KeyboardType.Text,
+                imeAction = androidx.compose.ui.text.input.ImeAction.Search,
+            ),
+            autoFocus = true,
         )
         state.error?.let { err ->
             AmStatusBanner(

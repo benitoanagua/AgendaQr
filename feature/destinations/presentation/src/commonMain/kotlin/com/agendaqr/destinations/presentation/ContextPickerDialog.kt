@@ -159,7 +159,7 @@ internal fun ContextPickerDialog(
                             color = AmColor.TextSecondary,
                         )
                     } else {
-                        contexts.forEach { context ->
+                        contexts.forEachIndexed { index, context ->
                             AmListRow(
                                 title = context.name,
                                 subtitle = context.note?.takeIf { it.isNotBlank() },
@@ -170,6 +170,7 @@ internal fun ContextPickerDialog(
                                 // `selected` (no con un tono de estado).
                                 selected = context.id == selectedId,
                                 onClick = { onSelect(context.id) },
+                                showDivider = index < contexts.lastIndex,
                             )
                         }
                     }

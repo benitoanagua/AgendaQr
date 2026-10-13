@@ -269,7 +269,7 @@ internal fun UnassociatedScreen(
                                 if (candidateOperations.isEmpty()) {
                                     AmText(AppStrings.noOperationsAvailable, color = AmColor.TextSecondary)
                                 } else {
-                                    candidateOperations.forEach { operation ->
+                                    candidateOperations.forEachIndexed { index, operation ->
                                         AmListRow(
                                             title = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
                                             subtitle = operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
@@ -277,6 +277,7 @@ internal fun UnassociatedScreen(
                                                 viewModel.onAction(OperationAction.Associate(receipt.id, operation.id))
                                                 selectedReceipt = null
                                             },
+                                            showDivider = index < candidateOperations.lastIndex,
                                         )
                                     }
                                 }
@@ -286,7 +287,7 @@ internal fun UnassociatedScreen(
                                 AppStrings.LasOperacionesCandidatasYaNo,
                                 color = AmColor.TextSecondary,
                             )
-                        else -> candidateOperations.forEach { operation ->
+                        else -> candidateOperations.forEachIndexed { index, operation ->
                             AmListRow(
                                 title = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
                                 subtitle = operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
@@ -294,6 +295,7 @@ internal fun UnassociatedScreen(
                                     viewModel.onAction(OperationAction.Associate(receipt.id, operation.id))
                                     selectedReceipt = null
                                 },
+                                showDivider = index < candidateOperations.lastIndex,
                             )
                         }
                     }

@@ -299,6 +299,9 @@ object AmMetrics {
     /** Ancho máximo del contenido en medium/expanded. */
     val ContentMaxWidth = 720.dp
     val QrPreviewSize = 240.dp
+    /** Lado del marco de revisión (S09): aprovecha el ancho disponible sin
+     * deformar el código (siempre 1:1). */
+    val QrReviewSize = 320.dp
     /** Tamaño de icono estándar de acciones y filas. */
     val IconSize = 24.dp
     /** Altura máxima de una lista dentro de un diálogo/hoja: alcanzable

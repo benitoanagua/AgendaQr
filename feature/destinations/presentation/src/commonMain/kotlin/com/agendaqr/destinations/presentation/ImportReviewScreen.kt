@@ -22,6 +22,7 @@ import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.destinations.domain.QrAsset
@@ -100,24 +101,46 @@ fun ImportReviewScreen(
                 size = AmType.Label,
                 color = AmColor.TextSecondary,
             )
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth().weight(1f),
-                verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-            ) {
-                itemsIndexed(assets) { _, asset ->
-                    // S09/el código va centrado (antes quedaba pegado a
-                    // la izquierda) y sin depender de métricas técnicas.
-                    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                        AmQrPreview(asset.encoded)
-                    }
-                    // S09: evidencia de lo que Agenda QR entendió — el texto
-                    // decodificado, sin exponer payload técnico.
+            if (assets.size == 1) {
+                // Un solo código: vista previa grande (aprovecha el ancho
+                // sin deformar, siempre 1:1) con su evidencia centrada.
+                val asset = assets.single()
+                Column(
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    AmQrPreview(asset.encoded, size = AmMetrics.QrReviewSize)
                     asset.content?.takeIf { it.isNotBlank() }?.let { content ->
                         AmText(
                             AppStrings.Contenido + ": " + content,
                             size = AmType.Label,
                             color = AmColor.TextSecondary,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                         )
+                    }
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                ) {
+                    itemsIndexed(assets) { _, asset ->
+                        // S09/el código va centrado (antes quedaba pegado a
+                        // la izquierda) y sin depender de métricas técnicas.
+                        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                            AmQrPreview(asset.encoded)
+                        }
+                        // S09: evidencia de lo que Agenda QR entendió — el texto
+                        // decodificado, sin exponer payload técnico.
+                        asset.content?.takeIf { it.isNotBlank() }?.let { content ->
+                            AmText(
+                                AppStrings.Contenido + ": " + content,
+                                size = AmType.Label,
+                                color = AmColor.TextSecondary,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            )
+                        }
                     }
                 }
             }

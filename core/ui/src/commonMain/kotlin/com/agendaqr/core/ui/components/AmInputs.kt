@@ -14,8 +14,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -171,16 +175,27 @@ fun AmSearchField(
     onClear: (() -> Unit)? = null,
     /** nombre accesible de la acción de limpiar, copy del llamador. */
     clearLabel: String = "",
+    /** Teclado y acción IME según el dato (el llamador decide). */
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    /** Foco al entrar cuando el flujo lo justifica (p. ej. destino
+     * Buscar): abre el teclado sin tocar dos veces. */
+    autoFocus: Boolean = false,
 ) {
     if (onClear != null) require(clearLabel.isNotBlank()) {
         "AmSearchField: onClear necesita clearLabel (copy del llamador)"
+    }
+    val focusRequester = remember { FocusRequester() }
+    if (autoFocus) {
+        LaunchedEffect(Unit) { runCatching { focusRequester.requestFocus() } }
     }
     TextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier
             .fillMaxWidth()
-            .defaultMinSize(minHeight = AmMetrics.ControlMinSize),
+            .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
+            .focusRequester(focusRequester),
+        keyboardOptions = keyboardOptions,
         placeholder = {
             Text(
                 placeholder,

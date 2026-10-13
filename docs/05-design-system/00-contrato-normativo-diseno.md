@@ -106,12 +106,12 @@
 |---|---|---|
 | Estructura | `AmScreenScaffold`, `AmTopBar` (+ acciones, overflow), `AmNavBar`/`AmNavRail` (+ destinos, estado), `AmExtendedFab` | Barra inferior de destinos raíz; barra superior jerárquica con Atrás (título a la izquierda por convención Android); FAB extendido de plataforma |
 | Acciones | `AmPrimaryButton` (solid), `AmSecondaryButton` (outline de acento), `AmTextAction` (none), `AmDangerButton` (solid), `AmIconButton`, `AmFilterChip` (selector/outline + wathet), `AmFavoriteToggle` | Fills solid/outline/none; radio 4; deshabilitado con opacidad .4; carga sin salto de ancho |
-| Formularios | `AmTextField` (sin borde, guía hairline en foco/error; label + helper + error accesible), `AmSearchField` (radio 6, fill box, borde de acento activo), `AmSearchTrigger` | Patrón Form/List; placeholder light; limpieza etiquetada |
+| Formularios | `AmTextField` (sin borde, guía hairline en foco/error; label + helper + error accesible), `AmSearchField` (radio 6, fill box, borde de acento activo, teclado configurable, autofoco opt-in), `AmSearchTrigger` | Patrón Form/List; placeholder light; limpieza etiquetada; foco al entrar en Buscar |
 | Superposiciones | `AmDialog` (título centrado 18; foco conservativo en destructivas), `AmDialogList` | Modal centrado; botonera de plataforma |
 | Datos | `AmListRow` (título 17, subtítulo 13, `meta` en línea propia, identidad de contexto, divisor opt-in, semántica `selected`), `AmBadge` (tag outline/round), `AmSectionHeader`, `AmSection`, `AmPivot` (indicador de acento, desplazable) | List/Item, Tag, Tabs |
 | Estados | `AmStatusBanner` (radio 8), `AmLoading`, `AmEmptyState` (glifo decorativo + título + acción), `AmSkeleton`, `AmLoadMoreFooter` | Empty; aviso persistente de producto |
 | Feedback | `AmFeedbackHost`/`AmSnackbarHost`/`AmFeedbackEvent` (háptica + anuncio + snackbar inferior en Android) | Toast de plataforma; anuncio por evento |
-| Medios | `AmQrPreview` (expect/actual), `AmMediaFrame` (radio 8, tarjeta de la referencia), `AmScannerViewport`, `AmScannerFrame` (esquinas de acento en canvas) | Card (radio 8) |
+| Medios | `AmQrPreview` (expect/actual, tamaño configurable 1:1, revisión a 320 dp), `AmMediaFrame` (radio 8, tarjeta de la referencia), `AmScannerViewport`, `AmScannerFrame` (esquinas de acento en canvas) | Card (radio 8) |
 | Tono | `AmTone` (Neutral/Success/Danger/Warning/Info) con par content/container y glifo por tono | Colores semánticos de la referencia |
 
 Estados obligatorios: normal, pressed (indicación M3), focused (indicación de foco del componente M3 con el rol `AmColor.Focus`), selected (semántica + borde de acento/fondo wathet), error (icono + texto + `error()` semántica), disabled (opacidad .4 + par `Disabled/OnDisabled`), loading (spinner superpuesto sin salto de ancho + `stateDescription`).

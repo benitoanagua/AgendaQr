@@ -10,16 +10,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 
 @Composable
-actual fun AmQrPreview(encodedQr: String, modifier: Modifier) {
+actual fun AmQrPreview(encodedQr: String, modifier: Modifier, size: Dp) {
     val bytes = runCatching { Base64.decode(encodedQr, Base64.DEFAULT) }.getOrNull()
     val bitmap = bytes?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }?.asImageBitmap()
     // Marco tonal (AmMediaFrame) SIN borde de reposo: el límite del
     // contenido es el bloque tonal.
-    AmMediaFrame(modifier = modifier.size(AmMetrics.QrPreviewSize)) {
+    AmMediaFrame(modifier = modifier.size(size)) {
         if (bitmap != null) {
             Image(bitmap = bitmap, contentDescription = "QR", modifier = Modifier.fillMaxSize())
         } else {

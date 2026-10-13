@@ -64,7 +64,7 @@ fun ImportBatchScreen(
         wasSaving = state is ImportBatchUiState.Saving || state is ImportBatchUiState.Saved
     }
     AmFeedbackEvent(event = savedEvent, message = AppStrings.GuardadoOk)
-    // V1.2 (§4 S12): barra superior con título y atrás; "Guardar
+    // V1.4 (§4 S12): barra superior con título y atrás; "Guardar
     // reconocidos" como botón principal FIJO abajo, solo cuando hay
     // elementos reconocibles; "Revisar N pendientes" en el cuerpo.
     // Mientras se guarda NO hay vuelta (el lote se perdería); el Back del
