@@ -37,7 +37,9 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 
 ## 3. Reglas de componente
 
-- Envoltorios finos de Material 3 con tokens: el componente fija forma/colores/estados que M3 no mapea (botones 12 dp, campos tonales, chips píldora) y hereda `typography`/`shapes` del tema.
+- La tipografía sigue la escala de Ant Design Mobile (cuerpo base 14 sp, título de página 18 sp, encabezados 20–24 sp), con tracking neutro y familia sans del sistema; no se conserva una jerarquía tipográfica Metro.
+
+- Envoltorios finos de Material 3 con tokens: el componente fija forma/colores/estados que M3 no mapea (botones con radio de 4 dp, campos sin borde con hairline y chips redondeados) y hereda `typography`/`shapes` del tema.
 - Todo copy llega como parámetro del llamador (ADR-0008); las pantallas lo sirven desde `AppStrings`.
 - Estados obligatorios: pressed/focused/selected/error/disabled/loading, cada uno con señal no exclusivamente cromática.
 - Área táctil ≥ 48 dp (`AmMetrics.ControlMinSize`), sin alturas fijas que recorten con fuente grande.
