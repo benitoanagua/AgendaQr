@@ -23,9 +23,8 @@ actual fun ComprobantePreview(bytes: ByteArray, mimeType: String?, modifier: Mod
             BitmapFactory.decodeByteArray(bytes, 0, bytes.size)?.asImageBitmap()
         }.getOrNull()
     }
-    // M9: marco tonal (AmMediaFrame, core:ui) SIN borde de reposo — el
-    // borde histórico de 1 dp no cumplía el límite perceptible y vivía en
-    // feature/ (los bordes pertenecen al design system, no a las pantallas).
+    // M9: marco tonal (AmMediaFrame, core:ui) — el límite es el bloque
+    // tonal Surface (los bordes viven solo en E-01/E-02 del gate).
     AmMediaFrame(
         modifier = modifier.fillMaxWidth().heightIn(min = AmMetrics.QrPreviewSize),
     ) {

@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.widthIn
@@ -24,6 +26,39 @@ import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.amWindowWidthSizeClass
+
+/**
+ * Botón de acción principal FIJO al borde inferior (el "Guardar" de los
+ * flujos de edición/revisión): ancho completo, margen lateral de pantalla
+ * y respeto de `navigationBars` e IME para que la acción nunca quede bajo
+ * las barras del sistema ni bajo el teclado, y el contenido desplazable
+ * conserve su visibilidad. Las pantallas la componen en el slot
+ * `bottomAction` del scaffold en lugar de repetir la cadena de paddings
+ * (única fuente de la regla).
+ */
+@Composable
+fun AmBottomAction(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    isLoading: Boolean = false,
+    /** stateDescription de "ocupado" (texto del llamador). */
+    busyDescription: String? = null,
+) {
+    AmPrimaryButton(
+        label = label,
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .imePadding()
+            .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
+        enabled = enabled,
+        isLoading = isLoading,
+        busyDescription = busyDescription,
+    )
+}
 
 /**
  * Contenedor de pantalla: `Scaffold` de Material 3 con

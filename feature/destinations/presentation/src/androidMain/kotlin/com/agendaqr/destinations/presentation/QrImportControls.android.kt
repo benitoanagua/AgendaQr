@@ -8,9 +8,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmPrimaryButton
 import com.agendaqr.core.ui.components.AmSecondaryButton
-import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.destinations.domain.QrAsset
 
 /**
@@ -27,7 +27,10 @@ actual fun QrImportControls(
         AgendaQrAndroidImportLauncher.results.collect(onResult)
     }
     Column(verticalArrangement = Arrangement.spacedBy(com.agendaqr.core.ui.theme.AmSpacing.Sm)) {
-        AmPrimaryButton(
+        // En el editor la acción primaria ES Guardar (botón fijo abajo):
+        // las fuentes de imagen son alternativas y no compiten por el
+        // peso visual (jerarquía de botones, §7).
+        AmSecondaryButton(
             label = AppStrings.ElegirDeLaGaleria,
             onClick = AgendaQrAndroidImportLauncher::gallery,
             icon = com.agendaqr.core.ui.components.AmIcons.Gallery,

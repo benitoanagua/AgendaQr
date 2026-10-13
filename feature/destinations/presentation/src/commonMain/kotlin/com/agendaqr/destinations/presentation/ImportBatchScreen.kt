@@ -17,7 +17,7 @@ import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.AmDialog
 import com.agendaqr.core.ui.components.AmFeedbackEvent
 import com.agendaqr.core.ui.components.AmListRow
-import com.agendaqr.core.ui.components.AmPrimaryButton
+import com.agendaqr.core.ui.components.AmBottomAction
 import com.agendaqr.core.ui.components.AmQrPreview
 import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmTopBar
@@ -90,16 +90,11 @@ fun ImportBatchScreen(
         statusContent = appHosts?.status,
         bottomAction = if (currentBatch?.canSaveRecognized() == true) {
             {
-                AmPrimaryButton(
+                AmBottomAction(
                     label = AppStrings.GuardarReconocidos,
                     onClick = { onAction(ImportBatchAction.SaveRecognized) },
                     enabled = state !is ImportBatchUiState.Saving,
                     isLoading = state is ImportBatchUiState.Saving,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .navigationBarsPadding()
-                    .imePadding()
-                        .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
                 )
             }
         } else {
@@ -162,9 +157,13 @@ private fun BatchResultContent(
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
 ) {
-    AmText(AppStrings.checkMark + AppStrings.Reconocidos + ": " + batch.uniqueRecognized.size, color = AmColor.TextPrimary)
-    AmText(AppStrings.dupMark + AppStrings.PosiblesDuplicados + ": " + batch.duplicates.size, color = AmColor.TextSecondary)
-    AmText(AppStrings.pendingMark + AppStrings.PendientesDeRevision + ": " + batch.unknown.size, color = AmColor.TextSecondary)
+    // Resumen de recuentos como bloque (4 dp entre líneas); la acción de
+    // revisión vive separada como grupo propio (12 dp del scaffold).
+    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+        AmText(AppStrings.checkMark + AppStrings.Reconocidos + ": " + batch.uniqueRecognized.size, color = AmColor.TextPrimary)
+        AmText(AppStrings.dupMark + AppStrings.PosiblesDuplicados + ": " + batch.duplicates.size, color = AmColor.TextSecondary)
+        AmText(AppStrings.pendingMark + AppStrings.PendientesDeRevision + ": " + batch.unknown.size, color = AmColor.TextSecondary)
+    }
 
     // Contrato S12: "Revisar N pendientes" como acción secundaria; "Guardar
     // reconocidos" vive fijo abajo (botón principal del scaffold).
@@ -180,8 +179,12 @@ private fun BatchReviewContent(
     isSaving: Boolean,
 ) {
     AmText(AppStrings.ElementosQueNecesitanRevision, color = AmColor.TextPrimary)
-    batch.pendingItems().forEach { candidate ->
-        PendingItemCard(candidate, batch, onAction, isSaving)
+    // Pendientes como tarjetas independientes (nivel 3 de superficies):
+    // cada una con su contenido + acciones; separadas a 8 dp.
+    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+        batch.pendingItems().forEach { candidate ->
+            PendingItemCard(candidate, batch, onAction, isSaving)
+        }
     }
 }
 
@@ -193,33 +196,36 @@ private fun PendingItemCard(
     isSaving: Boolean,
 ) {
     val isDuplicate = batch.duplicates.any { it.id == candidate.id }
-    // §12 V1.4: pendiente como fila ListItem; las acciones de fila bajo el
-    // contenido (etiquetas largas).
-    AmListRow(
-        title = pendingItemName(candidate),
-        subtitle = when {
-            isDuplicate -> AppStrings.elementoYaGuardado
-            candidate.kind == ImportKind.DESCONOCIDO -> AppStrings.elementoSinClasificar
-            else -> AppStrings.elementoPendienteRevision
-        },
-        meta = {
-            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                when {
-                    isDuplicate -> Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                        AmTextAction(label = AppStrings.VerExistente, onClick = { onAction(ImportBatchAction.ViewExisting(candidate.id)) })
-                        AmTextAction(label = AppStrings.GuardarDeTodosModos, onClick = { onAction(ImportBatchAction.SaveDuplicateAnyway(candidate.id)) })
+    // §12 V1.4: pendiente como tarjeta independiente (fila ListItem sobre
+    // cuerpo de lista); las acciones de fila bajo el contenido (etiquetas
+    // largas).
+    com.agendaqr.core.ui.components.AmListBody {
+        AmListRow(
+            title = pendingItemName(candidate),
+            subtitle = when {
+                isDuplicate -> AppStrings.elementoYaGuardado
+                candidate.kind == ImportKind.DESCONOCIDO -> AppStrings.elementoSinClasificar
+                else -> AppStrings.elementoPendienteRevision
+            },
+            meta = {
+                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                    when {
+                        isDuplicate -> Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                            AmTextAction(label = AppStrings.VerExistente, onClick = { onAction(ImportBatchAction.ViewExisting(candidate.id)) })
+                            AmTextAction(label = AppStrings.GuardarDeTodosModos, onClick = { onAction(ImportBatchAction.SaveDuplicateAnyway(candidate.id)) })
+                        }
+                        else -> Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                            AmTextAction(label = AppStrings.ReintentarClasificacion, onClick = { onAction(ImportBatchAction.RetryCandidate(candidate.id)) })
+                        }
                     }
-                    else -> Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                        AmTextAction(label = AppStrings.ReintentarClasificacion, onClick = { onAction(ImportBatchAction.RetryCandidate(candidate.id)) })
-                    }
+                    // El descarte siempre está disponible: abandona la intención
+                    // con este elemento y libera su payload temporal.
+                    AmTextAction(
+                        label = AppStrings.Descartar,
+                        onClick = { onAction(ImportBatchAction.DiscardCandidate(candidate.id)) },
+                    )
                 }
-                // El descarte siempre está disponible: abandona la intención
-                // con este elemento y libera su payload temporal.
-                AmTextAction(
-                    label = AppStrings.Descartar,
-                    onClick = { onAction(ImportBatchAction.DiscardCandidate(candidate.id)) },
-                )
-            }
-        },
-    )
+            },
+        )
+    }
 }

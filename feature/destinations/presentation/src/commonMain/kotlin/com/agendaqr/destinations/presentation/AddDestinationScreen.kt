@@ -1,12 +1,15 @@
 package com.agendaqr.destinations.presentation
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmSnackbarHost
-import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmSpacing
+import com.agendaqr.core.ui.theme.AmType
 
 /**
  * S02 — Añadir (V1.4, ADR-0014).
@@ -15,10 +18,12 @@ import com.agendaqr.core.ui.theme.AmColor
  * categoría ni contexto antes de que Agenda QR haya entendido el recurso.
  * La revisión ocurre después de la clasificación (S09).
  *
- * Lista de acciones con icono y etiqueta: Elegir de la galería (una o
- * varias imágenes) → Escanear con la cámara (con el texto de privacidad
- * visible junto a la acción). El bloque "Desde otra app" es una ayuda breve
- * y solo aparece donde la plataforma soporta compartir hacia Agenda QR.
+ * Grupos visuales (separados a 20 dp): explicación · fuentes de
+ * galería/archivo (alternativas, 8 dp entre sí) · cámara con su contexto
+ * de privacidad. La galería es la acción primaria; el resto son
+ * alternativas y no compiten por el peso visual. El bloque "Desde otra
+ * app" es una ayuda breve y solo aparece donde la plataforma soporta
+ * compartir hacia Agenda QR.
  */
 @Composable
 fun AddDestinationScreen(
@@ -39,6 +44,7 @@ fun AddDestinationScreen(
         },
         snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
+        verticalArrangement = Arrangement.spacedBy(AmSpacing.Xl),
     ) {
         AmText(
             AppStrings.TraeAAgendaQrAlgo,
@@ -48,25 +54,32 @@ fun AddDestinationScreen(
         // Orden congelado S02: Galería → (Desde otra app) → Cámara.
         // Una única acción de galería con selección múltiple: 1 elemento →
         // revisión única (S09); 2 o más → lote (S12).
-        QrGalleryControls(
-            onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
-        )
+        // Fuentes de archivo como grupo: alternativas entre sí (8 dp).
+        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+            QrGalleryControls(
+                onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
+            )
 
-        // PDF (opcional): solo donde la plataforma lo soporta (F7).
-        QrPdfPickerControl()
+            // PDF (opcional): solo donde la plataforma lo soporta (F7).
+            QrPdfPickerControl()
+        }
 
         // "Desde otra app": ayuda breve, solo donde la plataforma lo
         // soporta (Android: share intents; iOS: pendiente de Share
-        // Extension, no se muestra).
-        if (sharedImportsSupported()) {
-            AmText(
-                AppStrings.shareFromAnotherAppHint,
-                color = AmColor.TextSecondary,
+        // Extension, no se muestra). Vive pegada al grupo de cámara al que
+        // contextualiza (4 dp), no como bloque aislado.
+        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+            if (sharedImportsSupported()) {
+                AmText(
+                    AppStrings.shareFromAnotherAppHint,
+                    size = AmType.Caption,
+                    color = AmColor.TextSecondary,
+                )
+            }
+
+            QrCameraEntryControl(
+                onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
             )
         }
-
-        QrCameraEntryControl(
-            onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
-        )
     }
 }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.IconButton
@@ -68,7 +69,13 @@ fun AmTextField(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     trailing: (@Composable () -> Unit)? = null,
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        // La ayuda/error vive bajo el campo con aire mínimo (4 dp) y
+        // alineada al texto editable (padding horizontal del campo, 16 dp):
+        // sin esto la ayuda parece de otro campo y el error toca el hairline.
+        verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+    ) {
         TextField(
             value = value,
             onValueChange = onValueChange,
@@ -131,6 +138,7 @@ fun AmTextField(
             // liveRegion cortés — el lector lo anuncia al aparecer.
             isError && errorMessage != null -> {
                 Row(
+                    modifier = Modifier.padding(horizontal = AmSpacing.Lg),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
                 ) {
@@ -150,6 +158,7 @@ fun AmTextField(
             helperMessage != null -> {
                 Text(
                     helperMessage,
+                    modifier = Modifier.padding(horizontal = AmSpacing.Lg),
                     style = AmTextStyles.Support,
                     color = AmColor.TextSecondary,
                 )
@@ -222,7 +231,10 @@ fun AmSearchField(
             null
         },
         colors = TextFieldDefaults.colors(
-            unfocusedContainerColor = AmColor.SurfaceSecondary,
+            // Caja de búsqueda (referencia): `Surface` en reposo y en foco
+            // (distinta del fondo en ambos temas); el foco lo marca el
+            // indicador de acento, no el relleno.
+            unfocusedContainerColor = AmColor.Surface,
             focusedContainerColor = AmColor.Surface,
             disabledContainerColor = AmColor.Transparent,
             unfocusedIndicatorColor = AmColor.Divider,

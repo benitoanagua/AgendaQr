@@ -1,10 +1,16 @@
 package com.agendaqr.destinations.presentation
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.AmFeedbackEvent
 import com.agendaqr.core.ui.components.AmScreenScaffold
@@ -18,6 +24,7 @@ import com.agendaqr.core.ui.components.AmQrPreview
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTextAction
 import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.destinations.domain.Destination
 
 @Composable
@@ -68,8 +75,11 @@ fun DestinationDetailScreen(
         snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
-            destination.category?.let { AmText(it, color = AmColor.TextSecondary) }
-            destination.note?.takeIf { it.isNotBlank() }?.let { AmText(it, color = AmColor.TextSecondary) }
+            // Metadatos del destino como grupo (categoría + nota a 4 dp).
+            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+                destination.category?.let { AmText(it, color = AmColor.TextSecondary) }
+                destination.note?.takeIf { it.isNotBlank() }?.let { AmText(it, color = AmColor.TextSecondary) }
+            }
             // estado de sincronización del elemento (texto, no solo
             // color) con REINTENTAR cuando es un error recuperable.
             ElementSyncBadge(syncStatus, showWhenSynced = true)
@@ -83,7 +93,14 @@ fun DestinationDetailScreen(
                 )
             }
             if (destination.qr.encoded.isNotBlank()) {
-                AmQrPreview(destination.qr.encoded)
+                // Vista previa centrada a ancho completo: el QR no queda
+                // pegado a la izquierda y conserva proporción 1:1.
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    AmQrPreview(destination.qr.encoded)
+                }
             } else {
                 AmEmptyState(
                     icon = AmIcons.ImageOff,

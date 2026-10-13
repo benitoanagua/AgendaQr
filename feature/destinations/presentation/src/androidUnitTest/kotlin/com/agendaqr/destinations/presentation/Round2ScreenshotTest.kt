@@ -150,6 +150,16 @@ class Round2ScreenshotTest {
         AddDestinationScreen(onImport = {}, onBack = {})
     }
 
+    // Fallo de decodificación del QR: estado explícito (glifo sobre el
+    // marco tonal), nunca un rectángulo blanco sin contexto (§9).
+    @Test fun qr_preview_fallback_light() = shot("qr-preview-fallback-light", dark = false) {
+        com.agendaqr.core.ui.components.AmQrPreview("!!")
+    }
+
+    @Test fun qr_preview_fallback_dark() = shot("qr-preview-fallback-dark", dark = true) {
+        com.agendaqr.core.ui.components.AmQrPreview("!!")
+    }
+
     private fun searchFixture() = GlobalSearchUiState(
         query = "mercado",
         results = listOf(

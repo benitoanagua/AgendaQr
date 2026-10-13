@@ -14,8 +14,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AmSnackbarHost
+import com.agendaqr.core.ui.components.AmBottomAction
 import com.agendaqr.core.ui.components.AmListBody
-import com.agendaqr.core.ui.components.AmPrimaryButton
 import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmQrPreview
 import com.agendaqr.core.ui.components.AmSecondaryButton
@@ -108,12 +108,16 @@ private fun DestinationEditorContent(
         },
         snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
+        // Grupos funcionales (formulario · contexto · imagen · vista previa)
+        // separados a 20 dp; dentro de cada grupo la distancia es menor
+        // (hairlines del cuerpo de lista, 8 dp del grupo de importación).
+        verticalArrangement = Arrangement.spacedBy(AmSpacing.Xl),
         bottomAction = {
-            AmPrimaryButton(
+            AmBottomAction(
                 label = if (isSaving) AppStrings.Guardando else AppStrings.Guardar,
                 onClick = {
                     submitted = true
-                    if (name.isBlank() || qr.encoded.isBlank()) return@AmPrimaryButton
+                    if (name.isBlank() || qr.encoded.isBlank()) return@AmBottomAction
                     val now = com.agendaqr.destinations.domain.nowMillis()
                     onSave(
                         existing.copy(
@@ -128,11 +132,6 @@ private fun DestinationEditorContent(
                 },
                 enabled = canSave,
                 isLoading = isSaving,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .imePadding()
-                    .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
             )
         },
     ) {

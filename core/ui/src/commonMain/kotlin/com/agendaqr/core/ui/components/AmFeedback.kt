@@ -30,7 +30,9 @@ import com.agendaqr.core.ui.theme.AmType
  * medios y encuadre del scanner.
  */
 
-/** Skeleton estático sin movimiento decorativo continuo. */
+/** Skeleton estático sin movimiento decorativo continuo. Los bloques
+ * usan [AmColor.Surface] (distinto del fondo en ambos temas) para que la
+ * carga se perciba también en tema claro. */
 @Composable
 fun AmSkeleton(
     modifier: Modifier = Modifier,
@@ -44,14 +46,14 @@ fun AmSkeleton(
             modifier = Modifier
                 .fillMaxWidth(fraction = AmSkeletonTitleFraction)
                 .heightIn(min = AmSpacing.Xl)
-                .background(AmColor.SurfaceSecondary, AmShapes.Small),
+                .background(AmColor.Surface, AmShapes.Small),
         )
         repeat(lines.coerceAtLeast(1)) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = AmSpacing.Sm)
-                    .background(AmColor.SurfaceSecondary, AmShapes.Small),
+                    .background(AmColor.Surface, AmShapes.Small),
             )
         }
     }
@@ -153,11 +155,13 @@ private fun Modifier.amScannerCorners(
 }
 
 /**
- * Marco de medios (QR, comprobante): contenedor tonal
- * [AmColor.SurfaceSecondary] con la forma grande de tokens. El límite
- * del contenido es el bloque tonal; el fondo interno del contenido (p.
- * ej. el lienzo claro del QR, [AmColor.QrCanvas]) lo aporta quien lo
- * dibuja.
+ * Marco de medios (QR, comprobante): superficie [AmColor.Surface] con la
+ * forma grande de tokens — la tarjeta de la referencia. Se usa `Surface`
+ * (y no el tono secundario, idéntico al fondo en tema claro) para que el
+ * límite del contenido sea el bloque tonal en ambos temas, sin bordes
+ * decorativos (el gate solo admite E-01/E-02). El fondo interno del
+ * contenido (p. ej. el lienzo claro del QR, [AmColor.QrCanvas]) lo aporta
+ * quien lo dibuja.
  */
 @Composable
 fun AmMediaFrame(
@@ -165,7 +169,7 @@ fun AmMediaFrame(
     content: @Composable () -> Unit,
 ) {
     Box(
-        modifier = modifier.background(AmColor.SurfaceSecondary, AmShapes.Large),
+        modifier = modifier.background(AmColor.Surface, AmShapes.Large),
         contentAlignment = Alignment.Center,
     ) {
         content()

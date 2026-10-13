@@ -2,6 +2,7 @@ package com.agendaqr.destinations.presentation
 
 import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -110,8 +111,13 @@ fun DestinationsScreen(
                 selected = state.favoriteOnly,
                 onClick = { onAction(DestinationAction.ToggleFavorites) },
             )
-            AmSectionHeader(text = AppStrings.Recientes)
-            when {
+            // Sección Recientes: el encabezado vive pegado a su lista
+            // (8 dp); la separación entre bloques la da el scaffold (12 dp).
+            Column(
+                verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+            ) {
+                AmSectionHeader(text = AppStrings.Recientes)
+                when {
                 // la carga inicial de la lista se anuncia con el
                 // skeleton del DS (AmSkeleton, sin bucles) — el spinner
                 // con mensaje se reserva para estados en curso de una
@@ -147,6 +153,7 @@ fun DestinationsScreen(
                             endLabel = AppStrings.NoHayMasElementos,
                         )
                     }
+                }
                 }
             }
     }

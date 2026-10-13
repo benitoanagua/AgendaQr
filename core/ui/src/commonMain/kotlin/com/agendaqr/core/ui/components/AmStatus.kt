@@ -129,10 +129,11 @@ fun AmEmptyState(
         verticalArrangement = Arrangement.spacedBy(AmSpacing.Md),
     ) {
         icon?.let { glyph ->
+            // Círculo tonal del glifo: `Surface` (distinto del fondo en
+            // ambos temas), sin bordes decorativos (gate E-01/E-02).
             Box(
-                modifier = Modifier
-                    .size(AmMetrics.EmptyStateGlyphSize)
-                    .background(AmColor.SurfaceSecondary, AmShapes.Pill),
+                modifier = Modifier.size(AmMetrics.EmptyStateGlyphSize)
+                    .background(AmColor.Surface, AmShapes.Pill),
                 contentAlignment = Alignment.Center,
             ) {
                 AmIcon(

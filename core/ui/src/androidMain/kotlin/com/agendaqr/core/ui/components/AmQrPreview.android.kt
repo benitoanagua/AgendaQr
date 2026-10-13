@@ -4,8 +4,8 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
+import com.agendaqr.core.ui.theme.AmSpacing
 
 @Composable
 actual fun AmQrPreview(encodedQr: String, modifier: Modifier, size: Dp) {
@@ -22,11 +23,27 @@ actual fun AmQrPreview(encodedQr: String, modifier: Modifier, size: Dp) {
     // contenido es el bloque tonal.
     AmMediaFrame(modifier = modifier.size(size)) {
         if (bitmap != null) {
-            Image(bitmap = bitmap, contentDescription = "QR", modifier = Modifier.fillMaxSize())
+            // Lienzo claro garantizado tras la imagen: el QR necesita zona
+            // clara para ser escaneable en ambos temas (AmColor.QrCanvas),
+            // con aire interno para que el marco tonal se lea como marco.
+            Image(
+                bitmap = bitmap,
+                contentDescription = "QR",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(AmSpacing.Md)
+                    .background(AmColor.QrCanvas),
+            )
         } else {
-            // Lienzo claro garantizado: el QR necesita zona clara para ser
-            // escaneable en ambos temas (AmColor.QrCanvas).
-            Box(Modifier.fillMaxSize().background(AmColor.QrCanvas))
+            // Decodificación fallida o sin contenido: estado explícito
+            // (glifo sobre el tono del marco), NUNCA un rectángulo blanco
+            // sin contexto.
+            AmIcon(
+                imageVector = AmIcons.QrCode,
+                contentDescription = null,
+                tint = AmColor.TextTertiary,
+                size = AmMetrics.EmptyStateGlyphSize,
+            )
         }
     }
 }

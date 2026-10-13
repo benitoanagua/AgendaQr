@@ -15,7 +15,7 @@ import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.AmEmptyState
 import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.components.AmPrimaryButton
+import com.agendaqr.core.ui.components.AmBottomAction
 import com.agendaqr.core.ui.components.AmQrPreview
 import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmTopBar
@@ -54,7 +54,7 @@ fun ImportReviewScreen(
         statusContent = appHosts?.status,
         bottomAction = if (assets.isNotEmpty()) {
             {
-                AmPrimaryButton(
+                AmBottomAction(
                     label = when {
                         isSaving -> AppStrings.Guardando
                         assets.size == 1 -> AppStrings.Guardar
@@ -63,11 +63,6 @@ fun ImportReviewScreen(
                     onClick = onSaveAll,
                     enabled = !isSaving,
                     isLoading = isSaving,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .navigationBarsPadding()
-                    .imePadding()
-                        .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
                 )
             }
         } else {
@@ -108,7 +103,8 @@ fun ImportReviewScreen(
                 Column(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
+                    // Vista previa + evidencia decodificada como grupo (8 dp).
+                    verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm, Alignment.CenterVertically),
                 ) {
                     AmQrPreview(asset.encoded, size = AmMetrics.QrReviewSize)
                     asset.content?.takeIf { it.isNotBlank() }?.let { content ->
@@ -128,18 +124,23 @@ fun ImportReviewScreen(
                     itemsIndexed(assets) { _, asset ->
                         // S09/el código va centrado (antes quedaba pegado a
                         // la izquierda) y sin depender de métricas técnicas.
-                        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                        // Vista previa + evidencia como grupo (8 dp).
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                        ) {
                             AmQrPreview(asset.encoded)
-                        }
-                        // S09: evidencia de lo que Agenda QR entendió — el texto
-                        // decodificado, sin exponer payload técnico.
-                        asset.content?.takeIf { it.isNotBlank() }?.let { content ->
-                            AmText(
-                                AppStrings.Contenido + ": " + content,
-                                size = AmType.Label,
-                                color = AmColor.TextSecondary,
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                            )
+                            // S09: evidencia de lo que Agenda QR entendió — el texto
+                            // decodificado, sin exponer payload técnico.
+                            asset.content?.takeIf { it.isNotBlank() }?.let { content ->
+                                AmText(
+                                    AppStrings.Contenido + ": " + content,
+                                    size = AmType.Label,
+                                    color = AmColor.TextSecondary,
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                )
+                            }
                         }
                     }
                 }

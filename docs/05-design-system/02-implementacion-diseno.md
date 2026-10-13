@@ -17,16 +17,16 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
     ├── AmIcon.kt          # AmIcon + AmIcons (Lucide, único punto de entrada)
     ├── AmTone.kt           # AmTone + toneColors + glifo por tono
     ├── AmButtons.kt       # botones (solid/outline/none), chips estilo selector, toggle de favorito
-    ├── AmInputs.kt        # AmTextField (sin borde, guía hairline), AmSearchField (radio 6), AmSearchTrigger
+    ├── AmInputs.kt        # AmTextField (sin borde, guía hairline; ayuda/error a 4 dp y alineada al texto editable), AmSearchField (radio 6), AmSearchTrigger
     ├── AmLists.kt         # AmListRow (celda), AmBadge
     ├── AmStatus.kt        # AmStatusBanner, AmLoading, AmEmptyState, AmSection
     ├── AmChrome.kt        # AmTopBar, navegación raíz, FAB, transición de superficies
-    ├── AmScaffold.kt      # AmScreenScaffold (contenedor de pantalla)
+    ├── AmScaffold.kt      # AmScreenScaffold (contenedor de pantalla), AmBottomAction (acción principal fija: ancho completo + navigationBars + IME)
     ├── AmDialogs.kt       # AmDialog, AmDialogList (superposiciones)
-    ├── AmFeedback.kt      # skeleton, paginación, scanner, marco de medios
+    ├── AmFeedback.kt      # skeleton, paginación, scanner, marco de medios (Surface: tarjeta distinta del fondo en ambos temas)
     ├── AmFeedbackEvent.kt # AmFeedbackHost/AmSnackbarHost/AmFeedbackEvent
     ├── AmPivot.kt         # AmSectionHeader, AmPivot (pestañas de S06)
-    └── AmQrPreview.kt     # expect (Android decodifica; iOS pendiente de hardware)
+    └── AmQrPreview.kt     # expect (Android decodifica; fallo de decodificación = glifo explícito sobre el marco, nunca rectángulo blanco; iOS pendiente de hardware)
 ```
 
 ## 2. Reglas de token
@@ -48,6 +48,7 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 - La capa feature compone SOLO componentes del sistema (`core:ui`); importar controles M3 en `feature/`, `shared/` o `androidApp/` es una fuga del sistema y falla el gate.
 - La interacción (clickable, indicación, foco, semántica de fila) vive en el sistema, no en la pantalla.
 - El copy de las pantallas sale de `AppStrings` (decisión D2); los tests fijan esa centralización.
+- Espaciado entre grupos (20 dp, `AmSpacing.Xl`) frente a distancia intra-grupo (8 dp `Sm` o 4 dp `Xs`): el encabezado de sección vive pegado a su lista (8 dp), la ayuda/error a su campo (4 dp + alineación al texto editable), y la acción principal fija se compone con `AmBottomAction` (nunca paddings repetidos por pantalla).
 
 ## 5. Validación
 

@@ -119,8 +119,11 @@ internal fun OperationListScreen(
     ) {
             AmSearchField(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = AppStrings.Buscar, placeholder = AppStrings.BuscarOperaciones, onClear = { viewModel.onAction(OperationAction.Search("")) }, clearLabel = AppStrings.Limpiar)
         if (state.unassociated.isNotEmpty()) {
-            AmStatusBanner(unassociatedReceiptsLabel(state.unassociated.size))
-            AmSecondaryButton(label = AppStrings.VerBandejaDeRespaldos, onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
+            // Bandeja como grupo: el aviso vive pegado a su acción (8 dp).
+            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                AmStatusBanner(unassociatedReceiptsLabel(state.unassociated.size))
+                AmSecondaryButton(label = AppStrings.VerBandejaDeRespaldos, onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
+            }
         }
         state.error?.let { err ->
             AmStatusBanner(
@@ -217,23 +220,26 @@ internal fun UnassociatedScreen(
                     verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
                 ) {
                     items(state.unassociated, key = { it.id }) { receipt ->
-                        // §12 V1.4: fila ListItem; las acciones de fila viven
-                        // apiladas bajo el contenido (dos etiquetas largas no
-                        // caben lado a lado en 360 dp).
-                        AmListRow(
-                            title = AppStrings.receiptReceivedTitle,
-                            subtitle = formatDate(receipt.createdAt),
-                            onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) },
-                            meta = {
-                                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                                    ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
-                                    AmPrimaryButton(label = AppStrings.associateToExistingOperation, onClick = { selectedReceipt = receipt })
-                                    AmSecondaryButton(label = AppStrings.createOperationFromThis, onClick = {
-                                        viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
-                                    })
-                                }
-                            },
-                        )
+                        // §12 V1.4: cada comprobante es una tarjeta
+                        // independiente (fila ListItem sobre cuerpo de lista);
+                        // las acciones de fila viven apiladas bajo el contenido
+                        // (dos etiquetas largas no caben lado a lado en 360 dp).
+                        AmListBody {
+                            AmListRow(
+                                title = AppStrings.receiptReceivedTitle,
+                                subtitle = formatDate(receipt.createdAt),
+                                onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) },
+                                meta = {
+                                    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                                        ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
+                                        AmPrimaryButton(label = AppStrings.associateToExistingOperation, onClick = { selectedReceipt = receipt })
+                                        AmSecondaryButton(label = AppStrings.createOperationFromThis, onClick = {
+                                            viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
+                                        })
+                                    }
+                                },
+                            )
+                        }
                     }
                 }
             }

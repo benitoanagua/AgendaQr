@@ -98,8 +98,11 @@ internal fun OperationEditorScreen(
         },
         snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
+        // Grupos funcionales (tipo · datos · contexto · detalle) separados
+        // a 20 dp; dentro de cada grupo la distancia es menor.
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(AmSpacing.Xl),
         bottomAction = {
-            AmPrimaryButton(
+            AmBottomAction(
                 label = if (saving) {
                     AppStrings.Guardando
                 } else if (existing == null) {
@@ -109,7 +112,7 @@ internal fun OperationEditorScreen(
                 },
                 onClick = {
                     submitted = true
-                    val at = occurredAt ?: return@AmPrimaryButton
+                    val at = occurredAt ?: return@AmBottomAction
                     val candidate = buildCandidate(at)
                     if (existing == null) {
                         viewModel.onAction(
@@ -125,11 +128,6 @@ internal fun OperationEditorScreen(
                 },
                 enabled = !saving,
                 isLoading = saving,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .imePadding()
-                    .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
             )
         },
     ) {

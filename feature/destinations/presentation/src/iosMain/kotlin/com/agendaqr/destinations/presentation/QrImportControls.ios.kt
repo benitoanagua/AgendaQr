@@ -32,7 +32,14 @@ actual fun QrImportControls(
     onResult: (QrImportResult) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-        QrGalleryControls(onResult = onResult)
+        // En el editor la acción primaria ES Guardar (botón fijo abajo):
+        // las fuentes de imagen son alternativas y no compiten por el
+        // peso visual (jerarquía de botones, §7).
+        AmSecondaryButton(
+            label = AppStrings.ElegirDeLaGaleria,
+            icon = com.agendaqr.core.ui.components.AmIcons.Gallery,
+            onClick = { IosQrImportController.openMultiple(onResult = onResult) },
+        )
         QrCameraEntryControl(onResult = onResult)
     }
 }

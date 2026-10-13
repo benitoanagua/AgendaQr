@@ -1,19 +1,21 @@
 {
-  "edit-destination-dark.png": "7ebb8852a5daf98f94cc28ef1aace1887222cbb08821857d738c13268d8ee02b",
-  "edit-destination-light.png": "61905a88b7ce9257013759758faddce199aba9b0fd620cdc08f5ae26b3e6d891",
+  "edit-destination-dark.png": "2c23c901f783115c298ebab7c3ffcd157bdcb2b2ded100a7097d0db16bee7c71",
+  "edit-destination-light.png": "179a0290738c4ee0ba524cb89c3d62cdbb353c19590853714383f783d33d4995",
   "import-batch-dark.png": "9f96c846d5f55ad18ce19298bc6495c7dfe77e8b93802b5206fb2ee21fc42baf",
   "import-batch-light.png": "327f943a05c9403cb15aa0cd9cdb5090fbb53ead3298505981d583b47990e57d",
-  "login-dark.png": "39d5568a9c4b1e9e1ed8c2ef00949751e9b56b5db2d820b74ca30d1a957f569e",
-  "login-light.png": "43b218cec0dead443a22d5d52bc8e8f959e39dca78bbbfa045fbdf0e172c50fc",
-  "s01-dark.png": "be2d99da2fede67a1901a91e2c2a939a7d48f233a8cd8d0155b56b10ce2f7989",
-  "s01-light.png": "75642815046df90bc47852ceb2e15f3b35fe99e2d4cf9f80e6c127a7aa43d2a8",
-  "s02-add-dark.png": "8e31156b3e00dec7ca8462dc62c616f0bc6eb831fb3d7d54c210e1e9007aeb78",
-  "s02-add-light.png": "f28fcefd3545cb202ae7bd2bad79ea26d46237754f2984a4c79079358247b473",
-  "s04-search-dark.png": "0db93bedb093d8fb09de2ded9b89d112740c1071998f5bf9f63aca868bf982ef",
-  "s04-search-light.png": "b8be42a197181b3ce5d4cba6d2c8b2271bdf9e33604f1aa3b4e92a01080a0678",
+  "login-dark.png": "45aadfbdc0f28fc9ad06fbddd0161ebc8932cd941383e941d4b9a1c3f439da02",
+  "login-light.png": "67141ae0a7f29211f4fb1bc5a51510786c2370a0b13ab0debc727b8d0d4a66b9",
+  "qr-preview-fallback-dark.png": "5522336229b9e325d9fecb3212c717a380f5ddbfd69351bf1327a8fbdfd063d9",
+  "qr-preview-fallback-light.png": "79625cfdc3a1d378fab419eb90654b159442171a43333ab2c19c346e5c882197",
+  "s01-dark.png": "1a1672d1c7759f7693aaf2050a8bdea96a4d231924cb1dc63f26143cf193deaf",
+  "s01-light.png": "da845656aa3adb691df1c9733ee0a6ac7f98139079379d606cab02a8dfad8733",
+  "s02-add-dark.png": "6edc8efd29d63a95a487e024c9aeb5022ef2478ed6782cdc6d1cc4968680e519",
+  "s02-add-light.png": "b1592b83afb8d8b83e6feb76095412a8374761b5dcaf66c1c5e463646f382954",
+  "s04-search-dark.png": "558059c6c785276093536c45d45a474ce28971ab87c1cc92eb018c7ce4983ccd",
+  "s04-search-light.png": "d5b43abafed1dccb51810971321ffb210261a8630d800143b74a1ded41402fe2",
   "s06-contexts-dark.png": "659e9a28432a1475fe93c8f503a882e1998fe82b2abb9981fb885aa9554f4690",
   "s06-contexts-light.png": "7ded10a19831cc862d6ecc587614bb563dcb439566c0961b3524bc220ca30e2d",
-  "s09-review-dark.png": "d2595e0963bb32f172de3b578cd1d7ba8bf3996e79f7064aabd8f37531abdd49",
-  "s09-review-light.png": "27b0bcdd4bfae1aacebcfc6ea46a2ccc4145e3ce99b081f5448c5d007909f770"
+  "s09-review-dark.png": "ce9619e670a606b1d36d46cb3984d5760a3c6be8204f011cc4c67eec1eaa34a6",
+  "s09-review-light.png": "716fa3afe51c7ec9767b1b34f63bbfb599bd45b669cceeee8b49bca3cff1062e"
 
 }
