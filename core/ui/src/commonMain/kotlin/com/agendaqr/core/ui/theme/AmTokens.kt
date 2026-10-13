@@ -342,32 +342,32 @@ object AmType {
     /** Display de bloque (32 sp): número/hero de tarjeta de datos. */
     val Display: TextUnit = 32.sp
     /** Titular de autenticación (28 sp). */
-    val HeadlineMedium: TextUnit = 28.sp
+    val HeadlineMedium: TextUnit = 24.sp
     /** Encabezado de sección grande (24 sp). */
-    val Headline: TextUnit = 24.sp
+    val Headline: TextUnit = 20.sp
     /** Título de página en la barra superior (22 sp). */
-    val TitleLarge: TextUnit = 22.sp
+    val TitleLarge: TextUnit = 18.sp
     /** Título de diálogo/modal centrado (18 sp, referencia). */
     val Title: TextUnit = 18.sp
     /** Cuerpo (17 sp, referencia). */
-    val Body: TextUnit = 17.sp
+    val Body: TextUnit = 14.sp
     /** Etiqueta de botón/fila (14 sp). */
     val Label: TextUnit = 14.sp
     /** Apoyo/descripción (13 sp, referencia). */
-    val Caption: TextUnit = 13.sp
+    val Caption: TextUnit = 12.sp
     /** Caption mínima (11 sp). */
-    val CaptionSmall: TextUnit = 11.sp
+    val CaptionSmall: TextUnit = 10.sp
     /** Encabezados de sección (15 sp, referencia). */
     val SectionHeader: TextUnit = 15.sp
     // Interlineados canónicos en sp (respetan el escalado, §accesibilidad).
     val LineHeightLabel: TextUnit = 20.sp
-    val LineHeightBody: TextUnit = 26.sp
-    val LineHeightCaption: TextUnit = 16.sp
+    val LineHeightBody: TextUnit = 22.sp
+    val LineHeightCaption: TextUnit = 18.sp
     val LineHeightSection: TextUnit = 20.sp
-    val LineHeightHeadlineLarge: TextUnit = 40.sp
-    val LineHeightHeadlineMedium: TextUnit = 36.sp
-    val LineHeightHeadlineSmall: TextUnit = 32.sp
-    val LineHeightTitleLarge: TextUnit = 28.sp
+    val LineHeightHeadlineLarge: TextUnit = 36.sp
+    val LineHeightHeadlineMedium: TextUnit = 32.sp
+    val LineHeightHeadlineSmall: TextUnit = 28.sp
+    val LineHeightTitleLarge: TextUnit = 24.sp
     val LineHeightTitleMedium: TextUnit = 24.sp
     val LineHeightTitleSmall: TextUnit = 20.sp
     val LineHeightLabelSmall: TextUnit = 16.sp
@@ -380,14 +380,14 @@ object AmType {
 
 /** Tracking de los roles tipográficos de Material 3 (valores por defecto). */
 object AmTracking {
-    val TitleMedium: TextUnit = 0.15.sp
-    val TitleSmall: TextUnit = 0.1.sp
-    val BodyLarge: TextUnit = 0.5.sp
-    val BodyMedium: TextUnit = 0.25.sp
-    val BodySmall: TextUnit = 0.4.sp
-    val LabelLarge: TextUnit = 0.1.sp
-    val LabelMedium: TextUnit = 0.5.sp
-    val LabelSmall: TextUnit = 0.5.sp
+    val TitleMedium: TextUnit = 0.sp
+    val TitleSmall: TextUnit = 0.sp
+    val BodyLarge: TextUnit = 0.sp
+    val BodyMedium: TextUnit = 0.sp
+    val BodySmall: TextUnit = 0.sp
+    val LabelLarge: TextUnit = 0.sp
+    val LabelMedium: TextUnit = 0.sp
+    val LabelSmall: TextUnit = 0.sp
 }
 
 /**
