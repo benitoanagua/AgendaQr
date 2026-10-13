@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
@@ -59,6 +60,25 @@ fun AmBadge(
             style = AmTextStyles.Support,
             color = toneColor,
         )
+    }
+}
+
+/**
+ * Cuerpo de lista (card mode de la referencia): superficie con radio 8
+ * que agrupa celdas contiguas separadas por hairlines. Las filas usan
+ * `showDivider` salvo la última; el cuerpo mide su contenido.
+ */
+@Composable
+fun AmListBody(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(AmColor.Surface, AmShapes.Large),
+    ) {
+        content()
     }
 }
 

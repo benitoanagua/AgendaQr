@@ -209,13 +209,13 @@ I16 Evento tardío no puede retroceder a una fase inválida.
 I17 Una operación en curso tiene una única identidad aunque se dispare varias veces.  
 I18 Todo estado no terminal tiene salida recuperable o cancelable.
 
-### Invariantes V1.1 (ADR-0005) — implementación original 2026-10-08; contrato vigente actualizado a AgendaMobile (ADR-0013)
+### Invariantes V1.1 (ADR-0005) — implementación original 2026-10-08; contrato vigente actualizado a la referencia Ant Design Mobile (ADR-0014)
 
-- I19 (IMPLEMENTADO por test) Contraste de acentos: cada par acento/texto de la paleta de identidad de contextos de AgendaMobile cumple ≥ 4.5:1 en texto normal — fijado por `AmAccentTest` (`the_palette_is_exactly_the_12_admitted_accents_plus_system`, `every_accent_text_pair_meets_the_wcag_threshold`), válido en claro y oscuro (pares idénticos por diseño). PENDIENTE: revisión visual con lente de contraste en dispositivo físico.
+- I19 (IMPLEMENTADO por test) Contraste de acentos: cada par acento/texto de la paleta de identidad de contextos cumple ≥ 4.5:1 en texto normal — fijado por `AmAccentTest` (`the_palette_is_exactly_the_12_admitted_accents_plus_system`, `every_accent_text_pair_meets_the_wcag_threshold`), válido en claro y oscuro (pares idénticos por diseño). PENDIENTE: revisión visual con lente de contraste en dispositivo físico.
 - I20 (IMPLEMENTADO por test) Todo control interactivo expone su rol y etiqueta accesible: los componentes M3 (Button/ListItem/Tab/NavigationBar/TopAppBar) lo declaran por construcción; `ScreensA11yCoverageTest`/`DestinationsScreenA11yTest`/`AmAccessibilityContractTest` verifican semántica y targets 48 dp. PENDIENTE: TalkBack interactivo y anillo de foco con teclado físico en dispositivo; VoiceOver en iOS.
 - I21 (IMPLEMENTADO en componentes) Reduced motion desactiva la transición de superficies (duración 0, cambio en el sitio): las raíces de navegación (`AuthAppRoot`/`HomeSurface`) consultan `LocalReducedMotion`. PENDIENTE: verificación interactiva en dispositivo con la opción activada.
 - I22 (IMPLEMENTADO por diseño y test) No hay bucles de animación: los indicadores de progreso M3 son los estados de espera del sistema; no existe ninguna animación en bucle decorativa en `core:ui` (`AmSurfaceMotionTest`).
-- I23 (REVISADO AgendaMobile/ADR-0013) Los controles evitan el borde de reposo universal: los campos son tonales con guía inferior solo en foco/error, el botón secundario es tonal y el borde funcional `borderControl` (≥3:1) queda para señales activas: `AmSchemeTest` fija los pares.
+- I23 (REVISADO ADR-0014) Los controles evitan el borde de reposo universal: los campos no tienen borde ni relleno (guía hairline en reposo/foco/error), el botón secundario es outline de acento y el foco cumple ≥ 3:1: `AmSchemeTest` fija los pares.
 - I24 (IMPLEMENTADO por política de componentes) Todo icono interactivo lleva descripción accesible (flecha atrás, acciones de barra, overflow, limpiar búsqueda, favorito); los iconos decorativos se marcan como no accesibles (`AmIcon` con `contentDescription = null`). PENDIENTE: VoiceOver en iOS runtime.
 
 ## 5. Resultado

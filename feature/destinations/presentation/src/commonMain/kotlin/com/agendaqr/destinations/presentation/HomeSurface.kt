@@ -46,7 +46,7 @@ internal fun HomeSurface(
                 amSurfaceEnter(reverse = reverse) togetherWith amSurfaceExit(reverse = reverse)
             }
         },
-        label = AppStrings.DestinationRouteTurnstile,
+        label = AppStrings.DestinationRouteTransition,
     ) { route ->
         when (route) {
             DestinationRoute.List -> DestinationsScreen(
@@ -147,7 +147,7 @@ internal fun HomeSurface(
     }
 }
 
-/** Rutas de destinos: ¿este cambio de ruta es un regreso (turnstile inverso)? */
+/** Rutas de destinos: ¿este cambio de ruta es un regreso (transición inversa)? */
 internal fun destinationNavigationIsBack(
     from: DestinationRoute,
     to: DestinationRoute,

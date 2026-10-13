@@ -2,7 +2,6 @@ package com.agendaqr.destinations.presentation
 
 import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +24,7 @@ import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmEmptyState
 import com.agendaqr.core.ui.components.AmLoadMoreFooter
+import com.agendaqr.core.ui.components.AmListBody
 import com.agendaqr.core.ui.components.AmListRow
 import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.components.AmTone
@@ -131,18 +131,26 @@ fun DestinationsScreen(
                     onAction = { if (state.destinations.isEmpty()) onAction(DestinationAction.Edit(null)) else onAction(DestinationAction.Search("")) },
                 )
                 else -> {
-                    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                        paged.forEach { destination ->
-                            DestinationRow(destination, onAction, syncLookup)
-                        }
-                        if (paged.size < state.visibleDestinations.size) {
-                            AmLoadMoreFooter(
-                                onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(state.visibleDestinations.size) },
-                                loadMoreLabel = AppStrings.CargarMas,
-                                loadingLabel = AppStrings.Cargando,
-                                endLabel = AppStrings.NoHayMasElementos,
+                    // Cuerpo de lista de la referencia: superficie con
+                    // hairlines entre celdas contiguas; la paginación vive
+                    // fuera del cuerpo.
+                    AmListBody {
+                        paged.forEachIndexed { index, destination ->
+                            DestinationRow(
+                                destination,
+                                onAction,
+                                syncLookup,
+                                showDivider = index < paged.lastIndex,
                             )
                         }
+                    }
+                    if (paged.size < state.visibleDestinations.size) {
+                        AmLoadMoreFooter(
+                            onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(state.visibleDestinations.size) },
+                            loadMoreLabel = AppStrings.CargarMas,
+                            loadingLabel = AppStrings.Cargando,
+                            endLabel = AppStrings.NoHayMasElementos,
+                        )
                     }
                 }
             }
@@ -154,6 +162,7 @@ fun DestinationRow(
     destination: Destination,
     onAction: (DestinationAction) -> Unit,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
+    showDivider: Boolean = false,
 ) {
     // §12 V1.2: fila ListItem con la acción de favorito como
     // IconToggleButton de estrella (estado en semántica; la descripción
@@ -161,6 +170,7 @@ fun DestinationRow(
     AmListRow(
         title = destination.name.ifBlank { AppStrings.SinNombre },
         subtitle = destinationSubtitle(destination),
+        showDivider = showDivider,
         onClick = { onAction(DestinationAction.Open(destination.id)) },
         // Badge bajo el texto (línea propia vía `meta`): no compite por el
         // ancho con la acción en pantallas estrechas.

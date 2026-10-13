@@ -12,7 +12,7 @@ Registro de licencias de los recursos y dependencias consumidos por Agenda QR, c
   recursos empaquetados en la pasada de implementación.
 - Consumo vigente: `com.composables:icons-lucide:1.1.0`
   (wrapper no oficial) en `core:ui` commonMain, consumido SOLO vía
-  `AmIcon` (AgendaMobile). Verificado: compila en androidMain e
+  `AmIcon`. Verificado: compila en androidMain e
   iosSimulatorArm64 con Kotlin 2.2.20 / Compose 1.8.2; publica las mismas
   coordenadas para los tres targets. La licencia del artefacto es la ISC
   del set (más MIT para los glifos derivados de Feather listados en su

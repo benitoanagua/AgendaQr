@@ -45,7 +45,7 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 
 ## 4. Reglas de pantalla
 
-- La capa feature compone SOLO componentes AgendaMobile (`core:ui`); importar controles M3 en `feature/`, `shared/` o `androidApp/` es una fuga del sistema y falla el gate.
+- La capa feature compone SOLO componentes del sistema (`core:ui`); importar controles M3 en `feature/`, `shared/` o `androidApp/` es una fuga del sistema y falla el gate.
 - La interacción (clickable, indicación, foco, semántica de fila) vive en el sistema, no en la pantalla.
 - El copy de las pantallas sale de `AppStrings` (decisión D2); los tests fijan esa centralización.
 
