@@ -19,7 +19,7 @@ import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
 
 /**
- * Superposiciones de AgendaMobile: los diálogos confirman (dos acciones
+ * Superposiciones y selectores móviles: los diálogos confirman (dos acciones
  * claras) y resuelven selecciones acotadas — la distribución de patrones
  * de las apps móviles contemporáneas.
  *

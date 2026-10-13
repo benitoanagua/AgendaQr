@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
@@ -36,7 +37,7 @@ import com.agendaqr.core.ui.theme.AmTracking
 import com.agendaqr.core.ui.theme.AmType
 
 /**
- * Botones y chips AgendaMobile: acciones con área táctil mínima de 48 dp,
+ * Botones y chips Compose con patrones Ant Design Mobile: acciones con área táctil mínima de 48 dp,
  * radios de tokens y estado de carga que no desplaza el layout.
  */
 
@@ -189,19 +190,23 @@ fun AmSecondaryButton(
     isLoading: Boolean = false,
     icon: ImageVector? = null,
 ) {
-    Button(
+    OutlinedButton(
         modifier = modifier.defaultMinSize(minHeight = AmMetrics.ControlMinSize),
         onClick = onClick,
         enabled = enabled && !isLoading,
         shape = AmShapes.Medium,
+        border = androidx.compose.foundation.BorderStroke(
+            AmMetrics.Border,
+            if (enabled) AmColor.BorderControl else AmColor.Disabled,
+        ),
         contentPadding = PaddingValues(
             horizontal = AmSpacing.Lg,
             vertical = AmSpacing.None,
         ),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = AmColor.SurfaceSecondary,
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = AmColor.Surface,
             contentColor = AmColor.TextPrimary,
-            disabledContainerColor = AmColor.Disabled,
+            disabledContainerColor = AmColor.Surface,
             disabledContentColor = AmColor.OnDisabled,
         ),
     ) {
@@ -305,7 +310,7 @@ fun AmIconButton(
 }
 
 /**
- * Chip de filtro interactivo TONAL (píldora, sin borde de reposo):
+ * Chip de filtro interactivo compacto, con borde discreto y radio corto:
  * seleccionado se expresa con el bloque de acento; la selección también
  * vive en la semántica.
  */

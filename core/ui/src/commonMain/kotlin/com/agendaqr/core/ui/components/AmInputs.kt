@@ -34,7 +34,7 @@ import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
 
 /**
- * Entradas AgendaMobile: campo TONAL (sin borde de reposo — superficie
+ * Entradas compactas con patrones Ant Design Mobile: campo TONAL (sin borde de reposo — superficie
  * secundaria con radio de tokens) con etiqueta, texto de apoyo y error
  * contextual. El foco y el error se marcan con la guía inferior y el
  * color; el error también con icono + texto debajo del campo.

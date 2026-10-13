@@ -15,10 +15,12 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,7 +37,7 @@ import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
 
 /**
- * Chrome convencional de AgendaMobile: barra superior `TopAppBar`,
+ * Chrome móvil convencional con apariencia Ant Design Mobile: barra superior `TopAppBar`,
  * navegación raíz `NavigationBar`/`NavigationRail`, botón flotante
  * extendido y la transición estándar entre superficies.
  */
@@ -89,6 +91,10 @@ fun AmTopBar(
     var overflowOpen by remember { mutableStateOf(false) }
     TopAppBar(
         modifier = modifier,
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = AmColor.Surface,
+            titleContentColor = AmColor.TextPrimary,
+        ),
         title = {
             // El título de la pantalla es un encabezado semántico (la
             // navegación por encabezados de TalkBack/VoiceOver lo usa).
@@ -221,7 +227,12 @@ fun AmNavBar(
     onSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    NavigationBar(modifier = modifier, tonalElevation = AmSpacing.None) {
+    NavigationBar(
+        modifier = modifier,
+        containerColor = AmColor.Surface,
+        contentColor = AmColor.TextPrimary,
+        tonalElevation = AmSpacing.None,
+    ) {
         destinations.forEach { destination ->
             val selected = destination.id == selectedId
             NavigationBarItem(
@@ -236,6 +247,13 @@ fun AmNavBar(
                 },
                 label = { Text(destination.label, style = AmTextStyles.Caption) },
                 alwaysShowLabel = true,
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = AmColor.AccentText,
+                    selectedTextColor = AmColor.AccentText,
+                    unselectedIconColor = AmColor.TextSecondary,
+                    unselectedTextColor = AmColor.TextSecondary,
+                    indicatorColor = AmColor.Transparent,
+                ),
             )
         }
     }

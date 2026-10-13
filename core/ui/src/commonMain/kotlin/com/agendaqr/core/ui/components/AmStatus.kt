@@ -28,7 +28,7 @@ import com.agendaqr.core.ui.theme.AmTextStyles
 import com.agendaqr.core.ui.theme.AmType
 
 /**
- * Estados de AgendaMobile: banner de estado (alerta tonal redondeada),
+ * Estados de interfaz con patrones Ant Design Mobile: banner de estado (alerta tonal redondeada),
  * carga, estado vacío con glifo y agrupador de sección.
  */
 

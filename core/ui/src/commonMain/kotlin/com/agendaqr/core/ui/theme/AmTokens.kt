@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import kotlin.math.pow
 
 /**
- * AgendaMobile — tokens del sistema de diseño de Agenda QR (ADR-0013).
+ * Ant Design Mobile — tokens de referencia replicados en Compose (ADR-0014).
  *
  * Arquitectura de capas (contrato normativo docs/05-design-system/00):
  * 1. Tokens privados: [AmPalette] — primitivas por tema, sin exposición.
@@ -25,11 +25,7 @@ import kotlin.math.pow
  *    [AmMotion], [AmAccent] — la única capa que el producto consume.
  * 3. Tema: [AmTheme] — puente a Material 3 (implementación, no autoridad).
  *
- * La identidad visual deriva del linaje azul del logo de marca, recalibrado
- * para una app móvil de gestión: acento profundo con contraste AA como
- * relleno y como texto, superficies neutras frías (no blanco/negro puro)
- * y tema oscuro de tinta elevada. Los pares están verificados por
- * AmSchemeTest; ningún estado depende solo del color.
+ * La identidad visual replica la paleta azul y los neutros compactos de Ant Design Mobile. El rol de acción sólida usa una variante accesible del azul; los pares están verificados por AmSchemeTest y ningún estado depende solo del color.
  */
 
 /** Primitivas por tema: privadas de la capa de tokens. */
@@ -303,15 +299,15 @@ object AmMetrics {
 
 /** Radios moderados y consistentes (dp): la única fuente de formas. */
 object AmRadius {
-    val ExtraSmall = 4.dp
-    val Small = 8.dp
-    val Medium = 12.dp
-    val Large = 16.dp
-    val ExtraLarge = 24.dp
+    val ExtraSmall = 2.dp
+    val Small = 4.dp
+    val Medium = 4.dp
+    val Large = 8.dp
+    val ExtraLarge = 8.dp
 }
 
 /**
- * Conjunto de formas de AgendaMobile: [AmTheme] lo entrega a
+ * Conjunto de formas compactas de Ant Design Mobile: [AmTheme] lo entrega a
  * `MaterialTheme.shapes` y los componentes envolventes fijan los radios
  * que M3 no mapea por rol (botones, campos, chips).
  */
@@ -321,32 +317,32 @@ object AmShapes {
     val Medium = RoundedCornerShape(AmRadius.Medium)
     val Large = RoundedCornerShape(AmRadius.Large)
     val ExtraLarge = RoundedCornerShape(AmRadius.ExtraLarge)
-    /** Chips, badges y pastillas: media píldora. */
-    val Pill = RoundedCornerShape(percent = 50)
+    /** Chips, badges y controles compactos: radio corto, no píldora. */
+    val Pill = RoundedCornerShape(AmRadius.Small)
 }
 
 /**
  * Escala tipográfica en sp (respeta el escalado de fuente del sistema).
  * Roles semánticos del producto:
- * - Título de página: [TitleLarge] (22) en la barra superior.
+ * - Título de página: [TitleLarge] (18) en la barra superior.
  * - Título de sección: [SectionHeader] (14, Medium).
- * - Título de fila: Body (16) en AmListRow.
- * - Cuerpo: [Body] (16); etiqueta: [Label] (14).
+ * - Título de fila: Body (14) en AmListRow.
+ * - Cuerpo y etiqueta de control: [Body]/[Label] (14).
  * - Texto secundario/ayuda/error: [Caption] (12) vía [AmTextStyles].
  */
 object AmType {
     /** Display de bloque (32 sp): número/hero de tarjeta de datos. */
-    val Display: TextUnit = 32.sp
+    val Display: TextUnit = 28.sp
     /** Titular de autenticación (28 sp). */
-    val HeadlineMedium: TextUnit = 28.sp
+    val HeadlineMedium: TextUnit = 24.sp
     /** Encabezado de sección grande (24 sp). */
-    val Headline: TextUnit = 24.sp
+    val Headline: TextUnit = 22.sp
     /** Título de página en la barra superior (22 sp). */
-    val TitleLarge: TextUnit = 22.sp
+    val TitleLarge: TextUnit = 18.sp
     /** Título de diálogo/tarjeta (20 sp). */
-    val Title: TextUnit = 20.sp
+    val Title: TextUnit = 16.sp
     /** Cuerpo (16 sp). */
-    val Body: TextUnit = 16.sp
+    val Body: TextUnit = 14.sp
     /** Etiqueta de botón/fila (14 sp). */
     val Label: TextUnit = 14.sp
     /** Badge/apoyo (12 sp). */
@@ -357,7 +353,7 @@ object AmType {
     val SectionHeader: TextUnit = 14.sp
     // Interlineados canónicos en sp (respetan el escalado, §accesibilidad).
     val LineHeightLabel: TextUnit = 20.sp
-    val LineHeightBody: TextUnit = 24.sp
+    val LineHeightBody: TextUnit = 22.sp
     val LineHeightCaption: TextUnit = 16.sp
     val LineHeightSection: TextUnit = 20.sp
     val LineHeightHeadlineLarge: TextUnit = 40.sp
@@ -387,7 +383,7 @@ object AmTracking {
 }
 
 /**
- * Tipografía Material 3 de AgendaMobile: [AmTheme] la entrega a
+ * Tipografía Compose alineada con Ant Design Mobile: [AmTheme] la entrega a
  * `MaterialTheme(typography = …)` y cada componente M3 hereda la misma
  * familia y tamaños.
  */

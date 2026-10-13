@@ -25,14 +25,14 @@ import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
 
 /**
- * Celdas y etiquetas AgendaMobile: la celda (`AmListRow`) es la unidad de
+ * Celdas y etiquetas con patrones Ant Design Mobile: la celda (`AmListRow`) es la unidad de
  * las listas de producto — patrón de lista móvil con divisores opt-in y
  * metadatos en línea propia.
  */
 
 /**
  * Etiqueta semántica de estado (badge): texto con el par del tono
- * (content/container garantizado por AmSchemeTest), forma de píldora. No
+ * (content/container garantizado por AmSchemeTest), radio compacto. No
  * interactiva; el estado se expresa con TEXTO (nunca solo color).
  */
 @Composable

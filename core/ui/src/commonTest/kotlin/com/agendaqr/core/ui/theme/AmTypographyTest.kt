@@ -35,9 +35,9 @@ class AmTypographyTest {
     fun m3_roles_carry_the_canonical_sizes() {
         // El título de página (titleLarge) y el titular de auth
         // (headlineMedium) son los roles M3 estándar, en sp.
-        assertEquals(22.sp, AmMaterialTypography.titleLarge.fontSize)
-        assertEquals(28.sp, AmMaterialTypography.headlineMedium.fontSize)
-        assertEquals(16.sp, AmMaterialTypography.bodyLarge.fontSize)
+        assertEquals(18.sp, AmMaterialTypography.titleLarge.fontSize)
+        assertEquals(24.sp, AmMaterialTypography.headlineMedium.fontSize)
+        assertEquals(14.sp, AmMaterialTypography.bodyLarge.fontSize)
         assertEquals(14.sp, AmMaterialTypography.labelLarge.fontSize)
     }
 
