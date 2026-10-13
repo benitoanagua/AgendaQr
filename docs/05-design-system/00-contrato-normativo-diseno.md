@@ -91,7 +91,7 @@
 ## 7. Iconografía
 
 - Lucide (ISC + MIT para glifos derivados de Feather) vía `AmIcons`; licencia registrada en `06-licencias-terceros.md`. Sin mezcla de familias; sin emojis funcionales.
-- Un glifo por concepto; set mínimo con glifos de estado y de estados vacíos.
+- Un glifo por concepto; set mínimo con glifos de estado y de estados vacíos. Glifos financieros (ADR-0015, referencia Stitch): `Income` (flecha entrante, cobro), `Expense` (flecha saliente, pago), `Attachment` (comprobante adjunto) — decorativos; el texto de la fila comunica el tipo.
 - Icono decorativo = `contentDescription = null` (excluido del lector); todo icono interactivo lleva etiqueta de texto visible compuesta por el llamador.
 
 ## 8. Movimiento
@@ -105,10 +105,10 @@
 | Grupo | Componentes | Referencia |
 |---|---|---|
 | Estructura | `AmScreenScaffold`, `AmTopBar` (+ acciones, overflow), `AmNavBar`/`AmNavRail` (+ destinos, estado), `AmExtendedFab` | Barra inferior de destinos raíz; barra superior jerárquica con Atrás (título a la izquierda por convención Android); FAB extendido de plataforma |
-| Acciones | `AmPrimaryButton` (solid), `AmSecondaryButton` (outline de acento), `AmTextAction` (none), `AmDangerButton` (solid), `AmIconButton`, `AmFilterChip` (selector/outline + wathet), `AmFavoriteToggle` | Fills solid/outline/none; radio 4; deshabilitado con opacidad .4; carga sin salto de ancho |
+| Acciones | `AmPrimaryButton` (solid), `AmSecondaryButton` (outline de acento), `AmTextAction` (none), `AmDangerButton` (solid), `AmIconButton`, `AmFilterChip` (selector/outline + wathet), `AmSegmentedControl` (pista tonal `surfaceContainerHighest`, opción activa sobre píldora `Surface`, rol radio + 48 dp), `AmFavoriteToggle` | Fills solid/outline/none; radio 4; deshabilitado con opacidad .4; carga sin salto de ancho; Segmented de la referencia Stitch |
 | Formularios | `AmTextField` (sin borde, guía hairline en foco/error; label + helper + error accesible), `AmSearchField` (radio 6, fill box, borde de acento activo, teclado configurable, autofoco opt-in), `AmSearchTrigger` | Patrón Form/List; placeholder light; limpieza etiquetada; foco al entrar en Buscar |
 | Superposiciones | `AmDialog` (título centrado 18; foco conservativo en destructivas), `AmDialogList` | Modal centrado; botonera de plataforma |
-| Datos | `AmListRow` (título 17, subtítulo 13, `meta` en línea propia, identidad de contexto, divisor opt-in, semántica `selected`), `AmBadge` (tag outline/round), `AmSectionHeader`, `AmSection`, `AmPivot` (indicador de acento, desplazable) | List/Item, Tag, Tabs |
+| Datos | `AmListRow` (título 17, subtítulo 13, `meta` en línea propia, identidad de contexto, `leading` tipado — p. ej. insignia cobro/pago —, divisor opt-in, semántica `selected`), `AmBadge` (tag outline/round), `AmTonalTag` (tag con fondo tonal del par content/container), `AmIconBadge` (glifo del tono sobre bloque tonal: identidad tipada decorativa), `AmMetaRow` (metadatos compactos label/valor), `AmSectionHeader`, `AmSection`, `AmPivot` (indicador de acento, desplazable) | List/Item, Tag round tonal, metadatos compactos de la referencia Stitch |
 | Estados | `AmStatusBanner` (radio 8), `AmLoading`, `AmEmptyState` (glifo decorativo + título + acción), `AmSkeleton`, `AmLoadMoreFooter` | Empty; aviso persistente de producto |
 | Feedback | `AmFeedbackHost`/`AmSnackbarHost`/`AmFeedbackEvent` (háptica + anuncio + snackbar inferior en Android) | Toast de plataforma; anuncio por evento |
 | Medios | `AmQrPreview` (expect/actual, tamaño configurable 1:1, revisión a 320 dp; fallo de decodificación = glifo explícito, nunca rectángulo blanco), `AmMediaFrame` (Surface con radio 8, la tarjeta de la referencia: el límite es el bloque tonal, sin bordes — gate E-01/E-02), `AmScannerFrame` (esquinas de acento en canvas sobre el preview real; el viewport tonal se retiró por reservar espacio vacío) | Card (radio 8) |

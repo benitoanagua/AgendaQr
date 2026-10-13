@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,12 +20,16 @@ import com.agendaqr.core.ui.components.AmTopBarAction
 import com.agendaqr.core.ui.components.AmDialog
 import com.agendaqr.core.ui.components.AmEmptyState
 import com.agendaqr.core.ui.components.AmIcons
+import com.agendaqr.core.ui.components.AmListBody
+import com.agendaqr.core.ui.components.AmMetaRow
 import com.agendaqr.core.ui.components.AmOverflowAction
 import com.agendaqr.core.ui.components.AmQrPreview
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTextAction
 import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmSpacing
+import com.agendaqr.core.ui.theme.accentFor
 import com.agendaqr.destinations.domain.Destination
 
 @Composable
@@ -75,11 +80,23 @@ fun DestinationDetailScreen(
         snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
-            // Metadatos del destino como grupo (categoría + nota a 4 dp).
-            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
-                destination.category?.let { AmText(it, color = AmColor.TextSecondary) }
-                destination.note?.takeIf { it.isNotBlank() }?.let { AmText(it, color = AmColor.TextSecondary) }
+            // Metadatos del destino como grupo (categoría + nota a 4 dp) en
+        // tarjeta compacta — solo si hay contenido que agrupar.
+        val hasMetadata = destination.category != null ||
+            destination.note?.takeIf { it.isNotBlank() } != null
+        if (hasMetadata) {
+            AmListBody {
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Md),
+                    verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                ) {
+                    destination.category?.let { AmMetaRow(label = AppStrings.Categoria, value = it) }
+                    destination.note?.takeIf { it.isNotBlank() }?.let {
+                        AmText(it, color = AmColor.TextSecondary)
+                    }
+                }
             }
+        }
             // estado de sincronización del elemento (texto, no solo
             // color) con REINTENTAR cuando es un error recuperable.
             ElementSyncBadge(syncStatus, showWhenSynced = true)
@@ -93,13 +110,13 @@ fun DestinationDetailScreen(
                 )
             }
             if (destination.qr.encoded.isNotBlank()) {
-                // Vista previa centrada a ancho completo: el QR no queda
-                // pegado a la izquierda y conserva proporción 1:1.
+                // Hero de exhibición (referencia Stitch): QR centrado a
+                // 320 dp sobre marco tonal, con aire a los metadatos.
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center,
                 ) {
-                    AmQrPreview(destination.qr.encoded)
+                    AmQrPreview(destination.qr.encoded, size = AmMetrics.QrReviewSize)
                 }
             } else {
                 AmEmptyState(

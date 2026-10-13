@@ -52,3 +52,56 @@ internal fun operationTypeLabel(type: OperationType): String = when (type) {
     OperationType.COBRO -> "Cobro"
 }
 
+/**
+ * Título de la fila de actividad (referencia Stitch): la contraparte es
+ * el contenido principal; el tipo queda como texto del subtítulo (la
+ * forma de la flecha del [com.agendaqr.core.ui.components.AmIconBadge]
+ * acompaña, nunca sustituye). Sin contraparte ni concepto, el propio tipo.
+ */
+internal fun operationTitle(operation: Operation): String =
+    operation.personOrEntity?.takeIf { it.isNotBlank() }
+        ?: operation.concept?.takeIf { it.isNotBlank() }
+        ?: operationTypeLabel(operation.type)
+
+/**
+ * Monto con SIGNO DIRECCIONAL y tono semántico (referencia Stitch):
+ * cobro = entrada "+" en success, pago = salida "−" en danger. Es solo
+ * presentación: no cambia el valor registrado ni las reglas de negocio.
+ * Devuelve null sin monto (la fila muestra "—" aparte).
+ */
+internal fun operationAmount(operation: Operation): Pair<String, com.agendaqr.core.ui.components.AmTone>? {
+    val amount = operation.amount?.takeIf { it.isNotBlank() } ?: return null
+    val isIncome = operation.type == OperationType.COBRO
+    val sign = if (isIncome) AppStrings.SignoCobro else AppStrings.SignoPago
+    val text = sign + listOfNotNull(amount, operation.currency?.takeIf { it.isNotBlank() }).joinToString(" ")
+    return text to if (isIncome) {
+        com.agendaqr.core.ui.components.AmTone.Success
+    } else {
+        com.agendaqr.core.ui.components.AmTone.Danger
+    }
+}
+
+/** Icono direccional de la actividad (decorativo; el texto comunica). */
+internal fun operationTypeIcon(type: OperationType): androidx.compose.ui.graphics.vector.ImageVector =
+    if (type == OperationType.PAGO) {
+        com.agendaqr.core.ui.components.AmIcons.Expense
+    } else {
+        com.agendaqr.core.ui.components.AmIcons.Income
+    }
+
+/** Tono semántico del tipo (pago = salida, danger; cobro = entrada, success). */
+internal fun operationTypeTone(type: OperationType): com.agendaqr.core.ui.components.AmTone =
+    if (type == OperationType.PAGO) {
+        com.agendaqr.core.ui.components.AmTone.Danger
+    } else {
+        com.agendaqr.core.ui.components.AmTone.Success
+    }
+
+/** Tono de la etiqueta tonal de procedencia del comprobante. */
+internal fun provenanceTone(provenance: ReceiptProvenance?): com.agendaqr.core.ui.components.AmTone =
+    when (provenance) {
+        ReceiptProvenance.ENVIADO -> com.agendaqr.core.ui.components.AmTone.Info
+        ReceiptProvenance.RECIBIDO -> com.agendaqr.core.ui.components.AmTone.Success
+        ReceiptProvenance.DESCONOCIDO, null -> com.agendaqr.core.ui.components.AmTone.Neutral
+    }
+

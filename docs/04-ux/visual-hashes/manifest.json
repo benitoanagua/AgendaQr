@@ -1,4 +1,6 @@
 {
+  "destination-detail-dark.png": "133d71815a8f7214d35cd88a72ad4d626cc6cac0681636ff45e030a9ae173427",
+  "destination-detail-light.png": "ec8bbdb0a6fe005dfe986f0773ffbe8ebacdef937b67cfcc5820d9fd464fad3e",
   "edit-destination-dark.png": "2c23c901f783115c298ebab7c3ffcd157bdcb2b2ded100a7097d0db16bee7c71",
   "edit-destination-light.png": "179a0290738c4ee0ba524cb89c3d62cdbb353c19590853714383f783d33d4995",
   "import-batch-dark.png": "9f96c846d5f55ad18ce19298bc6495c7dfe77e8b93802b5206fb2ee21fc42baf",
@@ -15,6 +17,8 @@
   "s04-search-light.png": "d5b43abafed1dccb51810971321ffb210261a8630d800143b74a1ded41402fe2",
   "s06-contexts-dark.png": "659e9a28432a1475fe93c8f503a882e1998fe82b2abb9981fb885aa9554f4690",
   "s06-contexts-light.png": "7ded10a19831cc862d6ecc587614bb563dcb439566c0961b3524bc220ca30e2d",
+  "s07-operation-row-dark.png": "e458888148514ecfcf273723c4607993c30af81b3c72e61ac6380fdf3038adda",
+  "s07-operation-row-light.png": "9c0a3bba356df6b6a6d2d2844f871949749d87ed102e771c59f48f863f8e7906",
   "s09-review-dark.png": "ce9619e670a606b1d36d46cb3984d5760a3c6be8204f011cc4c67eec1eaa34a6",
   "s09-review-light.png": "716fa3afe51c7ec9767b1b34f63bbfb599bd45b669cceeee8b49bca3cff1062e"
 

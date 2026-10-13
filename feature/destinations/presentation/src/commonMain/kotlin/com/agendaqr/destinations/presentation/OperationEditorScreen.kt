@@ -14,8 +14,9 @@ import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.domain.*
 
 /**
- * Selector de tipo de actividad (S07): dos chips con estado seleccionado
- * visible (no dos primarios compitiendo, §1/§11).
+ * Selector de tipo de actividad (S07): control segmentado mutuamente
+ * excluyente (referencia Stitch) — el tipo activo sobre píldora clara,
+ * sin dos chips compitiendo. La selección vive en la semántica de radio.
  */
 @Composable
 internal fun OperationTypeSelector(
@@ -23,18 +24,12 @@ internal fun OperationTypeSelector(
     onSelect: (OperationType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-        AmFilterChip(
-            label = AppStrings.Pago,
-            selected = type == OperationType.PAGO,
-            onClick = { onSelect(OperationType.PAGO) },
-        )
-        AmFilterChip(
-            label = AppStrings.Cobro,
-            selected = type == OperationType.COBRO,
-            onClick = { onSelect(OperationType.COBRO) },
-        )
-    }
+    AmSegmentedControl(
+        options = listOf(AppStrings.Pago, AppStrings.Cobro),
+        selectedIndex = if (type == OperationType.PAGO) 0 else 1,
+        onSelect = { onSelect(if (it == 0) OperationType.PAGO else OperationType.COBRO) },
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -131,14 +126,43 @@ internal fun OperationEditorScreen(
             )
         },
     ) {
-        // Tipo con semántica de selección (no dos botones primarios
-        // compitiendo): Guardar queda como única acción principal (§1).
+        state.error?.let { err ->
+            AmStatusBanner(
+                err.display(),
+                tone = AmTone.Danger,
+                actionLabel = err.action.label,
+                onAction = {
+                    viewModel.onAction(
+                        if (err.action == ErrorAction.Retry) OperationAction.RetryFailed
+                        else OperationAction.ClearError,
+                    )
+                },
+                onDismiss = { viewModel.onAction(OperationAction.ClearError) },
+            )
+        }
+        // Tipo con semántica de selección (segmentado, no dos botones
+        // primarios compitiendo): Guardar queda como única acción
+        // principal (§1). El error recuperable vive ARRIBA, visible sin
+        // scroll, junto al resto de estados de la pantalla.
         OperationTypeSelector(
             type = type,
             onSelect = { type = it },
         )
+        // Sección "Detalles de la actividad" (referencia Stitch): los
+        // campos agrupados por significado dentro de un solo cuerpo.
+        AmSectionHeader(text = AppStrings.DetallesDeLaActividad)
         AmListBody {
-            AmTextField(label = AppStrings.MontoOpcional, value = amount, onValueChange = { amount = it }, modifier = Modifier.fillMaxWidth())
+            AmTextField(
+                label = AppStrings.MontoOpcional,
+                value = amount,
+                onValueChange = { amount = it },
+                modifier = Modifier.fillMaxWidth(),
+                // Teclado decimal: el campo es un monto (presentación,
+                // sin cambiar la validación existente).
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal,
+                ),
+            )
             AmTextField(
                 label = AppStrings.Fecha,
                 value = dateText,
@@ -155,26 +179,14 @@ internal fun OperationEditorScreen(
                 ?: AppStrings.ParaElegirContexto,
             onClick = { contextSelection = contextSelection.openPicker() },
         )
+        // Sección "Notas": el detalle opcional vive en su propio grupo.
+        AmSectionHeader(text = AppStrings.Notas)
         AmListBody {
             AmTextField(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, modifier = Modifier.fillMaxWidth())
             AmTextField(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, modifier = Modifier.fillMaxWidth())
         }
         if (existing == null) {
             AmText(AppStrings.PodrasAdjuntarComprobantesMasAdelante, color = AmColor.TextSecondary, size = AmType.Label)
-        }
-        state.error?.let { err ->
-            AmStatusBanner(
-                err.display(),
-                tone = AmTone.Danger,
-                actionLabel = err.action.label,
-                onAction = {
-                    viewModel.onAction(
-                        if (err.action == ErrorAction.Retry) OperationAction.RetryFailed
-                        else OperationAction.ClearError,
-                    )
-                },
-                onDismiss = { viewModel.onAction(OperationAction.ClearError) },
-            )
         }
     }
 

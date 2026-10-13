@@ -16,9 +16,9 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
     ├── AmText.kt          # AmText, AmHeading (texto con interlineado propio)
     ├── AmIcon.kt          # AmIcon + AmIcons (Lucide, único punto de entrada)
     ├── AmTone.kt           # AmTone + toneColors + glifo por tono
-    ├── AmButtons.kt       # botones (solid/outline/none), chips estilo selector, toggle de favorito
+    ├── AmButtons.kt       # botones (solid/outline/none), chips estilo selector, control segmentado (AmSegmentedControl), toggle de favorito
     ├── AmInputs.kt        # AmTextField (sin borde, guía hairline; ayuda/error a 4 dp y alineada al texto editable), AmSearchField (radio 6), AmSearchTrigger
-    ├── AmLists.kt         # AmListRow (celda), AmBadge
+    ├── AmLists.kt         # AmListRow (celda; slot leading tipado), AmBadge, AmTonalTag, AmIconBadge, AmMetaRow
     ├── AmStatus.kt        # AmStatusBanner, AmLoading, AmEmptyState, AmSection
     ├── AmChrome.kt        # AmTopBar, navegación raíz, FAB, transición de superficies
     ├── AmScaffold.kt      # AmScreenScaffold (contenedor de pantalla), AmBottomAction (acción principal fija: ancho completo + navigationBars + IME)

@@ -40,11 +40,11 @@ fun AmColorScheme.toneColors(tone: AmTone): ToneColors = when (tone) {
 }
 
 @Composable
-internal fun AmTone.content(): Color =
+fun AmTone.content(): Color =
     LocalAmColorScheme.current.toneColors(this).content
 
 @Composable
-internal fun AmTone.container(): Color =
+fun AmTone.container(): Color =
     LocalAmColorScheme.current.toneColors(this).container
 
 /**

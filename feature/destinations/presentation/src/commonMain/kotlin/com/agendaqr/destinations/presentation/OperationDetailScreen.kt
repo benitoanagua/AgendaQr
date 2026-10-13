@@ -11,6 +11,7 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.theme.*
@@ -74,10 +75,67 @@ internal fun OperationDetailScreen(
         snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
-            AmStatusBanner(
-                operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt) + " · " +
-                    operation.amount.orEmpty().ifBlank { AppStrings.SinMonto }
-            )
+        // Hero de la actividad (referencia Stitch): tarjeta con insignia
+        // direccional, tipo + fecha y monto destacado con signo. El monto
+        // es presentación; el valor registrado no cambia.
+        val amountText = operationAmount(operation)
+        AmListBody {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(AmSpacing.Lg),
+                verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Md),
+                ) {
+                    AmIconBadge(
+                        icon = operationTypeIcon(operation.type),
+                        tone = operationTypeTone(operation.type),
+                    )
+                    Column {
+                        AmText(
+                            operationTypeLabel(operation.type),
+                            size = AmType.Label,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                        )
+                        AmText(
+                            formatDate(operation.occurredAt),
+                            size = AmType.Caption,
+                            color = AmColor.TextSecondary,
+                        )
+                    }
+                }
+                amountText?.let { (text, tone) ->
+                    AmText(
+                        text,
+                        size = AmType.Display,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                        color = tone.content(),
+                    )
+                }
+            }
+        }
+        // Metadatos en filas compactas (referencia Stitch): etiqueta a la
+        // izquierda, valor a la derecha; la nota larga va como texto.
+        val hasMetadata = operation.personOrEntity != null ||
+            operation.currency != null ||
+            operation.concept != null ||
+            operation.note != null
+        if (hasMetadata) {
+            AmListBody {
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Md),
+                    verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                ) {
+                    operation.personOrEntity?.let { AmMetaRow(label = AppStrings.LabelPersonaOEntidad, value = it) }
+                    operation.currency?.let { AmMetaRow(label = AppStrings.LabelMoneda, value = it) }
+                    operation.concept?.let { AmMetaRow(label = AppStrings.LabelConcepto, value = it) }
+                    operation.note?.let {
+                        AmText(it, color = AmColor.TextSecondary)
+                    }
+                }
+            }
+        }
         // estado de sincronización del elemento (texto, no solo color).
         val operationSyncStatus = syncLookup.status(SyncResource.OPERATION, operation.id)
         ElementSyncBadge(operationSyncStatus)
@@ -93,29 +151,38 @@ internal fun OperationDetailScreen(
                 color = AmColor.TextSecondary,
             )
         }
-        operation.personOrEntity?.let { AmText(AppStrings.PersonaOEntidad + it) }
-        operation.currency?.let { AmText(AppStrings.Moneda + it) }
-        operation.concept?.let { AmText(AppStrings.Concepto + it) }
-        operation.note?.let { AmText(AppStrings.Nota2 + it, color = AmColor.TextSecondary) }
 
         AmSection(AppStrings.SeccionComprobantes) {
             if (state.operationComprobantes.isEmpty()) {
                 AmText(AppStrings.SinComprobanteAdjunto, color = AmColor.TextSecondary)
                 AmTextAction(label = AppStrings.attachReceiptNow, onClick = { viewModel.openUnassociatedForOperation(operation.id) })
             } else {
-                for (receipt in state.operationComprobantes) {
-                    // §12 V1.4: fila ListItem; "Desasociar" como acción de fila.
-                    AmListRow(
-                        title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
-                        subtitle = formatDate(receipt.createdAt),
-                        onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) },
-                        meta = {
-                            AmTextAction(
-                                label = AppStrings.Desasociar,
-                                onClick = { viewModel.onAction(OperationAction.Disassociate(receipt.id)) },
-                            )
-                        },
-                    )
+                AmListBody {
+                    for (receipt in state.operationComprobantes) {
+                        // §12 V1.4: comprobante como fila con identidad
+                        // (sujeta-papeles) y procedencia como etiqueta
+                        // tonal; "Desasociar" como acción de fila.
+                        AmListRow(
+                            title = AppStrings.Comprobante,
+                            subtitle = formatDate(receipt.createdAt),
+                            onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) },
+                            leading = {
+                                AmIconBadge(icon = AmIcons.Attachment, tone = AmTone.Neutral)
+                            },
+                            meta = {
+                                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+                                    AmTonalTag(
+                                        text = receiptProvenanceLabel(receipt.provenance),
+                                        tone = provenanceTone(receipt.provenance),
+                                    )
+                                    AmTextAction(
+                                        label = AppStrings.Desasociar,
+                                        onClick = { viewModel.onAction(OperationAction.Disassociate(receipt.id)) },
+                                    )
+                                }
+                            },
+                        )
+                    }
                 }
             }
         }

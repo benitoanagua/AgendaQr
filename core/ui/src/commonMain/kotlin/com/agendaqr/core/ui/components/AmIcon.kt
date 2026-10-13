@@ -11,6 +11,8 @@ import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.ArrowDownLeft
+import com.composables.icons.lucide.ArrowUpRight
 import com.composables.icons.lucide.Camera
 import com.composables.icons.lucide.CircleCheck
 import com.composables.icons.lucide.Ellipsis
@@ -21,6 +23,7 @@ import com.composables.icons.lucide.ImageOff
 import com.composables.icons.lucide.Inbox
 import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Paperclip
 import com.composables.icons.lucide.Plus
 import com.composables.icons.lucide.QrCode
 import com.composables.icons.lucide.Receipt
@@ -121,4 +124,10 @@ object AmIcons {
     val ImageOff: ImageVector get() = Lucide.ImageOff
     /** Escanear (entrada de captura). */
     val ScanLine: ImageVector get() = Lucide.ScanLine
+    /** Cobro (entrada de dinero; flecha entrante). */
+    val Income: ImageVector get() = Lucide.ArrowDownLeft
+    /** Pago (salida de dinero; flecha saliente). */
+    val Expense: ImageVector get() = Lucide.ArrowUpRight
+    /** Comprobante adjunto (sujeta-papeles). */
+    val Attachment: ImageVector get() = Lucide.Paperclip
 }

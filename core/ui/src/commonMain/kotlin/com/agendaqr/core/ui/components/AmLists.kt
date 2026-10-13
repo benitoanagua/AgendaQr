@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,9 +18,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmShapes
@@ -59,6 +62,91 @@ fun AmBadge(
             text,
             style = AmTextStyles.Support,
             color = toneColor,
+        )
+    }
+}
+
+/**
+ * Etiqueta semántica de estado con fondo tonal (Tag round de la
+ * referencia): par texto/contenedor del tono garantizado por
+ * AmSchemeTest sobre el bloque tonal. No interactiva; el estado se
+ * expresa con TEXTO (nunca solo color). Para el estilo outline usa
+ * [AmBadge].
+ */
+@Composable
+fun AmTonalTag(
+    text: String,
+    modifier: Modifier = Modifier,
+    tone: AmTone = AmTone.Neutral,
+) {
+    Box(
+        modifier = modifier
+            .background(tone.container(), AmShapes.Pill)
+            .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text,
+            style = AmTextStyles.Support,
+            color = tone.content(),
+        )
+    }
+}
+
+/**
+ * Insignia de identidad tipada: glifo del tono sobre el bloque tonal
+ * (p. ej. flecha entrante verde = cobro, saliente roja = pago). El glifo
+ * es decorativo — el TEXTO de la fila comunica el tipo; la forma
+ * acompaña, nunca es la única señal (contrato de accesibilidad).
+ */
+@Composable
+fun AmIconBadge(
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+    tone: AmTone = AmTone.Neutral,
+) {
+    Box(
+        modifier = modifier
+            .background(tone.container(), AmShapes.Pill)
+            .padding(AmSpacing.Xs),
+        contentAlignment = Alignment.Center,
+    ) {
+        AmIcon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = tone.content(),
+        )
+    }
+}
+
+/**
+ * Fila de metadatos compacta (label + valor): etiqueta secundaria a la
+ * izquierda, valor principal alineado a la derecha. Para valores largos
+ * multilinea (notas) usa texto aparte, no esta fila.
+ */
+@Composable
+fun AmMetaRow(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier,
+    /** Glifo decorativo del concepto de la fila (opcional). */
+    icon: ImageVector? = null,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+    ) {
+        icon?.let {
+            AmIcon(imageVector = it, contentDescription = null, tint = AmColor.TextTertiary)
+        }
+        Text(label, style = AmTextStyles.Caption, color = AmColor.TextSecondary)
+        Text(
+            value,
+            modifier = Modifier.weight(1f),
+            style = AmTextStyles.Body,
+            color = AmColor.TextPrimary,
+            textAlign = TextAlign.End,
         )
     }
 }
@@ -106,6 +194,9 @@ fun AmListRow(
     trailing: (@Composable () -> Unit)? = null,
     /** Identidad de contexto: punto de acento derivado del id. */
     accent: Color? = null,
+    /** Identidad tipada del contenido (p. ej. cobro/pago); sustituye al
+     * punto de acento. El glifo es decorativo: el texto comunica. */
+    leading: (@Composable () -> Unit)? = null,
     /** selección explícita con semántica `selected`. */
     selected: Boolean = false,
     /** Metadato en línea PROPIA, bajo el subtítulo (p. ej. el badge de
@@ -145,7 +236,7 @@ fun AmListRow(
             } else {
                 null
             },
-            leadingContent = accent?.let { color ->
+            leadingContent = leading ?: accent?.let { color ->
                 {
                     Box(
                         modifier = Modifier

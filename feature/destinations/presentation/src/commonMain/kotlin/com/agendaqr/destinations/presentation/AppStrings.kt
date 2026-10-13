@@ -209,7 +209,7 @@ internal object AppStrings {
     val QrImportado = "QR importado"
     val ComprobanteNoEncontrado = "Comprobante no encontrado"
     val Favoritos = "Favoritos"
-    /** S01 (tile Favoritos): estado del filtro expresado con TEXTO visible
+    /** S02 (tile Favoritos): estado del filtro expresado con TEXTO visible
      * (§11) — el acento del tile ya no cambia para no reutilizar un acento
      * de contexto con otro significado (contrato §5.1). */
     val FavoritosActivado = "Favoritos: activado"
@@ -238,4 +238,21 @@ internal object AppStrings {
     val ParaContextoElegido = "Para: "
     val ParaElegirContexto = "Para: elegir contexto (opcional)"
     val ContextoGenerico = "Contexto"
+    // ------------------------------------------------------------------
+    // Referencia visual Stitch (Ant Design Mobile): jerarquía financiera
+    // de Actividades y metadatos de detalle (ADR-0015).
+    // ------------------------------------------------------------------
+    /** Filtro de tipo del historial: todas las actividades. */
+    val Todos = "Todos"
+    /** Encabezado del grupo de datos principales del editor (S07). */
+    val DetallesDeLaActividad = "Detalles de la actividad"
+    /** Encabezado del grupo de notas del editor (S07). */
+    val Notas = "Notas"
+    /** Metadatos: etiquetas cortas sin puntuación (fila compacta). */
+    val LabelPersonaOEntidad = "Persona o entidad"
+    val LabelMoneda = "Moneda"
+    val LabelConcepto = "Concepto"
+    /** Signo direccional del monto: cobro = entrada (+), pago = salida (−). */
+    val SignoCobro = "+"
+    val SignoPago = "−"
 }

@@ -253,6 +253,12 @@ object AmColor {
     val Wathet: Color @Composable get() = LocalAmColorScheme.current.wathet
     val Danger: Color @Composable get() = LocalAmColorScheme.current.danger
     val OnDanger: Color @Composable get() = LocalAmColorScheme.current.onDanger
+    /** Texto/ icono de éxito sobre superficie o contenedor (≥ 4.5:1). */
+    val Success: Color @Composable get() = LocalAmColorScheme.current.success
+    /** Bloque tonal de éxito (fondos de identidad de cobro, etiquetas). */
+    val SuccessContainer: Color @Composable get() = LocalAmColorScheme.current.successContainer
+    /** Bloque tonal neutro profundo (etiquetas sobre fondo, ambos temas). */
+    val SurfaceContainerHighest: Color @Composable get() = LocalAmColorScheme.current.surfaceContainerHighest
     val Focus: Color @Composable get() = LocalAmColorScheme.current.focus
     val Disabled: Color @Composable get() = LocalAmColorScheme.current.disabled
     val OnDisabled: Color @Composable get() = LocalAmColorScheme.current.onDisabled

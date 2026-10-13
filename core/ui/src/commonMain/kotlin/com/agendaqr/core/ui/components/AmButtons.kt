@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -21,8 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -356,6 +361,61 @@ fun AmFilterChip(
             )
         },
     )
+}
+
+/**
+ * Control segmentado (Segmented de la referencia): pista tonal
+ * (`surfaceContainerHighest`) con opción activa sobre píldora `Surface`.
+ * Mutuamente excluyente por semántica (`selectableGroup` + rol radio) y
+ * por estado. Cada opción conserva el objetivo táctil de 48 dp.
+ */
+@Composable
+fun AmSegmentedControl(
+    options: List<String>,
+    selectedIndex: Int,
+    onSelect: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    require(options.isNotEmpty()) { "AmSegmentedControl necesita al menos una opción" }
+    require(selectedIndex in options.indices) { "AmSegmentedControl: índice fuera de rango" }
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(AmColor.SurfaceContainerHighest, AmShapes.Pill)
+            .selectableGroup()
+            .padding(AmSpacing.Xs),
+        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+    ) {
+        options.forEachIndexed { index, option ->
+            val selected = index == selectedIndex
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(AmShapes.Pill)
+                    .then(
+                        if (selected) {
+                            Modifier.background(AmColor.Surface, AmShapes.Pill)
+                        } else {
+                            Modifier
+                        },
+                    )
+                    .selectable(
+                        selected = selected,
+                        role = Role.RadioButton,
+                        onClick = { onSelect(index) },
+                    )
+                    .defaultMinSize(minHeight = AmMetrics.ControlMinSize),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    option,
+                    style = AmTextStyles.Support,
+                    color = if (selected) AmColor.TextPrimary else AmColor.TextSecondary,
+                    maxLines = 1,
+                )
+            }
+        }
+    }
 }
 
 /**

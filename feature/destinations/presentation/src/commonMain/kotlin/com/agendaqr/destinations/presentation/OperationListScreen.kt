@@ -96,7 +96,16 @@ internal fun OperationListScreen(
 ) {
     val operations = viewModel.visibleOperations()
     var visibleCount by remember(operations.size) { mutableStateOf(50) }
-    val paged = operations.take(visibleCount)
+    // Filtro de tipo (referencia Stitch: Todos · Pagos · Cobros). Es solo
+    // presentación sobre la lista ya visible del VM: no crea estado en el
+    // VM ni acciones nuevas; sobrevive a la recreación.
+    var typeFilter by androidx.compose.runtime.saveable.rememberSaveable { androidx.compose.runtime.mutableStateOf(0) }
+    val filtered = when (typeFilter) {
+        1 -> operations.filter { it.type == OperationType.PAGO }
+        2 -> operations.filter { it.type == OperationType.COBRO }
+        else -> operations
+    }
+    val paged = filtered.take(visibleCount)
     // V1.4 (§12): Actividades es destino raíz — barra superior con título,
     // navegación inferior y FAB extendido "Registrar" (la acción de
     // creación vive en el FAB, no en la barra).
@@ -117,7 +126,16 @@ internal fun OperationListScreen(
             )
         },
     ) {
-            AmSearchField(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = AppStrings.Buscar, placeholder = AppStrings.BuscarOperaciones, onClear = { viewModel.onAction(OperationAction.Search("")) }, clearLabel = AppStrings.Limpiar)
+            // Búsqueda + filtro de tipo como grupo (8 dp): la referencia
+            // los integra en la misma jerarquía de entrada.
+            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                AmSearchField(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = AppStrings.Buscar, placeholder = AppStrings.BuscarOperaciones, onClear = { viewModel.onAction(OperationAction.Search("")) }, clearLabel = AppStrings.Limpiar)
+                AmSegmentedControl(
+                    options = listOf(AppStrings.Todos, AppStrings.Pago, AppStrings.Cobro),
+                    selectedIndex = typeFilter,
+                    onSelect = { typeFilter = it },
+                )
+            }
         if (state.unassociated.isNotEmpty()) {
             // Bandeja como grupo: el aviso vive pegado a su acción (8 dp).
             Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
@@ -139,7 +157,7 @@ internal fun OperationListScreen(
                 onDismiss = { viewModel.onAction(OperationAction.ClearError) },
             )
         }
-        if (operations.isEmpty()) {
+        if (filtered.isEmpty()) {
             AmEmptyState(
                 icon = AmIcons.Register,
                 title = if (state.query.isBlank()) AppStrings.AunNoHayOperaciones else AppStrings.NoHayCoincidencias,
@@ -158,28 +176,46 @@ internal fun OperationListScreen(
                 modifier = Modifier.fillMaxWidth().weight(1f),
             ) {
                 itemsIndexed(paged, key = { _, operation -> operation.id }) { index, operation ->
-                    // Fila ListItem convencional con el contenido a la
-                    // derecha; el estado de sincronización con texto.
+                    // Anatomía financiera de la referencia: contraparte
+                    // como título, tipo+fecha como subtítulo (el tipo
+                    // SIEMPRE en texto), insignia direccional a la
+                    // izquierda y monto con signo a la derecha.
                     AmListRow(
-                        title = listOfNotNull(
-                            operationTypeLabel(operation.type),
-                            operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
-                        ).joinToString(" · "),
-                        subtitle = formatDate(operation.occurredAt) +
-                            (operation.personOrEntity?.let { " · $it" } ?: ""),
+                        title = operationTitle(operation),
+                        subtitle = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
                         onClick = { viewModel.onAction(OperationAction.Open(operation.id)) },
+                        leading = {
+                            AmIconBadge(
+                                icon = operationTypeIcon(operation.type),
+                                tone = operationTypeTone(operation.type),
+                            )
+                        },
                         meta = {
                             ElementSyncBadge(
                                 syncLookup.status(SyncResource.OPERATION, operation.id),
                             )
                         },
+                        trailing = {
+                            operationAmount(operation)?.let { (text, tone) ->
+                                AmText(
+                                    text,
+                                    size = AmType.Label,
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                                    color = tone.content(),
+                                )
+                            } ?: AmText(
+                                AppStrings.SinMontoCorto,
+                                size = AmType.Label,
+                                color = AmColor.TextSecondary,
+                            )
+                        },
                         showDivider = index < paged.lastIndex,
                     )
                 }
-                if (paged.size < operations.size) {
+                if (paged.size < filtered.size) {
                     item {
                         AmLoadMoreFooter(
-                            onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(operations.size) },
+                            onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(filtered.size) },
                             loadMoreLabel = AppStrings.CargarMas,
                             loadingLabel = AppStrings.Cargando,
                             endLabel = AppStrings.NoHayMasElementos,

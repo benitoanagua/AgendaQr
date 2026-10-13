@@ -2,6 +2,11 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
+import com.agendaqr.core.ui.components.AmIconBadge
+import com.agendaqr.core.ui.components.AmListRow
+import com.agendaqr.core.ui.components.AmSegmentedControl
+import com.agendaqr.core.ui.components.AmText
+import com.agendaqr.core.ui.components.content
 import com.agendaqr.core.ui.theme.AmTheme
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
@@ -276,6 +281,125 @@ class Round2ScreenshotTest {
             onImportMany = {},
             onBack = {},
         )
+    }
+
+    // Detalle y exhibición QR (referencia Stitch): hero de 320 dp con
+    // metadatos en tarjeta compacta.
+    private fun detailFixture() = com.agendaqr.destinations.domain.Destination(
+        id = "d-1", name = "Carniceria Don Bife",
+        category = "Almacén",
+        note = "Compra semanal de la fiambrería.",
+        qr = com.agendaqr.destinations.domain.QrAsset(encoded = "eA=="),
+        createdAt = 1, updatedAt = 1,
+    )
+
+    @Test fun destination_detail_light() = shot("destination-detail-light", dark = false) {
+        DestinationDetailScreen(
+            destination = detailFixture(),
+            onShowQr = {},
+            onEdit = {},
+            onDelete = {},
+            onShare = {},
+            onBack = {},
+        )
+    }
+
+    @Test fun destination_detail_dark() = shot("destination-detail-dark", dark = true) {
+        DestinationDetailScreen(
+            destination = detailFixture(),
+            onShowQr = {},
+            onEdit = {},
+            onDelete = {},
+            onShare = {},
+            onBack = {},
+        )
+    }
+
+    // Anatomía de fila de actividad (referencia Stitch): insignia
+    // direccional + contraparte + tipo/fecha + monto con signo. El
+    // OperationsScreen completo requiere OperationsViewModel (precedente
+    // S10: no se compone en Robolectric); aquí se captura el patrón
+    // visual con los mismos helpers internos que usa la pantalla.
+    @Test fun s07_operation_row_light() = shot("s07-operation-row-light", dark = false) {
+        val pago = com.agendaqr.destinations.domain.Operation(
+            "op-1", com.agendaqr.destinations.domain.OperationType.PAGO,
+            occurredAt = 1760000000000, createdAt = 1760000000000,
+            amount = "120", currency = "USD", personOrEntity = "Carnicería Don Bife",
+        )
+        val cobro = com.agendaqr.destinations.domain.Operation(
+            "op-2", com.agendaqr.destinations.domain.OperationType.COBRO,
+            occurredAt = 1760000000000, createdAt = 1760000000000,
+            amount = "45", currency = "USD", personOrEntity = "Verdulería Mercedes",
+        )
+        androidx.compose.foundation.layout.Column {
+            AmSegmentedControl(
+                options = listOf(AppStrings.Todos, AppStrings.Pago, AppStrings.Cobro),
+                selectedIndex = 0,
+                onSelect = {},
+            )
+            com.agendaqr.core.ui.components.AmListBody {
+                listOf(pago, cobro).forEachIndexed { index, operation ->
+                    AmListRow(
+                        title = operationTitle(operation),
+                        subtitle = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
+                        onClick = {},
+                        leading = {
+                            AmIconBadge(
+                                icon = operationTypeIcon(operation.type),
+                                tone = operationTypeTone(operation.type),
+                            )
+                        },
+                        trailing = {
+                            operationAmount(operation)?.let { (text, tone) ->
+                                AmText(text, color = tone.content())
+                            }
+                        },
+                        showDivider = index < 1,
+                    )
+                }
+            }
+        }
+    }
+
+    @Test fun s07_operation_row_dark() = shot("s07-operation-row-dark", dark = true) {
+        val pago = com.agendaqr.destinations.domain.Operation(
+            "op-1", com.agendaqr.destinations.domain.OperationType.PAGO,
+            occurredAt = 1760000000000, createdAt = 1760000000000,
+            amount = "120", currency = "USD", personOrEntity = "Carnicería Don Bife",
+        )
+        val cobro = com.agendaqr.destinations.domain.Operation(
+            "op-2", com.agendaqr.destinations.domain.OperationType.COBRO,
+            occurredAt = 1760000000000, createdAt = 1760000000000,
+            amount = "45", currency = "USD", personOrEntity = "Verdulería Mercedes",
+        )
+        androidx.compose.foundation.layout.Column {
+            AmSegmentedControl(
+                options = listOf(AppStrings.Todos, AppStrings.Pago, AppStrings.Cobro),
+                selectedIndex = 2,
+                onSelect = {},
+            )
+            com.agendaqr.core.ui.components.AmListBody {
+                listOf(pago, cobro).forEachIndexed { index, operation ->
+                    AmListRow(
+                        title = operationTitle(operation),
+                        subtitle = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
+                        onClick = {},
+                        leading = {
+                            AmIconBadge(
+                                icon = operationTypeIcon(operation.type),
+                                tone = operationTypeTone(operation.type),
+                            )
+                        },
+                        trailing = {
+                            operationAmount(operation)?.let { (text, tone) ->
+                                AmText(text, color = tone.content())
+                            }
+                        },
+                        showDivider = index < 1,
+                    )
+                }
+            }
+        }
     }
 
     private fun rootChrome(selected: String) =

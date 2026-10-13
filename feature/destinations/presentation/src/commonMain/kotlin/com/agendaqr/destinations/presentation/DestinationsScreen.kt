@@ -31,6 +31,7 @@ import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmSpacing
+import com.agendaqr.core.ui.theme.accentFor
 import com.agendaqr.destinations.domain.Destination
 
 @Composable
@@ -174,6 +175,10 @@ fun DestinationRow(
         subtitle = destinationSubtitle(destination),
         showDivider = showDivider,
         onClick = { onAction(DestinationAction.Open(destination.id)) },
+        // Identidad de contexto (M4): el punto de acento derivado del
+        // id del contexto agrupa visualmente los QR de un mismo
+        // contexto (referencia Stitch: identificadores de color).
+        accent = destination.contextId?.let { accentFor(it).background },
         // Badge bajo el texto (línea propia vía `meta`): no compite por el
         // ancho con la acción en pantallas estrechas.
         meta = {

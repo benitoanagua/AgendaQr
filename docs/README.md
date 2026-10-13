@@ -68,6 +68,7 @@
 | [`07-decisiones/ADR-0012-ui-convencional-material3.md`](07-decisiones/ADR-0012-ui-convencional-material3.md) | ADR histórico; autoría visual sustituida por ADR-0013 |
 | [`07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md`](07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md) | ADR histórico; autoría visual sustituida por ADR-0014 |
 | [`07-decisiones/ADR-0014-referencia-ant-design-mobile.md`](07-decisiones/ADR-0014-referencia-ant-design-mobile.md) | ADR: referencia Ant Design Mobile + navegación Android/iOS |
+| [`07-decisiones/ADR-0015-referencia-stitch-jerarquia-financiera.md`](07-decisiones/ADR-0015-referencia-stitch-jerarquia-financiera.md) | ADR: patrones financieros de la referencia Stitch (segmentado, tags tonales, hero QR); paleta e Inter no adoptadas |
 
 ## Validación
 
