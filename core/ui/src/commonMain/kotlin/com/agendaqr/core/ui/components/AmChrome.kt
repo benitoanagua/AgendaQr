@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMotion
 import com.agendaqr.core.ui.theme.AmSpacing
@@ -42,7 +43,7 @@ private val AmTabLabelStyle = androidx.compose.ui.text.TextStyle(
     fontSize = AmType.Caption,
     lineHeight = AmType.LineHeightLabelSmall,
     fontFamily = AmType.FamilyUi,
-    letterSpacing = androidx.compose.ui.unit.TextUnit.Unspecified,
+    letterSpacing = 0.sp,
 )
 
 /**
