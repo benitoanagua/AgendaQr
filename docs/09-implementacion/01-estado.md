@@ -12,7 +12,7 @@
 |---|---|---|
 | Dominio (operaciones, comprobantes, contextos) | Implementado | domain tests |
 | Datos (Supabase local-first, sync queue) | Implementado | data tests |
-| UX/UI V1.3 (AgendaMobile sobre Material 3, S01–S12) | Implementado | Robolectric suite + hashes visuales + gate del design system |
+| UX/UI V1.4 (referencia Ant Design Mobile, S01–S12) | Implementado | Robolectric suite + hashes visuales + gate del design system |
 | Chrome e insets (TopBar, NavigationBar/NavigationRail, Scaffold con contentWindowInsets) | Implementado | Robolectric suite + gate |
 | Edge-to-edge Android (`enableEdgeToEdge`) | Implementado | ensamblado; runtime NO VERIFICADO (dispositivo) |
 | Predictive back (PredictiveBackHandler con progreso) | Implementado | compilación 3 targets; gesto NO VERIFICADO (dispositivo) |
@@ -43,11 +43,11 @@ dispositivo físico o red). No se declaran PASS.
 ## Límites conocidos (decisiones, no bugs)
 
 - Glifos "Editar", "Compartir" y "Mostrar QR" sin icono asignado
-  (contrato AgendaMobile §7): esas acciones de la barra superior van como acción
+  (contrato §7): esas acciones de la barra superior van como acción
   de texto (con su descripción accesible como etiqueta) hasta una
   decisión de iconografía.
 - El contraste NO textual de algunos acentos de contexto contra el fondo
-  del tema es < 3:1 (contrato AgendaMobile §4.2): se aceptan como
+  del tema es < 3:1 (contrato §4.2): se aceptan como
   identidad de dato (encabezados de S06, punto de fila) siempre con
   texto legible.
 - Autofill de credenciales: `KeyboardOptions.contentType` no existe en

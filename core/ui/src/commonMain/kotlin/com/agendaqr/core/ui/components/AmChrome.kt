@@ -33,11 +33,21 @@ import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMotion
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
+import com.agendaqr.core.ui.theme.AmType
+
+/** Etiqueta de pestaña (referencia: etiqueta 10 px; 11 sp por
+ * altura de barra M3). */
+private val AmTabLabelStyle = androidx.compose.ui.text.TextStyle(
+    fontSize = AmType.CaptionSmall,
+    lineHeight = AmType.LineHeightLabelSmall,
+    fontFamily = AmType.FamilyUi,
+)
 
 /**
- * Chrome convencional de AgendaMobile: barra superior `TopAppBar`,
- * navegación raíz `NavigationBar`/`NavigationRail`, botón flotante
- * extendido y la transición estándar entre superficies.
+ * Chrome de navegación (barra superior jerárquica + destinos raíz según
+ * convención Android; componentes de la referencia): barra superior
+ * `TopAppBar`, navegación raíz `NavigationBar`/`NavigationRail`, botón
+ * flotante extendido y la transición estándar entre superficies.
  */
 
 /**
@@ -234,7 +244,7 @@ fun AmNavBar(
                         tint = if (selected) AmColor.Accent else AmColor.TextSecondary,
                     )
                 },
-                label = { Text(destination.label, style = AmTextStyles.Caption) },
+                label = { Text(destination.label, style = AmTabLabelStyle) },
                 alwaysShowLabel = true,
             )
         }
@@ -265,7 +275,7 @@ fun AmNavRail(
                         tint = if (selected) AmColor.Accent else AmColor.TextSecondary,
                     )
                 },
-                label = { Text(destination.label, style = AmTextStyles.Caption) },
+                label = { Text(destination.label, style = AmTabLabelStyle) },
                 alwaysShowLabel = true,
             )
         }

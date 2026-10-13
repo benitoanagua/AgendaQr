@@ -151,8 +151,9 @@ class AmUiPolishContractTest {
             AmText("Cuerpo de dos lineas para probar interlineado expandido")
         }
         val style = layoutOf("Cuerpo de dos lineas para probar interlineado expandido").layoutInput.style
-        assertEquals(16.sp, style.fontSize)
-        assertEquals(24.sp, style.lineHeight)
+        assertEquals(17.sp, style.fontSize)
+        // Proporción 1.5 del cuerpo (referencia): 17 × 1.5 = 25.5.
+        assertEquals(25.5.sp, style.lineHeight)
     }
 
     @Test

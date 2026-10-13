@@ -3,7 +3,6 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AmSnackbarHost
@@ -69,11 +68,11 @@ fun GlobalSearchScreen(
             )
             else -> LazyColumn(
                 modifier = Modifier.fillMaxWidth().weight(1f),
-                verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                verticalArrangement = Arrangement.spacedBy(AmSpacing.Md),
             ) {
                 // S04/S05 (M7): resultados heterogéneos agrupados por tipo,
                 // cada grupo con su encabezado de sección (§4: el tipo se
-                // expresa con texto/semántica).
+                // expresa con texto/semántica) y su cuerpo de lista.
                 val groups = state.results.groupBy { it.type }
                 com.agendaqr.destinations.domain.AgendaSearchResultType.entries.forEach { type ->
                     val group = groups[type].orEmpty()
@@ -81,15 +80,21 @@ fun GlobalSearchScreen(
                         item(key = "header:" + type.name) {
                             AmSectionHeader(text = searchResultTypeLabel(type))
                         }
-                        items(group, key = { it.type.name + ":" + it.id }) { result ->
-                            AmListRow(
-                                title = searchResultTitle(result),
-                                subtitle = searchResultSubtitle(result),
-                                // E-05: el marcador lateral solo aparece con
-                                // tono de estado o acento de contexto REALES;
-                                // un resultado de búsqueda no es ninguno.
-                                onClick = { onSelect(result) },
-                            )
+                        item(key = "body:" + type.name) {
+                            AmListBody {
+                                group.forEachIndexed { index, result ->
+                                    AmListRow(
+                                        title = searchResultTitle(result),
+                                        subtitle = searchResultSubtitle(result),
+                                        // El marcador lateral solo aparece
+                                        // con tono de estado o acento de
+                                        // contexto REALES; un resultado de
+                                        // búsqueda no es ninguno.
+                                        onClick = { onSelect(result) },
+                                        showDivider = index < group.lastIndex,
+                                    )
+                                }
+                            }
                         }
                     }
                 }

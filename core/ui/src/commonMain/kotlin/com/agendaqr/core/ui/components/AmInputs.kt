@@ -34,10 +34,10 @@ import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
 
 /**
- * Entradas AgendaMobile: campo TONAL (sin borde de reposo — superficie
- * secundaria con radio de tokens) con etiqueta, texto de apoyo y error
- * contextual. El foco y el error se marcan con la guía inferior y el
- * color; el error también con icono + texto debajo del campo.
+ * Entradas (patrón Form/List de la referencia): campo SIN borde, fondo
+ * transparente, con etiqueta, texto de apoyo y error contextual. La guía
+ * hairline inferior aparece en reposo (Divider), en foco (acento) y en
+ * error (peligro); el error también con icono + texto debajo del campo.
  *
  * - El error se expresa con icono + texto debajo del campo (nunca solo
  *   color) y se asocia también a la semántica del campo editable.
@@ -89,13 +89,13 @@ fun AmTextField(
             trailingIcon = trailing?.let { slot -> { slot() } },
             shape = AmShapes.Medium,
             colors = TextFieldDefaults.colors(
-                // Campo tonal: sin borde de reposo, guía inferior solo en
-                // foco y error.
-                unfocusedContainerColor = AmColor.SurfaceSecondary,
-                focusedContainerColor = AmColor.SurfaceSecondary,
-                disabledContainerColor = AmColor.Disabled,
-                errorContainerColor = AmColor.SurfaceSecondary,
-                unfocusedIndicatorColor = AmColor.Transparent,
+                // Sin borde ni relleno (referencia): fondo transparente y
+                // guía hairline — Divider en reposo, acento en foco.
+                unfocusedContainerColor = AmColor.Transparent,
+                focusedContainerColor = AmColor.Transparent,
+                disabledContainerColor = AmColor.Transparent,
+                errorContainerColor = AmColor.Transparent,
+                unfocusedIndicatorColor = AmColor.Divider,
                 focusedIndicatorColor = AmColor.Focus,
                 disabledIndicatorColor = AmColor.Transparent,
                 errorIndicatorColor = AmColor.Danger,
@@ -155,8 +155,10 @@ fun AmTextField(
 }
 
 /**
- * Campo de búsqueda: [AmTextField] tonal con glifo de búsqueda y limpieza
- * opcional etiquetada. La entrada real de búsqueda de producto (S04).
+ * Campo de búsqueda (SearchBar de la referencia): relleno box, radio 6,
+ * glifo de búsqueda y limpieza opcional etiquetada; activo con borde de
+ * acento. La entrada real de búsqueda de producto (S04). La altura mínima
+ * de 48 dp conserva el objetivo táctil (la referencia mide 32 px).
  */
 @Composable
 fun AmSearchField(
@@ -189,8 +191,8 @@ fun AmSearchField(
         },
         singleLine = true,
         label = { Text(label) },
-        shape = AmShapes.Pill,
-        leadingIcon = { AmIcon(imageVector = AmIcons.Search, contentDescription = null) },
+        shape = AmShapes.Medium,
+        leadingIcon = { AmIcon(imageVector = AmIcons.Search, contentDescription = null, tint = AmColor.TextTertiary) },
         trailingIcon = if (onClear != null && value.isNotEmpty()) {
             {
                 IconButton(onClick = onClear) {
@@ -206,11 +208,14 @@ fun AmSearchField(
         },
         colors = TextFieldDefaults.colors(
             unfocusedContainerColor = AmColor.SurfaceSecondary,
-            focusedContainerColor = AmColor.SurfaceSecondary,
-            unfocusedIndicatorColor = AmColor.Transparent,
-            focusedIndicatorColor = AmColor.Transparent,
+            focusedContainerColor = AmColor.Surface,
+            disabledContainerColor = AmColor.Transparent,
+            unfocusedIndicatorColor = AmColor.Divider,
+            focusedIndicatorColor = AmColor.Focus,
+            disabledIndicatorColor = AmColor.Transparent,
             unfocusedLabelColor = AmColor.TextSecondary,
             focusedLabelColor = AmColor.AccentText,
+            cursorColor = AmColor.Focus,
         ),
     )
 }

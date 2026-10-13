@@ -1,6 +1,6 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — V1.3 para contrato funcional y visual; contrato visual definido por ADR-0013 (AgendaMobile) y desarrollado en `docs/05-design-system/00-agendamobile-contrato-normativo.md`  
+**Estado:** FROZEN — V1.4 para contrato funcional; contrato visual definido por ADR-0014 (referencia Ant Design Mobile + navegación Android/iOS) y desarrollado en `docs/05-design-system/00-contrato-normativo-diseno.md`  
 **Fecha:** 2026-10-11  
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
 
@@ -12,8 +12,9 @@
 | V1.1 | 2026-10-05 | Enmienda por ADR-0005 (lenguaje visual Metro dentro de Xauxa): S01, S06, §11 y §12 reescritos. |
 | V1.2 | 2026-10-11 | Enmienda por ADR-0012 (UI convencional sobre Material 3, misma en ambas plataformas): §12 reescrito como diseño convencional (M1–M13 eliminados), §4 S01/S02/S12 recompuestos, §3 y §11 ajustados donde cambian. Intención, navegación conceptual, modelo mental, reglas de negocio y recuperación de errores: intactos. Aprobación explícita del propietario para enmendar la congelación registrada en ADR-0012. |
 | V1.3 | 2026-10-12 | Enmienda por ADR-0013 (sistema de diseño propio AgendaMobile): §12 actualizado a la autoría, paleta, formas y modo oscuro de AgendaMobile. Intención, navegación, modelo mental, reglas de negocio, accesibilidad y copy: intactos. |
+| V1.4 | 2026-10-13 | Enmienda por ADR-0014 (referencia Ant Design Mobile + navegación convencional Android/iOS): §12 actualizado a la referencia, paleta, radios y componentes oficiales; navegación jerárquica y de destinos conforme a plataforma. Intención, navegación conceptual, modelo mental, reglas de negocio, accesibilidad y copy: intactos. |
 
-La implementación vigente corresponde a V1.3. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/09-implementacion/01-estado.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
+La implementación vigente corresponde a V1.4. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/09-implementacion/01-estado.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
 ## 1. Contrato principal
 
@@ -249,11 +250,11 @@ Reglas vigentes V1.3:
 - **Escalado de fuente:** el contenido esencial y las acciones primarias
   no se truncan con la fuente del sistema al 200 %.
 
-## 12. Contrato visual — V1.3, ADR-0013
+## 12. Contrato visual — V1.4, ADR-0014
 
-> **Precedencia:** esta sección conserva la decisión de producto visual adoptada por ADR-0013 (AgendaMobile, sistema de diseño propio). Para reglas transversales detalladas, estados, accesibilidad, pruebas, gobernanza y resolución de contradicciones, prevalece `docs/05-design-system/00-agendamobile-contrato-normativo.md`. Si un detalle de esta sección contradice el contrato normativo, se debe reconciliar documentalmente; no se permite implementar una mezcla tácita.
+> **Precedencia:** esta sección conserva la decisión de producto visual adoptada por ADR-0014 (referencia Ant Design Mobile + navegación Android/iOS). Para reglas transversales detalladas, estados, accesibilidad, pruebas, gobernanza y resolución de contradicciones, prevalece `docs/05-design-system/00-contrato-normativo-diseno.md`. Si un detalle de esta sección contradice el contrato normativo, se debe reconciliar documentalmente; no se permite implementar una mezcla tácita.
 
-La UI es convencional, mobile-first y poco disruptiva: componentes estándar de Material 3 con el MISMO diseño en Android e iOS. La marca queda en el color de acento y poco más. Se conservan la paleta verificada, el lienzo claro del QR y las reglas de accesibilidad (§11). AgendaMobile es el único sistema de diseño: la capa de tokens (`AmTokens.kt`) y los envoltorios `Am*` son la única API visual de las features.
+La UI es convencional, mobile-first y poco disruptiva: componentes estándar de Material 3 con el MISMO diseño en Android e iOS. La marca queda en el color de acento y poco más. Se conservan la paleta verificada, el lienzo claro del QR y las reglas de accesibilidad (§11). La referencia visual es Ant Design Mobile: la capa de tokens (`AmTokens.kt`) y los componentes `Am*` son la única API visual de las features; la navegación sigue las convenciones de Android e iOS.
 
 ### Principios
 
@@ -341,4 +342,4 @@ Fuera del alcance de esta especificación conceptual: detalles internos de Kotli
 
 ## 14. Estado
 
-**UX/UI V1.3: FROZEN** (enmienda ADR-0013, 2026-10-12).
+**UX/UI V1.4: FROZEN** (enmienda ADR-0014, 2026-10-13).

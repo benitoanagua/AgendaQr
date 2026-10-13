@@ -12,7 +12,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 
 /**
- * Tema AgendaMobile (ADR-0013): la autoridad visual es [AmColorScheme];
+ * Tema (ADR-0014): la referencia es Ant Design Mobile; [AmColorScheme] es la autoridad de color;
  * Material 3 es la implementación. El esquema de M3 se deriva COMPLETO del
  * esquema semántico — incluidos los contenedores — para que ningún
  * componente herede la plantilla base de Material. Los componentes
@@ -42,7 +42,7 @@ fun AmTheme(
                     onPrimary = scheme.onAccent,
                     primaryContainer = scheme.accentContainer,
                     onPrimaryContainer = scheme.onAccentContainer,
-                    // AgendaMobile tiene UN acento; los slots M3 restantes
+                    // UN solo acento; los slots M3 restantes
                     // se cubren con roles propios (info), no con una
                     // segunda marca.
                     secondary = scheme.accent,
@@ -68,7 +68,7 @@ fun AmTheme(
                     surfaceContainer = scheme.surfaceContainer,
                     surfaceContainerHigh = scheme.surfaceContainerHigh,
                     surfaceContainerHighest = scheme.surfaceContainerHighest,
-                    outline = scheme.borderControl,
+                    outline = scheme.divider,
                     outlineVariant = scheme.border,
                     inverseSurface = scheme.inverseSurface,
                     inverseOnSurface = scheme.inverseOnSurface,
@@ -103,7 +103,7 @@ fun AmTheme(
                     surfaceContainer = scheme.surfaceContainer,
                     surfaceContainerHigh = scheme.surfaceContainerHigh,
                     surfaceContainerHighest = scheme.surfaceContainerHighest,
-                    outline = scheme.borderControl,
+                    outline = scheme.divider,
                     outlineVariant = scheme.border,
                     inverseSurface = scheme.inverseSurface,
                     inverseOnSurface = scheme.inverseOnSurface,

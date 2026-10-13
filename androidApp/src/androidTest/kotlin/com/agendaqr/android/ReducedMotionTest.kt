@@ -6,7 +6,7 @@ import kotlin.test.assertTrue
 
 /**
  * QA ronda 2 (checklist reduced motion): con las TRES escalas de
- * animación del sistema en 0, la navegación (turnstile) es instantánea:
+ * animación del sistema en 0, la navegación es instantánea:
  * la pantalla destino es visible en menos de 1 s desde el clic. Con el
  * valor por defecto (1.0) es un control de humo (misma ventana).
  */

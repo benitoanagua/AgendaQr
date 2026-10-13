@@ -27,7 +27,7 @@ import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmType
 
 /**
- * Feedback de proceso de AgendaMobile: skeleton, paginación, marco de
+ * Feedback de proceso: skeleton, paginación, marco de
  * medios y encuadre del scanner.
  */
 

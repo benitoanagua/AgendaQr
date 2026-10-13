@@ -37,7 +37,7 @@ class AmTypographyTest {
         // (headlineMedium) son los roles M3 estándar, en sp.
         assertEquals(22.sp, AmMaterialTypography.titleLarge.fontSize)
         assertEquals(28.sp, AmMaterialTypography.headlineMedium.fontSize)
-        assertEquals(16.sp, AmMaterialTypography.bodyLarge.fontSize)
+        assertEquals(17.sp, AmMaterialTypography.bodyLarge.fontSize)
         assertEquals(14.sp, AmMaterialTypography.labelLarge.fontSize)
     }
 

@@ -1,7 +1,7 @@
 import java.io.File
 
 /**
- * Gate del sistema de diseño AgendaMobile (ADR-0013). Las reglas por línea
+ * Gate del sistema de diseño (ADR-0014, referencia Ant Design Mobile). Las reglas por línea
  * operan sobre el código de producción; los source sets de test pueden
  * usar primitivas (p. ej. 48.dp para verificar touch targets) sin violar
  * la autoridad visual.
@@ -42,13 +42,16 @@ fun isUiLiteralAllowed(text: String): Boolean =
 
 /**
  * REGISTRO DE EXCEPCIONES del gate. El contrato normativo
- * (docs/05-design-system/00-agendamobile-contrato-normativo.md) declara la
+ * (docs/05-design-system/00-contrato-normativo-diseno.md) declara la
  * tabla de excepciones E-xx; esta tarea compara AMBOS conjuntos y falla si
- * no coinciden. AgendaMobile no tiene excepciones: ningún archivo de
+ * no coinciden. Las excepciones registradas son la única vía: ningún archivo de
  * producción dibuja bordes con `.border(`/`BorderStroke(` (la indicación
  * de foco y de estado vive en los componentes M3 y en el canvas).
  */
-val exceptionRegistry: Map<String, List<String>> = emptyMap()
+val exceptionRegistry: Map<String, List<String>> = mapOf(
+    "E-01" to listOf("border:AmButtons.kt"),
+    "E-02" to listOf("border:AmLists.kt"),
+)
 
 /** Archivos con `.border(`/`BorderStroke(` permitidos: ninguno. */
 val borderAllowedFiles: Set<String> =
@@ -75,7 +78,7 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
     // Las formas con esquinas viven SOLO en la capa de tokens; el tema
     // las pasa a MaterialTheme.shapes sin construir ninguna.
     val shapesAllowedFiles = listOf(TokenLayerFile)
-    // La capa feature compone AgendaMobile; los componentes Material solo
+    // La capa feature compone componentes del sistema; los componentes Material solo
     // viven en core:ui (que los adapta con tokens). Un import directo de
     // estos controles en feature/ es una fuga del design system.
     val bannedMaterialInFeature = listOf(
@@ -132,7 +135,7 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
                 line.contains("androidx.compose.material3.") ||
                 line.contains("MaterialTheme.colorScheme"))
         ) {
-            add("$location: app/feature code must use core:ui and AgendaMobile tokens: $line")
+            add("$location: app/feature code must use core:ui tokens: $line")
         }
         // Copy de UI en feature/ debe salir de AppStrings.
         if (isFeatureSource) {
@@ -153,10 +156,10 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
                 add("$location: UI string literal in expression outside AppStrings: ${expressionLiteral.groupValues[2]}")
             }
             // La interacción cruda es cosa del design system: feature/
-            // compone componentes AgendaMobile, nunca clickable propio
+            // compone componentes del sistema, nunca clickable propio
             // (feedback de pulsación, rol, foco y semántica viven en el DS).
             if (line.contains(".clickable(")) {
-                add("$location: raw .clickable( in feature/ (compose an AgendaMobile component): $line")
+                add("$location: raw .clickable( in feature/ (compose a system component): $line")
             }
             if (line.contains("indication = null")) {
                 add("$location: raw indication override in feature/ (feedback lives in the DS): $line")
@@ -243,7 +246,7 @@ tasks.register("verifyControlMinSize") {
         if (!tokens.exists()) return@doLast
         val content = tokens.readText()
         if (!content.contains("val ControlMinSize = 48.dp")) {
-            throw GradleException("AgendaMobile gate failed: AmMetrics.ControlMinSize must remain 48.dp.")
+            throw GradleException("Design gate failed: AmMetrics.ControlMinSize must remain 48.dp.")
         }
     }
 }
@@ -476,7 +479,7 @@ tasks.register("verifyDocs") {
 
 tasks.register("verifyDesignSystemCompliance") {
     group = "verification"
-    description = "Enforces AgendaMobile Design System invariants in production Kotlin sources."
+    description = "Enforces design-system invariants in production Kotlin sources."
     doLast {
         val violations = checkViolations().toMutableList()
         if (file("design-tokens.json").exists()) {
@@ -484,7 +487,7 @@ tasks.register("verifyDesignSystemCompliance") {
         }
         // La lista de excepciones del gate DEBE coincidir con la tabla del
         // contrato: sin entrada en AMBAS partes, no existe excepción válida.
-        val contractFile = file("docs/05-design-system/00-agendamobile-contrato-normativo.md")
+        val contractFile = file("docs/05-design-system/00-contrato-normativo-diseno.md")
         if (contractFile.exists()) {
             val tableIds = contractFile.readLines()
                 .mapNotNull { row -> Regex("^\\| (E-\\d+) \\|").find(row)?.groupValues?.get(1) }
@@ -501,7 +504,7 @@ tasks.register("verifyDesignSystemCompliance") {
         } else {
             violations += "contrato: no se encuentra ${contractFile.path} para verificar la tabla de excepciones"
         }
-        require(violations.isEmpty()) { "AgendaMobile Design System violations:\n${violations.joinToString("\n")}" }
+        require(violations.isEmpty()) { "Design System violations:\n${violations.joinToString("\n")}" }
     }
 }
 
@@ -511,7 +514,7 @@ tasks.register("verifyDesignSystemFixtures") {
     doLast {
         // Kotlin fixtures: los imports Material prohibidos en feature/
         // DEBEN fallar, y el mismo import en core:ui (donde los componentes
-        // AgendaMobile adaptan Material) no debe.
+        // el sistema adaptan Material) no debe.
         val bannedFeatureImports = listOf(
             "import androidx.compose.material3.OutlinedTextField",
             "import androidx.compose.material3.AlertDialog",

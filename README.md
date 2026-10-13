@@ -10,12 +10,12 @@ La implementación sigue una jerarquía explícita de fuentes de verdad:
 
 1. **Agenda QR** — producto, dominio, requisitos, alcance, decisiones y reglas de negocio.
 2. **UX/UI V1 de Agenda QR** — contrato de interacción congelado para la experiencia del producto.
-3. **AgendaMobile** — sistema de diseño propio: lenguaje visual, tokens, componentes y patrones.
+3. **Referencia Ant Design Mobile** — lenguaje visual, tokens, componentes y patrones; la navegación sigue las convenciones de Android e iOS.
 4. **WaraWerse** — referencia técnica para Kotlin Multiplatform, Compose, modularización, build y prácticas de testing.
 
 Si dos fuentes entran en conflicto, prevalece la fuente de mayor autoridad indicada arriba.
 
-WaraWerse nunca introduce lógica de negocio en Agenda QR. AgendaMobile define por completo la UI/UX visual del producto.
+WaraWerse nunca introduce lógica de negocio en Agenda QR. La referencia visual vigente es Ant Design Mobile (ADR-0014).
 
 ## 2. UX/UI V1
 
@@ -73,6 +73,6 @@ La existencia de código no equivale a validación de plataforma. Android e iOS 
 La documentación está organizada por autoridad y ciclo de desarrollo. Comienza en `docs/README.md`.
 
 
-## AgendaMobile Design System
+## Sistema de diseño
 
-El contrato visual vigente está en [`docs/05-design-system/00-agendamobile-contrato-normativo.md`](docs/05-design-system/00-agendamobile-contrato-normativo.md). [ADR-0013](docs/07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md) establece AgendaMobile como único sistema visual y sustituye las decisiones visuales anteriores. El estado de verificación por plataforma se mantiene en [`docs/09-implementacion/01-estado.md`](docs/09-implementacion/01-estado.md).
+El contrato visual vigente está en [`docs/05-design-system/00-contrato-normativo-diseno.md`](docs/05-design-system/00-contrato-normativo-diseno.md). [ADR-0014](docs/07-decisiones/ADR-0014-referencia-ant-design-mobile.md) establece Ant Design Mobile como única referencia visual. El estado de verificación por plataforma se mantiene en [`docs/09-implementacion/01-estado.md`](docs/09-implementacion/01-estado.md).

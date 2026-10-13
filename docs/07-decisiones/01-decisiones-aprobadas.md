@@ -62,7 +62,7 @@ CRM, obligaciones, saldos, pagos parciales, reembolsos especializados, contabili
 
 ## D-16 — UX
 
-La UI/UX permanece bajo un único sistema de diseño; esta consolidación no crea un sistema visual paralelo. (Historial: D-16 nombraba a Xauxa; ADR-0005/0012 lo mantuvieron como único sistema. Enmienda 2026-10-12, ADR-0013: el sistema de diseño propio AgendaMobile es el único sistema visual; Xauxa queda retirado.)
+La UI/UX permanece bajo un único sistema de diseño; esta consolidación no crea un sistema visual paralelo. (Historial: D-16 nombraba a Xauxa; ADR-0005/0012 lo mantuvieron como único sistema. ADR-0013 introdujo un sistema propio. Enmienda 2026-10-13, ADR-0014: la referencia visual es Ant Design Mobile; la autoría propia queda retirada.)
 
 ## D-17 — UX/UI V1 congelada
 
@@ -86,6 +86,6 @@ La implementación debe adaptarse al contrato UX/UI; un fallo de implementación
 
 ## D-18 — Sistema visual de la UI (UX/UI V1.3)
 
-AgendaMobile es el único sistema visual vigente de Agenda QR, conforme a ADR-0013 y al contrato normativo `docs/05-design-system/00-agendamobile-contrato-normativo.md`. Está implementado en Kotlin/Compose Multiplatform dentro de `core/ui`, con tokens semánticos, tema claro/oscuro y componentes compartidos. Ant Design Mobile y Vant son referencias de patrones de interacción, no dependencias de Compose.
+La referencia visual vigente de Agenda QR es Ant Design Mobile, conforme a ADR-0014 y al contrato normativo `docs/05-design-system/00-contrato-normativo-diseno.md`. Está implementada en Kotlin/Compose Multiplatform dentro de `core/ui`, con tokens semánticos, tema claro/oscuro y componentes compartidos. Vant no es referencia ni dependencia. La navegación sigue las convenciones de Android e iOS.
 
 La interfaz utiliza componentes convencionales adaptados con Material 3, mantiene una experiencia coherente entre Android e iOS y aplica las reglas de accesibilidad del contrato. Metro y Xauxa son decisiones históricas sustituidas; no forman parte de la arquitectura visual activa. La especificación UX/UI vigente es V1.3. El estado real de validación por plataforma se documenta únicamente en `docs/09-implementacion/01-estado.md`.

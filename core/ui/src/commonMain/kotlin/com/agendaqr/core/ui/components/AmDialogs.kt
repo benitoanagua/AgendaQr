@@ -2,6 +2,7 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -15,20 +16,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
+import com.agendaqr.core.ui.theme.AmShapes
+import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
 
 /**
- * Superposiciones de AgendaMobile: los diálogos confirman (dos acciones
- * claras) y resuelven selecciones acotadas — la distribución de patrones
- * de las apps móviles contemporáneas.
+ * Superposiciones (referencia: Modal): los diálogos confirman (dos
+ * acciones claras) y resuelven selecciones acotadas.
  *
- * NOTA (ADR-0013, riesgos): el patrón "hoja inferior para selectores"
- * (Ant ActionSheet / Vant Picker) se evaluó con `ModalBottomSheet` de M3
- * y se retiró: la ventana de la hoja no despacha acciones semánticas bajo
- * Robolectric (el contrato de pruebas UI de este repositorio), por lo
- * que el flujo S08 quedaba inverificable en el gate. Reevaluar cuando el
- * entorno de pruebas lo soporte.
+ * NOTA (ADR-0014, riesgos): el patrón de hoja para selectores (ActionSheet
+ * de la referencia) se evaluó con `ModalBottomSheet` de M3 y se retiró:
+ * la ventana de la hoja no despacha acciones semánticas bajo Robolectric
+ * (el contrato de pruebas UI de este repositorio), por lo que el flujo
+ * S08 quedaba inverificable en el gate. Reevaluar cuando el entorno de
+ * pruebas lo soporte.
  */
 
 /**
@@ -94,10 +96,17 @@ fun AmDialog(
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest ?: onDismiss,
+        // Modal de la referencia: radio 8, título centrado de 18 sp.
+        shape = AmShapes.Large,
         title = {
             Text(
                 title,
-                style = androidx.compose.material3.MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.fillMaxWidth(),
+                style = androidx.compose.material3.MaterialTheme.typography.headlineSmall.copy(
+                    fontSize = AmType.Title,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                ),
                 color = AmColor.TextPrimary,
             )
         },

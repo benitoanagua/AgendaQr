@@ -3,7 +3,7 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,6 +15,7 @@ import com.agendaqr.core.ui.components.AmNavChromeState
 import com.agendaqr.core.ui.components.AmEmptyState
 import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmPivot
+import com.agendaqr.core.ui.components.AmListBody
 import com.agendaqr.core.ui.components.AmListRow
 import com.agendaqr.core.ui.components.AmLoading
 import com.agendaqr.core.ui.components.AmScreenScaffold
@@ -24,7 +25,9 @@ import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTextAction
 import com.agendaqr.core.ui.components.AmTone
+import androidx.compose.foundation.background
 import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.accentFor
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmType
@@ -137,14 +140,18 @@ private fun ContextList(
                 actionLabel = AppStrings.CrearContexto,
                 onAction = onCreateContext,
             )
-            else -> LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                items(state.contexts, key = { it.id }) { context ->
+            else -> LazyColumn(
+                modifier = Modifier.fillMaxWidth().weight(1f)
+                    .background(AmColor.Surface, AmShapes.Large),
+            ) {
+                itemsIndexed(state.contexts, key = { _, context -> context.id }) { index, context ->
                     // M4: bloque de acento derivado del id del contexto.
                     AmListRow(
                         title = context.name,
                         subtitle = context.note?.takeIf { it.isNotBlank() },
                         onClick = { onAction(ContextAction.Open(context.id)) },
                         accent = accentFor(context.id).background,
+                        showDivider = index < state.contexts.lastIndex,
                     )
                 }
             }
@@ -216,29 +223,36 @@ private fun ContextDetail(
                         0 -> {
                             // U1: QR es invariable en español; conteo vía helper.
                             AmText(contextSectionLabel("QR", "QR", data.destinations.size), size = AmType.Label, color = AmColor.TextSecondary)
-                            data.destinations.forEach { destination ->
-                                AmListRow(
-                                    title = destination.name.ifBlank { AppStrings.QrSinNombre },
-                                    onClick = { onOpenDestination(destination.id) },
-                                )
+                            AmListBody {
+                                data.destinations.forEachIndexed { index, destination ->
+                                    AmListRow(
+                                        title = destination.name.ifBlank { AppStrings.QrSinNombre },
+                                        onClick = { onOpenDestination(destination.id) },
+                                        showDivider = index < data.destinations.lastIndex,
+                                    )
+                                }
                             }
                         }
                         1 -> {
                             // U1: singular honesto para N=1 ("Actividad reciente · 1").
                             AmText(contextSectionLabel(AppStrings.ActividadReciente, AppStrings.ActividadesRecientes, data.operations.size), size = AmType.Label, color = AmColor.TextSecondary)
-                            data.operations.take(RECENT_ACTIVITIES_SHOWN).forEach { operation ->
-                                AmListRow(
-                                    title = listOfNotNull(
-                                        when (operation.type) {
-                                            com.agendaqr.destinations.domain.OperationType.PAGO -> AppStrings.Pago
-                                            com.agendaqr.destinations.domain.OperationType.COBRO -> AppStrings.Cobro
-                                        },
-                                        operation.amount,
-                                        operation.currency,
-                                        operation.personOrEntity,
-                                    ).joinToString(" · "),
-                                    onClick = { onOpenOperation(operation.id) },
-                                )
+                            val shownOperations = data.operations.take(RECENT_ACTIVITIES_SHOWN)
+                            AmListBody {
+                                shownOperations.forEachIndexed { index, operation ->
+                                    AmListRow(
+                                        title = listOfNotNull(
+                                            when (operation.type) {
+                                                com.agendaqr.destinations.domain.OperationType.PAGO -> AppStrings.Pago
+                                                com.agendaqr.destinations.domain.OperationType.COBRO -> AppStrings.Cobro
+                                            },
+                                            operation.amount,
+                                            operation.currency,
+                                            operation.personOrEntity,
+                                        ).joinToString(" · "),
+                                        onClick = { onOpenOperation(operation.id) },
+                                        showDivider = index < shownOperations.lastIndex,
+                                    )
+                                }
                             }
                             if (data.operations.size > RECENT_ACTIVITIES_SHOWN) {
                                 AmTextAction(
@@ -249,12 +263,15 @@ private fun ContextDetail(
                         }
                         else -> {
                             AmText(contextSectionLabel(AppStrings.Comprobante, AppStrings.Comprobantes, data.comprobantes.size), size = AmType.Label, color = AmColor.TextSecondary)
-                            data.comprobantes.forEach { receipt ->
-                                AmListRow(
-                                    title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
-                                    subtitle = receipt.file.takeIf { it.isNotBlank() },
-                                    onClick = { onOpenComprobante(receipt.id) },
-                                )
+                            AmListBody {
+                                data.comprobantes.forEachIndexed { index, receipt ->
+                                    AmListRow(
+                                        title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
+                                        subtitle = receipt.file.takeIf { it.isNotBlank() },
+                                        onClick = { onOpenComprobante(receipt.id) },
+                                        showDivider = index < data.comprobantes.lastIndex,
+                                    )
+                                }
                             }
                         }
                     }

@@ -16,77 +16,77 @@ import androidx.compose.ui.unit.sp
 import kotlin.math.pow
 
 /**
- * AgendaMobile — tokens del sistema de diseño de Agenda QR (ADR-0013).
+ * Tokens del sistema de diseño de Agenda QR (ADR-0014).
  *
- * Arquitectura de capas (contrato normativo docs/05-design-system/00):
+ * Referencia visual: Ant Design Mobile (variables de tema claro/oscuro,
+ * componentes y patrones oficiales); navegación según convenciones de
+ * Android e iOS. Arquitectura de capas (contrato normativo
+ * docs/05-design-system/00-contrato-normativo-diseno.md):
  * 1. Tokens privados: [AmPalette] — primitivas por tema, sin exposición.
  * 2. Tokens semánticos: [AmColorScheme], [AmColor], [AmSpacing],
  *    [AmRadius]/[AmShapes], [AmMetrics], [AmType]/[AmTextStyles],
  *    [AmMotion], [AmAccent] — la única capa que el producto consume.
  * 3. Tema: [AmTheme] — puente a Material 3 (implementación, no autoridad).
  *
- * La identidad visual deriva del linaje azul del logo de marca, recalibrado
- * para una app móvil de gestión: acento profundo con contraste AA como
- * relleno y como texto, superficies neutras frías (no blanco/negro puro)
- * y tema oscuro de tinta elevada. Los pares están verificados por
- * AmSchemeTest; ningún estado depende solo del color.
+ * Donde la referencia no alcanza WCAG AA, los roles se recalibran
+ * mínimamente (contrato §4.4) y cada par queda fijado por AmSchemeTest;
+ * ningún estado depende solo del color.
  */
 
 /** Primitivas por tema: privadas de la capa de tokens. */
 internal object AmPalette {
-    // Tema claro: lienzo frío, superficie blanca, tinta azulada.
-    val lightBackground = Color(0xFFF6F7FA)
+    // Tema claro (referencia: theme-default de Ant Design Mobile; los
+    // roles de texto y de estado sobre fondo se recalibran a §4.4).
+    val lightBackground = Color(0xFFF5F5F5)
     val lightSurface = Color(0xFFFFFFFF)
-    val lightSurfaceSecondary = Color(0xFFEDF1F7)
-    val lightSurfaceContainerLow = Color(0xFFF9FAFC)
-    val lightSurfaceContainer = Color(0xFFF1F4F9)
-    val lightSurfaceContainerHigh = Color(0xFFEAEEF4)
-    val lightSurfaceContainerHighest = Color(0xFFE3E8F0)
-    val lightBorder = Color(0xFFDCE2EB)
-    val lightDivider = Color(0xFFE3E7EE)
-    val lightBorderControl = Color(0xFF67748C)
-    val lightText = Color(0xFF121722)
-    val lightTextSecondary = Color(0xFF5A6478)
-    val lightTextTertiary = Color(0xFF626D80)
-    val lightAccent = Color(0xFF0059D6)
+    val lightSurfaceSecondary = Color(0xFFF5F5F5)
+    val lightSurfaceContainerLow = Color(0xFFFFFFFF)
+    val lightSurfaceContainer = Color(0xFFF7F7F7)
+    val lightSurfaceContainerHigh = Color(0xFFEFEFEF)
+    val lightSurfaceContainerHighest = Color(0xFFE8E8E8)
+    val lightBorder = Color(0xFFE5E5E5)
+    val lightDivider = Color(0xFFEEEEEE)
+    val lightText = Color(0xFF333333)
+    val lightTextSecondary = Color(0xFF666666)
+    val lightTextTertiary = Color(0xFF6E6E6E)
+    val lightAccent = Color(0xFF1668DC)
     val lightOnAccent = Color(0xFFFFFFFF)
-    val lightAccentText = Color(0xFF0059D6)
-    val lightDanger = Color(0xFFB3231C)
+    val lightAccentText = Color(0xFF1668DC)
+    val lightWathet = Color(0xFFE7F1FF)
+    val lightDanger = Color(0xFFD21F2E)
     val lightOnDanger = Color(0xFFFFFFFF)
     val lightDangerContainer = Color(0xFFFDEBEA)
-    val lightSuccess = Color(0xFF146B2F)
+    val lightSuccess = Color(0xFF0A7A44)
     val lightSuccessContainer = Color(0xFFE2F5E8)
     val lightWarning = Color(0xFF8A5300)
     val lightWarningContainer = Color(0xFFFDF3DC)
-    val lightInfo = Color(0xFF0B6A8F)
-    val lightInfoContainer = Color(0xFFDCEEF8)
-    val lightDisabled = Color(0xFFE7EAF0)
-    val lightOnDisabled = Color(0xFF626D80)
-    val lightInverseSurface = Color(0xFF1B2330)
+    val lightDisabled = Color(0xFFF0F0F0)
+    val lightOnDisabled = Color(0xFF767676)
+    val lightInverseSurface = Color(0xFF1A1A1A)
     val lightInverseOnSurface = Color(0xFFFFFFFF)
-    val lightInverseAccent = Color(0xFF6FA5FF)
+    val lightInverseAccent = Color(0xFF3086FF)
     /** Lienzo del QR: fondo claro GARANTIZADO en ambos temas (zona de
      * silencio escaneable); el marco tonal lo aporta AmMediaFrame. */
     val lightQrCanvas = Color(0xFFFFFFFF)
 
-    // Tema oscuro: tinta profunda (no negro puro), superficies elevadas,
-    // acento claro con texto de tinta (par AA verificado).
-    val darkBackground = Color(0xFF0C1016)
-    val darkSurface = Color(0xFF151B24)
-    val darkSurfaceSecondary = Color(0xFF202836)
-    val darkSurfaceContainerLow = Color(0xFF11151C)
-    val darkSurfaceContainer = Color(0xFF151B24)
-    val darkSurfaceContainerHigh = Color(0xFF202836)
-    val darkSurfaceContainerHighest = Color(0xFF2A3340)
-    val darkBorder = Color(0xFF2A3342)
-    val darkDivider = Color(0xFF232B38)
-    val darkBorderControl = Color(0xFF859098)
-    val darkText = Color(0xFFEEF2F8)
-    val darkTextSecondary = Color(0xFFA3ADC2)
-    val darkTextTertiary = Color(0xFF8892A4)
+    // Tema oscuro (referencia: theme-dark de Ant Design Mobile;
+    // surface elevada un paso para filas separadas; terciario recalibrado).
+    val darkBackground = Color(0xFF1A1A1A)
+    val darkSurface = Color(0xFF242424)
+    val darkSurfaceSecondary = Color(0xFF0A0A0A)
+    val darkSurfaceContainerLow = Color(0xFF0A0A0A)
+    val darkSurfaceContainer = Color(0xFF1A1A1A)
+    val darkSurfaceContainerHigh = Color(0xFF242424)
+    val darkSurfaceContainerHighest = Color(0xFF2E2E2E)
+    val darkBorder = Color(0xFF2B2B2B)
+    val darkDivider = Color(0xFF2B2B2B)
+    val darkText = Color(0xFFE6E6E6)
+    val darkTextSecondary = Color(0xFFB3B3B3)
+    val darkTextTertiary = Color(0xFF8C8C8C)
     val darkAccent = Color(0xFF6FA5FF)
     val darkOnAccent = Color(0xFF0A1120)
     val darkAccentText = Color(0xFF6FA5FF)
+    val darkWathet = Color(0xFF0D2543)
     val darkDanger = Color(0xFFFF9C96)
     val darkOnDanger = Color(0xFF3A1512)
     val darkDangerContainer = Color(0xFF3A1512)
@@ -94,21 +94,19 @@ internal object AmPalette {
     val darkSuccessContainer = Color(0xFF0E2C1C)
     val darkWarning = Color(0xFFF8C96A)
     val darkWarningContainer = Color(0xFF3A2B0E)
-    val darkInfo = Color(0xFF74BEEC)
-    val darkInfoContainer = Color(0xFF0D2A3C)
-    val darkDisabled = Color(0xFF202836)
-    val darkOnDisabled = Color(0xFF8892A4)
-    val darkInverseSurface = Color(0xFFEEF2F8)
-    val darkInverseOnSurface = Color(0xFF121722)
-    val darkInverseAccent = Color(0xFF0059D6)
+    val darkDisabled = Color(0xFF2B2B2B)
+    val darkOnDisabled = Color(0xFF808080)
+    val darkInverseSurface = Color(0xFFF5F5F5)
+    val darkInverseOnSurface = Color(0xFF1A1A1A)
+    val darkInverseAccent = Color(0xFF3086FF)
 }
 
 /**
- * Esquema semántico de AgendaMobile. Los roles son el contrato del
- * producto: background/surface/surfaceSecondary, texto en tres niveles,
- * acento con su par, bordes/divisores funcionales, estados (success/
- * warning/danger/info), foco y deshabilitado. Pares verificados ≥ 4.5:1
- * (contenido) y ≥ 3:1 (bordes/foco) por AmSchemeTest.
+ * Esquema semántico del sistema. Los roles son el contrato del producto:
+ * background/surface/surfaceSecondary, texto en tres niveles, acento con
+ * su par, hairlines, estados (success/warning/danger/info), foco y
+ * deshabilitado. Pares verificados ≥ 4.5:1 (contenido) y ≥ 3:1
+ * (foco) por AmSchemeTest.
  */
 data class AmColorScheme(
     val background: Color,
@@ -116,18 +114,19 @@ data class AmColorScheme(
     val surfaceSecondary: Color,
     val border: Color,
     val divider: Color,
-    val borderControl: Color,
     val textPrimary: Color,
     val textSecondary: Color,
     val textTertiary: Color,
     val accent: Color,
     val onAccent: Color,
-    /** Alias de accent/onAccent por diseño: AgendaMobile tiene UN solo
-     * acento; el contenedor tonal de M3 no introduce una segunda marca. */
+    /** Alias de accent/onAccent por diseño: UN solo acento; el contenedor
+     * tonal de M3 no introduce una segunda marca. */
     val accentContainer: Color,
     val onAccentContainer: Color,
     /** Acento legible como TEXTO sobre background/surface (≥ 4.5:1). */
     val accentText: Color,
+    /** Tinte de la referencia para fondos de selección. */
+    val wathet: Color,
     val danger: Color,
     val onDanger: Color,
     val dangerContainer: Color,
@@ -135,6 +134,7 @@ data class AmColorScheme(
     val successContainer: Color,
     val warning: Color,
     val warningContainer: Color,
+    /** La referencia no define tono info: lo informativo usa el acento. */
     val info: Color,
     val infoContainer: Color,
     val focus: Color,
@@ -159,7 +159,6 @@ val LightAmColorScheme = AmColorScheme(
     surfaceSecondary = AmPalette.lightSurfaceSecondary,
     border = AmPalette.lightBorder,
     divider = AmPalette.lightDivider,
-    borderControl = AmPalette.lightBorderControl,
     textPrimary = AmPalette.lightText,
     textSecondary = AmPalette.lightTextSecondary,
     textTertiary = AmPalette.lightTextTertiary,
@@ -168,6 +167,7 @@ val LightAmColorScheme = AmColorScheme(
     accentContainer = AmPalette.lightAccent,
     onAccentContainer = AmPalette.lightOnAccent,
     accentText = AmPalette.lightAccentText,
+    wathet = AmPalette.lightWathet,
     danger = AmPalette.lightDanger,
     onDanger = AmPalette.lightOnDanger,
     dangerContainer = AmPalette.lightDangerContainer,
@@ -175,8 +175,8 @@ val LightAmColorScheme = AmColorScheme(
     successContainer = AmPalette.lightSuccessContainer,
     warning = AmPalette.lightWarning,
     warningContainer = AmPalette.lightWarningContainer,
-    info = AmPalette.lightInfo,
-    infoContainer = AmPalette.lightInfoContainer,
+    info = AmPalette.lightAccent,
+    infoContainer = AmPalette.lightWathet,
     focus = AmPalette.lightAccent,
     disabled = AmPalette.lightDisabled,
     onDisabled = AmPalette.lightOnDisabled,
@@ -196,7 +196,6 @@ val DarkAmColorScheme = AmColorScheme(
     surfaceSecondary = AmPalette.darkSurfaceSecondary,
     border = AmPalette.darkBorder,
     divider = AmPalette.darkDivider,
-    borderControl = AmPalette.darkBorderControl,
     textPrimary = AmPalette.darkText,
     textSecondary = AmPalette.darkTextSecondary,
     textTertiary = AmPalette.darkTextTertiary,
@@ -205,6 +204,7 @@ val DarkAmColorScheme = AmColorScheme(
     accentContainer = AmPalette.darkAccent,
     onAccentContainer = AmPalette.darkOnAccent,
     accentText = AmPalette.darkAccentText,
+    wathet = AmPalette.darkWathet,
     danger = AmPalette.darkDanger,
     onDanger = AmPalette.darkOnDanger,
     dangerContainer = AmPalette.darkDangerContainer,
@@ -212,8 +212,8 @@ val DarkAmColorScheme = AmColorScheme(
     successContainer = AmPalette.darkSuccessContainer,
     warning = AmPalette.darkWarning,
     warningContainer = AmPalette.darkWarningContainer,
-    info = AmPalette.darkInfo,
-    infoContainer = AmPalette.darkInfoContainer,
+    info = AmPalette.darkAccent,
+    infoContainer = AmPalette.darkWathet,
     focus = AmPalette.darkAccent,
     disabled = AmPalette.darkDisabled,
     onDisabled = AmPalette.darkOnDisabled,
@@ -239,6 +239,7 @@ val LocalAmColorScheme = compositionLocalOf { DarkAmColorScheme }
  */
 object AmColor {
     val Background: Color @Composable get() = LocalAmColorScheme.current.background
+    val Surface: Color @Composable get() = LocalAmColorScheme.current.surface
     val SurfaceSecondary: Color @Composable get() = LocalAmColorScheme.current.surfaceSecondary
     val Divider: Color @Composable get() = LocalAmColorScheme.current.divider
     val TextPrimary: Color @Composable get() = LocalAmColorScheme.current.textPrimary
@@ -248,6 +249,8 @@ object AmColor {
     val OnAccent: Color @Composable get() = LocalAmColorScheme.current.onAccent
     /** Acento legible como texto (≥ 4.5:1 sobre background y surface). */
     val AccentText: Color @Composable get() = LocalAmColorScheme.current.accentText
+    /** Tinte para fondos de selección (chips, pestañas). */
+    val Wathet: Color @Composable get() = LocalAmColorScheme.current.wathet
     val Danger: Color @Composable get() = LocalAmColorScheme.current.danger
     val OnDanger: Color @Composable get() = LocalAmColorScheme.current.onDanger
     val Focus: Color @Composable get() = LocalAmColorScheme.current.focus
@@ -301,17 +304,18 @@ object AmMetrics {
     val ScannerCornerLength = 24.dp
 }
 
-/** Radios moderados y consistentes (dp): la única fuente de formas. */
+/** Radios de la referencia (tag 2, botón 4, búsqueda 6, tarjeta 8,
+ * hoja 12): la única fuente de formas. */
 object AmRadius {
-    val ExtraSmall = 4.dp
-    val Small = 8.dp
-    val Medium = 12.dp
-    val Large = 16.dp
-    val ExtraLarge = 24.dp
+    val ExtraSmall = 2.dp
+    val Small = 4.dp
+    val Medium = 6.dp
+    val Large = 8.dp
+    val ExtraLarge = 12.dp
 }
 
 /**
- * Conjunto de formas de AgendaMobile: [AmTheme] lo entrega a
+ * Conjunto de formas: [AmTheme] lo entrega a
  * `MaterialTheme.shapes` y los componentes envolventes fijan los radios
  * que M3 no mapea por rol (botones, campos, chips).
  */
@@ -329,10 +333,10 @@ object AmShapes {
  * Escala tipográfica en sp (respeta el escalado de fuente del sistema).
  * Roles semánticos del producto:
  * - Título de página: [TitleLarge] (22) en la barra superior.
- * - Título de sección: [SectionHeader] (14, Medium).
- * - Título de fila: Body (16) en AmListRow.
- * - Cuerpo: [Body] (16); etiqueta: [Label] (14).
- * - Texto secundario/ayuda/error: [Caption] (12) vía [AmTextStyles].
+ * - Título de sección: [SectionHeader] (15, Medium).
+ * - Título de fila: Body (17) en AmListRow.
+ * - Cuerpo: [Body] (17); etiqueta: [Label] (14).
+ * - Texto secundario/ayuda/error: [Caption] (13) vía [AmTextStyles].
  */
 object AmType {
     /** Display de bloque (32 sp): número/hero de tarjeta de datos. */
@@ -343,21 +347,21 @@ object AmType {
     val Headline: TextUnit = 24.sp
     /** Título de página en la barra superior (22 sp). */
     val TitleLarge: TextUnit = 22.sp
-    /** Título de diálogo/tarjeta (20 sp). */
-    val Title: TextUnit = 20.sp
-    /** Cuerpo (16 sp). */
-    val Body: TextUnit = 16.sp
+    /** Título de diálogo/modal centrado (18 sp, referencia). */
+    val Title: TextUnit = 18.sp
+    /** Cuerpo (17 sp, referencia). */
+    val Body: TextUnit = 17.sp
     /** Etiqueta de botón/fila (14 sp). */
     val Label: TextUnit = 14.sp
-    /** Badge/apoyo (12 sp). */
-    val Caption: TextUnit = 12.sp
+    /** Apoyo/descripción (13 sp, referencia). */
+    val Caption: TextUnit = 13.sp
     /** Caption mínima (11 sp). */
     val CaptionSmall: TextUnit = 11.sp
-    /** Encabezados de sección (14 sp). */
-    val SectionHeader: TextUnit = 14.sp
+    /** Encabezados de sección (15 sp, referencia). */
+    val SectionHeader: TextUnit = 15.sp
     // Interlineados canónicos en sp (respetan el escalado, §accesibilidad).
     val LineHeightLabel: TextUnit = 20.sp
-    val LineHeightBody: TextUnit = 24.sp
+    val LineHeightBody: TextUnit = 26.sp
     val LineHeightCaption: TextUnit = 16.sp
     val LineHeightSection: TextUnit = 20.sp
     val LineHeightHeadlineLarge: TextUnit = 40.sp
@@ -387,7 +391,7 @@ object AmTracking {
 }
 
 /**
- * Tipografía Material 3 de AgendaMobile: [AmTheme] la entrega a
+ * Tipografía Material 3: [AmTheme] la entrega a
  * `MaterialTheme(typography = …)` y cada componente M3 hereda la misma
  * familia y tamaños.
  */
@@ -510,7 +514,7 @@ object AmTextStyles {
 
 
 /**
- * Movimiento de AgendaMobile: transiciones cortas y justificadas; con
+ * Movimiento: transiciones cortas y justificadas; con
  * movimiento reducido la duración es 0 (cambio en el sitio, §accesibilidad
  * — reducir no es "animar más rápido"). Una sola easing.
  */
@@ -524,7 +528,7 @@ object AmMotion {
 }
 
 /**
- * Identidad de contexto (ADR-0013): acento estable derivado de forma
+ * Identidad de contexto: acento estable derivado de forma
  * determinista del identificador del contexto. [background] es el bloque
  * de identidad (marcador de fila, tinte de pestañas de S06) y
  * [onAccent] el único texto admitido sobre él. El par es fijo y
@@ -539,7 +543,7 @@ data class AmAccent(val id: String, val background: Color, val onAccent: Color)
  * puro para mantener los pares robustos en ambas plataformas.
  */
 object AmAccents {
-    val System = AmAccent("system", Color(0xFF0059D6), Color(0xFFFFFFFF))
+    val System = AmAccent("system", Color(0xFF1668DC), Color(0xFFFFFFFF))
 
     private val Blue = AmAccent("blue", Color(0xFF1D4ED8), Color(0xFFFFFFFF))
     private val Sky = AmAccent("sky", Color(0xFF0369A1), Color(0xFFFFFFFF))

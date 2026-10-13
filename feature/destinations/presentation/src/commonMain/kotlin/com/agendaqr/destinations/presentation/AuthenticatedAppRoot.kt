@@ -170,7 +170,7 @@ internal fun AuthenticatedAppRoot(
     )
 
     // ------------------------------------------------------------------
-    // Navegación raíz (§4 S01 V1.2): Inicio · Buscar · Actividades ·
+    // Navegación raíz (§4 S01 V1.4): Inicio · Buscar · Actividades ·
     // Contextos. Cambiar de destino = popToRoot + push: Inicio es la raíz
     // del back stack (Back desde otro destino vuelve a Inicio; desde
     // Inicio sale de la app).
@@ -258,7 +258,7 @@ internal fun AuthenticatedAppRoot(
                     amSurfaceEnter(reverse = reverse) togetherWith amSurfaceExit(reverse = reverse)
                 }
             },
-            label = AppStrings.SurfaceRouteTurnstile,
+            label = AppStrings.SurfaceRouteTransition,
         ) { route ->
             // Predictive back: la superficie visible se encoge y funde con
             // el progreso del gesto (cancelar la restaura; confirmar corre

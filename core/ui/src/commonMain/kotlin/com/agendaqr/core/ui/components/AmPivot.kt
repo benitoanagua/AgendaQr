@@ -11,12 +11,13 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmTextStyles
 import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.core.ui.theme.asTextOn
 
 /**
- * Piezas de presentación de página y sección de AgendaMobile. El título
+ * Piezas de presentación de página y sección. El título
  * de página vive en la barra superior ([AmTopBar]).
  */
 
@@ -75,6 +76,21 @@ fun AmPivot(
     PrimaryScrollableTabRow(
         selectedTabIndex = selectedIndex,
         modifier = modifier.fillMaxWidth(),
+        containerColor = AmColor.Transparent,
+        contentColor = AmColor.TextPrimary,
+        // Indicador de acento de la referencia; hairline inferior.
+        indicator = {
+            androidx.compose.material3.TabRowDefaults.PrimaryIndicator(
+                modifier = Modifier.tabIndicatorOffset(selectedIndex),
+                color = AmColor.Accent,
+            )
+        },
+        divider = {
+            androidx.compose.material3.HorizontalDivider(
+                thickness = AmMetrics.Border,
+                color = AmColor.Divider,
+            )
+        },
     ) {
         sections.forEachIndexed { index, title ->
             val selected = index == selectedIndex
@@ -84,7 +100,7 @@ fun AmPivot(
                 text = {
                     Text(
                         text = title,
-                        color = if (selected) selectedTextColor else AmColor.TextSecondary,
+                        color = if (selected) selectedTextColor else AmColor.TextPrimary,
                         maxLines = 1,
                     )
                 },

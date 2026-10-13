@@ -4,9 +4,11 @@
  */
 package com.agendaqr.destinations.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -147,10 +149,13 @@ internal fun OperationListScreen(
                 }
             )
         } else {
-            LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                items(paged, key = { it.id }) { operation ->
-                    // §12 V1.2: fila ListItem convencional con el contenido
-                    // a la derecha; el estado de sincronización con texto.
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth().weight(1f)
+                    .background(AmColor.Surface, AmShapes.Large),
+            ) {
+                itemsIndexed(paged, key = { _, operation -> operation.id }) { index, operation ->
+                    // Fila ListItem convencional con el contenido a la
+                    // derecha; el estado de sincronización con texto.
                     AmListRow(
                         title = listOfNotNull(
                             operationTypeLabel(operation.type),
@@ -164,6 +169,7 @@ internal fun OperationListScreen(
                                 syncLookup.status(SyncResource.OPERATION, operation.id),
                             )
                         },
+                        showDivider = index < paged.lastIndex,
                     )
                 }
                 if (paged.size < operations.size) {
