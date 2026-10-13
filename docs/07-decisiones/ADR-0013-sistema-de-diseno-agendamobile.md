@@ -1,6 +1,6 @@
 # ADR-0013 — Sistema de diseño propio: AgendaMobile
 
-**Estado:** APROBADA — 2026-10-12
+**Estado:** SUPLANTADA por ADR-0014 (2026-10-13) en la autoría visual — se conserva como historial. Subsisten: arquitectura de capas, implementación en `core/ui`, prefijo `Am*` como convención de código.
 **Suplanta:** ADR-0005 (lenguaje visual Metro), ADR-0011 (contrato visual Xauxa) y la autoría visual de ADR-0012; conserva de ADR-0012 la implementación sobre Material 3 y la tipografía de sistema.
 
 ## Contexto

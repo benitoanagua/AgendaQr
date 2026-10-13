@@ -24,16 +24,16 @@
 | Documento | Contenido |
 |---|---|
 | [`04-ux/01-flujos-confirmados.md`](04-ux/01-flujos-confirmados.md) | Flujos confirmados |
-| [`04-ux/02-especificacion-ux-ui-v1.md`](04-ux/02-especificacion-ux-ui-v1.md) | Spec UX/UI V1.3 (FROZEN) |
+| [`04-ux/02-especificacion-ux-ui-v1.md`](04-ux/02-especificacion-ux-ui-v1.md) | Spec UX/UI V1.4 (FROZEN) |
 | [`04-ux/04-capacidades-y-comportamientos.md`](04-ux/04-capacidades-y-comportamientos.md) | Capacidades y comportamientos |
 | [`04-ux/05-guia-de-voz.md`](04-ux/05-guia-de-voz.md) | Guía de voz (tuteo) |
 
-## Design System (AgendaMobile)
+## Sistema de diseño (referencia Ant Design Mobile)
 
 | Documento | Contenido |
 |---|---|
-| [`05-design-system/00-agendamobile-contrato-normativo.md`](05-design-system/00-agendamobile-contrato-normativo.md) | Contrato normativo (fuente única) |
-| [`05-design-system/02-agendamobile-implementation.md`](05-design-system/02-agendamobile-implementation.md) | Reglas de implementación |
+| [`05-design-system/00-contrato-normativo-diseno.md`](05-design-system/00-contrato-normativo-diseno.md) | Contrato normativo (fuente única) |
+| [`05-design-system/02-implementacion-diseno.md`](05-design-system/02-implementacion-diseno.md) | Reglas de implementación |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros |
 
 ## Arquitectura
@@ -66,7 +66,8 @@
 | [`07-decisiones/ADR-0010-uiautomator-en-instrumentados.md`](07-decisiones/ADR-0010-uiautomator-en-instrumentados.md) | ADR: UiAutomator |
 | [`07-decisiones/ADR-0011-contrato-visual-xauxa.md`](07-decisiones/ADR-0011-contrato-visual-xauxa.md) | ADR histórico sustituido: Xauxa |
 | [`07-decisiones/ADR-0012-ui-convencional-material3.md`](07-decisiones/ADR-0012-ui-convencional-material3.md) | ADR histórico; autoría visual sustituida por ADR-0013 |
-| [`07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md`](07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md) | ADR: sistema de diseño AgendaMobile |
+| [`07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md`](07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md) | ADR histórico; autoría visual sustituida por ADR-0014 |
+| [`07-decisiones/ADR-0014-referencia-ant-design-mobile.md`](07-decisiones/ADR-0014-referencia-ant-design-mobile.md) | ADR: referencia Ant Design Mobile + navegación Android/iOS |
 
 ## Validación
 

@@ -32,7 +32,7 @@ import com.composables.icons.lucide.TriangleAlert
 import com.composables.icons.lucide.X
 
 /**
- * Iconografía de AgendaMobile (ADR-0013): único punto de entrada de
+ * Iconografía (ADR-0014): único punto de entrada de
  * iconos de producto. Set: Lucide (ISC — ver
  * `docs/05-design-system/06-licencias-terceros.md`), glifos de línea de
  * trazo uniforme, un solo color, sin relleno.
@@ -72,7 +72,7 @@ fun AmIcon(
 }
 
 /**
- * Mapeo de glifos de AgendaMobile, confirmado contra el catálogo real de
+ * Mapeo de glifos, confirmado contra el catálogo real de
  * Lucide 1.1.0 (`com.composables:icons-lucide`). Un único glifo por
  * concepto; fuera de esta lista no se añaden iconos sin decisión.
  */

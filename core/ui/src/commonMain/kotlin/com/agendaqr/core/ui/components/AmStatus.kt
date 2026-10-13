@@ -28,7 +28,7 @@ import com.agendaqr.core.ui.theme.AmTextStyles
 import com.agendaqr.core.ui.theme.AmType
 
 /**
- * Estados de AgendaMobile: banner de estado (alerta tonal redondeada),
+ * Estados: banner de estado (alerta tonal redondeada),
  * carga, estado vacío con glifo y agrupador de sección.
  */
 
@@ -62,7 +62,7 @@ fun AmStatusBanner(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(background, AmShapes.Medium)
+            .background(background, AmShapes.Large)
             .semantics { liveRegion = LiveRegionMode.Polite }
             .padding(AmSpacing.Lg),
         verticalAlignment = Alignment.CenterVertically,

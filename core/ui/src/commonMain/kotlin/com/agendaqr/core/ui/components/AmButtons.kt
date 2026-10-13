@@ -36,8 +36,9 @@ import com.agendaqr.core.ui.theme.AmTracking
 import com.agendaqr.core.ui.theme.AmType
 
 /**
- * Botones y chips AgendaMobile: acciones con área táctil mínima de 48 dp,
- * radios de tokens y estado de carga que no desplaza el layout.
+ * Botones y chips (referencia: Button/Selector de Ant Design Mobile):
+ * fills solid/outline/none, radio 4, deshabilitado con opacidad .4,
+ * área táctil mínima de 48 dp y estado de carga que no desplaza el layout.
  */
 
 /**
@@ -63,6 +64,9 @@ internal fun AmLoadingButton(
     Button(
         modifier = modifier
             .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
+            // Deshabilitado con opacidad .4 (referencia); el estado
+            // habilitado/deshabilitado también vive en la semántica.
+            .then(if (!enabled || isLoading) Modifier.alpha(0.4f) else Modifier)
             .then(
                 if (isLoading && busyDescription != null) {
                     Modifier.semantics { stateDescription = busyDescription }
@@ -72,9 +76,8 @@ internal fun AmLoadingButton(
             ),
         onClick = onClick,
         enabled = enabled && !isLoading,
-        // El botón AgendaMobile usa el radio de tokens Medium (12), no el
-        // rol extraSmall de la plantilla M3.
-        shape = AmShapes.Medium,
+        // Radio 4 de la referencia, no el rol de la plantilla M3.
+        shape = AmShapes.Small,
         // Padding vertical propio a cero: la altura la fija el contenido
         // (48 dp), no el relleno interno de Material. El horizontal
         // conserva el de Material (24 dp = Xxl).
@@ -176,9 +179,9 @@ fun AmDangerButton(
 }
 
 /**
- * Botón secundario TONAL (sin borde de reposo): superficie secundaria
- * con texto primario — jerarquía visual bajo el botón principal sin
- * bordes universales.
+ * Botón secundario (fill outline de la referencia): borde y texto de
+ * acento sobre fondo transparente — jerarquía visual bajo el botón
+ * principal sin superficies tonales.
  */
 @Composable
 fun AmSecondaryButton(
@@ -189,20 +192,26 @@ fun AmSecondaryButton(
     isLoading: Boolean = false,
     icon: ImageVector? = null,
 ) {
-    Button(
-        modifier = modifier.defaultMinSize(minHeight = AmMetrics.ControlMinSize),
+    androidx.compose.material3.OutlinedButton(
+        modifier = modifier
+            .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
+            .then(if (!enabled || isLoading) Modifier.alpha(0.4f) else Modifier),
         onClick = onClick,
         enabled = enabled && !isLoading,
-        shape = AmShapes.Medium,
+        shape = AmShapes.Small,
         contentPadding = PaddingValues(
             horizontal = AmSpacing.Lg,
             vertical = AmSpacing.None,
         ),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = AmColor.SurfaceSecondary,
-            contentColor = AmColor.TextPrimary,
-            disabledContainerColor = AmColor.Disabled,
-            disabledContentColor = AmColor.OnDisabled,
+        border = androidx.compose.foundation.BorderStroke(
+            AmMetrics.Border,
+            AmColor.Accent,
+        ),
+        colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
+            containerColor = AmColor.Transparent,
+            contentColor = AmColor.AccentText,
+            disabledContainerColor = AmColor.Transparent,
+            disabledContentColor = AmColor.AccentText,
         ),
     ) {
         if (isLoading) {
@@ -220,13 +229,13 @@ fun AmSecondaryButton(
                     AmIcon(
                         imageVector = icon,
                         contentDescription = null,
-                        tint = if (enabled) AmColor.AccentText else AmColor.OnDisabled,
+                        tint = AmColor.AccentText,
                     )
                 }
                 Text(
                     label,
                     style = AmTextStyles.ButtonLabel,
-                    color = if (enabled) AmColor.TextPrimary else AmColor.OnDisabled,
+                    color = AmColor.AccentText,
                 )
             }
         }
@@ -253,7 +262,7 @@ fun AmTextAction(
         modifier = modifier.defaultMinSize(minHeight = AmMetrics.ControlMinSize),
         onClick = onClick,
         enabled = enabled,
-        shape = AmShapes.Medium,
+        shape = AmShapes.Small,
         // 48 dp determinísticos como en los botones.
         contentPadding = PaddingValues(
             horizontal = AmSpacing.Md,
@@ -305,9 +314,9 @@ fun AmIconButton(
 }
 
 /**
- * Chip de filtro interactivo TONAL (píldora, sin borde de reposo):
- * seleccionado se expresa con el bloque de acento; la selección también
- * vive en la semántica.
+ * Chip de filtro interactivo (estilo Selector de la referencia):
+ * borde hairline en reposo; seleccionado con borde de acento, texto de
+ * acento y fondo wathet. La selección también vive en la semántica.
  */
 @Composable
 fun AmFilterChip(
@@ -326,19 +335,17 @@ fun AmFilterChip(
         border = FilterChipDefaults.filterChipBorder(
             enabled = enabled,
             selected = selected,
-            // Tonal: sin borde de reposo ni de selección — el bloque
-            // contenedor comunica el estado (además de la semántica).
-            borderColor = AmColor.Transparent,
-            selectedBorderColor = AmColor.Transparent,
+            borderColor = AmColor.Divider,
+            selectedBorderColor = AmColor.Accent,
             borderWidth = AmMetrics.Border,
         ),
         colors = FilterChipDefaults.filterChipColors(
-            containerColor = AmColor.SurfaceSecondary,
+            containerColor = AmColor.Surface,
             labelColor = AmColor.TextPrimary,
             disabledContainerColor = AmColor.Disabled,
             disabledLabelColor = AmColor.OnDisabled,
-            selectedContainerColor = AmColor.Accent,
-            selectedLabelColor = AmColor.OnAccent,
+            selectedContainerColor = AmColor.Wathet,
+            selectedLabelColor = AmColor.AccentText,
         ),
         label = {
             Text(

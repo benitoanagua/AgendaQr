@@ -107,11 +107,11 @@ class S02UiPolishTest {
             }
         }
         compose.waitForIdle()
-        // Encabezado de sección V1.2: semántica heading + 14 sp en color
+        // Encabezado de sección V1.4: semántica heading + 15 sp en color
         // estándar (§12), no título de 20 sp en texto primario.
         compose.onNodeWithText(AppStrings.Recientes).assert(headingMatcher())
         val style = layoutOf(AppStrings.Recientes).layoutInput.style
-        assertEquals(14.sp, style.fontSize)
+        assertEquals(15.sp, style.fontSize)
         assertEquals(LightAmColorScheme.textSecondary, style.color)
     }
 
@@ -123,7 +123,7 @@ class S02UiPolishTest {
             }
         }
         compose.waitForIdle()
-        // V1.2: "Desde otra app" es una ayuda breve de texto secundario,
+        // "Desde otra app" es una ayuda breve de texto secundario,
         // no una sección permanente destacada.
         compose.onNodeWithText(AppStrings.shareFromAnotherAppHint)
             .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Heading))
@@ -140,7 +140,7 @@ class S02UiPolishTest {
         }
         compose.waitForIdle()
         val style = layoutOf(AppStrings.Recientes).layoutInput.style
-        assertEquals(14.sp, style.fontSize)
+        assertEquals(15.sp, style.fontSize)
         assertEquals(DarkAmColorScheme.textSecondary, style.color)
     }
 

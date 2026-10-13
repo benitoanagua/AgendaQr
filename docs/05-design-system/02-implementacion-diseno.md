@@ -1,6 +1,6 @@
-# AgendaMobile — reglas de implementación
+# Reglas de implementación del sistema de diseño
 
-**Estado:** Normativo (ADR-0013). El contrato completo está en `00-agendamobile-contrato-normativo.md`; este documento traduce el contrato a reglas de código.
+**Estado:** Normativo (ADR-0014). El contrato completo está en `00-contrato-normativo-diseno.md`; este documento traduce el contrato a reglas de código.
 
 ## 1. Mapa de la implementación
 
@@ -16,8 +16,8 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
     ├── AmText.kt          # AmText, AmHeading (texto con interlineado propio)
     ├── AmIcon.kt          # AmIcon + AmIcons (Lucide, único punto de entrada)
     ├── AmTone.kt           # AmTone + toneColors + glifo por tono
-    ├── AmButtons.kt       # botones, chips, toggle de favorito
-    ├── AmInputs.kt        # AmTextField (tonal), AmSearchField, AmSearchTrigger
+    ├── AmButtons.kt       # botones (solid/outline/none), chips estilo selector, toggle de favorito
+    ├── AmInputs.kt        # AmTextField (sin borde, guía hairline), AmSearchField (radio 6), AmSearchTrigger
     ├── AmLists.kt         # AmListRow (celda), AmBadge
     ├── AmStatus.kt        # AmStatusBanner, AmLoading, AmEmptyState, AmSection
     ├── AmChrome.kt        # AmTopBar, navegación raíz, FAB, transición de superficies

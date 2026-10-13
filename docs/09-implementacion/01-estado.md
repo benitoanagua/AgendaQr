@@ -12,7 +12,7 @@
 |---|---|---|
 | Dominio (operaciones, comprobantes, contextos) | Implementado | domain tests |
 | Datos (Supabase local-first, sync queue) | Implementado | data tests |
-| UX/UI V1.3 (AgendaMobile sobre Material 3, S01–S12) | Implementado | Robolectric suite + hashes visuales + gate del design system |
+| UX/UI V1.4 (referencia Ant Design Mobile, S01–S12) | Implementado | Robolectric suite + hashes visuales + gate del design system |
 | Chrome e insets (TopBar, NavigationBar/NavigationRail, Scaffold con contentWindowInsets) | Implementado | Robolectric suite + gate |
 | Edge-to-edge Android (`enableEdgeToEdge`) | Implementado | ensamblado; runtime NO VERIFICADO (dispositivo) |
 | Predictive back (PredictiveBackHandler con progreso) | Implementado | compilación 3 targets; gesto NO VERIFICADO (dispositivo) |

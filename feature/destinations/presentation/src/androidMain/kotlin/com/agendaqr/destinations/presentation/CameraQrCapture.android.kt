@@ -65,7 +65,7 @@ import java.util.concurrent.Executors
  * continuo. Al detectar un QR se emite una única vez y el flujo continúa
  * a S09 exactamente como Galería (misma canal de resultados).
  *
- * El lenguaje visual es el del scanner AgendaMobile (marco con esquinas de acento,
+ * El lenguaje visual es el del scanner del sistema (marco con esquinas de acento,
  * hint textual, sin métricas), sobre la vista previa real de la cámara.
  */
 @Composable
@@ -121,7 +121,7 @@ internal fun CameraQrCaptureOverlay(
                             proxy
                         },
                     )
-                    // Lenguaje visual del scanner AgendaMobile sobre la vista
+                    // Lenguaje visual del scanner del sistema sobre la vista
                     // previa: encuadre de marca del design system
                     // (AmScannerFrame, excepción E-03) y hint textual;
                     // sin métricas técnicas del scanner (S03).

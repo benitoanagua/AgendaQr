@@ -1,6 +1,7 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,15 +26,16 @@ import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
 
 /**
- * Celdas y etiquetas AgendaMobile: la celda (`AmListRow`) es la unidad de
- * las listas de producto — patrón de lista móvil con divisores opt-in y
- * metadatos en línea propia.
+ * Celdas y etiquetas (referencia: List/Item + Tag): la celda (`AmListRow`)
+ * es la unidad de las listas de producto — patrón de lista móvil con
+ * divisores opt-in y metadatos en línea propia.
  */
 
 /**
- * Etiqueta semántica de estado (badge): texto con el par del tono
- * (content/container garantizado por AmSchemeTest), forma de píldora. No
- * interactiva; el estado se expresa con TEXTO (nunca solo color).
+ * Etiqueta semántica de estado (Tag outline/round de la referencia):
+ * borde y texto del tono (par garantizado por AmSchemeTest) sobre fondo
+ * transparente. No interactiva; el estado se expresa con TEXTO (nunca
+ * solo color).
  */
 @Composable
 fun AmBadge(
@@ -41,10 +43,12 @@ fun AmBadge(
     modifier: Modifier = Modifier,
     tone: AmTone = AmTone.Neutral,
 ) {
+    val toneColor = if (tone == AmTone.Neutral) AmColor.TextSecondary else tone.content()
     Box(
         modifier = modifier
-            .background(
-                if (tone == AmTone.Neutral) AmColor.SurfaceSecondary else tone.container(),
+            .border(
+                AmMetrics.Border,
+                toneColor,
                 AmShapes.Pill,
             )
             .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
@@ -53,7 +57,7 @@ fun AmBadge(
         Text(
             text,
             style = AmTextStyles.Support,
-            color = if (tone == AmTone.Neutral) AmColor.TextPrimary else tone.content(),
+            color = toneColor,
         )
     }
 }

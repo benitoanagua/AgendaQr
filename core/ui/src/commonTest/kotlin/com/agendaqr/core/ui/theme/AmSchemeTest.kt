@@ -11,18 +11,20 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 /**
- * Contrato del esquema de color de AgendaMobile (ADR-0013): los dos
- * esquemas fijan los valores actuales (ningún cambio visual silencioso),
- * todos los pares que llegan a pantalla cumplen WCAG AA (>= 4.5:1 texto,
- * >= 3:1 bordes/foco) y los roles conmutan con el tema.
+ * Contrato del esquema de color (ADR-0014, referencia Ant Design Mobile):
+ * los dos esquemas fijan los valores actuales (ningún cambio visual
+ * silencioso), todos los pares que llegan a pantalla cumplen WCAG AA
+ * (>= 4.5:1 texto, >= 3:1 foco) y los roles conmutan con el tema.
+ * Las recalibraciones respecto a la referencia están documentadas en el
+ * contrato §4.4 (la accesibilidad prevalece).
  */
 class AmSchemeTest {
 
     private fun AmColorScheme.all(): List<Color> = listOf(
         background, surface, surfaceSecondary,
-        border, divider, borderControl,
+        border, divider,
         textPrimary, textSecondary, textTertiary,
-        accent, onAccent, accentContainer, onAccentContainer, accentText,
+        accent, onAccent, accentContainer, onAccentContainer, accentText, wathet,
         danger, onDanger, dangerContainer,
         success, successContainer, warning, warningContainer,
         info, infoContainer, focus,
@@ -54,61 +56,61 @@ class AmSchemeTest {
     }
 
     @Test
-    fun light_scheme_pins_the_current_agendamobile_values() {
+    fun light_scheme_pins_the_current_values() {
         val s = LightAmColorScheme
-        assertEquals("F6F7FA", hex(s.background))
+        assertEquals("F5F5F5", hex(s.background))
         assertEquals("FFFFFF", hex(s.surface))
-        assertEquals("EDF1F7", hex(s.surfaceSecondary))
-        assertEquals("DCE2EB", hex(s.border))
-        assertEquals("E3E7EE", hex(s.divider))
-        assertEquals("67748C", hex(s.borderControl))
-        assertEquals("121722", hex(s.textPrimary))
-        assertEquals("5A6478", hex(s.textSecondary))
-        assertEquals("626D80", hex(s.textTertiary))
-        assertEquals("0059D6", hex(s.accent))
+        assertEquals("F5F5F5", hex(s.surfaceSecondary))
+        assertEquals("E5E5E5", hex(s.border))
+        assertEquals("EEEEEE", hex(s.divider))
+        assertEquals("333333", hex(s.textPrimary))
+        assertEquals("666666", hex(s.textSecondary))
+        assertEquals("6E6E6E", hex(s.textTertiary))
+        assertEquals("1668DC", hex(s.accent))
         assertEquals("FFFFFF", hex(s.onAccent))
-        assertEquals("0059D6", hex(s.accentContainer))
+        assertEquals("1668DC", hex(s.accentContainer))
         assertEquals("FFFFFF", hex(s.onAccentContainer))
-        assertEquals("0059D6", hex(s.accentText))
-        assertEquals("B3231C", hex(s.danger))
+        assertEquals("1668DC", hex(s.accentText))
+        assertEquals("E7F1FF", hex(s.wathet))
+        assertEquals("D21F2E", hex(s.danger))
         assertEquals("FFFFFF", hex(s.onDanger))
         assertEquals("FDEBEA", hex(s.dangerContainer))
-        assertEquals("146B2F", hex(s.success))
+        assertEquals("0A7A44", hex(s.success))
         assertEquals("E2F5E8", hex(s.successContainer))
         assertEquals("8A5300", hex(s.warning))
         assertEquals("FDF3DC", hex(s.warningContainer))
-        assertEquals("0B6A8F", hex(s.info))
-        assertEquals("DCEEF8", hex(s.infoContainer))
-        assertEquals("0059D6", hex(s.focus))
-        assertEquals("E7EAF0", hex(s.disabled))
-        assertEquals("626D80", hex(s.onDisabled))
-        assertEquals("1B2330", hex(s.inverseSurface))
+        assertEquals("1668DC", hex(s.info))
+        assertEquals("E7F1FF", hex(s.infoContainer))
+        assertEquals("1668DC", hex(s.focus))
+        assertEquals("F0F0F0", hex(s.disabled))
+        assertEquals("767676", hex(s.onDisabled))
+        assertEquals("1A1A1A", hex(s.inverseSurface))
         assertEquals("FFFFFF", hex(s.inverseOnSurface))
-        assertEquals("6FA5FF", hex(s.inverseAccent))
+        assertEquals("3086FF", hex(s.inverseAccent))
         assertEquals("FFFFFF", hex(s.qrCanvas))
-        assertEquals("F9FAFC", hex(s.surfaceContainerLow))
-        assertEquals("F1F4F9", hex(s.surfaceContainer))
-        assertEquals("EAEEF4", hex(s.surfaceContainerHigh))
-        assertEquals("E3E8F0", hex(s.surfaceContainerHighest))
+        assertEquals("FFFFFF", hex(s.surfaceContainerLow))
+        assertEquals("F7F7F7", hex(s.surfaceContainer))
+        assertEquals("EFEFEF", hex(s.surfaceContainerHigh))
+        assertEquals("E8E8E8", hex(s.surfaceContainerHighest))
     }
 
     @Test
-    fun dark_scheme_pins_the_current_agendamobile_values() {
+    fun dark_scheme_pins_the_current_values() {
         val s = DarkAmColorScheme
-        assertEquals("0C1016", hex(s.background))
-        assertEquals("151B24", hex(s.surface))
-        assertEquals("202836", hex(s.surfaceSecondary))
-        assertEquals("2A3342", hex(s.border))
-        assertEquals("232B38", hex(s.divider))
-        assertEquals("859098", hex(s.borderControl))
-        assertEquals("EEF2F8", hex(s.textPrimary))
-        assertEquals("A3ADC2", hex(s.textSecondary))
-        assertEquals("8892A4", hex(s.textTertiary))
+        assertEquals("1A1A1A", hex(s.background))
+        assertEquals("242424", hex(s.surface))
+        assertEquals("0A0A0A", hex(s.surfaceSecondary))
+        assertEquals("2B2B2B", hex(s.border))
+        assertEquals("2B2B2B", hex(s.divider))
+        assertEquals("E6E6E6", hex(s.textPrimary))
+        assertEquals("B3B3B3", hex(s.textSecondary))
+        assertEquals("8C8C8C", hex(s.textTertiary))
         assertEquals("6FA5FF", hex(s.accent))
         assertEquals("0A1120", hex(s.onAccent))
         assertEquals("6FA5FF", hex(s.accentContainer))
         assertEquals("0A1120", hex(s.onAccentContainer))
         assertEquals("6FA5FF", hex(s.accentText))
+        assertEquals("0D2543", hex(s.wathet))
         assertEquals("FF9C96", hex(s.danger))
         assertEquals("3A1512", hex(s.onDanger))
         assertEquals("3A1512", hex(s.dangerContainer))
@@ -116,21 +118,21 @@ class AmSchemeTest {
         assertEquals("0E2C1C", hex(s.successContainer))
         assertEquals("F8C96A", hex(s.warning))
         assertEquals("3A2B0E", hex(s.warningContainer))
-        assertEquals("74BEEC", hex(s.info))
-        assertEquals("0D2A3C", hex(s.infoContainer))
+        assertEquals("6FA5FF", hex(s.info))
+        assertEquals("0D2543", hex(s.infoContainer))
         assertEquals("6FA5FF", hex(s.focus))
-        assertEquals("202836", hex(s.disabled))
-        assertEquals("8892A4", hex(s.onDisabled))
-        assertEquals("EEF2F8", hex(s.inverseSurface))
-        assertEquals("121722", hex(s.inverseOnSurface))
-        assertEquals("0059D6", hex(s.inverseAccent))
+        assertEquals("2B2B2B", hex(s.disabled))
+        assertEquals("808080", hex(s.onDisabled))
+        assertEquals("F5F5F5", hex(s.inverseSurface))
+        assertEquals("1A1A1A", hex(s.inverseOnSurface))
+        assertEquals("3086FF", hex(s.inverseAccent))
         // El lienzo del QR es claro en ambos temas (zona de silencio
         // escaneable): no conmuta con el tema por diseño.
         assertEquals("FFFFFF", hex(s.qrCanvas))
-        assertEquals("11151C", hex(s.surfaceContainerLow))
-        assertEquals("151B24", hex(s.surfaceContainer))
-        assertEquals("202836", hex(s.surfaceContainerHigh))
-        assertEquals("2A3340", hex(s.surfaceContainerHighest))
+        assertEquals("0A0A0A", hex(s.surfaceContainerLow))
+        assertEquals("1A1A1A", hex(s.surfaceContainer))
+        assertEquals("242424", hex(s.surfaceContainerHigh))
+        assertEquals("2E2E2E", hex(s.surfaceContainerHighest))
     }
 
     @Test
@@ -140,11 +142,16 @@ class AmSchemeTest {
             assertTrue(scheme.all().none { it == Color.Unspecified }, "scheme has Unspecified colors")
         }
         assertNotEquals(LightAmColorScheme, DarkAmColorScheme)
-        // El contenedor de acento es un ALIAS del par accent/onAccent:
-        // AgendaMobile tiene un solo acento (sin segunda marca).
+        // El contenedor de acento es un ALIAS del par accent/onAccent: UN
+        // solo acento (sin segunda marca).
         listOf(LightAmColorScheme, DarkAmColorScheme).forEach { scheme ->
             assertEquals(scheme.accent, scheme.accentContainer, "accentContainer must alias accent")
             assertEquals(scheme.onAccent, scheme.onAccentContainer, "onAccentContainer must alias onAccent")
+        }
+        // La referencia no define tono info: lo informativo usa el acento.
+        listOf(LightAmColorScheme, DarkAmColorScheme).forEach { scheme ->
+            assertEquals(scheme.accent, scheme.info, "info must be the accent")
+            assertEquals(scheme.wathet, scheme.infoContainer, "infoContainer must be wathet")
         }
     }
 
@@ -153,6 +160,7 @@ class AmSchemeTest {
         val s = LightAmColorScheme
         assertTrue(contrast(hex(s.accent), hex(s.onAccent)) >= 4.5, "light accent/onAccent")
         assertTrue(contrast(hex(s.danger), hex(s.onDanger)) >= 4.5, "light danger/onDanger")
+        assertTrue(contrast(hex(s.accentText), hex(s.wathet)) >= 4.5, "light accentText/wathet")
         assertTrue(contrast(hex(s.background), hex(s.textPrimary)) >= 4.5, "light background/textPrimary")
         assertTrue(contrast(hex(s.surface), hex(s.textPrimary)) >= 4.5, "light surface/textPrimary")
         assertTrue(contrast(hex(s.inverseSurface), hex(s.inverseOnSurface)) >= 4.5, "light inverse pair")
@@ -164,6 +172,7 @@ class AmSchemeTest {
         val s = DarkAmColorScheme
         assertTrue(contrast(hex(s.accent), hex(s.onAccent)) >= 4.5, "dark accent/onAccent")
         assertTrue(contrast(hex(s.danger), hex(s.onDanger)) >= 4.5, "dark danger/onDanger")
+        assertTrue(contrast(hex(s.accentText), hex(s.wathet)) >= 4.5, "dark accentText/wathet")
         assertTrue(contrast(hex(s.background), hex(s.textPrimary)) >= 4.5, "dark background/textPrimary")
         assertTrue(contrast(hex(s.surface), hex(s.textPrimary)) >= 4.5, "dark surface/textPrimary")
         assertTrue(contrast(hex(s.inverseSurface), hex(s.inverseOnSurface)) >= 4.5, "dark inverse pair")
@@ -220,12 +229,12 @@ class AmSchemeTest {
     }
 
     @Test
-    fun control_borders_and_focus_meet_3_to_1_in_both_schemes() {
+    fun focus_meets_3_to_1_in_both_schemes() {
+        // La separación usa hairlines decorativos de la referencia; el
+        // foco y los indicadores activos sí cumplen ≥ 3:1.
         listOf(LightAmColorScheme, DarkAmColorScheme).forEach { scheme ->
-            assertTrue(contrast(hex(scheme.borderControl), hex(scheme.background)) >= 3.0, "borderControl/background")
-            assertTrue(contrast(hex(scheme.borderControl), hex(scheme.surface)) >= 3.0, "borderControl/surface")
-            assertTrue(contrast(hex(scheme.borderControl), hex(scheme.surfaceSecondary)) >= 3.0, "borderControl/surfaceSecondary")
             assertTrue(contrast(hex(scheme.focus), hex(scheme.background)) >= 3.0, "focus/background")
+            assertTrue(contrast(hex(scheme.focus), hex(scheme.surface)) >= 3.0, "focus/surface")
             assertTrue(contrast(hex(scheme.focus), hex(scheme.surfaceSecondary)) >= 3.0, "focus/surfaceSecondary")
         }
     }
@@ -234,7 +243,8 @@ class AmSchemeTest {
     fun disabled_pair_keeps_a_quality_floor() {
         // WCAG exime los controles deshabilitados de AA; el sistema se
         // exige a sí mismo un suelo de 3:1 para que "deshabilitado" sea
-        // perceptible sin depender solo del contraste con el fondo.
+        // perceptible sin depender solo del contraste con el fondo
+        // (además de la opacidad .4 de la referencia en botones).
         listOf(LightAmColorScheme, DarkAmColorScheme).forEach { scheme ->
             assertTrue(
                 contrast(hex(scheme.onDisabled), hex(scheme.disabled)) >= 3.0,
@@ -257,7 +267,6 @@ class AmSchemeTest {
             "surfaceSecondary" to surfaceSecondary,
             "border" to border,
             "divider" to divider,
-            "borderControl" to borderControl,
             "textPrimary" to textPrimary,
             "textSecondary" to textSecondary,
             "textTertiary" to textTertiary,
@@ -266,6 +275,7 @@ class AmSchemeTest {
             "accentContainer" to accentContainer,
             "onAccentContainer" to onAccentContainer,
             "accentText" to accentText,
+            "wathet" to wathet,
             "danger" to danger,
             "onDanger" to onDanger,
             "dangerContainer" to dangerContainer,
@@ -294,17 +304,20 @@ class AmSchemeTest {
         // Los roles dependientes del tema conmutan.
         listOf(
             "background", "surface", "surfaceSecondary", "border", "divider",
-            "borderControl", "textPrimary", "textSecondary", "textTertiary",
-            "accent", "onAccent", "accentText", "danger", "onDanger",
+            "textPrimary", "textSecondary", "textTertiary",
+            "accent", "onAccent", "accentText", "wathet", "danger", "onDanger",
             "dangerContainer", "success", "successContainer", "warning",
             "warningContainer", "info", "infoContainer", "focus",
             "disabled", "onDisabled", "inverseSurface", "inverseOnSurface",
-            "inverseAccent", "surfaceContainerLow", "surfaceContainer",
+            "surfaceContainerLow", "surfaceContainer",
             "surfaceContainerHigh", "surfaceContainerHighest",
         ).forEach { key ->
             assertNotEquals(light.getValue(key), dark.getValue(key), "$key must switch with the theme")
         }
         // El lienzo del QR no conmuta: claro garantizado en ambos temas.
         assertEquals(light.getValue("qrCanvas"), dark.getValue("qrCanvas"))
+        // El acento inverso tampoco: el primario oscuro de la referencia
+        // funciona en ambos contextos inversos.
+        assertEquals(light.getValue("inverseAccent"), dark.getValue("inverseAccent"))
     }
 }
