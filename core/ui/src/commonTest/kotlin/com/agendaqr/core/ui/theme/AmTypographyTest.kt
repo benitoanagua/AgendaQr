@@ -8,7 +8,7 @@ import kotlin.test.assertTrue
 
 /**
  * Tipografía (contrato §5, ADR-0014): familia de sistema en todos los
- * estilos, roles estándar de M3 desde tokens y sin fuente empaquetada.
+ * estilos, roles semánticos basados en Ant Design Mobile desde tokens y sin fuente empaquetada.
  */
 class AmTypographyTest {
 
@@ -32,9 +32,9 @@ class AmTypographyTest {
     }
 
     @Test
-    fun m3_roles_carry_the_canonical_sizes() {
+    fun ant_design_roles_carry_the_canonical_sizes() {
         // El título de página (titleLarge) y el titular de auth
-        // (headlineMedium) son los roles M3 estándar, en sp.
+        // (headlineMedium) son los roles semánticos de la referencia, en sp.
         assertEquals(18.sp, AmMaterialTypography.titleLarge.fontSize)
         assertEquals(24.sp, AmMaterialTypography.headlineMedium.fontSize)
         assertEquals(14.sp, AmMaterialTypography.bodyLarge.fontSize)
@@ -42,7 +42,7 @@ class AmTypographyTest {
     }
 
     @Test
-    fun m3_roles_use_the_system_family() {
+    fun ant_design_roles_use_the_system_family() {
         // Sin fuente empaquetada: todos los roles resuelven a la sans del
         // sistema.
         val roles = listOf(
@@ -86,13 +86,13 @@ class AmTypographyTest {
         roles.forEach { style ->
             assertTrue(
                 style.lineHeight.value > style.fontSize.value,
-                "lineHeight ${style.lineHeight} <= fontSize ${style.fontSize} en un rol M3",
+                "lineHeight ${style.lineHeight} <= fontSize ${style.fontSize} en un rol tipográfico",
             )
         }
     }
 
     @Test
-    fun tracking_follows_material_defaults() {
+    fun tracking_is_neutral_for_ant_design_mobile() {
         // Tracking neutro de la referencia Ant Design Mobile; no aplicar
         // el tracking por defecto de Material como rasgo visual.
         assertEquals(0.sp, AmTracking.BodyLarge)
