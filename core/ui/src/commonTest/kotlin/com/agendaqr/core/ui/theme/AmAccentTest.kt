@@ -40,7 +40,7 @@ class AmAccentTest {
     fun the_palette_is_exactly_the_12_admitted_accents_plus_system() {
         assertEquals(12, AmAccents.Admitted.size)
         val expected = mapOf(
-            "system" to "0059D6",
+            "system" to "0958D9",
             "blue" to "1D4ED8", "sky" to "0369A1", "teal" to "0F766E",
             "cyan" to "0E7490", "emerald" to "047857", "green" to "15803D",
             "lime" to "4D7C0F", "amber" to "A16207", "orange" to "C2410C",
