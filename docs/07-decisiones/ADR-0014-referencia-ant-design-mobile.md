@@ -28,12 +28,12 @@ La pasada anterior dotó al producto de un sistema de diseño propio (AgendaMobi
 | Button (solid/outline/none, radius 4, disabled opacity) | `AmPrimaryButton`/`AmSecondaryButton`/`AmTextAction`/`AmDangerButton` | Secundario = outline de acento; deshabilitado con opacidad .4 |
 | Input (sin borde, placeholder light, clear) + Form/List | `AmTextField` (guía hairline en foco/error) | Sin borde de reposo; error con icono+texto |
 | SearchBar (32px, radio 6, fill box, borde de acento activo) | `AmSearchField`/`AmSearchTrigger` | Altura mínima 48 dp por accesibilidad (desviación documentada) |
-| List/Item (hairlines, título 17, descripción 13) | `AmListRow` (+ `showDivider`) | Filas separadas en listas no contiguas (desviación documentada) |
+| List/Item (hairlines) | `AmListRow` (+ `showDivider`) | Título 14, descripción 12 (escala compacta); filas separadas en listas no contiguas (desviación documentada) |
 | Tag (outline/round) | `AmBadge` | Etiqueta de estado con texto, nunca solo color |
 | Selector/CapsuleTabs | `AmFilterChip` | Seleccionado: borde de acento + fondo wathet |
 | Tabs (indicador, pestaña activa de acento) | `AmPivot` | Indicador de acento, desplazable |
-| TabBar (48px, icono 24, etiqueta 10, activo de acento) | `AmNavBar`/`AmNavRail` | Etiqueta 11 sp por altura de barra M3 (desviación documentada) |
-| NavBar (atrás + título + acciones) | `AmTopBar` | Título a la izquierda por convención Android (desviación documentada) |
+| TabBar (48px, icono 24, etiqueta 10, activo de acento, sin píldora) | `AmNavBar` (64 dp propio + hairline, sin píldora M3) / `AmNavRail` M3 | Etiqueta 11 sp; objetivo 64 dp; selección con semántica |
+| NavBar (atrás + título + acciones) | `AmTopBar` propia de 56 dp | Título 18 sp Medium a la izquierda por convención Android (desviación documentada); acciones de 48 dp |
 | Modal (título centrado 18, contenido 15) | `AmDialog` | Botonera de plataforma; foco conservativo en destructivas |
 | Toast (centrado, oscuro) / plataforma | `AmFeedbackEvent` + Snackbar | Snackbar inferior en Android (convención de plataforma) |
 | Empty | `AmEmptyState` | Glifo + título + acción; glifo decorativo no anunciado |

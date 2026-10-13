@@ -22,7 +22,7 @@ private const val HeadingLineHeightRatio = 1.25f
 
 /**
  * Proporción de cuerpo/UI: coincide con los estilos canónicos
- * (Body 16/24). Fijarla explícitamente cierra la herencia del ambiente
+ * (Body 14, proporción 1.5). Fijarla explícitamente cierra la herencia del ambiente
  * para tamaños mayores.
  */
 private const val BodyLineHeightRatio = 1.5f

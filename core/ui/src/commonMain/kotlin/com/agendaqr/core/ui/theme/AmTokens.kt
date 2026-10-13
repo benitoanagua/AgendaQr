@@ -290,6 +290,12 @@ object AmMetrics {
     val BorderStrong = 3.dp
     /** Área táctil mínima (accesibilidad, invariante del gate). */
     val ControlMinSize = 48.dp
+    /** Altura de la barra superior compacta (referencia 45 px → 56 dp con
+     * objetivos táctiles de 48). */
+    val TopBarHeight = 56.dp
+    /** Altura de la barra inferior compacta (referencia 48 px → 64 dp con
+     * objetivos táctiles de 48 y separador). */
+    val NavBarHeight = 64.dp
     /** Ancho máximo del contenido en medium/expanded. */
     val ContentMaxWidth = 720.dp
     val QrPreviewSize = 240.dp
@@ -331,44 +337,42 @@ object AmShapes {
 
 /**
  * Escala tipográfica en sp (respeta el escalado de fuente del sistema).
- * Roles semánticos del producto:
- * - Título de página: [TitleLarge] (22) en la barra superior.
+ * Escala compacta neutra (brief de rediseño, referencia adm):
+ * - Título de pantalla: [TitleLarge] (18) en la barra superior.
+ * - Encabezado destacado: [Headline] (24) como techo.
  * - Título de sección: [SectionHeader] (15, Medium).
- * - Título de fila: Body (17) en AmListRow.
- * - Cuerpo: [Body] (17); etiqueta: [Label] (14).
- * - Texto secundario/ayuda/error: [Caption] (13) vía [AmTextStyles].
+ * - Título de fila: Body (14) en AmListRow.
+ * - Cuerpo: [Body] (14); etiqueta: [Label] (14).
+ * - Texto secundario/ayuda/error: [Caption] (12) vía [AmTextStyles].
  */
 object AmType {
     /** Display de bloque (32 sp): número/hero de tarjeta de datos. */
     val Display: TextUnit = 32.sp
-    /** Titular de autenticación (28 sp). */
-    val HeadlineMedium: TextUnit = 28.sp
-    /** Encabezado de sección grande (24 sp). */
+    /** Encabezado destacado (24 sp, techo de la escala compacta). */
     val Headline: TextUnit = 24.sp
-    /** Título de página en la barra superior (22 sp). */
-    val TitleLarge: TextUnit = 22.sp
+    /** Título de pantalla en la barra superior (18 sp). */
+    val TitleLarge: TextUnit = 18.sp
     /** Título de diálogo/modal centrado (18 sp, referencia). */
     val Title: TextUnit = 18.sp
-    /** Cuerpo (17 sp, referencia). */
-    val Body: TextUnit = 17.sp
+    /** Cuerpo (14 sp, escala compacta). */
+    val Body: TextUnit = 14.sp
     /** Etiqueta de botón/fila (14 sp). */
     val Label: TextUnit = 14.sp
-    /** Apoyo/descripción (13 sp, referencia). */
-    val Caption: TextUnit = 13.sp
-    /** Caption mínima (11 sp). */
+    /** Apoyo/descripción (12 sp). */
+    val Caption: TextUnit = 12.sp
+    /** Caption mínima (11 sp, etiquetas de barra). */
     val CaptionSmall: TextUnit = 11.sp
     /** Encabezados de sección (15 sp, referencia). */
     val SectionHeader: TextUnit = 15.sp
     // Interlineados canónicos en sp (respetan el escalado, §accesibilidad).
     val LineHeightLabel: TextUnit = 20.sp
-    val LineHeightBody: TextUnit = 26.sp
+    val LineHeightBody: TextUnit = 20.sp
     val LineHeightCaption: TextUnit = 16.sp
     val LineHeightSection: TextUnit = 20.sp
     val LineHeightHeadlineLarge: TextUnit = 40.sp
-    val LineHeightHeadlineMedium: TextUnit = 36.sp
     val LineHeightHeadlineSmall: TextUnit = 32.sp
-    val LineHeightTitleLarge: TextUnit = 28.sp
-    val LineHeightTitleMedium: TextUnit = 24.sp
+    val LineHeightTitleLarge: TextUnit = 24.sp
+    val LineHeightTitleMedium: TextUnit = 20.sp
     val LineHeightTitleSmall: TextUnit = 20.sp
     val LineHeightLabelSmall: TextUnit = 16.sp
     /**
@@ -378,16 +382,18 @@ object AmType {
     val FamilyUi: FontFamily = FontFamily.Default
 }
 
-/** Tracking de los roles tipográficos de Material 3 (valores por defecto). */
+/** Tracking neutro: la interfaz no usa tracking amplio como característica
+ * general (brief de rediseño); los roles conservan espaciado cero salvo
+ * justificación por caso. */
 object AmTracking {
-    val TitleMedium: TextUnit = 0.15.sp
-    val TitleSmall: TextUnit = 0.1.sp
-    val BodyLarge: TextUnit = 0.5.sp
-    val BodyMedium: TextUnit = 0.25.sp
-    val BodySmall: TextUnit = 0.4.sp
-    val LabelLarge: TextUnit = 0.1.sp
-    val LabelMedium: TextUnit = 0.5.sp
-    val LabelSmall: TextUnit = 0.5.sp
+    val TitleMedium: TextUnit = 0.sp
+    val TitleSmall: TextUnit = 0.sp
+    val BodyLarge: TextUnit = 0.sp
+    val BodyMedium: TextUnit = 0.sp
+    val BodySmall: TextUnit = 0.sp
+    val LabelLarge: TextUnit = 0.sp
+    val LabelMedium: TextUnit = 0.sp
+    val LabelSmall: TextUnit = 0.sp
 }
 
 /**
@@ -402,8 +408,8 @@ val AmMaterialTypography: Typography = Typography(
         fontFamily = AmType.FamilyUi,
     ),
     headlineMedium = TextStyle(
-        fontSize = AmType.HeadlineMedium,
-        lineHeight = AmType.LineHeightHeadlineMedium,
+        fontSize = AmType.Headline,
+        lineHeight = AmType.LineHeightHeadlineSmall,
         fontFamily = AmType.FamilyUi,
     ),
     headlineSmall = TextStyle(
@@ -505,7 +511,7 @@ object AmTextStyles {
         lineHeight = AmType.LineHeightCaption,
     )
 
-    /** Encabezado de sección (título de sección, 14 sp Medium). */
+    /** Encabezado de sección (título de sección, 15 sp Medium). */
     val SectionHeader = TextStyle(
         fontSize = AmType.SectionHeader,
         lineHeight = AmType.LineHeightSection,

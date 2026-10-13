@@ -13,6 +13,7 @@
 | V1.2 | 2026-10-11 | Enmienda por ADR-0012 (UI convencional sobre Material 3, misma en ambas plataformas): §12 reescrito como diseño convencional (M1–M13 eliminados), §4 S01/S02/S12 recompuestos, §3 y §11 ajustados donde cambian. Intención, navegación conceptual, modelo mental, reglas de negocio y recuperación de errores: intactos. Aprobación explícita del propietario para enmendar la congelación registrada en ADR-0012. |
 | V1.3 | 2026-10-12 | Enmienda por ADR-0013 (sistema de diseño propio AgendaMobile): §12 actualizado a la autoría, paleta, formas y modo oscuro de AgendaMobile. Intención, navegación, modelo mental, reglas de negocio, accesibilidad y copy: intactos. |
 | V1.4 | 2026-10-13 | Enmienda por ADR-0014 (referencia Ant Design Mobile + navegación convencional Android/iOS): §12 actualizado a la referencia, paleta, radios y componentes oficiales; navegación jerárquica y de destinos conforme a plataforma. Intención, navegación conceptual, modelo mental, reglas de negocio, accesibilidad y copy: intactos. |
+| V1.5 | 2026-10-13 | Enmienda de compacidad (escala compacta neutra): §12 delega tipografía (cuerpo 14, título 18, tracking neutro), barras compactas (superior 56 dp, inferior 64 dp sin píldora) y densidad al contrato normativo. Intención, flujos, reglas de negocio, accesibilidad y copy: intactos. |
 
 La implementación vigente corresponde a V1.4. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/09-implementacion/01-estado.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
@@ -274,33 +275,33 @@ La UI es convencional, mobile-first y poco disruptiva: componentes estándar de 
 
 ### Campos de entrada
 
-- Campo tonal (superficie secundaria, radio de tokens, sin borde de reposo) con etiqueta, texto de apoyo y error contextual debajo (icono + texto, no solo color); la guía inferior aparece en foco (acento) y error (danger). El borde funcional cumple ≥ 3:1 (rol `borderControl`).
+- Campo sin borde ni relleno, con etiqueta, texto de apoyo y error contextual debajo (icono + texto, no solo color); la guía hairline inferior aparece en reposo (divisor), en foco (acento) y en error (peligro).
 - Teclado e IME según el tipo de campo; autofill de credenciales; mostrar/ocultar contraseña con botón de descripción accesible.
 - La obligatoriedad se indica con texto/semántica accesible coherente con la guía de voz, no con asterisco decorativo.
 
 ### Listas y diálogos
 
-- Filas con `ListItem` (o equivalente M3), separación por divisor opt-in o espacio; acciones por fila como botones de icono (favorito = conmutador de estrella con estado y descripción accesible), no como enlace de texto.
-- Diálogos y hojas: `AlertDialog` estándar para confirmaciones y selecciones acotadas (la hoja inferior como patrón de selector queda registrada como siguiente paso en ADR-0013).
+- Filas con `ListItem` (o equivalente M3) en cuerpo de lista con hairlines; acciones por fila como botones de icono (favorito = conmutador de estrella con estado y descripción accesible), no como enlace de texto.
+- Diálogos y hojas: `AlertDialog` estándar para confirmaciones y selecciones acotadas (la hoja inferior como patrón de selector queda registrada como siguiente paso en ADR-0014).
 
 ### Botones
 
-- Acción principal: `Button` con relleno de acento. Secundaria: botón tonal (superficie secundaria, sin borde de reposo). Terciaria: `TextButton`. Icono: `IconButton`/`IconToggleButton` con descripción accesible. Mínimo 48 dp.
+- Acción principal: `Button` con relleno de acento. Secundaria: botón delineado (borde y texto de acento). Terciaria: `TextButton`. Icono: `IconButton`/`IconToggleButton` con descripción accesible. Mínimo 48 dp de objetivo táctil.
 - Estado deshabilitado y "guardando" expresados con etiqueta de texto (nunca solo con apariencia).
 
 ### Tipografía
 
-- Familia del sistema en todos los estilos (Roboto en Android, San Francisco en iOS): sin fuente empaquetada propia. Tamaños en sp; roles estándar de Material 3 (el título de página es `titleLarge`/`headlineSmall`, el cuerpo `bodyLarge`).
+- Familia del sistema en todos los estilos (Roboto en Android, San Francisco en iOS): sin fuente empaquetada propia. Escala compacta neutra en sp: pantalla 18, cuerpo 14, etiqueta 14, apoyo 12, tracking neutro; roles estándar de Material 3.
 - Capitalización de oración. El escalado de fuente del sistema se mantiene (§11).
 
 ### Color
 
-- Acento del sistema: del linaje del logo de marca, recalibrado para contraste AA — claro `0059D6` (texto blanco, 6.18:1), oscuro `6FA5FF` con texto de tinta (7.63:1). Esquemas claro y oscuro propios con superficies neutras frías (nunca blanco/negro puro como lienzo), pares de contenido verificados por pruebas.
+- Acento del sistema (referencia Ant Design Mobile, recalibrado para contraste AA): claro `1668DC` (texto blanco, 5.19:1), oscuro `6FA5FF` con texto de tinta (7.63:1). Superficies de la referencia en ambos temas, pares de contenido verificados por pruebas.
 - Paleta de identidad de contextos: el color se deriva de forma **determinista** del identificador del contexto, sin persistir el color ni cambiar el dominio; paleta acotada (12 + sistema), sin ampliar. Elegir color manualmente queda como punto abierto, coherente con ADR-0003 (sin edición de contextos en V1).
 - Los colores de estado (error, advertencia, éxito, información) siguen siendo semánticos y distintos del acento; el significado nunca depende solo del color.
 - El lienzo del código QR es claro en ambos temas (zona de silencio escaneable).
 
-Tabla de contraste calculada (WCAG 2.x sobre luminancia relativa; razón del par texto asignado/fondo). Regla: texto normal ≥ 4.5:1. Todos los acentos de AgendaMobile usan texto blanco.
+Tabla de contraste calculada (WCAG 2.x sobre luminancia relativa; razón del par texto asignado/fondo). Regla: texto normal ≥ 4.5:1. Todos los acentos usan texto blanco.
 
 | Acento | Hex | Texto blanco | Texto asignado |
 |---|---|---|---|
@@ -316,13 +317,13 @@ Tabla de contraste calculada (WCAG 2.x sobre luminancia relativa; razón del par
 | red | B91C1C | 6.47 | blanco |
 | rose | BE123C | 6.29 | blanco |
 | violet | 6D28D9 | 7.10 | blanco |
-| sistema | 0059D6 | 6.18 | blanco |
+| sistema | 1668DC | 5.19 | blanco |
 
-**Paleta final admitida: 12 acentos de contexto + el acento de sistema** (ADR-0013). Los pares están fijados por `AmAccentTest`; la asignación por identificador (FNV-1a) es estable entre plataformas.
+**Paleta final admitida: 12 acentos de contexto + el acento de sistema** (contrato normativo). Los pares están fijados por `AmAccentTest`; la asignación por identificador (FNV-1a) es estable entre plataformas.
 
 ### Formas y movimiento
 
-- Conjunto de formas explícito en tokens (extraSmall 4 dp, small 8 dp, medium 12 dp, large 16 dp, extraLarge 24 dp, píldora para chips/badges), consumido por `MaterialTheme.shapes`; ningún componente fija radios suyos.
+- Conjunto de formas explícito en tokens (extraSmall 2 dp, small 4 dp, medium 6 dp, large 8 dp, extraLarge 12 dp, píldora para chips/badges), consumido por `MaterialTheme.shapes`; ningún componente fija radios suyos.
 - Ripple/indicación de pulsación estándar de Material 3; sin overlay de pulsación propio ni `indication = null`.
 - Transición entre superficies: fundido con un desplazamiento horizontal pequeño, corto y con tokens de movimiento; con reduced motion el cambio es inmediato (§11).
 
@@ -334,7 +335,7 @@ Tabla de contraste calculada (WCAG 2.x sobre luminancia relativa; razón del par
 
 ### Modo oscuro
 
-- Esquema oscuro propio de tinta profunda (fondo `0C1016`, superficies elevadas `151B24`/`202836`), con los mismos roles semánticos y umbrales de contraste que el claro; el acento pasa a un azul claro con texto de tinta (par AA verificado).
+- Esquema oscuro de la referencia (fondo `1A1A1A`, superficie `242424`, secundaria `0A0A0A`, hairlines `2B2B2B`), con los mismos roles semánticos y umbrales de contraste que el claro; el acento pasa a un azul claro con texto de tinta (par AA verificado).
 
 ## 13. Fuera de esta congelación
 

@@ -37,7 +37,7 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 
 ## 3. Reglas de componente
 
-- Envoltorios finos de Material 3 con tokens: el componente fija forma/colores/estados que M3 no mapea (botones 12 dp, campos tonales, chips píldora) y hereda `typography`/`shapes` del tema.
+- Envoltorios finos de Material 3 con tokens: el componente fija forma/colores/estados que M3 no mapea (botones radio 4, campos sin borde, chips estilo selector) y hereda `typography`/`shapes` del tema; la barra superior (56 dp) y la inferior (64 dp, sin píldora) son composición propia.
 - Todo copy llega como parámetro del llamador (ADR-0008); las pantallas lo sirven desde `AppStrings`.
 - Estados obligatorios: pressed/focused/selected/error/disabled/loading, cada uno con señal no exclusivamente cromática.
 - Área táctil ≥ 48 dp (`AmMetrics.ControlMinSize`), sin alturas fijas que recorten con fuente grande.

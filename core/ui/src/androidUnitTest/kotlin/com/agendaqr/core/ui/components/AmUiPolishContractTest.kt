@@ -37,7 +37,7 @@ import kotlin.test.fail
  * Defectos de pulido UI a nivel de componente (contrato §5).
  *
  * - Interlineado: el encabezado no hereda el del cuerpo; el cuerpo fija
- *   el canónico 16/24; todo tamaño > 24 sp mantiene su proporción.
+ *   el canónico 14/21; todo tamaño > 24 sp mantiene su proporción.
  * - El acento de sección cumple AA como texto en ambos temas.
  */
 @RunWith(RobolectricTestRunner::class)
@@ -146,14 +146,14 @@ class AmUiPolishContractTest {
 
     @Test
     fun body_text_keeps_canonical_lineheight() {
-        // Caracterización: el cuerpo por defecto es 16/24 (canónico).
+        // Caracterización: el cuerpo por defecto es 14/20 (canónico
+        // compacto); AmText aplica la proporción 1.5 → 21 sp.
         setScaledContent(1.0f) {
             AmText("Cuerpo de dos lineas para probar interlineado expandido")
         }
         val style = layoutOf("Cuerpo de dos lineas para probar interlineado expandido").layoutInput.style
-        assertEquals(17.sp, style.fontSize)
-        // Proporción 1.5 del cuerpo (referencia): 17 × 1.5 = 25.5.
-        assertEquals(25.5.sp, style.lineHeight)
+        assertEquals(14.sp, style.fontSize)
+        assertEquals(21.sp, style.lineHeight)
     }
 
     @Test

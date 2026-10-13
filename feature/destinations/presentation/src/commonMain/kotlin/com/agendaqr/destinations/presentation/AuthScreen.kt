@@ -59,7 +59,7 @@ fun AuthScreen(
     ) {
         AmText(
             AppStrings.AgendaQr,
-            size = AmType.HeadlineMedium,
+            size = AmType.Title,
             fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
         )
         AmText(

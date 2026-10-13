@@ -105,16 +105,11 @@ fun DestinationsScreen(
             // tiles ni tile vivo; las entradas viven en la barra superior
             // (Cerrar sesión), el FAB (Añadir), la navegación raíz y las
             // filas. Favoritos es un filtro de la propia lista.
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-            ) {
-                AmFilterChip(
-                    label = if (state.favoriteOnly) AppStrings.FavoritosActivado else AppStrings.Favoritos,
-                    selected = state.favoriteOnly,
-                    onClick = { onAction(DestinationAction.ToggleFavorites) },
-                )
-            }
+            AmFilterChip(
+                label = if (state.favoriteOnly) AppStrings.FavoritosActivado else AppStrings.Favoritos,
+                selected = state.favoriteOnly,
+                onClick = { onAction(DestinationAction.ToggleFavorites) },
+            )
             AmSectionHeader(text = AppStrings.Recientes)
             when {
                 // la carga inicial de la lista se anuncia con el

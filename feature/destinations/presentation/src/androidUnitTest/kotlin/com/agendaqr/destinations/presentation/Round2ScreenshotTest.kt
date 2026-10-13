@@ -49,6 +49,30 @@ class Round2ScreenshotTest {
                 isLoading = false,
             ),
             onAction = {},
+            // La captura de referencia incluye el chrome de producción: la
+            // barra inferior aparece en las superficies raíz autenticadas.
+            navChrome = com.agendaqr.core.ui.components.AmNavChromeState(
+                destinations = listOf(
+                    com.agendaqr.core.ui.components.AmNavDestination(
+                        appRouteNameOf(AppRoute.Home), AppStrings.Inicio,
+                        com.agendaqr.core.ui.components.AmIcons.Home,
+                    ),
+                    com.agendaqr.core.ui.components.AmNavDestination(
+                        appRouteNameOf(AppRoute.Search), AppStrings.Buscar,
+                        com.agendaqr.core.ui.components.AmIcons.Search,
+                    ),
+                    com.agendaqr.core.ui.components.AmNavDestination(
+                        appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones,
+                        com.agendaqr.core.ui.components.AmIcons.Register,
+                    ),
+                    com.agendaqr.core.ui.components.AmNavDestination(
+                        appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos,
+                        com.agendaqr.core.ui.components.AmIcons.Context,
+                    ),
+                ),
+                selectedId = appRouteNameOf(AppRoute.Home),
+                onSelect = {},
+            ),
         )
     }
 
@@ -65,6 +89,28 @@ class Round2ScreenshotTest {
                 isLoading = false,
             ),
             onAction = {},
+            navChrome = com.agendaqr.core.ui.components.AmNavChromeState(
+                destinations = listOf(
+                    com.agendaqr.core.ui.components.AmNavDestination(
+                        appRouteNameOf(AppRoute.Home), AppStrings.Inicio,
+                        com.agendaqr.core.ui.components.AmIcons.Home,
+                    ),
+                    com.agendaqr.core.ui.components.AmNavDestination(
+                        appRouteNameOf(AppRoute.Search), AppStrings.Buscar,
+                        com.agendaqr.core.ui.components.AmIcons.Search,
+                    ),
+                    com.agendaqr.core.ui.components.AmNavDestination(
+                        appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones,
+                        com.agendaqr.core.ui.components.AmIcons.Register,
+                    ),
+                    com.agendaqr.core.ui.components.AmNavDestination(
+                        appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos,
+                        com.agendaqr.core.ui.components.AmIcons.Context,
+                    ),
+                ),
+                selectedId = appRouteNameOf(AppRoute.Home),
+                onSelect = {},
+            ),
         )
     }
 
@@ -103,4 +149,146 @@ class Round2ScreenshotTest {
     @Test fun s02_add_dark() = shot("s02-add-dark", dark = true) {
         AddDestinationScreen(onImport = {}, onBack = {})
     }
+
+    private fun searchFixture() = GlobalSearchUiState(
+        query = "mercado",
+        results = listOf(
+            com.agendaqr.destinations.domain.AgendaSearchResult(
+                type = com.agendaqr.destinations.domain.AgendaSearchResultType.QR,
+                id = "d-1", title = "Mercado Central", subtitle = "Frutas y verduras",
+                destinationId = "d-1",
+            ),
+            com.agendaqr.destinations.domain.AgendaSearchResult(
+                type = com.agendaqr.destinations.domain.AgendaSearchResultType.ACTIVITY,
+                id = "op-1", title = "Pago · 120",
+                operationId = "op-1",
+            ),
+            com.agendaqr.destinations.domain.AgendaSearchResult(
+                type = com.agendaqr.destinations.domain.AgendaSearchResultType.CONTEXT,
+                id = "ctx-1", title = "Mercado", contextId = "ctx-1",
+            ),
+        ),
+    )
+
+    @Test fun s04_search_light() = shot("s04-search-light", dark = false) {
+        GlobalSearchScreen(
+            state = searchFixture(),
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Search)),
+            onAction = {},
+            onSelect = {},
+        )
+    }
+
+    @Test fun s04_search_dark() = shot("s04-search-dark", dark = true) {
+        GlobalSearchScreen(
+            state = searchFixture(),
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Search)),
+            onAction = {},
+            onSelect = {},
+        )
+    }
+
+    private fun contextsFixture() = ContextsUiState(
+        contexts = listOf(
+            com.agendaqr.destinations.domain.Context(
+                id = "ctx-1", name = "Mercado", note = "Compras semanales",
+                createdAt = 1, updatedAt = 1,
+            ),
+            com.agendaqr.destinations.domain.Context(
+                id = "ctx-2", name = "Ferretería", createdAt = 1, updatedAt = 1,
+            ),
+        ),
+        isLoading = false,
+    )
+
+    @Test fun s06_contexts_light() = shot("s06-contexts-light", dark = false) {
+        ContextsScreen(
+            state = contextsFixture(),
+            onAction = {},
+            onBack = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Contexts)),
+        )
+    }
+
+    @Test fun s06_contexts_dark() = shot("s06-contexts-dark", dark = true) {
+        ContextsScreen(
+            state = contextsFixture(),
+            onAction = {},
+            onBack = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Contexts)),
+        )
+    }
+
+    // La ventana del diálogo crea una segunda raíz y la versión de
+    // Roborazzi del proyecto solo captura una raíz exacta: el diálogo se
+    // verifica por semántica (ContextPickerDialogTest,
+    // AmDialogProminenceTest), no por captura.
+
+    @Test fun s09_review_light() = shot("s09-review-light", dark = false) {
+        ImportReviewScreen(
+            assets = listOf(
+                com.agendaqr.destinations.domain.QrAsset(encoded = "eA=="),
+            ),
+            onSaveAll = {},
+            onBack = {},
+        )
+    }
+
+    @Test fun s09_review_dark() = shot("s09-review-dark", dark = true) {
+        ImportReviewScreen(
+            assets = listOf(
+                com.agendaqr.destinations.domain.QrAsset(encoded = "eA=="),
+            ),
+            onSaveAll = {},
+            onBack = {},
+        )
+    }
+
+    private fun editorFixture() = com.agendaqr.destinations.domain.Destination(
+        id = "d-1", name = "Carniceria Don Bife",
+        qr = com.agendaqr.destinations.domain.QrAsset(encoded = "eA=="),
+        createdAt = 1, updatedAt = 1,
+    )
+
+    @Test fun edit_destination_light() = shot("edit-destination-light", dark = false) {
+        DestinationEditorScreen(
+            existing = editorFixture(),
+            onSave = {},
+            onImportMany = {},
+            onBack = {},
+        )
+    }
+
+    @Test fun edit_destination_dark() = shot("edit-destination-dark", dark = true) {
+        DestinationEditorScreen(
+            existing = editorFixture(),
+            onSave = {},
+            onImportMany = {},
+            onBack = {},
+        )
+    }
+
+    private fun rootChrome(selected: String) =
+        com.agendaqr.core.ui.components.AmNavChromeState(
+            destinations = listOf(
+                com.agendaqr.core.ui.components.AmNavDestination(
+                    appRouteNameOf(AppRoute.Home), AppStrings.Inicio,
+                    com.agendaqr.core.ui.components.AmIcons.Home,
+                ),
+                com.agendaqr.core.ui.components.AmNavDestination(
+                    appRouteNameOf(AppRoute.Search), AppStrings.Buscar,
+                    com.agendaqr.core.ui.components.AmIcons.Search,
+                ),
+                com.agendaqr.core.ui.components.AmNavDestination(
+                    appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones,
+                    com.agendaqr.core.ui.components.AmIcons.Register,
+                ),
+                com.agendaqr.core.ui.components.AmNavDestination(
+                    appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos,
+                    com.agendaqr.core.ui.components.AmIcons.Context,
+                ),
+            ),
+            selectedId = selected,
+            onSelect = {},
+        )
 }

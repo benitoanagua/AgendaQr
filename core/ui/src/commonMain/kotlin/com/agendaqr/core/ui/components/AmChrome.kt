@@ -8,29 +8,39 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmMotion
+import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
 import com.agendaqr.core.ui.theme.AmType
@@ -71,11 +81,11 @@ data class AmTopBarAction(
 )
 
 /**
- * Barra superior estándar: `TopAppBar` con el título a la izquierda
- * (encabezado semántico), flecha atrás cuando hay a dónde volver — la
- * misma en ambas plataformas — y máx. 2 acciones visibles + menú "…".
+ * Barra superior estándar (56 dp, compacta): título de 18 sp a la
+ * izquierda (encabezado semántico), flecha atrás cuando hay a dónde
+ * volver — la misma en ambas plataformas — y máx. 2 acciones visibles +
+ * menú "…". Las acciones conservan objetivos de 48 dp.
  */
-@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun AmTopBar(
     title: String,
@@ -97,80 +107,87 @@ fun AmTopBar(
         }
     }
     var overflowOpen by remember { mutableStateOf(false) }
-    TopAppBar(
-        modifier = modifier,
-        title = {
-            // El título de la pantalla es un encabezado semántico (la
-            // navegación por encabezados de TalkBack/VoiceOver lo usa).
-            Text(
-                title,
-                style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.semantics { heading() },
-            )
-        },
-        navigationIcon = if (onBack != null) {
-            {
-                IconButton(onClick = onBack) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(AmMetrics.TopBarHeight)
+            .padding(
+                start = if (onBack != null) AmSpacing.Xs else AmSpacing.ScreenMargin,
+                end = AmSpacing.Xs,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (onBack != null) {
+            IconButton(onClick = onBack) {
+                AmIcon(
+                    imageVector = AmIcons.Back,
+                    contentDescription = backLabel,
+                    tint = AmColor.TextPrimary,
+                )
+            }
+        }
+        // El título de la pantalla es un encabezado semántico (la
+        // navegación por encabezados de TalkBack/VoiceOver lo usa).
+        Text(
+            title,
+            style = androidx.compose.ui.text.TextStyle(
+                fontSize = AmType.TitleLarge,
+                lineHeight = AmType.LineHeightTitleLarge,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                fontFamily = AmType.FamilyUi,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .weight(1f)
+                .semantics { heading() },
+        )
+        actions.forEach { action ->
+            if (action.icon != null) {
+                IconButton(onClick = action.onClick, enabled = action.enabled) {
                     AmIcon(
-                        imageVector = AmIcons.Back,
-                        contentDescription = backLabel,
+                        imageVector = action.icon,
+                        contentDescription = action.label,
+                        tint = if (action.enabled) AmColor.TextPrimary else AmColor.TextTertiary,
+                    )
+                }
+            } else {
+                AmTextAction(
+                    label = action.label,
+                    onClick = action.onClick,
+                    enabled = action.enabled,
+                )
+            }
+        }
+        if (overflowActions.isNotEmpty()) {
+            Box {
+                IconButton(onClick = { overflowOpen = true }) {
+                    AmIcon(
+                        imageVector = AmIcons.More,
+                        contentDescription = overflowLabel,
                         tint = AmColor.TextPrimary,
                     )
                 }
-            }
-        } else {
-            {}
-        },
-        actions = {
-            actions.forEach { action ->
-                if (action.icon != null) {
-                    IconButton(onClick = action.onClick, enabled = action.enabled) {
-                        AmIcon(
-                            imageVector = action.icon,
-                            contentDescription = action.label,
-                            tint = if (action.enabled) AmColor.TextPrimary else AmColor.TextTertiary,
+                // Menú contextual M3 estándar: contenedor y elevación
+                // del tema (superficies explícitas en AmTheme), sin
+                // bordes manuales.
+                DropdownMenu(
+                    expanded = overflowOpen,
+                    onDismissRequest = { overflowOpen = false },
+                ) {
+                    overflowActions.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option.label) },
+                            onClick = {
+                                overflowOpen = false
+                                option.onClick()
+                            },
                         )
-                    }
-                } else {
-                    AmTextAction(
-                        label = action.label,
-                        onClick = action.onClick,
-                        enabled = action.enabled,
-                    )
-                }
-            }
-            if (overflowActions.isNotEmpty()) {
-                Box {
-                    IconButton(onClick = { overflowOpen = true }) {
-                        AmIcon(
-                            imageVector = AmIcons.More,
-                            contentDescription = overflowLabel,
-                            tint = AmColor.TextPrimary,
-                        )
-                    }
-                    // Menú contextual M3 estándar: contenedor y elevación
-                    // del tema (superficies explícitas en AmTheme), sin
-                    // bordes manuales.
-                    DropdownMenu(
-                        expanded = overflowOpen,
-                        onDismissRequest = { overflowOpen = false },
-                    ) {
-                        overflowActions.forEach { option ->
-                            DropdownMenuItem(
-                                text = { Text(option.label) },
-                                onClick = {
-                                    overflowOpen = false
-                                    option.onClick()
-                                },
-                            )
-                        }
                     }
                 }
             }
-        },
-    )
+        }
+    }
 }
 
 /** Destino raíz de la navegación: etiqueta SIEMPRE visible + icono. */
@@ -221,8 +238,10 @@ fun AmExtendedFab(
 }
 
 /**
- * Barra de navegación inferior de las superficies raíz: etiqueta + icono
- * en cada destino (nunca solo icono).
+ * Barra de navegación inferior de las superficies raíz (64 dp, sin
+ * píldora de Material): etiqueta + icono en cada destino (nunca solo
+ * icono), activo en acento. Cada destino ocupa toda la altura (objetivo
+ * ≥ 48 dp) y expone su selección.
  */
 @Composable
 fun AmNavBar(
@@ -231,22 +250,46 @@ fun AmNavBar(
     onSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    NavigationBar(modifier = modifier, tonalElevation = AmSpacing.None) {
-        destinations.forEach { destination ->
-            val selected = destination.id == selectedId
-            NavigationBarItem(
-                selected = selected,
-                onClick = { onSelect(destination.id) },
-                icon = {
+    Column(modifier = modifier.fillMaxWidth()) {
+        HorizontalDivider(
+            thickness = AmMetrics.Border,
+            color = AmColor.Divider,
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(AmMetrics.NavBarHeight)
+                .selectableGroup(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            destinations.forEach { destination ->
+                val selected = destination.id == selectedId
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(AmMetrics.NavBarHeight)
+                        .selectable(
+                            selected = selected,
+                            role = Role.Tab,
+                            onClick = { onSelect(destination.id) },
+                        )
+                        .padding(vertical = AmSpacing.Xs),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
                     AmIcon(
                         imageVector = destination.icon,
                         contentDescription = null,
                         tint = if (selected) AmColor.Accent else AmColor.TextSecondary,
                     )
-                },
-                label = { Text(destination.label, style = AmTabLabelStyle) },
-                alwaysShowLabel = true,
-            )
+                    Text(
+                        destination.label,
+                        style = AmTabLabelStyle,
+                        color = if (selected) AmColor.AccentText else AmColor.TextSecondary,
+                        maxLines = 1,
+                    )
+                }
+            }
         }
     }
 }

@@ -79,14 +79,14 @@
 ## 5. Tipografía
 
 - Familia de sistema en todos los roles (Roboto/San Francisco): ninguna fuente se empaqueta.
-- Roles semánticos: título de página (`AmType.TitleLarge`, 22 sp, en `AmTopBar`, convención de plataforma), título de sección (`AmTextStyles.SectionHeader`, 15 sp Medium, referencia), título de fila (Body 17 sp en `AmListRow`, referencia), cuerpo (17/26), etiqueta (`ButtonLabel`, 14 sp Medium; la referencia usa 17 sp en botones, retenemos 14 sp para el layout validado a 200 %), texto secundario/ayuda/error (`AmTextStyles.Support`/`Caption`, 13 sp, referencia), insignias (11 sp).
+- Roles semánticos: título de pantalla (`AmType.TitleLarge`, 18 sp Medium, en `AmTopBar` compacta de 56 dp), encabezado destacado (`AmType.Headline`, 24 sp, techo), título de sección (`AmTextStyles.SectionHeader`, 15 sp Medium), título de fila (Body 14 sp en `AmListRow`), cuerpo (14/20), etiqueta (`ButtonLabel`, 14 sp Medium; la referencia usa 17 sp en botones, retenemos 14 sp para el layout validado a 200 %), texto secundario/ayuda/error (`AmTextStyles.Support`/`Caption`, 12 sp), insignias y etiquetas de barra (11 sp). Tracking neutro en todos los roles.
 - Interlineado siempre > 1.1× su tamaño (`AmUiPolishContractTest`); el escalado de fuente 100/150/200 % se respeta y se prueba.
 - El tracking sigue los valores por defecto de M3 (`AmTracking`).
 
 ## 6. Espaciado y métrica
 
 - Escala: 4 · 8 · 12 · 16 · 20 · 24 · 32 (+40 excepcional) — `AmSpacing`; margen de pantalla 16; densidad de listas de la referencia (celda 12+12, hairlines).
-- `AmMetrics`: área táctil mínima 48 dp (`ControlMinSize`, invariante del gate; la barra de búsqueda de la referencia mide 32 px pero conserva 48 dp de objetivo), icono estándar 24 dp, `QrPreviewSize` 240, `ContentMaxWidth` 720 (medium/expanded), `DialogListMaxHeight` 320, marco del scanner 3 dp (`BorderStrong`), glifo del estado vacío 64 dp.
+- `AmMetrics`: área táctil mínima 48 dp (`ControlMinSize`, invariante del gate; botones, chips, campos y filas conservan 48 dp de objetivo aunque su apariencia sea compacta), barra superior 56 dp (`TopBarHeight`), barra inferior 64 dp (`NavBarHeight`, sin píldora de Material), icono estándar 24 dp, `QrPreviewSize` 240, `ContentMaxWidth` 720 (medium/expanded), `DialogListMaxHeight` 320, marco del scanner 3 dp (`BorderStrong`), glifo del estado vacío 64 dp.
 
 ## 7. Iconografía
 

@@ -63,7 +63,7 @@ fun AmScreenScaffold(
     statusContent: (@Composable () -> Unit)? = null,
     scrollable: Boolean = false,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(AmSpacing.Lg),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(AmSpacing.Md),
     contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
     content: @Composable ColumnScope.() -> Unit,
 ) {

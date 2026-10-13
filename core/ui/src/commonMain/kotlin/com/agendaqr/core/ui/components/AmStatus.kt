@@ -64,7 +64,7 @@ fun AmStatusBanner(
             .fillMaxWidth()
             .background(background, AmShapes.Large)
             .semantics { liveRegion = LiveRegionMode.Polite }
-            .padding(AmSpacing.Lg),
+            .padding(horizontal = AmSpacing.Md, vertical = AmSpacing.Md),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
     ) {
@@ -124,9 +124,9 @@ fun AmEmptyState(
     onAction: (() -> Unit)? = null,
 ) {
     Column(
-        modifier = modifier.fillMaxWidth().padding(AmSpacing.Huge),
+        modifier = modifier.fillMaxWidth().padding(AmSpacing.Xxxl),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(AmSpacing.Lg),
+        verticalArrangement = Arrangement.spacedBy(AmSpacing.Md),
     ) {
         icon?.let { glyph ->
             Box(

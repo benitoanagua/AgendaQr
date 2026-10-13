@@ -16,8 +16,7 @@ class AmTypographyTest {
     fun sizes_keep_the_display_hierarchy() {
         // La jerarquía de encabezados/cuerpo se lee también por el tamaño;
         // todos en sp: el escalado de fuente del sistema se respeta.
-        assertTrue(AmType.Display.value > AmType.HeadlineMedium.value)
-        assertTrue(AmType.HeadlineMedium.value > AmType.Headline.value)
+        assertTrue(AmType.Display.value > AmType.Headline.value)
         assertTrue(AmType.Headline.value > AmType.TitleLarge.value)
         assertTrue(AmType.TitleLarge.value > AmType.Body.value)
         assertTrue(AmType.Body.value > AmType.Caption.value)
@@ -33,11 +32,12 @@ class AmTypographyTest {
 
     @Test
     fun m3_roles_carry_the_canonical_sizes() {
-        // El título de página (titleLarge) y el titular de auth
-        // (headlineMedium) son los roles M3 estándar, en sp.
-        assertEquals(22.sp, AmMaterialTypography.titleLarge.fontSize)
-        assertEquals(28.sp, AmMaterialTypography.headlineMedium.fontSize)
-        assertEquals(17.sp, AmMaterialTypography.bodyLarge.fontSize)
+        // Título de pantalla (titleLarge, 18), titular destacado
+        // (headlineSmall/Headline, 24), cuerpo (bodyLarge, 14) y etiqueta
+        // (labelLarge, 14): escala compacta, en sp.
+        assertEquals(18.sp, AmMaterialTypography.titleLarge.fontSize)
+        assertEquals(24.sp, AmMaterialTypography.headlineMedium.fontSize)
+        assertEquals(14.sp, AmMaterialTypography.bodyLarge.fontSize)
         assertEquals(14.sp, AmMaterialTypography.labelLarge.fontSize)
     }
 
@@ -92,11 +92,15 @@ class AmTypographyTest {
     }
 
     @Test
-    fun tracking_follows_material_defaults() {
-        // Tracking por defecto de M3; nada de tracking amplio propio en
-        // el cuerpo.
-        assertEquals(0.5.sp, AmTracking.BodyLarge)
-        assertEquals(0.1.sp, AmTracking.LabelLarge)
+    fun tracking_is_neutral_by_default() {
+        // Sin tracking amplio como característica general (brief de
+        // rediseño): los roles usan espaciado neutro y los estilos del
+        // sistema lo consumen desde los tokens.
+        listOf(
+            AmTracking.TitleMedium, AmTracking.TitleSmall,
+            AmTracking.BodyLarge, AmTracking.BodyMedium, AmTracking.BodySmall,
+            AmTracking.LabelLarge, AmTracking.LabelMedium, AmTracking.LabelSmall,
+        ).forEach { assertEquals(0.sp, it) }
         assertEquals(AmTracking.BodyLarge, AmMaterialTypography.bodyLarge.letterSpacing)
         assertEquals(AmTracking.LabelLarge, AmMaterialTypography.labelLarge.letterSpacing)
     }

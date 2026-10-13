@@ -79,10 +79,10 @@ internal fun AmLoadingButton(
         // Radio 4 de la referencia, no el rol de la plantilla M3.
         shape = AmShapes.Small,
         // Padding vertical propio a cero: la altura la fija el contenido
-        // (48 dp), no el relleno interno de Material. El horizontal
-        // conserva el de Material (24 dp = Xxl).
+        // (48 dp de objetivo táctil), no el relleno interno de Material.
+        // Horizontal compacto de 16 dp.
         contentPadding = PaddingValues(
-            horizontal = AmSpacing.Xxl,
+            horizontal = AmSpacing.Lg,
             vertical = AmSpacing.None,
         ),
         colors = ButtonDefaults.buttonColors(
