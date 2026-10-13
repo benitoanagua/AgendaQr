@@ -25,9 +25,7 @@ import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTextAction
 import com.agendaqr.core.ui.components.AmTone
-import androidx.compose.foundation.background
 import com.agendaqr.core.ui.theme.AmColor
-import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.accentFor
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmType
@@ -141,8 +139,10 @@ private fun ContextList(
                 onAction = onCreateContext,
             )
             else -> LazyColumn(
-                modifier = Modifier.fillMaxWidth().weight(1f)
-                    .background(AmColor.Surface, AmShapes.Large),
+                // Sin tarjeta contenedora: las filas viven sobre el fondo
+                // de página y la agrupación la dan los hairlines (modo
+                // List por defecto de la referencia).
+                modifier = Modifier.fillMaxWidth().weight(1f),
             ) {
                 itemsIndexed(state.contexts, key = { _, context -> context.id }) { index, context ->
                     // M4: bloque de acento derivado del id del contexto.

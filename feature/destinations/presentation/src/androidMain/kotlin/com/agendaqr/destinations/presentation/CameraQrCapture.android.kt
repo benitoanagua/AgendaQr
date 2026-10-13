@@ -123,7 +123,7 @@ internal fun CameraQrCaptureOverlay(
                     )
                     // Lenguaje visual del scanner del sistema sobre la vista
                     // previa: encuadre de marca del design system
-                    // (AmScannerFrame, excepción E-03) y hint textual;
+                    // (AmScannerFrame, esquinas dibujadas en canvas) y hint textual;
                     // sin métricas técnicas del scanner (S03).
                     Column(
                         modifier = Modifier

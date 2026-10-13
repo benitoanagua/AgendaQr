@@ -14,10 +14,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AmSnackbarHost
+import com.agendaqr.core.ui.components.AmListBody
 import com.agendaqr.core.ui.components.AmPrimaryButton
 import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmQrPreview
-import com.agendaqr.core.ui.components.AmScannerViewport
 import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmText
@@ -146,37 +146,38 @@ private fun DestinationEditorContent(
                 dismissLabel = AppStrings.Descartar,
             )
         }
-        AmTextField(
-            label = AppStrings.Nombre,
-            value = name,
-            onValueChange = { name = it },
-            isError = nameError,
-            errorMessage = if (nameError) AppStrings.ElNombreEsObligatorio else null,
-        )
-        AmTextField(label = AppStrings.Categoria, value = category, onValueChange = { category = it })
-        AmTextField(label = AppStrings.Nota, value = note, onValueChange = { note = it }, singleLine = false, minLines = 3)
+        // Sección de información: formulario agrupado (los campos sin
+        // borde dibujan sus hairlines sobre el cuerpo; la nota crece con
+        // su contenido en vez de reservar un bloque fijo).
+        AmListBody {
+            AmTextField(
+                label = AppStrings.Nombre,
+                value = name,
+                onValueChange = { name = it },
+                isError = nameError,
+                errorMessage = if (nameError) AppStrings.ElNombreEsObligatorio else null,
+            )
+            AmTextField(label = AppStrings.Categoria, value = category, onValueChange = { category = it })
+            AmTextField(label = AppStrings.Nota, value = note, onValueChange = { note = it }, singleLine = false)
+        }
         AmSecondaryButton(
             label = selection.contextId?.let { id -> AppStrings.ParaContextoElegido + (contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico) } ?: AppStrings.ParaElegirContexto,
             onClick = { selection = selection.openPicker() },
         )
-        // Entradas de importación del QR del destino: galería (una o
-        // varias imágenes) y cámara; la primaria de esta pantalla es Guardar.
+        // Sección de imagen: entradas de importación del QR del destino
+        // (galería y cámara) y vista previa solo cuando hay contenido —
+        // sin rectángulo reservado en vacío (el error de envío cubre el
+        // QR faltante).
         QrImportControls(onResult = { result ->
             when {
                 result.assets.size > 1 -> onImportMany(result.assets)
                 result.assets.size == 1 -> qr = result.assets.first()
             }
         })
-        if (qr.encoded.isBlank()) {
-            AmScannerViewport(
-                scanning = false,
-                hint = AppStrings.ImportaUnQrConCamara,
-            )
-            if (qrError) {
-                AmText(AppStrings.FaltaElCodigoQrUsa, size = AmType.Caption, color = AmColor.Danger)
-            }
-        } else {
+        if (qr.encoded.isNotBlank()) {
             AmQrPreview(qr.encoded)
+        } else if (qrError) {
+            AmText(AppStrings.FaltaElCodigoQrUsa, size = AmType.Caption, color = AmColor.Danger)
         }
     }
     if (selection.pickerOpen) {

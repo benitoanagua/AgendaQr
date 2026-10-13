@@ -19,7 +19,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.style.TextAlign
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmShapes
@@ -93,46 +92,6 @@ fun AmLoadMoreFooter(
                 Text(loadingLabel, fontSize = AmType.Label, color = AmColor.TextSecondary)
             }
             onLoadMore != null -> AmSecondaryButton(label = loadMoreLabel, onClick = onLoadMore)
-        }
-    }
-}
-
-/**
- * Viewport de cámara/escáner: bloque tonal que enmarca la guía de
- * captura; el escaneo real (CameraX/AVFoundation) es por plataforma y se
- * compone SOBRE este viewport.
- */
-@Composable
-fun AmScannerViewport(
-    modifier: Modifier = Modifier,
-    scanning: Boolean = false,
-    /** copy del llamador; el DS no hardcodea. */
-    hint: String = "",
-    /** Texto del estado "escaneando". */
-    scanningLabel: String = "",
-) {
-    if (scanning) require(scanningLabel.isNotBlank()) { "scanningLabel requerido" }
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            // Bloque tonal que enmarca la guía de captura.
-            .background(AmColor.SurfaceSecondary)
-            .padding(AmSpacing.Xxxl),
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-        ) {
-            AmScannerFrame {
-                Text(
-                    if (scanning) scanningLabel else hint,
-                    fontSize = AmType.Caption,
-                    color = AmColor.TextSecondary,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(AmSpacing.Sm),
-                )
-            }
         }
     }
 }

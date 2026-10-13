@@ -94,7 +94,6 @@ internal object AppStrings {
     val GuardarCambios = "Guardar cambios"
     val GuardarDeTodosModos = "Guardar de todos modos"
     val GuardarReconocidos = "Guardar reconocidos"
-    val ImportaUnQrConCamara = "Importa un QR con Cámara o Galería para previsualizarlo aquí"
     val IniciaSesionParaAccederA = "Inicia sesión para acceder a tu agenda."
     val IniciarSesion = "Iniciar sesión"
     val operationKeptOnReceiptDelete = "La actividad asociada se conservará."

@@ -111,7 +111,7 @@
 | Datos | `AmListRow` (título 17, subtítulo 13, `meta` en línea propia, identidad de contexto, divisor opt-in, semántica `selected`), `AmBadge` (tag outline/round), `AmSectionHeader`, `AmSection`, `AmPivot` (indicador de acento, desplazable) | List/Item, Tag, Tabs |
 | Estados | `AmStatusBanner` (radio 8), `AmLoading`, `AmEmptyState` (glifo decorativo + título + acción), `AmSkeleton`, `AmLoadMoreFooter` | Empty; aviso persistente de producto |
 | Feedback | `AmFeedbackHost`/`AmSnackbarHost`/`AmFeedbackEvent` (háptica + anuncio + snackbar inferior en Android) | Toast de plataforma; anuncio por evento |
-| Medios | `AmQrPreview` (expect/actual, tamaño configurable 1:1, revisión a 320 dp), `AmMediaFrame` (radio 8, tarjeta de la referencia), `AmScannerViewport`, `AmScannerFrame` (esquinas de acento en canvas) | Card (radio 8) |
+| Medios | `AmQrPreview` (expect/actual, tamaño configurable 1:1, revisión a 320 dp), `AmMediaFrame` (radio 8, tarjeta de la referencia), `AmScannerFrame` (esquinas de acento en canvas sobre el preview real; el viewport tonal se retiró por reservar espacio vacío) | Card (radio 8) |
 | Tono | `AmTone` (Neutral/Success/Danger/Warning/Info) con par content/container y glifo por tono | Colores semánticos de la referencia |
 
 Estados obligatorios: normal, pressed (indicación M3), focused (indicación de foco del componente M3 con el rol `AmColor.Focus`), selected (semántica + borde de acento/fondo wathet), error (icono + texto + `error()` semántica), disabled (opacidad .4 + par `Disabled/OnDisabled`), loading (spinner superpuesto sin salto de ancho + `stateDescription`).

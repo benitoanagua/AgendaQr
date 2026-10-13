@@ -4,7 +4,6 @@
  */
 package com.agendaqr.destinations.presentation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -150,8 +149,10 @@ internal fun OperationListScreen(
             )
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxWidth().weight(1f)
-                    .background(AmColor.Surface, AmShapes.Large),
+                // Sin tarjeta contenedora: las filas viven sobre el fondo
+                // de página y la agrupación la dan los hairlines (modo
+                // List por defecto de la referencia).
+                modifier = Modifier.fillMaxWidth().weight(1f),
             ) {
                 itemsIndexed(paged, key = { _, operation -> operation.id }) { index, operation ->
                     // Fila ListItem convencional con el contenido a la

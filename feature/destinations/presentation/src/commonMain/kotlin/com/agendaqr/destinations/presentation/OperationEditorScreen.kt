@@ -139,24 +139,28 @@ internal fun OperationEditorScreen(
             type = type,
             onSelect = { type = it },
         )
-        AmTextField(label = AppStrings.MontoOpcional, value = amount, onValueChange = { amount = it }, modifier = Modifier.fillMaxWidth())
-        AmTextField(
-            label = AppStrings.Fecha,
-            value = dateText,
-            onValueChange = { dateText = it },
-            modifier = Modifier.fillMaxWidth(),
-            isError = dateError,
-            errorMessage = if (dateError) AppStrings.FormatoFecha else null,
-        )
-        AmTextField(label = AppStrings.MonedaOpcional, value = currency, onValueChange = { currency = it }, modifier = Modifier.fillMaxWidth())
-        AmTextField(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, modifier = Modifier.fillMaxWidth())
+        AmListBody {
+            AmTextField(label = AppStrings.MontoOpcional, value = amount, onValueChange = { amount = it }, modifier = Modifier.fillMaxWidth())
+            AmTextField(
+                label = AppStrings.Fecha,
+                value = dateText,
+                onValueChange = { dateText = it },
+                modifier = Modifier.fillMaxWidth(),
+                isError = dateError,
+                errorMessage = if (dateError) AppStrings.FormatoFecha else null,
+            )
+            AmTextField(label = AppStrings.MonedaOpcional, value = currency, onValueChange = { currency = it }, modifier = Modifier.fillMaxWidth())
+            AmTextField(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, modifier = Modifier.fillMaxWidth())
+        }
         AmSecondaryButton(
             label = contextSelection.contextId?.let { id -> AppStrings.ParaContextoElegido + (state.contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico) }
                 ?: AppStrings.ParaElegirContexto,
             onClick = { contextSelection = contextSelection.openPicker() },
         )
-        AmTextField(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, modifier = Modifier.fillMaxWidth())
-        AmTextField(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, modifier = Modifier.fillMaxWidth())
+        AmListBody {
+            AmTextField(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, modifier = Modifier.fillMaxWidth())
+            AmTextField(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, modifier = Modifier.fillMaxWidth())
+        }
         if (existing == null) {
             AmText(AppStrings.PodrasAdjuntarComprobantesMasAdelante, color = AmColor.TextSecondary, size = AmType.Label)
         }
