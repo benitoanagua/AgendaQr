@@ -9,7 +9,7 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 /**
- * Paleta de identidad de contextos de AgendaMobile (ADR-0013): 12 tonos
+ * Paleta de identidad de contextos (contrato §4.3): 12 tonos
  * contemporáneos de etiqueta más el acento de sistema. Estos tests fijan
  * los colores exactos (no se recalculan ni se cambian), verifican que
  * cada par acento/texto cumple WCAG AA, y fijan el determinismo

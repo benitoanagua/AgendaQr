@@ -11,7 +11,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * AppStatusHost (§12 V1.2): prioridad de estados — error de importación >
+ * AppStatusHost (§12 V1.4): prioridad de estados — error de importación >
  * banner FAILED con "Reintentar ahora" > indicadores compactos; "Sin
  * conexión" y "N pendientes" nunca son banner a ancho completo. Viven
  * dentro del Scaffold (insets del contenedor; el componente no consume

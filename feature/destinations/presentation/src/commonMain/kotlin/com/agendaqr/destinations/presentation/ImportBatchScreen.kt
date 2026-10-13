@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -97,6 +98,7 @@ fun ImportBatchScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .navigationBarsPadding()
+                    .imePadding()
                         .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
                 )
             }
@@ -191,7 +193,7 @@ private fun PendingItemCard(
     isSaving: Boolean,
 ) {
     val isDuplicate = batch.duplicates.any { it.id == candidate.id }
-    // §12 V1.2: pendiente como fila ListItem; las acciones de fila bajo el
+    // §12 V1.4: pendiente como fila ListItem; las acciones de fila bajo el
     // contenido (etiquetas largas).
     AmListRow(
         title = pendingItemName(candidate),

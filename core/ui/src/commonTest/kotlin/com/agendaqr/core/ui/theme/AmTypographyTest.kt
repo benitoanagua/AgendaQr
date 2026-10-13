@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Tipografía AgendaMobile (ADR-0013): familia de sistema en todos los
+ * Tipografía (contrato §5, ADR-0014): familia de sistema en todos los
  * estilos, roles estándar de M3 desde tokens y sin fuente empaquetada.
  */
 class AmTypographyTest {

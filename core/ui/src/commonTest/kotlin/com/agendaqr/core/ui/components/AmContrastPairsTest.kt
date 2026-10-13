@@ -9,7 +9,7 @@ import kotlin.test.assertTrue
  * Pares de contraste del sistema que no viven en el esquema (AmSchemeTest)
  * pero que llegan a pantalla: el contenido legible sobre cada bloque de
  * identidad de contexto y el rol `focus` sobre las superficies del tema,
- * en claro y oscuro (contrato AgendaMobile §4.3).
+ * en claro y oscuro (contrato §4.5).
  */
 class AmContrastPairsTest {
 

@@ -98,7 +98,7 @@ internal fun OperationListScreen(
     val operations = viewModel.visibleOperations()
     var visibleCount by remember(operations.size) { mutableStateOf(50) }
     val paged = operations.take(visibleCount)
-    // V1.2 (§12): Actividades es destino raíz — barra superior con título,
+    // V1.4 (§12): Actividades es destino raíz — barra superior con título,
     // navegación inferior y FAB extendido "Registrar" (la acción de
     // creación vive en el FAB, no en la barra).
     AmScreenScaffold(
@@ -195,7 +195,7 @@ internal fun UnassociatedScreen(
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
     var selectedReceipt by remember { mutableStateOf<Comprobante?>(null) }
-    // V1.2 (§12): bandeja con título y flecha atrás en la barra superior
+    // V1.4 (§12): bandeja con título y flecha atrás en la barra superior
     // (no es destino raíz: no lleva navegación inferior).
     AmScreenScaffold(
         topBar = {
@@ -216,7 +216,7 @@ internal fun UnassociatedScreen(
                     verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
                 ) {
                     items(state.unassociated, key = { it.id }) { receipt ->
-                        // §12 V1.2: fila ListItem; las acciones de fila viven
+                        // §12 V1.4: fila ListItem; las acciones de fila viven
                         // apiladas bajo el contenido (dos etiquetas largas no
                         // caben lado a lado en 360 dp).
                         AmListRow(

@@ -13,7 +13,7 @@ import com.agendaqr.destinations.presentation.AgendaQrAndroidImportLauncher
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // V1.2 (§12): edge-to-edge; el Scaffold consume los insets y el
+        // V1.4 (§12): edge-to-edge; el Scaffold consume los insets y el
         // estilo de las barras del sistema sigue al tema del sistema.
         enableEdgeToEdge()
         AgendaQrAndroidStorage.initialize(applicationContext)

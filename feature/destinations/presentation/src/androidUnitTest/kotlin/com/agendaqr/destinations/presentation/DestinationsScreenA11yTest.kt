@@ -57,7 +57,7 @@ class DestinationsScreenA11yTest {
     @Test
     fun fab_has_label_and_the_row_actions_keep_48dp_targets() {
         setContent()
-        // §12 V1.2: FAB extendido "Añadir" con etiqueta visible (M3 fija
+        // §12 V1.4: FAB extendido "Añadir" con etiqueta visible (M3 fija
         // su altura mínima); la acción de favorito de la fila es un
         // IconToggleButton de 48 dp.
         compose.onNodeWithText("Añadir", useUnmergedTree = true).assertExists()
@@ -158,7 +158,7 @@ class DestinationsScreenA11yTest {
 
     @Test
     fun favorite_row_toggle_announces_state_through_its_description() {
-        // §11/§12 V1.2: el favorito de fila es un IconToggleButton cuya
+        // §11/§12 V1.4: el favorito de fila es un IconToggleButton cuya
         // descripción accesible CAMBIA con el estado (marcar/quitar).
         var toggled: Boolean? = null
         compose.setContent {

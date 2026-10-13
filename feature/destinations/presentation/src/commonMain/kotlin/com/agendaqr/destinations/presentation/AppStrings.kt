@@ -134,7 +134,7 @@ internal object AppStrings {
     val RevisarQr = "Revisar QR"
     val SeleccionarContexto = "Seleccionar contexto"
     val SinComprobanteAdjunto = "Sin comprobante adjunto"
-    /** Indicador compacto de sin conexión (chip del AppStatusHost, §12 V1.2). */
+    /** Indicador compacto de sin conexión (chip del AppStatusHost, §12 V1.4). */
     val SinConexion = "Sin conexión"
     val SinContextos = "Sin contextos"
     val SinContextosDisponibles = "Sin contextos disponibles."

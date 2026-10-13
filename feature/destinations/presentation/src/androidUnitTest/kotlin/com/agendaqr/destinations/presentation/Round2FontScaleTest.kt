@@ -159,7 +159,7 @@ class Round2FontScaleTest {
             },
         ) { scale ->
             // Criterio de la spec §11 (aceptación): nada se corta ni superpone.
-            // §12 V1.2: la fila (ListItem) crece con la fuente; la etiqueta
+            // §12 V1.4: la fila (ListItem) crece con la fuente; la etiqueta
             // desborda hacia el alto, nunca hacia el ancho.
             val row = compose.onAllNodesWithText("Registrar actividad", substring = true)
                 .fetchSemanticsNodes().single()
