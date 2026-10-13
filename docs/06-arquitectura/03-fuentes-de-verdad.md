@@ -4,9 +4,9 @@
 
 Es la única fuente para producto, requisitos, dominio, alcance, decisiones y reglas de negocio. Cubre también el comportamiento funcional UX (contrato UX/UI V1 congelado).
 
-## 2. AgendaMobile — autoridad visual
+## 2. Ant Design Mobile — autoridad visual
 
-AgendaMobile define la UI/UX visual completa: tokens, fundamentos, componentes, patterns, estados, accesibilidad, movimiento, tipografía y composición. Su contrato normativo es `docs/05-design-system/00-agendamobile-contrato-normativo.md`; ADR-0013 establece su precedencia sobre guías de implementación y código heredado.
+Ant Design Mobile define la referencia visual de tokens, componentes, estados, formularios, listas y feedback, replicada de forma nativa en Compose. Su contrato normativo es `docs/05-design-system/00-agendamobile-contrato-normativo.md`; ADR-0014 establece su precedencia.
 
 No se mantienen excepciones visuales heredadas ni una paleta propia de Agenda QR.
 
@@ -24,10 +24,10 @@ Se utiliza solo como referencia para Kotlin Multiplatform, Compose, modularizaci
 | Alcance y límites | Agenda QR | obligatorio |
 | Decisiones | Agenda QR | obligatorio |
 | UX funcional | Agenda QR | obligatorio |
-| UI/UX visual | AgendaMobile | obligatorio |
-| Tokens | AgendaMobile | obligatorio |
-| Componentes y patterns | AgendaMobile | obligatorio |
-| Accesibilidad y motion | AgendaMobile | obligatorio |
+| UI/UX visual | Ant Design Mobile / ADR-0014 | obligatorio |
+| Tokens | Ant Design Mobile replicado en Compose | obligatorio |
+| Componentes y patrones | Ant Design Mobile replicado en Compose | obligatorio |
+| Accesibilidad y movimiento | contrato de Compose + convenciones de plataforma | obligatorio |
 | Kotlin/KMP | WaraWerse | referencia técnica |
 | Compose | WaraWerse | referencia técnica |
 | Build logic | WaraWerse | referencia técnica |
@@ -37,10 +37,10 @@ Se utiliza solo como referencia para Kotlin Multiplatform, Compose, modularizaci
 
 1. Negocio: Agenda QR gana.
 2. UX funcional: Agenda QR gana.
-3. Visual, componentes, tokens, motion y accesibilidad: el contrato normativo de AgendaMobile y los ADR aprobados ganan; las guías de implementación explican el cómo, no redefinen el qué.
+3. Visual, componentes, tokens, motion y accesibilidad: el contrato normativo Ant Design Mobile y los ADR aprobados ganan; las guías de implementación explican el cómo, no redefinen el qué.
 4. Arquitectura técnica: WaraWerse es solo referencia.
-5. Una implementación no puede introducir una variante visual local de AgendaMobile.
+5. Una implementación no puede introducir una variante visual local fuera de Ant Design Mobile.
 
 ## Regla de implementación
 
-El código de producto combina reglas de negocio de Agenda QR con el lenguaje visual de AgendaMobile. Una discrepancia visual se resuelve a favor de AgendaMobile. Cuando una pantalla necesite una composición nueva, se compone primero con componentes AgendaMobile existentes.
+El código de producto combina reglas de negocio de Agenda QR con la referencia visual Ant Design Mobile. Una discrepancia visual se resuelve a favor de AgendaMobile. Cuando una pantalla necesite una composición nueva, se compone primero con componentes AgendaMobile existentes.

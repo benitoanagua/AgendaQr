@@ -1,6 +1,6 @@
 # UX — Flujos confirmados V1
 
-La UI visual está bajo el contrato de AgendaMobile y la especificación UX/UI V1 congelada en `02-especificacion-ux-ui-v1.md`.
+La UI visual sigue Ant Design Mobile según ADR-0014; los flujos funcionales se rigen por `02-especificacion-ux-ui-v1.md`.
 
 ## Principio
 
