@@ -84,8 +84,8 @@ Quedan consolidados, sin alterar las reglas de negocio existentes:
 
 La implementación debe adaptarse al contrato UX/UI; un fallo de implementación no modifica automáticamente la especificación.
 
-## D-18 — Sistema visual de la UI (UX/UI V1.3)
+## D-18 — Dirección visual vigente (UX/UI V1.4)
 
-AgendaMobile es el único sistema visual vigente de Agenda QR, conforme a ADR-0013 y al contrato normativo `docs/05-design-system/00-agendamobile-contrato-normativo.md`. Está implementado en Kotlin/Compose Multiplatform dentro de `core/ui`, con tokens semánticos, tema claro/oscuro y componentes compartidos. Ant Design Mobile y Vant son referencias de patrones de interacción, no dependencias de Compose.
+Ant Design Mobile es la referencia visual única para la interfaz, replicada con Kotlin/Compose Multiplatform. Vant no forma parte de la dirección vigente. Los prefijos `Am*` son nombres internos de la implementación, no una marca visual independiente.
 
-La interfaz utiliza componentes convencionales adaptados con Material 3, mantiene una experiencia coherente entre Android e iOS y aplica las reglas de accesibilidad del contrato. Metro y Xauxa son decisiones históricas sustituidas; no forman parte de la arquitectura visual activa. La especificación UX/UI vigente es V1.3. El estado real de validación por plataforma se documenta únicamente en `docs/09-implementacion/01-estado.md`.
+La navegación sigue convenciones móviles conocidas: barra inferior en destinos raíz, barra superior con Atrás en pantallas hijas, back stack coherente, áreas seguras/IME y adaptación a ventanas grandes. Los flujos, reglas de negocio, copy funcional y accesibilidad se preservan. Ver [ADR-0014](ADR-0014-ant-design-mobile-compose.md) y el contrato normativo de `core/ui`.
