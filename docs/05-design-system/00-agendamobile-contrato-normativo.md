@@ -1,16 +1,17 @@
-# Contrato normativo de AgendaMobile
+# Contrato normativo de interfaz — Ant Design Mobile
 
-**Estado:** Normativo — versión 1.0 (ADR-0013)
-**Autoridad:** este documento es la fuente única y obligatoria de la capa visual de Agenda QR. La implementación vive en `core/ui` (`com.agendaqr.core.ui`); Ant Design Mobile y Vant son referencias de interacción, no dependencias.
+**Estado:** Normativo — versión 2.0 (ADR-0014).
+**Autoridad visual:** Ant Design Mobile replicado en Kotlin/Compose Multiplatform. La implementación vive en `core/ui` (`com.agendaqr.core.ui`); los nombres `Am*` son una convención interna heredada, no una marca visual propia.
+**Referencia:** https://mobile.ant.design/ — no incorporar React, CSS, npm ni `antd-mobile` al binario nativo.
 
 ## 1. Principios
 
 1. **Mobile-first real**: se diseña para el pulgar en un teléfono Android de 360 dp; la adaptación a tablet/escritorio (compacto → medium/expanded vía `WindowSizeClass`) nunca degrada el patrón compacto.
-2. **Una sola autoridad visual**: AgendaMobile es el único sistema de diseño del producto. No hay fachadas, alias ni capas de compatibilidad con sistemas anteriores.
-3. **Material 3 es implementación, no autoridad**: los componentes M3 se adaptan con tokens; ningún color, radio, altura o tipografía se define por defecto de la plantilla.
+2. **Una sola autoridad visual**: Ant Design Mobile es la referencia visual única. La réplica se implementa con Compose y no se añade una segunda marca visual.
+3. **Compose es implementación, no autoridad visual**: Material 3 puede servir como primitiva técnica, pero sus valores por defecto no deben sustituir los tokens y patrones de Ant Design Mobile.
 4. **El estado nunca es solo color**: tono + texto/icono + semántica accesible en cada estado (carga, error, selección, deshabilitado, foco).
 5. **Contraste como contrato**: texto ≥ 4.5:1, bordes/foco ≥ 3:1, verificado por `AmSchemeTest` y `AmContrastPairsTest`.
-6. **Radios moderados y consistentes**: 4/8/12/16/24 dp (`AmRadius`) como única escala de forma.
+6. **Formas compactas**: usar los radios moderados y la densidad visual de Ant Design Mobile; no aplicar píldoras o radios grandes como firma global.
 7. **Movimiento corto y justificado**: 150 ms con `AmMotion`; movimiento reducido = cambio inmediato (duración 0), nunca "una animación más corta".
 
 ## 2. Arquitectura de capas

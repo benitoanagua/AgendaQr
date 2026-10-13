@@ -1,6 +1,6 @@
-# AgendaMobile — reglas de implementación
+# Ant Design Mobile — reglas de implementación Compose
 
-**Estado:** Normativo (ADR-0013). El contrato completo está en `00-agendamobile-contrato-normativo.md`; este documento traduce el contrato a reglas de código.
+**Estado:** Normativo (ADR-0014). El contrato completo está en `00-agendamobile-contrato-normativo.md`; este documento traduce los patrones visuales de Ant Design Mobile a Compose. Los prefijos `Am*` son internos.
 
 ## 1. Mapa de la implementación
 
@@ -45,7 +45,7 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 
 ## 4. Reglas de pantalla
 
-- La capa feature compone SOLO componentes AgendaMobile (`core:ui`); importar controles M3 en `feature/`, `shared/` o `androidApp/` es una fuga del sistema y falla el gate.
+- La capa feature compone SOLO componentes compartidos de `core:ui`; importar controles M3 en `feature/`, `shared/` o `androidApp/` es una fuga del sistema y falla el gate.
 - La interacción (clickable, indicación, foco, semántica de fila) vive en el sistema, no en la pantalla.
 - El copy de las pantallas sale de `AppStrings` (decisión D2); los tests fijan esa centralización.
 

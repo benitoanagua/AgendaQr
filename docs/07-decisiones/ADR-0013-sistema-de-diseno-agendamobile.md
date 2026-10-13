@@ -1,15 +1,15 @@
-# ADR-0013 — Sistema de diseño propio: AgendaMobile
+# ADR-0013 — Sistema de diseño propio: AgendaMobile (histórico)
 
-**Estado:** APROBADA — 2026-10-12
+**Estado:** HISTÓRICA — sustituida visualmente por ADR-0014
 **Suplanta:** ADR-0005 (lenguaje visual Metro), ADR-0011 (contrato visual Xauxa) y la autoría visual de ADR-0012; conserva de ADR-0012 la implementación sobre Material 3 y la tipografía de sistema.
 
-## Contexto
+## Contexto histórico
 
 Agenda QR heredó de su referencia técnica un sistema de diseño prestado (Xauxa) con un laboratorio de componentes en WebAssembly como entorno de validación. Tras V1.2 (ADR-0012) la interfaz ya era convencional sobre Material 3, pero la autoridad visual seguía siendo Xauxa: nombres, contrato normativo, gates y documentación hablaban de un lenguaje (Metro) que el producto ya no usaba, y el laboratorio wasm era la única razón de existir de un target completo de compilación.
 
-El producto necesita un sistema de diseño propio, mobile-first, con nombre neutral y duradero, inspirado en los patrones de interacción de las apps móviles contemporáneas (Ant Design Mobile, Vant como referencia), implementado íntegramente en Kotlin con Compose Multiplatform.
+La decisión original fue crear AgendaMobile con Compose Multiplatform. Esa dirección visual queda sustituida por ADR-0014, que adopta Ant Design Mobile como referencia única y descarta Vant.
 
-## Decisión
+## Decisión histórica (no normativa)
 
 1. **AgendaMobile** es el único sistema de diseño de Agenda QR. Implementación: `core/ui` (`com.agendaqr.core.ui`), prefijo `Am*`. Sin fachadas, alias ni capas de compatibilidad con Xauxa.
 2. Arquitectura de capas: tokens privados (`AmPalette`) → tokens semánticos (`AmColorScheme`, `AmColor`, `AmSpacing`, `AmRadius`/`AmShapes`, `AmMetrics`, `AmType`/`AmTextStyles`, `AmMotion`) → tema claro/oscuro (`AmTheme`) → componentes compartidos → patrones → pantallas → pruebas de contrato.
@@ -26,14 +26,14 @@ El producto necesita un sistema de diseño propio, mobile-first, con nombre neut
 - `settings.gradle.kts` sin repos Node/Yarn/binaryen; `core/ui` sin target wasm; workflow sin paso de laboratorio.
 - Documentación: contrato normativo nuevo (`00-agendamobile-contrato-normativo.md`), reglas de implementación, este ADR; ADR-0005/0011/0012 marcados como suplantados en su parte visual.
 
-## Riesgos y mitigaciones
+## Riesgos y mitigaciones históricos
 
 - **Regresión visual involuntaria**: mitigada con el pin de valores en `AmSchemeTest` + manifiesto de hashes renovado + capturas Roborazzi.
 - **Contraste en pares nuevos**: todos los pares calculados y fijados por prueba antes de llegar a pantalla.
-- **Patrón hoja inferior (Ant ActionSheet/Vant Picker)**: se evaluó con `ModalBottomSheet` para S08 y la asociación de comprobantes, y se retiró: la ventana de la hoja no despacha acciones semánticas bajo Robolectric (contrato de pruebas UI del repo), dejando el flujo inverificable en el gate. Los selectores permanecen como `AmDialog`. El patrón de hoja inferior no forma parte del sistema vigente; los selectores usan `AmDialog` hasta que una alternativa pueda cumplir el mismo contrato funcional y de pruebas.
+- **Patrón hoja inferior (Ant ActionSheet/Vant Picker)**: se evaluó con `ModalBottomSheet` para S08 y la asociación de comprobantes, y se retiró: la ventana de la hoja no despacha acciones semánticas bajo Robolectric (contrato de pruebas UI del repo), dejando el flujo inverificable en el gate. Los selectores permanecen como `AmDialog`. La decisión de mantener selectores en `AmDialog` fue temporal y se reevaluará bajo ADR-0014.
 - **Validación iOS**: solo compilación de targets en este entorno; el runtime requiere Xcode (`IOS_RUNTIME_CHECKLIST`).
 
-## Criterios de aceptación
+## Criterios de aceptación históricos
 
 1. Todas las pantallas reales consumen AgendaMobile; ningún componente del sistema anterior en el árbol de fuentes.
 2. Ningún flujo funcional desaparece; dominio y navegación intactos.

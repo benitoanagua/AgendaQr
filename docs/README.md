@@ -28,7 +28,7 @@
 | [`04-ux/04-capacidades-y-comportamientos.md`](04-ux/04-capacidades-y-comportamientos.md) | Capacidades y comportamientos |
 | [`04-ux/05-guia-de-voz.md`](04-ux/05-guia-de-voz.md) | Guía de voz (tuteo) |
 
-## Design System (AgendaMobile)
+## Design System (Ant Design Mobile en Compose)
 
 | Documento | Contenido |
 |---|---|

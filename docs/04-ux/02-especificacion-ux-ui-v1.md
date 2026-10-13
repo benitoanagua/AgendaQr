@@ -1,6 +1,6 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — V1.3 para contrato funcional y visual; contrato visual definido por ADR-0013 (AgendaMobile) y desarrollado en `docs/05-design-system/00-agendamobile-contrato-normativo.md`  
+**Estado:** FROZEN — V1.4 para contrato funcional y visual; la dirección visual vigente es Ant Design Mobile replicado en Compose según ADR-0014  
 **Fecha:** 2026-10-11  
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
 
@@ -11,9 +11,10 @@
 | V1.0 | 2026-09-23 | Congelación original. |
 | V1.1 | 2026-10-05 | Enmienda por ADR-0005 (lenguaje visual Metro dentro de Xauxa): S01, S06, §11 y §12 reescritos. |
 | V1.2 | 2026-10-11 | Enmienda por ADR-0012 (UI convencional sobre Material 3, misma en ambas plataformas): §12 reescrito como diseño convencional (M1–M13 eliminados), §4 S01/S02/S12 recompuestos, §3 y §11 ajustados donde cambian. Intención, navegación conceptual, modelo mental, reglas de negocio y recuperación de errores: intactos. Aprobación explícita del propietario para enmendar la congelación registrada en ADR-0012. |
-| V1.3 | 2026-10-12 | Enmienda por ADR-0013 (sistema de diseño propio AgendaMobile): §12 actualizado a la autoría, paleta, formas y modo oscuro de AgendaMobile. Intención, navegación, modelo mental, reglas de negocio, accesibilidad y copy: intactos. |
+| V1.3 | 2026-10-12 | Enmienda por ADR-0013 (AgendaMobile; histórica). |
+| V1.4 | 2026-10-12 | Enmienda por ADR-0014: Ant Design Mobile como autoridad visual y navegación convencional Android/iOS. Intención, modelo mental, reglas de negocio, accesibilidad y copy preservados. |
 
-La implementación vigente corresponde a V1.3. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/09-implementacion/01-estado.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
+La implementación objetivo corresponde a V1.4. Los resultados reales de validación por plataforma se mantienen en `docs/09-implementacion/01-estado.md`. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/09-implementacion/01-estado.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
 ## 1. Contrato principal
 
@@ -58,7 +59,7 @@ Contexto es una superficie de continuidad, no una nueva taxonomía de navegació
 
 ## 4. Pantallas
 
-### S01 — Inicio (V1.3, ADR-0013)
+### S01 — Inicio (V1.4, ADR-0014)
 Intención: encontrar o iniciar algo. Buscar domina visualmente; Añadir y Registrar son acciones secundarias.
 
 Composición (la intención no cambia; solo cambia la presentación):
@@ -82,7 +83,7 @@ Composición (la intención no cambia; solo cambia la presentación):
   la app).
 - Cerrar sesión vive en el menú "…" de la barra superior.
 
-### S02 — Añadir (V1.3, ADR-0013)
+### S02 — Añadir (V1.4, ADR-0014)
 Intención: traer algo que el usuario ya tiene.
 
     ELEGIR DE LA GALERÍA (una o varias imágenes)
@@ -108,7 +109,7 @@ Intención: encontrar cualquier cosa de Agenda QR. Los resultados pueden ser het
 ### S05 — Resultados
 Superficie de decisión. Al volver se conserva la consulta.
 
-### S06 — Contexto (V1.3, ADR-0013)
+### S06 — Contexto (V1.4, ADR-0014)
 Intención: comprender y continuar dentro de un contexto. No es un dashboard financiero. La acción primaria depende del flujo que llevó al usuario allí.
 
 Composición: la superficie del contexto se estructura como **secciones QR · Actividades · Comprobantes** (pestañas estándar), reflejando directamente el modelo mental de §2; no crea taxonomía nueva de navegación. El acento del contexto (§12, Color) tiñe sus encabezados de sección y elementos de foco. La barra superior lleva el título y la flecha atrás; las acciones de la pantalla viven en el cuerpo (§12, Navegación y chrome).
@@ -133,7 +134,7 @@ Ambos son resultados legítimos.
 ### S11 — Resolver ambigüedad
 Intención: resolver una única duda que el sistema no puede decidir con seguridad.
 
-### S12 — Resultado de importación masiva (V1.3, ADR-0013)
+### S12 — Resultado de importación masiva (V1.4, ADR-0014)
 Superficie de decisión derivada de Añadir.
 
     [barra superior: título "Resultado de importación" + atrás]
@@ -218,7 +219,7 @@ Ejemplos:
 
 No existe un ErrorScreen global como destino de navegación.
 
-## 11. Accesibilidad y movimiento (V1.3, ADR-0013)
+## 11. Accesibilidad y movimiento (V1.4, ADR-0014)
 
 - targets interactivos de 44–48dp como mínimo según plataforma;
 - significado independiente del color;
@@ -227,7 +228,7 @@ No existe un ErrorScreen global como destino de navegación.
 - reduced motion respetado;
 - comprensión independiente de la animación.
 
-Reglas vigentes V1.3:
+Reglas vigentes V1.4:
 
 - **Contraste:** texto normal ≥ 4.5:1 y texto grande ≥ 3:1 (WCAG), en
   claro y en oscuro; los límites de controles y bordes en reposo ≥ 3:1.
@@ -249,91 +250,18 @@ Reglas vigentes V1.3:
 - **Escalado de fuente:** el contenido esencial y las acciones primarias
   no se truncan con la fuente del sistema al 200 %.
 
-## 12. Contrato visual — V1.3, ADR-0013
+## 12. Contrato visual — V1.4, ADR-0014
 
-> **Precedencia:** esta sección conserva la decisión de producto visual adoptada por ADR-0013 (AgendaMobile, sistema de diseño propio). Para reglas transversales detalladas, estados, accesibilidad, pruebas, gobernanza y resolución de contradicciones, prevalece `docs/05-design-system/00-agendamobile-contrato-normativo.md`. Si un detalle de esta sección contradice el contrato normativo, se debe reconciliar documentalmente; no se permite implementar una mezcla tácita.
+> Ant Design Mobile es la autoridad visual. El contrato detallado vive en `docs/05-design-system/00-agendamobile-contrato-normativo.md`. La implementación es Compose Multiplatform; no se incorpora la biblioteca React a Android/iOS.
 
-La UI es convencional, mobile-first y poco disruptiva: componentes estándar de Material 3 con el MISMO diseño en Android e iOS. La marca queda en el color de acento y poco más. Se conservan la paleta verificada, el lienzo claro del QR y las reglas de accesibilidad (§11). AgendaMobile es el único sistema de diseño: la capa de tokens (`AmTokens.kt`) y los envoltorios `Am*` son la única API visual de las features.
-
-### Principios
-
-1. Contenido antes que cromo.
-2. Componentes estándar: todo control interactivo es Material 3 o un envoltorio fino AgendaMobile con color, forma y tipografía del tema; sin mecánicas de interacción paralelas propias.
-3. Sin deriva de plataforma: la composición, el chrome y los componentes son idénticos en Android e iOS; solo la adquisición nativa (selectores, share) y las convenciones obligadas del sistema difieren.
-4. La accesibilidad es contrato, no refinamiento (§11).
-
-### Navegación y chrome
-
-- Barra superior (`TopAppBar` pequeña, título a la izquierda, estilo estándar) en cada superficie: flecha atrás cuando haya a dónde volver — la misma en ambas plataformas —, acciones de la pantalla (máx. 2 visibles + menú "…").
-- Barra de navegación inferior (`NavigationBar`) SOLO en las superficies raíz: Inicio, Buscar, Actividades y Contextos; cada destino con etiqueta + icono (nunca solo icono). No aparece en detalle/edición/importación. Cambiar de destino conserva la raíz del back stack (Back desde otro destino vuelve a Inicio; desde Inicio sale de la app).
-- La acción principal contextual vive en el cuerpo como `Button`, o fija abajo solo cuando existe una acción real de guardado (p. ej. "Guardar reconocidos" en S12). Una pantalla cuya barra solo tiene "Volver" no lleva barra inferior.
-- El Back del sistema conserva su orden (flujo interno → pop de superficie → sistema); el predictive back de Android 14+ anima con el progreso del gesto.
-- Tablet/plegables: adaptación por `WindowSizeClass`; el ancho expandido limita el contenido (`ContentMaxWidth`) y la navegación raíz pasa a riel (`NavigationRail`).
-- S06 conserva sus secciones QR · Actividades · Comprobantes (pestañas estándar). S04/S05 conservan resultados agrupados por tipo con encabezados de sección.
-
-### Campos de entrada
-
-- Campo tonal (superficie secundaria, radio de tokens, sin borde de reposo) con etiqueta, texto de apoyo y error contextual debajo (icono + texto, no solo color); la guía inferior aparece en foco (acento) y error (danger). El borde funcional cumple ≥ 3:1 (rol `borderControl`).
-- Teclado e IME según el tipo de campo; autofill de credenciales; mostrar/ocultar contraseña con botón de descripción accesible.
-- La obligatoriedad se indica con texto/semántica accesible coherente con la guía de voz, no con asterisco decorativo.
-
-### Listas y diálogos
-
-- Filas con `ListItem` (o equivalente M3), separación por divisor opt-in o espacio; acciones por fila como botones de icono (favorito = conmutador de estrella con estado y descripción accesible), no como enlace de texto.
-- Diálogos y hojas: `AlertDialog` estándar para confirmaciones y selecciones acotadas (la hoja inferior como patrón de selector queda registrada como siguiente paso en ADR-0013).
-
-### Botones
-
-- Acción principal: `Button` con relleno de acento. Secundaria: botón tonal (superficie secundaria, sin borde de reposo). Terciaria: `TextButton`. Icono: `IconButton`/`IconToggleButton` con descripción accesible. Mínimo 48 dp.
-- Estado deshabilitado y "guardando" expresados con etiqueta de texto (nunca solo con apariencia).
-
-### Tipografía
-
-- Familia del sistema en todos los estilos (Roboto en Android, San Francisco en iOS): sin fuente empaquetada propia. Tamaños en sp; roles estándar de Material 3 (el título de página es `titleLarge`/`headlineSmall`, el cuerpo `bodyLarge`).
-- Capitalización de oración. El escalado de fuente del sistema se mantiene (§11).
-
-### Color
-
-- Acento del sistema: del linaje del logo de marca, recalibrado para contraste AA — claro `0059D6` (texto blanco, 6.18:1), oscuro `6FA5FF` con texto de tinta (7.63:1). Esquemas claro y oscuro propios con superficies neutras frías (nunca blanco/negro puro como lienzo), pares de contenido verificados por pruebas.
-- Paleta de identidad de contextos: el color se deriva de forma **determinista** del identificador del contexto, sin persistir el color ni cambiar el dominio; paleta acotada (12 + sistema), sin ampliar. Elegir color manualmente queda como punto abierto, coherente con ADR-0003 (sin edición de contextos en V1).
-- Los colores de estado (error, advertencia, éxito, información) siguen siendo semánticos y distintos del acento; el significado nunca depende solo del color.
-- El lienzo del código QR es claro en ambos temas (zona de silencio escaneable).
-
-Tabla de contraste calculada (WCAG 2.x sobre luminancia relativa; razón del par texto asignado/fondo). Regla: texto normal ≥ 4.5:1. Todos los acentos de AgendaMobile usan texto blanco.
-
-| Acento | Hex | Texto blanco | Texto asignado |
-|---|---|---|---|
-| blue | 1D4ED8 | 6.70 | blanco |
-| sky | 0369A1 | 5.93 | blanco |
-| teal | 0F766E | 5.47 | blanco |
-| cyan | 0E7490 | 5.36 | blanco |
-| emerald | 047857 | 5.48 | blanco |
-| green | 15803D | 5.02 | blanco |
-| lime | 4D7C0F | 4.99 | blanco |
-| amber | A16207 | 4.92 | blanco |
-| orange | C2410C | 5.18 | blanco |
-| red | B91C1C | 6.47 | blanco |
-| rose | BE123C | 6.29 | blanco |
-| violet | 6D28D9 | 7.10 | blanco |
-| sistema | 0059D6 | 6.18 | blanco |
-
-**Paleta final admitida: 12 acentos de contexto + el acento de sistema** (ADR-0013). Los pares están fijados por `AmAccentTest`; la asignación por identificador (FNV-1a) es estable entre plataformas.
-
-### Formas y movimiento
-
-- Conjunto de formas explícito en tokens (extraSmall 4 dp, small 8 dp, medium 12 dp, large 16 dp, extraLarge 24 dp, píldora para chips/badges), consumido por `MaterialTheme.shapes`; ningún componente fija radios suyos.
-- Ripple/indicación de pulsación estándar de Material 3; sin overlay de pulsación propio ni `indication = null`.
-- Transición entre superficies: fundido con un desplazamiento horizontal pequeño, corto y con tokens de movimiento; con reduced motion el cambio es inmediato (§11).
-
-### Iconografía
-
-- **Set: Lucide** (licencia ISC — texto del aviso en `docs/05-design-system/06-licencias-terceros.md`), encapsulado por `AmIcon`; tamaño desde tokens. El set de iconos de Material queda prohibido en producción.
-- Glifos de línea, trazo uniforme, un solo color. Iconos decorativos fuera del árbol de accesibilidad; iconos interactivos con descripción accesible (§11).
-- Fuera del mapeo existente no se añaden iconos sin decisión.
-
-### Modo oscuro
-
-- Esquema oscuro propio de tinta profunda (fondo `0C1016`, superficies elevadas `151B24`/`202836`), con los mismos roles semánticos y umbrales de contraste que el claro; el acento pasa a un azul claro con texto de tinta (par AA verificado).
+- **Estilo:** superficies planas, fondo neutro, filas y formularios compactos, divisores finos, radios moderados y jerarquía tipográfica sobria.
+- **Color:** azul Ant Design `#1677FF` para énfasis y selección; acción sólida accesible `#0958D9` cuando se use texto blanco normal. Estados semánticos de éxito, advertencia y error; el significado no depende solo del color.
+- **Navegación raíz:** Inicio, Buscar, Actividades y Contextos en barra inferior, con icono y etiqueta. Solo aparece en raíces.
+- **Navegación secundaria:** barra superior compacta con Atrás, título y acciones. Detalles, edición, importación y revisión no muestran la barra inferior.
+- **Layout:** una columna de lectura en teléfono, contenido desplazable, acciones primarias claramente visibles y controles adaptados al teclado y las áreas seguras. En pantallas grandes se permite rail y ancho máximo de contenido.
+- **Componentes:** replicar patrones de Button, Input, SearchBar, List, Tabs, TabBar, NavBar, Dialog/ActionSheet, Toast/NoticeBar, Badge/Tag, Empty, Skeleton y estados de carga/error de Ant Design Mobile.
+- **Convenciones nativas:** Back y restauración respetan el stack del flujo; Android conserva el gesto predictivo; iOS conserva las convenciones del sistema. Selectores de medios, cámara y compartir usan APIs nativas.
+- **Accesibilidad:** etiquetas accesibles, targets táctiles adecuados, contraste AA, escalado de fuente hasta 200 %, IME, foco y movimiento reducido.
 
 ## 13. Fuera de esta congelación
 
@@ -341,4 +269,4 @@ Fuera del alcance de esta especificación conceptual: detalles internos de Kotli
 
 ## 14. Estado
 
-**UX/UI V1.3: FROZEN** (enmienda ADR-0013, 2026-10-12).
+**UX/UI V1.4: FROZEN** (enmienda ADR-0014, 2026-10-12).
