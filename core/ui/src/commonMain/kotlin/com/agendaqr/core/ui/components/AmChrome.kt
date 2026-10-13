@@ -15,6 +15,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
@@ -38,9 +39,10 @@ import com.agendaqr.core.ui.theme.AmType
 /** Etiqueta de pestaña (referencia: etiqueta 10 px; 11 sp por
  * altura de barra M3). */
 private val AmTabLabelStyle = androidx.compose.ui.text.TextStyle(
-    fontSize = AmType.CaptionSmall,
+    fontSize = AmType.Caption,
     lineHeight = AmType.LineHeightLabelSmall,
     fontFamily = AmType.FamilyUi,
+    letterSpacing = androidx.compose.ui.unit.TextUnit.Unspecified,
 )
 
 /**
@@ -231,7 +233,12 @@ fun AmNavBar(
     onSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    NavigationBar(modifier = modifier, tonalElevation = AmSpacing.None) {
+    NavigationBar(
+        modifier = modifier,
+        containerColor = AmColor.Surface,
+        contentColor = AmColor.TextPrimary,
+        tonalElevation = AmSpacing.None,
+    ) {
         destinations.forEach { destination ->
             val selected = destination.id == selectedId
             NavigationBarItem(
@@ -246,6 +253,13 @@ fun AmNavBar(
                 },
                 label = { Text(destination.label, style = AmTabLabelStyle) },
                 alwaysShowLabel = true,
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = AmColor.Accent,
+                    selectedTextColor = AmColor.AccentText,
+                    unselectedIconColor = AmColor.TextSecondary,
+                    unselectedTextColor = AmColor.TextSecondary,
+                    indicatorColor = AmColor.Transparent,
+                ),
             )
         }
     }
