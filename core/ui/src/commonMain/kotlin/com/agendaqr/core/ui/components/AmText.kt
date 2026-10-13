@@ -28,7 +28,7 @@ private const val HeadingLineHeightRatio = 1.25f
 private const val BodyLineHeightRatio = 1.5f
 
 /**
- * Encabezado AgendaMobile: todo título con semántica `heading()` usa la
+ * Encabezado Compose con tipografía de referencia Ant Design Mobile: todo título con semántica `heading()` usa la
  * familia de sistema y los tokens tipográficos del sistema.
  *
  * El tamaño sigue en `sp`: el escalado de fuente del sistema se respeta.
@@ -56,7 +56,7 @@ fun AmHeading(
 }
 
 /**
- * Texto AgendaMobile: el cuerpo y la UI usan la familia de texto del
+ * Texto de interfaz: el cuerpo y la UI usan la familia de texto del
  * sistema con los tokens del design system. La capa feature no compone
  * `androidx.compose.material3.Text` directamente: usa este componente
  * (o [AmHeading] para títulos).

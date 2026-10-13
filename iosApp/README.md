@@ -2,7 +2,7 @@
 
 The Kotlin Multiplatform `:shared` module publishes the `AgendaQrShared` framework. The SwiftUI host consumes `MainViewController()` and embeds the shared Compose UI.
 
-AgendaMobile parity requires native integrations (camera/share/biometric/brightness) to be added at the platform boundary without changing the domain model.
+Ant Design Mobile parity in Compose requires native integrations (camera/share/biometric/brightness) to be added at the platform boundary without changing the domain model.
 
 ## AppIcon — instrucciones para el equipo
 

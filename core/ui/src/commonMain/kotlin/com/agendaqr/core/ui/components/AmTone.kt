@@ -7,7 +7,7 @@ import com.agendaqr.core.ui.theme.AmColorScheme
 import com.agendaqr.core.ui.theme.LocalAmColorScheme
 
 /**
- * Tono semántico de AgendaMobile: la base compartida de los estados de
+ * Tono semántico compartido de la interfaz: la base compartida de los estados de
  * los componentes. Un solo acento (Accent); los demás colores tienen
  * significado semántico. Cada tono resuelve su par content/container
  * desde el esquema ([toneColors]); nada hereda de slots secundarios.

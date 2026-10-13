@@ -8,11 +8,13 @@
 
 ## Capacidades implementadas y verificadas
 
+> El cambio visual a Ant Design Mobile está en curso en ADR-0014. No marcar como verificada la nueva fidelidad visual hasta completar CI y revisar capturas regeneradas.
+
 | Área | Estado | Verificación |
 |---|---|---|
 | Dominio (operaciones, comprobantes, contextos) | Implementado | domain tests |
 | Datos (Supabase local-first, sync queue) | Implementado | data tests |
-| UX/UI V1.3 (AgendaMobile sobre Material 3, S01–S12) | Implementado | Robolectric suite + hashes visuales + gate del design system |
+| UX/UI V1.4 (Ant Design Mobile replicado en Compose, S01–S12) | Implementado | Robolectric suite + hashes visuales + gate del design system |
 | Chrome e insets (TopBar, NavigationBar/NavigationRail, Scaffold con contentWindowInsets) | Implementado | Robolectric suite + gate |
 | Edge-to-edge Android (`enableEdgeToEdge`) | Implementado | ensamblado; runtime NO VERIFICADO (dispositivo) |
 | Predictive back (PredictiveBackHandler con progreso) | Implementado | compilación 3 targets; gesto NO VERIFICADO (dispositivo) |
