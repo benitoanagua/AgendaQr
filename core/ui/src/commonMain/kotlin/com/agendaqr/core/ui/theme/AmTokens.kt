@@ -341,25 +341,25 @@ object AmShapes {
 object AmType {
     /** Display de bloque (32 sp): número/hero de tarjeta de datos. */
     val Display: TextUnit = 32.sp
-    /** Titular de autenticación (28 sp). */
+    /** Titular principal (24 sp; escala Ant Design Mobile). */
     val HeadlineMedium: TextUnit = 24.sp
-    /** Encabezado de sección grande (24 sp). */
+    /** Encabezado de sección (20 sp; escala Ant Design Mobile). */
     val Headline: TextUnit = 20.sp
-    /** Título de página en la barra superior (22 sp). */
+    /** Título de página en la barra superior (18 sp; escala Ant Design Mobile). */
     val TitleLarge: TextUnit = 18.sp
     /** Título de diálogo/modal centrado (18 sp, referencia). */
     val Title: TextUnit = 18.sp
-    /** Cuerpo (17 sp, referencia). */
+    /** Cuerpo base (14 sp, escala Ant Design Mobile). */
     val Body: TextUnit = 14.sp
     /** Etiqueta de botón/fila (14 sp). */
     val Label: TextUnit = 14.sp
-    /** Apoyo/descripción (13 sp, referencia). */
+    /** Apoyo/descripción (12 sp, escala Ant Design Mobile). */
     val Caption: TextUnit = 12.sp
-    /** Caption mínima (11 sp). */
+    /** Caption mínima (10 sp). */
     val CaptionSmall: TextUnit = 10.sp
     /** Encabezados de sección (15 sp, referencia). */
     val SectionHeader: TextUnit = 15.sp
-    // Interlineados canónicos en sp (respetan el escalado, §accesibilidad).
+    // Interlineados de la escala Ant Design Mobile en sp (respetan el escalado de accesibilidad).
     val LineHeightLabel: TextUnit = 20.sp
     val LineHeightBody: TextUnit = 22.sp
     val LineHeightCaption: TextUnit = 18.sp
@@ -372,13 +372,13 @@ object AmType {
     val LineHeightTitleSmall: TextUnit = 20.sp
     val LineHeightLabelSmall: TextUnit = 16.sp
     /**
-     * Familia de sistema en TODOS los estilos — Roboto en Android, San
-     * Francisco en iOS; ninguna fuente se empaqueta (ADR-0012, ADR-0013).
+     * Familia sans de sistema en TODOS los estilos — Roboto en Android, San
+     * Francisco en iOS; no se impone una tipografía de Metro ni se empaqueta fuente.
      */
     val FamilyUi: FontFamily = FontFamily.Default
 }
 
-/** Tracking de los roles tipográficos de Material 3 (valores por defecto). */
+/** Tracking neutro de Ant Design Mobile; la referencia no usa tracking amplio como rasgo visual. */
 object AmTracking {
     val TitleMedium: TextUnit = 0.sp
     val TitleSmall: TextUnit = 0.sp
