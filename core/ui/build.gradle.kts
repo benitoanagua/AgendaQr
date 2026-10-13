@@ -1,6 +1,6 @@
 plugins { id("agendaqr.compose-library") }
 
-// AgendaMobile (ADR-0013): el sistema de diseño vive en este módulo. Sin
+// Sistema de diseño (ADR-0014, referencia Ant Design Mobile): vive en este módulo. Sin
 // recursos empaquetados: la iconografía es Lucide vía AmIcon y el logo de
 // marca vive en docs/branding (SVG, fuente de verdad del ícono).
 
@@ -31,7 +31,7 @@ kotlin {
         }
         androidUnitTest.dependencies {
             implementation(kotlin("test"))
-            // Pruebas semánticas de los componentes AgendaMobile bajo
+            // Pruebas semánticas de los componentes del sistema bajo
             // Robolectric.
             implementation("androidx.compose.ui:ui-test-junit4:${libs.versions.androidx.compose.get()}")
             implementation("androidx.compose.ui:ui-test-manifest:${libs.versions.androidx.compose.get()}")

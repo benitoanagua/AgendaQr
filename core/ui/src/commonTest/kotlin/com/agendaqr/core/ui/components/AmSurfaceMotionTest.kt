@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 
 /**
  * Contrato de movimiento de las transiciones de superficie (contrato
- * AgendaMobile §8): la transición estándar respeta el movimiento
+ * contrato §8): la transición estándar respeta el movimiento
  * reducido del sistema.
  *
  * El contrato comprobable aquí: con reduced motion la transición no

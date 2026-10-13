@@ -101,7 +101,7 @@ private fun ContextList(
     appHosts: AppHosts? = null,
     onCreateContext: () -> Unit = {},
 ) {
-    // V1.2 (§12): Contextos es destino raíz — barra superior con título y
+    // V1.4 (§12): Contextos es destino raíz — barra superior con título y
     // navegación inferior; sin flecha atrás (la navegación raíz y el Back
     // del sistema cubren el regreso a Inicio).
     AmScreenScaffold(
@@ -172,7 +172,7 @@ private fun ContextDetail(
     onOpenOperations: () -> Unit,
 ) {
     val contents = state.contents
-    // V1.2 (§12): detalle de contexto con título en la barra superior y
+    // V1.4 (§12): detalle de contexto con título en la barra superior y
     // flecha atrás; las secciones siguen siendo QR · Actividades ·
     // Comprobantes (pestañas estándar).
     AmScreenScaffold(

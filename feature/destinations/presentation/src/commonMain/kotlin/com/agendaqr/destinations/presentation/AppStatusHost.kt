@@ -14,7 +14,7 @@ import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.core.ui.theme.AmSpacing
 
 /**
- * Hosts compartidos de la sesión (§12 V1.2): el estado persistente que se
+ * Hosts compartidos de la sesión (§12 V1.4): el estado persistente que se
  * renderiza bajo la barra superior de cada superficie y el host del
  * Snackbar para eventos transitorios. La superficie activa monta ambos en
  * su Scaffold.
@@ -27,7 +27,7 @@ class AppHosts(
 )
 
 /**
- * AppStatusHost (§12 V1.2): el ÚNICO punto donde viven los estados
+ * AppStatusHost (§12 V1.4): el ÚNICO punto donde viven los estados
  * persistentes transversales, dentro del Scaffold, bajo la barra
  * superior (insets resueltos por el contenedor).
  *

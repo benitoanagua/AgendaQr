@@ -84,7 +84,7 @@ internal fun OperationEditorScreen(
         contextId = contextSelection.contextId,
     )
 
-    // V1.2 (§12): "Registrar actividad"/"Editar actividad" en la barra
+    // V1.4 (§12): "Registrar actividad"/"Editar actividad" en la barra
     // superior; Guardar es el botón principal FIJO abajo (acción real de
     // guardado), nunca recortado por el scroll.
     AmScreenScaffold(
@@ -128,6 +128,7 @@ internal fun OperationEditorScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
+                    .imePadding()
                     .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
             )
         },

@@ -39,7 +39,10 @@ import com.agendaqr.core.ui.theme.amWindowWidthSizeClass
  *   Compacto la pinta como [AmNavBar] abajo; expandido como
  *   [AmNavRail] lateral.
  * - [bottomAction]: botón principal FIJO abajo solo cuando existe una
- *   acción real de guardado.
+ *   acción real de guardado. Vive en el slot bottomBar, fuera de los
+ *   insets de contenido: la acción aplica `navigationBarsPadding()` +
+ *   `imePadding()` por su cuenta para no quedar bajo las barras ni bajo
+ *   el teclado.
  * - [scrollable]: scroll del contenido para pantallas sin LazyColumn
  *   propia.
  * - [statusContent]: host de estados persistentes, a ancho completo BAJO

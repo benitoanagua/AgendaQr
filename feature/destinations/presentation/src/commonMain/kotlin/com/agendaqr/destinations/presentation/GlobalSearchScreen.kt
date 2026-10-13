@@ -20,7 +20,7 @@ fun GlobalSearchScreen(
     onAction: (GlobalSearchAction) -> Unit,
     onSelect: (AgendaSearchResult) -> Unit,
 ) {
-    // V1.2 (§12): Buscar es destino raíz — barra superior con título y
+    // V1.4 (§12): Buscar es destino raíz — barra superior con título y
     // navegación inferior; el campo de búsqueda es el cuerpo de la
     // superficie. Los resultados siguen agrupados por tipo con
     // encabezados de sección estándar.

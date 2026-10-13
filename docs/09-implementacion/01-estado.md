@@ -17,9 +17,9 @@
 | Edge-to-edge Android (`enableEdgeToEdge`) | Implementado | ensamblado; runtime NO VERIFICADO (dispositivo) |
 | Predictive back (PredictiveBackHandler con progreso) | Implementado | compilación 3 targets; gesto NO VERIFICADO (dispositivo) |
 | Búsqueda global (S04/S05) | Implementado | Robolectric suite |
-| Importación QR (Photo Picker Android/PHPicker iOS, cámara, share Android) | Implementado | Instrumentados + unit |
+| Importación QR (Photo Picker Android/PHPicker iOS, cámara, share Android) | Implementado | unit + compilación de instrumentados (runtime instrumentado con fallos preexistentes de harness, no bloqueante) |
 | Registro de actividad (S07) | Implementado | Robolectric suite |
-| Permisos de cámara (política de ajustes) | Implementado | Instrumentados |
+| Permisos de cámara (política de ajustes) | Implementado | unit + compilación de instrumentados (runtime instrumentado con fallos preexistentes de harness, no bloqueante) |
 | Navegación (back stack restaurable + NavigationBar 4 destinos) | Implementado | commonTest + RootNavigationChromeTest |
 | Accesibilidad (contraste, foco visible, háptica, anuncios, targets 48dp) | Implementado | `core:ui` tests + Robolectric |
 | Iconografía (Lucide ISC vía AmIcon) | Implementado | compilación 2 targets (Android/iOS) + gate |
@@ -58,7 +58,7 @@ dispositivo físico o red). No se declaran PASS.
 
 - **Share Extension de iOS**: `sharedImportsSupported()` devuelve false en
   iOS; el bloque "Desde otra app" de S02 no se muestra hasta que la
-  extensión exista (ADR-0013).
+  extensión exista.
 - **Selector de PDF en iOS** (`UIDocumentPickerViewController`): la acción
   "Elegir archivo (PDF)" solo existe en Android (OpenDocument por el canal
   de comprobantes entrantes); en iOS queda pendiente de la pasada nativa

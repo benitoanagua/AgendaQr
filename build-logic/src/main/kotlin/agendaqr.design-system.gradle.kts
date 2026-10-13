@@ -637,7 +637,7 @@ tasks.register("verifyDesignSystemFixtures") {
         }
 
         // Bordes: `.border(`/`BorderStroke(` DEBEN fallar en todo el
-        // código de producción (AgendaMobile no dibuja bordes; el foco y
+        // código de producción (el sistema no dibuja bordes; el foco y
         // el estado viven en los componentes M3 y en el canvas).
         val borderInFeature = "Modifier.border(BorderStroke(AmMetrics.Border, AmColor.Accent), AmShapes.Medium)"
         listOf(
@@ -767,5 +767,5 @@ tasks.register("verifyArchitectureBoundaries") {
 tasks.register("verifyAgendaQrArchitecture") {
     group = "verification"
     dependsOn("verifyDesignSystemCompliance", "verifyArchitectureBoundaries", "verifyDesignSystemFixtures", "verifyNoScripts", "verifyControlMinSize", "verifyDocs")
-    description = "Runs the complete Agenda QR architecture and AgendaMobile design-system gates."
+    description = "Runs the complete Agenda QR architecture and design-system gates."
 }

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.flowOf
 data class QrImportResult(val assets: List<QrAsset>)
 
 /**
- * Entradas de adquisición de QR (§4 S02 V1.2).
+ * Entradas de adquisición de QR (§4 S02 V1.4).
  */
 @Composable
 expect fun QrImportControls(
@@ -32,7 +32,7 @@ expect fun QrCameraEntryControl(
 )
 
 /**
- * "Elegir archivo (PDF)" (opcional, §4 S02 V1.2): solo donde la plataforma
+ * "Elegir archivo (PDF)" (opcional, §4 S02 V1.4): solo donde la plataforma
  * lo soporta con bajo riesgo. Android: OpenDocument(application/pdf) por el
  * canal de comprobantes entrantes. iOS: pendiente (documentado en el
  * estado de implementación).

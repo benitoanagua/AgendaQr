@@ -1,7 +1,5 @@
 package com.agendaqr.destinations.presentation
 
-import com.agendaqr.destinations.presentation.AppStrings
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmSnackbarHost
@@ -9,10 +7,9 @@ import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.theme.AmColor
-import com.agendaqr.core.ui.theme.AmSpacing
 
 /**
- * S02 — Añadir (V1.2, ADR-0012).
+ * S02 — Añadir (V1.4, ADR-0014).
  *
  * Esta pantalla solo decide cómo traer un recurso existente. No pide nombre,
  * categoría ni contexto antes de que Agenda QR haya entendido el recurso.
@@ -29,7 +26,7 @@ fun AddDestinationScreen(
     onImport: (List<com.agendaqr.destinations.domain.QrAsset>) -> Unit,
     onBack: () -> Unit,
 ) {
-    // V1.2 (§12): la flecha atrás vive en la barra superior (la misma en
+    // V1.4 (§12): la flecha atrás vive en la barra superior (la misma en
     // ambas plataformas); el orden congelado S02 (Galería → Desde otra app
     // → Cámara) no cambia.
     AmScreenScaffold(

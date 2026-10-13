@@ -228,7 +228,7 @@ class ScreensA11yCoverageTest {
         }
         compose.waitForIdle()
         compose.onNodeWithText("Agenda QR").assert(headingMatcher())
-        // V1.2 (ADR-0012, S01): lista convencional — el nombre aparece UNA
+        // V1.4 (ADR-0014, S01): lista convencional — el nombre aparece UNA
         // sola vez (su fila de Recientes; sin tile vivo que lo duplique) y
         // el favorito es un IconToggleButton con descripción accesible.
         val nameNodes = compose.onAllNodesWithText("Carniceria Don Bife").fetchSemanticsNodes()

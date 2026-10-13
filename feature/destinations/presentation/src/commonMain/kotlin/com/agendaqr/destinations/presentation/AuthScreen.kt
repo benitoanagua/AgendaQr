@@ -50,10 +50,10 @@ fun AuthScreen(
         if (isValidEmail(state.email) && state.password.length >= 6) target()
     }
 
-    // V1.2 (§12): la autenticación no es un destino raíz ni tiene a dónde
+    // V1.4 (§12): la autenticación no es un destino raíz ni tiene a dónde
     // volver: sin barra; su acción principal es el `Button` del cuerpo.
-    // El titular usa el rol headlineMedium de M3 y los campos son
-    // OutlinedTextField con autofill de credenciales.
+    // El titular usa el rol headlineMedium y los campos sin borde llevan
+    // autofill de credenciales.
     AmScreenScaffold(
         scrollable = true,
     ) {

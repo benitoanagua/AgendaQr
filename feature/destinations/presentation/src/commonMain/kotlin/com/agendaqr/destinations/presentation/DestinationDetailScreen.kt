@@ -40,7 +40,7 @@ fun DestinationDetailScreen(
         message = AppStrings.Eliminado,
         feedbackHost = appHosts?.feedback,
     )
-    // V1.2 (§12): título del QR en la barra superior con flecha atrás;
+    // V1.4 (§12): título del QR en la barra superior con flecha atrás;
     // Mostrar QR y Editar como acciones visibles, Compartir y Eliminar en
     // el menú "…" (destructiva, no a un toque).
     AmScreenScaffold(

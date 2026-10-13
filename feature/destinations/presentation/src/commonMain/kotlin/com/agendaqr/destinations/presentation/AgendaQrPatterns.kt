@@ -38,7 +38,7 @@ fun QrFullscreenPattern(
     encodedQr: String,
     onBack: () -> Unit,
 ) {
-    // V1.2 (§12): "QR" en la barra superior con flecha atrás.
+    // V1.4 (§12): "QR" en la barra superior con flecha atrás.
     AmScreenScaffold(
         topBar = {
             AmTopBar(

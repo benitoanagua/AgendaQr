@@ -34,7 +34,7 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 /**
- * Defectos de pulido UI a nivel de componente (contrato AgendaMobile).
+ * Defectos de pulido UI a nivel de componente (contrato §5).
  *
  * - Interlineado: el encabezado no hereda el del cuerpo; el cuerpo fija
  *   el canónico 16/24; todo tamaño > 24 sp mantiene su proporción.

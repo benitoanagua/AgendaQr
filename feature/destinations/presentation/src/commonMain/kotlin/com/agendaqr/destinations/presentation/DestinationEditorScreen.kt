@@ -3,6 +3,7 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.layout.Arrangement
 import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -93,7 +94,7 @@ private fun DestinationEditorContent(
     val qrError = submitted && qr.encoded.isBlank()
     val canSave = name.isNotBlank() && qr.encoded.isNotBlank() && !isSaving
 
-    // V1.2 (§12): "Editar QR" en la barra superior con flecha atrás; Guardar
+    // V1.4 (§12): "Editar QR" en la barra superior con flecha atrás; Guardar
     // es el botón principal FIJO abajo (acción real de guardado), nunca
     // recortado por el scroll. Mientras se guarda no hay vuelta (§3).
     AmScreenScaffold(
@@ -130,6 +131,7 @@ private fun DestinationEditorContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
+                    .imePadding()
                     .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
             )
         },

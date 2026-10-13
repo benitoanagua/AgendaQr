@@ -45,7 +45,7 @@ fun DestinationsScreen(
 ) {
     var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
     val paged = state.visibleDestinations.take(visibleCount)
-    // S01 V1.2 (ADR-0012): barra superior con el título, navegación raíz
+    // S01 V1.4 (ADR-0014): barra superior con el título, navegación raíz
     // (Inicio · Buscar · Actividades · Contextos), búsqueda como entrada y
     // FAB extendido "Añadir". El cuerpo conserva su contenido hasta la
     // pasada de pantallas.
@@ -101,7 +101,7 @@ fun DestinationsScreen(
                     dismissLabel = AppStrings.Descartar,
                 )
             }
-            // S01 V1.2 (ADR-0012): Inicio es una LISTA convencional. Sin
+            // S01 V1.4 (ADR-0014): Inicio es una LISTA convencional. Sin
             // tiles ni tile vivo; las entradas viven en la barra superior
             // (Cerrar sesión), el FAB (Añadir), la navegación raíz y las
             // filas. Favoritos es un filtro de la propia lista.
@@ -164,7 +164,7 @@ fun DestinationRow(
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
     showDivider: Boolean = false,
 ) {
-    // §12 V1.2: fila ListItem con la acción de favorito como
+    // §12 V1.4: fila ListItem con la acción de favorito como
     // IconToggleButton de estrella (estado en semántica; la descripción
     // accesible cambia con el estado, §11).
     AmListRow(

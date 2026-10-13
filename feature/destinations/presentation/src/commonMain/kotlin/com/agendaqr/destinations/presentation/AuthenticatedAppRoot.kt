@@ -30,7 +30,7 @@ import com.agendaqr.destinations.domain.AgendaSearchResultType
 import kotlinx.coroutines.launch
 
 /**
- * Navegación de superficies de la app autenticada (§12 V1.2, ADR-0012).
+ * Navegación de superficies de la app autenticada (§12 V1.4, ADR-0014).
  *
  * El back stack ([AppBackStack]) es la única autoridad de qué superficie
  * está visible; el Back del sistema pasa primero por el flujo interno de la
@@ -147,7 +147,7 @@ internal fun AuthenticatedAppRoot(
     }
 
     // ------------------------------------------------------------------
-    // Hosts compartidos de la sesión (§12 V1.2): el AppStatusHost (estados
+    // Hosts compartidos de la sesión (§12 V1.4): el AppStatusHost (estados
     // persistentes bajo la barra superior de cada superficie) y el host
     // del Snackbar (eventos transitorios). La superficie activa los monta
     // en su Scaffold.

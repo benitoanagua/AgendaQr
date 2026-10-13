@@ -3,6 +3,7 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,7 +37,7 @@ fun ImportReviewScreen(
     error: UserFacingError? = null,
     onClearError: () -> Unit = {},
 ) {
-    // V1.2 (§12): "Revisar QR" en la barra superior; Guardar/Guardar todo es
+    // V1.4 (§12): "Revisar QR" en la barra superior; Guardar/Guardar todo es
     // el botón principal FIJO abajo (acción real de guardado). Mientras se
     // guarda no hay vuelta (§3).
     AmScreenScaffold(
@@ -64,6 +65,7 @@ fun ImportReviewScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .navigationBarsPadding()
+                    .imePadding()
                         .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
                 )
             }

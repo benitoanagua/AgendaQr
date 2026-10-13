@@ -48,7 +48,7 @@ internal fun OperationDetailScreen(
         message = AppStrings.Eliminado,
         feedbackHost = appHosts?.feedback,
     )
-    // V1.2 (§12): detalle con título y flecha atrás en la barra superior;
+    // V1.4 (§12): detalle con título y flecha atrás en la barra superior;
     // Compartir y Editar como acciones visibles (Editar es la principal),
     // Eliminar en el menú "…" (destructiva, no a un toque).
     AmScreenScaffold(
@@ -104,7 +104,7 @@ internal fun OperationDetailScreen(
                 AmTextAction(label = AppStrings.attachReceiptNow, onClick = { viewModel.openUnassociatedForOperation(operation.id) })
             } else {
                 for (receipt in state.operationComprobantes) {
-                    // §12 V1.2: fila ListItem; "Desasociar" como acción de fila.
+                    // §12 V1.4: fila ListItem; "Desasociar" como acción de fila.
                     AmListRow(
                         title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
                         subtitle = formatDate(receipt.createdAt),
