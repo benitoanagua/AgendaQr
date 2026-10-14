@@ -1,7 +1,30 @@
 package com.agendaqr.destinations.presentation
 
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import kotlin.math.abs
+import com.agendaqr.core.ui.components.AmIcon
 import com.agendaqr.core.ui.components.AmIconBadge
 import com.agendaqr.core.ui.components.AmListRow
 import com.agendaqr.core.ui.components.AmSegmentedControl
@@ -9,9 +32,29 @@ import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTonalTag
 import com.agendaqr.core.ui.components.AmTappableCard
 import com.agendaqr.core.ui.components.AmFilterChip
+import com.agendaqr.core.ui.components.AmScreenScaffold
+import com.agendaqr.core.ui.components.AmTopBar
+import com.agendaqr.core.ui.components.AmExtendedFab
+import com.agendaqr.core.ui.components.AmIcons
+import com.agendaqr.core.ui.components.AmSearchField
+import com.agendaqr.core.ui.components.AmListBody
+import com.agendaqr.core.ui.components.AmStatusPill
+import com.agendaqr.core.ui.components.AmStatusBanner
+import com.agendaqr.core.ui.components.AmEmptyState
+import com.agendaqr.core.ui.components.AmLoadMoreFooter
+import com.agendaqr.core.ui.components.AmSecondaryButton
+import com.agendaqr.core.ui.components.AmCompactAction
+import com.agendaqr.core.ui.components.AmHairline
+import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.core.ui.components.content
 import com.agendaqr.core.ui.theme.AmTheme
-import androidx.compose.ui.Modifier
+import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmMetrics
+import com.agendaqr.core.ui.theme.AmSpacing
+import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.destinations.domain.Operation
+import com.agendaqr.destinations.domain.OperationType
+import com.agendaqr.destinations.presentation.AppStrings
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
@@ -332,94 +375,235 @@ class Round2ScreenshotTest {
     // S10: no se compone en Robolectric); aquí se captura el patrón
     // visual con los mismos helpers internos que usa la pantalla.
     @Test fun s07_operation_row_light() = shot("s07-operation-row-light", dark = false) {
-        operationHistoryPattern(selected = 0)
+        operationListScreenPattern(selected = 0)
     }
 
     @Test fun s07_operation_row_dark() = shot("s07-operation-row-dark", dark = true) {
-        operationHistoryPattern(selected = 2)
+        operationListScreenPattern(selected = 2)
     }
 
-    // Patrón del historial (referencia MCP): pestañas cápsula con conteo y
-    // TARJETA por operación con tile direccional, título, importe
-    // coloreado con signo, metadato temporal y tags reales. El
-    // OperationsScreen completo requiere OperationsViewModel (precedente
-    // S10: no en Robolectric); se captura el patrón con los mismos
-    // helpers internos de la pantalla.
+    // Patrón visual de la pantalla de operaciones (referencia Stitch):
+    // Usa la estructura real de OperationListScreen: AmScreenScaffold con
+    // márgenes, búsqueda, filtros, AmListBody con AmListRow.
+    // OperationsScreen completo requiere OperationsViewModel (S10: no en Robolectric);
+    // se compone el patrón visual con estado y callbacks explícitos.
     @androidx.compose.runtime.Composable
-    private fun operationHistoryPattern(selected: Int) {
-        val pago = com.agendaqr.destinations.domain.Operation(
-            "op-1", com.agendaqr.destinations.domain.OperationType.PAGO,
-            occurredAt = 1760000000000, createdAt = 1760000040000,
-            amount = "4850", currency = "ARS", personOrEntity = "Cafetería Central",
-            concept = "Desayuno de trabajo",
+    private fun operationListScreenPattern(selected: Int) {
+        val operations = listOf(
+            com.agendaqr.destinations.domain.Operation(
+                "op-1", com.agendaqr.destinations.domain.OperationType.PAGO,
+                occurredAt = 1760000000000, createdAt = 1760000040000,
+                amount = "4850", currency = "ARS", personOrEntity = "Cafetería Central",
+                concept = "Desayuno de trabajo",
+            ),
+            com.agendaqr.destinations.domain.Operation(
+                "op-2", com.agendaqr.destinations.domain.OperationType.COBRO,
+                occurredAt = 1760000000000, createdAt = 1760000040000,
+                amount = "25000", currency = "ARS", personOrEntity = "Verdulería Mercedes",
+            ),
         )
-        val cobro = com.agendaqr.destinations.domain.Operation(
-            "op-2", com.agendaqr.destinations.domain.OperationType.COBRO,
-            occurredAt = 1760000000000, createdAt = 1760000040000,
-            amount = "25000", currency = "ARS", personOrEntity = "Verdulería Mercedes",
-        )
-        androidx.compose.foundation.layout.Column {
-            androidx.compose.foundation.layout.Row(
-                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(
-                    com.agendaqr.core.ui.theme.AmSpacing.Sm,
-                ),
-            ) {
-                AmFilterChip(label = AppStrings.Todas, selected = selected == 0, onClick = {}, count = 2)
-                AmFilterChip(label = AppStrings.Pago, selected = selected == 1, onClick = {}, count = 1)
-                AmFilterChip(label = AppStrings.Cobro, selected = selected == 2, onClick = {}, count = 1)
-            }
-            com.agendaqr.core.ui.components.AmTappableCard(onClick = {}) {
-                androidx.compose.foundation.layout.Column(
-                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(
-                        com.agendaqr.core.ui.theme.AmSpacing.Sm,
-                    ),
+        val filtered = when (selected) {
+            1 -> operations.filter { it.type == OperationType.PAGO }
+            2 -> operations.filter { it.type == OperationType.COBRO }
+            else -> operations
+        }
+        val pagosCount = operations.count { it.type == OperationType.PAGO }
+        val cobrosCount = operations.count { it.type == OperationType.COBRO }
+
+        AmScreenScaffold(
+            topBar = { AmTopBar(title = AppStrings.Operaciones) },
+            navDestinations = listOf(
+                com.agendaqr.core.ui.components.AmNavDestination("home", AppStrings.Inicio, AmIcons.Home),
+                com.agendaqr.core.ui.components.AmNavDestination("search", AppStrings.Buscar, AmIcons.Search),
+                com.agendaqr.core.ui.components.AmNavDestination("operations", AppStrings.Operaciones, AmIcons.Register),
+                com.agendaqr.core.ui.components.AmNavDestination("contexts", AppStrings.Contextos, AmIcons.Context),
+            ),
+            navSelectedId = "operations",
+            onNavSelect = {},
+            floatingActionButton = {
+                AmExtendedFab(
+                    label = AppStrings.RegistrarOperacion,
+                    icon = AmIcons.Add,
+                    onClick = {},
+                )
+            },
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                AmSearchField(
+                    value = "",
+                    onValueChange = {},
+                    label = AppStrings.Buscar,
+                    placeholder = AppStrings.BuscarOperaciones,
+                    onClear = {},
+                    clearLabel = AppStrings.Limpiar,
+                )
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
                 ) {
-                    listOf(pago, cobro).forEach { operation ->
-                        androidx.compose.foundation.layout.Column(
-                            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(
-                                com.agendaqr.core.ui.theme.AmSpacing.Xs,
-                            ),
+                    AmFilterChip(
+                        label = AppStrings.Todas,
+                        selected = selected == 0,
+                        onClick = {},
+                        count = operations.size,
+                    )
+                    AmFilterChip(
+                        label = AppStrings.Pago,
+                        selected = selected == 1,
+                        onClick = {},
+                        count = pagosCount,
+                    )
+                    AmFilterChip(
+                        label = AppStrings.Cobro,
+                        selected = selected == 2,
+                        onClick = {},
+                        count = cobrosCount,
+                    )
+                    AmFilterChip(
+                        label = AppStrings.ComprobantesSueltos,
+                        selected = false,
+                        onClick = {},
+                        count = 0,
+                    )
+                }
+            }
+
+            if (filtered.isNotEmpty()) {
+                AmListBody {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = AmSpacing.Md, vertical = AmSpacing.Sm),
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Row(
+                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
                         ) {
-                            androidx.compose.foundation.layout.Row(
-                                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(
-                                    com.agendaqr.core.ui.theme.AmSpacing.Md,
-                                ),
-                            ) {
-                                AmIconBadge(
-                                    icon = operationTypeIcon(operation.type),
-                                    tone = operationTypeTone(operation.type),
+                            AmIcon(
+                                imageVector = AmIcons.Calendar,
+                                contentDescription = null,
+                                size = AmMetrics.IconSizeCompact,
+                                tint = AmColor.AccentText,
+                            )
+                            Column {
+                                AmText(
+                                    monthYearLabel(filtered.first().occurredAt),
+                                    size = AmType.BodySmall,
+                                    fontWeight = FontWeight.SemiBold,
                                 )
-                                androidx.compose.foundation.layout.Column(
-                                    modifier = Modifier.weight(1f),
-                                ) {
-                                    AmText(operationTitle(operation))
-                                    operation.concept?.let { AmText(it, color = com.agendaqr.core.ui.theme.AmColor.TextSecondary) }
-                                }
-                                operationAmountText(operation)?.let {
-                                    AmText(
-                                        it,
-                                        color = if (operation.type == com.agendaqr.destinations.domain.OperationType.COBRO) {
-                                            com.agendaqr.core.ui.theme.AmColor.Success
-                                        } else {
-                                            com.agendaqr.core.ui.theme.AmColor.Danger
-                                        },
-                                    )
-                                }
+                                AmText(
+                                    filtered.size.toString() + " " + AppStrings.RegistrosLocales,
+                                    color = AmColor.TextSecondary,
+                                )
                             }
-                            AmText(
-                                formatDate(operation.occurredAt) + " · " + AppStrings.RegPrefijo + formatTime(operation.createdAt),
-                                color = com.agendaqr.core.ui.theme.AmColor.TextTertiary,
+                        }
+                        AmStatusPill(
+                            text = AppStrings.RespaldoSeguro,
+                            icon = AmIcons.ShieldCheck,
+                            tone = AmTone.Success,
+                        )
+                    }
+                }
+            }
+
+            if (filtered.isEmpty()) {
+                AmEmptyState(
+                    icon = AmIcons.Register,
+                    title = AppStrings.AunNoHayOperaciones,
+                    subtitle = AppStrings.registerFirstPaymentHint,
+                    actionLabel = AppStrings.RegistrarOperacion,
+                    onAction = {},
+                )
+            } else {
+                AmListBody(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                ) {
+                    Column {
+                        filtered.forEachIndexed { index, operation ->
+                            val amountText = operationAmountText(operation)
+                            val amountColor = if (operation.type == OperationType.COBRO) {
+                                AmColor.Success
+                            } else {
+                                AmColor.Danger
+                            }
+                            val isLast = index == filtered.lastIndex
+
+                            AmListRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                title = operationTitle(operation),
+                                subtitle = operation.concept?.takeIf { it.isNotBlank() },
+                                leading = {
+                                    AmIconBadge(
+                                        icon = operationTypeIcon(operation.type),
+                                        tone = operationTypeTone(operation.type),
+                                    )
+                                },
+                                trailing = {
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        amountText?.let {
+                                            AmText(
+                                                it,
+                                                size = AmType.SectionHeader,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = amountColor,
+                                            )
+                                        }
+                                        AmCompactAction(
+                                            label = AppStrings.Compartir,
+                                            onClick = {},
+                                            icon = AmIcons.Share,
+                                        )
+                                    }
+                                },
+                                meta = {
+                                    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+                                        ) {
+                                            AmIcon(
+                                                imageVector = AmIcons.Clock,
+                                                contentDescription = null,
+                                                size = AmMetrics.IconSizeCompact,
+                                                tint = AmColor.TextTertiary,
+                                            )
+                                            AmText(
+                                                formatDate(operation.occurredAt) + " · " + AppStrings.RegPrefijo + formatTime(operation.createdAt),
+                                                color = AmColor.TextTertiary,
+                                                size = AmType.Caption,
+                                            )
+                                        }
+                                    }
+                                },
+                                onClick = {},
+                                showDivider = !isLast,
                             )
                         }
                     }
+                }
+
+                if (filtered.size < operations.size) {
+                    AmLoadMoreFooter(
+                        modifier = Modifier.fillMaxWidth().padding(top = AmSpacing.Sm),
+                        onLoadMore = {},
+                        loadMoreLabel = AppStrings.CargarMas,
+                        loadingLabel = AppStrings.Cargando,
+                        endLabel = AppStrings.NoHayMasElementos,
+                    )
                 }
             }
         }
     }
 
-    private fun rootChrome(selected: String) =
-        com.agendaqr.core.ui.components.AmNavChromeState(
+    private fun rootChrome(selected: String): com.agendaqr.core.ui.components.AmNavChromeState {
+        return com.agendaqr.core.ui.components.AmNavChromeState(
             destinations = listOf(
                 com.agendaqr.core.ui.components.AmNavDestination(
                     appRouteNameOf(AppRoute.Home), AppStrings.Inicio,
@@ -441,4 +625,5 @@ class Round2ScreenshotTest {
             selectedId = selected,
             onSelect = {},
         )
+    }
 }
