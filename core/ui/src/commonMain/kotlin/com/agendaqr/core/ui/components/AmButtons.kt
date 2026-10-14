@@ -457,13 +457,15 @@ fun AmFilterChip(
 
 /**
  * Opción del control segmentado: etiqueta SIEMPRE (es la señal de texto),
- * glifo decorativo opcional y tono del estado activo opcional (p. ej.
+ * glifo decorativo opcional, badge de conteo opcional y tono del estado activo opcional (p. ej.
  * cobro en success) — la referencia Stitch tiñe la opción activa según
  * el significado del segmento.
  */
 data class AmSegmentedOption(
     val label: String,
     val icon: ImageVector? = null,
+    /** Badge de conteo pequeño (p. ej. "5"). */
+    val count: Int? = null,
     /** Color de TEXTO de la opción activa; null = acento del sistema. */
     val activeTone: AmTone? = null,
 )
@@ -532,6 +534,22 @@ fun AmSegmentedControl(
                         color = if (selected) activeColor else AmColor.TextSecondary,
                         maxLines = 1,
                     )
+                    option.count?.let {
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    if (selected) activeColor.copy(alpha = 0.2f) else AmColor.SurfaceContainerHighest,
+                                    AmShapes.Pill,
+                                )
+                                .padding(horizontal = AmSpacing.Xs),
+                        ) {
+                            Text(
+                                it.toString(),
+                                style = AmTextStyles.Tag,
+                                color = if (selected) activeColor else AmColor.TextSecondary,
+                            )
+                        }
+                    }
                 }
             }
         }

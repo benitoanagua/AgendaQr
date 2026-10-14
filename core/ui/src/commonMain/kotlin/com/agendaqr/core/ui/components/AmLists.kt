@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.selected
@@ -261,6 +262,10 @@ fun AmListRow(
     meta: (@Composable () -> Unit)? = null,
     /** Separador inferior de la lista agrupada. */
     showDivider: Boolean = false,
+    /** Límite de líneas para el título (default 1 con elipsis). */
+    titleMaxLines: Int = 1,
+    /** Límite de líneas para el subtítulo (default 1 con elipsis). */
+    subtitleMaxLines: Int = 1,
 ) {
     Column(modifier = modifier) {
         ListItem(
@@ -277,7 +282,13 @@ fun AmListRow(
                 ),
             colors = ListItemDefaults.colors(containerColor = AmColor.Transparent),
             headlineContent = {
-                Text(title, style = AmTextStyles.RowTitle, color = AmColor.TextPrimary)
+                Text(
+                    title,
+                    style = AmTextStyles.RowTitle,
+                    color = AmColor.TextPrimary,
+                    maxLines = titleMaxLines,
+                    overflow = TextOverflow.Ellipsis,
+                )
             },
             supportingContent = if (subtitle != null || meta != null) {
                 {
@@ -285,7 +296,13 @@ fun AmListRow(
                         verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
                     ) {
                         subtitle?.let {
-                            Text(it, style = AmTextStyles.Caption, color = AmColor.TextSecondary)
+                            Text(
+                                it,
+                                style = AmTextStyles.Caption,
+                                color = AmColor.TextSecondary,
+                                maxLines = subtitleMaxLines,
+                                overflow = TextOverflow.Ellipsis,
+                            )
                         }
                         meta?.invoke()
                     }

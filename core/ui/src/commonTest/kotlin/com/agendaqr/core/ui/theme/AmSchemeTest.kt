@@ -98,13 +98,13 @@ class AmSchemeTest {
     fun dark_scheme_pins_the_current_values() {
         val s = DarkAmColorScheme
         assertEquals("1A1A1A", hex(s.background))
-        assertEquals("242424", hex(s.surface))
-        assertEquals("0A0A0A", hex(s.surfaceSecondary))
-        assertEquals("2B2B2B", hex(s.border))
-        assertEquals("2B2B2B", hex(s.divider))
+        assertEquals("1F1F1F", hex(s.surface))
+        assertEquals("141414", hex(s.surfaceSecondary))
+        assertEquals("3A3A3A", hex(s.border))
+        assertEquals("3A3A3A", hex(s.divider))
         assertEquals("E6E6E6", hex(s.textPrimary))
         assertEquals("B3B3B3", hex(s.textSecondary))
-        assertEquals("8C8C8C", hex(s.textTertiary))
+        assertEquals("9E9E9E", hex(s.textTertiary))
         assertEquals("6FA5FF", hex(s.accent))
         assertEquals("0A1120", hex(s.onAccent))
         assertEquals("6FA5FF", hex(s.accentContainer))
@@ -121,18 +121,18 @@ class AmSchemeTest {
         assertEquals("6FA5FF", hex(s.info))
         assertEquals("0D2543", hex(s.infoContainer))
         assertEquals("6FA5FF", hex(s.focus))
-        assertEquals("2B2B2B", hex(s.disabled))
-        assertEquals("808080", hex(s.onDisabled))
+        assertEquals("3A3A3A", hex(s.disabled))
+        assertEquals("9E9E9E", hex(s.onDisabled))
         assertEquals("F5F5F5", hex(s.inverseSurface))
         assertEquals("1A1A1A", hex(s.inverseOnSurface))
         assertEquals("3086FF", hex(s.inverseAccent))
         // El lienzo del QR es claro en ambos temas (zona de silencio
         // escaneable): no conmuta con el tema por diseño.
         assertEquals("FFFFFF", hex(s.qrCanvas))
-        assertEquals("0A0A0A", hex(s.surfaceContainerLow))
-        assertEquals("1A1A1A", hex(s.surfaceContainer))
-        assertEquals("242424", hex(s.surfaceContainerHigh))
-        assertEquals("2E2E2E", hex(s.surfaceContainerHighest))
+        assertEquals("252525", hex(s.surfaceContainerLow))
+        assertEquals("2A2A2A", hex(s.surfaceContainer))
+        assertEquals("303030", hex(s.surfaceContainerHigh))
+        assertEquals("3A3A3A", hex(s.surfaceContainerHighest))
     }
 
     @Test

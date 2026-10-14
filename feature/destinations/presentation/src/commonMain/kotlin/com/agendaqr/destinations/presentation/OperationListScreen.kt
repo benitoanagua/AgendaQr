@@ -19,6 +19,7 @@ import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.components.AmExtendedFab
 import com.agendaqr.core.ui.components.AmNavChromeState
+import com.agendaqr.core.ui.components.AmSegmentedControl
 import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.data.SyncResource
@@ -129,8 +130,8 @@ internal fun OperationListScreen(
             )
         },
     ) {
-        // Grupo de entrada: búsqueda + filtros (8 dp). Filtros en Row
-        // con scroll horizontal si no caben (referencia Stitch: chips cápsula).
+        // Grupo de entrada: búsqueda + control segmentado (8 dp).
+        // SegmentedControl (referencia Stitch): 3 opciones con badges de conteo.
         Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
             AmSearchField(
                 value = state.query,
@@ -140,35 +141,36 @@ internal fun OperationListScreen(
                 onClear = { viewModel.onAction(OperationAction.Search("")) },
                 clearLabel = AppStrings.Limpiar
             )
-            Row(
-                modifier = Modifier.horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-            ) {
-                AmFilterChip(
-                    label = AppStrings.Todas,
-                    selected = typeFilter == 0,
-                    onClick = { typeFilter = 0 },
-                    count = operations.size,
-                )
-                AmFilterChip(
-                    label = AppStrings.Pago,
-                    selected = typeFilter == 1,
-                    onClick = { typeFilter = 1 },
-                    count = pagosCount,
-                )
-                AmFilterChip(
-                    label = AppStrings.Cobro,
-                    selected = typeFilter == 2,
-                    onClick = { typeFilter = 2 },
-                    count = cobrosCount,
-                )
-                // "Comprobantes sueltos" no es un filtro de tipo: es navegación
-                // a la bandeja. Se muestra como chip tonal sin selección.
-                AmFilterChip(
-                    label = AppStrings.ComprobantesSueltos,
-                    selected = false,
+            AmSegmentedControl(
+                options = listOf(
+                    com.agendaqr.core.ui.components.AmSegmentedOption(
+                        label = AppStrings.Todas,
+                        count = operations.size,
+                    ),
+                    com.agendaqr.core.ui.components.AmSegmentedOption(
+                        label = AppStrings.Pago,
+                        icon = AmIcons.Expense,
+                        count = pagosCount,
+                    ),
+                    com.agendaqr.core.ui.components.AmSegmentedOption(
+                        label = AppStrings.Cobro,
+                        icon = AmIcons.Income,
+                        activeTone = AmTone.Success,
+                        count = cobrosCount,
+                    ),
+                ),
+                selectedIndex = typeFilter,
+                onSelect = { typeFilter = it },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            // "Comprobantes sueltos" no es un filtro de tipo: es navegación
+            // a la bandeja. Se muestra como botón secundario de ancho completo.
+            if (state.unassociated.isNotEmpty()) {
+                AmSecondaryButton(
+                    label = AppStrings.ComprobantesSueltos + " (" + state.unassociated.size + ")",
                     onClick = { viewModel.onAction(OperationAction.OpenUnassociated) },
-                    count = state.unassociated.size,
+                    icon = AmIcons.Inbox,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }
@@ -206,20 +208,7 @@ internal fun OperationListScreen(
                             )
                         }
                     }
-                    AmStatusPill(
-                        text = AppStrings.RespaldoSeguro,
-                        icon = AmIcons.ShieldCheck,
-                        tone = AmTone.Success,
-                    )
                 }
-            }
-        }
-
-        // Aviso de comprobantes sin asociar (solo en filtro "Todas").
-        if (state.unassociated.isNotEmpty() && typeFilter == 0) {
-            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                AmStatusBanner(unassociatedReceiptsLabel(state.unassociated.size))
-                AmSecondaryButton(label = AppStrings.VerBandejaDeRespaldos, onClick = { viewModel.onAction(OperationAction.OpenUnassociated) })
             }
         }
 
@@ -282,22 +271,12 @@ internal fun OperationListScreen(
                                 )
                             },
                             trailing = {
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    amountText?.let {
-                                        AmText(
-                                            it,
-                                            size = AmType.SectionHeader,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = amountColor,
-                                        )
-                                    }
-                                    AmCompactAction(
-                                        label = AppStrings.Compartir,
-                                        onClick = { shareOperation(operation) },
-                                        icon = AmIcons.Share,
+                                amountText?.let {
+                                    AmText(
+                                        it,
+                                        size = AmType.SectionHeader,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = amountColor,
                                     )
                                 }
                             },

@@ -133,17 +133,6 @@ fun DestinationsScreen(
                 modifier = Modifier.fillMaxWidth().padding(AmSpacing.Md),
                 verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    AmStatusPill(
-                        text = AppStrings.AlmacenamientoLocal,
-                        icon = AmIcons.ShieldCheck,
-                        tone = AmTone.Success,
-                    )
-                }
                 Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
                     AmSecondaryButton(
                         label = AppStrings.EscanearQr,
@@ -253,29 +242,6 @@ fun DestinationsScreen(
                             endLabel = AppStrings.NoHayMasElementos,
                         )
                     }
-                }
-            }
-        }
-
-        // Banner de reaseguro (referencia MCP): datos locales, sin salir
-        // del teléfono — cierto para este producto.
-        AmListBody {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(AmSpacing.Md),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-            ) {
-                AmIconBadge(icon = AmIcons.QrCode, tone = AmTone.Info)
-                Column {
-                    AmText(
-                        AppStrings.DatosNuncaSalen,
-                        size = AmType.RowTitle,
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
-                    )
-                    AmText(
-                        AppStrings.IndexacionSinInternet,
-                        color = AmColor.TextSecondary,
-                    )
                 }
             }
         }

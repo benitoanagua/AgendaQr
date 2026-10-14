@@ -437,35 +437,28 @@ class Round2ScreenshotTest {
                     onClear = {},
                     clearLabel = AppStrings.Limpiar,
                 )
-                Row(
-                    modifier = Modifier.horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-                ) {
-                    AmFilterChip(
-                        label = AppStrings.Todas,
-                        selected = selected == 0,
-                        onClick = {},
-                        count = operations.size,
-                    )
-                    AmFilterChip(
-                        label = AppStrings.Pago,
-                        selected = selected == 1,
-                        onClick = {},
-                        count = pagosCount,
-                    )
-                    AmFilterChip(
-                        label = AppStrings.Cobro,
-                        selected = selected == 2,
-                        onClick = {},
-                        count = cobrosCount,
-                    )
-                    AmFilterChip(
-                        label = AppStrings.ComprobantesSueltos,
-                        selected = false,
-                        onClick = {},
-                        count = 0,
-                    )
-                }
+                AmSegmentedControl(
+                    options = listOf(
+                        com.agendaqr.core.ui.components.AmSegmentedOption(
+                            label = AppStrings.Todas,
+                            count = operations.size,
+                        ),
+                        com.agendaqr.core.ui.components.AmSegmentedOption(
+                            label = AppStrings.Pago,
+                            icon = AmIcons.Expense,
+                            count = pagosCount,
+                        ),
+                        com.agendaqr.core.ui.components.AmSegmentedOption(
+                            label = AppStrings.Cobro,
+                            icon = AmIcons.Income,
+                            activeTone = AmTone.Success,
+                            count = cobrosCount,
+                        ),
+                    ),
+                    selectedIndex = selected,
+                    onSelect = {},
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
 
             if (filtered.isNotEmpty()) {
@@ -499,11 +492,6 @@ class Round2ScreenshotTest {
                                 )
                             }
                         }
-                        AmStatusPill(
-                            text = AppStrings.RespaldoSeguro,
-                            icon = AmIcons.ShieldCheck,
-                            tone = AmTone.Success,
-                        )
                     }
                 }
             }
@@ -518,9 +506,7 @@ class Round2ScreenshotTest {
                 )
             } else {
                 AmListBody(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
+                    modifier = Modifier.fillMaxWidth().weight(1f),
                 ) {
                     Column {
                         filtered.forEachIndexed { index, operation ->
@@ -543,22 +529,12 @@ class Round2ScreenshotTest {
                                     )
                                 },
                                 trailing = {
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                    ) {
-                                        amountText?.let {
-                                            AmText(
-                                                it,
-                                                size = AmType.SectionHeader,
-                                                fontWeight = FontWeight.SemiBold,
-                                                color = amountColor,
-                                            )
-                                        }
-                                        AmCompactAction(
-                                            label = AppStrings.Compartir,
-                                            onClick = {},
-                                            icon = AmIcons.Share,
+                                    amountText?.let {
+                                        AmText(
+                                            it,
+                                            size = AmType.SectionHeader,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = amountColor,
                                         )
                                     }
                                 },
