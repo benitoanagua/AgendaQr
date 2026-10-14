@@ -262,10 +262,11 @@ fun AmExtendedFab(
  * icono), activo en acento. Cada destino ocupa toda la altura (objetivo
  * ≥ 48 dp) y expone su selección.
  *
- * Edge-to-edge: el slot bottomBar de Scaffold NO recibe los insets del
- * sistema — esta barra aplica `navigationBarsPadding` por sí misma para
- * no quedar tras la zona de gestos (y con ella, el FAB del Scaffold
- * recupera su distancia correcta al borde físico).
+ * Edge-to-edge: el fondo de la barra se extiende hasta el borde inferior
+ * (detrás de la barra de navegación del sistema). El CONTENIDO (iconos,
+ * etiquetas) se insets con `navigationBarsPadding` para no quedar bajo la
+ * zona de gestos. Así el FAB del Scaffold se posiciona 16 dp sobre la
+ * altura visual de 56 dp, independientemente de los insets del sistema.
  */
 @Composable
 fun AmNavBar(
@@ -274,7 +275,7 @@ fun AmNavBar(
     onSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxWidth().navigationBarsPadding()) {
+    Column(modifier = modifier.fillMaxWidth()) {
         HorizontalDivider(
             thickness = AmMetrics.Border,
             color = AmColor.Divider,
@@ -283,6 +284,7 @@ fun AmNavBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(AmMetrics.NavBarHeight)
+                .navigationBarsPadding() // Inset solo del contenido, no del fondo
                 .selectableGroup(),
             verticalAlignment = Alignment.CenterVertically,
         ) {

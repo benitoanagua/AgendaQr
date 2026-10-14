@@ -130,7 +130,19 @@ fun AmScreenScaffold(
                     )
                     .weight(1f)
                     .then(if (scrollable) Modifier.verticalScroll(rememberScrollState()) else Modifier)
-                    .padding(AmSpacing.ScreenMargin),
+                    .padding(
+                        horizontal = AmSpacing.ScreenMargin,
+                        vertical = AmSpacing.ScreenMargin,
+                    )
+                    .then(
+                        // Padding extra inferior para la barra de navegación (56 dp)
+                        // cuando existe bottomBar (navDestinations) en compacto.
+                        if (!expanded && navDestinations.isNotEmpty()) {
+                            Modifier.padding(bottom = AmMetrics.NavBarHeight)
+                        } else {
+                            Modifier
+                        },
+                    ),
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
             ) {
