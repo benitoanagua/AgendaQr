@@ -69,7 +69,59 @@ La referencia Stitch añade patrones que V1.4 no cubría:
 - El contrato normativo registra los componentes nuevos (§9), los glifos
   financieros (§7) y esta decisión.
 
-## Revisión de fidelidad (2026-10-13, pasada Stitch completa)
+## Revisión 2 — Stitch MCP como agente de diseño (2026-10-13/14)
+
+La fuente de diseño pasa a ser el **proyecto Stitch "Ant Design Mobile
+App" consultado por MCP** (16 pantallas móviles + sistema de diseño con
+tokens Inter/paleta/espaciados). Cuatro pantallas eran versiones
+ACTUALIZADAS nunca implementadas antes; esta pasada las implementó:
+
+- **Compactación (mandato explícito):** separación de superficie visible
+  y zona interactiva — secundarios 40 dp visual / 48 táctil, píldoras
+  ~32/48 con CONTEO real, entradas 44, acciones de fila ~36/48. Sin
+  literal dp fuera de tokens; `verifyControlMinSize` sigue fijando el
+  target de 48.
+- **Destinos QR - Agenda:** tarjeta de garantía local ("Almacenamiento
+  100% local" — cierto) + acciones rápidas (Escanear QR solid /
+  Importar imagen tonal → S02 real), pestañas cápsula con conteo del
+  dominio, **carrusel horizontal de favoritos reales** ("Destinos
+  frecuentes"), lista agrupada con tile QR y contenido decodificado
+  como evidencia, banner de privacidad y FAB "Añadir destino" directo
+  a S02 (la hoja de 3 opciones del diseño anterior se retira: las
+  creaciones viven en sus superficies).
+- **Historial de Operaciones:** pestañas cápsula con conteo (Todas /
+  Pagos / Cobros) + "Comprobantes sueltos" que abre la bandeja real,
+  barra de mes derivada de los datos ("Mayo 2024 · N registros
+  locales" + "Respaldo seguro"), **tarjeta por operación** con tile
+  direccional, importe COLOREADO con signo (pago rojo / cobro verde —
+  el MCP historial sí colorea; revierte el criterio neutral del
+  detalle), metadato temporal "fecha · Reg: hh:mm" (createdAt real),
+  tags de contexto/sync y acción compacta Compartir.
+- **Detalle y Exhibición QR:** tarjeta núcleo con el código REAL
+  decodificado (nunca imagen estática), esquinas de encuadre reutilizadas
+  del scanner, guía de uso, botón "Pantalla completa" (ruta real
+  FullscreenQr/RF-05), metadatos en filas con **copiar contenido al
+  portapapeles** (nueva capacidad multiplataforma `rememberAmClipboard`,
+  feedback "Copiado"), fecha de alta (createdAt) y dock de acciones
+  reales (Registrar actividad — sin preasociación, regla inexistente en
+  el dominio; Compartir; Editar metadatos/reemplazar QR) + reaseguro de
+  integridad histórica (cierto en el dominio).
+- **Registrar:** píldora de requisito mínimo honesta (tipo + momento).
+- **Portapapeles:** `rememberAmClipboard()` expect/actual (Android:
+  `LocalClipboardManager`; iOS: `UIPasteboard`) — solo escritura.
+- **Diferencias documentadas:** banner de imagen de comercio (sin
+  dato de imagen en el dominio), "Ver comprobante" por tarjeta del
+  historial (el listado no carga comprobantes por operación; el detalle
+  sí), píldora "Local" en la barra del detalle (el host de estado
+  global ya comunica el modo), preasociación de destino al registrar
+  (regla de negocio inexistente), chips de categoría fija en Destinos
+  (la categoría es texto libre del dominio).
+- **Consultas MCP reales:** `list_projects`, `get_project` (tokens del
+  design system), `list_screens`, `get_screen` + descarga de HTML de
+  las 4 pantallas prioritarias actualizadas. El ZIP local NO se usó
+  como fuente en esta pasada.
+
+## Revisión 1 — fidelidad por pantalla (2026-10-13, paquete ampliado)
 
 El paquete de referencia se amplió a las pantallas reales del producto
 (S01–S12); esta pasada adoptó la composición por pantalla, no solo los

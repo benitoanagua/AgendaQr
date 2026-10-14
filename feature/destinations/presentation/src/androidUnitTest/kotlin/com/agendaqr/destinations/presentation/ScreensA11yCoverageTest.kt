@@ -228,11 +228,12 @@ class ScreensA11yCoverageTest {
         }
         compose.waitForIdle()
         compose.onNodeWithText("Agenda QR").assert(headingMatcher())
-        // V1.4 (ADR-0014, S01): lista convencional — el nombre aparece UNA
-        // sola vez (su fila de Recientes; sin tile vivo que lo duplique) y
-        // el favorito es un IconToggleButton con descripción accesible.
+        // Referencia MCP: el nombre vive en la fila de "Todos los
+        // destinos" y, siendo favorito, TAMBIÉN en la mini-tarjeta del
+        // carrusel de frecuentes (superficie intencional del diseño) —
+        // nunca en un tile decorativo.
         val nameNodes = compose.onAllNodesWithText("Carniceria Don Bife").fetchSemanticsNodes()
-        assert(nameNodes.size == 1) { "S01 sin tiles: solo la fila de Recientes" }
+        assert(nameNodes.size == 2) { "S01: fila + mini-tarjeta de frecuentes (favorito)" }
         compose.onNodeWithContentDescription("Quitar favorito").assertExists()
         // V1.2: sin tiles — el botón de texto "Favorito" por fila desapareció
         // con el IconToggleButton de estrella (48 dp garantizado por M3).

@@ -109,8 +109,8 @@ class S02UiPolishTest {
         compose.waitForIdle()
         // Encabezado de sección (referencia Stitch, ADR-0015): headline-sm
         // 18 sp SemiBold en color ESTÁNDAR del tema — semántica heading.
-        compose.onNodeWithText(AppStrings.Recientes).assert(headingMatcher())
-        val style = layoutOf(AppStrings.Recientes).layoutInput.style
+        compose.onNodeWithText(AppStrings.TodosLosDestinos).assert(headingMatcher())
+        val style = layoutOf(AppStrings.TodosLosDestinos).layoutInput.style
         assertEquals(18.sp, style.fontSize)
         assertEquals(LightAmColorScheme.textPrimary, style.color)
     }
@@ -139,7 +139,7 @@ class S02UiPolishTest {
             }
         }
         compose.waitForIdle()
-        val style = layoutOf(AppStrings.Recientes).layoutInput.style
+        val style = layoutOf(AppStrings.TodosLosDestinos).layoutInput.style
         // Referencia Stitch: 18 sp en color estándar (jerarquía de
         // titular de sección, legible en ambos temas).
         assertEquals(18.sp, style.fontSize)
@@ -169,10 +169,14 @@ class S02UiPolishTest {
         } ?: return null
         val textLeft = text.positionInRoot.x
         val textCenterY = text.positionInRoot.y + text.size.height / 2f
+        // Compactación (referencia MCP): los controles compactos usan el
+        // glifo de 18 dp (IconSizeCompact); los primarios conservan 24.
         return all.firstOrNull { node ->
             node != text &&
-                abs(node.size.width - 24f * pxPerDp) <= 1f &&
-                abs(node.size.height - 24f * pxPerDp) <= 1f &&
+                listOf(18f, 24f).any { expected ->
+                    abs(node.size.width - expected * pxPerDp) <= 1f &&
+                        abs(node.size.height - expected * pxPerDp) <= 1f
+                } &&
                 node.size.width > 0 &&
                 (textLeft - (node.positionInRoot.x + node.size.width)) in 0f..(8f * pxPerDp) &&
                 abs(node.positionInRoot.y + node.size.height / 2f - textCenterY) <= 8f * pxPerDp &&

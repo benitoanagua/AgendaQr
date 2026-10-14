@@ -46,6 +46,25 @@ internal fun parseDate(text: String, timeZone: TimeZone = TimeZone.currentSystem
     return date.atStartOfDayIn(timeZone).toEpochMilliseconds()
 }
 
+/** Hora civil HH:mm de [millis] en la zona del dispositivo. */
+internal fun formatTime(millis: Long, timeZone: TimeZone = TimeZone.currentSystemDefault()): String {
+    val time = Instant.fromEpochMilliseconds(millis).toLocalDateTime(timeZone).time
+    fun two(value: Int) = if (value < 10) "0" + value else value.toString()
+    return two(time.hour) + ":" + two(time.minute)
+}
+
+private val monthNames = listOf(
+    "enero", "febrero", "marzo", "abril", "mayo", "junio",
+    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+)
+
+/** Etiqueta de mes civil ("Mayo 2024") para la barra del historial. */
+internal fun monthYearLabel(millis: Long, timeZone: TimeZone = TimeZone.currentSystemDefault()): String {
+    val date = Instant.fromEpochMilliseconds(millis).toLocalDateTime(timeZone).date
+    val month = monthNames[date.monthNumber - 1]
+    return month.replaceFirstChar { it.uppercase() } + " " + date.year
+}
+
 
 internal fun operationTypeLabel(type: OperationType): String = when (type) {
     OperationType.PAGO -> "Pago"

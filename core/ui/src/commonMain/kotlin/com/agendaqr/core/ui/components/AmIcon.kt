@@ -37,6 +37,7 @@ import com.composables.icons.lucide.Receipt
 import com.composables.icons.lucide.ScanLine
 import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.SearchX
+import com.composables.icons.lucide.Share2
 import com.composables.icons.lucide.ShieldCheck
 import com.composables.icons.lucide.Star
 import com.composables.icons.lucide.Store
@@ -164,4 +165,6 @@ object AmIcons {
     val Erase: ImageVector get() = Lucide.Delete
     /** Nota/concepto (lápiz de nota). */
     val NoteEdit: ImageVector get() = Lucide.NotebookPen
+    /** Compartir (salida del contenido). */
+    val Share: ImageVector get() = Lucide.Share2
 }

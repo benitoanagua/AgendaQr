@@ -180,6 +180,27 @@ internal fun OperationEditorScreen(
             type = type,
             onSelect = { type = it },
         )
+        // Requisito mínimo honesto (referencia MCP): tipo y momento son
+        // los únicos obligatorios del dominio; el resto es opcional.
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(AmColor.SurfaceContainerLow, com.agendaqr.core.ui.theme.AmShapes.Large)
+                .padding(AmSpacing.Sm),
+            verticalAlignment = androidx.compose.ui.Alignment.Top,
+            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+        ) {
+            AmIcon(
+                imageVector = com.agendaqr.core.ui.components.AmIcons.Info,
+                contentDescription = null,
+                size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
+                tint = AmColor.AccentText,
+            )
+            AmText(
+                AppStrings.RequisitoMinimo,
+                color = AmColor.TextSecondary,
+            )
+        }
         // Tarjeta de importe (referencia S07): entrada grande con
         // borrado ⌫ y ayuda de validación.
         AmListBody {

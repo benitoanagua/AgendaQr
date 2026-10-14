@@ -217,7 +217,9 @@ fun AmSearchField(
         onValueChange = onValueChange,
         modifier = modifier
             .fillMaxWidth()
-            .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
+            // Altura visual compacta (44, referencia h-10/h-11); el
+            // contenido crece con la escala de fuente.
+            .defaultMinSize(minHeight = AmMetrics.FieldCompactHeight)
             .focusRequester(focusRequester),
         keyboardOptions = keyboardOptions,
         placeholder = {

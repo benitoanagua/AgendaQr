@@ -24,7 +24,10 @@ import org.robolectric.annotation.Config
  * en el gate existente (testDebugUnitTest) sin emulador.
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34])
+// Layout MCP de S01 (garantía + carrusel + pestañas + lista): la fila con
+// el favorito queda bajo el pliegue de la ventana por defecto de
+// Robolectric; viewport alto para que el objetivo de 48 dp sea real.
+@Config(sdk = [34], qualifiers = "w360dp-h800dp")
 class DestinationsScreenA11yTest {
 
     @get:Rule
@@ -60,7 +63,7 @@ class DestinationsScreenA11yTest {
         // §12 V1.4: FAB extendido "Añadir" con etiqueta visible (M3 fija
         // su altura mínima); la acción de favorito de la fila es un
         // IconToggleButton de 48 dp.
-        compose.onNodeWithText("Añadir", useUnmergedTree = true).assertExists()
+        compose.onNodeWithText(AppStrings.AnadirDestino, useUnmergedTree = true).assertExists()
         compose.onNodeWithContentDescription("Marcar favorito").assertExists()
             .assertHeightIsAtLeast(48.dp)
     }

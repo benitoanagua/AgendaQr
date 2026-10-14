@@ -3,6 +3,7 @@ package com.agendaqr.core.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
@@ -32,6 +34,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
@@ -188,9 +192,11 @@ fun AmDangerButton(
 }
 
 /**
- * Botón secundario (fill outline de la referencia): borde y texto de
- * acento sobre fondo transparente — jerarquía visual bajo el botón
- * principal sin superficies tonales.
+ * Botón secundario compacto (fill tonal de la referencia Stitch): visual
+ * de 40 dp sobre zona interactiva de 48 dp — la superficie visible es
+ * menor que el target (mandato de compactación). Tonal: tarjeta con
+ * hairline y texto primario; [solid] lo convierte en bloque de acento
+ * (acción rápida principal de una fila/grid, p. ej. "Escanear QR").
  */
 @Composable
 fun AmSecondaryButton(
@@ -200,53 +206,102 @@ fun AmSecondaryButton(
     enabled: Boolean = true,
     isLoading: Boolean = false,
     icon: ImageVector? = null,
+    /** Variante sólida de acento (misma métrica compacta). */
+    solid: Boolean = false,
 ) {
-    androidx.compose.material3.OutlinedButton(
+    // Zona interactiva: 48 dp aunque la superficie visible sea 40.
+    Row(
         modifier = modifier
             .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
-            .then(if (!enabled || isLoading) Modifier.alpha(0.4f) else Modifier),
-        onClick = onClick,
-        enabled = enabled && !isLoading,
-        shape = AmShapes.Large,
-        contentPadding = PaddingValues(
-            horizontal = AmSpacing.Lg,
-            vertical = AmSpacing.None,
-        ),
-        border = androidx.compose.foundation.BorderStroke(
-            AmMetrics.Border,
-            AmColor.Accent,
-        ),
-        colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
-            containerColor = AmColor.Transparent,
-            contentColor = AmColor.AccentText,
-            disabledContainerColor = AmColor.Transparent,
-            disabledContentColor = AmColor.AccentText,
-        ),
-    ) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(AmSpacing.Xxl),
-                color = AmColor.AccentText,
+            .clickable(
+                enabled = enabled && !isLoading,
+                role = Role.Button,
+                onClickLabel = label,
+                onClick = onClick,
             )
+            .then(if (!enabled || isLoading) Modifier.alpha(0.4f) else Modifier),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val container = if (solid) AmColor.Accent else AmColor.SurfaceContainerLow
+        val content = if (solid) {
+            AmColor.OnAccent
         } else {
-            Row(
-                modifier = Modifier.defaultMinSize(minHeight = AmMetrics.ControlMinSize),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
-            ) {
+            AmColor.TextPrimary
+        }
+        Row(
+            modifier = Modifier
+                .heightIn(min = AmMetrics.ButtonCompactHeight)
+                .background(container, AmShapes.Large)
+                .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Xs),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(AmSpacing.Xxl),
+                    color = content,
+                )
+            } else {
                 if (icon != null) {
                     AmIcon(
                         imageVector = icon,
                         contentDescription = null,
-                        tint = AmColor.AccentText,
+                        size = AmMetrics.IconSizeCompact,
+                        tint = content,
                     )
                 }
                 Text(
                     label,
                     style = AmTextStyles.ButtonLabel,
-                    color = AmColor.AccentText,
+                    color = content,
                 )
             }
+        }
+    }
+}
+
+/**
+ * Acción compacta de fila/tarjeta (referencia historial: "Compartir",
+ * "Ver QR"): píldora tonal de ~36 dp visuales con glifo y etiqueta 13,
+ * sobre zona interactiva de 48 dp. [prominent] tiñe el texto de acento.
+ */
+@Composable
+fun AmCompactAction(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    /** Texto de acento (acción destacada de la tarjeta). */
+    prominent: Boolean = false,
+) {
+    Row(
+        modifier = modifier
+            .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
+            .clickable(role = Role.Button, onClickLabel = label, onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(
+            modifier = Modifier
+                .heightIn(min = AmMetrics.ChipCompactHeight + AmSpacing.Xs)
+                .background(AmColor.SurfaceContainerLow, AmShapes.Large)
+                .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+        ) {
+            icon?.let {
+                AmIcon(
+                    imageVector = it,
+                    contentDescription = null,
+                    size = AmMetrics.IconSizeCompact,
+                    tint = if (prominent) AmColor.AccentText else AmColor.TextSecondary,
+                )
+            }
+            Text(
+                label,
+                style = AmTextStyles.BodySmall,
+                fontWeight = FontWeight.Medium,
+                color = if (prominent) AmColor.AccentText else AmColor.TextSecondary,
+            )
         }
     }
 }
@@ -323,10 +378,11 @@ fun AmIconButton(
 }
 
 /**
- * Chip de filtro interactivo (píldoras de la referencia Stitch): la
- * opción ACTIVA es sólida (acento con contenido sobre acento, par
- * garantizado) — el resto, tarjeta con hairline y texto secundario. La
- * selección también vive en la semántica.
+ * Píldora de filtro compacta (cápsula de la referencia Stitch): visual
+ * ~32 dp con conteo opcional y zona interactiva de 48 dp — la superficie
+ * visible es menor que el target (mandato de compactación). Activa:
+ * sólida de acento (par garantizado); inactiva: tarjeta con hairline y
+ * texto secundario. La selección también vive en la semántica.
  */
 @Composable
 fun AmFilterChip(
@@ -335,35 +391,68 @@ fun AmFilterChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    /** Conteo real junto a la etiqueta (p. ej. "Todas · 18"). */
+    count: Int? = null,
+    /** Glifo decorativo de la píldora (p. ej. favorito). */
+    icon: ImageVector? = null,
 ) {
-    FilterChip(
-        modifier = modifier.defaultMinSize(minHeight = AmMetrics.ControlMinSize),
-        selected = selected,
-        onClick = onClick,
-        enabled = enabled,
-        shape = AmShapes.Pill,
-        border = FilterChipDefaults.filterChipBorder(
-            enabled = enabled,
-            selected = selected,
-            borderColor = AmColor.Divider,
-            selectedBorderColor = AmColor.Accent,
-            borderWidth = AmMetrics.Border,
-        ),
-        colors = FilterChipDefaults.filterChipColors(
-            containerColor = AmColor.Surface,
-            labelColor = AmColor.TextSecondary,
-            disabledContainerColor = AmColor.Disabled,
-            disabledLabelColor = AmColor.OnDisabled,
-            selectedContainerColor = AmColor.Accent,
-            selectedLabelColor = AmColor.OnAccent,
-        ),
-        label = {
+    // Zona interactiva: 48 dp aunque la píldora visible sea compacta.
+    Row(
+        modifier = modifier
+            .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
+            .clickable(
+                enabled = enabled,
+                role = Role.Button,
+                onClickLabel = label,
+                onClick = onClick,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(
+            modifier = Modifier
+                .heightIn(min = AmMetrics.ChipCompactHeight)
+                .semantics { this.selected = selected }
+                .then(if (selected) Modifier.background(AmColor.Accent, AmShapes.Pill) else Modifier.background(AmColor.Surface, AmShapes.Pill))
+                .border(
+                    AmMetrics.Border,
+                    if (selected) AmColor.Accent else AmColor.Divider,
+                    AmShapes.Pill,
+                )
+                .padding(horizontal = AmSpacing.Md, vertical = AmSpacing.Xs),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+        ) {
+            icon?.let {
+                AmIcon(
+                    imageVector = it,
+                    contentDescription = null,
+                    size = AmMetrics.IconSizeCompact,
+                    tint = if (selected) AmColor.OnAccent else AmColor.TextSecondary,
+                )
+            }
             Text(
                 label,
                 style = AmTextStyles.Tag,
+                color = if (selected) AmColor.OnAccent else AmColor.TextSecondary,
             )
-        },
-    )
+            count?.let {
+                Box(
+                    modifier = Modifier
+                        .background(
+                            if (selected) AmColor.OnAccent.copy(alpha = 0.25f) else AmColor.SurfaceContainerHighest,
+                            AmShapes.Pill,
+                        )
+                        .padding(horizontal = AmSpacing.Xs),
+                ) {
+                    Text(
+                        it.toString(),
+                        style = AmTextStyles.Tag,
+                        color = if (selected) AmColor.OnAccent else AmColor.TextSecondary,
+                    )
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -478,40 +567,4 @@ fun AmFavoriteToggle(
     }
 }
 
-/**
- * Tile de acción rápida (referencia Stitch S01): tarjeta de la lista con
- * tile tonal de 40 dp, título de fila y apoyo terciario. Toda la
- * interacción y semántica vive aquí; el copy lo aporta el llamador.
- */
-@Composable
-fun AmQuickAction(
-    title: String,
-    caption: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    icon: ImageVector? = null,
-    /** Tono del tile (identidad del tipo de acción). */
-    tone: AmTone = AmTone.Info,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(AmColor.Surface, AmShapes.ExtraLarge)
-            .border(AmMetrics.Border, AmColor.Divider, AmShapes.ExtraLarge)
-            .clickable(role = Role.Button, onClickLabel = title, onClick = onClick)
-            .padding(AmSpacing.Md),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Md),
-        ) {
-            icon?.let {
-                AmIconBadge(icon = it, tone = tone)
-            }
-            Column {
-                Text(title, style = AmTextStyles.RowTitle, color = AmColor.TextPrimary)
-                Text(caption, style = AmTextStyles.Caption, color = AmColor.TextTertiary)
-            }
-        }
-    }
-}
+

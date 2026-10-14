@@ -16,10 +16,11 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
     ├── AmText.kt          # AmText, AmHeading (texto con interlineado propio)
     ├── AmIcon.kt          # AmIcon + AmIcons (Lucide, único punto de entrada)
     ├── AmTone.kt           # AmTone + toneColors + glifo por tono
-    ├── AmButtons.kt       # botones (solid/outline/none, radio 8), chips píldora (activo sólido), control segmentado (AmSegmentedOption: glifo + tono activo), AmQuickAction (tile S01), toggle de favorito
-    ├── AmInputs.kt        # AmTextField (sin borde, guía hairline; ayuda/error a 4 dp y alineada; glifo de concepto), AmAmountField (importe 26 sp + ⌫ etiquetado), AmSearchField (radio 12), AmSearchTrigger
-    ├── AmLists.kt         # AmListRow (celda; slot leading tipado, título 15/500, divisor inset 56), AmListBody (tarjeta 12 + hairline E-03), AmHairline, AmBadge, AmTonalTag (11/600), AmIconBadge (tile 40), AmMetaRow
+    ├── AmButtons.kt       # botones (solid 48; secundario tonal compacto 40/48 con variante solid; AmCompactAction de fila), píldoras cápsula con conteo (AmFilterChip), segmentado (AmSegmentedOption), toggle de favorito
+    ├── AmInputs.kt        # AmTextField (sin borde, guía hairline; glifo de concepto), AmAmountField (importe 26 sp + ⌫), AmSearchField (radio 12, visual 44), AmSearchTrigger
+    ├── AmLists.kt         # AmListRow (título 15/500, slot leading tipado, divisor inset 56), AmListBody (tarjeta 12 + hairline E-03), AmTappableCard (tarjeta presionable), AmHairline, AmBadge, AmTonalTag (11/600), AmIconBadge (tile 40), AmMetaRow (con acción final)
     ├── AmStatus.kt        # AmStatusBanner (radio 12), AmStatusPill (tonal/inversa), AmLoading, AmEmptyState, AmSection
+    ├── AmClipboard.kt     # rememberAmClipboard (expect/actual: copiar contenido al portapapeles)
     ├── AmChrome.kt        # AmTopBar, navegación raíz, FAB, transición de superficies
     ├── AmScaffold.kt      # AmScreenScaffold (contenedor de pantalla), AmBottomAction (acción principal fija: ancho completo + navigationBars + IME)
     ├── AmDialogs.kt       # AmDialog, AmDialogList (superposiciones)

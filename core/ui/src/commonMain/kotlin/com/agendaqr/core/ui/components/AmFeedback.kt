@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.ui.unit.Dp
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -107,6 +108,8 @@ fun AmLoadMoreFooter(
 @Composable
 fun AmScannerFrame(
     modifier: Modifier = Modifier,
+    /** Lado del encuadre; por defecto el de la vista previa de QR. */
+    size: Dp = AmMetrics.QrPreviewSize,
     content: (@Composable () -> Unit)? = null,
 ) {
     val density = LocalDensity.current
@@ -114,7 +117,7 @@ fun AmScannerFrame(
     val stroke = with(density) { AmMetrics.BorderStrong.toPx() }
     Box(
         modifier = modifier
-            .size(AmMetrics.QrPreviewSize)
+            .size(size)
             .amScannerCorners(
                 color = AmColor.Accent,
                 cornerLength = cornerLength,

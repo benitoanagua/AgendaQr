@@ -126,8 +126,9 @@ fun AmIconBadge(
 
 /**
  * Fila de metadatos compacta (label + valor): etiqueta secundaria a la
- * izquierda, valor principal alineado a la derecha. Para valores largos
- * multilinea (notas) usa texto aparte, no esta fila.
+ * izquierda, valor principal alineado a la derecha y acción final
+ * opcional (p. ej. copiar). Para valores largos multilinea (notas) usa
+ * texto aparte, no esta fila.
  */
 @Composable
 fun AmMetaRow(
@@ -136,6 +137,8 @@ fun AmMetaRow(
     modifier: Modifier = Modifier,
     /** Glifo decorativo del concepto de la fila (opcional). */
     icon: ImageVector? = null,
+    /** Acción final compacta (p. ej. copiar el valor). */
+    trailing: (@Composable () -> Unit)? = null,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -149,10 +152,34 @@ fun AmMetaRow(
         Text(
             value,
             modifier = Modifier.weight(1f),
-            style = AmTextStyles.Body,
+            style = AmTextStyles.BodySmall,
             color = AmColor.TextPrimary,
             textAlign = TextAlign.End,
         )
+        trailing?.invoke()
+    }
+}
+
+/**
+ * Tarjeta presionable del sistema: superficie de [AmListBody] con la
+ * interacción y semántica de botón viviendo en el DS (feature/ no compone
+ * clickable crudo). Para filas estándar usa [AmListRow].
+ */
+@Composable
+fun AmTappableCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(AmColor.Surface, AmShapes.ExtraLarge)
+            .border(AmMetrics.Border, AmColor.Divider, AmShapes.ExtraLarge)
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(AmSpacing.Md),
+    ) {
+        content()
     }
 }
 

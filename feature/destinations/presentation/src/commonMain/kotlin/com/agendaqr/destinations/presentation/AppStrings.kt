@@ -281,4 +281,36 @@ internal object AppStrings {
     val RegistradoEnDispositivo = "Registrado en dispositivo"
     /** Acción de borrado del importe (accesible). */
     val BorrarImporte = "Borrar importe"
+    // ------------------------------------------------------------------
+    // Referencia Stitch MCP (Ant Design Mobile App) — pasada de
+    // compactación: historial en tarjetas, favoritos en carrusel,
+    // pestañas cápsula con conteo y dock de acciones del detalle QR.
+    // ------------------------------------------------------------------
+    /** Pestañas del historial (con conteo real). */
+    val Todas = "Todas"
+    val ComprobantesSueltos = "Comprobantes sueltos"
+    val RespaldoSeguro = "Respaldo seguro"
+    val RegistrosLocales = "registros locales"
+    /** Prefijo de la hora de registro local (metadato temporal). */
+    val RegPrefijo = "Reg: "
+    /** Inicio: sección de favoritos deslizables. */
+    val DestinosFrecuentes = "Destinos frecuentes"
+    val DeslizaParaVerMas = "Desliza para ver más"
+    val TodosLosDestinos = "Todos los destinos"
+    val VerQr = "Ver QR"
+    val AnadirDestino = "Añadir destino"
+    val ImportarImagen = "Importar imagen"
+    val AlmacenamientoLocal = "Almacenamiento 100% local"
+    val DatosNuncaSalen = "Tus datos nunca salen de tu teléfono"
+    val IndexacionSinInternet = "Indexación y análisis instantáneo sin internet."
+    /** Detalle QR: guía de uso, acción de exhibición y dock. */
+    val MuestraEsteCodigo = "Muestra este código para cobrar o escanéalo para transferir"
+    val PantallaCompleta = "Pantalla completa"
+    val Copiar = "Copiar"
+    val Copiado = "Copiado"
+    val FechaDeAlta = "Fecha de alta"
+    val EditarMetadatosReemplazarQr = "Editar metadatos / reemplazar QR"
+    val IntegridadHistorica = "Los cambios a este destino no modifican operaciones históricas asociadas."
+    /** Editor: requisito mínimo honesto (RF-08/RF-09). */
+    val RequisitoMinimo = "Requisito mínimo: tipo y momento ocurrido. Todos los demás campos son opcionales."
 }

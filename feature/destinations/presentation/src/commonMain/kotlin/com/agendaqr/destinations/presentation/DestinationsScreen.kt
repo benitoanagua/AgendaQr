@@ -1,56 +1,59 @@
 package com.agendaqr.destinations.presentation
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.destinations.data.SyncResource
-import com.agendaqr.core.ui.components.AmSnackbarHost
+import com.agendaqr.core.ui.components.AmBadge
+import com.agendaqr.core.ui.components.AmCompactAction
 import com.agendaqr.core.ui.components.AmFavoriteToggle
 import com.agendaqr.core.ui.components.AmFilterChip
 import com.agendaqr.core.ui.components.AmIcon
 import com.agendaqr.core.ui.components.AmIconBadge
 import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmExtendedFab
-import com.agendaqr.core.ui.components.AmDialog
-import com.agendaqr.core.ui.components.AmDialogList
 import com.agendaqr.core.ui.components.AmListRow
+import com.agendaqr.core.ui.components.AmListBody
 import com.agendaqr.core.ui.components.AmNavChromeState
 import com.agendaqr.core.ui.components.AmOverflowAction
-import com.agendaqr.core.ui.components.AmQuickAction
 import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmSearchTrigger
+import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmSectionHeader
 import com.agendaqr.core.ui.components.AmSkeleton
+import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.AmStatusPill
 import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.components.AmTextAction
-import com.agendaqr.core.ui.components.AmTonalTag
 import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmEmptyState
 import com.agendaqr.core.ui.components.AmLoadMoreFooter
-import com.agendaqr.core.ui.components.AmListBody
 import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmSpacing
+import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.destinations.domain.Destination
 
 /**
- * S01 — Inicio (V1.4, ADR-0014; composición de la referencia Stitch
- * 2026-10, ADR-0015): píldora de reaseguro local-first, búsqueda
- * dominante con filtros en píldora, acciones rápidas reales, sección
- * Recientes con conteo y tarjeta de disponibilidad; el FAB abre la hoja
- * "¿Qué quieres añadir?" con las tres creaciones reales del producto.
+ * S01 — Inicio (V1.4; composición del diseño "Destinos QR - Agenda" del
+ * proyecto Stitch "Ant Design Mobile App", ADR-0015): tarjeta de
+ * garantía local con acciones rápidas, pestañas cápsula con conteo
+ * real, carrusel de destinos frecuentes y lista agrupada con "Ver QR"
+ * por fila. Todas las acciones son reales: S02 (traer QR), pantalla
+ * completa del código (RF-05) y favoritos del dominio.
  */
 @Composable
 fun DestinationsScreen(
@@ -62,19 +65,14 @@ fun DestinationsScreen(
     onOpenContexts: () -> Unit = {},
     onSignOut: () -> Unit = {},
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
-    /** Acción rápida / hoja del FAB: traer un QR (S02, cámara incluida). */
+    /** Acción rápida / FAB: traer un QR (S02, cámara y galería). */
     onScanQr: () -> Unit = { onAction(DestinationAction.Edit(null)) },
-    /** Acción rápida / hoja del FAB: registrar actividad (S07). */
-    onRegisterOperation: () -> Unit = {},
-    /** Hoja del FAB: crear contexto (persiste vía ContextAction.Create). */
-    onCreateContext: (name: String, note: String?) -> Unit = { _, _ -> },
 ) {
     var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
     val paged = state.visibleDestinations.take(visibleCount)
-    // Hoja del FAB ("¿Qué quieres añadir?") y creación de contexto en la
-    // misma superficie (el draft del editor nunca sale de composición).
-    var showAddSheet by rememberSaveable { mutableStateOf(false) }
-    var showCreateContext by rememberSaveable { mutableStateOf(false) }
+    val favorites = remember(state.destinations) {
+        state.destinations.filter { it.favorite }
+    }
 
     AmScreenScaffold(
         scrollable = true,
@@ -95,22 +93,13 @@ fun DestinationsScreen(
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
         floatingActionButton = {
             AmExtendedFab(
-                label = AppStrings.Anadir,
+                label = AppStrings.AnadirDestino,
                 icon = AmIcons.Add,
-                onClick = { showAddSheet = true },
+                onClick = onScanQr,
             )
         },
-        verticalArrangement = Arrangement.spacedBy(AmSpacing.Xl),
+        verticalArrangement = Arrangement.spacedBy(AmSpacing.Lg),
     ) {
-        // Reaseguro local-first (referencia S01): SIEMPRE cierto en este
-        // producto (la agenda vive en el dispositivo). El estado de
-        // sincronización por elemento sigue en su fila.
-        AmStatusPill(
-            text = AppStrings.GuardadoEnTuTelefono,
-            icon = AmIcons.CircleCheck,
-            tone = AmTone.Success,
-        )
-
         // §10: errores recuperables y contextuales, visibles sin scroll.
         state.error?.let { error ->
             AmStatusBanner(
@@ -129,71 +118,112 @@ fun DestinationsScreen(
             )
         }
 
-        // Búsqueda dominante + filtros reales de la lista (Todo ·
-        // Favoritos) como píldoras sólidas de la referencia.
-        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-            AmSearchTrigger(
-                label = AppStrings.BuscarEnAgendaQr,
-                placeholder = AppStrings.searchPlaceholder,
-                onClick = onOpenSearch,
-            )
-            Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                AmFilterChip(
-                    label = AppStrings.Todos,
-                    selected = !state.favoriteOnly,
-                    onClick = { onAction(DestinationAction.ToggleFavorites) },
-                )
-                AmFilterChip(
-                    label = if (state.favoriteOnly) AppStrings.FavoritosActivado else AppStrings.Favoritos,
-                    selected = state.favoriteOnly,
-                    onClick = { onAction(DestinationAction.ToggleFavorites) },
-                )
-            }
-        }
+        // Búsqueda dominante (entrada a S04).
+        AmSearchTrigger(
+            label = AppStrings.BuscarEnAgendaQr,
+            placeholder = AppStrings.searchPlaceholder,
+            onClick = onOpenSearch,
+        )
 
-        // Acciones rápidas (referencia S01): entradas REALES — traer un
-        // QR (S02 con cámara) y registrar una actividad (S07).
-        Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-            AmQuickAction(
-                title = AppStrings.EscanearQr,
-                caption = AppStrings.AbrirLaCamara,
-                icon = AmIcons.ScanLine,
-                tone = AmTone.Info,
-                onClick = onScanQr,
-                modifier = Modifier.weight(1f),
-            )
-            AmQuickAction(
-                title = AppStrings.RegistrarPago,
-                caption = AppStrings.CargarActividad,
-                icon = AmIcons.Register,
-                tone = AmTone.Neutral,
-                onClick = onRegisterOperation,
-                modifier = Modifier.weight(1f),
-            )
-        }
-
-        // Sección Recientes: encabezado con conteo real y "Ver todo"
-        // (expande la paginación local).
-        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+        // Tarjeta de garantía local (referencia MCP): reaseguro SIEMPRE
+        // cierto (la agenda vive en el dispositivo) + acciones rápidas
+        // reales hacia S02.
+        AmListBody {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(AmSpacing.Md),
+                verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
             ) {
-                AmSectionHeader(text = AppStrings.Recientes)
-                AmTonalTag(
-                    text = state.visibleDestinations.size.toString(),
-                    tone = AmTone.Neutral,
-                )
-                if (paged.size < state.visibleDestinations.size) {
-                    AmTextAction(
-                        label = AppStrings.VerTodo,
-                        onClick = {
-                            visibleCount = state.visibleDestinations.size
-                        },
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    AmStatusPill(
+                        text = AppStrings.AlmacenamientoLocal,
+                        icon = AmIcons.ShieldCheck,
+                        tone = AmTone.Success,
+                    )
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                    AmSecondaryButton(
+                        label = AppStrings.EscanearQr,
+                        onClick = onScanQr,
+                        icon = AmIcons.ScanLine,
+                        solid = true,
+                        modifier = Modifier.weight(1f),
+                    )
+                    AmSecondaryButton(
+                        label = AppStrings.ImportarImagen,
+                        onClick = onScanQr,
+                        icon = AmIcons.Gallery,
+                        modifier = Modifier.weight(1f),
                     )
                 }
             }
+        }
+
+        // Pestañas cápsula (referencia MCP): filtros reales con conteo.
+        Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+            AmFilterChip(
+                label = AppStrings.Todos,
+                selected = !state.favoriteOnly,
+                onClick = { onAction(DestinationAction.ToggleFavorites) },
+                count = state.destinations.size,
+            )
+            AmFilterChip(
+                label = if (state.favoriteOnly) AppStrings.FavoritosActivado else AppStrings.Favoritos,
+                selected = state.favoriteOnly,
+                onClick = { onAction(DestinationAction.ToggleFavorites) },
+                count = favorites.size,
+                icon = AmIcons.Favorite,
+            )
+        }
+
+        // "Destinos frecuentes" (referencia MCP): carrusel horizontal de
+        // los favoritos reales del dominio.
+        if (favorites.isNotEmpty() && !state.favoriteOnly) {
+            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+                    ) {
+                        AmIcon(
+                            imageVector = AmIcons.Favorite,
+                            contentDescription = null,
+                            size = AmMetrics.IconSizeCompact,
+                            tint = AmColor.AccentText,
+                        )
+                        AmSectionHeader(text = AppStrings.DestinosFrecuentes)
+                    }
+                    AmText(
+                        AppStrings.DeslizaParaVerMas,
+                        color = AmColor.TextTertiary,
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Md),
+                ) {
+                    favorites.forEach { destination ->
+                        FavoriteDestinationCard(
+                            destination = destination,
+                            onClick = { onAction(DestinationAction.Open(destination.id)) },
+                        )
+                    }
+                }
+            }
+        }
+
+        // "Todos los destinos": lista agrupada con hairlines y "Ver QR".
+        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+            AmSectionHeader(text = AppStrings.TodosLosDestinos)
             when {
                 // la carga inicial se anuncia con el skeleton del DS.
                 state.isLoading -> AmSkeleton(lines = 4)
@@ -205,8 +235,6 @@ fun DestinationsScreen(
                     onAction = { if (state.destinations.isEmpty()) onAction(DestinationAction.Edit(null)) else onAction(DestinationAction.Search("")) },
                 )
                 else -> {
-                    // Tarjeta de lista de la referencia: superficie con
-                    // hairlines entre celdas; la paginación vive fuera.
                     AmListBody {
                         paged.forEachIndexed { index, destination ->
                             DestinationRow(
@@ -229,89 +257,70 @@ fun DestinationsScreen(
             }
         }
 
-        // Reaseguro de cierre (referencia S01): disponible sin conexión.
+        // Banner de reaseguro (referencia MCP): datos locales, sin salir
+        // del teléfono — cierto para este producto.
         AmListBody {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Md),
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Md),
+                modifier = Modifier.fillMaxWidth().padding(AmSpacing.Md),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
             ) {
-                AmIcon(
-                    imageVector = AmIcons.ShieldCheck,
-                    contentDescription = null,
-                    tint = AmColor.AccentText,
-                )
+                AmIconBadge(icon = AmIcons.QrCode, tone = AmTone.Info)
                 Column {
                     AmText(
-                        AppStrings.DisponibilidadTotal,
-                        size = com.agendaqr.core.ui.theme.AmType.RowTitle,
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
-                        color = AmColor.TextPrimary,
+                        AppStrings.DatosNuncaSalen,
+                        size = AmType.RowTitle,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
                     )
                     AmText(
-                        AppStrings.TuInformacionEstaGuardadaEnElDispositivo,
+                        AppStrings.IndexacionSinInternet,
                         color = AmColor.TextSecondary,
                     )
                 }
             }
         }
     }
-
-    if (showAddSheet) {
-        AmDialog(
-            title = AppStrings.QueQuieresAnadir,
-            confirmLabel = AppStrings.Cancelar,
-            confirmAsText = true,
-            onConfirm = { showAddSheet = false },
-            onDismiss = { showAddSheet = false },
-            onDismissRequest = { showAddSheet = false },
-            content = {
-                AmDialogList {
-                    AmListRow(
-                        title = AppStrings.Anadir,
-                        subtitle = AppStrings.TraeAAgendaQrAlgo,
-                        onClick = { showAddSheet = false; onScanQr() },
-                        leading = { AmIconBadge(icon = AmIcons.QrCode, tone = AmTone.Info) },
-                        trailing = { SheetChevron() },
-                    )
-                    AmListRow(
-                        title = AppStrings.CrearContexto,
-                        subtitle = AppStrings.LosContextosAgrupanTusQr,
-                        onClick = { showAddSheet = false; showCreateContext = true },
-                        leading = { AmIconBadge(icon = AmIcons.Context, tone = AmTone.Neutral) },
-                        trailing = { SheetChevron() },
-                    )
-                    AmListRow(
-                        title = AppStrings.RegistrarOperacion,
-                        subtitle = AppStrings.GuardaUnComprobanteOMovimiento,
-                        onClick = { showAddSheet = false; onRegisterOperation() },
-                        leading = { AmIconBadge(icon = AmIcons.Register, tone = AmTone.Success) },
-                        trailing = { SheetChevron() },
-                    )
-                }
-            },
-        )
-    }
-    if (showCreateContext) {
-        ContextCreationDialog(
-            onConfirmCreate = { name, note ->
-                onCreateContext(name, note)
-                showCreateContext = false
-            },
-            onDismiss = { showCreateContext = false },
-        )
-    }
 }
 
+/**
+ * Mini-tarjeta del carrusel de frecuentes (referencia MCP w-48): tile de
+ * identidad, nombre, metadato y categoría real. Toda la interacción
+ * vive en la fila; el toque abre el detalle.
+ */
 @Composable
-private fun SheetChevron() {
-    AmIcon(
-        imageVector = AmIcons.ChevronRight,
-        contentDescription = null,
-        tint = AmColor.TextTertiary,
-    )
+private fun FavoriteDestinationCard(
+    destination: Destination,
+    onClick: () -> Unit,
+) {
+    // La superficie presionable vive en el DS (feature/ sin clickable
+    // crudo): tarjeta compacta de ancho de token.
+    com.agendaqr.core.ui.components.AmTappableCard(
+        onClick = onClick,
+        modifier = Modifier.width(AmMetrics.FavCardWidth),
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                AmIconBadge(icon = AmIcons.QrCode, tone = AmTone.Info)
+                destination.category?.let {
+                    AmBadge(text = it, tone = AmTone.Neutral)
+                }
+            }
+            Column {
+                AmText(
+                    destination.name.ifBlank { AppStrings.SinNombre },
+                    size = AmType.RowTitle,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                )
+                AmText(
+                    destinationSubtitle(destination) ?: "",
+                    color = AmColor.TextSecondary,
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -321,23 +330,26 @@ fun DestinationRow(
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
     showDivider: Boolean = false,
 ) {
-    // §12 V1.4 + Stitch: fila con tile tipado (QR sobre tinte de acento),
-    // título 15/500, metadato caption y favorito como acción de fila.
+    // Fila del diseño MCP: miniatura QR a la izquierda, título con
+    // identidad, contenido decodificado como evidencia y "Ver QR" +
+    // favorito a la derecha.
     AmListRow(
         title = destination.name.ifBlank { AppStrings.SinNombre },
         subtitle = destinationSubtitle(destination),
         showDivider = showDivider,
         onClick = { onAction(DestinationAction.Open(destination.id)) },
         leading = {
-            AmIconBadge(icon = AmIcons.QrCode, tone = AmTone.Info)
+            AmIconBadge(icon = AmIcons.QrCode, tone = AmTone.Neutral)
         },
-        // Badge bajo el texto (línea propia vía `meta`): no compite por el
-        // ancho con la acción en pantallas estrechas.
         meta = {
-            // Estado de sincronización por elemento (con texto).
-            ElementSyncBadge(
-                syncLookup.status(SyncResource.DESTINATION, destination.id),
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+                destination.qr.content?.takeIf { it.isNotBlank() }?.let {
+                    AmText(it, color = AmColor.AccentText)
+                }
+                ElementSyncBadge(
+                    syncLookup.status(SyncResource.DESTINATION, destination.id),
+                )
+            }
         },
         trailing = {
             AmFavoriteToggle(

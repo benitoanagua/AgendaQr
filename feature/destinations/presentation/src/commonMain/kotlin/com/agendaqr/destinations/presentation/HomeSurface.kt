@@ -58,18 +58,9 @@ internal fun HomeSurface(
                 onOpenContexts = { nav.push(AppRoute.Contexts) },
                 onSignOut = onSignOut,
                 syncLookup = syncLookup,
-                // Acciones rápidas y hoja del FAB (referencia Stitch): las
-                // tres creaciones REALES del producto con sus rutas
-                // existentes — S02 (traer QR), S07 (registrar actividad)
-                // y creación de contexto vía el VM de contextos.
+                // Acción rápida / FAB (referencia MCP): traer un QR → S02,
+                // con cámara y galería dentro del flujo real.
                 onScanQr = { graph.destinationsViewModel.onAction(DestinationAction.Edit(null)) },
-                onRegisterOperation = {
-                    graph.operationsViewModel.onAction(OperationAction.New)
-                    nav.push(AppRoute.Operations)
-                },
-                onCreateContext = { name, note ->
-                    graph.contextsViewModel.onAction(ContextAction.Create(name, note))
-                },
             )
             DestinationRoute.Add -> AddDestinationScreen(
                 appHosts = appHosts,
@@ -128,6 +119,13 @@ internal fun HomeSurface(
                         },
                         onShare = { shareQr(destination.qr) },
                         onBack = onDetailBack,
+                        // Dock (referencia MCP): registrar actividad — S07
+                        // real vía el VM central; sin preasociación de
+                        // destino (regla que no existe en el dominio).
+                        onRegisterOperation = {
+                            graph.operationsViewModel.onAction(OperationAction.New)
+                            nav.push(AppRoute.Operations)
+                        },
                         syncStatus = syncLookup.status(
                             com.agendaqr.destinations.data.SyncResource.DESTINATION,
                             destination.id,

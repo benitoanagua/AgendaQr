@@ -303,6 +303,14 @@ object AmMetrics {
     val BorderStrong = 3.dp
     /** Área táctil mínima (accesibilidad, invariante del gate). */
     val ControlMinSize = 48.dp
+    /** Altura VISUAL compacta de botones secundarios (referencia Stitch
+     * h-10): la zona interactiva sigue siendo 48 dp (mandato de
+     * compactación: la superficie visible puede ser menor que el target). */
+    val ButtonCompactHeight = 40.dp
+    /** Altura visual de píldoras/chips compactos (referencia h-7–h-9). */
+    val ChipCompactHeight = 32.dp
+    /** Altura visual compacta de entradas (referencia h-10/h-11). */
+    val FieldCompactHeight = 44.dp
     /** Altura de la barra superior compacta (referencia 45 px → 56 dp con
      * objetivos táctiles de 48). */
     val TopBarHeight = 56.dp
@@ -319,6 +327,8 @@ object AmMetrics {
     val IconSize = 24.dp
     /** Icono compacto: segmentados, metadatos y ayudas (referencia Stitch). */
     val IconSizeCompact = 18.dp
+    /** Ancho de las mini-tarjetas del carrusel de favoritos. */
+    val FavCardWidth = 184.dp
     /** Insets del hairline de una fila con marca a la izquierda: alinea el
      * separador con el texto, no con el borde de la tarjeta (referencia
      * Stitch: ml-14). */
