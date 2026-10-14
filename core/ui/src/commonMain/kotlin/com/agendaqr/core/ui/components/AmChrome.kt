@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.DropdownMenu
@@ -85,6 +87,11 @@ data class AmTopBarAction(
  * izquierda (encabezado semántico), flecha atrás cuando hay a dónde
  * volver — la misma en ambas plataformas — y máx. 2 acciones visibles +
  * menú "…". Las acciones conservan objetivos de 48 dp.
+ *
+ * Edge-to-edge (ADR-0012): el slot topBar de Scaffold NO recibe los
+ * insets del sistema — esta barra los aplica por sí misma
+ * (`statusBarsPadding`) para que el título nunca quede tras la barra
+ * de estado, y el contenido siga fluyendo debajo.
  */
 @Composable
 fun AmTopBar(
@@ -110,6 +117,7 @@ fun AmTopBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .statusBarsPadding()
             .height(AmMetrics.TopBarHeight)
             .padding(
                 start = if (onBack != null) AmSpacing.Xs else AmSpacing.ScreenMargin,
@@ -210,7 +218,10 @@ class AmNavChromeState(
 
 /**
  * Botón flotante extendido de Inicio/Actividades: texto visible y glifo
- * decorativo sobre el bloque de acento.
+ * decorativo sobre el bloque de acento. Compacto (referencia MCP):
+ * altura visual de 48 dp con etiqueta 13 sp SemiBold y glifo de 18 dp —
+ * acción principal identificable sin dominar la pantalla; el área
+ * interactiva la completa M3 por encima de 48 dp.
  */
 @Composable
 fun AmExtendedFab(
@@ -220,18 +231,23 @@ fun AmExtendedFab(
     modifier: Modifier = Modifier,
 ) {
     ExtendedFloatingActionButton(
-        modifier = modifier,
+        modifier = modifier.height(AmMetrics.ControlMinSize),
         containerColor = AmColor.Accent,
         contentColor = AmColor.OnAccent,
-        // Píldora completa (referencia Stitch: rounded-full con aire
-        // interno propio del FAB extendido).
         shape = AmShapes.Pill,
-        text = { Text(label, style = AmTextStyles.ButtonLabel) },
+        text = {
+            Text(
+                label,
+                style = AmTextStyles.BodySmall,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+            )
+        },
         icon = icon?.let { glyph ->
             {
                 AmIcon(
                     imageVector = glyph,
                     contentDescription = null,
+                    size = AmMetrics.IconSizeCompact,
                     tint = AmColor.OnAccent,
                 )
             }
@@ -241,10 +257,15 @@ fun AmExtendedFab(
 }
 
 /**
- * Barra de navegación inferior de las superficies raíz (64 dp, sin
+ * Barra de navegación inferior de las superficies raíz (56 dp, sin
  * píldora de Material): etiqueta + icono en cada destino (nunca solo
  * icono), activo en acento. Cada destino ocupa toda la altura (objetivo
  * ≥ 48 dp) y expone su selección.
+ *
+ * Edge-to-edge: el slot bottomBar de Scaffold NO recibe los insets del
+ * sistema — esta barra aplica `navigationBarsPadding` por sí misma para
+ * no quedar tras la zona de gestos (y con ella, el FAB del Scaffold
+ * recupera su distancia correcta al borde físico).
  */
 @Composable
 fun AmNavBar(
@@ -253,7 +274,7 @@ fun AmNavBar(
     onSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth().navigationBarsPadding()) {
         HorizontalDivider(
             thickness = AmMetrics.Border,
             color = AmColor.Divider,

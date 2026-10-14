@@ -142,8 +142,10 @@ jobs:
   supabase-acceptance:
     # Blocking since T13: the harness is deterministic against a stock
     # postgres:15 (verified locally with podman and green on every PR run
-    # since its introduction). RLS *behavior* still requires `supabase start`
-    # or a hosted project — only the SQL acceptance is gated here.
+    # since its introduction). Since the RLS two-user isolation test
+    # (platform-stubs define auth.uid() from the session claim), RLS
+    # *behavior* is gated here too; only auth/storage *runtime* semantics
+    # of the hosted platform remain outside.
     runs-on: ubuntu-latest
     services:
       postgres:

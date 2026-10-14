@@ -5,7 +5,9 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.*
@@ -129,34 +131,39 @@ internal fun OperationListScreen(
         },
     ) {
             // Búsqueda compacta + pestañas cápsula con conteo real
-            // (grupo de entrada, 8 dp).
+            // (grupo de entrada, 8 dp). Las pestañas son DESLIZABLES
+            // (referencia MCP: overflow-x-auto): en 360 dp con conteos
+            // no caben las cuatro sin recorte.
             Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
                 AmSearchField(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = AppStrings.Buscar, placeholder = AppStrings.BuscarOperaciones, onClear = { viewModel.onAction(OperationAction.Search("")) }, clearLabel = AppStrings.Limpiar)
-                Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                    AmFilterChip(
-                        label = AppStrings.Todas,
-                        selected = typeFilter == 0,
-                        onClick = { typeFilter = 0 },
-                        count = operations.size,
-                    )
-                    AmFilterChip(
-                        label = AppStrings.Pago,
-                        selected = typeFilter == 1,
-                        onClick = { typeFilter = 1 },
-                        count = pagosCount,
-                    )
-                    AmFilterChip(
-                        label = AppStrings.Cobro,
-                        selected = typeFilter == 2,
-                        onClick = { typeFilter = 2 },
-                        count = cobrosCount,
-                    )
-                    AmFilterChip(
-                        label = AppStrings.ComprobantesSueltos,
-                        selected = false,
-                        onClick = { viewModel.onAction(OperationAction.OpenUnassociated) },
-                        count = state.unassociated.size,
-                    )
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                ) {
+                        AmFilterChip(
+                            label = AppStrings.Todas,
+                            selected = typeFilter == 0,
+                            onClick = { typeFilter = 0 },
+                            count = operations.size,
+                        )
+                        AmFilterChip(
+                            label = AppStrings.Pago,
+                            selected = typeFilter == 1,
+                            onClick = { typeFilter = 1 },
+                            count = pagosCount,
+                        )
+                        AmFilterChip(
+                            label = AppStrings.Cobro,
+                            selected = typeFilter == 2,
+                            onClick = { typeFilter = 2 },
+                            count = cobrosCount,
+                        )
+                        AmFilterChip(
+                            label = AppStrings.ComprobantesSueltos,
+                            selected = false,
+                            onClick = { viewModel.onAction(OperationAction.OpenUnassociated) },
+                            count = state.unassociated.size,
+                        )
                 }
             }
         // Barra de mes con reaseguro local (referencia MCP): mes del
@@ -238,8 +245,10 @@ internal fun OperationListScreen(
             // signo (pago rojo / cobro verde), metadato temporal
             // "ocurrido · Reg:", tags de contexto/sync reales y acción
             // de fila compacta (Compartir).
+            // Tarjetas separadas a 12 dp (referencia MCP: gap-3).
             LazyColumn(
                 modifier = Modifier.fillMaxWidth().weight(1f),
+                verticalArrangement = Arrangement.spacedBy(AmSpacing.Md),
             ) {
                 itemsIndexed(paged, key = { _, operation -> operation.id }) { _, operation ->
                     val syncStatus = syncLookup.status(SyncResource.OPERATION, operation.id)

@@ -7,7 +7,7 @@ Supabase es el backend elegido para el MVP. La primera integración se hace por 
 - PostgreSQL para datos de usuario.
 - Storage privado para archivos de comprobantes.
 - Auth como identidad de usuario.
-- RLS para que cada usuario solo pueda acceder a sus propios registros.
+- RLS para que cada usuario solo pueda acceder a sus propios registros. La migración activa RLS explícitamente en TODAS las tablas cubiertas, incluida `storage.objects` (defense in depth: el proyecto alojado ya la trae activa, pero la migración no debe depender de ese estado implícito — hallazgo del harness de aceptación con postgres:15 stock y prueba `rls_isolates_rows_between_two_users` en `supabase/acceptance`, que verifica con DOS usuarios y un rol NO superusuario: lecturas/escrituras cruzadas rechazadas, FK compuesto `(context_id, user_id)` y storage por carpeta de usuario).
 - Cliente Kotlin Multiplatform encapsulado en `feature:destinations:data`.
 
 ## Dependencias

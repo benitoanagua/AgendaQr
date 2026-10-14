@@ -54,6 +54,11 @@ alter table public.destinations enable row level security;
 alter table public.operations enable row level security;
 alter table public.comprobantes enable row level security;
 alter table public.deleted_operation_history enable row level security;
+-- Defense in depth: en Supabase alojado storage.objects llega con RLS
+-- activo, pero la migración no debe DEPENDER de ese estado implícito —
+-- contra un postgres plano las policies quedarían inertes (hallazgo del
+-- harness de aceptación, prueba rls_isolates_rows_between_two_users).
+alter table storage.objects enable row level security;
 
 create policy "destinations_own_rows" on public.destinations for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 create policy "operations_own_rows" on public.operations for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
