@@ -39,6 +39,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmShapes
@@ -197,6 +199,7 @@ fun AmDangerButton(
  * menor que el target (mandato de compactación). Tonal: tarjeta con
  * hairline y texto primario; [solid] lo convierte en bloque de acento
  * (acción rápida principal de una fila/grid, p. ej. "Escanear QR").
+ * El texto nunca se parte en varias líneas: usa elipsis si no cabe.
  */
 @Composable
 fun AmSecondaryButton(
@@ -228,10 +231,15 @@ fun AmSecondaryButton(
         } else {
             AmColor.TextPrimary
         }
+        // Borde sutil para la variante tonal (no sólida) para que se
+        // distinga como botón en tema claro sin competir con la acción sólida.
+        val borderWidth = if (solid) 0.dp else AmMetrics.Border
+        val borderColor = if (solid) Color.Transparent else AmColor.Divider
         Row(
             modifier = Modifier
                 .heightIn(min = AmMetrics.ButtonCompactHeight)
                 .background(container, AmShapes.Large)
+                .border(borderWidth, borderColor, AmShapes.Large)
                 .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Xs),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
@@ -254,6 +262,8 @@ fun AmSecondaryButton(
                     label,
                     style = AmTextStyles.ButtonLabel,
                     color = content,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }
