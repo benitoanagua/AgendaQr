@@ -25,6 +25,7 @@ import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTextAction
 import com.agendaqr.core.ui.components.AmTone
+import com.agendaqr.core.ui.components.AmContextBadge
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.accentFor
 import com.agendaqr.core.ui.theme.AmSpacing
@@ -138,21 +139,28 @@ private fun ContextList(
                 actionLabel = AppStrings.CrearContexto,
                 onAction = onCreateContext,
             )
-            else -> LazyColumn(
-                // Sin tarjeta contenedora: las filas viven sobre el fondo
-                // de página y la agrupación la dan los hairlines (modo
-                // List por defecto de la referencia).
-                modifier = Modifier.fillMaxWidth().weight(1f),
-            ) {
-                itemsIndexed(state.contexts, key = { _, context -> context.id }) { index, context ->
-                    // M4: bloque de acento derivado del id del contexto.
-                    AmListRow(
-                        title = context.name,
-                        subtitle = context.note?.takeIf { it.isNotBlank() },
-                        onClick = { onAction(ContextAction.Open(context.id)) },
-                        accent = accentFor(context.id).background,
-                        showDivider = index < state.contexts.lastIndex,
-                    )
+            else -> {
+                // Lista agrupada (referencia Stitch List/Card mode):
+                // AmListBody con AmListRow y hairlines — superficie de tarjeta
+                // que agrupa las filas y se separa del fondo de página.
+                AmListBody(
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                ) {
+                    state.contexts.forEachIndexed { index, context ->
+                        // Identidad visual del contexto: bloque de acento derivado
+                        // del id + nombre + descripción opcional.
+                        AmListRow(
+                            title = context.name,
+                            subtitle = context.note?.takeIf { it.isNotBlank() },
+                            onClick = { onAction(ContextAction.Open(context.id)) },
+                            leading = {
+                                // Bloque de identidad del contexto (M4): círculo
+                                // de 40 dp con el color del contexto.
+                                AmContextBadge(context.id)
+                            },
+                            showDivider = index < state.contexts.lastIndex,
+                        )
+                    }
                 }
             }
         }

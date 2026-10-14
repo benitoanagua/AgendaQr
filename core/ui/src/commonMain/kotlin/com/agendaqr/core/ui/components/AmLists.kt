@@ -30,6 +30,7 @@ import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
+import com.agendaqr.core.ui.theme.accentFor
 
 /**
  * Celdas y etiquetas (referencia: List/Item + Tag): la celda (`AmListRow`)
@@ -123,6 +124,25 @@ fun AmIconBadge(
             tint = tone.content(),
         )
     }
+}
+
+/**
+ * Insignia de identidad de contexto (M4): círculo de 40 dp con el color
+ * del contexto derivado del id. El color comunica la identidad visual del
+ * contexto; el nombre en la fila es la señal primaria. No interactiva.
+ */
+@Composable
+fun AmContextBadge(
+    contextId: String,
+    modifier: Modifier = Modifier,
+) {
+    val color = accentFor(contextId).background
+    Box(
+        modifier = modifier
+            .size(AmMetrics.ContextBadgeSize)
+            .background(color, AmShapes.Pill),
+        contentAlignment = Alignment.Center,
+    ) {}
 }
 
 /**

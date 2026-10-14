@@ -341,6 +341,8 @@ object AmMetrics {
     val EmptyStateGlyphSize = 64.dp
     /** Largo del trazo de las esquinas del encuadre del scanner. */
     val ScannerCornerLength = 24.dp
+    /** Insignia de contexto (M4): círculo de 40 dp (referencia Stitch: w-10 h-10). */
+    val ContextBadgeSize = 40.dp
 }
 
 /** Radios de la referencia (tag 2, botón 4, búsqueda 6, tarjeta 8,
