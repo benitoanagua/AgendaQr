@@ -1,8 +1,8 @@
 {
-  "destination-detail-dark.png": "1d5db0b58f691e8eb4db41e80f6e2dfceba7356184df0d755f1b69d31ebb1cb3",
-  "destination-detail-light.png": "7f75dbd79581d923b82cd907e561928478b3fca562bb122e554a240abdcbf036",
-  "edit-destination-dark.png": "adde706fdf5257a5f5a530923a64289fe394bc47b406a7cc35772a73bd7f9000",
-  "edit-destination-light.png": "7b823e2d87cb7013294f79968e21f9c898f84cba6b2e989aa74021fa89aab2aa",
+  "destination-detail-dark.png": "febe615019744057f176aaac5990261772e7066801868fcf13f10b1edaaf5254",
+  "destination-detail-light.png": "513f13fe13e1767d6d254fdb497a823afae05f75700decd00a03a41383869551",
+  "edit-destination-dark.png": "1d1602f67ccc82f77dfe1a825c9e860490f5b4a6a95b58d86966483115906425",
+  "edit-destination-light.png": "42b4a393eef9c2f71a9cedde2e46ced9a9dfd1374f6d93cc5a9bcbda33949c2a",
   "import-batch-dark.png": "84b9e5d80ca2799d85be7044753146f16efe249a8721500a3cae5e858fd3a97c",
   "import-batch-light.png": "13ffd9f1c7e1326d51a458b2084eb7d6e8d306acada154712c1fed479af0f9f3",
   "login-dark.png": "cf763342a1a2a082811d6589f1da68ee051d6eafa4ca379f508541bef38b13b4",
@@ -19,7 +19,6 @@
   "s06-contexts-light.png": "041959b8243747ab9ef86406bb6809273a9470418b1394efe67de9405886674e",
   "s07-operation-row-dark.png": "45db5ac797ee53f726bccb48a1a4690ca5009d9f0839702fd99fdf99d7cb134e",
   "s07-operation-row-light.png": "3a20146ab69fb49df9b3fd3b4e0d50ca24431986cfc42a1b1d344810866ade30",
-  "s09-review-dark.png": "c998e002fbb3100363f4899fdcabf8935a1a015cd7a9891dbae91050a2e3c1df",
-  "s09-review-light.png": "a38338acf0b312bfa630718c42618631069c04375dda2dd0deda4570ac074f80"
-
+  "s09-review-dark.png": "4ef25f6a718b07ca1d7b98c3573258f3ac08fe0c0d18f04936cee0f56ac29f26",
+  "s09-review-light.png": "fe5a223dd61aea5d83add8f88388c39f8b7f8a8c42ba4028882b9075bbac5948"
 }

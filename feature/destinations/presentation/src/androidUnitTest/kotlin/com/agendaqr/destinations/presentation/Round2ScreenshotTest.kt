@@ -45,14 +45,21 @@ class Round2ScreenshotTest {
         compose.onRoot().captureRoboImage("build/roborazzi/$name.png")
     }
 
+    companion object {
+        // Timestamp realista para pruebas visuales: 15 ene 2024 10:30:00 (milisegundos)
+        const val TEST_TIMESTAMP = 1705314600000L
+        // Base64 válido de un PNG 1x1 transparente (QR placeholder decodificable)
+        const val TEST_QR_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    }
+
     @Test fun s01_light() = shot("s01-light", dark = false) {
         DestinationsScreen(
             state = DestinationsUiState(
                 destinations = listOf(
                     com.agendaqr.destinations.domain.Destination(
                         id = "d-1", name = "Carniceria Don Bife",
-                        qr = com.agendaqr.destinations.domain.QrAsset(encoded = "eA=="),
-                        createdAt = 1, updatedAt = 1,
+                        qr = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                        createdAt = Round2ScreenshotTest.TEST_TIMESTAMP, updatedAt = Round2ScreenshotTest.TEST_TIMESTAMP,
                     ),
                 ),
                 isLoading = false,
@@ -91,8 +98,8 @@ class Round2ScreenshotTest {
                 destinations = listOf(
                     com.agendaqr.destinations.domain.Destination(
                         id = "d-1", name = "Carniceria Don Bife",
-                        qr = com.agendaqr.destinations.domain.QrAsset(encoded = "eA=="),
-                        createdAt = 1, updatedAt = 1,
+                        qr = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                        createdAt = Round2ScreenshotTest.TEST_TIMESTAMP, updatedAt = Round2ScreenshotTest.TEST_TIMESTAMP,
                     ),
                 ),
                 isLoading = false,
@@ -211,10 +218,10 @@ class Round2ScreenshotTest {
         contexts = listOf(
             com.agendaqr.destinations.domain.Context(
                 id = "ctx-1", name = "Mercado", note = "Compras semanales",
-                createdAt = 1, updatedAt = 1,
+                createdAt = TEST_TIMESTAMP, updatedAt = TEST_TIMESTAMP,
             ),
             com.agendaqr.destinations.domain.Context(
-                id = "ctx-2", name = "Ferretería", createdAt = 1, updatedAt = 1,
+                id = "ctx-2", name = "Ferretería", createdAt = TEST_TIMESTAMP, updatedAt = TEST_TIMESTAMP,
             ),
         ),
         isLoading = false,
@@ -246,7 +253,7 @@ class Round2ScreenshotTest {
     @Test fun s09_review_light() = shot("s09-review-light", dark = false) {
         ImportReviewScreen(
             assets = listOf(
-                com.agendaqr.destinations.domain.QrAsset(encoded = "eA=="),
+                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
             ),
             onSaveAll = {},
             onBack = {},
@@ -256,7 +263,7 @@ class Round2ScreenshotTest {
     @Test fun s09_review_dark() = shot("s09-review-dark", dark = true) {
         ImportReviewScreen(
             assets = listOf(
-                com.agendaqr.destinations.domain.QrAsset(encoded = "eA=="),
+                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
             ),
             onSaveAll = {},
             onBack = {},
@@ -265,8 +272,8 @@ class Round2ScreenshotTest {
 
     private fun editorFixture() = com.agendaqr.destinations.domain.Destination(
         id = "d-1", name = "Carniceria Don Bife",
-        qr = com.agendaqr.destinations.domain.QrAsset(encoded = "eA=="),
-        createdAt = 1, updatedAt = 1,
+        qr = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+        createdAt = TEST_TIMESTAMP, updatedAt = TEST_TIMESTAMP,
     )
 
     @Test fun edit_destination_light() = shot("edit-destination-light", dark = false) {
@@ -293,8 +300,8 @@ class Round2ScreenshotTest {
         id = "d-1", name = "Carniceria Don Bife",
         category = "Almacén",
         note = "Compra semanal de la fiambrería.",
-        qr = com.agendaqr.destinations.domain.QrAsset(encoded = "eA=="),
-        createdAt = 1, updatedAt = 1,
+        qr = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+        createdAt = TEST_TIMESTAMP, updatedAt = TEST_TIMESTAMP,
     )
 
     @Test fun destination_detail_light() = shot("destination-detail-light", dark = false) {

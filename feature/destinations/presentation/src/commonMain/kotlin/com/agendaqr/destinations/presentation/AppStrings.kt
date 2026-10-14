@@ -81,6 +81,7 @@ internal object AppStrings {
     val analyzingReceipt = "Estamos analizando el comprobante."
     val FaltaElCodigoQrUsa = "Falta el código QR: usa Cámara o Galería"
     val Fecha = "Fecha"
+    val FechaDesconocida = "Fecha desconocida"
     /** S02 V1.2: acción única de galería con selección múltiple. */
     val ElegirDeLaGaleria = "Elegir de la galería"
     /** S12 Idle: acción para elegir un lote de imágenes. */

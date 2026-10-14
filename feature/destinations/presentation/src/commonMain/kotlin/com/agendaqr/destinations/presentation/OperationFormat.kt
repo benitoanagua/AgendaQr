@@ -25,8 +25,12 @@ internal fun receiptProvenanceLabel(provenance: ReceiptProvenance?): String = wh
  * Se calcula en la zona local (no UTC): con la zona del público objetivo
  * (p. ej. UTC-4) la medianoche UTC ya pertenece al día siguiente por la
  * tarde, y el editor proponía "mañana" como fecha por defecto.
+ *
+ * Valores ≤ 0 (epoch o pre-epoch) indican fecha desconocida: se muestra
+ * un marcador explícito en lugar de una fecha inválida (ej. 31/12/1969).
  */
 internal fun formatDate(millis: Long, timeZone: TimeZone = TimeZone.currentSystemDefault()): String {
+    if (millis <= 0) return AppStrings.FechaDesconocida
     val date = Instant.fromEpochMilliseconds(millis).toLocalDateTime(timeZone).date
     fun two(value: Int) = if (value < 10) "0" + value else value.toString()
     return two(date.dayOfMonth) + "/" + two(date.monthNumber) + "/" + date.year
@@ -48,6 +52,7 @@ internal fun parseDate(text: String, timeZone: TimeZone = TimeZone.currentSystem
 
 /** Hora civil HH:mm de [millis] en la zona del dispositivo. */
 internal fun formatTime(millis: Long, timeZone: TimeZone = TimeZone.currentSystemDefault()): String {
+    if (millis <= 0) return AppStrings.FechaDesconocida
     val time = Instant.fromEpochMilliseconds(millis).toLocalDateTime(timeZone).time
     fun two(value: Int) = if (value < 10) "0" + value else value.toString()
     return two(time.hour) + ":" + two(time.minute)

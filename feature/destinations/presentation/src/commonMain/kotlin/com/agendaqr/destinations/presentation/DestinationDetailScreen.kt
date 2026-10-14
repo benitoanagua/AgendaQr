@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,7 +16,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AmSnackbarHost
-import com.agendaqr.core.ui.components.AmBottomAction
 import com.agendaqr.core.ui.components.AmFeedbackEvent
 import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmTopBar
@@ -34,6 +35,7 @@ import com.agendaqr.core.ui.components.AmStatusPill
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTextAction
 import com.agendaqr.core.ui.components.AmTone
+import com.agendaqr.core.ui.components.AmPrimaryButton
 import com.agendaqr.core.ui.components.rememberAmClipboard
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
@@ -79,7 +81,7 @@ fun DestinationDetailScreen(
         feedbackHost = appHosts?.feedback,
     )
     // V1.4 + MCP: título del destino en la barra; Compartir/Editar viven
-    // en el dock de acciones; Eliminar en "…" (destructiva, no a un
+    // en el dock de acciones (bottomAction slot); Eliminar en "…" (destructiva, no a un
     // toque). Mostrar QR = pantalla completa (RF-05), acción propia del
     // núcleo.
     AmScreenScaffold(
@@ -98,6 +100,36 @@ fun DestinationDetailScreen(
         snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
         verticalArrangement = Arrangement.spacedBy(AmSpacing.Lg),
+        bottomAction = {
+            // Dock de acciones persistente (referencia MCP): registrar, compartir y editar
+            // — todas reales. "Registrar operación" es la acción primaria (sólida),
+            // Compartir y Editar son secundarias. El dock respeta insets de navegación y IME.
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .imePadding()
+                    .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
+                verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+            ) {
+                AmPrimaryButton(
+                    label = AppStrings.RegistrarOperacion,
+                    onClick = onRegisterOperation,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                AmSecondaryButton(
+                    label = AppStrings.Compartir,
+                    onClick = onShare,
+                    icon = AmIcons.Share,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                AmTextAction(
+                    label = AppStrings.EditarMetadatosReemplazarQr,
+                    onClick = onEdit,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        },
     ) {
         // Tarjeta núcleo del QR (referencia MCP): código real sobre lienzo
         // claro, encuadre de esquinas y guía de uso honesta.
@@ -197,28 +229,6 @@ fun DestinationDetailScreen(
         if (syncStatus == ElementSyncStatus.ErrorRecoverable) {
             // El dato está a salvo localmente: el usuario puede reintentar.
             AmTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
-        }
-
-        // Dock de acciones (referencia MCP): registrar, compartir y editar
-        // — todas reales. "Registrar operación" abre el editor de
-        // actividades SIN preasociar el destino (esa regla no existe en
-        // el dominio; se documenta como diferencia).
-        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-            AmBottomAction(
-                label = AppStrings.RegistrarOperacion,
-                onClick = onRegisterOperation,
-            )
-            AmSecondaryButton(
-                label = AppStrings.Compartir,
-                onClick = onShare,
-                icon = AmIcons.Share,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            AmTextAction(
-                label = AppStrings.EditarMetadatosReemplazarQr,
-                onClick = onEdit,
-                modifier = Modifier.fillMaxWidth(),
-            )
         }
 
         // Reaseguro de integridad (referencia MCP): cierto en el dominio
