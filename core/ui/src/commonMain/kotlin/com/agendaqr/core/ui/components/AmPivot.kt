@@ -22,7 +22,8 @@ import com.agendaqr.core.ui.theme.asTextOn
  */
 
 /**
- * Encabezado de sección (rol titleSmall): texto estándar con semántica
+ * Encabezado de sección (rol headline-sm de la referencia Stitch): 18 sp
+ * SemiBold en color PRIMARIO (es un titular de sección) con semántica
  * `heading()`. El acento de contexto solo tiñe los encabezados de SU
  * superficie (S06) cuando el llamador pasa un [accent] legible como
  * texto.
@@ -34,7 +35,7 @@ fun AmSectionHeader(
     accent: Color? = null,
 ) {
     val textColor = accent?.asTextOn(AmColor.Background, AmColor.AccentText)
-        ?: AmColor.TextSecondary
+        ?: AmColor.TextPrimary
     Text(
         text = text,
         modifier = modifier.semantics { heading() },

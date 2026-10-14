@@ -8,6 +8,7 @@ package com.agendaqr.destinations.presentation
  * Detalle de la operación: datos, comprobantes, acciones y confirmación
  * de borrado. Estado de sincronización por elemento .
  */
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -75,42 +76,73 @@ internal fun OperationDetailScreen(
         snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
-        // Hero de la actividad (referencia Stitch): tarjeta con insignia
-        // direccional, tipo + fecha y monto destacado con signo. El monto
-        // es presentación; el valor registrado no cambia.
-        val amountText = operationAmount(operation)
+        // Hero de la actividad (referencia detalle Stitch): píldora de
+        // TIPO con texto (pago = danger, cobro = success) + contexto,
+        // cifra grande NEUTRA con signo (la referencia no colorea el
+        // importe; el tipo lo comunica la píldora) y caja temporal.
+        val amountText = operationAmountText(operation)
+        val contextName = state.contexts.firstOrNull { it.id == operation.contextId }?.name
         AmListBody {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(AmSpacing.Lg),
-                verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                verticalArrangement = Arrangement.spacedBy(AmSpacing.Md),
             ) {
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Md),
                 ) {
-                    AmIconBadge(
-                        icon = operationTypeIcon(operation.type),
+                    AmTonalTag(
+                        text = operationTypeLabel(operation.type),
                         tone = operationTypeTone(operation.type),
+                        uppercase = true,
                     )
-                    Column {
+                    contextName?.let {
+                        AmTonalTag(text = it, tone = AmTone.Neutral)
+                    }
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+                    amountText?.let {
                         AmText(
-                            operationTypeLabel(operation.type),
-                            size = AmType.Label,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                            it,
+                            size = AmType.Amount,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+                    ) {
+                        AmIcon(
+                            imageVector = AmIcons.Store,
+                            contentDescription = null,
+                            tint = AmColor.TextSecondary,
                         )
                         AmText(
-                            formatDate(operation.occurredAt),
-                            size = AmType.Caption,
-                            color = AmColor.TextSecondary,
+                            operationTitle(operation),
+                            size = AmType.SectionHeader,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
                         )
                     }
                 }
-                amountText?.let { (text, tone) ->
-                    AmText(
-                        text,
-                        size = AmType.Display,
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
-                        color = tone.content(),
+                // Caja temporal compacta (referencia): ocurrido vs
+                // registrado — datos reales del dominio.
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(AmColor.SurfaceContainerLow, AmShapes.Large)
+                        .padding(AmSpacing.Md),
+                    verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+                ) {
+                    AmMetaRow(
+                        label = AppStrings.FechaDeOperacion,
+                        value = formatDate(operation.occurredAt),
+                        icon = AmIcons.Calendar,
+                    )
+                    AmMetaRow(
+                        label = AppStrings.RegistradoEnDispositivo,
+                        value = formatDate(operation.createdAt),
+                        icon = AmIcons.Clock,
                     )
                 }
             }

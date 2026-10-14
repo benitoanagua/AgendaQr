@@ -58,6 +58,18 @@ internal fun HomeSurface(
                 onOpenContexts = { nav.push(AppRoute.Contexts) },
                 onSignOut = onSignOut,
                 syncLookup = syncLookup,
+                // Acciones rápidas y hoja del FAB (referencia Stitch): las
+                // tres creaciones REALES del producto con sus rutas
+                // existentes — S02 (traer QR), S07 (registrar actividad)
+                // y creación de contexto vía el VM de contextos.
+                onScanQr = { graph.destinationsViewModel.onAction(DestinationAction.Edit(null)) },
+                onRegisterOperation = {
+                    graph.operationsViewModel.onAction(OperationAction.New)
+                    nav.push(AppRoute.Operations)
+                },
+                onCreateContext = { name, note ->
+                    graph.contextsViewModel.onAction(ContextAction.Create(name, note))
+                },
             )
             DestinationRoute.Add -> AddDestinationScreen(
                 appHosts = appHosts,

@@ -62,7 +62,7 @@ fun AmStatusBanner(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(background, AmShapes.Large)
+            .background(background, AmShapes.ExtraLarge)
             .semantics { liveRegion = LiveRegionMode.Polite }
             .padding(horizontal = AmSpacing.Md, vertical = AmSpacing.Md),
         verticalAlignment = Alignment.CenterVertically,
@@ -93,7 +93,59 @@ fun AmStatusBanner(
     }
 }
 
-/** Indicador de carga con mensaje opcional y anuncio cortés. */
+/**
+ * Píldora de estado/reaseguro (referencia Stitch S01/S07/S09): tonal por
+ * defecto (surface-container-low con icono de estado y metadato 13 sp)
+ * o INVERSA para "Modo local" (bloque oscuro con contenido inverso, par
+ * garantizado por AmSchemeTest). No interactiva.
+ */
+@Composable
+fun AmStatusPill(
+    text: String,
+    modifier: Modifier = Modifier,
+    /** Glifo decorativo que acompaña el texto (opcional). */
+    icon: ImageVector? = null,
+    /** Tono del glifo (solo variante tonal). */
+    tone: AmTone = AmTone.Success,
+    /** Variante inversa: bloque oscuro "Modo local". */
+    inverse: Boolean = false,
+    /** Contenido final (p. ej. el estado "Al día" del llamador). */
+    trailing: (@Composable (() -> Unit))? = null,
+) {
+    val container = if (inverse) AmColor.InverseSurface else AmColor.SurfaceContainerLow
+    val content = if (inverse) AmColor.InverseOnSurface else AmColor.TextSecondary
+    Row(
+        modifier = modifier
+            .background(container, AmShapes.Pill)
+            .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+    ) {
+        if (inverse) {
+            // Punto "en vivo" del modo local (decorativo; el texto comunica).
+            Box(
+                modifier = Modifier
+                    .size(AmSpacing.Xs)
+                    .background(AmColor.SuccessContainer, AmShapes.Pill),
+            )
+        } else {
+            icon?.let {
+                AmIcon(
+                    imageVector = it,
+                    contentDescription = null,
+                    size = AmMetrics.IconSizeCompact,
+                    tint = tone.content(),
+                )
+            }
+        }
+        Text(text, style = AmTextStyles.BodySmall, color = content)
+        trailing?.invoke()
+    }
+}
+
+/**
+ * Indicador de carga con mensaje opcional y anuncio cortés.
+ */
 @Composable
 fun AmLoading(modifier: Modifier = Modifier, message: String? = null) {
     Column(

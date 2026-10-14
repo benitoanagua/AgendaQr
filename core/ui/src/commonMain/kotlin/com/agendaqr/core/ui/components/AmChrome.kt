@@ -133,7 +133,7 @@ fun AmTopBar(
             style = androidx.compose.ui.text.TextStyle(
                 fontSize = AmType.TitleLarge,
                 lineHeight = AmType.LineHeightTitleLarge,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
                 fontFamily = AmType.FamilyUi,
             ),
             maxLines = 1,
@@ -223,6 +223,9 @@ fun AmExtendedFab(
         modifier = modifier,
         containerColor = AmColor.Accent,
         contentColor = AmColor.OnAccent,
+        // Píldora completa (referencia Stitch: rounded-full con aire
+        // interno propio del FAB extendido).
+        shape = AmShapes.Pill,
         text = { Text(label, style = AmTextStyles.ButtonLabel) },
         icon = icon?.let { glyph ->
             {

@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmShapes
@@ -78,7 +79,10 @@ fun AmTonalTag(
     text: String,
     modifier: Modifier = Modifier,
     tone: AmTone = AmTone.Neutral,
+    /** Mayúsculas tipadas (p. ej. "PAGO"): presentación, no copy nuevo. */
+    uppercase: Boolean = false,
 ) {
+    val label = if (uppercase) text.uppercase() else text
     Box(
         modifier = modifier
             .background(tone.container(), AmShapes.Pill)
@@ -86,8 +90,8 @@ fun AmTonalTag(
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text,
-            style = AmTextStyles.Support,
+            label,
+            style = AmTextStyles.Tag,
             color = tone.content(),
         )
     }
@@ -95,9 +99,10 @@ fun AmTonalTag(
 
 /**
  * Insignia de identidad tipada: glifo del tono sobre el bloque tonal
- * (p. ej. flecha entrante verde = cobro, saliente roja = pago). El glifo
+ * (p. ej. flecha entrante verde = cobro, saliente azul = pago). El glifo
  * es decorativo — el TEXTO de la fila comunica el tipo; la forma
- * acompaña, nunca es la única señal (contrato de accesibilidad).
+ * acompaña, nunca es la única señal (contrato de accesibilidad). Tamaño
+ * de tile 40 dp (referencia Stitch: w-10 h-10).
  */
 @Composable
 fun AmIconBadge(
@@ -107,8 +112,8 @@ fun AmIconBadge(
 ) {
     Box(
         modifier = modifier
-            .background(tone.container(), AmShapes.Pill)
-            .padding(AmSpacing.Xs),
+            .background(tone.container(), AmShapes.Large)
+            .padding(AmSpacing.Sm),
         contentAlignment = Alignment.Center,
     ) {
         AmIcon(
@@ -152,9 +157,33 @@ fun AmMetaRow(
 }
 
 /**
- * Cuerpo de lista (card mode de la referencia): superficie con radio 8
- * que agrupa celdas contiguas separadas por hairlines. Las filas usan
- * `showDivider` salvo la última; el cuerpo mide su contenido.
+ * Hairline del sistema: separador sutil entre filas/controles dentro de
+ * una tarjeta. Los bordes y separadores viven en el DS (gate E-01/02/03);
+ * las pantallas componen este componente, nunca divisores de M3.
+ */
+@Composable
+fun AmHairline(
+    modifier: Modifier = Modifier,
+    /** Alineación con el contenido cuando hay marca a la izquierda. */
+    insetStart: Dp = AmSpacing.None,
+) {
+    HorizontalDivider(
+        modifier = if (insetStart > AmSpacing.None) {
+            Modifier.padding(start = insetStart)
+        } else {
+            Modifier
+        }.then(modifier),
+        thickness = AmMetrics.Border,
+        color = AmColor.Divider,
+    )
+}
+
+/**
+ * Cuerpo de lista (card mode de la referencia Stitch): superficie de
+ * tarjeta delimitada por hairline (`border-divider`, 1 dp, excepción
+ * E-03 del gate) con radio 12, que agrupa celdas contiguas separadas por
+ * hairlines inset. Las filas usan `showDivider` salvo la última; el
+ * cuerpo mide su contenido.
  */
 @Composable
 fun AmListBody(
@@ -164,7 +193,8 @@ fun AmListBody(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(AmColor.Surface, AmShapes.Large),
+            .background(AmColor.Surface, AmShapes.ExtraLarge)
+            .border(AmMetrics.Border, AmColor.Divider, AmShapes.ExtraLarge),
     ) {
         content()
     }
@@ -220,7 +250,7 @@ fun AmListRow(
                 ),
             colors = ListItemDefaults.colors(containerColor = AmColor.Transparent),
             headlineContent = {
-                Text(title, style = AmTextStyles.Body, color = AmColor.TextPrimary)
+                Text(title, style = AmTextStyles.RowTitle, color = AmColor.TextPrimary)
             },
             supportingContent = if (subtitle != null || meta != null) {
                 {
@@ -248,8 +278,14 @@ fun AmListRow(
             trailingContent = trailing,
         )
         if (showDivider) {
+            // Hairline alineado con el CONTENIDO cuando hay marca a la
+            // izquierda (tile/punto), no con el borde de la tarjeta
+            // (referencia Stitch: ml-14 → [AmMetrics.ListDividerInset]).
+            val hasLeading = leading != null || accent != null
             HorizontalDivider(
-                modifier = Modifier.padding(start = AmSpacing.Lg),
+                modifier = Modifier.padding(
+                    start = if (hasLeading) AmMetrics.ListDividerInset else AmSpacing.Lg,
+                ),
                 thickness = AmMetrics.Border,
                 color = AmColor.Divider,
             )

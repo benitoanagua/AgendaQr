@@ -131,7 +131,17 @@ internal fun OperationListScreen(
             Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
                 AmSearchField(value = state.query, onValueChange = { viewModel.onAction(OperationAction.Search(it)) }, label = AppStrings.Buscar, placeholder = AppStrings.BuscarOperaciones, onClear = { viewModel.onAction(OperationAction.Search("")) }, clearLabel = AppStrings.Limpiar)
                 AmSegmentedControl(
-                    options = listOf(AppStrings.Todos, AppStrings.Pago, AppStrings.Cobro),
+                    options = listOf(
+                        com.agendaqr.core.ui.components.AmSegmentedOption(AppStrings.Todos),
+                        com.agendaqr.core.ui.components.AmSegmentedOption(
+                            label = AppStrings.Pago,
+                            icon = com.agendaqr.core.ui.components.AmIcons.Expense,
+                        ),
+                        com.agendaqr.core.ui.components.AmSegmentedOption(
+                            label = AppStrings.Cobro,
+                            icon = com.agendaqr.core.ui.components.AmIcons.Income,
+                        ),
+                    ),
                     selectedIndex = typeFilter,
                     onSelect = { typeFilter = it },
                 )
@@ -176,13 +186,19 @@ internal fun OperationListScreen(
                 modifier = Modifier.fillMaxWidth().weight(1f),
             ) {
                 itemsIndexed(paged, key = { _, operation -> operation.id }) { index, operation ->
-                    // Anatomía financiera de la referencia: contraparte
-                    // como título, tipo+fecha como subtítulo (el tipo
-                    // SIEMPRE en texto), insignia direccional a la
-                    // izquierda y monto con signo a la derecha.
+                    // Anatomía de la referencia S01: tile direccional a la
+                    // izquierda, contraparte como título 15/500, TIPO como
+                    // píldora tonal (texto, nunca solo color), cifra con
+                    // signo en el caption (neutral) y estado de sync al
+                    // trailing.
+                    val syncStatus = syncLookup.status(SyncResource.OPERATION, operation.id)
+                    val amountText = operationAmountText(operation)
                     AmListRow(
                         title = operationTitle(operation),
-                        subtitle = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
+                        subtitle = listOfNotNull(
+                            amountText,
+                            formatDate(operation.occurredAt),
+                        ).joinToString(" · "),
                         onClick = { viewModel.onAction(OperationAction.Open(operation.id)) },
                         leading = {
                             AmIconBadge(
@@ -191,23 +207,16 @@ internal fun OperationListScreen(
                             )
                         },
                         meta = {
-                            ElementSyncBadge(
-                                syncLookup.status(SyncResource.OPERATION, operation.id),
-                            )
-                        },
-                        trailing = {
-                            operationAmount(operation)?.let { (text, tone) ->
-                                AmText(
-                                    text,
-                                    size = AmType.Label,
-                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
-                                    color = tone.content(),
+                            Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+                                AmTonalTag(
+                                    text = operationTypeLabel(operation.type),
+                                    tone = operationTypeTone(operation.type),
+                                    uppercase = true,
                                 )
-                            } ?: AmText(
-                                AppStrings.SinMontoCorto,
-                                size = AmType.Label,
-                                color = AmColor.TextSecondary,
-                            )
+                                if (syncStatus != ElementSyncStatus.Synced) {
+                                    AmTonalTag(text = syncStatus.label, tone = syncStatus.tone())
+                                }
+                            }
                         },
                         showDivider = index < paged.lastIndex,
                     )

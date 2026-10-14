@@ -16,10 +16,10 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
     ├── AmText.kt          # AmText, AmHeading (texto con interlineado propio)
     ├── AmIcon.kt          # AmIcon + AmIcons (Lucide, único punto de entrada)
     ├── AmTone.kt           # AmTone + toneColors + glifo por tono
-    ├── AmButtons.kt       # botones (solid/outline/none), chips estilo selector, control segmentado (AmSegmentedControl), toggle de favorito
-    ├── AmInputs.kt        # AmTextField (sin borde, guía hairline; ayuda/error a 4 dp y alineada al texto editable), AmSearchField (radio 6), AmSearchTrigger
-    ├── AmLists.kt         # AmListRow (celda; slot leading tipado), AmBadge, AmTonalTag, AmIconBadge, AmMetaRow
-    ├── AmStatus.kt        # AmStatusBanner, AmLoading, AmEmptyState, AmSection
+    ├── AmButtons.kt       # botones (solid/outline/none, radio 8), chips píldora (activo sólido), control segmentado (AmSegmentedOption: glifo + tono activo), AmQuickAction (tile S01), toggle de favorito
+    ├── AmInputs.kt        # AmTextField (sin borde, guía hairline; ayuda/error a 4 dp y alineada; glifo de concepto), AmAmountField (importe 26 sp + ⌫ etiquetado), AmSearchField (radio 12), AmSearchTrigger
+    ├── AmLists.kt         # AmListRow (celda; slot leading tipado, título 15/500, divisor inset 56), AmListBody (tarjeta 12 + hairline E-03), AmHairline, AmBadge, AmTonalTag (11/600), AmIconBadge (tile 40), AmMetaRow
+    ├── AmStatus.kt        # AmStatusBanner (radio 12), AmStatusPill (tonal/inversa), AmLoading, AmEmptyState, AmSection
     ├── AmChrome.kt        # AmTopBar, navegación raíz, FAB, transición de superficies
     ├── AmScaffold.kt      # AmScreenScaffold (contenedor de pantalla), AmBottomAction (acción principal fija: ancho completo + navigationBars + IME)
     ├── AmDialogs.kt       # AmDialog, AmDialogList (superposiciones)

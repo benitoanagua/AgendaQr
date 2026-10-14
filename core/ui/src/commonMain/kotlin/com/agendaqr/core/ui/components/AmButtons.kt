@@ -1,8 +1,11 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
@@ -81,8 +84,9 @@ internal fun AmLoadingButton(
             ),
         onClick = onClick,
         enabled = enabled && !isLoading,
-        // Radio 4 de la referencia, no el rol de la plantilla M3.
-        shape = AmShapes.Small,
+        // Radio 8 de la referencia (DESIGN.md Stitch: base radius para
+        // botones), no el rol de la plantilla M3.
+        shape = AmShapes.Large,
         // Padding vertical propio a cero: la altura la fija el contenido
         // (48 dp de objetivo táctil), no el relleno interno de Material.
         // Horizontal compacto de 16 dp.
@@ -203,7 +207,7 @@ fun AmSecondaryButton(
             .then(if (!enabled || isLoading) Modifier.alpha(0.4f) else Modifier),
         onClick = onClick,
         enabled = enabled && !isLoading,
-        shape = AmShapes.Small,
+        shape = AmShapes.Large,
         contentPadding = PaddingValues(
             horizontal = AmSpacing.Lg,
             vertical = AmSpacing.None,
@@ -267,7 +271,7 @@ fun AmTextAction(
         modifier = modifier.defaultMinSize(minHeight = AmMetrics.ControlMinSize),
         onClick = onClick,
         enabled = enabled,
-        shape = AmShapes.Small,
+        shape = AmShapes.Large,
         // 48 dp determinísticos como en los botones.
         contentPadding = PaddingValues(
             horizontal = AmSpacing.Md,
@@ -319,9 +323,10 @@ fun AmIconButton(
 }
 
 /**
- * Chip de filtro interactivo (estilo Selector de la referencia):
- * borde hairline en reposo; seleccionado con borde de acento, texto de
- * acento y fondo wathet. La selección también vive en la semántica.
+ * Chip de filtro interactivo (píldoras de la referencia Stitch): la
+ * opción ACTIVA es sólida (acento con contenido sobre acento, par
+ * garantizado) — el resto, tarjeta con hairline y texto secundario. La
+ * selección también vive en la semántica.
  */
 @Composable
 fun AmFilterChip(
@@ -346,32 +351,44 @@ fun AmFilterChip(
         ),
         colors = FilterChipDefaults.filterChipColors(
             containerColor = AmColor.Surface,
-            labelColor = AmColor.TextPrimary,
+            labelColor = AmColor.TextSecondary,
             disabledContainerColor = AmColor.Disabled,
             disabledLabelColor = AmColor.OnDisabled,
-            selectedContainerColor = AmColor.Wathet,
-            selectedLabelColor = AmColor.AccentText,
+            selectedContainerColor = AmColor.Accent,
+            selectedLabelColor = AmColor.OnAccent,
         ),
         label = {
             Text(
                 label,
-                fontSize = AmType.Label,
-                fontWeight = FontWeight.Medium,
-                letterSpacing = AmTracking.LabelLarge,
+                style = AmTextStyles.Tag,
             )
         },
     )
 }
 
 /**
- * Control segmentado (Segmented de la referencia): pista tonal
- * (`surfaceContainerHighest`) con opción activa sobre píldora `Surface`.
- * Mutuamente excluyente por semántica (`selectableGroup` + rol radio) y
- * por estado. Cada opción conserva el objetivo táctil de 48 dp.
+ * Opción del control segmentado: etiqueta SIEMPRE (es la señal de texto),
+ * glifo decorativo opcional y tono del estado activo opcional (p. ej.
+ * cobro en success) — la referencia Stitch tiñe la opción activa según
+ * el significado del segmento.
+ */
+data class AmSegmentedOption(
+    val label: String,
+    val icon: ImageVector? = null,
+    /** Color de TEXTO de la opción activa; null = acento del sistema. */
+    val activeTone: AmTone? = null,
+)
+
+/**
+ * Control segmentado (Segmented de la referencia Stitch): pista tonal
+ * (`surfaceContainerHigh`) con la opción activa sobre píldora `Surface`
+ * de radio 8 y etiqueta de titular (18 sp SemiBold) con glifo. Mutuamente
+ * excluyente por semántica (`selectableGroup` + rol radio). Cada opción
+ * conserva el objetivo táctil de 48 dp.
  */
 @Composable
 fun AmSegmentedControl(
-    options: List<String>,
+    options: List<AmSegmentedOption>,
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -381,20 +398,21 @@ fun AmSegmentedControl(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(AmColor.SurfaceContainerHighest, AmShapes.Pill)
+            .background(AmColor.SurfaceContainerHigh, AmShapes.ExtraLarge)
             .selectableGroup()
             .padding(AmSpacing.Xs),
         horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
     ) {
         options.forEachIndexed { index, option ->
             val selected = index == selectedIndex
+            val activeColor = option.activeTone?.content() ?: AmColor.AccentText
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(AmShapes.Pill)
+                    .clip(AmShapes.Large)
                     .then(
                         if (selected) {
-                            Modifier.background(AmColor.Surface, AmShapes.Pill)
+                            Modifier.background(AmColor.Surface, AmShapes.Large)
                         } else {
                             Modifier
                         },
@@ -407,12 +425,25 @@ fun AmSegmentedControl(
                     .defaultMinSize(minHeight = AmMetrics.ControlMinSize),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
-                    option,
-                    style = AmTextStyles.Support,
-                    color = if (selected) AmColor.TextPrimary else AmColor.TextSecondary,
-                    maxLines = 1,
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+                ) {
+                    option.icon?.let {
+                        AmIcon(
+                            imageVector = it,
+                            contentDescription = null,
+                            size = AmMetrics.IconSizeCompact,
+                            tint = if (selected) activeColor else AmColor.TextSecondary,
+                        )
+                    }
+                    Text(
+                        option.label,
+                        style = AmTextStyles.SectionHeader,
+                        color = if (selected) activeColor else AmColor.TextSecondary,
+                        maxLines = 1,
+                    )
+                }
             }
         }
     }
@@ -444,5 +475,43 @@ fun AmFavoriteToggle(
             contentDescription = null,
             tint = if (favorite) AmColor.Accent else AmColor.TextTertiary,
         )
+    }
+}
+
+/**
+ * Tile de acción rápida (referencia Stitch S01): tarjeta de la lista con
+ * tile tonal de 40 dp, título de fila y apoyo terciario. Toda la
+ * interacción y semántica vive aquí; el copy lo aporta el llamador.
+ */
+@Composable
+fun AmQuickAction(
+    title: String,
+    caption: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    /** Tono del tile (identidad del tipo de acción). */
+    tone: AmTone = AmTone.Info,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(AmColor.Surface, AmShapes.ExtraLarge)
+            .border(AmMetrics.Border, AmColor.Divider, AmShapes.ExtraLarge)
+            .clickable(role = Role.Button, onClickLabel = title, onClick = onClick)
+            .padding(AmSpacing.Md),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Md),
+        ) {
+            icon?.let {
+                AmIconBadge(icon = it, tone = tone)
+            }
+            Column {
+                Text(title, style = AmTextStyles.RowTitle, color = AmColor.TextPrimary)
+                Text(caption, style = AmTextStyles.Caption, color = AmColor.TextTertiary)
+            }
+        }
     }
 }

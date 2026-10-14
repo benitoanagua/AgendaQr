@@ -64,21 +64,16 @@ internal fun operationTitle(operation: Operation): String =
         ?: operationTypeLabel(operation.type)
 
 /**
- * Monto con SIGNO DIRECCIONAL y tono semántico (referencia Stitch):
- * cobro = entrada "+" en success, pago = salida "−" en danger. Es solo
- * presentación: no cambia el valor registrado ni las reglas de negocio.
- * Devuelve null sin monto (la fila muestra "—" aparte).
+ * Monto con SIGNO DIRECCIONAL (referencia Stitch): cobro "+", pago "−",
+ * con la moneda cuando existe. NEUTRO (textPrimary): la referencia no
+ * colorea la cifra — el tipo lo comunica la píldora
+ * ([operationTypeTone]); el signo acompaña. Es solo presentación: no
+ * cambia el valor registrado. Devuelve null sin monto.
  */
-internal fun operationAmount(operation: Operation): Pair<String, com.agendaqr.core.ui.components.AmTone>? {
+internal fun operationAmountText(operation: Operation): String? {
     val amount = operation.amount?.takeIf { it.isNotBlank() } ?: return null
-    val isIncome = operation.type == OperationType.COBRO
-    val sign = if (isIncome) AppStrings.SignoCobro else AppStrings.SignoPago
-    val text = sign + listOfNotNull(amount, operation.currency?.takeIf { it.isNotBlank() }).joinToString(" ")
-    return text to if (isIncome) {
-        com.agendaqr.core.ui.components.AmTone.Success
-    } else {
-        com.agendaqr.core.ui.components.AmTone.Danger
-    }
+    val sign = if (operation.type == OperationType.COBRO) AppStrings.SignoCobro else AppStrings.SignoPago
+    return sign + listOfNotNull(amount, operation.currency?.takeIf { it.isNotBlank() }).joinToString(" ")
 }
 
 /** Icono direccional de la actividad (decorativo; el texto comunica). */

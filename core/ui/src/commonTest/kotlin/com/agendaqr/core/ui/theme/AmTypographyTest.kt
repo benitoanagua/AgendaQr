@@ -107,7 +107,14 @@ class AmTypographyTest {
 
     @Test
     fun section_header_stays_in_the_label_scale() {
-        // Encabezados de sección (título de sección, 14 sp Medium).
-        assertTrue(AmType.SectionHeader.value in 14f..16f)
+        // Encabezados de sección (headline-sm de la referencia Stitch:
+        // 18 sp SemiBold — titulares de sección, no etiquetas de fila).
+        assertEquals(18f, AmType.SectionHeader.value)
+        assertEquals(18f, AmTextStyles.SectionHeader.fontSize.value)
+        assertEquals(15f, AmTextStyles.RowTitle.fontSize.value)
+        assertEquals(15f, AmTextStyles.ButtonLabel.fontSize.value)
+        assertEquals(13f, AmTextStyles.BodySmall.fontSize.value)
+        assertEquals(26f, AmTextStyles.Amount.fontSize.value)
+        assertEquals(11f, AmTextStyles.Tag.fontSize.value)
     }
 }

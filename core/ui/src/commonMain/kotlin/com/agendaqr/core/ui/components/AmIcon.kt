@@ -13,8 +13,13 @@ import com.agendaqr.core.ui.theme.AmMetrics
 import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.ArrowDownLeft
 import com.composables.icons.lucide.ArrowUpRight
+import com.composables.icons.lucide.Calendar
 import com.composables.icons.lucide.Camera
+import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.CircleCheck
+import com.composables.icons.lucide.Clock
+import com.composables.icons.lucide.Database
+import com.composables.icons.lucide.Delete
 import com.composables.icons.lucide.Ellipsis
 import com.composables.icons.lucide.Folder
 import com.composables.icons.lucide.House
@@ -22,7 +27,9 @@ import com.composables.icons.lucide.Image
 import com.composables.icons.lucide.ImageOff
 import com.composables.icons.lucide.Inbox
 import com.composables.icons.lucide.Info
+import com.composables.icons.lucide.Lock
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.NotebookPen
 import com.composables.icons.lucide.Paperclip
 import com.composables.icons.lucide.Plus
 import com.composables.icons.lucide.QrCode
@@ -30,8 +37,11 @@ import com.composables.icons.lucide.Receipt
 import com.composables.icons.lucide.ScanLine
 import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.SearchX
+import com.composables.icons.lucide.ShieldCheck
 import com.composables.icons.lucide.Star
+import com.composables.icons.lucide.Store
 import com.composables.icons.lucide.TriangleAlert
+import com.composables.icons.lucide.Wallet
 import com.composables.icons.lucide.X
 
 /**
@@ -130,4 +140,28 @@ object AmIcons {
     val Expense: ImageVector get() = Lucide.ArrowUpRight
     /** Comprobante adjunto (sujeta-papeles). */
     val Attachment: ImageVector get() = Lucide.Paperclip
+    // ------------------------------------------------------------------
+    // Referencia Stitch (ADR-0015): glifos de filas, formularios y
+    // micro-estados. Un glifo por concepto; decorativos salvo indicación.
+    // ------------------------------------------------------------------
+    /** Comercio/entidad (fila de persona o entidad). */
+    val Store: ImageVector get() = Lucide.Store
+    /** Fecha/momento ocurrido. */
+    val Calendar: ImageVector get() = Lucide.Calendar
+    /** Momento registrado (reloj). */
+    val Clock: ImageVector get() = Lucide.Clock
+    /** Navegación hacia adelante (fila con detalle propio). */
+    val ChevronRight: ImageVector get() = Lucide.ChevronRight
+    /** Almacenamiento local (reaseguro de persistencia). */
+    val Database: ImageVector get() = Lucide.Database
+    /** Seguridad/verificación local. */
+    val ShieldCheck: ImageVector get() = Lucide.ShieldCheck
+    /** Moneda. */
+    val Wallet: ImageVector get() = Lucide.Wallet
+    /** Valor automático de solo lectura. */
+    val Lock: ImageVector get() = Lucide.Lock
+    /** Borrado de importe (⌫). */
+    val Erase: ImageVector get() = Lucide.Delete
+    /** Nota/concepto (lápiz de nota). */
+    val NoteEdit: ImageVector get() = Lucide.NotebookPen
 }

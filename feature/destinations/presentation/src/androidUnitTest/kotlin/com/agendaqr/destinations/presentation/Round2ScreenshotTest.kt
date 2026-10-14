@@ -6,6 +6,7 @@ import com.agendaqr.core.ui.components.AmIconBadge
 import com.agendaqr.core.ui.components.AmListRow
 import com.agendaqr.core.ui.components.AmSegmentedControl
 import com.agendaqr.core.ui.components.AmText
+import com.agendaqr.core.ui.components.AmTonalTag
 import com.agendaqr.core.ui.components.content
 import com.agendaqr.core.ui.theme.AmTheme
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -333,7 +334,17 @@ class Round2ScreenshotTest {
         )
         androidx.compose.foundation.layout.Column {
             AmSegmentedControl(
-                options = listOf(AppStrings.Todos, AppStrings.Pago, AppStrings.Cobro),
+                options = listOf(
+                    com.agendaqr.core.ui.components.AmSegmentedOption(AppStrings.Todos),
+                    com.agendaqr.core.ui.components.AmSegmentedOption(
+                        label = AppStrings.Pago,
+                        icon = com.agendaqr.core.ui.components.AmIcons.Expense,
+                    ),
+                    com.agendaqr.core.ui.components.AmSegmentedOption(
+                        label = AppStrings.Cobro,
+                        icon = com.agendaqr.core.ui.components.AmIcons.Income,
+                    ),
+                ),
                 selectedIndex = 0,
                 onSelect = {},
             )
@@ -341,7 +352,10 @@ class Round2ScreenshotTest {
                 listOf(pago, cobro).forEachIndexed { index, operation ->
                     AmListRow(
                         title = operationTitle(operation),
-                        subtitle = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
+                        subtitle = listOfNotNull(
+                            operationAmountText(operation),
+                            formatDate(operation.occurredAt),
+                        ).joinToString(" · "),
                         onClick = {},
                         leading = {
                             AmIconBadge(
@@ -349,10 +363,12 @@ class Round2ScreenshotTest {
                                 tone = operationTypeTone(operation.type),
                             )
                         },
-                        trailing = {
-                            operationAmount(operation)?.let { (text, tone) ->
-                                AmText(text, color = tone.content())
-                            }
+                        meta = {
+                            AmTonalTag(
+                                text = operationTypeLabel(operation.type),
+                                tone = operationTypeTone(operation.type),
+                                uppercase = true,
+                            )
                         },
                         showDivider = index < 1,
                     )
@@ -374,7 +390,17 @@ class Round2ScreenshotTest {
         )
         androidx.compose.foundation.layout.Column {
             AmSegmentedControl(
-                options = listOf(AppStrings.Todos, AppStrings.Pago, AppStrings.Cobro),
+                options = listOf(
+                    com.agendaqr.core.ui.components.AmSegmentedOption(AppStrings.Todos),
+                    com.agendaqr.core.ui.components.AmSegmentedOption(
+                        label = AppStrings.Pago,
+                        icon = com.agendaqr.core.ui.components.AmIcons.Expense,
+                    ),
+                    com.agendaqr.core.ui.components.AmSegmentedOption(
+                        label = AppStrings.Cobro,
+                        icon = com.agendaqr.core.ui.components.AmIcons.Income,
+                    ),
+                ),
                 selectedIndex = 2,
                 onSelect = {},
             )
@@ -382,7 +408,10 @@ class Round2ScreenshotTest {
                 listOf(pago, cobro).forEachIndexed { index, operation ->
                     AmListRow(
                         title = operationTitle(operation),
-                        subtitle = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
+                        subtitle = listOfNotNull(
+                            operationAmountText(operation),
+                            formatDate(operation.occurredAt),
+                        ).joinToString(" · "),
                         onClick = {},
                         leading = {
                             AmIconBadge(
@@ -390,10 +419,12 @@ class Round2ScreenshotTest {
                                 tone = operationTypeTone(operation.type),
                             )
                         },
-                        trailing = {
-                            operationAmount(operation)?.let { (text, tone) ->
-                                AmText(text, color = tone.content())
-                            }
+                        meta = {
+                            AmTonalTag(
+                                text = operationTypeLabel(operation.type),
+                                tone = operationTypeTone(operation.type),
+                                uppercase = true,
+                            )
                         },
                         showDivider = index < 1,
                     )

@@ -80,9 +80,11 @@ fun DestinationDetailScreen(
         snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
-            // Metadatos del destino como grupo (categoría + nota a 4 dp) en
-        // tarjeta compacta — solo si hay contenido que agrupar.
+            // Metadatos del destino como grupo (categoría, contenido
+        // decodificado y nota) en tarjeta compacta — solo si hay
+        // contenido que agrupar.
         val hasMetadata = destination.category != null ||
+            destination.qr.content?.takeIf { it.isNotBlank() } != null ||
             destination.note?.takeIf { it.isNotBlank() } != null
         if (hasMetadata) {
             AmListBody {
@@ -91,6 +93,9 @@ fun DestinationDetailScreen(
                     verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
                 ) {
                     destination.category?.let { AmMetaRow(label = AppStrings.Categoria, value = it) }
+                    destination.qr.content?.takeIf { it.isNotBlank() }?.let {
+                        AmMetaRow(label = AppStrings.Contenido, value = it)
+                    }
                     destination.note?.takeIf { it.isNotBlank() }?.let {
                         AmText(it, color = AmColor.TextSecondary)
                     }

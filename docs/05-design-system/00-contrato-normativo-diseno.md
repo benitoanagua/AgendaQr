@@ -48,7 +48,7 @@
 
 - **Claro**: página `#F5F5F5` (box), superficie `#FFFFFF`, secundaria `#F5F5F5`; texto `#333333`, secundario `#666666`.
 - **Oscuro**: página `#1A1A1A` (background), superficie `#242424` (elevación mínima para filas separadas), secundaria `#0A0A0A` (box, rellenos inset); texto `#E6E6E6`, secundario `#B3B3B3`.
-- **Separadores**: hairline `#EEEEEE` / `#2B2B2B` (referencia exacta).
+- **Separadores**: hairline `#F0F0F0` / `#2B2B2B` (`border-divider` exacta de la referencia Stitch).
 - **Lienzo del QR** (`qrCanvas`): blanco garantizado en ambos temas (zona de silencio escaneable); no conmuta con el tema.
 
 ### 4.3 Acento y estados
@@ -78,15 +78,16 @@
 
 ## 5. Tipografía
 
-- Familia de sistema en todos los roles (Roboto/San Francisco): ninguna fuente se empaqueta.
-- Roles semánticos: título de pantalla (`AmType.TitleLarge`, 18 sp Medium, en `AmTopBar` compacta de 56 dp), encabezado destacado (`AmType.Headline`, 24 sp, techo), título de sección (`AmTextStyles.SectionHeader`, 15 sp Medium), título de fila (Body 14 sp en `AmListRow`), cuerpo (14/20), etiqueta (`ButtonLabel`, 14 sp Medium; la referencia usa 17 sp en botones, retenemos 14 sp para el layout validado a 200 %), texto secundario/ayuda/error (`AmTextStyles.Support`/`Caption`, 12 sp), insignias y etiquetas de barra (11 sp). Tracking neutro en todos los roles.
+- Familia de sistema en todos los roles (Roboto/San Francisco): ninguna fuente se empaqueta. La referencia Stitch usa Inter; la diferencia es intencional (offline-first, sin descargas ni licencias por plataforma — ADR-0015).
+- Roles semánticos (referencia Stitch): título de pantalla (`AmType.TitleLarge`, 18 sp SemiBold, en `AmTopBar` compacta de 56 dp), encabezado destacado (`AmType.Headline`, 24 sp, techo), título de sección (`AmTextStyles.SectionHeader`, 18 sp SemiBold, color primario — headline-sm), título de fila (`AmTextStyles.RowTitle`, 15 sp Medium — label-lg), cuerpo (14/20), metadato compacto (`BodySmall`, 13/18 — body-sm), importe (`AmTextStyles.Amount`, 26 sp SemiBold — headline-lg-mobile), etiqueta de botón (`ButtonLabel`, 15 sp Medium — label-lg), texto secundario/ayuda/error (`AmTextStyles.Support`/`Caption`, 12 sp), tags e insignias (`AmTextStyles.Tag`, 11 sp SemiBold — label-sm), etiquetas de barra (11 sp). Tracking neutro en todos los roles.
 - Interlineado siempre > 1.1× su tamaño (`AmUiPolishContractTest`); el escalado de fuente 100/150/200 % se respeta y se prueba.
 - El tracking sigue los valores por defecto de M3 (`AmTracking`).
 
 ## 6. Espaciado y métrica
 
-- Escala: 4 · 8 · 12 · 16 · 20 · 24 · 32 (+40 excepcional) — `AmSpacing`; margen de pantalla 16; densidad de listas de la referencia (celda 12+12, hairlines).
-- `AmMetrics`: área táctil mínima 48 dp (`ControlMinSize`, invariante del gate; botones, chips, campos y filas conservan 48 dp de objetivo aunque su apariencia sea compacta), barra superior 56 dp (`TopBarHeight`), barra inferior 64 dp (`NavBarHeight`, sin píldora de Material), icono estándar 24 dp, `QrPreviewSize` 240, `ContentMaxWidth` 720 (medium/expanded), `DialogListMaxHeight` 320, marco del scanner 3 dp (`BorderStrong`), glifo del estado vacío 64 dp.
+- Escala: 4 · 8 · 12 · 16 · 20 · 24 · 32 (+40 excepcional) — `AmSpacing`; margen de pantalla 16; densidad de listas de la referencia (celda 12+12, hairlines inset a 56 dp bajo la marca de fila — `ListDividerInset`).
+- `AmMetrics`: área táctil mínima 48 dp (`ControlMinSize`, invariante del gate; botones, chips, campos, filas y opciones de segmentado conservan 48 dp de objetivo aunque su apariencia sea compacta), barra superior 56 dp (`TopBarHeight`), barra inferior 56 dp (`NavBarHeight`, referencia Stitch h-14; los ítems garantizan 44–48 dp por M3), icono estándar 24 dp, icono compacto 18 dp (`IconSizeCompact`), `QrPreviewSize` 240, `ContentMaxWidth` 720 (medium/expanded), `DialogListMaxHeight` 320, marco del scanner 3 dp (`BorderStrong`), glifo del estado vacío 64 dp.
+- Radios (DESIGN.md Stitch): base 8 dp para botones y entradas destacadas; 12 dp para tarjetas de lista, diálogos, buscador y marcos de medios; píldora para chips, tags, FAB y píldoras de estado. El hairline perimetral de las tarjetas es la excepción E-03.
 
 ## 7. Iconografía
 
@@ -106,9 +107,10 @@
 |---|---|---|
 | Estructura | `AmScreenScaffold`, `AmTopBar` (+ acciones, overflow), `AmNavBar`/`AmNavRail` (+ destinos, estado), `AmExtendedFab` | Barra inferior de destinos raíz; barra superior jerárquica con Atrás (título a la izquierda por convención Android); FAB extendido de plataforma |
 | Acciones | `AmPrimaryButton` (solid), `AmSecondaryButton` (outline de acento), `AmTextAction` (none), `AmDangerButton` (solid), `AmIconButton`, `AmFilterChip` (selector/outline + wathet), `AmSegmentedControl` (pista tonal `surfaceContainerHighest`, opción activa sobre píldora `Surface`, rol radio + 48 dp), `AmFavoriteToggle` | Fills solid/outline/none; radio 4; deshabilitado con opacidad .4; carga sin salto de ancho; Segmented de la referencia Stitch |
-| Formularios | `AmTextField` (sin borde, guía hairline en foco/error; label + helper + error accesible), `AmSearchField` (radio 6, fill box, borde de acento activo, teclado configurable, autofoco opt-in), `AmSearchTrigger` | Patrón Form/List; placeholder light; limpieza etiquetada; foco al entrar en Buscar |
+| Formularios | `AmTextField` (sin borde, guía hairline en foco/error; label + helper + error accesible + glifo de concepto opcional), `AmAmountField` (importe 26 sp con borrado ⌫ etiquetado y guía hairline, referencia S07), `AmSearchField` (radio 12, fill box, borde de acento activo, teclado configurable, autofoco opt-in), `AmSearchTrigger` | Patrón Form/List; placeholder light; limpieza etiquetada; foco al entrar en Buscar |
 | Superposiciones | `AmDialog` (título centrado 18; foco conservativo en destructivas), `AmDialogList` | Modal centrado; botonera de plataforma |
-| Datos | `AmListRow` (título 17, subtítulo 13, `meta` en línea propia, identidad de contexto, `leading` tipado — p. ej. insignia cobro/pago —, divisor opt-in, semántica `selected`), `AmBadge` (tag outline/round), `AmTonalTag` (tag con fondo tonal del par content/container), `AmIconBadge` (glifo del tono sobre bloque tonal: identidad tipada decorativa), `AmMetaRow` (metadatos compactos label/valor), `AmSectionHeader`, `AmSection`, `AmPivot` (indicador de acento, desplazable) | List/Item, Tag round tonal, metadatos compactos de la referencia Stitch |
+| Datos | `AmListRow` (título 15/500, subtítulo caption, `meta` en línea propia, identidad de contexto, `leading` tipado — tile tonal 40 dp —, divisor opt-in con inset a 56 dp, semántica `selected`), `AmListBody` (tarjeta 12 dp con hairline perimetral E-03), `AmHairline` (separador del sistema), `AmBadge` (tag outline/round), `AmTonalTag` (tag tonal con par content/container, 11 sp SemiBold), `AmIconBadge` (glifo del tono sobre tile tonal 40 dp), `AmMetaRow` (metadatos compactos label/valor), `AmSectionHeader` (headline-sm 18/600 primario), `AmSection`, `AmPivot` (indicador de acento, desplazable) | List/Item, Tag round tonal, metadatos compactos de la referencia Stitch |
+| Estados | `AmStatusBanner` (radio 12), `AmStatusPill` (reaseguro tonal o inverso "Modo local", referencia S01/S07), `AmLoading`, `AmEmptyState` (glifo decorativo + título + acción), `AmSkeleton`, `AmLoadMoreFooter`, `AmQuickAction` (tile de acción rápida S01) | Empty; aviso persistente de producto |
 | Estados | `AmStatusBanner` (radio 8), `AmLoading`, `AmEmptyState` (glifo decorativo + título + acción), `AmSkeleton`, `AmLoadMoreFooter` | Empty; aviso persistente de producto |
 | Feedback | `AmFeedbackHost`/`AmSnackbarHost`/`AmFeedbackEvent` (háptica + anuncio + snackbar inferior en Android) | Toast de plataforma; anuncio por evento |
 | Medios | `AmQrPreview` (expect/actual, tamaño configurable 1:1, revisión a 320 dp; fallo de decodificación = glifo explícito, nunca rectángulo blanco), `AmMediaFrame` (Surface con radio 8, la tarjeta de la referencia: el límite es el bloque tonal, sin bordes — gate E-01/E-02), `AmScannerFrame` (esquinas de acento en canvas sobre el preview real; el viewport tonal se retiró por reservar espacio vacío) | Card (radio 8) |
@@ -145,6 +147,7 @@ El gate compara esta tabla con `exceptionRegistry` en `build-logic/agendaqr.desi
 |---|---|---|
 | E-01 | Borde outline del botón secundario (fill outline de la referencia: borde de acento 1 dp, no hairline decorativo) | `border:AmButtons.kt` — verificado por la suite (`AmSecondaryButton` se renderiza y conserva 48 dp en `AmResponsiveLayoutContractTest`/`Round2FontScaleTest`) |
 | E-02 | Borde outline de la insignia de estado (Tag outline de la referencia: borde de 1 dp del tono, no hairline decorativo) | `border:AmLists.kt` — verificado por la suite (`AmBadge` se renderiza en `AppStatusHostTest`/`ScreensA11yCoverageTest`) |
+| E-03 | Hairline perimetral del cuerpo de lista/tarjeta (`AmListBody`: "Flat #ffffff surface delineated by a crisp 1px solid #f0f0f0 border", DESIGN.md Stitch — el límite de la tarjeta es el borde, no una sombra) | `border:AmLists.kt` — verificado por las capturas de referencia (ADR-0007) |
 
 Para proponer una excepción: registrarla aquí y en el gate en el MISMO cambio, con justificación de accesibilidad y prueba asociada.
 

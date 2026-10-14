@@ -60,22 +60,30 @@ Contexto es una superficie de continuidad, no una nueva taxonomía de navegació
 
 ## 4. Pantallas
 
-### S01 — Inicio (V1.3, ADR-0013)
+### S01 — Inicio (V1.4 + referencia Stitch, ADR-0015)
 Intención: encontrar o iniciar algo. Buscar domina visualmente; Añadir y Registrar son acciones secundarias.
 
 Composición (la intención no cambia; solo cambia la presentación):
 
     [barra superior: título "Agenda QR" — título estándar]
+    [píldora de reaseguro "Guardado en tu teléfono" (local-first, siempre cierta)]
     [campo de búsqueda como entrada a Buscar — primer bloque, dominante]
-    [sección "Recientes": lista convencional de filas]
-      [favorito: conmutador de estrella por fila]
+    [filtros de la lista como píldoras: Todo · Favoritos (activo sólido)]
+    [acciones rápidas: Escanear QR (→ S02) · Registrar pago (→ S07)]
+    [sección "Recientes" con conteo y "Ver todo": lista convencional de filas]
+      [fila: tile QR tonal · título · metadato caption · favorito (estrella)]
       [estado vacío con acción "Añadir" cuando no hay nada]
-    [botón flotante extendido "Añadir"]
+    [tarjeta de disponibilidad sin conexión]
+    [botón flotante extendido "Añadir" → hoja "¿Qué quieres añadir?": QR / contexto / actividad]
 
 - Inicio es una lista convencional (sin tiles, sin tile vivo): una sola
   entrada de búsqueda (sin duplicar campo superior y acción inferior) y
   las acciones de pantalla viven en la barra superior, el FAB y la
   barra de navegación inferior.
+- El FAB abre la hoja de creación con las tres creaciones reales del
+  producto (traer QR → S02, crear contexto → diálogo de creación,
+  registrar actividad → S07); la hoja se materializa como diálogo por
+  la limitación de `ModalBottomSheet` bajo Robolectric (ADR-0013).
 - Favoritos es un filtro de la propia lista (y del cuerpo de Inicio),
   no un destino aparte.
 - Navegación inferior (Inicio · Buscar · Actividades · Contextos) solo

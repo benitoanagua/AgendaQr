@@ -4,6 +4,7 @@
  */
 package com.agendaqr.destinations.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -14,9 +15,10 @@ import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.domain.*
 
 /**
- * Selector de tipo de actividad (S07): control segmentado mutuamente
- * excluyente (referencia Stitch) — el tipo activo sobre píldora clara,
- * sin dos chips compitiendo. La selección vive en la semántica de radio.
+ * Selector de tipo de actividad (S07, referencia Stitch): control
+ * segmentado con glifo direccional — Pago activo en acento, Cobro activo
+ * en success (la opción activa comunica el significado del segmento).
+ * Mutuamente excluyente por semántica de radio.
  */
 @Composable
 internal fun OperationTypeSelector(
@@ -25,7 +27,17 @@ internal fun OperationTypeSelector(
     modifier: Modifier = Modifier,
 ) {
     AmSegmentedControl(
-        options = listOf(AppStrings.Pago, AppStrings.Cobro),
+        options = listOf(
+            com.agendaqr.core.ui.components.AmSegmentedOption(
+                label = AppStrings.Pago,
+                icon = com.agendaqr.core.ui.components.AmIcons.Expense,
+            ),
+            com.agendaqr.core.ui.components.AmSegmentedOption(
+                label = AppStrings.Cobro,
+                icon = com.agendaqr.core.ui.components.AmIcons.Income,
+                activeTone = com.agendaqr.core.ui.components.AmTone.Success,
+            ),
+        ),
         selectedIndex = if (type == OperationType.PAGO) 0 else 1,
         onSelect = { onSelect(if (it == 0) OperationType.PAGO else OperationType.COBRO) },
         modifier = modifier,
@@ -126,6 +138,8 @@ internal fun OperationEditorScreen(
             )
         },
     ) {
+        // Error recuperable ARRIBA, visible sin scroll, junto al resto de
+        // estados de la pantalla (§10).
         state.error?.let { err ->
             AmStatusBanner(
                 err.display(),
@@ -140,53 +154,187 @@ internal fun OperationEditorScreen(
                 onDismiss = { viewModel.onAction(OperationAction.ClearError) },
             )
         }
+        // Reaseguro local-first de la referencia S07: SIEMPRE cierto (la
+        // actividad se guarda en el dispositivo) y el motor local real.
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+        ) {
+            com.agendaqr.core.ui.components.AmStatusPill(
+                text = AppStrings.ModoLocal,
+                inverse = true,
+            )
+            AmIcon(
+                imageVector = com.agendaqr.core.ui.components.AmIcons.Database,
+                contentDescription = null,
+                size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
+                tint = AmColor.TextTertiary,
+            )
+            AmText(AppStrings.SqliteLocal, color = AmColor.TextTertiary)
+        }
         // Tipo con semántica de selección (segmentado, no dos botones
         // primarios compitiendo): Guardar queda como única acción
-        // principal (§1). El error recuperable vive ARRIBA, visible sin
-        // scroll, junto al resto de estados de la pantalla.
+        // principal (§1).
         OperationTypeSelector(
             type = type,
             onSelect = { type = it },
         )
-        // Sección "Detalles de la actividad" (referencia Stitch): los
-        // campos agrupados por significado dentro de un solo cuerpo.
-        AmSectionHeader(text = AppStrings.DetallesDeLaActividad)
+        // Tarjeta de importe (referencia S07): entrada grande con
+        // borrado ⌫ y ayuda de validación.
         AmListBody {
-            AmTextField(
-                label = AppStrings.MontoOpcional,
-                value = amount,
-                onValueChange = { amount = it },
-                modifier = Modifier.fillMaxWidth(),
-                // Teclado decimal: el campo es un monto (presentación,
-                // sin cambiar la validación existente).
-                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal,
-                ),
-            )
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(AmSpacing.Lg),
+                verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+            ) {
+                AmAmountField(
+                    label = AppStrings.MontoOpcional,
+                    value = amount,
+                    onValueChange = { amount = it },
+                    onClear = { amount = "" },
+                    clearLabel = AppStrings.BorrarImporte,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal,
+                    ),
+                )
+                Row(
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+                ) {
+                    AmIcon(
+                        imageVector = com.agendaqr.core.ui.components.AmIcons.CircleCheck,
+                        contentDescription = null,
+                        size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
+                        tint = AmColor.Success,
+                    )
+                    AmText(AppStrings.MontoHint, color = AmColor.TextTertiary)
+                }
+            }
+        }
+        // Tarjeta de momento (referencia S07): ocurrido editable +
+        // registrado automático de solo lectura (dato real del dominio).
+        AmListBody {
             AmTextField(
                 label = AppStrings.Fecha,
                 value = dateText,
                 onValueChange = { dateText = it },
-                modifier = Modifier.fillMaxWidth(),
                 isError = dateError,
                 errorMessage = if (dateError) AppStrings.FormatoFecha else null,
+                helperMessage = AppStrings.CuantoOcurrio,
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Number,
+                ),
+                leadingIcon = com.agendaqr.core.ui.components.AmIcons.Calendar,
+                modifier = Modifier.padding(horizontal = AmSpacing.Lg),
             )
-            AmTextField(label = AppStrings.MonedaOpcional, value = currency, onValueChange = { currency = it }, modifier = Modifier.fillMaxWidth())
-            AmTextField(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, modifier = Modifier.fillMaxWidth())
+            AmHairline()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Md),
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Md),
+            ) {
+                AmIcon(
+                    imageVector = com.agendaqr.core.ui.components.AmIcons.Clock,
+                    contentDescription = null,
+                    tint = AmColor.TextTertiary,
+                )
+                Column {
+                    AmText(AppStrings.MomentoRegistrado, color = AmColor.TextSecondary)
+                    AmText(AppStrings.FirmaTemporal, color = AmColor.TextTertiary)
+                }
+                Box(
+                    modifier = Modifier
+                        .background(
+                            AmColor.SurfaceContainerLow,
+                            com.agendaqr.core.ui.theme.AmShapes.Large,
+                        )
+                        .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
+                ) {
+                    Row(
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+                    ) {
+                        AmText(
+                            formatDate(existing?.createdAt ?: nowMillis()),
+                            color = AmColor.TextSecondary,
+                        )
+                        AmIcon(
+                            imageVector = com.agendaqr.core.ui.components.AmIcons.Lock,
+                            contentDescription = null,
+                            size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
+                            tint = AmColor.TextTertiary,
+                        )
+                    }
+                }
+            }
         }
-        AmSecondaryButton(
-            label = contextSelection.contextId?.let { id -> AppStrings.ParaContextoElegido + (state.contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico) }
-                ?: AppStrings.ParaElegirContexto,
-            onClick = { contextSelection = contextSelection.openPicker() },
-        )
-        // Sección "Notas": el detalle opcional vive en su propio grupo.
-        AmSectionHeader(text = AppStrings.Notas)
+        // Tarjeta de datos opcionales (referencia S07): persona, moneda,
+        // concepto y nota con glifos de la referencia; el contexto vive en
+        // su propia tarjeta de selección (S08).
         AmListBody {
-            AmTextField(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, modifier = Modifier.fillMaxWidth())
-            AmTextField(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, modifier = Modifier.fillMaxWidth())
+            AmTextField(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, leadingIcon = com.agendaqr.core.ui.components.AmIcons.Store, modifier = Modifier.padding(horizontal = AmSpacing.Lg))
+            AmHairline()
+            AmTextField(label = AppStrings.MonedaOpcional, value = currency, onValueChange = { currency = it }, leadingIcon = com.agendaqr.core.ui.components.AmIcons.Wallet, modifier = Modifier.padding(horizontal = AmSpacing.Lg))
+            AmHairline()
+            AmTextField(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, leadingIcon = com.agendaqr.core.ui.components.AmIcons.NoteEdit, modifier = Modifier.padding(horizontal = AmSpacing.Lg))
+            AmHairline()
+            AmTextField(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, singleLine = false, modifier = Modifier.padding(horizontal = AmSpacing.Lg))
+        }
+        // Contexto (S08): fila de selección con chevron; Cancelar nunca
+        // destruye el draft (semántica del selector intacta).
+        AmListBody {
+            AmListRow(
+                title = contextSelection.contextId?.let { id ->
+                    AppStrings.ParaContextoElegido +
+                        (state.contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico)
+                } ?: AppStrings.ParaElegirContexto,
+                subtitle = AppStrings.PuedesSinContexto,
+                onClick = { contextSelection = contextSelection.openPicker() },
+                leading = {
+                    AmIconBadge(
+                        icon = com.agendaqr.core.ui.components.AmIcons.QrCode,
+                        tone = AmTone.Info,
+                    )
+                },
+                trailing = {
+                    AmIcon(
+                        imageVector = com.agendaqr.core.ui.components.AmIcons.ChevronRight,
+                        contentDescription = null,
+                        tint = AmColor.TextTertiary,
+                    )
+                },
+            )
         }
         if (existing == null) {
-            AmText(AppStrings.PodrasAdjuntarComprobantesMasAdelante, color = AmColor.TextSecondary, size = AmType.Label)
+            // RF-10: los comprobantes se gestionan en el detalle (ADR-0015
+            // §6); en el registro nuevo, la promesa es honesta y visible.
+            Row(
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+            ) {
+                AmIcon(
+                    imageVector = com.agendaqr.core.ui.components.AmIcons.Attachment,
+                    contentDescription = null,
+                    size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
+                    tint = AmColor.TextTertiary,
+                )
+                AmText(AppStrings.PodrasAdjuntarComprobantesMasAdelante, color = AmColor.TextSecondary)
+            }
+        }
+        // Texto de confianza bajo la acción (referencia S07/ADR-0008).
+        Row(
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+        ) {
+            AmIcon(
+                imageVector = com.agendaqr.core.ui.components.AmIcons.ShieldCheck,
+                contentDescription = null,
+                size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
+                tint = AmColor.Success,
+            )
+            AmText(AppStrings.TuInformacionEstaGuardadaEnElDispositivo, color = AmColor.TextSecondary)
         }
     }
 

@@ -169,7 +169,7 @@ fun AmMediaFrame(
     content: @Composable () -> Unit,
 ) {
     Box(
-        modifier = modifier.background(AmColor.Surface, AmShapes.Large),
+        modifier = modifier.background(AmColor.Surface, AmShapes.ExtraLarge),
         contentAlignment = Alignment.Center,
     ) {
         content()

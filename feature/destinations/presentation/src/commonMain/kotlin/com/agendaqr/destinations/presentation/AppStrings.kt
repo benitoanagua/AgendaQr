@@ -255,4 +255,30 @@ internal object AppStrings {
     /** Signo direccional del monto: cobro = entrada (+), pago = salida (−). */
     val SignoCobro = "+"
     val SignoPago = "−"
+    // ------------------------------------------------------------------
+    // Referencia Stitch — pasada de fidelidad (ADR-0015 revisada).
+    // ------------------------------------------------------------------
+    /** Píldora de reaseguro local-first (S01, siempre cierta). */
+    val GuardadoEnTuTelefono = "Guardado en tu teléfono"
+    val VerTodo = "Ver todo"
+    val DisponibilidadTotal = "Disponibilidad total"
+    val EscanearQr = "Escanear QR"
+    val AbrirLaCamara = "Abrir la cámara"
+    val RegistrarPago = "Registrar pago"
+    val CargarActividad = "Cargar actividad"
+    val QueQuieresAnadir = "¿Qué quieres añadir?"
+    val GuardaUnComprobanteOMovimiento = "Guarda un comprobante o movimiento"
+    /** S07: ayuda del importe y momento de la operación. */
+    val MontoHint = "Ingreso numérico rápido y validado en tiempo real."
+    val CuantoOcurrio = "Cuándo ocurrió la operación"
+    val MomentoRegistrado = "Momento registrado"
+    val FirmaTemporal = "Firma temporal del sistema"
+    val PuedesSinContexto = "Puedes registrar sin asociar un contexto"
+    val ModoLocal = "Modo local · En tu dispositivo"
+    val SqliteLocal = "SQLite local"
+    /** Detalle de actividad: caja de metadatos temporales. */
+    val FechaDeOperacion = "Fecha de operación"
+    val RegistradoEnDispositivo = "Registrado en dispositivo"
+    /** Acción de borrado del importe (accesible). */
+    val BorrarImporte = "Borrar importe"
 }

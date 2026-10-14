@@ -69,6 +69,54 @@ La referencia Stitch añade patrones que V1.4 no cubría:
 - El contrato normativo registra los componentes nuevos (§9), los glifos
   financieros (§7) y esta decisión.
 
+## Revisión de fidelidad (2026-10-13, pasada Stitch completa)
+
+El paquete de referencia se amplió a las pantallas reales del producto
+(S01–S12); esta pasada adoptó la composición por pantalla, no solo los
+patrones:
+
+- **Tipografía**: título de sección 18/600 en color PRIMARIO
+  (headline-sm), título de fila 15/500 (label-lg), metadato 13
+  (body-sm), importe 26 SemiBold, botón 15/500 (label-lg), tags 11/600
+  (label-sm). `AmTypographyTest` y `S02UiPolishTest` repinneados.
+- **Formas**: botones 8 dp, tarjetas/diálogos/buscador/marcos 12 dp,
+  chips/tags/FAB/píldoras full-pill. Barra inferior 56 dp (h-14).
+- **Superficies**: tarjetas con hairline perimetral `#F0F0F0`
+  (nueva excepción E-03 del gate; DESIGN.md: "flat white surface
+  delineated by a crisp 1px solid #f0f0f0 border"). Sin sombras: la
+  propia DESIGN.md prohíbe sombras pesadas y el sistema ya resuelve la
+  elevación por tono (los `shadow-sm` del HTML son sutiles y quedan
+  cubiertos por el hairline + contraste tonal).
+- **Divisores inset a 56 dp** bajo la marca de fila (referencia ml-14).
+- **S01**: píldora de reaseguro "Guardado en tu teléfono" (siempre
+  cierta), acciones rápidas reales (Escanear QR → S02; Registrar pago →
+  S07 vía VM central), encabezado Recientes con conteo y "Ver todo"
+  (expande paginación), tarjeta de disponibilidad, y FAB que abre la
+  hoja "¿Qué quieres añadir?" con las tres creaciones reales (QR,
+  contexto, actividad). La hoja se materializa como `AmDialog` por la
+  limitación documentada de `ModalBottomSheet` bajo Robolectric.
+- **S07**: píldora inversa "Modo local" + "SQLite local" (ambas ciertas),
+  segmentado con glifos, tarjeta de importe con `AmAmountField`
+  (26 sp + ⌫), tarjeta de momento (ocurrido editable + registrado
+  automático de solo lectura con dato real `createdAt`), opcionales con
+  glifos de concepto, contexto como fila con chevron, texto de
+  confianza bajo la acción.
+- **Detalle de actividad**: hero con píldora de TIPO (pago danger /
+  cobro success, con texto), cifra NEUTRA con signo — la referencia NO
+  colorea el importe y esta pasada REVIERTe el coloreado de la iteración
+  anterior —, contraparte 18/600 y caja temporal (ocurrido/registrado).
+- **Divisores y colores no adoptados**: `#0057C2`/`#1677FF` dobles de la
+  referencia se consolidan en el acento único `#1668DC` (es literalmente
+  el azul del CTA "Guardar operación" de S07 y pasa AA como texto);
+  success/danger de la referencia (`#52c41a`/`#ff4d4f`) siguen
+  recalibrados por AA (§4.4). Inter sigue sin empaquetarse.
+- **Pendientes honestos**: "Al día" del header de S01 requiere un estado
+  global de sincronización que Inicio no posee (solo hay estado por
+  elemento); los chips por TIPO de S01 requieren un feed mixto
+  (contextos+QR+actividades) que no existe en la lista de destinos — se
+  muestran los filtros reales (Todo · Favoritos). Los comprobantes en el
+  editor siguen en el detalle (§6).
+
 ## Alternativas descartadas
 
 - **Copiar el HTML/Tailwind literalmente:** no es una arquitectura

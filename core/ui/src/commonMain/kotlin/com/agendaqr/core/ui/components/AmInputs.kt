@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -37,6 +39,7 @@ import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
+import com.agendaqr.core.ui.theme.AmType
 
 /**
  * Entradas (patrón Form/List de la referencia): campo SIN borde, fondo
@@ -67,6 +70,9 @@ fun AmTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    /** Glifo decorativo del concepto del campo (referencia Stitch:
+     * comercio, nota, moneda…). El label sigue siendo la señal. */
+    leadingIcon: ImageVector? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
     Column(
@@ -97,6 +103,15 @@ fun AmTextField(
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             visualTransformation = visualTransformation,
+            leadingIcon = leadingIcon?.let { glyph ->
+                {
+                    AmIcon(
+                        imageVector = glyph,
+                        contentDescription = null,
+                        tint = if (isError) AmColor.Danger else AmColor.TextTertiary,
+                    )
+                }
+            },
             trailingIcon = trailing?.let { slot -> { slot() } },
             shape = AmShapes.Medium,
             colors = TextFieldDefaults.colors(
@@ -215,7 +230,7 @@ fun AmSearchField(
         },
         singleLine = true,
         label = { Text(label) },
-        shape = AmShapes.Medium,
+        shape = AmShapes.ExtraLarge,
         leadingIcon = { AmIcon(imageVector = AmIcons.Search, contentDescription = null, tint = AmColor.TextTertiary) },
         trailingIcon = if (onClear != null && value.isNotEmpty()) {
             {
@@ -286,5 +301,90 @@ fun AmSearchTrigger(
                     }
                 },
         )
+    }
+}
+
+/**
+ * Entrada de importe (referencia Stitch S07): cifra grande (26 sp
+ * SemiBold) con símbolo opcional de moneda, acción de borrado ⌫
+ * etiquetada y guía hairline — la altura la fija el contenido con un
+ * objetivo táctil de 48 dp en el borrado. El valor sigue siendo texto
+ * libre del dominio; nada se formatea ni valida aquí.
+ */
+@Composable
+fun AmAmountField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    /** Símbolo mostrado a la izquierda (copy del llamador; p. ej. "$"). */
+    currencySymbol: String? = null,
+    /** Borrado del importe; su descripción accesible es [clearLabel]. */
+    onClear: (() -> Unit)? = null,
+    clearLabel: String = "",
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+) {
+    if (onClear != null) require(clearLabel.isNotBlank()) {
+        "AmAmountField: onClear necesita clearLabel (copy del llamador)"
+    }
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+    ) {
+        Text(label, style = AmTextStyles.BodySmall, color = AmColor.TextSecondary)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+        ) {
+            currencySymbol?.let {
+                Text(
+                    it,
+                    style = AmTextStyles.Amount,
+                    color = AmColor.AccentText,
+                )
+            }
+            androidx.compose.foundation.text.BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier
+                    .weight(1f)
+                    .defaultMinSize(minHeight = AmMetrics.ControlMinSize),
+                textStyle = androidx.compose.ui.text.TextStyle(
+                    fontSize = AmType.Amount,
+                    lineHeight = AmType.LineAmount,
+                    fontFamily = AmType.FamilyUi,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                    color = AmColor.TextPrimary,
+                ),
+                keyboardOptions = keyboardOptions,
+                singleLine = true,
+                cursorBrush = androidx.compose.ui.graphics.SolidColor(AmColor.Focus),
+                decorationBox = { inner ->
+                    Box(contentAlignment = Alignment.CenterStart) {
+                        if (value.isEmpty()) {
+                            Text(
+                                label,
+                                style = AmTextStyles.Amount,
+                                color = AmColor.TextTertiary,
+                            )
+                        }
+                        inner()
+                    }
+                },
+            )
+            if (onClear != null) {
+                AmIconButton(
+                    contentDescription = clearLabel,
+                    onClick = onClear,
+                ) {
+                    AmIcon(
+                        imageVector = AmIcons.Erase,
+                        contentDescription = null,
+                        tint = AmColor.TextTertiary,
+                    )
+                }
+            }
+        }
+        HorizontalDivider(thickness = AmMetrics.Border, color = AmColor.Divider)
     }
 }
