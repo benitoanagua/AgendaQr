@@ -24,8 +24,10 @@ interface RemoteDestinationRepository {
 }
 
 class SupabaseDestinationRepository(
-    private val client: SupabaseClient = AgendaQrSupabase.client,
+    /** Resuelto al usar el repositorio, no al construirlo (ver nota en SupabaseContextRepository). */
+    private val clientProvider: () -> SupabaseClient = { AgendaQrSupabase.client },
 ) : RemoteDestinationRepository {
+    private val client: SupabaseClient get() = clientProvider()
 
     override suspend fun observe(): List<Destination> =
         client.from("destinations")

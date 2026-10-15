@@ -30,8 +30,10 @@ interface RemoteComprobanteRepository {
 }
 
 class SupabaseComprobanteRepository(
-    private val client: SupabaseClient = AgendaQrSupabase.client,
+    /** Resuelto al usar el repositorio, no al construirlo (ver nota en SupabaseContextRepository). */
+    private val clientProvider: () -> SupabaseClient = { AgendaQrSupabase.client },
 ) : RemoteComprobanteRepository {
+    private val client: SupabaseClient get() = clientProvider()
 
     private val bucket get() = client.storage.from("comprobantes")
 

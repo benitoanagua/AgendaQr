@@ -14,8 +14,9 @@
 | V1.3 | 2026-10-12 | Enmienda por ADR-0013 (sistema de diseño propio AgendaMobile): §12 actualizado a la autoría, paleta, formas y modo oscuro de AgendaMobile. Intención, navegación, modelo mental, reglas de negocio, accesibilidad y copy: intactos. |
 | V1.4 | 2026-10-13 | Enmienda por ADR-0014 (referencia Ant Design Mobile + navegación convencional Android/iOS): §12 actualizado a la referencia, paleta, radios y componentes oficiales; navegación jerárquica y de destinos conforme a plataforma. Intención, navegación conceptual, modelo mental, reglas de negocio, accesibilidad y copy: intactos. |
 | V1.5 | 2026-10-13 | Enmienda de compacidad (escala compacta neutra): §12 delega tipografía (cuerpo 14, título 18, tracking neutro), barras compactas (superior 56 dp, inferior 64 dp sin píldora) y densidad al contrato normativo. Intención, flujos, reglas de negocio, accesibilidad y copy: intactos. |
+| V1.6 | 2026-10-14 | Enmienda por ADR-0016 (identidad local sin cuenta): §4 añade S00 Acceso local (configurar PIN en el primer arranque, desbloquear con PIN) y S01 cambia "Cerrar sesión" por "Cuenta y respaldo" + "Bloquear" en el menú "…". El acceso deja de ser una pantalla de login remoto. Modelo mental, reglas de negocio, accesibilidad y copy de las pantallas existentes: intactos. |
 
-La implementación vigente corresponde a V1.4. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/09-implementacion/01-estado.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
+La implementación vigente corresponde a V1.6. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/09-implementacion/01-estado.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
 ## 1. Contrato principal
 
@@ -60,6 +61,19 @@ Contexto es una superficie de continuidad, no una nueva taxonomía de navegació
 
 ## 4. Pantallas
 
+### S00 — Acceso local (V1.6, ADR-0016)
+Intención: entrar al dispositivo propio. No es un login: no hay correo, contraseña ni red.
+
+    PRIMER ARRANQUE      configurar PIN (código + confirmación) → Guardar
+    ARRANQUES POSTERIORES desbloquear con PIN
+
+- El perfil local se crea solo, sin cuenta; el PIN protege el acceso al dispositivo.
+- El PIN es de 4 a 12 dígitos, campo numérico oculto; el error se asocia al campo.
+- Confirmación distinta → error "no coinciden" sin crear credencial.
+- Código incorrecto → error con intentos restantes; al agotar intentos hay un bloqueo temporal progresivo.
+- El bloqueo ocurre al pasar la app a segundo plano; al reanudar se vuelve a pedir el PIN.
+- El PIN es local; nunca viaja a la red y no es la clave de cifrado de los datos.
+
 ### S01 — Inicio (V1.4 + referencia Stitch, ADR-0015)
 Intención: encontrar o iniciar algo. Buscar domina visualmente; Añadir y Registrar son acciones secundarias.
 
@@ -90,7 +104,7 @@ Composición (la intención no cambia; solo cambia la presentación):
   en las superficies raíz; cambiar de destino conserva la raíz del back
   stack (Back desde otro destino vuelve a Inicio; desde Inicio sale de
   la app).
-- Cerrar sesión vive en el menú "…" de la barra superior.
+- El menú "…" de la barra superior de Inicio ofrece "Cuenta y respaldo" (nube opcional) y "Bloquear".
 
 ### S02 — Añadir (V1.3, ADR-0013)
 Intención: traer algo que el usuario ya tiene.

@@ -23,7 +23,7 @@ internal fun HomeSurface(
     state: DestinationsUiState,
     contextState: ContextsUiState,
     graph: AuthenticatedSessionGraph,
-    onSignOut: () -> Unit,
+    onLock: () -> Unit,
     nav: AppBackStack,
     navChrome: AmNavChromeState? = null,
     appHosts: AppHosts? = null,
@@ -56,7 +56,10 @@ internal fun HomeSurface(
                 appHosts = appHosts,
                 onOpenSearch = { onSearchOpened(); nav.push(AppRoute.Search) },
                 onOpenContexts = { nav.push(AppRoute.Contexts) },
-                onSignOut = onSignOut,
+                onLock = onLock,
+                // Cuenta y respaldo es OPCIONAL: se abre como superficie más
+                // en el stack; la app local no depende de ella.
+                onOpenAccount = { nav.push(AppRoute.Account) },
                 syncLookup = syncLookup,
                 // Acción rápida / FAB (referencia MCP): traer un QR → S02,
                 // con cámara y galería dentro del flujo real.

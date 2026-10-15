@@ -12,7 +12,11 @@
 |---|---|---|
 | Dominio (operaciones, comprobantes, contextos) | Implementado | domain tests |
 | Datos (Supabase local-first, sync queue) | Implementado | data tests |
-| UX/UI V1.4 (referencia Ant Design Mobile, S01–S12) | Implementado | Robolectric suite + hashes visuales + gate del design system |
+| Identidad local sin cuenta (perfil local + namespace por perfil) | Implementado | domain/data tests + `AgendaQrLocalStartupTest` (arranque real) |
+| Acceso local con PIN (S00: configurar/confirmar, desbloquear, bloqueo) | Implementado | `LocalAccessGateTest` + Robolectric del arranque real (iOS: compila, runtime NO VERIFICADO) |
+| Migración de instalaciones previas al perfil local | Implementado | data tests (idempotencia, no borra origen, no mezcla cuentas, detección por claves sin cliente remoto) |
+| Nube opcional ("Cuenta y respaldo" detrás de Inicio) | Implementado | compilación Android/iOS + gate; sincronización real con backend NO VERIFICADA |
+| UX/UI V1.6 (referencia Ant Design Mobile, S00 + S01–S12) | Implementado | Robolectric suite + hashes visuales + gate del design system |
 | Chrome e insets (TopBar, NavigationBar/NavigationRail, Scaffold con contentWindowInsets) | Implementado | Robolectric suite + gate |
 | Edge-to-edge Android (`enableEdgeToEdge`) | Implementado | ensamblado; runtime NO VERIFICADO (dispositivo) |
 | Predictive back (PredictiveBackHandler con progreso) | Implementado | compilación 3 targets; gesto NO VERIFICADO (dispositivo) |
@@ -39,6 +43,8 @@ dispositivo físico o red). No se declaran PASS.
 | Photo Picker en dispositivo (contractos del sistema) | Robolectric ejecuta el flujo unitario; el picker visual requiere dispositivo | `ANDROID_PHYSICAL_DEVICE_TEST.md` |
 | Revisión visual de las capturas Roborazzi regeneradas | El hash PASS es determinista y el análisis de bandas/regiones es programático; el ojo humano valida la composición | abrir `feature/destinations/presentation/build/roborazzi/*.png` (22 capturas × claro/oscuro) |
 | Supabase acceptance (JDBC) | Requiere base de datos | `:supabase:acceptance:test` con `DATABASE_URL` |
+| Sincronización real contra Supabase (subida/bajada) | Requiere backend y cuenta reales; no se ejercita en tests unitarios | prueba de aceptación contra un proyecto Supabase |
+| Desbloqueo biométrico en dispositivo | No implementado todavía; el PIN es el mecanismo actual | implementación nativa + dispositivo |
 
 ## Límites conocidos (decisiones, no bugs)
 
@@ -67,12 +73,37 @@ dispositivo físico o red). No se declaran PASS.
   `WindowSizeClass`; su render real en tablet/plegable es NO VERIFICADO
   (no hay dispositivo).
 
+## No implementado en esta pasada (alcance declarado, no defecto)
+
+Se listan explícitamente para no declararlos cubiertos (ADR-0016):
+
+- **Cifrado de datos en reposo con el PIN — NO IMPLEMENTADO.** El PIN es una
+  puerta de acceso local (verificador PBKDF2 con sal), no una clave derivada de
+  los datos. Los datos locales NO están cifrados con el PIN.
+- **Desbloqueo biométrico (`BiometricPrompt`/`LocalAuthentication`) — NO
+  IMPLEMENTADO.** El PIN es el único mecanismo de desbloqueo. La taxonomía de
+  errores biométricos (cancelado, no inscrito, bloqueo del sensor, recuperable)
+  tampoco existe todavía.
+- **Migración de los bytes de comprobantes del directorio heredado — NO
+  IMPLEMENTADO.** La migración copia las colecciones serializadas; los archivos
+  antiguos (`.../comprobantes/<user_id>/`) se conservan en su ruta y no se
+  copian a la del perfil local.
+- **Vínculo explícito perfil local ↔ cuenta remota — NO IMPLEMENTADO.** "Cuenta
+  y respaldo" permite entrar/salir sin borrar datos locales, pero no existe el
+  enlace perfil↔cuenta con semántica de respaldo por dispositivo.
+- **Canal de recuperación del PIN — NO IMPLEMENTADO.** Olvidar el PIN no tiene
+  recuperación en la app; restablecer la protección solo es posible desde
+  dentro de la app ya desbloqueada.
+
 ## Puertas de calidad
 
 | Puerta | Comando | Resultado (esta pasada) |
 |---|---|---|
 | Arquitectura + design system + no-scripts | `./gradlew verifyAgendaQrArchitecture -PallowDebugSigningForRc=true` | PASS |
 | Tests de módulos | `./gradlew :core:ui:testDebugUnitTest :feature:destinations:presentation:testDebugUnitTest :feature:destinations:domain:test :feature:destinations:data:testDebugUnitTest -PallowDebugSigningForRc=true` | PASS |
+| Arranque local-first y acceso con PIN (arranque REAL) | `./gradlew :feature:destinations:presentation:testDebugUnitTest --tests "*AgendaQrLocalStartupTest" -PallowDebugSigningForRc=true` | PASS (3/3: instalación limpia → configurar PIN sin login; el perfil local se crea sin cuenta; reinicio → desbloqueo local; sin referencias a correo/contraseña) |
+| Máquina de estados del acceso local | `./gradlew :feature:destinations:presentation:testDebugUnitTest --tests "*LocalAccessGateTest" -PallowDebugSigningForRc=true` | PASS (10/10: configurar→desbloquear→bloquear, saneado de dígitos, no coincidencia no guarda, intentos, bloqueo temporal) |
+| Namespace por perfil + migración de instalaciones previas | `./gradlew :feature:destinations:data:testDebugUnitTest --tests "*LocalIdentityTest" -PallowDebugSigningForRc=true` | PASS (claves por perfil, detección de datos heredados por claves sin cliente remoto, migración idempotente que no borra el origen y no mezcla cuentas, construcción perezosa de los repositorios remotos) |
 | Regresión visual (Roborazzi + SHA-256) | `./gradlew :feature:destinations:presentation:recordRoborazziDebug recordVisualHashes verifyVisualHashes -PallowDebugSigningForRc=true` | PASS (22 capturas × claro/oscuro: s01/s02-add/s04-search/s06-contexts/s07-operation-row/s09-review/login/import-batch/destination-detail/edit-destination/qr-preview-fallback) |
 | Contrato de QR (generación + lectura con ZXing) | `./gradlew :feature:destinations:presentation:testDebugUnitTest --tests "*QrPreviewContractTest"` | PASS (5/5: el fixture es un QR real legible; bytes del dominio → imagen; payload no-imagen → estado de error, no un QR falso) |
 | Contrato de no solapamiento (dock y FAB) | `./gradlew :core:ui:testDebugUnitTest --tests "*AmScaffoldOverlapContractTest"` | PASS (3/3: el contenido termina por encima del dock de acciones y del FAB; el espacio se deriva del Scaffold y de tokens, sin alturas estimadas) |

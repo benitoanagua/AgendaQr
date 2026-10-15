@@ -19,7 +19,7 @@ private val historyJson = Json {
 
 class LocalDeletedOperationHistoryRepository(
     private val store: OperationsStore = operationsStore(),
-    private val storageKey: String = userScopedKey(STORAGE_KEY_PREFIX),
+    private val storageKey: String = profileScopedKey(STORAGE_KEY_PREFIX),
 ) : DeletedOperationHistoryRepository {
     private val mutex = Mutex()
     private val state = MutableStateFlow(load())

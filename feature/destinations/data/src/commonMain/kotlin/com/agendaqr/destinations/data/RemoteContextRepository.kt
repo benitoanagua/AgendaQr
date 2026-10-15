@@ -20,8 +20,15 @@ interface RemoteContextRepository {
 }
 
 class SupabaseContextRepository(
-    private val client: SupabaseClient = AgendaQrSupabase.client,
+    /**
+     * El cliente se resuelve AL USAR el repositorio, no al construirlo: el
+     * grafo local debe poder montarse sin Supabase configurado (estado
+     * soportado). Si no hay configuración, el primer acceso lanza y el sync lo
+     * trata como error remoto recuperable (no destruye datos locales).
+     */
+    private val clientProvider: () -> SupabaseClient = { AgendaQrSupabase.client },
 ) : RemoteContextRepository {
+    private val client: SupabaseClient get() = clientProvider()
     override suspend fun observe(): List<Context> =
         client.from("contexts").select().decodeList<ContextRow>().map { it.toDomain() }
 

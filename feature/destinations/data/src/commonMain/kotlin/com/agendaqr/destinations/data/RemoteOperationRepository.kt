@@ -30,8 +30,10 @@ interface RemoteOperationRepository {
 }
 
 class SupabaseOperationRepository(
-    private val client: SupabaseClient = AgendaQrSupabase.client,
+    /** Resuelto al usar el repositorio, no al construirlo (ver nota en SupabaseContextRepository). */
+    private val clientProvider: () -> SupabaseClient = { AgendaQrSupabase.client },
 ) : RemoteOperationRepository {
+    private val client: SupabaseClient get() = clientProvider()
 
     override suspend fun observe(): List<Operation> =
         client.from("operations")

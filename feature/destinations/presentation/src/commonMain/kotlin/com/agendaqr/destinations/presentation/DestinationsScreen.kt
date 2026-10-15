@@ -63,7 +63,8 @@ fun DestinationsScreen(
     appHosts: AppHosts? = null,
     onOpenSearch: () -> Unit = {},
     onOpenContexts: () -> Unit = {},
-    onSignOut: () -> Unit = {},
+    onLock: () -> Unit = {},
+    onOpenAccount: () -> Unit = {},
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
     /** Acción rápida / FAB: traer un QR (S02, cámara y galería). */
     onScanQr: () -> Unit = { onAction(DestinationAction.Edit(null)) },
@@ -80,7 +81,8 @@ fun DestinationsScreen(
             AmTopBar(
                 title = AppStrings.AgendaQr,
                 overflowActions = listOf(
-                    AmOverflowAction(AppStrings.CerrarSesion, onClick = onSignOut),
+                    AmOverflowAction(AppStrings.CuentaYRespaldo, onClick = onOpenAccount),
+                    AmOverflowAction(AppStrings.Bloquear, onClick = onLock),
                 ),
                 overflowLabel = AppStrings.Mas,
             )

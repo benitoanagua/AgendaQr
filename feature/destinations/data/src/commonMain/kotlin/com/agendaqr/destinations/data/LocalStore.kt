@@ -21,6 +21,16 @@ private val json = Json {
 interface DestinationStore {
     fun read(key: String): String?
     fun write(key: String, value: String)
+    /** Elimina la clave. Por defecto escribe vacío; las plataformas lo afinan. */
+    fun remove(key: String) {
+        write(key, "")
+    }
+    /**
+     * Claves presentes en el almacén. Por defecto vacío; las plataformas lo
+     * implementan para permitir, entre otras cosas, detectar instalaciones
+     * heredadas sin tocar la red ni crear el cliente remoto.
+     */
+    fun keys(): Set<String> = emptySet()
 }
 
 expect fun platformDestinationStore(): DestinationStore

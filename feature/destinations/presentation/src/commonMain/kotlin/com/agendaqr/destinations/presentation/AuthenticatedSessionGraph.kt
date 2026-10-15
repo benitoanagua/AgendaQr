@@ -23,8 +23,9 @@ import com.agendaqr.destinations.data.createSyncedComprobanteRepository
 import com.agendaqr.destinations.data.createSyncedContextRepository
 import com.agendaqr.destinations.data.createSyncedDestinationRepository
 import com.agendaqr.destinations.data.createSyncedOperationRepository
+import com.agendaqr.destinations.data.isRemoteConfigured
 import com.agendaqr.destinations.data.platformNetworkMonitor
-import com.agendaqr.destinations.data.userScopedKey
+import com.agendaqr.destinations.data.profileScopedKey
 import com.agendaqr.destinations.domain.AssociateComprobanteToOperationUseCase
 import com.agendaqr.destinations.domain.DeleteComprobanteUseCase
 import com.agendaqr.destinations.domain.DeleteDestinationUseCase
@@ -65,7 +66,7 @@ import kotlinx.coroutines.cancel
  *
  * Reglas preservadas (no renegociables):
  * - aislamiento por usuario: cada clave de almacenamiento es user-scoped
- *   y el grafo se reconstruye al cambiar `userId`;
+ *   y el grafo se reconstruye al cambiar `profileId`;
  * - modelo local-first: la UI escribe vía los wrappers Sync (encolan) y el
  *   procesador opera sobre los locales crudos compartidos;
  * - el scope se cancela solo al salir de composición esta sesión; el
@@ -86,43 +87,48 @@ class AuthenticatedSessionGraph(
     val operationsViewModel: OperationsViewModel,
     val contextsViewModel: ContextsViewModel,
     val globalSearchViewModel: GlobalSearchViewModel,
+    /**
+     * ¿Hay backend remoto configurado? En modo local (`false`) la UI de
+     * sincronización se oculta: no hay cuenta ni destino al que sincronizar.
+     */
+    val remoteConfigured: Boolean = true,
 )
 
 /**
- * Construye el grafo ligado a [userId] con el mismo ciclo de vida que la
+ * Construye el grafo ligado a [profileId] con el mismo ciclo de vida que la
  * sesión: sobrevive a recomposiciones, se reconstruye al cambiar usuario
  * y libera sus recursos al salir de composición.
  */
 @Composable
-fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph {
+fun rememberAuthenticatedSessionGraph(profileId: String): AuthenticatedSessionGraph {
     // UN scope cancelable ligado a la sesión: sync y ViewModels
     // comparten ciclo de vida; el cierre de sesión cancela TODO.
-    val sessionScope = remember(userId) { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
+    val sessionScope = remember(profileId) { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
     DisposableEffect(sessionScope) {
         onDispose { sessionScope.coroutineContext.cancel() }
     }
-    val syncQueue = remember(userId) { LocalSyncQueue() }
+    val syncQueue = remember(profileId) { LocalSyncQueue() }
     val syncEnqueuer = remember(syncQueue) { SyncMutationEnqueuer(syncQueue) }
     // Estado local crudo compartido: los wrappers Sync son la vía de escritura
     // de UI (encolan), y el procesador opera sobre estos mismos locales sin
     // re-encolar al aplicar snapshots ganadores del servidor.
-    val contextLocal = remember(userId) {
-        LocalContextRepository(storageKey = userScopedKey("agendaqr.contexts.v1"))
+    val contextLocal = remember(profileId) {
+        LocalContextRepository(storageKey = profileScopedKey("agendaqr.contexts.v1"))
     }
-    val destinationLocal = remember(userId) {
-        LocalDestinationRepository(storageKey = userScopedKey("agendaqr.destinations.v1"))
+    val destinationLocal = remember(profileId) {
+        LocalDestinationRepository(storageKey = profileScopedKey("agendaqr.destinations.v1"))
     }
-    val operationLocal = remember(userId) {
-        LocalOperationRepository(storageKey = userScopedKey("agendaqr.operations.v1"))
+    val operationLocal = remember(profileId) {
+        LocalOperationRepository(storageKey = profileScopedKey("agendaqr.operations.v1"))
     }
-    val comprobanteLocal = remember(userId) {
-        LocalComprobanteRepository(storageKey = userScopedKey("agendaqr.comprobantes.v1"))
+    val comprobanteLocal = remember(profileId) {
+        LocalComprobanteRepository(storageKey = profileScopedKey("agendaqr.comprobantes.v1"))
     }
     val contextRepository = remember(syncQueue) { createSyncedContextRepository(syncQueue, contextLocal) }
     val destinationRepository = remember(syncEnqueuer) { createSyncedDestinationRepository(syncEnqueuer, destinationLocal) }
     val operationRepository = remember(syncEnqueuer) { createSyncedOperationRepository(syncEnqueuer, operationLocal) }
-    val fileStore = remember(userId) { createComprobanteFileStore() }
-    val importPayloadStore = remember(userId) { createImportPayloadStore() }
+    val fileStore = remember(profileId) { createComprobanteFileStore() }
+    val importPayloadStore = remember(profileId) { createImportPayloadStore() }
     val comprobanteRepository = remember(syncEnqueuer, fileStore) {
         createSyncedComprobanteRepository(fileStore, syncEnqueuer, comprobanteLocal)
     }
@@ -141,18 +147,23 @@ fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph
         )
     }
     val networkMonitor = remember { platformNetworkMonitor() }
+    // Sin configuración remota NO se arranca el ciclo de sincronización: la
+    // ausencia de Supabase es un estado soportado (modo local) y no debe
+    // producir reintentos indefinidos contra un backend inexistente. La cola
+    // local sigue acumulando mutaciones pendientes para cuando se conecte.
+    val remoteConfigured = remember { isRemoteConfigured() }
     val recovery = remember(syncProcessor, sessionScope, networkMonitor) {
         SyncRecoveryCoordinator(syncProcessor, sessionScope, networkMonitor = networkMonitor)
     }
-    DisposableEffect(recovery) {
-        recovery.start()
+    DisposableEffect(recovery, remoteConfigured) {
+        if (remoteConfigured) recovery.start()
         onDispose { recovery.stop() }
     }
     val queueObserver = remember(syncQueue) { SyncQueueObserver(syncQueue) }
     val saveImportBatch = remember(destinationRepository, comprobanteRepository, fileStore, importPayloadStore) {
         SaveImportBatchUseCase(destinationRepository, comprobanteRepository, fileStore, importPayloadStore)
     }
-    val historyRepository = remember(userId) { createDeletedOperationHistoryRepository() }
+    val historyRepository = remember(profileId) { createDeletedOperationHistoryRepository() }
     val destinationsViewModel = remember(destinationRepository, sessionScope) {
         DestinationsViewModel(
             observe = ObserveDestinationsUseCase(destinationRepository),
@@ -216,6 +227,7 @@ fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph
         destinationRepository, comprobanteRepository, fileStore,
         importPayloadStore, saveImportBatch,
         destinationsViewModel, operationsViewModel, contextsViewModel, globalSearchViewModel,
+        remoteConfigured,
     ) {
         AuthenticatedSessionGraph(
             sessionScope = sessionScope,
@@ -230,6 +242,7 @@ fun rememberAuthenticatedSessionGraph(userId: String): AuthenticatedSessionGraph
             operationsViewModel = operationsViewModel,
             contextsViewModel = contextsViewModel,
             globalSearchViewModel = globalSearchViewModel,
+            remoteConfigured = remoteConfigured,
         )
     }
 }

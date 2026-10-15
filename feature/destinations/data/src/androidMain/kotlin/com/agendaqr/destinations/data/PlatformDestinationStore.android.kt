@@ -30,6 +30,8 @@ object AgendaQrAndroidStorage {
 private object AndroidDestinationStore : DestinationStore {
     override fun read(key: String): String? = AgendaQrAndroidStorage.requirePreferences().getString(key, null)
     override fun write(key: String, value: String) { AgendaQrAndroidStorage.requirePreferences().edit().putString(key, value).apply() }
+    override fun remove(key: String) { AgendaQrAndroidStorage.requirePreferences().edit().remove(key).apply() }
+    override fun keys(): Set<String> = AgendaQrAndroidStorage.requirePreferences().all.keys
 }
 
 actual fun platformDestinationStore(): DestinationStore = AndroidDestinationStore
@@ -39,7 +41,7 @@ private const val SYNC_QUEUE_PREFIX = "agendaqr.sync.queue.v1"
 
 private class PlatformSyncQueueStore : SyncQueueStore {
     private val delegate = platformDestinationStore()
-    private fun key(): String = userScopedKey(SYNC_QUEUE_PREFIX)
+    private fun key(): String = profileScopedKey(SYNC_QUEUE_PREFIX)
     @OptIn(ExperimentalTime::class)
     override fun read(): List<PendingSyncMutation> {
         val raw = delegate.read(key()) ?: "[]"

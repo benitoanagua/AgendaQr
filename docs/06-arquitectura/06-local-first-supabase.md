@@ -1,6 +1,6 @@
 # Supabase + Local-first — configuración V1
 
-Agenda QR funciona local-first. La persistencia local y la cola durable siguen siendo la base de la experiencia offline; Supabase aporta identidad, respaldo y sincronización cuando existe conectividad.
+Agenda QR funciona local-first. La persistencia local y la cola durable son la base de la experiencia offline; la identidad del dispositivo es el **perfil local**, que se crea sin cuenta y sin red. Supabase aporta respaldo y sincronización cuando, y solo cuando, el usuario conecta una cuenta opcional (ADR-0016).
 
 ## Configuración local Android
 
@@ -50,9 +50,16 @@ Sin conectividad, Agenda QR debe poder:
 - consultar historial;
 - encolar mutaciones pendientes.
 
-Con conectividad, la cola sincroniza hacia Supabase y reintenta las mutaciones pendientes.
+Conectividad es una condición para **sincronizar**, nunca para abrir la app ni
+para escribir localmente. La cola se drena hacia Supabase con backoff y
+reintentos **solo cuando hay una cuenta conectada y remoto configurado**; sin
+cuenta, las mutaciones siguen encoladas en el dispositivo y la indicación de
+sincronización se oculta para no sugerir un envío que no va a ocurrir.
 
-La autenticación remota sigue siendo la fuente de identidad. No se implementa una identidad paralela independiente para V1.
+La identidad local (perfil local) es independiente de la sesión remota: la
+cuenta no es la fuente de identidad del dispositivo. Ver
+[12-local-first-security.md](12-local-first-security.md) y
+[ADR-0016](../07-decisiones/ADR-0016-identidad-local-sin-cuenta.md).
 
 ## Validación
 

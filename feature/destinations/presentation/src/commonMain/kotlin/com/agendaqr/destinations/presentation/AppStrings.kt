@@ -316,4 +316,31 @@ internal object AppStrings {
     val IntegridadHistorica = "Los cambios a este destino no modifican operaciones históricas asociadas."
     /** Editor: requisito mínimo honesto (RF-08/RF-09). */
     val RequisitoMinimo = "Requisito mínimo: tipo y momento ocurrido. Todos los demás campos son opcionales."
+    // ------------------------------------------------------------------
+    // Acceso local (sin cuenta): configuración de PIN, desbloqueo y
+    // bloqueo. El PIN protege el acceso en el dispositivo; NO es la
+    // contraseña del sistema ni una credencial remota.
+    // ------------------------------------------------------------------
+    val ConfiguraTuPin = "Configura tu PIN"
+    val ConfiguraTuPinDescripcion = "Tu PIN protege el acceso en este dispositivo. No es el código de tu teléfono."
+    val Pin = "PIN"
+    val ConfirmaElPin = "Confirma el PIN"
+    val GuardarPin = "Guardar PIN"
+    val DesbloqueaAgendaQr = "Desbloquea Agenda QR"
+    val DesbloqueaAgendaQrDescripcion = "Introduce tu PIN para continuar."
+    val Desbloquear = "Desbloquear"
+    val Bloquear = "Bloquear"
+    val PinErrorCorto = "El PIN debe tener al menos 4 dígitos"
+    val PinErrorLargo = "El PIN no puede tener más de 12 dígitos"
+    val PinErrorSoloDigitos = "El PIN solo puede contener dígitos"
+    val PinErrorNoCoinciden = "Los PIN no coinciden"
+    val PinErrorIncorrecto = "PIN incorrecto"
+    val PinErrorBloqueado = "Demasiados intentos. Espera antes de reintentar."
+    val IntentosRestantes = "Intentos restantes: "
+    val SoloEnEsteDispositivo = "Solo en este dispositivo"
+    val CuentaYRespaldo = "Cuenta y respaldo"
+    val CuentaConectada = "Cuenta conectada"
+    val ConectarCuentaDescripcion = "Conectar una cuenta es opcional. Tus datos siguen en tu teléfono; la cuenta solo habilita respaldo y sincronización."
+    val DesconectarCuenta = "Desconectar cuenta"
+    val DatosLocalesSeConservan = "Al desconectar, los datos locales se conservan en este dispositivo."
 }

@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun AuthenticatedAppRoot(
     graph: AuthenticatedSessionGraph,
-    onSignOut: () -> Unit,
+    onLock: () -> Unit,
 ) {
     // el back stack SOBREVIVE a rotación y a muerte de
     // proceso (rememberSaveable + Saver por nombre de ruta).
@@ -83,6 +83,10 @@ internal fun AuthenticatedAppRoot(
     var pendingCount by remember { mutableStateOf(0) }
     var isOffline by remember { mutableStateOf(false) }
     var hasFailed by remember { mutableStateOf(false) }
+    // Modo local (sin backend configurado): no hay sincronización que mostrar.
+    // La cola puede acumular mutaciones pendientes, pero se ocultan los
+    // indicadores para no sugerir un envío que no va a ocurrir.
+    val showSyncUi = graph.remoteConfigured
     var syncQueueItems by remember { mutableStateOf<List<com.agendaqr.destinations.data.PendingSyncMutation>>(emptyList()) }
     LaunchedEffect(graph.queueObserver) {
         graph.queueObserver.observeQueue().collect { items ->
@@ -98,8 +102,8 @@ internal fun AuthenticatedAppRoot(
     val feedbackHost = remember { com.agendaqr.core.ui.components.AmFeedbackHost() }
     var syncDoneEvent by remember { mutableStateOf<Any?>(null) }
     var previousPendingCount by remember { mutableStateOf(0) }
-    LaunchedEffect(pendingCount) {
-        if (previousPendingCount > 0 && pendingCount == 0) {
+    LaunchedEffect(pendingCount, showSyncUi) {
+        if (showSyncUi && previousPendingCount > 0 && pendingCount == 0) {
             syncDoneEvent = Any()
         }
         previousPendingCount = pendingCount
@@ -109,8 +113,11 @@ internal fun AuthenticatedAppRoot(
         message = AppStrings.SincronizacionCompletada,
         feedbackHost = feedbackHost,
     )
+    // Modo local (sin backend configurado): no hay sincronización que mostrar.
     // estado de sincronización por elemento (consulta indexada).
-    val syncLookup = remember(syncQueueItems) { ElementSyncLookup(syncQueueItems) }
+    val syncLookup = remember(syncQueueItems, showSyncUi) {
+        if (showSyncUi) ElementSyncLookup(syncQueueItems) else ElementSyncLookup.Empty
+    }
     val retrySync = remember(graph) {
         { graph.sessionScope.launch { graph.syncProcessor.drain() }; Unit }
     }
@@ -159,9 +166,9 @@ internal fun AuthenticatedAppRoot(
         status = {
             AppStatusHost(
                 importError = importError,
-                isOffline = isOffline,
-                pendingCount = pendingCount,
-                hasFailed = hasFailed,
+                isOffline = isOffline && showSyncUi,
+                pendingCount = if (showSyncUi) pendingCount else 0,
+                hasFailed = hasFailed && showSyncUi,
                 onDismissImportError = { importError = null },
                 onRetryNow = retryNow,
             )
@@ -206,6 +213,7 @@ internal fun AuthenticatedAppRoot(
             AppRoute.Contexts -> contextState.route != ContextRoute.List
             AppRoute.ImportBatch -> importBatchState is ImportBatchUiState.Review
             AppRoute.Search -> false
+            AppRoute.Account -> false
         }
     }
     var backProgress by remember { mutableFloatStateOf(0f) }
@@ -227,6 +235,7 @@ internal fun AuthenticatedAppRoot(
                     AppRoute.Contexts -> graph.contextsViewModel.onAction(ContextAction.Back)
                     AppRoute.ImportBatch -> importBatch.onAction(ImportBatchAction.Back)
                     AppRoute.Search -> Unit
+                    AppRoute.Account -> Unit
                 }
                 SystemBackAction.PopSurface -> nav.pop()
                 SystemBackAction.SystemExit -> Unit // handler deshabilitado en la raíz.
@@ -375,10 +384,15 @@ internal fun AuthenticatedAppRoot(
                         onSearchOpened = { searchReturnDestinationId = null },
                         onDetailBack = ::backFromDestinationDetail,
                         graph = graph,
-                        onSignOut = onSignOut,
+                        onLock = onLock,
                         nav = nav,
                         syncLookup = syncLookup,
                         onRetrySync = retrySync,
+                    )
+                    AppRoute.Account -> AccountScreen(
+                        navChrome = navChrome,
+                        appHosts = appHosts,
+                        onBack = { nav.pop() },
                     )
                 }
             }
