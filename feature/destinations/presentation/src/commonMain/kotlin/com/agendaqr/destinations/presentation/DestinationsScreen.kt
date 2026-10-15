@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.core.ui.components.AmBadge
 import com.agendaqr.core.ui.components.AmCompactAction
@@ -139,13 +141,18 @@ fun DestinationsScreen(
                         onClick = onScanQr,
                         icon = AmIcons.ScanLine,
                         solid = true,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .widthIn(min = 140.dp),
                     )
                     AmSecondaryButton(
                         label = AppStrings.ImportarImagen,
                         onClick = onScanQr,
                         icon = AmIcons.Gallery,
-                        modifier = Modifier.weight(1f),
+                        solid = true,
+                        modifier = Modifier
+                            .weight(1f)
+                            .widthIn(min = 140.dp),
                     )
                 }
             }
