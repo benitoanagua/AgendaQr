@@ -13,15 +13,23 @@ internal object IncomingComprobanteFeed {
     val flow: kotlinx.coroutines.flow.Flow<IncomingComprobante> = pending
 
     fun offer(data: NSData, mimeType: String) {
+        offer(data, mimeType, defaultExtensionFor(mimeType))
+    }
+
+    /** Variante explícita de extensión (PDF vía UIDocumentPicker). */
+    fun offer(data: NSData, mimeType: String, extension: String) {
         pending.tryEmit(
             IncomingComprobante(
                 bytes = IosQrImportController.toByteArray(data),
                 mimeType = mimeType,
-                extension = when (mimeType) {
-                    "image/jpeg" -> "jpg"
-                    else -> "png"
-                },
+                extension = extension,
             ),
         )
+    }
+
+    private fun defaultExtensionFor(mimeType: String): String = when (mimeType) {
+        "image/jpeg" -> "jpg"
+        "application/pdf" -> "pdf"
+        else -> "png"
     }
 }

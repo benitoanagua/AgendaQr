@@ -128,10 +128,15 @@ actual fun QrCameraEntryControl(
 actual fun sharedImportsSupported(): Boolean = false
 
 /**
- * iOS: el selector de PDF (UIDocumentPickerViewController) queda pendiente
- * de la implementación nativa con Xcode (riesgo sin verificación en dispositivo);
- * la acción no se muestra hasta que exista.
+ * iOS: selector de PDF REAL con `UIDocumentPickerViewController` (misma
+ * acción y canal que Android; el archivo llega al diálogo "Comprobante
+ * recibido"). Runtime del picker pendiente de Xcode/simulador —
+ * docs/STATE.md.
  */
 @Composable
 actual fun QrPdfPickerControl() {
+    AmSecondaryButton(
+        label = AppStrings.ElegirArchivoPdf,
+        onClick = { IosPdfPicker.present() },
+    )
 }

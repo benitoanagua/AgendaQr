@@ -1,4 +1,6 @@
 {
+  "account-dark.png": "41cd9ca374f23a5159b3b37ec086f78d08fd4312468df0062628fdd53529fb32",
+  "account-light.png": "1adc533630f86464f361ef0d3e9fd21451264636c996c94c442408071051e0e8",
   "destination-detail-dark.png": "d7fcb5ef3f69029bcf574dbb20c8c092b193376bc2ad742d6d51358f20972122",
   "destination-detail-light.png": "b397856f8f9ded7b4b7e27435baac6563869913661a5e73fb14e211004f79dc1",
   "edit-destination-dark.png": "acc7c0cfeb21db8a1bb4f76389141928f34835b60d4df53238f8b7d5745a6f66",
@@ -11,8 +13,14 @@
   "import-batch-result-light.png": "a624d5ad41ddb2e71a7a11e67309890bd2d14991c28a53565a0ad1f08bd87dc1",
   "import-batch-review-dark.png": "8dea861ba87e33256fee415533ba231ec2405ed8f932640bc3e3b69a732e74f8",
   "import-batch-review-light.png": "3ff806c32fe4de4a3d5828110595d4c9a5b2f8b39483ecd5ee5f7eac343e8d83",
+  "import-batch-saved-dark.png": "b4b5511567d9c0a7533fd42c20058c8b08c111775041c2c98980562941d87465",
+  "import-batch-saved-light.png": "c29a849cefb1349b38e7b17c33434f0839342925500930a03b2b44d33bf9d412",
+  "import-batch-saving-dark.png": "591bf62cd3d529909602d510bc01bc4e75d4d60fe94f692d4fc4fea483f3fd66",
+  "import-batch-saving-light.png": "61bbe2ab9b4da2959c9ac386d1e0c7d6ff9f45c9df39d12b8bd33cc47b995d4b",
   "local-lock-biometric-dark.png": "64b0e39c76f3fa1b6d5fd623bd496f7cfe93731e6cb8ab61d1478150e4f6717c",
   "local-lock-biometric-light.png": "ab06834323e3b2c610433b5901e97cbedb27b9575f28b66bbc44158275a3cfff",
+  "local-lock-biometric-ready-dark.png": "3f6b9201b04d40dbd94fc1658ae287b1821d892a4544c357af47a849472ae54b",
+  "local-lock-biometric-ready-light.png": "a42c4734f6a2dfbafcd2ebbae66566ddfcc6ec1b417a634992ce7384fdd76363",
   "local-lock-dark.png": "190f51f45d6926babc8bcf48e1234d2b271dc3cf57a0bb609439f41f05936a80",
   "local-lock-incorrect-dark.png": "15b3d915d6034d41c7de37651e4490ea47cc511ba13af0a1fdc4a987fdd7cc9b",
   "local-lock-incorrect-light.png": "4b74ae727f2ebcbf17460274da2cb8f75ad776a8df640628e5ce83456cbb4e8b",
@@ -33,6 +41,8 @@
   "s01-error-dark.png": "ed355b6892df5c09cae93fdb3087df4986343abf2b832eebcc2386ac282167c0",
   "s01-error-light.png": "b4108125071ce336595086fc57f3a74af8a1e00974746dd6145ab87e062d81c8",
   "s01-light.png": "92d3d8e34b59738f5d7e3d1af94c6228ed10069dcf06eeb2c639c36e935f59a7",
+  "s01-long-name-dark.png": "72d49f13c6c7444b5aaac8335f6b44acd12e3d03086bea2dd9ba94e993efc517",
+  "s01-long-name-light.png": "52c646afa8d8e781a3e53d9bf0e9dd8c93caddb06774dfe712b497658fb52337",
   "s02-add-dark.png": "0a482fcfb88ecef31def40733529fa7e2360d29db6bf54fcb60559070d15deee",
   "s02-add-light.png": "a307083730ec9f7857b2759179a5f81bc411456d873b161b1c42e16ab310b591",
   "s04-search-dark.png": "623a350ebf205a82781d59d91ac7157009d5f794594d971fa094fa0cac04abf7",
@@ -50,6 +60,8 @@
   "s09-review-dark.png": "6dcef2c43a6ddc660cc353681f493b53a4ed59732d0bb90b1f919f41eafc46b8",
   "s09-review-light.png": "7b206665e24ae6db611e330f18d8e666d7cf65a7ef8c16f5aa580d91b41ae396",
   "s09-review-multi-dark.png": "6fc0c5931edc6033baa8f5ec9a392b9f45e5b43410d22a8d07c3f0d02672351e",
-  "s09-review-multi-light.png": "97af2abaf62874d7fafdedeef8286583f8531110598c7ef631893cf723900643"
+  "s09-review-multi-light.png": "97af2abaf62874d7fafdedeef8286583f8531110598c7ef631893cf723900643",
+  "tablet-s01-dark.png": "d996bb88b4ac679a28114d3c1e2f6e815fac0e34112e132c61c0ce20f8cb920f",
+  "tablet-s01-light.png": "5002e7f019f5e876a2fa7f1e2d0ecf1555b793e46d8a1462b5016e35db642f06"
 
 }

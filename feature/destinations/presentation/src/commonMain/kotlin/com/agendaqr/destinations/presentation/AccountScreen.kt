@@ -32,22 +32,26 @@ import com.agendaqr.destinations.domain.SignUpUseCase
  * Ajustes → Cuenta y respaldo. Superficie OPCIONAL: la app funciona sin
  * cuenta. Aquí se conecta o desconecta la cuenta remota; desconectar nunca
  * destruye los datos locales (que viven bajo el perfil local).
+ *
+ * [authRepository] permite inyectar el repositorio (tests/preview); por
+ * defecto se crea de forma perezosa el de producción.
  */
 @Composable
 internal fun AccountScreen(
     navChrome: AmNavChromeState?,
     appHosts: AppHosts?,
     onBack: () -> Unit,
+    authRepository: com.agendaqr.destinations.domain.AuthRepository? = null,
 ) {
     // La identidad remota se construye de forma perezosa: si el usuario no
     // entra aquí, no se crea ningún repositorio de Supabase.
-    val authRepository = remember { createAuthRepository() }
-    val authViewModel = remember(authRepository) {
+    val repository = authRepository ?: remember { createAuthRepository() }
+    val authViewModel = remember(repository) {
         AuthViewModel(
-            observe = ObserveAuthStateUseCase(authRepository),
-            signIn = SignInUseCase(authRepository),
-            signUp = SignUpUseCase(authRepository),
-            signOutUseCase = SignOutUseCase(authRepository),
+            observe = ObserveAuthStateUseCase(repository),
+            signIn = SignInUseCase(repository),
+            signUp = SignUpUseCase(repository),
+            signOutUseCase = SignOutUseCase(repository),
         )
     }
     val authState by authViewModel.state.collectAsStateWithLifecycle()

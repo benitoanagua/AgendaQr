@@ -308,10 +308,12 @@ evalúa en configuración).
 | Contraste y esquema | `AmSchemeTest`, `AmContrastPairsTest`, `AmAccentTest` | umbrales y pares fijados |
 | Tipografía y layout | `AmTypographyTest`, `AmPivotLayoutTest`, `AmUiPolishContractTest` | roles, interlineado, escalado de fuente |
 | Accesibilidad de componentes | `AmAccessibilityContractTest`, `ScreensA11yCoverageTest` | semántica, roles, targets |
-| Regresión visual | `recordRoborazzi` → `recordVisualHashes` / `verifyVisualHashes` | 52 capturas (26 escenarios × claro/oscuro) por SHA-256 (ADR-0007, sensible al entorno) |
+| Regresión visual | `recordRoborazzi` → `recordVisualHashes` / `verifyVisualHashes` | 64 capturas (32 escenarios × claro/oscuro, incl. tablet w720dp con NavigationRail y textos largos) por SHA-256 (ADR-0007, sensible al entorno) |
 | Arranque local-first y PIN | `:feature:destinations:presentation:testDebugUnitTest --tests "*AgendaQrLocalStartupTest"` | arranque real sin cuenta, perfil local, desbloqueo |
 | Máquina de estados del acceso local | `--tests "*LocalAccessGateTest"` | configurar → desbloquear → bloquear, saneado, intentos, bloqueo temporal |
 | Biometría (atajo fail-closed) + demo | `--tests "*LocalAccessBiometricTest" --tests "*DemoDataTest" --tests "*DemoSeederTest"` | éxito biométrico desbloquea, fallo conserva bloqueo + fallback PIN; dataset demo determinista, siembra idempotente y aislada |
+| Mapeo biométrico de plataforma + fail-closed | `--tests "*BiometricPromptErrorMappingTest"` (androidUnitTest de `:feature:destinations:data`) | códigos `BiometricPrompt` → contrato compartido; ningún código de error desbloquea; sin Activity host → `Unavailable` |
+| Migración de bytes heredados | `--tests "*LegacyComprobanteBytesMigrationTest"` | idempotencia, no-borrado del origen, fallo parcial sin aborto, reintento recupera, aislamiento por propietario |
 | Namespace por perfil + migración | `--tests "*LocalIdentityTest"` | claves por perfil, detección heredada por claves sin cliente remoto, migración idempotente |
 | Contrato de QR | `--tests "*QrPreviewContractTest"` | fixture es QR real; bytes del dominio → imagen; payload no-imagen → error |
 | Contrato de no solapamiento | `:core:ui:testDebugUnitTest --tests "*AmScaffoldOverlapContractTest"` | el contenido termina por encima del dock/FAB |

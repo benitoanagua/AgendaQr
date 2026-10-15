@@ -195,8 +195,22 @@ Reglas de la migración (`LegacyLocalDataMigration`):
 - se ejecuta antes de construir el grafo, porque los repositorios locales cargan
   su estado en la construcción.
 
-Los directorios heredados de archivos de comprobantes NO se copian: se conservan
-en su ruta antigua (limitación documentada en ADR-0016).
+Los BYTES de los comprobantes heredados (`<base>/comprobantes/<user_id>/`)
+también se migran (`LegacyComprobanteBytesMigration`), con las mismas reglas
+de seguridad más la tolerancia a fallos por archivo:
+
+- idempotente: un archivo que ya existe en el destino no se copia ni se
+  pisa (la versión del usuario bajo el perfil local gana);
+- no borra el origen: la ruta heredada se conserva intacta;
+- fallo parcial sin aborto: un archivo que falla no detiene los demás y se
+  recupera en el próximo arranque (reintento de la migración);
+- copia atómica-en-el-destino (temporal + rename) para no dejar medios
+  archivos ante una interrupción;
+- nunca escribe fuera de los dos directorios implicados.
+
+La lógica vive en común sobre el puerto `LegacyBytesFs` y está probada en
+`LegacyComprobanteBytesMigrationTest`; las plataformas solo aportan rutas y
+operaciones nativas (`java.io.File` / `NSFileManager`).
 
 ### Política de bloqueo
 
@@ -211,15 +225,26 @@ protección. El contrato vive en el dominio (`BiometricGate`,
 `BiometricAvailability`, `BiometricAuthResult`) y cada plataforma lo
 implementa en `data`:
 
-- **Android:** disponibilidad real vía `BiometricManager`
-  (`canAuthenticate(BIOMETRIC_STRONG)`); el prompt ligado a la Activity
-  está pendiente y `authenticate()` responde `Unavailable` (fail-closed).
-- **iOS:** `LocalAuthentication` pendiente de Xcode; estado `Unavailable`.
+- **Android:** `androidx.biometric.BiometricPrompt` real, ligado a la
+  `FragmentActivity` del host (`MainActivity` extiende `FragmentActivity`;
+  `BiometricPromptHost` retiene la Activity en primer plano y se libera en
+  `onDestroy` solo si sigue siendo la misma instancia). Disponibilidad vía
+  `BiometricManager.canAuthenticate(BIOMETRIC_WEAK)`: clase 2+ (el atajo es
+  conveniencia; el PIN es la puerta fuerte y exigir clase 3 dejaría sin atajo
+  a dispositivos con biometría de clase 2). El prompt usa botón negativo
+  «Usar PIN», confirmación explícita y guardia de un solo prompt en vuelo;
+  la cancelación de la corrutina cancela el prompt.
+- **iOS:** `LocalAuthentication`/`LAContext` real (`canEvaluatePolicy` +
+  `evaluatePolicy`; `invalidate()` al cancelar). `biometryType` distingue
+  sin-hardware de no-inscrita.
 
 La UI ofrece el atajo en `LocalLockScreen` solo cuando la disponibilidad es
 `Available`; el PIN es siempre la vía principal y el fallback visible ante
 cualquier fallo, cancelación o ausencia de hardware. Solo
-`BiometricAuthResult.Success` desbloquea. La biometría no cifra datos ni
+`BiometricAuthResult.Success` desbloquea: el mapeo de códigos de error se
+verifica en JVM con la invariante «ningún error desbloquea»
+(`BiometricPromptErrorMappingTest`). El prompt sobre hardware real
+requiere dispositivo (ver STATE.md §2). La biometría no cifra datos ni
 sustituye al verificador PBKDF2 del PIN.
 
 ### Modo de demostración aislado
@@ -402,12 +427,13 @@ RLS, PostgreSQL, Storage y sincronización offline/online.
   local (verificador PBKDF2-HMAC-SHA256 con sal aleatoria), no una clave
   derivada de los datos. La biometría tampoco cifra: es un atajo de
   desbloqueo sobre la misma puerta.
-- **Prompt biométrico:** la disponibilidad Android es real, pero el
-  `BiometricPrompt` ligado a la Activity y `LocalAuthentication` (iOS)
-  siguen pendientes; `authenticate()` es fail-closed (`Unavailable`) y el
-  PIN permanece como única vía verificada de desbloqueo.
-- **Migración de archivos de comprobantes heredados:** no implementada; los
-  bytes heredados se conservan en su ruta antigua.
+- **Prompt biométrico:** implementado en ambas plataformas; el runtime sobre
+  hardware real (diálogo del sistema, éxito/fallo/cancelación) queda
+  registrado como NO VERIFICADO hasta validar en dispositivo con biometría
+  inscrita. El mapeo de errores y la invariante fail-closed sí están
+  verificados en JVM.
+- **Migración de archivos de comprobantes heredados:** implementada y probada
+  (bytes + colecciones); el origen heredado se conserva intacto.
 - **Cuenta remota:** el aislamiento remoto depende de RLS + Auth y no se
   debilita con la identidad local. Desconectar la cuenta no borra datos locales.
 - **Modo de demostración:** aislado por namespace y sin sincronización; no

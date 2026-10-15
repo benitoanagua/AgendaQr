@@ -924,6 +924,154 @@ class VisualReferenceScreenshotTest {
         )
     }
 
+    // Biometría lista (Available, sin mensaje de fallback): solo el atajo
+    // visible junto al PIN — distinto del estado de fallo ya capturado.
+    @Test fun local_lock_biometric_ready_light() = shot("local-lock-biometric-ready-light", dark = false) {
+        LocalLockScreen(
+            state = LocalAccessUiState(
+                mode = LocalAccessMode.Locked,
+                biometricAvailability = BiometricAvailability.Available,
+            ),
+            onPinChanged = {},
+            onSubmit = {},
+            onBiometric = {},
+            onExploreDemo = {},
+        )
+    }
+
+    @Test fun local_lock_biometric_ready_dark() = shot("local-lock-biometric-ready-dark", dark = true) {
+        LocalLockScreen(
+            state = LocalAccessUiState(
+                mode = LocalAccessMode.Locked,
+                biometricAvailability = BiometricAvailability.Available,
+            ),
+            onPinChanged = {},
+            onSubmit = {},
+            onBiometric = {},
+            onExploreDemo = {},
+        )
+    }
+
+    // S12 Saving: guardado local en curso — acción primaria ocupada, sin
+    // vuelta atrás (§3); nunca "Guardado" antes de persistir (§5).
+    @Test fun import_batch_saving_light() = shot("import-batch-saving-light", dark = false) {
+        ImportBatchScreen(state = ImportBatchUiState.Saving(importBatchFixture()), onAction = {})
+    }
+
+    @Test fun import_batch_saving_dark() = shot("import-batch-saving-dark", dark = true) {
+        ImportBatchScreen(state = ImportBatchUiState.Saving(importBatchFixture()), onAction = {})
+    }
+
+    // S12 Saved: persistencia local terminada; los pendientes conservan su
+    // revisión (procesamiento parcial del contrato).
+    @Test fun import_batch_saved_light() = shot("import-batch-saved-light", dark = false) {
+        ImportBatchScreen(state = ImportBatchUiState.Saved(importBatchFixture()), onAction = {})
+    }
+
+    @Test fun import_batch_saved_dark() = shot("import-batch-saved-dark", dark = true) {
+        ImportBatchScreen(state = ImportBatchUiState.Saved(importBatchFixture()), onAction = {})
+    }
+
+    // Cuenta y respaldo (superficie opcional del login remoto, fuera del
+    // arranque local-first): SignedOut con un doble determinista — el
+    // repositorio real de Supabase no puede construirse en JVM (supabase-kt
+    // exige Settings nativo), y lo validado visualmente es el AuthForm.
+    private val signedOutAuthRepository =
+        object : com.agendaqr.destinations.domain.AuthRepository {
+            override val state: kotlinx.coroutines.flow.Flow<com.agendaqr.destinations.domain.AuthState> =
+                kotlinx.coroutines.flow.flowOf(com.agendaqr.destinations.domain.AuthState.SignedOut)
+            override suspend fun signIn(email: String, password: String) =
+                error("Not in a visual capture")
+            override suspend fun signUp(email: String, password: String) =
+                error("Not in a visual capture")
+            override suspend fun signOut() = error("Not in a visual capture")
+        }
+
+    @Test fun account_light() = shot("account-light", dark = false) {
+        AccountScreen(navChrome = null, appHosts = null, onBack = {}, authRepository = signedOutAuthRepository)
+    }
+
+    @Test fun account_dark() = shot("account-dark", dark = true) {
+        AccountScreen(navChrome = null, appHosts = null, onBack = {}, authRepository = signedOutAuthRepository)
+    }
+
+    // UX-030: nombres largos no solapan ni tapan la acción primaria.
+    @Test fun s01_long_name_light() = shot("s01-long-name-light", dark = false) {
+        DestinationsScreen(
+            state = DestinationsUiState(
+                destinations = listOf(
+                    com.agendaqr.destinations.domain.Destination(
+                        id = "d-long",
+                        name = "Carnicería Don Bife — Sucursal Centro Norte Av. San Martín 1852 Local 4",
+                        qr = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                        createdAt = TEST_TIMESTAMP, updatedAt = TEST_TIMESTAMP,
+                    ),
+                ),
+                isLoading = false,
+            ),
+            onAction = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Home)),
+        )
+    }
+
+    @Test fun s01_long_name_dark() = shot("s01-long-name-dark", dark = true) {
+        DestinationsScreen(
+            state = DestinationsUiState(
+                destinations = listOf(
+                    com.agendaqr.destinations.domain.Destination(
+                        id = "d-long",
+                        name = "Carnicería Don Bife — Sucursal Centro Norte Av. San Martín 1852 Local 4",
+                        qr = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                        createdAt = TEST_TIMESTAMP, updatedAt = TEST_TIMESTAMP,
+                    ),
+                ),
+                isLoading = false,
+            ),
+            onAction = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Home)),
+        )
+    }
+
+    // Tablet/plegable (w720dp): NavigationRail en lugar de la barra inferior
+    // — evidencia del diseño adaptativo (AmScreenScaffold expanded).
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
+    fun tablet_s01_light() = shot("tablet-s01-light", dark = false) {
+        DestinationsScreen(
+            state = DestinationsUiState(
+                destinations = listOf(
+                    com.agendaqr.destinations.domain.Destination(
+                        id = "d-1", name = "Carniceria Don Bife",
+                        qr = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                        createdAt = TEST_TIMESTAMP, updatedAt = TEST_TIMESTAMP,
+                    ),
+                ),
+                isLoading = false,
+            ),
+            onAction = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Home)),
+        )
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
+    fun tablet_s01_dark() = shot("tablet-s01-dark", dark = true) {
+        DestinationsScreen(
+            state = DestinationsUiState(
+                destinations = listOf(
+                    com.agendaqr.destinations.domain.Destination(
+                        id = "d-1", name = "Carniceria Don Bife",
+                        qr = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                        createdAt = TEST_TIMESTAMP, updatedAt = TEST_TIMESTAMP,
+                    ),
+                ),
+                isLoading = false,
+            ),
+            onAction = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Home)),
+        )
+    }
+
     private fun rootChrome(selected: String): com.agendaqr.core.ui.components.AmNavChromeState {
         return com.agendaqr.core.ui.components.AmNavChromeState(
             destinations = listOf(

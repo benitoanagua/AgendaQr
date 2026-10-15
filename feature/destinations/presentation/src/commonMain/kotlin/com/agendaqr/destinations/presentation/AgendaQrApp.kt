@@ -21,6 +21,7 @@ import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTheme
 import com.agendaqr.destinations.data.DemoSeeder
+import com.agendaqr.destinations.data.LegacyComprobanteBytesMigration
 import com.agendaqr.destinations.data.LegacyLocalDataMigration
 import com.agendaqr.destinations.data.LocalProfileScope
 import com.agendaqr.destinations.data.createLocalProfileRepository
@@ -69,7 +70,13 @@ fun AgendaQrApp() {
             // repositorios locales cargan su estado al construirse.
             legacyLocalProfileIdOrNull()?.let { legacyId ->
                 if (legacyId != created.id) {
-                    LegacyLocalDataMigration().migrate(legacyId, created.id)
+                    val collections = LegacyLocalDataMigration().migrate(legacyId, created.id)
+                    // Bytes de comprobantes heredados: los ARCHIVOS físicos de
+                    // la ruta antigua también se copian (idempotente, sin
+                    // borrar el origen, fallo parcial sin aborto).
+                    if (collections.hadLegacyData) {
+                        LegacyComprobanteBytesMigration().migrate(legacyId, created.id)
+                    }
                 }
             }
             created

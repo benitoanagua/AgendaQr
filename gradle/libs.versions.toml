@@ -21,6 +21,11 @@ lucide = "1.1.0"
 # Robolectric existente — ADR-0007. Compat: AGP 8.11, robolectric
 # 4.14.1, Compose 1.8.2 (verificado por compilación).
 roborazzi = "1.26.0"
+# Biometría Android (BiometricPrompt; requiere FragmentActivity). Apache 2.0.
+biometric = "1.1.0"
+# Host del prompt: FragmentActivity (biometric la trae; se declara explícita
+# en androidApp para compilar MainActivity contra ella).
+androidxFragment = "1.8.6"
 # Recolección con ciclo de vida en commonMain. El
 # artifact androidx.lifecycle:lifecycle-runtime-compose es SOLO Android
 # (verificado contra su .module: sin variantes ios/wasm). Se usa la
@@ -43,6 +48,8 @@ coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+androidx-fragment = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidxFragment" }
 zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
 androidx-test-core = { group = "androidx.test", name = "core-ktx", version = "1.6.1" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit-ktx", version = "1.2.1" }

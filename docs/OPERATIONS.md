@@ -110,10 +110,17 @@ máquina con macOS.
    REINTENTAR.
 7. **Share:** `UIActivityViewController` de QR/comprobante (verificar que la
    escena activa presenta el controlador; `keyWindow` ya no se usa).
-8. **Nube opcional:** desde «Cuenta y respaldo», conectar una cuenta; modo avión
-   → operación → «Pendiente» → reconectar → «Sincronizado».
-9. **VoiceOver:** nodos únicos, heading en títulos, estados con texto (los tests
-   Compose ya fijan el árbol semántico).
+8. **PDF (S02):** «Elegir archivo (PDF)» → `UIDocumentPickerViewController`
+   (`IosPdfPicker`, asCopy) → el PDF llega al diálogo «Comprobante recibido»
+   con extensión `pdf`. Cancelar el picker no pierde nada.
+9. **Biometría:** con PIN configurado y Face/Touch ID inscrito, el lock
+   muestra «Usar biometría» → `LAContext.evaluatePolicy` → éxito desbloquea;
+   fallo/cancelación mantiene el bloqueo con el PIN visible
+   (`LocalAuthentication`, mapeo LAError → contrato común).
+10. **Nube opcional:** desde «Cuenta y respaldo», conectar una cuenta; modo avión
+    → operación → «Pendiente» → reconectar → «Sincronizado».
+11. **VoiceOver:** nodos únicos, heading en títulos, estados con texto (los tests
+    Compose ya fijan el árbol semántico).
 
 ### Notas de la implementación
 
@@ -123,6 +130,14 @@ máquina con macOS.
 - `IosQrCameraPresenter` (AVFoundation): `AVCaptureMetadataOutput` +
   `AVMetadataObjectTypeQRCode`; el QR detectado viaja como asset al canal común
   `QrImportResult`.
+- `IosPdfPicker` (UIDocumentPickerViewController): delegate retenido fuerte
+  (UIKit lo pide weak), un solo PDF por selección, entrega por
+  `IncomingComprobanteFeed` con mime `application/pdf`.
+- `IosBiometricGate` (LocalAuthentication): `canEvaluatePolicy` para
+  disponibilidad (`biometryType` distingue sin-hardware de no-inscrita),
+  `evaluatePolicy` para el intento, `invalidate()` al cancelar; códigos
+  `LAError` mapeados al contrato común (fail-closed: solo `Success`
+  desbloquea).
 - Escena activa: `UIApplication.connectedScenes` → `UIWindowScene` →
   `keyWindow.rootViewController` (fallback a la primera escena).
 - `ImportBatchControls.ios` y `observeIncomingComprobantes()` alimentan S12 y el

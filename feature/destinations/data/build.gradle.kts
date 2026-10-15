@@ -40,9 +40,15 @@ kotlin {
             implementation(libs.coroutines.core)
         }
         commonTest.dependencies { implementation(libs.coroutines.test) }
+        androidUnitTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.coroutines.test)
+        }
         androidMain.dependencies {
             implementation("io.ktor:ktor-client-android:${libs.versions.ktor.get()}")
             implementation(libs.zxing.core)
+            implementation(libs.androidx.biometric)
+            implementation(libs.core.ktx)
         }
         iosMain.dependencies {
             implementation("io.ktor:ktor-client-darwin:${libs.versions.ktor.get()}")

@@ -89,6 +89,17 @@ externo no puede ser la raíz de la identidad local.
   > ligado a la Activity (`authenticate()` responde `Unavailable`) y
   > `LocalAuthentication` en iOS; ambos requieren dispositivo físico. El
   > estado autoritativo vive en [STATE.md](../STATE.md).
+
+  > **Actualización posterior (2026-10-15, cierre integral):** el prompt ya
+  > está implementado en ambas plataformas — `androidx.biometric`
+  > `BiometricPrompt` ligado a la `FragmentActivity` del host y
+  > `LocalAuthentication`/`LAContext` en iOS — con el mapeo de errores
+  > probado en JVM y la invariante fail-closed «ningún error desbloquea».
+  > Falta únicamente la verificación del prompt sobre hardware real
+  > (dispositivo con biometría inscrita). Los BYTES de comprobantes
+  > heredados también se migran ya (`LegacyComprobanteBytesMigration`,
+  > idempotente y sin borrar el origen). El estado autoritativo vive en
+  > [STATE.md](../STATE.md).
 - **Directorio heredado de comprobantes.** La migración copia las colecciones
   serializadas, no los bytes de los archivos de comprobantes de la ruta
   antigua (`<base>/comprobantes/<user_id>/`), que ahora es

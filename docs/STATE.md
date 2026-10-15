@@ -16,16 +16,17 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Datos (persistencia local-first, sync queue) | data tests |
 | Identidad local sin cuenta (perfil local + namespace por perfil) | domain/data tests + `AgendaQrLocalStartupTest` (arranque real) |
 | Acceso local con PIN (configurar/confirmar, desbloquear, bloqueo) | `LocalAccessGateTest` + Robolectric del arranque real |
-| Biometría como atajo (disponibilidad Android real, prompt pendiente) + fallback PIN | `LocalAccessBiometricTest` (éxito desbloquea, fallo/cancelación conserva bloqueo) |
+| Biometría como atajo: prompt real Android (`BiometricPrompt`) + iOS (`LAContext`), mapeo de errores e invariante fail-closed | `LocalAccessBiometricTest` (contrato) + `BiometricPromptErrorMappingTest` (mapeo y fail-closed); runtime de hardware en §2 |
+| Migración de bytes de comprobantes heredados (`<base>/comprobantes/<user_id>/` → perfil local) | `LegacyComprobanteBytesMigrationTest` (idempotencia, no-borrado, fallo parcial, aislamiento) |
 | Modo de demostración aislado (perfil `demo-profile-v1`, sin sync) | `DemoDataTest` + `DemoSeederTest` (determinista, idempotente, no toca perfil real) |
 | Migración de instalaciones previas al perfil local | data tests (idempotencia, no borra origen, no mezcla cuentas, detección por claves sin cliente remoto) |
-| Nube opcional («Cuenta y respaldo» detrás de Inicio) | compilación Android/iOS + gate |
+| Nube opcional («Cuenta y respaldo» detrás de Inicio) | compilación Android/iOS + gate + captura `account-{light,dark}` (SignedOut con doble determinista) |
 | UX/UI V1.6 (referencia Ant Design Mobile, S00 + S01–S12) | Robolectric suite + hashes visuales + gate del design system |
-| Chrome e insets (TopBar, NavigationBar/Rail, Scaffold con contentWindowInsets) | Robolectric suite + gate |
+| Chrome e insets (TopBar, NavigationBar/Rail, Scaffold con contentWindowInsets) | Robolectric suite + gate (incl. captura tablet w720dp con NavigationRail) |
 | Edge-to-edge Android (`enableEdgeToEdge`) | ensamblado |
 | Predictive back (PredictiveBackHandler con progreso) | compilación 3 targets |
 | Búsqueda global (S04/S05) | Robolectric suite |
-| Importación QR (Photo Picker Android/PHPicker iOS, cámara, share Android) | unit + compilación de instrumentados |
+| Importación QR (Photo Picker Android/PHPicker iOS, cámara, share Android, PDF: OpenDocument Android/UIDocumentPicker iOS —runtime iOS en §2) | unit + compilación de instrumentados |
 | Registro de actividad (S07) | Robolectric suite |
 | Permisos de cámara (política de ajustes) | unit + compilación de instrumentados |
 | Navegación (back stack restaurable + NavigationBar 4 destinos) | commonTest + `RootNavigationChromeTest` |
@@ -44,11 +45,12 @@ No se declaran PASS. Requieren Xcode, dispositivo físico o red.
 | Insets/notch, cámara, foco nativo y motion en dispositivo | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Predictive back en Android 14+ (gesto real con progreso) | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Photo Picker en dispositivo (contratos del sistema) | Robolectric ejecuta el flujo unitario; el picker visual requiere dispositivo | [QUALITY.md](QUALITY.md) §5 |
-| Revisión visual de las capturas Roborazzi regeneradas | El hash PASS es determinista y el análisis de bandas/regiones es programático; el ojo humano valida la composición | abrir `feature/destinations/presentation/build/roborazzi/*.png` (52 capturas: 26 escenarios × claro/oscuro) |
+| Revisión visual de las capturas Roborazzi regeneradas | El hash PASS es determinista y el análisis de bandas/regiones es programático; el ojo humano valida la composición | abrir `feature/destinations/presentation/build/roborazzi/*.png` (64 capturas: 32 escenarios × claro/oscuro) |
 | Supabase acceptance (JDBC) | Requiere base de datos | `:supabase:acceptance:test` con `DATABASE_URL` |
 | Sincronización real contra Supabase (subida/bajada) | Requiere backend y cuenta reales | prueba de aceptación contra un proyecto Supabase |
-| Desbloqueo biométrico en dispositivo | Disponibilidad implementada (`BiometricManager` en Android, `LocalAuthentication` pendiente en iOS); el prompt ligado a la Activity y la verificación en hardware requieren dispositivo físico | implementación del prompt + dispositivo (el PIN sigue siendo la vía verificada) |
-| NavigationRail en tablet/plegable | No hay dispositivo | render real en tablet/plegable |
+| Prompt biométrico en dispositivo | Código implementado (`BiometricPrompt` con host `FragmentActivity` en Android, `LocalAuthentication`/`LAContext` en iOS); el mapeo de errores y la invariante fail-closed están probados en JVM, pero el prompt sobre hardware real no puede ejecutarse aquí | abrir la app con PIN configurado en dispositivo con biometría inscrita: éxito desbloquea; fallo/cancelación mantiene el bloqueo con el PIN visible |
+| Runtime del selector PDF de iOS (`UIDocumentPickerViewController`) | Implementado y compilado contra bindings reales; el contrato del sistema requiere simulador/dispositivo | elegir un PDF en «Elegir archivo (PDF)» en S02 → llega al diálogo «Comprobante recibido» |
+| NavigationRail en tablet/plegable | Captura tablet registrada en Roborazzi (w720dp); falta render en hardware real | render real en tablet/plegable |
 
 ## 3. Límites conocidos (decisiones, no defectos)
 
@@ -66,29 +68,23 @@ No se declaran PASS. Requieren Xcode, dispositivo físico o red.
 
 - **Share Extension de iOS:** `sharedImportsSupported()` devuelve false en iOS; el
   bloque «Desde otra app» de S02 no se muestra hasta que la extensión exista.
-- **Selector de PDF en iOS** (`UIDocumentPickerViewController`): la acción
-  «Elegir archivo (PDF)» solo existe en Android (OpenDocument por el canal de
-  comprobantes entrantes); en iOS queda pendiente de la implementación nativa con Xcode.
+  **Bloqueo concreto:** el proyecto Xcode no está versionado en el repositorio
+  (política documentada en `iosApp/README.md`) y crear el target de la extensión
+  exige Xcode + firma; no puede hacerse ni verificarse desde este entorno.
 
 ## 5. No implementado (alcance declarado, no defecto)
 
 Se listan explícitamente para no declararlos cubiertos (ADR-0016):
 
-- **Cifrado de datos en reposo con el PIN — NO IMPLEMENTADO.** El PIN es una
-  puerta de acceso local (verificador PBKDF2 con sal), no una clave derivada de
-  los datos. Los datos locales NO están cifrados con el PIN.
-- **Desbloqueo biométrico (`BiometricPrompt`/`LocalAuthentication`) — PARCIALMENTE
-  IMPLEMENTADO.** Disponibilidad real en Android (`BiometricManager`), puerta
-  `BiometricGate` con fallback fail-closed al PIN y atajo en `LocalLockScreen`
-  cuando está disponible e inscrita. Pendiente: el prompt ligado a la Activity
-  (`authenticate()` devuelve `Unavailable` hasta cablearlo) y `LocalAuthentication`
-  en iOS; ambos requieren dispositivo físico para verificarse. La taxonomía de
-  errores (cancelado, no inscrito, bloqueo del sensor, recuperable) existe en
-  `BiometricAuthResult`/`BiometricAvailability`.
-- **Migración de los bytes de comprobantes del directorio heredado — NO
-  IMPLEMENTADO.** La migración copia las colecciones serializadas; los archivos
-  antiguos (`.../comprobantes/<user_id>/`) se conservan en su ruta y no se copian
-  a la del perfil local.
+- **Cifrado de datos en reposo — NO IMPLEMENTADO (decisión documentada).** El
+  PIN es una puerta de acceso local (verificador PBKDF2 con sal), no una clave
+  derivada de los datos. Almacenamiento: colecciones en
+  `SharedPreferences` (JSON, `allowBackup=false`) y bytes de comprobantes en
+  `filesDir`/`Application Support` — sin cifrar en reposo. Un cifrado seguro
+  requeriría clave envuelta por Keystore/Keychain (no derivada del PIN),
+  re-cifrado al cambiar protección y doble lectura durante la migración de
+  los datos existentes en claro; no se introduce una migración que pueda
+  dejarlos inaccesibles.
 - **Vínculo explícito perfil local ↔ cuenta remota — NO IMPLEMENTADO.** «Cuenta y
   respaldo» permite entrar/salir sin borrar datos locales, pero no existe el
   enlace perfil↔cuenta con semántica de respaldo por dispositivo.
