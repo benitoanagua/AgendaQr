@@ -101,7 +101,7 @@ class AmSchemeTest {
         assertEquals("1F1F1F", hex(s.surface))
         assertEquals("141414", hex(s.surfaceSecondary))
         assertEquals("3A3A3A", hex(s.border))
-        assertEquals("3A3A3A", hex(s.divider))
+        assertEquals("4A4A4A", hex(s.divider))
         assertEquals("E6E6E6", hex(s.textPrimary))
         assertEquals("B3B3B3", hex(s.textSecondary))
         assertEquals("9E9E9E", hex(s.textTertiary))

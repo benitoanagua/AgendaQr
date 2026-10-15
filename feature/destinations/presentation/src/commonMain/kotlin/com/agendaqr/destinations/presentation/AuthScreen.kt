@@ -17,6 +17,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import com.agendaqr.core.ui.components.AmIcon
 import com.agendaqr.core.ui.components.AmIconButton
 import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmPrimaryButton
@@ -117,13 +118,17 @@ fun AuthScreen(
                 errorMessage = if (passwordError) AppStrings.Minimo6Caracteres else null,
                 helperMessage = if (!passwordError) AppStrings.Minimo6Caracteres else null,
                 trailing = {
+                    // Uso de texto compacto como alternativa a iconos de ojo
+                    // (Lucide 1.1.0 no incluye Eye/EyeOff). El botón mantiene
+                    // área táctil de 48 dp y estilo de icono.
                     AmIconButton(
                         contentDescription = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
                         onClick = { passwordVisible = !passwordVisible },
                     ) {
                         AmText(
-                            if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
+                            text = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
                             size = AmType.Caption,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
                             color = AmColor.AccentText,
                         )
                     }

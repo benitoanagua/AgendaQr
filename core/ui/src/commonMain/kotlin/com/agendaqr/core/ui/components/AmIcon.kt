@@ -28,6 +28,8 @@ import com.composables.icons.lucide.ImageOff
 import com.composables.icons.lucide.Inbox
 import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.Lock
+import com.composables.icons.lucide.Eye
+import com.composables.icons.lucide.EyeOff
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.NotebookPen
 import com.composables.icons.lucide.Paperclip

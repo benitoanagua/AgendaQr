@@ -80,7 +80,7 @@ internal object AmPalette {
     val darkSurfaceContainerHigh = Color(0xFF303030)
     val darkSurfaceContainerHighest = Color(0xFF3A3A3A)
     val darkBorder = Color(0xFF3A3A3A)
-    val darkDivider = Color(0xFF3A3A3A)
+    val darkDivider = Color(0xFF4A4A4A)
     val darkText = Color(0xFFE6E6E6)
     val darkTextSecondary = Color(0xFFB3B3B3)
     val darkTextTertiary = Color(0xFF9E9E9E)

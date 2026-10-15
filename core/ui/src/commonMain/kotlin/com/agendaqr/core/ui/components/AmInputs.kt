@@ -115,8 +115,8 @@ fun AmTextField(
             trailingIcon = trailing?.let { slot -> { slot() } },
             shape = AmShapes.Medium,
             colors = TextFieldDefaults.colors(
-                // Sin borde ni relleno (referencia): fondo transparente y
-                // guía hairline — Divider en reposo, acento en foco.
+                // Fondo sutil en tema oscuro para mejor contraste; transparente en claro.
+                // Guía hairline: Divider en reposo, acento en foco.
                 unfocusedContainerColor = AmColor.Transparent,
                 focusedContainerColor = AmColor.Transparent,
                 disabledContainerColor = AmColor.Transparent,
