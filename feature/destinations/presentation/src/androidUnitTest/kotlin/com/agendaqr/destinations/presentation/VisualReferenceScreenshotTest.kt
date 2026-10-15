@@ -54,6 +54,10 @@ import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.destinations.domain.Operation
 import com.agendaqr.destinations.domain.OperationType
+import com.agendaqr.destinations.domain.BiometricAvailability
+import com.agendaqr.destinations.domain.ImportBatch
+import com.agendaqr.destinations.domain.ImportCandidate
+import com.agendaqr.destinations.domain.ImportKind
 import com.agendaqr.destinations.presentation.AppStrings
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
@@ -578,6 +582,346 @@ class VisualReferenceScreenshotTest {
                 }
             }
         }
+    }
+
+    // --- Acceso local (Fase B): onboarding, bloqueo, PIN incorrecto y
+    // biometría. Son la puerta de entrada real (sin login remoto).
+    @Test fun local_onboarding_light() = shot("local-onboarding-light", dark = false) {
+        LocalOnboardingScreen(
+            state = LocalAccessUiState(mode = LocalAccessMode.Onboarding),
+            onPinChanged = {},
+            onConfirmationChanged = {},
+            onSubmit = {},
+            onExploreDemo = {},
+        )
+    }
+
+    @Test fun local_onboarding_dark() = shot("local-onboarding-dark", dark = true) {
+        LocalOnboardingScreen(
+            state = LocalAccessUiState(mode = LocalAccessMode.Onboarding),
+            onPinChanged = {},
+            onConfirmationChanged = {},
+            onSubmit = {},
+            onExploreDemo = {},
+        )
+    }
+
+    @Test fun local_onboarding_mismatch_light() = shot("local-onboarding-mismatch-light", dark = false) {
+        LocalOnboardingScreen(
+            state = LocalAccessUiState(
+                mode = LocalAccessMode.Onboarding,
+                pin = "1234",
+                confirmation = "4321",
+                error = LocalAccessError.Mismatch,
+            ),
+            onPinChanged = {},
+            onConfirmationChanged = {},
+            onSubmit = {},
+            onExploreDemo = {},
+        )
+    }
+
+    @Test fun local_onboarding_mismatch_dark() = shot("local-onboarding-mismatch-dark", dark = true) {
+        LocalOnboardingScreen(
+            state = LocalAccessUiState(
+                mode = LocalAccessMode.Onboarding,
+                pin = "1234",
+                confirmation = "4321",
+                error = LocalAccessError.Mismatch,
+            ),
+            onPinChanged = {},
+            onConfirmationChanged = {},
+            onSubmit = {},
+            onExploreDemo = {},
+        )
+    }
+
+    @Test fun local_lock_light() = shot("local-lock-light", dark = false) {
+        LocalLockScreen(
+            state = LocalAccessUiState(mode = LocalAccessMode.Locked),
+            onPinChanged = {},
+            onSubmit = {},
+            onExploreDemo = {},
+        )
+    }
+
+    @Test fun local_lock_dark() = shot("local-lock-dark", dark = true) {
+        LocalLockScreen(
+            state = LocalAccessUiState(mode = LocalAccessMode.Locked),
+            onPinChanged = {},
+            onSubmit = {},
+            onExploreDemo = {},
+        )
+    }
+
+    @Test fun local_lock_incorrect_light() = shot("local-lock-incorrect-light", dark = false) {
+        LocalLockScreen(
+            state = LocalAccessUiState(
+                mode = LocalAccessMode.Locked,
+                pin = "0000",
+                error = LocalAccessError.Incorrect,
+                remainingAttempts = 3,
+            ),
+            onPinChanged = {},
+            onSubmit = {},
+            onExploreDemo = {},
+        )
+    }
+
+    @Test fun local_lock_incorrect_dark() = shot("local-lock-incorrect-dark", dark = true) {
+        LocalLockScreen(
+            state = LocalAccessUiState(
+                mode = LocalAccessMode.Locked,
+                pin = "0000",
+                error = LocalAccessError.Incorrect,
+                remainingAttempts = 3,
+            ),
+            onPinChanged = {},
+            onSubmit = {},
+            onExploreDemo = {},
+        )
+    }
+
+    // Biometría disponible con fallback visible: el PIN sigue presente como
+    // vía principal; la biometría es solo el atajo secundario.
+    @Test fun local_lock_biometric_light() = shot("local-lock-biometric-light", dark = false) {
+        LocalLockScreen(
+            state = LocalAccessUiState(
+                mode = LocalAccessMode.Locked,
+                biometricAvailability = BiometricAvailability.Available,
+                biometricFallbackVisible = true,
+            ),
+            onPinChanged = {},
+            onSubmit = {},
+            onBiometric = {},
+            onExploreDemo = {},
+        )
+    }
+
+    @Test fun local_lock_biometric_dark() = shot("local-lock-biometric-dark", dark = true) {
+        LocalLockScreen(
+            state = LocalAccessUiState(
+                mode = LocalAccessMode.Locked,
+                biometricAvailability = BiometricAvailability.Available,
+                biometricFallbackVisible = true,
+            ),
+            onPinChanged = {},
+            onSubmit = {},
+            onBiometric = {},
+            onExploreDemo = {},
+        )
+    }
+
+    // S01 vacío y con error recuperable (estados reales, no solo poblado).
+    @Test fun s01_empty_light() = shot("s01-empty-light", dark = false) {
+        DestinationsScreen(
+            state = DestinationsUiState(destinations = emptyList(), isLoading = false),
+            onAction = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Home)),
+        )
+    }
+
+    @Test fun s01_empty_dark() = shot("s01-empty-dark", dark = true) {
+        DestinationsScreen(
+            state = DestinationsUiState(destinations = emptyList(), isLoading = false),
+            onAction = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Home)),
+        )
+    }
+
+    @Test fun s01_error_light() = shot("s01-error-light", dark = false) {
+        DestinationsScreen(
+            state = DestinationsUiState(
+                destinations = emptyList(),
+                isLoading = false,
+                error = userFacingError(IllegalStateException("save failed"), ErrorFlow.SaveQr),
+            ),
+            onAction = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Home)),
+        )
+    }
+
+    @Test fun s01_error_dark() = shot("s01-error-dark", dark = true) {
+        DestinationsScreen(
+            state = DestinationsUiState(
+                destinations = emptyList(),
+                isLoading = false,
+                error = userFacingError(IllegalStateException("save failed"), ErrorFlow.SaveQr),
+            ),
+            onAction = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Home)),
+        )
+    }
+
+    // S04: vacío sin resultados y error de búsqueda con reintento.
+    @Test fun s04_search_empty_light() = shot("s04-search-empty-light", dark = false) {
+        GlobalSearchScreen(
+            state = GlobalSearchUiState(query = "inexistente"),
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Search)),
+            onAction = {},
+            onSelect = {},
+        )
+    }
+
+    @Test fun s04_search_empty_dark() = shot("s04-search-empty-dark", dark = true) {
+        GlobalSearchScreen(
+            state = GlobalSearchUiState(query = "inexistente"),
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Search)),
+            onAction = {},
+            onSelect = {},
+        )
+    }
+
+    @Test fun s04_search_error_light() = shot("s04-search-error-light", dark = false) {
+        GlobalSearchScreen(
+            state = GlobalSearchUiState(
+                query = "mercado",
+                error = userFacingError(IllegalStateException("search failed"), ErrorFlow.Search),
+            ),
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Search)),
+            onAction = {},
+            onSelect = {},
+        )
+    }
+
+    @Test fun s04_search_error_dark() = shot("s04-search-error-dark", dark = true) {
+        GlobalSearchScreen(
+            state = GlobalSearchUiState(
+                query = "mercado",
+                error = userFacingError(IllegalStateException("search failed"), ErrorFlow.Search),
+            ),
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Search)),
+            onAction = {},
+            onSelect = {},
+        )
+    }
+
+    // S12: lote con reconocidos + duplicado + pendiente (resultado,
+    // revisión y error de guardado parcial).
+    private fun importBatchFixture() = ImportBatch(
+        candidates = listOf(
+            ImportCandidate(
+                id = "imp-1", kind = ImportKind.QR, fingerprint = "fp-1",
+                mimeType = "image/png", extension = "png",
+                qrAsset = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+            ),
+            ImportCandidate(
+                id = "imp-2", kind = ImportKind.QR, fingerprint = "fp-2",
+                mimeType = "image/png", extension = "png",
+                qrAsset = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+            ),
+            ImportCandidate(
+                id = "imp-3", kind = ImportKind.QR, fingerprint = "fp-1",
+                mimeType = "image/png", extension = "png",
+                qrAsset = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+            ),
+            ImportCandidate(
+                id = "imp-4", kind = ImportKind.DESCONOCIDO, fingerprint = "fp-4",
+                mimeType = "image/png", extension = "png", error = "No se pudo clasificar",
+            ),
+        ),
+    )
+
+    @Test fun import_batch_result_light() = shot("import-batch-result-light", dark = false) {
+        ImportBatchScreen(state = ImportBatchUiState.Result(importBatchFixture()), onAction = {})
+    }
+
+    @Test fun import_batch_result_dark() = shot("import-batch-result-dark", dark = true) {
+        ImportBatchScreen(state = ImportBatchUiState.Result(importBatchFixture()), onAction = {})
+    }
+
+    @Test fun import_batch_review_light() = shot("import-batch-review-light", dark = false) {
+        ImportBatchScreen(state = ImportBatchUiState.Review(importBatchFixture()), onAction = {})
+    }
+
+    @Test fun import_batch_review_dark() = shot("import-batch-review-dark", dark = true) {
+        ImportBatchScreen(state = ImportBatchUiState.Review(importBatchFixture()), onAction = {})
+    }
+
+    @Test fun import_batch_error_light() = shot("import-batch-error-light", dark = false) {
+        ImportBatchScreen(
+            state = ImportBatchUiState.Error(
+                error = userFacingError(IllegalStateException("batch save failed"), ErrorFlow.ImportBatchSave),
+                batch = importBatchFixture(),
+            ),
+            onAction = {},
+        )
+    }
+
+    @Test fun import_batch_error_dark() = shot("import-batch-error-dark", dark = true) {
+        ImportBatchScreen(
+            state = ImportBatchUiState.Error(
+                error = userFacingError(IllegalStateException("batch save failed"), ErrorFlow.ImportBatchSave),
+                batch = importBatchFixture(),
+            ),
+            onAction = {},
+        )
+    }
+
+    // S06 vacío: sin contextos, con guía de creación.
+    @Test fun s06_contexts_empty_light() = shot("s06-contexts-empty-light", dark = false) {
+        ContextsScreen(
+            state = ContextsUiState(contexts = emptyList(), isLoading = false),
+            onAction = {},
+            onBack = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Contexts)),
+        )
+    }
+
+    @Test fun s06_contexts_empty_dark() = shot("s06-contexts-empty-dark", dark = true) {
+        ContextsScreen(
+            state = ContextsUiState(contexts = emptyList(), isLoading = false),
+            onAction = {},
+            onBack = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Contexts)),
+        )
+    }
+
+    // Cuenta y respaldo: estado ocupado del formulario (la superficie
+    // opcional que conserva el login remoto fuera del arranque).
+    @Test fun login_submitting_light() = shot("login-submitting-light", dark = false) {
+        AuthScreen(
+            state = AuthUiState(email = "persona@example.com", password = "secreta123", isSubmitting = true),
+            onEmailChanged = {},
+            onPasswordChanged = {},
+            onSignIn = {},
+            onSignUp = {},
+        )
+    }
+
+    @Test fun login_submitting_dark() = shot("login-submitting-dark", dark = true) {
+        AuthScreen(
+            state = AuthUiState(email = "persona@example.com", password = "secreta123", isSubmitting = true),
+            onEmailChanged = {},
+            onPasswordChanged = {},
+            onSignIn = {},
+            onSignUp = {},
+        )
+    }
+
+    // S09 con varios QR: conteo plural y guardado múltiple.
+    @Test fun s09_review_multi_light() = shot("s09-review-multi-light", dark = false) {
+        ImportReviewScreen(
+            assets = listOf(
+                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+            ),
+            onSaveAll = {},
+            onBack = {},
+        )
+    }
+
+    @Test fun s09_review_multi_dark() = shot("s09-review-multi-dark", dark = true) {
+        ImportReviewScreen(
+            assets = listOf(
+                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+            ),
+            onSaveAll = {},
+            onBack = {},
+        )
     }
 
     private fun rootChrome(selected: String): com.agendaqr.core.ui.components.AmNavChromeState {

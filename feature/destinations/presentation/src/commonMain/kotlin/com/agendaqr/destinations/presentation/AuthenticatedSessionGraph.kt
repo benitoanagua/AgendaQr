@@ -52,6 +52,7 @@ import com.agendaqr.destinations.domain.ToggleFavoriteUseCase
 import com.agendaqr.destinations.domain.UnassociateComprobanteUseCase
 import com.agendaqr.destinations.domain.UpdateDestinationUseCase
 import com.agendaqr.destinations.domain.UpdateOperationUseCase
+import com.agendaqr.destinations.domain.isDemoProfile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -151,7 +152,9 @@ fun rememberAuthenticatedSessionGraph(profileId: String): AuthenticatedSessionGr
     // ausencia de Supabase es un estado soportado (modo local) y no debe
     // producir reintentos indefinidos contra un backend inexistente. La cola
     // local sigue acumulando mutaciones pendientes para cuando se conecte.
-    val remoteConfigured = remember { isRemoteConfigured() }
+    // El perfil de demostración tampoco sincroniza nunca: sus datos son
+    // ficticios y no deben salir del dispositivo.
+    val remoteConfigured = remember(profileId) { isRemoteConfigured() && !isDemoProfile(profileId) }
     val recovery = remember(syncProcessor, sessionScope, networkMonitor) {
         SyncRecoveryCoordinator(syncProcessor, sessionScope, networkMonitor = networkMonitor)
     }

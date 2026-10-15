@@ -79,6 +79,16 @@ externo no puede ser la raíz de la identidad local.
   no inscrita, bloqueo temporal del sensor, error recuperable o no) tampoco
   está implementada: `LocalAccessError` hoy solo cubre la política del PIN.
   Deberá extenderse junto con el desbloqueo biométrico.
+
+  > **Actualización (2026-10-15):** parcialmente implementado. La taxonomía
+  > existe ya en `BiometricAvailability`/`BiometricAuthResult` (dominio) y la
+  > disponibilidad real se consulta en Android vía `BiometricManager`
+  > (`platformBiometricGate`). El atajo aparece en `LocalLockScreen` solo
+  > cuando está disponible e inscrita, con el PIN como vía principal y
+  > fallback ante cualquier fallo (fail-closed). Sigue pendiente el prompt
+  > ligado a la Activity (`authenticate()` responde `Unavailable`) y
+  > `LocalAuthentication` en iOS; ambos requieren dispositivo físico. El
+  > estado autoritativo vive en [STATE.md](../STATE.md).
 - **Directorio heredado de comprobantes.** La migración copia las colecciones
   serializadas, no los bytes de los archivos de comprobantes de la ruta
   antigua (`<base>/comprobantes/<user_id>/`), que ahora es

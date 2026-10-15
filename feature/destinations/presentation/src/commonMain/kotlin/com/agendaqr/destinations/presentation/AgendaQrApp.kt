@@ -1,17 +1,35 @@
 package com.agendaqr.destinations.presentation
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.agendaqr.core.ui.components.AmStatusBanner
+import com.agendaqr.core.ui.components.AmLoading
+import com.agendaqr.core.ui.components.AmTone
+import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.destinations.data.DemoSeeder
 import com.agendaqr.destinations.data.LegacyLocalDataMigration
 import com.agendaqr.destinations.data.LocalProfileScope
 import com.agendaqr.destinations.data.createLocalProfileRepository
 import com.agendaqr.destinations.data.createLocalProtectionRepository
 import com.agendaqr.destinations.data.legacyLocalProfileIdOrNull
+import com.agendaqr.destinations.data.platformBiometricGate
+import com.agendaqr.destinations.domain.BiometricAvailability
+import com.agendaqr.destinations.domain.DEMO_PROFILE_ID
+import kotlinx.coroutines.launch
 
 /**
  * Raíz de la app — ARRANQUE LOCAL-FIRST.
@@ -28,6 +46,12 @@ import com.agendaqr.destinations.data.legacyLocalProfileIdOrNull
  *
  * La cuenta remota sigue siendo opcional y se gestiona desde
  * [AccountScreen]; su ausencia no bloquea el acceso.
+ *
+ * Modos transversales:
+ * - Biometría: atajo opcional de desbloqueo (puerta de plataforma). El PIN
+ *   es siempre la vía principal y el fallback ante cualquier fallo.
+ * - Demostración: perfil aislado [DEMO_PROFILE_ID] con datos ficticios.
+ *   No toca el perfil real, no requiere PIN ni cuenta y nunca sincroniza.
  */
 @Composable
 fun AgendaQrApp() {
@@ -56,26 +80,87 @@ fun AgendaQrApp() {
         }
         val accessState by accessViewModel.state.collectAsStateWithLifecycle()
 
-        // Política de bloqueo: la app se bloquea al pasar a segundo plano.
-        // Sin PIN configurado no hay nada que proteger, así que el bloqueo
-        // no altera el primer arranque.
-        LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+        // Biometría: disponibilidad real de plataforma (fail-closed si falla).
+        val biometricGate = remember { platformBiometricGate() }
+        LaunchedEffect(biometricGate) {
+            val availability = runCatching { biometricGate.availability() }
+                .getOrDefault(BiometricAvailability.Unavailable)
+            accessViewModel.setBiometricAvailability(availability)
+        }
+        val biometricScope = rememberCoroutineScope()
+        fun requestBiometric() {
+            biometricScope.launch {
+                val result = runCatching { biometricGate.authenticate() }
+                    .getOrDefault(com.agendaqr.destinations.domain.BiometricAuthResult.Unavailable)
+                accessViewModel.onBiometricResult(result)
+            }
+        }
+
+        // Modo de demostración: perfil aislado con datos ficticios.
+        var demoActive by rememberSaveable { mutableStateOf(false) }
+        var demoReady by rememberSaveable { mutableStateOf(false) }
+        LaunchedEffect(demoActive) {
+            if (demoActive) {
+                val report = runCatching { DemoSeeder().seedIfEmpty() }.getOrNull()
+                if (report != null) demoReady = true else demoActive = false
+            } else {
+                demoReady = false
+            }
+        }
+        // El scope efectivo se activa de forma síncrona (mismo patrón que el
+        // arranque): el grafo de abajo siempre lee el namespace correcto.
+        val effectiveProfileId = remember(profile.id, demoActive, demoReady) {
+            val id = if (demoActive && demoReady) DEMO_PROFILE_ID else profile.id
+            LocalProfileScope.activate(id)
+            id
+        }
+        val demoShowing = demoActive && demoReady && effectiveProfileId == DEMO_PROFILE_ID
+        fun exitDemo() {
+            demoActive = false
             accessViewModel.lock()
         }
 
-        when (accessState.mode) {
-            LocalAccessMode.Onboarding -> LocalOnboardingScreen(
+        // Política de bloqueo: la app se bloquea al pasar a segundo plano.
+        // Sin PIN configurado no hay nada que proteger, así que el bloqueo
+        // no altera el primer arranque. En demo no se bloquea con PIN.
+        LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+            if (!demoShowing) accessViewModel.lock()
+        }
+
+        when {
+            demoActive && !demoReady -> AmLoading(message = AppStrings.Cargando)
+            demoShowing -> Column {
+                AmStatusBanner(
+                    message = AppStrings.ModoDemostracion + "\n" + AppStrings.DemostracionAislada,
+                    tone = AmTone.Info,
+                    actionLabel = AppStrings.SalirDeDemostracion,
+                    onAction = ::exitDemo,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = AmSpacing.Md, vertical = AmSpacing.Sm),
+                )
+                AgendaQrLocalApp(
+                    profileId = DEMO_PROFILE_ID,
+                    onLock = ::exitDemo,
+                )
+            }
+            accessState.mode == LocalAccessMode.Onboarding -> LocalOnboardingScreen(
                 state = accessState,
                 onPinChanged = accessViewModel::onPinChanged,
                 onConfirmationChanged = accessViewModel::onConfirmationChanged,
                 onSubmit = accessViewModel::submitOnboarding,
+                onExploreDemo = { demoActive = true },
             )
-            LocalAccessMode.Locked -> LocalLockScreen(
+            accessState.mode == LocalAccessMode.Locked -> LocalLockScreen(
                 state = accessState,
                 onPinChanged = accessViewModel::onPinChanged,
                 onSubmit = accessViewModel::submitUnlock,
+                onBiometric = if (accessState.biometricAvailability == BiometricAvailability.Available) {
+                    ::requestBiometric
+                } else {
+                    null
+                },
+                onExploreDemo = { demoActive = true },
             )
-            LocalAccessMode.Unlocked -> AgendaQrLocalApp(
+            accessState.mode == LocalAccessMode.Unlocked -> AgendaQrLocalApp(
                 profileId = profile.id,
                 onLock = accessViewModel::lock,
             )

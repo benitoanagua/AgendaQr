@@ -343,4 +343,18 @@ internal object AppStrings {
     val ConectarCuentaDescripcion = "Conectar una cuenta es opcional. Tus datos siguen en tu teléfono; la cuenta solo habilita respaldo y sincronización."
     val DesconectarCuenta = "Desconectar cuenta"
     val DatosLocalesSeConservan = "Al desconectar, los datos locales se conservan en este dispositivo."
+    // ------------------------------------------------------------------
+    // Biometría (atajo de desbloqueo; el PIN sigue siendo obligatorio
+    // como alternativa y la biometría nunca cifra datos).
+    // ------------------------------------------------------------------
+    val UsarBiometria = "Usar biometría"
+    val BiometriaNoDisponible = "La biometría no está disponible en este dispositivo. Usa tu PIN."
+    // ------------------------------------------------------------------
+    // Modo de demostración (datos ficticios aislados, sin cuenta ni red).
+    // ------------------------------------------------------------------
+    val ExplorarDemostracion = "Explorar demostración"
+    val ExplorarDemostracionDescripcion = "Prueba la app con datos ficticios. No toca tu información real."
+    val ModoDemostracion = "Modo demostración · datos ficticios"
+    val SalirDeDemostracion = "Salir de demostración"
+    val DemostracionAislada = "Estás explorando con datos ficticios. Nada se sincroniza ni se mezcla con tu información."
 }

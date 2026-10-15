@@ -204,6 +204,42 @@ La app se bloquea al pasar a segundo plano (`Lifecycle.Event.ON_STOP`) y vuelve
 a pedir el PIN al reanudarse. Sin PIN configurado no hay nada que proteger y el
 primer arranque no se ve afectado.
 
+### Biometría local (atajo opcional, fail-closed)
+
+La biometría es un atajo de desbloqueo, nunca un mecanismo aparte de
+protección. El contrato vive en el dominio (`BiometricGate`,
+`BiometricAvailability`, `BiometricAuthResult`) y cada plataforma lo
+implementa en `data`:
+
+- **Android:** disponibilidad real vía `BiometricManager`
+  (`canAuthenticate(BIOMETRIC_STRONG)`); el prompt ligado a la Activity
+  está pendiente y `authenticate()` responde `Unavailable` (fail-closed).
+- **iOS:** `LocalAuthentication` pendiente de Xcode; estado `Unavailable`.
+
+La UI ofrece el atajo en `LocalLockScreen` solo cuando la disponibilidad es
+`Available`; el PIN es siempre la vía principal y el fallback visible ante
+cualquier fallo, cancelación o ausencia de hardware. Solo
+`BiometricAuthResult.Success` desbloquea. La biometría no cifra datos ni
+sustituye al verificador PBKDF2 del PIN.
+
+### Modo de demostración aislado
+
+El modo de demostración permite explorar la app con datos ficticios
+deterministas (`DemoData`/`DemoSeeder`):
+
+- Perfil fijo `demo-profile-v1`: todas las colecciones viven bajo
+  `<prefijo>.local.demo-profile-v1` y nunca tocan el namespace del perfil
+  real del usuario.
+- Entrada explícita: botón «Explorar demostración» en onboarding/lock;
+  nunca se carga automáticamente.
+- Idempotente: `seedIfEmpty` no duplica al reentrar y no pisa datos
+  preexistentes del namespace demo.
+- Sin sincronización: el grafo de sesión fuerza `remoteConfigured = false`
+  para el perfil demo (sin recovery, sin UI de sync, sin cola hacia
+  Supabase) — los datos ficticios no salen del dispositivo.
+- Sin PIN/cuenta: salir de la demostración restaura el flujo de acceso real
+  (onboarding o lock) sin mezclar información.
+
 ### Importante
 
 - **Los datos locales NO están cifrados en reposo con el PIN.** El PIN es una
@@ -364,11 +400,18 @@ RLS, PostgreSQL, Storage y sincronización offline/online.
 
 - **Datos en reposo:** no cifrados con el PIN. El PIN es una puerta de acceso
   local (verificador PBKDF2-HMAC-SHA256 con sal aleatoria), no una clave
-  derivada de los datos.
+  derivada de los datos. La biometría tampoco cifra: es un atajo de
+  desbloqueo sobre la misma puerta.
+- **Prompt biométrico:** la disponibilidad Android es real, pero el
+  `BiometricPrompt` ligado a la Activity y `LocalAuthentication` (iOS)
+  siguen pendientes; `authenticate()` es fail-closed (`Unavailable`) y el
+  PIN permanece como única vía verificada de desbloqueo.
 - **Migración de archivos de comprobantes heredados:** no implementada; los
   bytes heredados se conservan en su ruta antigua.
 - **Cuenta remota:** el aislamiento remoto depende de RLS + Auth y no se
   debilita con la identidad local. Desconectar la cuenta no borra datos locales.
+- **Modo de demostración:** aislado por namespace y sin sincronización; no
+  constituye un perfil de usuario y no debe usarse para datos reales.
 
 El estado de verificación por plataforma y las capacidades no implementadas se
 mantienen en [STATE.md](STATE.md); las puertas y la estrategia de prueba, en

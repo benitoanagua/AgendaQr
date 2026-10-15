@@ -1,6 +1,8 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.lifecycle.ViewModel
+import com.agendaqr.destinations.domain.BiometricAuthResult
+import com.agendaqr.destinations.domain.BiometricAvailability
 import com.agendaqr.destinations.domain.LocalProfile
 import com.agendaqr.destinations.domain.LocalProtectionRepository
 import com.agendaqr.destinations.domain.PinPolicy
@@ -38,6 +40,14 @@ data class LocalAccessUiState(
     val confirmation: String = "",
     val error: LocalAccessError? = null,
     val remainingAttempts: Int = 0,
+    /**
+     * Disponibilidad biométrica del dispositivo (la fija el arranque tras
+     * consultar la puerta de plataforma). El PIN sigue siendo la vía
+     * principal: la biometría es solo un atajo opcional.
+     */
+    val biometricAvailability: BiometricAvailability = BiometricAvailability.Unavailable,
+    /** El último intento biométrico falló: se muestra el fallback al PIN. */
+    val biometricFallbackVisible: Boolean = false,
 )
 
 /**
@@ -58,7 +68,7 @@ class LocalAccessViewModel(
     val state: StateFlow<LocalAccessUiState> = _state.asStateFlow()
 
     fun onPinChanged(value: String) {
-        _state.update { it.copy(pin = sanitize(value), error = null) }
+        _state.update { it.copy(pin = sanitize(value), error = null, biometricFallbackVisible = false) }
     }
 
     fun onConfirmationChanged(value: String) {
@@ -95,9 +105,31 @@ class LocalAccessViewModel(
      * Sin PIN configurado no hay nada que bloquear: se mantiene el onboarding.
      */
     fun lock() {
+        val biometric = _state.value.biometricAvailability
         _state.value = LocalAccessUiState(
             mode = if (protection.isConfigured()) LocalAccessMode.Locked else LocalAccessMode.Onboarding,
+            biometricAvailability = biometric,
         )
+    }
+
+    /** Disponibilidad consultada a la puerta de plataforma (arranque). */
+    fun setBiometricAvailability(availability: BiometricAvailability) {
+        _state.update { it.copy(biometricAvailability = availability) }
+    }
+
+    /**
+     * Resultado del prompt biométrico. Solo [BiometricAuthResult.Success]
+     * desbloquea; cualquier otro resultado conserva el bloqueo y muestra
+     * el fallback al PIN (fail-closed: nunca se omite la protección).
+     */
+    fun onBiometricResult(result: BiometricAuthResult) {
+        when (result) {
+            BiometricAuthResult.Success -> unlock()
+            BiometricAuthResult.Cancelled -> Unit
+            is BiometricAuthResult.Failed,
+            BiometricAuthResult.Unavailable,
+            -> _state.update { it.copy(biometricFallbackVisible = true) }
+        }
     }
 
     private fun unlock() {

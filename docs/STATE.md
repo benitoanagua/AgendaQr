@@ -16,6 +16,8 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Datos (persistencia local-first, sync queue) | data tests |
 | Identidad local sin cuenta (perfil local + namespace por perfil) | domain/data tests + `AgendaQrLocalStartupTest` (arranque real) |
 | Acceso local con PIN (configurar/confirmar, desbloquear, bloqueo) | `LocalAccessGateTest` + Robolectric del arranque real |
+| Biometría como atajo (disponibilidad Android real, prompt pendiente) + fallback PIN | `LocalAccessBiometricTest` (éxito desbloquea, fallo/cancelación conserva bloqueo) |
+| Modo de demostración aislado (perfil `demo-profile-v1`, sin sync) | `DemoDataTest` + `DemoSeederTest` (determinista, idempotente, no toca perfil real) |
 | Migración de instalaciones previas al perfil local | data tests (idempotencia, no borra origen, no mezcla cuentas, detección por claves sin cliente remoto) |
 | Nube opcional («Cuenta y respaldo» detrás de Inicio) | compilación Android/iOS + gate |
 | UX/UI V1.6 (referencia Ant Design Mobile, S00 + S01–S12) | Robolectric suite + hashes visuales + gate del design system |
@@ -42,10 +44,10 @@ No se declaran PASS. Requieren Xcode, dispositivo físico o red.
 | Insets/notch, cámara, foco nativo y motion en dispositivo | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Predictive back en Android 14+ (gesto real con progreso) | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Photo Picker en dispositivo (contratos del sistema) | Robolectric ejecuta el flujo unitario; el picker visual requiere dispositivo | [QUALITY.md](QUALITY.md) §5 |
-| Revisión visual de las capturas Roborazzi regeneradas | El hash PASS es determinista y el análisis de bandas/regiones es programático; el ojo humano valida la composición | abrir `feature/destinations/presentation/build/roborazzi/*.png` (22 capturas × claro/oscuro) |
+| Revisión visual de las capturas Roborazzi regeneradas | El hash PASS es determinista y el análisis de bandas/regiones es programático; el ojo humano valida la composición | abrir `feature/destinations/presentation/build/roborazzi/*.png` (52 capturas: 26 escenarios × claro/oscuro) |
 | Supabase acceptance (JDBC) | Requiere base de datos | `:supabase:acceptance:test` con `DATABASE_URL` |
 | Sincronización real contra Supabase (subida/bajada) | Requiere backend y cuenta reales | prueba de aceptación contra un proyecto Supabase |
-| Desbloqueo biométrico en dispositivo | No implementado todavía; el PIN es el mecanismo actual | implementación nativa + dispositivo |
+| Desbloqueo biométrico en dispositivo | Disponibilidad implementada (`BiometricManager` en Android, `LocalAuthentication` pendiente en iOS); el prompt ligado a la Activity y la verificación en hardware requieren dispositivo físico | implementación del prompt + dispositivo (el PIN sigue siendo la vía verificada) |
 | NavigationRail en tablet/plegable | No hay dispositivo | render real en tablet/plegable |
 
 ## 3. Límites conocidos (decisiones, no defectos)
@@ -75,10 +77,14 @@ Se listan explícitamente para no declararlos cubiertos (ADR-0016):
 - **Cifrado de datos en reposo con el PIN — NO IMPLEMENTADO.** El PIN es una
   puerta de acceso local (verificador PBKDF2 con sal), no una clave derivada de
   los datos. Los datos locales NO están cifrados con el PIN.
-- **Desbloqueo biométrico (`BiometricPrompt`/`LocalAuthentication`) — NO
-  IMPLEMENTADO.** El PIN es el único mecanismo de desbloqueo. La taxonomía de
-  errores biométricos (cancelado, no inscrito, bloqueo del sensor, recuperable)
-  tampoco existe todavía.
+- **Desbloqueo biométrico (`BiometricPrompt`/`LocalAuthentication`) — PARCIALMENTE
+  IMPLEMENTADO.** Disponibilidad real en Android (`BiometricManager`), puerta
+  `BiometricGate` con fallback fail-closed al PIN y atajo en `LocalLockScreen`
+  cuando está disponible e inscrita. Pendiente: el prompt ligado a la Activity
+  (`authenticate()` devuelve `Unavailable` hasta cablearlo) y `LocalAuthentication`
+  en iOS; ambos requieren dispositivo físico para verificarse. La taxonomía de
+  errores (cancelado, no inscrito, bloqueo del sensor, recuperable) existe en
+  `BiometricAuthResult`/`BiometricAvailability`.
 - **Migración de los bytes de comprobantes del directorio heredado — NO
   IMPLEMENTADO.** La migración copia las colecciones serializadas; los archivos
   antiguos (`.../comprobantes/<user_id>/`) se conservan en su ruta y no se copian

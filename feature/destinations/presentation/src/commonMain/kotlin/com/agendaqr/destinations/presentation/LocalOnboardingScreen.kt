@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.agendaqr.core.ui.components.AmPrimaryButton
 import com.agendaqr.core.ui.components.AmScreenScaffold
+import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTextField
 import com.agendaqr.core.ui.theme.AmColor
@@ -23,6 +24,9 @@ import com.agendaqr.core.ui.theme.AmType
 /**
  * Primer arranque: el perfil local ya existe (se crea sin conexión) y aquí el
  * usuario configura su PIN. No es un login: no hay correo, contraseña ni red.
+ *
+ * Desde aquí también se puede entrar al modo de demostración (datos
+ * ficticios aislados) sin configurar PIN ni cuenta.
  */
 @Composable
 internal fun LocalOnboardingScreen(
@@ -30,6 +34,7 @@ internal fun LocalOnboardingScreen(
     onPinChanged: (String) -> Unit,
     onConfirmationChanged: (String) -> Unit,
     onSubmit: () -> Unit,
+    onExploreDemo: (() -> Unit)? = null,
 ) {
     AmScreenScaffold(
         scrollable = true,
@@ -84,5 +89,17 @@ internal fun LocalOnboardingScreen(
             onClick = onSubmit,
             modifier = Modifier.fillMaxWidth(),
         )
+        if (onExploreDemo != null) {
+            AmText(
+                AppStrings.ExplorarDemostracionDescripcion,
+                size = AmType.Body,
+                color = AmColor.TextSecondary,
+            )
+            AmSecondaryButton(
+                AppStrings.ExplorarDemostracion,
+                onClick = onExploreDemo,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 }

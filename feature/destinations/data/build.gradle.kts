@@ -42,6 +42,7 @@ kotlin {
         commonTest.dependencies { implementation(libs.coroutines.test) }
         androidMain.dependencies {
             implementation("io.ktor:ktor-client-android:${libs.versions.ktor.get()}")
+            implementation(libs.zxing.core)
         }
         iosMain.dependencies {
             implementation("io.ktor:ktor-client-darwin:${libs.versions.ktor.get()}")

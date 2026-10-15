@@ -14,21 +14,28 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.agendaqr.core.ui.components.AmPrimaryButton
 import com.agendaqr.core.ui.components.AmScreenScaffold
+import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTextField
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.destinations.domain.BiometricAvailability
 
 /**
  * Desbloqueo local. Sustituye al login remoto como puerta de entrada: se
  * muestra cuando ya existe un PIN configurado y la app está bloqueada.
+ *
+ * La biometría es un atajo opcional (solo cuando está disponible e inscrita);
+ * el PIN es siempre la vía principal y el fallback ante cualquier fallo.
  */
 @Composable
 internal fun LocalLockScreen(
     state: LocalAccessUiState,
     onPinChanged: (String) -> Unit,
     onSubmit: () -> Unit,
+    onBiometric: (() -> Unit)? = null,
+    onExploreDemo: (() -> Unit)? = null,
 ) {
     AmScreenScaffold(
         scrollable = true,
@@ -70,5 +77,31 @@ internal fun LocalLockScreen(
             onClick = onSubmit,
             modifier = Modifier.fillMaxWidth(),
         )
+        if (state.biometricAvailability == BiometricAvailability.Available && onBiometric != null) {
+            AmSecondaryButton(
+                AppStrings.UsarBiometria,
+                onClick = onBiometric,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        if (state.biometricFallbackVisible) {
+            AmText(
+                AppStrings.BiometriaNoDisponible,
+                size = AmType.Body,
+                color = AmColor.TextSecondary,
+            )
+        }
+        if (onExploreDemo != null) {
+            AmText(
+                AppStrings.ExplorarDemostracionDescripcion,
+                size = AmType.Body,
+                color = AmColor.TextSecondary,
+            )
+            AmSecondaryButton(
+                AppStrings.ExplorarDemostracion,
+                onClick = onExploreDemo,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 }

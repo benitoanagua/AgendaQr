@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.agendaqr.destinations.data.AgendaQrAndroidStorage
+import com.agendaqr.destinations.data.BiometricContextHolder
 import com.agendaqr.destinations.data.initializeNetworkMonitor
 import com.agendaqr.shared.AgendaQrSharedApp
 import com.agendaqr.destinations.presentation.AgendaQrAndroidShareLauncher
@@ -17,6 +18,7 @@ class MainActivity : ComponentActivity() {
         // estilo de las barras del sistema sigue al tema del sistema.
         enableEdgeToEdge()
         AgendaQrAndroidStorage.initialize(applicationContext)
+        BiometricContextHolder.context = applicationContext
         initializeNetworkMonitor(applicationContext)
         AgendaQrAndroidShareLauncher.initialize(this)
         AgendaQrAndroidImportLauncher.initialize(this)
