@@ -341,7 +341,7 @@ fun DestinationRow(
  * Subtítulo de la fila del destino: nota/categoría si existen; si el
  * nombre es genérico ("Sin nombre" o "QR importado"), ORIGEN + FECHA —
  * dos destinos con nombre genérico quedaban indistinguibles en la lista
- * (defecto abierto registrado; decisión de esta pasada, no de spec).
+ * (decisión de implementación, no de spec).
  */
 internal fun destinationSubtitle(destination: Destination): String? {
     val generic = destination.name.isBlank() ||

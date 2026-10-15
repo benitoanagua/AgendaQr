@@ -1,6 +1,6 @@
 # Guía de voz de Agenda QR
 
-Media página. Decisiones de la ronda 2 (ADR-0008); aplica a AppStrings y a
+Media página. Decisiones de QA (ADR-0008); aplica a AppStrings y a
 todo copy que el llamador provea a `core/ui`.
 
 ## Decisión: tuteo

@@ -6,14 +6,14 @@ import org.junit.runner.RunWith
 import kotlin.test.assertTrue
 
 /**
- * QA ronda 2 (checklist TalkBack-preparación, sin TalkBack real):
- * auditoría del árbol de accesibilidad por pantalla. Falla si hay
+ * Preparación de TalkBack sin TalkBack real: auditoría del árbol de
+ * accesibilidad por pantalla. Falla si hay
  * clicables SIN nombre accesible, con área < 48dp (dp = px/(dpi/160)) o
  * con nombres duplicados dentro de una pantalla. En S01: un ÚNICO nodo
  * "Buscar en Agenda QR" con rol botón.
  */
 @RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
-class AccessibilityTreeAuditTest {
+class AccessibilityTreeContractTest {
 
     private val settings get() = SystemSettingsRule()
 

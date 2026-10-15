@@ -7,12 +7,12 @@ import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
 /**
- * QA ronda 2 — ajuste y RESTAURACIÓN de estado del sistema.
+ * Ajuste y RESTAURACIÓN de estado del sistema.
  *
  * Toca lo que las pruebas necesitan del SO (escala de fuente, rotación,
  * escalas de animación, modo avión, permisos) vía `UiDevice.executeShellCommand`
  * y devuelve TODO a su valor original en un `finally`, aunque la prueba
- * falle (regla 5 de la pasada).
+ * falle.
  *
  * Inmutable por ajuste: cada método lee el valor actual, lo guarda y
  * aplica el nuevo; `restore()` se invoca siempre.

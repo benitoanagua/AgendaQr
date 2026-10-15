@@ -11,7 +11,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * T8 — S03: lógica de decodificación continua de cámara.
+ * S03: lógica de decodificación continua de cámara.
  *
  * El frame sintético es un QR REAL (matriz de ZXing renderizada a
  * luminancia): la prueba ejercita el mismo camino que un frame de

@@ -30,7 +30,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * T11 — S06 utilizable: las filas del contexto reutilizan las rutas
+ * S06 utilizable: las filas del contexto reutilizan las rutas
  * existentes (las mismas que los resultados de búsqueda global), sin crear
  * navegación nueva: QR → detalle en Inicio; actividad/comprobante →
  * superficie de Operaciones.

@@ -93,4 +93,5 @@ Eliminar comprobante:
 
 Back vuelve al estado anterior y conserva el draft cuando existe. Cancelar abandona la intención actual.
 
-La matriz de estados/eventos está en `docs/08-validacion/02-suite-estados-eventos-v1.md`.
+La matriz de estados/eventos está en la suite de estados y eventos de
+`docs/QUALITY.md`.

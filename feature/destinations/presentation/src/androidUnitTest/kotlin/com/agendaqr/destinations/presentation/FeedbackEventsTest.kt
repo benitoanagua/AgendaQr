@@ -18,13 +18,13 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Ronda 2 (Área F): los anuncios de estado se disparan por TRANSICIÓN de
- * evento, no por estado persistente. El guardado del lote se anuncia una
+ * Los anuncios de estado se disparan por TRANSICIÓN de evento, no por
+ * estado persistente. El guardado del lote se anuncia una
  * sola vez al llegar a Saved (y no se repite mientras Saved persiste).
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
-class Round2FeedbackEventsTest {
+class FeedbackEventsTest {
 
     @get:Rule
     val compose = createComposeRule()
@@ -53,7 +53,7 @@ class Round2FeedbackEventsTest {
         compose.onNodeWithContentDescription("Guardado")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Polite))
     }
-    // --- Ronda 2 (Área I): slot trailing del campo (mostrar/ocultar contraseña) ---
+    // --- Slot trailing del campo (mostrar/ocultar contraseña) ---
 
     @Test
     fun text_input_trailing_slot_renders_inside_the_field() {

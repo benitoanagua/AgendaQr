@@ -25,7 +25,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 /**
- * T2 — Back stack de superficies.
+ * Back stack de superficies.
  *
  * Contrato implicado (reglas congeladas §3):
  * - "Back conserva el trabajo del flujo padre": al hacer pop, la superficie
@@ -172,7 +172,7 @@ class AppBackStackTest {
     // intención sin guardar. La conservación del draft del editor al
     // abrir/cerrar el selector es una propiedad del paso modal (el editor
     // nunca sale de composición): se verifica en runtime con Back del
-    // sistema y queda cubierta por los tests del selector compartido (T4).
+    // sistema y queda cubierta por los tests del selector compartido.
     // ------------------------------------------------------------------
 
     @Test

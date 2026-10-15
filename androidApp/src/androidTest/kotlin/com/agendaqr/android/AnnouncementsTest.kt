@@ -6,7 +6,7 @@ import org.junit.runner.RunWith
 import kotlin.test.assertTrue
 
 /**
- * QA ronda 2 (checklist de anuncios): captura eventos de accesibilidad
+ * Anuncios: captura eventos de accesibilidad
  * vía UiAutomation y verifica UN anuncio por acción para:
  * - eliminación ("Eliminado") — diário destructivo del detalle de destino,
  * - error de correo en el login ("Ingresa un correo válido"),

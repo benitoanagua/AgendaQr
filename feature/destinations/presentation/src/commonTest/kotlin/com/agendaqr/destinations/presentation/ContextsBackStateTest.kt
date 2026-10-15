@@ -26,7 +26,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * T1 — Contextos sin salida: Back desde el Detalle de un contexto vuelve a
+ * Contextos sin salida: Back desde el Detalle de un contexto vuelve a
  * la Lista (S06); el cierre de la superficie completa (Lista) es manejado
  * por el back stack de la app y está cubierto en [AppBackStackTest].
  */

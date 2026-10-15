@@ -114,7 +114,7 @@ No hay panorama horizontal en V1.1.
 
 - **Deriva código vs spec:** la implementación actual queda
   DESALINEADA con V1.1 en cuanto este ADR entra en vigor. Se declara en
-  `docs/09-implementacion/01-estado.md` y se resuelve en una pasada de
+  `docs/STATE.md` y se resuelve en una pasada de
   implementación posterior dedicada.
 - **Contraste:** cada acento admite un solo color de texto (blanco o
   negro) calculado por script; los acentos cuyo par no alcanza ningún

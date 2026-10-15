@@ -7,7 +7,7 @@ import androidx.test.uiautomator.UiDevice
 import java.io.File
 import kotlin.test.fail
 
-/** QA ronda 2 — utilidades compartidas de las pruebas instrumentadas. */
+/** Utilidades compartidas de las pruebas instrumentadas. */
 object Qa {
 
     val instrumentation get() = InstrumentationRegistry.getInstrumentation()

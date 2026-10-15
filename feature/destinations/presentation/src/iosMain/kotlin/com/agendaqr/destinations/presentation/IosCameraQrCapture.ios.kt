@@ -40,8 +40,8 @@ internal class IosQrCameraPresenter(
         // La API de autorización de AVFoundation
         // (authorizationStatusForMediaType/requestAccessForMediaType) NO
         // está expuesta en los bindings precompilados de KMP usados aquí
-        // (verificado por sonda de compilación; ver
-        // 07-auditoria-ronda-2.md y el checklist de Xcode). Mientras
+        // (verificado por sonda de compilación; ver el checklist de
+        // Xcode en docs/OPERATIONS.md). Mientras
         // tanto, el fallo de creación del input (permiso denegado o sin
         // cámara) ya NO hace dismiss silencioso: se notifica para
         // mostrar el banner con "Abrir ajustes". El pedido explícito del

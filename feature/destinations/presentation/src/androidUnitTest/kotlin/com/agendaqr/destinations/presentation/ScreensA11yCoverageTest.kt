@@ -145,7 +145,7 @@ class ScreensA11yCoverageTest {
         }
         compose.waitForIdle()
         compose.onNodeWithText("Seleccionar contexto").assertIsDisplayed()
-        // T4: Quitar contexto solo con selección previa; Cancelar nunca destruye.
+        // Quitar contexto solo con selección previa; Cancelar nunca destruye.
         compose.onNodeWithText("Quitar contexto").assertHeightIsAtLeast(48.dp)
         compose.onNodeWithText("Cancelar").assertHeightIsAtLeast(48.dp)
         compose.onNodeWithText("Crear contexto").assertExists()
@@ -203,7 +203,7 @@ class ScreensA11yCoverageTest {
         compose.onNodeWithText("Agenda QR").assertDoesNotExist()
     }
 
-    // S01 — la fila del destino: badge con texto (T6) + acción etiquetada.
+    // S01 — la fila del destino: badge con texto + acción etiquetada.
     @Test
     fun s01_destination_row_states_and_labels() {
         compose.setContent {
@@ -237,7 +237,7 @@ class ScreensA11yCoverageTest {
         compose.onNodeWithContentDescription("Quitar favorito").assertExists()
         // V1.2: sin tiles — el botón de texto "Favorito" por fila desapareció
         // con el IconToggleButton de estrella (48 dp garantizado por M3).
-        // T6/U4: el estado de sync ES texto cuando hay algo que informar.
+        // El estado de sync ES texto cuando hay algo que informar.
         // Defecto F-1: el estado SINCRONIZADO es el normal (silencio = OK);
         // el badge solo aparece para Pendiente/Error/Sincronizando.
         compose.onNodeWithText("Sincronizado").assertDoesNotExist()
@@ -291,7 +291,7 @@ class ScreensA11yCoverageTest {
         assertTrue(selected == OperationType.COBRO)
     }
 
-    // T7 — defectos registrados en docs/09-implementacion/01-estado.md,
+    // Defectos registrados en docs/STATE.md,
     // resueltos por V1.1 (verificación explícita): "Volver" ya no se parte
     // en dos líneas y el primario nunca queda recortado al final del
     // scroll: ambos viven en la AmScreenScaffold anclado a los insets.

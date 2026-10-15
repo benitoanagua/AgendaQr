@@ -31,7 +31,7 @@ import platform.darwin.NSObject
  *   sin ZXing en común, las imágenes pasan a revisión honesta como
  *   DESCONOCIDO; la cámara detecta QR con el SO).
  * - Runtime: BLOCKED sin Xcode; este código compila contra los bindings
- *   reales de Kotlin/Native y deja el checklist en docs/09-implementacion.
+ *   reales de Kotlin/Native y deja el checklist en docs/OPERATIONS.md.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal object IosQrImportController {

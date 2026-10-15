@@ -49,7 +49,7 @@ class ContextPickerDialogTest {
         compose.onNodeWithText("Mercado Central").assertExists()
         // U3: la acción de crear está en la lista del selector.
         compose.onNodeWithText("Crear contexto").assertExists()
-        // Sin selección previa no se ofrece Quitar contexto (T4).
+        // Sin selección previa no se ofrece Quitar contexto.
         compose.onNodeWithText("Quitar contexto").assertDoesNotExist()
     }
 

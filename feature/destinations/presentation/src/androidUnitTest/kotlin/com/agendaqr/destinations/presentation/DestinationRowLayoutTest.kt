@@ -28,7 +28,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Defectos abiertos resueltos (docs/09-implementacion/01-estado.md):
+ * Defectos abiertos resueltos (docs/STATE.md):
  * 1. El badge de estado ("Sincronizado"/"Pendiente") NO compite por el
  *    ancho de la fila: vive en su línea propia bajo el título (slot meta
  *    del ListRow), no junto a la acción de trailing. Se cubre a 320 y

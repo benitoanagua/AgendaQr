@@ -46,7 +46,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 /**
- * T5 — Errores recuperables y contextuales (spec §10).
+ * Errores recuperables y contextuales (spec §10).
  *
  * Todo error responde: qué ocurrió, qué pasó con los datos y qué puede
  * hacer el usuario. Nunca se muestra `error.message` crudo (inglés,

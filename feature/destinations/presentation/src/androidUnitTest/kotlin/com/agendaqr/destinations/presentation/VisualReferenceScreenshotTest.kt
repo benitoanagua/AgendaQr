@@ -63,21 +63,21 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Ronda 2 (Área D, ADR-0007): capturas de referencia de las pantallas
- * críticas en claro y oscuro. Los PNG se generan en
+ * Capturas de referencia de las pantallas críticas en claro y oscuro
+ * (ADR-0007). Los PNG se generan en
  * `feature/destinations/presentation/build/roborazzi/` y NO se versionan
  * (decisión del 2026-10-09: sin binarios de imagen en git): la regresión
  * se detecta comparando el SHA-256 de cada PNG contra
  * `docs/04-ux/visual-hashes/manifest.json` (verificar con
- * `bash docs/04-ux/visual-hashes/verify.sh`, tarea sensible al entorno —
+ * `./gradlew verifyVisualHashes`, tarea sensible al entorno —
  * ver ADR).
  */
 @RunWith(RobolectricTestRunner::class)
 // NATIVE graphics: requisito de Roborazzi para render real de píxeles
-// (sin esto las capturas salen en negro/idénticas — hallado en esta ronda).
+// (sin esto las capturas salen en negro/idénticas).
 @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = "w360dp-h740dp")
-class Round2ScreenshotTest {
+class VisualReferenceScreenshotTest {
 
     @get:Rule
     val compose = createComposeRule()
@@ -104,7 +104,7 @@ class Round2ScreenshotTest {
                     com.agendaqr.destinations.domain.Destination(
                         id = "d-1", name = "Carniceria Don Bife",
                         qr = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
-                        createdAt = Round2ScreenshotTest.TEST_TIMESTAMP, updatedAt = Round2ScreenshotTest.TEST_TIMESTAMP,
+                        createdAt = VisualReferenceScreenshotTest.TEST_TIMESTAMP, updatedAt = VisualReferenceScreenshotTest.TEST_TIMESTAMP,
                     ),
                 ),
                 isLoading = false,
@@ -144,7 +144,7 @@ class Round2ScreenshotTest {
                     com.agendaqr.destinations.domain.Destination(
                         id = "d-1", name = "Carniceria Don Bife",
                         qr = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
-                        createdAt = Round2ScreenshotTest.TEST_TIMESTAMP, updatedAt = Round2ScreenshotTest.TEST_TIMESTAMP,
+                        createdAt = VisualReferenceScreenshotTest.TEST_TIMESTAMP, updatedAt = VisualReferenceScreenshotTest.TEST_TIMESTAMP,
                     ),
                 ),
                 isLoading = false,

@@ -9,7 +9,7 @@ Registro de licencias de los recursos y dependencias consumidos por Agenda QR, c
   bajo **MIT**, Copyright (c) 2013-present Cole Bemis, según la lista del
   propio repositorio). Ambas exigen conservar el aviso de copyright y el
   permiso en copias: el archivo LICENSE del set se conserva junto a los
-  recursos empaquetados en la pasada de implementación.
+  recursos empaquetados.
 - Consumo vigente: `com.composables:icons-lucide:1.1.0`
   (wrapper no oficial) en `core:ui` commonMain, consumido SOLO vía
   `AmIcon`. Verificado: compila en androidMain e

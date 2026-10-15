@@ -11,13 +11,13 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Ronda 2 (Área C): lo que el usuario no debe perder sobrevive a la
- * recreación de la actividad. Con `remember` simple estos tests fallan
+ * Lo que el usuario no debe perder sobrevive a la recreación de la
+ * actividad. Con `remember` simple estos tests fallan
  * (rojo primero): la recreación olvidaba que se intentó enviar.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
-class Round2StateRestorationTest {
+class StateRestorationTest {
 
     @get:Rule
     val compose = androidx.compose.ui.test.junit4.createComposeRule()

@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * T12 — un scope cancelable ligado a la sesión: los ViewModels reciben el
+ * Un scope cancelable ligado a la sesión: los ViewModels reciben el
  * scope del grafo (`remember(userId)` + `DisposableEffect`), así que al
  * cerrar sesión TODO se cancela y ningún collector sobrevive a la sesión
  * que lo creó (aislamiento por usuario).

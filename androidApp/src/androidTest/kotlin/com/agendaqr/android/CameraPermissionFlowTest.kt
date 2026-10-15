@@ -6,7 +6,7 @@ import org.junit.runner.RunWith
 import kotlin.test.assertTrue
 
 /**
- * QA ronda 2 (checklist B/TalkBack-2, item de cámara): denegación
+ * Denegación
  * PERMANENTE del permiso de cámara → la acción visible es "Abrir ajustes"
  * (no "Reintentar"), y esta abre los ajustes de la app. Tras conceder
  * desde ajustes, la cámara arranca.
@@ -32,7 +32,7 @@ class CameraPermissionFlowTest {
         // Deniega el diálogo del SISTEMA dos veces (la segunda con "no
         // preguntar más" activa en muchos OEM tras la primera denegación).
         denySystemDialog()
-        // Segunda ronda: reintenta (aún no permanente) y vuelve a denegar.
+        // Segundo intento: reintenta (aún no permanente) y vuelve a denegar.
         Qa.tapText("Cámara")
         denySystemDialog()
 

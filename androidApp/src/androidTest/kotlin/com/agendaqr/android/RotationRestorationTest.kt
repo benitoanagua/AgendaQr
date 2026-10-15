@@ -5,7 +5,7 @@ import org.junit.runner.RunWith
 import kotlin.test.assertTrue
 
 /**
- * QA ronda 2 (checklist rotación + Área C en dispositivo):
+ * Rotación en dispositivo:
  * - superficie abierta (Contextos) sobrevive a la rotación (Saver),
  * - formulario S07 conserva datos y error visible al rotar y al
  *   recrear la actividad (recreate() = rotación de configuración; NO

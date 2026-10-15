@@ -1,30 +1,23 @@
 # Agenda QR — Documentación
 
-## Producto
+Índice de la documentación. Cada sección tiene una única fuente de verdad.
+
+## Núcleo
 
 | Documento | Contenido |
 |---|---|
-| [`01-producto/01-concepto-y-problema.md`](01-producto/01-concepto-y-problema.md) | Concepto y problema que resuelve |
-| [`01-producto/02-alcance.md`](01-producto/02-alcance.md) | Alcance de V1 |
-| [`01-producto/03-limites.md`](01-producto/03-limites.md) | Límites explícitos |
-| [`10-fuera-de-alcance/01-fuera-del-nucleo.md`](10-fuera-de-alcance/01-fuera-del-nucleo.md) | Exclusiones de V1 |
-
-## Requisitos y dominio
-
-| Documento | Contenido |
-|---|---|
-| [`02-requisitos/01-requisitos-funcionales.md`](02-requisitos/01-requisitos-funcionales.md) | Requisitos funcionales |
-| [`02-requisitos/02-requisitos-no-funcionales.md`](02-requisitos/02-requisitos-no-funcionales.md) | Requisitos no funcionales |
-| [`03-dominio/01-modelo-de-dominio.md`](03-dominio/01-modelo-de-dominio.md) | Modelo de dominio |
-| [`03-dominio/02-relaciones.md`](03-dominio/02-relaciones.md) | Relaciones entre entidades |
-| [`03-dominio/03-reglas-operacion-y-comprobante.md`](03-dominio/03-reglas-operacion-y-comprobante.md) | Reglas de operación y comprobante |
+| [`PRODUCT.md`](PRODUCT.md) | Producto, alcance, límites, requisitos, dominio y exclusiones de V1 |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Módulos, fuentes de verdad, local-first, identidad local, Supabase, sync y hosts |
+| [`QUALITY.md`](QUALITY.md) | Estrategia de pruebas, suite de estados/eventos, puertas y validación |
+| [`STATE.md`](STATE.md) | Estado actual de implementación, NO VERIFICADO, límites y bloqueos |
+| [`OPERATIONS.md`](OPERATIONS.md) | Build y pruebas, firma/distribución Android, checklist runtime iOS |
 
 ## UX
 
 | Documento | Contenido |
 |---|---|
 | [`04-ux/01-flujos-confirmados.md`](04-ux/01-flujos-confirmados.md) | Flujos confirmados |
-| [`04-ux/02-especificacion-ux-ui-v1.md`](04-ux/02-especificacion-ux-ui-v1.md) | Spec UX/UI V1.4 (FROZEN) |
+| [`04-ux/02-especificacion-ux-ui-v1.md`](04-ux/02-especificacion-ux-ui-v1.md) | Especificación UX/UI V1.6 (congelada) |
 | [`04-ux/04-capacidades-y-comportamientos.md`](04-ux/04-capacidades-y-comportamientos.md) | Capacidades y comportamientos |
 | [`04-ux/05-guia-de-voz.md`](04-ux/05-guia-de-voz.md) | Guía de voz (tuteo) |
 
@@ -35,21 +28,6 @@
 | [`05-design-system/00-contrato-normativo-diseno.md`](05-design-system/00-contrato-normativo-diseno.md) | Contrato normativo (fuente única) |
 | [`05-design-system/02-implementacion-diseno.md`](05-design-system/02-implementacion-diseno.md) | Reglas de implementación |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros |
-
-## Arquitectura
-
-| Documento | Contenido |
-|---|---|
-| [`06-arquitectura/00-overview.md`](06-arquitectura/00-overview.md) | Overview |
-| [`06-arquitectura/03-fuentes-de-verdad.md`](06-arquitectura/03-fuentes-de-verdad.md) | Fuentes de verdad |
-| [`06-arquitectura/04-kotlin-way.md`](06-arquitectura/04-kotlin-way.md) | Kotlin way (sin scripts) |
-| [`06-arquitectura/05-supabase.md`](06-arquitectura/05-supabase.md) | Supabase |
-| [`06-arquitectura/06-local-first-supabase.md`](06-arquitectura/06-local-first-supabase.md) | Local-first + Supabase |
-| [`06-arquitectura/08-supabase-destinations.md`](06-arquitectura/08-supabase-destinations.md) | Supabase: destinos |
-| [`06-arquitectura/09-sync.md`](06-arquitectura/09-sync.md) | Sincronización |
-| [`06-arquitectura/10-hosts-de-plataforma.md`](06-arquitectura/10-hosts-de-plataforma.md) | Hosts de plataforma |
-| [`06-arquitectura/11-supabase-comprobantes.md`](06-arquitectura/11-supabase-comprobantes.md) | Supabase: comprobantes |
-| [`06-arquitectura/12-local-first-security.md`](06-arquitectura/12-local-first-security.md) | Seguridad local-first |
 
 ## Decisiones
 
@@ -71,22 +49,12 @@
 | [`07-decisiones/ADR-0015-referencia-stitch-jerarquia-financiera.md`](07-decisiones/ADR-0015-referencia-stitch-jerarquia-financiera.md) | ADR: patrones financieros de la referencia Stitch (segmentado, tags tonales, hero QR); paleta e Inter no adoptadas |
 | [`07-decisiones/ADR-0016-identidad-local-sin-cuenta.md`](07-decisiones/ADR-0016-identidad-local-sin-cuenta.md) | ADR: identidad local sin cuenta, login no obligatorio, namespace por perfil, PIN, migración y limitaciones |
 
-## Validación
+## Cómo se mantiene
 
-| Documento | Contenido |
-|---|---|
-| [`08-validacion/01-pruebas.md`](08-validacion/01-pruebas.md) | Estrategia de pruebas |
-| [`08-validacion/02-suite-estados-eventos-v1.md`](08-validacion/02-suite-estados-eventos-v1.md) | Suite de estados y eventos |
-| [`08-validacion/03-simulaciones.md`](08-validacion/03-simulaciones.md) | Simulaciones |
-| [`08-validacion/04-prueba-real.md`](08-validacion/04-prueba-real.md) | Prueba real |
-| [`08-validacion/06-resultados-y-evidencia.md`](08-validacion/06-resultados-y-evidencia.md) | Resultados y evidencia |
-| [`08-validacion/07-checklist-manual-ronda2.md`](08-validacion/07-checklist-manual-ronda2.md) | Checklist manual (dispositivo) |
-
-## Implementación
-
-| Documento | Contenido |
-|---|---|
-| [`09-implementacion/01-estado.md`](09-implementacion/01-estado.md) | Estado actual |
-| [`09-implementacion/ANDROID_DISTRIBUTION.md`](09-implementacion/ANDROID_DISTRIBUTION.md) | Distribución Android |
-| [`09-implementacion/ANDROID_PHYSICAL_DEVICE_TEST.md`](09-implementacion/ANDROID_PHYSICAL_DEVICE_TEST.md) | Prueba en dispositivo físico |
-| [`09-implementacion/IOS_RUNTIME_CHECKLIST.md`](09-implementacion/IOS_RUNTIME_CHECKLIST.md) | Checklist runtime iOS |
+- Una sola fuente por tema: producto, arquitectura, calidad, estado y operaciones
+  viven en los cinco documentos núcleo; los ADR registran decisiones puntuales.
+- `verifyDocs` (dentro de `verifyAgendaQrArchitecture`) verifica enlaces vivos,
+  alcanzabilidad de todo `.md` desde este índice y ausencia de marcadores
+  transitorios.
+- No se documentan aquí resultados de pruebas ad-hoc ni hashes de artefactos: el
+  estado verificable vive en `STATE.md` y la historia de cambios en `git log`.

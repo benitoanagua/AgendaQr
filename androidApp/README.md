@@ -35,4 +35,4 @@ empty — it is not a network or credentials error.
 
 Only the public/publishable key is used. Never place a `service_role` key in
 the app, the repository, or any build input. Full policy in
-`docs/06-arquitectura/05-local-first-supabase.md`.
+`docs/ARCHITECTURE.md` (§10, configuración de Supabase).

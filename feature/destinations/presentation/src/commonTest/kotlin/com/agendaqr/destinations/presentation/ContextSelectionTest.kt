@@ -7,7 +7,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * T4 — Semántica del selector de contexto (S08).
+ * Semántica del selector de contexto (S08).
  *
  * El selector anterior usaba el copy de S11 ("¿A cuál corresponde?"),
  * confirmaba con "Cerrar" y su acción de descarte ("Sin contexto") borraba

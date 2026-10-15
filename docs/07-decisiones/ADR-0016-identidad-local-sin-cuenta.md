@@ -1,6 +1,6 @@
 # ADR-0016: Identidad local sin cuenta y acceso con PIN
 
-**Estado:** Aceptada · **Fecha:** 2026-10-14 · **Relaciona:** 06-arquitectura/12-local-first-security.md, ADR-0014, ADR-0015
+**Estado:** Aceptada · **Fecha:** 2026-10-14 · **Relaciona:** ARCHITECTURE.md (§5), ADR-0014, ADR-0015
 
 ## Contexto
 

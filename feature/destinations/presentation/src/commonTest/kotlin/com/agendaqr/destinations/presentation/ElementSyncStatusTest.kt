@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * T6 — Estados Guardado / Pendiente / Sincronizado visibles por elemento.
+ * Estados Guardado / Pendiente / Sincronizado visibles por elemento.
  *
  * Contrato local-first §5: GUARDADO → PENDIENTE → SINCRONIZANDO →
  * SINCRONIZADO (+ ERROR RECUPERABLE con REINTENTAR). El estado se muestra

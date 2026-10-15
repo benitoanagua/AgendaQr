@@ -26,12 +26,12 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Fase 2 de la auditoría de accesibilidad (2026-10-08): estados y
- * formularios. Cada cambio de comportamiento lleva su test.
+ * Accesibilidad: estados y formularios. Cada cambio de comportamiento
+ * lleva su test.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
-class AuditStatesFormsTest {
+class AccessibilityStatesFormsTest {
 
     @get:Rule
     val compose = createComposeRule()
@@ -162,7 +162,7 @@ class AuditStatesFormsTest {
         compose.onNodeWithText("Mercado Central").assertIsSelected()
     }
 
-    // --- Ronda 2 (Área B): feedback de evento (háptica + anuncio) ---
+    // --- Feedback de evento (háptica + anuncio) ---
 
     @Test
     fun feedback_event_announces_only_when_the_event_fires() {

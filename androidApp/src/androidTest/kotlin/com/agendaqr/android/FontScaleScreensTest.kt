@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 /**
- * QA ronda 2 (checklist fuente 200 %/150 %, claro y oscuro): recorre las
+ * Fuente 200 %/150 %, claro y oscuro: recorre las
  * pantallas alcanzables sin login extra (S01/S02/S04/S06/S07/S09/S12
  * según navegación permitida) y verifica que NINGÚN nodo clicable queda
  * fuera de pantalla o con área táctil < 48 dp. Captura por

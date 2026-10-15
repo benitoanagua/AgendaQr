@@ -5,7 +5,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Ronda 2 (Área C) — restauración del back stack. Con el código anterior
+ * Restauración del back stack. Con el código anterior
  * (`remember { AppBackStack() }`) rotación o muerte de proceso devolvían
  * SIEMPRE a Inicio: estos tests fijan guardar + restaurar por nombre y el
  * comportamiento conservador ante rutas desconocidas.

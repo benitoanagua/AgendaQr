@@ -4,7 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Ronda 2 (Área B) — política del permiso de cámara (función pura).
+ * Política del permiso de cámara (función pura).
  * Debe fallar-primero: con el código anterior NO existía distinción entre
  * denegación normal y permanente (el reintento no hacía nada).
  */

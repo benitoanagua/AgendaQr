@@ -4,26 +4,27 @@ Agenda QR es una agenda de destinos QR y respaldo de operaciones:
 
 **guardar → organizar → buscar → mostrar → reutilizar/compartir**
 
+Funciona **local-first**: los datos viven en el dispositivo bajo un perfil local
+que se crea sin cuenta y sin red. Conectar una cuenta es opcional y solo habilita
+respaldo y sincronización ([ADR-0016](docs/07-decisiones/ADR-0016-identidad-local-sin-cuenta.md)).
+
 ## 1. Regla de precedencia
 
 La implementación sigue una jerarquía explícita de fuentes de verdad:
 
 1. **Agenda QR** — producto, dominio, requisitos, alcance, decisiones y reglas de negocio.
-2. **UX/UI V1 de Agenda QR** — contrato de interacción congelado para la experiencia del producto.
-3. **Referencia Ant Design Mobile** — lenguaje visual, tokens, componentes y patrones; la navegación sigue las convenciones de Android e iOS.
+2. **UX/UI V1 de Agenda QR** — contrato de interacción congelado (`docs/04-ux/02-especificacion-ux-ui-v1.md`).
+3. **Referencia Ant Design Mobile** — lenguaje visual, tokens, componentes y patrones; la navegación sigue las convenciones de Android e iOS ([ADR-0014](docs/07-decisiones/ADR-0014-referencia-ant-design-mobile.md)).
 4. **WaraWerse** — referencia técnica para Kotlin Multiplatform, Compose, modularización, build y prácticas de testing.
 
-Si dos fuentes entran en conflicto, prevalece la fuente de mayor autoridad indicada arriba.
+Si dos fuentes entran en conflicto, prevalece la de mayor autoridad. WaraWerse
+nunca introduce lógica de negocio.
 
-WaraWerse nunca introduce lógica de negocio en Agenda QR. La referencia visual vigente es Ant Design Mobile (ADR-0014).
+## 2. Alcance y límites
 
-## 2. UX/UI V1
-
-La especificación UX/UI está congelada en `docs/04-ux/02-especificacion-ux-ui-v1.md`.
-
-La suite de estados, eventos e invariantes está en `docs/08-validacion/02-suite-estados-eventos-v1.md`.
-
-Esta congelación no es implementación: Kotlin/Compose debe adaptarse al contrato, no redefinirlo.
+Agenda QR conserva destinos QR y evidencia de PAGO/COBRO. **No ejecuta pagos, no
+mueve dinero y no verifica el dinero**: un comprobante recibido no significa
+dinero verificado. Detalle en [`docs/PRODUCT.md`](docs/PRODUCT.md).
 
 ## 3. Plataformas
 
@@ -31,7 +32,9 @@ Esta congelación no es implementación: Kotlin/Compose debe adaptarse al contra
     shared/       → lógica compartida KMP
     iosApp/       → host iOS/Xcode y boundary nativo
 
-Android es la plataforma que se valida primero. iOS forma parte de la arquitectura desde el inicio, pero no se considera validado hasta ejecutarlo mediante Xcode/simulador/dispositivo.
+Android se valida primero (JVM/Robolectric, gates, lint, ensamblado). iOS forma
+parte de la arquitectura desde el inicio y se mantiene compilable, pero no se
+considera validado hasta ejecutarlo con Xcode/simulador/dispositivo.
 
 ## 4. Estructura
 
@@ -39,13 +42,12 @@ Android es la plataforma que se valida primero. iOS forma parte de la arquitectu
     ├── androidApp/                 # host Android
     ├── iosApp/                     # host iOS
     ├── shared/                     # KMP compartido
-    ├── core/                       # capacidades transversales
+    ├── core/                       # capacidades transversales (incl. core/ui, tema)
     ├── feature/
     │   └── destinations/           # dominio, data y presentación
-    ├── build-logic/                # convention plugins
+    ├── build-logic/                # convention plugins y gates
     ├── gradle/                     # version catalog / wrapper
-    ├── docs/                       # documentación normativa y de implementación
-    └── core/ui/.../theme/AmTokens.kt  # fuente canónica de tokens (Kotlin)
+    └── docs/                       # documentación normativa y de implementación
 
 ## 5. Kotlin Way
 
@@ -62,17 +64,24 @@ Android es la plataforma que se valida primero. iOS forma parte de la arquitectu
 - convention plugins y version catalog;
 - una responsabilidad clara por módulo y componente.
 
-## 6. Verificación
+## 6. Build, verificación y pruebas
 
-    ./gradlew verifyAgendaQrArchitecture
+Los comandos requieren `-PallowDebugSigningForRc=true` (el guard de firma de
+release se evalúa en configuración):
 
-La existencia de código no equivale a validación de plataforma. Android e iOS se verifican por separado.
+```bash
+./gradlew verifyAgendaQrArchitecture -PallowDebugSigningForRc=true
+./gradlew :androidApp:assembleDebug -PallowDebugSigningForRc=true
+./gradlew :androidApp:testDebugUnitTest -PallowDebugSigningForRc=true
+```
+
+La lista completa de puertas, pruebas y validación por plataforma está en
+[`docs/QUALITY.md`](docs/QUALITY.md). La existencia de código no equivale a
+validación de plataforma: Android e iOS se verifican por separado.
 
 ## 7. Documentación
 
-La documentación está organizada por autoridad y ciclo de desarrollo. Comienza en `docs/README.md`.
-
-
-## Sistema de diseño
-
-El contrato visual vigente está en [`docs/05-design-system/00-contrato-normativo-diseno.md`](docs/05-design-system/00-contrato-normativo-diseno.md). [ADR-0014](docs/07-decisiones/ADR-0014-referencia-ant-design-mobile.md) establece Ant Design Mobile como única referencia visual. El estado de verificación por plataforma se mantiene en [`docs/09-implementacion/01-estado.md`](docs/09-implementacion/01-estado.md).
+La documentación comienza en [`docs/README.md`](docs/README.md). Estado actual de
+implementación y límites: [`docs/STATE.md`](docs/STATE.md). El contrato visual
+vigente está en
+[`docs/05-design-system/00-contrato-normativo-diseno.md`](docs/05-design-system/00-contrato-normativo-diseno.md).

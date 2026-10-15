@@ -137,7 +137,7 @@ El patrón de hoja para selectores (ActionSheet de la referencia) se evaluó con
 - Android e iOS comparten TODO el código visual (commonMain); solo `AmQrPreview`, `amWindowWidthSizeClass` y `ProvideReducedMotion` son expect/actual.
 - Navegación: back del sistema y predictive back en Android; gestos de retroceso en iOS; áreas seguras resueltas una vez en el scaffold; sin insets manuales duplicados.
 - Las superficies M3 se fijan explícitamente en `AmTheme` (ningún componente hereda la plantilla base de Material).
-- La validación iOS se realiza por compilación de targets (`compileKotlinIosSimulatorArm64`); la validación de runtime requiere Xcode (checklist `09-implementacion/IOS_RUNTIME_CHECKLIST.md`).
+- La validación iOS se realiza por compilación de targets (`compileKotlinIosSimulatorArm64`); la validación de runtime requiere Xcode (checklist en `OPERATIONS.md`).
 
 ## 12. Registro de excepciones
 
@@ -145,7 +145,7 @@ El gate compara esta tabla con `exceptionRegistry` en `build-logic/agendaqr.desi
 
 | ID | Regla | Aplicación |
 |---|---|---|
-| E-01 | Borde outline del botón secundario (fill outline de la referencia: borde de acento 1 dp, no hairline decorativo) | `border:AmButtons.kt` — verificado por la suite (`AmSecondaryButton` se renderiza y conserva 48 dp en `AmResponsiveLayoutContractTest`/`Round2FontScaleTest`) |
+| E-01 | Borde outline del botón secundario (fill outline de la referencia: borde de acento 1 dp, no hairline decorativo) | `border:AmButtons.kt` — verificado por la suite (`AmSecondaryButton` se renderiza y conserva 48 dp en `AmResponsiveLayoutContractTest`/`FontScaleContractTest`) |
 | E-02 | Borde outline de la insignia de estado (Tag outline de la referencia: borde de 1 dp del tono, no hairline decorativo) | `border:AmLists.kt` — verificado por la suite (`AmBadge` se renderiza en `AppStatusHostTest`/`ScreensA11yCoverageTest`) |
 | E-03 | Hairline perimetral del cuerpo de lista/tarjeta (`AmListBody`: "Flat #ffffff surface delineated by a crisp 1px solid #f0f0f0 border", DESIGN.md Stitch — el límite de la tarjeta es el borde, no una sombra) | `border:AmLists.kt` — verificado por las capturas de referencia (ADR-0007) |
 

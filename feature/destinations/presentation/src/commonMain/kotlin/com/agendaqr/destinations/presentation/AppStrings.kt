@@ -259,7 +259,7 @@ internal object AppStrings {
     val SignoCobro = "+"
     val SignoPago = "−"
     // ------------------------------------------------------------------
-    // Referencia Stitch — pasada de fidelidad (ADR-0015 revisada).
+    // Referencia Stitch (ADR-0015).
     // ------------------------------------------------------------------
     /** Píldora de reaseguro local-first (S01, siempre cierta). */
     val GuardadoEnTuTelefono = "Guardado en tu teléfono"
@@ -285,9 +285,9 @@ internal object AppStrings {
     /** Acción de borrado del importe (accesible). */
     val BorrarImporte = "Borrar importe"
     // ------------------------------------------------------------------
-    // Referencia Stitch MCP (Ant Design Mobile App) — pasada de
-    // compactación: historial en tarjetas, favoritos en carrusel,
-    // pestañas cápsula con conteo y dock de acciones del detalle QR.
+    // Referencia Stitch MCP (Ant Design Mobile App): historial en tarjetas,
+    // favoritos en carrusel, pestañas cápsula con conteo y dock de
+    // acciones del detalle QR.
     // ------------------------------------------------------------------
     /** Pestañas del historial (con conteo real). */
     val Todas = "Todas"

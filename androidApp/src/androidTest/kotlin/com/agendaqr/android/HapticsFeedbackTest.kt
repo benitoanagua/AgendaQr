@@ -5,7 +5,7 @@ import org.junit.runner.RunWith
 import kotlin.test.assertTrue
 
 /**
- * QA ronda 2 (háptica): el sistema registra las vibraciones emitidas por
+ * Háptica: el sistema registra las vibraciones emitidas por
  * la app en `dumpsys vibrator_manager`. Tras una acción con feedback
  * (eliminación confirmada), el registro debe contener al menos un efecto
  * de `com.agendaqr.app`. La lectura de QR no es automatizable sin un QR
@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
  * MISMO mecanismo AmFeedbackEvent con la acción de eliminar).
  */
 @RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
-class HapticsEvidenceTest {
+class HapticsFeedbackTest {
 
     @Test
     fun delete_confirmation_produces_a_haptic_effect() {

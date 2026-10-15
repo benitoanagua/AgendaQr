@@ -41,7 +41,7 @@ import org.robolectric.annotation.Config
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], qualifiers = "w320dp-h640dp")
-class Round2FontScaleTest {
+class FontScaleContractTest {
 
     @get:Rule
     val compose = createComposeRule()

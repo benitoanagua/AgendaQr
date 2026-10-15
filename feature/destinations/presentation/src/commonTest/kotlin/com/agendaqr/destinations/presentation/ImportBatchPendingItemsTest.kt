@@ -21,7 +21,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * T7 — S12: resolver pendientes por elemento.
+ * S12: resolver pendientes por elemento.
  *
  * Contrato S12 (congelado): "✓ reconocidos / ! duplicados / ? pendientes /
  * [ GUARDAR RECONOCIDOS ] / Revisar N pendientes. Los válidos no dependen

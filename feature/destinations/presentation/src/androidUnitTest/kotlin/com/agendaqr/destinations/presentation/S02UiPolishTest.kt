@@ -31,11 +31,11 @@ import kotlin.test.fail
 import kotlin.math.abs
 
 /**
- * Pulido UI V1.1 en pantallas (D4/D6).
+ * Pulido UI V1.1 en pantallas.
  *
- * D4: "Desde otra app" (S02) es encabezado de seccion (M6, 14 sp en acento),
+ * "Desde otra app" (S02) es encabezado de seccion (M6, 14 sp en acento),
  * con el mismo estilo que "Recientes" (S01).
- * D6: el placeholder del buscador de S01 vive en una sola linea a 360 dp.
+ * El placeholder del buscador de S01 vive en una sola linea a 360 dp.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], qualifiers = "w360dp-h800dp")

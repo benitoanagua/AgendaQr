@@ -14,7 +14,7 @@ import kotlin.test.assertTrue
 import org.junit.runner.RunWith
 
 /**
- * D4 — contratos de entrada Android, instrumentados (emulador). Job de CI
+ * Contratos de entrada Android, instrumentados (emulador). Job de CI
  * no bloqueante hasta 5 corridas estables (documentado en docs).
  */
 @RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
