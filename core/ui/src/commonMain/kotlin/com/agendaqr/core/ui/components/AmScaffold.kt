@@ -23,6 +23,7 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.amWindowWidthSizeClass
@@ -137,8 +138,13 @@ fun AmScreenScaffold(
                     .then(
                         // Padding extra inferior para la barra de navegación (56 dp)
                         // cuando existe bottomBar (navDestinations) en compacto.
+                        // También para bottomAction cuando no hay navDestinations.
                         if (!expanded && navDestinations.isNotEmpty()) {
                             Modifier.padding(bottom = AmMetrics.NavBarHeight)
+                        } else if (!expanded && bottomAction != null && navDestinations.isEmpty()) {
+                            // Estimar altura del dock de acciones: 3 botones * 48dp + gaps
+                            // 3 * 48 + 2 * 8 = 160dp aprox
+                            Modifier.padding(bottom = 160.dp)
                         } else {
                             Modifier
                         },
