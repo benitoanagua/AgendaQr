@@ -144,6 +144,7 @@ fun DestinationDetailScreen(
                         AmQrPreview(
                             encodedQr = destination.qr.encoded,
                             size = AmMetrics.QrPreviewSize,
+                            unavailableMessage = AppStrings.QrNoSePudoMostrar,
                         )
                     }
                     AmText(

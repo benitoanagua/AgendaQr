@@ -91,9 +91,10 @@ class Round2ScreenshotTest {
     companion object {
         // Timestamp realista para pruebas visuales: 15 ene 2024 10:30:00 (milisegundos)
         const val TEST_TIMESTAMP = 1705314600000L
-        // Base64 válido de un QR code PNG 21x21 (versión 1) que codifica "https://agendaqr.app/d-1"
-        // Generado con qrcode library (box_size=10, border=4)
-        const val TEST_QR_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAADIAAAAyAQMAAAAxtz1cAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4Ae3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIBLcQ8AAa0jZQAAAABJRU5ErkJggg=="
+        // QR REAL para las capturas: PNG legible generado con ZXing (ver
+        // QrTestFixture). Nunca una imagen ficticia (el fixture anterior era
+        // un píxel verde 1×1 que se veía como un bloque verde uniforme).
+        val TEST_QR_BASE64: String = QrTestFixture.base64Png
     }
 
     @Test fun s01_light() = shot("s01-light", dark = false) {

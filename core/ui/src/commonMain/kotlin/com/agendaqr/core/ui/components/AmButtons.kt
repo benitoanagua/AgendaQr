@@ -40,7 +40,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmShapes
@@ -233,13 +232,18 @@ fun AmSecondaryButton(
         }
         // Borde sutil para la variante tonal (no sólida) para que se
         // distinga como botón en tema claro sin competir con la acción sólida.
-        val borderWidth = if (solid) 0.dp else AmMetrics.Border
-        val borderColor = if (solid) Color.Transparent else AmColor.Divider
+        // La variante sólida NO dibuja borde (ni un "borde de 0 dp": no se
+        // añade el modificador), para no introducir literales fuera de tokens.
+        val borderModifier = if (solid) {
+            Modifier
+        } else {
+            Modifier.border(AmMetrics.Border, AmColor.Divider, AmShapes.Large)
+        }
         Row(
             modifier = Modifier
                 .heightIn(min = AmMetrics.ButtonCompactHeight)
                 .background(container, AmShapes.Large)
-                .border(borderWidth, borderColor, AmShapes.Large)
+                .then(borderModifier)
                 .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Xs),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),

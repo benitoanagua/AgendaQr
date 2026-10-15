@@ -23,7 +23,6 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.amWindowWidthSizeClass
@@ -136,15 +135,13 @@ fun AmScreenScaffold(
                         vertical = AmSpacing.ScreenMargin,
                     )
                     .then(
-                        // Padding extra inferior para la barra de navegación (56 dp)
-                        // cuando existe bottomBar (navDestinations) en compacto.
-                        // También para bottomAction cuando no hay navDestinations.
-                        if (!expanded && navDestinations.isNotEmpty()) {
-                            Modifier.padding(bottom = AmMetrics.NavBarHeight)
-                        } else if (!expanded && bottomAction != null && navDestinations.isEmpty()) {
-                            // Estimar altura del dock de acciones: 3 botones * 48dp + gaps
-                            // 3 * 48 + 2 * 8 = 160dp aprox
-                            Modifier.padding(bottom = 160.dp)
+                        // El Scaffold ya reserva la altura real de su bottomBar
+                        // (nav bar o dock de acciones) en `innerPadding`: NO se
+                        // añade padding estimado. Lo único que el Scaffold no
+                        // reserva es el FAB flotante, que se dibuja POR ENCIMA
+                        // del contenido; se le cede su espacio derivado de tokens.
+                        if (floatingActionButton != null) {
+                            Modifier.padding(bottom = AmMetrics.FabClearance)
                         } else {
                             Modifier
                         },

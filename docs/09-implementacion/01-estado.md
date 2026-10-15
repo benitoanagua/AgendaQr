@@ -37,7 +37,7 @@ dispositivo físico o red). No se declaran PASS.
 | Insets/notch, cámara, foco nativo y motion en dispositivo | Requiere dispositivo físico | `ANDROID_PHYSICAL_DEVICE_TEST.md` |
 | Predictive back en Android 14+ (gesto real con progreso) | Requiere dispositivo físico | `ANDROID_PHYSICAL_DEVICE_TEST.md` |
 | Photo Picker en dispositivo (contractos del sistema) | Robolectric ejecuta el flujo unitario; el picker visual requiere dispositivo | `ANDROID_PHYSICAL_DEVICE_TEST.md` |
-| Revisión visual de las capturas Roborazzi regeneradas | El hash PASS es determinista; el ojo humano valida la composición | abrir `feature/destinations/presentation/build/roborazzi/*.png` (s01/login/s02-add/import-batch × claro/oscuro) |
+| Revisión visual de las capturas Roborazzi regeneradas | El hash PASS es determinista y el análisis de bandas/regiones es programático; el ojo humano valida la composición | abrir `feature/destinations/presentation/build/roborazzi/*.png` (22 capturas × claro/oscuro) |
 | Supabase acceptance (JDBC) | Requiere base de datos | `:supabase:acceptance:test` con `DATABASE_URL` |
 
 ## Límites conocidos (decisiones, no bugs)
@@ -73,8 +73,25 @@ dispositivo físico o red). No se declaran PASS.
 |---|---|---|
 | Arquitectura + design system + no-scripts | `./gradlew verifyAgendaQrArchitecture -PallowDebugSigningForRc=true` | PASS |
 | Tests de módulos | `./gradlew :core:ui:testDebugUnitTest :feature:destinations:presentation:testDebugUnitTest :feature:destinations:domain:test :feature:destinations:data:testDebugUnitTest -PallowDebugSigningForRc=true` | PASS |
-| Regresión visual (Roborazzi + SHA-256) | `./gradlew :feature:destinations:presentation:recordRoborazziDebug recordVisualHashes verifyVisualHashes -PallowDebugSigningForRc=true` | PASS (16 capturas revisadas una por una: s01/login/s02-add/import-batch/s04-search/s06-contexts/s09-review/edit-destination × claro/oscuro) |
+| Regresión visual (Roborazzi + SHA-256) | `./gradlew :feature:destinations:presentation:recordRoborazziDebug recordVisualHashes verifyVisualHashes -PallowDebugSigningForRc=true` | PASS (22 capturas × claro/oscuro: s01/s02-add/s04-search/s06-contexts/s07-operation-row/s09-review/login/import-batch/destination-detail/edit-destination/qr-preview-fallback) |
+| Contrato de QR (generación + lectura con ZXing) | `./gradlew :feature:destinations:presentation:testDebugUnitTest --tests "*QrPreviewContractTest"` | PASS (5/5: el fixture es un QR real legible; bytes del dominio → imagen; payload no-imagen → estado de error, no un QR falso) |
+| Contrato de no solapamiento (dock y FAB) | `./gradlew :core:ui:testDebugUnitTest --tests "*AmScaffoldOverlapContractTest"` | PASS (3/3: el contenido termina por encima del dock de acciones y del FAB; el espacio se deriva del Scaffold y de tokens, sin alturas estimadas) |
 | Ensamblado Android | `./gradlew :androidApp:assembleDebug -PallowDebugSigningForRc=true` | PASS |
 | Compilación iOS (simulador ARM64, sin runtime) | `./gradlew :core:ui:compileKotlinIosSimulatorArm64 :feature:destinations:presentation:compileKotlinIosSimulatorArm64` | PASS (compila; runtime NO VERIFICADO, sin Xcode) |
 | Supabase acceptance (JDBC) | `DATABASE_URL=jdbc:postgresql://... ./gradlew :supabase:acceptance:test` | NO VERIFICADO (sin base de datos) |
 | CI (4 jobs) | Push a `main` → Android validation workflow | NO VERIFICADO (fuera del entorno local) |
+
+### Lectura del QR renderizado (verificación puntual, no una puerta)
+
+Las capturas de Roborazzi se volvieron a LEER con el decodificador del
+proyecto (ZXing `MultiFormatReader` + `RGBLuminanceSource`, vía `javac`
+contra `com.google.zxing:core:3.5.3`) para comprobar que el QR que se ve en
+pantalla es real (no una imagen decorativa):
+
+- `destination-detail-light.png` / `-dark.png` → `QR_CODE` = `https://agendaqr.app/d-1`
+- `s09-review-light.png` / `-dark.png` → `QR_CODE` = `https://agendaqr.app/d-1`
+- `qr-preview-fallback-light.png` / `-dark.png` → **no legible** (el fallback NO es un QR válido, por diseño)
+
+Esta comprobación depende de las capturas ya generadas; la prueba
+automatizada permanente (fixture + decodificación) vive en
+`QrPreviewContractTest`.

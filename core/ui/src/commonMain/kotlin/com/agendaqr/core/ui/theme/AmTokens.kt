@@ -343,6 +343,11 @@ object AmMetrics {
     val ScannerCornerLength = 24.dp
     /** Insignia de contexto (M4): círculo de 40 dp (referencia Stitch: w-10 h-10). */
     val ContextBadgeSize = 40.dp
+    /** Espacio que el FAB necesita por encima de la barra inferior para no
+     * tapar el último elemento del contenido desplazable: alto real del FAB
+     * ([ControlMinSize]) + el margen del Scaffold ([AmSpacing.Lg]). Es un
+     * valor DERIVADO de componentes reales, no una constante a mano. */
+    val FabClearance = ControlMinSize + AmSpacing.Lg
 }
 
 /** Radios de la referencia (tag 2, botón 4, búsqueda 6, tarjeta 8,

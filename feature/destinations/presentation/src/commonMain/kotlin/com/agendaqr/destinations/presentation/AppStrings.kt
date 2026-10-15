@@ -127,6 +127,8 @@ internal object AppStrings {
     val PudoHaberSidoEliminadoEn = "Pudo haber sido eliminado en otro dispositivo."
     val Qr = "QR"
     val QrSinContenido = "QR sin contenido"
+    /** Estado explícito cuando el QR almacenado no puede mostrarse como imagen. */
+    val QrNoSePudoMostrar = "No se pudo mostrar el código"
     val Reintentar = "REINTENTAR"
     val ReintentarAhora = "Reintentar ahora"
     val ReintentarClasificacion = "Reintentar clasificación"
