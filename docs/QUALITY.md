@@ -315,6 +315,7 @@ evalúa en configuración).
 | Contraste y esquema | `AmSchemeTest`, `AmContrastPairsTest`, `AmAccentTest` | umbrales y pares fijados |
 | Tipografía y layout | `AmTypographyTest`, `AmPivotLayoutTest`, `AmUiPolishContractTest` | roles, interlineado, escalado de fuente |
 | Accesibilidad de componentes | `AmAccessibilityContractTest`, `ScreensA11yCoverageTest` | semántica, roles, targets |
+| Correcciones UX (ADR-0018) | `UxFilterReproductionTest`, `UxDateReproductionTest`, `UxEditorDiscardTest`, `UxAmountValidationTest`, `UxHomeHubTest`, `UxUnassociatedTest`, `UxLockSearchTest`, `QrFullscreenTest`, `ExternalFlowTrackerTest`, `AmDateTimePickerTest` | filtros idempotentes, fecha con hora, descarte confirmado, importe válido, hub de Inicio, bandeja sin primarios, biometría/foco, brillo restaurado, gracia de bloqueo, pickers bajo Robolectric |
 | Regresión visual | `recordRoborazzi` → `recordVisualHashes` / `verifyVisualHashes` | 80 capturas (40 escenarios × claro/oscuro, incl. tablet w720dp con NavigationRail y textos largos) por SHA-256 (ADR-0007, sensible al entorno) |
 | Arranque local-first y PIN | `:feature:destinations:presentation:testDebugUnitTest --tests "*AgendaQrLocalStartupTest"` | arranque real sin cuenta, perfil local, desbloqueo |
 | Máquina de estados del acceso local | `--tests "*LocalAccessGateTest"` | configurar → desbloquear → bloquear, saneado, intentos, bloqueo temporal |

@@ -21,7 +21,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Modo de demostración aislado (perfil `demo-profile-v1`, sin sync) | `DemoDataTest` + `DemoSeederTest` (determinista, idempotente, no toca perfil real) |
 | Migración de instalaciones previas al perfil local | data tests (idempotencia, no borra origen, no mezcla cuentas, detección por claves sin cliente remoto) |
 | Nube opcional («Cuenta y respaldo» detrás de Inicio) | compilación Android/iOS + gate + captura `account-{light,dark}` (SignedOut con doble determinista) |
-| UX/UI V1.7 (alineación fiel con Ant Design Mobile 5.43.0, S00 + S01–S12) | Robolectric suite + hashes visuales + gate del design system |
+| UX/UI V1.8 (correcciones de captura rápida ADR-0018: filtros, bloqueo con gracia, fecha/hora, Detalle, editor, Inicio, copy, PIN/búsqueda) | Robolectric suite + hashes visuales + gate del design system |
 | Alineación visual ADR-0017 (tokens, radios, diálogo hairline, buscador SearchBar, E-04) | `AmSchemeTest`/`AmTypographyTest`/`S02UiPolishTest` repinneados + `ScreensA11yCoverageTest`/`ActionHierarchyTest`/`AmDialogProminenceTest` (diálogo verificado bajo Robolectric, sin fallback) + gate |
 | Chrome e insets (TopBar, NavigationBar/Rail, Scaffold con contentWindowInsets) | Robolectric suite + gate (incl. captura tablet w720dp con NavigationRail) |
 | Edge-to-edge Android (`enableEdgeToEdge`) | ensamblado |
@@ -60,6 +60,10 @@ No se declaran PASS. Requieren Xcode, dispositivo físico o red.
 | NavigationRail en tablet/plegable | Captura tablet registrada en Roborazzi (w720dp); falta render en hardware real | render real en tablet/plegable |
 
 ## 3. Límites conocidos (decisiones, no defectos)
+
+- Gracia de bloqueo de 120 s (`ExternalFlowGraceMillis`, D1): si el sistema destruye el proceso fuera de la gracia, el borrador en memoria se pierde (el grafo no se elevó por encima del PIN).
+- `FLAG_SECURE` no implementado (ADR-0009 propuesto): las pantallas sensibles admiten capturas; implementarlo bloquea screenshots del QR.
+- Paginación local de 50 en 50 (U-22): se conserva sin cambios; reportada como opcional.
 
 - Separadores oscuros `#2B2B2B` sobre superficie `#1F1F1F` (hairline oficial): si en revisión humana resultan imperceptibles, es decisión pendiente del propietario (alternativa documentable: `#3A3A3A`); no se cambia en silencio.
 - Textos a 17 sp (cuerpo de la referencia): a 320 dp y 200 % de fuente los desbordamientos se resuelven con layout, nunca bajando la escala; la suite de layout lo verifica.

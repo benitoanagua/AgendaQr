@@ -1,6 +1,6 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — V1.7 para contrato funcional y visual; contrato visual definido por ADR-0017 (alineación fiel con Ant Design Mobile 5.43.0 + navegación Android/iOS) y desarrollado en `docs/05-design-system/00-contrato-normativo-diseno.md`  
+**Estado:** FROZEN — V1.8 para contrato funcional; contrato visual definido por ADR-0017 (alineación fiel con Ant Design Mobile 5.43.0 + navegación Android/iOS) y desarrollado en `docs/05-design-system/00-contrato-normativo-diseno.md`  
 **Fecha:** 2026-10-11  
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
 
@@ -16,8 +16,9 @@
 | V1.5 | 2026-10-13 | Enmienda de compacidad (escala compacta neutra): §12 delega tipografía (cuerpo 14, título 18, tracking neutro), barras compactas (superior 56 dp, inferior 64 dp sin píldora) y densidad al contrato normativo. Intención, flujos, reglas de negocio, accesibilidad y copy: intactos. |
 | V1.6 | 2026-10-14 | Enmienda por ADR-0016 (identidad local sin cuenta): §4 añade S00 Acceso local (configurar PIN en el primer arranque, desbloquear con PIN) y S01 cambia "Cerrar sesión" por "Cuenta y respaldo" + "Bloquear" en el menú "…". El acceso deja de ser una pantalla de login remoto. Modelo mental, reglas de negocio, accesibilidad y copy de las pantallas existentes: intactos. |
 | V1.7 | 2026-10-16 | Enmienda por ADR-0017 (alineación fiel con Ant Design Mobile 5.43.0): §12 reescrito a los valores oficiales (escala 17/15/13, radios 2/4/6/8, paleta oscura oficial, diálogo con fila hairline, buscador SearchBar, secundario = botón `default`); corrige el error "barra inferior 64 dp" de V1.5 (son 56 dp). Intención, flujos y copy: intactos. Aprobación explícita del propietario para enmendar la congelación del §12 (alineación con Ant Design Mobile, ADR-0017); intención, flujos y copy intactos. |
+| V1.8 | 2026-10-16 | Enmienda por ADR-0018 (correcciones UX de captura rápida): S00 (gracia de bloqueo 120 s, biometría automática, demo solo al inicio), S01 (hub de creación, sin duplicados, Favoritos, lista sin favoritos del carrusel), Detalle de destino (Mostrar QR como primaria, pantalla completa con brillo), S07 (editor con divulgación progresiva, validación real, descarte confirmado), S04 (foco solo desde Inicio). Intención, modelo mental y reglas de negocio: intactos. Aprobación explícita del propietario para enmendar la congelación en lo que ADR-0018 cambia. |
 
-La implementación vigente corresponde a V1.7. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
+La implementación vigente corresponde a V1.8. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
 ## 1. Contrato principal
 
@@ -72,40 +73,46 @@ Intención: entrar al dispositivo propio. No es un login: no hay correo, contras
 - El PIN es de 4 a 12 dígitos, campo numérico oculto; el error se asocia al campo.
 - Confirmación distinta → error "no coinciden" sin crear credencial.
 - Código incorrecto → error con intentos restantes; al agotar intentos hay un bloqueo temporal progresivo.
-- El bloqueo ocurre al pasar la app a segundo plano; al reanudar se vuelve a pedir el PIN.
+- El bloqueo ocurre al pasar la app a segundo plano; al reanudar se vuelve a pedir el PIN. Con un flujo externo iniciado por la app (galería, cámara, selectores, compartir) hay una gracia acotada de 120 s; vencida, se bloquea al volver.
+- Con biometría disponible e inscrita, el desbloqueo la solicita sola una vez por bloqueo (con el PIN como respaldo); la demostración solo existe en el primer arranque.
 - El PIN es local; nunca viaja a la red y no es la clave de cifrado de los datos.
 
-### S01 — Inicio (V1.4 + referencia Stitch, ADR-0015)
-Intención: encontrar o iniciar algo. Buscar domina visualmente; Añadir y Registrar son acciones secundarias.
+### S01 — Inicio (V1.8, ADR-0018)
+Intención: encontrar o iniciar algo. Buscar domina visualmente; Añadir abre el hub de creación.
 
 Composición (la intención no cambia; solo cambia la presentación):
 
     [barra superior: título "Agenda QR" — título estándar]
-    [píldora de reaseguro "Guardado en tu teléfono" (local-first, siempre cierta)]
     [campo de búsqueda como entrada a Buscar — primer bloque, dominante]
-    [filtros de la lista como píldoras: Todo · Favoritos (activo sólido)]
-    [acciones rápidas: Escanear QR (→ S02) · Registrar pago (→ S07)]
-    [sección "Recientes" con conteo y "Ver todo": lista convencional de filas]
+    [filtros de la lista como píldoras: Todos · Favoritos (activo sólido, idempotente)]
+    [sección "Favoritos": carrusel horizontal (la siguiente tarjeta asoma como indicio)]
+    [sección "Todos los destinos": lista convencional de filas (sin los favoritos del carrusel)]
       [fila: tile QR tonal · título · metadato caption · favorito (estrella)]
-      [estado vacío con acción "Añadir" cuando no hay nada]
+      [estado vacío con acción "Traer un QR" cuando no hay nada]
     [tarjeta de disponibilidad sin conexión]
-    [botón flotante extendido "Añadir" → hoja "¿Qué quieres añadir?": QR / contexto / actividad]
+    [botón flotante extendido "Añadir" → diálogo "¿Qué quieres añadir?": Traer un QR / Registrar actividad / Crear contexto]
 
 - Inicio es una lista convencional (sin tiles, sin tile vivo): una sola
   entrada de búsqueda (sin duplicar campo superior y acción inferior) y
   las acciones de pantalla viven en la barra superior, el FAB y la
-  barra de navegación inferior.
-- El FAB abre la hoja de creación con las tres creaciones reales del
+  barra de navegación inferior. Sin acciones rápidas duplicadas en el
+  cuerpo (la entrada a S02 vive en el hub y en S02).
+- El FAB abre el hub de creación con las tres creaciones reales del
   producto (traer QR → S02, crear contexto → diálogo de creación,
-  registrar actividad → S07); la hoja se materializa como diálogo por
-  la limitación de `ModalBottomSheet` bajo Robolectric (ADR-0013).
+  registrar actividad → S07 sin preasociación); el hub se materializa
+  como diálogo por la limitación de `ModalBottomSheet` bajo Robolectric
+  (ADR-0013).
 - Favoritos es un filtro de la propia lista (y del cuerpo de Inicio),
-  no un destino aparte.
+  no un destino aparte; en Todos la lista excluye los favoritos del
+  carrusel (sin duplicación).
 - Navegación inferior (Inicio · Buscar · Actividades · Contextos) solo
   en las superficies raíz; cambiar de destino conserva la raíz del back
   stack (Back desde otro destino vuelve a Inicio; desde Inicio sale de
   la app).
 - El menú "…" de la barra superior de Inicio ofrece "Cuenta y respaldo" (nube opcional) y "Bloquear".
+
+### Detalle de destino (V1.8, ADR-0018)
+Intención: mostrar el QR. La única acción primaria es "Mostrar QR" (pantalla completa); Compartir es secundaria; Registrar actividad, Editar y Eliminar viven en "…". La tarjeta del QR también abre la pantalla completa. La pantalla completa muestra el QR al máximo con el nombre debajo, brillo al máximo y pantalla encendida (restaurados al salir). El contenido decodificado no aparece en las listas; en el Detalle va en bloque expandible, seleccionable y copiable.
 
 ### S02 — Añadir (V1.3, ADR-0013)
 Intención: traer algo que el usuario ya tiene.
@@ -128,7 +135,7 @@ Intención: traer algo que el usuario ya tiene.
 Intención: capturar un QR físico. La detección debe ser automática cuando sea posible. No se muestran métricas técnicas del scanner.
 
 ### S04 — Buscar
-Intención: encontrar cualquier cosa de Agenda QR. Los resultados pueden ser heterogéneos y muestran su tipo mediante texto/semántica.
+Intención: encontrar cualquier cosa de Agenda QR. Los resultados pueden ser heterogéneos y muestran su tipo mediante texto/semántica. El foco automático solo llega desde el disparador de Inicio; por pestaña se entra sin foco.
 
 ### S05 — Resultados
 Superficie de decisión. Al volver se conserva la consulta.
@@ -138,8 +145,12 @@ Intención: comprender y continuar dentro de un contexto. No es un dashboard fin
 
 Composición: la superficie del contexto se estructura como **secciones QR · Actividades · Comprobantes** (pestañas estándar), reflejando directamente el modelo mental de §2; no crea taxonomía nueva de navegación. El acento del contexto (§12, Color) tiñe sus encabezados de sección y elementos de foco. La barra superior lleva el título y la flecha atrás; las acciones de la pantalla viven en el cuerpo (§12, Navegación y chrome).
 
-### S07 — Registrar
-Intención: registrar una actividad. El contexto ayuda pero no bloquea el registro.
+### S07 — Registrar (V1.8, ADR-0018)
+Intención: registrar una actividad. El contexto ayuda pero no bloquea el registro. Captura rápida con divulgación progresiva: Tipo · Importe+Moneda · Persona o entidad · Fecha y hora · Contexto · Más detalles (plegado salvo que existan) · Guardar fijo abajo.
+
+- Importe opcional con validación real (dígitos y un separador decimal, máx. 2 decimales); moneda BOB/USD/Otra (por defecto, la última usada); persona con sugerencias de contrapartes recientes.
+- Fecha y hora con selectores (sin texto libre) y atajos Hoy/Ayer; por defecto, ahora con hora.
+- Salir con cambios pide "¿Descartar cambios?"; sin cambios sale de inmediato. El Back del sistema sigue el mismo camino.
 
 ### S08 — Seleccionar contexto
 Intención: elegir contexto para el flujo padre. Al terminar, vuelve al flujo original conservando el draft.
@@ -367,4 +378,4 @@ Fuera del alcance de esta especificación conceptual: detalles internos de Kotli
 
 ## 14. Estado
 
-**UX/UI V1.7: FROZEN** (enmienda ADR-0017, 2026-10-16).
+**UX/UI V1.8: FROZEN** (enmienda ADR-0018, 2026-10-16).

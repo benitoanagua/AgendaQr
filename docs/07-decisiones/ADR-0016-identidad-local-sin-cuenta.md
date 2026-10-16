@@ -1,6 +1,6 @@
 # ADR-0016: Identidad local sin cuenta y acceso con PIN
 
-**Estado:** Aceptada · **Fecha:** 2026-10-14 · **Relaciona:** ARCHITECTURE.md (§5), ADR-0014, ADR-0015
+**Estado:** Aceptada · **Fecha:** 2026-10-14 · **Enmendada por ADR-0018** (2026-10-16: gracia acotada de 120 s para flujos externos iniciados por la app — `ExternalFlowTracker` en presentación, fail-closed sin marca; el PIN nunca pasa por el rastreador; demostración solo en el primer arranque, no en el desbloqueo; la historia de esta decisión se conserva) · **Relaciona:** ARCHITECTURE.md (§5), ADR-0014, ADR-0015
 
 ## Contexto
 

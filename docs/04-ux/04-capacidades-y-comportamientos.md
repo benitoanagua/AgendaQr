@@ -41,6 +41,12 @@ El comprobante no será modificado.
 
 Los cambios conceptuales, notas u organización no necesitan esa confirmación.
 
+## Registro de actividad (V1.8, ADR-0018)
+
+- Importe opcional con validación real (dígitos y un separador decimal, máx. 2 decimales, sin espacios); se canoniza con punto al guardar.
+- Fecha y hora con selectores (sin texto libre) y atajos Hoy/Ayer; por defecto, ahora con hora. Los datos antiguos a medianoche no tienen hora y no se reescriben.
+- Moneda BOB/USD/Otra (por defecto, la última usada) y sugerencias de contrapartes recientes: derivadas del estado, sin persistencia nueva.
+
 ## Semántica
 
 Un comprobante recibido significa que el archivo/evidencia llegó al usuario o fue incorporado desde ese contexto. No implica verificación del dinero.
