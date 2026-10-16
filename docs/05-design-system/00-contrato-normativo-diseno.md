@@ -164,9 +164,10 @@ El gate compara esta tabla con `exceptionRegistry` en `build-logic/agendaqr.desi
 
 | ID | Regla | Aplicación |
 |---|---|---|
-| E-01 | Borde outline del botón secundario (fill outline de la referencia: borde de acento 1 dp, no hairline decorativo) | `border:AmButtons.kt` — verificado por la suite (`AmSecondaryButton` se renderiza y conserva 48 dp en `AmResponsiveLayoutContractTest`/`FontScaleContractTest`) |
+| E-01 | Hairline perimetral del botón secundario (botón `default` de la referencia: fondo claro + borde hairline + texto primario; NO es outline de acento) | `border:AmButtons.kt` — verificado por la suite (`AmSecondaryButton` se renderiza y conserva 48 dp en `AmResponsiveLayoutContractTest`/`FontScaleContractTest`) |
 | E-02 | Borde outline de la insignia de estado (Tag outline de la referencia: borde de 1 dp del tono, no hairline decorativo) | `border:AmLists.kt` — verificado por la suite (`AmBadge` se renderiza en `AppStatusHostTest`/`ScreensA11yCoverageTest`) |
-| E-03 | Hairline perimetral del cuerpo de lista/tarjeta (`AmListBody`: "Flat #ffffff surface delineated by a crisp 1px solid #f0f0f0 border", DESIGN.md Stitch — el límite de la tarjeta es el borde, no una sombra) | `border:AmLists.kt` — verificado por las capturas de referencia (ADR-0007) |
+| E-03 | Hairline perimetral del cuerpo de lista/tarjeta (`AmListBody`/`AmTappableCard`: "Flat #ffffff surface delineated by a crisp 1px solid #f0f0f0 border", DESIGN.md Stitch — el límite de la tarjeta es el borde, no una sombra) | `border:AmLists.kt` — verificado por las capturas de referencia (ADR-0007) |
+| E-04 | Borde de acento en foco del buscador (SearchBar de la referencia: borde 1 px del color primario cuando el campo está activo; en reposo el borde es transparente) | `border:AmInputs.kt` — verificado por la suite (el campo se renderiza y conserva su nombre accesible en `ScreensA11yCoverageTest`; el foco cumple ≥ 3:1 por `AmSchemeTest`) |
 
 Para proponer una excepción: registrarla aquí y en el gate en el MISMO cambio, con justificación de accesibilidad y prueba asociada.
 
