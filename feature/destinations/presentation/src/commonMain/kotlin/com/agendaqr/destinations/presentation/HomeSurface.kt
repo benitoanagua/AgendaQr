@@ -142,9 +142,13 @@ internal fun HomeSurface(
                 if (destination == null || destination.qr.encoded.isBlank()) {
                     DestinationNotFound(onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) })
                 } else {
-                    QrFullscreenPattern(destination.qr.encoded) {
-                        graph.destinationsViewModel.onAction(DestinationAction.Back)
-                    }
+                    QrFullscreenPattern(
+                        destination.qr.encoded,
+                        destinationName = destination.name.ifBlank { AppStrings.SinNombre },
+                        onBack = {
+                            graph.destinationsViewModel.onAction(DestinationAction.Back)
+                        },
+                    )
                 }
             }
             DestinationRoute.ImportReview -> ImportReviewScreen(

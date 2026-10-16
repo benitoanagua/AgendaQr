@@ -29,8 +29,8 @@ import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmListBody
 import com.agendaqr.core.ui.components.AmMetaRow
 import com.agendaqr.core.ui.components.AmQrPreview
-import com.agendaqr.core.ui.components.AmScannerFrame
 import com.agendaqr.core.ui.components.AmSecondaryButton
+import com.agendaqr.core.ui.components.AmTappableCard
 import com.agendaqr.core.ui.components.AmStatusPill
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTextAction
@@ -80,10 +80,10 @@ fun DestinationDetailScreen(
         message = AppStrings.Copiado,
         feedbackHost = appHosts?.feedback,
     )
-    // V1.4 + MCP: título del destino en la barra; Compartir/Editar viven
-    // en el dock de acciones (bottomAction slot); Eliminar en "…" (destructiva, no a un
-    // toque). Mostrar QR = pantalla completa (RF-05), acción propia del
-    // núcleo.
+    // U-04/D3: la tarea central es MOSTRAR el QR (primaria); Compartir
+    // es secundaria. Registrar, Editar y Eliminar viven en "…" (la
+    // eliminación mantiene su diálogo destructivo). "Registrar actividad"
+    // abre un formulario vacío: no promete asociación al destino.
     AmScreenScaffold(
         scrollable = true,
         topBar = {
@@ -92,6 +92,8 @@ fun DestinationDetailScreen(
                 onBack = onBack,
                 backLabel = AppStrings.Volver,
                 overflowActions = listOf(
+                    AmOverflowAction(AppStrings.RegistrarOperacion, onRegisterOperation),
+                    AmOverflowAction(AppStrings.Editar, onEdit),
                     AmOverflowAction(AppStrings.Eliminar, { showDeleteConfirm = true }),
                 ),
                 overflowLabel = AppStrings.Mas,
@@ -101,9 +103,9 @@ fun DestinationDetailScreen(
         statusContent = appHosts?.status,
         verticalArrangement = Arrangement.spacedBy(AmSpacing.Lg),
         bottomAction = {
-            // Dock de acciones persistente (referencia MCP): registrar, compartir y editar
-            // — todas reales. "Registrar operación" es la acción primaria (sólida),
-            // Compartir y Editar son secundarias. El dock respeta insets de navegación y IME.
+            // Dock (U-04, D3): exactamente una acción primaria — Mostrar
+            // QR a pantalla completa — más Compartir secundaria. El dock
+            // respeta insets de navegación y IME.
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -113,8 +115,9 @@ fun DestinationDetailScreen(
                 verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
             ) {
                 AmPrimaryButton(
-                    label = AppStrings.RegistrarOperacion,
-                    onClick = onRegisterOperation,
+                    label = AppStrings.MostrarQr,
+                    onClick = onShowQr,
+                    icon = AmIcons.Maximize,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 AmSecondaryButton(
@@ -123,40 +126,29 @@ fun DestinationDetailScreen(
                     icon = AmIcons.Share,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                AmTextAction(
-                    label = AppStrings.EditarMetadatosReemplazarQr,
-                    onClick = onEdit,
-                    modifier = Modifier.fillMaxWidth(),
-                )
             }
         },
     ) {
-        // Tarjeta núcleo del QR (referencia MCP): código real sobre lienzo
-        // claro, encuadre de esquinas y guía de uso honesta.
+        // Tarjeta núcleo del QR (U-04): código real sobre lienzo claro
+        // PLANO (el marco de escáner queda para la cámara) + guía de uso.
+        // La tarjeta también es tocable con la misma acción de Mostrar
+        // (semántica de botón); el dock conserva la primaria visible.
         if (destination.qr.encoded.isNotBlank()) {
-            AmListBody {
+            AmTappableCard(onClick = onShowQr) {
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(AmSpacing.Lg),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(AmSpacing.Md),
                 ) {
-                    AmScannerFrame(size = AmMetrics.QrPreviewSize) {
-                        AmQrPreview(
-                            encodedQr = destination.qr.encoded,
-                            size = AmMetrics.QrPreviewSize,
-                            unavailableMessage = AppStrings.QrNoSePudoMostrar,
-                        )
-                    }
+                    AmQrPreview(
+                        encodedQr = destination.qr.encoded,
+                        size = AmMetrics.QrPreviewSize,
+                        unavailableMessage = AppStrings.QrNoSePudoMostrar,
+                    )
                     AmText(
                         AppStrings.MuestraEsteCodigo,
                         color = AmColor.TextSecondary,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                    )
-                    AmSecondaryButton(
-                        label = AppStrings.PantallaCompleta,
-                        onClick = onShowQr,
-                        icon = AmIcons.ScanLine,
-                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
@@ -194,7 +186,7 @@ fun DestinationDetailScreen(
                                         copyToClipboard(it)
                                         copiedEvent = Any()
                                     },
-                                    icon = AmIcons.Attachment,
+                                    icon = AmIcons.Copy,
                                     prominent = true,
                                 )
                             },
