@@ -44,16 +44,16 @@ fun UserFacingError.bannerActions(
 /** Acciones que un error recuperable puede ofrecer. */
 enum class ErrorAction(val label: String) {
     /** Reintentar la operación fallida (o despejar el camino para hacerlo). */
-    Retry("REINTENTAR"),
+    Retry(AppStrings.ErrorReintentar),
 
     /** Volver a elegir el archivo/imagen de origen. */
-    ChooseAnotherImage("ELEGIR OTRA IMAGEN"),
+    ChooseAnotherImage(AppStrings.ErrorElegirOtraImagen),
 
     /**
      * Cerrar: para errores donde reintentar no tiene sentido (el elemento
      * ya no existe). El banner se descarta; el usuario sigue en su flujo.
      */
-    Close("CERRAR"),
+    Close(AppStrings.ErrorCerrar),
 }
 
 /** Flujos que producen errores recuperables en la app. */
@@ -141,54 +141,54 @@ fun Throwable.errorCause(): ErrorCause {
  */
 fun userFacingError(error: Throwable, flow: ErrorFlow): UserFacingError = when (flow) {
     ErrorFlow.SaveQr -> UserFacingError(
-        what = "No pudimos guardar el QR.",
-        dataStatus = "Tus cambios siguen en la pantalla.",
+        what = AppStrings.ErrorSaveQrWhat,
+        dataStatus = AppStrings.ErrorSaveQrData,
         action = ErrorAction.Retry,
     )
     ErrorFlow.DeleteQr -> UserFacingError(
-        what = "No pudimos eliminar el QR.",
-        dataStatus = "El QR sigue guardado.",
+        what = AppStrings.ErrorDeleteQrWhat,
+        dataStatus = AppStrings.ErrorDeleteQrData,
         action = ErrorAction.Retry,
     )
     ErrorFlow.SaveOperation -> UserFacingError(
-        what = "No pudimos guardar la actividad.",
-        dataStatus = "Tus cambios siguen en la pantalla.",
+        what = AppStrings.ErrorSaveOperationWhat,
+        dataStatus = AppStrings.ErrorSaveQrData,
         action = ErrorAction.Retry,
     )
     ErrorFlow.DeleteOperation -> UserFacingError(
-        what = "No pudimos eliminar la actividad.",
-        dataStatus = "La operación sigue guardada.",
+        what = AppStrings.ErrorDeleteOperationWhat,
+        dataStatus = AppStrings.ErrorDeleteOperationData,
         action = ErrorAction.Retry,
     )
     ErrorFlow.SaveReceipt -> UserFacingError(
-        what = "No pudimos guardar el comprobante.",
-        dataStatus = "El comprobante no se guardó.",
+        what = AppStrings.ErrorSaveReceiptWhat,
+        dataStatus = AppStrings.ErrorSaveReceiptData,
         action = ErrorAction.Retry,
     )
     ErrorFlow.DeleteReceipt -> UserFacingError(
-        what = "No pudimos eliminar el comprobante.",
-        dataStatus = "El comprobante sigue guardado.",
+        what = AppStrings.ErrorDeleteReceiptWhat,
+        dataStatus = AppStrings.ErrorDeleteReceiptData,
         action = ErrorAction.Retry,
     )
     ErrorFlow.ComprobanteOpen -> UserFacingError(
-        what = "No pudimos abrir el comprobante.",
-        dataStatus = "El comprobante sigue guardado.",
+        what = AppStrings.ErrorComprobanteOpenWhat,
+        dataStatus = AppStrings.ErrorDeleteReceiptData,
         action = ErrorAction.Retry,
     )
     ErrorFlow.Search -> UserFacingError(
         what = when (error.errorCause()) {
-            ErrorCause.Network -> "No pudimos buscar. Revisa tu conexión."
-            else -> "No pudimos buscar."
+            ErrorCause.Network -> AppStrings.ErrorSearchNetworkWhat
+            else -> AppStrings.ErrorSearchWhat
         },
-        dataStatus = "Tu información está a salvo.",
+        dataStatus = AppStrings.ErrorSearchData,
         action = ErrorAction.Retry,
     )
     ErrorFlow.SignIn -> UserFacingError(
         what = when (error.errorCause()) {
-            ErrorCause.Network -> "No pudimos conectarnos. Revisa tu conexión."
-            else -> "No pudimos iniciar sesión. Revisa tu correo y contraseña."
+            ErrorCause.Network -> AppStrings.ErrorSignInNetworkWhat
+            else -> AppStrings.ErrorSignInWhat
         },
-        dataStatus = "Tus credenciales no se guardaron.",
+        dataStatus = AppStrings.ErrorSignInData,
         action = when (error.errorCause()) {
             ErrorCause.Network -> ErrorAction.Retry
             else -> ErrorAction.Close
@@ -196,72 +196,72 @@ fun userFacingError(error: Throwable, flow: ErrorFlow): UserFacingError = when (
     )
     ErrorFlow.SignUp -> UserFacingError(
         what = when (error.errorCause()) {
-            ErrorCause.Network -> "No pudimos conectarnos. Revisa tu conexión."
-            else -> "No pudimos crear la cuenta. Revisa tus datos."
+            ErrorCause.Network -> AppStrings.ErrorSignUpNetworkWhat
+            else -> AppStrings.ErrorSignUpWhat
         },
-        dataStatus = "No se creó ninguna cuenta.",
+        dataStatus = AppStrings.ErrorSignUpData,
         action = when (error.errorCause()) {
             ErrorCause.Network -> ErrorAction.Retry
             else -> ErrorAction.Close
         },
     )
     ErrorFlow.SignOut -> UserFacingError(
-        what = "No pudimos cerrar sesión.",
-        dataStatus = "Tu información está guardada en el dispositivo.",
+        what = AppStrings.ErrorSignOutWhat,
+        dataStatus = AppStrings.ErrorSignOutData,
         action = ErrorAction.Retry,
     )
     ErrorFlow.ImportRead -> UserFacingError(
-        what = "No se pudo abrir el archivo compartido.",
-        dataStatus = "Nada se guardó.",
+        what = AppStrings.ErrorImportReadWhat,
+        dataStatus = AppStrings.ErrorImportReadData,
         action = ErrorAction.ChooseAnotherImage,
     )
     ErrorFlow.ImportBatchSave -> UserFacingError(
-        what = "No pudimos guardar la importación.",
-        dataStatus = "Los elementos reconocidos siguen pendientes de guardar.",
+        what = AppStrings.ErrorImportBatchSaveWhat,
+        dataStatus = AppStrings.ErrorImportBatchSaveData,
         action = ErrorAction.Retry,
     )
     ErrorFlow.ContextSave -> UserFacingError(
-        what = "No pudimos crear el contexto.",
-        dataStatus = "No se guardó nada.",
+        what = AppStrings.ErrorContextSaveWhat,
+        dataStatus = AppStrings.ErrorContextSaveData,
         action = ErrorAction.Retry,
     )
     // Reintentar no tiene sentido: el contexto no existe. Cerrar.
     ErrorFlow.ContextOpen -> UserFacingError(
-        what = "No encontramos este contexto.",
-        dataStatus = "Tus demás datos están bien.",
+        what = AppStrings.ErrorContextOpenWhat,
+        dataStatus = AppStrings.ErrorContextOpenData,
         action = ErrorAction.Close,
     )
     ErrorFlow.CameraPermission -> UserFacingError(
-        what = "No pudimos abrir la cámara.",
-        dataStatus = "Concede el permiso o usa Galería.",
+        what = AppStrings.ErrorCameraPermissionWhat,
+        dataStatus = AppStrings.ErrorCameraPermissionData,
         action = ErrorAction.Retry,
     )
 }
 
 /** Error contextual cuando un comprobante ya existe y se evita duplicar. */
 internal fun duplicateReceiptGuardError(): UserFacingError = UserFacingError(
-    what = "Ya existe un comprobante igual. Puedes conservarlo sin crear otra copia.",
-    dataStatus = "No se creó ninguna copia.",
+    what = AppStrings.ErrorDuplicateReceiptWhat,
+    dataStatus = AppStrings.ErrorDuplicateReceiptData,
     action = ErrorAction.Close,
 )
 
 /** Error contextual cuando el comprobante pedido no existe. */
 internal fun comprobanteNotFound(): UserFacingError = UserFacingError(
-    what = "No encontramos este comprobante.",
-    dataStatus = "Pudo haber sido eliminado.",
+    what = AppStrings.ErrorComprobanteNotFoundWhat,
+    dataStatus = AppStrings.ErrorComprobanteNotFoundData,
     action = ErrorAction.Close,
 )
 
 /** Error contextual cuando la operación pedida no existe. */
 internal fun operationNotFound(): UserFacingError = UserFacingError(
-    what = "No encontramos esta actividad.",
-    dataStatus = "Pudo haber sido eliminada.",
+    what = AppStrings.ErrorOperationNotFoundWhat,
+    dataStatus = AppStrings.ErrorOperationNotFoundData,
     action = ErrorAction.Close,
 )
 
 /** Envoltura para los errores de lectura de import que llegan por canal. */
 internal fun importReadError(what: String): UserFacingError = UserFacingError(
     what = what,
-    dataStatus = "Nada se guardó.",
+    dataStatus = AppStrings.ErrorImportReadData,
     action = ErrorAction.ChooseAnotherImage,
 )

@@ -219,7 +219,8 @@ internal fun OperationListScreen(
                 onClear = { viewModel.onAction(OperationAction.ClearError) },
             )
             AmStatusBanner(
-                message = err.display(),
+                title = err.what,
+                message = err.dataStatus,
                 tone = AmTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,

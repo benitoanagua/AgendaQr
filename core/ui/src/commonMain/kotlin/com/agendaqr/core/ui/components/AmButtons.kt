@@ -307,6 +307,10 @@ fun AmCompactAction(
     icon: ImageVector? = null,
     /** Texto de acento (acción destacada de la tarjeta). */
     prominent: Boolean = false,
+    /** Color explícito del texto (p. ej. heredado de un banner de tono). */
+    color: Color? = null,
+    /** Peso del texto (p. ej. SemiBold para la acción principal del banner). */
+    fontWeight: FontWeight? = null,
 ) {
     Box(
         modifier = modifier
@@ -330,14 +334,14 @@ fun AmCompactAction(
                     imageVector = it,
                     contentDescription = null,
                     size = AmMetrics.IconSizeCompact,
-                    tint = if (prominent) AmColor.AccentText else AmColor.TextSecondary,
+                    tint = color ?: if (prominent) AmColor.AccentText else AmColor.TextSecondary,
                 )
             }
             Text(
                 label,
                 style = AmTextStyles.BodySmall,
-                fontWeight = FontWeight.Medium,
-                color = if (prominent) AmColor.AccentText else AmColor.TextSecondary,
+                fontWeight = fontWeight ?: FontWeight.Medium,
+                color = color ?: if (prominent) AmColor.AccentText else AmColor.TextSecondary,
             )
         }
     }

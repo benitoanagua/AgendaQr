@@ -145,17 +145,22 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
             if (uiCall != null && !isUiLiteralAllowed(uiCall.groupValues[2])) {
                 add("$location: UI string literal outside AppStrings: ${uiCall.groupValues[2]}")
             }
-            val namedArg = Regex("(title|subtitle|actionLabel|label|placeholder|confirmLabel|dismissLabel|message|text|hint) = \"([^\"]+)\"").find(line)
+            val namedArg = Regex("(title|subtitle|actionLabel|label|placeholder|confirmLabel|dismissLabel|message|text|hint|what|dataStatus) = \"([^\"]+)\"").find(line)
             if (namedArg != null && !isUiLiteralAllowed(namedArg.groupValues[2])) {
                 add("$location: UI string literal outside AppStrings: ${namedArg.groupValues[2]}")
             }
             // Copy dentro de EXPRESIONES también es copy: `label = if (...) "…"` y
             // variantes con when esquivaban la regla anterior.
             val expressionLiteral = Regex(
-                "(title|subtitle|actionLabel|label|placeholder|confirmLabel|dismissLabel|message|text|hint|errorMessage|helperMessage|backLabel|busyDescription) = (?:if|when)[^\n]*?\"([^\"]{2,})\"",
+                "(title|subtitle|actionLabel|label|placeholder|confirmLabel|dismissLabel|message|text|hint|errorMessage|helperMessage|backLabel|busyDescription|what|dataStatus) = (?:if|when)[^\n]*?\"([^\"]{2,})\"",
             ).find(line)
             if (expressionLiteral != null && !isUiLiteralAllowed(expressionLiteral.groupValues[2])) {
                 add("$location: UI string literal in expression outside AppStrings: ${expressionLiteral.groupValues[2]}")
+            }
+            // Literales en ErrorAction (constructor posicional) también son copy.
+            val errorActionLiteral = Regex("ErrorAction\\.\\w+\\(\\s*\"([^\"]{2,})\"").find(line)
+            if (errorActionLiteral != null && !isUiLiteralAllowed(errorActionLiteral.groupValues[1])) {
+                add("$location: UI string literal in ErrorAction outside AppStrings: ${errorActionLiteral.groupValues[1]}")
             }
             // La interacción cruda es cosa del design system: feature/
             // compone componentes del sistema, nunca clickable propio

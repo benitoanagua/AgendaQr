@@ -56,7 +56,8 @@ internal fun AppStatusHost(
                 onClear = onDismissImportError,
             )
             AmStatusBanner(
-                message = error.display(),
+                title = error.what,
+                message = error.dataStatus,
                 tone = AmTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,

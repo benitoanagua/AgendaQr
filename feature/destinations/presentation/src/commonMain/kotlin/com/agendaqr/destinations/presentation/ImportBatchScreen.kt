@@ -129,24 +129,21 @@ fun ImportBatchScreen(
             is ImportBatchUiState.Result -> BatchResultContent(state.batch, onAction, isSaving = false)
             is ImportBatchUiState.Review -> BatchReviewContent(state.batch, onAction, isSaving = false)
             is ImportBatchUiState.Saving -> {
-                AmLoading(message = AppStrings.savingRecognizedItems)
                 BatchResultContent(state.batch, onAction, isSaving = true)
             }
             is ImportBatchUiState.Saved -> {
-                // Resumen de guardado: qué se guardó y qué queda pendiente.
                 AmStatusBanner(
+                    title = AppStrings.GuardadoOk,
                     message = AppStrings.batchSavedKeepReviewNotice,
                     tone = AmTone.Success,
                 )
                 state.batch.let { batch ->
                     if (batch.pendingItems().isNotEmpty()) {
-                        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                            AmStatusPill(
-                                text = pendingReviewCountLabel(batch.pendingItems().size),
-                                icon = AmIcons.Warning,
-                                tone = AmTone.Warning,
-                            )
-                        }
+                        AmSecondaryButton(
+                            label = reviewPendingLabel(batch),
+                            onClick = { onAction(ImportBatchAction.ReviewPending) },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
                     }
                 }
             }
@@ -154,7 +151,8 @@ fun ImportBatchScreen(
                 // El banner no lleva acción: el botón fijo inferior
                 // "Reintentar guardado" es la única fuente de la acción.
                 AmStatusBanner(
-                    message = state.error.display(),
+                    title = state.error.what,
+                message = state.error.dataStatus,
                     tone = AmTone.Danger,
                 )
                 state.batch?.let { BatchResultContent(it, onAction, isSaving = false) }

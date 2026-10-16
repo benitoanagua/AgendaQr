@@ -67,13 +67,13 @@ fun AmStatusBanner(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .padding(horizontal = AmSpacing.ScreenMargin)
             .background(background, AmShapes.Large)
             .semantics { liveRegion = LiveRegionMode.Polite }
             .padding(horizontal = AmSpacing.Md, vertical = AmSpacing.Md),
         verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
     ) {
-        // Fila 1: icono + mensaje a ancho completo (el icono se alinea a la
-        // primera línea del mensaje).
+        // Fila 1: icono + título/mensaje a ancho completo.
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top,
@@ -95,27 +95,37 @@ fun AmStatusBanner(
                         fontWeight = FontWeight.Bold,
                     )
                 }
-                Text(
-                    message,
-                    color = foreground,
-                    fontSize = AmType.Label,
-                )
+                if (message.isNotBlank()) {
+                    Text(
+                        message,
+                        color = foreground,
+                        fontSize = AmType.Label,
+                    )
+                }
+            }
+            // Descarte como icono X accesible, no como segundo texto.
+            dismiss?.let { d ->
+                AmIconButton(
+                    contentDescription = d.label,
+                    onClick = d.onClick,
+                ) {
+                    AmIcon(imageVector = AmIcons.Cancel, contentDescription = null, tint = foreground)
+                }
             }
         }
-        // Fila 2: acciones alineadas al final, con envoltura para fuentes
-        // grandes o etiquetas largas. Sin fila si no hay acciones.
-        if (action != null || dismiss != null) {
-            FlowRow(
+        // Fila 2: acción principal con peso SemiBold, altura compacta
+        // (36 dp visual / 48 dp táctil), texto alineado con el mensaje.
+        action?.let { a ->
+            Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
-                verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
             ) {
-                action?.let { a ->
-                    AmTextAction(label = a.label, onClick = a.onClick, color = foreground)
-                }
-                dismiss?.let { d ->
-                    AmTextAction(label = d.label, onClick = d.onClick, color = foreground)
-                }
+                AmCompactAction(
+                    label = a.label,
+                    onClick = a.onClick,
+                    color = foreground,
+                    fontWeight = FontWeight.SemiBold,
+                )
             }
         }
     }

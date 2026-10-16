@@ -75,7 +75,8 @@ fun ImportReviewScreen(
                 onClear = onClearError,
             )
             AmStatusBanner(
-                message = err.display(),
+                title = err.what,
+                message = err.dataStatus,
                 tone = AmTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,
@@ -113,6 +114,7 @@ fun ImportReviewScreen(
                             size = AmType.Label,
                             color = AmColor.TextSecondary,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            maxLines = 2,
                         )
                     }
                 }
@@ -139,6 +141,7 @@ fun ImportReviewScreen(
                                     size = AmType.Label,
                                     color = AmColor.TextSecondary,
                                     textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                    maxLines = 2,
                                 )
                             }
                         }
