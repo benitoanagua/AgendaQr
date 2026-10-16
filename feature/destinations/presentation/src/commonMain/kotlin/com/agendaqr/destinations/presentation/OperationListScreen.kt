@@ -101,7 +101,7 @@ internal fun OperationListScreen(
 ) {
     val operations = viewModel.visibleOperations()
     var visibleCount by remember(operations.size) { mutableStateOf(50) }
-    // Pestañas cápsula (referencia Stitch): Todas · Pago · Cobro con
+    // Pestañas cápsula: Todas · Pago · Cobro con
     // CONTEO real; "Comprobantes sueltos" es acción separada, no filtro.
     var typeFilter by androidx.compose.runtime.saveable.rememberSaveable { androidx.compose.runtime.mutableStateOf(0) }
     val pagosCount = operations.count { it.type == OperationType.PAGO }
@@ -131,7 +131,7 @@ internal fun OperationListScreen(
         },
     ) {
         // Grupo de entrada: búsqueda + control segmentado (8 dp).
-        // SegmentedControl (referencia Stitch): 3 opciones con badges de conteo.
+        // SegmentedControl: 3 opciones con badges de conteo.
         Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
             AmSearchField(
                 value = state.query,
@@ -240,7 +240,7 @@ internal fun OperationListScreen(
                 }
             )
         } else {
-            // Lista agrupada (referencia Stitch: Card mode / ListBody):
+            // Lista agrupada (Card mode / ListBody):
             // AmListBody + AmListRow con separadores hairline.
             // Cada fila: insignia direccional + título/concepto + importe
             // coloreado con signo + metadato "ocurrido · Reg:" + tags.

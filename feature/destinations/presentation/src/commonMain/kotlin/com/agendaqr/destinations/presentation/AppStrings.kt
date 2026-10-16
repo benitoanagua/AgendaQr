@@ -280,8 +280,8 @@ internal object AppStrings {
     val ParaElegirContexto = "Para: elegir contexto (opcional)"
     val ContextoGenerico = "Contexto"
     // ------------------------------------------------------------------
-    // Referencia visual Stitch (Ant Design Mobile): jerarquía financiera
-    // de Actividades y metadatos de detalle (ADR-0015).
+    // Jerarquía financiera de Actividades y metadatos de detalle
+    // (referencia Ant Design Mobile, ADR-0015).
     // ------------------------------------------------------------------
     /** Filtro de tipo del historial: todas las actividades. */
     val Todos = "Todos"
@@ -297,7 +297,7 @@ internal object AppStrings {
     val SignoCobro = "+"
     val SignoPago = "−"
     // ------------------------------------------------------------------
-    // Referencia Stitch (ADR-0015).
+    // Referencia Ant Design Mobile (ADR-0015).
     // ------------------------------------------------------------------
     /** Píldora de reaseguro local-first (S01, siempre cierta). */
     val GuardadoEnTuTelefono = "Guardado en tu teléfono"
@@ -326,9 +326,9 @@ internal object AppStrings {
     /** Acción de borrado del importe (accesible). */
     val BorrarImporte = "Borrar importe"
     // ------------------------------------------------------------------
-    // Referencia Stitch MCP (Ant Design Mobile App): historial en tarjetas,
-    // favoritos en carrusel, pestañas cápsula con conteo y dock de
-    // acciones del detalle QR.
+    // Referencia Ant Design Mobile: historial en tarjetas, favoritos en
+    // carrusel, pestañas cápsula con conteo y dock de acciones del
+    // detalle QR.
     // ------------------------------------------------------------------
     /** Pestañas del historial (con conteo real). */
     val Todas = "Todas"
@@ -337,8 +337,6 @@ internal object AppStrings {
     val RegistrosLocales = "registros locales"
     /** Prefijo de la hora de registro local (metadato temporal). */
     val RegPrefijo = "Reg: "
-    /** Inicio: sección de favoritos deslizables (U-10: es lo que son). */
-    val DestinosFrecuentes = "Favoritos"
     // (DeslizaParaVerMas retirado en U-10: instrucción en lugar de
     // indicio; la siguiente tarjeta asoma.)
     val TodosLosDestinos = "Todos los destinos"

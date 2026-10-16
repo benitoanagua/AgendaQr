@@ -48,12 +48,11 @@ import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.destinations.domain.Destination
 
 /**
- * S01 — Inicio (V1.4; composición del diseño "Destinos QR - Agenda" del
- * proyecto Stitch "Ant Design Mobile App", ADR-0015): tarjeta de
- * garantía local con acciones rápidas, pestañas cápsula con conteo
- * real, carrusel de destinos frecuentes y lista agrupada con "Ver QR"
- * por fila. Todas las acciones son reales: S02 (traer QR), pantalla
- * completa del código (RF-05) y favoritos del dominio.
+ * S01 — Inicio (V1.4): tarjeta de garantía local con acciones rápidas,
+ * pestañas cápsula con conteo real, carrusel de favoritos y lista
+ * agrupada con "Ver QR" por fila. Todas las acciones son reales: S02
+ * (traer QR), pantalla completa del código (RF-05) y favoritos del
+ * dominio.
  */
 @Composable
 fun DestinationsScreen(
@@ -133,7 +132,7 @@ fun DestinationsScreen(
             onClick = onOpenSearch,
         )
 
-        // Pestañas cápsula (referencia MCP): filtros reales con conteo.
+        // Pestañas cápsula: filtros reales con conteo.
         Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
             AmFilterChip(
                 label = AppStrings.Todos,
@@ -167,7 +166,7 @@ fun DestinationsScreen(
                         size = AmMetrics.IconSizeCompact,
                         tint = AmColor.AccentText,
                     )
-                    AmSectionHeader(text = AppStrings.DestinosFrecuentes)
+                    AmSectionHeader(text = AppStrings.Favoritos)
                 }
                 Row(
                     modifier = Modifier
@@ -312,9 +311,9 @@ fun DestinationsScreen(
 }
 
 /**
- * Mini-tarjeta del carrusel de frecuentes (referencia MCP w-48): tile de
- * identidad, nombre, metadato y categoría real. Toda la interacción
- * vive en la fila; el toque abre el detalle.
+ * Mini-tarjeta del carrusel de favoritos: tile de identidad, nombre,
+ * metadato y categoría real. Toda la interacción vive en la tarjeta; el
+ * toque abre el detalle.
  */
 @Composable
 private fun FavoriteDestinationCard(
@@ -359,9 +358,8 @@ fun DestinationRow(
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
     showDivider: Boolean = false,
 ) {
-    // Fila del diseño MCP: miniatura QR a la izquierda, título con
-    // identidad, contenido decodificado como evidencia y "Ver QR" +
-    // favorito a la derecha.
+    // Fila del destino: miniatura QR a la izquierda, título con
+    // identidad, metadato de sincronización y favorito a la derecha.
     AmListRow(
         title = destination.name.ifBlank { AppStrings.SinNombre },
         subtitle = destinationSubtitle(destination),

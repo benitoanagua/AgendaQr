@@ -20,7 +20,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 /**
- * Selector de tipo de actividad (S07, referencia Stitch): control
+ * Selector de tipo de actividad (S07): control
  * segmentado con glifo direccional — Pago activo en acento, Cobro activo
  * en success (la opción activa comunica el significado del segmento).
  * Mutuamente excluyente por semántica de radio.
