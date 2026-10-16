@@ -1,5 +1,6 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -303,7 +304,11 @@ fun AmSearchTrigger(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier) {
+    Box(
+        modifier = modifier
+            .background(AmColor.SurfaceSecondary, AmShapes.Medium)
+            .border(AmMetrics.Border, AmColor.Divider, AmShapes.Medium),
+    ) {
         // El campo decorativo queda fuera del árbol de accesibilidad: el
         // control es un solo botón con nombre accesible (la superposición).
         Box(Modifier.clearAndSetSemantics {}) {

@@ -2,6 +2,8 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -199,13 +201,18 @@ fun DestinationsScreen(
                 when {
                     // la carga inicial se anuncia con el skeleton del DS.
                     state.isLoading -> AmSkeleton(lines = 4)
-                    state.destinations.isEmpty() -> AmEmptyState(
-                        icon = AmIcons.QrCode,
-                        title = AppStrings.AunNoHayDestinos,
-                        // El FAB "Añadir" cubre la misma acción: el estado vacío
-                        // no repite el botón, solo apunta a él.
-                        subtitle = AppStrings.emptyDestinationsHint,
-                    )
+                    state.destinations.isEmpty() -> Box(
+                        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        AmEmptyState(
+                            icon = AmIcons.QrCode,
+                            title = AppStrings.AunNoHayDestinos,
+                            // El FAB "Añadir" cubre la misma acción: el estado vacío
+                            // no repite el botón, solo apunta a él.
+                            subtitle = AppStrings.emptyDestinationsHint,
+                        )
+                    }
                     // Filtro Favoritos sin favoritos: mensaje propio y salida
                     // real al filtro Todos (antes "Limpiar búsqueda" no
                     // cambiaba el filtro).

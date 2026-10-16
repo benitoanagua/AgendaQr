@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -241,13 +242,43 @@ fun AmHairline(
 @Composable
 fun AmListBody(
     modifier: Modifier = Modifier,
+    /** Padding interno del cuerpo. Por defecto 0 (las filas gestionan su
+     *  propio padding). */
+    contentPadding: PaddingValues = PaddingValues(AmSpacing.None),
     content: @Composable () -> Unit,
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(AmColor.Surface, AmShapes.Large)
-            .border(AmMetrics.Border, AmColor.Divider, AmShapes.Large),
+            .border(AmMetrics.Border, AmColor.Divider, AmShapes.Large)
+            .padding(contentPadding),
+    ) {
+        content()
+    }
+}
+
+/**
+ * Tarjeta de superficie para contenido libre (no filas de lista): mismo
+ * fondo y borde que [AmListBody] pero con padding interno por defecto
+ * ([AmSpacing.Lg]), para que el contenido no toque el borde.
+ *
+ * - Usar [AmListBody] para agrupar filas de lista (padding 0).
+ * - Usar [AmCard] para contenido libre (resúmenes, formularios, tarjetas
+ *   de estado) que necesita aire interno.
+ */
+@Composable
+fun AmCard(
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(AmSpacing.Lg),
+    content: @Composable () -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(AmColor.Surface, AmShapes.Large)
+            .border(AmMetrics.Border, AmColor.Divider, AmShapes.Large)
+            .padding(contentPadding),
     ) {
         content()
     }

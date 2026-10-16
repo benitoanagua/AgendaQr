@@ -1,8 +1,11 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -27,6 +30,7 @@ import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmStatusPill
+import com.agendaqr.core.ui.components.AmCard
 import com.agendaqr.core.ui.components.AmIcon
 import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmText
@@ -98,7 +102,12 @@ fun ImportBatchScreen(
         bottomAction = if (currentBatch?.canSaveRecognized() == true) {
             {
                 AmBottomAction(
-                    label = if (state is ImportBatchUiState.Error) AppStrings.reintentarGuardado else AppStrings.GuardarReconocidos,
+                    label = if (state is ImportBatchUiState.Error) {
+                        AppStrings.reintentarGuardado
+                    } else {
+                        val recognized = currentBatch?.uniqueRecognized?.size ?: 0
+                        if (recognized > 0) "Guardar $recognized reconocidos" else AppStrings.GuardarReconocidos
+                    },
                     onClick = { onAction(ImportBatchAction.SaveRecognized) },
                     enabled = state !is ImportBatchUiState.Saving,
                     isLoading = state is ImportBatchUiState.Saving,
@@ -187,7 +196,7 @@ private fun BatchResultContent(
 ) {
     // Tarjeta resumen: "Reconocidos" como titular (número grande + etiqueta);
     // duplicados y pendientes como filas secundarias con su icono.
-    AmListBody {
+    AmCard {
         Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
             if (batch.uniqueRecognized.isNotEmpty()) {
                 Row(
@@ -195,12 +204,14 @@ private fun BatchResultContent(
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
                 ) {
-                    AmIcon(
-                        imageVector = AmIcons.CircleCheck,
-                        contentDescription = null,
-                        tint = AmColor.Success,
-                        size = AmMetrics.IconSizeCompact,
-                    )
+                    Box(modifier = Modifier.width(AmMetrics.IconSizeCompact)) {
+                        AmIcon(
+                            imageVector = AmIcons.CircleCheck,
+                            contentDescription = null,
+                            tint = AmColor.Success,
+                            size = AmMetrics.IconSizeCompact,
+                        )
+                    }
                     Column {
                         AmText(
                             text = batch.uniqueRecognized.size.toString(),
@@ -222,7 +233,9 @@ private fun BatchResultContent(
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
                 ) {
-                    AmIcon(imageVector = AmIcons.Warning, contentDescription = null, tint = AmColor.Warning)
+                    Box(modifier = Modifier.width(AmMetrics.IconSizeCompact)) {
+                        AmIcon(imageVector = AmIcons.Warning, contentDescription = null, tint = AmColor.Warning, size = AmMetrics.IconSizeCompact)
+                    }
                     AmText(
                         text = duplicatesCountLabel(batch.duplicates.size),
                         size = AmType.BodySmall,
@@ -236,7 +249,9 @@ private fun BatchResultContent(
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
                 ) {
-                    AmIcon(imageVector = AmIcons.Info, contentDescription = null, tint = AmColor.Info)
+                    Box(modifier = Modifier.width(AmMetrics.IconSizeCompact)) {
+                        AmIcon(imageVector = AmIcons.Info, contentDescription = null, tint = AmColor.Info, size = AmMetrics.IconSizeCompact)
+                    }
                     AmText(
                         text = pendingReviewCountLabel(batch.unknown.size),
                         size = AmType.BodySmall,
@@ -274,8 +289,8 @@ private fun BatchReviewContent(
     // Pendientes como tarjetas independientes (nivel 3 de superficies):
     // cada una con su contenido + acciones; separadas a 8 dp.
     Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-        batch.pendingItems().forEach { candidate ->
-            PendingItemCard(candidate, batch, onAction, isSaving)
+        batch.pendingItems().forEachIndexed { index, candidate ->
+            PendingItemCard(candidate, batch, onAction, isSaving, index)
         }
     }
 }
@@ -292,6 +307,7 @@ private fun PendingItemCard(
     batch: ImportBatch,
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
+    index: Int = 0,
 ) {
     val isDuplicate = batch.duplicates.any { it.id == candidate.id }
     // El descarte de un elemento SIN clasificar pierde su contenido
@@ -299,7 +315,7 @@ private fun PendingItemCard(
     // así que pide confirmación; el de un duplicado no pierde nada (el
     // original existe) y se ejecuta directo.
     var showDiscardConfirm by remember(candidate.id) { mutableStateOf(false) }
-    com.agendaqr.core.ui.components.AmListBody {
+    com.agendaqr.core.ui.components.AmCard {
         Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
             // Cabecera: icono de estado + nombre útil + estado.
             Row(
@@ -320,12 +336,20 @@ private fun PendingItemCard(
                     )
                 }
                 Column {
-                    AmText(text = pendingItemName(candidate), fontWeight = androidx.compose.ui.text.font.FontWeight.Medium)
+                    AmText(text = pendingItemName(candidate, index), fontWeight = androidx.compose.ui.text.font.FontWeight.Medium)
                     AmText(
-                        text = when {
-                            isDuplicate -> AppStrings.elementoYaGuardado
-                            candidate.kind == ImportKind.DESCONOCIDO -> AppStrings.elementoSinClasificar
-                            else -> AppStrings.elementoPendienteRevision
+                        text = if (candidate.displayName?.isNotBlank() == true) {
+                            (candidate.extension?.let { AppStrings.ArchivoPrefijo + it + " · " } ?: "") + when (candidate.kind) {
+                                ImportKind.QR -> "QR"
+                                ImportKind.COMPROBANTE -> "comprobante"
+                                ImportKind.DESCONOCIDO -> "sin clasificar"
+                            }
+                        } else {
+                            when {
+                                isDuplicate -> AppStrings.elementoYaGuardado
+                                candidate.kind == ImportKind.DESCONOCIDO -> AppStrings.elementoSinClasificar
+                                else -> AppStrings.elementoPendienteRevision
+                            }
                         },
                         size = AmType.BodySmall,
                         color = AmColor.TextSecondary,
@@ -345,15 +369,19 @@ private fun PendingItemCard(
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
-            // Acciones secundarias en fila inferior; Descartar en tono peligro.
+            // Acciones secundarias alineadas al final, mismo orden siempre:
+            // [Guardar de todos modos] [Descartar], Descartar a la derecha.
             Row(
-                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
             ) {
                 if (isDuplicate) {
                     AmTextAction(
                         label = AppStrings.GuardarDeTodosModos,
                         onClick = { onAction(ImportBatchAction.SaveDuplicateAnyway(candidate.id)) },
+                        variant = AmTextActionVariant.Neutral,
+                        contentPadding = PaddingValues(horizontal = AmSpacing.None, vertical = AmSpacing.None),
                     )
                 }
                 AmTextAction(
@@ -366,6 +394,7 @@ private fun PendingItemCard(
                         }
                     },
                     variant = AmTextActionVariant.Danger,
+                    contentPadding = PaddingValues(horizontal = AmSpacing.None, vertical = AmSpacing.None),
                 )
             }
         }

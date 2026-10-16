@@ -196,6 +196,7 @@ object AgendaQrAndroidImportLauncher {
                         fingerprint = fingerprint,
                         mimeType = mime,
                         extension = extensionFor(mime),
+                        displayName = uri.lastPathSegment,
                         qrAsset = asset,
                     )
                 } else {
@@ -208,6 +209,7 @@ object AgendaQrAndroidImportLauncher {
                         fingerprint = fingerprint,
                         mimeType = mime,
                         extension = extension,
+                        displayName = uri.lastPathSegment,
                         payloadRef = payloadRef,
                     )
                 }

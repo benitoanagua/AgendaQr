@@ -95,15 +95,15 @@ fun buildDemoDataset(qrImage: (String) -> String): DemoDataset {
 
     val importBatch = ImportBatch(
         candidates = listOf(
-            ImportCandidate("demo-imp-01", ImportKind.QR, "demo-fp-01", "image/png", "png", qr("https://agendaqr.app/demo/nuevo-1")),
-            ImportCandidate("demo-imp-02", ImportKind.QR, "demo-fp-02", "image/png", "png", qr("https://agendaqr.app/demo/nuevo-2")),
-            ImportCandidate("demo-imp-03", ImportKind.COMPROBANTE, "demo-fp-03", "image/png", "png", null, "demo-payload-03"),
+            ImportCandidate("demo-imp-01", ImportKind.QR, "demo-fp-01", "image/png", "png", null, qr("https://agendaqr.app/demo/nuevo-1")),
+            ImportCandidate("demo-imp-02", ImportKind.QR, "demo-fp-02", "image/png", "png", null, qr("https://agendaqr.app/demo/nuevo-2")),
+            ImportCandidate("demo-imp-03", ImportKind.COMPROBANTE, "demo-fp-03", "image/png", "png", null, null, "demo-payload-03"),
             // Duplicado dentro del lote (misma huella que imp-01).
-            ImportCandidate("demo-imp-04", ImportKind.QR, "demo-fp-01", "image/png", "png", qr("https://agendaqr.app/demo/nuevo-1")),
+            ImportCandidate("demo-imp-04", ImportKind.QR, "demo-fp-01", "image/png", "png", null, qr("https://agendaqr.app/demo/nuevo-1")),
             // Pendiente: ilegible, con error de clasificación.
-            ImportCandidate("demo-imp-05", ImportKind.DESCONOCIDO, "demo-fp-05", "image/png", "png", null, "demo-payload-05", "No se pudo clasificar"),
+            ImportCandidate("demo-imp-05", ImportKind.DESCONOCIDO, "demo-fp-05", "image/png", "png", null, null, "demo-payload-05", "No se pudo clasificar"),
             // Fallido: payload corrupto.
-            ImportCandidate("demo-imp-06", ImportKind.DESCONOCIDO, "demo-fp-06", "image/png", "png", null, null, "Archivo ilegible"),
+            ImportCandidate("demo-imp-06", ImportKind.DESCONOCIDO, "demo-fp-06", "image/png", "png", null, null, null, "Archivo ilegible"),
         ),
     )
 
