@@ -104,7 +104,7 @@ fun AmTonalTag(
  * (p. ej. flecha entrante verde = cobro, saliente azul = pago). El glifo
  * es decorativo — el TEXTO de la fila comunica el tipo; la forma
  * acompaña, nunca es la única señal (contrato de accesibilidad). Tamaño
- * de tile 40 dp (referencia Stitch: w-10 h-10).
+ * de tile 40 dp (mismo tile que la marca tipada de fila).
  */
 @Composable
 fun AmIconBadge(
@@ -227,9 +227,10 @@ fun AmHairline(
 }
 
 /**
- * Cuerpo de lista (card mode de la referencia Stitch): superficie de
- * tarjeta delimitada por hairline (`border-divider`, 1 dp, excepción
- * E-03 del gate) con radio 12, que agrupa celdas contiguas separadas por
+ * Cuerpo de lista (card mode): superficie de
+ * tarjeta delimitada por hairline (1 dp, excepción
+ * E-03 del gate) con radio de tarjeta, que agrupa celdas contiguas
+ * separadas por
  * hairlines inset. Las filas usan `showDivider` salvo la última; el
  * cuerpo mide su contenido.
  */
@@ -344,7 +345,7 @@ fun AmListRow(
         if (showDivider) {
             // Hairline alineado con el CONTENIDO cuando hay marca a la
             // izquierda (tile/punto), no con el borde de la tarjeta
-            // (referencia Stitch: ml-14 → [AmMetrics.ListDividerInset]).
+            // ([AmMetrics.ListDividerInset]).
             val hasLeading = leading != null || accent != null
             HorizontalDivider(
                 modifier = Modifier.padding(

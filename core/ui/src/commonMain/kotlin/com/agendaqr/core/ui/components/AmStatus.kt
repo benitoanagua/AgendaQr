@@ -94,7 +94,7 @@ fun AmStatusBanner(
 }
 
 /**
- * Píldora de estado/reaseguro (referencia Stitch S01/S07/S09): tonal por
+ * Píldora de estado/reaseguro (S01/S07/S09): tonal por
  * defecto (surface-container-low con icono de estado y metadato 13 sp)
  * o INVERSA para "Modo local" (bloque oscuro con contenido inverso, par
  * garantizado por AmSchemeTest). No interactiva.

@@ -144,8 +144,8 @@ object AmIcons {
     /** Comprobante adjunto (sujeta-papeles). */
     val Attachment: ImageVector get() = Lucide.Paperclip
     // ------------------------------------------------------------------
-    // Referencia Stitch (ADR-0015): glifos de filas, formularios y
-    // micro-estados. Un glifo por concepto; decorativos salvo indicación.
+    // Glifos de filas, formularios y micro-estados (ADR-0015). Un glifo
+    // por concepto; decorativos salvo indicación.
     // ------------------------------------------------------------------
     /** Comercio/entidad (fila de persona o entidad). */
     val Store: ImageVector get() = Lucide.Store

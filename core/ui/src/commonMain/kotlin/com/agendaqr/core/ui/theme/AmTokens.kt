@@ -44,8 +44,8 @@ internal object AmPalette {
     val lightSurfaceContainer = Color(0xFFF7F7F7)
     val lightSurfaceContainerHigh = Color(0xFFEFEFEF)
     val lightSurfaceContainerHighest = Color(0xFFE8E8E8)
-    val lightBorder = Color(0xFFE5E5E5)
-    val lightDivider = Color(0xFFF0F0F0)
+    val lightBorder = Color(0xFFEEEEEE)
+    val lightDivider = Color(0xFFEEEEEE)
     val lightText = Color(0xFF333333)
     val lightTextSecondary = Color(0xFF666666)
     val lightTextTertiary = Color(0xFF6E6E6E)
@@ -58,7 +58,7 @@ internal object AmPalette {
     val lightDangerContainer = Color(0xFFFDEBEA)
     val lightSuccess = Color(0xFF0A7A44)
     val lightSuccessContainer = Color(0xFFE2F5E8)
-    val lightWarning = Color(0xFF8A5300)
+    val lightWarning = Color(0xFFA85A00)
     val lightWarningContainer = Color(0xFFFDF3DC)
     val lightDisabled = Color(0xFFF0F0F0)
     val lightOnDisabled = Color(0xFF767676)
@@ -69,31 +69,32 @@ internal object AmPalette {
      * silencio escaneable); el marco tonal lo aporta AmMediaFrame. */
     val lightQrCanvas = Color(0xFFFFFFFF)
 
-    // Tema oscuro (referencia: theme-dark de Ant Design Mobile;
-    // elevación de superficie para distinguir tarjetas de fondo; divider visible;
-    // terciario recalibrado para contraste ≥ 4.5:1).
+    // Tema oscuro (referencia: theme-dark de Ant Design Mobile; los roles
+    // de estado y acento adoptan sus valores oficiales; donde el par
+    // oficial no alcanza WCAG AA se recalibra mínimamente — contrato §4.4:
+    // wathet, onAccent/accentText/onDanger y el terciario).
     val darkBackground = Color(0xFF1A1A1A)
     val darkSurface = Color(0xFF1F1F1F)
-    val darkSurfaceSecondary = Color(0xFF141414)
+    val darkSurfaceSecondary = Color(0xFF0A0A0A)
     val darkSurfaceContainerLow = Color(0xFF252525)
     val darkSurfaceContainer = Color(0xFF2A2A2A)
     val darkSurfaceContainerHigh = Color(0xFF303030)
     val darkSurfaceContainerHighest = Color(0xFF3A3A3A)
-    val darkBorder = Color(0xFF3A3A3A)
-    val darkDivider = Color(0xFF4A4A4A)
+    val darkBorder = Color(0xFF2B2B2B)
+    val darkDivider = Color(0xFF2B2B2B)
     val darkText = Color(0xFFE6E6E6)
     val darkTextSecondary = Color(0xFFB3B3B3)
-    val darkTextTertiary = Color(0xFF9E9E9E)
-    val darkAccent = Color(0xFF6FA5FF)
+    val darkTextTertiary = Color(0xFF8C8C8C)
+    val darkAccent = Color(0xFF3086FF)
     val darkOnAccent = Color(0xFF0A1120)
-    val darkAccentText = Color(0xFF6FA5FF)
-    val darkWathet = Color(0xFF0D2543)
-    val darkDanger = Color(0xFFFF9C96)
-    val darkOnDanger = Color(0xFF3A1512)
+    val darkAccentText = Color(0xFF4F96FF)
+    val darkWathet = Color(0xFF0B2140)
+    val darkDanger = Color(0xFFFF4A58)
+    val darkOnDanger = Color(0xFF1A1A1A)
     val darkDangerContainer = Color(0xFF3A1512)
-    val darkSuccess = Color(0xFF6BD69E)
+    val darkSuccess = Color(0xFF34B368)
     val darkSuccessContainer = Color(0xFF0E2C1C)
-    val darkWarning = Color(0xFFF8C96A)
+    val darkWarning = Color(0xFFFFA930)
     val darkWarningContainer = Color(0xFF3A2B0E)
     val darkDisabled = Color(0xFF3A3A3A)
     val darkOnDisabled = Color(0xFF9E9E9E)
@@ -268,9 +269,11 @@ object AmColor {
     val InfoContainer: Color @Composable get() = LocalAmColorScheme.current.infoContainer
     /** Bloque tonal neutro profundo (etiquetas sobre fondo, ambos temas). */
     val SurfaceContainerHighest: Color @Composable get() = LocalAmColorScheme.current.surfaceContainerHighest
-    /** Pista del control segmentado y chips de reposo (referencia Stitch). */
+    /** Pista del control segmentado y chips de reposo (relleno distinguible
+     * del fondo y de la superficie activa en ambos temas). */
     val SurfaceContainerHigh: Color @Composable get() = LocalAmColorScheme.current.surfaceContainerHigh
-    /** Caja tonal de metadatos y filas de solo lectura (referencia Stitch). */
+    /** Caja tonal de metadatos y filas de solo lectura (relleno sutil que
+     * agrupa sin competir con el contenido). */
     val SurfaceContainerLow: Color @Composable get() = LocalAmColorScheme.current.surfaceContainerLow
     /** Píldora "Modo local": superficie inversa con contenido inverso. */
     val InverseSurface: Color @Composable get() = LocalAmColorScheme.current.inverseSurface
@@ -312,19 +315,19 @@ object AmMetrics {
     val BorderStrong = 3.dp
     /** Área táctil mínima (accesibilidad, invariante del gate). */
     val ControlMinSize = 48.dp
-    /** Altura VISUAL compacta de botones secundarios (referencia Stitch
-     * h-10): la zona interactiva sigue siendo 48 dp (mandato de
-     * compactación: la superficie visible puede ser menor que el target). */
+    /** Altura VISUAL compacta de botones secundarios: la zona interactiva
+     * sigue siendo 48 dp (mandato de compactación: la superficie visible
+     * puede ser menor que el target). */
     val ButtonCompactHeight = 40.dp
-    /** Altura visual de píldoras/chips compactos (referencia h-7–h-9). */
+    /** Altura visual de píldoras/chips compactos. */
     val ChipCompactHeight = 32.dp
-    /** Altura visual compacta de entradas (referencia h-10/h-11). */
+    /** Altura visual compacta de entradas. */
     val FieldCompactHeight = 44.dp
-    /** Altura de la barra superior compacta (referencia 45 px → 56 dp con
-     * objetivos táctiles de 48). */
+    /** Altura de la barra superior compacta (NavBar de la referencia mide
+     * 45 px; 56 dp aloja objetivos táctiles de 48). */
     val TopBarHeight = 56.dp
-    /** Altura de la barra inferior compacta (referencia Stitch: 56 px
-     * con ítems de 44; los targets de 48 los garantiza M3 por ítem). */
+    /** Altura de la barra inferior compacta (TabBar de la referencia mide
+     * 48 px; 56 dp con etiqueta 11 sp aloja objetivos de 48 dp por ítem). */
     val NavBarHeight = 56.dp
     /** Ancho máximo del contenido en medium/expanded. */
     val ContentMaxWidth = 720.dp
@@ -334,22 +337,29 @@ object AmMetrics {
     val QrReviewSize = 320.dp
     /** Tamaño de icono estándar de acciones y filas. */
     val IconSize = 24.dp
-    /** Icono compacto: segmentados, metadatos y ayudas (referencia Stitch). */
+    /** Icono compacto: segmentados, metadatos y ayudas (glifo acompaña,
+     * no domina, la etiqueta de texto). */
     val IconSizeCompact = 18.dp
     /** Ancho de las mini-tarjetas del carrusel de favoritos. */
     val FavCardWidth = 184.dp
     /** Insets del hairline de una fila con marca a la izquierda: alinea el
-     * separador con el texto, no con el borde de la tarjeta (referencia
-     * Stitch: ml-14). */
+     * separador con el texto, no con el borde de la tarjeta. */
     val ListDividerInset = 56.dp
     /** Altura máxima de una lista dentro de un diálogo/hoja: alcanzable
      * con scroll cuando es larga; por debajo mide su contenido. */
     val DialogListMaxHeight = 320.dp
+    /** Ancho mínimo del popup de un diálogo (Dialog de la referencia:
+     * 280 px → 280 dp). */
+    val DialogMinWidth = 280.dp
+    /** Ancho máximo del popup de un diálogo como fracción del ancho de
+     * ventana (Dialog de la referencia: 75vw). */
+    const val DialogMaxWidthFraction = 0.75f
     /** Círculo tonal del glifo del estado vacío. */
     val EmptyStateGlyphSize = 64.dp
     /** Largo del trazo de las esquinas del encuadre del scanner. */
     val ScannerCornerLength = 24.dp
-    /** Insignia de contexto (M4): círculo de 40 dp (referencia Stitch: w-10 h-10). */
+    /** Insignia de contexto (M4): círculo de 40 dp, mismo tile que la
+     * marca tipada de las filas financieras. */
     val ContextBadgeSize = 40.dp
     /** Espacio que el FAB necesita por encima de la barra inferior para no
      * tapar el último elemento del contenido desplazable: alto real del FAB
@@ -385,52 +395,52 @@ object AmShapes {
 
 /**
  * Escala tipográfica en sp (respeta el escalado de fuente del sistema).
- * Escala compacta neutra con la jerarquía financiera de la referencia
- * Stitch (ADR-0015): título de pantalla 18 en barra; título de sección
- * 18 SemiBold; título de fila 15 Medium; cuerpo 14; metadato 13;
- * importe 26; apoyo 12; tags y barra 11.
+ * Escala de Ant Design Mobile (ADR-0014, ADR-0017): título 18; cuerpo,
+ * botón, título de fila, entrada y pestañas 17 (font-size-7); etiqueta,
+ * contenido de modal, cápsula y extra de lista 15 (font-size-5 = main);
+ * descripción y metadato 13; apoyo/ayuda/error 12; tag y barra inferior
+ * 11. Importe 26 y Display 32 / Headline 24 son extensiones financieras
+ * sin equivalente en la referencia. Pesos: normal salvo el título de
+ * diálogo (bold) y la etiqueta de botón (Medium, desviación documentada).
  */
 object AmType {
     /** Display de bloque (32 sp): número/hero de tarjeta de datos. */
     val Display: TextUnit = 32.sp
-    /** Encabezado destacado (24 sp, techo de la escala compacta). */
+    /** Encabezado destacado (24 sp, techo de la escala). */
     val Headline: TextUnit = 24.sp
     /** Título de pantalla en la barra superior (18 sp). */
     val TitleLarge: TextUnit = 18.sp
-    /** Título de diálogo/modal centrado (18 sp, referencia). */
+    /** Título de diálogo/modal centrado (18 sp, NavBar/Modal title). */
     val Title: TextUnit = 18.sp
-    /** Cuerpo (14 sp, escala compacta). */
-    val Body: TextUnit = 14.sp
-    /** Cuerpo compacto (13 sp): metadatos y píldoras de estado
-     * (referencia Stitch body-sm). */
+    /** Cuerpo, botón, título de fila, entrada y pestañas (17 sp). */
+    val Body: TextUnit = 17.sp
+    /** Descripción y metadato (13 sp, font-size-main de la referencia). */
     val BodySmall: TextUnit = 13.sp
-    /** Etiqueta de botón/fila (14 sp). */
-    val Label: TextUnit = 14.sp
-    /** Título de fila / etiqueta destacada (15 sp, referencia Stitch
-     * label-lg: Medium 500). */
-    val RowTitle: TextUnit = 15.sp
-    /** Importe (26 sp): hero de detalle y entrada de monto (referencia
-     * Stitch headline-lg-mobile). */
+    /** Etiqueta de acción de texto, contenido de modal, cápsula y extra de lista (15 sp). */
+    val Label: TextUnit = 15.sp
+    /** Título de fila (17 sp, List.Item de la referencia). */
+    val RowTitle: TextUnit = 17.sp
+    /** Importe (26 sp): hero de detalle y entrada de monto (extensión financiera). */
     val Amount: TextUnit = 26.sp
-    /** Apoyo/descripción (12 sp). */
+    /** Apoyo/ayuda/error (12 sp). */
     val Caption: TextUnit = 12.sp
     /** Caption mínima (11 sp, etiquetas de barra y tags). */
     val CaptionSmall: TextUnit = 11.sp
-    /** Encabezados de sección (18 sp, referencia Stitch headline-sm:
-     * SemiBold 600). */
-    val SectionHeader: TextUnit = 18.sp
-    // Interlineados canónicos en sp (respetan el escalado, §accesibilidad).
+    /** Encabezado de sección (15 sp: List header de la referencia). */
+    val SectionHeader: TextUnit = 15.sp
+    // Interlineados canónicos en sp (≈ 1.4× su tamaño como la referencia;
+    // respetan el escalado, §accesibilidad).
     val LineHeightLabel: TextUnit = 20.sp
-    val LineHeightBody: TextUnit = 20.sp
+    val LineHeightBody: TextUnit = 24.sp
     val LineHeightBodySmall: TextUnit = 18.sp
     val LineHeightCaption: TextUnit = 16.sp
-    val LineHeightSection: TextUnit = 24.sp
+    val LineHeightSection: TextUnit = 20.sp
     val LineAmount: TextUnit = 32.sp
-    val LineHeightRowTitle: TextUnit = 20.sp
+    val LineHeightRowTitle: TextUnit = 24.sp
     val LineHeightHeadlineLarge: TextUnit = 40.sp
     val LineHeightHeadlineSmall: TextUnit = 32.sp
     val LineHeightTitleLarge: TextUnit = 24.sp
-    val LineHeightTitleMedium: TextUnit = 20.sp
+    val LineHeightTitleMedium: TextUnit = 24.sp
     val LineHeightTitleSmall: TextUnit = 20.sp
     val LineHeightLabelSmall: TextUnit = 16.sp
     /**
@@ -541,66 +551,64 @@ val AmMaterialTypography: Typography = Typography(
  * lugar de repetir tríos de tokens.
  */
 object AmTextStyles {
-    /** Etiqueta de botón (label-lg de la referencia: 15 sp Medium). */
+    /** Etiqueta de botón (17 sp Medium: desviación documentada — la
+     * referencia usa peso normal; el peso medio conserva el rango de la
+     * etiqueta sobre superficies densas). */
     val ButtonLabel = TextStyle(
-        fontSize = AmType.RowTitle,
+        fontSize = AmType.Body,
         fontWeight = FontWeight.Medium,
         letterSpacing = AmTracking.LabelLarge,
-        lineHeight = AmType.LineHeightRowTitle,
+        lineHeight = AmType.LineHeightBody,
     )
 
-    /** Cuerpo de texto (mensajes, filas). */
+    /** Cuerpo de texto (mensajes, filas): 17/24. */
     val Body = TextStyle(
         fontSize = AmType.Body,
         lineHeight = AmType.LineHeightBody,
     )
 
-    /** Metadato compacto (body-sm de la referencia: 13 sp). */
+    /** Metadato/descripción (13 sp, font-size-main). */
     val BodySmall = TextStyle(
         fontSize = AmType.BodySmall,
         lineHeight = AmType.LineHeightBodySmall,
     )
 
-    /** Título de fila (label-lg: 15 sp Medium). */
+    /** Título de fila (17 sp normal, List.Item). */
     val RowTitle = TextStyle(
         fontSize = AmType.RowTitle,
-        fontWeight = FontWeight.Medium,
         lineHeight = AmType.LineHeightRowTitle,
     )
 
-    /** Importe (headline-lg-mobile de la referencia: 26 sp SemiBold). */
+    /** Importe (26 sp SemiBold — extensión financiera). */
     val Amount = TextStyle(
         fontSize = AmType.Amount,
         fontWeight = FontWeight.SemiBold,
         lineHeight = AmType.LineAmount,
     )
 
-    /** Subtítulo/metadato de fila (texto secundario). */
+    /** Subtítulo/metadato de fila (texto secundario, 12 sp). */
     val Caption = TextStyle(
         fontSize = AmType.Caption,
         lineHeight = AmType.LineHeightCaption,
     )
 
-    /** Etiqueta/insignia mínima (label-sm: 11 sp SemiBold, tags). */
+    /** Etiqueta/insignia mínima (11 sp normal, Tag de la referencia). */
     val Tag = TextStyle(
         fontSize = AmType.CaptionSmall,
-        fontWeight = FontWeight.SemiBold,
         lineHeight = AmType.LineHeightLabelSmall,
     )
 
     /** Texto de apoyo (errores, ayuda, badges) — rol labelMedium de M3. */
     val Support = TextStyle(
         fontSize = AmType.Caption,
-        fontWeight = FontWeight.Medium,
         letterSpacing = AmTracking.LabelMedium,
         lineHeight = AmType.LineHeightCaption,
     )
 
-    /** Encabezado de sección (headline-sm de la referencia: 18 sp
-     * SemiBold). */
+    /** Encabezado de sección (15 sp normal: List header de la
+     * referencia; el color lo decide el llamador). */
     val SectionHeader = TextStyle(
         fontSize = AmType.SectionHeader,
-        fontWeight = FontWeight.SemiBold,
         lineHeight = AmType.LineHeightSection,
     )
 }

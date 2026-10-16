@@ -22,11 +22,9 @@ import com.agendaqr.core.ui.theme.asTextOn
  */
 
 /**
- * Encabezado de sección (rol headline-sm de la referencia Stitch): 18 sp
- * SemiBold en color PRIMARIO (es un titular de sección) con semántica
- * `heading()`. El acento de contexto solo tiñe los encabezados de SU
- * superficie (S06) cuando el llamador pasa un [accent] legible como
- * texto.
+ * Encabezado de sección: titular con semántica `heading()`. El acento de
+ * contexto solo tiñe los encabezados de SU superficie (S06) cuando el
+ * llamador pasa un [accent] legible como texto.
  */
 @Composable
 fun AmSectionHeader(

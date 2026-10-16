@@ -89,8 +89,6 @@ internal fun AmLoadingButton(
             ),
         onClick = onClick,
         enabled = enabled && !isLoading,
-        // Radio 8 de la referencia (DESIGN.md Stitch: base radius para
-        // botones), no el rol de la plantilla M3.
         shape = AmShapes.Large,
         // Padding vertical propio a cero: la altura la fija el contenido
         // (48 dp de objetivo táctil), no el relleno interno de Material.
@@ -411,11 +409,12 @@ fun AmIconButton(
 }
 
 /**
- * Píldora de filtro compacta (cápsula de la referencia Stitch): visual
- * ~32 dp con conteo opcional y zona interactiva de 48 dp — la superficie
- * visible es menor que el target (mandato de compactación). Activa:
- * sólida de acento (par garantizado); inactiva: tarjeta con hairline y
- * texto secundario. La selección también vive en la semántica.
+ * Píldora de filtro compacta (cápsula tipo CapsuleTabs de la
+ * referencia): visual ~32 dp con conteo opcional y zona interactiva de
+ * 48 dp — la superficie visible es menor que el target (mandato de
+ * compactación). Activa: sólida de acento (par garantizado); inactiva:
+ * tarjeta con hairline y texto secundario. La selección también vive
+ * en la semántica.
  */
 @Composable
 fun AmFilterChip(
@@ -490,9 +489,9 @@ fun AmFilterChip(
 
 /**
  * Opción del control segmentado: etiqueta SIEMPRE (es la señal de texto),
- * glifo decorativo opcional, badge de conteo opcional y tono del estado activo opcional (p. ej.
- * cobro en success) — la referencia Stitch tiñe la opción activa según
- * el significado del segmento.
+ * glifo decorativo opcional, badge de conteo opcional y tono del estado
+ * activo opcional (p. ej. cobro en success) — el tono activo comunica el
+ * significado del segmento.
  */
 data class AmSegmentedOption(
     val label: String,
@@ -504,11 +503,10 @@ data class AmSegmentedOption(
 )
 
 /**
- * Control segmentado (Segmented de la referencia Stitch): pista tonal
- * (`surfaceContainerHigh`) con la opción activa sobre píldora `Surface`
- * de radio 8 y etiqueta de titular (18 sp SemiBold) con glifo. Mutuamente
- * excluyente por semántica (`selectableGroup` + rol radio). Cada opción
- * conserva el objetivo táctil de 48 dp.
+ * Control segmentado (Segmented de la referencia): pista tonal
+ * (`surfaceContainerHigh`) con la opción activa sobre píldora `Surface`.
+ * Mutuamente excluyente por semántica (`selectableGroup` + rol radio).
+ * Cada opción conserva el objetivo táctil de 48 dp.
  */
 @Composable
 fun AmSegmentedControl(

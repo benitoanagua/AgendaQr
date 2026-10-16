@@ -70,8 +70,8 @@ fun AmTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    /** Glifo decorativo del concepto del campo (referencia Stitch:
-     * comercio, nota, moneda…). El label sigue siendo la señal. */
+    /** Glifo decorativo del concepto del campo (comercio, nota,
+     *  moneda…). El label sigue siendo la señal. */
     leadingIcon: ImageVector? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
@@ -217,7 +217,7 @@ fun AmSearchField(
         onValueChange = onValueChange,
         modifier = modifier
             .fillMaxWidth()
-            // Altura visual compacta (44, referencia h-10/h-11); el
+            // Altura visual compacta (44 dp, FieldCompactHeight); el
             // contenido crece con la escala de fuente.
             .defaultMinSize(minHeight = AmMetrics.FieldCompactHeight)
             .focusRequester(focusRequester),
@@ -307,7 +307,7 @@ fun AmSearchTrigger(
 }
 
 /**
- * Entrada de importe (referencia Stitch S07): cifra grande (26 sp
+ * Entrada de importe: cifra grande (26 sp
  * SemiBold) con símbolo opcional de moneda, acción de borrado ⌫
  * etiquetada y guía hairline — la altura la fija el contenido con un
  * objetivo táctil de 48 dp en el borrado. El valor sigue siendo texto
