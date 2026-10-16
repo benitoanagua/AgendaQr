@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -30,7 +31,6 @@ import com.agendaqr.destinations.data.legacyLocalProfileIdOrNull
 import com.agendaqr.destinations.data.platformBiometricGate
 import com.agendaqr.destinations.domain.BiometricAvailability
 import com.agendaqr.destinations.domain.DEMO_PROFILE_ID
-import com.agendaqr.destinations.domain.nowMillis
 import kotlinx.coroutines.launch
 
 /**
@@ -90,11 +90,12 @@ fun AgendaQrApp() {
 
         // Rastreador de flujos externos (U-02, D1): la app lo publica para
         // que los lanzadores de plataforma marquen "justo antes de lanzar";
-        // la política de bloqueo lo consulta al pasar a segundo plano.
+        // la política de bloqueo lo consulta al pasar a segundo plano. La
+        // publicación es SÍNCRONA (SideEffect): un LaunchedEffect podía
+        // asignarlo después del primer lanzamiento.
         val externalFlows = remember { ExternalFlowTracker() }
-        LaunchedEffect(externalFlows) {
-            ExternalFlowGates.tracker = externalFlows
-        }
+        SideEffect { ExternalFlowGates.tracker = externalFlows }
+        val externalFlowPolicy = remember(externalFlows) { ExternalFlowLockPolicy(externalFlows) }
         // Biometría: disponibilidad real de plataforma (fail-closed si falla).
         val biometricGate = remember { platformBiometricGate() }
         LaunchedEffect(biometricGate) {
@@ -140,18 +141,18 @@ fun AgendaQrApp() {
         // externo desde la app (gracia acotada de 120 s). Sin PIN
         // configurado no hay nada que proteger; en demo no se bloquea.
         LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
-            if (shouldLockOnStop(demoShowing, ExternalFlowGates.tracker, nowMillis())) {
-                accessViewModel.lock()
-            }
+            externalFlowPolicy.onStop(demoShowing) { accessViewModel.lock() }
         }
         // Al volver con una marca pendiente: gracia vencida → bloquear;
         // la marca se consume siempre (no se acumula).
         LifecycleEventEffect(Lifecycle.Event.ON_START) {
-            val tracker = ExternalFlowGates.tracker
-            if (!demoShowing && tracker.hasPendingLaunch()) {
-                if (!tracker.shouldSkipLock(nowMillis())) accessViewModel.lock()
-                tracker.clear()
-            }
+            externalFlowPolicy.onStart(demoShowing) { accessViewModel.lock() }
+        }
+        // ON_RESUME: regreso real a primer plano. Un flujo translúcido puede
+        // no producir ON_STOP; la marca se limpia siempre para que un paso a
+        // segundo plano posterior vuelva a bloquear (fail-closed).
+        LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+            externalFlowPolicy.onResume()
         }
 
         when {
