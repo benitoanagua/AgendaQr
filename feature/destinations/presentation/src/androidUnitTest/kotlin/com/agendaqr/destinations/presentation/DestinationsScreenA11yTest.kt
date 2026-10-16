@@ -120,9 +120,9 @@ class DestinationsScreenA11yTest {
 
     @Test
     fun favorites_filter_state_is_text_and_semantics_not_color() {
-        // Contrato §5.1/§11: el filtro Favoritos es un FilterChip; el
-        // estado se expresa con TEXTO visible ("Favoritos: activado") y
-        // semántica selected/toggleableState, nunca solo con color.
+        // U-01: el filtro Favoritos es un FilterChip; la etiqueta NO
+        // cambia ("Favoritos" siempre) y el estado se expresa con
+        // semántica `selected` + `stateDescription`, nunca solo con color.
         compose.setContent {
             AmTheme {
                 DestinationsScreen(
@@ -136,8 +136,10 @@ class DestinationsScreenA11yTest {
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("Favoritos: activado")
+        compose.onNodeWithText("Favoritos")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, true))
+        compose.onNodeWithText("Favoritos")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, AppStrings.Seleccionado))
     }
 
     @Test

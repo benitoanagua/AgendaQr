@@ -221,10 +221,10 @@ internal object AppStrings {
     val QrImportado = "QR importado"
     val ComprobanteNoEncontrado = "Comprobante no encontrado"
     val Favoritos = "Favoritos"
-    /** S02 (tile Favoritos): estado del filtro expresado con TEXTO visible
-     * (§11) — el acento del tile ya no cambia para no reutilizar un acento
-     * de contexto con otro significado (contrato §5.1). */
-    val FavoritosActivado = "Favoritos: activado"
+    /** Descripción de estado accesible de los chips de filtro
+     * seleccionados (U-01: la etiqueta no cambia; el estado va por
+     * semántica `selected` + `stateDescription`). */
+    val Seleccionado = "Seleccionado"
     /** S12: descripciones honestas de cada pendiente (guía de voz). */
     val elementoYaGuardado = "Parece que este elemento ya está guardado."
     val elementoSinClasificar = "No pudimos clasificar este elemento."

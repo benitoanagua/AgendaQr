@@ -18,38 +18,35 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Reproducción U-01: los chips "Todos" y "Favoritos" disparan la misma
- * acción `ToggleFavorites`. Tocar "Todos" estando ya activo cambia a
- * Favoritos. Estos tests fallan con el comportamiento actual y pasan
- * cuando los chips envían `SetFavoritesOnly` idempotente.
+ * U-01: los chips "Todos" y "Favoritos" envían `SetFavoritesOnly`
+ * idempotente. Tocar el chip activo no cambia el filtro (antes ambos
+ * disparaban `ToggleFavorites` y el filtro conmutaba).
  */
 class UxFilterReproductionTest {
 
     @Test
     fun todos_chip_tap_while_todos_active_keeps_todos() = runBlocking {
         val vm = viewModel()
-        // Estado inicial: filtro Todos (favoriteOnly = false). El chip
-        // "Todos" envía hoy ToggleFavorites.
-        vm.onAction(DestinationAction.ToggleFavorites)
-        assertEquals(
-            false,
-            vm.state.value.favoriteOnly,
-            "U-01: tocar 'Todos' estando activo no debe cambiar el filtro",
-        )
+        vm.onAction(DestinationAction.SetFavoritesOnly(false))
+        vm.onAction(DestinationAction.SetFavoritesOnly(false))
+        assertEquals(false, vm.state.value.favoriteOnly)
     }
 
     @Test
     fun favoritos_chip_tap_while_favoritos_active_keeps_favoritos() = runBlocking {
         val vm = viewModel()
-        // Primer toque: ir a Favoritos. Segundo toque (chip activo): debe
-        // quedarse en Favoritos.
-        vm.onAction(DestinationAction.ToggleFavorites)
-        vm.onAction(DestinationAction.ToggleFavorites)
-        assertEquals(
-            true,
-            vm.state.value.favoriteOnly,
-            "U-01: tocar 'Favoritos' estando activo no debe cambiar el filtro",
-        )
+        vm.onAction(DestinationAction.SetFavoritesOnly(true))
+        vm.onAction(DestinationAction.SetFavoritesOnly(true))
+        assertEquals(true, vm.state.value.favoriteOnly)
+    }
+
+    @Test
+    fun filter_transitions_both_ways() = runBlocking {
+        val vm = viewModel()
+        vm.onAction(DestinationAction.SetFavoritesOnly(true))
+        assertEquals(true, vm.state.value.favoriteOnly)
+        vm.onAction(DestinationAction.SetFavoritesOnly(false))
+        assertEquals(false, vm.state.value.favoriteOnly)
     }
 
     private fun viewModel(): DestinationsViewModel {

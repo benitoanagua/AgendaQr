@@ -160,15 +160,17 @@ fun DestinationsScreen(
             AmFilterChip(
                 label = AppStrings.Todos,
                 selected = !state.favoriteOnly,
-                onClick = { onAction(DestinationAction.ToggleFavorites) },
+                onClick = { onAction(DestinationAction.SetFavoritesOnly(false)) },
                 count = state.destinations.size,
+                stateDescription = AppStrings.Seleccionado,
             )
             AmFilterChip(
-                label = if (state.favoriteOnly) AppStrings.FavoritosActivado else AppStrings.Favoritos,
+                label = AppStrings.Favoritos,
                 selected = state.favoriteOnly,
-                onClick = { onAction(DestinationAction.ToggleFavorites) },
+                onClick = { onAction(DestinationAction.SetFavoritesOnly(true)) },
                 count = favorites.size,
                 icon = AmIcons.Favorite,
+                stateDescription = AppStrings.Seleccionado,
             )
         }
 

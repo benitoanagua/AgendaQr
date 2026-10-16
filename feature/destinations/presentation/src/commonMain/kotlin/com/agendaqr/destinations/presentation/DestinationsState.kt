@@ -44,7 +44,9 @@ data class DestinationsUiState(
 
 sealed interface DestinationAction {
     data class Search(val value: String) : DestinationAction
-    data object ToggleFavorites : DestinationAction
+    /** Filtro Todos/Favoritos idempotente: el chip envía el valor que
+     * representa; tocar el activo no cambia nada (U-01). */
+    data class SetFavoritesOnly(val value: Boolean) : DestinationAction
     data class Open(val id: String) : DestinationAction
     data class Edit(val id: String?) : DestinationAction
     data class ShowQr(val id: String) : DestinationAction
@@ -94,7 +96,7 @@ class DestinationsViewModel(
         if (action != DestinationAction.RetryFailed) retryBlock = null
         when (action) {
             is DestinationAction.Search -> _state.update { it.copy(query = action.value) }
-            DestinationAction.ToggleFavorites -> _state.update { it.copy(favoriteOnly = !it.favoriteOnly) }
+            is DestinationAction.SetFavoritesOnly -> _state.update { it.copy(favoriteOnly = action.value) }
             is DestinationAction.Open -> scope.launch {
                 get(action.id)?.let { _state.update { state -> state.copy(route = DestinationRoute.Detail(action.id)) } }
             }

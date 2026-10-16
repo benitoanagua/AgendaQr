@@ -431,6 +431,9 @@ fun AmFilterChip(
     count: Int? = null,
     /** Glifo decorativo de la píldora (p. ej. favorito). */
     icon: ImageVector? = null,
+    /** Descripción de estado accesible (p. ej. "Seleccionado"); copy del
+     * llamador. La selección también vive en la semántica `selected`. */
+    stateDescription: String? = null,
 ) {
     // Zona interactiva: 48 dp aunque la píldora visible sea compacta.
     Row(
@@ -447,7 +450,12 @@ fun AmFilterChip(
         Row(
             modifier = Modifier
                 .heightIn(min = AmMetrics.ChipCompactHeight)
-                .semantics { this.selected = selected }
+                .semantics {
+                    this.selected = selected
+                    if (selected && stateDescription != null) {
+                        this.stateDescription = stateDescription
+                    }
+                }
                 .then(
                     if (selected) {
                         Modifier.background(AmColor.Accent, AmShapes.Pill)
