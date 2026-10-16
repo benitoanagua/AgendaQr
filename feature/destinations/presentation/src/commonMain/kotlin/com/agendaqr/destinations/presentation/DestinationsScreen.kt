@@ -77,9 +77,7 @@ fun DestinationsScreen(
     var showCreateContext by remember { mutableStateOf(false) }
     var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
     val paged = state.visibleDestinations.take(visibleCount)
-    val favorites = remember(state.destinations) {
-        state.destinations.filter { it.favorite }
-    }
+    val favorites = state.favorites
 
     AmScreenScaffold(
         scrollable = true,
@@ -157,7 +155,7 @@ fun DestinationsScreen(
         // Favoritos (U-10: es lo que son, no "frecuentes"): carrusel
         // horizontal; la siguiente tarjeta asoma como indicio (sin
         // instrucción de deslizamiento).
-        if (favorites.isNotEmpty() && !state.favoriteOnly) {
+        if (state.showsFavoritesCarousel) {
             Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -187,37 +185,68 @@ fun DestinationsScreen(
             }
         }
 
-        // "Todos los destinos": lista agrupada con hairlines y "Ver QR".
-        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-            AmSectionHeader(text = AppStrings.TodosLosDestinos)
-            when {
-                // la carga inicial se anuncia con el skeleton del DS.
-                state.isLoading -> AmSkeleton(lines = 4)
-                state.visibleDestinations.isEmpty() -> AmEmptyState(
-                    icon = AmIcons.QrCode,
-                    title = if (state.destinations.isEmpty()) AppStrings.AunNoHayDestinos else AppStrings.NoSeEncontraronDestinos,
-                    subtitle = if (state.destinations.isEmpty()) AppStrings.emptyDestinationsHint else AppStrings.PruebaConOtraBusquedaOLimpia,
-                    actionLabel = if (state.destinations.isEmpty()) AppStrings.TraerQr else AppStrings.LimpiarBusqueda,
-                    onAction = { if (state.destinations.isEmpty()) onAction(DestinationAction.Edit(null)) else onAction(DestinationAction.Search("")) },
+        // Sección inferior: los favoritos ya viven en el carrusel, así que el
+        // encabezado es "Otros destinos" solo en ese caso; "Todos los destinos"
+        // cuando no hay carrusel. Cuando el carrusel muestra TODO el contenido
+        // (todos son favoritos) la sección no se renderiza: un estado vacío
+        // aquí sería un mensaje falso.
+        val showsFavoritesCarousel = state.showsFavoritesCarousel
+        val showsLowerSection = state.isLoading ||
+            state.destinations.isEmpty() ||
+            state.favoriteOnly ||
+            state.hasOtherDestinations ||
+            state.query.isNotBlank()
+        if (showsLowerSection) {
+            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                AmSectionHeader(
+                    text = if (showsFavoritesCarousel) AppStrings.OtrosDestinos else AppStrings.TodosLosDestinos,
                 )
-                else -> {
-                    AmListBody {
-                        paged.forEachIndexed { index, destination ->
-                            DestinationRow(
-                                destination,
-                                onAction,
-                                syncLookup,
-                                showDivider = index < paged.lastIndex,
+                when {
+                    // la carga inicial se anuncia con el skeleton del DS.
+                    state.isLoading -> AmSkeleton(lines = 4)
+                    state.destinations.isEmpty() -> AmEmptyState(
+                        icon = AmIcons.QrCode,
+                        title = AppStrings.AunNoHayDestinos,
+                        subtitle = AppStrings.emptyDestinationsHint,
+                        actionLabel = AppStrings.TraerQr,
+                        onAction = { onAction(DestinationAction.Edit(null)) },
+                    )
+                    // Filtro Favoritos sin favoritos: mensaje propio y salida
+                    // real al filtro Todos (antes "Limpiar búsqueda" no
+                    // cambiaba el filtro).
+                    state.favoriteOnly && state.visibleDestinations.isEmpty() && state.query.isBlank() -> AmEmptyState(
+                        icon = AmIcons.Favorite,
+                        title = AppStrings.AunNoHayFavoritos,
+                        subtitle = AppStrings.MarcaUnDestinoConEstrella,
+                        actionLabel = AppStrings.VerTodos,
+                        onAction = { onAction(DestinationAction.SetFavoritesOnly(false)) },
+                    )
+                    state.visibleDestinations.isEmpty() -> AmEmptyState(
+                        icon = AmIcons.QrCode,
+                        title = AppStrings.NoSeEncontraronDestinos,
+                        subtitle = AppStrings.PruebaConOtraBusquedaOLimpia,
+                        actionLabel = AppStrings.LimpiarBusqueda,
+                        onAction = { onAction(DestinationAction.Search("")) },
+                    )
+                    else -> {
+                        AmListBody {
+                            paged.forEachIndexed { index, destination ->
+                                DestinationRow(
+                                    destination,
+                                    onAction,
+                                    syncLookup,
+                                    showDivider = index < paged.lastIndex,
+                                )
+                            }
+                        }
+                        if (paged.size < state.visibleDestinations.size) {
+                            AmLoadMoreFooter(
+                                onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(state.visibleDestinations.size) },
+                                loadMoreLabel = AppStrings.CargarMas,
+                                loadingLabel = AppStrings.Cargando,
+                                endLabel = AppStrings.NoHayMasElementos,
                             )
                         }
-                    }
-                    if (paged.size < state.visibleDestinations.size) {
-                        AmLoadMoreFooter(
-                            onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(state.visibleDestinations.size) },
-                            loadMoreLabel = AppStrings.CargarMas,
-                            loadingLabel = AppStrings.Cargando,
-                            endLabel = AppStrings.NoHayMasElementos,
-                        )
                     }
                 }
             }

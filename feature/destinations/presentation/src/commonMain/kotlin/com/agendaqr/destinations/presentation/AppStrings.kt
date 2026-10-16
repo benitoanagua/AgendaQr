@@ -342,6 +342,13 @@ internal object AppStrings {
     // (DeslizaParaVerMas retirado en U-10: instrucción en lugar de
     // indicio; la siguiente tarjeta asoma.)
     val TodosLosDestinos = "Todos los destinos"
+    /** Encabezado de la lista cuando el carrusel ya muestra los favoritos. */
+    val OtrosDestinos = "Otros destinos"
+    /** Estado vacío propio del filtro Favoritos cuando no hay ninguno. */
+    val AunNoHayFavoritos = "Aún no tienes favoritos"
+    val MarcaUnDestinoConEstrella = "Marca un destino con la estrella para verlo aquí."
+    /** Acción que sale del filtro Favoritos vacío hacia la lista completa. */
+    val VerTodos = "Ver todos"
     val VerQr = "Ver QR"
     val AnadirDestino = "Añadir destino"
     // (ImportarImagen retirado en U-10: acción duplicada de la tarjeta;

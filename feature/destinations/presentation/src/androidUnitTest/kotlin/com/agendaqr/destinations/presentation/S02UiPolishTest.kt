@@ -99,6 +99,21 @@ class S02UiPolishTest {
         isLoading = false,
     )
 
+    /** Mezcla: un favorito en el carrusel y un destino en la lista inferior. */
+    private fun s01StateWithFavorite() = DestinationsUiState(
+        destinations = listOf(
+            com.agendaqr.destinations.domain.Destination(
+                id = "d-fav",
+                name = "Mercado",
+                qr = com.agendaqr.destinations.domain.QrAsset(encoded = "eA=="),
+                favorite = true,
+                createdAt = 1,
+                updatedAt = 1,
+            ),
+        ) + s01State().destinations,
+        isLoading = false,
+    )
+
     @Test
     fun s01_recientes_is_a_section_header_in_standard_color() {
         compose.setContent {
@@ -111,6 +126,23 @@ class S02UiPolishTest {
         // texto secundario — semántica heading.
         compose.onNodeWithText(AppStrings.TodosLosDestinos).assert(headingMatcher())
         val style = layoutOf(AppStrings.TodosLosDestinos).layoutInput.style
+        assertEquals(15.sp, style.fontSize)
+        assertEquals(LightAmColorScheme.textSecondary, style.color)
+    }
+
+    @Test
+    fun s01_otros_destinos_is_the_section_header_when_the_carousel_shows_favorites() {
+        compose.setContent {
+            AmTheme(darkTheme = false) {
+                DestinationsScreen(state = s01StateWithFavorite(), onAction = {})
+            }
+        }
+        compose.waitForIdle()
+        // Con carrusel de favoritos, la lista inferior encabeza "Otros
+        // destinos" con el MISMO estilo de List header (15 sp, secundario).
+        compose.onNodeWithText(AppStrings.OtrosDestinos).assert(headingMatcher())
+        compose.onNodeWithText(AppStrings.TodosLosDestinos).assertDoesNotExist()
+        val style = layoutOf(AppStrings.OtrosDestinos).layoutInput.style
         assertEquals(15.sp, style.fontSize)
         assertEquals(LightAmColorScheme.textSecondary, style.color)
     }
@@ -142,6 +174,19 @@ class S02UiPolishTest {
         val style = layoutOf(AppStrings.TodosLosDestinos).layoutInput.style
         // List header de la referencia: 15 sp en texto secundario
         // (legible en ambos temas).
+        assertEquals(15.sp, style.fontSize)
+        assertEquals(DarkAmColorScheme.textSecondary, style.color)
+    }
+
+    @Test
+    fun s01_otros_destinos_header_uses_readable_standard_color_in_dark_theme() {
+        compose.setContent {
+            AmTheme(darkTheme = true) {
+                DestinationsScreen(state = s01StateWithFavorite(), onAction = {})
+            }
+        }
+        compose.waitForIdle()
+        val style = layoutOf(AppStrings.OtrosDestinos).layoutInput.style
         assertEquals(15.sp, style.fontSize)
         assertEquals(DarkAmColorScheme.textSecondary, style.color)
     }
