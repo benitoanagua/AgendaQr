@@ -109,6 +109,7 @@ internal object IosQrImportController {
                     fingerprint = "ios-" + index + "-" + (data?.length ?: 0L),
                     mimeType = mimeType,
                     extension = extensionFor(mimeType),
+                    displayName = provider.suggestedName,
                     qrAsset = null,
                 )
                 if (collected.size == expected) completion(collected.toList())

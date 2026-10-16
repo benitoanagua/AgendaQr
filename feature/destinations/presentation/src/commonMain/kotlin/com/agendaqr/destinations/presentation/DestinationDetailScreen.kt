@@ -26,6 +26,7 @@ import com.agendaqr.core.ui.components.AmEmptyState
 import com.agendaqr.core.ui.components.AmHairline
 import com.agendaqr.core.ui.components.AmIcon
 import com.agendaqr.core.ui.components.AmIcons
+import com.agendaqr.core.ui.components.AmCard
 import com.agendaqr.core.ui.components.AmListBody
 import com.agendaqr.core.ui.components.AmMetaRow
 import com.agendaqr.core.ui.components.AmQrPreview
@@ -170,9 +171,9 @@ fun DestinationDetailScreen(
             destination.qr.content?.takeIf { it.isNotBlank() } != null ||
             destination.note?.takeIf { it.isNotBlank() } != null
         if (hasMetadata || destination.qr.encoded.isNotBlank()) {
-            AmListBody {
+            AmCard {
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Md),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
                 ) {
                     // Contenido decodificado (U-12, D9): bloque de ancho

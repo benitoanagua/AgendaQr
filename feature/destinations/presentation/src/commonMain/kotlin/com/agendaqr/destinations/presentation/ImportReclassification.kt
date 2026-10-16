@@ -20,11 +20,19 @@ expect suspend fun reclassifyImportCandidate(
 ): ImportCandidate
 
 /** Nombre visible del archivo pendiente (miniatura textual del elemento). */
-internal fun pendingItemName(candidate: ImportCandidate): String {
-    val extension = candidate.extension?.let { AppStrings.ArchivoPrefijo + it } ?: AppStrings.ElementoImportado
-    return when (candidate.kind) {
-        ImportKind.QR -> extension + " · QR"
-        ImportKind.COMPROBANTE -> extension + " · comprobante"
-        ImportKind.DESCONOCIDO -> extension
+internal fun pendingItemName(candidate: ImportCandidate, index: Int = 0): String {
+    // Con nombre original disponible, el título es el nombre del archivo.
+    candidate.displayName?.takeIf { it.isNotBlank() }?.let { return it }
+    // Respaldo numerado estable por tipo cuando no hay nombre.
+    val typeLabel = when (candidate.kind) {
+        ImportKind.QR -> "QR"
+        ImportKind.COMPROBANTE -> "comprobante"
+        ImportKind.DESCONOCIDO -> "sin clasificar"
+    }
+    val extension = candidate.extension?.let { AppStrings.ArchivoPrefijo + it }
+    return if (extension != null) {
+        extension + " · " + typeLabel
+    } else {
+        "Imagen " + (index + 1) + " · " + typeLabel
     }
 }

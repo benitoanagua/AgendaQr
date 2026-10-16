@@ -205,9 +205,9 @@ internal fun OperationEditorScreen(
             onSelect = { type = it },
         )
         // Importe + moneda (U-07, D6): entrada grande con borrado y error
-        AmListBody {
+        AmCard {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(AmSpacing.Lg),
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
             ) {
                 AmAmountField(

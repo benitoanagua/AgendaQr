@@ -229,8 +229,22 @@ fun AmSecondaryButton(
     /** Variante sólida de acento (misma métrica compacta). */
     solid: Boolean = false,
 ) {
-    // Zona interactiva: 48 dp aunque la superficie visible sea 40.
-    Row(
+    // Zona interactiva: 48 dp aunque la superficie visible sea 40. La
+    // superficie (fondo + borde) se dibuja en una capa que ocupa todo el
+    // ancho disponible cuando el llamador pasa fillMaxWidth(), y se ajusta
+    // al contenido en caso contrario (matchParentSize sobre el Box exterior).
+    val container = if (solid) AmColor.Accent else AmColor.SurfaceContainerLow
+    val content = if (solid) {
+        AmColor.OnAccent
+    } else {
+        AmColor.TextPrimary
+    }
+    val borderModifier = if (solid) {
+        Modifier
+    } else {
+        Modifier.border(AmMetrics.Border, AmColor.Divider, AmShapes.Small)
+    }
+    Box(
         modifier = modifier
             .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
             .clickable(
@@ -240,31 +254,19 @@ fun AmSecondaryButton(
                 onClick = onClick,
             )
             .then(if (!enabled || isLoading) Modifier.alpha(0.4f) else Modifier),
-        verticalAlignment = Alignment.CenterVertically,
+        contentAlignment = Alignment.Center,
     ) {
-        val container = if (solid) AmColor.Accent else AmColor.SurfaceContainerLow
-        val content = if (solid) {
-            AmColor.OnAccent
-        } else {
-            AmColor.TextPrimary
-        }
-        // Borde sutil para la variante tonal (no sólida) para que se
-        // distinga como botón en tema claro sin competir con la acción sólida.
-        // La variante sólida NO dibuja borde (ni un "borde de 0 dp": no se
-        // añade el modificador), para no introducir literales fuera de tokens.
-        val borderModifier = if (solid) {
-            Modifier
-        } else {
-            Modifier.border(AmMetrics.Border, AmColor.Divider, AmShapes.Small)
-        }
-        Row(
+        Box(
             modifier = Modifier
+                .matchParentSize()
                 .heightIn(min = AmMetrics.ButtonCompactHeight)
                 .background(container, AmShapes.Small)
-                .then(borderModifier)
-                .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Xs),
+                .then(borderModifier),
+        )
+        Row(
+            modifier = Modifier.padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Xs),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+            horizontalArrangement = Arrangement.Center,
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
@@ -306,17 +308,20 @@ fun AmCompactAction(
     /** Texto de acento (acción destacada de la tarjeta). */
     prominent: Boolean = false,
 ) {
-    Row(
+    Box(
         modifier = modifier
             .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
             .clickable(role = Role.Button, onClickLabel = label, onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically,
+        contentAlignment = Alignment.Center,
     ) {
-        Row(
+        Box(
             modifier = Modifier
+                .matchParentSize()
                 .heightIn(min = AmMetrics.ChipCompactHeight + AmSpacing.Xs)
-                .background(AmColor.SurfaceContainerLow, AmShapes.Small)
-                .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
+                .background(AmColor.SurfaceContainerLow, AmShapes.Small),
+        )
+        Row(
+            modifier = Modifier.padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
         ) {
@@ -347,8 +352,8 @@ fun AmCompactAction(
  * donde el acento no cumple 4.5:1 (p. ej. dentro de un banner de tono,
  * que hereda el color de contenido del tono — par garantizado).
  */
-/** Variante visual de [AmTextAction]: acento (por defecto) o destructiva. */
-enum class AmTextActionVariant { Default, Danger }
+/** Variante visual de [AmTextAction]: acento (por defecto), neutra o destructiva. */
+enum class AmTextActionVariant { Default, Neutral, Danger }
 
 @Composable
 fun AmTextAction(
@@ -363,21 +368,29 @@ fun AmTextAction(
     /** Variante: Default (acento) o Danger (destructiva). Prohíbe el uso de
      *  grises (TextSecondary/TextTertiary) como color de acción. */
     variant: AmTextActionVariant = AmTextActionVariant.Default,
+    /** Padding interno del TextButton. Por defecto el canónico (16 dp
+     *  horizontal). Pásale `PaddingValues(AmSpacing.None)` para alinear el
+     *  texto al borde de la superficie contenedora. */
+    contentPadding: PaddingValues = PaddingValues(
+        horizontal = AmSpacing.Md,
+        vertical = AmSpacing.None,
+    ),
 ) {
     val actionColor = color ?: when (variant) {
         AmTextActionVariant.Default -> AmColor.AccentText
+        AmTextActionVariant.Neutral -> AmColor.TextPrimary
         AmTextActionVariant.Danger -> AmColor.Danger
+    }
+    val fontWeight = when (variant) {
+        AmTextActionVariant.Neutral -> FontWeight.SemiBold
+        else -> null
     }
     TextButton(
         modifier = modifier.defaultMinSize(minHeight = AmMetrics.ControlMinSize),
         onClick = onClick,
         enabled = enabled,
         shape = AmShapes.Small,
-        // 48 dp determinísticos como en los botones.
-        contentPadding = PaddingValues(
-            horizontal = AmSpacing.Md,
-            vertical = AmSpacing.None,
-        ),
+        contentPadding = contentPadding,
     ) {
         Row(
             modifier = Modifier.defaultMinSize(minHeight = AmMetrics.ControlMinSize),
@@ -394,6 +407,7 @@ fun AmTextAction(
             Text(
                 label,
                 style = AmTextStyles.ButtonLabel,
+                fontWeight = fontWeight,
                 color = if (enabled) actionColor else AmColor.OnDisabled,
             )
         }
