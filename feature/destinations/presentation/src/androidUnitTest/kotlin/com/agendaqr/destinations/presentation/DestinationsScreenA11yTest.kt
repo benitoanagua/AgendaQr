@@ -60,10 +60,10 @@ class DestinationsScreenA11yTest {
     @Test
     fun fab_has_label_and_the_row_actions_keep_48dp_targets() {
         setContent()
-        // §12 V1.4: FAB extendido "Añadir" con etiqueta visible (M3 fija
-        // su altura mínima); la acción de favorito de la fila es un
-        // IconToggleButton de 48 dp.
-        compose.onNodeWithText(AppStrings.AnadirDestino, useUnmergedTree = true).assertExists()
+        // U-10/D8: FAB extendido "Añadir" con etiqueta visible (abre el
+        // hub); la acción de favorito de la fila es un IconToggleButton
+        // de 48 dp.
+        compose.onNodeWithText(AppStrings.Anadir, useUnmergedTree = true).assertExists()
         compose.onNodeWithContentDescription("Marcar favorito").assertExists()
             .assertHeightIsAtLeast(48.dp)
     }
@@ -163,14 +163,17 @@ class DestinationsScreenA11yTest {
 
     @Test
     fun favorite_row_toggle_announces_state_through_its_description() {
-        // §11/§12 V1.4: el favorito de fila es un IconToggleButton cuya
+        // §11: el favorito de fila es un IconToggleButton cuya
         // descripción accesible CAMBIA con el estado (marcar/quitar).
+        // Las filas de favoritos se ven con el filtro Favoritos (U-10: en
+        // Todos los favoritos viven en el carrusel).
         var toggled: Boolean? = null
         compose.setContent {
             AmTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
                         destinations = listOf(sample.copy(favorite = true)),
+                        favoriteOnly = true,
                         isLoading = false,
                     ),
                     onAction = { action ->

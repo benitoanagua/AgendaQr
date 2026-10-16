@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.core.ui.components.AmBadge
 import com.agendaqr.core.ui.components.AmCompactAction
+import com.agendaqr.core.ui.components.AmDialog
+import com.agendaqr.core.ui.components.AmDialogList
 import com.agendaqr.core.ui.components.AmFavoriteToggle
 import com.agendaqr.core.ui.components.AmFilterChip
 import com.agendaqr.core.ui.components.AmIcon
@@ -30,11 +32,9 @@ import com.agendaqr.core.ui.components.AmNavChromeState
 import com.agendaqr.core.ui.components.AmOverflowAction
 import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmSearchTrigger
-import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmSectionHeader
 import com.agendaqr.core.ui.components.AmSkeleton
 import com.agendaqr.core.ui.components.AmSnackbarHost
-import com.agendaqr.core.ui.components.AmStatusPill
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.core.ui.components.AmStatusBanner
@@ -68,7 +68,13 @@ fun DestinationsScreen(
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
     /** Acción rápida / FAB: traer un QR (S02, cámara y galería). */
     onScanQr: () -> Unit = { onAction(DestinationAction.Edit(null)) },
+    /** Hub "¿Qué quieres añadir?": registrar actividad (S07). */
+    onRegisterOperation: () -> Unit = {},
+    /** Hub "¿Qué quieres añadir?": crear contexto (diálogo existente). */
+    onCreateContext: (name: String, note: String?) -> Unit = { _, _ -> },
 ) {
+    var showAddHub by remember { mutableStateOf(false) }
+    var showCreateContext by remember { mutableStateOf(false) }
     var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
     val paged = state.visibleDestinations.take(visibleCount)
     val favorites = remember(state.destinations) {
@@ -94,10 +100,12 @@ fun DestinationsScreen(
         navSelectedId = navChrome?.selectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
         floatingActionButton = {
+            // U-10/D8: el FAB abre el hub "¿Qué quieres añadir?" con las 3
+            // creaciones (la especificación S01); sin acciones duplicadas.
             AmExtendedFab(
-                label = AppStrings.AnadirDestino,
+                label = AppStrings.Anadir,
                 icon = AmIcons.Add,
-                onClick = onScanQr,
+                onClick = { showAddHub = true },
             )
         },
         verticalArrangement = Arrangement.spacedBy(AmSpacing.Lg),
@@ -127,34 +135,6 @@ fun DestinationsScreen(
             onClick = onOpenSearch,
         )
 
-        // Tarjeta de garantía local (referencia MCP): reaseguro SIEMPRE
-        // cierto (la agenda vive en el dispositivo) + acciones rápidas
-        // reales hacia S02.
-        AmListBody {
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(AmSpacing.Md),
-                verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-            ) {
-            // Jerarquía: escanear es la acción insignia del producto
-            // (variante sólida); importar es su alternativa tonal.
-            // Apiladas a ancho completo: las etiquetas completas caben sin
-            // elipsis (la fila comprimía «Importar imagen» en 360 dp).
-            AmSecondaryButton(
-                label = AppStrings.EscanearQr,
-                onClick = onScanQr,
-                icon = AmIcons.ScanLine,
-                solid = true,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            AmSecondaryButton(
-                label = AppStrings.ImportarImagen,
-                onClick = onScanQr,
-                icon = AmIcons.Gallery,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            }
-        }
-
         // Pestañas cápsula (referencia MCP): filtros reales con conteo.
         Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
             AmFilterChip(
@@ -174,31 +154,22 @@ fun DestinationsScreen(
             )
         }
 
-        // "Destinos frecuentes" (referencia MCP): carrusel horizontal de
-        // los favoritos reales del dominio.
+        // Favoritos (U-10: es lo que son, no "frecuentes"): carrusel
+        // horizontal; la siguiente tarjeta asoma como indicio (sin
+        // instrucción de deslizamiento).
         if (favorites.isNotEmpty() && !state.favoriteOnly) {
             Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
-                    ) {
-                        AmIcon(
-                            imageVector = AmIcons.Favorite,
-                            contentDescription = null,
-                            size = AmMetrics.IconSizeCompact,
-                            tint = AmColor.AccentText,
-                        )
-                        AmSectionHeader(text = AppStrings.DestinosFrecuentes)
-                    }
-                    AmText(
-                        AppStrings.DeslizaParaVerMas,
-                        color = AmColor.TextTertiary,
+                    AmIcon(
+                        imageVector = AmIcons.Favorite,
+                        contentDescription = null,
+                        size = AmMetrics.IconSizeCompact,
+                        tint = AmColor.AccentText,
                     )
+                    AmSectionHeader(text = AppStrings.DestinosFrecuentes)
                 }
                 Row(
                     modifier = Modifier
@@ -226,7 +197,7 @@ fun DestinationsScreen(
                     icon = AmIcons.QrCode,
                     title = if (state.destinations.isEmpty()) AppStrings.AunNoHayDestinos else AppStrings.NoSeEncontraronDestinos,
                     subtitle = if (state.destinations.isEmpty()) AppStrings.emptyDestinationsHint else AppStrings.PruebaConOtraBusquedaOLimpia,
-                    actionLabel = if (state.destinations.isEmpty()) AppStrings.Anadir else AppStrings.LimpiarBusqueda,
+                    actionLabel = if (state.destinations.isEmpty()) AppStrings.TraerQr else AppStrings.LimpiarBusqueda,
                     onAction = { if (state.destinations.isEmpty()) onAction(DestinationAction.Edit(null)) else onAction(DestinationAction.Search("")) },
                 )
                 else -> {
@@ -251,6 +222,63 @@ fun DestinationsScreen(
                 }
             }
         }
+    }
+    // Hub "¿Qué quieres añadir?" (U-10, D8, S01): las 3 creaciones reales
+    // (diálogo por la limitación de ModalBottomSheet bajo Robolectric).
+    if (showAddHub) {
+        AmDialog(
+            title = AppStrings.QueQuieresAnadir,
+            confirmLabel = AppStrings.Cancelar,
+            confirmAsText = true,
+            onConfirm = { showAddHub = false },
+            onDismiss = { showAddHub = false },
+            content = {
+                AmDialogList {
+                    AmListRow(
+                        title = AppStrings.TraerQr,
+                        onClick = {
+                            showAddHub = false
+                            onScanQr()
+                        },
+                        leading = {
+                            AmIconBadge(icon = AmIcons.QrCode, tone = AmTone.Info)
+                        },
+                        showChevron = true,
+                    )
+                    AmListRow(
+                        title = AppStrings.RegistrarOperacion,
+                        onClick = {
+                            showAddHub = false
+                            onRegisterOperation()
+                        },
+                        leading = {
+                            AmIconBadge(icon = AmIcons.Register, tone = AmTone.Success)
+                        },
+                        showChevron = true,
+                    )
+                    AmListRow(
+                        title = AppStrings.CrearContexto,
+                        onClick = {
+                            showAddHub = false
+                            showCreateContext = true
+                        },
+                        leading = {
+                            AmIconBadge(icon = AmIcons.Context, tone = AmTone.Warning)
+                        },
+                        showChevron = true,
+                    )
+                }
+            },
+        )
+    }
+    if (showCreateContext) {
+        ContextCreationDialog(
+            onConfirmCreate = { name, note ->
+                showCreateContext = false
+                onCreateContext(name, note)
+            },
+            onDismiss = { showCreateContext = false },
+        )
     }
 }
 

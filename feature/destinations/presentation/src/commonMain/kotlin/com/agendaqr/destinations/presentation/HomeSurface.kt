@@ -64,6 +64,15 @@ internal fun HomeSurface(
                 // Acción rápida / FAB (referencia MCP): traer un QR → S02,
                 // con cámara y galería dentro del flujo real.
                 onScanQr = { graph.destinationsViewModel.onAction(DestinationAction.Edit(null)) },
+                // Hub (U-10, D8): registrar actividad (S07, sin
+                // preasociación) y crear contexto (diálogo existente).
+                onRegisterOperation = {
+                    graph.operationsViewModel.onAction(OperationAction.New)
+                    nav.push(AppRoute.Operations)
+                },
+                onCreateContext = { name, note ->
+                    graph.contextsViewModel.onAction(ContextAction.Create(name, note))
+                },
             )
             DestinationRoute.Add -> AddDestinationScreen(
                 appHosts = appHosts,

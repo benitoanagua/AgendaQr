@@ -71,7 +71,7 @@ class AgendaQrLocalStartupTest {
 
         // Entró a la app local: la configuración desaparece y aparece Inicio.
         compose.onNodeWithText(AppStrings.ConfiguraTuPin, useUnmergedTree = true).assertDoesNotExist()
-        compose.onNodeWithText(AppStrings.AnadirDestino, useUnmergedTree = true).assertExists()
+        compose.onNodeWithText(AppStrings.Anadir, useUnmergedTree = true).assertExists()
     }
 
     @Test

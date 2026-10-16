@@ -37,7 +37,9 @@ data class DestinationsUiState(
         get() = destinations
             .asSequence()
             .filter { query.isBlank() || it.name.contains(query, ignoreCase = true) || it.category.orEmpty().contains(query, ignoreCase = true) }
-            .filter { !favoriteOnly || it.favorite }
+            // U-10: los favoritos viven en el carrusel; la lista muestra el
+            // resto cuando el filtro es Todos (favoriteOnly == es favorito).
+            .filter { favoriteOnly == it.favorite }
             .sortedWith(compareBy<Destination> { it.name.lowercase() })
             .toList()
 }

@@ -295,12 +295,14 @@ internal object AppStrings {
     val GuardadoEnTuTelefono = "Guardado en tu teléfono"
     val VerTodo = "Ver todo"
     val DisponibilidadTotal = "Disponibilidad total"
-    val EscanearQr = "Escanear QR"
+    // (EscanearQr retirado en U-10: acción duplicada de la tarjeta; la
+    // entrada vive en S02 y en el hub.)
     val AbrirLaCamara = "Abrir la cámara"
     val RegistrarPago = "Registrar pago"
     val CargarActividad = "Cargar actividad"
     val QueQuieresAnadir = "¿Qué quieres añadir?"
-    val GuardaUnComprobanteOMovimiento = "Guarda un comprobante o movimiento"
+    /** Hub de Inicio (U-10, D8): traer un QR a S02. */
+    val TraerQr = "Traer un QR"
     // (MontoHint retirado en U-07: la afirmación de validación era falsa;
     // el error en vivo es ImporteInvalido.)
     // (CuantoOcurrio retirado en U-03: la fila de fecha muestra su valor;
@@ -327,13 +329,15 @@ internal object AppStrings {
     val RegistrosLocales = "registros locales"
     /** Prefijo de la hora de registro local (metadato temporal). */
     val RegPrefijo = "Reg: "
-    /** Inicio: sección de favoritos deslizables. */
-    val DestinosFrecuentes = "Destinos frecuentes"
-    val DeslizaParaVerMas = "Desliza para ver más"
+    /** Inicio: sección de favoritos deslizables (U-10: es lo que son). */
+    val DestinosFrecuentes = "Favoritos"
+    // (DeslizaParaVerMas retirado en U-10: instrucción en lugar de
+    // indicio; la siguiente tarjeta asoma.)
     val TodosLosDestinos = "Todos los destinos"
     val VerQr = "Ver QR"
     val AnadirDestino = "Añadir destino"
-    val ImportarImagen = "Importar imagen"
+    // (ImportarImagen retirado en U-10: acción duplicada de la tarjeta;
+    // la entrada vive en S02.)
     val AlmacenamientoLocal = "Almacenamiento 100% local"
     val DatosNuncaSalen = "Tus datos nunca salen de tu teléfono"
     val IndexacionSinInternet = "Indexación y análisis instantáneo sin internet."
