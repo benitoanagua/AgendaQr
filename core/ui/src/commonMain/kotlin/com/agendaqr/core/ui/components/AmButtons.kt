@@ -369,8 +369,8 @@ fun AmTextAction(
      *  grises (TextSecondary/TextTertiary) como color de acción. */
     variant: AmTextActionVariant = AmTextActionVariant.Default,
     /** Padding interno del TextButton. Por defecto el canónico (16 dp
-     *  horizontal). Pásale `PaddingValues(0.dp)` para alinear el texto al
-     *  borde de la superficie contenedora. */
+     *  horizontal). Pásale `PaddingValues(AmSpacing.None)` para alinear el
+     *  texto al borde de la superficie contenedora. */
     contentPadding: PaddingValues = PaddingValues(
         horizontal = AmSpacing.Md,
         vertical = AmSpacing.None,

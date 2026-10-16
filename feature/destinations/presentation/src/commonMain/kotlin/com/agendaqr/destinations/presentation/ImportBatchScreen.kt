@@ -106,7 +106,7 @@ fun ImportBatchScreen(
                         AppStrings.reintentarGuardado
                     } else {
                         val recognized = currentBatch?.uniqueRecognized?.size ?: 0
-                        if (recognized > 0) "Guardar $recognized reconocidos" else AppStrings.GuardarReconocidos
+                        if (recognized > 0) guardarReconocidosLabel(recognized) else AppStrings.GuardarReconocidos
                     },
                     onClick = { onAction(ImportBatchAction.SaveRecognized) },
                     enabled = state !is ImportBatchUiState.Saving,
