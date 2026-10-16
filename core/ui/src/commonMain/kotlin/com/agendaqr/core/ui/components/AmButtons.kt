@@ -229,8 +229,22 @@ fun AmSecondaryButton(
     /** Variante sólida de acento (misma métrica compacta). */
     solid: Boolean = false,
 ) {
-    // Zona interactiva: 48 dp aunque la superficie visible sea 40.
-    Row(
+    // Zona interactiva: 48 dp aunque la superficie visible sea 40. La
+    // superficie (fondo + borde) se dibuja en una capa que ocupa todo el
+    // ancho disponible cuando el llamador pasa fillMaxWidth(), y se ajusta
+    // al contenido en caso contrario (matchParentSize sobre el Box exterior).
+    val container = if (solid) AmColor.Accent else AmColor.SurfaceContainerLow
+    val content = if (solid) {
+        AmColor.OnAccent
+    } else {
+        AmColor.TextPrimary
+    }
+    val borderModifier = if (solid) {
+        Modifier
+    } else {
+        Modifier.border(AmMetrics.Border, AmColor.Divider, AmShapes.Small)
+    }
+    Box(
         modifier = modifier
             .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
             .clickable(
@@ -240,31 +254,19 @@ fun AmSecondaryButton(
                 onClick = onClick,
             )
             .then(if (!enabled || isLoading) Modifier.alpha(0.4f) else Modifier),
-        verticalAlignment = Alignment.CenterVertically,
+        contentAlignment = Alignment.Center,
     ) {
-        val container = if (solid) AmColor.Accent else AmColor.SurfaceContainerLow
-        val content = if (solid) {
-            AmColor.OnAccent
-        } else {
-            AmColor.TextPrimary
-        }
-        // Borde sutil para la variante tonal (no sólida) para que se
-        // distinga como botón en tema claro sin competir con la acción sólida.
-        // La variante sólida NO dibuja borde (ni un "borde de 0 dp": no se
-        // añade el modificador), para no introducir literales fuera de tokens.
-        val borderModifier = if (solid) {
-            Modifier
-        } else {
-            Modifier.border(AmMetrics.Border, AmColor.Divider, AmShapes.Small)
-        }
-        Row(
+        Box(
             modifier = Modifier
+                .matchParentSize()
                 .heightIn(min = AmMetrics.ButtonCompactHeight)
                 .background(container, AmShapes.Small)
-                .then(borderModifier)
-                .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Xs),
+                .then(borderModifier),
+        )
+        Row(
+            modifier = Modifier.padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Xs),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+            horizontalArrangement = Arrangement.Center,
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
@@ -306,17 +308,20 @@ fun AmCompactAction(
     /** Texto de acento (acción destacada de la tarjeta). */
     prominent: Boolean = false,
 ) {
-    Row(
+    Box(
         modifier = modifier
             .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
             .clickable(role = Role.Button, onClickLabel = label, onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically,
+        contentAlignment = Alignment.Center,
     ) {
-        Row(
+        Box(
             modifier = Modifier
+                .matchParentSize()
                 .heightIn(min = AmMetrics.ChipCompactHeight + AmSpacing.Xs)
-                .background(AmColor.SurfaceContainerLow, AmShapes.Small)
-                .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
+                .background(AmColor.SurfaceContainerLow, AmShapes.Small),
+        )
+        Row(
+            modifier = Modifier.padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
         ) {
