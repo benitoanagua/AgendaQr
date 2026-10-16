@@ -39,8 +39,9 @@ class AppStatusHostTest {
             }
         }
         compose.waitForIdle()
-        // Solo el banner de error de importación (con acción y descarte).
-        compose.onNodeWithText(AppStrings.Descartar).assertExists()
+        // Solo el banner de error de importación (acción única, sin
+        // descarte duplicado).
+        compose.onNodeWithText("ELEGIR OTRA IMAGEN").assertExists()
         // Los indicadores compactos no se duplican detrás del banner.
         val compact = compose.onAllNodesWithText(AppStrings.SinConexion).fetchSemanticsNodes()
         assert(compact.isEmpty()) { "El indicador compacto no compite con el banner de error" }

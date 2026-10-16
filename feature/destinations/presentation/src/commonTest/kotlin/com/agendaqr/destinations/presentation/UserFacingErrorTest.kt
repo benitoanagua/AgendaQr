@@ -257,6 +257,20 @@ class UserFacingErrorTest {
         assertEquals(ErrorFlow.SignIn, viewModel.state.value.errorFlow)
     }
 
+    @Test
+    fun bannerActions_retry_yields_two_actions_close_yields_one() {
+        val retryError = userFacingError(GenericAppError("boom"), ErrorFlow.SaveQr)
+        val (a1, d1) = retryError.bannerActions(onRetry = {}, onClear = {})
+        assertTrue(a1 != null && d1 != null)
+        assertEquals("REINTENTAR", a1!!.label)
+        assertEquals(AppStrings.Descartar, d1!!.label)
+
+        val closeError = userFacingError(GenericAppError("boom"), ErrorFlow.ContextOpen)
+        val (a2, d2) = closeError.bannerActions(onRetry = {}, onClear = {})
+        assertTrue(a2 != null && d2 == null)
+        assertEquals("CERRAR", a2!!.label)
+    }
+
     private suspend fun waitUntil(condition: suspend () -> Boolean) {
         repeat(100) {
             if (condition()) return
