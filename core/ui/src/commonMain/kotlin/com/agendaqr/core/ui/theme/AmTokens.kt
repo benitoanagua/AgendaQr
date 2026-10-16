@@ -618,6 +618,12 @@ object AmTextStyles {
         fontSize = AmType.SectionHeader,
         lineHeight = AmType.LineHeightSection,
     )
+
+    /** Título de diálogo (18 sp centrado; el bold lo aplica AmDialog). */
+    val Title = TextStyle(
+        fontSize = AmType.Title,
+        lineHeight = AmType.LineHeightTitleLarge,
+    )
 }
 
 
