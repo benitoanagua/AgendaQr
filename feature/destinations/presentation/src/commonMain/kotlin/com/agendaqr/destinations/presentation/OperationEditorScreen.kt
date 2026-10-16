@@ -13,6 +13,9 @@ import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.domain.*
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 /**
  * Selector de tipo de actividad (S07, referencia Stitch): control
@@ -60,7 +63,14 @@ internal fun OperationEditorScreen(
     var person by rememberSaveable(editorKey) { mutableStateOf(existing?.personOrEntity.orEmpty()) }
     var concept by rememberSaveable(editorKey) { mutableStateOf(existing?.concept.orEmpty()) }
     var note by rememberSaveable(editorKey) { mutableStateOf(existing?.note.orEmpty()) }
-    var dateText by rememberSaveable(editorKey) { mutableStateOf(formatDate(existing?.occurredAt ?: nowMillis())) }
+    // Momento con hora (U-03, D2): milisegundos de época, sin texto
+    // libre. El valor por defecto de una actividad nueva es ahora, con
+    // hora; los datos antiguos a medianoche se muestran sin hora y no se
+    // reescriben salvo que el usuario elija.
+    var occurredAtMillis by rememberSaveable(editorKey) { mutableStateOf(existing?.occurredAt ?: nowMillis()) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
+    var pendingDateUtc by remember { mutableStateOf<Long?>(null) }
     // S08: selección de contexto con semántica explícita — Cancelar no toca
     // la selección; Quitar contexto es la única vía de limpiarla.
     var contextSelection by rememberSaveable(editorKey, stateSaver = ContextSelectionSaver) {
@@ -71,10 +81,7 @@ internal fun OperationEditorScreen(
         justCreatedContextId?.let { id -> contextSelection = contextSelection.select(id) }
     }
     var showSensitiveConfirm by remember { mutableStateOf(false) }
-    var submitted by remember { mutableStateOf(false) }
     val saving = state.isSavingOperation
-    val occurredAt = parseDate(dateText)
-    val dateError = submitted && occurredAt == null
 
     fun buildCandidate(at: Long): Operation = Operation(
         id = existing?.id ?: newEntityId("operation"),
@@ -118,8 +125,7 @@ internal fun OperationEditorScreen(
                     AppStrings.GuardarCambios
                 },
                 onClick = {
-                    submitted = true
-                    val at = occurredAt ?: return@AmBottomAction
+                    val at = occurredAtMillis
                     val candidate = buildCandidate(at)
                     if (existing == null) {
                         viewModel.onAction(
@@ -232,63 +238,42 @@ internal fun OperationEditorScreen(
                 }
             }
         }
-        // Tarjeta de momento (referencia S07): ocurrido editable +
-        // registrado automático de solo lectura (dato real del dominio).
+        // Momento con fecha y hora (U-03, D2): fila de selección con el
+        // valor ("Hoy · 16/10/2026 14:30") que abre los selectores, más
+        // atajos Hoy/Ayer. Sin texto libre: la hora es opcional solo para
+        // datos antiguos (medianoche = sin hora, se muestra sin hora).
         AmListBody {
-            AmTextField(
-                label = AppStrings.Fecha,
-                value = dateText,
-                onValueChange = { dateText = it },
-                isError = dateError,
-                errorMessage = if (dateError) AppStrings.FormatoFecha else null,
-                helperMessage = AppStrings.CuantoOcurrio,
-                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Number,
-                ),
-                leadingIcon = com.agendaqr.core.ui.components.AmIcons.Calendar,
-                modifier = Modifier.padding(horizontal = AmSpacing.Lg),
+            val dateValue = (relativeDayLabel(occurredAtMillis, nowMillis())?.let { it + " · " } ?: "") +
+                formatDateTime(occurredAtMillis)
+            AmListRow(
+                title = dateValue,
+                subtitle = AppStrings.Fecha,
+                onClick = { showDatePicker = true },
+                leading = {
+                    AmIconBadge(
+                        icon = com.agendaqr.core.ui.components.AmIcons.Calendar,
+                        tone = AmTone.Info,
+                    )
+                },
+                showChevron = true,
             )
             AmHairline()
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Md),
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Md),
+                    .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Sm),
+                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
             ) {
-                AmIcon(
-                    imageVector = com.agendaqr.core.ui.components.AmIcons.Clock,
-                    contentDescription = null,
-                    tint = AmColor.TextTertiary,
+                AmFilterChip(
+                    label = AppStrings.Hoy,
+                    selected = false,
+                    onClick = { occurredAtMillis = nowMillis() },
                 )
-                Column {
-                    AmText(AppStrings.MomentoRegistrado, color = AmColor.TextSecondary)
-                    AmText(AppStrings.FirmaTemporal, color = AmColor.TextTertiary)
-                }
-                Box(
-                    modifier = Modifier
-                        .background(
-                            AmColor.SurfaceContainerLow,
-                            com.agendaqr.core.ui.theme.AmShapes.Large,
-                        )
-                        .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
-                ) {
-                    Row(
-                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
-                    ) {
-                        AmText(
-                            formatDate(existing?.createdAt ?: nowMillis()),
-                            color = AmColor.TextSecondary,
-                        )
-                        AmIcon(
-                            imageVector = com.agendaqr.core.ui.components.AmIcons.Lock,
-                            contentDescription = null,
-                            size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
-                            tint = AmColor.TextTertiary,
-                        )
-                    }
-                }
+                AmFilterChip(
+                    label = AppStrings.Ayer,
+                    selected = false,
+                    onClick = { occurredAtMillis = minusCivilDays(nowMillis(), 1) },
+                )
             }
         }
         // Tarjeta de datos opcionales (referencia S07): persona, moneda,
@@ -365,6 +350,47 @@ internal fun OperationEditorScreen(
         )
     }
 
+    // Selectores de fecha y hora (U-03, D2): la fecha elegida abre la
+    // hora; cancelar en cualquiera conserva el valor anterior.
+    if (showDatePicker) {
+        AmDatePickerDialog(
+            selectedDateUtc = utcDayMillis(occurredAtMillis),
+            onConfirm = { utc ->
+                pendingDateUtc = utc
+                showDatePicker = false
+                showTimePicker = true
+            },
+            onDismiss = { showDatePicker = false },
+            confirmLabel = AppStrings.Elegir,
+            dismissLabel = AppStrings.Cancelar,
+            title = AppStrings.Fecha,
+        )
+    }
+    if (showTimePicker) {
+        val current = Instant.fromEpochMilliseconds(occurredAtMillis)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+        AmTimePickerDialog(
+            initialHour = current.hour,
+            initialMinute = current.minute,
+            onConfirm = { hour, minute ->
+                occurredAtMillis = combineDateAndTime(
+                    pendingDateUtc ?: utcDayMillis(occurredAtMillis),
+                    hour,
+                    minute,
+                )
+                pendingDateUtc = null
+                showTimePicker = false
+            },
+            onDismiss = {
+                pendingDateUtc = null
+                showTimePicker = false
+            },
+            confirmLabel = AppStrings.Elegir,
+            dismissLabel = AppStrings.Cancelar,
+            title = AppStrings.Hora,
+        )
+    }
+
     if (showSensitiveConfirm) {
         AmDialog(
             title = AppStrings.changeOperationWithReceipts,
@@ -372,7 +398,12 @@ internal fun OperationEditorScreen(
             confirmLabel = AppStrings.GuardarCambio,
             onConfirm = {
                 showSensitiveConfirm = false
-                occurredAt?.let { viewModel.onAction(OperationAction.Update(buildCandidate(it), confirmedSensitiveChange = true)) }
+                viewModel.onAction(
+                    OperationAction.Update(
+                        buildCandidate(occurredAtMillis),
+                        confirmedSensitiveChange = true,
+                    ),
+                )
             },
             dismissLabel = AppStrings.Cancelar,
             onDismiss = { showSensitiveConfirm = false },

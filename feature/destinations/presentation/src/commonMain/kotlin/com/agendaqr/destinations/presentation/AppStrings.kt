@@ -81,7 +81,13 @@ internal object AppStrings {
     val analyzingReceipt = "Estamos analizando el comprobante."
     val FaltaElCodigoQrUsa = "Falta el código QR: usa Cámara o Galería"
     val Fecha = "Fecha"
+    val Hora = "Hora"
     val FechaDesconocida = "Fecha desconocida"
+    /** Atajos del selector de fecha del editor (U-03, D2). */
+    val Hoy = "Hoy"
+    val Ayer = "Ayer"
+    /** Confirmar del selector de fecha/hora (sin defaults hardcodeados). */
+    val Elegir = "Elegir"
     /** S02 V1.2: acción única de galería con selección múltiple. */
     val ElegirDeLaGaleria = "Elegir de la galería"
     /** S12 Idle: acción para elegir un lote de imágenes. */
@@ -188,7 +194,8 @@ internal object AppStrings {
     // validación de auth + estado ocupado.
     val IngresaUnCorreoValido = "Ingresa un correo válido"
     // literales que esquivaban la regla D2 dentro de expresiones.
-    val FormatoFecha = "Usa el formato dd/mm/aaaa"
+    // (FormatoFecha retirado en U-03: el texto libre dd/mm/aaaa
+    // desaparece con el selector de fecha.)
     // permiso de cámara y lectura de QR.
     val AbrirAjustes = "Abrir ajustes"
     val PermisoCamaraContexto = "Usamos la cámara solo para escanear códigos QR."
@@ -282,7 +289,8 @@ internal object AppStrings {
     val GuardaUnComprobanteOMovimiento = "Guarda un comprobante o movimiento"
     /** S07: ayuda del importe y momento de la operación. */
     val MontoHint = "Ingreso numérico rápido y validado en tiempo real."
-    val CuantoOcurrio = "Cuándo ocurrió la operación"
+    // (CuantoOcurrio retirado en U-03: la fila de fecha muestra su valor;
+    // la ayuda de texto libre desaparece con el selector.)
     val MomentoRegistrado = "Momento registrado"
     val FirmaTemporal = "Firma temporal del sistema"
     val PuedesSinContexto = "Puedes registrar sin asociar un contexto"

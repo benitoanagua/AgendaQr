@@ -6,10 +6,15 @@
 package com.agendaqr.destinations.presentation
 
 import com.agendaqr.destinations.domain.*
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.minus
+import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
 internal fun receiptProvenanceLabel(provenance: ReceiptProvenance?): String = when (provenance) {
@@ -56,6 +61,92 @@ internal fun formatTime(millis: Long, timeZone: TimeZone = TimeZone.currentSyste
     val time = Instant.fromEpochMilliseconds(millis).toLocalDateTime(timeZone).time
     fun two(value: Int) = if (value < 10) "0" + value else value.toString()
     return two(time.hour) + ":" + two(time.minute)
+}
+
+/**
+ * Fecha y hora civiles ("16/10/2026 14:30"). Los datos antiguos
+ * guardados a medianoche exacta se muestran sin hora (o con la hora en
+ * blanco): no se reescriben salvo que el usuario la elija (U-03).
+ */
+internal fun formatDateTime(millis: Long, timeZone: TimeZone = TimeZone.currentSystemDefault()): String {
+    if (millis <= 0) return AppStrings.FechaDesconocida
+    val dateTime = Instant.fromEpochMilliseconds(millis).toLocalDateTime(timeZone)
+    return if (dateTime.hour == 0 && dateTime.minute == 0) {
+        formatDate(millis, timeZone)
+    } else {
+        formatDate(millis, timeZone) + " " + formatTime(millis, timeZone)
+    }
+}
+
+/**
+ * Día civil de [millis] como medianoche UTC: lo que el selector de fecha
+ * consume y devuelve (el picker muestra días civiles, sin zona).
+ */
+internal fun utcDayMillis(millis: Long, timeZone: TimeZone = TimeZone.currentSystemDefault()): Long {
+    val date = Instant.fromEpochMilliseconds(millis).toLocalDateTime(timeZone).date
+    return date.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
+}
+
+/**
+ * Combina el día civil del picker (medianoche UTC) con la hora elegida
+ * en la zona del dispositivo. El tipo de dato del dominio no cambia
+ * (`occurredAt` ya son milisegundos).
+ */
+internal fun combineDateAndTime(
+    utcDateMillis: Long,
+    hour: Int,
+    minute: Int,
+    timeZone: TimeZone = TimeZone.currentSystemDefault(),
+): Long {
+    require(hour in 0..23) { "hora fuera de rango" }
+    require(minute in 0..59) { "minuto fuera de rango" }
+    val date = Instant.fromEpochMilliseconds(utcDateMillis).toLocalDateTime(TimeZone.UTC).date
+    return LocalDateTime(date, LocalTime(hour, minute)).toInstant(timeZone).toEpochMilliseconds()
+}
+
+/** ¿Medianoche local exacta (dato antiguo sin hora)? */
+internal fun isStartOfDay(millis: Long, timeZone: TimeZone = TimeZone.currentSystemDefault()): Boolean {
+    if (millis <= 0) return false
+    val dateTime = Instant.fromEpochMilliseconds(millis).toLocalDateTime(timeZone)
+    return dateTime.hour == 0 && dateTime.minute == 0 &&
+        millis == dateTime.date.atStartOfDayIn(timeZone).toEpochMilliseconds()
+}
+
+/** ¿Mismo día civil en la zona del dispositivo? */
+internal fun isSameCivilDay(
+    first: Long,
+    second: Long,
+    timeZone: TimeZone = TimeZone.currentSystemDefault(),
+): Boolean = Instant.fromEpochMilliseconds(first).toLocalDateTime(timeZone).date ==
+    Instant.fromEpochMilliseconds(second).toLocalDateTime(timeZone).date
+
+/**
+ * Resta días civiles conservando la hora (chip "Ayer"): ayer a la misma
+ * hora, en la zona del dispositivo.
+ */
+internal fun minusCivilDays(
+    millis: Long,
+    days: Int,
+    timeZone: TimeZone = TimeZone.currentSystemDefault(),
+): Long {
+    require(days >= 0) { "días fuera de rango" }
+    val dateTime = Instant.fromEpochMilliseconds(millis).toLocalDateTime(timeZone)
+    return LocalDateTime(dateTime.date.minus(days, DateTimeUnit.DAY), dateTime.time)
+        .toInstant(timeZone).toEpochMilliseconds()
+}
+
+/**
+ * Prefijo relativo del día ("Hoy"/"Ayer") en la zona del dispositivo;
+ * null para cualquier otro día.
+ */
+internal fun relativeDayLabel(
+    millis: Long,
+    now: Long,
+    timeZone: TimeZone = TimeZone.currentSystemDefault(),
+): String? = when {
+    isSameCivilDay(millis, now, timeZone) -> AppStrings.Hoy
+    isSameCivilDay(millis, minusCivilDays(now, 1, timeZone), timeZone) -> AppStrings.Ayer
+    else -> null
 }
 
 private val monthNames = listOf(
