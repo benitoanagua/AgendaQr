@@ -49,9 +49,11 @@ import com.agendaqr.core.ui.theme.AmTracking
 import com.agendaqr.core.ui.theme.AmType
 
 /**
- * Botones y chips (referencia: Button/Selector de Ant Design Mobile):
- * fills solid/outline/none, radio 4, deshabilitado con opacidad .4,
- * área táctil mínima de 48 dp y estado de carga que no desplaza el layout.
+ * Botones y chips (referencia: Button/CapsuleTabs de Ant Design Mobile):
+ * fills solid/default/none — el secundario equivale al botón `default`
+ * (fondo claro + hairline + texto primario, no outline de acento) —,
+ * radio 4, deshabilitado con opacidad .4, área táctil mínima de 48 dp y
+ * estado de carga que no desplaza el layout.
  */
 
 /**
@@ -89,7 +91,9 @@ internal fun AmLoadingButton(
             ),
         onClick = onClick,
         enabled = enabled && !isLoading,
-        shape = AmShapes.Large,
+        // Radio 4 del botón (Button de la referencia), no el rol de la
+        // plantilla M3.
+        shape = AmShapes.Small,
         // Padding vertical propio a cero: la altura la fija el contenido
         // (48 dp de objetivo táctil), no el relleno interno de Material.
         // Horizontal compacto de 16 dp.
@@ -251,12 +255,12 @@ fun AmSecondaryButton(
         val borderModifier = if (solid) {
             Modifier
         } else {
-            Modifier.border(AmMetrics.Border, AmColor.Divider, AmShapes.Large)
+            Modifier.border(AmMetrics.Border, AmColor.Divider, AmShapes.Small)
         }
         Row(
             modifier = Modifier
                 .heightIn(min = AmMetrics.ButtonCompactHeight)
-                .background(container, AmShapes.Large)
+                .background(container, AmShapes.Small)
                 .then(borderModifier)
                 .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Xs),
             verticalAlignment = Alignment.CenterVertically,
@@ -311,7 +315,7 @@ fun AmCompactAction(
         Row(
             modifier = Modifier
                 .heightIn(min = AmMetrics.ChipCompactHeight + AmSpacing.Xs)
-                .background(AmColor.SurfaceContainerLow, AmShapes.Large)
+                .background(AmColor.SurfaceContainerLow, AmShapes.Small)
                 .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
@@ -357,7 +361,7 @@ fun AmTextAction(
         modifier = modifier.defaultMinSize(minHeight = AmMetrics.ControlMinSize),
         onClick = onClick,
         enabled = enabled,
-        shape = AmShapes.Large,
+        shape = AmShapes.Small,
         // 48 dp determinísticos como en los botones.
         contentPadding = PaddingValues(
             horizontal = AmSpacing.Md,
@@ -409,12 +413,12 @@ fun AmIconButton(
 }
 
 /**
- * Píldora de filtro compacta (cápsula tipo CapsuleTabs de la
- * referencia): visual ~32 dp con conteo opcional y zona interactiva de
- * 48 dp — la superficie visible es menor que el target (mandato de
- * compactación). Activa: sólida de acento (par garantizado); inactiva:
- * tarjeta con hairline y texto secundario. La selección también vive
- * en la semántica.
+ * Píldora de filtro (cápsula tipo CapsuleTabs de la referencia):
+ * inactiva con relleno box (`SurfaceSecondary`) SIN borde; activa sólida
+ * de acento (par garantizado). Etiqueta 15; conteo opcional en badge de
+ * Tag. Zona interactiva de 48 dp — la superficie visible es menor que el
+ * target (mandato de compactación). La selección también vive en la
+ * semántica.
  */
 @Composable
 fun AmFilterChip(
@@ -444,11 +448,12 @@ fun AmFilterChip(
             modifier = Modifier
                 .heightIn(min = AmMetrics.ChipCompactHeight)
                 .semantics { this.selected = selected }
-                .then(if (selected) Modifier.background(AmColor.Accent, AmShapes.Pill) else Modifier.background(AmColor.Surface, AmShapes.Pill))
-                .border(
-                    AmMetrics.Border,
-                    if (selected) AmColor.Accent else AmColor.Divider,
-                    AmShapes.Pill,
+                .then(
+                    if (selected) {
+                        Modifier.background(AmColor.Accent, AmShapes.Pill)
+                    } else {
+                        Modifier.background(AmColor.SurfaceSecondary, AmShapes.Pill)
+                    },
                 )
                 .padding(horizontal = AmSpacing.Md, vertical = AmSpacing.Xs),
             verticalAlignment = Alignment.CenterVertically,
@@ -464,15 +469,15 @@ fun AmFilterChip(
             }
             Text(
                 label,
-                style = AmTextStyles.Tag,
-                color = if (selected) AmColor.OnAccent else AmColor.TextSecondary,
+                style = AmTextStyles.Label,
+                color = if (selected) AmColor.OnAccent else AmColor.TextPrimary,
             )
             count?.let {
                 Box(
                     modifier = Modifier
                         .background(
                             if (selected) AmColor.OnAccent.copy(alpha = 0.25f) else AmColor.SurfaceContainerHighest,
-                            AmShapes.Pill,
+                            AmShapes.ExtraSmall,
                         )
                         .padding(horizontal = AmSpacing.Xs),
                 ) {
@@ -520,7 +525,7 @@ fun AmSegmentedControl(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(AmColor.SurfaceContainerHigh, AmShapes.ExtraLarge)
+            .background(AmColor.SurfaceContainerHigh, AmShapes.ExtraSmall)
             .selectableGroup()
             .padding(AmSpacing.Xs),
         horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
@@ -531,10 +536,10 @@ fun AmSegmentedControl(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(AmShapes.Large)
+                    .clip(AmShapes.ExtraSmall)
                     .then(
                         if (selected) {
-                            Modifier.background(AmColor.Surface, AmShapes.Large)
+                            Modifier.background(AmColor.Surface, AmShapes.ExtraSmall)
                         } else {
                             Modifier
                         },
@@ -561,7 +566,7 @@ fun AmSegmentedControl(
                     }
                     Text(
                         option.label,
-                        style = AmTextStyles.SectionHeader,
+                        style = AmTextStyles.Label,
                         color = if (selected) activeColor else AmColor.TextSecondary,
                         maxLines = 1,
                     )
@@ -570,7 +575,7 @@ fun AmSegmentedControl(
                             modifier = Modifier
                                 .background(
                                     if (selected) activeColor.copy(alpha = 0.2f) else AmColor.SurfaceContainerHighest,
-                                    AmShapes.Pill,
+                                    AmShapes.ExtraSmall,
                                 )
                                 .padding(horizontal = AmSpacing.Xs),
                         ) {

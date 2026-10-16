@@ -39,42 +39,45 @@ import com.agendaqr.core.ui.theme.accentFor
  */
 
 /**
- * Etiqueta semántica de estado (Tag outline/round de la referencia):
- * borde y texto del tono (par garantizado por AmSchemeTest) sobre fondo
+ * Etiqueta semántica de estado (Tag outline de la referencia): borde y
+ * texto del tono (par garantizado por AmSchemeTest) sobre fondo
  * transparente. No interactiva; el estado se expresa con TEXTO (nunca
- * solo color).
+ * solo color). [round] activa la variante píldora del Tag.
  */
 @Composable
 fun AmBadge(
     text: String,
     modifier: Modifier = Modifier,
     tone: AmTone = AmTone.Neutral,
+    /** Variante píldora (Tag `round` de la referencia). */
+    round: Boolean = false,
 ) {
     val toneColor = if (tone == AmTone.Neutral) AmColor.TextSecondary else tone.content()
+    val shape = if (round) AmShapes.Pill else AmShapes.ExtraSmall
     Box(
         modifier = modifier
             .border(
                 AmMetrics.Border,
                 toneColor,
-                AmShapes.Pill,
+                shape,
             )
             .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text,
-            style = AmTextStyles.Support,
+            style = AmTextStyles.Tag,
             color = toneColor,
         )
     }
 }
 
 /**
- * Etiqueta semántica de estado con fondo tonal (Tag round de la
- * referencia): par texto/contenedor del tono garantizado por
- * AmSchemeTest sobre el bloque tonal. No interactiva; el estado se
- * expresa con TEXTO (nunca solo color). Para el estilo outline usa
- * [AmBadge].
+ * Etiqueta semántica de estado con fondo tonal (Tag de la referencia):
+ * par texto/contenedor del tono garantizado por AmSchemeTest sobre el
+ * bloque tonal. No interactiva; el estado se expresa con TEXTO (nunca
+ * solo color). Para el estilo outline usa [AmBadge]; [round] activa la
+ * variante píldora.
  */
 @Composable
 fun AmTonalTag(
@@ -83,11 +86,13 @@ fun AmTonalTag(
     tone: AmTone = AmTone.Neutral,
     /** Mayúsculas tipadas (p. ej. "PAGO"): presentación, no copy nuevo. */
     uppercase: Boolean = false,
+    /** Variante píldora (Tag `round` de la referencia). */
+    round: Boolean = false,
 ) {
     val label = if (uppercase) text.uppercase() else text
     Box(
         modifier = modifier
-            .background(tone.container(), AmShapes.Pill)
+            .background(tone.container(), if (round) AmShapes.Pill else AmShapes.ExtraSmall)
             .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
         contentAlignment = Alignment.Center,
     ) {
@@ -195,8 +200,8 @@ fun AmTappableCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(AmColor.Surface, AmShapes.ExtraLarge)
-            .border(AmMetrics.Border, AmColor.Divider, AmShapes.ExtraLarge)
+            .background(AmColor.Surface, AmShapes.Large)
+            .border(AmMetrics.Border, AmColor.Divider, AmShapes.Large)
             .clickable(role = Role.Button, onClick = onClick)
             .padding(AmSpacing.Md),
     ) {
@@ -229,10 +234,9 @@ fun AmHairline(
 /**
  * Cuerpo de lista (card mode): superficie de
  * tarjeta delimitada por hairline (1 dp, excepción
- * E-03 del gate) con radio de tarjeta, que agrupa celdas contiguas
- * separadas por
- * hairlines inset. Las filas usan `showDivider` salvo la última; el
- * cuerpo mide su contenido.
+ * E-03 del gate) con radio 8 (card de la referencia), que agrupa celdas
+ * contiguas separadas por hairlines inset. Las filas usan `showDivider`
+ * salvo la última; el cuerpo mide su contenido.
  */
 @Composable
 fun AmListBody(
@@ -242,8 +246,8 @@ fun AmListBody(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(AmColor.Surface, AmShapes.ExtraLarge)
-            .border(AmMetrics.Border, AmColor.Divider, AmShapes.ExtraLarge),
+            .background(AmColor.Surface, AmShapes.Large)
+            .border(AmMetrics.Border, AmColor.Divider, AmShapes.Large),
     ) {
         content()
     }

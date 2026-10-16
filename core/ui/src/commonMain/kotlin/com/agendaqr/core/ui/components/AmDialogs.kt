@@ -96,8 +96,8 @@ fun AmDialog(
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest ?: onDismiss,
-        // Modal de la referencia: radio 12, título centrado de 18 sp.
-        shape = AmShapes.ExtraLarge,
+        // Dialog de la referencia: radio 8, título centrado de 18 sp.
+        shape = AmShapes.Large,
         title = {
             Text(
                 title,

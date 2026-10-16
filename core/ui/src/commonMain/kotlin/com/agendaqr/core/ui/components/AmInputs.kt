@@ -232,7 +232,7 @@ fun AmSearchField(
         },
         singleLine = true,
         label = { Text(label) },
-        shape = AmShapes.ExtraLarge,
+        shape = AmShapes.Medium,
         leadingIcon = { AmIcon(imageVector = AmIcons.Search, contentDescription = null, tint = AmColor.TextTertiary) },
         trailingIcon = if (onClear != null && value.isNotEmpty()) {
             {

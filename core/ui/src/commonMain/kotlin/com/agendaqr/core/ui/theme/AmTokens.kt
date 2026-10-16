@@ -567,6 +567,13 @@ object AmTextStyles {
         lineHeight = AmType.LineHeightBody,
     )
 
+    /** Etiqueta de acción de texto, contenido de modal, cápsula y extra
+     * de lista (15 sp, font-size-main de la referencia). */
+    val Label = TextStyle(
+        fontSize = AmType.Label,
+        lineHeight = AmType.LineHeightLabel,
+    )
+
     /** Metadato/descripción (13 sp, font-size-main). */
     val BodySmall = TextStyle(
         fontSize = AmType.BodySmall,

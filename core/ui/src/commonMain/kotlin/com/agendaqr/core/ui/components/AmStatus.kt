@@ -62,7 +62,7 @@ fun AmStatusBanner(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(background, AmShapes.ExtraLarge)
+            .background(background, AmShapes.Large)
             .semantics { liveRegion = LiveRegionMode.Polite }
             .padding(horizontal = AmSpacing.Md, vertical = AmSpacing.Md),
         verticalAlignment = Alignment.CenterVertically,
