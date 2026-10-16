@@ -20,6 +20,9 @@ fun GlobalSearchScreen(
     appHosts: AppHosts? = null,
     onAction: (GlobalSearchAction) -> Unit,
     onSelect: (AgendaSearchResult) -> Unit,
+    /** Foco automático solo al abrir desde el disparador de Inicio
+     * (U-21); por pestaña se entra sin foco. */
+    autoFocus: Boolean = true,
 ) {
     // V1.4 (§12): Buscar es destino raíz — barra superior con título y
     // navegación inferior; el campo de búsqueda es el cuerpo de la
@@ -48,7 +51,7 @@ fun GlobalSearchScreen(
                 keyboardType = androidx.compose.ui.text.input.KeyboardType.Text,
                 imeAction = androidx.compose.ui.text.input.ImeAction.Search,
             ),
-            autoFocus = true,
+            autoFocus = autoFocus,
         )
         state.error?.let { err ->
             AmStatusBanner(

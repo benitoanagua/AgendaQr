@@ -185,7 +185,8 @@ fun AgendaQrApp() {
                 } else {
                     null
                 },
-                onExploreDemo = { demoActive = true },
+                // U-20/D11: la demostración solo existe en el primer
+                // arranque (onboarding); en desbloqueo no se ofrece.
             )
             accessState.mode == LocalAccessMode.Unlocked -> AgendaQrLocalApp(
                 profileId = profile.id,

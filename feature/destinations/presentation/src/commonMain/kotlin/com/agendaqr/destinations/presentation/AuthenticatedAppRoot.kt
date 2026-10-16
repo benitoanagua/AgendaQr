@@ -182,6 +182,9 @@ internal fun AuthenticatedAppRoot(
     // del back stack (Back desde otro destino vuelve a Inicio; desde
     // Inicio sale de la app).
     // ------------------------------------------------------------------
+    // U-21: el foco de Buscar depende del origen — disparador de Inicio
+    // (con foco) frente a pestaña (sin foco).
+    var searchAutoFocus by rememberSaveable { mutableStateOf(true) }
     val navChrome = remember(top) {
         AmNavChromeState(
             destinations = listOf(
@@ -193,6 +196,7 @@ internal fun AuthenticatedAppRoot(
             selectedId = appRouteNameOf(top),
             onSelect = { name ->
                 val destination = appRouteForName(name) ?: return@AmNavChromeState
+                searchAutoFocus = false
                 nav.popToRoot()
                 if (destination != AppRoute.Home) nav.push(destination)
             },
@@ -295,6 +299,7 @@ internal fun AuthenticatedAppRoot(
                         navChrome = navChrome,
                         appHosts = appHosts,
                         onAction = graph.globalSearchViewModel::onAction,
+                        autoFocus = searchAutoFocus,
                         onSelect = { result ->
                             when (result.type) {
                                 AgendaSearchResultType.CONTEXT -> {
@@ -381,7 +386,10 @@ internal fun AuthenticatedAppRoot(
                         contextState = contextState,
                         navChrome = navChrome,
                         appHosts = appHosts,
-                        onSearchOpened = { searchReturnDestinationId = null },
+                        onSearchOpened = {
+                            searchReturnDestinationId = null
+                            searchAutoFocus = true
+                        },
                         onDetailBack = ::backFromDestinationDetail,
                         graph = graph,
                         onLock = onLock,
