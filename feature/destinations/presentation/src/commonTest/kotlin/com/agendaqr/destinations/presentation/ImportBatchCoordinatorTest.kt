@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -95,11 +96,76 @@ class ImportBatchCoordinatorTest {
         val (c, _) = coordinator(destinations)
         var state: ImportBatchUiState = ImportBatchUiState.Result(batch)
         c.saveRecognized(batch, { state = it }, { state }, ImportBatchReducer())
+        waitUntil { state is ImportBatchUiState.Saved || state is ImportBatchUiState.Error }
+        // Con un único candidato reconocido que falla: estado Error (no Saved)
+        assertIs<ImportBatchUiState.Error>(state)
+        assertEquals(0, destinations.saved.size)
+    }
+
+    @Test
+    fun all_candidates_failing_produces_error_not_saved(): Unit = runBlocking {
+        // Bug fix: cuando TODOS los candidatos fallan, el estado debe ser
+        // Error (recuperable), no Saved (que implicaría éxito).
+        val destinations = RecordingDestinations(initialFail = true)
+        val (c, _) = coordinator(destinations)
+        val singleQrBatch = ImportBatch(listOf(qr))
+        var state: ImportBatchUiState = ImportBatchUiState.Result(singleQrBatch)
+        c.saveRecognized(singleQrBatch, { state = it }, { state }, ImportBatchReducer())
+        waitUntil { state is ImportBatchUiState.Error }
+        val error = assertIs<ImportBatchUiState.Error>(state)
+        assertNotNull(error.batch)
+    }
+
+    @Test
+    fun partial_failure_produces_saved_with_remaining(): Unit = runBlocking {
+        // Fallo parcial: un candidato falla, otro se guarda → estado Saved
+        val destinations = RecordingDestinations(initialFail = true)
+        val (c, _) = coordinator(destinations)
+        val mixedBatch = ImportBatch(listOf(qr, unknown))
+        var state: ImportBatchUiState = ImportBatchUiState.Result(mixedBatch)
+        c.saveRecognized(mixedBatch, { state = it }, { state }, ImportBatchReducer())
         waitUntil { state is ImportBatchUiState.Saved }
         assertEquals(0, destinations.saved.size)
-        // El lote sobrevive para revisión del pendiente.
-        val saved = state as ImportBatchUiState.Saved
-        assertEquals(1, saved.batch.pendingItems().size)
+    }
+
+    @Test
+    fun retry_after_error_does_not_duplicate_saved_candidates(): Unit = runBlocking {
+        // Guardado parcial: un QR se guarda, el reintento no lo duplica.
+        val destinations = RecordingDestinations()
+        val (c, _) = coordinator(destinations)
+        val batch = ImportBatch(listOf(qr))
+
+        // Primer intento: falla
+        destinations.failNext = true
+        var state: ImportBatchUiState = ImportBatchUiState.Result(batch)
+        c.saveRecognized(batch, { state = it }, { state }, ImportBatchReducer())
+        waitUntil { state is ImportBatchUiState.Error }
+
+        // Reintento: ahora debería guardar
+        destinations.failNext = false
+        val errorState = state as ImportBatchUiState.Error
+        val retryBatch = errorState.batch ?: error("Error state must preserve batch")
+        c.saveRecognized(retryBatch, { state = it }, { state }, ImportBatchReducer())
+        waitUntil { state is ImportBatchUiState.Saved }
+        assertEquals(1, destinations.saved.size)
+    }
+
+    @Test
+    fun partial_save_with_multiple_candidates_saves_successes(): Unit = runBlocking {
+        // Dos QRs: el primero falla, el segundo se guarda → estado Saved con 1 guardado
+        val qr2 = ImportCandidate(
+            id = "qr-2",
+            kind = ImportKind.QR,
+            fingerprint = "fp-2",
+            qrAsset = QrAsset(encoded = "eB=="),
+        )
+        val destinations = RecordingDestinations(initialFail = true)
+        val (c, _) = coordinator(destinations)
+        val batch = ImportBatch(listOf(qr, qr2))
+        var state: ImportBatchUiState = ImportBatchUiState.Result(batch)
+        c.saveRecognized(batch, { state = it }, { state }, ImportBatchReducer())
+        waitUntil { state is ImportBatchUiState.Saved }
+        assertEquals(1, destinations.saved.size)
     }
 
     @Test

@@ -1072,6 +1072,226 @@ class VisualReferenceScreenshotTest {
         )
     }
 
+    // --- Escenarios nuevos: estados de importación ---
+
+    // Error de persistencia con todos los candidatos fallidos
+    @Test fun import_batch_error_all_failed_light() = shot("import-batch-error-all-failed-light", dark = false) {
+        ImportBatchScreen(
+            state = ImportBatchUiState.Error(
+                error = userFacingError(IllegalStateException("storage unavailable"), ErrorFlow.ImportBatchSave),
+                batch = importBatchFixture(),
+            ),
+            onAction = {},
+        )
+    }
+
+    @Test fun import_batch_error_all_failed_dark() = shot("import-batch-error-all-failed-dark", dark = true) {
+        ImportBatchScreen(
+            state = ImportBatchUiState.Error(
+                error = userFacingError(IllegalStateException("storage unavailable"), ErrorFlow.ImportBatchSave),
+                batch = importBatchFixture(),
+            ),
+            onAction = {},
+        )
+    }
+
+    // Guardado parcial: algunos guardados, algunos pendientes
+    @Test fun import_batch_partial_save_light() = shot("import-batch-partial-save-light", dark = false) {
+        val partialBatch = ImportBatch(
+            candidates = listOf(
+                ImportCandidate(
+                    id = "imp-saved", kind = ImportKind.QR, fingerprint = "fp-saved",
+                    mimeType = "image/png", extension = "png",
+                    qrAsset = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                ),
+                ImportCandidate(
+                    id = "imp-pending", kind = ImportKind.DESCONOCIDO, fingerprint = "fp-pending",
+                    mimeType = "image/png", extension = "png", error = "No se pudo clasificar",
+                ),
+            ),
+        )
+        ImportBatchScreen(state = ImportBatchUiState.Saved(partialBatch), onAction = {})
+    }
+
+    @Test fun import_batch_partial_save_dark() = shot("import-batch-partial-save-dark", dark = true) {
+        val partialBatch = ImportBatch(
+            candidates = listOf(
+                ImportCandidate(
+                    id = "imp-saved", kind = ImportKind.QR, fingerprint = "fp-saved",
+                    mimeType = "image/png", extension = "png",
+                    qrAsset = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                ),
+                ImportCandidate(
+                    id = "imp-pending", kind = ImportKind.DESCONOCIDO, fingerprint = "fp-pending",
+                    mimeType = "image/png", extension = "png", error = "No se pudo clasificar",
+                ),
+            ),
+        )
+        ImportBatchScreen(state = ImportBatchUiState.Saved(partialBatch), onAction = {})
+    }
+
+    // Reintento después de un error
+    @Test fun import_batch_retry_after_error_light() = shot("import-batch-retry-after-error-light", dark = false) {
+        ImportBatchScreen(
+            state = ImportBatchUiState.Error(
+                error = userFacingError(IllegalStateException("storage unavailable"), ErrorFlow.ImportBatchSave),
+                batch = importBatchFixture(),
+            ),
+            onAction = {},
+        )
+    }
+
+    @Test fun import_batch_retry_after_error_dark() = shot("import-batch-retry-after-error-dark", dark = true) {
+        ImportBatchScreen(
+            state = ImportBatchUiState.Error(
+                error = userFacingError(IllegalStateException("storage unavailable"), ErrorFlow.ImportBatchSave),
+                batch = importBatchFixture(),
+            ),
+            onAction = {},
+        )
+    }
+
+    // Estado después de un reintento exitoso
+    @Test fun import_batch_after_successful_retry_light() = shot("import-batch-after-successful-retry-light", dark = false) {
+        ImportBatchScreen(state = ImportBatchUiState.Saved(importBatchFixture()), onAction = {})
+    }
+
+    @Test fun import_batch_after_successful_retry_dark() = shot("import-batch-after-successful-retry-dark", dark = true) {
+        ImportBatchScreen(state = ImportBatchUiState.Saved(importBatchFixture()), onAction = {})
+    }
+
+    // Revisión con varias incidencias y nombres largos
+    @Test fun import_batch_review_multiple_issues_light() = shot("import-batch-review-multiple-issues-light", dark = false) {
+        val longNameBatch = ImportBatch(
+            candidates = listOf(
+                ImportCandidate(
+                    id = "imp-long-1", kind = ImportKind.DESCONOCIDO, fingerprint = "fp-long-1",
+                    mimeType = "image/png", extension = "png", error = "No se pudo clasificar",
+                ),
+                ImportCandidate(
+                    id = "imp-long-2", kind = ImportKind.QR, fingerprint = "fp-long-2",
+                    mimeType = "image/png", extension = "png",
+                    qrAsset = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                ),
+                ImportCandidate(
+                    id = "imp-long-3", kind = ImportKind.QR, fingerprint = "fp-long-2",
+                    mimeType = "image/png", extension = "png",
+                    qrAsset = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                ),
+                ImportCandidate(
+                    id = "imp-long-4", kind = ImportKind.DESCONOCIDO, fingerprint = "fp-long-4",
+                    mimeType = "image/jpeg", extension = "jpg", error = "Formato no soportado",
+                ),
+                ImportCandidate(
+                    id = "imp-long-5", kind = ImportKind.DESCONOCIDO, fingerprint = "fp-long-5",
+                    mimeType = "application/pdf", extension = "pdf", error = "No se pudo leer el PDF",
+                ),
+            ),
+        )
+        ImportBatchScreen(state = ImportBatchUiState.Review(longNameBatch), onAction = {})
+    }
+
+    @Test fun import_batch_review_multiple_issues_dark() = shot("import-batch-review-multiple-issues-dark", dark = true) {
+        val longNameBatch = ImportBatch(
+            candidates = listOf(
+                ImportCandidate(
+                    id = "imp-long-1", kind = ImportKind.DESCONOCIDO, fingerprint = "fp-long-1",
+                    mimeType = "image/png", extension = "png", error = "No se pudo clasificar",
+                ),
+                ImportCandidate(
+                    id = "imp-long-2", kind = ImportKind.QR, fingerprint = "fp-long-2",
+                    mimeType = "image/png", extension = "png",
+                    qrAsset = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                ),
+                ImportCandidate(
+                    id = "imp-long-3", kind = ImportKind.QR, fingerprint = "fp-long-2",
+                    mimeType = "image/png", extension = "png",
+                    qrAsset = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                ),
+                ImportCandidate(
+                    id = "imp-long-4", kind = ImportKind.DESCONOCIDO, fingerprint = "fp-long-4",
+                    mimeType = "image/jpeg", extension = "jpg", error = "Formato no soportado",
+                ),
+                ImportCandidate(
+                    id = "imp-long-5", kind = ImportKind.DESCONOCIDO, fingerprint = "fp-long-5",
+                    mimeType = "application/pdf", extension = "pdf", error = "No se pudo leer el PDF",
+                ),
+            ),
+        )
+        ImportBatchScreen(state = ImportBatchUiState.Review(longNameBatch), onAction = {})
+    }
+
+    // Importación en viewport pequeño (w320dp)
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w320dp-h640dp")
+    fun import_batch_small_viewport_light() = shot("import-batch-small-viewport-light", dark = false) {
+        ImportBatchScreen(state = ImportBatchUiState.Result(importBatchFixture()), onAction = {})
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w320dp-h640dp")
+    fun import_batch_small_viewport_dark() = shot("import-batch-small-viewport-dark", dark = true) {
+        ImportBatchScreen(state = ImportBatchUiState.Result(importBatchFixture()), onAction = {})
+    }
+
+    // Login con texto ampliado (simulado con qualifier de densidad)
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w320dp-h640dp")
+    fun login_small_viewport_light() = shot("login-small-viewport-light", dark = false) {
+        AuthScreen(
+            state = AuthUiState(email = "", password = "", isSubmitting = false),
+            onEmailChanged = {},
+            onPasswordChanged = {},
+            onSignIn = {},
+            onSignUp = {},
+        )
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w320dp-h640dp")
+    fun login_small_viewport_dark() = shot("login-small-viewport-dark", dark = true) {
+        AuthScreen(
+            state = AuthUiState(email = "", password = "", isSubmitting = false),
+            onEmailChanged = {},
+            onPasswordChanged = {},
+            onSignIn = {},
+            onSignUp = {},
+        )
+    }
+
+    // Login con error
+    @Test fun login_error_light() = shot("login-error-light", dark = false) {
+        AuthScreen(
+            state = AuthUiState(
+                email = "invalid",
+                password = "123",
+                isSubmitting = false,
+                errorMessage = userFacingError(IllegalStateException("invalid credentials"), ErrorFlow.SignIn),
+                errorFlow = ErrorFlow.SignIn,
+            ),
+            onEmailChanged = {},
+            onPasswordChanged = {},
+            onSignIn = {},
+            onSignUp = {},
+        )
+    }
+
+    @Test fun login_error_dark() = shot("login-error-dark", dark = true) {
+        AuthScreen(
+            state = AuthUiState(
+                email = "invalid",
+                password = "123",
+                isSubmitting = false,
+                errorMessage = userFacingError(IllegalStateException("invalid credentials"), ErrorFlow.SignIn),
+                errorFlow = ErrorFlow.SignIn,
+            ),
+            onEmailChanged = {},
+            onPasswordChanged = {},
+            onSignIn = {},
+            onSignUp = {},
+        )
+    }
+
     private fun rootChrome(selected: String): com.agendaqr.core.ui.components.AmNavChromeState {
         return com.agendaqr.core.ui.components.AmNavChromeState(
             destinations = listOf(

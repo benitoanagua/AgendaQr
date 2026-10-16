@@ -33,7 +33,25 @@ internal class ImportBatchCoordinator(
         onStateChanged(reducer.reduce(currentState(), ImportBatchAction.SaveRecognized))
         scope.launch {
             runCatching { saveImportBatch(batch) }
-                .onSuccess { onStateChanged(reducer.reduce(currentState(), ImportBatchAction.Saved)) }
+                .onSuccess { result ->
+                    // Si todo falló (0 guardados, hay fallidos), es un error
+                    // recuperable: el usuario necesita saber que nada se guardó.
+                    if (result.savedQr == 0 && result.savedComprobantes == 0 && result.failed.isNotEmpty()) {
+                        onStateChanged(
+                            reducer.reduce(
+                                currentState(),
+                                ImportBatchAction.Failed(
+                                    userFacingError(
+                                        IllegalStateException("All candidates failed to persist"),
+                                        ErrorFlow.ImportBatchSave,
+                                    ),
+                                ),
+                            ),
+                        )
+                    } else {
+                        onStateChanged(reducer.reduce(currentState(), ImportBatchAction.Saved))
+                    }
+                }
                 .onFailure { error ->
                     onStateChanged(
                         reducer.reduce(

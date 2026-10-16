@@ -118,6 +118,25 @@
 
 Estados obligatorios: normal, pressed (indicación M3), focused (indicación de foco del componente M3 con el rol `AmColor.Focus`), selected (semántica + borde de acento/fondo wathet), error (icono + texto + `error()` semántica), disabled (opacidad .4 + par `Disabled/OnDisabled`), loading (spinner superpuesto sin salto de ancho + `stateDescription`).
 
+### Jerarquía de acciones (4 niveles, contracto §9.1)
+
+Toda acción de la app pertenece a un nivel semántico; el nivel decide el componente,
+no al revés. Documentación detallada en la javadoc de `AmButtons.kt`; cobertura
+comportamental en `ActionHierarchyTest` y `ScreensA11yCoverageTest`.
+
+| Nivel | Componente | Tratamiento | Regla de uso |
+|---|---|---|---|
+| 1 — Primaria | `AmPrimaryButton` / `AmBottomAction` | Relleno de acento | El objetivo principal del usuario por sección; **como máximo una** por contexto; en lectura/búsqueda/selección puede no existir |
+| 2 — Secundaria | `AmSecondaryButton` | Tonal (contenedor bajo + hairline); variante `solid` solo para la acción insignia de una tarjeta | Alternativa importante; nunca compite con la primaria; una destacada por contexto |
+| 3 — Terciaria | `AmTextAction` | Texto con target de 48 dp | Acciones contextuales y navegación auxiliar |
+| 4 — Destructiva | `AmDangerButton` / `AmDialog(destructive = true)` | Tono peligro + texto específico de consecuencia; confirmación si hay pérdida irreversible | Nunca compite con la primaria; el color nunca es la única señal (glifo o etiqueta específica) |
+
+Reglas derivadas verificadas en los flujos: etiquetas específicas de consecuencia en
+diálogos (nada de «Aceptar» genérico); acciones destructivas dentro del contenido del
+diálogo cuando la salida segura es el slot de descarte; descarte con confirmación solo
+cuando se pierde información no recuperable; etiquetas completas sin elipsis (los
+botones apilan a ancho disponible antes de comprimir texto).
+
 ### Nota sobre la hoja inferior
 
 El patrón de hoja para selectores (ActionSheet de la referencia) se evaluó con `ModalBottomSheet` de M3 y se retiró: la ventana de la hoja no despacha acciones semánticas bajo Robolectric (el contrato de pruebas UI de este repositorio), dejando el flujo S08 inverificable en el gate. Los selectores permanecen como `AmDialog` con lista desplazable. Reevaluar cuando el entorno lo soporte (ver ADR-0013/ADR-0014, riesgos).

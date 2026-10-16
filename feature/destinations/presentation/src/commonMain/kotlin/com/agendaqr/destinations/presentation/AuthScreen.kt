@@ -66,11 +66,13 @@ fun AuthScreen(
 }
 
 /**
- * Cuerpo de credenciales reutilizable (AuthScreen y AccountScreen). El
- * titular usa el rol headlineMedium y los campos sin borde llevan autofill de
- * credenciales. Composición simple sin tarjetas ni sombras: cabecera (título
- * + descripción a 4 dp) · campos (12 dp) · acción principal · enlace
- * secundario.
+ * Cuerpo de credenciales reutilizable (AuthScreen y AccountScreen).
+ *
+ * Jerarquía visual (referencia Ant Design Mobile — S10/Login):
+ * 1. Cabecera: título (SectionHeader) + descripción (Body secondary)
+ * 2. Formulario: etiqueta + campo + ayuda/validación agrupados
+ * 3. Error: banner con tono danger + acción de recuperación
+ * 4. Acciones: primaria (full-width) + secundaria (texto centrado)
  */
 @Composable
 internal fun AuthForm(
@@ -83,122 +85,118 @@ internal fun AuthForm(
     onSignUp: () -> Unit,
     onClearError: () -> Unit = {},
 ) {
-    // sobrevive a recreación.
     var submitted by rememberSaveable { mutableStateOf(false) }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
     val emailError = submitted && !isValidEmail(state.email)
     val passwordError = submitted && state.password.length < 6
-    // el botón NO se deshabilita por validación —
-    // se habilita mientras no se esté enviando y los errores se muestran
-    // AL ENVIAR (un botón gris no explica qué falta; el error sí).
+
     fun submit(target: () -> Unit) {
         submitted = true
         if (isValidEmail(state.email) && state.password.length >= 6) target()
     }
 
-    // Cabecera: título y descripción con jerarquía estrecha (4 dp). El
-    // titular es opcional: en Ajustes ya lo aporta la barra superior.
-    if (heading != null || description != null) {
-        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
-            heading?.let { AmText(it, size = AmType.Title, fontWeight = FontWeight.SemiBold) }
-            description?.let { AmText(it, size = AmType.Body, color = AmColor.TextSecondary) }
-        }
-    }
-    // Campos: grupo funcional (12 dp entre campos; la ayuda/error de
-    // cada campo se alinea a su texto editable en el DS).
     Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Md)) {
-        AmTextField(
-            label = AppStrings.Correo,
-            value = state.email,
-            onValueChange = onEmailChanged,
-            // imeAction Next: el flujo natural es saltar a la contraseña;
-            // sin mayúsculas automáticas ni autocorrección (es correo).
-            // El autofill llega por el keyboardType Email (iOS lo mapea a
-            // textContentType emailAddress; Android a los hints del IME).
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next,
-                capitalization = KeyboardCapitalization.None,
-                autoCorrect = false,
-            ),
-            isError = emailError,
-            errorMessage = if (emailError) AppStrings.IngresaUnCorreoValido else null,
-        )
-        AmTextField(
-            label = AppStrings.Contrasena,
-            value = state.password,
-            onValueChange = onPasswordChanged,
-            // Done envía el formulario (KeyboardActions); el error de
-            // validación aparece al intentar, no bloqueando antes. El
-            // autofill de contraseñas llega por el keyboardType Password.
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done,
-            ),
-            keyboardActions = KeyboardActions(onDone = { submit(onSignIn) }),
-            visualTransformation = if (passwordVisible) {
-                VisualTransformation.None
-            } else {
-                PasswordVisualTransformation()
-            },
-            isError = passwordError,
-            errorMessage = if (passwordError) AppStrings.Minimo6Caracteres else null,
-            helperMessage = if (!passwordError) AppStrings.Minimo6Caracteres else null,
-            trailing = {
-                // Uso de texto compacto como alternativa a iconos de ojo
-                // (Lucide 1.1.0 no incluye Eye/EyeOff). El botón mantiene
-                // área táctil de 48 dp y estilo de icono.
-                AmIconButton(
-                    contentDescription = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
-                    onClick = { passwordVisible = !passwordVisible },
-                ) {
-                    AmText(
-                        text = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
-                        size = AmType.Caption,
-                        fontWeight = FontWeight.Medium,
-                        color = AmColor.AccentText,
-                    )
+        // Cabecera: título y descripción con jerarquía estrecha (4 dp).
+        if (heading != null || description != null) {
+            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+                heading?.let {
+                    AmText(it, size = AmType.Headline, fontWeight = FontWeight.SemiBold)
                 }
-            },
-        )
-    }
-    state.errorMessage?.let { err ->
-        AmStatusBanner(
-            err.display(),
-            tone = AmTone.Danger,
-            actionLabel = err.action.label,
-            // REINTENTAR repite el mismo paso que falló.
-            onAction = when (state.errorFlow) {
-                ErrorFlow.SignIn -> onSignIn
-                ErrorFlow.SignUp -> onSignUp
-                else -> onClearError
-            },
-            onDismiss = onClearError,
-            dismissLabel = AppStrings.Descartar,
-        )
-    }
-    state.confirmationMessage?.let { AmStatusBanner(it, tone = AmTone.Info) }
-    // Acción principal a ancho completo; el enlace de crear cuenta es
-    // terciario y no compite por el peso visual.
-    Column(
-        verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        AmPrimaryButton(
-            AppStrings.IniciarSesion,
-            onClick = { submit(onSignIn) },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !state.isSubmitting,
-            isLoading = state.isSubmitting,
-            busyDescription = AppStrings.IniciandoSesion,
-        )
-        // el secundario NO muestra spinner (un solo indicador
-        // de ocupado por pantalla — el del primario).
-        AmTextAction(
-            label = AppStrings.CrearCuenta,
-            onClick = { submit(onSignUp) },
-            enabled = !state.isSubmitting,
-        )
+                description?.let {
+                    AmText(it, size = AmType.Body, color = AmColor.TextSecondary)
+                }
+            }
+        }
+
+        // Campos: grupo funcional con etiqueta + campo + ayuda/error.
+        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+            AmTextField(
+                label = AppStrings.Correo,
+                value = state.email,
+                onValueChange = onEmailChanged,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next,
+                    capitalization = KeyboardCapitalization.None,
+                    autoCorrect = false,
+                ),
+                isError = emailError,
+                errorMessage = if (emailError) AppStrings.IngresaUnCorreoValido else null,
+            )
+
+            AmTextField(
+                label = AppStrings.Contrasena,
+                value = state.password,
+                onValueChange = onPasswordChanged,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(onDone = { submit(onSignIn) }),
+                visualTransformation = if (passwordVisible) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
+                isError = passwordError,
+                errorMessage = if (passwordError) AppStrings.Minimo6Caracteres else null,
+                helperMessage = if (!passwordError) AppStrings.Minimo6Caracteres else null,
+                trailing = {
+                    AmIconButton(
+                        contentDescription = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
+                        onClick = { passwordVisible = !passwordVisible },
+                    ) {
+                        AmText(
+                            text = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
+                            size = AmType.Caption,
+                            fontWeight = FontWeight.Medium,
+                            color = AmColor.AccentText,
+                        )
+                    }
+                },
+            )
+        }
+
+        // Error: banner con acción de recuperación.
+        state.errorMessage?.let { err ->
+            AmStatusBanner(
+                err.display(),
+                tone = AmTone.Danger,
+                actionLabel = err.action.label,
+                onAction = when (state.errorFlow) {
+                    ErrorFlow.SignIn -> onSignIn
+                    ErrorFlow.SignUp -> onSignUp
+                    else -> onClearError
+                },
+                onDismiss = onClearError,
+                dismissLabel = AppStrings.Descartar,
+            )
+        }
+
+        // Confirmación (registro exitoso).
+        state.confirmationMessage?.let {
+            AmStatusBanner(it, tone = AmTone.Info)
+        }
+
+        // Acciones: primaria full-width + secundaria centrada.
+        Column(
+            verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            AmPrimaryButton(
+                AppStrings.IniciarSesion,
+                onClick = { submit(onSignIn) },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !state.isSubmitting,
+                isLoading = state.isSubmitting,
+                busyDescription = AppStrings.IniciandoSesion,
+            )
+            AmTextAction(
+                label = AppStrings.CrearCuenta,
+                onClick = { submit(onSignUp) },
+                enabled = !state.isSubmitting,
+            )
+        }
     }
 }
 

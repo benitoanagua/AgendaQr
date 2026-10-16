@@ -135,25 +135,23 @@ fun DestinationsScreen(
                 modifier = Modifier.fillMaxWidth().padding(AmSpacing.Md),
                 verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                    AmSecondaryButton(
-                        label = AppStrings.EscanearQr,
-                        onClick = onScanQr,
-                        icon = AmIcons.ScanLine,
-                        solid = true,
-                        // Ancho repartido por `weight`: en pantallas estrechas
-                        // los botones encogen en lugar de desbordar la tarjeta
-                        // (sin mínimos fijos que fuercen overflow).
-                        modifier = Modifier.weight(1f),
-                    )
-                    AmSecondaryButton(
-                        label = AppStrings.ImportarImagen,
-                        onClick = onScanQr,
-                        icon = AmIcons.Gallery,
-                        solid = true,
-                        modifier = Modifier.weight(1f),
-                    )
-                }
+            // Jerarquía: escanear es la acción insignia del producto
+            // (variante sólida); importar es su alternativa tonal.
+            // Apiladas a ancho completo: las etiquetas completas caben sin
+            // elipsis (la fila comprimía «Importar imagen» en 360 dp).
+            AmSecondaryButton(
+                label = AppStrings.EscanearQr,
+                onClick = onScanQr,
+                icon = AmIcons.ScanLine,
+                solid = true,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            AmSecondaryButton(
+                label = AppStrings.ImportarImagen,
+                onClick = onScanQr,
+                icon = AmIcons.Gallery,
+                modifier = Modifier.fillMaxWidth(),
+            )
             }
         }
 

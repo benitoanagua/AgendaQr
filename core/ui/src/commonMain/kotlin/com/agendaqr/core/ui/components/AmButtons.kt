@@ -138,7 +138,12 @@ internal fun AmLoadingButton(
     }
 }
 
-/** Botón principal: la acción primaria de la pantalla. */
+/** Nivel 1 — Acción primaria.
+ *  Acción principal claramente identificable por sección o contexto.
+ *  Utilizada para completar el objetivo más importante del usuario en ese estado.
+ *  Tratamiento visual destacado y etiqueta específica (uso obligatorio de AmColor.Accent).
+ *  Siempre debe haber exactamente una acción primaria por sección/contexto cuando el objetivo del producto lo requiera.
+ */
 @Composable
 fun AmPrimaryButton(
     label: String,
@@ -167,7 +172,15 @@ fun AmPrimaryButton(
     )
 }
 
-/** Acción destructiva (eliminar QR/actividad/comprobante). */
+/**
+ * Nivel 4 — Acción destructiva o excepcional.
+ * Descartar, eliminar o realizar una operación con consecuencias especiales.
+ * NO debe competir visualmente con la acción primaria: su color propio
+ * (AmColor.Danger) y su texto específico la diferencian semánticamente
+ * (el color nunca es la única señal).
+ * Requiere confirmación cuando la acción pueda provocar una pérdida
+ * irreversible de información (AmDialog destructive = true).
+ */
 @Composable
 fun AmDangerButton(
     label: String,
@@ -193,12 +206,15 @@ fun AmDangerButton(
 }
 
 /**
- * Botón secundario compacto (fill tonal de la referencia Stitch): visual
- * de 40 dp sobre zona interactiva de 48 dp — la superficie visible es
- * menor que el target (mandato de compactación). Tonal: tarjeta con
- * hairline y texto primario; [solid] lo convierte en bloque de acento
- * (acción rápida principal de una fila/grid, p. ej. "Escanear QR").
- * El texto nunca se parte en varias líneas: usa elipsis si no cabe.
+ * Nivel 2 — Acción secundaria.
+ * Alternativa importante, pero no la acción principal.
+ * Tratamiento menos dominante: variante tonal con background SurfaceContainerLow
+ * y border Divider (hairline) para diferenciarla visualmente de la primaria.
+ * Área táctil mínima de 48 dp aunque la superficie visible sea 40 dp (mandato de compactación):
+ * la zona interactiva completa es 48 dp, la superficie mostrada puede ser menor.
+ * Nunca compite visualmente con la acción primaria.
+ * Ideal para: acciones alternativas, navegación auxiliar, compartir, editar.
+ * Debe haber como máximo una acción secundaria destacada por contexto.
  */
 @Composable
 fun AmSecondaryButton(
@@ -321,7 +337,10 @@ fun AmCompactAction(
 }
 
 /**
- * Acción de texto (terciaria): `TextButton` con área táctil de 48 dp.
+ * Nivel 3 — Acción terciaria.
+ * Alternativas contextuales, navegación auxiliar y acciones de menor prioridad.
+ * Acción de texto: `TextButton` con área táctil de 48 dp — la etiqueta
+ * completa mantiene su target accesible sin peso visual de botón.
  * [color] lo anula el llamador cuando la acción vive sobre un fondo
  * donde el acento no cumple 4.5:1 (p. ej. dentro de un banner de tono,
  * que hereda el color de contenido del tono — par garantizado).

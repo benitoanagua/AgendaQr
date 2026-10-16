@@ -56,7 +56,14 @@ comportamiento UX congelado.
 - separar reconocidos, duplicados y pendientes;
 - guardar reconocidos aunque existan pendientes;
 - fallo parcial de un elemento;
-- revisión posterior de pendientes.
+- revisión posterior de pendientes;
+- error all-failed: todos los candidatos fallan → estado Saved (no Error);
+- partial save: guardado parcial con reintentos;
+- retry after error: reintento tras fallo;
+- after successful retry: estado tras reintento exitoso;
+- multiple issues: múltiples problemas en el lote;
+- small viewport: importación en viewport reducido;
+- login error: error de autenticación durante importación.
 
 ### Offline / sincronización
 
@@ -308,7 +315,7 @@ evalúa en configuración).
 | Contraste y esquema | `AmSchemeTest`, `AmContrastPairsTest`, `AmAccentTest` | umbrales y pares fijados |
 | Tipografía y layout | `AmTypographyTest`, `AmPivotLayoutTest`, `AmUiPolishContractTest` | roles, interlineado, escalado de fuente |
 | Accesibilidad de componentes | `AmAccessibilityContractTest`, `ScreensA11yCoverageTest` | semántica, roles, targets |
-| Regresión visual | `recordRoborazzi` → `recordVisualHashes` / `verifyVisualHashes` | 64 capturas (32 escenarios × claro/oscuro, incl. tablet w720dp con NavigationRail y textos largos) por SHA-256 (ADR-0007, sensible al entorno) |
+| Regresión visual | `recordRoborazzi` → `recordVisualHashes` / `verifyVisualHashes` | 80 capturas (40 escenarios × claro/oscuro, incl. tablet w720dp con NavigationRail y textos largos) por SHA-256 (ADR-0007, sensible al entorno) |
 | Arranque local-first y PIN | `:feature:destinations:presentation:testDebugUnitTest --tests "*AgendaQrLocalStartupTest"` | arranque real sin cuenta, perfil local, desbloqueo |
 | Máquina de estados del acceso local | `--tests "*LocalAccessGateTest"` | configurar → desbloquear → bloquear, saneado, intentos, bloqueo temporal |
 | Biometría (atajo fail-closed) + demo | `--tests "*LocalAccessBiometricTest" --tests "*DemoDataTest" --tests "*DemoSeederTest"` | éxito biométrico desbloquea, fallo conserva bloqueo + fallback PIN; dataset demo determinista, siembra idempotente y aislada |
@@ -321,6 +328,88 @@ evalúa en configuración).
 | Compilación iOS | `:core:ui:compileKotlinIosSimulatorArm64 :feature:destinations:presentation:compileKotlinIosSimulatorArm64` | compila (runtime requiere Xcode) |
 | Lint Android | `:androidApp:lint` | sin problemas nuevos |
 | Supabase acceptance | `DATABASE_URL=jdbc:postgresql://... ./gradlew :supabase:acceptance:test` | RLS, aislamiento entre usuarios, migraciones |
+
+### Detalle: regresión de importación con fallos parciales
+
+**Causa raíz del bug.** `SaveImportBatchUseCase` capturaba todas las excepciones
+internamente sin propagarlas. Cuando todos los candidatos fallaban, el caso de uso
+devolvía un estado `Saved` en lugar de `Error`, lo que impedía al usuario
+detectar que la importación había fallado por completo.
+
+**Corrección.** El caso de uso ahora propaga los fallos mediante
+`ImportBatchSaveResult.failed`, permitiendo que la capa de presentación distinga
+entre guardado parcial (algunos elementos guardados, otros pendientes) y fallo
+total (ningún elemento guardado → estado `Error` con opción de reintento).
+
+**Semántica de fallos parciales:**
+
+- `ImportBatchSaveResult.saved` — todos los elementos se guardaron correctamente.
+- `ImportBatchSaveResult.partial` — algunos elementos se guardaron; otros
+  quedan pendientes de revisión.
+- `ImportBatchSaveResult.failed` — ningún elemento se guardado; se muestra el
+  estado `Error` con opción de reintento.
+
+**Escenarios de regresión cubiertos por `ImportFlowRegressionTest`:**
+
+- **error all-failed:** todos los candidatos fallan → estado `Error` (no `Saved`).
+- **partial save:** guardado parcial con elementos pendientes.
+- **retry after error:** reintento tras un fallo total.
+- **after successful retry:** estado correcto tras un reintento exitoso.
+- **multiple issues:** múltiples problemas simultáneos en el lote.
+- **small viewport:** importación en viewport reducido (layout adaptado).
+- **login error:** error de autenticación durante la importación.
+
+### Detalle: regresión visual (Roborazzi)
+
+**Procedimiento de generación y verificación de hashes:**
+
+1. **Generación:** `./gradlew recordRoborazzi` ejecuta los escenarios en
+   Robolectric y genera las capturas PNG en
+   `feature/destinations/presentation/build/roborazzi/`.
+2. **Hash:** `recordVisualHashes` calcula el SHA-256 de cada captura y lo
+   almacena en el manifiesto.
+3. **Verificación:** `verifyVisualHashes` compara el SHA-256 de cada captura
+   actual contra el manifiesto. Cualquier diferencia indica un cambio visual
+   no esperado.
+
+**Sensibilidad al entorno:** el hash es sensible al JDK/OS (ADR-0007). La
+verificación debe ejecutarse en el mismo entorno que generó el manifiesto, o
+regenerar el manifiesto con `recordVisualHashes` antes de comparar.
+
+### Detalle: jerarquía de acciones (4 niveles)
+
+El sistema de diseño define una jerarquía semántica de acciones documentada en
+la javadoc de `AmButtons.kt` y verificable por composición:
+
+| Nivel | Componente | Tratamiento | Uso |
+|---|---|---|---|
+| 1 — Primaria | `AmPrimaryButton` / `AmBottomAction` | Relleno de acento (`AmColor.Accent`) | El objetivo principal del usuario por sección; como máximo una por contexto |
+| 2 — Secundaria | `AmSecondaryButton` | Tonal (`SurfaceContainerLow` + hairline `Divider`); variante `solid` para la acción insignia de una tarjeta | Alternativas importantes que no compiten con la primaria |
+| 3 — Terciaria | `AmTextAction` | Texto con área táctil de 48 dp | Acciones contextuales y navegación auxiliar |
+| 4 — Destructiva | `AmDangerButton` / `AmDialog(destructive = true)` | Tono peligro + texto específico; confirmación cuando hay pérdida irreversible | Descartar/eliminar; nunca compite visualmente con la primaria |
+
+**Reglas aplicadas en los flujos:**
+
+- En pantalla de lectura/búsqueda no se fuerza acción primaria (S04, S06).
+- Importación S12 — tarjeta de duplicado: primaria contextual «Ver existente»
+  (acento), secundaria «Guardar de todos modos» (tono secundario), terciaria
+  «Descartar» (tono terciario). Tarjeta sin clasificar: primaria «Reintentar
+  clasificación»; «Descartar» pide confirmación porque pierde el contenido
+  retenido (no recuperable en el flujo); sobre duplicados el descarte es
+  directo (el original existe).
+- El botón global «Guardar reconocidos» vive fijo abajo y se separa de las
+  acciones por elemento; en estado de error su etiqueta pasa a «Reintentar
+  guardado».
+- Inicio S01: «Escanear QR» (sólida) sobre «Importar imagen» (tonal), apiladas
+  a etiqueta completa; la FAB «Añadir destino» conserva el rol de acción
+  flotante de plataforma.
+- Selector de contexto S08: «Quitar contexto» sale del slot de salida del
+  diálogo y vive en el contenido como acción destructiva (peligro + glifo);
+  «Cancelar» es la única salida.
+- Cobertura: `ActionHierarchyTest` (jerarquía por tipo de incidencia,
+  confirmación de descarte, cancelación conservadora, sin acciones
+  incompatibles con el estado) + `ScreensA11yCoverageTest` (estados legibles
+  como texto) + gates del design system.
 
 Pruebas de módulos:
 

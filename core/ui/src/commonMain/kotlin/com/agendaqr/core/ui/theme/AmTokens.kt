@@ -258,6 +258,14 @@ object AmColor {
     val Success: Color @Composable get() = LocalAmColorScheme.current.success
     /** Bloque tonal de éxito (fondos de identidad de cobro, etiquetas). */
     val SuccessContainer: Color @Composable get() = LocalAmColorScheme.current.successContainer
+    /** Texto/ icono de advertencia (≥ 4.5:1 sobre fondos claros). */
+    val Warning: Color @Composable get() = LocalAmColorScheme.current.warning
+    /** Bloque tonal de advertencia (fondos de advertencia, etiquetas). */
+    val WarningContainer: Color @Composable get() = LocalAmColorScheme.current.warningContainer
+    /** Texto/ icono informativo (≥ 4.5:1 sobre fondos claros). */
+    val Info: Color @Composable get() = LocalAmColorScheme.current.info
+    /** Bloque tonal informativo (fondos de información, etiquetas). */
+    val InfoContainer: Color @Composable get() = LocalAmColorScheme.current.infoContainer
     /** Bloque tonal neutro profundo (etiquetas sobre fondo, ambos temas). */
     val SurfaceContainerHighest: Color @Composable get() = LocalAmColorScheme.current.surfaceContainerHighest
     /** Pista del control segmentado y chips de reposo (referencia Stitch). */

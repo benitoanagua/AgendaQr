@@ -172,7 +172,9 @@ internal object AppStrings {
     val GuardarTodo = "Guardar todo"
     val VerMas = "Ver más"
     val Reconocidos = "Reconocidos"
+    val Reconocido = "Reconocido"
     val PosiblesDuplicados = "Posibles duplicados"
+    val PosibleDuplicado = "Posible duplicado"
     val PendientesDeRevision = "Pendientes de revisión"
     val CrearContexto = "Crear contexto"
     val Crear = "Crear"
@@ -195,6 +197,13 @@ internal object AppStrings {
     val SincronizacionCompletada = "Sincronización completada"
     val Eliminado = "Eliminado"
     val GuardadoOk = "Guardado"
+    val guardadoParcial = "Guardado parcialmente"
+    val noSeGuardóNada = "No se pudo guardar ningún elemento"
+    val reintentarGuardado = "Reintentar guardado"
+    /** Confirmación de descarte de un pendiente SIN clasificar (pérdida de contenido retenido). */
+    val descartarElementoWarning = "Este elemento no se ha guardado. Al descartarlo perderás su contenido y tendrás que importarlo de nuevo."
+    /** Etiqueta específica de la confirmación (difiere de la acción de fila «Descartar»). */
+    val descartarElementoConfirmar = "Descartar elemento"
     val Minimo6Caracteres = "Mínimo 6 caracteres"
     /** Mostrar/ocultar contraseña (descripción accesible del botón). */
     val Mostrar = "Mostrar"

@@ -27,6 +27,18 @@ internal fun counterLabel(singular: String, plural: String, count: Int): String 
 internal fun reviewPendingLabel(pendingCount: Int): String =
     "Revisar " + pendingCount + " " + spanishPlural("pendiente", pendingCount)
 
+/** "N Reconocido(s)" — píldora del resumen S12 (copy en AppStrings). */
+internal fun recognizedCountLabel(count: Int): String =
+    count.toString() + " " + counterLabel(AppStrings.Reconocido, AppStrings.Reconocidos, count)
+
+/** "N Posible(s) duplicado(s)" — píldora del resumen S12. */
+internal fun duplicatesCountLabel(count: Int): String =
+    count.toString() + " " + counterLabel(AppStrings.PosibleDuplicado, AppStrings.PosiblesDuplicados, count)
+
+/** "N Pendiente(s) de revisión" — píldora del resumen S12. */
+internal fun pendingReviewCountLabel(count: Int): String =
+    count.toString() + " " + spanishPlural("Pendiente", count) + " de revisión"
+
 /** "Comprobante(s) sin asociar: N" — bandeja de respaldos. */
 internal fun unassociatedReceiptsLabel(count: Int): String =
     counterLabel("Comprobante sin asociar", "Comprobantes sin asociar", count) + ": " + count

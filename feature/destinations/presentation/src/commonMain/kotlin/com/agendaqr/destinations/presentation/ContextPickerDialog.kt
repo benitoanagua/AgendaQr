@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AmDialog
 import com.agendaqr.core.ui.components.AmDialogList
+import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmListRow
 import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmText
@@ -130,12 +131,13 @@ internal fun ContextPickerDialog(
         ContextPickerStep.List -> AmDialog(
             title = AppStrings.SeleccionarContexto,
             confirmLabel = AppStrings.Cancelar,
-            // La acción principal es elegir de la lista; Cancelar y
-            // Quitar contexto son salidas secundarias.
+            // La acción principal es elegir de la lista; Cancelar es la
+            // única salida del diálogo (texto, salida segura). Sin botón
+            // de descarte en la barra: "Quitar contexto" vive como acción
+            // destructiva dentro del contenido.
             confirmAsText = true,
             onConfirm = onCancel,
-            dismissLabel = if (selection.canRemove) AppStrings.QuitarContexto else null,
-            onDismiss = onRemove,
+            onDismiss = onCancel,
             // Back del sistema / toque fuera: cancelar, nunca quitar la
             // selección por accidente.
             onDismissRequest = onCancel,
@@ -173,6 +175,20 @@ internal fun ContextPickerDialog(
                                 showDivider = index < contexts.lastIndex,
                             )
                         }
+                    }
+                    // Nivel 4 — acción destructiva del diálogo: quitar la
+                    // selección. Vive en el CONTENIDO (no en el slot de
+                    // salida del diálogo) para no competir con "Cancelar"
+                    // y diferenciarse semánticamente: glifo de advertencia
+                    // + texto en tono peligro (el color nunca es la única
+                    // señal). Solo cuando hay selección que quitar.
+                    if (selection.canRemove) {
+                        AmTextAction(
+                            label = AppStrings.QuitarContexto,
+                            onClick = onRemove,
+                            color = AmColor.Danger,
+                            icon = AmIcons.Erase,
+                        )
                     }
                 }
             },

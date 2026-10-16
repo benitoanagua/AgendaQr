@@ -18,6 +18,8 @@ data class ImportBatchSaveResult(
     val savedQr: Int,
     val savedComprobantes: Int,
     val skipped: Int,
+    /** Candidatos que fallaron y pueden reintentarse (su payload se conserva). */
+    val failed: List<ImportCandidate>,
 )
 
 class SaveImportBatchUseCase(
@@ -30,6 +32,7 @@ class SaveImportBatchUseCase(
         var savedQr = 0
         var savedComprobantes = 0
         var skipped = 0
+        val failed = mutableListOf<ImportCandidate>()
 
         batch.uniqueRecognized.forEach { candidate ->
             try {
@@ -99,6 +102,7 @@ class SaveImportBatchUseCase(
                 // One failed candidate must not prevent independent candidates
                 // from being persisted. Keep its payload so the candidate can
                 // be retried after the underlying failure is fixed.
+                failed += candidate
                 skipped++
             }
         }
@@ -108,6 +112,6 @@ class SaveImportBatchUseCase(
         // payload intact; they are reported as skipped.
         skipped += batch.pendingReview.size
 
-        return ImportBatchSaveResult(savedQr, savedComprobantes, skipped)
+        return ImportBatchSaveResult(savedQr, savedComprobantes, skipped, failed)
     }
 }

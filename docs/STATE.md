@@ -27,11 +27,16 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Predictive back (PredictiveBackHandler con progreso) | compilación 3 targets |
 | Búsqueda global (S04/S05) | Robolectric suite |
 | Importación QR (Photo Picker Android/PHPicker iOS, cámara, share Android, PDF: OpenDocument Android/UIDocumentPicker iOS —runtime iOS en §2) | unit + compilación de instrumentados |
+| Importación con corrección de fallos parciales y reintentos (bug fix: todos los candidatos fallaban → estado Saved en lugar de Error) | `ImportFlowRegressionTest` (error all-failed, partial save, retry after error, after successful retry, multiple issues, small viewport, login error) |
+| Jerarquía de acciones de 4 niveles documentada en `Am*` (primaria/secundaria/terciaria/destructiva) y aplicada en los flujos | javadoc de `AmButtons.kt` + `ActionHierarchyTest` (confirmación de descarte, jerarquía por tipo de incidencia, sin acciones incompatibles con el estado) + gate del design system |
+| Descarte de pendientes SIN clasificar con confirmación (pérdida de contenido retenido); duplicados sin confirmación (el original existe) | `ActionHierarchyTest.unknown_card_offers_retry_as_main_action_and_discard_with_confirmation` + `.duplicate_card_offers_view_existing_as_main_and_saves_anyway_as_secondary` |
+| «Quitar contexto» como acción destructiva explícita (peligro + glifo) dentro del selector; «Cancelar» única salida del diálogo | `ContextPickerDialogTest` + gate |
 | Registro de actividad (S07) | Robolectric suite |
 | Permisos de cámara (política de ajustes) | unit + compilación de instrumentados |
 | Navegación (back stack restaurable + NavigationBar 4 destinos) | commonTest + `RootNavigationChromeTest` |
 | Accesibilidad (contraste, foco visible, háptica, anuncios, targets 48dp) | `core:ui` tests + Robolectric |
 | Iconografía (Lucide ISC vía AmIcon) | compilación 2 targets + gate |
+| Tokens de color Warning e Info añadidos a AmColor | gate del design system |
 | Feedback transitorio (Snackbar) y persistente (AppStatusHost) | `RootNavigationChromeTest` + `AppStatusHostTest` |
 
 ## 2. Implementado pero NO VERIFICADO en este entorno
@@ -45,7 +50,8 @@ No se declaran PASS. Requieren Xcode, dispositivo físico o red.
 | Insets/notch, cámara, foco nativo y motion en dispositivo | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Predictive back en Android 14+ (gesto real con progreso) | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Photo Picker en dispositivo (contratos del sistema) | Robolectric ejecuta el flujo unitario; el picker visual requiere dispositivo | [QUALITY.md](QUALITY.md) §5 |
-| Revisión visual de las capturas Roborazzi regeneradas | El hash PASS es determinista y el análisis de bandas/regiones es programático; el ojo humano valida la composición | abrir `feature/destinations/presentation/build/roborazzi/*.png` (64 capturas: 32 escenarios × claro/oscuro) |
+| Revisión visual de las capturas Roborazzi regeneradas | El hash PASS es determinista y el análisis de bandas/regiones es programático; el ojo humano valida la composición | abrir `feature/destinations/presentation/build/roborazzi/*.png` (80 capturas: 40 escenarios × claro/oscuro) |
+| Validación de los nuevos escenarios de importación (corrección de fallos parciales y reintentos) | El bug fix está implementado y cubierto por tests unitarios (`ImportFlowRegressionTest`), pero la validación visual de los nuevos escenarios en el dispositivo no se ha realizado | revisión manual de los flujos de importación con fallos parciales en dispositivo |
 | Supabase acceptance (JDBC) | Requiere base de datos | `:supabase:acceptance:test` con `DATABASE_URL` |
 | Sincronización real contra Supabase (subida/bajada) | Requiere backend y cuenta reales | prueba de aceptación contra un proyecto Supabase |
 | Prompt biométrico en dispositivo | Código implementado (`BiometricPrompt` con host `FragmentActivity` en Android, `LocalAuthentication`/`LAContext` en iOS); el mapeo de errores y la invariante fail-closed están probados en JVM, pero el prompt sobre hardware real no puede ejecutarse aquí | abrir la app con PIN configurado en dispositivo con biometría inscrita: éxito desbloquea; fallo/cancelación mantiene el bloqueo con el PIN visible |

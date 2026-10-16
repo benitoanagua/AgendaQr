@@ -23,6 +23,9 @@ import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmStatusBanner
+import com.agendaqr.core.ui.components.AmStatusPill
+import com.agendaqr.core.ui.components.AmIcon
+import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTextAction
 import com.agendaqr.core.ui.components.AmLoading
@@ -91,7 +94,7 @@ fun ImportBatchScreen(
         bottomAction = if (currentBatch?.canSaveRecognized() == true) {
             {
                 AmBottomAction(
-                    label = AppStrings.GuardarReconocidos,
+                    label = if (state is ImportBatchUiState.Error) AppStrings.reintentarGuardado else AppStrings.GuardarReconocidos,
                     onClick = { onAction(ImportBatchAction.SaveRecognized) },
                     enabled = state !is ImportBatchUiState.Saving,
                     isLoading = state is ImportBatchUiState.Saving,
@@ -117,7 +120,22 @@ fun ImportBatchScreen(
                 BatchResultContent(state.batch, onAction, isSaving = true)
             }
             is ImportBatchUiState.Saved -> {
-                AmStatusBanner(AppStrings.batchSavedKeepReviewNotice, tone = AmTone.Success)
+                // Resumen de guardado: qué se guardó y qué queda pendiente.
+                AmStatusBanner(
+                    AppStrings.batchSavedKeepReviewNotice,
+                    tone = AmTone.Success,
+                )
+                state.batch.let { batch ->
+                    if (batch.pendingItems().isNotEmpty()) {
+                        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                            AmStatusPill(
+                                text = pendingReviewCountLabel(batch.pendingItems().size),
+                                icon = AmIcons.Warning,
+                                tone = AmTone.Warning,
+                            )
+                        }
+                    }
+                }
             }
             is ImportBatchUiState.Error -> {
                 AmStatusBanner(
@@ -151,18 +169,43 @@ fun ImportBatchScreen(
     }
 }
 
+/**
+ * Resumen de importación con jerarquía clara:
+ * 1. Reconocidos (listos para guardar) — tono de éxito
+ * 2. Posibles duplicados — tono de advertencia
+ * 3. Pendientes de revisión — tono neutro
+ */
 @Composable
 private fun BatchResultContent(
     batch: ImportBatch,
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
 ) {
-    // Resumen de recuentos como bloque (4 dp entre líneas); la acción de
-    // revisión vive separada como grupo propio (12 dp del scaffold).
-    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
-        AmText(AppStrings.checkMark + AppStrings.Reconocidos + ": " + batch.uniqueRecognized.size, color = AmColor.TextPrimary)
-        AmText(AppStrings.dupMark + AppStrings.PosiblesDuplicados + ": " + batch.duplicates.size, color = AmColor.TextSecondary)
-        AmText(AppStrings.pendingMark + AppStrings.PendientesDeRevision + ": " + batch.unknown.size, color = AmColor.TextSecondary)
+    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+        // Reconocidos: el resultado principal — mayor prominencia visual
+        if (batch.uniqueRecognized.isNotEmpty()) {
+            AmStatusPill(
+                text = recognizedCountLabel(batch.uniqueRecognized.size),
+                icon = AmIcons.CircleCheck,
+                tone = AmTone.Success,
+            )
+        }
+        // Duplicados: advertencia visual
+        if (batch.duplicates.isNotEmpty()) {
+            AmStatusPill(
+                text = duplicatesCountLabel(batch.duplicates.size),
+                icon = AmIcons.Warning,
+                tone = AmTone.Warning,
+            )
+        }
+        // Pendientes: información secundaria
+        if (batch.unknown.isNotEmpty()) {
+            AmStatusPill(
+                text = pendingReviewCountLabel(batch.unknown.size),
+                icon = AmIcons.Info,
+                tone = AmTone.Neutral,
+            )
+        }
     }
 
     // Contrato S12: "Revisar N pendientes" como acción secundaria; "Guardar
@@ -172,6 +215,10 @@ private fun BatchResultContent(
     }
 }
 
+/**
+ * Revisión de pendientes: cada elemento como unidad visual reconocible
+ * con acciones diferenciadas (principal vs secundarias).
+ */
 @Composable
 private fun BatchReviewContent(
     batch: ImportBatch,
@@ -188,6 +235,12 @@ private fun BatchReviewContent(
     }
 }
 
+/**
+ * Tarjeta de pendiente con jerarquía de acciones:
+ * - Principal: "Reintentar clasificación" (para desconocidos) o "Ver existente" (para duplicados)
+ * - Secundaria: "Guardar de todos modos" (solo duplicados)
+ * - Terciaria: "Descartar"
+ */
 @Composable
 private fun PendingItemCard(
     candidate: ImportCandidate,
@@ -196,9 +249,11 @@ private fun PendingItemCard(
     isSaving: Boolean,
 ) {
     val isDuplicate = batch.duplicates.any { it.id == candidate.id }
-    // §12 V1.4: pendiente como tarjeta independiente (fila ListItem sobre
-    // cuerpo de lista); las acciones de fila bajo el contenido (etiquetas
-    // largas).
+    // El descarte de un elemento SIN clasificar pierde su contenido
+    // retenido (no recuperable dentro del flujo: habría que re-importar),
+    // así que pide confirmación; el de un duplicado no pierde nada (el
+    // original existe) y se ejecuta directo.
+    var showDiscardConfirm by remember(candidate.id) { mutableStateOf(false) }
     com.agendaqr.core.ui.components.AmListBody {
         AmListRow(
             title = pendingItemName(candidate),
@@ -207,25 +262,80 @@ private fun PendingItemCard(
                 candidate.kind == ImportKind.DESCONOCIDO -> AppStrings.elementoSinClasificar
                 else -> AppStrings.elementoPendienteRevision
             },
-            meta = {
-                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                    when {
-                        isDuplicate -> Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                            AmTextAction(label = AppStrings.VerExistente, onClick = { onAction(ImportBatchAction.ViewExisting(candidate.id)) })
-                            AmTextAction(label = AppStrings.GuardarDeTodosModos, onClick = { onAction(ImportBatchAction.SaveDuplicateAnyway(candidate.id)) })
-                        }
-                        else -> Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                            AmTextAction(label = AppStrings.ReintentarClasificacion, onClick = { onAction(ImportBatchAction.RetryCandidate(candidate.id)) })
-                        }
-                    }
-                    // El descarte siempre está disponible: abandona la intención
-                    // con este elemento y libera su payload temporal.
-                    AmTextAction(
-                        label = AppStrings.Descartar,
-                        onClick = { onAction(ImportBatchAction.DiscardCandidate(candidate.id)) },
+            leading = {
+                // Icono de estado que diferencia visualmente el tipo de incidencia
+                if (isDuplicate) {
+                    AmIcon(
+                        imageVector = AmIcons.Warning,
+                        contentDescription = null,
+                        tint = com.agendaqr.core.ui.theme.AmColor.Warning,
+                    )
+                } else {
+                    AmIcon(
+                        imageVector = AmIcons.Info,
+                        contentDescription = null,
+                        tint = com.agendaqr.core.ui.theme.AmColor.Info,
                     )
                 }
             },
+            meta = {
+                // Pila de acciones compacta (4 dp entre targets de 48 dp):
+                // jerarquía visible sin aire excesivo.
+                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+                    // Acción principal: reintentar o ver existente
+                    when {
+                        isDuplicate -> {
+                            AmTextAction(
+                                label = AppStrings.VerExistente,
+                                onClick = { onAction(ImportBatchAction.ViewExisting(candidate.id)) },
+                                color = AmColor.AccentText,
+                            )
+                            // Secundaria: guardar de todos modos (con advertencia implícita)
+                            AmTextAction(
+                                label = AppStrings.GuardarDeTodosModos,
+                                onClick = { onAction(ImportBatchAction.SaveDuplicateAnyway(candidate.id)) },
+                                color = AmColor.TextSecondary,
+                            )
+                        }
+                        else -> {
+                            AmTextAction(
+                                label = AppStrings.ReintentarClasificacion,
+                                onClick = { onAction(ImportBatchAction.RetryCandidate(candidate.id)) },
+                                color = AmColor.AccentText,
+                            )
+                        }
+                    }
+                    // Terciaria: descartar (siempre disponible, menor prominencia).
+                    // Con confirmación solo cuando el descarte pierde contenido.
+                    AmTextAction(
+                        label = AppStrings.Descartar,
+                        onClick = {
+                            if (isDuplicate) {
+                                onAction(ImportBatchAction.DiscardCandidate(candidate.id))
+                            } else {
+                                showDiscardConfirm = true
+                            }
+                        },
+                        color = AmColor.TextTertiary,
+                    )
+                }
+            },
+        )
+    }
+    if (showDiscardConfirm) {
+        AmDialog(
+            title = AppStrings.Descartar,
+            message = AppStrings.descartarElementoWarning,
+            // Etiqueta específica (no "Descartar" genérico): nombra la
+            // consecuencia exacta y desambigua frente a la acción de fila.
+            confirmLabel = AppStrings.descartarElementoConfirmar,
+            destructive = true,
+            onConfirm = {
+                showDiscardConfirm = false
+                onAction(ImportBatchAction.DiscardCandidate(candidate.id))
+            },
+            dismissLabel = AppStrings.Cancelar,
+            onDismiss = { showDiscardConfirm = false },
         )
     }
 }
