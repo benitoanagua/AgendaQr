@@ -17,7 +17,7 @@
 | Documento | Contenido |
 |---|---|
 | [`04-ux/01-flujos-confirmados.md`](04-ux/01-flujos-confirmados.md) | Flujos confirmados |
-| [`04-ux/02-especificacion-ux-ui-v1.md`](04-ux/02-especificacion-ux-ui-v1.md) | Especificación UX/UI V1.6 (congelada) |
+| [`04-ux/02-especificacion-ux-ui-v1.md`](04-ux/02-especificacion-ux-ui-v1.md) | Especificación UX/UI V1.7 (congelada) |
 | [`04-ux/04-capacidades-y-comportamientos.md`](04-ux/04-capacidades-y-comportamientos.md) | Capacidades y comportamientos |
 | [`04-ux/05-guia-de-voz.md`](04-ux/05-guia-de-voz.md) | Guía de voz (tuteo) |
 
@@ -45,9 +45,10 @@
 | [`07-decisiones/ADR-0011-contrato-visual-xauxa.md`](07-decisiones/ADR-0011-contrato-visual-xauxa.md) | ADR histórico sustituido: Xauxa |
 | [`07-decisiones/ADR-0012-ui-convencional-material3.md`](07-decisiones/ADR-0012-ui-convencional-material3.md) | ADR histórico; autoría visual sustituida por ADR-0013 |
 | [`07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md`](07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md) | ADR histórico; autoría visual sustituida por ADR-0014 |
-| [`07-decisiones/ADR-0014-referencia-ant-design-mobile.md`](07-decisiones/ADR-0014-referencia-ant-design-mobile.md) | ADR: referencia Ant Design Mobile + navegación Android/iOS |
-| [`07-decisiones/ADR-0015-referencia-stitch-jerarquia-financiera.md`](07-decisiones/ADR-0015-referencia-stitch-jerarquia-financiera.md) | ADR: patrones financieros de la referencia Stitch (segmentado, tags tonales, hero QR); paleta e Inter no adoptadas |
+| [`07-decisiones/ADR-0014-referencia-ant-design-mobile.md`](07-decisiones/ADR-0014-referencia-ant-design-mobile.md) | ADR: referencia Ant Design Mobile + navegación Android/iOS (enmendada por ADR-0017) |
+| [`07-decisiones/ADR-0015-referencia-stitch-jerarquia-financiera.md`](07-decisiones/ADR-0015-referencia-stitch-jerarquia-financiera.md) | ADR: patrones financieros de la referencia Stitch (segmentado, tags tonales, hero QR); paleta e Inter no adoptadas (acotada por ADR-0017) |
 | [`07-decisiones/ADR-0016-identidad-local-sin-cuenta.md`](07-decisiones/ADR-0016-identidad-local-sin-cuenta.md) | ADR: identidad local sin cuenta, login no obligatorio, namespace por perfil, PIN, migración y limitaciones |
+| [`07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md`](07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md) | ADR: alineación fiel con Ant Design Mobile 5.43.0 (enmienda ADR-0014, acota ADR-0015) |
 
 ## Cómo se mantiene
 

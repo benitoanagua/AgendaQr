@@ -1,6 +1,6 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — V1.4 para contrato funcional; contrato visual definido por ADR-0014 (referencia Ant Design Mobile + navegación Android/iOS) y desarrollado en `docs/05-design-system/00-contrato-normativo-diseno.md`  
+**Estado:** FROZEN — V1.7 para contrato funcional y visual; contrato visual definido por ADR-0017 (alineación fiel con Ant Design Mobile 5.43.0 + navegación Android/iOS) y desarrollado en `docs/05-design-system/00-contrato-normativo-diseno.md`  
 **Fecha:** 2026-10-11  
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
 
@@ -15,8 +15,9 @@
 | V1.4 | 2026-10-13 | Enmienda por ADR-0014 (referencia Ant Design Mobile + navegación convencional Android/iOS): §12 actualizado a la referencia, paleta, radios y componentes oficiales; navegación jerárquica y de destinos conforme a plataforma. Intención, navegación conceptual, modelo mental, reglas de negocio, accesibilidad y copy: intactos. |
 | V1.5 | 2026-10-13 | Enmienda de compacidad (escala compacta neutra): §12 delega tipografía (cuerpo 14, título 18, tracking neutro), barras compactas (superior 56 dp, inferior 64 dp sin píldora) y densidad al contrato normativo. Intención, flujos, reglas de negocio, accesibilidad y copy: intactos. |
 | V1.6 | 2026-10-14 | Enmienda por ADR-0016 (identidad local sin cuenta): §4 añade S00 Acceso local (configurar PIN en el primer arranque, desbloquear con PIN) y S01 cambia "Cerrar sesión" por "Cuenta y respaldo" + "Bloquear" en el menú "…". El acceso deja de ser una pantalla de login remoto. Modelo mental, reglas de negocio, accesibilidad y copy de las pantallas existentes: intactos. |
+| V1.7 | 2026-10-16 | Enmienda por ADR-0017 (alineación fiel con Ant Design Mobile 5.43.0): §12 reescrito a los valores oficiales (escala 17/15/13, radios 2/4/6/8, paleta oscura oficial, diálogo con fila hairline, buscador SearchBar, secundario = botón `default`); corrige el error "barra inferior 64 dp" de V1.5 (son 56 dp). Intención, flujos y copy: intactos. Aprobación explícita del propietario para enmendar la congelación del §12 (alineación con Ant Design Mobile, ADR-0017); intención, flujos y copy intactos. |
 
-La implementación vigente corresponde a V1.6. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
+La implementación vigente corresponde a V1.7. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
 ## 1. Contrato principal
 
@@ -273,7 +274,7 @@ Reglas vigentes V1.3:
 - **Escalado de fuente:** el contenido esencial y las acciones primarias
   no se truncan con la fuente del sistema al 200 %.
 
-## 12. Contrato visual — V1.4, ADR-0014
+## 12. Contrato visual — V1.7, ADR-0017
 
 > **Precedencia:** esta sección conserva la decisión de producto visual adoptada por ADR-0014 (referencia Ant Design Mobile + navegación Android/iOS). Para reglas transversales detalladas, estados, accesibilidad, pruebas, gobernanza y resolución de contradicciones, prevalece `docs/05-design-system/00-contrato-normativo-diseno.md`. Si un detalle de esta sección contradice el contrato normativo, se debe reconciliar documentalmente; no se permite implementar una mezcla tácita.
 
@@ -288,8 +289,8 @@ La UI es convencional, mobile-first y poco disruptiva: componentes estándar de 
 
 ### Navegación y chrome
 
-- Barra superior (`TopAppBar` pequeña, título a la izquierda, estilo estándar) en cada superficie: flecha atrás cuando haya a dónde volver — la misma en ambas plataformas —, acciones de la pantalla (máx. 2 visibles + menú "…").
-- Barra de navegación inferior (`NavigationBar`) SOLO en las superficies raíz: Inicio, Buscar, Actividades y Contextos; cada destino con etiqueta + icono (nunca solo icono). No aparece en detalle/edición/importación. Cambiar de destino conserva la raíz del back stack (Back desde otro destino vuelve a Inicio; desde Inicio sale de la app).
+- Barra superior de 56 dp (título 18 a la izquierda, estilo estándar) en cada superficie: flecha atrás cuando haya a dónde volver — la misma en ambas plataformas —, acciones de la pantalla (máx. 2 visibles + menú "…").
+- Barra de navegación inferior de 56 dp (`NavigationBar`, sin píldora) SOLO en las superficies raíz: Inicio, Buscar, Actividades y Contextos; cada destino con etiqueta 11 + icono (nunca solo icono). No aparece en detalle/edición/importación. Cambiar de destino conserva la raíz del back stack (Back desde otro destino vuelve a Inicio; desde Inicio sale de la app).
 - La acción principal contextual vive en el cuerpo como `Button`, o fija abajo solo cuando existe una acción real de guardado (p. ej. "Guardar reconocidos" en S12). Una pantalla cuya barra solo tiene "Volver" no lleva barra inferior.
 - El Back del sistema conserva su orden (flujo interno → pop de superficie → sistema); el predictive back de Android 14+ anima con el progreso del gesto.
 - Tablet/plegables: adaptación por `WindowSizeClass`; el ancho expandido limita el contenido (`ContentMaxWidth`) y la navegación raíz pasa a riel (`NavigationRail`).
@@ -297,28 +298,29 @@ La UI es convencional, mobile-first y poco disruptiva: componentes estándar de 
 
 ### Campos de entrada
 
-- Campo sin borde ni relleno, con etiqueta, texto de apoyo y error contextual debajo (icono + texto, no solo color); la guía hairline inferior aparece en reposo (divisor), en foco (acento) y en error (peligro).
+- Campo con etiqueta, texto de apoyo y error contextual debajo (icono + texto, no solo color); el campo de texto conserva etiqueta flotante persistente (desviación documentada frente al patrón Form/List) y guía hairline inferior en reposo (divisor), en foco (acento) y en error (peligro).
+- Buscador estilo SearchBar: relleno box, radio 6, sin etiqueta flotante visible, borde de acento en foco, altura mínima 48 dp.
 - Teclado e IME según el tipo de campo; autofill de credenciales; mostrar/ocultar contraseña con botón de descripción accesible.
 - La obligatoriedad se indica con texto/semántica accesible coherente con la guía de voz, no con asterisco decorativo.
 
 ### Listas y diálogos
 
-- Filas con `ListItem` (o equivalente M3) en cuerpo de lista con hairlines; acciones por fila como botones de icono (favorito = conmutador de estrella con estado y descripción accesible), no como enlace de texto.
-- Diálogos y hojas: `AlertDialog` estándar para confirmaciones y selecciones acotadas (la hoja inferior como patrón de selector queda registrada como siguiente paso en ADR-0014).
+- Filas con título 17 y descripción 13 en cuerpo de lista (card mode radio 8) con hairlines; flecha decorativa opt-in en filas que navegan; acciones por fila como botones de icono (favorito = conmutador de estrella con estado y descripción accesible), no como enlace de texto.
+- Diálogos estilo Dialog: popup radio 8, título 18 bold centrado, contenido 15, fila de acciones a ancho completo separada por hairlines (confirmar en negrita, destructiva en peligro); foco inicial en la acción conservadora cuando hay pérdida irreversible. Sin hoja inferior (limitación Robolectric documentada).
 
 ### Botones
 
-- Acción principal: `Button` con relleno de acento. Secundaria: botón delineado (borde y texto de acento). Terciaria: `TextButton`. Icono: `IconButton`/`IconToggleButton` con descripción accesible. Mínimo 48 dp de objetivo táctil.
+- Acción principal: `Button` con relleno de acento, radio 4. Secundaria: botón `default` (fondo claro + hairline + texto primario, radio 4). Terciaria: `TextButton`. Icono: `IconButton`/`IconToggleButton` con descripción accesible. Mínimo 48 dp de objetivo táctil; deshabilitado con opacidad .4.
 - Estado deshabilitado y "guardando" expresados con etiqueta de texto (nunca solo con apariencia).
 
 ### Tipografía
 
-- Familia del sistema en todos los estilos (Roboto en Android, San Francisco en iOS): sin fuente empaquetada propia. Escala compacta neutra en sp: pantalla 18, cuerpo 14, etiqueta 14, apoyo 12, tracking neutro; roles estándar de Material 3.
+- Familia del sistema en todos los estilos (Roboto en Android, San Francisco en iOS): sin fuente empaquetada propia. Escala de la referencia en sp: título 18, cuerpo/botón/fila 17, etiqueta 15, descripción 13, apoyo 12, tags y barra 11 (peso normal salvo título de diálogo bold y botón Medium); importe 26 SemiBold como extensión financiera; tracking neutro; roles estándar de Material 3.
 - Capitalización de oración. El escalado de fuente del sistema se mantiene (§11).
 
 ### Color
 
-- Acento del sistema (referencia Ant Design Mobile, recalibrado para contraste AA): claro `1668DC` (texto blanco, 5.19:1), oscuro `6FA5FF` con texto de tinta (7.63:1). Superficies de la referencia en ambos temas, pares de contenido verificados por pruebas.
+- Acento del sistema (referencia Ant Design Mobile, recalibrado para contraste AA): claro `1668DC` (texto blanco, 5.19:1), oscuro `3086FF` (oficial) con texto de tinta (5.37:1). Superficies oficiales en ambos temas (página oscura `1A1A1A`, superficie `1F1F1F` con elevación documentada, box `0A0A0A`; hairlines `#EEEEEE`/`#2B2B2B`), pares de contenido verificados por pruebas.
 - Paleta de identidad de contextos: el color se deriva de forma **determinista** del identificador del contexto, sin persistir el color ni cambiar el dominio; paleta acotada (12 + sistema), sin ampliar. Elegir color manualmente queda como punto abierto, coherente con ADR-0003 (sin edición de contextos en V1).
 - Los colores de estado (error, advertencia, éxito, información) siguen siendo semánticos y distintos del acento; el significado nunca depende solo del color.
 - El lienzo del código QR es claro en ambos temas (zona de silencio escaneable).
@@ -345,7 +347,7 @@ Tabla de contraste calculada (WCAG 2.x sobre luminancia relativa; razón del par
 
 ### Formas y movimiento
 
-- Conjunto de formas explícito en tokens (extraSmall 2 dp, small 4 dp, medium 6 dp, large 8 dp, extraLarge 12 dp, píldora para chips/badges), consumido por `MaterialTheme.shapes`; ningún componente fija radios suyos.
+- Escala de radios oficial en tokens (tag/segmentado 2, botón 4, búsqueda 6, tarjeta/diálogo/banner 8, hoja 12, píldora para chips de filtro/FAB/estados), consumida por `MaterialTheme.shapes`; ningún componente fija radios suyos.
 - Ripple/indicación de pulsación estándar de Material 3; sin overlay de pulsación propio ni `indication = null`.
 - Transición entre superficies: fundido con un desplazamiento horizontal pequeño, corto y con tokens de movimiento; con reduced motion el cambio es inmediato (§11).
 
@@ -357,7 +359,7 @@ Tabla de contraste calculada (WCAG 2.x sobre luminancia relativa; razón del par
 
 ### Modo oscuro
 
-- Esquema oscuro de la referencia (fondo `1A1A1A`, superficie `242424`, secundaria `0A0A0A`, hairlines `2B2B2B`), con los mismos roles semánticos y umbrales de contraste que el claro; el acento pasa a un azul claro con texto de tinta (par AA verificado).
+- Esquema oscuro oficial (fondo `1A1A1A`, superficie `1F1F1F` con elevación documentada, box `0A0A0A`, hairlines `2B2B2B`), con los mismos roles semánticos y umbrales de contraste que el claro; el acento es el azul oficial con texto de tinta (par AA verificado).
 
 ## 13. Fuera de esta congelación
 
@@ -365,4 +367,4 @@ Fuera del alcance de esta especificación conceptual: detalles internos de Kotli
 
 ## 14. Estado
 
-**UX/UI V1.4: FROZEN** (enmienda ADR-0014, 2026-10-13).
+**UX/UI V1.7: FROZEN** (enmienda ADR-0017, 2026-10-16).

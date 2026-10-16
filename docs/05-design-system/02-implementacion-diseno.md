@@ -1,6 +1,6 @@
 # Reglas de implementación del sistema de diseño
 
-**Estado:** Normativo (ADR-0014). El contrato completo está en `00-contrato-normativo-diseno.md`; este documento traduce el contrato a reglas de código.
+**Estado:** Normativo (ADR-0017). El contrato completo está en `00-contrato-normativo-diseno.md`; este documento traduce el contrato a reglas de código.
 
 ## 1. Mapa de la implementación
 
@@ -16,17 +16,17 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
     ├── AmText.kt          # AmText, AmHeading (texto con interlineado propio)
     ├── AmIcon.kt          # AmIcon + AmIcons (Lucide, único punto de entrada)
     ├── AmTone.kt           # AmTone + toneColors + glifo por tono
-    ├── AmButtons.kt       # botones (solid 48; secundario tonal compacto 40/48 con variante solid; AmCompactAction de fila), píldoras cápsula con conteo (AmFilterChip), segmentado (AmSegmentedOption), toggle de favorito
-    ├── AmInputs.kt        # AmTextField (sin borde, guía hairline; glifo de concepto), AmAmountField (importe 26 sp + ⌫), AmSearchField (radio 12, visual 44), AmSearchTrigger
-    ├── AmLists.kt         # AmListRow (título 15/500, slot leading tipado, divisor inset 56), AmListBody (tarjeta 12 + hairline E-03), AmTappableCard (tarjeta presionable), AmHairline, AmBadge, AmTonalTag (11/600), AmIconBadge (tile 40), AmMetaRow (con acción final)
-    ├── AmStatus.kt        # AmStatusBanner (radio 12), AmStatusPill (tonal/inversa), AmLoading, AmEmptyState, AmSection
+    ├── AmButtons.kt       # botones radio 4 (solid 48; secundario = botón default con hairline E-01, compacto 40/48 con variante solid; AmCompactAction de fila), píldoras cápsula CapsuleTabs (AmFilterChip: reposo box sin borde, etiqueta 15), segmentado radio 2 sobre pista box (AmSegmentedOption), toggle de favorito
+    ├── AmInputs.kt        # AmTextField (etiqueta flotante persistente + guía hairline; glifo de concepto), AmAmountField (importe 26 sp + ⌫), AmSearchField (SearchBar: box, radio 6, borde de acento en foco E-04, 48 dp mínimo, sin etiqueta flotante), AmSearchTrigger
+    ├── AmLists.kt         # AmListRow (título 17, descripción 13, showChevron opt-in, slot leading tipado, divisor inset 56), AmListBody (tarjeta radio 8 + hairline E-03), AmTappableCard (tarjeta presionable radio 8), AmHairline, AmBadge/AmTonalTag (Tag radio 2 con round opt-in, 11 normal), AmIconBadge (tile 40), AmMetaRow (con acción final)
+    ├── AmStatus.kt        # AmStatusBanner (radio 8), AmStatusPill (tonal/inversa, píldora rounded), AmLoading, AmEmptyState, AmSection
     ├── AmClipboard.kt     # rememberAmClipboard (expect/actual: copiar contenido al portapapeles)
     ├── AmChrome.kt        # AmTopBar, navegación raíz, FAB, transición de superficies
     ├── AmScaffold.kt      # AmScreenScaffold (contenedor de pantalla), AmBottomAction (acción principal fija: ancho completo + navigationBars + IME)
-    ├── AmDialogs.kt       # AmDialog, AmDialogList (superposiciones)
-    ├── AmFeedback.kt      # skeleton, paginación, scanner, marco de medios (Surface: tarjeta distinta del fondo en ambos temas)
-    ├── AmFeedbackEvent.kt # AmFeedbackHost/AmSnackbarHost/AmFeedbackEvent
-    ├── AmPivot.kt         # AmSectionHeader, AmPivot (pestañas de S06)
+    ├── AmDialogs.kt       # AmDialog (Dialog oficial: popup radio 8, título 18 bold centrado, contenido 15, fila de acciones hairline a ancho completo), AmDialogList
+    ├── AmFeedback.kt      # skeleton, paginación, scanner, marco de medios radio 8 (Surface: tarjeta distinta del fondo en ambos temas)
+    ├── AmFeedbackEvent.kt # AmFeedbackHost/AmSnackbarHost (contenedor InverseSurface radio 8, texto 15)/AmFeedbackEvent
+    ├── AmPivot.kt         # AmSectionHeader (List header: 15, texto secundario, peso normal), AmPivot (Tabs con indicador de acento, título 17)
     └── AmQrPreview.kt     # expect (Android decodifica; fallo de decodificación = glifo explícito sobre el marco, nunca rectángulo blanco; iOS pendiente de hardware)
 ```
 
@@ -38,7 +38,7 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 
 ## 3. Reglas de componente
 
-- Envoltorios finos de Material 3 con tokens: el componente fija forma/colores/estados que M3 no mapea (botones radio 4, campos sin borde, chips estilo selector) y hereda `typography`/`shapes` del tema; la barra superior (56 dp) y la inferior (64 dp, sin píldora) son composición propia.
+- Envoltorios finos de Material 3 con tokens: el componente fija forma/colores/estados que M3 no mapea (botones radio 4, buscador SearchBar con borde de acento E-04, chips estilo CapsuleTabs) y hereda `typography`/`shapes` del tema; la barra superior (56 dp) y la inferior (56 dp, sin píldora) son composición propia.
 - Todo copy llega como parámetro del llamador (ADR-0008); las pantallas lo sirven desde `AppStrings`.
 - Estados obligatorios: pressed/focused/selected/error/disabled/loading, cada uno con señal no exclusivamente cromática.
 - Área táctil ≥ 48 dp (`AmMetrics.ControlMinSize`), sin alturas fijas que recorten con fuente grande.

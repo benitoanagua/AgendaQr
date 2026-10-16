@@ -1,6 +1,6 @@
 # ADR-0014 — Referencia visual Ant Design Mobile y navegación convencional Android/iOS
 
-**Estado:** APROBADA — 2026-10-13
+**Estado:** APROBADA — 2026-10-13 — **Enmendada por ADR-0017** (2026-10-16: corrige la tabla de correspondencia y los valores — escala 17/15/13, radios oficiales, paleta oscura oficial, secundario = botón `default`, barra inferior 56 dp; la historia de esta decisión se conserva)
 **Suplanta:** la autoría visual de ADR-0013 (AgendaMobile como referencia). Conserva de ADR-0013 la arquitectura de capas, la implementación en `core/ui` y el prefijo `Am*` como convención de código (sin valor de marca).
 
 ## Contexto
