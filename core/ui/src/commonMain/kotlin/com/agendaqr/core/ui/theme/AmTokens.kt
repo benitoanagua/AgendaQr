@@ -72,7 +72,7 @@ internal object AmPalette {
     // Tema oscuro (referencia: theme-dark de Ant Design Mobile; los roles
     // de estado y acento adoptan sus valores oficiales; donde el par
     // oficial no alcanza WCAG AA se recalibra mínimamente — contrato §4.4:
-    // wathet, onAccent/accentText/onDanger y el terciario).
+    // onAccent/accentText/onDanger y el terciario).
     val darkBackground = Color(0xFF1A1A1A)
     val darkSurface = Color(0xFF1F1F1F)
     val darkSurfaceSecondary = Color(0xFF0A0A0A)
@@ -88,7 +88,7 @@ internal object AmPalette {
     val darkAccent = Color(0xFF3086FF)
     val darkOnAccent = Color(0xFF0A1120)
     val darkAccentText = Color(0xFF4F96FF)
-    val darkWathet = Color(0xFF0B2140)
+    val darkWathet = Color(0xFF0D2543)
     val darkDanger = Color(0xFFFF4A58)
     val darkOnDanger = Color(0xFF1A1A1A)
     val darkDangerContainer = Color(0xFF3A1512)

@@ -54,9 +54,9 @@
 ### 4.3 Acento y estados
 
 - **Acento**: primario de la referencia, recalibrado a `#1668DC` en claro (ver §4.4); oscuro `#3086FF` (oficial) con texto de tinta `#0A1120` (5.37:1).
-- **wathet** (`#E7F1FF` / `#0B2140`): tinte de la referencia para fondos de selección (chips, pestañas); el oscuro se recalibra mínimamente desde el oficial `#0D2543` (ver §4.4).
+- **wathet** (`#E7F1FF` / `#0D2543`): tinte de la referencia para fondos de selección (chips, pestañas), adoptado sin cambios en ambos temas. El contenido sobre wathet es `accentText` (no el acento puro), que garantiza AA (ver §4.4).
 - **Éxito/advertencia/peligro**: de la referencia, recalibrados en claro (`#0A7A44`, `#A85A00`, `#D21F2E`; ver §4.4); oscuro oficial (`#34B368`/`#FFA930`/`#FF4A58`, este último con tinta `#1A1A1A`) con contenedores `#0E2C1C`/`#3A2B0E`/`#3A1512`.
-- **Informativo**: la referencia no define tono info; lo informativo usa el acento (`info` = acento, `infoContainer` = wathet).
+- **Informativo**: la referencia no define tono info; lo informativo usa el acento (`info` = acento, `infoContainer` = wathet, contenido sobre el contenedor = `accentText`).
 - **Identidad de contexto**: 12 tonos + acento de sistema (`AmAccents`), par fijo negro/blanco por acento, asignación determinista por `accentFor` (FNV-1a 32 bits sobre UTF-8, idéntico en Android e iOS). Congelada: los valores no cambian para no reasignar identidades.
 
 ### 4.4 Recalibraciones AA documentadas (la accesibilidad prevalece sobre la referencia)
@@ -71,12 +71,12 @@
 | Placeholder `#cccccc` 1.61:1 | Falla AA | Placeholder en texto secundario (desviación documentada, ver §"Desviaciones deliberadas") |
 | Oscuro: blanco sobre `#3086ff` 3.51:1 | Falla AA | Tinta `#0A1120` sobre acento (5.37:1); acento como texto `#4F96FF` (5.92:1 sobre `1A1A1A`, 5.60:1 sobre `1F1F1F`, 5.24:1 sobre wathet) |
 | Oscuro: blanco sobre `#ff4a58` 3.30:1 | Falla AA | Tinta `#1A1A1A` sobre peligro (5.28:1); peligro como texto 5.28:1 sobre `1A1A1A`, 5.00:1 sobre `1F1F1F` |
-| Oscuro: acento `#3086ff` sobre wathet oficial `#0d2543` 4.39:1 | Falla AA | Wathet oscuro `#0B2140` (5.24:1 con `accentText`) |
+| Oscuro: acento `#3086ff` como TEXTO sobre wathet oficial `#0d2543` 4.39:1 | Falla AA como texto | Wathet oficial `#0D2543` sin cambios; el contenido informativo usa `accentText` `#4F96FF` (5.24:1); el acento puro sobre wathet se reserva a glifos y bordes |
 | Oscuro: éxito `#34b368` / advertencia `#ffa930` | Cumplen AA (6.46:1 / 9.09:1 sobre `1A1A1A`) | Se adoptan sin cambios |
 
 ### 4.5 Umbrales (AmSchemeTest)
 
-- Contenido sobre su fondo/container: ≥ 4.5:1 en ambos temas (texto, tonos de estado, acento como texto, acento sobre wathet).
+- Contenido sobre su fondo/container: ≥ 4.5:1 en ambos temas (texto, tonos de estado, acento como texto, contenido informativo sobre wathet con `accentText`).
 - `focus` contra `background`/`surface`/`surfaceSecondary`: ≥ 3:1.
 - Par deshabilitado `onDisabled`/`disabled`: ≥ 3:1 (suelo de calidad propio; WCAG exime los controles deshabilitados; los botones además usan opacidad .4 de la referencia).
 - Los valores exactos están fijados (pin anti-cambio-silencioso) en `AmSchemeTest`.
@@ -212,4 +212,4 @@ Cada valor de la referencia oficial que el código NO adopta está aquí con su 
 | Etiqueta de botón en Medium (oficial: peso normal) | Rango de la etiqueta sobre superficies densas |
 | Segmentado sin sombra en el ítem activo (oficial: sombra suave) | El gate prohíbe `shadow(`; el límite lo da el bloque tonal |
 | Hoja inferior 12 sin uso; selectores como `AmDialog` con lista | `ModalBottomSheet` no despacha acciones bajo Robolectric (bloqueo documentado) |
-| Recalibraciones AA de §4.4 (acento, éxito, peligro, advertencia, terciario, tintas, wathet oscuro) | La accesibilidad prevalece sobre la referencia |
+| Recalibraciones AA de §4.4 (acento, éxito, peligro, advertencia, terciario, tintas) y contenido informativo con `accentText` sobre wathet | La accesibilidad prevalece sobre la referencia |

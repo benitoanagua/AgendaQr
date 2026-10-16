@@ -110,7 +110,7 @@ class AmSchemeTest {
         assertEquals("3086FF", hex(s.accentContainer))
         assertEquals("0A1120", hex(s.onAccentContainer))
         assertEquals("4F96FF", hex(s.accentText))
-        assertEquals("0B2140", hex(s.wathet))
+        assertEquals("0D2543", hex(s.wathet))
         assertEquals("FF4A58", hex(s.danger))
         assertEquals("1A1A1A", hex(s.onDanger))
         assertEquals("3A1512", hex(s.dangerContainer))
@@ -119,7 +119,7 @@ class AmSchemeTest {
         assertEquals("FFA930", hex(s.warning))
         assertEquals("3A2B0E", hex(s.warningContainer))
         assertEquals("3086FF", hex(s.info))
-        assertEquals("0B2140", hex(s.infoContainer))
+        assertEquals("0D2543", hex(s.infoContainer))
         assertEquals("3086FF", hex(s.focus))
         assertEquals("3A3A3A", hex(s.disabled))
         assertEquals("9E9E9E", hex(s.onDisabled))
@@ -196,7 +196,9 @@ class AmSchemeTest {
                 )
             }
             assertEquals(scheme.success, scheme.toneColors(AmTone.Success).content)
-            assertEquals(scheme.info, scheme.toneColors(AmTone.Info).content)
+            // El contenedor informativo es wathet: el contenido es accentText
+            // (el acento puro no alcanza AA como texto sobre wathet).
+            assertEquals(scheme.accentText, scheme.toneColors(AmTone.Info).content)
             assertEquals(scheme.warning, scheme.toneColors(AmTone.Warning).content)
             assertEquals(scheme.danger, scheme.toneColors(AmTone.Danger).content)
         }

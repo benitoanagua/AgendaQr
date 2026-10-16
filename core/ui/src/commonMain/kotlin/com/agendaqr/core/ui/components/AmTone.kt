@@ -36,7 +36,10 @@ fun AmColorScheme.toneColors(tone: AmTone): ToneColors = when (tone) {
     AmTone.Success -> ToneColors(success, successContainer)
     AmTone.Danger -> ToneColors(danger, dangerContainer)
     AmTone.Warning -> ToneColors(warning, warningContainer)
-    AmTone.Info -> ToneColors(info, infoContainer)
+    // El contenedor informativo es `wathet`; el acento puro queda en
+    // 4.39:1 sobre él, por lo que el CONTENIDO usa `accentText` (5.24:1):
+    // el acento puro sobre wathet se reserva a glifos y bordes.
+    AmTone.Info -> ToneColors(accentText, infoContainer)
 }
 
 @Composable
