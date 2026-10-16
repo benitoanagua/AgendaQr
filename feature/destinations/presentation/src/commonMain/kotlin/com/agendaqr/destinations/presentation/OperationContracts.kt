@@ -37,6 +37,10 @@ data class OperationsUiState(
     val isLoadingComprobante: Boolean = false,
     val error: UserFacingError? = null,
     val receiptSuggestions: Map<String, ReceiptAssociationSuggestion> = emptyMap(),
+    /** El editor tiene cambios sin guardar (lo reporta la pantalla). */
+    val editorDirty: Boolean = false,
+    /** Confirmación de descarte pendiente (Back con `editorDirty`). */
+    val discardPrompt: Boolean = false,
 )
 
 sealed interface OperationAction {
@@ -51,6 +55,15 @@ sealed interface OperationAction {
     data object ClearIncoming : OperationAction
     data class SaveIncoming(val openInbox: Boolean = false, val allowDuplicate: Boolean = false) : OperationAction    data object OpenUnassociated : OperationAction
     data object Back : OperationAction
+    /**
+     * El editor reporta si tiene cambios sin guardar (U-08, D7): `back()`
+     * con `dirty` no navega, muestra la confirmación de descarte.
+     */
+    data class EditorDirtyChanged(val dirty: Boolean) : OperationAction
+    /** Confirma el descarte: limpia y navega. */
+    data object DiscardEditor : OperationAction
+    /** Cierra la confirmación de descarte y sigue editando. */
+    data object DismissDiscardPrompt : OperationAction
     data object ClearError : OperationAction
     /**
      * Re-ejecuta la última operación fallida: el banner REINTENTAR

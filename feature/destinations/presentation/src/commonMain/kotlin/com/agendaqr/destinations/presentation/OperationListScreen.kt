@@ -360,20 +360,19 @@ internal fun UnassociatedScreen(
                     verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
                 ) {
                     items(state.unassociated, key = { it.id }) { receipt ->
-                        // §12 V1.4: cada comprobante es una tarjeta
-                        // independiente (fila ListItem sobre cuerpo de lista);
-                        // las acciones de fila viven apiladas bajo el contenido
-                        // (dos etiquetas largas no caben lado a lado en 360 dp).
+                        // U-15: una sola primaria por pantalla — la fila
+                        // entera abre el flujo de asociación (diálogo con
+                        // candidatas); "Crear actividad desde esto" es
+                        // acción de texto. Sin botones primarios por fila.
                         AmListBody {
                             AmListRow(
                                 title = AppStrings.receiptReceivedTitle,
                                 subtitle = formatDate(receipt.createdAt),
-                                onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) },
+                                onClick = { selectedReceipt = receipt },
                                 meta = {
                                     Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
                                         ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
-                                        AmPrimaryButton(label = AppStrings.associateToExistingOperation, onClick = { selectedReceipt = receipt })
-                                        AmSecondaryButton(label = AppStrings.createOperationFromThis, onClick = {
+                                        AmTextAction(label = AppStrings.createOperationFromThis, onClick = {
                                             viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
                                         })
                                     }

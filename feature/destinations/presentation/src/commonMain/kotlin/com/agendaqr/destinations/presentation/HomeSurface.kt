@@ -64,6 +64,15 @@ internal fun HomeSurface(
                 // Acción rápida / FAB (referencia MCP): traer un QR → S02,
                 // con cámara y galería dentro del flujo real.
                 onScanQr = { graph.destinationsViewModel.onAction(DestinationAction.Edit(null)) },
+                // Hub (U-10, D8): registrar actividad (S07, sin
+                // preasociación) y crear contexto (diálogo existente).
+                onRegisterOperation = {
+                    graph.operationsViewModel.onAction(OperationAction.New)
+                    nav.push(AppRoute.Operations)
+                },
+                onCreateContext = { name, note ->
+                    graph.contextsViewModel.onAction(ContextAction.Create(name, note))
+                },
             )
             DestinationRoute.Add -> AddDestinationScreen(
                 appHosts = appHosts,
@@ -142,9 +151,13 @@ internal fun HomeSurface(
                 if (destination == null || destination.qr.encoded.isBlank()) {
                     DestinationNotFound(onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) })
                 } else {
-                    QrFullscreenPattern(destination.qr.encoded) {
-                        graph.destinationsViewModel.onAction(DestinationAction.Back)
-                    }
+                    QrFullscreenPattern(
+                        destination.qr.encoded,
+                        destinationName = destination.name.ifBlank { AppStrings.SinNombre },
+                        onBack = {
+                            graph.destinationsViewModel.onAction(DestinationAction.Back)
+                        },
+                    )
                 }
             }
             DestinationRoute.ImportReview -> ImportReviewScreen(

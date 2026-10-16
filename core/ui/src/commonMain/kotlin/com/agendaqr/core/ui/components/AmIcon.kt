@@ -18,6 +18,7 @@ import com.composables.icons.lucide.Camera
 import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.CircleCheck
 import com.composables.icons.lucide.Clock
+import com.composables.icons.lucide.Copy
 import com.composables.icons.lucide.Database
 import com.composables.icons.lucide.Delete
 import com.composables.icons.lucide.Ellipsis
@@ -28,6 +29,7 @@ import com.composables.icons.lucide.ImageOff
 import com.composables.icons.lucide.Inbox
 import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.Lock
+import com.composables.icons.lucide.Maximize
 import com.composables.icons.lucide.Eye
 import com.composables.icons.lucide.EyeOff
 import com.composables.icons.lucide.Lucide
@@ -169,4 +171,8 @@ object AmIcons {
     val NoteEdit: ImageVector get() = Lucide.NotebookPen
     /** Compartir (salida del contenido). */
     val Share: ImageVector get() = Lucide.Share2
+    /** Copiar al portapapeles (dos rectángulos). */
+    val Copy: ImageVector get() = Lucide.Copy
+    /** Mostrar a pantalla completa (expandir). */
+    val Maximize: ImageVector get() = Lucide.Maximize
 }

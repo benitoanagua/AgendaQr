@@ -220,6 +220,14 @@ class ScreensA11yCoverageTest {
                                 updatedAt = 1,
                                 favorite = true,
                             ),
+                            Destination(
+                                id = "d-2",
+                                name = "Verduleria El Sol",
+                                qr = QrAsset(encoded = "eA=="),
+                                createdAt = 1,
+                                updatedAt = 1,
+                                favorite = false,
+                            ),
                         ),
                         isLoading = false,
                     ),
@@ -229,13 +237,13 @@ class ScreensA11yCoverageTest {
         }
         compose.waitForIdle()
         compose.onNodeWithText("Agenda QR").assert(headingMatcher())
-        // Referencia MCP: el nombre vive en la fila de "Todos los
-        // destinos" y, siendo favorito, TAMBIÉN en la mini-tarjeta del
-        // carrusel de frecuentes (superficie intencional del diseño) —
-        // nunca en un tile decorativo.
-        val nameNodes = compose.onAllNodesWithText("Carniceria Don Bife").fetchSemanticsNodes()
-        assert(nameNodes.size == 2) { "S01: fila + mini-tarjeta de frecuentes (favorito)" }
-        compose.onNodeWithContentDescription("Quitar favorito").assertExists()
+        // U-10: sin duplicación — el favorito vive SOLO en el carrusel y
+        // el no favorito SOLO en la lista de "Todos los destinos".
+        val favNodes = compose.onAllNodesWithText("Carniceria Don Bife").fetchSemanticsNodes()
+        assert(favNodes.size == 1) { "S01: el favorito va solo en el carrusel" }
+        val listNodes = compose.onAllNodesWithText("Verduleria El Sol").fetchSemanticsNodes()
+        assert(listNodes.size == 1) { "S01: el no favorito va solo en la lista" }
+        compose.onNodeWithContentDescription("Marcar favorito").assertExists()
         // V1.2: sin tiles — el botón de texto "Favorito" por fila desapareció
         // con el IconToggleButton de estrella (48 dp garantizado por M3).
         // El estado de sync ES texto cuando hay algo que informar.
@@ -264,7 +272,7 @@ class ScreensA11yCoverageTest {
         // (sharedImportsSupported = true), así que la ayuda es visible.
         val gallery = compose.onNodeWithText("Elegir de la galería").getBoundsInRoot().top
         val share = compose.onNodeWithText(
-            "Comparte una imagen o PDF desde otra app con Agenda QR. La importación continuará aquí para revisar lo que se encontró.",
+            AppStrings.shareFromAnotherAppHint,
         ).getBoundsInRoot().top
         val camera = compose.onNodeWithText("Cámara").getBoundsInRoot().top
         assertTrue(gallery < share, "Galería debe estar sobre la ayuda de share")

@@ -20,6 +20,9 @@ fun GlobalSearchScreen(
     appHosts: AppHosts? = null,
     onAction: (GlobalSearchAction) -> Unit,
     onSelect: (AgendaSearchResult) -> Unit,
+    /** Foco automático solo al abrir desde el disparador de Inicio
+     * (U-21); por pestaña se entra sin foco. */
+    autoFocus: Boolean = true,
 ) {
     // V1.4 (§12): Buscar es destino raíz — barra superior con título y
     // navegación inferior; el campo de búsqueda es el cuerpo de la
@@ -48,7 +51,7 @@ fun GlobalSearchScreen(
                 keyboardType = androidx.compose.ui.text.input.KeyboardType.Text,
                 imeAction = androidx.compose.ui.text.input.ImeAction.Search,
             ),
-            autoFocus = true,
+            autoFocus = autoFocus,
         )
         state.error?.let { err ->
             AmStatusBanner(
@@ -116,10 +119,10 @@ fun GlobalSearchScreen(
 
 private fun searchResultTypeLabel(type: com.agendaqr.destinations.domain.AgendaSearchResultType): String =
     when (type) {
-        com.agendaqr.destinations.domain.AgendaSearchResultType.CONTEXT -> "Contexto"
-        com.agendaqr.destinations.domain.AgendaSearchResultType.QR -> "QR"
-        com.agendaqr.destinations.domain.AgendaSearchResultType.ACTIVITY -> "Actividad"
-        com.agendaqr.destinations.domain.AgendaSearchResultType.COMPROBANTE -> "Comprobante"
+        com.agendaqr.destinations.domain.AgendaSearchResultType.CONTEXT -> AppStrings.TipoContexto
+        com.agendaqr.destinations.domain.AgendaSearchResultType.QR -> AppStrings.TipoQr
+        com.agendaqr.destinations.domain.AgendaSearchResultType.ACTIVITY -> AppStrings.TipoActividad
+        com.agendaqr.destinations.domain.AgendaSearchResultType.COMPROBANTE -> AppStrings.TipoComprobante
     }
 
 /**
@@ -127,8 +130,8 @@ private fun searchResultTypeLabel(type: com.agendaqr.destinations.domain.AgendaS
  * se traducen a la semántica visible (nunca enums técnicos en UI).
  */
 internal fun searchResultTitle(result: AgendaSearchResult): String = when (result.title) {
-    "PAGO" -> "Pago"
-    "COBRO" -> "Cobro"
+    "PAGO" -> AppStrings.Pago
+    "COBRO" -> AppStrings.Cobro
     else -> result.title
 }
 

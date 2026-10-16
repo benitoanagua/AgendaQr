@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -78,6 +79,12 @@ internal fun LocalLockScreen(
             modifier = Modifier.fillMaxWidth(),
         )
         if (state.biometricAvailability == BiometricAvailability.Available && onBiometric != null) {
+            // U-20/D11: solicitud automática UNA vez por bloqueo (clave por
+            // bloqueo, no por recomposición); Cancelled no relanza (el
+            // estado no cambia) y el botón queda como respaldo.
+            LaunchedEffect(state.lockSequence) {
+                onBiometric()
+            }
             AmSecondaryButton(
                 AppStrings.UsarBiometria,
                 onClick = onBiometric,

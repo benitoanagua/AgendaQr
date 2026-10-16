@@ -31,6 +31,8 @@ internal object IosPdfPicker {
     private var retainedDelegate: Delegate? = null
 
     fun present() {
+        // Flujo externo (U-02): el selector saca la app de primer plano.
+        ExternalFlowGates.tracker.markLaunch()
         val root = currentRootViewController() ?: return
         val picker = UIDocumentPickerViewController(
             forOpeningContentTypes = listOf(UTTypePDF),

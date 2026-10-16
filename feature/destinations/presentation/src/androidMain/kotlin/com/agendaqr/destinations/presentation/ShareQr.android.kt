@@ -26,5 +26,7 @@ object AgendaQrAndroidShareLauncher {
 }
 
 actual fun shareQr(asset: QrAsset) {
+    // Flujo externo (U-02): la hoja de compartir saca la app.
+    ExternalFlowGates.tracker.markLaunch()
     AgendaQrAndroidShareLauncher.share(asset)
 }

@@ -119,6 +119,12 @@ class OperationsViewModel(
             is OperationAction.SaveIncoming -> saveIncoming(action.openInbox, action.allowDuplicate)
             OperationAction.OpenUnassociated -> _state.update { it.copy(route = OperationRoute.Unassociated, error = null) }
             OperationAction.Back -> back()
+            is OperationAction.EditorDirtyChanged -> _state.update { it.copy(editorDirty = action.dirty) }
+            OperationAction.DiscardEditor -> {
+                _state.update { it.copy(editorDirty = false, discardPrompt = false) }
+                navigateBack()
+            }
+            OperationAction.DismissDiscardPrompt -> _state.update { it.copy(discardPrompt = false) }
             OperationAction.ClearError -> _state.update { it.copy(error = null) }
             OperationAction.RetryFailed -> retryBlock?.invoke()
             is OperationAction.OpenComprobante -> openComprobante(action.id)
@@ -299,6 +305,18 @@ class OperationsViewModel(
     }
 
     private fun back() {
+        val dirty = state.value.editorDirty
+        val route = state.value.route
+        if (dirty && (route is OperationRoute.New || route is OperationRoute.Edit)) {
+            // U-08/D7: salir con cambios pide confirmación; sin cambios
+            // navega de inmediato como hoy.
+            _state.update { it.copy(discardPrompt = true) }
+            return
+        }
+        navigateBack()
+    }
+
+    private fun navigateBack() {
         val returnOperationId = associationReturnOperationId
         associationReturnOperationId = null
         val currentRoute = state.value.route

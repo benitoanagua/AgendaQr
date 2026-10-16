@@ -93,5 +93,9 @@ Eliminar comprobante:
 
 Back vuelve al estado anterior y conserva el draft cuando existe. Cancelar abandona la intención actual.
 
+Salir del editor de actividad con cambios sin guardar pide "¿Descartar cambios?" (Seguir editando / Descartar); sin cambios sale de inmediato. El Back del sistema sigue el mismo camino.
+
+El bloqueo por pasar a segundo plano concede una gracia acotada de 120 s cuando el propio usuario lanzó un flujo externo desde la app (galería, cámara, selectores, compartir); vencida la gracia, se bloquea al volver. Sin marca previa, el bloqueo es inmediato (fail-closed).
+
 La matriz de estados/eventos está en la suite de estados y eventos de
 `docs/QUALITY.md`.
