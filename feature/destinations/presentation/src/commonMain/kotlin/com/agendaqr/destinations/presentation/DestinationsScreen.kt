@@ -202,9 +202,9 @@ fun DestinationsScreen(
                     state.destinations.isEmpty() -> AmEmptyState(
                         icon = AmIcons.QrCode,
                         title = AppStrings.AunNoHayDestinos,
+                        // El FAB "Añadir" cubre la misma acción: el estado vacío
+                        // no repite el botón, solo apunta a él.
                         subtitle = AppStrings.emptyDestinationsHint,
-                        actionLabel = AppStrings.TraerQr,
-                        onAction = { onAction(DestinationAction.Edit(null)) },
                     )
                     // Filtro Favoritos sin favoritos: mensaje propio y salida
                     // real al filtro Todos (antes "Limpiar búsqueda" no

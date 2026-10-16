@@ -285,7 +285,9 @@ fun AmListRow(
     /** selección explícita con semántica `selected`. */
     selected: Boolean = false,
     /** Metadato en línea PROPIA, bajo el subtítulo (p. ej. el badge de
-     * sincronización): no compite por el ancho con la acción de la fila. */
+     * sincronización): no compite por el ancho con la acción de la fila.
+     * PROHIBIDO: acciones interactivas (botones/enlaces) aquí; las acciones
+     * de fila viven en [trailing] o fuera del meta. */
     meta: (@Composable () -> Unit)? = null,
     /** Flecha decorativa de navegación (List.Item `arrow`); solo en filas
      * que navegan y sin acciones finales. */

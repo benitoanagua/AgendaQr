@@ -16,7 +16,10 @@ import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.AmDialog
 import com.agendaqr.core.ui.components.AmFeedbackEvent
+import com.agendaqr.core.ui.components.AmListBody
 import com.agendaqr.core.ui.components.AmListRow
+import com.agendaqr.core.ui.components.AmSectionHeader
+import com.agendaqr.core.ui.components.AmTextActionVariant
 import com.agendaqr.core.ui.components.AmBottomAction
 import com.agendaqr.core.ui.components.AmQrPreview
 import com.agendaqr.core.ui.components.AmScreenScaffold
@@ -32,6 +35,7 @@ import com.agendaqr.core.ui.components.AmLoading
 import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmSpacing
+import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.destinations.domain.ImportBatch
 import com.agendaqr.destinations.domain.ImportCandidate
@@ -181,37 +185,78 @@ private fun BatchResultContent(
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-        // Reconocidos: el resultado principal — mayor prominencia visual
-        if (batch.uniqueRecognized.isNotEmpty()) {
-            AmStatusPill(
-                text = recognizedCountLabel(batch.uniqueRecognized.size),
-                icon = AmIcons.CircleCheck,
-                tone = AmTone.Success,
-            )
-        }
-        // Duplicados: advertencia visual
-        if (batch.duplicates.isNotEmpty()) {
-            AmStatusPill(
-                text = duplicatesCountLabel(batch.duplicates.size),
-                icon = AmIcons.Warning,
-                tone = AmTone.Warning,
-            )
-        }
-        // Pendientes: información secundaria
-        if (batch.unknown.isNotEmpty()) {
-            AmStatusPill(
-                text = pendingReviewCountLabel(batch.unknown.size),
-                icon = AmIcons.Info,
-                tone = AmTone.Neutral,
-            )
+    // Tarjeta resumen: "Reconocidos" como titular (número grande + etiqueta);
+    // duplicados y pendientes como filas secundarias con su icono.
+    AmListBody {
+        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+            if (batch.uniqueRecognized.isNotEmpty()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                ) {
+                    AmIcon(
+                        imageVector = AmIcons.CircleCheck,
+                        contentDescription = null,
+                        tint = AmColor.Success,
+                        size = AmMetrics.IconSizeCompact,
+                    )
+                    Column {
+                        AmText(
+                            text = batch.uniqueRecognized.size.toString(),
+                            size = AmType.Amount,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                            color = AmColor.Success,
+                        )
+                        AmText(
+                            text = AppStrings.Reconocidos,
+                            size = AmType.BodySmall,
+                            color = AmColor.TextSecondary,
+                        )
+                    }
+                }
+            }
+            if (batch.duplicates.isNotEmpty()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                ) {
+                    AmIcon(imageVector = AmIcons.Warning, contentDescription = null, tint = AmColor.Warning)
+                    AmText(
+                        text = duplicatesCountLabel(batch.duplicates.size),
+                        size = AmType.BodySmall,
+                        color = AmColor.TextSecondary,
+                    )
+                }
+            }
+            if (batch.unknown.isNotEmpty()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                ) {
+                    AmIcon(imageVector = AmIcons.Info, contentDescription = null, tint = AmColor.Info)
+                    AmText(
+                        text = pendingReviewCountLabel(batch.unknown.size),
+                        size = AmType.BodySmall,
+                        color = AmColor.TextSecondary,
+                    )
+                }
+            }
         }
     }
 
-    // Contrato S12: "Revisar N pendientes" como acción secundaria; "Guardar
-    // reconocidos" vive fijo abajo (botón principal del scaffold).
+    // Contrato S12: "Revisar N pendientes" como acción secundaria a ancho
+    // completo; "Guardar reconocidos" vive fijo abajo (botón principal del
+    // scaffold).
     if (batch.pendingItems().isNotEmpty()) {
-        AmSecondaryButton(reviewPendingLabel(batch), onClick = { onAction(ImportBatchAction.ReviewPending) }, enabled = !isSaving)
+        AmSecondaryButton(
+            reviewPendingLabel(batch),
+            onClick = { onAction(ImportBatchAction.ReviewPending) },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isSaving,
+        )
     }
 }
 
@@ -225,7 +270,7 @@ private fun BatchReviewContent(
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
 ) {
-    AmText(AppStrings.ElementosQueNecesitanRevision, color = AmColor.TextPrimary)
+    AmSectionHeader(text = AppStrings.ElementosQueNecesitanRevision + " (" + batch.pendingItems().size + ")")
     // Pendientes como tarjetas independientes (nivel 3 de superficies):
     // cada una con su contenido + acciones; separadas a 8 dp.
     Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
@@ -255,15 +300,12 @@ private fun PendingItemCard(
     // original existe) y se ejecuta directo.
     var showDiscardConfirm by remember(candidate.id) { mutableStateOf(false) }
     com.agendaqr.core.ui.components.AmListBody {
-        AmListRow(
-            title = pendingItemName(candidate),
-            subtitle = when {
-                isDuplicate -> AppStrings.elementoYaGuardado
-                candidate.kind == ImportKind.DESCONOCIDO -> AppStrings.elementoSinClasificar
-                else -> AppStrings.elementoPendienteRevision
-            },
-            leading = {
-                // Icono de estado que diferencia visualmente el tipo de incidencia
+        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+            // Cabecera: icono de estado + nombre útil + estado.
+            Row(
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+            ) {
                 if (isDuplicate) {
                     AmIcon(
                         imageVector = AmIcons.Warning,
@@ -277,50 +319,56 @@ private fun PendingItemCard(
                         tint = com.agendaqr.core.ui.theme.AmColor.Info,
                     )
                 }
-            },
-            meta = {
-                // Pila de acciones compacta (4 dp entre targets de 48 dp):
-                // jerarquía visible sin aire excesivo.
-                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
-                    // Acción principal: reintentar o ver existente
-                    when {
-                        isDuplicate -> {
-                            AmTextAction(
-                                label = AppStrings.VerExistente,
-                                onClick = { onAction(ImportBatchAction.ViewExisting(candidate.id)) },
-                                color = AmColor.AccentText,
-                            )
-                            // Secundaria: guardar de todos modos (con advertencia implícita)
-                            AmTextAction(
-                                label = AppStrings.GuardarDeTodosModos,
-                                onClick = { onAction(ImportBatchAction.SaveDuplicateAnyway(candidate.id)) },
-                                color = AmColor.TextSecondary,
-                            )
-                        }
-                        else -> {
-                            AmTextAction(
-                                label = AppStrings.ReintentarClasificacion,
-                                onClick = { onAction(ImportBatchAction.RetryCandidate(candidate.id)) },
-                                color = AmColor.AccentText,
-                            )
-                        }
-                    }
-                    // Terciaria: descartar (siempre disponible, menor prominencia).
-                    // Con confirmación solo cuando el descarte pierde contenido.
-                    AmTextAction(
-                        label = AppStrings.Descartar,
-                        onClick = {
-                            if (isDuplicate) {
-                                onAction(ImportBatchAction.DiscardCandidate(candidate.id))
-                            } else {
-                                showDiscardConfirm = true
-                            }
+                Column {
+                    AmText(text = pendingItemName(candidate), fontWeight = androidx.compose.ui.text.font.FontWeight.Medium)
+                    AmText(
+                        text = when {
+                            isDuplicate -> AppStrings.elementoYaGuardado
+                            candidate.kind == ImportKind.DESCONOCIDO -> AppStrings.elementoSinClasificar
+                            else -> AppStrings.elementoPendienteRevision
                         },
-                        color = AmColor.TextTertiary,
+                        size = AmType.BodySmall,
+                        color = AmColor.TextSecondary,
                     )
                 }
-            },
-        )
+            }
+            // Acción principal de ancho completo (tonal).
+            when {
+                isDuplicate -> AmSecondaryButton(
+                    label = AppStrings.VerExistente,
+                    onClick = { onAction(ImportBatchAction.ViewExisting(candidate.id)) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                else -> AmSecondaryButton(
+                    label = AppStrings.ReintentarClasificacion,
+                    onClick = { onAction(ImportBatchAction.RetryCandidate(candidate.id)) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+            // Acciones secundarias en fila inferior; Descartar en tono peligro.
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            ) {
+                if (isDuplicate) {
+                    AmTextAction(
+                        label = AppStrings.GuardarDeTodosModos,
+                        onClick = { onAction(ImportBatchAction.SaveDuplicateAnyway(candidate.id)) },
+                    )
+                }
+                AmTextAction(
+                    label = AppStrings.Descartar,
+                    onClick = {
+                        if (isDuplicate) {
+                            onAction(ImportBatchAction.DiscardCandidate(candidate.id))
+                        } else {
+                            showDiscardConfirm = true
+                        }
+                    },
+                    variant = AmTextActionVariant.Danger,
+                )
+            }
+        }
     }
     if (showDiscardConfirm) {
         AmDialog(

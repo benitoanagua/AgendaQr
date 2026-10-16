@@ -223,7 +223,9 @@ fun AmEmptyState(
                 )
             }
         }
-        AmHeading(text = title, size = AmType.Title, fontWeight = FontWeight.SemiBold)
+        // Título de estado vacío (17 sp) distinto del título de pantalla
+        // (18 sp): evita la misma jerarquía visual entre ambos.
+        AmHeading(text = title, size = AmType.Body, fontWeight = FontWeight.SemiBold)
         subtitle?.let { Text(it, color = AmColor.TextSecondary, fontSize = AmType.Label) }
         if (actionLabel != null && onAction != null) {
             AmPrimaryButton(actionLabel, onAction)
