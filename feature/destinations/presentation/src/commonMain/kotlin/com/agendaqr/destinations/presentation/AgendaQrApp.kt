@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.agendaqr.core.ui.components.AmBannerAction
 import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmLoading
 import com.agendaqr.core.ui.components.AmTone
@@ -159,10 +160,10 @@ fun AgendaQrApp() {
             demoActive && !demoReady -> AmLoading(message = AppStrings.Cargando)
             demoShowing -> Column {
                 AmStatusBanner(
-                    message = AppStrings.ModoDemostracion + "\n" + AppStrings.DemostracionAislada,
+                    message = AppStrings.DemostracionAislada,
+                    title = AppStrings.ModoDemostracion,
                     tone = AmTone.Info,
-                    actionLabel = AppStrings.SalirDeDemostracion,
-                    onAction = ::exitDemo,
+                    action = AmBannerAction(AppStrings.SalirDeDemostracion, ::exitDemo),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = AmSpacing.Md, vertical = AmSpacing.Sm),
                 )
                 AgendaQrLocalApp(

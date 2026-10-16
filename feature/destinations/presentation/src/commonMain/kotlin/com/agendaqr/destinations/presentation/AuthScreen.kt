@@ -88,8 +88,12 @@ internal fun AuthForm(
 ) {
     var submitted by rememberSaveable { mutableStateOf(false) }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
-    val emailError = submitted && !isValidEmail(state.email)
-    val passwordError = submitted && state.password.length < 6
+    // El banner de error de credenciales también marca los campos, para que
+    // el estado del campo y el del banner no se contradigan (p. ej. correo
+    // "invalid": el campo se pinta como error al mismo tiempo que el banner).
+    val hasBackendError = state.errorMessage != null
+    val emailError = (submitted && !isValidEmail(state.email)) || hasBackendError
+    val passwordError = (submitted && state.password.length < 6) || hasBackendError
 
     fun submit(target: () -> Unit) {
         submitted = true
@@ -125,7 +129,7 @@ internal fun AuthForm(
                     autoCorrect = false,
                 ),
                 isError = emailError,
-                errorMessage = if (emailError) AppStrings.IngresaUnCorreoValido else null,
+                errorMessage = if (submitted && !isValidEmail(state.email)) AppStrings.IngresaUnCorreoValido else null,
             )
 
             AmTextField(
@@ -143,7 +147,7 @@ internal fun AuthForm(
                     PasswordVisualTransformation()
                 },
                 isError = passwordError,
-                errorMessage = if (passwordError) AppStrings.Minimo6Caracteres else null,
+                errorMessage = if (submitted && state.password.length < 6) AppStrings.Minimo6Caracteres else null,
                 helperMessage = if (!passwordError) AppStrings.Minimo6Caracteres else null,
                 trailing = {
                     AmIconButton(
@@ -163,17 +167,19 @@ internal fun AuthForm(
 
         // Error: banner con acción de recuperación.
         state.errorMessage?.let { err ->
-            AmStatusBanner(
-                err.display(),
-                tone = AmTone.Danger,
-                actionLabel = err.action.label,
-                onAction = when (state.errorFlow) {
+            val (action, dismiss) = err.bannerActions(
+                onRetry = when (state.errorFlow) {
                     ErrorFlow.SignIn -> onSignIn
                     ErrorFlow.SignUp -> onSignUp
                     else -> onClearError
                 },
-                onDismiss = onClearError,
-                dismissLabel = AppStrings.Descartar,
+                onClear = onClearError,
+            )
+            AmStatusBanner(
+                message = err.display(),
+                tone = AmTone.Danger,
+                action = action,
+                dismiss = dismiss,
             )
         }
 

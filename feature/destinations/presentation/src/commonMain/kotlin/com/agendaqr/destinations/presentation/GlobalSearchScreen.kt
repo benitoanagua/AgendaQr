@@ -54,14 +54,15 @@ fun GlobalSearchScreen(
             autoFocus = autoFocus,
         )
         state.error?.let { err ->
+            val (bannerAction, bannerDismiss) = err.bannerActions(
+                onRetry = { onAction(GlobalSearchAction.QueryChanged(state.query)) },
+                onClear = { onAction(GlobalSearchAction.ClearError) },
+            )
             AmStatusBanner(
-                err.display(),
+                message = err.display(),
                 tone = AmTone.Danger,
-                actionLabel = err.action.label,
-                // REINTENTAR: relanza la búsqueda con la misma consulta.
-                onAction = { onAction(GlobalSearchAction.QueryChanged(state.query)) },
-                onDismiss = { onAction(GlobalSearchAction.ClearError) },
-                dismissLabel = AppStrings.Descartar,
+                action = bannerAction,
+                dismiss = bannerDismiss,
             )
         }
         when {

@@ -186,17 +186,15 @@ internal fun OperationEditorScreen(
         // Error recuperable ARRIBA, visible sin scroll, junto al resto de
         // estados de la pantalla (§10).
         state.error?.let { err ->
+            val (bannerAction, bannerDismiss) = err.bannerActions(
+                onRetry = { viewModel.onAction(OperationAction.RetryFailed) },
+                onClear = { viewModel.onAction(OperationAction.ClearError) },
+            )
             AmStatusBanner(
-                err.display(),
+                message = err.display(),
                 tone = AmTone.Danger,
-                actionLabel = err.action.label,
-                onAction = {
-                    viewModel.onAction(
-                        if (err.action == ErrorAction.Retry) OperationAction.RetryFailed
-                        else OperationAction.ClearError,
-                    )
-                },
-                onDismiss = { viewModel.onAction(OperationAction.ClearError) },
+                action = bannerAction,
+                dismiss = bannerDismiss,
             )
         }
         // Tipo con semántica de selección (segmentado, no dos botones

@@ -99,7 +99,7 @@ internal fun AccountScreen(
                     AmText(email, size = AmType.Body, color = AmColor.TextSecondary)
                 }
                 AmStatusBanner(
-                    AppStrings.DatosLocalesSeConservan,
+                    message = AppStrings.DatosLocalesSeConservan,
                     tone = AmTone.Info,
                 )
                 AmSecondaryButton(

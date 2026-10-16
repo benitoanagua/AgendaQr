@@ -122,7 +122,7 @@ fun ImportBatchScreen(
             is ImportBatchUiState.Saved -> {
                 // Resumen de guardado: qué se guardó y qué queda pendiente.
                 AmStatusBanner(
-                    AppStrings.batchSavedKeepReviewNotice,
+                    message = AppStrings.batchSavedKeepReviewNotice,
                     tone = AmTone.Success,
                 )
                 state.batch.let { batch ->
@@ -138,11 +138,11 @@ fun ImportBatchScreen(
                 }
             }
             is ImportBatchUiState.Error -> {
+                // El banner no lleva acción: el botón fijo inferior
+                // "Reintentar guardado" es la única fuente de la acción.
                 AmStatusBanner(
-                    state.error.display(),
+                    message = state.error.display(),
                     tone = AmTone.Danger,
-                    actionLabel = state.error.action.label,
-                    onAction = { onAction(ImportBatchAction.SaveRecognized) },
                 )
                 state.batch?.let { BatchResultContent(it, onAction, isSaving = false) }
             }

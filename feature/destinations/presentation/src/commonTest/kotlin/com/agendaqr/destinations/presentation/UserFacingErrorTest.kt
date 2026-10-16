@@ -122,7 +122,8 @@ class UserFacingErrorTest {
         assertTrue(shown.contains("No pudimos iniciar sesión"))
         assertFalse(shown.contains("Invalid login credentials"))
         assertFalse(shown.contains("RestException"))
-        assertEquals("REINTENTAR", error.action.label)
+        // Credenciales inválidas: no se reenvían los mismos datos; solo descartar.
+        assertEquals("CERRAR", error.action.label)
     }
 
     @Test
@@ -252,7 +253,7 @@ class UserFacingErrorTest {
         assertNotNull(error)
         assertFalse(error.display().contains("Invalid login credentials"))
         assertTrue(error.display().contains("No pudimos iniciar sesión"))
-        assertEquals("REINTENTAR", error.action.label)
+        assertEquals("CERRAR", error.action.label)
         assertEquals(ErrorFlow.SignIn, viewModel.state.value.errorFlow)
     }
 

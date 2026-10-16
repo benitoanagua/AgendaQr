@@ -109,19 +109,15 @@ fun DestinationsScreen(
     ) {
         // §10: errores recuperables y contextuales, visibles sin scroll.
         state.error?.let { error ->
+            val (bannerAction, bannerDismiss) = error.bannerActions(
+                onRetry = { onAction(DestinationAction.RetryFailed) },
+                onClear = { onAction(DestinationAction.ClearError) },
+            )
             AmStatusBanner(
-                error.display(),
+                message = error.display(),
                 tone = AmTone.Danger,
-                actionLabel = error.action.label,
-                // REINTENTAR re-ejecuta la operación fallida en el VM.
-                onAction = {
-                    onAction(
-                        if (error.action == ErrorAction.Retry) DestinationAction.RetryFailed
-                        else DestinationAction.ClearError,
-                    )
-                },
-                onDismiss = { onAction(DestinationAction.ClearError) },
-                dismissLabel = AppStrings.Descartar,
+                action = bannerAction,
+                dismiss = bannerDismiss,
             )
         }
 

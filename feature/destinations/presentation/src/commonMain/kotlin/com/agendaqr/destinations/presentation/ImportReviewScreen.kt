@@ -70,15 +70,15 @@ fun ImportReviewScreen(
         },
     ) {
         error?.let { err ->
+            val (bannerAction, bannerDismiss) = err.bannerActions(
+                onRetry = onSaveAll,
+                onClear = onClearError,
+            )
             AmStatusBanner(
-                err.display(),
+                message = err.display(),
                 tone = AmTone.Danger,
-                actionLabel = err.action.label,
-                // REINTENTAR guarda los importados de nuevo (el lote sigue
-                // retenido en el VM); el resto de acciones solo descarta.
-                onAction = { if (err.action == ErrorAction.Retry) onSaveAll() else onClearError() },
-                onDismiss = onClearError,
-                dismissLabel = AppStrings.Descartar,
+                action = bannerAction,
+                dismiss = bannerDismiss,
             )
         }
         if (assets.isEmpty()) {

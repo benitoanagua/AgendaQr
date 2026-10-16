@@ -214,17 +214,15 @@ internal fun OperationListScreen(
 
         // Error persistente.
         state.error?.let { err ->
+            val (bannerAction, bannerDismiss) = err.bannerActions(
+                onRetry = { viewModel.onAction(OperationAction.RetryFailed) },
+                onClear = { viewModel.onAction(OperationAction.ClearError) },
+            )
             AmStatusBanner(
-                err.display(),
+                message = err.display(),
                 tone = AmTone.Danger,
-                actionLabel = err.action.label,
-                onAction = {
-                    viewModel.onAction(
-                        if (err.action == ErrorAction.Retry) OperationAction.RetryFailed
-                        else OperationAction.ClearError,
-                    )
-                },
-                onDismiss = { viewModel.onAction(OperationAction.ClearError) },
+                action = bannerAction,
+                dismiss = bannerDismiss,
             )
         }
 

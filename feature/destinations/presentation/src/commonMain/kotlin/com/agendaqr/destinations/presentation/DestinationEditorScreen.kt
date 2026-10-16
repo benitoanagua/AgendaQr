@@ -136,13 +136,15 @@ private fun DestinationEditorContent(
         },
     ) {
         error?.let { err ->
+            val (bannerAction, bannerDismiss) = err.bannerActions(
+                onRetry = onRetryError,
+                onClear = onClearError,
+            )
             AmStatusBanner(
-                err.display(),
+                message = err.display(),
                 tone = AmTone.Danger,
-                actionLabel = err.action.label,
-                onAction = { if (err.action == ErrorAction.Retry) onRetryError() else onClearError() },
-                onDismiss = onClearError,
-                dismissLabel = AppStrings.Descartar,
+                action = bannerAction,
+                dismiss = bannerDismiss,
             )
         }
         // Sección de información: formulario agrupado (los campos sin
