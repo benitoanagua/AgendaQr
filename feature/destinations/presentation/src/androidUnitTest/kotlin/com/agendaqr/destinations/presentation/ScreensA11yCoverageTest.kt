@@ -272,7 +272,7 @@ class ScreensA11yCoverageTest {
         // (sharedImportsSupported = true), así que la ayuda es visible.
         val gallery = compose.onNodeWithText("Elegir de la galería").getBoundsInRoot().top
         val share = compose.onNodeWithText(
-            "Comparte una imagen o PDF desde otra app con Agenda QR. La importación continuará aquí para revisar lo que se encontró.",
+            AppStrings.shareFromAnotherAppHint,
         ).getBoundsInRoot().top
         val camera = compose.onNodeWithText("Cámara").getBoundsInRoot().top
         assertTrue(gallery < share, "Galería debe estar sobre la ayuda de share")

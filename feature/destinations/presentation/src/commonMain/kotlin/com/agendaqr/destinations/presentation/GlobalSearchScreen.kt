@@ -116,10 +116,10 @@ fun GlobalSearchScreen(
 
 private fun searchResultTypeLabel(type: com.agendaqr.destinations.domain.AgendaSearchResultType): String =
     when (type) {
-        com.agendaqr.destinations.domain.AgendaSearchResultType.CONTEXT -> "Contexto"
-        com.agendaqr.destinations.domain.AgendaSearchResultType.QR -> "QR"
-        com.agendaqr.destinations.domain.AgendaSearchResultType.ACTIVITY -> "Actividad"
-        com.agendaqr.destinations.domain.AgendaSearchResultType.COMPROBANTE -> "Comprobante"
+        com.agendaqr.destinations.domain.AgendaSearchResultType.CONTEXT -> AppStrings.TipoContexto
+        com.agendaqr.destinations.domain.AgendaSearchResultType.QR -> AppStrings.TipoQr
+        com.agendaqr.destinations.domain.AgendaSearchResultType.ACTIVITY -> AppStrings.TipoActividad
+        com.agendaqr.destinations.domain.AgendaSearchResultType.COMPROBANTE -> AppStrings.TipoComprobante
     }
 
 /**
@@ -127,8 +127,8 @@ private fun searchResultTypeLabel(type: com.agendaqr.destinations.domain.AgendaS
  * se traducen a la semántica visible (nunca enums técnicos en UI).
  */
 internal fun searchResultTitle(result: AgendaSearchResult): String = when (result.title) {
-    "PAGO" -> "Pago"
-    "COBRO" -> "Cobro"
+    "PAGO" -> AppStrings.Pago
+    "COBRO" -> AppStrings.Cobro
     else -> result.title
 }
 

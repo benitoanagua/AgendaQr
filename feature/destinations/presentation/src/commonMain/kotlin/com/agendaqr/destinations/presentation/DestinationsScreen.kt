@@ -343,9 +343,8 @@ fun DestinationRow(
         },
         meta = {
             Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
-                destination.qr.content?.takeIf { it.isNotBlank() }?.let {
-                    AmText(it, color = AmColor.AccentText)
-                }
+                // U-12/D9: el contenido decodificado NO aparece en la lista
+                // (privacidad + no parece un enlace); vive en el Detalle.
                 ElementSyncBadge(
                     syncLookup.status(SyncResource.DESTINATION, destination.id),
                 )

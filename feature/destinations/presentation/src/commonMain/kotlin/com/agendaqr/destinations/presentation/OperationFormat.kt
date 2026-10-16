@@ -18,9 +18,9 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
 internal fun receiptProvenanceLabel(provenance: ReceiptProvenance?): String = when (provenance) {
-    ReceiptProvenance.ENVIADO -> "Enviado"
-    ReceiptProvenance.RECIBIDO -> "Recibido"
-    ReceiptProvenance.DESCONOCIDO, null -> "Origen desconocido"
+    ReceiptProvenance.ENVIADO -> AppStrings.ProcedenciaEnviado
+    ReceiptProvenance.RECIBIDO -> AppStrings.ProcedenciaRecibido
+    ReceiptProvenance.DESCONOCIDO, null -> AppStrings.ProcedenciaDesconocida
 }
 
 /**
@@ -203,8 +203,8 @@ internal fun monthYearLabel(millis: Long, timeZone: TimeZone = TimeZone.currentS
 
 
 internal fun operationTypeLabel(type: OperationType): String = when (type) {
-    OperationType.PAGO -> "Pago"
-    OperationType.COBRO -> "Cobro"
+    OperationType.PAGO -> AppStrings.Pago
+    OperationType.COBRO -> AppStrings.Cobro
 }
 
 /**

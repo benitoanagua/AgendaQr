@@ -8,6 +8,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import com.agendaqr.core.ui.theme.AmColor
@@ -69,6 +70,8 @@ fun AmText(
     fontWeight: FontWeight? = null,
     color: Color = AmColor.TextPrimary,
     textAlign: TextAlign? = null,
+    /** Límite de líneas con elipsis (p. ej. contenido largo plegado). */
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     Text(
         text = text,
@@ -79,5 +82,7 @@ fun AmText(
         fontWeight = fontWeight,
         color = color,
         textAlign = textAlign,
+        maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis,
     )
 }

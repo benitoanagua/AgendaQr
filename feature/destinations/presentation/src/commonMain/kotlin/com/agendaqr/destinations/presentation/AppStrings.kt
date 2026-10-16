@@ -28,6 +28,14 @@ internal object AppStrings {
     val associateToExistingOperation = "Asociar a actividad existente"
     val Anadir = "Añadir"
     val searchIntroHint = "Busca QR, actividades, contextos o comprobantes."
+    /** Etiquetas de tipo y procedencia (U-21: antes literales en código). */
+    val TipoContexto = "Contexto"
+    val TipoQr = "QR"
+    val TipoActividad = "Actividad"
+    val TipoComprobante = "Comprobante"
+    val ProcedenciaEnviado = "Enviado"
+    val ProcedenciaRecibido = "Recibido"
+    val ProcedenciaDesconocida = "Origen desconocido"
     val BuscandoEnAgendaQr = "Buscando en Agenda QR…"
     val Buscar = "Buscar"
     val searchPlaceholder = "QR, actividades y más"
@@ -41,7 +49,7 @@ internal object AppStrings {
     val Cerrar = "Cerrar"
     val CerrarSesion = "Cerrar sesión"
     val Cobro = "Cobro"
-    val shareFromAnotherAppHint = "Comparte una imagen o PDF desde otra app con Agenda QR. La importación continuará aquí para revisar lo que se encontró."
+    val shareFromAnotherAppHint = "Comparte una imagen o PDF con Agenda QR desde otra app."
     val Compartir = "Compartir"
     val Comprobante = "Comprobante"
     val receiptReceivedTitle = "Comprobante recibido"
@@ -313,7 +321,7 @@ internal object AppStrings {
     // (ModoLocal/SqliteLocal retirados en U-06/U-11: jerga fuera del
     // editor; el estado global comunica el modo.)
     /** Detalle de actividad: caja de metadatos temporales. */
-    val FechaDeOperacion = "Fecha de operación"
+    val FechaDeOperacion = "Fecha de la actividad"
     val RegistradoEnDispositivo = "Registrado en dispositivo"
     /** Acción de borrado del importe (accesible). */
     val BorrarImporte = "Borrar importe"
@@ -342,13 +350,16 @@ internal object AppStrings {
     val DatosNuncaSalen = "Tus datos nunca salen de tu teléfono"
     val IndexacionSinInternet = "Indexación y análisis instantáneo sin internet."
     /** Detalle QR: guía de uso, acción de exhibición y dock. */
-    val MuestraEsteCodigo = "Muestra este código para cobrar o escanéalo para transferir"
+    val MuestraEsteCodigo = "Muéstralo para cobrar o compártelo para pagar."
     val PantallaCompleta = "Pantalla completa"
     val Copiar = "Copiar"
     val Copiado = "Copiado"
+    /** Contenido del QR en el Detalle (U-12, D9): plegado del bloque
+     * (reutiliza VerMas de S09). */
+    val VerMenos = "Ver menos"
     val FechaDeAlta = "Fecha de alta"
     val EditarMetadatosReemplazarQr = "Editar metadatos / reemplazar QR"
-    val IntegridadHistorica = "Los cambios a este destino no modifican operaciones históricas asociadas."
+    val IntegridadHistorica = "Editar este destino no cambia tus actividades guardadas."
     // (RequisitoMinimo retirado en U-06: el formulario ya lo comunica.)
     // ------------------------------------------------------------------
     // Acceso local (sin cuenta): configuración de PIN, desbloqueo y

@@ -175,22 +175,43 @@ fun DestinationDetailScreen(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Md),
                     verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
                 ) {
-                    destination.qr.content?.takeIf { it.isNotBlank() }?.let {
-                        AmMetaRow(
-                            label = AppStrings.Contenido,
-                            value = it,
-                            trailing = {
+                    // Contenido decodificado (U-12, D9): bloque de ancho
+                    // completo alineado a la izquierda, máx. 3 líneas con
+                    // "Ver más", seleccionable y copiable (no una fila de
+                    // valor alineada a la derecha).
+                    destination.qr.content?.takeIf { it.isNotBlank() }?.let { content ->
+                        var contentExpanded by remember { mutableStateOf(false) }
+                        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+                            AmText(
+                                AppStrings.Contenido,
+                                color = AmColor.TextSecondary,
+                                size = AmType.BodySmall,
+                            )
+                            androidx.compose.foundation.text.selection.SelectionContainer {
+                                AmText(
+                                    content,
+                                    maxLines = if (contentExpanded) Int.MAX_VALUE else 3,
+                                )
+                            }
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
                                 AmCompactAction(
                                     label = AppStrings.Copiar,
                                     onClick = {
-                                        copyToClipboard(it)
+                                        copyToClipboard(content)
                                         copiedEvent = Any()
                                     },
                                     icon = AmIcons.Copy,
                                     prominent = true,
                                 )
-                            },
-                        )
+                                AmTextAction(
+                                    label = if (contentExpanded) AppStrings.VerMenos else AppStrings.VerMas,
+                                    onClick = { contentExpanded = !contentExpanded },
+                                )
+                            }
+                        }
                     }
                     destination.category?.let { AmMetaRow(label = AppStrings.Categoria, value = it) }
                     AmMetaRow(
