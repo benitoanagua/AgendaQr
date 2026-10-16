@@ -1,9 +1,11 @@
 package com.agendaqr.core.ui.theme
 
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -33,12 +35,12 @@ class AmTypographyTest {
     @Test
     fun m3_roles_carry_the_canonical_sizes() {
         // Título de pantalla (titleLarge, 18), titular destacado
-        // (headlineSmall/Headline, 24), cuerpo (bodyLarge, 14) y etiqueta
-        // (labelLarge, 14): escala compacta, en sp.
+        // (headlineSmall/Headline, 24), cuerpo (bodyLarge, 17) y etiqueta
+        // (labelLarge, 15): escala de la referencia, en sp.
         assertEquals(18.sp, AmMaterialTypography.titleLarge.fontSize)
         assertEquals(24.sp, AmMaterialTypography.headlineMedium.fontSize)
-        assertEquals(14.sp, AmMaterialTypography.bodyLarge.fontSize)
-        assertEquals(14.sp, AmMaterialTypography.labelLarge.fontSize)
+        assertEquals(17.sp, AmMaterialTypography.bodyLarge.fontSize)
+        assertEquals(15.sp, AmMaterialTypography.labelLarge.fontSize)
     }
 
     @Test
@@ -107,14 +109,29 @@ class AmTypographyTest {
 
     @Test
     fun section_header_stays_in_the_label_scale() {
-        // Encabezados de sección (headline-sm de la referencia Stitch:
-        // 18 sp SemiBold — titulares de sección, no etiquetas de fila).
-        assertEquals(18f, AmType.SectionHeader.value)
-        assertEquals(18f, AmTextStyles.SectionHeader.fontSize.value)
-        assertEquals(15f, AmTextStyles.RowTitle.fontSize.value)
-        assertEquals(15f, AmTextStyles.ButtonLabel.fontSize.value)
+        // Encabezados de sección (List header de la referencia: 15 sp
+        // normal), título y etiqueta de botón en el cuerpo 17, metadato
+        // 13, importe 26 y tags 11.
+        assertEquals(15f, AmType.SectionHeader.value)
+        assertEquals(15f, AmTextStyles.SectionHeader.fontSize.value)
+        assertEquals(17f, AmTextStyles.RowTitle.fontSize.value)
+        assertEquals(17f, AmTextStyles.ButtonLabel.fontSize.value)
         assertEquals(13f, AmTextStyles.BodySmall.fontSize.value)
         assertEquals(26f, AmTextStyles.Amount.fontSize.value)
         assertEquals(11f, AmTextStyles.Tag.fontSize.value)
+    }
+
+    @Test
+    fun weights_follow_the_reference_with_documented_exceptions() {
+        // Pesos normal en toda la escala salvo las dos desviaciones
+        // documentadas: etiqueta de botón Medium y título de diálogo bold
+        // (este último lo fija AmDialog con FontWeight.Bold). Los roles
+        // "normales" no fijan peso (null = regular del sistema).
+        assertNull(AmTextStyles.RowTitle.fontWeight)
+        assertNull(AmTextStyles.Tag.fontWeight)
+        assertNull(AmTextStyles.SectionHeader.fontWeight)
+        assertNull(AmTextStyles.Support.fontWeight)
+        assertEquals(FontWeight.Medium, AmTextStyles.ButtonLabel.fontWeight)
+        assertEquals(FontWeight.SemiBold, AmTextStyles.Amount.fontWeight)
     }
 }

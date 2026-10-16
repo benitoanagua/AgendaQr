@@ -158,13 +158,11 @@ private fun Modifier.amScannerCorners(
 }
 
 /**
- * Marco de medios (QR, comprobante): superficie [AmColor.Surface] con la
- * forma grande de tokens — la tarjeta de la referencia. Se usa `Surface`
- * (y no el tono secundario, idéntico al fondo en tema claro) para que el
- * límite del contenido sea el bloque tonal en ambos temas, sin bordes
- * decorativos (el gate solo admite E-01/E-02). El fondo interno del
- * contenido (p. ej. el lienzo claro del QR, [AmColor.QrCanvas]) lo aporta
- * quien lo dibuja.
+ * Marco de medios (QR, comprobante): superficie [AmColor.Surface] con el
+ * radio de tarjeta de la referencia (8) — el límite del contenido es el
+ * bloque tonal en ambos temas, sin bordes decorativos (el gate solo
+ * admite E-01/E-02). El fondo interno del contenido (p. ej. el lienzo
+ * claro del QR, [AmColor.QrCanvas]) lo aporta quien lo dibuja.
  */
 @Composable
 fun AmMediaFrame(
@@ -172,7 +170,7 @@ fun AmMediaFrame(
     content: @Composable () -> Unit,
 ) {
     Box(
-        modifier = modifier.background(AmColor.Surface, AmShapes.ExtraLarge),
+        modifier = modifier.background(AmColor.Surface, AmShapes.Large),
         contentAlignment = Alignment.Center,
     ) {
         content()

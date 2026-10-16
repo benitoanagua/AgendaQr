@@ -218,10 +218,10 @@ class AmNavChromeState(
 
 /**
  * Botón flotante extendido de Inicio/Actividades: texto visible y glifo
- * decorativo sobre el bloque de acento. Compacto (referencia MCP):
- * altura visual de 48 dp con etiqueta 13 sp SemiBold y glifo de 18 dp —
- * acción principal identificable sin dominar la pantalla; el área
- * interactiva la completa M3 por encima de 48 dp.
+ * decorativo sobre el bloque de acento. Compacto: altura visual de 48 dp
+ * con etiqueta 13 sp SemiBold y glifo de 18 dp — acción principal
+ * identificable sin dominar la pantalla; el área interactiva la completa
+ * M3 por encima de 48 dp.
  */
 @Composable
 fun AmExtendedFab(

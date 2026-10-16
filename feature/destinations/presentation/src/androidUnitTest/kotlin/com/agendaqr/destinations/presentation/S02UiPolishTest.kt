@@ -107,12 +107,12 @@ class S02UiPolishTest {
             }
         }
         compose.waitForIdle()
-        // Encabezado de sección (referencia Stitch, ADR-0015): headline-sm
-        // 18 sp SemiBold en color ESTÁNDAR del tema — semántica heading.
+        // Encabezado de sección (List header de la referencia): 15 sp en
+        // texto secundario — semántica heading.
         compose.onNodeWithText(AppStrings.TodosLosDestinos).assert(headingMatcher())
         val style = layoutOf(AppStrings.TodosLosDestinos).layoutInput.style
-        assertEquals(18.sp, style.fontSize)
-        assertEquals(LightAmColorScheme.textPrimary, style.color)
+        assertEquals(15.sp, style.fontSize)
+        assertEquals(LightAmColorScheme.textSecondary, style.color)
     }
 
     @Test
@@ -140,10 +140,10 @@ class S02UiPolishTest {
         }
         compose.waitForIdle()
         val style = layoutOf(AppStrings.TodosLosDestinos).layoutInput.style
-        // Referencia Stitch: 18 sp en color estándar (jerarquía de
-        // titular de sección, legible en ambos temas).
-        assertEquals(18.sp, style.fontSize)
-        assertEquals(DarkAmColorScheme.textPrimary, style.color)
+        // List header de la referencia: 15 sp en texto secundario
+        // (legible en ambos temas).
+        assertEquals(15.sp, style.fontSize)
+        assertEquals(DarkAmColorScheme.textSecondary, style.color)
     }
 
     // --- D5: los 3 controles de S02 muestran icono + etiqueta (M10/M12) ---

@@ -1,6 +1,9 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +20,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,8 +74,8 @@ fun AmTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    /** Glifo decorativo del concepto del campo (referencia Stitch:
-     * comercio, nota, moneda…). El label sigue siendo la señal. */
+    /** Glifo decorativo del concepto del campo (comercio, nota,
+     *  moneda…). El label sigue siendo la señal. */
     leadingIcon: ImageVector? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
@@ -183,10 +187,14 @@ fun AmTextField(
 }
 
 /**
- * Campo de búsqueda (SearchBar de la referencia): relleno box, radio 6,
- * glifo de búsqueda y limpieza opcional etiquetada; activo con borde de
- * acento. La entrada real de búsqueda de producto (S04). La altura mínima
- * de 48 dp conserva el objetivo táctil (la referencia mide 32 px).
+ * Campo de búsqueda (SearchBar de la referencia): relleno box
+ * (`SurfaceSecondary`), radio 6, glifo de búsqueda y limpieza opcional
+ * etiquetada; SIN etiqueta flotante visible — el nombre accesible va por
+ * semántica ([label] como contentDescription) y la pista visible es el
+ * placeholder; en foco, borde de acento de 1 dp (excepción E-04). La
+ * entrada real de búsqueda de producto (S04). La altura mínima de 48 dp
+ * conserva el objetivo táctil (la referencia mide 32 px; desviación
+ * documentada).
  */
 @Composable
 fun AmSearchField(
@@ -212,27 +220,39 @@ fun AmSearchField(
     if (autoFocus) {
         LaunchedEffect(Unit) { runCatching { focusRequester.requestFocus() } }
     }
+    val interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+    val focused by interactionSource.collectIsFocusedAsState()
     TextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier
             .fillMaxWidth()
-            // Altura visual compacta (44, referencia h-10/h-11); el
-            // contenido crece con la escala de fuente.
-            .defaultMinSize(minHeight = AmMetrics.FieldCompactHeight)
-            .focusRequester(focusRequester),
+            // Altura mínima 48 dp (desviación documentada frente a los
+            // 32 px de la referencia): el campo es su propio target.
+            .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
+            // Borde de acento SOLO en foco (E-04); transparente en reposo
+            // para que el layout no salte.
+            .border(
+                AmMetrics.Border,
+                if (focused) AmColor.Focus else AmColor.Transparent,
+                AmShapes.Medium,
+            )
+            .focusRequester(focusRequester)
+            // Nombre accesible del campo: la etiqueta no se dibuja
+            // (SearchBar de la referencia no lleva label flotante).
+            .semantics { contentDescription = label },
+        interactionSource = interactionSource,
         keyboardOptions = keyboardOptions,
         placeholder = {
             Text(
                 placeholder,
-                style = AmTextStyles.Body,
+                style = AmTextStyles.Label,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
         },
         singleLine = true,
-        label = { Text(label) },
-        shape = AmShapes.ExtraLarge,
+        shape = AmShapes.Medium,
         leadingIcon = { AmIcon(imageVector = AmIcons.Search, contentDescription = null, tint = AmColor.TextTertiary) },
         trailingIcon = if (onClear != null && value.isNotEmpty()) {
             {
@@ -248,17 +268,23 @@ fun AmSearchField(
             null
         },
         colors = TextFieldDefaults.colors(
-            // Caja de búsqueda (referencia): `Surface` en reposo y en foco
-            // (distinta del fondo en ambos temas); el foco lo marca el
-            // indicador de acento, no el relleno.
-            unfocusedContainerColor = AmColor.Surface,
-            focusedContainerColor = AmColor.Surface,
+            // Caja de búsqueda (referencia): relleno box en reposo y en
+            // foco; el foco lo marca el borde de acento (E-04), sin el
+            // indicador inferior de M3.
+            unfocusedContainerColor = AmColor.SurfaceSecondary,
+            focusedContainerColor = AmColor.SurfaceSecondary,
             disabledContainerColor = AmColor.Transparent,
-            unfocusedIndicatorColor = AmColor.Divider,
-            focusedIndicatorColor = AmColor.Focus,
+            unfocusedIndicatorColor = AmColor.Transparent,
+            focusedIndicatorColor = AmColor.Transparent,
             disabledIndicatorColor = AmColor.Transparent,
-            unfocusedLabelColor = AmColor.TextSecondary,
-            focusedLabelColor = AmColor.AccentText,
+            unfocusedTextColor = AmColor.TextPrimary,
+            focusedTextColor = AmColor.TextPrimary,
+            disabledTextColor = AmColor.OnDisabled,
+            unfocusedPlaceholderColor = AmColor.TextSecondary,
+            focusedPlaceholderColor = AmColor.TextSecondary,
+            disabledPlaceholderColor = AmColor.OnDisabled,
+            unfocusedLeadingIconColor = AmColor.TextTertiary,
+            focusedLeadingIconColor = AmColor.TextTertiary,
             cursorColor = AmColor.Focus,
         ),
     )
@@ -278,12 +304,16 @@ fun AmSearchTrigger(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
-        AmSearchField(
-            value = "",
-            onValueChange = {},
-            label = label,
-            placeholder = placeholder,
-        )
+        // El campo decorativo queda fuera del árbol de accesibilidad: el
+        // control es un solo botón con nombre accesible (la superposición).
+        Box(Modifier.clearAndSetSemantics {}) {
+            AmSearchField(
+                value = "",
+                onValueChange = {},
+                label = label,
+                placeholder = placeholder,
+            )
+        }
         Box(
             Modifier
                 .matchParentSize()
@@ -307,7 +337,7 @@ fun AmSearchTrigger(
 }
 
 /**
- * Entrada de importe (referencia Stitch S07): cifra grande (26 sp
+ * Entrada de importe: cifra grande (26 sp
  * SemiBold) con símbolo opcional de moneda, acción de borrado ⌫
  * etiquetada y guía hairline — la altura la fija el contenido con un
  * objetivo táctil de 48 dp en el borrado. El valor sigue siendo texto

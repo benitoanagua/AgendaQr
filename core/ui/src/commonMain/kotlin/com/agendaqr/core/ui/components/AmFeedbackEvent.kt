@@ -2,6 +2,7 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -16,6 +17,8 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
+import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.AmSpacing
 
 /**
@@ -31,10 +34,22 @@ class AmFeedbackHost {
     val snackbarHostState: SnackbarHostState = SnackbarHostState()
 }
 
-/** Monta el Snackbar del host en el slot del Scaffold. */
+/**
+ * Monta el Snackbar del host en el slot del Scaffold. El contenedor
+ * replica el Toast de la referencia — bloque oscuro (superficie inversa),
+ * radio 8 y texto 15 (bodyMedium del tema) — manteniendo la ubicación
+ * inferior de la plataforma.
+ */
 @Composable
 fun AmSnackbarHost(host: AmFeedbackHost) {
-    SnackbarHost(hostState = host.snackbarHostState)
+    SnackbarHost(hostState = host.snackbarHostState) { data ->
+        Snackbar(
+            data,
+            containerColor = AmColor.InverseSurface,
+            contentColor = AmColor.InverseOnSurface,
+            shape = AmShapes.Large,
+        )
+    }
 }
 
 /**

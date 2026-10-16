@@ -39,42 +39,45 @@ import com.agendaqr.core.ui.theme.accentFor
  */
 
 /**
- * Etiqueta semántica de estado (Tag outline/round de la referencia):
- * borde y texto del tono (par garantizado por AmSchemeTest) sobre fondo
+ * Etiqueta semántica de estado (Tag outline de la referencia): borde y
+ * texto del tono (par garantizado por AmSchemeTest) sobre fondo
  * transparente. No interactiva; el estado se expresa con TEXTO (nunca
- * solo color).
+ * solo color). [round] activa la variante píldora del Tag.
  */
 @Composable
 fun AmBadge(
     text: String,
     modifier: Modifier = Modifier,
     tone: AmTone = AmTone.Neutral,
+    /** Variante píldora (Tag `round` de la referencia). */
+    round: Boolean = false,
 ) {
     val toneColor = if (tone == AmTone.Neutral) AmColor.TextSecondary else tone.content()
+    val shape = if (round) AmShapes.Pill else AmShapes.ExtraSmall
     Box(
         modifier = modifier
             .border(
                 AmMetrics.Border,
                 toneColor,
-                AmShapes.Pill,
+                shape,
             )
             .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text,
-            style = AmTextStyles.Support,
+            style = AmTextStyles.Tag,
             color = toneColor,
         )
     }
 }
 
 /**
- * Etiqueta semántica de estado con fondo tonal (Tag round de la
- * referencia): par texto/contenedor del tono garantizado por
- * AmSchemeTest sobre el bloque tonal. No interactiva; el estado se
- * expresa con TEXTO (nunca solo color). Para el estilo outline usa
- * [AmBadge].
+ * Etiqueta semántica de estado con fondo tonal (Tag de la referencia):
+ * par texto/contenedor del tono garantizado por AmSchemeTest sobre el
+ * bloque tonal. No interactiva; el estado se expresa con TEXTO (nunca
+ * solo color). Para el estilo outline usa [AmBadge]; [round] activa la
+ * variante píldora.
  */
 @Composable
 fun AmTonalTag(
@@ -83,11 +86,13 @@ fun AmTonalTag(
     tone: AmTone = AmTone.Neutral,
     /** Mayúsculas tipadas (p. ej. "PAGO"): presentación, no copy nuevo. */
     uppercase: Boolean = false,
+    /** Variante píldora (Tag `round` de la referencia). */
+    round: Boolean = false,
 ) {
     val label = if (uppercase) text.uppercase() else text
     Box(
         modifier = modifier
-            .background(tone.container(), AmShapes.Pill)
+            .background(tone.container(), if (round) AmShapes.Pill else AmShapes.ExtraSmall)
             .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
         contentAlignment = Alignment.Center,
     ) {
@@ -104,7 +109,7 @@ fun AmTonalTag(
  * (p. ej. flecha entrante verde = cobro, saliente azul = pago). El glifo
  * es decorativo — el TEXTO de la fila comunica el tipo; la forma
  * acompaña, nunca es la única señal (contrato de accesibilidad). Tamaño
- * de tile 40 dp (referencia Stitch: w-10 h-10).
+ * de tile 40 dp (mismo tile que la marca tipada de fila).
  */
 @Composable
 fun AmIconBadge(
@@ -195,8 +200,8 @@ fun AmTappableCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(AmColor.Surface, AmShapes.ExtraLarge)
-            .border(AmMetrics.Border, AmColor.Divider, AmShapes.ExtraLarge)
+            .background(AmColor.Surface, AmShapes.Large)
+            .border(AmMetrics.Border, AmColor.Divider, AmShapes.Large)
             .clickable(role = Role.Button, onClick = onClick)
             .padding(AmSpacing.Md),
     ) {
@@ -227,11 +232,11 @@ fun AmHairline(
 }
 
 /**
- * Cuerpo de lista (card mode de la referencia Stitch): superficie de
- * tarjeta delimitada por hairline (`border-divider`, 1 dp, excepción
- * E-03 del gate) con radio 12, que agrupa celdas contiguas separadas por
- * hairlines inset. Las filas usan `showDivider` salvo la última; el
- * cuerpo mide su contenido.
+ * Cuerpo de lista (card mode): superficie de
+ * tarjeta delimitada por hairline (1 dp, excepción
+ * E-03 del gate) con radio 8 (card de la referencia), que agrupa celdas
+ * contiguas separadas por hairlines inset. Las filas usan `showDivider`
+ * salvo la última; el cuerpo mide su contenido.
  */
 @Composable
 fun AmListBody(
@@ -241,8 +246,8 @@ fun AmListBody(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(AmColor.Surface, AmShapes.ExtraLarge)
-            .border(AmMetrics.Border, AmColor.Divider, AmShapes.ExtraLarge),
+            .background(AmColor.Surface, AmShapes.Large)
+            .border(AmMetrics.Border, AmColor.Divider, AmShapes.Large),
     ) {
         content()
     }
@@ -260,6 +265,8 @@ fun AmListBody(
  * - [selected] expone la selección en la semántica (nunca solo color).
  * - [trailing] son las acciones de fila: botones de icono, no enlaces de
  *   texto.
+ * - [showChevron] añade la flecha de la referencia (List.Item `arrow`,
+ *   decorativa) cuando la fila navega y no tiene acciones finales.
  * - [showDivider] añade el separador inferior de la lista agrupada; lo
  *   activa la pantalla que agrupa celdas contiguas.
  */
@@ -280,6 +287,9 @@ fun AmListRow(
     /** Metadato en línea PROPIA, bajo el subtítulo (p. ej. el badge de
      * sincronización): no compite por el ancho con la acción de la fila. */
     meta: (@Composable () -> Unit)? = null,
+    /** Flecha decorativa de navegación (List.Item `arrow`); solo en filas
+     * que navegan y sin acciones finales. */
+    showChevron: Boolean = false,
     /** Separador inferior de la lista agrupada. */
     showDivider: Boolean = false,
     /** Límite de líneas para el título (default 1 con elipsis). */
@@ -318,7 +328,7 @@ fun AmListRow(
                         subtitle?.let {
                             Text(
                                 it,
-                                style = AmTextStyles.Caption,
+                                style = AmTextStyles.BodySmall,
                                 color = AmColor.TextSecondary,
                                 maxLines = subtitleMaxLines,
                                 overflow = TextOverflow.Ellipsis,
@@ -339,12 +349,23 @@ fun AmListRow(
                     )
                 }
             },
-            trailingContent = trailing,
+            trailingContent = trailing ?: if (showChevron) {
+                {
+                    AmIcon(
+                        imageVector = AmIcons.ChevronRight,
+                        contentDescription = null,
+                        size = AmMetrics.IconSizeCompact,
+                        tint = AmColor.TextTertiary,
+                    )
+                }
+            } else {
+                null
+            },
         )
         if (showDivider) {
             // Hairline alineado con el CONTENIDO cuando hay marca a la
             // izquierda (tile/punto), no con el borde de la tarjeta
-            // (referencia Stitch: ml-14 → [AmMetrics.ListDividerInset]).
+            // ([AmMetrics.ListDividerInset]).
             val hasLeading = leading != null || accent != null
             HorizontalDivider(
                 modifier = Modifier.padding(

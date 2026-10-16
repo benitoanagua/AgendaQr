@@ -52,6 +52,7 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-01" to listOf("border:AmButtons.kt"),
     "E-02" to listOf("border:AmLists.kt"),
     "E-03" to listOf("border:AmLists.kt"),
+    "E-04" to listOf("border:AmInputs.kt"),
 )
 
 /** Archivos con `.border(`/`BorderStroke(` permitidos: ninguno. */

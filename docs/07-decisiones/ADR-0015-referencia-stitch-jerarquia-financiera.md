@@ -1,6 +1,6 @@
 # ADR-0015: Referencia visual Stitch (Ant Design Mobile) para la jerarquía financiera
 
-**Estado:** Aceptada · **Fecha:** 2026-10-13 · **Relaciona:** ADR-0013, ADR-0014, contrato normativo (docs/05-design-system/00-contrato-normativo-diseno.md)
+**Estado:** Aceptada · **Fecha:** 2026-10-13 · **Acotada por ADR-0017** (2026-10-16: Stitch solo aporta anatomía financiera y patrones — segmentado, tag tonal, icon badge, meta row, hero QR —; paleta, tipografía y radios los define Ant Design Mobile oficial; la historia de esta decisión se conserva) · **Relaciona:** ADR-0013, ADR-0014, contrato normativo (docs/05-design-system/00-contrato-normativo-diseno.md)
 
 ## Contexto
 

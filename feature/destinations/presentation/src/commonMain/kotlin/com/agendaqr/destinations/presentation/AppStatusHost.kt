@@ -80,12 +80,13 @@ internal fun AppStatusHost(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (isOffline) {
-                    AmBadge(text = AppStrings.SinConexion, tone = AmTone.Warning)
+                    AmBadge(text = AppStrings.SinConexion, tone = AmTone.Warning, round = true)
                 }
                 if (pendingCount > 0) {
                     AmBadge(
                         text = syncPendingLabel(pendingCount, retrying = false),
                         tone = AmTone.Info,
+                        round = true,
                     )
                 }
             }

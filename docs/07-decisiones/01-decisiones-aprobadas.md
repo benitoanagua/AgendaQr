@@ -84,8 +84,8 @@ Quedan consolidados, sin alterar las reglas de negocio existentes:
 
 La implementación debe adaptarse al contrato UX/UI; un fallo de implementación no modifica automáticamente la especificación.
 
-## D-18 — Sistema visual de la UI (UX/UI V1.3)
+## D-18 — Sistema visual de la UI (UX/UI V1.7)
 
-La referencia visual vigente de Agenda QR es Ant Design Mobile, conforme a ADR-0014 y al contrato normativo `docs/05-design-system/00-contrato-normativo-diseno.md`. Está implementada en Kotlin/Compose Multiplatform dentro de `core/ui`, con tokens semánticos, tema claro/oscuro y componentes compartidos. Vant no es referencia ni dependencia. La navegación sigue las convenciones de Android e iOS.
+La referencia visual vigente de Agenda QR es Ant Design Mobile 5.43.0, conforme a ADR-0017 (que enmienda ADR-0014 y acota ADR-0015) y al contrato normativo `docs/05-design-system/00-contrato-normativo-diseno.md` v2.1. Está implementada en Kotlin/Compose Multiplatform dentro de `core/ui`, con tokens semánticos, tema claro/oscuro y componentes compartidos. Vant no es referencia ni dependencia. La navegación sigue las convenciones de Android e iOS.
 
-La interfaz utiliza componentes convencionales adaptados con Material 3, mantiene una experiencia coherente entre Android e iOS y aplica las reglas de accesibilidad del contrato. Metro y Xauxa son decisiones históricas sustituidas; no forman parte de la arquitectura visual activa. La especificación UX/UI vigente es V1.3. El estado real de validación por plataforma se documenta únicamente en `docs/STATE.md`.
+La interfaz utiliza componentes convencionales adaptados con Material 3, mantiene una experiencia coherente entre Android e iOS y aplica las reglas de accesibilidad del contrato. Metro y Xauxa son decisiones históricas sustituidas; no forman parte de la arquitectura visual activa. La especificación UX/UI vigente es V1.7. El estado real de validación por plataforma se documenta únicamente en `docs/STATE.md`.

@@ -21,7 +21,8 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Modo de demostración aislado (perfil `demo-profile-v1`, sin sync) | `DemoDataTest` + `DemoSeederTest` (determinista, idempotente, no toca perfil real) |
 | Migración de instalaciones previas al perfil local | data tests (idempotencia, no borra origen, no mezcla cuentas, detección por claves sin cliente remoto) |
 | Nube opcional («Cuenta y respaldo» detrás de Inicio) | compilación Android/iOS + gate + captura `account-{light,dark}` (SignedOut con doble determinista) |
-| UX/UI V1.6 (referencia Ant Design Mobile, S00 + S01–S12) | Robolectric suite + hashes visuales + gate del design system |
+| UX/UI V1.7 (alineación fiel con Ant Design Mobile 5.43.0, S00 + S01–S12) | Robolectric suite + hashes visuales + gate del design system |
+| Alineación visual ADR-0017 (tokens, radios, diálogo hairline, buscador SearchBar, E-04) | `AmSchemeTest`/`AmTypographyTest`/`S02UiPolishTest` repinneados + `ScreensA11yCoverageTest`/`ActionHierarchyTest`/`AmDialogProminenceTest` (diálogo verificado bajo Robolectric, sin fallback) + gate |
 | Chrome e insets (TopBar, NavigationBar/Rail, Scaffold con contentWindowInsets) | Robolectric suite + gate (incl. captura tablet w720dp con NavigationRail) |
 | Edge-to-edge Android (`enableEdgeToEdge`) | ensamblado |
 | Predictive back (PredictiveBackHandler con progreso) | compilación 3 targets |
@@ -50,7 +51,7 @@ No se declaran PASS. Requieren Xcode, dispositivo físico o red.
 | Insets/notch, cámara, foco nativo y motion en dispositivo | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Predictive back en Android 14+ (gesto real con progreso) | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Photo Picker en dispositivo (contratos del sistema) | Robolectric ejecuta el flujo unitario; el picker visual requiere dispositivo | [QUALITY.md](QUALITY.md) §5 |
-| Revisión visual de las capturas Roborazzi regeneradas | El hash PASS es determinista y el análisis de bandas/regiones es programático; el ojo humano valida la composición | abrir `feature/destinations/presentation/build/roborazzi/*.png` (80 capturas: 40 escenarios × claro/oscuro) |
+| Revisión visual de las capturas Roborazzi regeneradas | El hash PASS es determinista y el análisis de bandas/regiones es programático; el ojo humano valida la composición | abrir `feature/destinations/presentation/build/roborazzi/*.png` (80 capturas: 40 escenarios × claro/oscuro; regeneradas en este entorno tras ADR-0017 — ver §3) |
 | Validación de los nuevos escenarios de importación (corrección de fallos parciales y reintentos) | El bug fix está implementado y cubierto por tests unitarios (`ImportFlowRegressionTest`), pero la validación visual de los nuevos escenarios en el dispositivo no se ha realizado | revisión manual de los flujos de importación con fallos parciales en dispositivo |
 | Supabase acceptance (JDBC) | Requiere base de datos | `:supabase:acceptance:test` con `DATABASE_URL` |
 | Sincronización real contra Supabase (subida/bajada) | Requiere backend y cuenta reales | prueba de aceptación contra un proyecto Supabase |
@@ -59,6 +60,9 @@ No se declaran PASS. Requieren Xcode, dispositivo físico o red.
 | NavigationRail en tablet/plegable | Captura tablet registrada en Roborazzi (w720dp); falta render en hardware real | render real en tablet/plegable |
 
 ## 3. Límites conocidos (decisiones, no defectos)
+
+- Separadores oscuros `#2B2B2B` sobre superficie `#1F1F1F` (hairline oficial): si en revisión humana resultan imperceptibles, es decisión pendiente del propietario (alternativa documentable: `#3A3A3A`); no se cambia en silencio.
+- Textos a 17 sp (cuerpo de la referencia): a 320 dp y 200 % de fuente los desbordamientos se resuelven con layout, nunca bajando la escala; la suite de layout lo verifica.
 
 - Glifos «Editar», «Compartir» y «Mostrar QR» sin icono asignado (contrato
   normativo §7): esas acciones de barra superior van como acción de texto (con su

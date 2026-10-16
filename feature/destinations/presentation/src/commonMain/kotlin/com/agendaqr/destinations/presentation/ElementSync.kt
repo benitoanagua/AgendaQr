@@ -63,7 +63,7 @@ fun ElementSyncStatus.tone(): AmTone = when (this) {
 @Composable
 fun ElementSyncBadge(status: ElementSyncStatus, showWhenSynced: Boolean = false) {
     if (showWhenSynced || status != ElementSyncStatus.Synced) {
-        AmBadge(text = status.label, tone = status.tone())
+        AmBadge(text = status.label, tone = status.tone(), round = true)
     }
 }
 
