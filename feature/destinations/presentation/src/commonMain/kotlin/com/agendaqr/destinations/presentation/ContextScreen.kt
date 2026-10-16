@@ -140,7 +140,7 @@ private fun ContextList(
                 onAction = onCreateContext,
             )
             else -> {
-                // Lista agrupada (referencia Stitch List/Card mode):
+                // Lista agrupada (referencia Ant Design Mobile):
                 // AmListBody con AmListRow y hairlines — superficie de tarjeta
                 // que agrupa las filas y se separa del fondo de página.
                 AmListBody(

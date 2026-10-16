@@ -33,15 +33,33 @@ data class DestinationsUiState(
     val isSaving: Boolean = false,
     val error: UserFacingError? = null,
 ) {
+    /** Filtro de texto compartido por la lista y el carrusel. */
+    private fun Destination.matchesQuery(): Boolean =
+        query.isBlank() ||
+            name.contains(query, ignoreCase = true) ||
+            category.orEmpty().contains(query, ignoreCase = true)
+
+    /** Favoritos que muestra el carrusel (con el mismo filtro de texto). */
+    val favorites: List<Destination>
+        get() = destinations
+            .filter { it.favorite && it.matchesQuery() }
+            .sortedWith(compareBy<Destination> { it.name.lowercase() })
+
     val visibleDestinations: List<Destination>
         get() = destinations
-            .asSequence()
-            .filter { query.isBlank() || it.name.contains(query, ignoreCase = true) || it.category.orEmpty().contains(query, ignoreCase = true) }
+            .filter { it.matchesQuery() }
             // U-10: los favoritos viven en el carrusel; la lista muestra el
             // resto cuando el filtro es Todos (favoriteOnly == es favorito).
             .filter { favoriteOnly == it.favorite }
             .sortedWith(compareBy<Destination> { it.name.lowercase() })
-            .toList()
+
+    /** ¿El carrusel de favoritos se muestra en la parte superior? */
+    val showsFavoritesCarousel: Boolean
+        get() = !favoriteOnly && favorites.isNotEmpty()
+
+    /** ¿La lista de la sección inferior ("Otros destinos") tiene filas? */
+    val hasOtherDestinations: Boolean
+        get() = visibleDestinations.isNotEmpty()
 }
 
 sealed interface DestinationAction {

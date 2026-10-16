@@ -44,12 +44,12 @@ import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.destinations.domain.Destination
 
 /**
- * Detalle y exhibición del QR (diseño MCP "Detalle y Exhibición QR"):
- * tarjeta núcleo con el código real (decodificado del dominio, nunca
- * imagen estática), esquinas de encuadre, guía de uso, botón de
- * pantalla completa (RF-05 real), metadatos en filas compactas con
- * copiar del contenido y dock de acciones reales. El banner "Local" del
- * diseño vive en el host de estado de la app (no por pantalla).
+ * Detalle y exhibición del QR: tarjeta núcleo con el código real
+ * (decodificado del dominio, nunca imagen estática), esquinas de
+ * encuadre, guía de uso, botón de pantalla completa (RF-05 real),
+ * metadatos en filas compactas con copiar del contenido y dock de
+ * acciones reales. El banner "Local" del diseño vive en el host de
+ * estado de la app (no por pantalla).
  */
 @Composable
 fun DestinationDetailScreen(
@@ -162,7 +162,7 @@ fun DestinationDetailScreen(
             )
         }
 
-        // Metadatos en filas compactas (referencia MCP "Ant List"): solo
+        // Metadatos en filas compactas (referencia Ant Design Mobile): solo
         // datos reales del dominio; el contenido decodificado se puede
         // COPIAR (portapapeles del sistema, feedback por evento) y la
         // fecha de alta es el createdAt real.
@@ -245,7 +245,7 @@ fun DestinationDetailScreen(
             AmTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
         }
 
-        // Reaseguro de integridad (referencia MCP): cierto en el dominio
+        // Reaseguro de integridad: cierto en el dominio
         // — editar un destino no toca las operaciones históricas.
         AmStatusPill(
             text = AppStrings.IntegridadHistorica,

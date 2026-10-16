@@ -61,7 +61,7 @@ internal fun HomeSurface(
                 // en el stack; la app local no depende de ella.
                 onOpenAccount = { nav.push(AppRoute.Account) },
                 syncLookup = syncLookup,
-                // Acción rápida / FAB (referencia MCP): traer un QR → S02,
+                // Acción rápida / FAB: traer un QR → S02,
                 // con cámara y galería dentro del flujo real.
                 onScanQr = { graph.destinationsViewModel.onAction(DestinationAction.Edit(null)) },
                 // Hub (U-10, D8): registrar actividad (S07, sin
@@ -131,7 +131,7 @@ internal fun HomeSurface(
                         },
                         onShare = { shareQr(destination.qr) },
                         onBack = onDetailBack,
-                        // Dock (referencia MCP): registrar actividad — S07
+                        // Dock: registrar actividad — S07
                         // real vía el VM central; sin preasociación de
                         // destino (regla que no existe en el dominio).
                         onRegisterOperation = {

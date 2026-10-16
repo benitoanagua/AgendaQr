@@ -208,7 +208,7 @@ internal fun operationTypeLabel(type: OperationType): String = when (type) {
 }
 
 /**
- * Título de la fila de actividad (referencia Stitch): la contraparte es
+ * Título de la fila de actividad: la contraparte es
  * el contenido principal; el tipo queda como texto del subtítulo (la
  * forma de la flecha del [com.agendaqr.core.ui.components.AmIconBadge]
  * acompaña, nunca sustituye). Sin contraparte ni concepto, el propio tipo.
@@ -219,7 +219,7 @@ internal fun operationTitle(operation: Operation): String =
         ?: operationTypeLabel(operation.type)
 
 /**
- * Monto con SIGNO DIRECCIONAL (referencia Stitch): cobro "+", pago "−",
+ * Monto con SIGNO DIRECCIONAL: cobro "+", pago "−",
  * con la moneda cuando existe. NEUTRO (textPrimary): la referencia no
  * colorea la cifra — el tipo lo comunica la píldora
  * ([operationTypeTone]); el signo acompaña. Es solo presentación: no

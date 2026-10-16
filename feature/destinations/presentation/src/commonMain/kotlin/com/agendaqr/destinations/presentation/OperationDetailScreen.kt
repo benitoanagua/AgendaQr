@@ -76,7 +76,7 @@ internal fun OperationDetailScreen(
         snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
-        // Hero de la actividad (referencia detalle Stitch): píldora de
+        // Hero de la actividad (referencia Ant Design Mobile): píldora de
         // TIPO con texto (pago = danger, cobro = success) + contexto,
         // cifra grande NEUTRA con signo (la referencia no colorea el
         // importe; el tipo lo comunica la píldora) y caja temporal.
@@ -147,7 +147,7 @@ internal fun OperationDetailScreen(
                 }
             }
         }
-        // Metadatos en filas compactas (referencia Stitch): etiqueta a la
+        // Metadatos en filas compactas (referencia Ant Design Mobile): etiqueta a la
         // izquierda, valor a la derecha; la nota larga va como texto.
         val hasMetadata = operation.personOrEntity != null ||
             operation.currency != null ||

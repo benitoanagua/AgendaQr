@@ -199,4 +199,29 @@ class LocalAccessGateTest {
         assertTrue(protection.isConfigured())
         assertEquals(PinVerification.Success, protection.verify("9999".toCharArray()))
     }
+
+    @Test
+    fun manual_lock_is_never_skipped_by_the_external_flow_grace_and_drops_the_pin() {
+        // (e)/(f): el bloqueo manual no consulta la gracia de flujos externos
+        // (esa gracia solo afecta a la política ON_STOP/ON_START) y NUNCA
+        // retiene el PIN en memoria.
+        val previous = ExternalFlowGates.tracker
+        val marked = ExternalFlowTracker(clock = { 1_000L })
+        marked.markLaunch()
+        ExternalFlowGates.tracker = marked
+        try {
+            protection.configure("1234".toCharArray(), "1234".toCharArray())
+            val vm = LocalAccessViewModel(profile, protection)
+            vm.onPinChanged("1234")
+            vm.submitUnlock()
+            assertEquals(LocalAccessMode.Unlocked, vm.state.value.mode)
+
+            vm.onPinChanged("9")
+            vm.lock()
+            assertEquals(LocalAccessMode.Locked, vm.state.value.mode)
+            assertEquals("", vm.state.value.pin)
+        } finally {
+            ExternalFlowGates.tracker = previous
+        }
+    }
 }

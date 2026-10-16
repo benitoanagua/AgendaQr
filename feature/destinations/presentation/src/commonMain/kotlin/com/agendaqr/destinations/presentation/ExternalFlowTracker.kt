@@ -60,3 +60,37 @@ const val ExternalFlowGraceMillis = 120_000L
  */
 fun shouldLockOnStop(demoShowing: Boolean, tracker: ExternalFlowTracker, nowMillis: Long): Boolean =
     !demoShowing && !tracker.shouldSkipLock(nowMillis)
+
+/**
+ * Decisión del ciclo de vida para los flujos externos iniciados por la app.
+ * Pura y probable: recibe el reloj por constructor y la acción de bloqueo por
+ * parámetro; no depende de Android.
+ *
+ * Orden real al volver de un flujo: STOP → START → RESUME.
+ * - `ON_STOP` decide si bloquear con la gracia vigente.
+ * - `ON_START` bloquea si la gracia venció y consume la marca.
+ * - `ON_RESUME` limpia SIEMPRE la marca pendiente: un flujo translúcido (hoja
+ *   de compartir, diálogo de permiso) puede no producir `ON_STOP`, y una marca
+ *   viva impediría bloquear un paso a segundo plano posterior dentro de la
+ *   ventana de gracia.
+ */
+class ExternalFlowLockPolicy(
+    private val tracker: ExternalFlowTracker,
+    private val now: () -> Long = { com.agendaqr.destinations.domain.nowMillis() },
+) {
+    fun onStop(demoShowing: Boolean, lock: () -> Unit) {
+        if (shouldLockOnStop(demoShowing, tracker, now())) lock()
+    }
+
+    fun onStart(demoShowing: Boolean, lock: () -> Unit) {
+        if (!demoShowing && tracker.hasPendingLaunch()) {
+            if (!tracker.shouldSkipLock(now())) lock()
+            tracker.clear()
+        }
+    }
+
+    /** Al volver a primer plano se consume siempre la marca pendiente. */
+    fun onResume() {
+        tracker.clear()
+    }
+}

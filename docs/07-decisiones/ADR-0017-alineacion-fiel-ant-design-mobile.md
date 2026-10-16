@@ -22,7 +22,7 @@ D2. **Radios:** botón 4 (`Small`); Tag/Selector/Segmented 2 (`ExtraSmall`, con 
 
 D3. **Tipografía** = escala 17/15/13: título 18; cuerpo/botón/título de fila/entrada/pestañas 17; etiqueta/contenido de modal/cápsula/extra 15; descripción 13; ayuda/error 12; barra inferior y tag 11 (la referencia usa 10 en TabBar: se conserva 11 por legibilidad, documentado). Pesos: normal salvo título de diálogo (bold) y etiqueta de botón (Medium, documentado). Importe 26 SemiBold, Display 32 y Headline 24 se conservan como extensiones financieras sin equivalente en la referencia.
 
-D4. **Paleta oscura = valores oficiales**, con recalibración mínima solo donde falla AA: `accent` `#3086FF` con tinta `#0A1120`; `accentText` `#4F96FF`; `danger` `#FF4A58` con tinta `#1A1A1A`; `success` `#34B368`; `warning` `#FFA930`; terciario `#8C8C8C`. El `wathet` oficial `#0D2543` deja el par de acento en 4.39:1, por lo que se adopta `#0B2140` (5.24:1).
+D4. **Paleta oscura = valores oficiales**, con recalibración mínima solo donde falla AA: `accent` `#3086FF` con tinta `#0A1120`; `accentText` `#4F96FF`; `danger` `#FF4A58` con tinta `#1A1A1A`; `success` `#34B368`; `warning` `#FFA930`; terciario `#8C8C8C`. El `wathet` oficial `#0D2543` se adopta sin cambios; el acento puro sobre él queda en 4.39:1 (no apto como texto), por lo que el contenido del tono informativo usa `accentText` `#4F96FF` (5.24:1) y el acento puro sobre wathet se reserva a glifos y bordes.
 
 D5. **Paleta clara:** `border` y `divider` → `#EEEEEE`; `warning` `#8A5300` → `#A85A00` (naranja más cercano a la referencia que cumple AA sobre `#FFFFFF`, `#F5F5F5` y `#FDF3DC`); el resto se conserva (`1668DC`, `0A7A44`, `D21F2E`, `6E6E6E`).
 
