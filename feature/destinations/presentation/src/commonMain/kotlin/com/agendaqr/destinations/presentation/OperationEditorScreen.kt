@@ -319,13 +319,7 @@ internal fun OperationEditorScreen(
                         tone = AmTone.Info,
                     )
                 },
-                trailing = {
-                    AmIcon(
-                        imageVector = com.agendaqr.core.ui.components.AmIcons.ChevronRight,
-                        contentDescription = null,
-                        tint = AmColor.TextTertiary,
-                    )
-                },
+                showChevron = true,
             )
         }
         if (existing == null) {

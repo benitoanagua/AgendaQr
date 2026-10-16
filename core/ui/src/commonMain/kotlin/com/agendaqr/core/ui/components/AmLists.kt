@@ -265,6 +265,8 @@ fun AmListBody(
  * - [selected] expone la selección en la semántica (nunca solo color).
  * - [trailing] son las acciones de fila: botones de icono, no enlaces de
  *   texto.
+ * - [showChevron] añade la flecha de la referencia (List.Item `arrow`,
+ *   decorativa) cuando la fila navega y no tiene acciones finales.
  * - [showDivider] añade el separador inferior de la lista agrupada; lo
  *   activa la pantalla que agrupa celdas contiguas.
  */
@@ -285,6 +287,9 @@ fun AmListRow(
     /** Metadato en línea PROPIA, bajo el subtítulo (p. ej. el badge de
      * sincronización): no compite por el ancho con la acción de la fila. */
     meta: (@Composable () -> Unit)? = null,
+    /** Flecha decorativa de navegación (List.Item `arrow`); solo en filas
+     * que navegan y sin acciones finales. */
+    showChevron: Boolean = false,
     /** Separador inferior de la lista agrupada. */
     showDivider: Boolean = false,
     /** Límite de líneas para el título (default 1 con elipsis). */
@@ -344,7 +349,18 @@ fun AmListRow(
                     )
                 }
             },
-            trailingContent = trailing,
+            trailingContent = trailing ?: if (showChevron) {
+                {
+                    AmIcon(
+                        imageVector = AmIcons.ChevronRight,
+                        contentDescription = null,
+                        size = AmMetrics.IconSizeCompact,
+                        tint = AmColor.TextTertiary,
+                    )
+                }
+            } else {
+                null
+            },
         )
         if (showDivider) {
             // Hairline alineado con el CONTENIDO cuando hay marca a la

@@ -508,8 +508,8 @@ data class AmSegmentedOption(
 )
 
 /**
- * Control segmentado (Segmented de la referencia): pista tonal
- * (`surfaceContainerHigh`) con la opción activa sobre píldora `Surface`.
+ * Control segmentado (Segmented de la referencia): pista `SurfaceSecondary`
+ * (fill-content) con la opción activa sobre píldora `Surface`, radios 2.
  * Mutuamente excluyente por semántica (`selectableGroup` + rol radio).
  * Cada opción conserva el objetivo táctil de 48 dp.
  */
@@ -525,7 +525,7 @@ fun AmSegmentedControl(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(AmColor.SurfaceContainerHigh, AmShapes.ExtraSmall)
+            .background(AmColor.SurfaceSecondary, AmShapes.ExtraSmall)
             .selectableGroup()
             .padding(AmSpacing.Xs),
         horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
