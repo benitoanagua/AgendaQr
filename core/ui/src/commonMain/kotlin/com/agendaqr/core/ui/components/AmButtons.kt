@@ -347,6 +347,9 @@ fun AmCompactAction(
  * donde el acento no cumple 4.5:1 (p. ej. dentro de un banner de tono,
  * que hereda el color de contenido del tono — par garantizado).
  */
+/** Variante visual de [AmTextAction]: acento (por defecto) o destructiva. */
+enum class AmTextActionVariant { Default, Danger }
+
 @Composable
 fun AmTextAction(
     label: String,
@@ -354,9 +357,17 @@ fun AmTextAction(
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
     enabled: Boolean = true,
+    /** Color explícito (p. ej. heredado de un banner de tono). Tiene
+     *  prioridad sobre [variant]. */
     color: Color? = null,
+    /** Variante: Default (acento) o Danger (destructiva). Prohíbe el uso de
+     *  grises (TextSecondary/TextTertiary) como color de acción. */
+    variant: AmTextActionVariant = AmTextActionVariant.Default,
 ) {
-    val actionColor = color ?: AmColor.AccentText
+    val actionColor = color ?: when (variant) {
+        AmTextActionVariant.Default -> AmColor.AccentText
+        AmTextActionVariant.Danger -> AmColor.Danger
+    }
     TextButton(
         modifier = modifier.defaultMinSize(minHeight = AmMetrics.ControlMinSize),
         onClick = onClick,
@@ -480,7 +491,7 @@ fun AmFilterChip(
                 style = AmTextStyles.Label,
                 color = if (selected) AmColor.OnAccent else AmColor.TextPrimary,
             )
-            count?.let {
+            count?.takeIf { it != 0 }?.let {
                 Box(
                     modifier = Modifier
                         .background(

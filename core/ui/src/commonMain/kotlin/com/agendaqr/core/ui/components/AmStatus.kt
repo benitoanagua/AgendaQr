@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,55 +41,82 @@ import com.agendaqr.core.ui.theme.AmType
  * El tono se expresa SIEMPRE con [tone]; las acciones heredan el color de
  * CONTENIDO del tono (par garantizado por AmSchemeTest).
  */
+/**
+ * Acción de un banner de estado. El DS no hardcodea copy: la etiqueta
+ * llega del llamador (habitualmente desde `UserFacingError` o `AppStrings`).
+ */
+data class AmBannerAction(val label: String, val onClick: () -> Unit)
+
 @Composable
 fun AmStatusBanner(
     message: String,
     modifier: Modifier = Modifier,
     tone: AmTone? = null,
-    actionLabel: String? = null,
-    onAction: (() -> Unit)? = null,
-    onDismiss: (() -> Unit)? = null,
-    /** copy del descarte desde el llamador (el DS no hardcodea). */
-    dismissLabel: String? = null,
+    /** Título opcional (negrita, TextStyle del DS) encima del mensaje; evita
+     *  el "\\n" manual en el copy del llamador. */
+    title: String? = null,
+    /** Acción principal (p. ej. reintentar). */
+    action: AmBannerAction? = null,
+    /** Acción de descarte (p. ej. descartar). Puede ser null; si es null
+     *  no se renderiza fila de acciones cuando tampoco hay [action]. */
+    dismiss: AmBannerAction? = null,
 ) {
-    if (onDismiss != null) {
-        requireNotNull(dismissLabel) {
-            "AmStatusBanner: onDismiss necesita dismissLabel (copy del llamador)"
-        }
-    }
     val resolvedTone = tone ?: AmTone.Neutral
     val background = resolvedTone.container()
     val foreground = resolvedTone.content()
-    Row(
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .background(background, AmShapes.Large)
             .semantics { liveRegion = LiveRegionMode.Polite }
             .padding(horizontal = AmSpacing.Md, vertical = AmSpacing.Md),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+        verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
     ) {
-        // El estado nunca se comunica solo por color — icono por tono.
-        resolvedTone.iconVector?.let { glyph ->
-            AmIcon(
-                imageVector = glyph,
-                contentDescription = null,
-                tint = foreground,
-            )
+        // Fila 1: icono + mensaje a ancho completo (el icono se alinea a la
+        // primera línea del mensaje).
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+        ) {
+            resolvedTone.iconVector?.let { glyph ->
+                AmIcon(
+                    imageVector = glyph,
+                    contentDescription = null,
+                    tint = foreground,
+                )
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                title?.let {
+                    Text(
+                        it,
+                        color = foreground,
+                        style = AmTextStyles.Title,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+                Text(
+                    message,
+                    color = foreground,
+                    fontSize = AmType.Label,
+                )
+            }
         }
-        Text(
-            message,
-            modifier = Modifier.weight(1f),
-            color = foreground,
-            fontSize = AmType.Label,
-        )
-        // Acción del error recuperable (el error ofrece qué hacer) antes
-        // que el descarte opcional.
-        if (actionLabel != null && onAction != null) {
-            AmTextAction(label = actionLabel, onClick = onAction, color = foreground)
-        }
-        if (onDismiss != null && dismissLabel != null) {
-            AmTextAction(label = dismissLabel, onClick = onDismiss, color = foreground)
+        // Fila 2: acciones alineadas al final, con envoltura para fuentes
+        // grandes o etiquetas largas. Sin fila si no hay acciones.
+        if (action != null || dismiss != null) {
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+            ) {
+                action?.let { a ->
+                    AmTextAction(label = a.label, onClick = a.onClick, color = foreground)
+                }
+                dismiss?.let { d ->
+                    AmTextAction(label = d.label, onClick = d.onClick, color = foreground)
+                }
+            }
         }
     }
 }
@@ -195,7 +223,9 @@ fun AmEmptyState(
                 )
             }
         }
-        AmHeading(text = title, size = AmType.Title, fontWeight = FontWeight.SemiBold)
+        // Título de estado vacío (17 sp) distinto del título de pantalla
+        // (18 sp): evita la misma jerarquía visual entre ambos.
+        AmHeading(text = title, size = AmType.Body, fontWeight = FontWeight.SemiBold)
         subtitle?.let { Text(it, color = AmColor.TextSecondary, fontSize = AmType.Label) }
         if (actionLabel != null && onAction != null) {
             AmPrimaryButton(actionLabel, onAction)

@@ -214,17 +214,15 @@ internal fun OperationListScreen(
 
         // Error persistente.
         state.error?.let { err ->
+            val (bannerAction, bannerDismiss) = err.bannerActions(
+                onRetry = { viewModel.onAction(OperationAction.RetryFailed) },
+                onClear = { viewModel.onAction(OperationAction.ClearError) },
+            )
             AmStatusBanner(
-                err.display(),
+                message = err.display(),
                 tone = AmTone.Danger,
-                actionLabel = err.action.label,
-                onAction = {
-                    viewModel.onAction(
-                        if (err.action == ErrorAction.Retry) OperationAction.RetryFailed
-                        else OperationAction.ClearError,
-                    )
-                },
-                onDismiss = { viewModel.onAction(OperationAction.ClearError) },
+                action = bannerAction,
+                dismiss = bannerDismiss,
             )
         }
 
@@ -233,11 +231,10 @@ internal fun OperationListScreen(
                 icon = AmIcons.Register,
                 title = if (state.query.isBlank()) AppStrings.AunNoHayOperaciones else AppStrings.NoHayCoincidencias,
                 subtitle = if (state.query.isBlank()) AppStrings.registerFirstPaymentHint else AppStrings.tryAnotherSearchHint,
-                actionLabel = if (state.query.isBlank()) AppStrings.RegistrarOperacion else AppStrings.LimpiarBusqueda,
-                onAction = {
-                    if (state.query.isBlank()) viewModel.onAction(OperationAction.New)
-                    else viewModel.onAction(OperationAction.Search(""))
-                }
+                // El FAB "Registrar" cubre la misma acción en la primera
+                // ejecución: el vacío no repite el botón, solo apunta al FAB.
+                actionLabel = if (state.query.isBlank()) null else AppStrings.LimpiarBusqueda,
+                onAction = if (state.query.isBlank()) null else ({ viewModel.onAction(OperationAction.Search("")) })
             )
         } else {
             // Lista agrupada (Card mode / ListBody):
@@ -370,12 +367,12 @@ internal fun UnassociatedScreen(
                                 subtitle = formatDate(receipt.createdAt),
                                 onClick = { selectedReceipt = receipt },
                                 meta = {
-                                    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                                        ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
-                                        AmTextAction(label = AppStrings.createOperationFromThis, onClick = {
-                                            viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
-                                        })
-                                    }
+                                    ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
+                                },
+                                trailing = {
+                                    AmTextAction(label = AppStrings.createOperationFromThis, onClick = {
+                                        viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
+                                    })
                                 },
                             )
                         }

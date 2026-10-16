@@ -202,16 +202,17 @@ internal fun OperationDetailScreen(
                                 AmIconBadge(icon = AmIcons.Attachment, tone = AmTone.Neutral)
                             },
                             meta = {
-                                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
-                                    AmTonalTag(
-                                        text = receiptProvenanceLabel(receipt.provenance),
-                                        tone = provenanceTone(receipt.provenance),
-                                    )
-                                    AmTextAction(
-                                        label = AppStrings.Desasociar,
-                                        onClick = { viewModel.onAction(OperationAction.Disassociate(receipt.id)) },
-                                    )
-                                }
+                                AmTonalTag(
+                                    text = receiptProvenanceLabel(receipt.provenance),
+                                    tone = provenanceTone(receipt.provenance),
+                                )
+                            },
+                            trailing = {
+                                AmTextAction(
+                                    label = AppStrings.Desasociar,
+                                    onClick = { viewModel.onAction(OperationAction.Disassociate(receipt.id)) },
+                                    variant = AmTextActionVariant.Danger,
+                                )
                             },
                         )
                     }

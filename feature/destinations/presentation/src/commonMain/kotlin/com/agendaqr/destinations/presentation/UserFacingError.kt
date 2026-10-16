@@ -1,5 +1,7 @@
 package com.agendaqr.destinations.presentation
 
+import com.agendaqr.core.ui.components.AmBannerAction
+
 /**
  * Error listo para mostrar  — spec congelada §10:
  * "Todo error debe responder: qué ocurrió, qué pasó con los datos y qué
@@ -20,6 +22,23 @@ data class UserFacingError(
     /** Texto visible: qué ocurrió y qué pasó con los datos. */
     fun display(): String =
         if (dataStatus.isBlank()) what else what + "\n" + dataStatus
+}
+
+/**
+ * Acciones de banner derivadas del error, para usar con [AmStatusBanner].
+ *
+ * - [ErrorAction.Retry]: dos acciones: reintentar ([onRetry]) y descartar
+ *   ([onClear]) con [AppStrings.Descartar].
+ * - Cualquier otra acción: una sola acción (la etiqueta de [ErrorAction],
+ *   [onClear]) y sin descarte, para no duplicar comportamiento.
+ */
+fun UserFacingError.bannerActions(
+    onRetry: () -> Unit,
+    onClear: () -> Unit,
+): Pair<AmBannerAction?, AmBannerAction?> = when (action) {
+    ErrorAction.Retry -> AmBannerAction(action.label, onRetry) to
+        AmBannerAction(AppStrings.Descartar, onClear)
+    else -> AmBannerAction(action.label, onClear) to null
 }
 
 /** Acciones que un error recuperable puede ofrecer. */
@@ -169,8 +188,11 @@ fun userFacingError(error: Throwable, flow: ErrorFlow): UserFacingError = when (
             ErrorCause.Network -> "No pudimos conectarnos. Revisa tu conexión."
             else -> "No pudimos iniciar sesión. Revisa tu correo y contraseña."
         },
-        dataStatus = "No se perdió nada.",
-        action = ErrorAction.Retry,
+        dataStatus = "Tus credenciales no se guardaron.",
+        action = when (error.errorCause()) {
+            ErrorCause.Network -> ErrorAction.Retry
+            else -> ErrorAction.Close
+        },
     )
     ErrorFlow.SignUp -> UserFacingError(
         what = when (error.errorCause()) {
@@ -178,7 +200,10 @@ fun userFacingError(error: Throwable, flow: ErrorFlow): UserFacingError = when (
             else -> "No pudimos crear la cuenta. Revisa tus datos."
         },
         dataStatus = "No se creó ninguna cuenta.",
-        action = ErrorAction.Retry,
+        action = when (error.errorCause()) {
+            ErrorCause.Network -> ErrorAction.Retry
+            else -> ErrorAction.Close
+        },
     )
     ErrorFlow.SignOut -> UserFacingError(
         what = "No pudimos cerrar sesión.",

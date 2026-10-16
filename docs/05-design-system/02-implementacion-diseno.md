@@ -40,6 +40,9 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 
 - Envoltorios finos de Material 3 con tokens: el componente fija forma/colores/estados que M3 no mapea (botones radio 4, buscador SearchBar con borde de acento E-04, chips estilo CapsuleTabs) y hereda `typography`/`shapes` del tema; la barra superior (56 dp) y la inferior (56 dp, sin píldora) son composición propia.
 - Todo copy llega como parámetro del llamador (ADR-0008); las pantallas lo sirven desde `AppStrings`.
+- `AmStatusBanner` se compone en **columna**: fila 1 icono + mensaje a ancho completo; fila 2 acciones alineadas al final con envoltura (sin fila si no hay acciones). API: `AmBannerAction(label, onClick)` para `action`/`dismiss`; imposible el estado inválido (sin `requireNotNull`).
+- `AmListRow.meta` solo metadatos/badges: prohibido colocar acciones ahí.
+- `AmTextAction` ofrece variantes `Default` (acento) y `Danger` (destructiva); prohibido usar `TextSecondary`/`TextTertiary` como color de acción.
 - Estados obligatorios: pressed/focused/selected/error/disabled/loading, cada uno con señal no exclusivamente cromática.
 - Área táctil ≥ 48 dp (`AmMetrics.ControlMinSize`), sin alturas fijas que recorten con fuente grande.
 - Iconos: solo `AmIcons`; decorativos con `contentDescription = null`; interactivos con etiqueta visible del llamador.

@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import com.agendaqr.core.ui.components.AmFeedbackEvent
 import com.agendaqr.core.ui.components.AmPrimaryButton
 import com.agendaqr.core.ui.components.AmSecondaryButton
+import com.agendaqr.core.ui.components.AmBannerAction
 import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTone
@@ -74,19 +75,21 @@ actual fun QrCameraEntryControl(
     AmFeedbackEvent(event = detectionToken, message = AppStrings.CodigoQrDetectado)
     Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
         permissionError?.let { error ->
-            AmStatusBanner(
-                error.display(),
-                tone = AmTone.Danger,
-                actionLabel = AppStrings.AbrirAjustes,
-                // UIApplicationOpenSettingsURLString: la constante C es
-                // la que exponen los bindings (openSettingsURLString de
-                // Swift no está en el cinterop precompilado).
-                onAction = {
+            val (bannerAction, bannerDismiss) = error.bannerActions(
+                onRetry = {
                     NSURL.URLWithString(UIApplicationOpenSettingsURLString)
                         ?.let { url -> UIApplication.sharedApplication.openURL(url) }
                 },
-                onDismiss = { permissionError = null },
-                dismissLabel = AppStrings.Descartar,
+                onClear = { permissionError = null },
+            )
+            // La acción del error (CameraPermission → Retry) se reemplaza por
+            // "Abrir ajustes": no es reintentar, es abrir el selector del SO.
+            val action = AmBannerAction(AppStrings.AbrirAjustes, bannerAction?.onClick ?: { permissionError = null })
+            AmStatusBanner(
+                message = error.display(),
+                tone = AmTone.Danger,
+                action = action,
+                dismiss = bannerDismiss,
             )
         }
         // §4 S02: el texto de privacidad de la cámara es visible junto a

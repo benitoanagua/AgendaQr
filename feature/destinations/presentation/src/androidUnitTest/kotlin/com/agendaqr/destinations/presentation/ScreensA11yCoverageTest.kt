@@ -178,9 +178,9 @@ class ScreensA11yCoverageTest {
             }
         }
         compose.waitForIdle()
-        // §5/§11: los estados del contrato se leen como texto (píldoras con
+        // §5/§11: los estados del contrato se leen como texto (resumen con
         // icono + texto; singular honesto para N=1).
-        compose.onNodeWithText("1 Reconocido").assertExists()
+        compose.onNodeWithText("Reconocidos").assertExists()
         compose.onNodeWithText("1 Pendiente de revisión").assertExists()
         compose.onNodeWithText("Revisar 1 pendiente").assertHeightIsAtLeast(48.dp)
     }

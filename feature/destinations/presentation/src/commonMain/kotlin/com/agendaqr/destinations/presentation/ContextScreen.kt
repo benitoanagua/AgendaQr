@@ -114,18 +114,15 @@ private fun ContextList(
         statusContent = appHosts?.status,
     ) {
         state.error?.let { err ->
+            val (bannerAction, bannerDismiss) = err.bannerActions(
+                onRetry = { onAction(ContextAction.RetryFailed) },
+                onClear = { onAction(ContextAction.ClearError) },
+            )
             AmStatusBanner(
-                err.display(),
+                message = err.display(),
                 tone = AmTone.Danger,
-                actionLabel = err.action.label,
-                onAction = {
-                    onAction(
-                        if (err.action == ErrorAction.Retry) ContextAction.RetryFailed
-                        else ContextAction.ClearError,
-                    )
-                },
-                onDismiss = { onAction(ContextAction.ClearError) },
-                dismissLabel = AppStrings.Descartar,
+                action = bannerAction,
+                dismiss = bannerDismiss,
             )
         }
         when {
@@ -196,18 +193,15 @@ private fun ContextDetail(
         statusContent = appHosts?.status,
     ) {
         state.error?.let { err ->
+            val (bannerAction, bannerDismiss) = err.bannerActions(
+                onRetry = { onAction(ContextAction.RetryFailed) },
+                onClear = { onAction(ContextAction.ClearError) },
+            )
             AmStatusBanner(
-                err.display(),
+                message = err.display(),
                 tone = AmTone.Danger,
-                actionLabel = err.action.label,
-                onAction = {
-                    onAction(
-                        if (err.action == ErrorAction.Retry) ContextAction.RetryFailed
-                        else ContextAction.ClearError,
-                    )
-                },
-                onDismiss = { onAction(ContextAction.ClearError) },
-                dismissLabel = AppStrings.Descartar,
+                action = bannerAction,
+                dismiss = bannerDismiss,
             )
         }
         contents?.let { data ->

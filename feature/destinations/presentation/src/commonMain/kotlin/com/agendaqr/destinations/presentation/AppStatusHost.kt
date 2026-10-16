@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AmBadge
 import com.agendaqr.core.ui.components.AmFeedbackHost
+import com.agendaqr.core.ui.components.AmBannerAction
 import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.core.ui.theme.AmSpacing
@@ -50,22 +51,23 @@ internal fun AppStatusHost(
         if (error != null) {
             // Error recuperable de importación (spec §10): la acción despeja
             // el error para volver a intentarlo desde la pantalla de origen.
+            val (bannerAction, bannerDismiss) = error.bannerActions(
+                onRetry = onDismissImportError,
+                onClear = onDismissImportError,
+            )
             AmStatusBanner(
-                error.display(),
+                message = error.display(),
                 tone = AmTone.Danger,
-                actionLabel = error.action.label,
-                onAction = onDismissImportError,
-                onDismiss = onDismissImportError,
-                dismissLabel = AppStrings.Descartar,
+                action = bannerAction,
+                dismiss = bannerDismiss,
             )
         } else if (hasFailed && pendingCount > 0) {
             // Banner completo SOLO con mutaciones FAILED: el usuario debe
             // poder reintentar AHORA (los datos están a salvo localmente).
             AmStatusBanner(
-                syncPendingLabel(pendingCount, retrying = true),
+                message = syncPendingLabel(pendingCount, retrying = true),
                 tone = AmTone.Danger,
-                actionLabel = AppStrings.ReintentarAhora,
-                onAction = onRetryNow,
+                action = AmBannerAction(AppStrings.ReintentarAhora, onRetryNow),
             )
         } else if (isOffline || pendingCount > 0) {
             // Indicador compacto: chips con texto (el significado nunca

@@ -109,19 +109,15 @@ fun DestinationsScreen(
     ) {
         // §10: errores recuperables y contextuales, visibles sin scroll.
         state.error?.let { error ->
+            val (bannerAction, bannerDismiss) = error.bannerActions(
+                onRetry = { onAction(DestinationAction.RetryFailed) },
+                onClear = { onAction(DestinationAction.ClearError) },
+            )
             AmStatusBanner(
-                error.display(),
+                message = error.display(),
                 tone = AmTone.Danger,
-                actionLabel = error.action.label,
-                // REINTENTAR re-ejecuta la operación fallida en el VM.
-                onAction = {
-                    onAction(
-                        if (error.action == ErrorAction.Retry) DestinationAction.RetryFailed
-                        else DestinationAction.ClearError,
-                    )
-                },
-                onDismiss = { onAction(DestinationAction.ClearError) },
-                dismissLabel = AppStrings.Descartar,
+                action = bannerAction,
+                dismiss = bannerDismiss,
             )
         }
 
@@ -206,9 +202,9 @@ fun DestinationsScreen(
                     state.destinations.isEmpty() -> AmEmptyState(
                         icon = AmIcons.QrCode,
                         title = AppStrings.AunNoHayDestinos,
+                        // El FAB "Añadir" cubre la misma acción: el estado vacío
+                        // no repite el botón, solo apunta a él.
                         subtitle = AppStrings.emptyDestinationsHint,
-                        actionLabel = AppStrings.TraerQr,
-                        onAction = { onAction(DestinationAction.Edit(null)) },
                     )
                     // Filtro Favoritos sin favoritos: mensaje propio y salida
                     // real al filtro Todos (antes "Limpiar búsqueda" no

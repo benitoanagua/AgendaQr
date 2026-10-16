@@ -302,31 +302,26 @@ internal fun CameraQrEntry(onOpen: () -> Unit) {
     }
     Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
         permissionError?.let { error ->
-            AmStatusBanner(
-                error.display(),
-                tone = com.agendaqr.core.ui.components.AmTone.Danger,
-                // Denegado permanentemente: la acción lleva a los ajustes de
-                // la app; si no, REINTENTAR vuelve a pedir el permiso.
-                actionLabel = if (permanentlyDenied) {
-                    AppStrings.AbrirAjustes
+            val actionLabel = if (permanentlyDenied) AppStrings.AbrirAjustes else error.action.label
+            val onAction = {
+                if (permanentlyDenied) {
+                    val intent = android.content.Intent(
+                        android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        android.net.Uri.fromParts("package", context.packageName, null),
+                    )
+                    // Flujo externo (U-02): los ajustes sacan la app.
+                    ExternalFlowGates.tracker.markLaunch()
+                    runCatching { context.startActivity(intent) }
+                    Unit
                 } else {
-                    error.action.label
-                },
-                onAction = {
-                    if (permanentlyDenied) {
-                        val intent = android.content.Intent(
-                            android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                            android.net.Uri.fromParts("package", context.packageName, null),
-                        )
-                        // Flujo externo (U-02): los ajustes sacan la app.
-                        ExternalFlowGates.tracker.markLaunch()
-                        runCatching { context.startActivity(intent) }
-                    } else {
-                        permissionLauncher.launch(Manifest.permission.CAMERA)
-                    }
-                },
-                onDismiss = { permissionError = null },
-                dismissLabel = AppStrings.Descartar,
+                    permissionLauncher.launch(Manifest.permission.CAMERA)
+                }
+            }
+            AmStatusBanner(
+                message = error.display(),
+                tone = com.agendaqr.core.ui.components.AmTone.Danger,
+                action = com.agendaqr.core.ui.components.AmBannerAction(actionLabel, onAction),
+                dismiss = com.agendaqr.core.ui.components.AmBannerAction(AppStrings.Descartar) { permissionError = null },
             )
         }
         // Contexto del permiso ANTES de pedirlo (una línea, sin diálogo
