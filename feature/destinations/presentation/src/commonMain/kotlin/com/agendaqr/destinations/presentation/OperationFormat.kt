@@ -149,6 +149,46 @@ internal fun relativeDayLabel(
     else -> null
 }
 
+/**
+ * Validación real del importe (U-07, D6): dígitos y UN separador decimal
+ * (`,` o `.`), máx. 2 decimales, sin espacios. Vacío = válido (el
+ * importe sigue siendo opcional).
+ */
+internal fun isValidAmount(text: String): Boolean {
+    if (text.isEmpty()) return true
+    if (text.any { it.isWhitespace() }) return false
+    val normalized = text.replace(',', '.')
+    if (normalized.count { it == '.' } > 1) return false
+    val integer = normalized.substringBefore('.')
+    val fraction = if ('.' in normalized) normalized.substringAfter('.') else ""
+    if (integer.isEmpty() && fraction.isEmpty()) return false
+    if (integer.any { !it.isDigit() }) return false
+    if (fraction.any { !it.isDigit() }) return false
+    return fraction.length <= 2
+}
+
+/** Canoniza el importe con punto al guardar (el dominio lo guarda como
+ * texto). */
+internal fun canonizeAmount(text: String): String = text.replace(',', '.')
+
+/**
+ * Moneda por defecto del editor (U-05, D6): la de la actividad más
+ * reciente (`operations` ya viene ordenada descendente); sin historial,
+ * vacío. Derivada del estado, sin persistencia nueva.
+ */
+internal fun mostRecentCurrency(operations: List<Operation>): String =
+    operations.firstOrNull()?.currency?.takeIf { it.isNotBlank() }.orEmpty()
+
+/**
+ * Sugerencias de persona o entidad (U-05): últimas contrapartes distintas
+ * (máx. 5, las más recientes primero). Derivadas del estado, sin
+ * persistencia nueva.
+ */
+internal fun recentCounterparts(operations: List<Operation>, max: Int = 5): List<String> =
+    operations.mapNotNull { it.personOrEntity?.takeIf { name -> name.isNotBlank() } }
+        .distinct()
+        .take(max.coerceAtLeast(1))
+
 private val monthNames = listOf(
     "enero", "febrero", "marzo", "abril", "mayo", "junio",
     "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",

@@ -88,6 +88,18 @@ internal object AppStrings {
     val Ayer = "Ayer"
     /** Confirmar del selector de fecha/hora (sin defaults hardcodeados). */
     val Elegir = "Elegir"
+    /** Error en vivo del importe (U-07, D6): validación real. */
+    val ImporteInvalido = "Usa solo números y un decimal"
+    /** Monedas del editor (U-05, D6): lista de presentación. */
+    val MonedaBob = "BOB"
+    val MonedaUsd = "USD"
+    val MonedaOtra = "Otra…"
+    /** Confirmación de descarte del editor (U-08, D7). */
+    val DescartarCambios = "¿Descartar cambios?"
+    val DescartarCambiosMensaje = "Si sales ahora, se perderán los cambios."
+    val SeguirEditando = "Seguir editando"
+    /** Divulgación progresiva del editor (U-06, D5). */
+    val MasDetalles = "Más detalles"
     /** S02 V1.2: acción única de galería con selección múltiple. */
     val ElegirDeLaGaleria = "Elegir de la galería"
     /** S12 Idle: acción para elegir un lote de imágenes. */
@@ -107,7 +119,8 @@ internal object AppStrings {
     val LasOperacionesCandidatasYaNo = "Las actividades candidatas ya no están disponibles."
     val Limpiar = "Limpiar"
     val LosContextosAgrupanTusQr = "Los contextos agrupan tus QR y actividades."
-    val MonedaOpcional = "Moneda (opcional)"
+    // (MonedaOpcional retirado en U-05: la moneda va en chips + campo
+    // Otra… con LabelMoneda.)
     val Moneda = "Moneda: "
     val MontoOpcional = "Monto (opcional)"
     val MostrarQr = "Mostrar QR"
@@ -127,7 +140,8 @@ internal object AppStrings {
     val Pago = "Pago"
     val PersonaOEntidadOpcional = "Persona o entidad (opcional)"
     val PersonaOEntidad = "Persona o entidad: "
-    val PodrasAdjuntarComprobantesMasAdelante = "Podrás adjuntar comprobantes más adelante"
+    // (PodrasAdjuntar retirado en U-06: el editor muestra solo lo
+    // definido en D5.)
     val PruebaConOtraPalabraO = "Prueba con otra palabra o revisa la ortografía."
     val PudoHaberSidoEliminada = "Pudo haber sido eliminada."
     val PudoHaberSidoEliminadoEn = "Pudo haber sido eliminado en otro dispositivo."
@@ -287,15 +301,15 @@ internal object AppStrings {
     val CargarActividad = "Cargar actividad"
     val QueQuieresAnadir = "¿Qué quieres añadir?"
     val GuardaUnComprobanteOMovimiento = "Guarda un comprobante o movimiento"
-    /** S07: ayuda del importe y momento de la operación. */
-    val MontoHint = "Ingreso numérico rápido y validado en tiempo real."
+    // (MontoHint retirado en U-07: la afirmación de validación era falsa;
+    // el error en vivo es ImporteInvalido.)
     // (CuantoOcurrio retirado en U-03: la fila de fecha muestra su valor;
     // la ayuda de texto libre desaparece con el selector.)
-    val MomentoRegistrado = "Momento registrado"
-    val FirmaTemporal = "Firma temporal del sistema"
+    // (MomentoRegistrado/FirmaTemporal retirados en U-06: jerga fuera del
+    // editor; la fecha de alta sigue visible donde el dato existe.)
     val PuedesSinContexto = "Puedes registrar sin asociar un contexto"
-    val ModoLocal = "Modo local · En tu dispositivo"
-    val SqliteLocal = "SQLite local"
+    // (ModoLocal/SqliteLocal retirados en U-06/U-11: jerga fuera del
+    // editor; el estado global comunica el modo.)
     /** Detalle de actividad: caja de metadatos temporales. */
     val FechaDeOperacion = "Fecha de operación"
     val RegistradoEnDispositivo = "Registrado en dispositivo"
@@ -331,8 +345,7 @@ internal object AppStrings {
     val FechaDeAlta = "Fecha de alta"
     val EditarMetadatosReemplazarQr = "Editar metadatos / reemplazar QR"
     val IntegridadHistorica = "Los cambios a este destino no modifican operaciones históricas asociadas."
-    /** Editor: requisito mínimo honesto (RF-08/RF-09). */
-    val RequisitoMinimo = "Requisito mínimo: tipo y momento ocurrido. Todos los demás campos son opcionales."
+    // (RequisitoMinimo retirado en U-06: el formulario ya lo comunica.)
     // ------------------------------------------------------------------
     // Acceso local (sin cuenta): configuración de PIN, desbloqueo y
     // bloqueo. El PIN protege el acceso en el dispositivo; NO es la

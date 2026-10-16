@@ -5,7 +5,9 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -59,15 +61,31 @@ internal fun OperationEditorScreen(
     val editorKey = existing?.id ?: "new"
     var type by rememberSaveable(editorKey) { mutableStateOf(existing?.type ?: OperationType.PAGO) }
     var amount by rememberSaveable(editorKey) { mutableStateOf(existing?.amount.orEmpty()) }
-    var currency by rememberSaveable(editorKey) { mutableStateOf(existing?.currency.orEmpty()) }
+    // Error en vivo tras la primera edición (U-07, D6): sin afirmaciones
+    // falsas de validación.
+    var amountEdited by rememberSaveable(editorKey) { mutableStateOf(false) }
+    val initialCurrency = existing?.currency.orEmpty()
+        .ifBlank { mostRecentCurrency(state.operations) }
+    var currency by rememberSaveable(editorKey) { mutableStateOf(initialCurrency) }
+    var currencyCustomOpen by rememberSaveable(editorKey) {
+        mutableStateOf(initialCurrency.isNotBlank() && initialCurrency != AppStrings.MonedaBob && initialCurrency != AppStrings.MonedaUsd)
+    }
     var person by rememberSaveable(editorKey) { mutableStateOf(existing?.personOrEntity.orEmpty()) }
     var concept by rememberSaveable(editorKey) { mutableStateOf(existing?.concept.orEmpty()) }
     var note by rememberSaveable(editorKey) { mutableStateOf(existing?.note.orEmpty()) }
+    // Divulgación progresiva (U-06, D5): concepto y nota plegados salvo
+    // que el registro ya los tenga.
+    var showDetails by rememberSaveable(editorKey) {
+        mutableStateOf(existing?.concept?.isNotBlank() == true || existing?.note?.isNotBlank() == true)
+    }
     // Momento con hora (U-03, D2): milisegundos de época, sin texto
     // libre. El valor por defecto de una actividad nueva es ahora, con
     // hora; los datos antiguos a medianoche se muestran sin hora y no se
     // reescriben salvo que el usuario elija.
-    var occurredAtMillis by rememberSaveable(editorKey) { mutableStateOf(existing?.occurredAt ?: nowMillis()) }
+    val initialOccurredAtMillis = rememberSaveable(editorKey) { existing?.occurredAt ?: nowMillis() }
+    var occurredAtMillis by rememberSaveable(editorKey, initialOccurredAtMillis) {
+        mutableStateOf(initialOccurredAtMillis)
+    }
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
     var pendingDateUtc by remember { mutableStateOf<Long?>(null) }
@@ -82,6 +100,21 @@ internal fun OperationEditorScreen(
     }
     var showSensitiveConfirm by remember { mutableStateOf(false) }
     val saving = state.isSavingOperation
+    val amountInvalid = amountEdited && !isValidAmount(amount)
+
+    // U-08/D7: el editor reporta si tiene cambios; `back()` con cambios
+    // muestra la confirmación de descarte en vez de navegar.
+    val dirty = type != (existing?.type ?: OperationType.PAGO) ||
+        amount != existing?.amount.orEmpty() ||
+        currency != initialCurrency ||
+        person != existing?.personOrEntity.orEmpty() ||
+        concept != existing?.concept.orEmpty() ||
+        note != existing?.note.orEmpty() ||
+        occurredAtMillis != initialOccurredAtMillis ||
+        contextSelection.contextId != existing?.contextId
+    LaunchedEffect(dirty) {
+        viewModel.onAction(OperationAction.EditorDirtyChanged(dirty))
+    }
 
     fun buildCandidate(at: Long): Operation = Operation(
         id = existing?.id ?: newEntityId("operation"),
@@ -89,7 +122,7 @@ internal fun OperationEditorScreen(
         occurredAt = at,
         createdAt = existing?.createdAt ?: nowMillis(),
         updatedAt = existing?.updatedAt ?: nowMillis(),
-        amount = amount.trim().takeIf(String::isNotBlank),
+        amount = canonizeAmount(amount).trim().takeIf(String::isNotBlank),
         currency = currency.trim().takeIf(String::isNotBlank),
         personOrEntity = person.trim().takeIf(String::isNotBlank),
         destinationId = existing?.destinationId,
@@ -125,12 +158,18 @@ internal fun OperationEditorScreen(
                     AppStrings.GuardarCambios
                 },
                 onClick = {
+                    // U-07: sin importe válido no se guarda; el error en
+                    // vivo ya es visible (o aparece ahora).
+                    if (!isValidAmount(amount)) {
+                        amountEdited = true
+                        return@AmBottomAction
+                    }
                     val at = occurredAtMillis
                     val candidate = buildCandidate(at)
                     if (existing == null) {
                         viewModel.onAction(
                             OperationAction.SaveNew(
-                                type, at, amount, currency, person, null, concept, note, contextSelection.contextId, candidate.id,
+                                type, at, canonizeAmount(amount), currency, person, null, concept, note, contextSelection.contextId, candidate.id,
                             ),
                         )
                     } else if (candidate.hasSensitiveChangesComparedTo(existing) && state.operationComprobantes.isNotEmpty()) {
@@ -160,25 +199,6 @@ internal fun OperationEditorScreen(
                 onDismiss = { viewModel.onAction(OperationAction.ClearError) },
             )
         }
-        // Reaseguro local-first de la referencia S07: SIEMPRE cierto (la
-        // actividad se guarda en el dispositivo) y el motor local real.
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-        ) {
-            com.agendaqr.core.ui.components.AmStatusPill(
-                text = AppStrings.ModoLocal,
-                inverse = true,
-            )
-            AmIcon(
-                imageVector = com.agendaqr.core.ui.components.AmIcons.Database,
-                contentDescription = null,
-                size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
-                tint = AmColor.TextTertiary,
-            )
-            AmText(AppStrings.SqliteLocal, color = AmColor.TextTertiary)
-        }
         // Tipo con semántica de selección (segmentado, no dos botones
         // primarios compitiendo): Guardar queda como única acción
         // principal (§1).
@@ -186,29 +206,7 @@ internal fun OperationEditorScreen(
             type = type,
             onSelect = { type = it },
         )
-        // Requisito mínimo honesto (referencia MCP): tipo y momento son
-        // los únicos obligatorios del dominio; el resto es opcional.
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(AmColor.SurfaceContainerLow, com.agendaqr.core.ui.theme.AmShapes.Large)
-                .padding(AmSpacing.Sm),
-            verticalAlignment = androidx.compose.ui.Alignment.Top,
-            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
-        ) {
-            AmIcon(
-                imageVector = com.agendaqr.core.ui.components.AmIcons.Info,
-                contentDescription = null,
-                size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
-                tint = AmColor.AccentText,
-            )
-            AmText(
-                AppStrings.RequisitoMinimo,
-                color = AmColor.TextSecondary,
-            )
-        }
-        // Tarjeta de importe (referencia S07): entrada grande con
-        // borrado ⌫ y ayuda de validación.
+        // Importe + moneda (U-07, D6): entrada grande con borrado y error
         AmListBody {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(AmSpacing.Lg),
@@ -217,24 +215,65 @@ internal fun OperationEditorScreen(
                 AmAmountField(
                     label = AppStrings.MontoOpcional,
                     value = amount,
-                    onValueChange = { amount = it },
+                    onValueChange = {
+                        amount = it
+                        amountEdited = true
+                    },
                     onClear = { amount = "" },
                     clearLabel = AppStrings.BorrarImporte,
                     keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                         keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal,
                     ),
                 )
-                Row(
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
-                ) {
-                    AmIcon(
-                        imageVector = com.agendaqr.core.ui.components.AmIcons.CircleCheck,
-                        contentDescription = null,
-                        size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
-                        tint = AmColor.Success,
+                if (amountInvalid) {
+                    Row(
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+                    ) {
+                        AmIcon(
+                            imageVector = com.agendaqr.core.ui.components.AmIcons.Cancel,
+                            contentDescription = null,
+                            size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
+                            tint = AmColor.Danger,
+                        )
+                        AmText(AppStrings.ImporteInvalido, color = AmColor.Danger)
+                    }
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                    AmFilterChip(
+                        label = AppStrings.MonedaBob,
+                        selected = currency == AppStrings.MonedaBob,
+                        onClick = {
+                            currency = AppStrings.MonedaBob
+                            currencyCustomOpen = false
+                        },
                     )
-                    AmText(AppStrings.MontoHint, color = AmColor.TextTertiary)
+                    AmFilterChip(
+                        label = AppStrings.MonedaUsd,
+                        selected = currency == AppStrings.MonedaUsd,
+                        onClick = {
+                            currency = AppStrings.MonedaUsd
+                            currencyCustomOpen = false
+                        },
+                    )
+                    AmFilterChip(
+                        label = AppStrings.MonedaOtra,
+                        selected = currencyCustomOpen,
+                        onClick = {
+                            if (currency == AppStrings.MonedaBob || currency == AppStrings.MonedaUsd) {
+                                currency = ""
+                            }
+                            currencyCustomOpen = true
+                        },
+                    )
+                }
+                if (currencyCustomOpen) {
+                    AmTextField(
+                        label = AppStrings.LabelMoneda,
+                        value = currency,
+                        onValueChange = { currency = it },
+                        leadingIcon = com.agendaqr.core.ui.components.AmIcons.Wallet,
+                    )
                 }
             }
         }
@@ -276,17 +315,29 @@ internal fun OperationEditorScreen(
                 )
             }
         }
-        // Tarjeta de datos opcionales (referencia S07): persona, moneda,
-        // concepto y nota con glifos de la referencia; el contexto vive en
-        // su propia tarjeta de selección (S08).
+        // Persona o entidad (U-05): campo + sugerencias de las últimas
+        // contrapartes (derivadas del estado, sin persistencia nueva).
         AmListBody {
             AmTextField(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, leadingIcon = com.agendaqr.core.ui.components.AmIcons.Store, modifier = Modifier.padding(horizontal = AmSpacing.Lg))
-            AmHairline()
-            AmTextField(label = AppStrings.MonedaOpcional, value = currency, onValueChange = { currency = it }, leadingIcon = com.agendaqr.core.ui.components.AmIcons.Wallet, modifier = Modifier.padding(horizontal = AmSpacing.Lg))
-            AmHairline()
-            AmTextField(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, leadingIcon = com.agendaqr.core.ui.components.AmIcons.NoteEdit, modifier = Modifier.padding(horizontal = AmSpacing.Lg))
-            AmHairline()
-            AmTextField(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, singleLine = false, modifier = Modifier.padding(horizontal = AmSpacing.Lg))
+            val counterparts = remember(state.operations) { recentCounterparts(state.operations) }
+            if (counterparts.isNotEmpty()) {
+                AmHairline()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Sm)
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                ) {
+                    counterparts.forEach { suggestion ->
+                        AmFilterChip(
+                            label = suggestion,
+                            selected = false,
+                            onClick = { person = suggestion },
+                        )
+                    }
+                }
+            }
         }
         // Contexto (S08): fila de selección con chevron; Cancelar nunca
         // destruye el draft (semántica del selector intacta).
@@ -307,35 +358,36 @@ internal fun OperationEditorScreen(
                 showChevron = true,
             )
         }
-        if (existing == null) {
-            // RF-10: los comprobantes se gestionan en el detalle (ADR-0015
-            // §6); en el registro nuevo, la promesa es honesta y visible.
-            Row(
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
-            ) {
-                AmIcon(
-                    imageVector = com.agendaqr.core.ui.components.AmIcons.Attachment,
-                    contentDescription = null,
-                    size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
-                    tint = AmColor.TextTertiary,
-                )
-                AmText(AppStrings.PodrasAdjuntarComprobantesMasAdelante, color = AmColor.TextSecondary)
+        // Más detalles (U-06, D5): concepto y nota plegados salvo que el
+        // registro ya los tenga; el contexto vive en su propia tarjeta
+        // de selección (S08).
+        AmListBody {
+            AmListRow(
+                title = AppStrings.MasDetalles,
+                onClick = { showDetails = !showDetails },
+                showChevron = true,
+            )
+            if (showDetails) {
+                AmHairline()
+                AmTextField(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, leadingIcon = com.agendaqr.core.ui.components.AmIcons.NoteEdit, modifier = Modifier.padding(horizontal = AmSpacing.Lg))
+                AmHairline()
+                AmTextField(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, singleLine = false, modifier = Modifier.padding(horizontal = AmSpacing.Lg))
             }
         }
-        // Texto de confianza bajo la acción (referencia S07/ADR-0008).
-        Row(
-            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
-        ) {
-            AmIcon(
-                imageVector = com.agendaqr.core.ui.components.AmIcons.ShieldCheck,
-                contentDescription = null,
-                size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
-                tint = AmColor.Success,
-            )
-            AmText(AppStrings.TuInformacionEstaGuardadaEnElDispositivo, color = AmColor.TextSecondary)
-        }
+    }
+
+    if (state.discardPrompt) {
+        // U-08/D7: salir con cambios pide confirmación; el foco inicial
+        // cae en la opción conservadora (destructivo).
+        AmDialog(
+            title = AppStrings.DescartarCambios,
+            message = AppStrings.DescartarCambiosMensaje,
+            confirmLabel = AppStrings.Descartar,
+            destructive = true,
+            onConfirm = { viewModel.onAction(OperationAction.DiscardEditor) },
+            dismissLabel = AppStrings.SeguirEditando,
+            onDismiss = { viewModel.onAction(OperationAction.DismissDiscardPrompt) },
+        )
     }
 
     if (contextSelection.pickerOpen) {

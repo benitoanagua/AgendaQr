@@ -1,5 +1,7 @@
 package com.agendaqr.destinations.presentation
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -41,6 +43,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.test.assertTrue
 
 /**
  * Reproducción U-08: salir del editor con cambios escritos no pide
@@ -62,8 +65,9 @@ class UxDiscardReproductionTest {
         vm.onAction(OperationAction.New)
         compose.setContent {
             AmTheme {
+                val state by vm.state.collectAsState()
                 OperationEditorScreen(
-                    state = vm.state.value,
+                    state = state,
                     viewModel = vm,
                     existing = null,
                 )
@@ -79,6 +83,62 @@ class UxDiscardReproductionTest {
         compose.waitForIdle()
         // U-08: debe pedir confirmación en vez de navegar en silencio.
         compose.onNodeWithText("¿Descartar cambios?").assertExists()
+        // Confirmar descarta y navega a la lista.
+        compose.onNodeWithText(AppStrings.Descartar).performClick()
+        compose.waitForIdle()
+        assertTrue(vm.state.value.route is OperationRoute.List)
+        compose.onNodeWithText("¿Descartar cambios?").assertDoesNotExist()
+    }
+
+    @Test
+    fun back_without_changes_navigates_immediately() {
+        val operations = FakeOperations()
+        val vm = viewModel(operations)
+        vm.onAction(OperationAction.New)
+        compose.setContent {
+            AmTheme {
+                val state by vm.state.collectAsState()
+                OperationEditorScreen(
+                    state = state,
+                    viewModel = vm,
+                    existing = null,
+                )
+            }
+        }
+        compose.waitForIdle()
+        // Sin cambios: Back inmediato, sin confirmación.
+        vm.onAction(OperationAction.Back)
+        compose.waitForIdle()
+        assertTrue(vm.state.value.route is OperationRoute.List)
+        compose.onNodeWithText("¿Descartar cambios?").assertDoesNotExist()
+    }
+
+    @Test
+    fun dismissing_the_prompt_keeps_editing() {
+        val operations = FakeOperations()
+        val vm = viewModel(operations)
+        vm.onAction(OperationAction.New)
+        compose.setContent {
+            AmTheme {
+                val state by vm.state.collectAsState()
+                OperationEditorScreen(
+                    state = state,
+                    viewModel = vm,
+                    existing = null,
+                )
+            }
+        }
+        compose.waitForIdle()
+        compose.onAllNodes(hasSetTextAction() and hasText(AppStrings.MontoOpcional))[0]
+            .performTextInput("120")
+        compose.waitForIdle()
+        vm.onAction(OperationAction.Back)
+        compose.waitForIdle()
+        compose.onNodeWithText(AppStrings.SeguirEditando).performClick()
+        compose.waitForIdle()
+        // Sigue en el editor, con el borrador intacto.
+        assertTrue(vm.state.value.route is OperationRoute.New)
+        compose.onNodeWithText("¿Descartar cambios?").assertDoesNotExist()
     }
 
     private fun viewModel(operations: FakeOperations): OperationsViewModel {
