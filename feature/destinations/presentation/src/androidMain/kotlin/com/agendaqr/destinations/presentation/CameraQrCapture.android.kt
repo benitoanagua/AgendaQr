@@ -318,7 +318,8 @@ internal fun CameraQrEntry(onOpen: () -> Unit) {
                 }
             }
             AmStatusBanner(
-                message = error.display(),
+                title = error.what,
+                message = error.dataStatus,
                 tone = com.agendaqr.core.ui.components.AmTone.Danger,
                 action = com.agendaqr.core.ui.components.AmBannerAction(actionLabel, onAction),
                 dismiss = com.agendaqr.core.ui.components.AmBannerAction(AppStrings.Descartar) { permissionError = null },

@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import com.agendaqr.core.ui.components.AmIconButton
 import com.agendaqr.core.ui.components.AmPrimaryButton
 import com.agendaqr.core.ui.components.AmScreenScaffold
+import com.agendaqr.core.ui.components.AmBannerAction
 import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTextAction
@@ -88,12 +90,12 @@ internal fun AuthForm(
 ) {
     var submitted by rememberSaveable { mutableStateOf(false) }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    val focusRequester = remember { androidx.compose.ui.focus.FocusRequester() }
     // El banner de error de credenciales también marca los campos, para que
     // el estado del campo y el del banner no se contradigan (p. ej. correo
     // "invalid": el campo se pinta como error al mismo tiempo que el banner).
-    val hasBackendError = state.errorMessage != null
-    val emailError = (submitted && !isValidEmail(state.email)) || hasBackendError
-    val passwordError = (submitted && state.password.length < 6) || hasBackendError
+    val emailError = submitted && !isValidEmail(state.email)
+    val passwordError = submitted && state.password.length < 6
 
     fun submit(target: () -> Unit) {
         submitted = true
@@ -167,16 +169,18 @@ internal fun AuthForm(
 
         // Error: banner con acción de recuperación.
         state.errorMessage?.let { err ->
-            val (action, dismiss) = err.bannerActions(
-                onRetry = when (state.errorFlow) {
-                    ErrorFlow.SignIn -> onSignIn
-                    ErrorFlow.SignUp -> onSignUp
-                    else -> onClearError
-                },
-                onClear = onClearError,
-            )
+            val isAuthError = state.errorFlow == ErrorFlow.SignIn || state.errorFlow == ErrorFlow.SignUp
+            val (action, dismiss) = if (isAuthError) {
+                AmBannerAction(AppStrings.RevisarDatos) { submitted = true; onClearError() } to null
+            } else {
+                err.bannerActions(
+                    onRetry = onClearError,
+                    onClear = onClearError,
+                )
+            }
             AmStatusBanner(
-                message = err.display(),
+                title = err.what,
+                message = err.dataStatus,
                 tone = AmTone.Danger,
                 action = action,
                 dismiss = dismiss,

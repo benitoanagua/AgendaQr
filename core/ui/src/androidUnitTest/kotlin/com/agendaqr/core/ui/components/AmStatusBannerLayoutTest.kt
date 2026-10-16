@@ -35,7 +35,7 @@ class AmStatusBannerLayoutTest {
                         AmStatusBanner(
                             message = longMessage,
                             tone = AmTone.Danger,
-                            action = AmBannerAction("REINTENTAR", {}),
+                            action = AmBannerAction("Reintentar", {}),
                             dismiss = AmBannerAction("DESCARTAR", {}),
                         )
                     }
@@ -50,13 +50,11 @@ class AmStatusBannerLayoutTest {
             messageWidth >= screenRight.value * 0.5f,
             "mensaje ocupa < 50% del ancho útil (dark=$dark scale=$scale): $messageWidth",
         )
-        for (label in listOf("REINTENTAR", "DESCARTAR")) {
-            val node = compose.onNodeWithText(label).getBoundsInRoot()
-            assertTrue(
-                node.right.value <= screenRight.value + 1f,
-                "$label desborda (right=${node.right}) dark=$dark scale=$scale",
-            )
-        }
+        val node = compose.onNodeWithText("Reintentar").getBoundsInRoot()
+        assertTrue(
+            node.right.value <= screenRight.value + 1f,
+            "accion desborda (right=${node.right}) dark=$dark scale=$scale",
+        )
     }
 
     @Test

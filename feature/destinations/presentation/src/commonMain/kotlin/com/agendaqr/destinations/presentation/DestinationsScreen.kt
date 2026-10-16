@@ -81,7 +81,7 @@ fun DestinationsScreen(
     val favorites = state.favorites
 
     AmScreenScaffold(
-        scrollable = true,
+        scrollable = state.destinations.isNotEmpty(),
         topBar = {
             AmTopBar(
                 title = AppStrings.AgendaQr,
@@ -98,14 +98,18 @@ fun DestinationsScreen(
 
         navSelectedId = navChrome?.selectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
-        floatingActionButton = {
-            // U-10/D8: el FAB abre el hub "¿Qué quieres añadir?" con las 3
-            // creaciones (la especificación S01); sin acciones duplicadas.
-            AmExtendedFab(
-                label = AppStrings.Anadir,
-                icon = AmIcons.Add,
-                onClick = { showAddHub = true },
-            )
+        floatingActionButton = if (state.destinations.isEmpty() && state.query.isBlank()) {
+            null
+        } else {
+            {
+                // U-10/D8: el FAB abre el hub "¿Qué quieres añadir?" con las 3
+                // creaciones (la especificación S01); sin acciones duplicadas.
+                AmExtendedFab(
+                    label = AppStrings.Anadir,
+                    icon = AmIcons.Add,
+                    onClick = { showAddHub = true },
+                )
+            }
         },
         verticalArrangement = Arrangement.spacedBy(AmSpacing.Lg),
     ) {
@@ -116,7 +120,8 @@ fun DestinationsScreen(
                 onClear = { onAction(DestinationAction.ClearError) },
             )
             AmStatusBanner(
-                message = error.display(),
+                title = error.what,
+                message = error.dataStatus,
                 tone = AmTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,
@@ -195,24 +200,21 @@ fun DestinationsScreen(
             state.query.isNotBlank()
         if (showsLowerSection) {
             Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                AmSectionHeader(
-                    text = if (showsFavoritesCarousel) AppStrings.OtrosDestinos else AppStrings.TodosLosDestinos,
-                )
+                if (!state.destinations.isEmpty()) {
+                    AmSectionHeader(
+                        text = if (showsFavoritesCarousel) AppStrings.OtrosDestinos else AppStrings.TodosLosDestinos,
+                    )
+                }
                 when {
                     // la carga inicial se anuncia con el skeleton del DS.
                     state.isLoading -> AmSkeleton(lines = 4)
-                    state.destinations.isEmpty() -> Box(
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        AmEmptyState(
-                            icon = AmIcons.QrCode,
-                            title = AppStrings.AunNoHayDestinos,
-                            // El FAB "Añadir" cubre la misma acción: el estado vacío
-                            // no repite el botón, solo apunta a él.
-                            subtitle = AppStrings.emptyDestinationsHint,
-                        )
-                    }
+                    state.destinations.isEmpty() -> AmEmptyState(
+                        icon = AmIcons.QrCode,
+                        title = AppStrings.AunNoHayDestinos,
+                        subtitle = AppStrings.emptyDestinationsHint,
+                        actionLabel = AppStrings.TraerQr,
+                        onAction = { onAction(DestinationAction.Edit(null)) },
+                    )
                     // Filtro Favoritos sin favoritos: mensaje propio y salida
                     // real al filtro Todos (antes "Limpiar búsqueda" no
                     // cambiaba el filtro).

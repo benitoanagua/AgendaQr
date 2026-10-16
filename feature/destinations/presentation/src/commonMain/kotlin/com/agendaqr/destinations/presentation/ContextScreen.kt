@@ -119,7 +119,8 @@ private fun ContextList(
                 onClear = { onAction(ContextAction.ClearError) },
             )
             AmStatusBanner(
-                message = err.display(),
+                title = err.what,
+                message = err.dataStatus,
                 tone = AmTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,
@@ -198,7 +199,8 @@ private fun ContextDetail(
                 onClear = { onAction(ContextAction.ClearError) },
             )
             AmStatusBanner(
-                message = err.display(),
+                title = err.what,
+                message = err.dataStatus,
                 tone = AmTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,

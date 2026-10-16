@@ -59,7 +59,8 @@ fun GlobalSearchScreen(
                 onClear = { onAction(GlobalSearchAction.ClearError) },
             )
             AmStatusBanner(
-                message = err.display(),
+                title = err.what,
+                message = err.dataStatus,
                 tone = AmTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,

@@ -104,7 +104,7 @@ class UserFacingErrorTest {
         assertTrue(shown.contains("No se pudo abrir el archivo compartido."))
         assertFalse(shown.contains("Permission"), "El texto técnico no debe mostrarse: $shown")
         assertFalse(shown.contains("uid="))
-        assertEquals("ELEGIR OTRA IMAGEN", error.action.label)
+        assertEquals("Elegir otra imagen", error.action.label)
         assertTrue(shown.contains("Nada se guardó."), "Debe decir qué pasó con los datos")
     }
 
@@ -112,7 +112,7 @@ class UserFacingErrorTest {
     fun sign_in_network_error_tells_the_user_to_check_connection() {
         val error = userFacingError(ConnectTimeoutLike(), ErrorFlow.SignIn)
         assertTrue(error.display().contains("Revisa tu conexión"))
-        assertEquals("REINTENTAR", error.action.label)
+        assertEquals("Reintentar", error.action.label)
     }
 
     @Test
@@ -123,7 +123,7 @@ class UserFacingErrorTest {
         assertFalse(shown.contains("Invalid login credentials"))
         assertFalse(shown.contains("RestException"))
         // Credenciales inválidas: no se reenvían los mismos datos; solo descartar.
-        assertEquals("CERRAR", error.action.label)
+        assertEquals("Cerrar", error.action.label)
     }
 
     @Test
@@ -133,7 +133,7 @@ class UserFacingErrorTest {
         assertTrue(shown.contains("No pudimos guardar la actividad."))
         assertTrue(shown.contains("Tus cambios siguen en la pantalla."))
         assertFalse(shown.contains("disk on fire"))
-        assertEquals("REINTENTAR", error.action.label)
+        assertEquals("Reintentar", error.action.label)
     }
 
     @Test
@@ -183,7 +183,7 @@ class UserFacingErrorTest {
         assertFalse(error.display().contains("Operation failed"))
         assertFalse(error.display().contains("sql"))
         assertTrue(error.display().contains("No pudimos guardar el QR."))
-        assertEquals("REINTENTAR", error.action.label)
+        assertEquals("Reintentar", error.action.label)
     }
 
     @Test
@@ -227,7 +227,7 @@ class UserFacingErrorTest {
         val error = vm.state.value.error
         assertNotNull(error)
         assertTrue(error.display().contains("No pudimos guardar la actividad."))
-        assertEquals("REINTENTAR", error.action.label)
+        assertEquals("Reintentar", error.action.label)
     }
 
     @Test
@@ -253,7 +253,7 @@ class UserFacingErrorTest {
         assertNotNull(error)
         assertFalse(error.display().contains("Invalid login credentials"))
         assertTrue(error.display().contains("No pudimos iniciar sesión"))
-        assertEquals("CERRAR", error.action.label)
+        assertEquals("Cerrar", error.action.label)
         assertEquals(ErrorFlow.SignIn, viewModel.state.value.errorFlow)
     }
 
@@ -262,13 +262,13 @@ class UserFacingErrorTest {
         val retryError = userFacingError(GenericAppError("boom"), ErrorFlow.SaveQr)
         val (a1, d1) = retryError.bannerActions(onRetry = {}, onClear = {})
         assertTrue(a1 != null && d1 != null)
-        assertEquals("REINTENTAR", a1!!.label)
+        assertEquals(AppStrings.ErrorReintentar, a1!!.label)
         assertEquals(AppStrings.Descartar, d1!!.label)
 
         val closeError = userFacingError(GenericAppError("boom"), ErrorFlow.ContextOpen)
         val (a2, d2) = closeError.bannerActions(onRetry = {}, onClear = {})
         assertTrue(a2 != null && d2 == null)
-        assertEquals("CERRAR", a2!!.label)
+        assertEquals(AppStrings.ErrorCerrar, a2!!.label)
     }
 
     private suspend fun waitUntil(condition: suspend () -> Boolean) {

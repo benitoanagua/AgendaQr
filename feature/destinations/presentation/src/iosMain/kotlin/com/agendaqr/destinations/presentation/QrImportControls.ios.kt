@@ -86,7 +86,8 @@ actual fun QrCameraEntryControl(
             // "Abrir ajustes": no es reintentar, es abrir el selector del SO.
             val action = AmBannerAction(AppStrings.AbrirAjustes, bannerAction?.onClick ?: { permissionError = null })
             AmStatusBanner(
-                message = error.display(),
+                title = error.what,
+                message = error.dataStatus,
                 tone = AmTone.Danger,
                 action = action,
                 dismiss = bannerDismiss,

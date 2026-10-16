@@ -44,7 +44,7 @@ class ErrorRetryButtonsTest {
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("REINTENTAR").performClick()
+        compose.onNodeWithText("Reintentar").performClick()
         assertTrue(received.contains(DestinationAction.RetryFailed))
     }
 
@@ -64,7 +64,7 @@ class ErrorRetryButtonsTest {
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("CERRAR").performClick()
+        compose.onNodeWithText("Cerrar").performClick()
         assertTrue(received == listOf(DestinationAction.ClearError))
     }
 
@@ -83,7 +83,7 @@ class ErrorRetryButtonsTest {
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("REINTENTAR").performClick()
+        compose.onNodeWithText("Reintentar").performClick()
         assertEquals(1, saves)
     }
 }

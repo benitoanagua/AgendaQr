@@ -50,6 +50,7 @@
 | [`07-decisiones/ADR-0016-identidad-local-sin-cuenta.md`](07-decisiones/ADR-0016-identidad-local-sin-cuenta.md) | ADR: identidad local sin cuenta, login no obligatorio, namespace por perfil, PIN, migración y limitaciones |
 | [`07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md`](07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md) | ADR: alineación fiel con Ant Design Mobile 5.43.0 (enmienda ADR-0014, acota ADR-0015) |
 | [`07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md`](07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md) | ADR: correcciones UX de captura rápida (enmienda ADR-0016 y la congelación UX en su alcance) |
+| [`07-decisiones/ADR-0019-enmienda-v1-9-inicio-vacio.md`](07-decisiones/ADR-0019-enmienda-v1-9-inicio-vacio.md) | ADR: enmienda V1.9 inicio vacío y separadores oscuros |
 
 ## Cómo se mantiene
 
