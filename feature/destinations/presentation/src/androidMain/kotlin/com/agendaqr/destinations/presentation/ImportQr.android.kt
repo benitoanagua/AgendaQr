@@ -116,10 +116,14 @@ object AgendaQrAndroidImportLauncher {
     }
 
     fun gallery() {
+        // Flujo externo (U-02): la galería saca la app de primer plano.
+        ExternalFlowGates.tracker.markLaunch()
         gallery?.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
     fun pdf() {
+        // Flujo externo (U-02): el selector de archivos saca la app.
+        ExternalFlowGates.tracker.markLaunch()
         pdf?.launch(arrayOf("application/pdf"))
     }
 

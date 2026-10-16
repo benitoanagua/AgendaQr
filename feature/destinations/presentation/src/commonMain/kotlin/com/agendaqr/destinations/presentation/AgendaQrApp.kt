@@ -30,6 +30,7 @@ import com.agendaqr.destinations.data.legacyLocalProfileIdOrNull
 import com.agendaqr.destinations.data.platformBiometricGate
 import com.agendaqr.destinations.domain.BiometricAvailability
 import com.agendaqr.destinations.domain.DEMO_PROFILE_ID
+import com.agendaqr.destinations.domain.nowMillis
 import kotlinx.coroutines.launch
 
 /**
@@ -87,6 +88,13 @@ fun AgendaQrApp() {
         }
         val accessState by accessViewModel.state.collectAsStateWithLifecycle()
 
+        // Rastreador de flujos externos (U-02, D1): la app lo publica para
+        // que los lanzadores de plataforma marquen "justo antes de lanzar";
+        // la política de bloqueo lo consulta al pasar a segundo plano.
+        val externalFlows = remember { ExternalFlowTracker() }
+        LaunchedEffect(externalFlows) {
+            ExternalFlowGates.tracker = externalFlows
+        }
         // Biometría: disponibilidad real de plataforma (fail-closed si falla).
         val biometricGate = remember { platformBiometricGate() }
         LaunchedEffect(biometricGate) {
@@ -127,11 +135,23 @@ fun AgendaQrApp() {
             accessViewModel.lock()
         }
 
-        // Política de bloqueo: la app se bloquea al pasar a segundo plano.
-        // Sin PIN configurado no hay nada que proteger, así que el bloqueo
-        // no altera el primer arranque. En demo no se bloquea con PIN.
+        // Política de bloqueo (U-02, D1): la app se bloquea al pasar a
+        // segundo plano, SALVO cuando el propio usuario lanzó un flujo
+        // externo desde la app (gracia acotada de 120 s). Sin PIN
+        // configurado no hay nada que proteger; en demo no se bloquea.
         LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
-            if (!demoShowing) accessViewModel.lock()
+            if (shouldLockOnStop(demoShowing, ExternalFlowGates.tracker, nowMillis())) {
+                accessViewModel.lock()
+            }
+        }
+        // Al volver con una marca pendiente: gracia vencida → bloquear;
+        // la marca se consume siempre (no se acumula).
+        LifecycleEventEffect(Lifecycle.Event.ON_START) {
+            val tracker = ExternalFlowGates.tracker
+            if (!demoShowing && tracker.hasPendingLaunch()) {
+                if (!tracker.shouldSkipLock(nowMillis())) accessViewModel.lock()
+                tracker.clear()
+            }
         }
 
         when {

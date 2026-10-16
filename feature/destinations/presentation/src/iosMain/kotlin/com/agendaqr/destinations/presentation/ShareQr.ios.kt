@@ -35,5 +35,7 @@ actual fun shareQr(asset: QrAsset) {
     }
     // U2: keyWindow deprecado (iOS 13+); escena activa con fallback honesto.
     val root = currentRootViewController() ?: return
+    // Flujo externo (U-02): la hoja de compartir saca la app.
+    ExternalFlowGates.tracker.markLaunch()
     root.presentViewController(controller, animated = true, completion = null)
 }

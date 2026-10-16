@@ -51,6 +51,8 @@ internal object IosQrImportController {
     }
 
     private fun presentPicker(selectionLimit: Long, handle: (List<NSItemProvider>) -> Unit) {
+        // Flujo externo (U-02): el selector saca la app de primer plano.
+        ExternalFlowGates.tracker.markLaunch()
         val configuration = PHPickerConfiguration()
         configuration.filter = PHPickerFilter.imagesFilter()
         configuration.selectionLimit = selectionLimit
