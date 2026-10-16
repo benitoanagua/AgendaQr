@@ -85,7 +85,7 @@ internal object AppStrings {
     val EliminarOperacion = "Eliminar actividad"
     val EncuadreElCodigoQr = "Encuadra el código QR" // ADR-0008: tuteo (antes "Encuadre")
     val irreversibleActionWarning = "Esta acción no se puede deshacer."
-    val sensitiveChangeWarning = "Esta actividad tiene comprobantes. El comprobante no será modificado."
+    val sensitiveChangeWarning = "Esta actividad tiene comprobantes; no se modificarán."
     val analyzingReceipt = "Estamos analizando el comprobante."
     val FaltaElCodigoQrUsa = "Falta el código QR: usa Cámara o Galería"
     val Fecha = "Fecha"
@@ -132,7 +132,7 @@ internal object AppStrings {
     val Moneda = "Moneda: "
     val MontoOpcional = "Monto (opcional)"
     val MostrarQr = "Mostrar QR"
-    val noAutomaticMatch = "No encontramos una coincidencia automática. Puedes elegir manualmente una actividad."
+    val noAutomaticMatch = "Sin coincidencia automática. Elige una actividad."
     val NoHayQrParaRevisar = "No hay QR para revisar"
     val noUnassociatedReceipts = "No hay comprobantes sin asociar"
     val noOperationsAvailable = "No hay actividades disponibles."
@@ -230,7 +230,7 @@ internal object AppStrings {
     val noSeGuardóNada = "No se pudo guardar ningún elemento"
     val reintentarGuardado = "Reintentar guardado"
     /** Confirmación de descarte de un pendiente SIN clasificar (pérdida de contenido retenido). */
-    val descartarElementoWarning = "Este elemento no se ha guardado. Al descartarlo perderás su contenido y tendrás que importarlo de nuevo."
+    val descartarElementoWarning = "Sin guardar: si lo descartas, tendrás que importarlo."
     /** Etiqueta específica de la confirmación (difiere de la acción de fila «Descartar»). */
     val descartarElementoConfirmar = "Descartar elemento"
     val Minimo6Caracteres = "Mínimo 6 caracteres"
@@ -374,7 +374,7 @@ internal object AppStrings {
     // contraseña del sistema ni una credencial remota.
     // ------------------------------------------------------------------
     val ConfiguraTuPin = "Configura tu PIN"
-    val ConfiguraTuPinDescripcion = "Tu PIN protege el acceso en este dispositivo. No es el código de tu teléfono."
+    val ConfiguraTuPinDescripcion = "Protege el acceso aquí; no es el PIN del teléfono."
     val Pin = "PIN"
     val ConfirmaElPin = "Confirma el PIN"
     val GuardarPin = "Guardar PIN"
@@ -392,21 +392,23 @@ internal object AppStrings {
     val SoloEnEsteDispositivo = "Solo en este dispositivo"
     val CuentaYRespaldo = "Cuenta y respaldo"
     val CuentaConectada = "Cuenta conectada"
-    val ConectarCuentaDescripcion = "Conectar una cuenta es opcional. Tus datos siguen en tu teléfono; la cuenta solo habilita respaldo y sincronización."
+    val ConectarCuentaDescripcion = "Conectar una cuenta es opcional."
+    /** Segunda línea de la cuenta opcional: que el dato sigue local. */
+    val ConectarCuentaDetalle = "Habilita respaldo y sincronización; tus datos siguen aquí."
     val DesconectarCuenta = "Desconectar cuenta"
-    val DatosLocalesSeConservan = "Al desconectar, los datos locales se conservan en este dispositivo."
+    val DatosLocalesSeConservan = "Al desconectar, tus datos locales se conservan aquí."
     // ------------------------------------------------------------------
     // Biometría (atajo de desbloqueo; el PIN sigue siendo obligatorio
     // como alternativa y la biometría nunca cifra datos).
     // ------------------------------------------------------------------
     val UsarBiometria = "Usar biometría"
-    val BiometriaNoDisponible = "La biometría no está disponible en este dispositivo. Usa tu PIN."
+    val BiometriaNoDisponible = "La biometría no está disponible aquí; usa tu PIN."
     // ------------------------------------------------------------------
     // Modo de demostración (datos ficticios aislados, sin cuenta ni red).
     // ------------------------------------------------------------------
     val ExplorarDemostracion = "Explorar demostración"
-    val ExplorarDemostracionDescripcion = "Prueba la app con datos ficticios. No toca tu información real."
+    val ExplorarDemostracionDescripcion = "Prueba la app con datos ficticios. No toca tu información."
     val ModoDemostracion = "Modo demostración · datos ficticios"
     val SalirDeDemostracion = "Salir de demostración"
-    val DemostracionAislada = "Estás explorando con datos ficticios. Nada se sincroniza ni se mezcla con tu información."
+    val DemostracionAislada = "Datos ficticios: nada se sincroniza con tu información."
 }

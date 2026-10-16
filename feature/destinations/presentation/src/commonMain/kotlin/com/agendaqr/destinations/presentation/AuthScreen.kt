@@ -78,6 +78,7 @@ fun AuthScreen(
 internal fun AuthForm(
     heading: String?,
     description: String?,
+    descriptionDetail: String? = null,
     state: AuthUiState,
     onEmailChanged: (String) -> Unit,
     onPasswordChanged: (String) -> Unit,
@@ -97,12 +98,15 @@ internal fun AuthForm(
 
     Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Md)) {
         // Cabecera: título y descripción con jerarquía estrecha (4 dp).
-        if (heading != null || description != null) {
+        if (heading != null || description != null || descriptionDetail != null) {
             Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
                 heading?.let {
                     AmText(it, size = AmType.Headline, fontWeight = FontWeight.SemiBold)
                 }
                 description?.let {
+                    AmText(it, size = AmType.Body, color = AmColor.TextSecondary)
+                }
+                descriptionDetail?.let {
                     AmText(it, size = AmType.Body, color = AmColor.TextSecondary)
                 }
             }

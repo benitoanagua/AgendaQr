@@ -20,7 +20,10 @@ en ADR-0008.
    con verbo en infinitivo/tuteo: REINTENTAR, "Elige otra imagen").
 3. **Frases cortas.** Objetivo ≤ 60 caracteres por mensaje; las
    etiquetas de acción de 1–2 palabras ("Guardar", "Cancelar"). Si un
-   mensaje necesita más, es una nota, no un banner.
+   mensaje necesita más, es una nota, no un banner. El presupuesto se
+   fija por prueba sobre `AppStrings`; la única excepción es el prefijo
+   que lleva el nombre del archivo en una segunda línea
+   (`incomingReceiptExplanationPrefix`).
 4. **Números y estados con texto, nunca solo símbolos ni solo color**
    (spec §5/§11): "Sincronización pendiente: 1", no un puntito rojo.
 5. **Sin jerga técnica.** "No pudimos sincronizar", no "HTTP 502".
