@@ -116,7 +116,7 @@ fun AmDialog(
             } else {
                 Text(
                     message.orEmpty(),
-                    style = AmTextStyles.Body,
+                    style = AmTextStyles.Label,
                     color = AmColor.TextSecondary,
                 )
             }

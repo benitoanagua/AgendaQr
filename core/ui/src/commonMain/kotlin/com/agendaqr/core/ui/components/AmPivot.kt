@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmTextStyles
@@ -22,7 +21,8 @@ import com.agendaqr.core.ui.theme.asTextOn
  */
 
 /**
- * Encabezado de sección: titular con semántica `heading()`. El acento de
+ * Encabezado de sección (List header de la referencia): 15 sp en texto
+ * secundario, peso normal, con semántica `heading()`. El acento de
  * contexto solo tiñe los encabezados de SU superficie (S06) cuando el
  * llamador pasa un [accent] legible como texto.
  */
@@ -33,13 +33,12 @@ fun AmSectionHeader(
     accent: Color? = null,
 ) {
     val textColor = accent?.asTextOn(AmColor.Background, AmColor.AccentText)
-        ?: AmColor.TextPrimary
+        ?: AmColor.TextSecondary
     Text(
         text = text,
         modifier = modifier.semantics { heading() },
         style = AmTextStyles.SectionHeader,
         fontFamily = AmType.FamilyUi,
-        fontWeight = FontWeight.Medium,
         color = textColor,
     )
 }
@@ -99,6 +98,7 @@ fun AmPivot(
                 text = {
                     Text(
                         text = title,
+                        style = AmTextStyles.Body,
                         color = if (selected) selectedTextColor else AmColor.TextPrimary,
                         maxLines = 1,
                     )

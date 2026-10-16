@@ -323,7 +323,7 @@ fun AmListRow(
                         subtitle?.let {
                             Text(
                                 it,
-                                style = AmTextStyles.Caption,
+                                style = AmTextStyles.BodySmall,
                                 color = AmColor.TextSecondary,
                                 maxLines = subtitleMaxLines,
                                 overflow = TextOverflow.Ellipsis,

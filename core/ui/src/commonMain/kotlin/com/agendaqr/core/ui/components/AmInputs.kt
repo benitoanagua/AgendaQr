@@ -225,7 +225,7 @@ fun AmSearchField(
         placeholder = {
             Text(
                 placeholder,
-                style = AmTextStyles.Body,
+                style = AmTextStyles.Label,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
