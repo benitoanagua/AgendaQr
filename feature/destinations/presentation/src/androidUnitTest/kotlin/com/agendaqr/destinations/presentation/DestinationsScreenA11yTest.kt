@@ -58,12 +58,13 @@ class DestinationsScreenA11yTest {
     }
 
     @Test
-    fun fab_has_label_and_the_row_actions_keep_48dp_targets() {
+    fun grid_actions_and_row_actions_keep_48dp_targets() {
         setContent()
-        // U-10/D8: FAB extendido "Añadir" con etiqueta visible (abre el
-        // hub); la acción de favorito de la fila es un IconToggleButton
-        // de 48 dp.
-        compose.onNodeWithText(AppStrings.Anadir, useUnmergedTree = true).assertExists()
+        // Anexo A: rejilla "King Kong" con las 3 acciones rápidas; la acción
+        // de favorito de la fila es un IconToggleButton de 48 dp.
+        compose.onNodeWithText(AppStrings.TraerQr).assertExists()
+        compose.onNodeWithText(AppStrings.RegistrarOperacion).assertExists()
+        compose.onNodeWithText(AppStrings.CrearContexto).assertExists()
         compose.onNodeWithContentDescription("Marcar favorito").assertExists()
             .assertHeightIsAtLeast(48.dp)
     }

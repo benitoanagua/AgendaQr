@@ -35,6 +35,7 @@ import com.agendaqr.core.ui.components.AmOverflowAction
 import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmSearchTrigger
 import com.agendaqr.core.ui.components.AmSectionHeader
+import com.agendaqr.core.ui.components.AmTappableCard
 import com.agendaqr.core.ui.components.AmSkeleton
 import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.AmText
@@ -74,7 +75,6 @@ fun DestinationsScreen(
     /** Hub "¿Qué quieres añadir?": crear contexto (diálogo existente). */
     onCreateContext: (name: String, note: String?) -> Unit = { _, _ -> },
 ) {
-    var showAddHub by remember { mutableStateOf(false) }
     var showCreateContext by remember { mutableStateOf(false) }
     var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
     val paged = state.visibleDestinations.take(visibleCount)
@@ -98,19 +98,7 @@ fun DestinationsScreen(
 
         navSelectedId = navChrome?.selectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
-        floatingActionButton = if (state.destinations.isEmpty() && state.query.isBlank()) {
-            null
-        } else {
-            {
-                // U-10/D8: el FAB abre el hub "¿Qué quieres añadir?" con las 3
-                // creaciones (la especificación S01); sin acciones duplicadas.
-                AmExtendedFab(
-                    label = AppStrings.Anadir,
-                    icon = AmIcons.Add,
-                    onClick = { showAddHub = true },
-                )
-            }
-        },
+        floatingActionButton = null,
         verticalArrangement = Arrangement.spacedBy(AmSpacing.Lg),
     ) {
         // §10: errores recuperables y contextuales, visibles sin scroll.
@@ -134,6 +122,31 @@ fun DestinationsScreen(
             placeholder = AppStrings.searchPlaceholder,
             onClick = onOpenSearch,
         )
+
+        // Rejilla "King Kong" de acciones rápidas existentes — mismas tres acciones del hub anterior, sin duplicar.
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+        ) {
+            QuickActionItem(
+                label = AppStrings.TraerQr,
+                icon = AmIcons.QrCode,
+                onClick = onScanQr,
+                modifier = Modifier.weight(1f),
+            )
+            QuickActionItem(
+                label = AppStrings.RegistrarOperacion,
+                icon = AmIcons.Register,
+                onClick = onRegisterOperation,
+                modifier = Modifier.weight(1f),
+            )
+            QuickActionItem(
+                label = AppStrings.CrearContexto,
+                icon = AmIcons.Context,
+                onClick = { showCreateContext = true },
+                modifier = Modifier.weight(1f),
+            )
+        }
 
         // Pestañas cápsula: filtros reales con conteo.
         Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
@@ -256,54 +269,7 @@ fun DestinationsScreen(
             }
         }
     }
-    // Hub "¿Qué quieres añadir?" (U-10, D8, S01): las 3 creaciones reales
-    // (diálogo por la limitación de ModalBottomSheet bajo Robolectric).
-    if (showAddHub) {
-        AmDialog(
-            title = AppStrings.QueQuieresAnadir,
-            confirmLabel = AppStrings.Cancelar,
-            confirmAsText = true,
-            onConfirm = { showAddHub = false },
-            onDismiss = { showAddHub = false },
-            content = {
-                AmDialogList {
-                    AmListRow(
-                        title = AppStrings.TraerQr,
-                        onClick = {
-                            showAddHub = false
-                            onScanQr()
-                        },
-                        leading = {
-                            AmIconBadge(icon = AmIcons.QrCode, tone = AmTone.Info)
-                        },
-                        showChevron = true,
-                    )
-                    AmListRow(
-                        title = AppStrings.RegistrarOperacion,
-                        onClick = {
-                            showAddHub = false
-                            onRegisterOperation()
-                        },
-                        leading = {
-                            AmIconBadge(icon = AmIcons.Register, tone = AmTone.Success)
-                        },
-                        showChevron = true,
-                    )
-                    AmListRow(
-                        title = AppStrings.CrearContexto,
-                        onClick = {
-                            showAddHub = false
-                            showCreateContext = true
-                        },
-                        leading = {
-                            AmIconBadge(icon = AmIcons.Context, tone = AmTone.Warning)
-                        },
-                        showChevron = true,
-                    )
-                }
-            },
-        )
-    }
+
     if (showCreateContext) {
         ContextCreationDialog(
             onConfirmCreate = { name, note ->
@@ -410,5 +376,39 @@ internal fun destinationSubtitle(destination: Destination): String? {
             AppStrings.AnadidoEl + formatDate(destination.createdAt)
         generic -> AppStrings.ImportadoEl + formatDate(destination.createdAt)
         else -> destination.note ?: destination.category
+    }
+}
+
+/**
+ * Celda de acción rápida de la rejilla "King Kong": icono sobre fondo tonal
+ * con radio 12–16, etiqueta 12 sp en una línea, objetivo táctil ≥ 48 dp.
+ */
+@Composable
+private fun QuickActionItem(
+    label: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    com.agendaqr.core.ui.components.AmTappableCard(
+        onClick = onClick,
+        modifier = modifier,
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+        ) {
+            AmIcon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = AmColor.AccentText,
+            )
+            com.agendaqr.core.ui.components.AmText(
+                text = label,
+                size = AmType.BodySmall,
+                color = AmColor.TextSecondary,
+            )
+        }
     }
 }

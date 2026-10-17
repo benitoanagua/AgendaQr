@@ -1318,7 +1318,7 @@ class VisualReferenceScreenshotTest {
         )
     }
 
-    private fun rootChrome(selected: String): com.agendaqr.core.ui.components.AmNavChromeState {
+    internal fun rootChrome(selected: String): com.agendaqr.core.ui.components.AmNavChromeState {
         return com.agendaqr.core.ui.components.AmNavChromeState(
             destinations = listOf(
                 com.agendaqr.core.ui.components.AmNavDestination(

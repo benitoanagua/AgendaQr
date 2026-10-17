@@ -316,7 +316,7 @@ evalúa en configuración).
 | Tipografía y layout | `AmTypographyTest`, `AmPivotLayoutTest`, `AmUiPolishContractTest` | roles, interlineado, escalado de fuente |
 | Accesibilidad de componentes | `AmAccessibilityContractTest`, `ScreensA11yCoverageTest` | semántica, roles, targets |
 | Correcciones UX (ADR-0018) | `UxFilterReproductionTest`, `UxDateReproductionTest`, `UxEditorDiscardTest`, `UxAmountValidationTest`, `UxHomeHubTest`, `UxHomeFavoritesTest`, `DestinationsSectionStateTest`, `UxUnassociatedTest`, `UxLockSearchTest`, `QrFullscreenTest`, `ExternalFlowTrackerTest`, `ExternalFlowLockPolicyTest`, `AmDateTimePickerTest`, `AppStringsCopyContractTest` | filtros idempotentes, fecha con hora, descarte confirmado, importe válido, hub y favoritos de Inicio (lista sin duplicar el carrusel, sin mensaje falso), bandeja sin primarios, biometría/foco, brillo restaurado, gracia de bloqueo (STOP/START/RESUME con limpieza en primer plano) y presupuesto de copy ≤ 60 caracteres, bajo Robolectric/JVM |
-| Regresión visual | `recordRoborazzi` → `recordVisualHashes` / `verifyVisualHashes` | 80 capturas (40 escenarios × claro/oscuro, incl. tablet w720dp con NavigationRail y textos largos) por SHA-256 (ADR-0007, sensible al entorno) |
+| Regresión visual | `recordRoborazzi` → `recordVisualHashes` / `verifyVisualHashes` | 90 capturas (45 escenarios × claro/oscuro, incl. tablet w720dp con NavigationRail, textos largos y rejilla King Kong a 320 dp) por SHA-256 (ADR-0007, sensible al entorno) |
 | Arranque local-first y PIN | `:feature:destinations:presentation:testDebugUnitTest --tests "*AgendaQrLocalStartupTest"` | arranque real sin cuenta, perfil local, desbloqueo |
 | Máquina de estados del acceso local | `--tests "*LocalAccessGateTest"` | configurar → desbloquear → bloquear, saneado, intentos, bloqueo temporal |
 | Biometría (atajo fail-closed) + demo | `--tests "*LocalAccessBiometricTest" --tests "*DemoDataTest" --tests "*DemoSeederTest"` | éxito biométrico desbloquea, fallo conserva bloqueo + fallback PIN; dataset demo determinista, siembra idempotente y aislada |
@@ -401,9 +401,9 @@ la javadoc de `AmButtons.kt` y verificable por composición:
 - El botón global «Guardar reconocidos» vive fijo abajo y se separa de las
   acciones por elemento; en estado de error su etiqueta pasa a «Reintentar
   guardado».
-- Inicio S01: «Escanear QR» (sólida) sobre «Importar imagen» (tonal), apiladas
-  a etiqueta completa; la FAB «Añadir destino» conserva el rol de acción
-  flotante de plataforma.
+- Inicio S01: rejilla «King Kong» con las 3 acciones rápidas existentes
+  (Traer QR, Registrar operación, Crear contexto); sin FAB ni hub duplicado
+  (Anexo A, ADR-0022).
 - Selector de contexto S08: «Quitar contexto» sale del slot de salida del
   diálogo y vive en el contenido como acción destructiva (peligro + glifo);
   «Cancelar» es la única salida.
