@@ -22,67 +22,62 @@ class CameraPermissionFlowTest {
 
     @Test
     fun permanent_denial_offers_open_settings_and_recovers() {
-        // Limpieza inicial del permiso (no se restaura al final: el permiso
-        // se concede de nuevo dentro del propio test).
+        // Arranca denegado; se deja concedido incluso si falla el flujo para
+        // que las pruebas posteriores no hereden este estado global.
         Qa.shell("pm revoke com.agendaqr.app android.permission.CAMERA")
-        Qa.launchApp()
-        Qa.tapText("Traer un QR", timeoutMs = 15_000)
-        Qa.tapText("Cámara")
+        try {
+            Qa.launchApp()
+            Qa.tapText("Traer un QR", timeoutMs = 15_000)
+            Qa.tapText("Cámara")
 
-        // Deniega el diálogo del SISTEMA dos veces (la segunda con "no
-        // preguntar más" activa en muchos OEM tras la primera denegación).
-        denySystemDialog()
-        // Segundo intento: reintenta (aún no permanente) y vuelve a denegar.
-        Qa.tapText("Cámara")
-        denySystemDialog()
+            // Deniega el diálogo del SISTEMA dos veces (la segunda con "no
+            // preguntar más" activa en muchos OEM tras la primera denegación).
+            denySystemDialog()
+            // Segundo intento: reintenta (aún no permanente) y vuelve a denegar.
+            Qa.tapText("Cámara")
+            denySystemDialog()
 
-        // Con "no volver a preguntar" el reintento es invisible: la acción
-        // del banner DEBE ser "Abrir ajustes".
-        Qa.waitFor(8_000) { Qa.hasText("No pudimos abrir la cámara.") }
-        assertTrue(
-            Qa.textVisible("Abrir ajustes"),
-            "la acción visible debe ser 'Abrir ajustes' tras la denegación permanente",
-        )
+            // Con "no volver a preguntar" el reintento es invisible: la acción
+            // del banner DEBE ser "Abrir ajustes".
+            Qa.waitFor(8_000) { Qa.hasText("No pudimos abrir la cámara.") }
+            assertTrue(
+                Qa.textVisible("Abrir ajustes"),
+                "la acción visible debe ser 'Abrir ajustes' tras la denegación permanente",
+            )
 
-        // La pulsa y aterriza en los ajustes de la app.
-        Qa.tapText("Abrir ajustes")
-        Qa.waitFor(8_000) {
-            Qa.device.currentPackageName.let { it == "com.android.settings" || it == "com.google.android.settings" || it == "com.motorola.settings" }
+            // La pulsa y aterriza en los ajustes de la app.
+            Qa.tapText("Abrir ajustes")
+            Qa.waitFor(8_000) {
+                Qa.device.currentPackageName.let { it == "com.android.settings" || it == "com.google.android.settings" || it == "com.motorola.settings" }
+            }
+            Qa.screenshot("camera-permission-settings")
+
+            // Concede desde ajustes (permiso del sistema) y vuelve a la app.
+            Qa.shell("pm grant com.agendaqr.app android.permission.CAMERA")
+            Qa.launchApp()
+            Qa.tapText("Traer un QR", timeoutMs = 15_000)
+            Qa.tapText("Cámara")
+            // La cámara arranca: overlay de captura con el hint del scanner.
+            Qa.waitFor(10_000) { Qa.hasText("Encuadra el código QR") }
+            Qa.tapText("Volver")
+        } finally {
+            Qa.shell("pm grant com.agendaqr.app android.permission.CAMERA")
         }
-        Qa.screenshot("camera-permission-settings")
-
-        // Concede desde ajustes (permiso del sistema) y vuelve a la app.
-        Qa.shell("pm grant com.agendaqr.app android.permission.CAMERA")
-        Qa.launchApp()
-        Qa.tapText("Traer un QR", timeoutMs = 15_000)
-        Qa.tapText("Cámara")
-        // La cámara arranca: overlay de captura con el hint del scanner.
-        Qa.waitFor(10_000) { Qa.hasText("Encuadra el código QR") }
-        Qa.tapText("Volver")
     }
 
     private fun denySystemDialog() {
-        // Diálogo del sistema: sin "Don't allow" en español varía por OEM;
-        // se busca por varios textos conocidos y, como último recurso,
-        // se deniega con el permiso revocado (back + revoke).
+        // El texto del diálogo del sistema varía según idioma y OEM.
         val denyCandidates = listOf(
             "No permitir",
             "Denegar",
             "Don't allow",
             "NO PERMITIR",
         )
-        val pressed = denyCandidates.firstOrNull { candidate ->
-            Qa.waitFor(4_000) { Qa.textVisible(candidate) }
-            Qa.device.findObjects(By.text(candidate)).firstOrNull()?.let { node ->
-                node.click()
-                true
-            } ?: false
+        Qa.waitFor(4_000) { denyCandidates.any(Qa::textVisible) }
+        val denyNode = denyCandidates.firstNotNullOfOrNull { candidate ->
+            Qa.device.findObjects(By.text(candidate)).firstOrNull()
         }
-        if (pressed == null) {
-            // El diálogo no apareció (permiso ya permanente): cierra con
-            // Back y asegura el estado denegado.
-            Qa.device.pressBack()
-        }
+        checkNotNull(denyNode) { "No se encontró una opción para denegar el permiso de cámara" }.click()
         Qa.waitFor(3_000) { !Qa.textVisible("Mientras uses la app") }
     }
 }

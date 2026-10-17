@@ -34,10 +34,16 @@ class AnnouncementsTest {
         val listenerObj = object : android.app.UiAutomation.OnAccessibilityEventListener {
             override fun onAccessibilityEvent(event: AccessibilityEvent) {
                 if (!recorder.recording) return
-                val text = event.text.joinToString(" ").ifBlank {
-                    event.contentDescription?.toString() ?: ""
-                }
+                val source = event.source
+                val text = (event.text.map(CharSequence::toString) +
+                    listOfNotNull(
+                        event.contentDescription?.toString(),
+                        source?.text?.toString(),
+                        source?.contentDescription?.toString(),
+                        source?.error?.toString(),
+                    )).filter(String::isNotBlank).distinct().joinToString(" ")
                 recorder.events.add(event.eventType to text)
+                source?.recycle()
             }
         }
         uiAutomation.setOnAccessibilityEventListener(listenerObj)
@@ -58,11 +64,11 @@ class AnnouncementsTest {
         Qa.launchApp()
         // Abre el primer destino de la lista (S01 → detalle).
         Qa.waitFor(15_000) {
-            Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Carniceria")).isNotEmpty() ||
+            Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Carnicería")).isNotEmpty() ||
                 Qa.device.findObjects(androidx.test.uiautomator.By.textContains("QR importado")).isNotEmpty() ||
                 Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Sin nombre")).isNotEmpty()
         }
-        val first = Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Carniceria")).firstOrNull()
+        val first = Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Carnicería")).firstOrNull()
             ?: Qa.device.findObjects(androidx.test.uiautomator.By.textContains("QR importado")).firstOrNull()
             ?: Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Sin nombre")).firstOrNull()
         first?.click() ?: kotlin.test.fail("sin destino en la lista")

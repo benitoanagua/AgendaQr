@@ -73,9 +73,10 @@ object Qa {
 
     fun hasText(text: String): Boolean = textVisible(text) || descVisible(text)
 
-    /** Captura a /sdcard (fuera del repo; se recupera con adb pull). */
+    /** Captura en el caché del runner de pruebas, fuera del repositorio. */
     fun screenshot(name: String) {
-        val dir = File("/sdcard/agendaqr-ronda2").apply { mkdirs() }
+        val dir = File(instrumentation.context.cacheDir, "agendaqr-ronda2")
+        check(dir.exists() || dir.mkdirs()) { "no se pudo crear el directorio de capturas" }
         val output = File(dir, "$name.png")
         val captured = device.takeScreenshot(output)
         check(captured) { "screenshot fallido: $name" }

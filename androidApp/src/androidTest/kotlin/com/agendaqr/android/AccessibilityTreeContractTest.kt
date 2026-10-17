@@ -78,7 +78,8 @@ class AccessibilityTreeContractTest {
         small: MutableList<String>,
     ) {
         if (node.isVisibleToUser && node.isClickable) {
-            val name = node.contentDescription?.toString() ?: node.text?.toString()
+            val name = node.contentDescription?.toString()?.takeIf(String::isNotBlank)
+                ?: node.text?.toString()?.takeIf(String::isNotBlank)
             val label = node.viewIdResourceName ?: ""
             if (name.isNullOrBlank() && label.isBlank()) {
                 missing.add(node.className.toString())
