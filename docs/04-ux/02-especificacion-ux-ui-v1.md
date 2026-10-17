@@ -1,6 +1,6 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — V1.9 para contrato funcional; identidad visual definida por ADR-0020/ADR-0021 y desarrollada en `docs/05-design-system/00-contrato-normativo-diseno.md`  
+**Estado:** FROZEN — V1.9 para contrato funcional; identidad visual definida por ADR-0020/ADR-0021/ADR-0022 y desarrollada en `docs/05-design-system/00-contrato-normativo-diseno.md`  
 **Fecha:** 2026-10-11  
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
 
@@ -20,8 +20,9 @@
 | V1.9 | 2026-10-16 | Enmienda por ADR-0019 (inicio vacío): S01 vacío de primera ejecución muestra "Traer un QR", el FAB se oculta sin destinos ni búsqueda, y se retira el encabezado "Todos los destinos" sobre el vacío. Intención, modelo mental y reglas de negocio: intactos. |
 | V1.10 | 2026-10-16 | Enmienda visual por ADR-0020: identidad propia inspirada en aplicaciones chinas de consumo; paleta azul tecnológico + superficies neutras azul-gris; sin cambios en navegación, flujos, copy funcional o reglas de negocio. |
 | V1.11 | 2026-10-17 | Enmienda visual por ADR-0021: Ant Design Mobile deja de ser referencia; §12 incorpora las referencias de patrón por pantalla (apps chinas de consumo) sin cambios de navegación, flujos, copy ni reglas de negocio. |
+| V1.12 | 2026-10-17 | Enmienda visual por ADR-0022: la dirección vigente es la Super-App de alta densidad (paleta, escala tipográfica, densidad y gradientes del Anexo A, con pisos de accesibilidad); S01 gana la rejilla de acciones existentes y pierde el botón flotante con hub; el resto de flujos, navegación y copy quedan intactos. |
 
-La composición funcional vigente corresponde a V1.9; la identidad visual vigente corresponde a V1.11/ADR-0021. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
+La composición funcional vigente corresponde a V1.9 salvo la composición de S01 (V1.12); la identidad visual vigente corresponde a V1.12/ADR-0022. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
 ## 1. Contrato principal
 
@@ -80,31 +81,35 @@ Intención: entrar al dispositivo propio. No es un login: no hay correo, contras
 - Con biometría disponible e inscrita, el desbloqueo la solicita sola una vez por bloqueo (con el PIN como respaldo); la demostración solo existe en el primer arranque.
 - El PIN es local; nunca viaja a la red y no es la clave de cifrado de los datos.
 
-### S01 — Inicio (V1.8, ADR-0018)
-Intención: encontrar o iniciar algo. Buscar domina visualmente; Añadir abre el hub de creación.
+### S01 — Inicio (V1.12, ADR-0022)
+Intención: encontrar o iniciar algo. Buscar domina visualmente; las creaciones viven en la rejilla de acciones.
 
 Composición (la intención no cambia; solo cambia la presentación):
 
-    [barra superior: título "Agenda QR" — título estándar]
-    [campo de búsqueda como entrada a Buscar — primer bloque, dominante]
+    [cabecera con banda de gradiente de acción: título "Agenda QR" y
+      campo de búsqueda en píldora blanca sobre la banda]
+    [rejilla de acciones ("King Kong") con las MISMAS tres creaciones del
+      hub anterior, una por celda: Traer un QR / Registrar actividad /
+      Crear contexto — sin acciones nuevas ni duplicadas]
     [filtros de la lista como píldoras: Todos · Favoritos (activo sólido, idempotente)]
     [sección "Favoritos": carrusel horizontal (la siguiente tarjeta asoma como indicio)]
-    [sección "Todos los destinos": lista convencional de filas (sin los favoritos del carrusel)]
+    [sección "Todos los destinos": lista densa en tarjeta (sin los favoritos del carrusel)]
       [fila: tile QR tonal · título · metadato caption · favorito (estrella)]
       [estado vacío con acción "Traer un QR" cuando no hay nada]
     [tarjeta de disponibilidad sin conexión]
-    [botón flotante extendido "Añadir" → diálogo "¿Qué quieres añadir?": Traer un QR / Registrar actividad / Crear contexto]
 
-- Inicio es una lista convencional (sin tiles, sin tile vivo): una sola
-  entrada de búsqueda (sin duplicar campo superior y acción inferior) y
-  las acciones de pantalla viven en la barra superior, el FAB y la
-  barra de navegación inferior. Sin acciones rápidas duplicadas en el
-  cuerpo (la entrada a S02 vive en el hub y en S02).
-- El FAB abre el hub de creación con las tres creaciones reales del
-  producto (traer QR → S02, crear contexto → diálogo de creación,
-  registrar actividad → S07 sin preasociación); el hub se materializa
-  como diálogo por la limitación de `ModalBottomSheet` bajo Robolectric
-  (ADR-0013).
+- Inicio es una superficie densa con tarjetas y rejilla, no un panel: una
+  sola entrada de búsqueda y las acciones de pantalla viven en la cabecera
+  y la barra de navegación inferior. Sin acciones rápidas duplicadas en el
+  cuerpo.
+- La rejilla de acciones reutiliza exactamente las creaciones existentes
+  (traer QR → S02, crear contexto → diálogo de creación, registrar
+  actividad → S07 sin preasociación), una por celda, con icono Lucide
+  sobre cuadrado tonal, etiqueta corta a 12 sp y objetivo ≥ 48 dp. No se
+  añaden celdas decorativas.
+- El botón flotante con hub de Inicio se retira para no duplicar acciones
+  (ADR-0022 enmienda esta sección); el FAB de otras superficies, si existe,
+  no se toca.
 - Favoritos es un filtro de la propia lista (y del cuerpo de Inicio),
   no un destino aparte; en Todos la lista excluye los favoritos del
   carrusel (sin duplicación).
@@ -288,24 +293,23 @@ Reglas vigentes V1.3:
 - **Escalado de fuente:** el contenido esencial y las acciones primarias
   no se truncan con la fuente del sistema al 200 %.
 
-## 12. Contrato visual — V1.11, ADR-0020 y ADR-0021
+## 12. Contrato visual — V1.12, ADR-0020, ADR-0021 y ADR-0022
 
 > **Precedencia:** esta sección define la dirección visual de producto. Para tokens, contraste, componentes, estados, accesibilidad, pruebas y gobernanza, prevalece `docs/05-design-system/00-contrato-normativo-diseno.md`. La UX funcional y la navegación raíz no cambian por esta enmienda.
 
-AgendaQr adopta una identidad visual propia inspirada en aplicaciones móviles chinas de consumo: útil desde el primer vistazo, compacta sin ser apretada, jerárquica y visualmente pulida. No se copia una superapp ni se añaden adornos culturales genéricos. La interfaz sigue siendo nativa en Compose Multiplatform; no se incorpora React, CSS ni una librería web.
+La dirección visual vigente es la **Super-App de alta densidad** (ADR-0022; Anexo A en `docs/05-design-system/08-referencia-super-app.md`): útil desde el primer vistazo, densa, vibrante y jerárquica, con gradientes y una rejilla de accesos. No se copia una superapp ni se añaden adornos culturales genéricos; se imitan patrones, nunca activos. La interfaz sigue siendo nativa en Compose Multiplatform.
 
-### Referencias por pantalla (ADR-0021)
+### Referencias por pantalla (ADR-0021, ADR-0022)
 
-Se imitan patrones de UX de apps móviles chinas de consumo, nunca activos (iconos, ilustraciones, logotipos, textos, colores de marca ni composiciones calcadas). Alipay: Inicio y detalle QR; WeChat: búsqueda, contextos y barra inferior; Alipay y WeChat Pay: detalle de actividad e importación; HyperOS y WeChat: formularios. La tabla completa y la auditoría de brecha viven en ADR-0021 y en el contrato normativo §16. Inicio no incorpora cuadrícula de accesos rápidos: el hub del botón flotante ya cubre las creaciones.
+Se imitan patrones de UX de apps móviles chinas de consumo, nunca activos (iconos, ilustraciones, logotipos, textos, colores de marca ni composiciones calcadas). Inicio adopta el bazar denso (cabecera con gradiente, búsqueda en píldora, rejilla de acciones existentes, favoritos y lista densa); WeChat: búsqueda, contextos y barra inferior; Alipay y WeChat Pay: detalle de actividad e importación; HyperOS y WeChat: formularios. La tabla completa y la auditoría viven en el contrato §16.
 
 ### Principios
 
-1. Contenido y acción útil antes que decoración.
-2. Una intención principal y una acción principal por pantalla.
-3. Densidad controlada: filas compactas, metadatos alineados, divisores discretos y pocas tarjetas anidadas.
-4. Azul tecnológico para acción y selección; superficies neutras con matiz azul-gris; tonos semánticos solo para estados.
-5. El QR es un elemento central del producto: alto contraste, lienzo blanco y acciones directas.
-6. Accesibilidad, funcionamiento offline y consistencia Android/iOS son invariantes.
+1. La densidad es utilidad: aprovechar el espacio con filas compactas y pocas tarjetas anidadas.
+2. Una intención principal y una acción principal por pantalla; la primaria es siempre píldora con gradiente.
+3. Color de acción rojo de marca con gradiente a naranja; azul fintech para enlaces/confianza; tonos semánticos solo para estados.
+4. El QR es un elemento central del producto: alto contraste, lienzo blanco y acciones directas.
+5. Accesibilidad, funcionamiento offline y consistencia Android/iOS son invariantes: se ajustan valores, no se quita el estilo.
 
 ### Navegación y chrome
 
@@ -341,23 +345,23 @@ Se imitan patrones de UX de apps móviles chinas de consumo, nunca activos (icon
 
 ### Tipografía e iconografía
 
-- Se conserva inicialmente la familia de sistema y la escala semántica existente: título 18 sp, cuerpo/fila 17 sp, etiqueta 15 sp, metadatos 13 sp, apoyo 12 sp y etiquetas compactas 11 sp.
+- Se adopta la escala del Anexo A (ADR-0022): H1 20/600, H2 16/600, cuerpo 14/400, metadatos y apoyo 12, etiquetas compactas 11–12, importe hero 30/800 con símbolo de moneda 14/700 y cifras tabulares. Mínimo absoluto 11 sp.
 - MiSans Global y una familia monoespaciada son candidatas para evaluación local, no dependencias aprobadas. No se empaquetará una fuente hasta validar cobertura, licencia, tamaño y capturas en Android/iOS.
 - Lucide permanece como familia única a través de `AmIcon`/`AmIcons`. No se mezclan familias ni se migran iconos sin comparar las pantallas reales.
-- Los importes y datos técnicos pueden usar alineación numérica o monoespaciado solo si mejora la lectura; no se aplica estética de consola a toda la interfaz.
+- Los importes y datos técnicos usan cifras tabulares; no se aplica estética de consola a toda la interfaz.
 
 ### Color y tema oscuro
 
-- Tema claro: fondo `F7F8FA`, superficies `FFFFFF`/`F1F4F8`, texto `1F2937`, acento `245FE5`.
-- Tema oscuro: fondo `10141B`, superficie `171D26`, secundaria `0C1118`, texto `F1F5F9`, acento `70A5FF` con tinta `101B2E`.
-- Los roles semánticos de éxito, advertencia, peligro e información se definen en los tokens. Contraste de texto ≥ 4.5:1 y foco/bordes funcionales ≥ 3:1.
+- Tema claro: fondo `F5F6F8`, superficie `FFFFFF`, secundaria `F1F2F5`, texto principal `1A1A1A`, texto secundario `666666`, acción `E4001F` con gradiente a `BE4F00`.
+- Tema oscuro: fondo `0A0A0A`, superficie `1A1A1A` con borde sutil, secundaria `141414`, texto `E6E6E6`/`9A9A9A`, acción `FF5A70`.
+- Los roles semánticos de éxito, advertencia, peligro e información se definen en los tokens, con variante oscurecida cuando se usan como texto o glifo significativo (éxito `008156`, enlace `0067F7`; en oscuro rojo `FF5A70`, azul `4D9BFF`). Contraste de texto ≥ 4.5:1 y foco/bordes funcionales ≥ 3:1.
 - El lienzo del QR permanece blanco en ambos temas para preservar su zona de silencio escaneable.
 - El tema oscuro se diseña como una paleta independiente, no como inversión mecánica del claro.
 
 ### Movimiento
 
-- Las transiciones son breves, consistentes y funcionales. El movimiento reducido elimina la animación en lugar de acelerarla.
-- No se añaden sombras generalizadas, transparencias decorativas ni animaciones complejas para aparentar una estética de marca.
+- Las transiciones usan los tokens de `AmMotion` (200–300 ms, easing de rebote `cubic-bezier(0.34,1.56,0.64,1)`, escala de pulsación 0.95 con háptica). El brillo de entrada dura ≤ 5 s y luego queda estático.
+- El movimiento reducido elimina la animación (duración 0, escala 1, brillo estático, sin confeti) en lugar de acelerarla. El contenido en movimiento es detenible.
 
 ## 13. Fuera de esta congelación
 
@@ -365,4 +369,4 @@ Fuera del alcance de esta especificación conceptual: detalles internos de Kotli
 
 ## 14. Estado
 
-**UX/UI V1.9 funcional + V1.11 visual: FROZEN** (ADR-0019, ADR-0020 y ADR-0021, 2026-10-17).
+**UX/UI V1.9 funcional + V1.12 visual: FROZEN** (ADR-0019, ADR-0020, ADR-0021 y ADR-0022, 2026-10-17).

@@ -53,6 +53,11 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-02" to listOf("border:AmLists.kt"),
     "E-03" to listOf("border:AmLists.kt"),
     "E-04" to listOf("border:AmInputs.kt"),
+    // Sombras del Anexo A (ADR-0022): el `Modifier.shadow` está
+    // centralizado en la capa de tokens (`AmElevation`/`amElevation`); solo
+    // los archivos registrados pueden invocarlo.
+    "E-05" to listOf("shadow:AmLists.kt"),
+    "E-06" to listOf("shadow:AmButtons.kt"),
 )
 
 /** Archivos con `.border(`/`BorderStroke(` permitidos: ninguno. */
@@ -60,6 +65,14 @@ val borderAllowedFiles: Set<String> =
     buildSet {
         exceptionRegistry.values.forEach { rules ->
             rules.forEach { rule -> if (rule.startsWith("border:")) add(rule.removePrefix("border:")) }
+        }
+    }
+
+/** Archivos con `shadow(`/`.shadow(` permitidos (excepciones E-05/E-06). */
+val shadowAllowedFiles: Set<String> =
+    buildSet {
+        exceptionRegistry.values.forEach { rules ->
+            rules.forEach { rule -> if (rule.startsWith("shadow:")) add(rule.removePrefix("shadow:")) }
         }
     }
 
@@ -75,11 +88,12 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
     val rawDp = Regex("(?<![A-Za-z0-9_])(\\d+(?:\\.\\d+)?)\\.dp\\b")
     val rawSp = Regex("(?<![A-Za-z0-9_])(\\d+(?:\\.\\d+)?)\\.sp\\b")
     val rawColor = Regex("\\bColor\\s*\\(")
-    val forbiddenShapes = listOf("RoundedCornerShape", "CutCornerShape", "shadow(", ".shadow(")
     val forbiddenVisualAuthority = listOf("MaterialTheme.colorScheme")
     // Las formas con esquinas viven SOLO en la capa de tokens; el tema
     // las pasa a MaterialTheme.shapes sin construir ninguna.
     val shapesAllowedFiles = listOf(TokenLayerFile)
+    val isShadowAllowed = shapesAllowedFiles.any { path.endsWith(it) } ||
+        shadowAllowedFiles.any { path.endsWith(it) }
     // La capa feature compone componentes del sistema; los componentes Material solo
     // viven en core:ui (que los adapta con tokens). Un import directo de
     // estos controles en feature/ es una fuga del design system.
@@ -101,8 +115,13 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
         if (!isTokenLayer && rawDp.containsMatchIn(line)) add("$location: raw dp outside token layer: $line")
         if (!isTokenLayer && rawSp.containsMatchIn(line)) add("$location: raw sp outside token layer: $line")
         if (!isTokenLayer && rawColor.containsMatchIn(line)) add("$location: raw Color constructor outside token layer: $line")
-        if (shapesAllowedFiles.none { path.endsWith(it) } && forbiddenShapes.any(line::contains)) {
+        if (shapesAllowedFiles.none { path.endsWith(it) } &&
+            (line.contains("RoundedCornerShape") || line.contains("CutCornerShape"))
+        ) {
             add("$location: forbidden radius/elevation API: $line")
+        }
+        if (!isShadowAllowed && (line.contains("shadow(") || line.contains(".shadow("))) {
+            add("$location: forbidden shadow API (register a shadow: exception): $line")
         }
         if (!isTokenLayer &&
             (line.contains("CircleShape") || line.contains("RectangleShape"))

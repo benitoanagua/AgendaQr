@@ -1,6 +1,6 @@
 # ADR-0021 — Referencias de UI/UX de apps chinas de consumo, por pantalla
 
-**Estado:** ACEPTADO — 2026-10-17 (instrucción del propietario)
+**Estado:** ACEPTADO — 2026-10-17 (instrucción del propietario) — **parcialmente suplantado por ADR-0022 (2026-10-17):** el reparto de referencias y la prohibición de la rejilla de Inicio quedan enmendados; su auditoría de brechas G1–G9 permanece como historia.
 **Enmienda:** ADR-0020 (concreta su "inspiración" en referencias nombradas por pantalla).
 **Suplanta:** ADR-0014 y ADR-0017 (Ant Design Mobile deja de ser referencia; su historia se conserva).
 **Relaciona:** ADR-0015 (anatomía financiera), ADR-0018, contrato normativo `docs/05-design-system/00-contrato-normativo-diseno.md` §16, especificación UX/UI §12.
