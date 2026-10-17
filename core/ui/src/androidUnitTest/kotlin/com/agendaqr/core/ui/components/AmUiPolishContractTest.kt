@@ -8,11 +8,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsNode
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
@@ -226,5 +230,110 @@ class AmUiPolishContractTest {
             all.none { it.config.getOrNull(androidx.compose.ui.semantics.SemanticsProperties.ContentDescription)?.isNotEmpty() == true },
             "el glifo del estado vacío no debe anunciarse al lector de pantalla",
         )
+    }
+
+    // --- Tarea A: metadato final (endMeta) de AmListRow ---
+
+    @Test
+    fun end_meta_keeps_the_title_line_and_right_alignment_when_there_is_room() {
+        setScaledContent(1f) {
+            AmListRow(
+                title = "Mercado",
+                subtitle = "Contexto de compras",
+                endMeta = "14/11/2023",
+                onClick = {},
+            )
+        }
+        val title = compose.onNodeWithText("Mercado", useUnmergedTree = true)
+            .getBoundsInRoot()
+        val meta = compose.onNodeWithText("14/11/2023", useUnmergedTree = true)
+            .getBoundsInRoot()
+        val titleTop = title.top.value
+        val titleBottom = title.bottom.value
+        val titleRight = title.right.value
+        val metaTop = meta.top.value
+        val metaBottom = meta.bottom.value
+        val metaRight = meta.right.value
+        // Misma línea del título: los rangos verticales se solapan.
+        assertTrue(
+            metaTop < titleBottom - 1f && metaBottom > titleTop + 1f,
+            "el metadato no comparte la línea del título: title=$title meta=$meta",
+        )
+        // Alineado a la derecha del contenedor (fila de 360 dp).
+        val rowRight = compose.onRoot().getBoundsInRoot().right.value
+        assertTrue(
+            metaRight > titleRight && metaRight >= rowRight - 24f,
+            "el metadato no está alineado a la derecha: right=$metaRight, fila=$rowRight",
+        )
+    }
+
+    @Test
+    @Config(sdk = [34], qualifiers = "w320dp-h640dp")
+    fun end_meta_moves_to_its_own_line_on_a_narrow_row() {
+        setScaledContent(1f) {
+            AmListRow(
+                title = "Mercado",
+                subtitle = "Contexto de compras",
+                endMeta = "14/11/2023",
+                onClick = {},
+            )
+        }
+        assertEndMetaBelowTitle()
+    }
+
+    @Test
+    fun end_meta_moves_to_its_own_line_at_200_percent_font_scale() {
+        setScaledContent(2f) {
+            AmListRow(
+                title = "Mercado",
+                subtitle = "Contexto de compras",
+                endMeta = "14/11/2023",
+                onClick = {},
+            )
+        }
+        assertEndMetaBelowTitle()
+    }
+
+    private fun assertEndMetaBelowTitle() {
+        val title = compose.onNodeWithText("Mercado", useUnmergedTree = true)
+            .getBoundsInRoot()
+        val meta = compose.onNodeWithText("14/11/2023", useUnmergedTree = true)
+            .getBoundsInRoot()
+        assertTrue(
+            meta.top.value >= title.bottom.value - 1f,
+            "el metadato no bajó a su propia línea: title=$title meta=$meta",
+        )
+        val rowRight = compose.onRoot().getBoundsInRoot().right.value
+        assertTrue(
+            meta.right.value <= rowRight + 1f,
+            "el metadato desborda el ancho: right=${meta.right.value}, fila=$rowRight",
+        )
+    }
+
+    @Test
+    fun end_meta_reads_as_one_accessible_element_without_duplicate_announcements() {
+        compose.setContent {
+            AmTheme {
+                AmListRow(
+                    title = "Mercado Central",
+                    subtitle = "Compras semanales",
+                    endMeta = "14/11/2023",
+                    onClick = {},
+                )
+            }
+        }
+        compose.waitForIdle()
+        // Un solo nodo por el texto del metadato: la fila fusiona sus
+        // descendientes (sin anuncios repetidos).
+        compose.onAllNodesWithText("14/11/2023").assertCountEquals(1)
+        val texts = compose.onNodeWithText("Mercado Central")
+            .fetchSemanticsNode()
+            .config[SemanticsProperties.Text]
+            .map { it.text }
+            assertEquals(
+                setOf("Mercado Central", "Compras semanales", "14/11/2023"),
+                texts.toSet(),
+            )
+        assertEquals(3, texts.size)
     }
 }

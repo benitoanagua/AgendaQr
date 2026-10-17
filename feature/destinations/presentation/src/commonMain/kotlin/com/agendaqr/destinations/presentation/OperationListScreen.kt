@@ -262,6 +262,10 @@ internal fun OperationListScreen(
                             modifier = Modifier.fillMaxWidth(),
                             title = operationTitle(operation),
                             subtitle = operation.concept?.takeIf { it.isNotBlank() },
+                            // Fecha real del registro: metadato corto en la
+                            // línea del título (patrón de lista de facturas);
+                            // la hora de registro queda con el resto del meta.
+                            endMeta = formatDate(operation.occurredAt),
                             leading = {
                                 AmIconBadge(
                                     icon = operationTypeIcon(operation.type),
@@ -291,7 +295,7 @@ internal fun OperationListScreen(
                                             tint = AmColor.TextTertiary,
                                         )
                                         AmText(
-                                            formatDate(operation.occurredAt) + " · " + AppStrings.RegPrefijo + formatTime(operation.createdAt),
+                                            AppStrings.RegPrefijo + formatTime(operation.createdAt),
                                             color = AmColor.TextTertiary,
                                             size = AmType.Caption,
                                         )

@@ -253,6 +253,9 @@ private fun ContextDetail(
                                             operation.currency,
                                             operation.personOrEntity,
                                         ).joinToString(" · "),
+                                        // Fecha real de la actividad: metadato
+                                        // corto en la línea del título.
+                                        endMeta = formatDate(operation.occurredAt),
                                         onClick = { onOpenOperation(operation.id) },
                                         showDivider = index < shownOperations.lastIndex,
                                     )

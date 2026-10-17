@@ -221,6 +221,7 @@ class AmSchemeTest {
             assertTrue(contrast(hex(scheme.textSecondary), hex(scheme.surface)) >= 4.5, "textSecondary/surface")
             assertTrue(contrast(hex(scheme.textSecondary), hex(scheme.surfaceSecondary)) >= 4.5, "textSecondary/surfaceSecondary")
             assertTrue(contrast(hex(scheme.textTertiary), hex(scheme.background)) >= 4.5, "textTertiary/background")
+            assertTrue(contrast(hex(scheme.textTertiary), hex(scheme.surface)) >= 4.5, "textTertiary/surface")
             assertTrue(contrast(hex(scheme.textTertiary), hex(scheme.surfaceSecondary)) >= 4.5, "textTertiary/surfaceSecondary")
             listOf(scheme.danger, scheme.success, scheme.warning, scheme.info).forEach { tone ->
                 assertTrue(contrast(hex(tone), hex(scheme.background)) >= 4.5, "tone text/background")

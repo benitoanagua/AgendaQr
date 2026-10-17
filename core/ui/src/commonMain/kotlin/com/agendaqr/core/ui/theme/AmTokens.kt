@@ -360,6 +360,13 @@ object AmMetrics {
      * ([ControlMinSize]) + el margen del Scaffold ([AmSpacing.Lg]). Es un
      * valor DERIVADO de componentes reales, no una constante a mano. */
     val FabClearance = ControlMinSize + AmSpacing.Lg
+    /** Ancho de fila a partir del cual el metadato final de la celda
+     * (`AmListRow` `endMeta`) comparte la línea del título; por debajo pasa
+     * a su propia línea para no comprimir el título en un teléfono angosto. */
+    val ListRowEndMetaMinWidth = 320.dp
+    /** Escala de fuente del sistema a partir de la cual el metadato final
+     * pasa a su propia línea (el texto grande nunca recorta el título). */
+    const val ListRowEndMetaStackFontScale = 2f
 }
 
 /** Radios de la referencia (tag 2, botón 4, búsqueda 6, tarjeta 8,

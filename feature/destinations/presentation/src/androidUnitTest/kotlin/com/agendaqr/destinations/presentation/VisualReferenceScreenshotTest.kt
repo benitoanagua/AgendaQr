@@ -528,6 +528,7 @@ class VisualReferenceScreenshotTest {
                                 modifier = Modifier.fillMaxWidth(),
                                 title = operationTitle(operation),
                                 subtitle = operation.concept?.takeIf { it.isNotBlank() },
+                                endMeta = formatDate(operation.occurredAt),
                                 leading = {
                                     AmIconBadge(
                                         icon = operationTypeIcon(operation.type),
@@ -557,7 +558,7 @@ class VisualReferenceScreenshotTest {
                                                 tint = AmColor.TextTertiary,
                                             )
                                             AmText(
-                                                formatDate(operation.occurredAt) + " · " + AppStrings.RegPrefijo + formatTime(operation.createdAt),
+                                                AppStrings.RegPrefijo + formatTime(operation.createdAt),
                                                 color = AmColor.TextTertiary,
                                                 size = AmType.Caption,
                                             )

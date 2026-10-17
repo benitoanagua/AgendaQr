@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
@@ -298,6 +300,13 @@ fun AmCard(
  *   texto.
  * - [showChevron] añade la flecha de la referencia (List.Item `arrow`,
  *   decorativa) cuando la fila navega y no tiene acciones finales.
+ * - [endMeta] es un metadato CORTO de solo texto (fecha, estado o
+ *   importe sin formato de acción) alineado a la derecha en la MISMA
+ *   línea del título, como en las listas de chats y facturas. Coexiste
+ *   con un valor no interactivo en [trailing] (p. ej. un importe); NO
+ *   coexiste con acciones en [trailing] ni con [showChevron] (misma zona
+ *   final). Si la fila es angosta o la fuente del sistema llega al 200 %
+ *   el metadato pasa a su propia línea bajo el título, sin recortes.
  * - [showDivider] añade el separador inferior de la lista agrupada; lo
  *   activa la pantalla que agrupa celdas contiguas.
  */
@@ -329,72 +338,129 @@ fun AmListRow(
     titleMaxLines: Int = 1,
     /** Límite de líneas para el subtítulo (default 1 con elipsis). */
     subtitleMaxLines: Int = 1,
+    /** Metadato corto de solo texto alineado a la derecha en la línea del
+     * título (fecha/estado/importe). Exclusivo con [showChevron]; con
+     * acciones en [trailing] no se usa (el texto lo pasa la pantalla). */
+    endMeta: String? = null,
 ) {
+    require(endMeta == null || !showChevron) {
+        "AmListRow endMeta y showChevron compiten en la zona final: usa uno solo"
+    }
     Column(modifier = modifier) {
-        ListItem(
-            modifier = Modifier
-                .then(
-                    if (onClick != null) {
-                        Modifier.clickable(role = Role.Button, onClick = onClick)
-                    } else {
-                        Modifier
-                    },
+        BoxWithConstraints {
+            // Fuente grande o fila angosta: el metadato no compite con el
+            // título y baja a su propia línea.
+            val stackEndMeta = endMeta != null && (
+                maxWidth <= AmMetrics.ListRowEndMetaMinWidth ||
+                    LocalDensity.current.fontScale >= AmMetrics.ListRowEndMetaStackFontScale
                 )
-                .then(
-                    if (selected) Modifier.semantics { this.selected = true } else Modifier,
-                ),
-            colors = ListItemDefaults.colors(containerColor = AmColor.Transparent),
-            headlineContent = {
-                Text(
-                    title,
-                    style = AmTextStyles.RowTitle,
-                    color = AmColor.TextPrimary,
-                    maxLines = titleMaxLines,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            },
-            supportingContent = if (subtitle != null || meta != null) {
-                {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
-                    ) {
-                        subtitle?.let {
+            ListItem(
+                modifier = Modifier
+                    .then(
+                        if (onClick != null) {
+                            Modifier.clickable(role = Role.Button, onClick = onClick)
+                        } else {
+                            Modifier
+                        },
+                    )
+                    .then(
+                        if (selected) Modifier.semantics { this.selected = true } else Modifier,
+                    ),
+                colors = ListItemDefaults.colors(containerColor = AmColor.Transparent),
+                headlineContent = {
+                    val shortMeta = endMeta
+                    if (shortMeta == null) {
+                        Text(
+                            title,
+                            style = AmTextStyles.RowTitle,
+                            color = AmColor.TextPrimary,
+                            maxLines = titleMaxLines,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    } else if (stackEndMeta) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+                        ) {
                             Text(
-                                it,
+                                title,
+                                style = AmTextStyles.RowTitle,
+                                color = AmColor.TextPrimary,
+                                maxLines = titleMaxLines,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                            Text(
+                                shortMeta,
                                 style = AmTextStyles.BodySmall,
-                                color = AmColor.TextSecondary,
-                                maxLines = subtitleMaxLines,
+                                color = AmColor.TextTertiary,
+                            )
+                        }
+                    } else {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                        ) {
+                            Text(
+                                title,
+                                modifier = Modifier.weight(1f),
+                                style = AmTextStyles.RowTitle,
+                                color = AmColor.TextPrimary,
+                                maxLines = titleMaxLines,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                            Text(
+                                shortMeta,
+                                style = AmTextStyles.BodySmall,
+                                color = AmColor.TextTertiary,
+                                maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
                         }
-                        meta?.invoke()
                     }
-                }
-            } else {
-                null
-            },
-            leadingContent = leading ?: accent?.let { color ->
-                {
-                    Box(
-                        modifier = Modifier
-                            .size(AmSpacing.Md)
-                            .background(color, AmShapes.Pill),
-                    )
-                }
-            },
-            trailingContent = trailing ?: if (showChevron) {
-                {
-                    AmIcon(
-                        imageVector = AmIcons.ChevronRight,
-                        contentDescription = null,
-                        size = AmMetrics.IconSizeCompact,
-                        tint = AmColor.TextTertiary,
-                    )
-                }
-            } else {
-                null
-            },
-        )
+                },
+                supportingContent = if (subtitle != null || meta != null) {
+                    {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+                        ) {
+                            subtitle?.let {
+                                Text(
+                                    it,
+                                    style = AmTextStyles.BodySmall,
+                                    color = AmColor.TextSecondary,
+                                    maxLines = subtitleMaxLines,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                            meta?.invoke()
+                        }
+                    }
+                } else {
+                    null
+                },
+                leadingContent = leading ?: accent?.let { color ->
+                    {
+                        Box(
+                            modifier = Modifier
+                                .size(AmSpacing.Md)
+                                .background(color, AmShapes.Pill),
+                        )
+                    }
+                },
+                trailingContent = trailing ?: if (showChevron) {
+                    {
+                        AmIcon(
+                            imageVector = AmIcons.ChevronRight,
+                            contentDescription = null,
+                            size = AmMetrics.IconSizeCompact,
+                            tint = AmColor.TextTertiary,
+                        )
+                    }
+                } else {
+                    null
+                },
+            )
+        }
         if (showDivider) {
             // Hairline alineado con el CONTENIDO cuando hay marca a la
             // izquierda (tile/punto), no con el borde de la tarjeta

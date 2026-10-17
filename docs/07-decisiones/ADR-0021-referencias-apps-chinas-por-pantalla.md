@@ -36,10 +36,10 @@ ADR-0020 declaró la identidad de AgendaQr como "inspirada en aplicaciones móvi
 | Detalle de destino | `AmQrPreview` en `AmTappableCard` sobre lienzo blanco, dock con "Mostrar QR" primaria y "Compartir" secundaria, `AmCard` con `AmMetaRow` | Ninguna estructural |
 | Navegación raíz | `AmNavBar` de 56 dp, color + etiqueta, sin píldora | Ninguna |
 | Detalle de actividad | Hero con píldora de tipo y cifra neutra, filas etiqueta-valor | Ninguna estructural (revisión de comentarios y estructura, no de capturas) |
-| Filas de lista | `AmListRow`: título, subtítulo, meta bajo el subtítulo, acciones finales o chevron | Sin metadato alineado a la derecha (fecha o estado en la misma línea del título), habitual en listas de chats y facturas |
+| Filas de lista | `AmListRow`: título, subtítulo, meta bajo el subtítulo, `endMeta` corto de solo texto alineado a la derecha en la línea del título (fecha real en Actividades y en las actividades de un contexto), acciones finales o chevron | Ninguna estructural en Actividades; en Inicio no aplica (la fila lleva la acción de favorito en `trailing`) |
 | Formularios | `AmTextField` con etiqueta flotante persistente y guía hairline | Deliberada: la etiqueta persistente es un requisito de accesibilidad |
 
-No auditado a fondo: Buscar, Importación (S09–S12) y S00. La única brecha abierta (metadato a la derecha en `AmListRow`) cambia capturas, por lo que exige regenerar y revisar los hashes visuales en local (ADR-0007, ADR-0020 §8) antes de implementarse.
+No auditado a fondo: Buscar, Importación (S09–S12) y S00. La brecha del metadato a la derecha en `AmListRow` se cerró con el parámetro `endMeta`, aplicado a la fecha real de Actividades y de las actividades de un contexto; el cambio visual exige regenerar y revisar las capturas y los hashes en local (ADR-0007, ADR-0020 §8) antes de darse por válido.
 
 ## Consecuencias
 
