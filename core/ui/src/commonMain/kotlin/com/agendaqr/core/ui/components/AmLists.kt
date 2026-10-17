@@ -29,11 +29,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmElevation
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
 import com.agendaqr.core.ui.theme.accentFor
+import com.agendaqr.core.ui.theme.amElevation
 
 /**
  * Celdas y etiquetas (referencia: List/Item + Tag): la celda (`AmListRow`)
@@ -200,11 +202,13 @@ fun AmTappableCard(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
+    val shape = AmShapes.Medium
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(AmColor.Surface, AmShapes.Large)
-            .border(AmMetrics.Border, AmColor.Divider, AmShapes.Large)
+            .amElevation(AmElevation.E1, shape)
+            .background(AmColor.Surface, shape)
+            .border(AmMetrics.Border, AmColor.SurfaceBorder, shape)
             .clickable(role = Role.Button, onClick = onClick)
             .padding(AmSpacing.Md),
     ) {
@@ -235,11 +239,11 @@ fun AmHairline(
 }
 
 /**
- * Cuerpo de lista (card mode): superficie de
- * tarjeta delimitada por hairline (1 dp, excepción
- * E-03 del gate) con radio 8 (card de la referencia), que agrupa celdas
- * contiguas separadas por hairlines inset. Las filas usan `showDivider`
- * salvo la última; el cuerpo mide su contenido.
+ * Cuerpo de lista (card mode): tarjeta de superficie con radio 12
+ * (Anexo A: tarjeta de lista) y sombra E-1 sobre el fondo gris (E-05),
+ * delimitada por hairline (1 dp, excepción E-03 del gate), que agrupa
+ * celdas contiguas separadas por hairlines inset. Las filas usan
+ * `showDivider` salvo la última; el cuerpo mide su contenido.
  */
 @Composable
 fun AmListBody(
@@ -249,11 +253,13 @@ fun AmListBody(
     contentPadding: PaddingValues = PaddingValues(AmSpacing.None),
     content: @Composable () -> Unit,
 ) {
+    val shape = AmShapes.Medium
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(AmColor.Surface, AmShapes.Large)
-            .border(AmMetrics.Border, AmColor.Divider, AmShapes.Large)
+            .amElevation(AmElevation.E1, shape)
+            .background(AmColor.Surface, shape)
+            .border(AmMetrics.Border, AmColor.SurfaceBorder, shape)
             .padding(contentPadding),
     ) {
         content()
@@ -262,8 +268,9 @@ fun AmListBody(
 
 /**
  * Tarjeta de superficie para contenido libre (no filas de lista): mismo
- * fondo y borde que [AmListBody] pero con padding interno por defecto
- * ([AmSpacing.Lg]), para que el contenido no toque el borde.
+ * radio 12, sombra E-1 (E-05) y borde hairline (E-03) que [AmListBody]
+ * pero con padding interno por defecto ([AmSpacing.Lg]), para que el
+ * contenido no toque el borde.
  *
  * - Usar [AmListBody] para agrupar filas de lista (padding 0).
  * - Usar [AmCard] para contenido libre (resúmenes, formularios, tarjetas
@@ -275,11 +282,13 @@ fun AmCard(
     contentPadding: PaddingValues = PaddingValues(AmSpacing.Lg),
     content: @Composable () -> Unit,
 ) {
+    val shape = AmShapes.Medium
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(AmColor.Surface, AmShapes.Large)
-            .border(AmMetrics.Border, AmColor.Divider, AmShapes.Large)
+            .amElevation(AmElevation.E1, shape)
+            .background(AmColor.Surface, shape)
+            .border(AmMetrics.Border, AmColor.SurfaceBorder, shape)
             .padding(contentPadding),
     ) {
         content()

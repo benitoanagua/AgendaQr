@@ -102,9 +102,9 @@ private fun AmDialogAction(
 /**
  * Diálogo de confirmación con exactamente dos acciones.
  *
- * Réplica del Dialog de la referencia: popup con radio de tarjeta,
- * título 18 bold centrado, contenido 15 y FILA DE ACCIONES A ANCHO
- * COMPLETO separada del contenido por hairline (y entre sí por
+ * Réplica del Dialog de la referencia: popup con radio de tarjeta (12,
+ * Anexo A), título 18 bold centrado, contenido 14 y FILA DE ACCIONES A
+ * ANCHO COMPLETO separada del contenido por hairline (y entre sí por
  * hairline vertical); la acción de confirmar va en negrita con el acento
  * (peligro si [destructive]) y el descarte en texto normal primario.
  * Con una sola acción ([dismissLabel] nulo) la fila es una única
@@ -163,7 +163,7 @@ fun AmDialog(
             ).coerceAtLeast(AmMetrics.DialogMinWidth)
             Surface(
                 modifier = modifier.width(dialogWidth),
-                shape = AmShapes.Large,
+                shape = AmShapes.Medium,
                 color = AmColor.Surface,
             ) {
                 Column {

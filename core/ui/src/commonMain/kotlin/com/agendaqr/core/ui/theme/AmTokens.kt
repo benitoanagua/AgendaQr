@@ -327,6 +327,8 @@ object AmColor {
     val Wathet: Color @Composable get() = LocalAmColorScheme.current.wathet
     val Danger: Color @Composable get() = LocalAmColorScheme.current.danger
     val OnDanger: Color @Composable get() = LocalAmColorScheme.current.onDanger
+    /** Bloque tonal de peligro (acción destructiva tonal: contorno o tono). */
+    val DangerContainer: Color @Composable get() = LocalAmColorScheme.current.dangerContainer
     /** Texto/ icono de éxito sobre superficie o contenedor (≥ 4.5:1). */
     val Success: Color @Composable get() = LocalAmColorScheme.current.success
     /** Bloque tonal de éxito (fondos de identidad de cobro, etiquetas). */

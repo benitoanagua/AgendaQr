@@ -189,9 +189,10 @@ fun AmTextField(
 
 /**
  * Campo de búsqueda (SearchBar de la referencia): relleno box
- * (`SurfaceSecondary`), radio 6, glifo de búsqueda y limpieza opcional
- * etiquetada; SIN etiqueta flotante visible — el nombre accesible va por
- * semántica ([label] como contentDescription) y la pista visible es el
+ * (`SurfaceSecondary`), PÍLDORA (Anexo A: inputs/buscador 20+, radio
+ * completo), glifo de búsqueda y limpieza opcional etiquetada; SIN
+ * etiqueta flotante visible — el nombre accesible va por semántica
+ * ([label] como contentDescription) y la pista visible es el
  * placeholder; en foco, borde de acento de 1 dp (excepción E-04). La
  * entrada real de búsqueda de producto (S04). La altura mínima de 48 dp
  * conserva el objetivo táctil (la referencia mide 32 px; desviación
@@ -236,7 +237,7 @@ fun AmSearchField(
             .border(
                 AmMetrics.Border,
                 if (focused) AmColor.Focus else AmColor.Transparent,
-                AmShapes.Medium,
+                AmShapes.Pill,
             )
             .focusRequester(focusRequester)
             // Nombre accesible del campo: la etiqueta no se dibuja
@@ -253,7 +254,7 @@ fun AmSearchField(
             )
         },
         singleLine = true,
-        shape = AmShapes.Medium,
+        shape = AmShapes.Pill,
         leadingIcon = { AmIcon(imageVector = AmIcons.Search, contentDescription = null, tint = AmColor.TextTertiary) },
         trailingIcon = if (onClear != null && value.isNotEmpty()) {
             {
@@ -306,8 +307,8 @@ fun AmSearchTrigger(
 ) {
     Box(
         modifier = modifier
-            .background(AmColor.SurfaceSecondary, AmShapes.Medium)
-            .border(AmMetrics.Border, AmColor.Divider, AmShapes.Medium),
+            .background(AmColor.SurfaceSecondary, AmShapes.Pill)
+            .border(AmMetrics.Border, AmColor.Divider, AmShapes.Pill),
     ) {
         // El campo decorativo queda fuera del árbol de accesibilidad: el
         // control es un solo botón con nombre accesible (la superposición).
@@ -342,8 +343,8 @@ fun AmSearchTrigger(
 }
 
 /**
- * Entrada de importe: cifra grande (26 sp
- * SemiBold) con símbolo opcional de moneda, acción de borrado ⌫
+ * Entrada de importe: cifra hero del Anexo A (30 sp/800, tabular) con
+ * símbolo opcional de moneda más pequeño (14 sp/700), acción de borrado ⌫
  * etiquetada y guía hairline — la altura la fija el contenido con un
  * objetivo táctil de 48 dp en el borrado. El valor sigue siendo texto
  * libre del dominio; nada se formatea ni valida aquí.
@@ -376,7 +377,7 @@ fun AmAmountField(
             currencySymbol?.let {
                 Text(
                     it,
-                    style = AmTextStyles.Amount,
+                    style = AmTextStyles.AmountSymbol,
                     color = AmColor.AccentText,
                 )
             }
@@ -386,13 +387,7 @@ fun AmAmountField(
                 modifier = Modifier
                     .weight(1f)
                     .defaultMinSize(minHeight = AmMetrics.ControlMinSize),
-                textStyle = androidx.compose.ui.text.TextStyle(
-                    fontSize = AmType.Amount,
-                    lineHeight = AmType.LineAmount,
-                    fontFamily = AmType.FamilyUi,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
-                    color = AmColor.TextPrimary,
-                ),
+                textStyle = AmTextStyles.Amount.copy(color = AmColor.TextPrimary),
                 keyboardOptions = keyboardOptions,
                 singleLine = true,
                 cursorBrush = androidx.compose.ui.graphics.SolidColor(AmColor.Focus),
