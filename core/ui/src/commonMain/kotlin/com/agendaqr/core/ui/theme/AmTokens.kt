@@ -16,11 +16,9 @@ import androidx.compose.ui.unit.sp
 import kotlin.math.pow
 
 /**
- * Tokens del sistema de diseño de Agenda QR (ADR-0014).
+ * Tokens del sistema visual propio de AgendaQr (ADR-0020).
  *
- * Referencia visual: Ant Design Mobile (variables de tema claro/oscuro,
- * componentes y patrones oficiales); navegación según convenciones de
- * Android e iOS. Arquitectura de capas (contrato normativo
+ * Identidad visual: AgendaQr (ADR-0020), inspirada en aplicaciones móviles chinas de consumo; navegación según convenciones de Android e iOS. Arquitectura de capas (contrato normativo
  * docs/05-design-system/00-contrato-normativo-diseno.md):
  * 1. Tokens privados: [AmPalette] — primitivas por tema, sin exposición.
  * 2. Tokens semánticos: [AmColorScheme], [AmColor], [AmSpacing],
@@ -28,43 +26,40 @@ import kotlin.math.pow
  *    [AmMotion], [AmAccent] — la única capa que el producto consume.
  * 3. Tema: [AmTheme] — puente a Material 3 (implementación, no autoridad).
  *
- * Donde la referencia no alcanza WCAG AA, los roles se recalibran
- * mínimamente (contrato §4.4) y cada par queda fijado por AmSchemeTest;
- * ningún estado depende solo del color.
+ * La paleta de marca se define para AgendaQr y se verifica contra WCAG AA en ambos temas; ningún estado depende solo del color.
  */
 
 /** Primitivas por tema: privadas de la capa de tokens. */
 internal object AmPalette {
-    // Tema claro (referencia: theme-default de Ant Design Mobile; los
-    // roles de texto y de estado sobre fondo se recalibran a §4.4).
-    val lightBackground = Color(0xFFF5F5F5)
+    // Tema claro: paleta de marca AgendaQr, con contraste AA verificado.
+    val lightBackground = Color(0xFFF7F8FA)
     val lightSurface = Color(0xFFFFFFFF)
-    val lightSurfaceSecondary = Color(0xFFF5F5F5)
+    val lightSurfaceSecondary = Color(0xFFF1F4F8)
     val lightSurfaceContainerLow = Color(0xFFFFFFFF)
-    val lightSurfaceContainer = Color(0xFFF7F7F7)
-    val lightSurfaceContainerHigh = Color(0xFFEFEFEF)
-    val lightSurfaceContainerHighest = Color(0xFFE8E8E8)
-    val lightBorder = Color(0xFFEEEEEE)
-    val lightDivider = Color(0xFFEEEEEE)
-    val lightText = Color(0xFF333333)
-    val lightTextSecondary = Color(0xFF666666)
-    val lightTextTertiary = Color(0xFF6E6E6E)
-    val lightAccent = Color(0xFF1668DC)
+    val lightSurfaceContainer = Color(0xFFF7F9FC)
+    val lightSurfaceContainerHigh = Color(0xFFEDF1F6)
+    val lightSurfaceContainerHighest = Color(0xFFE3E9F1)
+    val lightBorder = Color(0xFFE2E7EF)
+    val lightDivider = Color(0xFFE2E7EF)
+    val lightText = Color(0xFF1F2937)
+    val lightTextSecondary = Color(0xFF596579)
+    val lightTextTertiary = Color(0xFF5D6879)
+    val lightAccent = Color(0xFF245FE5)
     val lightOnAccent = Color(0xFFFFFFFF)
-    val lightAccentText = Color(0xFF1668DC)
-    val lightWathet = Color(0xFFE7F1FF)
-    val lightDanger = Color(0xFFD21F2E)
+    val lightAccentText = Color(0xFF245FE5)
+    val lightWathet = Color(0xFFE8F0FF)
+    val lightDanger = Color(0xFFC62828)
     val lightOnDanger = Color(0xFFFFFFFF)
-    val lightDangerContainer = Color(0xFFFDEBEA)
-    val lightSuccess = Color(0xFF0A7A44)
-    val lightSuccessContainer = Color(0xFFE2F5E8)
-    val lightWarning = Color(0xFFA85A00)
-    val lightWarningContainer = Color(0xFFFDF3DC)
-    val lightDisabled = Color(0xFFF0F0F0)
-    val lightOnDisabled = Color(0xFF767676)
-    val lightInverseSurface = Color(0xFF1A1A1A)
+    val lightDangerContainer = Color(0xFFFDECEC)
+    val lightSuccess = Color(0xFF087443)
+    val lightSuccessContainer = Color(0xFFE2F7EB)
+    val lightWarning = Color(0xFF8A4B00)
+    val lightWarningContainer = Color(0xFFFFF2D9)
+    val lightDisabled = Color(0xFFE9EDF2)
+    val lightOnDisabled = Color(0xFF596579)
+    val lightInverseSurface = Color(0xFF172033)
     val lightInverseOnSurface = Color(0xFFFFFFFF)
-    val lightInverseAccent = Color(0xFF3086FF)
+    val lightInverseAccent = Color(0xFF70A5FF)
     /** Lienzo del QR: fondo claro GARANTIZADO en ambos temas (zona de
      * silencio escaneable); el marco tonal lo aporta AmMediaFrame. */
     val lightQrCanvas = Color(0xFFFFFFFF)
@@ -73,34 +68,34 @@ internal object AmPalette {
     // de estado y acento adoptan sus valores oficiales; donde el par
     // oficial no alcanza WCAG AA se recalibra mínimamente — contrato §4.4:
     // onAccent/accentText/onDanger y el terciario).
-    val darkBackground = Color(0xFF1A1A1A)
-    val darkSurface = Color(0xFF1F1F1F)
-    val darkSurfaceSecondary = Color(0xFF0A0A0A)
-    val darkSurfaceContainerLow = Color(0xFF252525)
-    val darkSurfaceContainer = Color(0xFF2A2A2A)
-    val darkSurfaceContainerHigh = Color(0xFF303030)
-    val darkSurfaceContainerHighest = Color(0xFF3A3A3A)
-    val darkBorder = Color(0xFF2B2B2B)
-    val darkDivider = Color(0xFF2B2B2B)
-    val darkText = Color(0xFFE6E6E6)
-    val darkTextSecondary = Color(0xFFB3B3B3)
-    val darkTextTertiary = Color(0xFF8C8C8C)
-    val darkAccent = Color(0xFF3086FF)
-    val darkOnAccent = Color(0xFF0A1120)
-    val darkAccentText = Color(0xFF4F96FF)
-    val darkWathet = Color(0xFF0D2543)
-    val darkDanger = Color(0xFFFF4A58)
-    val darkOnDanger = Color(0xFF1A1A1A)
-    val darkDangerContainer = Color(0xFF3A1512)
-    val darkSuccess = Color(0xFF34B368)
-    val darkSuccessContainer = Color(0xFF0E2C1C)
-    val darkWarning = Color(0xFFFFA930)
+    val darkBackground = Color(0xFF10141B)
+    val darkSurface = Color(0xFF171D26)
+    val darkSurfaceSecondary = Color(0xFF0C1118)
+    val darkSurfaceContainerLow = Color(0xFF171D26)
+    val darkSurfaceContainer = Color(0xFF1D2530)
+    val darkSurfaceContainerHigh = Color(0xFF26313E)
+    val darkSurfaceContainerHighest = Color(0xFF303B49)
+    val darkBorder = Color(0xFF303844)
+    val darkDivider = Color(0xFF303844)
+    val darkText = Color(0xFFF1F5F9)
+    val darkTextSecondary = Color(0xFFC1CAD6)
+    val darkTextTertiary = Color(0xFFA9B5C5)
+    val darkAccent = Color(0xFF70A5FF)
+    val darkOnAccent = Color(0xFF101B2E)
+    val darkAccentText = Color(0xFF80B0FF)
+    val darkWathet = Color(0xFF172B49)
+    val darkDanger = Color(0xFFFF6B78)
+    val darkOnDanger = Color(0xFF2A0F14)
+    val darkDangerContainer = Color(0xFF3A151D)
+    val darkSuccess = Color(0xFF5DDBA5)
+    val darkSuccessContainer = Color(0xFF123628)
+    val darkWarning = Color(0xFFFFC15A)
     val darkWarningContainer = Color(0xFF3A2B0E)
-    val darkDisabled = Color(0xFF3A3A3A)
-    val darkOnDisabled = Color(0xFF9E9E9E)
-    val darkInverseSurface = Color(0xFFF5F5F5)
-    val darkInverseOnSurface = Color(0xFF1A1A1A)
-    val darkInverseAccent = Color(0xFF3086FF)
+    val darkDisabled = Color(0xFF303844)
+    val darkOnDisabled = Color(0xFFA6B1C0)
+    val darkInverseSurface = Color(0xFFF1F5F9)
+    val darkInverseOnSurface = Color(0xFF10141B)
+    val darkInverseAccent = Color(0xFF70A5FF)
 }
 
 /**
@@ -445,7 +440,7 @@ object AmType {
     val LineHeightLabelSmall: TextUnit = 16.sp
     /**
      * Familia de sistema en TODOS los estilos — Roboto en Android, San
-     * Francisco en iOS; ninguna fuente se empaqueta (ADR-0012, ADR-0013).
+     * Francisco en iOS; ninguna fuente se empaqueta (ADR-0020).
      */
     val FamilyUi: FontFamily = FontFamily.Default
 }
@@ -652,12 +647,12 @@ data class AmAccent(val id: String, val background: Color, val onAccent: Color)
 
 /**
  * Paleta de identidad de contextos: 12 tonos contemporáneos de etiqueta
- * (no la paleta de acentos histórica) más el acento de sistema. Cada par
+ * (no la paleta de acentos histórica) más el acento de marca AgendaQr. Cada par
  * está verificado por AmAccentTest; onAccent es siempre negro o blanco
  * puro para mantener los pares robustos en ambas plataformas.
  */
 object AmAccents {
-    val System = AmAccent("system", Color(0xFF1668DC), Color(0xFFFFFFFF))
+    val System = AmAccent("system", Color(0xFF245FE5), Color(0xFFFFFFFF))
 
     private val Blue = AmAccent("blue", Color(0xFF1D4ED8), Color(0xFFFFFFFF))
     private val Sky = AmAccent("sky", Color(0xFF0369A1), Color(0xFFFFFFFF))

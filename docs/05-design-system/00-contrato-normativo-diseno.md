@@ -1,17 +1,17 @@
 # Contrato normativo de diseño
 
-**Estado:** Normativo — versión 2.1 (ADR-0017)
-**Autoridad:** este documento es la fuente única y obligatoria de la capa visual de Agenda QR. La **referencia visual es Ant Design Mobile** (variables de tema, componentes y patrones oficiales); **Android e iOS definen las convenciones de navegación y comportamiento de plataforma**. La implementación vive en `core/ui` (`com.agendaqr.core.ui`, prefijo `Am*` como convención de código, sin valor de marca). Vant no es referencia ni dependencia. Material 3 es detalle de implementación, no autoridad.
+**Estado:** Normativo — versión 3.0 (ADR-0020)
+**Autoridad:** este documento es la fuente única y obligatoria de la identidad visual de AgendaQr. La dirección visual es propia, inspirada en aplicaciones móviles chinas de consumo (utilidad cotidiana, jerarquía funcional, densidad controlada y acabado pulido), sin replicar una librería concreta. **Android e iOS definen las convenciones de navegación y comportamiento de plataforma**. La implementación vive en `core/ui` (`com.agendaqr.core.ui`, prefijo `Am*` como convención de código, sin valor de marca). Material 3 es detalle de implementación, no autoridad visual.
 
 ## 1. Principios
 
-1. **Referencia única y auditable**: Ant Design Mobile define paleta, superficies, texto, estados, radios, densidad, controles y feedback. Cada desviación (plataforma o accesibilidad) se documenta y se fija por prueba.
-2. **Navegación convencional de plataforma**: destinos raíz con barra inferior en compacto, barra superior jerárquica con Atrás, back stack con restauración, back del sistema y predictive back en Android, gestos en iOS. El chrome de navegación sigue la plataforma aunque la referencia web difiera (título centrado, otras densidades).
+1. **Identidad propia y auditable**: la paleta, superficies, texto, estados, radios, densidad, controles y feedback se definen en este contrato. Las referencias externas inspiran patrones, pero no gobiernan tokens ni obligan a copiar componentes.
+2. **Navegación convencional de plataforma**: destinos raíz con barra inferior en compacto, barra superior jerárquica con Atrás, back stack con restauración, back del sistema y predictive back en Android, gestos en iOS. La identidad visual propia no sustituye las convenciones nativas de navegación.
 3. **Mobile-first real**: se diseña para el pulgar en un teléfono Android de 360 dp; la adaptación a tablet/escritorio (compacto → medium/expanded vía `WindowSizeClass`) nunca degrada el patrón compacto.
 4. **Material 3 es implementación, no autoridad**: los componentes M3 se adaptan con tokens; ningún color, radio, altura o tipografía se define por defecto de la plantilla.
 5. **El estado nunca es solo color**: tono + texto/icono + semántica accesible en cada estado (carga, error, selección, deshabilitado, foco).
-6. **Contraste como contrato**: texto ≥ 4.5:1, bordes/foco ≥ 3:1, verificado por `AmSchemeTest` y `AmContrastPairsTest`. Donde la referencia no alcanza AA, la accesibilidad prevalece con recalibración mínima documentada (§4.4).
-7. **Radios de la referencia**: 2/4/6/8/12 dp (`AmRadius`) como única escala de forma (tag 2, botón 4, búsqueda 6, tarjeta/diálogo 8, hoja 12).
+6. **Contraste como contrato**: texto ≥ 4.5:1, bordes/foco ≥ 3:1, verificado por `AmSchemeTest` y `AmContrastPairsTest`. La identidad visual nunca justifica degradar legibilidad o accesibilidad.
+7. **Escala de formas propia y consistente**: 2/4/6/8/12 dp (`AmRadius`) como única escala de forma (tag 2, botón 4, búsqueda 6, tarjeta/diálogo 8, hoja 12).
 8. **Movimiento corto y justificado**: 150 ms con `AmMotion`; movimiento reducido = cambio inmediato (duración 0), nunca "una animación más corta".
 
 ## 2. Arquitectura de capas
@@ -21,7 +21,7 @@
 | 1. Tokens privados | `AmTokens.kt` → `AmPalette` (internal) | Primitivas por tema; sin exposición al producto |
 | 2. Tokens semánticos | `AmTokens.kt` → `AmColorScheme`, `AmColor`, `AmSpacing`, `AmRadius`/`AmShapes`, `AmMetrics`, `AmType`/`AmTextStyles`, `AmMotion`, `AmAccent`/`AmAccents`/`accentFor` | La ÚNICA capa que el producto consume |
 | 3. Tema | `AmTheme.kt` | Puente claro/oscuro a Material 3; esquema M3 derivado COMPLETO (incluye contenedores) |
-| 4. Componentes | `components/` | Réplicas Compose de la referencia con tokens; contratos de estado y accesibilidad |
+| 4. Componentes | `components/` | Implementaciones Compose nativas del lenguaje visual AgendaQr con tokens; contratos de estado y accesibilidad |
 | 5. Patrones | `components/` (scaffold, chrome, listas de datos) | Composición reutilizable de producto |
 | 6. Pantallas | `feature/destinations/presentation` | Componen componentes; cero literales visuales |
 | 7. Pruebas | `core/ui` commonTest/androidUnitTest + Roborazzi | Contrato de color, tipografía, accesibilidad y regresión visual |
@@ -38,59 +38,61 @@
 - Duraciones de animación literales: se consumen `AmMotion`.
 - `.border(`/`BorderStroke(` en producción: la separación usa hairlines (`Divider`), el foco y el estado usan componentes M3 y canvas.
 
-## 4. Color (referencia: variables de tema de Ant Design Mobile)
+## 4. Color e identidad de marca
+
+La paleta expresa una herramienta digital moderna: azul tecnológico para la acción principal, superficies neutras y profundas, y tonos semánticos reservados a estados. No se usa rojo/dorado como decoración cultural ni se colorea cada tarjeta por separado.
 
 ### 4.1 Roles semánticos
 
 `AmColorScheme` expone exactamente: `background`, `surface`, `surfaceSecondary`, `border`, `divider`, `textPrimary`, `textSecondary`, `textTertiary`, `accent`, `onAccent`, `accentContainer`, `onAccentContainer`, `accentText`, `wathet`, `danger`, `onDanger`, `dangerContainer`, `success`, `successContainer`, `warning`, `warningContainer`, `info`, `infoContainer`, `focus`, `disabled`, `onDisabled`, `inverseSurface`, `inverseOnSurface`, `inverseAccent`, `qrCanvas`, y los contenedores M3 explícitos (`surfaceContainerLow/Container/High/Highest`).
 
-### 4.2 Superficies y texto (valores de la referencia)
+### 4.2 Paleta base
 
-- **Claro**: página `#F5F5F5` (box), superficie `#FFFFFF`, secundaria `#F5F5F5`; texto `#333333`, secundario `#666666`.
-- **Oscuro**: página `#1A1A1A` (background), superficie `#1F1F1F` (elevación mínima para distinguir tarjetas del fondo — desviación documentada, la referencia no define elevación), secundaria `#0A0A0A` (box, rellenos inset); texto `#E6E6E6`, secundario `#B3B3B3`.
-- **Separadores**: hairline `#EEEEEE` / `#2B2B2B` (border oficial de la referencia en ambos temas).
-- **Lienzo del QR** (`qrCanvas`): blanco garantizado en ambos temas (zona de silencio escaneable); no conmuta con el tema.
-
-### 4.3 Acento y estados
-
-- **Acento**: primario de la referencia, recalibrado a `#1668DC` en claro (ver §4.4); oscuro `#3086FF` (oficial) con texto de tinta `#0A1120` (5.37:1).
-- **wathet** (`#E7F1FF` / `#0D2543`): tinte de la referencia para fondos de selección (chips, pestañas), adoptado sin cambios en ambos temas. El contenido sobre wathet es `accentText` (no el acento puro), que garantiza AA (ver §4.4).
-- **Éxito/advertencia/peligro**: de la referencia, recalibrados en claro (`#0A7A44`, `#A85A00`, `#D21F2E`; ver §4.4); oscuro oficial (`#34B368`/`#FFA930`/`#FF4A58`, este último con tinta `#1A1A1A`) con contenedores `#0E2C1C`/`#3A2B0E`/`#3A1512`.
-- **Informativo**: la referencia no define tono info; lo informativo usa el acento (`info` = acento, `infoContainer` = wathet, contenido sobre el contenedor = `accentText`).
-- **Identidad de contexto**: 12 tonos + acento de sistema (`AmAccents`), par fijo negro/blanco por acento, asignación determinista por `accentFor` (FNV-1a 32 bits sobre UTF-8, idéntico en Android e iOS). Congelada: los valores no cambian para no reasignar identidades.
-
-### 4.4 Recalibraciones AA documentadas (la accesibilidad prevalece sobre la referencia)
-
-| Valor de referencia | Problema | Rol calibrado |
+| Rol | Claro | Oscuro |
 |---|---|---|
-| Primario `#1677ff` + blanco 4.1:1 | Falla AA como relleno y como texto | Acento claro `#1668DC` (5.19:1 en ambas direcciones) |
-| Éxito `#00b578` 2.7:1 | Falla AA | Éxito claro `#0A7A44` (5.41:1) |
-| Peligro `#ff3141` ~4.0:1 | Falla AA | Peligro claro `#D21F2E` (5.28:1) |
-| Advertencia `#ff8f1f` 2.28:1 | Falla AA | Advertencia clara `#A85A00` (5.09:1 sobre `FFFFFF`, 4.67:1 sobre `F5F5F5`, 4.61:1 sobre `FDF3DC`) |
-| Terciario `#999999` 2.9:1 | Falla AA como texto | Terciario claro `#6E6E6E` (5.10:1 sobre `FFFFFF`, 4.68:1 sobre `F5F5F5`) / oscuro `#8C8C8C` (5.18:1 sobre `1A1A1A`, 4.90:1 sobre `1F1F1F`; el oficial `#808080` = 4.41:1, falla) |
-| Placeholder `#cccccc` 1.61:1 | Falla AA | Placeholder en texto secundario (desviación documentada, ver §"Desviaciones deliberadas") |
-| Oscuro: blanco sobre `#3086ff` 3.51:1 | Falla AA | Tinta `#0A1120` sobre acento (5.37:1); acento como texto `#4F96FF` (5.92:1 sobre `1A1A1A`, 5.60:1 sobre `1F1F1F`, 5.24:1 sobre wathet) |
-| Oscuro: blanco sobre `#ff4a58` 3.30:1 | Falla AA | Tinta `#1A1A1A` sobre peligro (5.28:1); peligro como texto 5.28:1 sobre `1A1A1A`, 5.00:1 sobre `1F1F1F` |
-| Oscuro: acento `#3086ff` como TEXTO sobre wathet oficial `#0d2543` 4.39:1 | Falla AA como texto | Wathet oficial `#0D2543` sin cambios; el contenido informativo usa `accentText` `#4F96FF` (5.24:1); el acento puro sobre wathet se reserva a glifos y bordes |
-| Oscuro: éxito `#34b368` / advertencia `#ffa930` | Cumplen AA (6.46:1 / 9.09:1 sobre `1A1A1A`) | Se adoptan sin cambios |
+| Página | `#F7F8FA` | `#10141B` |
+| Superficie | `#FFFFFF` | `#171D26` |
+| Superficie secundaria | `#F1F4F8` | `#0C1118` |
+| Texto principal | `#1F2937` | `#F1F5F9` |
+| Texto secundario | `#596579` | `#C1CAD6` |
+| Texto terciario | `#5D6879` | `#A9B5C5` |
+| Divisor/borde | `#E2E7EF` | `#303844` |
+| Acento de acción | `#245FE5` | `#70A5FF` |
+| Texto de acento | `#245FE5` | `#80B0FF` |
+| Fondo de selección | `#E8F0FF` | `#172B49` |
 
-### 4.5 Umbrales (AmSchemeTest)
+El acento claro con texto blanco cumple 5.46:1. El acento oscuro usa tinta `#101B2E` (6.99:1); el texto de acento oscuro usa `#80B0FF` para mantener legibilidad sobre superficies. Los valores exactos quedan fijados por `AmSchemeTest`.
 
-- Contenido sobre su fondo/container: ≥ 4.5:1 en ambos temas (texto, tonos de estado, acento como texto, contenido informativo sobre wathet con `accentText`).
-- `focus` contra `background`/`surface`/`surfaceSecondary`: ≥ 3:1.
-- Par deshabilitado `onDisabled`/`disabled`: ≥ 3:1 (suelo de calidad propio; WCAG exime los controles deshabilitados; los botones además usan opacidad .4 de la referencia).
-- Los valores exactos están fijados (pin anti-cambio-silencioso) en `AmSchemeTest`.
+### 4.3 Estados semánticos
+
+| Estado | Claro (contenido / contenedor) | Oscuro (contenido / contenedor) |
+|---|---|---|
+| Éxito | `#087443` / `#E2F7EB` | `#5DDBA5` / `#123628` |
+| Advertencia | `#8A4B00` / `#FFF2D9` | `#FFC15A` / `#3A2B0E` |
+| Peligro | `#C62828` / `#FDECEC` | `#FF6B78` / `#3A151D` |
+| Información | Acento / fondo de selección | Acento / fondo de selección |
+
+Los estados siempre combinan tono con texto, icono o semántica accesible; nunca dependen solo del color. La identidad de contexto conserva sus 12 acentos deterministas, independientes del acento de marca y sin cambiar el dominio.
+
+### 4.4 Contraste y superficies
+
+- Texto normal y contenido de estado: contraste ≥ 4.5:1 sobre las superficies donde se presenta.
+- Foco e indicadores funcionales: contraste ≥ 3:1 respecto a las superficies adyacentes.
+- El par deshabilitado mantiene un suelo de calidad ≥ 3:1; el estado también se expresa semánticamente.
+- Las superficies claras son neutras; las oscuras usan matiz azul-gris para dar profundidad sin sombras generalizadas.
+- Los contenedores semánticos deben admitir texto principal y acciones sin perder contraste; `AmSchemeTest` y `AmContrastPairsTest` son la autoridad ejecutable.
+- `qrCanvas` permanece blanco en ambos temas para preservar la zona de silencio escaneable del QR.
 
 ## 5. Tipografía
 
-- Familia de sistema en todos los roles (Roboto/San Francisco): ninguna fuente se empaqueta. La referencia usa su propia fuente; la diferencia es intencional (offline-first, sin descargas ni licencias por plataforma — ADR-0015).
-- Roles semánticos (escala de la referencia): título de pantalla (`AmType.TitleLarge`, 18 sp, en `AmTopBar` de 56 dp), título de diálogo (`AmTextStyles.Title`, 18 sp centrado, bold), cuerpo/botón/título de fila/entrada/pestañas (`AmTextStyles.Body`/`ButtonLabel`/`RowTitle`, 17 sp), etiqueta/contenido de modal/cápsula/extra de lista (`AmTextStyles.Label`, 15 sp), descripción y metadato (`BodySmall`, 13 sp — font-size-main), texto de ayuda/error (`AmTextStyles.Support`/`Caption`, 12 sp), tags (`AmTextStyles.Tag`, 11 sp peso normal), etiquetas de barra (11 sp — la referencia usa 10; se conserva 11 por legibilidad). Importe (`AmTextStyles.Amount`, 26 sp SemiBold), Display 32 y Headline 24 son extensiones financieras sin equivalente en la referencia. La etiqueta de botón conserva peso Medium (desviación documentada). Tracking neutro en todos los roles.
+- Familia de sistema en todos los roles (Roboto/San Francisco): ninguna fuente se empaqueta en esta fase. Es una decisión consciente para preservar el funcionamiento offline-first y evitar licencias/recursos multiplataforma hasta validar una alternativa en capturas reales. MiSans Global y una familia monoespaciada quedan como experimentos locales, no como dependencias aprobadas.
+- Roles semánticos de AgendaQr: título de pantalla (`AmType.TitleLarge`, 18 sp, en `AmTopBar` de 56 dp), título de diálogo (`AmTextStyles.Title`, 18 sp centrado, bold), cuerpo/botón/título de fila/entrada/pestañas (`AmTextStyles.Body`/`ButtonLabel`/`RowTitle`, 17 sp), etiqueta/contenido de modal/cápsula/extra de lista (`AmTextStyles.Label`, 15 sp), descripción y metadato (`BodySmall`, 13 sp — font-size-main), texto de ayuda/error (`AmTextStyles.Support`/`Caption`, 12 sp), tags (`AmTextStyles.Tag`, 11 sp peso normal), etiquetas de barra (11 sp por legibilidad). Importe (`AmTextStyles.Amount`, 26 sp SemiBold), Display 32 y Headline 24 son extensiones financieras sin equivalente en la referencia. La etiqueta de botón conserva peso Medium (desviación documentada). Tracking neutro en todos los roles.
 - Interlineado siempre > 1.1× su tamaño (`AmUiPolishContractTest`); el escalado de fuente 100/150/200 % se respeta y se prueba.
 - El tracking sigue los valores por defecto de M3 (`AmTracking`).
 
 ## 6. Espaciado y métrica
 
-- Escala: 4 · 8 · 12 · 16 · 20 · 24 · 32 (+40 excepcional) — `AmSpacing`; margen de pantalla 16; densidad de listas de la referencia (celda 12+12, hairlines inset a 56 dp bajo la marca de fila — `ListDividerInset`).
+- Escala: 4 · 8 · 12 · 16 · 20 · 24 · 32 (+40 excepcional) — `AmSpacing`; margen de pantalla 16; densidad compacta y legible de AgendaQr (celda 12+12, hairlines inset a 56 dp bajo la marca de fila — `ListDividerInset`).
 - `AmMetrics`: área táctil mínima 48 dp (`ControlMinSize`, invariante del gate) con **separación de superficie visible y zona interactiva**: la superficie VISIBLE de botones secundarios (40 dp, `ButtonCompactHeight`), píldoras (~32 dp, `ChipCompactHeight`), entradas (44 dp, `FieldCompactHeight`) y acciones de fila (~36 dp) puede ser menor que su zona interactiva de 48 dp; el buscador mide 48 dp mínimo (desviación documentada frente a los 32 px de la referencia); barra superior 56 dp (`TopBarHeight`), barra inferior 56 dp (`NavBarHeight`; cada ítem garantiza 48 dp), icono estándar 24 dp, icono compacto 18 dp (`IconSizeCompact`), `QrPreviewSize` 240, `ContentMaxWidth` 720 (medium/expanded), `DialogListMaxHeight` 320, `DialogMinWidth` 280 (mínimo del popup) con tope del 75 % del ancho (`DialogMaxWidthFraction`), marco del scanner 3 dp (`BorderStrong`), glifo del estado vacío 64 dp, ancho de mini-tarjeta de frecuentes 184 (`FavCardWidth`).
 - Radios (escala oficial 2/4/6/8/12): tag/selector/segmentado 2 (`ExtraSmall`, con `round` opt-in en tags), botón 4 (`Small`), búsqueda 6 (`Medium`), tarjeta de lista/tappable/media/diálogo/banner 8 (`Large`), hoja inferior 12 (`ExtraLarge`, hoy sin uso); píldora para chips de filtro estilo CapsuleTabs, FAB y píldoras de estado. El hairline perimetral de las tarjetas es la excepción E-03; el borde de acento en foco del buscador es la excepción E-04.
 
@@ -106,7 +108,7 @@
 - Transición de superficies: fundido + desplazamiento de 1/8 del ancho (`AmSurfaceSlideFraction`); con movimiento reducido: duración 0 (`LocalReducedMotion`/`ProvideReducedMotion`).
 - Sin animaciones decorativas; la interacción es clara sin movimiento.
 
-## 9. Componentes y estados (referencia: catálogo oficial)
+## 9. Componentes y estados (lenguaje visual AgendaQr)
 
 | Grupo | Componentes | Referencia |
 |---|---|---|
@@ -195,21 +197,21 @@ Para proponer una excepción: registrarla aquí y en el gate en el MISMO cambio,
 3. Los retiros de componentes se registran en el ADR que los decide.
 4. Decisiones estructurales del sistema visual: ADR.
 
-## 15. Desviaciones deliberadas (ADR-0017)
+## 15. Excepciones deliberadas (ADR-0020)
 
-Cada valor de la referencia oficial que el código NO adopta está aquí con su motivo. Todo lo demás es fiel.
+Las excepciones del sistema visual y de la plataforma se documentan aquí. No existe requisito de fidelidad a una librería externa.
 
-| Desviación | Motivo |
+| Excepción | Motivo |
 |---|---|
-| Barra superior 56 dp con título 18 a la izquierda (oficial: 45 px, título centrado 18) | Convención Android/iOS (ADR-0014 punto 2); objetivos de 48 dp |
-| Barra inferior 56 dp, etiqueta 11 (oficial: 48 px, etiqueta 10, sin píldora) | Convención de plataforma + legibilidad; sin píldora M3 |
-| Buscador 48 dp mínimo (oficial: 32 px) | Objetivo táctil mínimo (gate `verifyControlMinSize`) |
-| Snackbar inferior en vez de Toast centrado | Convención Android; el contenedor replica el Toast (bloque oscuro, radio 8, texto 15) |
+| Barra superior 56 dp con título 18 a la izquierda | Convención Android/iOS y objetivos táctiles de 48 dp |
+| Barra inferior 56 dp, etiqueta 11 y selección sin píldora | Convención de plataforma y legibilidad |
+| Buscador de 48 dp mínimo | Objetivo táctil mínimo (gate `verifyControlMinSize`) |
+| Snackbar inferior en vez de Toast centrado | Convención Android; feedback consistente con el sistema |
 | FAB extendido en píldora | Convención Android (sin equivalente oficial) |
-| Superficie oscura elevada `#1F1F1F` sobre página `#1A1A1A` | La referencia no define elevación; distingue tarjetas del fondo |
-| `AmTextField` M3 con etiqueta flotante y guía hairline en reposo (oficial: sin subrayado) | Etiqueta persistente = accesibilidad; el texto "sin borde de reposo" del ADR-0014 queda corregido aquí |
-| Placeholder en texto secundario (oficial `light`: 1.61:1) | Contraste AA |
-| Etiqueta de botón en Medium (oficial: peso normal) | Rango de la etiqueta sobre superficies densas |
+| Superficies oscuras con matiz azul-gris | Diferenciación de superficies sin sombras generalizadas |
+| `AmTextField` con etiqueta persistente y guía hairline | Etiqueta persistente y estado de foco/error accesibles |
+| Placeholder en texto secundario | Contraste AA |
+| Etiqueta de botón en Medium | Jerarquía legible en acciones compactas |
 | Segmentado sin sombra en el ítem activo (oficial: sombra suave) | El gate prohíbe `shadow(`; el límite lo da el bloque tonal |
 | Hoja inferior 12 sin uso; selectores como `AmDialog` con lista | `ModalBottomSheet` no despacha acciones bajo Robolectric (bloqueo documentado) |
-| Recalibraciones AA de §4.4 (acento, éxito, peligro, advertencia, terciario, tintas) y contenido informativo con `accentText` sobre wathet | La accesibilidad prevalece sobre la referencia |
+| Recalibraciones de paleta y contenido de acento | La accesibilidad y la legibilidad prevalecen sobre cualquier referencia externa |

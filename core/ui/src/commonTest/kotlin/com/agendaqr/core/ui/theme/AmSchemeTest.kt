@@ -15,8 +15,7 @@ import kotlin.test.assertTrue
  * los dos esquemas fijan los valores actuales (ningún cambio visual
  * silencioso), todos los pares que llegan a pantalla cumplen WCAG AA
  * (>= 4.5:1 texto, >= 3:1 foco) y los roles conmutan con el tema.
- * Las recalibraciones respecto a la referencia están documentadas en el
- * contrato §4.4 (la accesibilidad prevalece).
+ * La paleta de marca está documentada en el contrato §4; la accesibilidad y legibilidad son invariantes.
  */
 class AmSchemeTest {
 
@@ -58,81 +57,81 @@ class AmSchemeTest {
     @Test
     fun light_scheme_pins_the_current_values() {
         val s = LightAmColorScheme
-        assertEquals("F5F5F5", hex(s.background))
+        assertEquals("F7F8FA", hex(s.background))
         assertEquals("FFFFFF", hex(s.surface))
-        assertEquals("F5F5F5", hex(s.surfaceSecondary))
-        assertEquals("EEEEEE", hex(s.border))
-        assertEquals("EEEEEE", hex(s.divider))
-        assertEquals("333333", hex(s.textPrimary))
-        assertEquals("666666", hex(s.textSecondary))
-        assertEquals("6E6E6E", hex(s.textTertiary))
-        assertEquals("1668DC", hex(s.accent))
+        assertEquals("F1F4F8", hex(s.surfaceSecondary))
+        assertEquals("E2E7EF", hex(s.border))
+        assertEquals("E2E7EF", hex(s.divider))
+        assertEquals("1F2937", hex(s.textPrimary))
+        assertEquals("596579", hex(s.textSecondary))
+        assertEquals("5D6879", hex(s.textTertiary))
+        assertEquals("245FE5", hex(s.accent))
         assertEquals("FFFFFF", hex(s.onAccent))
-        assertEquals("1668DC", hex(s.accentContainer))
+        assertEquals("245FE5", hex(s.accentContainer))
         assertEquals("FFFFFF", hex(s.onAccentContainer))
-        assertEquals("1668DC", hex(s.accentText))
-        assertEquals("E7F1FF", hex(s.wathet))
-        assertEquals("D21F2E", hex(s.danger))
+        assertEquals("245FE5", hex(s.accentText))
+        assertEquals("E8F0FF", hex(s.wathet))
+        assertEquals("C62828", hex(s.danger))
         assertEquals("FFFFFF", hex(s.onDanger))
-        assertEquals("FDEBEA", hex(s.dangerContainer))
-        assertEquals("0A7A44", hex(s.success))
-        assertEquals("E2F5E8", hex(s.successContainer))
-        assertEquals("A85A00", hex(s.warning))
-        assertEquals("FDF3DC", hex(s.warningContainer))
-        assertEquals("1668DC", hex(s.info))
-        assertEquals("E7F1FF", hex(s.infoContainer))
-        assertEquals("1668DC", hex(s.focus))
-        assertEquals("F0F0F0", hex(s.disabled))
-        assertEquals("767676", hex(s.onDisabled))
-        assertEquals("1A1A1A", hex(s.inverseSurface))
+        assertEquals("FDECEC", hex(s.dangerContainer))
+        assertEquals("087443", hex(s.success))
+        assertEquals("E2F7EB", hex(s.successContainer))
+        assertEquals("8A4B00", hex(s.warning))
+        assertEquals("FFF2D9", hex(s.warningContainer))
+        assertEquals("245FE5", hex(s.info))
+        assertEquals("E8F0FF", hex(s.infoContainer))
+        assertEquals("245FE5", hex(s.focus))
+        assertEquals("E9EDF2", hex(s.disabled))
+        assertEquals("596579", hex(s.onDisabled))
+        assertEquals("172033", hex(s.inverseSurface))
         assertEquals("FFFFFF", hex(s.inverseOnSurface))
-        assertEquals("3086FF", hex(s.inverseAccent))
+        assertEquals("70A5FF", hex(s.inverseAccent))
         assertEquals("FFFFFF", hex(s.qrCanvas))
         assertEquals("FFFFFF", hex(s.surfaceContainerLow))
-        assertEquals("F7F7F7", hex(s.surfaceContainer))
-        assertEquals("EFEFEF", hex(s.surfaceContainerHigh))
-        assertEquals("E8E8E8", hex(s.surfaceContainerHighest))
+        assertEquals("F7F9FC", hex(s.surfaceContainer))
+        assertEquals("EDF1F6", hex(s.surfaceContainerHigh))
+        assertEquals("E3E9F1", hex(s.surfaceContainerHighest))
     }
 
     @Test
     fun dark_scheme_pins_the_current_values() {
         val s = DarkAmColorScheme
-        assertEquals("1A1A1A", hex(s.background))
-        assertEquals("1F1F1F", hex(s.surface))
-        assertEquals("0A0A0A", hex(s.surfaceSecondary))
-        assertEquals("2B2B2B", hex(s.border))
-        assertEquals("2B2B2B", hex(s.divider))
-        assertEquals("E6E6E6", hex(s.textPrimary))
-        assertEquals("B3B3B3", hex(s.textSecondary))
-        assertEquals("8C8C8C", hex(s.textTertiary))
-        assertEquals("3086FF", hex(s.accent))
-        assertEquals("0A1120", hex(s.onAccent))
-        assertEquals("3086FF", hex(s.accentContainer))
-        assertEquals("0A1120", hex(s.onAccentContainer))
-        assertEquals("4F96FF", hex(s.accentText))
-        assertEquals("0D2543", hex(s.wathet))
-        assertEquals("FF4A58", hex(s.danger))
-        assertEquals("1A1A1A", hex(s.onDanger))
-        assertEquals("3A1512", hex(s.dangerContainer))
-        assertEquals("34B368", hex(s.success))
-        assertEquals("0E2C1C", hex(s.successContainer))
-        assertEquals("FFA930", hex(s.warning))
+        assertEquals("10141B", hex(s.background))
+        assertEquals("171D26", hex(s.surface))
+        assertEquals("0C1118", hex(s.surfaceSecondary))
+        assertEquals("303844", hex(s.border))
+        assertEquals("303844", hex(s.divider))
+        assertEquals("F1F5F9", hex(s.textPrimary))
+        assertEquals("C1CAD6", hex(s.textSecondary))
+        assertEquals("A9B5C5", hex(s.textTertiary))
+        assertEquals("70A5FF", hex(s.accent))
+        assertEquals("101B2E", hex(s.onAccent))
+        assertEquals("70A5FF", hex(s.accentContainer))
+        assertEquals("101B2E", hex(s.onAccentContainer))
+        assertEquals("80B0FF", hex(s.accentText))
+        assertEquals("172B49", hex(s.wathet))
+        assertEquals("FF6B78", hex(s.danger))
+        assertEquals("2A0F14", hex(s.onDanger))
+        assertEquals("3A151D", hex(s.dangerContainer))
+        assertEquals("5DDBA5", hex(s.success))
+        assertEquals("123628", hex(s.successContainer))
+        assertEquals("FFC15A", hex(s.warning))
         assertEquals("3A2B0E", hex(s.warningContainer))
-        assertEquals("3086FF", hex(s.info))
-        assertEquals("0D2543", hex(s.infoContainer))
-        assertEquals("3086FF", hex(s.focus))
-        assertEquals("3A3A3A", hex(s.disabled))
-        assertEquals("9E9E9E", hex(s.onDisabled))
-        assertEquals("F5F5F5", hex(s.inverseSurface))
-        assertEquals("1A1A1A", hex(s.inverseOnSurface))
-        assertEquals("3086FF", hex(s.inverseAccent))
+        assertEquals("70A5FF", hex(s.info))
+        assertEquals("172B49", hex(s.infoContainer))
+        assertEquals("70A5FF", hex(s.focus))
+        assertEquals("303844", hex(s.disabled))
+        assertEquals("A6B1C0", hex(s.onDisabled))
+        assertEquals("F1F5F9", hex(s.inverseSurface))
+        assertEquals("10141B", hex(s.inverseOnSurface))
+        assertEquals("70A5FF", hex(s.inverseAccent))
         // El lienzo del QR es claro en ambos temas (zona de silencio
         // escaneable): no conmuta con el tema por diseño.
         assertEquals("FFFFFF", hex(s.qrCanvas))
-        assertEquals("252525", hex(s.surfaceContainerLow))
-        assertEquals("2A2A2A", hex(s.surfaceContainer))
-        assertEquals("303030", hex(s.surfaceContainerHigh))
-        assertEquals("3A3A3A", hex(s.surfaceContainerHighest))
+        assertEquals("171D26", hex(s.surfaceContainerLow))
+        assertEquals("1D2530", hex(s.surfaceContainer))
+        assertEquals("26313E", hex(s.surfaceContainerHigh))
+        assertEquals("303B49", hex(s.surfaceContainerHighest))
     }
 
     @Test
@@ -148,7 +147,7 @@ class AmSchemeTest {
             assertEquals(scheme.accent, scheme.accentContainer, "accentContainer must alias accent")
             assertEquals(scheme.onAccent, scheme.onAccentContainer, "onAccentContainer must alias onAccent")
         }
-        // La referencia no define tono info: lo informativo usa el acento.
+        // El tono informativo usa el acento de marca.
         listOf(LightAmColorScheme, DarkAmColorScheme).forEach { scheme ->
             assertEquals(scheme.accent, scheme.info, "info must be the accent")
             assertEquals(scheme.wathet, scheme.infoContainer, "infoContainer must be wathet")
@@ -232,7 +231,7 @@ class AmSchemeTest {
 
     @Test
     fun focus_meets_3_to_1_in_both_schemes() {
-        // La separación usa hairlines decorativos de la referencia; el
+        // La separación usa hairlines decorativos del sistema; el
         // foco y los indicadores activos sí cumplen ≥ 3:1.
         listOf(LightAmColorScheme, DarkAmColorScheme).forEach { scheme ->
             assertTrue(contrast(hex(scheme.focus), hex(scheme.background)) >= 3.0, "focus/background")
@@ -246,7 +245,7 @@ class AmSchemeTest {
         // WCAG exime los controles deshabilitados de AA; el sistema se
         // exige a sí mismo un suelo de 3:1 para que "deshabilitado" sea
         // perceptible sin depender solo del contraste con el fondo
-        // (además de la opacidad .4 de la referencia en botones).
+        // (además de la opacidad .4 definida por el sistema en botones).
         listOf(LightAmColorScheme, DarkAmColorScheme).forEach { scheme ->
             assertTrue(
                 contrast(hex(scheme.onDisabled), hex(scheme.disabled)) >= 3.0,

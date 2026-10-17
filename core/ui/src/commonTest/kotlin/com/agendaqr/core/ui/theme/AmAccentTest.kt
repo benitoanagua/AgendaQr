@@ -9,8 +9,8 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 /**
- * Paleta de identidad de contextos (contrato §4.3): 12 tonos
- * contemporáneos de etiqueta más el acento de sistema. Estos tests fijan
+ * Paleta de identidad de contextos (contrato §4): 12 tonos
+ * contemporáneos de etiqueta más el acento de marca AgendaQr. Estos tests fijan
  * los colores exactos (no se recalculan ni se cambian), verifican que
  * cada par acento/texto cumple WCAG AA, y fijan el determinismo
  * multiplataforma de [accentFor].
@@ -40,7 +40,7 @@ class AmAccentTest {
     fun the_palette_is_exactly_the_12_admitted_accents_plus_system() {
         assertEquals(12, AmAccents.Admitted.size)
         val expected = mapOf(
-            "system" to "1668DC",
+            "system" to "245FE5",
             "blue" to "1D4ED8", "sky" to "0369A1", "teal" to "0F766E",
             "cyan" to "0E7490", "emerald" to "047857", "green" to "15803D",
             "lime" to "4D7C0F", "amber" to "A16207", "orange" to "C2410C",
