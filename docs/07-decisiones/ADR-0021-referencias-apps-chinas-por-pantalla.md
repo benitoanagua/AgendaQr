@@ -34,12 +34,33 @@ ADR-0020 declaró la identidad de AgendaQr como "inspirada en aplicaciones móvi
 |---|---|---|
 | S01 Inicio | Búsqueda como primer bloque, filtros `AmFilterChip`, carrusel de favoritos, `AmListBody` + filas, FAB con hub de tres creaciones (`AmIconBadge`) | Ninguna estructural |
 | Detalle de destino | `AmQrPreview` en `AmTappableCard` sobre lienzo blanco, dock con "Mostrar QR" primaria y "Compartir" secundaria, `AmCard` con `AmMetaRow` | Ninguna estructural |
+| S04–S05 Buscar y resultados | `AmSearchField` (48 dp mínimo, desviación documentada) como cuerpo, resultados agrupados por tipo con `AmSectionHeader` + `AmListBody`/`AmListRow`, estados de vacío, carga y error | Filas solo de texto: sin marca de tipo a la izquierda ni metadato a la derecha; el dominio de búsqueda no expone fecha |
+| S06 / S08 Contexto | Filas con marca tonal a la izquierda, título y descripción, separador discreto | Ninguna estructural |
+| Actividades y su detalle | Hero con píldora de tipo y cifra neutra, filas etiqueta-valor, `AmListRow` con `endMeta` | Ninguna estructural en Actividades; en Inicio no aplica (la fila lleva la acción de favorito en `trailing`) |
+| S09–S12 Importación | Resumen en `AmCard` (cifra de reconocidos en `AmType.Amount` y filas icono + texto de duplicados y pendientes), `PendingItemCard` por elemento, `ImportReviewScreen` con vista previa y evidencia decodificada | Los estados se expresan con icono y texto suelto en vez de insignia con texto; el resumen no usa filas etiqueta-valor |
+| S00 Acceso local | Título y descripción, campos `AmTextField` en columna, botón primario dentro del scroll, bloque de demostración opcional | Campos sin agrupar en tarjetas de ajustes; el botón primario no queda fijo al pie |
+| S02 Añadir | Texto de intención y controles de fuente agrupados por distancia (archivos y cámara), sin encabezados de sección | Fuentes sin encabezado de sección ni cuerpo `AmListBody` |
+| S07 Editor de actividad | Selector segmentado de tipo, `AmCard` de importe y moneda, grupos en `AmListBody`, botón primario fijo al pie | Grupos sin `AmSectionHeader` (sin rótulo de sección) |
 | Navegación raíz | `AmNavBar` de 56 dp, color + etiqueta, sin píldora | Ninguna |
-| Detalle de actividad | Hero con píldora de tipo y cifra neutra, filas etiqueta-valor | Ninguna estructural (revisión de comentarios y estructura, no de capturas) |
-| Filas de lista | `AmListRow`: título, subtítulo, meta bajo el subtítulo, `endMeta` corto de solo texto alineado a la derecha en la línea del título (fecha real en Actividades y en las actividades de un contexto), acciones finales o chevron | Ninguna estructural en Actividades; en Inicio no aplica (la fila lleva la acción de favorito en `trailing`) |
 | Formularios | `AmTextField` con etiqueta flotante persistente y guía hairline | Deliberada: la etiqueta persistente es un requisito de accesibilidad |
 
-No auditado a fondo: Buscar, Importación (S09–S12) y S00. La brecha del metadato a la derecha en `AmListRow` se cerró con el parámetro `endMeta`, aplicado a la fecha real de Actividades y de las actividades de un contexto; el cambio visual exige regenerar y revisar las capturas y los hashes en local (ADR-0007, ADR-0020 §8) antes de darse por válido.
+### Brechas priorizadas
+
+Prioridad por relación impacto/esfuerzo. El riesgo se mide sobre las capturas existentes y sobre la accesibilidad (§10).
+
+| ID | Brecha | Superficie | Impacto | Esfuerzo | Riesgo |
+|---|---|---|---|---|---|
+| G1 | Botón primario fijo al pie (`bottomAction`) en lugar de dentro del scroll | S00 | Alto | Bajo | Alto en capturas (login-* y local-*); neutro en accesibilidad |
+| G2 | Estado del lote como insignia con texto (`AmStatusPill`/`AmTonalTag`) en vez de icono + texto suelto | S09–S12 | Alto | Medio | Alto en capturas (import-batch-*); refuerza la señal no dependiente del color |
+| G3 | Resumen del lote como filas etiqueta-valor (`AmMetaRow`) para reconocidos, duplicados y pendientes | S09–S12 | Medio | Medio | Alto en capturas (import-batch-*) |
+| G4 | Campos agrupados en tarjetas de ajustes (`AmListBody` + `AmSectionHeader`) | S00 | Medio | Medio | Alto en capturas (local-*); neutro en accesibilidad |
+| G5 | Evidencia decodificada como fila etiqueta-valor o tarjeta en vez de texto suelto | S09 | Bajo | Bajo | Medio en capturas (s09-review-*) |
+| G6 | `endMeta` con fecha en resultados de actividad y comprobante | S04–S05 | Medio | Alto (requiere campo de fecha en el dominio de búsqueda) | Medio en capturas (s04-search-*); neutro en accesibilidad |
+| G7 | Encabezados de sección para las fuentes de importación | S02 | Bajo | Bajo | Medio en capturas (s02-add-*) |
+| G8 | Encabezados de sección para los grupos del editor | S07 | Bajo | Bajo | Nulo (el editor no tiene captura directa) |
+| G9 | Marca de tipo a la izquierda en cada resultado | S04–S05 | Bajo | Bajo | Medio en capturas (s04-search-*); se solapa con el encabezado de sección |
+
+Ninguna de estas brechas se implementa sin decisión del propietario. Las que cambian capturas exigen regenerarlas y revisarlas en local (ADR-0007, ADR-0020 §8) antes de darse por válidas. La brecha del metadato a la derecha en `AmListRow` se cerró con el parámetro `endMeta`, aplicado a la fecha real de Actividades y de las actividades de un contexto.
 
 ## Consecuencias
 
