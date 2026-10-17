@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import com.agendaqr.core.ui.components.AmPrimaryButton
+import com.agendaqr.core.ui.components.AmBottomAction
 import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmText
@@ -40,6 +40,11 @@ internal fun LocalOnboardingScreen(
         scrollable = true,
         verticalArrangement = Arrangement.spacedBy(AmSpacing.Xl),
         horizontalAlignment = Alignment.Start,
+        // Guardar PIN fijo al pie: la acción aplica navigationBars + ime, así
+        // que no queda bajo el teclado numérico ni bajo la barra del sistema.
+        bottomAction = {
+            AmBottomAction(label = AppStrings.GuardarPin, onClick = onSubmit)
+        },
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
             AmText(
@@ -84,11 +89,6 @@ internal fun LocalOnboardingScreen(
                 },
             )
         }
-        AmPrimaryButton(
-            AppStrings.GuardarPin,
-            onClick = onSubmit,
-            modifier = Modifier.fillMaxWidth(),
-        )
         if (onExploreDemo != null) {
             AmText(
                 AppStrings.ExplorarDemostracionDescripcion,

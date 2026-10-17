@@ -13,7 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import com.agendaqr.core.ui.components.AmPrimaryButton
+import com.agendaqr.core.ui.components.AmBottomAction
 import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmText
@@ -42,6 +42,11 @@ internal fun LocalLockScreen(
         scrollable = true,
         verticalArrangement = Arrangement.spacedBy(AmSpacing.Xl),
         horizontalAlignment = Alignment.Start,
+        // Desbloquear fijo al pie: la acción aplica navigationBars + ime, así
+        // que no queda bajo el teclado numérico ni bajo la barra del sistema.
+        bottomAction = {
+            AmBottomAction(label = AppStrings.Desbloquear, onClick = onSubmit)
+        },
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
             AmText(
@@ -72,11 +77,6 @@ internal fun LocalLockScreen(
             } else {
                 null
             },
-        )
-        AmPrimaryButton(
-            AppStrings.Desbloquear,
-            onClick = onSubmit,
-            modifier = Modifier.fillMaxWidth(),
         )
         if (state.biometricAvailability == BiometricAvailability.Available && onBiometric != null) {
             // U-20/D11: solicitud automática UNA vez por bloqueo (clave por
