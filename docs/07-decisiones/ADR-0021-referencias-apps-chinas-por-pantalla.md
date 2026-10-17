@@ -34,7 +34,7 @@ ADR-0020 declaró la identidad de AgendaQr como "inspirada en aplicaciones móvi
 |---|---|---|
 | S01 Inicio | Búsqueda como primer bloque, filtros `AmFilterChip`, carrusel de favoritos, `AmListBody` + filas, FAB con hub de tres creaciones (`AmIconBadge`) | Ninguna estructural |
 | Detalle de destino | `AmQrPreview` en `AmTappableCard` sobre lienzo blanco, dock con "Mostrar QR" primaria y "Compartir" secundaria, `AmCard` con `AmMetaRow` | Ninguna estructural |
-| S04–S05 Buscar y resultados | `AmSearchField` (48 dp mínimo, desviación documentada) como cuerpo, resultados agrupados por tipo con `AmSectionHeader` + `AmListBody`/`AmListRow` con fecha final en actividad y comprobante, estados de vacío, carga y error | Falta la marca de tipo a la izquierda en cada fila |
+| S04–S05 Buscar y resultados | `AmSearchField` (48 dp mínimo, desviación documentada) como cuerpo, resultados agrupados por tipo con `AmSectionHeader` + `AmListBody`/`AmListRow` con marca de tipo a la izquierda y fecha final en actividad y comprobante, estados de vacío, carga y error | Ninguna estructural |
 | S06 / S08 Contexto | Filas con marca tonal a la izquierda, título y descripción, separador discreto | Ninguna estructural |
 | Actividades y su detalle | Hero con píldora de tipo y cifra neutra, filas etiqueta-valor, `AmListRow` con `endMeta` | Ninguna estructural en Actividades; en Inicio no aplica (la fila lleva la acción de favorito en `trailing`) |
 | S09–S12 Importación | Resumen en `AmCard` con filas etiqueta-valor (`AmMetaRow`) de reconocidos, duplicados y pendientes; `PendingItemCard` por elemento con insignia de estado con texto; `ImportReviewScreen` con vista previa y evidencia decodificada en tarjeta | Ninguna estructural |
@@ -72,6 +72,7 @@ Ninguna de estas brechas se implementa sin decisión del propietario. Las que ca
 - **G1** — Botón primario de S00 (Guardar PIN, Desbloquear) fijo al pie con `bottomAction` en lugar de dentro del scroll; la acción aplica `navigationBarsPadding` + `imePadding`, así que no queda bajo el teclado numérico. Commit: «Fija al pie la acción primaria del acceso local».
 - **G4** — Campos de S00 agrupados en `AmListBody` con rótulo de sección `Solo en este dispositivo`, en lugar de una columna suelta. Commit: «Agrupa en tarjeta los campos del acceso local».
 - **G6** — Fecha final en los resultados de búsqueda (S04–S05): `AgendaSearchResult` gana el campo `dateMillis` (actividad = `occurredAt`; comprobante = `createdAt`) y la fila lo muestra con `endMeta`; el formato y el "ayer" quedan en la capa de presentación. Es la única brecha aprobada que toca el modelo de dominio: autorización explícita del propietario, excepción puntual a la regla de no tocar modelos de dominio de ADR-0020 §7. Commit: «Muestra la fecha en los resultados de búsqueda».
+- **G9** — Marca de tipo a la izquierda en cada resultado (S04–S05): `AmIconBadge` con el glifo del tipo (contexto, QR, actividad, comprobante). El encabezado de sección sigue siendo la señal textual del tipo; el glifo acompaña (nunca color/glifo solos). Commit: «Añade la marca de tipo a los resultados de búsqueda».
 
 ## Consecuencias
 

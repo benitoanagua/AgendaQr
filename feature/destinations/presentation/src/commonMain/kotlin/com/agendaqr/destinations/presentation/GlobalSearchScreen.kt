@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.components.AmNavChromeState
@@ -106,10 +107,14 @@ fun GlobalSearchScreen(
                                             // comprobante). El formato es de la
                                             // capa de presentación.
                                             endMeta = result.dateMillis?.let { formatDate(it) },
-                                            // El marcador lateral solo aparece
-                                            // con tono de estado o acento de
-                                            // contexto REALES; un resultado de
-                                            // búsqueda no es ninguno.
+                                            // Marca de tipo a la izquierda:
+                                            // glifo decorativo del tipo del
+                                            // grupo. La señal textual sigue
+                                            // siendo el encabezado de sección
+                                            // (nunca color/glifo solos).
+                                            leading = {
+                                                AmIconBadge(icon = searchResultTypeIcon(type))
+                                            },
                                             onClick = { onSelect(result) },
                                             showDivider = index < group.lastIndex,
                                         )
@@ -130,6 +135,19 @@ private fun searchResultTypeLabel(type: com.agendaqr.destinations.domain.AgendaS
         com.agendaqr.destinations.domain.AgendaSearchResultType.QR -> AppStrings.TipoQr
         com.agendaqr.destinations.domain.AgendaSearchResultType.ACTIVITY -> AppStrings.TipoActividad
         com.agendaqr.destinations.domain.AgendaSearchResultType.COMPROBANTE -> AppStrings.TipoComprobante
+    }
+
+/**
+ * Glifo decorativo del tipo de resultado (marca de fila). El tipo se
+ * comunica con TEXTO en el encabezado de sección; el glifo acompaña, nunca
+ * es la única señal (contrato de accesibilidad).
+ */
+private fun searchResultTypeIcon(type: com.agendaqr.destinations.domain.AgendaSearchResultType): ImageVector =
+    when (type) {
+        com.agendaqr.destinations.domain.AgendaSearchResultType.CONTEXT -> AmIcons.Context
+        com.agendaqr.destinations.domain.AgendaSearchResultType.QR -> AmIcons.QrCode
+        com.agendaqr.destinations.domain.AgendaSearchResultType.ACTIVITY -> AmIcons.Wallet
+        com.agendaqr.destinations.domain.AgendaSearchResultType.COMPROBANTE -> AmIcons.Attachment
     }
 
 /**
