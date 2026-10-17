@@ -27,6 +27,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Búsqueda global (S04/S05) | Robolectric suite |
 | Importación QR (Photo Picker Android/PHPicker iOS, cámara, share Android, PDF: OpenDocument Android/UIDocumentPicker iOS —runtime iOS en §2) | unit + compilación de instrumentados |
 | Importación con corrección de fallos parciales y reintentos (bug fix: todos los candidatos fallaban → estado Saved en lugar de Error) | `ImportFlowRegressionTest` (error all-failed, partial save, retry after error, after successful retry, multiple issues, small viewport, login error) |
+| Acciones de las tarjetas de revisión de importación separadas visualmente | `ActionHierarchyTest.duplicate_card_offers_view_existing_as_main_and_saves_anyway_as_secondary` verifica que «Guardar de todos modos» y «Descartar» no colisionen |
 | Jerarquía de acciones de 4 niveles documentada en `Am*` (primaria/secundaria/terciaria/destructiva) y aplicada en los flujos | javadoc de `AmButtons.kt` + `ActionHierarchyTest` (confirmación de descarte, jerarquía por tipo de incidencia, sin acciones incompatibles con el estado) + gate del design system |
 | Descarte de pendientes SIN clasificar con confirmación (pérdida de contenido retenido); duplicados sin confirmación (el original existe) | `ActionHierarchyTest.unknown_card_offers_retry_as_main_action_and_discard_with_confirmation` + `.duplicate_card_offers_view_existing_as_main_and_saves_anyway_as_secondary` |
 | «Quitar contexto» como acción destructiva explícita (peligro + glifo) dentro del selector; «Cancelar» única salida del diálogo | `ContextPickerDialogTest` + gate |
@@ -87,12 +88,6 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
   **Bloqueo concreto:** el proyecto Xcode no está versionado en el repositorio
   (política documentada en `iosApp/README.md`) y crear el target de la extensión
   exige Xcode + firma; no puede hacerse ni verificarse desde este entorno.
-- **Separación de las dos acciones de texto en la tarjeta de pendiente (S12):**
-  «Guardar de todos modos» y «Descartar» se componen en un `Row`
-  `Arrangement.End` con `contentPadding` horizontal `None`, así que sus
-  etiquetas quedan pegadas y se leen como un solo rótulo. Detectado al revisar
-  las capturas regeneradas; **fuera del alcance aprobado** (no es una de las
-  brechas G1–G9), se decide con el propietario antes de tocarlo.
 
 ## 5. No implementado (alcance declarado, no defecto)
 
