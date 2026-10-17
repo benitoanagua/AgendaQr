@@ -21,8 +21,6 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Modo de demostración aislado (perfil `demo-profile-v1`, sin sync) | `DemoDataTest` + `DemoSeederTest` (determinista, idempotente, no toca perfil real) |
 | Migración de instalaciones previas al perfil local | data tests (idempotencia, no borra origen, no mezcla cuentas, detección por claves sin cliente remoto) |
 | Nube opcional («Cuenta y respaldo» detrás de Inicio) | compilación Android/iOS + gate + captura `account-{light,dark}` (SignedOut con doble determinista) |
-| UX/UI V1.8 (correcciones de captura rápida ADR-0018: filtros, bloqueo con gracia —limpieza de la marca al volver a primer plano—, fecha/hora, Detalle, editor, Inicio —lista sin duplicar el carrusel de favoritos y estado vacío real de favoritos—, copy ≤ 60 caracteres, PIN/búsqueda) | Robolectric suite + hashes visuales regenerados + gate del design system |
-| Alineación visual ADR-0017 (tokens, radios, diálogo hairline, buscador SearchBar, E-04) | `AmSchemeTest`/`AmTypographyTest`/`S02UiPolishTest` repinneados + `ScreensA11yCoverageTest`/`ActionHierarchyTest`/`AmDialogProminenceTest` (diálogo verificado bajo Robolectric, sin fallback) + gate |
 | Chrome e insets (TopBar, NavigationBar/Rail, Scaffold con contentWindowInsets) | Robolectric suite + gate (incl. captura tablet w720dp con NavigationRail) |
 | Edge-to-edge Android (`enableEdgeToEdge`) | ensamblado |
 | Predictive back (PredictiveBackHandler con progreso) | compilación 3 targets |
@@ -42,10 +40,12 @@ Las puertas, sus comandos y la validación por plataforma están en
 
 ## 2. Implementado pero NO VERIFICADO en este entorno
 
-No se declaran PASS. Requieren Xcode, dispositivo físico o red.
+No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local de las nuevas capturas visuales.
 
 | Capacidad | Motivo | Cómo se verifica |
 |---|---|---|
+| Identidad visual AgendaQr V1.10 / ADR-0020 (nueva paleta de tokens) | Código y pins de color actualizados; capturas e hashes aún representan la paleta anterior. La apariencia no se considera validada hasta regenerar y revisar las capturas. | `./gradlew :core:ui:allTests verifyAgendaQrArchitecture recordRoborazzi recordVisualHashes verifyVisualHashes`; revisar capturas claro/oscuro de Inicio, detalle QR, búsqueda, importación y formularios |
+| CI de `main` | La última ejecución anterior al rediseño (commit `9b73317`) falló en `AgendaQrLocalStartupTest` y 12 pruebas instrumentadas con timeouts; las ejecuciones de los nuevos commits están en curso. | [Android validation — commit de paleta](https://github.com/benitoanagua/AgendaQr/actions/runs/38987476202) y [commit documental](https://github.com/benitoanagua/AgendaQr/actions/runs/38987515141) |
 | Runtime iOS (arranque y render) | Requiere Xcode/simulador | [OPERATIONS.md](OPERATIONS.md) (checklist iOS) |
 | TalkBack/VoiceOver interactivo | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Insets/notch, cámara, foco nativo y motion en dispositivo | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
@@ -65,8 +65,8 @@ No se declaran PASS. Requieren Xcode, dispositivo físico o red.
 - `FLAG_SECURE` no implementado (ADR-0009 propuesto): las pantallas sensibles admiten capturas; implementarlo bloquea screenshots del QR.
 - Paginación local de 50 en 50 (U-22): se conserva sin cambios; reportada como opcional.
 
-- Separadores oscuros `#2B2B2B` sobre superficie `#1F1F1F` (hairline oficial): si en revisión humana resultan imperceptibles, es decisión pendiente del propietario (alternativa documentable: `#3A3A3A`); no se cambia en silencio.
-- Textos a 17 sp (cuerpo de la referencia): a 320 dp y 200 % de fuente los desbordamientos se resuelven con layout, nunca bajando la escala; la suite de layout lo verifica.
+- Separadores oscuros `#303844` sobre superficie `#171D26` (paleta AgendaQr V1.10): la legibilidad visual debe confirmarse al revisar las capturas regeneradas; no se cambia en silencio.
+- Textos a 17 sp (cuerpo de la escala actual): a 320 dp y 200 % de fuente los desbordamientos se resuelven con layout, nunca bajando la escala; la suite de layout lo verifica.
 
 - Glifos «Editar», «Compartir» y «Mostrar QR» sin icono asignado (contrato
   normativo §7): esas acciones de barra superior van como acción de texto (con su
