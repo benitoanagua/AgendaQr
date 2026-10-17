@@ -29,6 +29,7 @@
 | [`05-design-system/02-implementacion-diseno.md`](05-design-system/02-implementacion-diseno.md) | Reglas de implementación |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros |
 | [`05-design-system/07-evaluacion-tipografia.md`](05-design-system/07-evaluacion-tipografia.md) | Evaluación de la tipografía candidata MiSans Global (no adoptada) |
+| [`05-design-system/08-referencia-super-app.md`](05-design-system/08-referencia-super-app.md) | Referencia de dirección visual Super-App (autoridad visual vigente según ADR-0022) |
 
 ## Decisiones
 
