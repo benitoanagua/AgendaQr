@@ -1,6 +1,6 @@
 plugins { id("agendaqr.compose-library") }
 
-// Sistema de diseño (ADR-0014, referencia Ant Design Mobile): vive en este módulo. Sin
+// Sistema de diseño (ADR-0020 y ADR-0021): vive en este módulo. Sin
 // recursos empaquetados: la iconografía es Lucide vía AmIcon y el logo de
 // marca vive en docs/branding (SVG, fuente de verdad del ícono).
 

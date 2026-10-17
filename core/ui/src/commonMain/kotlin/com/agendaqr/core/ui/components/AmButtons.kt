@@ -49,7 +49,7 @@ import com.agendaqr.core.ui.theme.AmTracking
 import com.agendaqr.core.ui.theme.AmType
 
 /**
- * Botones y chips (referencia: Button/CapsuleTabs de Ant Design Mobile):
+ * Botones y chips (patrón de apps de consumo, ADR-0021):
  * fills solid/default/none — el secundario equivale al botón `default`
  * (fondo claro + hairline + texto primario, no outline de acento) —,
  * radio 4, deshabilitado con opacidad .4, área táctil mínima de 48 dp y

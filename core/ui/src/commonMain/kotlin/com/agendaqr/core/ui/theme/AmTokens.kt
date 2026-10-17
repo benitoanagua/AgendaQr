@@ -64,10 +64,9 @@ internal object AmPalette {
      * silencio escaneable); el marco tonal lo aporta AmMediaFrame. */
     val lightQrCanvas = Color(0xFFFFFFFF)
 
-    // Tema oscuro (referencia: theme-dark de Ant Design Mobile; los roles
-    // de estado y acento adoptan sus valores oficiales; donde el par
-    // oficial no alcanza WCAG AA se recalibra mínimamente — contrato §4.4:
-    // onAccent/accentText/onDanger y el terciario).
+    // Tema oscuro: paleta propia de AgendaQr (ADR-0020), diseñada como
+    // paleta independiente y no como inversión mecánica del claro; los
+    // pares de contraste los fija AmSchemeTest (contrato §4.4).
     val darkBackground = Color(0xFF10141B)
     val darkSurface = Color(0xFF171D26)
     val darkSurfaceSecondary = Color(0xFF0C1118)
@@ -390,12 +389,12 @@ object AmShapes {
 
 /**
  * Escala tipográfica en sp (respeta el escalado de fuente del sistema).
- * Escala de Ant Design Mobile (ADR-0014, ADR-0017): título 18; cuerpo,
- * botón, título de fila, entrada y pestañas 17 (font-size-7); etiqueta,
- * contenido de modal, cápsula y extra de lista 15 (font-size-5 = main);
- * descripción y metadato 13; apoyo/ayuda/error 12; tag y barra inferior
- * 11. Importe 26 y Display 32 / Headline 24 son extensiones financieras
- * sin equivalente en la referencia. Pesos: normal salvo el título de
+ * Escala heredada de ADR-0014 y ADR-0017 y vigente bajo ADR-0020: título
+ * 18; cuerpo, botón, título de fila, entrada y pestañas 17; etiqueta,
+ * contenido de modal, cápsula y extra de lista 15; descripción y metadato
+ * 13; apoyo/ayuda/error 12; tag y barra inferior 11. Importe 26 y Display
+ * 32 / Headline 24 son extensiones financieras sin equivalente en la
+ * escala base. Pesos: normal salvo el título de
  * diálogo (bold) y la etiqueta de botón (Medium, desviación documentada).
  */
 object AmType {

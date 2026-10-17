@@ -70,7 +70,7 @@ fun AuthScreen(
 /**
  * Cuerpo de credenciales reutilizable (AuthScreen y AccountScreen).
  *
- * Jerarquía visual (referencia Ant Design Mobile — S10/Login):
+ * Jerarquía visual (patrón de formulario de acceso de apps de consumo, ADR-0021 — S10/Login):
  * 1. Cabecera: título (SectionHeader) + descripción (Body secondary)
  * 2. Formulario: etiqueta + campo + ayuda/validación agrupados
  * 3. Error: banner con tono danger + acción de recuperación

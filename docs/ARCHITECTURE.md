@@ -45,13 +45,14 @@ ejecución real con Xcode.
 1. **Agenda QR — autoridad de producto.** Única fuente para producto,
    requisitos, dominio, alcance, decisiones y reglas de negocio. Cubre también
    el comportamiento funcional UX (contrato UX/UI V1 congelado).
-2. **Ant Design Mobile — referencia visual.** Define paleta, superficies, texto,
-   estados, radios, densidad, controles, iconografía y feedback. Android e iOS
-   definen las convenciones de navegación y comportamiento. El contrato
+2. **Identidad visual propia de AgendaQr.** Define paleta, superficies, texto,
+   estados, radios, densidad, controles, iconografía y feedback, con patrones
+   de apps móviles chinas de consumo como referencia por pantalla. Android e
+   iOS definen las convenciones de navegación y comportamiento. El contrato
    normativo es `docs/05-design-system/00-contrato-normativo-diseno.md`;
-   [ADR-0014](07-decisiones/ADR-0014-referencia-ant-design-mobile.md) establece
-   su precedencia sobre guías de implementación y código heredado. Vant no es
-   referencia.
+   [ADR-0020](07-decisiones/ADR-0020-identidad-visual-agendaqr.md) y
+   [ADR-0021](07-decisiones/ADR-0021-referencias-apps-chinas-por-pantalla.md)
+   lo respaldan. Ant Design Mobile y Vant no son referencia.
 3. **WaraWerse — referencia técnica.** Solo para Kotlin Multiplatform, Compose,
    modularización, Gradle/build logic y prácticas de testing. No introduce
    lógica de negocio.
@@ -66,10 +67,10 @@ Matriz por área:
 | Alcance y límites | Agenda QR | obligatorio |
 | Decisiones | Agenda QR | obligatorio |
 | UX funcional | Agenda QR | obligatorio |
-| UI/UX visual | Ant Design Mobile | obligatorio |
-| Tokens | Ant Design Mobile | obligatorio |
-| Componentes y patrones | Ant Design Mobile | obligatorio |
-| Accesibilidad y motion | Ant Design Mobile | obligatorio |
+| UI/UX visual | Contrato normativo AgendaQr | obligatorio |
+| Tokens | Contrato normativo AgendaQr | obligatorio |
+| Componentes y patrones | Contrato normativo AgendaQr | obligatorio |
+| Accesibilidad y motion | Contrato normativo AgendaQr | obligatorio |
 | Navegación y comportamiento | Android / iOS | obligatorio |
 | Kotlin/KMP | WaraWerse | referencia técnica |
 | Compose | WaraWerse | referencia técnica |

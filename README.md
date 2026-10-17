@@ -14,7 +14,7 @@ La implementación sigue una jerarquía explícita de fuentes de verdad:
 
 1. **Agenda QR** — producto, dominio, requisitos, alcance, decisiones y reglas de negocio.
 2. **UX/UI V1 de Agenda QR** — contrato de interacción congelado (`docs/04-ux/02-especificacion-ux-ui-v1.md`).
-3. **Referencia Ant Design Mobile** — lenguaje visual, tokens, componentes y patrones; la navegación sigue las convenciones de Android e iOS ([ADR-0014](docs/07-decisiones/ADR-0014-referencia-ant-design-mobile.md)).
+3. **Identidad visual propia de AgendaQr** — lenguaje visual, tokens, componentes y patrones inspirados en apps móviles chinas de consumo, con referencias por pantalla; la navegación sigue las convenciones de Android e iOS ([ADR-0020](docs/07-decisiones/ADR-0020-identidad-visual-agendaqr.md), [ADR-0021](docs/07-decisiones/ADR-0021-referencias-apps-chinas-por-pantalla.md)).
 4. **WaraWerse** — referencia técnica para Kotlin Multiplatform, Compose, modularización, build y prácticas de testing.
 
 Si dos fuentes entran en conflicto, prevalece la de mayor autoridad. WaraWerse

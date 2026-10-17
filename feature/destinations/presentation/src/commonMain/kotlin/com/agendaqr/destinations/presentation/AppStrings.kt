@@ -282,7 +282,7 @@ internal object AppStrings {
     val ContextoGenerico = "Contexto"
     // ------------------------------------------------------------------
     // Jerarquía financiera de Actividades y metadatos de detalle
-    // (referencia Ant Design Mobile, ADR-0015).
+    // (patrón de apps financieras de consumo, ADR-0015 y ADR-0021).
     // ------------------------------------------------------------------
     /** Filtro de tipo del historial: todas las actividades. */
     val Todos = "Todos"
@@ -298,7 +298,7 @@ internal object AppStrings {
     val SignoCobro = "+"
     val SignoPago = "−"
     // ------------------------------------------------------------------
-    // Referencia Ant Design Mobile (ADR-0015).
+    // Reaseguro y estados de apps de consumo (ADR-0015 y ADR-0021).
     // ------------------------------------------------------------------
     /** Píldora de reaseguro local-first (S01, siempre cierta). */
     val GuardadoEnTuTelefono = "Guardado en tu teléfono"
@@ -327,7 +327,7 @@ internal object AppStrings {
     /** Acción de borrado del importe (accesible). */
     val BorrarImporte = "Borrar importe"
     // ------------------------------------------------------------------
-    // Referencia Ant Design Mobile: historial en tarjetas, favoritos en
+    // Patrones de apps de consumo (ADR-0021): historial en tarjetas, favoritos en
     // carrusel, pestañas cápsula con conteo y dock de acciones del
     // detalle QR.
     // ------------------------------------------------------------------

@@ -1,6 +1,6 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — V1.9 para contrato funcional; identidad visual definida por ADR-0020 y desarrollada en `docs/05-design-system/00-contrato-normativo-diseno.md`  
+**Estado:** FROZEN — V1.9 para contrato funcional; identidad visual definida por ADR-0020/ADR-0021 y desarrollada en `docs/05-design-system/00-contrato-normativo-diseno.md`  
 **Fecha:** 2026-10-11  
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
 
@@ -19,8 +19,9 @@
 | V1.8 | 2026-10-16 | Enmienda por ADR-0018 (correcciones UX de captura rápida): S00 (gracia de bloqueo 120 s, biometría automática, demo solo al inicio), S01 (hub de creación, sin duplicados, Favoritos, lista sin favoritos del carrusel), Detalle de destino (Mostrar QR como primaria, pantalla completa con brillo), S07 (editor con divulgación progresiva, validación real, descarte confirmado), S04 (foco solo desde Inicio). Intención, modelo mental y reglas de negocio: intactos. Aprobación explícita del propietario para enmendar la congelación en lo que ADR-0018 cambia. |
 | V1.9 | 2026-10-16 | Enmienda por ADR-0019 (inicio vacío): S01 vacío de primera ejecución muestra "Traer un QR", el FAB se oculta sin destinos ni búsqueda, y se retira el encabezado "Todos los destinos" sobre el vacío. Intención, modelo mental y reglas de negocio: intactos. |
 | V1.10 | 2026-10-16 | Enmienda visual por ADR-0020: identidad propia inspirada en aplicaciones chinas de consumo; paleta azul tecnológico + superficies neutras azul-gris; sin cambios en navegación, flujos, copy funcional o reglas de negocio. |
+| V1.11 | 2026-10-17 | Enmienda visual por ADR-0021: Ant Design Mobile deja de ser referencia; §12 incorpora las referencias de patrón por pantalla (apps chinas de consumo) sin cambios de navegación, flujos, copy ni reglas de negocio. |
 
-La composición funcional vigente corresponde a V1.9; la identidad visual vigente corresponde a V1.10/ADR-0020. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
+La composición funcional vigente corresponde a V1.9; la identidad visual vigente corresponde a V1.11/ADR-0021. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
 ## 1. Contrato principal
 
@@ -287,11 +288,15 @@ Reglas vigentes V1.3:
 - **Escalado de fuente:** el contenido esencial y las acciones primarias
   no se truncan con la fuente del sistema al 200 %.
 
-## 12. Contrato visual — V1.10, ADR-0020
+## 12. Contrato visual — V1.11, ADR-0020 y ADR-0021
 
 > **Precedencia:** esta sección define la dirección visual de producto. Para tokens, contraste, componentes, estados, accesibilidad, pruebas y gobernanza, prevalece `docs/05-design-system/00-contrato-normativo-diseno.md`. La UX funcional y la navegación raíz no cambian por esta enmienda.
 
 AgendaQr adopta una identidad visual propia inspirada en aplicaciones móviles chinas de consumo: útil desde el primer vistazo, compacta sin ser apretada, jerárquica y visualmente pulida. No se copia una superapp ni se añaden adornos culturales genéricos. La interfaz sigue siendo nativa en Compose Multiplatform; no se incorpora React, CSS ni una librería web.
+
+### Referencias por pantalla (ADR-0021)
+
+Se imitan patrones de UX de apps móviles chinas de consumo, nunca activos (iconos, ilustraciones, logotipos, textos, colores de marca ni composiciones calcadas). Alipay: Inicio y detalle QR; WeChat: búsqueda, contextos y barra inferior; Alipay y WeChat Pay: detalle de actividad e importación; HyperOS y WeChat: formularios. La tabla completa y la auditoría de brecha viven en ADR-0021 y en el contrato normativo §16. Inicio no incorpora cuadrícula de accesos rápidos: el hub del botón flotante ya cubre las creaciones.
 
 ### Principios
 
@@ -360,4 +365,4 @@ Fuera del alcance de esta especificación conceptual: detalles internos de Kotli
 
 ## 14. Estado
 
-**UX/UI V1.9 funcional + V1.10 visual: FROZEN** (ADR-0019 y ADR-0020, 2026-10-16).
+**UX/UI V1.9 funcional + V1.11 visual: FROZEN** (ADR-0019, ADR-0020 y ADR-0021, 2026-10-17).

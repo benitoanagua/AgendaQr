@@ -163,7 +163,7 @@ fun DestinationDetailScreen(
             )
         }
 
-        // Metadatos en filas compactas (referencia Ant Design Mobile): solo
+        // Metadatos en filas compactas (patrón de detalle de comprobante, ADR-0021): solo
         // datos reales del dominio; el contenido decodificado se puede
         // COPIAR (portapapeles del sistema, feedback por evento) y la
         // fecha de alta es el createdAt real.

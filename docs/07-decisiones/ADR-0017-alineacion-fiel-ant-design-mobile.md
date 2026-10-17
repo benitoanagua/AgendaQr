@@ -1,6 +1,6 @@
 # ADR-0017 — Alineación fiel con Ant Design Mobile 5.43.0
 
-**Estado:** APROBADA — 2026-10-16
+**Estado:** SUPLANTADA por ADR-0020 y ADR-0021 (historia conservada). Fue APROBADA — 2026-10-16
 **Enmienda:** ADR-0014 (tabla de correspondencia y valores erróneos). **Acota:** ADR-0015 (Stitch solo para anatomía financiera; paleta, tipografía y radios no los define Stitch).
 **Relaciona:** ADR-0013, ADR-0014, ADR-0015, contrato normativo (`docs/05-design-system/00-contrato-normativo-diseno.md`), especificación UX/UI V1.7 (`docs/04-ux/02-especificacion-ux-ui-v1.md` §12).
 

@@ -138,7 +138,7 @@ private fun ContextList(
                 onAction = onCreateContext,
             )
             else -> {
-                // Lista agrupada (referencia Ant Design Mobile):
+                // Lista agrupada (patrón de lista de chats y contactos, ADR-0021):
                 // AmListBody con AmListRow y hairlines — superficie de tarjeta
                 // que agrupa las filas y se separa del fondo de página.
                 AmListBody(

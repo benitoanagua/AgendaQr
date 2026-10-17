@@ -45,13 +45,14 @@
 | [`07-decisiones/ADR-0011-contrato-visual-xauxa.md`](07-decisiones/ADR-0011-contrato-visual-xauxa.md) | ADR histórico sustituido: Xauxa |
 | [`07-decisiones/ADR-0012-ui-convencional-material3.md`](07-decisiones/ADR-0012-ui-convencional-material3.md) | ADR histórico; autoría visual sustituida por ADR-0013 |
 | [`07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md`](07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md) | ADR histórico; autoría visual sustituida por ADR-0014 |
-| [`07-decisiones/ADR-0014-referencia-ant-design-mobile.md`](07-decisiones/ADR-0014-referencia-ant-design-mobile.md) | ADR: referencia Ant Design Mobile + navegación Android/iOS (enmendada por ADR-0017) |
+| [`07-decisiones/ADR-0014-referencia-ant-design-mobile.md`](07-decisiones/ADR-0014-referencia-ant-design-mobile.md) | ADR histórico: referencia Ant Design Mobile (suplantada por ADR-0020 y ADR-0021) |
 | [`07-decisiones/ADR-0015-referencia-stitch-jerarquia-financiera.md`](07-decisiones/ADR-0015-referencia-stitch-jerarquia-financiera.md) | ADR: patrones financieros de la referencia Stitch (segmentado, tags tonales, hero QR); paleta e Inter no adoptadas (acotada por ADR-0017) |
 | [`07-decisiones/ADR-0016-identidad-local-sin-cuenta.md`](07-decisiones/ADR-0016-identidad-local-sin-cuenta.md) | ADR: identidad local sin cuenta, login no obligatorio, namespace por perfil, PIN, migración y limitaciones |
-| [`07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md`](07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md) | ADR: alineación fiel con Ant Design Mobile 5.43.0 (enmienda ADR-0014, acota ADR-0015) |
+| [`07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md`](07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md) | ADR histórico: alineación con Ant Design Mobile 5.43.0 (suplantada por ADR-0020 y ADR-0021) |
 | [`07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md`](07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md) | ADR: correcciones UX de captura rápida (enmienda ADR-0016 y la congelación UX en su alcance) |
 | [`07-decisiones/ADR-0019-enmienda-v1-9-inicio-vacio.md`](07-decisiones/ADR-0019-enmienda-v1-9-inicio-vacio.md) | ADR: enmienda V1.9 inicio vacío y separadores oscuros |
 | [`07-decisiones/ADR-0020-identidad-visual-agendaqr.md`](07-decisiones/ADR-0020-identidad-visual-agendaqr.md) | ADR: identidad visual propia inspirada en aplicaciones chinas de consumo |
+| [`07-decisiones/ADR-0021-referencias-apps-chinas-por-pantalla.md`](07-decisiones/ADR-0021-referencias-apps-chinas-por-pantalla.md) | ADR: referencias de apps chinas de consumo por pantalla y auditoría de brecha |
 
 ## Cómo se mantiene
 

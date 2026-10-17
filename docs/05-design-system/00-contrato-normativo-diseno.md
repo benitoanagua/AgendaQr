@@ -1,6 +1,6 @@
 # Contrato normativo de diseño
 
-**Estado:** Normativo — versión 3.0 (ADR-0020)
+**Estado:** Normativo — versión 3.1 (ADR-0020, ADR-0021)
 **Autoridad:** este documento es la fuente única y obligatoria de la identidad visual de AgendaQr. La dirección visual es propia, inspirada en aplicaciones móviles chinas de consumo (utilidad cotidiana, jerarquía funcional, densidad controlada y acabado pulido), sin replicar una librería concreta. **Android e iOS definen las convenciones de navegación y comportamiento de plataforma**. La implementación vive en `core/ui` (`com.agendaqr.core.ui`, prefijo `Am*` como convención de código, sin valor de marca). Material 3 es detalle de implementación, no autoridad visual.
 
 ## 1. Principios
@@ -215,3 +215,19 @@ Las excepciones del sistema visual y de la plataforma se documentan aquí. No ex
 | Segmentado sin sombra en el ítem activo (oficial: sombra suave) | El gate prohíbe `shadow(`; el límite lo da el bloque tonal |
 | Hoja inferior 12 sin uso; selectores como `AmDialog` con lista | `ModalBottomSheet` no despacha acciones bajo Robolectric (bloqueo documentado) |
 | Recalibraciones de paleta y contenido de acento | La accesibilidad y la legibilidad prevalecen sobre cualquier referencia externa |
+
+## 16. Referencias de patrón por pantalla (ADR-0021)
+
+Las referencias inspiran composición y jerarquía; no gobiernan tokens ni se copian activos (iconos, ilustraciones, logotipos, textos, colores de marca, composiciones calcadas).
+
+| Superficie | Referencia de patrón |
+|---|---|
+| Inicio | Alipay (inicio) y WeChat (búsqueda) |
+| Detalle de destino / QR | Alipay (código de cobro) |
+| Buscar y resultados | WeChat (búsqueda) |
+| Contextos | WeChat (chats y contactos) |
+| Actividades, detalle e importación | Alipay y WeChat Pay (detalle de factura) |
+| Formularios y acceso local | HyperOS y WeChat (ajustes) |
+| Navegación raíz | WeChat (barra inferior de 4 destinos) |
+
+Cualquier cambio visual derivado de esta tabla actualiza las capturas y sus hashes generados en local (ADR-0007); la accesibilidad (§10) prevalece sobre el parecido con la referencia.
