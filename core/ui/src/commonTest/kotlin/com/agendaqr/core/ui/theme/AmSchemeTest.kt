@@ -11,7 +11,7 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 /**
- * Contrato del esquema de color (ADR-0014, referencia Ant Design Mobile):
+ * Contrato del esquema de color (ADR-0020, identidad visual propia de AgendaQr):
  * los dos esquemas fijan los valores actuales (ningún cambio visual
  * silencioso), todos los pares que llegan a pantalla cumplen WCAG AA
  * (>= 4.5:1 texto, >= 3:1 foco) y los roles conmutan con el tema.
