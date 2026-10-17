@@ -2,6 +2,7 @@ package com.agendaqr.destinations.domain
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -68,6 +69,12 @@ class AgendaSearchTest {
         assertEquals("ctx-1", results.first { it.type == AgendaSearchResultType.QR }.contextId)
         assertEquals("ctx-1", results.first { it.type == AgendaSearchResultType.ACTIVITY }.contextId)
         assertEquals("ctx-1", results.first { it.type == AgendaSearchResultType.COMPROBANTE }.contextId)
+        // La fecha solo la exponen los tipos que la tienen: actividad
+        // (occurredAt) y comprobante (createdAt); contexto y QR van sin fecha.
+        assertEquals(2L, results.first { it.type == AgendaSearchResultType.ACTIVITY }.dateMillis)
+        assertEquals(3L, results.first { it.type == AgendaSearchResultType.COMPROBANTE }.dateMillis)
+        assertNull(results.first { it.type == AgendaSearchResultType.CONTEXT }.dateMillis)
+        assertNull(results.first { it.type == AgendaSearchResultType.QR }.dateMillis)
     }
 
     @Test

@@ -18,6 +18,14 @@ data class AgendaSearchResult(
     val contextId: String? = null,
     val destinationId: String? = null,
     val operationId: String? = null,
+    /**
+     * Fecha del resultado en milisegundos epoch, cuando su tipo tiene una:
+     * actividad = fecha de la operación; comprobante = fecha de alta. El
+     * dominio expone el dato crudo y la presentación decide el formato (así
+     * "ayer" sigue siendo un cálculo de la capa de UI). Null en contextos y
+     * QRs, que no tienen fecha propia.
+     */
+    val dateMillis: Long? = null,
 )
 
 data class AgendaSearchQuery(
@@ -93,6 +101,7 @@ class SearchAgendaQrUseCase(
                                     contextId = operation.contextId,
                                     destinationId = operation.destinationId,
                                     operationId = operation.id,
+                                    dateMillis = operation.occurredAt,
                                 )
                             )
                         }
@@ -108,6 +117,7 @@ class SearchAgendaQrUseCase(
                                     subtitle = receipt.provenance?.name ?: receipt.mimeType,
                                     contextId = receipt.contextId,
                                     operationId = receipt.operationId,
+                                    dateMillis = receipt.createdAt,
                                 )
                             )
                         }

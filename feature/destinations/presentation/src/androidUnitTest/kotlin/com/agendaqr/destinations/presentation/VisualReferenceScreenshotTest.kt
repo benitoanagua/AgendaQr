@@ -237,6 +237,7 @@ class VisualReferenceScreenshotTest {
                 type = com.agendaqr.destinations.domain.AgendaSearchResultType.ACTIVITY,
                 id = "op-1", title = "Pago · 120",
                 operationId = "op-1",
+                dateMillis = 1760000000000,
             ),
             com.agendaqr.destinations.domain.AgendaSearchResult(
                 type = com.agendaqr.destinations.domain.AgendaSearchResultType.CONTEXT,

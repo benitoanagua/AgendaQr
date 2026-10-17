@@ -101,6 +101,11 @@ fun GlobalSearchScreen(
                                         AmListRow(
                                             title = searchResultTitle(result),
                                             subtitle = searchResultSubtitle(result),
+                                            // Fecha como metadato final (solo los
+                                            // tipos que tienen una: actividad y
+                                            // comprobante). El formato es de la
+                                            // capa de presentación.
+                                            endMeta = result.dateMillis?.let { formatDate(it) },
                                             // El marcador lateral solo aparece
                                             // con tono de estado o acento de
                                             // contexto REALES; un resultado de
