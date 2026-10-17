@@ -214,16 +214,16 @@ class AmSchemeTest {
         // Cada tono tiene content/container propios con >= 4.5:1 en
         // ambos temas; el texto primario también es legible sobre el
         // contenedor (mensajes largos, acciones heredan el color).
-        listOf(LightAmColorScheme, DarkAmColorScheme).forEach { scheme ->
+        listOf("light" to LightAmColorScheme, "dark" to DarkAmColorScheme).forEach { (schemeName, scheme) ->
             AmTone.entries.forEach { tone ->
                 val colors = scheme.toneColors(tone)
                 assertTrue(
                     contrast(hex(colors.content), hex(colors.container)) >= 4.5,
-                    "${scheme.javaClass.simpleName} $tone content/container",
+                    "$schemeName $tone content/container",
                 )
                 assertTrue(
                     contrast(hex(scheme.textPrimary), hex(colors.container)) >= 4.5,
-                    "${scheme.javaClass.simpleName} $tone textPrimary/container",
+                    "$schemeName $tone textPrimary/container",
                 )
             }
             assertEquals(scheme.success, scheme.toneColors(AmTone.Success).content)

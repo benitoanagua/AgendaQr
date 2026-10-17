@@ -1,7 +1,7 @@
 package com.agendaqr.destinations.data
 
-import android.hardware.biometrics.BiometricManager
 import android.os.Build
+import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
@@ -47,8 +47,7 @@ private object AndroidBiometricGate : BiometricGate {
             // BiometricContextHolder; sin él el estado no es determinable
             // (fail-closed: se conserva solo el PIN).
             val appContext = BiometricContextHolder.context ?: return BiometricAvailability.Unavailable
-            val manager = appContext.getSystemService(BiometricManager::class.java) as? BiometricManager
-                ?: return BiometricAvailability.Unavailable
+            val manager = BiometricManager.from(appContext)
             when (manager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)) {
                 BiometricManager.BIOMETRIC_SUCCESS -> BiometricAvailability.Available
                 BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> BiometricAvailability.NoHardware
