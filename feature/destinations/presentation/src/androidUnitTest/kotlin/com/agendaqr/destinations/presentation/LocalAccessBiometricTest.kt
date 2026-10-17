@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.agendaqr.core.ui.theme.AmTheme
 import com.agendaqr.destinations.domain.BiometricAuthResult
 import com.agendaqr.destinations.domain.BiometricAvailability
@@ -163,6 +164,11 @@ class LocalAccessBiometricTest {
             }
         }
         compose.onNodeWithText(AppStrings.ConfiguraTuPin).assertIsDisplayed()
-        compose.onNodeWithText(AppStrings.ExplorarDemostracion).assertIsDisplayed()
+        // La entrada a la demostración sigue accesible sin PIN; con los campos
+        // ya agrupados en tarjeta, en el viewport de prueba queda bajo el
+        // pliegue, así que se desplaza hasta ella antes de exigir visibilidad.
+        compose.onNodeWithText(AppStrings.ExplorarDemostracion)
+            .performScrollTo()
+            .assertIsDisplayed()
     }
 }

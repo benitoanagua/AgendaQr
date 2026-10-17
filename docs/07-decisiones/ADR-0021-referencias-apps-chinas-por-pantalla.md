@@ -38,7 +38,7 @@ ADR-0020 declaró la identidad de AgendaQr como "inspirada en aplicaciones móvi
 | S06 / S08 Contexto | Filas con marca tonal a la izquierda, título y descripción, separador discreto | Ninguna estructural |
 | Actividades y su detalle | Hero con píldora de tipo y cifra neutra, filas etiqueta-valor, `AmListRow` con `endMeta` | Ninguna estructural en Actividades; en Inicio no aplica (la fila lleva la acción de favorito en `trailing`) |
 | S09–S12 Importación | Resumen en `AmCard` con filas etiqueta-valor (`AmMetaRow`) de reconocidos, duplicados y pendientes; `PendingItemCard` por elemento con insignia de estado con texto; `ImportReviewScreen` con vista previa y evidencia decodificada en tarjeta | Ninguna estructural |
-| S00 Acceso local | Título y descripción, campos `AmTextField` en columna, botón primario fijo al pie (`bottomAction`), bloque de demostración opcional | Campos sin agrupar en tarjetas de ajustes |
+| S00 Acceso local | Título y descripción, campos `AmTextField` agrupados en `AmListBody` con rótulo de sección, botón primario fijo al pie (`bottomAction`), bloque de demostración opcional | Ninguna estructural |
 | S02 Añadir | Texto de intención y controles de fuente agrupados por rótulo de sección (archivos y cámara) | Ninguna: los controles son botones, no filas, así que no usan `AmListBody` (deliberado) |
 | S07 Editor de actividad | Selector segmentado de tipo, `AmCard` de importe y moneda, grupos en `AmListBody` con rótulo de sección, botón primario fijo al pie | Ninguna estructural |
 | Navegación raíz | `AmNavBar` de 56 dp, color + etiqueta, sin píldora | Ninguna |
@@ -70,6 +70,7 @@ Ninguna de estas brechas se implementa sin decisión del propietario. Las que ca
 - **G3** — Resumen del lote (S09–S12) como filas etiqueta-valor `AmMetaRow` (reconocidos, duplicados, pendientes) con su conteo a la derecha. Commit: «Convierte el resumen del lote en filas etiqueta-valor».
 - **G2** — Estado de cada elemento pendiente (S12) como insignia con texto `AmStatusPill` (`Posible duplicado` / `Pendiente de revisión`), con glifo y tono de acompañamiento; el texto comunica. Commit: «Expresa el estado de cada pendiente como insignia con texto».
 - **G1** — Botón primario de S00 (Guardar PIN, Desbloquear) fijo al pie con `bottomAction` en lugar de dentro del scroll; la acción aplica `navigationBarsPadding` + `imePadding`, así que no queda bajo el teclado numérico. Commit: «Fija al pie la acción primaria del acceso local».
+- **G4** — Campos de S00 agrupados en `AmListBody` con rótulo de sección `Solo en este dispositivo`, en lugar de una columna suelta. Commit: «Agrupa en tarjeta los campos del acceso local».
 
 ## Consecuencias
 

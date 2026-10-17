@@ -2,6 +2,7 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,7 +15,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.agendaqr.core.ui.components.AmBottomAction
+import com.agendaqr.core.ui.components.AmListBody
 import com.agendaqr.core.ui.components.AmScreenScaffold
+import com.agendaqr.core.ui.components.AmSectionHeader
 import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTextField
@@ -60,24 +63,30 @@ internal fun LocalLockScreen(
                 color = AmColor.TextSecondary,
             )
         }
-        AmTextField(
-            label = AppStrings.Pin,
-            value = state.pin,
-            onValueChange = onPinChanged,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.NumberPassword,
-                imeAction = ImeAction.Done,
-            ),
-            keyboardActions = KeyboardActions(onDone = { onSubmit() }),
-            visualTransformation = PasswordVisualTransformation(),
-            isError = state.error.isPinFieldError(),
-            errorMessage = state.error.pinFieldMessage(),
-            helperMessage = if (state.remainingAttempts > 0) {
-                AppStrings.IntentosRestantes + state.remainingAttempts
-            } else {
-                null
-            },
-        )
+        // Campo agrupado en tarjeta de ajustes con rótulo de sección.
+        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+            AmSectionHeader(text = AppStrings.SoloEnEsteDispositivo)
+            AmListBody(contentPadding = PaddingValues(AmSpacing.Lg)) {
+                AmTextField(
+                    label = AppStrings.Pin,
+                    value = state.pin,
+                    onValueChange = onPinChanged,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.NumberPassword,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(onDone = { onSubmit() }),
+                    visualTransformation = PasswordVisualTransformation(),
+                    isError = state.error.isPinFieldError(),
+                    errorMessage = state.error.pinFieldMessage(),
+                    helperMessage = if (state.remainingAttempts > 0) {
+                        AppStrings.IntentosRestantes + state.remainingAttempts
+                    } else {
+                        null
+                    },
+                )
+            }
+        }
         if (state.biometricAvailability == BiometricAvailability.Available && onBiometric != null) {
             // U-20/D11: solicitud automática UNA vez por bloqueo (clave por
             // bloqueo, no por recomposición); Cancelled no relanza (el

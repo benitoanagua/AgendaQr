@@ -2,6 +2,7 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -13,7 +14,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.agendaqr.core.ui.components.AmBottomAction
+import com.agendaqr.core.ui.components.AmListBody
 import com.agendaqr.core.ui.components.AmScreenScaffold
+import com.agendaqr.core.ui.components.AmSectionHeader
 import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTextField
@@ -58,36 +61,42 @@ internal fun LocalOnboardingScreen(
                 color = AmColor.TextSecondary,
             )
         }
-        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Md)) {
-            AmTextField(
-                label = AppStrings.Pin,
-                value = state.pin,
-                onValueChange = onPinChanged,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.NumberPassword,
-                    imeAction = ImeAction.Next,
-                ),
-                visualTransformation = PasswordVisualTransformation(),
-                isError = state.error.isPinFieldError(),
-                errorMessage = state.error.pinFieldMessage(),
-            )
-            AmTextField(
-                label = AppStrings.ConfirmaElPin,
-                value = state.confirmation,
-                onValueChange = onConfirmationChanged,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.NumberPassword,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(onDone = { onSubmit() }),
-                visualTransformation = PasswordVisualTransformation(),
-                isError = state.error == LocalAccessError.Mismatch,
-                errorMessage = if (state.error == LocalAccessError.Mismatch) {
-                    AppStrings.PinErrorNoCoinciden
-                } else {
-                    null
-                },
-            )
+        // Campos agrupados en tarjeta de ajustes con rótulo de sección.
+        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+            AmSectionHeader(text = AppStrings.SoloEnEsteDispositivo)
+            AmListBody(contentPadding = PaddingValues(AmSpacing.Lg)) {
+                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Md)) {
+                    AmTextField(
+                        label = AppStrings.Pin,
+                        value = state.pin,
+                        onValueChange = onPinChanged,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.NumberPassword,
+                            imeAction = ImeAction.Next,
+                        ),
+                        visualTransformation = PasswordVisualTransformation(),
+                        isError = state.error.isPinFieldError(),
+                        errorMessage = state.error.pinFieldMessage(),
+                    )
+                    AmTextField(
+                        label = AppStrings.ConfirmaElPin,
+                        value = state.confirmation,
+                        onValueChange = onConfirmationChanged,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.NumberPassword,
+                            imeAction = ImeAction.Done,
+                        ),
+                        keyboardActions = KeyboardActions(onDone = { onSubmit() }),
+                        visualTransformation = PasswordVisualTransformation(),
+                        isError = state.error == LocalAccessError.Mismatch,
+                        errorMessage = if (state.error == LocalAccessError.Mismatch) {
+                            AppStrings.PinErrorNoCoinciden
+                        } else {
+                            null
+                        },
+                    )
+                }
+            }
         }
         if (onExploreDemo != null) {
             AmText(
