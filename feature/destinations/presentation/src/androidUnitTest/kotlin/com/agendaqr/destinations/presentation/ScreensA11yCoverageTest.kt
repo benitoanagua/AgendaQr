@@ -178,10 +178,12 @@ class ScreensA11yCoverageTest {
             }
         }
         compose.waitForIdle()
-        // §5/§11: los estados del contrato se leen como texto (resumen con
-        // icono + texto; singular honesto para N=1).
+        // §5/§11: los estados del contrato se leen como texto. El resumen usa
+        // filas etiqueta-valor (G3): el rótulo del estado y su conteo son
+        // nodos de texto separados (rótulo a la izquierda, conteo a la
+        // derecha).
         compose.onNodeWithText("Reconocidos").assertExists()
-        compose.onNodeWithText("1 Pendiente de revisión").assertExists()
+        compose.onNodeWithText("Pendientes de revisión").assertExists()
         compose.onNodeWithText("Revisar 1 pendiente").assertHeightIsAtLeast(48.dp)
     }
 

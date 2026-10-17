@@ -2,10 +2,8 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -21,6 +19,7 @@ import com.agendaqr.core.ui.components.AmDialog
 import com.agendaqr.core.ui.components.AmFeedbackEvent
 import com.agendaqr.core.ui.components.AmListBody
 import com.agendaqr.core.ui.components.AmListRow
+import com.agendaqr.core.ui.components.AmMetaRow
 import com.agendaqr.core.ui.components.AmSectionHeader
 import com.agendaqr.core.ui.components.AmTextActionVariant
 import com.agendaqr.core.ui.components.AmBottomAction
@@ -39,7 +38,6 @@ import com.agendaqr.core.ui.components.AmLoading
 import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.destinations.domain.ImportBatch
 import com.agendaqr.destinations.domain.ImportCandidate
@@ -192,70 +190,30 @@ private fun BatchResultContent(
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
 ) {
-    // Tarjeta resumen: "Reconocidos" como titular (número grande + etiqueta);
-    // duplicados y pendientes como filas secundarias con su icono.
+    // Tarjeta resumen como filas etiqueta-valor: cada estado del lote con
+    // su conteo real alineado a la derecha (singular honesto por conteo).
     AmCard {
         Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
             if (batch.uniqueRecognized.isNotEmpty()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-                ) {
-                    Box(modifier = Modifier.width(AmMetrics.IconSizeCompact)) {
-                        AmIcon(
-                            imageVector = AmIcons.CircleCheck,
-                            contentDescription = null,
-                            tint = AmColor.Success,
-                            size = AmMetrics.IconSizeCompact,
-                        )
-                    }
-                    Column {
-                        AmText(
-                            text = batch.uniqueRecognized.size.toString(),
-                            size = AmType.Amount,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
-                            color = AmColor.Success,
-                        )
-                        AmText(
-                            text = AppStrings.Reconocidos,
-                            size = AmType.BodySmall,
-                            color = AmColor.TextSecondary,
-                        )
-                    }
-                }
+                AmMetaRow(
+                    label = AppStrings.Reconocidos,
+                    value = batch.uniqueRecognized.size.toString(),
+                    icon = AmIcons.CircleCheck,
+                )
             }
             if (batch.duplicates.isNotEmpty()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-                ) {
-                    Box(modifier = Modifier.width(AmMetrics.IconSizeCompact)) {
-                        AmIcon(imageVector = AmIcons.Warning, contentDescription = null, tint = AmColor.Warning, size = AmMetrics.IconSizeCompact)
-                    }
-                    AmText(
-                        text = duplicatesCountLabel(batch.duplicates.size),
-                        size = AmType.BodySmall,
-                        color = AmColor.TextSecondary,
-                    )
-                }
+                AmMetaRow(
+                    label = AppStrings.PosiblesDuplicados,
+                    value = batch.duplicates.size.toString(),
+                    icon = AmIcons.Warning,
+                )
             }
             if (batch.unknown.isNotEmpty()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-                ) {
-                    Box(modifier = Modifier.width(AmMetrics.IconSizeCompact)) {
-                        AmIcon(imageVector = AmIcons.Info, contentDescription = null, tint = AmColor.Info, size = AmMetrics.IconSizeCompact)
-                    }
-                    AmText(
-                        text = pendingReviewCountLabel(batch.unknown.size),
-                        size = AmType.BodySmall,
-                        color = AmColor.TextSecondary,
-                    )
-                }
+                AmMetaRow(
+                    label = AppStrings.PendientesDeRevision,
+                    value = batch.unknown.size.toString(),
+                    icon = AmIcons.Info,
+                )
             }
         }
     }
