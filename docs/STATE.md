@@ -39,7 +39,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Tokens de color Warning e Info añadidos a AmColor | gate del design system |
 | Feedback transitorio (Snackbar) y persistente (AppStatusHost) | `RootNavigationChromeTest` + `AppStatusHostTest` |
 | Reformas de referencia visual por pantalla (ADR-0021, brechas G1–G9: botón primario fijo al pie, tarjetas de ajustes con encabezado de sección, insignia de estado con texto, evidencia decodificada en tarjeta, metadatos de fecha y marca de tipo en resultados) | gate del design system + Robolectric de presentación + capturas regeneradas (`verifyVisualHashes` PASS, 80 capturas) |
-| Dirección visual Super-App (ADR-0022, Anexo A): tokens, componentes, rejilla King Kong en Inicio, escala tipográfica, elevación y movimiento | gate del design system + Robolectric de presentación + `verifyVisualHashes` PASS (90 capturas, incl. escenarios 320 dp y estados de botones) |
+| Dirección visual Super-App (ADR-0022, Anexo A): tokens, componentes, rejilla King Kong en Inicio, escala tipográfica, elevación y movimiento | gate del design system + Robolectric de presentación + `verifyVisualHashes` PASS (90 capturas, incl. escenarios 320 dp y estados de botones); inspección cruzada en hojas de contacto de 45 pares claro/oscuro y revisión a tamaño completo de Inicio, Buscar, detalle QR, operaciones e importación |
 
 ## 2. Implementado pero NO VERIFICADO en este entorno
 
@@ -47,14 +47,12 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
 
 | Capacidad | Motivo | Cómo se verifica |
 |---|---|---|
-| Identidad visual Super-App / ADR-0022 (Anexo A) | Código y pins de color actualizados + gate del design system; capturas e hashes regenerados en este entorno tras la adopción del Anexo A (`verifyVisualHashes` PASS, 90 capturas). La revisión visual humana queda en §2. | `./gradlew :core:ui:allTests verifyAgendaQrArchitecture recordRoborazzi recordVisualHashes verifyVisualHashes`; revisar capturas claro/oscuro de Inicio (rejilla King Kong), detalle QR, búsqueda, importación y formularios |
-| CI de `main` | En el commit `c077fb9` (HEAD al inicio de esta consolidación): jobs bloqueantes `test`, `ios-compile` y `supabase-acceptance` en **success**; job no bloqueante `instrumented-tests` en **failure** (`continue-on-error: true`). El workflow completo reporta `success` porque los instrumentados no bloquean. | [Android validation — c077fb9](https://github.com/benitoanagua/AgendaQr/actions/runs/39048801935) |
 | Runtime iOS (arranque y render) | Requiere Xcode/simulador | [OPERATIONS.md](OPERATIONS.md) (checklist iOS) |
+| CI del PR #143 (commit `ed18b9e`) | Jobs bloqueantes `test`, `ios-compile` y `supabase-acceptance` en **success**. `instrumented-tests` terminó en **failure**: 12/15 pruebas fallaron esperando elementos con `Qa.waitFor`/UiAutomator; las 3 pruebas de `ShareIntentsTest` pasaron. En el log aparece `Active window root not found`; la causa raíz aún no está determinada. El job es no bloqueante (`continue-on-error: true`). La CI de push del merge commit `bebe66a` está en curso; no se declara el workflow completo verde. | [Android validation — PR #143](https://github.com/benitoanagua/AgendaQr/actions/runs/39071445726) · [Android validation — main `bebe66a`](https://github.com/benitoanagua/AgendaQr/actions/runs/39071868104) |
 | TalkBack/VoiceOver interactivo | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Insets/notch, cámara, foco nativo y motion en dispositivo | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Predictive back en Android 14+ (gesto real con progreso) | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Photo Picker en dispositivo (contratos del sistema) | Robolectric ejecuta el flujo unitario; el picker visual requiere dispositivo | [QUALITY.md](QUALITY.md) §5 |
-| Revisión visual de las capturas Roborazzi regeneradas | El hash PASS es determinista y el análisis de bandas/regiones es programático; el ojo humano valida la composición | abrir `feature/destinations/presentation/build/roborazzi/*.png` (90 capturas: 45 escenarios × claro/oscuro; regeneradas en este entorno tras ADR-0022 Anexo A — ver §3) |
 | Validación de los nuevos escenarios de importación (corrección de fallos parciales y reintentos) | El bug fix está implementado y cubierto por tests unitarios (`ImportFlowRegressionTest`), pero la validación visual de los nuevos escenarios en el dispositivo no se ha realizado | revisión manual de los flujos de importación con fallos parciales en dispositivo |
 | Supabase acceptance (JDBC) | Requiere base de datos | `:supabase:acceptance:test` con `DATABASE_URL` |
 | Sincronización real contra Supabase (subida/bajada) | Requiere backend y cuenta reales | prueba de aceptación contra un proyecto Supabase |
