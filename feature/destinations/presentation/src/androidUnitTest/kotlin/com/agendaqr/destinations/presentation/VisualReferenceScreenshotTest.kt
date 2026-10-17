@@ -303,7 +303,10 @@ class VisualReferenceScreenshotTest {
     @Test fun s09_review_light() = shot("s09-review-light", dark = false) {
         ImportReviewScreen(
             assets = listOf(
-                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                com.agendaqr.destinations.domain.QrAsset(
+                    encoded = TEST_QR_BASE64,
+                    content = "Mensualidad octubre 2026",
+                ),
             ),
             onSaveAll = {},
             onBack = {},
@@ -313,7 +316,10 @@ class VisualReferenceScreenshotTest {
     @Test fun s09_review_dark() = shot("s09-review-dark", dark = true) {
         ImportReviewScreen(
             assets = listOf(
-                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                com.agendaqr.destinations.domain.QrAsset(
+                    encoded = TEST_QR_BASE64,
+                    content = "Mensualidad octubre 2026",
+                ),
             ),
             onSaveAll = {},
             onBack = {},
@@ -905,9 +911,18 @@ class VisualReferenceScreenshotTest {
     @Test fun s09_review_multi_light() = shot("s09-review-multi-light", dark = false) {
         ImportReviewScreen(
             assets = listOf(
-                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
-                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
-                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                com.agendaqr.destinations.domain.QrAsset(
+                    encoded = TEST_QR_BASE64,
+                    content = "Mensualidad octubre 2026",
+                ),
+                com.agendaqr.destinations.domain.QrAsset(
+                    encoded = TEST_QR_BASE64,
+                    content = "Cuota colegio",
+                ),
+                com.agendaqr.destinations.domain.QrAsset(
+                    encoded = TEST_QR_BASE64,
+                    content = "Multa",
+                ),
             ),
             onSaveAll = {},
             onBack = {},
@@ -917,9 +932,18 @@ class VisualReferenceScreenshotTest {
     @Test fun s09_review_multi_dark() = shot("s09-review-multi-dark", dark = true) {
         ImportReviewScreen(
             assets = listOf(
-                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
-                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
-                com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
+                com.agendaqr.destinations.domain.QrAsset(
+                    encoded = TEST_QR_BASE64,
+                    content = "Mensualidad octubre 2026",
+                ),
+                com.agendaqr.destinations.domain.QrAsset(
+                    encoded = TEST_QR_BASE64,
+                    content = "Cuota colegio",
+                ),
+                com.agendaqr.destinations.domain.QrAsset(
+                    encoded = TEST_QR_BASE64,
+                    content = "Multa",
+                ),
             ),
             onSaveAll = {},
             onBack = {},
