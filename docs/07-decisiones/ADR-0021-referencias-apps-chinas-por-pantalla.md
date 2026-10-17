@@ -66,6 +66,7 @@ Ninguna de estas brechas se implementa sin decisión del propietario. Las que ca
 
 - **G8** — Encabezados de sección en los grupos del editor (S07): `Importe y moneda`, `Fecha y hora`, `Persona o entidad` y `Contexto`, con el rótulo pegado a su cuerpo. Commit: «Agrega encabezados de sección a los grupos del editor».
 - **G7** — Encabezados de sección para las fuentes de importación (S02): `Desde archivos` y `Desde la cámara`. Commit: «Agrega encabezados de sección a las fuentes de importación».
+- **G5** — Evidencia decodificada (S09) como tarjeta del sistema con etiqueta `Contenido` y valor, en lugar de texto suelto. Commit: «Presenta la evidencia decodificada como tarjeta en la revisión».
 
 ## Consecuencias
 

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AmSnackbarHost
+import com.agendaqr.core.ui.components.AmCard
 import com.agendaqr.core.ui.components.AmEmptyState
 import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmText
@@ -109,13 +110,7 @@ fun ImportReviewScreen(
                 ) {
                     AmQrPreview(asset.encoded, size = AmMetrics.QrReviewSize)
                     asset.content?.takeIf { it.isNotBlank() }?.let { content ->
-                        AmText(
-                            AppStrings.Contenido + ": " + content,
-                            size = AmType.Label,
-                            color = AmColor.TextSecondary,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                            maxLines = 2,
-                        )
+                        DecodedEvidenceCard(content)
                     }
                 }
             } else {
@@ -136,18 +131,36 @@ fun ImportReviewScreen(
                             // S09: evidencia de lo que Agenda QR entendió — el texto
                             // decodificado, sin exponer payload técnico.
                             asset.content?.takeIf { it.isNotBlank() }?.let { content ->
-                                AmText(
-                                    AppStrings.Contenido + ": " + content,
-                                    size = AmType.Label,
-                                    color = AmColor.TextSecondary,
-                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                                    maxLines = 2,
-                                )
+                                DecodedEvidenceCard(content)
                             }
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+/**
+ * Evidencia decodificada de un QR (S09): el texto que Agenda QR entendió,
+ * presentado como bloque etiqueta-valor dentro de una tarjeta del sistema,
+ * sin exponer payload técnico innecesario.
+ */
+@Composable
+private fun DecodedEvidenceCard(content: String) {
+    AmCard {
+        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+            AmText(
+                AppStrings.Contenido,
+                size = AmType.Caption,
+                color = AmColor.TextSecondary,
+            )
+            AmText(
+                content,
+                size = AmType.Label,
+                color = AmColor.TextPrimary,
+                maxLines = 2,
+            )
         }
     }
 }
