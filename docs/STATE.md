@@ -47,7 +47,7 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
 | Capacidad | Motivo | Cómo se verifica |
 |---|---|---|
 | Identidad visual Super-App / ADR-0022 (Anexo A) | Código y pins de color actualizados + gate del design system; capturas e hashes regenerados en este entorno tras la adopción del Anexo A (`verifyVisualHashes` PASS, 90 capturas). La revisión visual humana queda en §2. | `./gradlew :core:ui:allTests verifyAgendaQrArchitecture recordRoborazzi recordVisualHashes verifyVisualHashes`; revisar capturas claro/oscuro de Inicio (rejilla King Kong), detalle QR, búsqueda, importación y formularios |
-| CI de `main` | La ejecución del commit `d7d51bd` completó con fallo: arquitectura, dominio, datos y compilación iOS pasaron; falló `AgendaQrLocalStartupTest.onboarding_creates_local_profile_without_any_account` (aserción en línea 74) y 12 de 15 pruebas instrumentadas agotaron sus tiempos de espera. No se atribuyen estos fallos al cambio de paleta sin evidencia causal. | [Android validation — HEAD de main](https://github.com/benitoanagua/AgendaQr/actions/runs/38987610040) |
+| CI de `main` | En el commit `c077fb9` (HEAD al inicio de esta consolidación): jobs bloqueantes `test`, `ios-compile` y `supabase-acceptance` en **success**; job no bloqueante `instrumented-tests` en **failure** (`continue-on-error: true`). El workflow completo reporta `success` porque los instrumentados no bloquean. | [Android validation — c077fb9](https://github.com/benitoanagua/AgendaQr/actions/runs/39048801935) |
 | Runtime iOS (arranque y render) | Requiere Xcode/simulador | [OPERATIONS.md](OPERATIONS.md) (checklist iOS) |
 | TalkBack/VoiceOver interactivo | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Insets/notch, cámara, foco nativo y motion en dispositivo | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
@@ -67,8 +67,8 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
 - `FLAG_SECURE` no implementado (ADR-0009 propuesto): las pantallas sensibles admiten capturas; implementarlo bloquea screenshots del QR.
 - Paginación local de 50 en 50 (U-22): se conserva sin cambios; reportada como opcional.
 
-- Separadores oscuros `#303844` sobre superficie `#171D26` (paleta AgendaQr V1.10): la legibilidad visual debe confirmarse al revisar las capturas regeneradas; no se cambia en silencio.
-- Textos a 17 sp (cuerpo de la escala actual): a 320 dp y 200 % de fuente los desbordamientos se resuelven con layout, nunca bajando la escala; la suite de layout lo verifica.
+- Divisor decorativo Super-App (`#EEEEEE` claro / `#2A2A2A` oscuro) y borde de superficie (`#E2E4E9` / `#333333`): válidos como separadores; los límites funcionales siguen ≥ 3:1 (contrato §4.4, ADR-0022).
+- Cuerpo a 14 sp (escala Anexo A, ADR-0022; mínimo absoluto 11 sp): a 320 dp y 200 % de fuente los desbordamientos se resuelven con layout, nunca bajando la escala; la suite de layout lo verifica.
 
 - Glifos «Editar», «Compartir» y «Mostrar QR» sin icono asignado (contrato
   normativo §7): esas acciones de barra superior van como acción de texto (con su

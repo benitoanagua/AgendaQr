@@ -30,7 +30,7 @@ La dirección de alta densidad choca con invariantes de accesibilidad y de plata
 | Estado de foco "no aplica" | Teclado, D-pad, Switch Access | Sin anillo permanente en táctil; el indicador `AmColor.Focus` se conserva para foco por teclado/D-pad/Switch Access. El estado táctil es escala + háptica. |
 | Easing spring `cubic-bezier(0.34,1.56,0.64,1)`, 200–300 ms, escala 0.95 | Gate: sin duraciones literales; movimiento reducido | Se adopta como tokens de `AmMotion`. Movimiento reducido = duración 0 y escala 1. |
 | Brillo (shimmer) en banners en reposo | Contenido en movimiento > 5 s debe poder detenerse | Brillo de entrada de ≤ 5 s y luego estático; en esqueletos de carga puede repetirse mientras dure la carga. Movimiento reducido = estático. |
-| Háptica obligatoria al tocar; doble vibración en éxito | Dependencia de plataforma | Se implementa con el servicio de háptica existente (`AmFeedbackEvent`) respetando la configuración del sistema. |
+| Háptica obligatoria al tocar; doble vibración en éxito | Dependencia de plataforma | La háptica por evento usa `AmFeedbackEvent`; en la confirmación S12, `AmSuccessCheck` da el doble pulso y `AmFeedbackEvent` desactiva el pulso simple para evitar una tercera vibración. Ambos respetan el feedback de plataforma. |
 | Confeti en éxito, cohete en pull-to-refresh | Decoración | Confeti breve y solo en el resultado de importación completada (S12); respeta movimiento reducido. Pull-to-refresh personalizado solo si la pantalla ya lo tiene; si no, no se añade. |
 | Carrito volador, cuentas regresivas, monedas, niveles, "HOT/限时/-50 %", servicio al cliente flotante, insignias de conteo en la barra inferior | Requieren funciones o datos que el producto no tiene | **No aplicable**; no se inventan datos. Las insignias tipo cinta sí existen como componente, con textos reales de estado ("Nuevo", "Duplicado", "Pendiente"). |
 | Fuentes PingFang SC / Noto Sans SC | No se empaquetan fuentes | La fuente de sistema ya resuelve CJK (Noto en Android, PingFang en iOS); no se empaqueta nada. |
@@ -73,12 +73,10 @@ ADR-0021 en documentación descartable. La guía de implementación y los
 comentarios de la capa `core/ui` se alinearon con ADR-0022 y el contrato
 normativo.
 
-El inventario no encontró marcadores técnicos de deuda, implementaciones
-`NotImplementedError`, pruebas ignoradas ni componentes públicos sin uso y sin
-protección contractual. `AmSuccessCheck` y `AmSuccessBurst` no tienen caller
-actual, pero el contrato los reserva para el feedback de éxito S12; no se
-eliminan sin una decisión que cambie ese contrato. No se archivaron ADRs ni se
-eliminó documentación histórica.
+La importación completada en S12 compone `AmSuccessCheck` y `AmSuccessBurst`.
+El check es decorativo: `AmFeedbackEvent` ya anuncia el resultado, por lo que
+no se añade un segundo `liveRegion`. Ambos respetan movimiento reducido. No se
+archivaron ADRs ni se eliminó documentación histórica.
 
 La prueba de arranque reveló etiquetas duplicadas para «Traer un QR» en Inicio:
 la rejilla de acciones y el estado vacío ofrecían la misma acción. Se quitó la

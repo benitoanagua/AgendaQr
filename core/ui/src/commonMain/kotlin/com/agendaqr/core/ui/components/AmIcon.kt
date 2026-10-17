@@ -19,7 +19,6 @@ import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.CircleCheck
 import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Copy
-import com.composables.icons.lucide.Database
 import com.composables.icons.lucide.Delete
 import com.composables.icons.lucide.Ellipsis
 import com.composables.icons.lucide.Folder
@@ -30,8 +29,6 @@ import com.composables.icons.lucide.Inbox
 import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.Lock
 import com.composables.icons.lucide.Maximize
-import com.composables.icons.lucide.Eye
-import com.composables.icons.lucide.EyeOff
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.NotebookPen
 import com.composables.icons.lucide.Paperclip
@@ -157,8 +154,6 @@ object AmIcons {
     val Clock: ImageVector get() = Lucide.Clock
     /** Navegación hacia adelante (fila con detalle propio). */
     val ChevronRight: ImageVector get() = Lucide.ChevronRight
-    /** Almacenamiento local (reaseguro de persistencia). */
-    val Database: ImageVector get() = Lucide.Database
     /** Seguridad/verificación local. */
     val ShieldCheck: ImageVector get() = Lucide.ShieldCheck
     /** Moneda. */
