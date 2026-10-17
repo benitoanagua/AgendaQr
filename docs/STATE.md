@@ -37,6 +37,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Iconografía (Lucide ISC vía AmIcon) | compilación 2 targets + gate |
 | Tokens de color Warning e Info añadidos a AmColor | gate del design system |
 | Feedback transitorio (Snackbar) y persistente (AppStatusHost) | `RootNavigationChromeTest` + `AppStatusHostTest` |
+| Reformas de referencia visual por pantalla (ADR-0021, brechas G1–G9: botón primario fijo al pie, tarjetas de ajustes con encabezado de sección, insignia de estado con texto, evidencia decodificada en tarjeta, metadatos de fecha y marca de tipo en resultados) | gate del design system + Robolectric de presentación + capturas regeneradas (`verifyVisualHashes` PASS, 80 capturas) |
 
 ## 2. Implementado pero NO VERIFICADO en este entorno
 
@@ -44,14 +45,14 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
 
 | Capacidad | Motivo | Cómo se verifica |
 |---|---|---|
-| Identidad visual AgendaQr V1.10 / ADR-0020 (nueva paleta de tokens) | Código y pins de color actualizados; capturas e hashes aún representan la paleta anterior. La apariencia no se considera validada hasta regenerar y revisar las capturas. | `./gradlew :core:ui:allTests verifyAgendaQrArchitecture recordRoborazzi recordVisualHashes verifyVisualHashes`; revisar capturas claro/oscuro de Inicio, detalle QR, búsqueda, importación y formularios |
+| Identidad visual AgendaQr V1.10 / ADR-0020 (paleta de tokens) | Código y pins de color actualizados + gate del design system; capturas e hashes regenerados en este entorno tras las brechas de ADR-0021 (`verifyVisualHashes` PASS, 80 capturas). La revisión visual humana queda en §2. | `./gradlew :core:ui:allTests verifyAgendaQrArchitecture recordRoborazzi recordVisualHashes verifyVisualHashes`; revisar capturas claro/oscuro de Inicio, detalle QR, búsqueda, importación y formularios |
 | CI de `main` | La ejecución del commit `d7d51bd` completó con fallo: arquitectura, dominio, datos y compilación iOS pasaron; falló `AgendaQrLocalStartupTest.onboarding_creates_local_profile_without_any_account` (aserción en línea 74) y 12 de 15 pruebas instrumentadas agotaron sus tiempos de espera. No se atribuyen estos fallos al cambio de paleta sin evidencia causal. | [Android validation — HEAD de main](https://github.com/benitoanagua/AgendaQr/actions/runs/38987610040) |
 | Runtime iOS (arranque y render) | Requiere Xcode/simulador | [OPERATIONS.md](OPERATIONS.md) (checklist iOS) |
 | TalkBack/VoiceOver interactivo | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Insets/notch, cámara, foco nativo y motion en dispositivo | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Predictive back en Android 14+ (gesto real con progreso) | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
 | Photo Picker en dispositivo (contratos del sistema) | Robolectric ejecuta el flujo unitario; el picker visual requiere dispositivo | [QUALITY.md](QUALITY.md) §5 |
-| Revisión visual de las capturas Roborazzi regeneradas | El hash PASS es determinista y el análisis de bandas/regiones es programático; el ojo humano valida la composición | abrir `feature/destinations/presentation/build/roborazzi/*.png` (80 capturas: 40 escenarios × claro/oscuro; regeneradas en este entorno tras ADR-0017/ADR-0018 — ver §3) |
+| Revisión visual de las capturas Roborazzi regeneradas | El hash PASS es determinista y el análisis de bandas/regiones es programático; el ojo humano valida la composición | abrir `feature/destinations/presentation/build/roborazzi/*.png` (80 capturas: 40 escenarios × claro/oscuro; regeneradas en este entorno tras ADR-0017/ADR-0018 y las brechas de ADR-0021 — ver §3) |
 | Validación de los nuevos escenarios de importación (corrección de fallos parciales y reintentos) | El bug fix está implementado y cubierto por tests unitarios (`ImportFlowRegressionTest`), pero la validación visual de los nuevos escenarios en el dispositivo no se ha realizado | revisión manual de los flujos de importación con fallos parciales en dispositivo |
 | Supabase acceptance (JDBC) | Requiere base de datos | `:supabase:acceptance:test` con `DATABASE_URL` |
 | Sincronización real contra Supabase (subida/bajada) | Requiere backend y cuenta reales | prueba de aceptación contra un proyecto Supabase |
@@ -85,6 +86,12 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
   **Bloqueo concreto:** el proyecto Xcode no está versionado en el repositorio
   (política documentada en `iosApp/README.md`) y crear el target de la extensión
   exige Xcode + firma; no puede hacerse ni verificarse desde este entorno.
+- **Separación de las dos acciones de texto en la tarjeta de pendiente (S12):**
+  «Guardar de todos modos» y «Descartar» se componen en un `Row`
+  `Arrangement.End` con `contentPadding` horizontal `None`, así que sus
+  etiquetas quedan pegadas y se leen como un solo rótulo. Detectado al revisar
+  las capturas regeneradas; **fuera del alcance aprobado** (no es una de las
+  brechas G1–G9), se decide con el propietario antes de tocarlo.
 
 ## 5. No implementado (alcance declarado, no defecto)
 

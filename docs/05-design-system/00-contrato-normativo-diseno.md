@@ -230,4 +230,4 @@ Las referencias inspiran composición y jerarquía; no gobiernan tokens ni se co
 | Formularios y acceso local | HyperOS y WeChat (ajustes) |
 | Navegación raíz | WeChat (barra inferior de 4 destinos) |
 
-Cualquier cambio visual derivado de esta tabla actualiza las capturas y sus hashes generados en local (ADR-0007); la accesibilidad (§10) prevalece sobre el parecido con la referencia.
+Cualquier cambio visual derivado de esta tabla actualiza las capturas y sus hashes generados en local (ADR-0007); la accesibilidad (§10) prevalece sobre el parecido con la referencia. La auditoría de brecha por pantalla y su estado (aprobada, implementada o pendiente) viven en ADR-0021; este contrato solo fija la referencia de patrón.

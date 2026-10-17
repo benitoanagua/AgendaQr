@@ -64,11 +64,13 @@ Ninguna de estas brechas se implementa sin decisión del propietario. Las que ca
 
 ### Brechas implementadas
 
+El propietario aprobó las nueve brechas (G1–G9, incluida G6 con su excepción de modelo de dominio); todas están implementadas, con las capturas y los hashes regenerados y revisados en local (ADR-0007).
+
 - **G8** — Encabezados de sección en los grupos del editor (S07): `Importe y moneda`, `Fecha y hora`, `Persona o entidad` y `Contexto`, con el rótulo pegado a su cuerpo. Commit: «Agrega encabezados de sección a los grupos del editor».
 - **G7** — Encabezados de sección para las fuentes de importación (S02): `Desde archivos` y `Desde la cámara`. Commit: «Agrega encabezados de sección a las fuentes de importación».
 - **G5** — Evidencia decodificada (S09) como tarjeta del sistema con etiqueta `Contenido` y valor, en lugar de texto suelto. Commit: «Presenta la evidencia decodificada como tarjeta en la revisión».
 - **G3** — Resumen del lote (S09–S12) como filas etiqueta-valor `AmMetaRow` (reconocidos, duplicados, pendientes) con su conteo a la derecha. Commit: «Convierte el resumen del lote en filas etiqueta-valor».
-- **G2** — Estado de cada elemento pendiente (S12) como insignia con texto `AmStatusPill` (`Posible duplicado` / `Pendiente de revisión`), con glifo y tono de acompañamiento; el texto comunica. Commit: «Expresa el estado de cada pendiente como insignia con texto».
+- **G2** — Estado de cada elemento pendiente (S12) como insignia con texto `AmStatusPill` (`Posible duplicado` / `Pendiente de revisión`) en su propia línea, para no recortar el título a 320 dp ni con la fuente al 200 %; el glifo y el tono acompañan y el texto comunica. Commit: «Expresa el estado de cada pendiente como insignia con texto».
 - **G1** — Botón primario de S00 (Guardar PIN, Desbloquear) fijo al pie con `bottomAction` en lugar de dentro del scroll; la acción aplica `navigationBarsPadding` + `imePadding`, así que no queda bajo el teclado numérico. Commit: «Fija al pie la acción primaria del acceso local».
 - **G4** — Campos de S00 agrupados en `AmListBody` con rótulo de sección `Solo en este dispositivo`, en lugar de una columna suelta. Commit: «Agrupa en tarjeta los campos del acceso local».
 - **G6** — Fecha final en los resultados de búsqueda (S04–S05): `AgendaSearchResult` gana el campo `dateMillis` (actividad = `occurredAt`; comprobante = `createdAt`) y la fila lo muestra con `endMeta`; el formato y el "ayer" quedan en la capa de presentación. Es la única brecha aprobada que toca el modelo de dominio: autorización explícita del propietario, excepción puntual a la regla de no tocar modelos de dominio de ADR-0020 §7. Commit: «Muestra la fecha en los resultados de búsqueda».
