@@ -34,13 +34,13 @@ class AmTypographyTest {
 
     @Test
     fun m3_roles_carry_the_canonical_sizes() {
-        // Título de pantalla (titleLarge, 18), titular destacado
-        // (headlineSmall/Headline, 24), cuerpo (bodyLarge, 17) y etiqueta
-        // (labelLarge, 15): escala de la referencia, en sp.
-        assertEquals(18.sp, AmMaterialTypography.titleLarge.fontSize)
+        // Título de pantalla/H1 (titleLarge, 20), titular destacado
+        // (headlineMedium/Headline, 24), cuerpo (bodyLarge, 14) y etiqueta
+        // (labelLarge, 14): escala del Anexo A (ADR-0022), en sp.
+        assertEquals(20.sp, AmMaterialTypography.titleLarge.fontSize)
         assertEquals(24.sp, AmMaterialTypography.headlineMedium.fontSize)
-        assertEquals(17.sp, AmMaterialTypography.bodyLarge.fontSize)
-        assertEquals(15.sp, AmMaterialTypography.labelLarge.fontSize)
+        assertEquals(14.sp, AmMaterialTypography.bodyLarge.fontSize)
+        assertEquals(14.sp, AmMaterialTypography.labelLarge.fontSize)
     }
 
     @Test
@@ -109,29 +109,30 @@ class AmTypographyTest {
 
     @Test
     fun section_header_stays_in_the_label_scale() {
-        // Encabezados de sección (List header de la referencia: 15 sp
-        // normal), título y etiqueta de botón en el cuerpo 17, metadato
-        // 13, importe 26 y tags 11.
-        assertEquals(15f, AmType.SectionHeader.value)
-        assertEquals(15f, AmTextStyles.SectionHeader.fontSize.value)
-        assertEquals(17f, AmTextStyles.RowTitle.fontSize.value)
-        assertEquals(17f, AmTextStyles.ButtonLabel.fontSize.value)
-        assertEquals(13f, AmTextStyles.BodySmall.fontSize.value)
-        assertEquals(26f, AmTextStyles.Amount.fontSize.value)
+        // Encabezado de sección y título de fila (H2 16/600), etiqueta/botón
+        // 14, metadato/caption 12, importe hero 30 y tags 11 (Anexo A).
+        assertEquals(16f, AmType.SectionHeader.value)
+        assertEquals(16f, AmTextStyles.SectionHeader.fontSize.value)
+        assertEquals(16f, AmTextStyles.RowTitle.fontSize.value)
+        assertEquals(14f, AmTextStyles.ButtonLabel.fontSize.value)
+        assertEquals(12f, AmTextStyles.BodySmall.fontSize.value)
+        assertEquals(30f, AmTextStyles.Amount.fontSize.value)
+        assertEquals(14f, AmTextStyles.AmountSymbol.fontSize.value)
         assertEquals(11f, AmTextStyles.Tag.fontSize.value)
     }
 
     @Test
     fun weights_follow_the_reference_with_documented_exceptions() {
-        // Pesos normal en toda la escala salvo las dos desviaciones
-        // documentadas: etiqueta de botón Medium y título de diálogo bold
-        // (este último lo fija AmDialog con FontWeight.Bold). Los roles
-        // "normales" no fijan peso (null = regular del sistema).
-        assertNull(AmTextStyles.RowTitle.fontWeight)
+        // Los títulos H2 (fila/sección) y la etiqueta de acción usan
+        // semi-bold (600) del Anexo A; el importe es extra-bold (800) con
+        // símbolo bold (700). Tag y texto de apoyo se quedan en el peso
+        // regular del sistema (null = regular).
         assertNull(AmTextStyles.Tag.fontWeight)
-        assertNull(AmTextStyles.SectionHeader.fontWeight)
         assertNull(AmTextStyles.Support.fontWeight)
-        assertEquals(FontWeight.Medium, AmTextStyles.ButtonLabel.fontWeight)
-        assertEquals(FontWeight.SemiBold, AmTextStyles.Amount.fontWeight)
+        assertEquals(FontWeight.SemiBold, AmTextStyles.RowTitle.fontWeight)
+        assertEquals(FontWeight.SemiBold, AmTextStyles.SectionHeader.fontWeight)
+        assertEquals(FontWeight.SemiBold, AmTextStyles.ButtonLabel.fontWeight)
+        assertEquals(FontWeight.ExtraBold, AmTextStyles.Amount.fontWeight)
+        assertEquals(FontWeight.Bold, AmTextStyles.AmountSymbol.fontWeight)
     }
 }

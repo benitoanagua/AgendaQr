@@ -32,6 +32,25 @@ class AmSurfaceMotionTest {
     }
 
     @Test
+    fun durations_follow_the_annex_range() {
+        // Anexo A: 200–300 ms, con una duración reducida de 0 (cambio en
+        // el sitio). La escala es creciente corto → medio → largo.
+        assertEquals(200, AmMotion.DurationShortMs)
+        assertEquals(260, AmMotion.DurationMediumMs)
+        assertEquals(300, AmMotion.DurationLongMs)
+        assertTrue(AmMotion.DurationShortMs < AmMotion.DurationMediumMs)
+        assertTrue(AmMotion.DurationMediumMs < AmMotion.DurationLongMs)
+    }
+
+    @Test
+    fun press_scale_is_the_annex_value_and_shimmer_is_bounded() {
+        // Escala de pulsación 0.95 del Anexo A; el brillo de entrada dura
+        // ≤ 5 s (luego estático): el contenido en movimiento es detenible.
+        assertEquals(AmMotion.PressScale, 0.95f)
+        assertEquals(5000, AmMotion.ShimmerDurationMs)
+    }
+
+    @Test
     fun the_slide_is_a_small_fraction_of_the_width() {
         // Desplazamiento horizontal PEQUEÑO (1/8 del ancho), no un slide
         // completo de la superficie.

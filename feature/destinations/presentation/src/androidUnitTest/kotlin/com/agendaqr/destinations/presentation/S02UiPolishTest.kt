@@ -122,11 +122,11 @@ class S02UiPolishTest {
             }
         }
         compose.waitForIdle()
-        // Encabezado de sección (List header de la referencia): 15 sp en
+        // Encabezado de sección (H2 del Anexo A): 16 sp en
         // texto secundario — semántica heading.
         compose.onNodeWithText(AppStrings.TodosLosDestinos).assert(headingMatcher())
         val style = layoutOf(AppStrings.TodosLosDestinos).layoutInput.style
-        assertEquals(15.sp, style.fontSize)
+        assertEquals(16.sp, style.fontSize)
         assertEquals(LightAmColorScheme.textSecondary, style.color)
     }
 
@@ -139,11 +139,11 @@ class S02UiPolishTest {
         }
         compose.waitForIdle()
         // Con carrusel de favoritos, la lista inferior encabeza "Otros
-        // destinos" con el MISMO estilo de List header (15 sp, secundario).
+        // destinos" con el MISMO estilo de H2 (16 sp, secundario).
         compose.onNodeWithText(AppStrings.OtrosDestinos).assert(headingMatcher())
         compose.onNodeWithText(AppStrings.TodosLosDestinos).assertDoesNotExist()
         val style = layoutOf(AppStrings.OtrosDestinos).layoutInput.style
-        assertEquals(15.sp, style.fontSize)
+        assertEquals(16.sp, style.fontSize)
         assertEquals(LightAmColorScheme.textSecondary, style.color)
     }
 
@@ -172,9 +172,9 @@ class S02UiPolishTest {
         }
         compose.waitForIdle()
         val style = layoutOf(AppStrings.TodosLosDestinos).layoutInput.style
-        // List header de la referencia: 15 sp en texto secundario
+        // H2 del Anexo A: 16 sp en texto secundario
         // (legible en ambos temas).
-        assertEquals(15.sp, style.fontSize)
+        assertEquals(16.sp, style.fontSize)
         assertEquals(DarkAmColorScheme.textSecondary, style.color)
     }
 
@@ -187,7 +187,7 @@ class S02UiPolishTest {
         }
         compose.waitForIdle()
         val style = layoutOf(AppStrings.OtrosDestinos).layoutInput.style
-        assertEquals(15.sp, style.fontSize)
+        assertEquals(16.sp, style.fontSize)
         assertEquals(DarkAmColorScheme.textSecondary, style.color)
     }
 

@@ -150,15 +150,14 @@ class AmUiPolishContractTest {
 
     @Test
     fun body_text_keeps_canonical_lineheight() {
-        // Caracterización: el cuerpo por defecto es 17/25.5 (cuerpo de la
-        // referencia con proporción 1.5); AmText aplica la proporción
-        // 1.5 → 25.5 sp.
+        // Caracterización: el cuerpo por defecto es 14/21 (Anexo A Body 14
+        // con proporción 1.5); AmText aplica la proporción 1.5 → 21 sp.
         setScaledContent(1.0f) {
             AmText("Cuerpo de dos lineas para probar interlineado expandido")
         }
         val style = layoutOf("Cuerpo de dos lineas para probar interlineado expandido").layoutInput.style
-        assertEquals(17.sp, style.fontSize)
-        assertEquals(25.5.sp, style.lineHeight)
+        assertEquals(14.sp, style.fontSize)
+        assertEquals(21.sp, style.lineHeight)
     }
 
     @Test

@@ -44,7 +44,7 @@ La paleta expresa una herramienta digital moderna: azul tecnológico para la acc
 
 ### 4.1 Roles semánticos
 
-`AmColorScheme` expone exactamente: `background`, `surface`, `surfaceSecondary`, `border`, `divider`, `textPrimary`, `textSecondary`, `textTertiary`, `accent`, `onAccent`, `accentContainer`, `onAccentContainer`, `accentText`, `wathet`, `danger`, `onDanger`, `dangerContainer`, `success`, `successContainer`, `warning`, `warningContainer`, `info`, `infoContainer`, `focus`, `disabled`, `onDisabled`, `inverseSurface`, `inverseOnSurface`, `inverseAccent`, `qrCanvas`, los contenedores M3 explícitos (`surfaceContainerLow/Container/High/Highest`) y los roles de la dirección Super-App: `gradientStart`/`gradientMid`/`gradientEnd`/`onGradient` (gradiente de acción), `promo`/`promoContainer`/`onPromo`, `fintech`/`onFintech`/`fintechText`, `successText`/`onSuccessContainer`, `dividerSubtle` y `surfaceBorder`.
+`AmColorScheme` expone exactamente: `background`, `surface`, `surfaceSecondary`, `border`, `divider`, `textPrimary`, `textSecondary`, `textTertiary`, `accent`, `onAccent`, `accentContainer`, `onAccentContainer`, `accentText`, `wathet`, `danger`, `onDanger`, `dangerContainer`, `success`, `successContainer`, `warning`, `warningContainer`, `info`, `infoContainer`, `focus`, `disabled`, `onDisabled`, `inverseSurface`, `inverseOnSurface`, `inverseAccent`, `qrCanvas`, los contenedores M3 explícitos (`surfaceContainerLow/Container/High/Highest`) y los roles de la dirección Super-App: `gradientStart`/`gradientMid`/`gradientEnd`/`onGradient` (gradiente de acción), `promo`/`promoContainer`/`onPromo`, `fintech`/`onFintech`/`fintechText`, `dividerSubtle` y `surfaceBorder`.
 
 ### 4.2 Paleta base
 
@@ -69,10 +69,10 @@ El texto blanco (`onGradient`) sobre cada extremo del gradiente cumple ≥ 4.5:1
 
 | Estado | Claro (contenido / contenedor) | Oscuro (contenido / contenedor) |
 |---|---|---|
-| Éxito | `#008156` / `#E6F7EF` | `#3CCB8E` / `#0E2A1E` |
+| Éxito | `#008156` / `#ECFBF4` | `#3CCB8E` / `#0E2A1E` |
 | Advertencia | `#8A4B00` / `#FFF2D9` | `#FFC15A` / `#3A2B0E` |
 | Peligro | `#C62828` / `#FDECEC` | `#FF6B78` / `#3A151D` |
-| Información | `#0067F7` / `#E6F0FF` | `#4D9BFF` / `#10233F` |
+| Información | `#0067F7` / `#F2F8FF` | `#4D9BFF` / `#10233F` |
 
 Los estados siempre combinan tono con texto, icono o semántica accesible; nunca dependen solo del color. La identidad de contexto conserva sus 12 acentos deterministas, independientes del acento de marca y sin cambiar el dominio. El color de acción (rojo) es distinto del de peligro: la acción destructiva nunca usa relleno de gradiente y siempre lleva glifo + etiqueta de consecuencia.
 
@@ -219,7 +219,7 @@ Las excepciones del sistema visual y de la plataforma se documentan aquí. No ex
 | Escala 14/12 con mínimo absoluto 11 sp | Anexo A (cuerpo 14, caption 12); el 11 protege la legibilidad de badges y etiquetas de barra |
 | Destructiva sin gradiente (contorno/tono + glifo + consecuencia + confirmación) | La acción primaria y la destructiva no pueden compartir el rojo de marca como relleno dominante |
 | Ningún dato simulado (carrito, cuentas regresivas, monedas, niveles, "HOT/限时/-50 %", servicio flotante, insignias de conteo) | El producto no tiene esas funciones ni datos; no se inventan |
-| Barra superior 56 dp con título 18 a la izquierda | Convención Android/iOS y objetivos táctiles de 48 dp |
+| Barra superior 56 dp con título 20 (H1) a la izquierda | Convención Android/iOS y objetivos táctiles de 48 dp |
 | Barra inferior 56 dp, etiqueta 11 y selección sin píldora | Convención de plataforma y legibilidad |
 | Buscador de 48 dp mínimo | Objetivo táctil mínimo (gate `verifyControlMinSize`) |
 | Snackbar inferior en vez de aviso centrado | Convención Android; feedback consistente con el sistema |
@@ -227,7 +227,6 @@ Las excepciones del sistema visual y de la plataforma se documentan aquí. No ex
 | Superficies oscuras con matiz azul-gris | Diferenciación de superficies sin sombras generalizadas |
 | `AmTextField` con etiqueta persistente y guía hairline | Etiqueta persistente y estado de foco/error accesibles |
 | Placeholder en texto secundario | Contraste AA |
-| Etiqueta de botón en Medium | Jerarquía legible en acciones compactas |
 | Segmentado sin sombra en el ítem activo (el diseño de origen usa sombra suave) | El gate prohíbe `shadow(`; el límite lo da el bloque tonal |
 | Hoja inferior 12 sin uso; selectores como `AmDialog` con lista | `ModalBottomSheet` no despacha acciones bajo Robolectric (bloqueo documentado) |
 | Recalibraciones de paleta y contenido de acento | La accesibilidad y la legibilidad prevalecen sobre el parecido con cualquier referencia |

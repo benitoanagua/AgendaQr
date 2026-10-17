@@ -6,10 +6,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,7 +29,7 @@ import kotlin.math.pow
  * 1. Tokens privados: [AmPalette] — primitivas por tema, sin exposición.
  * 2. Tokens semánticos: [AmColorScheme], [AmColor], [AmSpacing],
  *    [AmRadius]/[AmShapes], [AmMetrics], [AmType]/[AmTextStyles],
- *    [AmMotion], [AmAccent] — la única capa que el producto consume.
+ *    [AmMotion], [AmElevation], [AmAccent] — la única capa que el producto consume.
  * 3. Tema: [AmTheme] — puente a Material 3 (implementación, no autoridad).
  *
  * La paleta de marca se define para AgendaQr y se verifica contra WCAG AA en ambos temas; ningún estado depende solo del color.
@@ -31,70 +37,100 @@ import kotlin.math.pow
 
 /** Primitivas por tema: privadas de la capa de tokens. */
 internal object AmPalette {
-    // Tema claro: paleta de marca AgendaQr, con contraste AA verificado.
-    val lightBackground = Color(0xFFF7F8FA)
+    // Tema claro: paleta Super-App de alta densidad (ADR-0022), con
+    // ajustes mínimos de contraste para cumplir WCAG AA.
+    val lightBackground = Color(0xFFF5F6F8)
     val lightSurface = Color(0xFFFFFFFF)
-    val lightSurfaceSecondary = Color(0xFFF1F4F8)
+    val lightSurfaceSecondary = Color(0xFFF1F2F5)
     val lightSurfaceContainerLow = Color(0xFFFFFFFF)
-    val lightSurfaceContainer = Color(0xFFF7F9FC)
-    val lightSurfaceContainerHigh = Color(0xFFEDF1F6)
-    val lightSurfaceContainerHighest = Color(0xFFE3E9F1)
-    val lightBorder = Color(0xFFE2E7EF)
-    val lightDivider = Color(0xFFE2E7EF)
-    val lightText = Color(0xFF1F2937)
-    val lightTextSecondary = Color(0xFF596579)
-    val lightTextTertiary = Color(0xFF5D6879)
-    val lightAccent = Color(0xFF245FE5)
+    val lightSurfaceContainer = Color(0xFFF5F6F8)
+    val lightSurfaceContainerHigh = Color(0xFFEDEFF3)
+    val lightSurfaceContainerHighest = Color(0xFFE3E6EC)
+    val lightBorder = Color(0xFFE2E4E9)
+    val lightDivider = Color(0xFFEEEEEE)
+    val lightText = Color(0xFF1A1A1A)
+    val lightTextSecondary = Color(0xFF666666)
+    val lightTextTertiary = Color(0xFF6B6B6B)
+    val lightAccent = Color(0xFFE4001F)
     val lightOnAccent = Color(0xFFFFFFFF)
-    val lightAccentText = Color(0xFF245FE5)
-    val lightWathet = Color(0xFFE8F0FF)
+    val lightAccentText = Color(0xFFD0001C)
+    val lightWathet = Color(0xFFFDE7EA)
     val lightDanger = Color(0xFFC62828)
     val lightOnDanger = Color(0xFFFFFFFF)
     val lightDangerContainer = Color(0xFFFDECEC)
-    val lightSuccess = Color(0xFF087443)
-    val lightSuccessContainer = Color(0xFFE2F7EB)
+    val lightSuccess = Color(0xFF008156)
+    val lightSuccessContainer = Color(0xFFECFBF4)
     val lightWarning = Color(0xFF8A4B00)
     val lightWarningContainer = Color(0xFFFFF2D9)
     val lightDisabled = Color(0xFFE9EDF2)
-    val lightOnDisabled = Color(0xFF596579)
-    val lightInverseSurface = Color(0xFF172033)
+    val lightOnDisabled = Color(0xFF666666)
+    val lightInverseSurface = Color(0xFF1A1A1A)
     val lightInverseOnSurface = Color(0xFFFFFFFF)
     val lightInverseAccent = Color(0xFF3086FF)
     /** Lienzo del QR: fondo claro GARANTIZADO en ambos temas (zona de
      * silencio escaneable); el marco tonal lo aporta AmMediaFrame. */
     val lightQrCanvas = Color(0xFFFFFFFF)
+    // Roles de la dirección Super-App (ADR-0022).
+    val lightActionGradientStart = Color(0xFFE4001F)
+    val lightActionGradientMid = Color(0xFFD12810)
+    val lightActionGradientEnd = Color(0xFFBE4F00)
+    val lightOnActionGradient = Color(0xFFFFFFFF)
+    val lightPromo = Color(0xFFBE4F00)
+    val lightOnPromo = Color(0xFFFFFFFF)
+    val lightPromoContainer = Color(0xFFFFE9D6)
+    val lightInfoContainer = Color(0xFFF2F8FF)
+    val lightFintech = Color(0xFF1677FF)
+    val lightOnFintech = Color(0xFFFFFFFF)
+    val lightFintechText = Color(0xFF0067F7)
+    val lightSurfaceBorder = Color(0xFFE2E4E9)
+    val lightDividerSubtle = Color(0xFFEEEEEE)
 
-    // Tema oscuro: paleta propia de AgendaQr (ADR-0020), diseñada como
-    // paleta independiente y no como inversión mecánica del claro; los
-    // pares de contraste los fija AmSchemeTest (contrato §4.4).
-    val darkBackground = Color(0xFF10141B)
-    val darkSurface = Color(0xFF171D26)
-    val darkSurfaceSecondary = Color(0xFF0C1118)
-    val darkSurfaceContainerLow = Color(0xFF171D26)
-    val darkSurfaceContainer = Color(0xFF1D2530)
-    val darkSurfaceContainerHigh = Color(0xFF26313E)
-    val darkSurfaceContainerHighest = Color(0xFF303B49)
-    val darkBorder = Color(0xFF303844)
-    val darkDivider = Color(0xFF303844)
-    val darkText = Color(0xFFF1F5F9)
-    val darkTextSecondary = Color(0xFFC1CAD6)
-    val darkTextTertiary = Color(0xFFA9B5C5)
-    val darkAccent = Color(0xFF70A5FF)
-    val darkOnAccent = Color(0xFF101B2E)
-    val darkAccentText = Color(0xFF80B0FF)
-    val darkWathet = Color(0xFF172B49)
+    // Tema oscuro: paleta independiente inspirada en el Anexo A (fondo
+    // #0A0A0A, superficie #1A1A1A con borde sutil), no inversión mecánica
+    // del claro; los pares de contraste los fija AmSchemeTest (contrato §4.4).
+    val darkBackground = Color(0xFF0A0A0A)
+    val darkSurface = Color(0xFF1A1A1A)
+    val darkSurfaceSecondary = Color(0xFF141414)
+    val darkSurfaceContainerLow = Color(0xFF1A1A1A)
+    val darkSurfaceContainer = Color(0xFF202020)
+    val darkSurfaceContainerHigh = Color(0xFF2A2A2A)
+    val darkSurfaceContainerHighest = Color(0xFF333333)
+    val darkBorder = Color(0xFF2A2A2A)
+    val darkDivider = Color(0xFF2A2A2A)
+    val darkText = Color(0xFFE6E6E6)
+    val darkTextSecondary = Color(0xFF9A9A9A)
+    val darkTextTertiary = Color(0xFF8A8A8A)
+    val darkAccent = Color(0xFFFF5A70)
+    val darkOnAccent = Color(0xFF2A0A10)
+    val darkAccentText = Color(0xFFFF5A70)
+    val darkWathet = Color(0xFF33141A)
     val darkDanger = Color(0xFFFF6B78)
     val darkOnDanger = Color(0xFF2A0F14)
     val darkDangerContainer = Color(0xFF3A151D)
-    val darkSuccess = Color(0xFF5DDBA5)
-    val darkSuccessContainer = Color(0xFF123628)
+    val darkSuccess = Color(0xFF3CCB8E)
+    val darkSuccessContainer = Color(0xFF0E2A1E)
     val darkWarning = Color(0xFFFFC15A)
     val darkWarningContainer = Color(0xFF3A2B0E)
-    val darkDisabled = Color(0xFF303844)
-    val darkOnDisabled = Color(0xFFA6B1C0)
-    val darkInverseSurface = Color(0xFFF1F5F9)
-    val darkInverseOnSurface = Color(0xFF10141B)
+    val darkDisabled = Color(0xFF303030)
+    val darkOnDisabled = Color(0xFF9A9A9A)
+    val darkInverseSurface = Color(0xFFE6E6E6)
+    val darkInverseOnSurface = Color(0xFF0A0A0A)
     val darkInverseAccent = Color(0xFF3086FF)
+    // El gradiente de acción es marca: se conserva idéntico en ambos temas
+    // (texto blanco ≥ 4.5:1 sobre cada extremo).
+    val darkActionGradientStart = Color(0xFFE4001F)
+    val darkActionGradientMid = Color(0xFFD12810)
+    val darkActionGradientEnd = Color(0xFFBE4F00)
+    val darkOnActionGradient = Color(0xFFFFFFFF)
+    val darkPromo = Color(0xFFFF8A3D)
+    val darkOnPromo = Color(0xFF2A1200)
+    val darkPromoContainer = Color(0xFF3A2410)
+    val darkInfoContainer = Color(0xFF10233F)
+    val darkFintech = Color(0xFF1677FF)
+    val darkOnFintech = Color(0xFFFFFFFF)
+    val darkFintechText = Color(0xFF4D9BFF)
+    val darkSurfaceBorder = Color(0xFF333333)
+    val darkDividerSubtle = Color(0xFF262626)
 }
 
 /**
@@ -141,6 +177,24 @@ data class AmColorScheme(
     val inverseAccent: Color,
     /** Lienzo del QR (fondo claro garantizado en ambos temas). */
     val qrCanvas: Color,
+    /** Gradiente de acción (marca): inicio, medio y fin; [onActionGradient]
+     * es el único texto admitido sobre él (≥ 4.5:1 sobre cada extremo). */
+    val actionGradientStart: Color,
+    val actionGradientMid: Color,
+    val actionGradientEnd: Color,
+    val onActionGradient: Color,
+    /** Naranja promo (badges de novedad/urgencia y acentos comerciales). */
+    val promo: Color,
+    val onPromo: Color,
+    val promoContainer: Color,
+    /** Azul fintech: relleno de confianza y texto/enlace legible. */
+    val fintech: Color,
+    val onFintech: Color,
+    val fintechText: Color,
+    /** Borde sutil de superficie (en oscuro separa la tarjeta del fondo). */
+    val surfaceBorder: Color,
+    /** Divisor decorativo fino entre filas (1 px; no es límite funcional). */
+    val dividerSubtle: Color,
     /** Contenedores M3 explícitos: ninguna superficie hereda el esquema
      * base de Material (contaminación morada de la plantilla). */
     val surfaceContainerLow: Color,
@@ -171,15 +225,27 @@ val LightAmColorScheme = AmColorScheme(
     successContainer = AmPalette.lightSuccessContainer,
     warning = AmPalette.lightWarning,
     warningContainer = AmPalette.lightWarningContainer,
-    info = AmPalette.lightAccent,
-    infoContainer = AmPalette.lightWathet,
-    focus = AmPalette.lightAccent,
+    info = AmPalette.lightFintechText,
+    infoContainer = AmPalette.lightInfoContainer,
+    focus = AmPalette.lightFintechText,
     disabled = AmPalette.lightDisabled,
     onDisabled = AmPalette.lightOnDisabled,
     inverseSurface = AmPalette.lightInverseSurface,
     inverseOnSurface = AmPalette.lightInverseOnSurface,
     inverseAccent = AmPalette.lightInverseAccent,
     qrCanvas = AmPalette.lightQrCanvas,
+    actionGradientStart = AmPalette.lightActionGradientStart,
+    actionGradientMid = AmPalette.lightActionGradientMid,
+    actionGradientEnd = AmPalette.lightActionGradientEnd,
+    onActionGradient = AmPalette.lightOnActionGradient,
+    promo = AmPalette.lightPromo,
+    onPromo = AmPalette.lightOnPromo,
+    promoContainer = AmPalette.lightPromoContainer,
+    fintech = AmPalette.lightFintech,
+    onFintech = AmPalette.lightOnFintech,
+    fintechText = AmPalette.lightFintechText,
+    surfaceBorder = AmPalette.lightSurfaceBorder,
+    dividerSubtle = AmPalette.lightDividerSubtle,
     surfaceContainerLow = AmPalette.lightSurfaceContainerLow,
     surfaceContainer = AmPalette.lightSurfaceContainer,
     surfaceContainerHigh = AmPalette.lightSurfaceContainerHigh,
@@ -208,15 +274,27 @@ val DarkAmColorScheme = AmColorScheme(
     successContainer = AmPalette.darkSuccessContainer,
     warning = AmPalette.darkWarning,
     warningContainer = AmPalette.darkWarningContainer,
-    info = AmPalette.darkAccent,
-    infoContainer = AmPalette.darkWathet,
-    focus = AmPalette.darkAccent,
+    info = AmPalette.darkFintechText,
+    infoContainer = AmPalette.darkInfoContainer,
+    focus = AmPalette.darkFintechText,
     disabled = AmPalette.darkDisabled,
     onDisabled = AmPalette.darkOnDisabled,
     inverseSurface = AmPalette.darkInverseSurface,
     inverseOnSurface = AmPalette.darkInverseOnSurface,
     inverseAccent = AmPalette.darkInverseAccent,
     qrCanvas = AmPalette.lightQrCanvas,
+    actionGradientStart = AmPalette.darkActionGradientStart,
+    actionGradientMid = AmPalette.darkActionGradientMid,
+    actionGradientEnd = AmPalette.darkActionGradientEnd,
+    onActionGradient = AmPalette.darkOnActionGradient,
+    promo = AmPalette.darkPromo,
+    onPromo = AmPalette.darkOnPromo,
+    promoContainer = AmPalette.darkPromoContainer,
+    fintech = AmPalette.darkFintech,
+    onFintech = AmPalette.darkOnFintech,
+    fintechText = AmPalette.darkFintechText,
+    surfaceBorder = AmPalette.darkSurfaceBorder,
+    dividerSubtle = AmPalette.darkDividerSubtle,
     surfaceContainerLow = AmPalette.darkSurfaceContainerLow,
     surfaceContainer = AmPalette.darkSurfaceContainer,
     surfaceContainerHigh = AmPalette.darkSurfaceContainerHigh,
@@ -277,6 +355,24 @@ object AmColor {
     val OnDisabled: Color @Composable get() = LocalAmColorScheme.current.onDisabled
     /** Lienzo del QR: fondo claro garantizado en claro y oscuro. */
     val QrCanvas: Color @Composable get() = LocalAmColorScheme.current.qrCanvas
+    /** Gradiente de acción (marca): extremos y medio; [OnActionGradient] es
+     * el texto admitido sobre él. */
+    val ActionGradientStart: Color @Composable get() = LocalAmColorScheme.current.actionGradientStart
+    val ActionGradientMid: Color @Composable get() = LocalAmColorScheme.current.actionGradientMid
+    val ActionGradientEnd: Color @Composable get() = LocalAmColorScheme.current.actionGradientEnd
+    val OnActionGradient: Color @Composable get() = LocalAmColorScheme.current.onActionGradient
+    /** Naranja promo y su par. */
+    val Promo: Color @Composable get() = LocalAmColorScheme.current.promo
+    val OnPromo: Color @Composable get() = LocalAmColorScheme.current.onPromo
+    val PromoContainer: Color @Composable get() = LocalAmColorScheme.current.promoContainer
+    /** Azul fintech: relleno de confianza (con glifo) y texto/enlace legible. */
+    val Fintech: Color @Composable get() = LocalAmColorScheme.current.fintech
+    val OnFintech: Color @Composable get() = LocalAmColorScheme.current.onFintech
+    val FintechText: Color @Composable get() = LocalAmColorScheme.current.fintechText
+    /** Borde sutil de superficie (en oscuro separa la tarjeta del fondo). */
+    val SurfaceBorder: Color @Composable get() = LocalAmColorScheme.current.surfaceBorder
+    /** Divisor decorativo fino entre filas. */
+    val DividerSubtle: Color @Composable get() = LocalAmColorScheme.current.dividerSubtle
     /** Transparente funcional (indicadores deshabilitados de M3); único
      * literal de color crudo permitido en la capa de tokens. */
     val Transparent: Color = Color.Transparent
@@ -296,8 +392,8 @@ object AmSpacing {
     val Xxl = 24.dp
     val Xxxl = 32.dp
     val Huge = 40.dp
-    /** Margen lateral de pantalla (múltiplo de 4). */
-    val ScreenMargin = 16.dp
+    /** Margen lateral de pantalla (múltiplo de 4; 12 dp del Anexo A). */
+    val ScreenMargin = 12.dp
 }
 
 /**
@@ -369,14 +465,16 @@ object AmMetrics {
     const val ListRowEndMetaStackFontScale = 2f
 }
 
-/** Radios de la referencia (tag 2, botón 4, búsqueda 6, tarjeta 8,
- * hoja 12): la única fuente de formas. */
+/** Radios del Anexo A (ADR-0022): tag/cinta 4–8, control y tarjeta
+ * pequeña 8, tarjeta 12, panel 16, píldora 20+, rejilla 14. */
 object AmRadius {
-    val ExtraSmall = 2.dp
-    val Small = 4.dp
-    val Medium = 6.dp
-    val Large = 8.dp
-    val ExtraLarge = 12.dp
+    val ExtraSmall = 4.dp
+    val Band = 6.dp
+    val Small = 8.dp
+    val Medium = 12.dp
+    val Large = 16.dp
+    val ExtraLarge = 20.dp
+    val GridIcon = 14.dp
 }
 
 /**
@@ -386,74 +484,73 @@ object AmRadius {
  */
 object AmShapes {
     val ExtraSmall = RoundedCornerShape(AmRadius.ExtraSmall)
+    val Band = RoundedCornerShape(AmRadius.Band)
     val Small = RoundedCornerShape(AmRadius.Small)
     val Medium = RoundedCornerShape(AmRadius.Medium)
     val Large = RoundedCornerShape(AmRadius.Large)
     val ExtraLarge = RoundedCornerShape(AmRadius.ExtraLarge)
-    /** Chips, badges y pastillas: media píldora. */
+    val GridIcon = RoundedCornerShape(AmRadius.GridIcon)
+    /** Chips, botones primarios, badges y pastillas: píldora completa. */
     val Pill = RoundedCornerShape(percent = 50)
 }
 
 /**
- * Escala tipográfica en sp (respeta el escalado de fuente del sistema).
- * Escala heredada de ADR-0014 y ADR-0017 y vigente bajo ADR-0020: título
- * 18; cuerpo, botón, título de fila, entrada y pestañas 17; etiqueta,
- * contenido de modal, cápsula y extra de lista 15; descripción y metadato
- * 13; apoyo/ayuda/error 12; tag y barra inferior 11. Importe 26 y Display
- * 32 / Headline 24 son extensiones financieras sin equivalente en la
- * escala base. Pesos: normal salvo el título de
- * diálogo (bold) y la etiqueta de botón (Medium, desviación documentada).
+ * Escala tipográfica en sp (respeta el escalado de fuente del sistema) del
+ * Anexo A (ADR-0022): Importe hero 30/800 con símbolo 14/700; H1 20/600;
+ * H2 16/600 (`RowTitle`, `SectionHeader`); Body 14/400; Caption 12/400;
+ * badges y etiquetas de barra 11–12. **Mínimo absoluto 11 sp.** Display 32
+ * y Headline 24 se conservan del sistema.
  */
 object AmType {
     /** Display de bloque (32 sp): número/hero de tarjeta de datos. */
     val Display: TextUnit = 32.sp
     /** Encabezado destacado (24 sp, techo de la escala). */
     val Headline: TextUnit = 24.sp
-    /** Título de pantalla en la barra superior (18 sp). */
-    val TitleLarge: TextUnit = 18.sp
-    /** Título de diálogo/modal centrado (18 sp, NavBar/Modal title). */
+    /** Título de pantalla y H1 (20 sp, Anexo 18–20/600). */
+    val TitleLarge: TextUnit = 20.sp
+    /** Título de diálogo/modal centrado (18 sp). */
     val Title: TextUnit = 18.sp
-    /** Cuerpo, botón, título de fila, entrada y pestañas (17 sp). */
-    val Body: TextUnit = 17.sp
-    /** Descripción y metadato (13 sp, font-size-main de la referencia). */
-    val BodySmall: TextUnit = 13.sp
-    /** Etiqueta de acción de texto, contenido de modal, cápsula y extra de lista (15 sp). */
-    val Label: TextUnit = 15.sp
-    /** Título de fila (17 sp, List.Item de la referencia). */
-    val RowTitle: TextUnit = 17.sp
-    /** Importe (26 sp): hero de detalle y entrada de monto (extensión financiera). */
-    val Amount: TextUnit = 26.sp
+    /** Importe hero (30 sp, Anexo 28–32/800): tabular, símbolo más pequeño. */
+    val Amount: TextUnit = 30.sp
+    /** Símbolo de moneda del importe (14 sp/700, siempre menor que el número). */
+    val AmountSymbol: TextUnit = 14.sp
+    /** H2: título de fila y de sección (16 sp/600). */
+    val RowTitle: TextUnit = 16.sp
+    /** Encabezado de sección (16 sp/600, Anexo H2). */
+    val SectionHeader: TextUnit = 16.sp
+    /** Cuerpo y etiqueta de acción (14 sp/400, Anexo Body). */
+    val Body: TextUnit = 14.sp
+    /** Etiqueta de acción de texto, contenido de modal y cápsula (14 sp). */
+    val Label: TextUnit = 14.sp
+    /** Descripción y metadato (12 sp, Anexo Caption). */
+    val BodySmall: TextUnit = 12.sp
     /** Apoyo/ayuda/error (12 sp). */
     val Caption: TextUnit = 12.sp
-    /** Caption mínima (11 sp, etiquetas de barra y tags). */
+    /** Caption mínima: badges y etiquetas de barra (11 sp, mínimo absoluto). */
     val CaptionSmall: TextUnit = 11.sp
-    /** Encabezado de sección (15 sp: List header de la referencia). */
-    val SectionHeader: TextUnit = 15.sp
-    // Interlineados canónicos en sp (≈ 1.4× su tamaño como la referencia;
-    // respetan el escalado, §accesibilidad).
+    // Interlineados canónicos en sp (> 1.1× su tamaño, §accesibilidad).
     val LineHeightLabel: TextUnit = 20.sp
-    val LineHeightBody: TextUnit = 24.sp
+    val LineHeightBody: TextUnit = 20.sp
     val LineHeightBodySmall: TextUnit = 18.sp
     val LineHeightCaption: TextUnit = 16.sp
-    val LineHeightSection: TextUnit = 20.sp
-    val LineAmount: TextUnit = 32.sp
-    val LineHeightRowTitle: TextUnit = 24.sp
+    val LineHeightSection: TextUnit = 22.sp
+    val LineAmount: TextUnit = 36.sp
+    val LineHeightRowTitle: TextUnit = 22.sp
     val LineHeightHeadlineLarge: TextUnit = 40.sp
     val LineHeightHeadlineSmall: TextUnit = 32.sp
-    val LineHeightTitleLarge: TextUnit = 24.sp
-    val LineHeightTitleMedium: TextUnit = 24.sp
+    val LineHeightTitleLarge: TextUnit = 26.sp
+    val LineHeightTitleMedium: TextUnit = 22.sp
     val LineHeightTitleSmall: TextUnit = 20.sp
     val LineHeightLabelSmall: TextUnit = 16.sp
     /**
      * Familia de sistema en TODOS los estilos — Roboto en Android, San
-     * Francisco en iOS; ninguna fuente se empaqueta (ADR-0020).
+     * Francisco en iOS; ninguna fuente se empaqueta (ADR-0020/ADR-0022).
      */
     val FamilyUi: FontFamily = FontFamily.Default
 }
 
-/** Tracking neutro: la interfaz no usa tracking amplio como característica
- * general (brief de rediseño); los roles conservan espaciado cero salvo
- * justificación por caso. */
+/** Tracking de la interfaz: neutro salvo la etiqueta de la acción primaria
+ * (Anexo A: tracking ligeramente positivo). */
 object AmTracking {
     val TitleMedium: TextUnit = 0.sp
     val TitleSmall: TextUnit = 0.sp
@@ -463,6 +560,8 @@ object AmTracking {
     val LabelLarge: TextUnit = 0.sp
     val LabelMedium: TextUnit = 0.sp
     val LabelSmall: TextUnit = 0.sp
+    /** Etiqueta de la acción primaria (Anexo A). */
+    val ButtonLabel: TextUnit = 0.2.sp
 }
 
 /**
@@ -489,13 +588,14 @@ val AmMaterialTypography: Typography = Typography(
     titleLarge = TextStyle(
         fontSize = AmType.TitleLarge,
         lineHeight = AmType.LineHeightTitleLarge,
+        fontWeight = FontWeight.SemiBold,
         fontFamily = AmType.FamilyUi,
     ),
     titleMedium = TextStyle(
-        fontSize = AmType.Body,
+        fontSize = AmType.RowTitle,
         lineHeight = AmType.LineHeightTitleMedium,
         letterSpacing = AmTracking.TitleMedium,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.SemiBold,
         fontFamily = AmType.FamilyUi,
     ),
     titleSmall = TextStyle(
@@ -552,46 +652,56 @@ val AmMaterialTypography: Typography = Typography(
  * lugar de repetir tríos de tokens.
  */
 object AmTextStyles {
-    /** Etiqueta de botón (17 sp Medium: desviación documentada — la
-     * referencia usa peso normal; el peso medio conserva el rango de la
-     * etiqueta sobre superficies densas). */
+    /** Etiqueta de la acción primaria (Anexo A: 14/600 con tracking
+     * positivo; el texto blanco sobre el gradiente gana con semi-bold). */
     val ButtonLabel = TextStyle(
         fontSize = AmType.Body,
-        fontWeight = FontWeight.Medium,
-        letterSpacing = AmTracking.LabelLarge,
+        fontWeight = FontWeight.SemiBold,
+        letterSpacing = AmTracking.ButtonLabel,
         lineHeight = AmType.LineHeightBody,
     )
 
-    /** Cuerpo de texto (mensajes, filas): 17/24. */
+    /** Cuerpo de texto (mensajes, filas): 14/20 (Anexo Body 14/400). */
     val Body = TextStyle(
         fontSize = AmType.Body,
         lineHeight = AmType.LineHeightBody,
     )
 
-    /** Etiqueta de acción de texto, contenido de modal, cápsula y extra
-     * de lista (15 sp, font-size-main de la referencia). */
+    /** Etiqueta de acción de texto, contenido de modal y cápsula (14 sp). */
     val Label = TextStyle(
         fontSize = AmType.Label,
         lineHeight = AmType.LineHeightLabel,
     )
 
-    /** Metadato/descripción (13 sp, font-size-main). */
+    /** Metadato/descripción (12 sp, Anexo Caption 12/400). */
     val BodySmall = TextStyle(
         fontSize = AmType.BodySmall,
         lineHeight = AmType.LineHeightBodySmall,
     )
 
-    /** Título de fila (17 sp normal, List.Item). */
+    /** Título de fila y H2 (16 sp/600, Anexo H2). */
     val RowTitle = TextStyle(
         fontSize = AmType.RowTitle,
+        fontWeight = FontWeight.SemiBold,
         lineHeight = AmType.LineHeightRowTitle,
     )
 
-    /** Importe (26 sp SemiBold — extensión financiera). */
+    /** Importe hero (30 sp/800, Anexo 28–32/800) con cifras tabulares
+     * para alinear la columna financiera. */
     val Amount = TextStyle(
         fontSize = AmType.Amount,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.ExtraBold,
         lineHeight = AmType.LineAmount,
+        fontFeatureSettings = "tnum",
+    )
+
+    /** Símbolo de moneda del importe (14 sp/700): siempre menor que el
+     * número y tabular para no desalinear la cifra. */
+    val AmountSymbol = TextStyle(
+        fontSize = AmType.AmountSymbol,
+        fontWeight = FontWeight.Bold,
+        lineHeight = AmType.LineHeightLabel,
+        fontFeatureSettings = "tnum",
     )
 
     /** Subtítulo/metadato de fila (texto secundario, 12 sp). */
@@ -613,14 +723,15 @@ object AmTextStyles {
         lineHeight = AmType.LineHeightCaption,
     )
 
-    /** Encabezado de sección (15 sp normal: List header de la
-     * referencia; el color lo decide el llamador). */
+    /** Encabezado de sección y H2 (16 sp/600, Anexo H2; el color lo
+     * decide el llamador). */
     val SectionHeader = TextStyle(
         fontSize = AmType.SectionHeader,
+        fontWeight = FontWeight.SemiBold,
         lineHeight = AmType.LineHeightSection,
     )
 
-    /** Título de diálogo (18 sp centrado; el bold lo aplica AmDialog). */
+    /** Título de diálogo (18 sp; AmDialog fija el bold del popup). */
     val Title = TextStyle(
         fontSize = AmType.Title,
         lineHeight = AmType.LineHeightTitleLarge,
@@ -634,13 +745,96 @@ object AmTextStyles {
  * — reducir no es "animar más rápido"). Una sola easing.
  */
 object AmMotion {
-    const val DurationShortMs = 150
+    /** Duración corta: pulsaciones y confirmaciones (Anexo 200–300 ms). */
+    const val DurationShortMs = 200
+    /** Duración media: transiciones de superficie de la app. */
+    const val DurationMediumMs = 260
+    /** Duración larga: transición de pantalla completa. */
+    const val DurationLongMs = 300
+    /** Con movimiento reducido la transición no dura nada: cambio en el sitio. */
     const val DurationReducedMs = 0
+    /** Escala de pulsación (Anexo A: `scale(0.95)`); 1 con movimiento reducido. */
+    const val PressScale = 0.95f
+    /** Techo del brillo de entrada del Anexo A: ≤ 5 s y luego estático. */
+    const val ShimmerDurationMs = 5000
 
     object Easings {
+        /** Transición estándar de superficie (fade + desplazamiento corto). */
         val Standard: Easing = CubicBezierEasing(0.1f, 0.9f, 0.2f, 1f)
+
+        /** Rebote suave del Anexo A: `cubic-bezier(0.34, 1.56, 0.64, 1)`. */
+        val Spring: Easing = CubicBezierEasing(0.34f, 1.56f, 0.64f, 1f)
     }
 }
+
+/**
+ * Niveles de elevación del Anexo A (ADR-0022, contrato §9).
+ *
+ * La sombra de Compose aproxima las sombras CSS del Anexo (no hay control
+ * fino de desplazamiento/desenfoque): cada nivel fija el `Dp` que consume
+ * [amElevation] y el color de su proyección. E-0 no dibuja sombra.
+ */
+enum class AmElevation(val elevation: Dp) {
+    /** E-0: sin sombra (contenido inline, listas). */
+    None(0.dp),
+
+    /** E-1 (`0 2 8 rgba(0,0,0,.04)`): tarjetas estándar sobre fondo gris. */
+    E1(2.dp),
+
+    /** E-2 (`0 4 16 rgba(0,0,0,.08)`): tarjetas destacadas y carruseles. */
+    E2(4.dp),
+
+    /** E-3 (`0 8 24` del color de acción al 20 %): acción primaria flotante. */
+    E3(8.dp),
+}
+
+private const val ShadowAlphaLow = 0.04f
+private const val ShadowAlphaHigh = 0.08f
+private const val ActionShadowAlpha = 0.20f
+
+/**
+ * Sombra de [level] sobre [shape]. Es el ÚNICO punto del código que llama a
+ * `Modifier.shadow` (capa de tokens); las excepciones E-05/E-06 habilitan su
+ * uso por archivo en los componentes. [AmElevation.None] no añade nada y no
+ * provoca recomposición. E-3 proyecta el color de acción al 20 %; E-1/E-2
+ * usan negro de baja opacidad (Anexo A).
+ */
+@Composable
+fun Modifier.amElevation(
+    level: AmElevation,
+    shape: Shape = RectangleShape,
+    clip: Boolean = false,
+): Modifier {
+    if (level == AmElevation.None) return this
+    val scheme = LocalAmColorScheme.current
+    val shadowColor = when (level) {
+        AmElevation.E3 -> scheme.accent.copy(alpha = ActionShadowAlpha)
+        AmElevation.E1 -> Color.Black.copy(alpha = ShadowAlphaLow)
+        AmElevation.E2 -> Color.Black.copy(alpha = ShadowAlphaHigh)
+        AmElevation.None -> Color.Transparent
+    }
+    return shadow(
+        elevation = level.elevation,
+        shape = shape,
+        clip = clip,
+        ambientColor = shadowColor,
+        spotColor = shadowColor,
+    )
+}
+
+/**
+ * Gradiente de acción de marca: `ActionGradientStart→Mid→End`
+ * (Anexo A, obligatorio en la acción primaria y los banners). El único
+ * contenido admitido sobre él es [AmColor.OnActionGradient].
+ */
+@Composable
+fun amActionGradient(): Brush = Brush.linearGradient(
+    listOf(
+        AmColor.ActionGradientStart,
+        AmColor.ActionGradientMid,
+        AmColor.ActionGradientEnd,
+    ),
+)
 
 /**
  * Identidad de contexto: acento estable derivado de forma

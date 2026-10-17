@@ -46,6 +46,19 @@ class AmContrastPairsTest {
         }
     }
 
+    @Test
+    fun action_gradient_content_meets_4_5_to_1_over_every_stop() {
+        // El texto de la acción primaria (onActionGradient) es legible
+        // sobre los tres extremos del gradiente de marca en ambos temas
+        // (el gradiente es idéntico: ADR-0022, AmSchemeTest).
+        schemes.forEach { (name, s) ->
+            listOf(s.actionGradientStart, s.actionGradientMid, s.actionGradientEnd).forEach { stop ->
+                val ratio = contrastRatio(s.onActionGradient, stop)
+                assertTrue(ratio >= 4.5, "contenido del gradiente en tema $name: $ratio < 4.5:1")
+            }
+        }
+    }
+
     private val schemes: Map<String, com.agendaqr.core.ui.theme.AmColorScheme> =
         mapOf(
             "claro" to com.agendaqr.core.ui.theme.LightAmColorScheme,
