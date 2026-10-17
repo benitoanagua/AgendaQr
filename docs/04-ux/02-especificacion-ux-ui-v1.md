@@ -95,7 +95,8 @@ Composición (la intención no cambia; solo cambia la presentación):
     [sección "Favoritos": carrusel horizontal (la siguiente tarjeta asoma como indicio)]
     [sección "Todos los destinos": lista densa en tarjeta (sin los favoritos del carrusel)]
       [fila: tile QR tonal · título · metadato caption · favorito (estrella)]
-      [estado vacío con acción "Traer un QR" cuando no hay nada]
+      [estado vacío informativo sin acción duplicada; "Traer un QR" permanece
+        en la rejilla de acciones]
     [tarjeta de disponibilidad sin conexión]
 
 - Inicio es una superficie densa con tarjetas y rejilla, no un panel: una
