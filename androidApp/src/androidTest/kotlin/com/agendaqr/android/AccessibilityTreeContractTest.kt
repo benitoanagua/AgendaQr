@@ -82,7 +82,11 @@ class AccessibilityTreeContractTest {
                 ?: node.text?.toString()?.takeIf(String::isNotBlank)
             val label = node.viewIdResourceName ?: ""
             if (name.isNullOrBlank() && label.isBlank()) {
-                missing.add(node.className.toString())
+                val bounds = android.graphics.Rect().also(node::getBoundsInScreen)
+                missing.add(
+                    "${node.className}(text=${node.text}, description=${node.contentDescription}, " +
+                        "id=$label, bounds=$bounds)",
+                )
             } else {
                 val key = name ?: label
                 seen[key] = (seen[key] ?: 0) + 1

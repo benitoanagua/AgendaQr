@@ -3,6 +3,7 @@ package com.agendaqr.android
 import android.content.Context
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.StaleObjectException
 import androidx.test.uiautomator.UiDevice
 import java.io.File
 import kotlin.test.fail
@@ -27,7 +28,7 @@ object Qa {
                 hasText("Volver") ||
                 hasText("Configura tu PIN")
         }
-        if (textVisible("Explorar demostración")) {
+        if (hasText("Explorar demostración")) {
             tapText("Explorar demostración", timeoutMs = 15_000)
             waitFor(15_000) { hasText("Traer un QR") }
         }
@@ -66,16 +67,27 @@ object Qa {
 
     /** Toca el primer elemento con el texto dado (fail si no existe). */
     fun tapText(text: String, timeoutMs: Long = 8_000) {
-        waitText(text, timeoutMs)
-        val node = device.findObject(By.text(text)) ?: device.findObject(By.desc(text))
-        node?.click() ?: fail("nodo no clickable: $text")
+        repeat(3) { attempt ->
+            waitText(text, timeoutMs)
+            val node = device.findObject(By.text(text)) ?: device.findObject(By.desc(text))
+            if (node == null) return@repeat
+            try {
+                node.click()
+                return
+            } catch (stale: StaleObjectException) {
+                if (attempt == 2) throw stale
+            }
+        }
+        fail("nodo no clickable: $text")
     }
 
     fun hasText(text: String): Boolean = textVisible(text) || descVisible(text)
 
     /** Captura en el caché del runner de pruebas, fuera del repositorio. */
     fun screenshot(name: String) {
-        val dir = File(instrumentation.context.cacheDir, "agendaqr-ronda2")
+        val externalCache = instrumentation.context.externalCacheDir
+            ?: error("el runner no tiene caché externo para capturas")
+        val dir = File(externalCache, "agendaqr-ronda2")
         check(dir.exists() || dir.mkdirs()) { "no se pudo crear el directorio de capturas" }
         val output = File(dir, "$name.png")
         val captured = device.takeScreenshot(output)
@@ -83,6 +95,21 @@ object Qa {
     }
 
     fun shell(cmd: String): String = device.executeShellCommand(cmd)
+
+    fun scrollToText(text: String, maxSwipes: Int = 8): Boolean {
+        repeat(maxSwipes) {
+            if (hasText(text)) return true
+            device.swipe(
+                device.displayWidth / 2,
+                device.displayHeight * 4 / 5,
+                device.displayWidth / 2,
+                device.displayHeight / 3,
+                20,
+            )
+            device.waitForIdle(500)
+        }
+        return hasText(text)
+    }
 
     /** dp = px / (densityDpi / 160). */
     fun pxToDp(px: Int): Float {

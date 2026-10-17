@@ -18,12 +18,13 @@ import kotlin.test.assertTrue
 @RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
 class CameraPermissionFlowTest {
 
-    private val settings get() = SystemSettingsRule()
-
     @Test
     fun permanent_denial_offers_open_settings_and_recovers() {
         // Arranca denegado; se deja concedido incluso si falla el flujo para
         // que las pruebas posteriores no hereden este estado global.
+        Qa.shell(
+            "pm clear-permission-flags com.agendaqr.app android.permission.CAMERA user-set user-fixed",
+        )
         Qa.shell("pm revoke com.agendaqr.app android.permission.CAMERA")
         try {
             Qa.launchApp()
@@ -66,18 +67,19 @@ class CameraPermissionFlowTest {
     }
 
     private fun denySystemDialog() {
-        // El texto del diálogo del sistema varía según idioma y OEM.
-        val denyCandidates = listOf(
-            "No permitir",
-            "Denegar",
-            "Don't allow",
-            "NO PERMITIR",
-        )
-        Qa.waitFor(4_000) { denyCandidates.any(Qa::textVisible) }
-        val denyNode = denyCandidates.firstNotNullOfOrNull { candidate ->
-            Qa.device.findObjects(By.text(candidate)).firstOrNull()
+        // El id del botón evita depender del idioma del diálogo del sistema.
+        val denyNode = {
+            listOf(
+                By.res("com.android.permissioncontroller", "permission_deny_button"),
+                By.res("com.google.android.permissioncontroller", "permission_deny_button"),
+                By.text("No permitir"),
+                By.text("Denegar"),
+                By.text("Don't allow"),
+                By.text("NO PERMITIR"),
+            ).firstNotNullOfOrNull { selector -> Qa.device.findObject(selector) }
         }
-        checkNotNull(denyNode) { "No se encontró una opción para denegar el permiso de cámara" }.click()
+        Qa.waitFor(4_000) { denyNode() != null }
+        checkNotNull(denyNode()) { "No se encontró una opción para denegar el permiso de cámara" }.click()
         Qa.waitFor(3_000) { !Qa.textVisible("Mientras uses la app") }
     }
 }
