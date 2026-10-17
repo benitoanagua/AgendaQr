@@ -124,7 +124,7 @@ class AmSchemeTest {
         assertEquals("A6B1C0", hex(s.onDisabled))
         assertEquals("F1F5F9", hex(s.inverseSurface))
         assertEquals("10141B", hex(s.inverseOnSurface))
-        assertEquals("70A5FF", hex(s.inverseAccent))
+        assertEquals("3086FF", hex(s.inverseAccent))
         // El lienzo del QR es claro en ambos temas (zona de silencio
         // escaneable): no conmuta con el tema por diseño.
         assertEquals("FFFFFF", hex(s.qrCanvas))
