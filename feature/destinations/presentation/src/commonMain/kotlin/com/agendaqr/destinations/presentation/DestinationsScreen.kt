@@ -3,7 +3,6 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +19,8 @@ import androidx.compose.ui.Modifier
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.core.ui.components.AmBadge
 import com.agendaqr.core.ui.components.AmCompactAction
+import com.agendaqr.core.ui.components.AmHeroHeader
+import com.agendaqr.core.ui.components.AmQuickAction
 import com.agendaqr.core.ui.components.AmDialog
 import com.agendaqr.core.ui.components.AmDialogList
 import com.agendaqr.core.ui.components.AmFavoriteToggle
@@ -27,13 +28,11 @@ import com.agendaqr.core.ui.components.AmFilterChip
 import com.agendaqr.core.ui.components.AmIcon
 import com.agendaqr.core.ui.components.AmIconBadge
 import com.agendaqr.core.ui.components.AmIcons
-import com.agendaqr.core.ui.components.AmExtendedFab
 import com.agendaqr.core.ui.components.AmListRow
 import com.agendaqr.core.ui.components.AmListBody
 import com.agendaqr.core.ui.components.AmNavChromeState
 import com.agendaqr.core.ui.components.AmOverflowAction
 import com.agendaqr.core.ui.components.AmScreenScaffold
-import com.agendaqr.core.ui.components.AmSearchTrigger
 import com.agendaqr.core.ui.components.AmSectionHeader
 import com.agendaqr.core.ui.components.AmTappableCard
 import com.agendaqr.core.ui.components.AmSkeleton
@@ -43,7 +42,6 @@ import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmEmptyState
 import com.agendaqr.core.ui.components.AmLoadMoreFooter
-import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmSpacing
@@ -83,8 +81,11 @@ fun DestinationsScreen(
     AmScreenScaffold(
         scrollable = state.destinations.isNotEmpty(),
         topBar = {
-            AmTopBar(
+            AmHeroHeader(
                 title = AppStrings.AgendaQr,
+                searchLabel = AppStrings.BuscarEnAgendaQr,
+                searchPlaceholder = AppStrings.searchPlaceholder,
+                onSearchClick = onOpenSearch,
                 overflowActions = listOf(
                     AmOverflowAction(AppStrings.CuentaYRespaldo, onClick = onOpenAccount),
                     AmOverflowAction(AppStrings.Bloquear, onClick = onLock),
@@ -116,31 +117,24 @@ fun DestinationsScreen(
             )
         }
 
-        // Búsqueda dominante (entrada a S04).
-        AmSearchTrigger(
-            label = AppStrings.BuscarEnAgendaQr,
-            placeholder = AppStrings.searchPlaceholder,
-            onClick = onOpenSearch,
-        )
-
         // Rejilla "King Kong" de acciones rápidas existentes — mismas tres acciones del hub anterior, sin duplicar.
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
         ) {
-            QuickActionItem(
+            AmQuickAction(
                 label = AppStrings.TraerQr,
                 icon = AmIcons.QrCode,
                 onClick = onScanQr,
                 modifier = Modifier.weight(1f),
             )
-            QuickActionItem(
+            AmQuickAction(
                 label = AppStrings.RegistrarOperacion,
                 icon = AmIcons.Register,
                 onClick = onRegisterOperation,
                 modifier = Modifier.weight(1f),
             )
-            QuickActionItem(
+            AmQuickAction(
                 label = AppStrings.CrearContexto,
                 icon = AmIcons.Context,
                 onClick = { showCreateContext = true },
@@ -376,39 +370,5 @@ internal fun destinationSubtitle(destination: Destination): String? {
             AppStrings.AnadidoEl + formatDate(destination.createdAt)
         generic -> AppStrings.ImportadoEl + formatDate(destination.createdAt)
         else -> destination.note ?: destination.category
-    }
-}
-
-/**
- * Celda de acción rápida de la rejilla "King Kong": icono sobre fondo tonal
- * con radio 12–16, etiqueta 12 sp en una línea, objetivo táctil ≥ 48 dp.
- */
-@Composable
-private fun QuickActionItem(
-    label: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    com.agendaqr.core.ui.components.AmTappableCard(
-        onClick = onClick,
-        modifier = modifier,
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
-        ) {
-            AmIcon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = AmColor.AccentText,
-            )
-            com.agendaqr.core.ui.components.AmText(
-                text = label,
-                size = AmType.BodySmall,
-                color = AmColor.TextSecondary,
-            )
-        }
     }
 }

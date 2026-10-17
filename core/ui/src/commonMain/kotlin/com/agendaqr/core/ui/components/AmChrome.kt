@@ -39,6 +39,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.foundation.background
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmMotion
@@ -46,6 +47,7 @@ import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
 import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.core.ui.theme.amActionGradient
 
 /** Etiqueta de pestaña (referencia: etiqueta 10 px; 11 sp por
  * altura de barra M3). */
@@ -380,3 +382,94 @@ fun <S> AnimatedContentTransitionScope<S>.amReducedSurfaceEnter(): EnterTransiti
 /** Variante reduced-motion de la salida: cambio inmediato (duración 0). */
 fun <S> AnimatedContentTransitionScope<S>.amReducedSurfaceExit(): ExitTransition =
     fadeOut(tween(AmMotion.DurationReducedMs))
+
+/**
+ * Cabecera hero de Inicio (Anexo A): banda con gradiente de acción
+ * (`ActionGradientStart→Mid→End`), texto blanco y campo de búsqueda en
+ * píldora integrado en la banda. El fondo permanece estático para
+ * conservar el contraste del texto durante toda la interacción.
+ *
+ * El título es un encabezado semántico (heading) para TalkBack/VoiceOver.
+ * Las acciones de overflow (cuenta, bloquear) viven en un menú "…" con
+ * etiquetas siempre visibles.
+ */
+@Composable
+fun AmHeroHeader(
+    title: String,
+    searchLabel: String,
+    searchPlaceholder: String,
+    onSearchClick: () -> Unit,
+    overflowActions: List<AmOverflowAction>,
+    overflowLabel: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .background(amActionGradient())
+            .padding(horizontal = AmSpacing.ScreenMargin)
+            .padding(top = AmSpacing.Sm, bottom = AmSpacing.Md),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            // Título blanco sobre el gradiente (≥ 4.5:1 con OnActionGradient).
+            Text(
+                title,
+                style = androidx.compose.ui.text.TextStyle(
+                    fontSize = AmType.TitleLarge,
+                    lineHeight = AmType.LineHeightTitleLarge,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                    fontFamily = AmType.FamilyUi,
+                    color = AmColor.OnActionGradient,
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { heading() },
+            )
+            if (overflowActions.isNotEmpty()) {
+                Box {
+                    var overflowOpen by remember { mutableStateOf(false) }
+                    IconButton(onClick = { overflowOpen = true }) {
+                        AmIcon(
+                            imageVector = AmIcons.More,
+                            contentDescription = overflowLabel,
+                            tint = AmColor.OnActionGradient,
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = overflowOpen,
+                        onDismissRequest = { overflowOpen = false },
+                    ) {
+                        overflowActions.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option.label) },
+                                leadingIcon = option.icon?.let { glyph ->
+                                    {
+                                        AmIcon(
+                                            imageVector = glyph,
+                                            contentDescription = null,
+                                            tint = AmColor.TextPrimary,
+                                        )
+                                    }
+                                },
+                                onClick = {
+                                    overflowOpen = false
+                                    option.onClick()
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        // Campo de búsqueda en píldora superpuesto a la banda (Anexo A).
+        AmSearchTrigger(
+            label = searchLabel,
+            placeholder = searchPlaceholder,
+            onClick = onSearchClick,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}

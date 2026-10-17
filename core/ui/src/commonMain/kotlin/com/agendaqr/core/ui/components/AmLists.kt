@@ -34,6 +34,7 @@ import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
+import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.core.ui.theme.accentFor
 import com.agendaqr.core.ui.theme.amElevation
 
@@ -213,6 +214,48 @@ fun AmTappableCard(
             .padding(AmSpacing.Md),
     ) {
         content()
+    }
+}
+
+/**
+ * Acción rápida de Inicio: icono tonal de 48 dp y etiqueta centrada,
+ * ambos dentro de un único objetivo táctil accesible.
+ */
+@Composable
+fun AmQuickAction(
+    label: String,
+    icon: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AmTappableCard(
+        onClick = onClick,
+        modifier = modifier,
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(AmMetrics.GridIconContainerSize)
+                    .background(AmColor.InfoContainer, AmShapes.GridIcon),
+                contentAlignment = Alignment.Center,
+            ) {
+                AmIcon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = AmColor.Info,
+                )
+            }
+            AmText(
+                text = label,
+                size = AmType.Caption,
+                color = AmColor.TextSecondary,
+                textAlign = TextAlign.Center,
+            )
+        }
     }
 }
 

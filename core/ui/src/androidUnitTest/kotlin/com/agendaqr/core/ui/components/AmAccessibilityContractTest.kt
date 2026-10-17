@@ -50,6 +50,27 @@ class AmAccessibilityContractTest {
     }
 
     @Test
+    fun quick_action_is_one_named_button_with_a_touch_target() {
+        var clicks = 0
+        compose.setContent {
+            AmTheme {
+                AmQuickAction(
+                    label = "Traer un QR",
+                    icon = AmIcons.QrCode,
+                    onClick = { clicks++ },
+                )
+            }
+        }
+
+        compose.onNodeWithText("Traer un QR")
+            .assertExists()
+            .assertHeightIsAtLeast(48.dp)
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
+            .performClick()
+        assert(clicks == 1) { "La acción rápida debe ejecutarse una vez" }
+    }
+
+    @Test
     fun filter_chip_exposes_selected_state_and_keeps_touch_target() {
         compose.setContent {
             AmTheme {

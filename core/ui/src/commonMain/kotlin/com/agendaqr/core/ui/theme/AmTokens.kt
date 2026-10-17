@@ -448,6 +448,8 @@ object AmMetrics {
     const val DialogMaxWidthFraction = 0.75f
     /** Círculo tonal del glifo del estado vacío. */
     val EmptyStateGlyphSize = 64.dp
+    /** Contenedor del icono de una celda de acción rápida en Inicio. */
+    val GridIconContainerSize = 48.dp
     /** Largo del trazo de las esquinas del encuadre del scanner. */
     val ScannerCornerLength = 24.dp
     /** Insignia de contexto (M4): círculo de 40 dp, mismo tile que la

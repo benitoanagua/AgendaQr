@@ -378,7 +378,7 @@ fun AmAmountField(
                 Text(
                     it,
                     style = AmTextStyles.AmountSymbol,
-                    color = AmColor.AccentText,
+                    color = AmColor.TextPrimary,
                 )
             }
             androidx.compose.foundation.text.BasicTextField(
