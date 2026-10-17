@@ -19,6 +19,29 @@ object Qa {
             "am start -n com.agendaqr.app/com.agendaqr.android.MainActivity",
         )
         device.waitForIdle(2_000)
+
+        waitFor(15_000) {
+            hasText("Explorar demostración") ||
+                hasText("Traer un QR") ||
+                hasText("Inicio") ||
+                hasText("Volver") ||
+                hasText("Configura tu PIN")
+        }
+        if (textVisible("Explorar demostración")) {
+            tapText("Explorar demostración", timeoutMs = 15_000)
+            waitFor(15_000) { hasText("Traer un QR") }
+        }
+
+        repeat(5) {
+            if (hasText("Traer un QR")) return
+            if (hasText("Inicio")) {
+                tapText("Inicio")
+            } else {
+                device.pressBack()
+            }
+            device.waitForIdle(1_000)
+        }
+        waitFor(15_000) { hasText("Traer un QR") }
     }
 
     /** Espera por condición con tope (nada de sleeps fijos; regla 7). */
@@ -50,9 +73,10 @@ object Qa {
 
     fun hasText(text: String): Boolean = textVisible(text) || descVisible(text)
 
-    /** Captura a /sdcard (fuera del repo; se recupera con adb pull). */
+    /** Captura en el caché del runner de pruebas, fuera del repositorio. */
     fun screenshot(name: String) {
-        val dir = File("/sdcard/agendaqr-ronda2").apply { mkdirs() }
+        val dir = File(instrumentation.context.cacheDir, "agendaqr-ronda2")
+        check(dir.exists() || dir.mkdirs()) { "no se pudo crear el directorio de capturas" }
         val output = File(dir, "$name.png")
         val captured = device.takeScreenshot(output)
         check(captured) { "screenshot fallido: $name" }

@@ -30,7 +30,7 @@ class ReducedMotionTest {
         settings.apply(animations = 1f) {
             Qa.launchApp()
             val start = System.currentTimeMillis()
-            Qa.tapText("Registrar", timeoutMs = 10_000)
+            Qa.tapText("Registrar actividad", timeoutMs = 10_000)
             Qa.waitFor(3_000) { Qa.hasText("Registrar actividad") }
             val elapsed = System.currentTimeMillis() - start
             assertTrue(elapsed < 2_500, "navegación fluida con animaciones normales (tardó ${elapsed}ms)")
