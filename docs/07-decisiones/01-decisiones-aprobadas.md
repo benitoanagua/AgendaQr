@@ -84,8 +84,8 @@ Quedan consolidados, sin alterar las reglas de negocio existentes:
 
 La implementación debe adaptarse al contrato UX/UI; un fallo de implementación no modifica automáticamente la especificación.
 
-## D-18 — Sistema visual de la UI (UX/UI V1.7)
+## D-18 — Sistema visual de AgendaQr (ADR-0020)
 
-La referencia visual vigente de Agenda QR es Ant Design Mobile 5.43.0, conforme a ADR-0017 (que enmienda ADR-0014 y acota ADR-0015) y al contrato normativo `docs/05-design-system/00-contrato-normativo-diseno.md` v2.1. Está implementada en Kotlin/Compose Multiplatform dentro de `core/ui`, con tokens semánticos, tema claro/oscuro y componentes compartidos. Vant no es referencia ni dependencia. La navegación sigue las convenciones de Android e iOS.
+La identidad visual activa es propia de AgendaQr: una herramienta móvil moderna, compacta y pulida, inspirada en aplicaciones chinas de consumo por su utilidad cotidiana, jerarquía funcional y densidad controlada. No replica una librería ni introduce dependencias web. Se implementa en Kotlin/Compose Multiplatform dentro de `core/ui`, con tokens semánticos, temas claro/oscuro y componentes compartidos. Material 3 es detalle de implementación; Android e iOS conservan sus convenciones de navegación.
 
-La interfaz utiliza componentes convencionales adaptados con Material 3, mantiene una experiencia coherente entre Android e iOS y aplica las reglas de accesibilidad del contrato. Metro y Xauxa son decisiones históricas sustituidas; no forman parte de la arquitectura visual activa. La especificación UX/UI vigente es V1.7. El estado real de validación por plataforma se documenta únicamente en `docs/STATE.md`.
+La paleta usa azul tecnológico, superficies neutras con matiz azul-gris y estados semánticos accesibles. Lucide y la fuente de sistema se conservan en esta fase; cualquier cambio de iconografía o tipografía requiere comparación visual, revisión de licencia y validación local. Las decisiones anteriores sobre Ant Design Mobile (ADR-0014/0017) quedan como historia, no como autoridad visual activa. La especificación funcional vigente es V1.9. El estado real de validación por plataforma se documenta únicamente en `docs/STATE.md`.

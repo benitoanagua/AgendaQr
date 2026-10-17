@@ -1,6 +1,6 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — V1.8 para contrato funcional; contrato visual definido por ADR-0017 (alineación fiel con Ant Design Mobile 5.43.0 + navegación Android/iOS) y desarrollado en `docs/05-design-system/00-contrato-normativo-diseno.md`  
+**Estado:** FROZEN — V1.9 para contrato funcional; identidad visual definida por ADR-0020 y desarrollada en `docs/05-design-system/00-contrato-normativo-diseno.md`  
 **Fecha:** 2026-10-11  
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
 
@@ -18,8 +18,9 @@
 | V1.7 | 2026-10-16 | Enmienda por ADR-0017 (alineación fiel con Ant Design Mobile 5.43.0): §12 reescrito a los valores oficiales (escala 17/15/13, radios 2/4/6/8, paleta oscura oficial, diálogo con fila hairline, buscador SearchBar, secundario = botón `default`); corrige el error "barra inferior 64 dp" de V1.5 (son 56 dp). Intención, flujos y copy: intactos. Aprobación explícita del propietario para enmendar la congelación del §12 (alineación con Ant Design Mobile, ADR-0017); intención, flujos y copy intactos. |
 | V1.8 | 2026-10-16 | Enmienda por ADR-0018 (correcciones UX de captura rápida): S00 (gracia de bloqueo 120 s, biometría automática, demo solo al inicio), S01 (hub de creación, sin duplicados, Favoritos, lista sin favoritos del carrusel), Detalle de destino (Mostrar QR como primaria, pantalla completa con brillo), S07 (editor con divulgación progresiva, validación real, descarte confirmado), S04 (foco solo desde Inicio). Intención, modelo mental y reglas de negocio: intactos. Aprobación explícita del propietario para enmendar la congelación en lo que ADR-0018 cambia. |
 | V1.9 | 2026-10-16 | Enmienda por ADR-0019 (inicio vacío): S01 vacío de primera ejecución muestra "Traer un QR", el FAB se oculta sin destinos ni búsqueda, y se retira el encabezado "Todos los destinos" sobre el vacío. Intención, modelo mental y reglas de negocio: intactos. |
+| V1.10 | 2026-10-16 | Enmienda visual por ADR-0020: identidad propia inspirada en aplicaciones chinas de consumo; paleta azul tecnológico + superficies neutras azul-gris; sin cambios en navegación, flujos, copy funcional o reglas de negocio. |
 
-La implementación vigente corresponde a V1.8. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
+La composición funcional vigente corresponde a V1.9; la identidad visual vigente corresponde a V1.10/ADR-0020. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
 ## 1. Contrato principal
 
@@ -286,92 +287,72 @@ Reglas vigentes V1.3:
 - **Escalado de fuente:** el contenido esencial y las acciones primarias
   no se truncan con la fuente del sistema al 200 %.
 
-## 12. Contrato visual — V1.7, ADR-0017
+## 12. Contrato visual — V1.10, ADR-0020
 
-> **Precedencia:** esta sección conserva la decisión de producto visual adoptada por ADR-0014 (referencia Ant Design Mobile + navegación Android/iOS). Para reglas transversales detalladas, estados, accesibilidad, pruebas, gobernanza y resolución de contradicciones, prevalece `docs/05-design-system/00-contrato-normativo-diseno.md`. Si un detalle de esta sección contradice el contrato normativo, se debe reconciliar documentalmente; no se permite implementar una mezcla tácita.
+> **Precedencia:** esta sección define la dirección visual de producto. Para tokens, contraste, componentes, estados, accesibilidad, pruebas y gobernanza, prevalece `docs/05-design-system/00-contrato-normativo-diseno.md`. La UX funcional y la navegación raíz no cambian por esta enmienda.
 
-La UI es convencional, mobile-first y poco disruptiva: componentes estándar de Material 3 con el MISMO diseño en Android e iOS. La marca queda en el color de acento y poco más. Se conservan la paleta verificada, el lienzo claro del QR y las reglas de accesibilidad (§11). La referencia visual es Ant Design Mobile: la capa de tokens (`AmTokens.kt`) y los componentes `Am*` son la única API visual de las features; la navegación sigue las convenciones de Android e iOS.
+AgendaQr adopta una identidad visual propia inspirada en aplicaciones móviles chinas de consumo: útil desde el primer vistazo, compacta sin ser apretada, jerárquica y visualmente pulida. No se copia una superapp ni se añaden adornos culturales genéricos. La interfaz sigue siendo nativa en Compose Multiplatform; no se incorpora React, CSS ni una librería web.
 
 ### Principios
 
-1. Contenido antes que cromo.
-2. Componentes estándar: todo control interactivo es Material 3 o un envoltorio fino AgendaMobile con color, forma y tipografía del tema; sin mecánicas de interacción paralelas propias.
-3. Sin deriva de plataforma: la composición, el chrome y los componentes son idénticos en Android e iOS; solo la adquisición nativa (selectores, share) y las convenciones obligadas del sistema difieren.
-4. La accesibilidad es contrato, no refinamiento (§11).
+1. Contenido y acción útil antes que decoración.
+2. Una intención principal y una acción principal por pantalla.
+3. Densidad controlada: filas compactas, metadatos alineados, divisores discretos y pocas tarjetas anidadas.
+4. Azul tecnológico para acción y selección; superficies neutras con matiz azul-gris; tonos semánticos solo para estados.
+5. El QR es un elemento central del producto: alto contraste, lienzo blanco y acciones directas.
+6. Accesibilidad, funcionamiento offline y consistencia Android/iOS son invariantes.
 
 ### Navegación y chrome
 
-- Barra superior de 56 dp (título 18 a la izquierda, estilo estándar) en cada superficie: flecha atrás cuando haya a dónde volver — la misma en ambas plataformas —, acciones de la pantalla (máx. 2 visibles + menú "…").
-- Barra de navegación inferior de 56 dp (`NavigationBar`, sin píldora) SOLO en las superficies raíz: Inicio, Buscar, Actividades y Contextos; cada destino con etiqueta 11 + icono (nunca solo icono). No aparece en detalle/edición/importación. Cambiar de destino conserva la raíz del back stack (Back desde otro destino vuelve a Inicio; desde Inicio sale de la app).
-- La acción principal contextual vive en el cuerpo como `Button`, o fija abajo solo cuando existe una acción real de guardado (p. ej. "Guardar reconocidos" en S12). Una pantalla cuya barra solo tiene "Volver" no lleva barra inferior.
-- El Back del sistema conserva su orden (flujo interno → pop de superficie → sistema); el predictive back de Android 14+ anima con el progreso del gesto.
-- Tablet/plegables: adaptación por `WindowSizeClass`; el ancho expandido limita el contenido (`ContentMaxWidth`) y la navegación raíz pasa a riel (`NavigationRail`).
-- S06 conserva sus secciones QR · Actividades · Comprobantes (pestañas estándar). S04/S05 conservan resultados agrupados por tipo con encabezados de sección.
+- Se conservan las convenciones existentes: barra superior jerárquica de 56 dp, navegación inferior de 56 dp solo en superficies raíz, back stack restaurable y comportamiento nativo de Atrás.
+- La navegación raíz continúa siendo Inicio, Buscar, Actividades y Contextos; los detalles, editores e importaciones no duplican esa barra.
+- La barra de navegación utiliza selección por color y etiqueta legible, sin indicador decorativo tipo píldora.
+- Tablet/plegables mantienen adaptación por `WindowSizeClass` y límite de ancho de contenido.
+- No se cambia la navegación funcional como parte de la reforma visual.
 
-### Campos de entrada
+### Composición, listas y tarjetas
 
-- Campo con etiqueta, texto de apoyo y error contextual debajo (icono + texto, no solo color); el campo de texto conserva etiqueta flotante persistente (desviación documentada frente al patrón Form/List) y guía hairline inferior en reposo (divisor), en foco (acento) y en error (peligro).
-- Buscador estilo SearchBar: relleno box, radio 6, sin etiqueta flotante visible, borde de acento en foco, altura mínima 48 dp.
-- Teclado e IME según el tipo de campo; autofill de credenciales; mostrar/ocultar contraseña con botón de descripción accesible.
-- La obligatoriedad se indica con texto/semántica accesible coherente con la guía de voz, no con asterisco decorativo.
+- Una cabecera clara por pantalla; acciones contextuales visibles limitadas a las más importantes.
+- Las listas son la composición base para destinos, actividades, contextos y comprobantes. Cada fila distingue título, metadatos y acción sin competir por atención.
+- Las tarjetas se reservan para contenido agrupado o acciones que se benefician de un límite visual; no envolver cada fila en una tarjeta independiente.
+- Las secciones usan espaciado consistente; el encabezado permanece próximo al contenido que introduce.
+- Los estados vacíos incluyen una explicación breve y la acción más útil cuando existe.
+- Los estados de error, carga, éxito y sincronización conservan texto e iconografía; el color no es la única señal.
 
-### Listas y diálogos
+### Campos y formularios
 
-- Filas con título 17 y descripción 13 en cuerpo de lista (card mode radio 8) con hairlines; flecha decorativa opt-in en filas que navegan; acciones por fila como botones de icono (favorito = conmutador de estrella con estado y descripción accesible), no como enlace de texto.
-- Diálogos estilo Dialog: popup radio 8, título 18 bold centrado, contenido 15, fila de acciones a ancho completo separada por hairlines (confirmar en negrita, destructiva en peligro); foco inicial en la acción conservadora cuando hay pérdida irreversible. Sin hoja inferior (limitación Robolectric documentada).
+- Etiqueta persistente, contenido, ayuda y error contextual claramente asociados.
+- El buscador tiene un tratamiento propio y reconocible, con foco visible y objetivo táctil mínimo de 48 dp.
+- La obligatoriedad, los errores y los estados de guardado se comunican con texto/semántica, no solo con color.
+- Las acciones fijas respetan las barras del sistema y el teclado (IME); no ocultan el contenido editable.
+- Los flujos de importación conservan selección, revisión y confirmación con jerarquía visual consistente.
 
-### Botones
+### Botones y acciones
 
-- Acción principal: `Button` con relleno de acento, radio 4. Secundaria: botón `default` (fondo claro + hairline + texto primario, radio 4). Terciaria: `TextButton`. Icono: `IconButton`/`IconToggleButton` con descripción accesible. Mínimo 48 dp de objetivo táctil; deshabilitado con opacidad .4.
-- Estado deshabilitado y "guardando" expresados con etiqueta de texto (nunca solo con apariencia).
+- Una acción primaria por contexto; las secundarias no compiten en relleno o tamaño.
+- Las acciones destructivas se separan visual y semánticamente de las habituales.
+- Acciones frecuentes visibles donde ahorren pasos; no duplicar la misma acción en varias zonas de una pantalla.
+- Todos los controles interactivos conservan objetivo táctil mínimo de 48 dp, foco, estado presionado y estado deshabilitado accesibles.
 
-### Tipografía
+### Tipografía e iconografía
 
-- Familia del sistema en todos los estilos (Roboto en Android, San Francisco en iOS): sin fuente empaquetada propia. Escala de la referencia en sp: título 18, cuerpo/botón/fila 17, etiqueta 15, descripción 13, apoyo 12, tags y barra 11 (peso normal salvo título de diálogo bold y botón Medium); importe 26 SemiBold como extensión financiera; tracking neutro; roles estándar de Material 3.
-- Capitalización de oración. El escalado de fuente del sistema se mantiene (§11).
+- Se conserva inicialmente la familia de sistema y la escala semántica existente: título 18 sp, cuerpo/fila 17 sp, etiqueta 15 sp, metadatos 13 sp, apoyo 12 sp y etiquetas compactas 11 sp.
+- MiSans Global y una familia monoespaciada son candidatas para evaluación local, no dependencias aprobadas. No se empaquetará una fuente hasta validar cobertura, licencia, tamaño y capturas en Android/iOS.
+- Lucide permanece como familia única a través de `AmIcon`/`AmIcons`. No se mezclan familias ni se migran iconos sin comparar las pantallas reales.
+- Los importes y datos técnicos pueden usar alineación numérica o monoespaciado solo si mejora la lectura; no se aplica estética de consola a toda la interfaz.
 
-### Color
+### Color y tema oscuro
 
-- Acento del sistema (referencia Ant Design Mobile, recalibrado para contraste AA): claro `1668DC` (texto blanco, 5.19:1), oscuro `3086FF` (oficial) con texto de tinta (5.37:1). Superficies oficiales en ambos temas (página oscura `1A1A1A`, superficie `1F1F1F` con elevación documentada, box `0A0A0A`; hairlines `#EEEEEE`/`#2B2B2B`), pares de contenido verificados por pruebas.
-- Paleta de identidad de contextos: el color se deriva de forma **determinista** del identificador del contexto, sin persistir el color ni cambiar el dominio; paleta acotada (12 + sistema), sin ampliar. Elegir color manualmente queda como punto abierto, coherente con ADR-0003 (sin edición de contextos en V1).
-- Los colores de estado (error, advertencia, éxito, información) siguen siendo semánticos y distintos del acento; el significado nunca depende solo del color.
-- El lienzo del código QR es claro en ambos temas (zona de silencio escaneable).
+- Tema claro: fondo `F7F8FA`, superficies `FFFFFF`/`F1F4F8`, texto `1F2937`, acento `245FE5`.
+- Tema oscuro: fondo `10141B`, superficie `171D26`, secundaria `0C1118`, texto `F1F5F9`, acento `70A5FF` con tinta `101B2E`.
+- Los roles semánticos de éxito, advertencia, peligro e información se definen en los tokens. Contraste de texto ≥ 4.5:1 y foco/bordes funcionales ≥ 3:1.
+- El lienzo del QR permanece blanco en ambos temas para preservar su zona de silencio escaneable.
+- El tema oscuro se diseña como una paleta independiente, no como inversión mecánica del claro.
 
-Tabla de contraste calculada (WCAG 2.x sobre luminancia relativa; razón del par texto asignado/fondo). Regla: texto normal ≥ 4.5:1. Todos los acentos usan texto blanco.
+### Movimiento
 
-| Acento | Hex | Texto blanco | Texto asignado |
-|---|---|---|---|
-| blue | 1D4ED8 | 6.70 | blanco |
-| sky | 0369A1 | 5.93 | blanco |
-| teal | 0F766E | 5.47 | blanco |
-| cyan | 0E7490 | 5.36 | blanco |
-| emerald | 047857 | 5.48 | blanco |
-| green | 15803D | 5.02 | blanco |
-| lime | 4D7C0F | 4.99 | blanco |
-| amber | A16207 | 4.92 | blanco |
-| orange | C2410C | 5.18 | blanco |
-| red | B91C1C | 6.47 | blanco |
-| rose | BE123C | 6.29 | blanco |
-| violet | 6D28D9 | 7.10 | blanco |
-| sistema | 1668DC | 5.19 | blanco |
-
-**Paleta final admitida: 12 acentos de contexto + el acento de sistema** (contrato normativo). Los pares están fijados por `AmAccentTest`; la asignación por identificador (FNV-1a) es estable entre plataformas.
-
-### Formas y movimiento
-
-- Escala de radios oficial en tokens (tag/segmentado 2, botón 4, búsqueda 6, tarjeta/diálogo/banner 8, hoja 12, píldora para chips de filtro/FAB/estados), consumida por `MaterialTheme.shapes`; ningún componente fija radios suyos.
-- Ripple/indicación de pulsación estándar de Material 3; sin overlay de pulsación propio ni `indication = null`.
-- Transición entre superficies: fundido con un desplazamiento horizontal pequeño, corto y con tokens de movimiento; con reduced motion el cambio es inmediato (§11).
-
-### Iconografía
-
-- **Set: Lucide** (licencia ISC — texto del aviso en `docs/05-design-system/06-licencias-terceros.md`), encapsulado por `AmIcon`; tamaño desde tokens. El set de iconos de Material queda prohibido en producción.
-- Glifos de línea, trazo uniforme, un solo color. Iconos decorativos fuera del árbol de accesibilidad; iconos interactivos con descripción accesible (§11).
-- Fuera del mapeo existente no se añaden iconos sin decisión.
-
-### Modo oscuro
-
-- Esquema oscuro oficial (fondo `1A1A1A`, superficie `1F1F1F` con elevación documentada, box `0A0A0A`, hairlines `2B2B2B`), con los mismos roles semánticos y umbrales de contraste que el claro; el acento es el azul oficial con texto de tinta (par AA verificado).
+- Las transiciones son breves, consistentes y funcionales. El movimiento reducido elimina la animación en lugar de acelerarla.
+- No se añaden sombras generalizadas, transparencias decorativas ni animaciones complejas para aparentar una estética de marca.
 
 ## 13. Fuera de esta congelación
 
@@ -379,4 +360,4 @@ Fuera del alcance de esta especificación conceptual: detalles internos de Kotli
 
 ## 14. Estado
 
-**UX/UI V1.8: FROZEN** (enmienda ADR-0018, 2026-10-16).
+**UX/UI V1.9 funcional + V1.10 visual: FROZEN** (ADR-0019 y ADR-0020, 2026-10-16).

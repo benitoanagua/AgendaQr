@@ -1,10 +1,10 @@
 import java.io.File
 
 /**
- * Gate del sistema de diseño (ADR-0014, referencia Ant Design Mobile). Las reglas por línea
+ * Gate del sistema de diseño (ADR-0020, identidad visual propia AgendaQr). Las reglas por línea
  * operan sobre el código de producción; los source sets de test pueden
  * usar primitivas (p. ej. 48.dp para verificar touch targets) sin violar
- * la autoridad visual.
+ * el contrato visual.
  */
 fun Project.productionKotlinSources(): Sequence<File> = sequence {
     sequenceOf("androidApp", "core", "feature", "shared").forEach { root ->
