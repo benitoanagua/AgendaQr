@@ -169,6 +169,10 @@ object AmIcons {
     val Erase: ImageVector get() = Lucide.Delete
     /** Nota/concepto (lápiz de nota). */
     val NoteEdit: ImageVector get() = Lucide.NotebookPen
+    /** Editar (lápiz). */
+    val Edit: ImageVector get() = Lucide.NotebookPen
+    /** Eliminar (papelera). */
+    val Trash: ImageVector get() = Lucide.Delete
     /** Compartir (salida del contenido). */
     val Share: ImageVector get() = Lucide.Share2
     /** Copiar al portapapeles (dos rectángulos). */

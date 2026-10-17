@@ -93,9 +93,9 @@ fun DestinationDetailScreen(
                 onBack = onBack,
                 backLabel = AppStrings.Volver,
                 overflowActions = listOf(
-                    AmOverflowAction(AppStrings.RegistrarOperacion, onRegisterOperation),
-                    AmOverflowAction(AppStrings.Editar, onEdit),
-                    AmOverflowAction(AppStrings.Eliminar, { showDeleteConfirm = true }),
+                    AmOverflowAction(AppStrings.RegistrarOperacion, onRegisterOperation, AmIcons.Register),
+                    AmOverflowAction(AppStrings.Editar, onEdit, AmIcons.Edit),
+                    AmOverflowAction(AppStrings.Eliminar, { showDeleteConfirm = true }, AmIcons.Trash),
                 ),
                 overflowLabel = AppStrings.Mas,
             )

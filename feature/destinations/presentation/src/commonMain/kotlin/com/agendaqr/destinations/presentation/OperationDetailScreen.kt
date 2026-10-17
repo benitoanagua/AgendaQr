@@ -61,9 +61,10 @@ internal fun OperationDetailScreen(
                 onBack = { viewModel.onAction(OperationAction.Back) },
                 backLabel = AppStrings.Volver,
                 actions = listOf(
-                    AmTopBarAction(label = AppStrings.Compartir, onClick = { shareOperation(operation) }),
+                    AmTopBarAction(label = AppStrings.Compartir, icon = AmIcons.Share, onClick = { shareOperation(operation) }),
                     AmTopBarAction(
                         label = AppStrings.Editar,
+                        icon = AmIcons.Edit,
                         onClick = { viewModel.onAction(OperationAction.Edit(operation.id)) },
                     ),
                 ),

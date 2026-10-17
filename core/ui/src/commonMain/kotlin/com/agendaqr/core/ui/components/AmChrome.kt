@@ -68,6 +68,8 @@ private val AmTabLabelStyle = androidx.compose.ui.text.TextStyle(
 data class AmOverflowAction(
     val label: String,
     val onClick: () -> Unit,
+    /** Glifo opcional del menú (decorativo; la etiqueta es la señal). */
+    val icon: ImageVector? = null,
 )
 
 /**
@@ -186,6 +188,9 @@ fun AmTopBar(
                     overflowActions.forEach { option ->
                         DropdownMenuItem(
                             text = { Text(option.label) },
+                            leadingIcon = option.icon?.let { glyph ->
+                                { AmIcon(imageVector = glyph, contentDescription = null, tint = AmColor.TextPrimary) }
+                            },
                             onClick = {
                                 overflowOpen = false
                                 option.onClick()
