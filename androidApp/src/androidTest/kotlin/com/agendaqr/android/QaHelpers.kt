@@ -5,7 +5,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.StaleObjectException
 import androidx.test.uiautomator.UiDevice
-import java.io.File
 import kotlin.test.fail
 
 /** Utilidades compartidas de las pruebas instrumentadas. */
@@ -27,6 +26,9 @@ object Qa {
                 hasText("Inicio") ||
                 hasText("Volver") ||
                 hasText("Configura tu PIN")
+        }
+        if (!hasText("Explorar demostración") && hasText("Configura tu PIN")) {
+            scrollToText("Explorar demostración")
         }
         if (hasText("Explorar demostración")) {
             tapText("Explorar demostración", timeoutMs = 15_000)
@@ -83,15 +85,14 @@ object Qa {
 
     fun hasText(text: String): Boolean = textVisible(text) || descVisible(text)
 
-    /** Captura en el caché del runner de pruebas, fuera del repositorio. */
+    /** Captura en almacenamiento compartido del emulador, fuera del repositorio. */
     fun screenshot(name: String) {
-        val externalCache = instrumentation.context.externalCacheDir
-            ?: error("el runner no tiene caché externo para capturas")
-        val dir = File(externalCache, "agendaqr-ronda2")
-        check(dir.exists() || dir.mkdirs()) { "no se pudo crear el directorio de capturas" }
-        val output = File(dir, "$name.png")
-        val captured = device.takeScreenshot(output)
-        check(captured) { "screenshot fallido: $name" }
+        require(name.matches(Regex("[A-Za-z0-9_.-]+"))) { "nombre de captura inválido: $name" }
+        val path = "/sdcard/agendaqr-ronda2/$name.png"
+        val result = shell(
+            "mkdir -p /sdcard/agendaqr-ronda2 && screencap -p '$path' && test -s '$path' && echo captured",
+        ).trim()
+        check(result == "captured") { "screenshot fallido: $name" }
     }
 
     fun shell(cmd: String): String = device.executeShellCommand(cmd)

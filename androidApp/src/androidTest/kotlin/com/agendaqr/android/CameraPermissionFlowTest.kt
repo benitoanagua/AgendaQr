@@ -80,6 +80,9 @@ class CameraPermissionFlowTest {
         }
         Qa.waitFor(4_000) { denyNode() != null }
         checkNotNull(denyNode()) { "No se encontró una opción para denegar el permiso de cámara" }.click()
-        Qa.waitFor(3_000) { !Qa.textVisible("Mientras uses la app") }
+        Qa.waitFor(3_000) {
+            Qa.device.currentPackageName != "com.android.permissioncontroller" &&
+                Qa.device.currentPackageName != "com.google.android.permissioncontroller"
+        }
     }
 }
