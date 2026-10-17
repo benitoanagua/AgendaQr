@@ -339,7 +339,10 @@ private fun PendingItemCard(
             // [Guardar de todos modos] [Descartar], Descartar a la derecha.
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
+                horizontalArrangement = Arrangement.spacedBy(
+                    AmSpacing.Sm,
+                    alignment = Alignment.End,
+                ),
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
             ) {
                 if (isDuplicate) {

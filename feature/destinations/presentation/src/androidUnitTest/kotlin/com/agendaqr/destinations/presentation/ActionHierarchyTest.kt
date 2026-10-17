@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.agendaqr.core.ui.theme.AmTheme
@@ -9,6 +10,7 @@ import com.agendaqr.destinations.domain.ImportCandidate
 import com.agendaqr.destinations.domain.ImportKind
 import com.agendaqr.destinations.domain.QrAsset
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -104,6 +106,14 @@ class ActionHierarchyTest {
         compose.onNodeWithText(AppStrings.VerExistente).assertExists()
         compose.onNodeWithText(AppStrings.GuardarDeTodosModos).assertExists()
         compose.onNodeWithText(AppStrings.ReintentarClasificacion).assertDoesNotExist()
+
+        val saveBounds = compose.onNodeWithText(AppStrings.GuardarDeTodosModos)
+            .getUnclippedBoundsInRoot()
+        val discardBounds = compose.onNodeWithText(AppStrings.Descartar)
+            .getUnclippedBoundsInRoot()
+        assertTrue("Las acciones de una tarjeta pendiente deben tener espacio visible entre ellas") {
+            discardBounds.left > saveBounds.right
+        }
 
         // Nivel 4 sobre duplicado: descartar directo (el original existe;
         // no se pierde información) — sin diálogo de confirmación.
