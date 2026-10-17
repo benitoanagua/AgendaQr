@@ -59,7 +59,7 @@ internal object AmPalette {
     val lightOnDisabled = Color(0xFF596579)
     val lightInverseSurface = Color(0xFF172033)
     val lightInverseOnSurface = Color(0xFFFFFFFF)
-    val lightInverseAccent = Color(0xFF70A5FF)
+    val lightInverseAccent = Color(0xFF3086FF)
     /** Lienzo del QR: fondo claro GARANTIZADO en ambos temas (zona de
      * silencio escaneable); el marco tonal lo aporta AmMediaFrame. */
     val lightQrCanvas = Color(0xFFFFFFFF)
@@ -95,7 +95,7 @@ internal object AmPalette {
     val darkOnDisabled = Color(0xFFA6B1C0)
     val darkInverseSurface = Color(0xFFF1F5F9)
     val darkInverseOnSurface = Color(0xFF10141B)
-    val darkInverseAccent = Color(0xFF70A5FF)
+    val darkInverseAccent = Color(0xFF3086FF)
 }
 
 /**

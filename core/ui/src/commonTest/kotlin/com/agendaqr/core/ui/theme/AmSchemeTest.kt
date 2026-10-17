@@ -85,7 +85,7 @@ class AmSchemeTest {
         assertEquals("596579", hex(s.onDisabled))
         assertEquals("172033", hex(s.inverseSurface))
         assertEquals("FFFFFF", hex(s.inverseOnSurface))
-        assertEquals("70A5FF", hex(s.inverseAccent))
+        assertEquals("3086FF", hex(s.inverseAccent))
         assertEquals("FFFFFF", hex(s.qrCanvas))
         assertEquals("FFFFFF", hex(s.surfaceContainerLow))
         assertEquals("F7F9FC", hex(s.surfaceContainer))
@@ -317,8 +317,8 @@ class AmSchemeTest {
         }
         // El lienzo del QR no conmuta: claro garantizado en ambos temas.
         assertEquals(light.getValue("qrCanvas"), dark.getValue("qrCanvas"))
-        // El acento inverso tampoco: el primario oscuro de la referencia
-        // funciona en ambos contextos inversos.
+        // El acento inverso se conserva para el rol inversePrimary de Material 3;
+        // no forma parte del acento de marca de las pantallas.
         assertEquals(light.getValue("inverseAccent"), dark.getValue("inverseAccent"))
     }
 }
