@@ -39,7 +39,7 @@ ADR-0020 declaró la identidad de AgendaQr como "inspirada en aplicaciones móvi
 | Actividades y su detalle | Hero con píldora de tipo y cifra neutra, filas etiqueta-valor, `AmListRow` con `endMeta` | Ninguna estructural en Actividades; en Inicio no aplica (la fila lleva la acción de favorito en `trailing`) |
 | S09–S12 Importación | Resumen en `AmCard` (cifra de reconocidos en `AmType.Amount` y filas icono + texto de duplicados y pendientes), `PendingItemCard` por elemento, `ImportReviewScreen` con vista previa y evidencia decodificada | Los estados se expresan con icono y texto suelto en vez de insignia con texto; el resumen no usa filas etiqueta-valor |
 | S00 Acceso local | Título y descripción, campos `AmTextField` en columna, botón primario dentro del scroll, bloque de demostración opcional | Campos sin agrupar en tarjetas de ajustes; el botón primario no queda fijo al pie |
-| S02 Añadir | Texto de intención y controles de fuente agrupados por distancia (archivos y cámara), sin encabezados de sección | Fuentes sin encabezado de sección ni cuerpo `AmListBody` |
+| S02 Añadir | Texto de intención y controles de fuente agrupados por rótulo de sección (archivos y cámara) | Ninguna: los controles son botones, no filas, así que no usan `AmListBody` (deliberado) |
 | S07 Editor de actividad | Selector segmentado de tipo, `AmCard` de importe y moneda, grupos en `AmListBody` con rótulo de sección, botón primario fijo al pie | Ninguna estructural |
 | Navegación raíz | `AmNavBar` de 56 dp, color + etiqueta, sin píldora | Ninguna |
 | Formularios | `AmTextField` con etiqueta flotante persistente y guía hairline | Deliberada: la etiqueta persistente es un requisito de accesibilidad |
@@ -65,6 +65,7 @@ Ninguna de estas brechas se implementa sin decisión del propietario. Las que ca
 ### Brechas implementadas
 
 - **G8** — Encabezados de sección en los grupos del editor (S07): `Importe y moneda`, `Fecha y hora`, `Persona o entidad` y `Contexto`, con el rótulo pegado a su cuerpo. Commit: «Agrega encabezados de sección a los grupos del editor».
+- **G7** — Encabezados de sección para las fuentes de importación (S02): `Desde archivos` y `Desde la cámara`. Commit: «Agrega encabezados de sección a las fuentes de importación».
 
 ## Consecuencias
 

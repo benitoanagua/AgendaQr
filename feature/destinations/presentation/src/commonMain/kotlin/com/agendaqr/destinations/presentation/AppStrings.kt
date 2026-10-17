@@ -293,6 +293,9 @@ internal object AppStrings {
     /** Rótulos de sección de los grupos del editor (S07). */
     val ImporteYMoneda = "Importe y moneda"
     val FechaYHora = "Fecha y hora"
+    /** Rótulos de sección de las fuentes de importación (S02). */
+    val DesdeArchivos = "Desde archivos"
+    val DesdeLaCamara = "Desde la cámara"
     /** Metadatos: etiquetas cortas sin puntuación (fila compacta). */
     val LabelPersonaOEntidad = "Persona o entidad"
     val LabelMoneda = "Moneda"

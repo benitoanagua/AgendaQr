@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import com.agendaqr.core.ui.components.AmScreenScaffold
+import com.agendaqr.core.ui.components.AmSectionHeader
 import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTopBar
@@ -52,10 +53,11 @@ fun AddDestinationScreen(
         )
 
         // Orden congelado S02: Galería → (Desde otra app) → Cámara.
-        // Una única acción de galería con selección múltiple: 1 elemento →
-        // revisión única (S09); 2 o más → lote (S12).
-        // Fuentes de archivo como grupo: alternativas entre sí (8 dp).
+        // Fuentes de archivo como grupo con rótulo de sección; una única
+        // acción de galería con selección múltiple: 1 elemento → revisión
+        // única (S09); 2 o más → lote (S12).
         Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+            AmSectionHeader(text = AppStrings.DesdeArchivos)
             QrGalleryControls(
                 onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
             )
@@ -64,22 +66,26 @@ fun AddDestinationScreen(
             QrPdfPickerControl()
         }
 
-        // "Desde otra app": ayuda breve, solo donde la plataforma lo
-        // soporta (Android: share intents; iOS: pendiente de Share
-        // Extension, no se muestra). Vive pegada al grupo de cámara al que
-        // contextualiza (4 dp), no como bloque aislado.
-        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
-            if (sharedImportsSupported()) {
-                AmText(
-                    AppStrings.shareFromAnotherAppHint,
-                    size = AmType.Caption,
-                    color = AmColor.TextSecondary,
+        // Fuente de cámara con su rótulo de sección. "Desde otra app": ayuda
+        // breve, solo donde la plataforma lo soporta (Android: share
+        // intents; iOS: pendiente de Share Extension, no se muestra). Vive
+        // pegada al grupo de cámara al que contextualiza (4 dp), no como
+        // bloque aislado.
+        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+            AmSectionHeader(text = AppStrings.DesdeLaCamara)
+            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+                if (sharedImportsSupported()) {
+                    AmText(
+                        AppStrings.shareFromAnotherAppHint,
+                        size = AmType.Caption,
+                        color = AmColor.TextSecondary,
+                    )
+                }
+
+                QrCameraEntryControl(
+                    onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
                 )
             }
-
-            QrCameraEntryControl(
-                onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
-            )
         }
     }
 }
