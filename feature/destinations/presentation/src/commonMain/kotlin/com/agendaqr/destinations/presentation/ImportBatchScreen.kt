@@ -30,7 +30,6 @@ import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmStatusPill
 import com.agendaqr.core.ui.components.AmCard
-import com.agendaqr.core.ui.components.AmIcon
 import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTextAction
@@ -273,44 +272,34 @@ private fun PendingItemCard(
     var showDiscardConfirm by remember(candidate.id) { mutableStateOf(false) }
     com.agendaqr.core.ui.components.AmCard {
         Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-            // Cabecera: icono de estado + nombre útil + estado.
-            Row(
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-            ) {
-                if (isDuplicate) {
-                    AmIcon(
-                        imageVector = AmIcons.Warning,
-                        contentDescription = null,
-                        tint = com.agendaqr.core.ui.theme.AmColor.Warning,
-                    )
-                } else {
-                    AmIcon(
-                        imageVector = AmIcons.Info,
-                        contentDescription = null,
-                        tint = com.agendaqr.core.ui.theme.AmColor.Info,
-                    )
-                }
-                Column {
-                    AmText(text = pendingItemName(candidate, index), fontWeight = androidx.compose.ui.text.font.FontWeight.Medium)
-                    AmText(
-                        text = if (candidate.displayName?.isNotBlank() == true) {
-                            (candidate.extension?.let { AppStrings.ArchivoPrefijo + it + " · " } ?: "") + when (candidate.kind) {
-                                ImportKind.QR -> "QR"
-                                ImportKind.COMPROBANTE -> "comprobante"
-                                ImportKind.DESCONOCIDO -> "sin clasificar"
-                            }
-                        } else {
-                            when {
-                                isDuplicate -> AppStrings.elementoYaGuardado
-                                candidate.kind == ImportKind.DESCONOCIDO -> AppStrings.elementoSinClasificar
-                                else -> AppStrings.elementoPendienteRevision
-                            }
-                        },
-                        size = AmType.BodySmall,
-                        color = AmColor.TextSecondary,
-                    )
-                }
+            // Nombre útil, dato del archivo o motivo, y estado. El estado se
+            // expresa con una insignia CON texto (el glifo y el tono solo
+            // acompañan): la insignia va en su propia línea para no recortar
+            // el ancho del título, tampoco a 320 dp ni con fuente al 200 %.
+            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+                AmText(text = pendingItemName(candidate, index), fontWeight = androidx.compose.ui.text.font.FontWeight.Medium)
+                AmText(
+                    text = if (candidate.displayName?.isNotBlank() == true) {
+                        (candidate.extension?.let { AppStrings.ArchivoPrefijo + it + " · " } ?: "") + when (candidate.kind) {
+                            ImportKind.QR -> "QR"
+                            ImportKind.COMPROBANTE -> "comprobante"
+                            ImportKind.DESCONOCIDO -> "sin clasificar"
+                        }
+                    } else {
+                        when {
+                            isDuplicate -> AppStrings.elementoYaGuardado
+                            candidate.kind == ImportKind.DESCONOCIDO -> AppStrings.elementoSinClasificar
+                            else -> AppStrings.elementoPendienteRevision
+                        }
+                    },
+                    size = AmType.BodySmall,
+                    color = AmColor.TextSecondary,
+                )
+                AmStatusPill(
+                    text = if (isDuplicate) AppStrings.PosibleDuplicado else AppStrings.PendienteDeRevision,
+                    icon = if (isDuplicate) AmIcons.Warning else AmIcons.Info,
+                    tone = if (isDuplicate) AmTone.Warning else AmTone.Info,
+                )
             }
             // Acción principal de ancho completo (tonal).
             when {

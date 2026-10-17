@@ -205,6 +205,7 @@ internal object AppStrings {
     val PosiblesDuplicados = "Posibles duplicados"
     val PosibleDuplicado = "Posible duplicado"
     val PendientesDeRevision = "Pendientes de revisión"
+    val PendienteDeRevision = "Pendiente de revisión"
     val CrearContexto = "Crear contexto"
     val Crear = "Crear"
     val QuitarContexto = "Quitar contexto"
