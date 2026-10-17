@@ -4,8 +4,22 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+// Aviso de licencias de terceros (Lucide + envoltorio composeicons): se
+// copia a assets generados en tiempo de build y AGP lo empaqueta en el
+// APK. La fuente canónica vive en `third-party-notices/`; no hay scripts
+// externos.
+val thirdPartyNotices = layout.projectDirectory.dir("third-party-notices")
+val generatedThirdPartyNotices = layout.buildDirectory.dir("generated/thirdPartyNotices")
+val generateThirdPartyNotices = tasks.register<Sync>("generateThirdPartyNotices") {
+    description = "Copia los avisos de licencias de terceros a los assets del distribuible."
+    from(thirdPartyNotices)
+    into(generatedThirdPartyNotices)
+}
+
 android {
     compileSdk = 36
+    // Los avisos generados entran como assets del distribuible.
+    sourceSets.getByName("main").assets.srcDir(generatedThirdPartyNotices)
     defaultConfig {
         applicationId = "com.agendaqr.app"
         minSdk = 26
@@ -73,4 +87,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures.compose = true
+}
+
+// El empaquetado de assets corre tras `preBuild`: asegura que los avisos
+// estén generados antes de fusionarlos en el APK/AAB.
+tasks.matching { it.name == "preBuild" }.configureEach {
+    dependsOn(generateThirdPartyNotices)
 }

@@ -11,17 +11,22 @@ Registro de licencias de los recursos y dependencias consumidos por Agenda QR, c
   permiso en copias: el archivo LICENSE del set se conserva junto a los
   recursos empaquetados.
 - Consumo vigente: `com.composables:icons-lucide:1.1.0`
-  (wrapper no oficial) en `core:ui` commonMain, consumido SOLO vía
-  `AmIcon`. Verificado: compila en androidMain e
+  (envoltorio de Compose Multiplatform) en `core:ui` commonMain, consumido
+  SOLO vía `AmIcon`. Verificado: compila en androidMain e
   iosSimulatorArm64 con Kotlin 2.2.20 / Compose 1.8.2; publica las mismas
-  coordenadas para los tres targets. La licencia del artefacto es la ISC
-  del set (más MIT para los glifos derivados de Feather listados en su
-  LICENSE): el aviso se conserva en este registro; **pendiente de
-  implementación**: copiar el archivo LICENSE junto a los recursos
-  empaquetados del distribuible (APK/IPA/web).
+  coordenadas para los tres targets. Licencias aplicables: el código del
+  envoltorio es **MIT** (POM del artefacto; Copyright (c) 2025 Composable
+  Horizons) y los glifos son **ISC** del set Lucide, más **MIT** para los
+  glifos derivados de Feather. Todas exigen conservar el aviso.
+- Estado del empaquetado: **Android implementado y comprobado**. La
+  tarea Gradle `generateThirdPartyNotices` (plugin
+  `agendaqr.android-application`) copia el aviso a los assets generados y
+  AGP lo empaqueta; el APK de depuración incluye
+  `assets/THIRD_PARTY_LICENSES.txt`. **iOS y web: pendiente** (el aviso no
+  se copia aún a esos distribuibles).
 
 Texto exacto de la licencia ISC, transcrito del repositorio oficial de
-Lucide (`LICENSE`, rama main, verificado el 2026-10-05):
+Lucide (`LICENSE`, rama main, verificado el 2026-10-16):
 
 ```
 ISC License
@@ -42,8 +47,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ```
 
 Aviso MIT adicional (solo para los glifos derivados de Feather, lista en
-el LICENSE de Lucide: p. ej. `search`, `plus`, `check`, `x`, `star`,
-`arrow-left`, `image`, `camera` están en esa lista):
+el LICENSE de Lucide: p. ej. `search`, `plus`, `check`, `x`, `arrow-left`,
+`calendar`, `clock`, `info` están en esa lista):
 
 ```
 The MIT License (MIT) (for the icons listed above)
@@ -69,5 +74,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-**Pendiente de implementación:** confirmar el texto LICENSE del artefacto
-concreto empaquetado y copiarlo al distribuible (APK/IPA/web).
+Aviso MIT del envoltorio empaquetado (POM de
+`com.composables:icons-lucide:1.1.0`; el artefacto no publica un archivo
+LICENSE propio ni en el JAR de metadatos ni en el AAR, así que el aviso se
+transcribe del POM y de la fuente del repositorio, verificado el
+2026-10-16):
+
+```
+MIT License
+
+Copyright (c) 2025 Composable Horizons
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+**Estado del aviso en el distribuible:** Android implementado y comprobado
+(asset `assets/THIRD_PARTY_LICENSES.txt` presente en el APK). iOS y web
+siguen pendientes: el aviso no se copia aún a esos distribuibles.
