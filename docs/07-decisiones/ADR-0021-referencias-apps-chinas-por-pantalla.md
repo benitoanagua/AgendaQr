@@ -28,7 +28,9 @@ ADR-0020 declaró la identidad de AgendaQr como "inspirada en aplicaciones móvi
 4. **Se conserva sin cambio:** navegación y comportamiento de Android/iOS, accesibilidad (texto ≥ 4.5:1, objetivos ≥ 48 dp, escalado 200 %, movimiento reducido), lienzo QR blanco, paleta de ADR-0020, Compose Multiplatform, prefijo `Am*`, Lucide, flujos y copy funcional.
 5. **No se añade una cuadrícula de accesos rápidos en Inicio** (patrón típico de superapps): la especificación S01 prohíbe acciones rápidas duplicadas y el hub del botón flotante ya cubre las tres creaciones.
 
-## Auditoría de brecha (código al 2026-10-17)
+> **Enmienda ADR-0022 (no implementar el texto anterior como norma vigente):** el punto 5 queda anulado — Inicio implementa la rejilla de acciones existentes y retira el FAB con hub. Del punto 4, la **paleta** queda sustituida por el Anexo A; siguen vigentes navegación, QR blanco, Lucide, fuente de sistema, prefijo `Am*` y flujos. Esta sección se conserva como historia de la decisión original.
+
+## Auditoría de brecha (código al 2026-10-17; estado previo a ADR-0022)
 
 | Superficie | Implementación verificada | Brecha frente al patrón |
 |---|---|---|

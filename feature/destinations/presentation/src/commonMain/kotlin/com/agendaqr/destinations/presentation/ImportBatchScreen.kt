@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.AmDialog
@@ -29,6 +31,8 @@ import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmStatusPill
+import com.agendaqr.core.ui.components.AmSuccessBurst
+import com.agendaqr.core.ui.components.AmSuccessCheck
 import com.agendaqr.core.ui.components.AmCard
 import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmText
@@ -71,7 +75,11 @@ fun ImportBatchScreen(
         }
         wasSaving = state is ImportBatchUiState.Saving || state is ImportBatchUiState.Saved
     }
-    AmFeedbackEvent(event = savedEvent, message = AppStrings.GuardadoOk)
+    AmFeedbackEvent(
+        event = savedEvent,
+        message = AppStrings.GuardadoOk,
+        haptic = false,
+    )
     // V1.4 (§4 S12): barra superior con título y atrás; "Guardar
     // reconocidos" como botón principal FIJO abajo, solo cuando hay
     // elementos reconocibles; "Revisar N pendientes" en el cuerpo.
@@ -129,6 +137,19 @@ fun ImportBatchScreen(
                 BatchResultContent(state.batch, onAction, isSaving = true)
             }
             is ImportBatchUiState.Saved -> {
+                // ADR-0022 / contrato §9: confirmación visual S12 (check +
+                // confeti breve). El snackbar (AmFeedbackEvent) anuncia el
+                // éxito en la transición; el check es decorativo para evitar
+                // duplicar el anuncio y proporciona la doble háptica (por eso
+                // el evento desactiva su háptica simple). Movimiento reducido:
+                // burst vacío, check estático sin háptica.
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    AmSuccessBurst()
+                    AmSuccessCheck()
+                }
                 AmStatusBanner(
                     title = AppStrings.GuardadoOk,
                     message = AppStrings.batchSavedKeepReviewNotice,

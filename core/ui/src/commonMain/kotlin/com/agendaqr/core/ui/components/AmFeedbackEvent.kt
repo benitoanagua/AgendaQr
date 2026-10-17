@@ -53,12 +53,12 @@ fun AmSnackbarHost(host: AmFeedbackHost) {
 }
 
 /**
- * Punto ÚNICO de realimentación no visual del DS: háptica ligera +
- * anuncio accesible de estado, disparados por EVENTO (un token que
- * cambia), nunca por estado persistente (así no se repite en
- * recomposiciones). Con [feedbackHost] el evento también se publica como
- * Snackbar transitorio (con acción opcional); el anuncio accesible y el
- * háptico se conservan siempre.
+ * Realimentación de eventos del DS: háptica ligera + anuncio accesible de
+ * estado, disparados por EVENTO (un token que cambia), nunca por estado
+ * persistente (así no se repite en recomposiciones). Con [feedbackHost] el
+ * evento también se publica como Snackbar transitorio (con acción opcional);
+ * el anuncio accesible y el háptico se conservan siempre salvo que se
+ * desactiven explícitamente para evitar duplicar otra confirmación.
  *
  * - `event`: null mientras no ocurre; el llamador pasa un token nuevo
  *   (contador, id de operación) cada vez que quiere anunciar.

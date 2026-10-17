@@ -290,17 +290,13 @@ private const val AmSuccessIconFraction = 0.55f
 
 /**
  * Confirmación de éxito (Anexo A: check animado con rebote + doble
- * háptica). El glifo aparece con la escala de rebote y el evento se
- * anuncia por [accessibilityLabel] (liveRegion cortés, copy del llamador);
- * el estado nunca depende solo del color. Con movimiento reducido el check
- * aparece estático y sin háptica de celebración.
+ * háptica). Es decorativo cuando acompaña el banner o evento que comunica el
+ * resultado; no crea un segundo anuncio accesible. Con movimiento reducido el
+ * check aparece estático y sin háptica de celebración.
  */
 @Composable
 fun AmSuccessCheck(
     modifier: Modifier = Modifier,
-    /** copy del llamador para el anuncio (liveRegion). Obligatorio: el
-     *  llamador decide si ya hay otro anuncio en la superficie. */
-    accessibilityLabel: String,
     /** Lado del círculo de confirmación. */
     size: Dp = AmMetrics.EmptyStateGlyphSize,
 ) {
@@ -323,11 +319,7 @@ fun AmSuccessCheck(
     Box(
         modifier = modifier
             .size(size)
-            .scale(scale.value)
-            .semantics {
-                liveRegion = LiveRegionMode.Polite
-                contentDescription = accessibilityLabel
-            },
+            .scale(scale.value),
         contentAlignment = Alignment.Center,
     ) {
         Box(
