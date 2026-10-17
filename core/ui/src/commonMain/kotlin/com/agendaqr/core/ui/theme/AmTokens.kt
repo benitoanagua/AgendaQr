@@ -22,9 +22,9 @@ import androidx.compose.ui.unit.sp
 import kotlin.math.pow
 
 /**
- * Tokens del sistema visual propio de AgendaQr (ADR-0020).
+ * Tokens del sistema visual propio de AgendaQr (ADR-0022).
  *
- * Identidad visual: AgendaQr (ADR-0020), inspirada en aplicaciones móviles chinas de consumo; navegación según convenciones de Android e iOS. Arquitectura de capas (contrato normativo
+ * Identidad visual: AgendaQr (ADR-0022), Super-App de alta densidad con accesibilidad; navegación según convenciones de Android e iOS. Arquitectura de capas (contrato normativo
  * docs/05-design-system/00-contrato-normativo-diseno.md):
  * 1. Tokens privados: [AmPalette] — primitivas por tema, sin exposición.
  * 2. Tokens semánticos: [AmColorScheme], [AmColor], [AmSpacing],

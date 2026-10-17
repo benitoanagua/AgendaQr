@@ -84,7 +84,7 @@ Quedan consolidados, sin alterar las reglas de negocio existentes:
 
 La implementación debe adaptarse al contrato UX/UI; un fallo de implementación no modifica automáticamente la especificación.
 
-## D-18 — Sistema visual de AgendaQr (ADR-0020)
+## D-18 — Sistema visual de AgendaQr (ADR-0020, parcialmente suplantada)
 
 La identidad visual activa es propia de AgendaQr: una herramienta móvil moderna, compacta y pulida, inspirada en aplicaciones chinas de consumo por su utilidad cotidiana, jerarquía funcional y densidad controlada. No replica una librería ni introduce dependencias web. Se implementa en Kotlin/Compose Multiplatform dentro de `core/ui`, con tokens semánticos, temas claro/oscuro y componentes compartidos. Material 3 es detalle de implementación; Android e iOS conservan sus convenciones de navegación.
 

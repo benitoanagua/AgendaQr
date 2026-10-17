@@ -6,6 +6,7 @@
 
 | Documento | Contenido |
 |---|---|
+| [`CLEANUP-SUMMARY.md`](CLEANUP-SUMMARY.md) | Resultado del inventario de consolidación UI/UX del 2026-10-17 |
 | [`PRODUCT.md`](PRODUCT.md) | Producto, alcance, límites, requisitos, dominio y exclusiones de V1 |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Módulos, fuentes de verdad, local-first, identidad local, Supabase, sync y hosts |
 | [`QUALITY.md`](QUALITY.md) | Estrategia de pruebas, suite de estados/eventos, puertas y validación |

@@ -1,6 +1,6 @@
 # Reglas de implementación del sistema de diseño
 
-**Estado:** Normativo (ADR-0020). El contrato completo está en `00-contrato-normativo-diseno.md`; este documento traduce la identidad visual propia de AgendaQr a reglas de código.
+**Estado:** Guía de implementación. El contrato normativo vigente es `00-contrato-normativo-diseno.md` (ADR-0022); esta guía resume la estructura de `core/ui` y las reglas ejecutables del sistema.
 
 ## 1. Mapa de la implementación
 
@@ -16,29 +16,29 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
     ├── AmText.kt          # AmText, AmHeading (texto con interlineado propio)
     ├── AmIcon.kt          # AmIcon + AmIcons (Lucide, único punto de entrada)
     ├── AmTone.kt           # AmTone + toneColors + glifo por tono
-    ├── AmButtons.kt       # botones radio 4 (solid 48; secundario = botón default con hairline E-01, compacto 40/48 con variante solid; AmCompactAction de fila), píldoras cápsula CapsuleTabs (AmFilterChip: reposo box sin borde, etiqueta 15), segmentado radio 2 sobre pista box (AmSegmentedOption), toggle de favorito
-    ├── AmInputs.kt        # AmTextField (etiqueta flotante persistente + guía hairline; glifo de concepto), AmAmountField (importe 26 sp + ⌫), AmSearchField (SearchBar: box, radio 6, borde de acento en foco E-04, 48 dp mínimo, sin etiqueta flotante), AmSearchTrigger
-    ├── AmLists.kt         # AmListRow (título 17, descripción 13, showChevron opt-in, slot leading tipado, divisor inset 56), AmListBody (tarjeta radio 8 + hairline E-03), AmTappableCard (tarjeta presionable radio 8), AmHairline, AmBadge/AmTonalTag (Tag radio 2 con round opt-in, 11 normal), AmIconBadge (tile 40), AmMetaRow (con acción final)
-    ├── AmStatus.kt        # AmStatusBanner (radio 8), AmStatusPill (tonal/inversa, píldora rounded), AmLoading, AmEmptyState, AmSection
+    ├── AmButtons.kt       # acciones primarias con gradiente, secundarias y destructivas; filtros, segmentado, favorito
+    ├── AmInputs.kt        # AmTextField, AmAmountField (cifras tabulares), AmSearchField y AmSearchTrigger
+    ├── AmLists.kt         # filas, tarjetas, badges, metadatos y AmQuickAction (rejilla de Inicio)
+    ├── AmStatus.kt        # banners, estados, carga, esqueleto, feedback de éxito
     ├── AmClipboard.kt     # rememberAmClipboard (expect/actual: copiar contenido al portapapeles)
-    ├── AmChrome.kt        # AmTopBar, navegación raíz, FAB, transición de superficies
+    ├── AmChrome.kt        # AmTopBar, AmHeroHeader, navegación raíz, FAB reutilizable, transición de superficies
     ├── AmScaffold.kt      # AmScreenScaffold (contenedor de pantalla), AmBottomAction (acción principal fija: ancho completo + navigationBars + IME)
-    ├── AmDialogs.kt       # AmDialog (Dialog oficial: popup radio 8, título 18 bold centrado, contenido 15, fila de acciones hairline a ancho completo), AmDialogList
-    ├── AmFeedback.kt      # skeleton, paginación, scanner, marco de medios radio 8 (Surface: tarjeta distinta del fondo en ambos temas)
-    ├── AmFeedbackEvent.kt # AmFeedbackHost/AmSnackbarHost (contenedor InverseSurface radio 8, texto 15)/AmFeedbackEvent
-    ├── AmPivot.kt         # AmSectionHeader (List header: 15, texto secundario, peso normal), AmPivot (Tabs con indicador de acento, título 17)
-    └── AmQrPreview.kt     # expect (Android decodifica; fallo de decodificación = glifo explícito sobre el marco, nunca rectángulo blanco; iOS pendiente de hardware)
+    ├── AmDialogs.kt       # AmDialog y AmDialogList con formas y estilos de tokens
+    ├── AmFeedback.kt      # skeleton, paginación, scanner y marco de medios
+    ├── AmFeedbackEvent.kt # AmFeedbackHost, AmSnackbarHost y eventos de feedback
+    ├── AmPivot.kt         # AmSectionHeader y AmPivot (pestañas)
+    └── AmQrPreview.kt     # preview QR multiplataforma; lienzo blanco y estado explícito ante errores
 ```
 
 ## 2. Reglas de token
 
-- TODO literal visual (hex, `dp`, `sp`, `Color(...)`, `Color.<nombre>`, formas con esquinas) vive en `AmTokens.kt`. El resto del repositorio consume `AmColor`/`AmSpacing`/`AmShapes`/`AmRadius`/`AmMetrics`/`AmType`/`AmTextStyles`/`AmMotion`.
+- Todo literal visual (hex, `dp`, `sp`, `Color(...)`, `Color.<nombre>`, formas con esquinas) vive en `AmTokens.kt`. El resto del repositorio consume `AmColor`/`AmSpacing`/`AmShapes`/`AmRadius`/`AmMetrics`/`AmType`/`AmTextStyles`/`AmMotion`.
 - Un cambio visual es un cambio de token + pin actualizado en `AmSchemeTest` + capturas regeneradas; nunca un literal nuevo en una pantalla. Las referencias externas orientan la exploración, no determinan los valores.
 - Los pares de color llegan verificados: `AmSchemeTest` fija los umbrales (4.5:1 contenido, 3:1 bordes/foco, 3:1 suelo deshabilitado); `AmContrastPairsTest` fija los bloques de identidad de contexto, el par del botón primario y el rol focus.
 
 ## 3. Reglas de componente
 
-- Envoltorios finos de Material 3 con tokens: el componente fija forma/colores/estados que M3 no mapea (botones radio 4, buscador SearchBar con borde de acento E-04, chips estilo CapsuleTabs) y hereda `typography`/`shapes` del tema; la barra superior (56 dp) y la inferior (56 dp, sin píldora) son composición propia.
+- Los componentes fijan forma, colores y estados usando tokens semánticos; Material 3 es detalle de implementación y hereda `typography`/`shapes` de `AmTheme`.
 - Todo copy llega como parámetro del llamador (ADR-0008); las pantallas lo sirven desde `AppStrings`.
 - `AmStatusBanner` se compone en **columna**: fila 1 icono + mensaje a ancho completo; fila 2 acciones alineadas al final con envoltura (sin fila si no hay acciones). API: `AmBannerAction(label, onClick)` para `action`/`dismiss`; imposible el estado inválido (sin `requireNotNull`).
 - `AmListRow.meta` solo metadatos/badges: prohibido colocar acciones ahí.

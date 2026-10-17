@@ -64,3 +64,23 @@ La dirección de alta densidad choca con invariantes de accesibilidad y de plata
 - **Parecido con una app concreta:** se mitiga con la regla de imitar patrones, nunca activos (iconos, ilustraciones, logotipos, textos, colores de marca, composiciones calcadas).
 - **Escala 14/12 y densidad:** se prueba a 320/360 dp y 200 % de fuente; el layout cede antes que la legibilidad.
 - **Sombras en Compose Multiplatform:** la aproximación de las sombras CSS del Anexo a `shadow` de Compose se documenta; no hay sombras de color exactas y se aproximan con color ambiental/puntual.
+
+## Consolidación (2026-10-17)
+
+La revisión de limpieza conservó las decisiones históricas y los componentes
+protegidos por este ADR; «parcialmente suplantado» no convierte los ADR-0020 y
+ADR-0021 en documentación descartable. La guía de implementación y los
+comentarios de la capa `core/ui` se alinearon con ADR-0022 y el contrato
+normativo.
+
+El inventario no encontró marcadores técnicos de deuda, implementaciones
+`NotImplementedError`, pruebas ignoradas ni componentes públicos sin uso y sin
+protección contractual. `AmSuccessCheck` y `AmSuccessBurst` no tienen caller
+actual, pero el contrato los reserva para el feedback de éxito S12; no se
+eliminan sin una decisión que cambie ese contrato. No se archivaron ADRs ni se
+eliminó documentación histórica.
+
+La prueba de arranque reveló etiquetas duplicadas para «Traer un QR» en Inicio:
+la rejilla de acciones y el estado vacío ofrecían la misma acción. Se quitó la
+acción redundante del estado vacío; la rejilla existente conserva el acceso y
+el contrato de no duplicar acciones.
