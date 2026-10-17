@@ -49,6 +49,22 @@ internal fun OperationTypeSelector(
     )
 }
 
+/**
+ * Grupo de ajustes del editor (S07): rótulo de sección pegado a su cuerpo
+ * con la distancia interna del grupo; la distancia entre grupos la pone el
+ * scaffold.
+ */
+@Composable
+private fun EditorSection(
+    label: String,
+    content: @Composable () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+        AmSectionHeader(text = label)
+        content()
+    }
+}
+
 @Composable
 internal fun OperationEditorScreen(
     state: OperationsUiState,
@@ -205,157 +221,167 @@ internal fun OperationEditorScreen(
             type = type,
             onSelect = { type = it },
         )
-        // Importe + moneda (U-07, D6): entrada grande con borrado y error
-        AmCard {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-            ) {
-                AmAmountField(
-                    label = AppStrings.MontoOpcional,
-                    value = amount,
-                    onValueChange = {
-                        amount = it
-                        amountEdited = true
-                    },
-                    onClear = { amount = "" },
-                    clearLabel = AppStrings.BorrarImporte,
-                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal,
-                    ),
-                )
-                if (amountInvalid) {
-                    Row(
-                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
-                    ) {
-                        AmIcon(
-                            imageVector = com.agendaqr.core.ui.components.AmIcons.Cancel,
-                            contentDescription = null,
-                            size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
-                            tint = AmColor.Danger,
+        // Importe + moneda (U-07, D6): grupo con rótulo; entrada grande con
+        // borrado y error.
+        EditorSection(AppStrings.ImporteYMoneda) {
+            AmCard {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                ) {
+                    AmAmountField(
+                        label = AppStrings.MontoOpcional,
+                        value = amount,
+                        onValueChange = {
+                            amount = it
+                            amountEdited = true
+                        },
+                        onClear = { amount = "" },
+                        clearLabel = AppStrings.BorrarImporte,
+                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                            keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal,
+                        ),
+                    )
+                    if (amountInvalid) {
+                        Row(
+                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+                        ) {
+                            AmIcon(
+                                imageVector = com.agendaqr.core.ui.components.AmIcons.Cancel,
+                                contentDescription = null,
+                                size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
+                                tint = AmColor.Danger,
+                            )
+                            AmText(AppStrings.ImporteInvalido, color = AmColor.Danger)
+                        }
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                        AmFilterChip(
+                            label = AppStrings.MonedaBob,
+                            selected = currency == AppStrings.MonedaBob,
+                            onClick = {
+                                currency = AppStrings.MonedaBob
+                                currencyCustomOpen = false
+                            },
                         )
-                        AmText(AppStrings.ImporteInvalido, color = AmColor.Danger)
+                        AmFilterChip(
+                            label = AppStrings.MonedaUsd,
+                            selected = currency == AppStrings.MonedaUsd,
+                            onClick = {
+                                currency = AppStrings.MonedaUsd
+                                currencyCustomOpen = false
+                            },
+                        )
+                        AmFilterChip(
+                            label = AppStrings.MonedaOtra,
+                            selected = currencyCustomOpen,
+                            onClick = {
+                                if (currency == AppStrings.MonedaBob || currency == AppStrings.MonedaUsd) {
+                                    currency = ""
+                                }
+                                currencyCustomOpen = true
+                            },
+                        )
+                    }
+                    if (currencyCustomOpen) {
+                        AmTextField(
+                            label = AppStrings.LabelMoneda,
+                            value = currency,
+                            onValueChange = { currency = it },
+                            leadingIcon = com.agendaqr.core.ui.components.AmIcons.Wallet,
+                        )
                     }
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                    AmFilterChip(
-                        label = AppStrings.MonedaBob,
-                        selected = currency == AppStrings.MonedaBob,
-                        onClick = {
-                            currency = AppStrings.MonedaBob
-                            currencyCustomOpen = false
-                        },
-                    )
-                    AmFilterChip(
-                        label = AppStrings.MonedaUsd,
-                        selected = currency == AppStrings.MonedaUsd,
-                        onClick = {
-                            currency = AppStrings.MonedaUsd
-                            currencyCustomOpen = false
-                        },
-                    )
-                    AmFilterChip(
-                        label = AppStrings.MonedaOtra,
-                        selected = currencyCustomOpen,
-                        onClick = {
-                            if (currency == AppStrings.MonedaBob || currency == AppStrings.MonedaUsd) {
-                                currency = ""
-                            }
-                            currencyCustomOpen = true
-                        },
-                    )
-                }
-                if (currencyCustomOpen) {
-                    AmTextField(
-                        label = AppStrings.LabelMoneda,
-                        value = currency,
-                        onValueChange = { currency = it },
-                        leadingIcon = com.agendaqr.core.ui.components.AmIcons.Wallet,
-                    )
-                }
             }
         }
-        // Momento con fecha y hora (U-03, D2): fila de selección con el
-        // valor ("Hoy · 16/10/2026 14:30") que abre los selectores, más
-        // atajos Hoy/Ayer. Sin texto libre: la hora es opcional solo para
-        // datos antiguos (medianoche = sin hora, se muestra sin hora).
-        AmListBody {
-            val dateValue = (relativeDayLabel(occurredAtMillis, nowMillis())?.let { it + " · " } ?: "") +
-                formatDateTime(occurredAtMillis)
-            AmListRow(
-                title = dateValue,
-                subtitle = AppStrings.Fecha,
-                onClick = { showDatePicker = true },
-                leading = {
-                    AmIconBadge(
-                        icon = com.agendaqr.core.ui.components.AmIcons.Calendar,
-                        tone = AmTone.Info,
-                    )
-                },
-                showChevron = true,
-            )
-            AmHairline()
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Sm),
-                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
-            ) {
-                AmFilterChip(
-                    label = AppStrings.Hoy,
-                    selected = false,
-                    onClick = { occurredAtMillis = nowMillis() },
+        // Momento con fecha y hora (U-03, D2): grupo con rótulo, fila de
+        // selección con el valor ("Hoy · 16/10/2026 14:30") que abre los
+        // selectores, más atajos Hoy/Ayer. Sin texto libre: la hora es
+        // opcional solo para datos antiguos (medianoche = sin hora).
+        EditorSection(AppStrings.FechaYHora) {
+            AmListBody {
+                val dateValue = (relativeDayLabel(occurredAtMillis, nowMillis())?.let { it + " · " } ?: "") +
+                    formatDateTime(occurredAtMillis)
+                AmListRow(
+                    title = dateValue,
+                    subtitle = AppStrings.Fecha,
+                    onClick = { showDatePicker = true },
+                    leading = {
+                        AmIconBadge(
+                            icon = com.agendaqr.core.ui.components.AmIcons.Calendar,
+                            tone = AmTone.Info,
+                        )
+                    },
+                    showChevron = true,
                 )
-                AmFilterChip(
-                    label = AppStrings.Ayer,
-                    selected = false,
-                    onClick = { occurredAtMillis = minusCivilDays(nowMillis(), 1) },
-                )
-            }
-        }
-        // Persona o entidad (U-05): campo + sugerencias de las últimas
-        // contrapartes (derivadas del estado, sin persistencia nueva).
-        AmListBody {
-            AmTextField(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, leadingIcon = com.agendaqr.core.ui.components.AmIcons.Store, modifier = Modifier.padding(horizontal = AmSpacing.Lg))
-            val counterparts = remember(state.operations) { recentCounterparts(state.operations) }
-            if (counterparts.isNotEmpty()) {
                 AmHairline()
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Sm)
-                        .horizontalScroll(rememberScrollState()),
+                        .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Sm),
                     horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
                 ) {
-                    counterparts.forEach { suggestion ->
-                        AmFilterChip(
-                            label = suggestion,
-                            selected = false,
-                            onClick = { person = suggestion },
-                        )
+                    AmFilterChip(
+                        label = AppStrings.Hoy,
+                        selected = false,
+                        onClick = { occurredAtMillis = nowMillis() },
+                    )
+                    AmFilterChip(
+                        label = AppStrings.Ayer,
+                        selected = false,
+                        onClick = { occurredAtMillis = minusCivilDays(nowMillis(), 1) },
+                    )
+                }
+            }
+        }
+        // Persona o entidad (U-05): grupo con rótulo; campo + sugerencias de
+        // las últimas contrapartes (derivadas del estado, sin persistencia
+        // nueva).
+        EditorSection(AppStrings.LabelPersonaOEntidad) {
+            AmListBody {
+                AmTextField(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, leadingIcon = com.agendaqr.core.ui.components.AmIcons.Store, modifier = Modifier.padding(horizontal = AmSpacing.Lg))
+                val counterparts = remember(state.operations) { recentCounterparts(state.operations) }
+                if (counterparts.isNotEmpty()) {
+                    AmHairline()
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Sm)
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                    ) {
+                        counterparts.forEach { suggestion ->
+                            AmFilterChip(
+                                label = suggestion,
+                                selected = false,
+                                onClick = { person = suggestion },
+                            )
+                        }
                     }
                 }
             }
         }
-        // Contexto (S08): fila de selección con chevron; Cancelar nunca
-        // destruye el draft (semántica del selector intacta).
-        AmListBody {
-            AmListRow(
-                title = contextSelection.contextId?.let { id ->
-                    AppStrings.ParaContextoElegido +
-                        (state.contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico)
-                } ?: AppStrings.ParaElegirContexto,
-                subtitle = AppStrings.PuedesSinContexto,
-                onClick = { contextSelection = contextSelection.openPicker() },
-                leading = {
-                    AmIconBadge(
-                        icon = com.agendaqr.core.ui.components.AmIcons.QrCode,
-                        tone = AmTone.Info,
-                    )
-                },
-                showChevron = true,
-            )
+        // Contexto (S08): grupo con rótulo; fila de selección con chevron.
+        // Cancelar nunca destruye el draft (semántica del selector intacta).
+        EditorSection(AppStrings.ContextoGenerico) {
+            AmListBody {
+                AmListRow(
+                    title = contextSelection.contextId?.let { id ->
+                        AppStrings.ParaContextoElegido +
+                            (state.contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico)
+                    } ?: AppStrings.ParaElegirContexto,
+                    subtitle = AppStrings.PuedesSinContexto,
+                    onClick = { contextSelection = contextSelection.openPicker() },
+                    leading = {
+                        AmIconBadge(
+                            icon = com.agendaqr.core.ui.components.AmIcons.QrCode,
+                            tone = AmTone.Info,
+                        )
+                    },
+                    showChevron = true,
+                )
+            }
         }
         // Más detalles (U-06, D5): concepto y nota plegados salvo que el
         // registro ya los tenga; el contexto vive en su propia tarjeta

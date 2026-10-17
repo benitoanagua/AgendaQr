@@ -290,6 +290,9 @@ internal object AppStrings {
     val DetallesDeLaActividad = "Detalles de la actividad"
     /** Encabezado del grupo de notas del editor (S07). */
     val Notas = "Notas"
+    /** Rótulos de sección de los grupos del editor (S07). */
+    val ImporteYMoneda = "Importe y moneda"
+    val FechaYHora = "Fecha y hora"
     /** Metadatos: etiquetas cortas sin puntuación (fila compacta). */
     val LabelPersonaOEntidad = "Persona o entidad"
     val LabelMoneda = "Moneda"

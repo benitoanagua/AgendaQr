@@ -40,7 +40,7 @@ ADR-0020 declaró la identidad de AgendaQr como "inspirada en aplicaciones móvi
 | S09–S12 Importación | Resumen en `AmCard` (cifra de reconocidos en `AmType.Amount` y filas icono + texto de duplicados y pendientes), `PendingItemCard` por elemento, `ImportReviewScreen` con vista previa y evidencia decodificada | Los estados se expresan con icono y texto suelto en vez de insignia con texto; el resumen no usa filas etiqueta-valor |
 | S00 Acceso local | Título y descripción, campos `AmTextField` en columna, botón primario dentro del scroll, bloque de demostración opcional | Campos sin agrupar en tarjetas de ajustes; el botón primario no queda fijo al pie |
 | S02 Añadir | Texto de intención y controles de fuente agrupados por distancia (archivos y cámara), sin encabezados de sección | Fuentes sin encabezado de sección ni cuerpo `AmListBody` |
-| S07 Editor de actividad | Selector segmentado de tipo, `AmCard` de importe y moneda, grupos en `AmListBody`, botón primario fijo al pie | Grupos sin `AmSectionHeader` (sin rótulo de sección) |
+| S07 Editor de actividad | Selector segmentado de tipo, `AmCard` de importe y moneda, grupos en `AmListBody` con rótulo de sección, botón primario fijo al pie | Ninguna estructural |
 | Navegación raíz | `AmNavBar` de 56 dp, color + etiqueta, sin píldora | Ninguna |
 | Formularios | `AmTextField` con etiqueta flotante persistente y guía hairline | Deliberada: la etiqueta persistente es un requisito de accesibilidad |
 
@@ -61,6 +61,10 @@ Prioridad por relación impacto/esfuerzo. El riesgo se mide sobre las capturas e
 | G9 | Marca de tipo a la izquierda en cada resultado | S04–S05 | Bajo | Bajo | Medio en capturas (s04-search-*); se solapa con el encabezado de sección |
 
 Ninguna de estas brechas se implementa sin decisión del propietario. Las que cambian capturas exigen regenerarlas y revisarlas en local (ADR-0007, ADR-0020 §8) antes de darse por válidas. La brecha del metadato a la derecha en `AmListRow` se cerró con el parámetro `endMeta`, aplicado a la fecha real de Actividades y de las actividades de un contexto.
+
+### Brechas implementadas
+
+- **G8** — Encabezados de sección en los grupos del editor (S07): `Importe y moneda`, `Fecha y hora`, `Persona o entidad` y `Contexto`, con el rótulo pegado a su cuerpo. Commit: «Agrega encabezados de sección a los grupos del editor».
 
 ## Consecuencias
 
