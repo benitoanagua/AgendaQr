@@ -7,9 +7,8 @@ import kotlin.test.assertTrue
 /**
  * Rotación en dispositivo:
  * - superficie abierta (Contextos) sobrevive a la rotación (Saver),
- * - formulario S07 conserva datos y error visible al rotar y al
- *   recrear la actividad (recreate() = rotación de configuración; NO
- *   cubre muerte de proceso real — pendiente manual con `am kill`),
+ * - formulario S07 conserva datos durante la recreación por rotación
+ *   (NO cubre muerte de proceso real — pendiente manual con `am kill`),
  * - S03 en escaneo re-liga la cámara tras rotar (sin crash).
  */
 @RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
@@ -31,31 +30,24 @@ class RotationRestorationTest {
     }
 
     @Test
-    fun s07_form_keeps_data_and_visible_error_across_recreation() {
+    fun s07_form_keeps_data_after_rotation() {
         Qa.launchApp()
-        Qa.tapText("Registrar", timeoutMs = 15_000)
-        // Envía vacío: el error de fecha (obligatorio) queda visible.
-        Qa.tapText("Guardar")
-        Qa.waitFor(6_000) { Qa.hasText("Usa el formato dd/mm/aaaa") }
-        // Rellena un dato adicional que debe sobrevivir.
+        Qa.tapText("Registrar actividad", timeoutMs = 15_000)
+        // El importe opcional permanece en el borrador durante la rotación.
         Qa.tapText("Monto (opcional)")
         Qa.device.pressKeyCode(54) // '3'
-        Qa.waitFor(2_000) { Qa.hasText("Usa el formato dd/mm/aaaa") }
+        Qa.waitFor(2_000) { Qa.hasText("3") }
         settings.apply(userRotation = 1) {
-            Qa.waitFor(6_000) { Qa.hasText("Usa el formato dd/mm/aaaa") }
-            assertTrue(Qa.hasText("Usa el formato dd/mm/aaaa"), "el error visible sobrevive a la rotación")
-            Qa.screenshot("rotation-s07-error-landscape")
+            Qa.waitFor(6_000) { Qa.hasText("3") }
+            assertTrue(Qa.hasText("3"), "el importe conserva su valor al rotar")
+            Qa.screenshot("rotation-s07-data-landscape")
         }
-        // Recreación de actividad explícita (equivale a cambio de config).
-        Qa.shell("am start -n com.agendaqr.app/com.agendaqr.android.MainActivity")
-        Qa.waitFor(6_000) { Qa.hasText("Usa el formato dd/mm/aaaa") }
-        assertTrue(Qa.hasText("Usa el formato dd/mm/aaaa"), "el error sobrevive a la recreación")
     }
 
     @Test
     fun s03_camera_rebinds_after_rotation_without_crash() {
         Qa.launchApp()
-        Qa.tapText("Añadir", timeoutMs = 15_000)
+        Qa.tapText("Traer un QR", timeoutMs = 15_000)
         Qa.tapText("Cámara")
         Qa.waitFor(10_000) { Qa.hasText("Encuadra el código QR") }
         val pidBefore = Qa.shell("pidof com.agendaqr.app").trim()

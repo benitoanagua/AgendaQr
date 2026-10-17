@@ -21,19 +21,19 @@ class AccessibilityTreeContractTest {
     fun reachable_screens_have_named_clickable_targets_and_no_duplicates() {
         val screens = listOf(
             "s01" to { Qa.launchApp() },
-            "s02" to { Qa.launchApp(); Qa.tapText("Añadir") },
+            "s02" to { Qa.launchApp(); Qa.tapText("Traer un QR") },
             "s04" to { Qa.launchApp(); Qa.tapText("Buscar en Agenda QR") },
             "s06" to { Qa.launchApp(); Qa.tapText("Contextos") },
-            "s07" to { Qa.launchApp(); Qa.tapText("Registrar") },
+            "s07" to { Qa.launchApp(); Qa.tapText("Registrar actividad") },
         )
         for ((id, open) in screens) {
             open()
             // Espera a que la pantalla tenga contenido antes de auditar.
             Qa.waitFor(8_000) {
                 Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Agenda")).isNotEmpty() ||
-                Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Añadir")).isNotEmpty() ||
+                Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Traer un QR")).isNotEmpty() ||
                 Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Contextos")).isNotEmpty() ||
-                Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Registrar")).isNotEmpty()
+                Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Registrar actividad")).isNotEmpty()
             }
             auditScreen(id)
         }

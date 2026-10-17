@@ -22,10 +22,10 @@ class FontScaleScreensTest {
 
     private fun screens(): List<Screen> = listOf(
         Screen("s01", { Qa.launchApp() }, "Agenda QR"),
-        Screen("s02", { Qa.tapText("Añadir"); }, "Trae a Agenda QR algo que ya existe"),
+        Screen("s02", { Qa.tapText("Traer un QR") }, "Trae a Agenda QR algo que ya tienes."),
         Screen("s04", { Qa.launchApp(); Qa.tapText("Buscar en Agenda QR") }, "Busca QR, actividades, contextos o comprobantes."),
         Screen("s06", { Qa.launchApp(); Qa.tapText("Contextos") }, "Contextos"),
-        Screen("s07", { Qa.launchApp(); Qa.tapText("Registrar") }, "Registrar actividad"),
+        Screen("s07", { Qa.launchApp(); Qa.tapText("Registrar actividad") }, "Registrar actividad"),
     )
 
     @Test

@@ -11,7 +11,7 @@ import kotlin.test.assertTrue
  * (no "Reintentar"), y esta abre los ajustes de la app. Tras conceder
  * desde ajustes, la cámara arranca.
  *
- * Flujo: revoca → abre S02 (Añadir) → Cámara → deniega el diálogo del
+ * Flujo: revoca → abre S02 (Traer un QR) → Cámara → deniega el diálogo del
  * SISTEMA dos veces → "no volver a preguntar" → banner con "Abrir
  * ajustes" → settings package → conceder → volver → cámara.
  */
@@ -26,7 +26,7 @@ class CameraPermissionFlowTest {
         // se concede de nuevo dentro del propio test).
         Qa.shell("pm revoke com.agendaqr.app android.permission.CAMERA")
         Qa.launchApp()
-        Qa.tapText("Añadir", timeoutMs = 15_000)
+        Qa.tapText("Traer un QR", timeoutMs = 15_000)
         Qa.tapText("Cámara")
 
         // Deniega el diálogo del SISTEMA dos veces (la segunda con "no
@@ -54,7 +54,7 @@ class CameraPermissionFlowTest {
         // Concede desde ajustes (permiso del sistema) y vuelve a la app.
         Qa.shell("pm grant com.agendaqr.app android.permission.CAMERA")
         Qa.launchApp()
-        Qa.tapText("Añadir", timeoutMs = 15_000)
+        Qa.tapText("Traer un QR", timeoutMs = 15_000)
         Qa.tapText("Cámara")
         // La cámara arranca: overlay de captura con el hint del scanner.
         Qa.waitFor(10_000) { Qa.hasText("Encuadra el código QR") }

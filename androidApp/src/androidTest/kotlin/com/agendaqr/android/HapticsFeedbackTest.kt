@@ -22,7 +22,7 @@ class HapticsFeedbackTest {
         val before = appVibratorEntries()
         // Abre el primer destino → overflow → eliminar → confirmar.
         Qa.waitFor(15_000) {
-            Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Recientes")).isNotEmpty()
+            Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Carniceria")).isNotEmpty()
         }
         val row = Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Carniceria"))
             .firstOrNull() ?: Qa.device.findObjects(androidx.test.uiautomator.By.textContains("QR importado"))

@@ -3,18 +3,20 @@ package com.agendaqr.android
 import android.view.accessibility.AccessibilityEvent
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
  * Anuncios: captura eventos de accesibilidad
  * vía UiAutomation y verifica UN anuncio por acción para:
- * - eliminación ("Eliminado") — diário destructivo del detalle de destino,
- * - error de correo en el login ("Ingresa un correo válido"),
- * - sincronización completada ("Sincronización completada") — offline→online.
+ * - eliminación ("Eliminado") — diálogo destructivo del detalle de destino,
+ * - error de correo al conectar una cuenta ("Ingresa un correo válido").
  *
  * El guardado de lote (S12) y la lectura de QR requieren activos que no
  * existen en el dispositivo de prueba (imágenes/QR real): quedan
  * registrados como REQUIERE TALKBACK REAL / PENDIENTE en el informe.
+ * El anuncio de sincronización se verifica con un evento determinista en
+ * RootNavigationChromeTest; el perfil de demostración del emulador no sincroniza.
  */
 @RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
 class AnnouncementsTest {
@@ -60,9 +62,9 @@ class AnnouncementsTest {
                 Qa.device.findObjects(androidx.test.uiautomator.By.textContains("QR importado")).isNotEmpty() ||
                 Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Sin nombre")).isNotEmpty()
         }
-        val first = Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Recientes"))
-            .firstOrNull() ?: Qa.device.findObjects(androidx.test.uiautomator.By.clickable(true))
-            .firstOrNull { it.text?.isNotBlank() == true && it.text != "Añadir" && it.text != "Registrar" && it.text != "Favoritos" && it.text != "Contextos" }
+        val first = Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Carniceria")).firstOrNull()
+            ?: Qa.device.findObjects(androidx.test.uiautomator.By.textContains("QR importado")).firstOrNull()
+            ?: Qa.device.findObjects(androidx.test.uiautomator.By.textContains("Sin nombre")).firstOrNull()
         first?.click() ?: kotlin.test.fail("sin destino en la lista")
         Qa.waitFor(6_000) { Qa.hasText("Mostrar QR") || Qa.hasText("Volver") }
         Qa.tapText("Más") // menú overflow con "Eliminar"
@@ -81,11 +83,10 @@ class AnnouncementsTest {
 
     @Test
     fun login_invalid_email_announces_the_error() {
-        // Cerrar sesión para volver al login.
+        // La cuenta remota es opcional y se conecta desde la superficie de cuenta.
         Qa.launchApp()
         Qa.tapText("Más")
-        Qa.waitFor(4_000) { Qa.textVisible("Cerrar sesión") }
-        Qa.tapText("Cerrar sesión")
+        Qa.tapText("Cuenta y respaldo")
         Qa.waitFor(8_000) { Qa.textVisible("Correo") || Qa.hasText("Iniciar sesión") }
         val recorder = withRecorder {
             Qa.tapText("Iniciar sesión")
@@ -96,34 +97,10 @@ class AnnouncementsTest {
     }
 
     @Test
-    fun sync_completing_announces_sincronizacion_completada() {
+    fun demo_mode_does_not_claim_remote_sync() {
         Qa.launchApp()
-        Qa.tapText("Registrar")
-        // Modo avión ON antes de guardar: la operación queda pendiente.
-        val settings = SystemSettingsRule()
-        settings.apply(airplane = true) {
-            Qa.tapText("Fecha")
-            Qa.device.pressKeyCode(7) // 0
-            Qa.device.pressKeyCode(7)
-            Qa.device.pressKeyCode(52) // /
-            Qa.device.pressKeyCode(8) // 1
-            Qa.device.pressKeyCode(8)
-            Qa.device.pressKeyCode(52)
-            Qa.device.pressKeyCode(13) // 2
-            Qa.device.pressKeyCode(10) // 6
-            Qa.tapText("Guardar")
-            Qa.waitFor(10_000) { Qa.hasText("Pendiente") }
-        }
-        // Reconecta y captura el anuncio de completado.
-        val recorder = withRecorder {
-            Qa.waitFor(25_000) { recorderIdleSync() }
-        }
-        val count = recorderHas(recorder, "Sincronización completada")
-        assertTrue(count >= 1, "debe anunciar 'Sincronización completada' (eventos: ${recorder.events})")
-    }
-
-    private fun recorderIdleSync(): Boolean {
-        // Éxito cuando el badge deja de mostrar pendientes (banner fuera).
-        return !Qa.hasText("Sincronización pendiente")
+        assertTrue(Qa.hasText("Modo demostración · datos ficticios"))
+        assertFalse(Qa.hasText("Sincronización pendiente"))
+        assertFalse(Qa.hasText("Sincronización completada"))
     }
 }
