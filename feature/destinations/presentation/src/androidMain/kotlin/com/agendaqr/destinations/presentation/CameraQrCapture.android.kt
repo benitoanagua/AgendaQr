@@ -44,6 +44,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
 import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmFeedbackEvent
+import com.agendaqr.core.ui.components.AmIconBadge
+import com.agendaqr.core.ui.components.AmListRow
 import com.agendaqr.core.ui.components.AmScannerFrame
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmSecondaryButton
@@ -257,7 +259,10 @@ private fun rotateBitmap(bitmap: Bitmap, degrees: Int): Bitmap {
  * (volver a pedirlo) o volver a Galería (la entrada principal).
  */
 @Composable
-internal fun CameraQrEntry(onOpen: () -> Unit) {
+internal fun CameraQrEntry(
+    onOpen: () -> Unit,
+    cellPresentation: Boolean = false,
+) {
     val context = LocalContext.current
     // el estado de "ya se pidió" y el error del permiso
     // sobreviven a la recreación de la pantalla (rotación).
@@ -325,28 +330,38 @@ internal fun CameraQrEntry(onOpen: () -> Unit) {
                 dismiss = com.agendaqr.core.ui.components.AmBannerAction(AppStrings.Descartar) { permissionError = null },
             )
         }
-        // Contexto del permiso ANTES de pedirlo (una línea, sin diálogo
-        // extra): el usuario sabe para qué es antes del diálogo del SO.
-        AmText(
-            AppStrings.PermisoCamaraContexto,
-            size = AmType.Caption,
-            color = AmColor.TextSecondary,
-        )
-        AmSecondaryButton(
-            label = AppStrings.Camara,
-            icon = com.agendaqr.core.ui.components.AmIcons.Camera,
-            onClick = {
-                val granted = ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.CAMERA,
-                ) == PackageManager.PERMISSION_GRANTED
-                if (granted) {
-                    onOpen()
-                } else {
-                    permissionLauncher.launch(Manifest.permission.CAMERA)
-                }
-            },
-        )
+        val requestCamera = {
+            val granted = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA,
+            ) == PackageManager.PERMISSION_GRANTED
+            if (granted) onOpen() else permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+        if (cellPresentation) {
+            AmListRow(
+                title = AppStrings.Camara,
+                subtitle = AppStrings.PermisoCamaraContexto,
+                onClick = requestCamera,
+                leading = {
+                    AmIconBadge(
+                        icon = com.agendaqr.core.ui.components.AmIcons.Camera,
+                        tone = com.agendaqr.core.ui.components.AmTone.Info,
+                    )
+                },
+                showChevron = true,
+            )
+        } else {
+            AmText(
+                AppStrings.PermisoCamaraContexto,
+                size = AmType.Caption,
+                color = AmColor.TextSecondary,
+            )
+            AmSecondaryButton(
+                label = AppStrings.Camara,
+                icon = com.agendaqr.core.ui.components.AmIcons.Camera,
+                onClick = requestCamera,
+            )
+        }
     }
 }
 

@@ -1,17 +1,19 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.SemanticsActions
-import androidx.compose.ui.semantics.SemanticsNode
-import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.sp
 import com.agendaqr.core.ui.theme.DarkAmColorScheme
@@ -24,8 +26,6 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.test.fail
 import kotlin.math.abs
@@ -191,66 +191,24 @@ class S02UiPolishTest {
 
     // --- D5: los 3 controles de S02 muestran icono + etiqueta (M10/M12) ---
 
-    private fun unmergedNodes(): List<SemanticsNode> {
-        val all = mutableListOf<SemanticsNode>()
-        fun walk(node: SemanticsNode) {
-            all.add(node)
-            node.children.forEach(::walk)
-        }
-        walk(compose.onRoot(useUnmergedTree = true).fetchSemanticsNode())
-        return all
-    }
-
-    /**
-     * Icono decorativo junto a la etiqueta: bloque de 24 dp (IconSize) a la
-     * izquierda del texto, en su misma fila, sin rol/texto/descripcion
-     * propios (la etiqueta visible ya es el nombre accesible, §11/M12).
-     */
-    private fun iconForLabel(all: List<SemanticsNode>, label: String, pxPerDp: Float): SemanticsNode? {
-        val text = all.singleOrNull {
-            it.config.getOrNull(SemanticsProperties.Text)?.any { t -> t.text == label } == true
-        } ?: return null
-        val textLeft = text.positionInRoot.x
-        val textCenterY = text.positionInRoot.y + text.size.height / 2f
-        // Compactación (referencia MCP): los controles compactos usan el
-        // glifo de 18 dp (IconSizeCompact); los primarios conservan 24.
-        return all.firstOrNull { node ->
-            node != text &&
-                listOf(18f, 20f, 24f).any { expected ->
-                    abs(node.size.width - expected * pxPerDp) <= 1f &&
-                        abs(node.size.height - expected * pxPerDp) <= 1f
-                } &&
-                node.size.width > 0 &&
-                (textLeft - (node.positionInRoot.x + node.size.width)) in 0f..(8f * pxPerDp) &&
-                abs(node.positionInRoot.y + node.size.height / 2f - textCenterY) <= 8f * pxPerDp &&
-                node.config.getOrNull(SemanticsProperties.Role) == null &&
-                node.config.getOrNull(SemanticsProperties.Text) == null &&
-                node.config.getOrNull(SemanticsProperties.ContentDescription) == null
-        }
-    }
-
     @Test
-    fun d5_s02_controls_show_icon_with_label() {
+    fun s02_import_sources_are_labelled_interactive_cells() {
         compose.setContent {
             AmTheme(darkTheme = false) {
                 AddDestinationScreen(onImport = {}, onBack = {})
             }
         }
         compose.waitForIdle()
-        val all = unmergedNodes()
-        val root = compose.onRoot(useUnmergedTree = true).fetchSemanticsNode()
-        val pxPerDp = root.size.width / 360f
-        // V1.2: UNA acción de galería con selección múltiple (sin "Galería
-        // (varios)") y la cámara, cada una con glifo decorativo + etiqueta.
-        listOf(AppStrings.ElegirDeLaGaleria, AppStrings.Camara).forEach { label ->
-            val icon = iconForLabel(all, label, pxPerDp)
-            assertNotNull(icon, "S02: el control '$label' no muestra icono junto a la etiqueta")
-            assertNull(icon.config.getOrNull(SemanticsProperties.ContentDescription))
+        listOf(
+            AppStrings.ElegirDeLaGaleria,
+            AppStrings.ElegirArchivoPdf,
+            AppStrings.Camara,
+        ).forEach { label ->
+            compose.onNodeWithText(label)
+                .assertIsDisplayed()
+                .assertHeightIsAtLeast(48.dp)
+                .assert(hasClickAction())
         }
-        // La pareja histórica Galería/Galería (varios) ya no existe.
-        assertTrue(
-            compose.onAllNodesWithText("Galería (varios)").fetchSemanticsNodes().isEmpty(),
-            "S02 ya no muestra 'Galería (varios)'",
-        )
+        compose.onAllNodesWithText("Galería (varios)", useUnmergedTree = true).assertCountEquals(0)
     }
 }

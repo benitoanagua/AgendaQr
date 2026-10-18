@@ -3,6 +3,7 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import com.agendaqr.core.ui.components.AmListBody
 import com.agendaqr.core.ui.components.AmScreenScaffold
 import com.agendaqr.core.ui.components.AmSectionHeader
 import com.agendaqr.core.ui.components.AmSnackbarHost
@@ -52,40 +53,33 @@ fun AddDestinationScreen(
             color = AmColor.TextSecondary,
         )
 
-        // Orden congelado S02: Galería → (Desde otra app) → Cámara.
-        // Fuentes de archivo como grupo con rótulo de sección; una única
-        // acción de galería con selección múltiple: 1 elemento → revisión
-        // única (S09); 2 o más → lote (S12).
+        // Galería y archivo son celdas del grupo; una única acción de
+        // galería conserva la selección múltiple y el enrutado por cantidad.
         Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
             AmSectionHeader(text = AppStrings.DesdeArchivos)
-            QrGalleryControls(
-                onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
-            )
-
-            // PDF (opcional): solo donde la plataforma lo soporta (F7).
-            QrPdfPickerControl()
+            AmListBody {
+                QrGalleryControls(
+                    onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
+                )
+                QrPdfPickerControl()
+            }
         }
 
-        // Fuente de cámara con su rótulo de sección. "Desde otra app": ayuda
-        // breve, solo donde la plataforma lo soporta (Android: share
-        // intents; iOS: pendiente de Share Extension, no se muestra). Vive
-        // pegada al grupo de cámara al que contextualiza (4 dp), no como
-        // bloque aislado.
         Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
             AmSectionHeader(text = AppStrings.DesdeLaCamara)
-            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
-                if (sharedImportsSupported()) {
-                    AmText(
-                        AppStrings.shareFromAnotherAppHint,
-                        size = AmType.Caption,
-                        color = AmColor.TextSecondary,
-                    )
-                }
-
+            AmListBody {
                 QrCameraEntryControl(
                     onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
                 )
             }
+        }
+
+        if (sharedImportsSupported()) {
+            AmText(
+                AppStrings.shareFromAnotherAppHint,
+                size = AmType.Caption,
+                color = AmColor.TextSecondary,
+            )
         }
     }
 }

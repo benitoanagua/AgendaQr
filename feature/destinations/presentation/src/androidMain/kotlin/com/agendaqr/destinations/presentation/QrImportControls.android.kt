@@ -9,8 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.agendaqr.core.ui.components.AmIcons
+import com.agendaqr.core.ui.components.AmIconBadge
+import com.agendaqr.core.ui.components.AmListRow
 import com.agendaqr.core.ui.components.AmPrimaryButton
 import com.agendaqr.core.ui.components.AmSecondaryButton
+import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.destinations.domain.QrAsset
 
 /**
@@ -51,10 +54,12 @@ actual fun QrGalleryControls(
     LaunchedEffect(Unit) {
         AgendaQrAndroidImportLauncher.results.collect(onResult)
     }
-    AmPrimaryButton(
-        label = AppStrings.ElegirDeLaGaleria,
+    AmListRow(
+        title = AppStrings.ElegirDeLaGaleria,
         onClick = AgendaQrAndroidImportLauncher::gallery,
-        icon = AmIcons.Gallery,
+        leading = { AmIconBadge(icon = AmIcons.Gallery, tone = AmTone.Info) },
+        showChevron = true,
+        showDivider = true,
     )
 }
 
@@ -62,15 +67,21 @@ actual fun QrGalleryControls(
 actual fun QrCameraEntryControl(
     onResult: (QrImportResult) -> Unit,
 ) {
-    CameraCaptureHost(onQr = { asset -> onResult(QrImportResult(listOf(asset))) })
+    CameraCaptureHost(
+        onQr = { asset -> onResult(QrImportResult(listOf(asset))) },
+        cellPresentation = true,
+    )
 }
 
 /** Android: PDF vía OpenDocument por el canal de comprobantes entrantes. */
 @Composable
 actual fun QrPdfPickerControl() {
-    AmSecondaryButton(
-        label = AppStrings.ElegirArchivoPdf,
+    AmListRow(
+        title = AppStrings.ElegirArchivoPdf,
         onClick = AgendaQrAndroidImportLauncher::pdf,
+        leading = { AmIconBadge(icon = AmIcons.Attachment, tone = AmTone.Info) },
+        showChevron = true,
+        showDivider = true,
     )
 }
 
@@ -83,11 +94,17 @@ actual fun sharedImportsSupported(): Boolean = true
  * congelado).
  */
 @Composable
-internal fun CameraCaptureHost(onQr: (QrAsset) -> Unit) {
+internal fun CameraCaptureHost(
+    onQr: (QrAsset) -> Unit,
+    cellPresentation: Boolean = false,
+) {
     var cameraOpen by androidx.compose.runtime.remember {
         androidx.compose.runtime.mutableStateOf(false)
     }
-    CameraQrEntry(onOpen = { cameraOpen = true })
+    CameraQrEntry(
+        onOpen = { cameraOpen = true },
+        cellPresentation = cellPresentation,
+    )
     if (cameraOpen) {
         CameraQrCaptureOverlay(
             onQr = { asset ->

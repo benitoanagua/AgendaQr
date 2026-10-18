@@ -9,15 +9,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.agendaqr.core.ui.components.AmFeedbackEvent
-import com.agendaqr.core.ui.components.AmPrimaryButton
+import com.agendaqr.core.ui.components.AmIconBadge
+import com.agendaqr.core.ui.components.AmIcons
+import com.agendaqr.core.ui.components.AmListRow
 import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmBannerAction
 import com.agendaqr.core.ui.components.AmStatusBanner
-import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTone
-import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmType
 import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
 import platform.UIKit.UIApplicationOpenSettingsURLString
@@ -46,7 +45,7 @@ actual fun QrImportControls(
 }
 
 /**
- * "Elegir de la galería" (§4 S02 V1.2): UNA acción con selección múltiple
+ * "Elegir de la galería": UNA acción con selección múltiple
  * (PHPicker, selectionLimit coherente con el lote). El enrutado por
  * cantidad vive en el controlador: 1 elemento → flujo de selección única
  * (S09); 2 o más → lote (S12).
@@ -55,10 +54,12 @@ actual fun QrImportControls(
 actual fun QrGalleryControls(
     onResult: (QrImportResult) -> Unit,
 ) {
-    AmPrimaryButton(
-        label = AppStrings.ElegirDeLaGaleria,
-        icon = com.agendaqr.core.ui.components.AmIcons.Gallery,
+    AmListRow(
+        title = AppStrings.ElegirDeLaGaleria,
         onClick = { IosQrImportController.openMultiple(onResult = onResult) },
+        leading = { AmIconBadge(icon = AmIcons.Gallery, tone = AmTone.Info) },
+        showChevron = true,
+        showDivider = true,
     )
 }
 
@@ -93,16 +94,9 @@ actual fun QrCameraEntryControl(
                 dismiss = bannerDismiss,
             )
         }
-        // §4 S02: el texto de privacidad de la cámara es visible junto a
-        // la acción de escanear.
-        AmText(
-            AppStrings.PermisoCamaraContexto,
-            size = AmType.Caption,
-            color = AmColor.TextSecondary,
-        )
-        AmSecondaryButton(
-            label = AppStrings.Camara,
-            icon = com.agendaqr.core.ui.components.AmIcons.Camera,
+        AmListRow(
+            title = AppStrings.Camara,
+            subtitle = AppStrings.PermisoCamaraContexto,
             onClick = {
                 IosQrCameraPresenter(
                     onQr = { result ->
@@ -120,6 +114,8 @@ actual fun QrCameraEntryControl(
                     },
                 ).present()
             },
+            leading = { AmIconBadge(icon = AmIcons.Camera, tone = AmTone.Info) },
+            showChevron = true,
         )
     }
 }
@@ -139,8 +135,11 @@ actual fun sharedImportsSupported(): Boolean = false
  */
 @Composable
 actual fun QrPdfPickerControl() {
-    AmSecondaryButton(
-        label = AppStrings.ElegirArchivoPdf,
+    AmListRow(
+        title = AppStrings.ElegirArchivoPdf,
         onClick = { IosPdfPicker.present() },
+        leading = { AmIconBadge(icon = AmIcons.Attachment, tone = AmTone.Info) },
+        showChevron = true,
+        showDivider = true,
     )
 }
