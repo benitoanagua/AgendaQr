@@ -238,7 +238,7 @@ class ScreensA11yCoverageTest {
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("Agenda QR").assert(headingMatcher())
+        compose.onNodeWithText("Inicio").assert(headingMatcher())
         // U-10: sin duplicación — el favorito vive SOLO en el carrusel y
         // el no favorito SOLO en la lista de "Todos los destinos".
         val favNodes = compose.onAllNodesWithText("Carniceria Don Bife").fetchSemanticsNodes()
