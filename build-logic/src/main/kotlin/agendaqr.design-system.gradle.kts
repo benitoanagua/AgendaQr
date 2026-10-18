@@ -722,15 +722,25 @@ fun repoRead(relativePath: String): String? =
 
 private val screenContractDocPath = "docs/04-ux/03-contrato-interaccion-pantallas.md"
 
+/**
+ * Galería estricta por superficie (`<superficie>--<estado>--<ancho>dp--<tema>--font<escala>.png`).
+ * Es un artefacto distinto de las capturas de referencia de layout
+ * (`build/roborazzi/`, esquema `<escenario>.png`, generadas por
+ * `-Pagendaqr.capture=true`; ver ADR-0007). Solo esta galería se valida
+ * contra el contrato por pantalla.
+ */
+val captureGalleryDir = "build/captures/gallery"
+
 /** Recolecta capturas PNG declaradas bajo build/ (nunca versionadas). */
 fun collectCaptureArtifacts(): Pair<List<CaptureArtifact>, List<String>> {
     val artifacts = mutableListOf<CaptureArtifact>()
     val malformed = mutableListOf<String>()
+    val galleryMarker = "/${captureGalleryDir.removePrefix("build/")}/"
     listOf("feature/destinations/presentation", "androidApp", "core/ui").forEach { module ->
         val dir = file("$module/build")
         if (!dir.exists()) return@forEach
         dir.walkTopDown()
-            .filter { it.isFile && it.extension == "png" && it.path.contains("roborazzi") }
+            .filter { it.isFile && it.extension == "png" && it.path.contains(galleryMarker) }
             .forEach { png ->
                 val rel = png.relativeTo(rootDir).path
                 val name = parseCaptureName(png.name)

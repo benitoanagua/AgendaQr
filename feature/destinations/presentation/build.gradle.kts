@@ -1,3 +1,5 @@
+import java.io.File
+
 plugins {
     id("agendaqr.compose-library")
 }
@@ -47,6 +49,72 @@ kotlin {
             implementation("androidx.compose.ui:ui-test-junit4:${libs.versions.androidx.compose.get()}")
             implementation("androidx.compose.ui:ui-test-manifest:${libs.versions.androidx.compose.get()}")
             implementation("org.robolectric:robolectric:${libs.versions.robolectric.get()}")
+            // Capturas de referencia bajo demanda (ADR-0007). Solo dibujan
+            // píxeles cuando se activa -Pagendaqr.capture=true; en el gate
+            // normal la captura es un no-op y no se versiona ninguna imagen.
+            implementation(libs.roborazzi)
+            implementation(libs.roborazzi.compose)
         }
+    }
+}
+
+// Las capturas Roborazzi se generan sobre el mismo harness Robolectric
+// (testDebugUnitTest), sin emulador:
+//
+//   ./gradlew :feature:destinations:presentation:testDebugUnitTest \
+//       -Pagendaqr.capture=true
+//
+// Salida: feature/destinations/presentation/build/roborazzi/*.png
+// (gitignored: ADR-0007 prohíbe versionar imágenes/hashes). Sin el flag,
+// los tests siguen verificando el layout sin escribir nada.
+tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {
+    val capture = providers.gradleProperty("agendaqr.capture").orNull == "true"
+    systemProperty("agendaqr.capture", capture.toString())
+    if (capture) {
+        systemProperty("roborazzi.test.record", "true")
+    }
+}
+
+// Atajo: regenera las capturas y deja un índice navegable para revisarlas
+// en el navegador. Requiere el flag explícito para no generar imágenes por
+// accidente (ADR-0007, nada versionado).
+tasks.register("captureScreenshots") {
+    group = "verification"
+    description = "Regenera las capturas de referencia y escribe build/roborazzi/index.html (requiere -Pagendaqr.capture=true)."
+    dependsOn("testDebugUnitTest")
+    doLast {
+        if (providers.gradleProperty("agendaqr.capture").orNull != "true") {
+            throw GradleException(
+                "Ejecuta: ./gradlew :feature:destinations:presentation:captureScreenshots -Pagendaqr.capture=true",
+            )
+        }
+        val dir = layout.projectDirectory.dir("build/roborazzi").asFile
+        val images = dir.listFiles { f -> f.extension == "png" }?.sortedBy { it.name }.orEmpty()
+        val cards = images.joinToString("\n") { img ->
+            val name = img.name
+            """  <figure><img loading="lazy" src="$name" alt="$name"><figcaption>$name</figcaption></figure>"""
+        }
+        File(dir, "index.html").writeText(
+            """
+            <!doctype html>
+            <meta charset="utf-8">
+            <title>Capturas de referencia AgendaQr (${images.size})</title>
+            <style>
+              body{font-family:system-ui,sans-serif;margin:16px;background:#fafafa}
+              .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+              figure{margin:0;background:#fff;border:1px solid #ddd;border-radius:8px;padding:8px;text-align:center}
+              img{max-width:100%;height:auto;image-rendering:auto}
+              figcaption{font-size:11px;color:#555;margin-top:6px;word-break:break-all}
+            </style>
+            <h1>Capturas de referencia (${images.size})</h1>
+            <p>Generadas bajo demanda con Robolectric + Roborazzi. No versionadas (ADR-0007).</p>
+            <div class="grid">
+            $cards
+            </div>
+            """.trimIndent(),
+        )
+        logger.lifecycle(
+            "captureScreenshots: ${images.size} capturas; abre ${dir.resolve("index.html")}",
+        )
     }
 }
