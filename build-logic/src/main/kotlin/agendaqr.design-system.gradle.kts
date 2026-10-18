@@ -1,10 +1,9 @@
 import java.io.File
 
 /**
- * Gate del sistema de diseño (ADR-0020, identidad visual propia AgendaQr). Las reglas por línea
- * operan sobre el código de producción; los source sets de test pueden
- * usar primitivas (p. ej. 48.dp para verificar touch targets) sin violar
- * el contrato visual.
+ * Gate del sistema de diseño. Las reglas por línea operan sobre el código
+ * de producción; los source sets de test pueden usar primitivas para
+ * verificar contratos como el tamaño mínimo de interacción.
  */
 fun Project.productionKotlinSources(): Sequence<File> = sequence {
     sequenceOf("androidApp", "core", "feature", "shared").forEach { root ->
@@ -54,9 +53,8 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-02" to listOf("border:AmLists.kt"),
     "E-03" to listOf("border:AmLists.kt"),
     "E-04" to listOf("border:AmInputs.kt"),
-    // Sombras del Anexo A (ADR-0022): el `Modifier.shadow` está
-    // centralizado en la capa de tokens (`AmElevation`/`amElevation`); solo
-    // los archivos registrados pueden invocarlo.
+    // `Modifier.shadow` se centraliza en la capa de tokens; solo los
+    // archivos registrados pueden invocarlo.
     "E-05" to listOf("shadow:AmLists.kt"),
     "E-06" to listOf("shadow:AmButtons.kt"),
 )
@@ -109,6 +107,8 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
     )
     val isFeatureSource = path.contains("/feature/")
     val isTokenLayer = path.endsWith(TokenLayerFile)
+    // Los vectores declaran dimensiones intrínsecas y un color monocromo
+    // que se reemplaza por el tinte semántico en AmIcon.
     val isIconVectorSource = path.endsWith(IconVectorFile)
     lines.forEachIndexed { index, line ->
         val location = "$path:${index + 1}"
