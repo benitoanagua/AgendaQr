@@ -865,6 +865,82 @@ fun captureViolations(
     }
 }
 
+/** Ubicación del manifiesto de capturas (nunca versionado; vive en `build/`). */
+const val captureManifestPath = "build/captures/manifest.json"
+
+private fun jsonString(value: String): String =
+    "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
+
+/**
+ * Manifiesto determinista de la galería: metadatos por artefacto (pantalla,
+ * estado, tema, ancho, densidad, escala de fuente, tamaño real del bitmap,
+ * hash, si es obligatorio y por qué se incluye). No incluye la imagen.
+ */
+fun renderCaptureManifest(artifacts: List<CaptureArtifact>, screens: List<ScreenContract>): String {
+    val bySurface = screens.associateBy { it.surface }
+    val entries = artifacts.sortedBy { it.relPath }.map { artifact ->
+        val name = artifact.name
+        val screen = bySurface[name.surface]
+        val required = screen != null && name.state in screen.captureStates
+        val density = "%.2f".format(artifact.widthPx.toDouble() / name.widthDp)
+        val scenarioId = artifact.relPath.substringAfterLast('/').removeSuffix(".png")
+        val inclusion = if (required) "estado declarado en el contrato" else "revision adicional"
+        val fields = listOf(
+            "scenarioId" to jsonString(scenarioId),
+            "screen" to jsonString(screen?.id ?: ""),
+            "surface" to jsonString(name.surface),
+            "state" to jsonString(name.state),
+            "theme" to jsonString(name.theme),
+            "widthDp" to name.widthDp.toString(),
+            "density" to density,
+            "fontScale" to name.fontScale.toString(),
+            "widthPx" to artifact.widthPx.toString(),
+            "heightPx" to artifact.heightPx.toString(),
+            "sha256" to jsonString(artifact.sha256),
+            "required" to required.toString(),
+            "inclusionReason" to jsonString(inclusion),
+        )
+        val body = fields.joinToString(",\n") { (key, value) -> "      \"$key\": $value" }
+        "    {\n$body\n    }"
+    }
+    val configs = requiredCaptureConfigs.joinToString(", ") { jsonString(it) }
+    return buildString {
+        appendLine("{")
+        appendLine("  \"schema\": \"agendaqr.captures/1\",")
+        appendLine("  \"requiredConfigs\": [$configs],")
+        appendLine("  \"entryCount\": ${artifacts.size},")
+        appendLine("  \"entries\": [")
+        appendLine(entries.joinToString(",\n"))
+        appendLine("  ]")
+        appendLine("}")
+    }
+}
+
+/**
+ * Reglas del manifiesto: cuando hay capturas, deben tener metadatos completos
+ * y sincronizados con la fuente determinista.
+ */
+fun captureManifestViolations(
+    artifacts: List<CaptureArtifact>,
+    screens: List<ScreenContract>,
+    committed: String?,
+): List<String> = buildList {
+    if (artifacts.isEmpty()) return@buildList
+    if (committed == null) {
+        add(
+            "manifiesto-ausente: hay ${artifacts.size} capturas sin manifiesto; " +
+                "ejecuta ./gradlew generateCaptureManifest",
+        )
+        return@buildList
+    }
+    if (committed.replace("\r\n", "\n") != renderCaptureManifest(artifacts, screens)) {
+        add(
+            "manifiesto-desactualizado: $captureManifestPath no corresponde a las capturas " +
+                "presentes; ejecuta ./gradlew generateCaptureManifest",
+        )
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Documentación generada: la prosa por pantalla se renderiza desde el contrato.
 // ---------------------------------------------------------------------------

@@ -763,6 +763,21 @@ tasks.register("generateScreenContractDoc") {
     }
 }
 
+tasks.register("generateCaptureManifest") {
+    group = "verification"
+    description = "Writes the on-demand capture manifest (build/captures/manifest.json) from existing PNGs."
+    doLast {
+        val (artifacts, malformed) = collectCaptureArtifacts()
+        malformed.forEach { logger.warn("generateCaptureManifest: artefacto malformado: $it") }
+        val target = file(captureManifestPath)
+        target.parentFile.mkdirs()
+        target.writeText(renderCaptureManifest(artifacts, ScreenContracts.all))
+        logger.lifecycle(
+            "generateCaptureManifest: wrote $captureManifestPath (${artifacts.size} capturas)",
+        )
+    }
+}
+
 tasks.register("verifyScreenContract") {
     group = "verification"
     description = "Cross-checks the structured per-screen contract against code, tests and generated doc."
@@ -782,6 +797,8 @@ tasks.register("verifyScreenContract") {
         malformed.forEach { violations += "captura-nombre: $it" }
         if (artifacts.isNotEmpty()) {
             violations += captureViolations(artifacts, ScreenContracts.all)
+            val manifest = file(captureManifestPath).takeIf { it.isFile }?.readText()
+            violations += captureManifestViolations(artifacts, ScreenContracts.all, manifest)
         }
 
         if (violations.isNotEmpty()) {
@@ -954,6 +971,24 @@ tasks.register("verifyScreenContractFixtures") {
                 screens,
             ).any { it.contains("captura-orbita") },
         ) { "una superficie inexistente debe fallar" }
+
+        // Manifiesto: ausente con artefactos presentes.
+        val someArtifacts = listOf(
+            artifact("a/home--content--320dp--light--font100.png", 320, "h1"),
+            artifact("a/add--content--320dp--light--font100.png", 320, "h2"),
+        )
+        require(
+            captureManifestViolations(someArtifacts, screens, null).any { it.contains("manifiesto-ausente") },
+        ) { "capturas sin manifiesto deben fallar" }
+        val manifest = renderCaptureManifest(someArtifacts, screens)
+        require(captureManifestViolations(someArtifacts, screens, manifest).isEmpty()) {
+            "un manifiesto sincronizado no debe fallar"
+        }
+        require(
+            captureManifestViolations(someArtifacts, screens, "$manifest ").any {
+                it.contains("manifiesto-desactualizado")
+            },
+        ) { "un manifiesto desincronizado debe fallar" }
 
         // Documentación generada desincronizada.
         val rendered = renderScreenContractDoc(valid)
