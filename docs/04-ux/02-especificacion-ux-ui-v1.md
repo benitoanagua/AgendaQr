@@ -1,6 +1,6 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — contrato funcional V1.9 y composición V1.18/ADR-0023, enmendada por ADR-0024
+**Estado:** FROZEN — contrato funcional V1.9 y composición V1.20/ADR-0023, enmendada por ADR-0024
 **Fecha:** 2026-10-11  
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
 
@@ -20,6 +20,8 @@
 | V1.16 | 2026-10-18 | Enmienda por ADR-0024: el desbloqueo local (S00) adopta la entrada propia de su pantalla de Stitch — héroe centrado, puntos enmascarados y teclado 3×4 con borrado accesible — en lugar del campo de texto con IME. El envío sigue siendo explícito (PIN de 4 a 12), la biometría y la demostración permanecen como acciones de texto, y la configuración inicial conserva el patrón Input (sin pantalla de Stitch; alineación pendiente de decisión). No se adoptan, con motivo registrado: "¿Olvidaste tu PIN? Ver respaldo local" (canal de recuperación NO IMPLEMENTADO) y el copy criptográfico ("datos cifrados", "llave maestra", ".vault") — el cifrado en reposo no existe y el PIN no es clave de cifrado. Intención, reglas de negocio y copy funcional existente: intactos. |
 | V1.17 | 2026-10-18 | Enmienda por ADR-0024: S02 adopta la composición de su pantalla de Stitch — héroe centrado y un único grupo de métodos en el orden de la jerarquía que esta especificación declara (Galería → Cámara, con Archivo al pie); se retiran los rótulos "Desde archivos"/"Desde la cámara" y el PDF deja de interponerse entre la galería y la cámara. La ayuda "Desde otra app" sigue siendo texto breve al pie (no se adopta la tarjeta destacada de Stitch: contradice la decisión de mantenerla como ayuda no destacada). No se adoptan los badges por método ("Recomendado", "100% local", chips de formato) ni el copy nuevo de Stitch (copy funcional congelado). Intención, reglas de negocio y rutas: intactos. |
 | V1.18 | 2026-10-18 | Enmienda por ADR-0024 (resuelve la decisión pendiente de V1.16): la configuración inicial del PIN (S00) se alinea al desbloqueo y usa el teclado propio en dos pasos — crear el código (acción "Continuar", exige la longitud mínima del dominio) y confirmarlo (acción "Guardar PIN") — con héroe, puntos enmascarados y errores como texto. Borrar con la confirmación vacía vuelve al paso de creación sin perder el código. La demostración sigue disponible como acción de texto. Intención, reglas de negocio y gate del PIN: intactos (la validación sigue viviendo en el gate). |
+| V1.19 | 2026-10-18 | Enmienda por ADR-0024: S04 adopta el conteo real por tipo en los encabezados de grupo (S04 de Stitch). No se adoptan de S04, con motivo registrado: el overflow "…" de la barra superior ("Cuenta y respaldo" vive detrás de Inicio), la acción "Cancelar" (Buscar es destino raíz) y la fila de filtros con conteo (nueva interacción que exige estado y reducción propios; los grupos ya comunican la misma composición — pendiente de decisión de producto). S09 se reconcilia sin cambios: ya compone conforme a su pantalla de Stitch en lo verificable; no se adoptan el banner "100% legible" (métrica no medible), los metadatos parseados por campo (tipo/entidad/cuenta/moneda: el dominio no parsea el payload) ni "Contexto asignado/Cambiar" (cambio de flujo), ni la nota de cifrado AES-256 (falsa: no hay cifrado en reposo). Intención, reglas de negocio y copy funcional: intactos. |
+| V1.20 | 2026-10-18 | Reconciliación por ADR-0024 sin cambios de composición: S06 y S08 ya responden a sus pantallas de Stitch en lo verificable. No se adopta de S06, con motivo registrado: la búsqueda y los conteos por contexto (exigen estado y agregados que la lista no tiene), "Crear nuevo contexto" visible con lista llena (ADR-0003 U3: con ≥1 contexto la creación no aparece en S06), los totales mensuales por contexto (agregado nuevo) y la nota de cifrado (falsa). De S08 no se adoptan la forma de página con "Confirmar selección" (la spec prescribe `AmDialog` por verificabilidad D-07 y conservación del draft) ni la búsqueda dentro del selector (pocos elementos; se retira la mención de Search de la composición, que nunca existió en el código). Los contratos S04/S06/S08/S09 pasan a declarar solo los componentes reales. Intención, reglas de negocio y copy funcional: intactos. |
 
 La composición funcional y las reglas de producto corresponden a V1.9; V1.13 define la composición de pantallas y los patrones de interacción. ADR-0023 y el contrato normativo de diseño fijan el sistema vigente. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
@@ -138,10 +140,10 @@ Intención: capturar un QR físico. La detección debe ser automática cuando se
 
 Composición: navbar transparente sobre la vista previa y marco de escaneo con esquinas de marca. No se añaden métricas ni controles que cambien el flujo de captura.
 
-### S04 — Buscar (presentación V1.13)
+### S04 — Buscar (composición V1.19)
 Intención: encontrar cualquier cosa de Agenda QR. Los resultados pueden ser heterogéneos y muestran su tipo mediante texto/semántica. El foco automático solo llega desde el disparador de Inicio; por pestaña se entra sin foco.
 
-Composición: Search con acción "Cancelar" en marca. Los resultados se agrupan por tipo en Cell-group y llevan Tag textual; la consulta se conserva al volver.
+Composición: Search con acción "Cancelar" en marca. Los resultados se agrupan por tipo en Cell-group y llevan Tag textual; los encabezados de grupo llevan el conteo real (S04 de Stitch, V1.19); la consulta se conserva al volver.
 
 ### S05 — Resultados (presentación V1.13)
 Superficie de decisión. Al volver se conserva la consulta.
@@ -161,10 +163,10 @@ Intención: registrar una actividad. El contexto ayuda pero no bloquea el regist
 - Fecha y hora con selectores (sin texto libre) y atajos Hoy/Ayer; por defecto, ahora con hora.
 - Salir con cambios pide "¿Descartar cambios?"; sin cambios sale de inmediato. El Back del sistema sigue el mismo camino.
 
-### S08 — Seleccionar contexto (presentación V1.13)
+### S08 — Seleccionar contexto (composición V1.20)
 Intención: elegir contexto para el flujo padre. Al terminar, vuelve al flujo original conservando el draft.
 
-Composición: `AmDialog` con Search y lista de opciones Radio en celdas. Si no se puede verificar de forma reproducible, se conserva el patrón de selección en página completa, sin perder el draft ni cambiar el back stack.
+Composición: `AmDialog` con lista de opciones Radio en celdas, creación sin salir del draft y "Quitar contexto" como acción destructiva dentro del contenido; "Cancelar" es la única salida (V1.20: sin búsqueda — el selector trabaja sobre pocos elementos). Si no se puede verificar de forma reproducible, se conserva el patrón de selección en página completa, sin perder el draft ni cambiar el back stack.
 
 ### S09 — Revisar QR (presentación V1.13)
 Intención: verificar lo que Agenda QR entendió antes de guardar. Debe mostrar evidencia suficiente sin exponer payload técnico innecesario.
