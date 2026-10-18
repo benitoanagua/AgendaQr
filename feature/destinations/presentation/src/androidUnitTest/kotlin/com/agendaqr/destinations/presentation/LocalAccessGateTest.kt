@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import com.agendaqr.core.ui.theme.AmTheme
 import com.agendaqr.destinations.domain.LocalProfile
@@ -158,7 +159,7 @@ class LocalAccessGateTest {
     }
 
     @Test
-    fun lock_screen_shows_unlock_action_and_pin_field() {
+    fun lock_screen_shows_unlock_action_and_own_keypad() {
         compose.setContent {
             AmTheme {
                 LocalLockScreen(
@@ -170,8 +171,11 @@ class LocalAccessGateTest {
         }
         compose.waitForIdle()
         compose.onNodeWithText(AppStrings.DesbloqueaAgendaQr, useUnmergedTree = true).assertExists()
-        compose.onNodeWithText(AppStrings.Pin, useUnmergedTree = true).assertExists()
         compose.onNodeWithText(AppStrings.Desbloquear, useUnmergedTree = true).assertExists()
+        // Entrada propia (S00 de Stitch): teclas de dígito con rol de botón
+        // y borrado con nombre accesible.
+        compose.onNodeWithText("1", useUnmergedTree = true).assertExists()
+        compose.onNodeWithContentDescription(AppStrings.BorrarDigito).assertExists()
     }
 
     @Test

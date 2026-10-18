@@ -85,6 +85,35 @@ class AmAccessibilityContractTest {
     }
 
     @Test
+    fun keypad_keys_are_named_buttons_with_48dp_targets() {
+        val digits = StringBuilder()
+        compose.setContent {
+            AmTheme {
+                AmKeypad(
+                    onDigit = { digits.append(it) },
+                    onBackspace = {
+                        if (digits.isNotEmpty()) digits.deleteCharAt(digits.length - 1)
+                    },
+                    backspaceDescription = "Borrar dígito",
+                )
+            }
+        }
+
+        compose.onNodeWithText("1")
+            .assertExists()
+            .assertHeightIsAtLeast(48.dp)
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
+            .performClick()
+        compose.onNodeWithText("0").performClick()
+        assert(digits.toString() == "10") { "Las teclas deben registrar sus dígitos" }
+        compose.onNodeWithContentDescription("Borrar dígito")
+            .assertExists()
+            .assertHeightIsAtLeast(48.dp)
+            .performClick()
+        assert(digits.toString() == "1") { "El borrado quita el último dígito" }
+    }
+
+    @Test
     fun search_field_has_a_named_48dp_edit_target() {
         compose.setContent {
             AmTheme {
