@@ -1,0 +1,251 @@
+package com.agendaqr.destinations.presentation
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import com.agendaqr.destinations.data.LocalComprobanteRepository
+import com.agendaqr.destinations.data.LocalContextRepository
+import com.agendaqr.destinations.data.LocalDestinationRepository
+import com.agendaqr.destinations.data.LocalOperationRepository
+import com.agendaqr.destinations.data.LocalSyncQueue
+import com.agendaqr.destinations.data.SyncMutationEnqueuer
+import com.agendaqr.destinations.data.SyncMutationProcessor
+import com.agendaqr.destinations.data.SyncQueueObserver
+import com.agendaqr.destinations.data.SyncRecoveryCoordinator
+import com.agendaqr.destinations.data.createComprobanteFileStore
+import com.agendaqr.destinations.data.createDeletedOperationHistoryRepository
+import com.agendaqr.destinations.data.createImportPayloadStore
+import com.agendaqr.destinations.data.createRemoteComprobanteRepository
+import com.agendaqr.destinations.data.createRemoteContextRepository
+import com.agendaqr.destinations.data.createRemoteDestinationRepository
+import com.agendaqr.destinations.data.createRemoteOperationRepository
+import com.agendaqr.destinations.data.createSyncedComprobanteRepository
+import com.agendaqr.destinations.data.createSyncedContextRepository
+import com.agendaqr.destinations.data.createSyncedDestinationRepository
+import com.agendaqr.destinations.data.createSyncedOperationRepository
+import com.agendaqr.destinations.data.isRemoteConfigured
+import com.agendaqr.destinations.data.platformNetworkMonitor
+import com.agendaqr.destinations.data.profileScopedKey
+import com.agendaqr.destinations.domain.AssociateComprobanteToOperationUseCase
+import com.agendaqr.destinations.domain.DeleteComprobanteUseCase
+import com.agendaqr.destinations.domain.DeleteDestinationUseCase
+import com.agendaqr.destinations.domain.DeleteOperationWithHistoryUseCase
+import com.agendaqr.destinations.domain.FindDuplicateComprobantesUseCase
+import com.agendaqr.destinations.domain.GetComprobanteUseCase
+import com.agendaqr.destinations.domain.GetContextUseCase
+import com.agendaqr.destinations.domain.GetDestinationUseCase
+import com.agendaqr.destinations.domain.GetOperationUseCase
+import com.agendaqr.destinations.domain.ImportPayloadStore
+import com.agendaqr.destinations.domain.ObserveContextContentsUseCase
+import com.agendaqr.destinations.domain.ObserveContextsUseCase
+import com.agendaqr.destinations.domain.ObserveDestinationsUseCase
+import com.agendaqr.destinations.domain.ObserveOperationComprobantesUseCase
+import com.agendaqr.destinations.domain.ObserveOperationsUseCase
+import com.agendaqr.destinations.domain.ObserveUnassociatedComprobantesUseCase
+import com.agendaqr.destinations.domain.SaveComprobanteUseCase
+import com.agendaqr.destinations.domain.SaveDestinationUseCase
+import com.agendaqr.destinations.domain.SaveImportBatchUseCase
+import com.agendaqr.destinations.domain.SaveOperationUseCase
+import com.agendaqr.destinations.domain.SearchAgendaQrUseCase
+import com.agendaqr.destinations.domain.SuggestReceiptAssociationUseCase
+import com.agendaqr.destinations.domain.ToggleFavoriteUseCase
+import com.agendaqr.destinations.domain.UnassociateComprobanteUseCase
+import com.agendaqr.destinations.domain.UpdateDestinationUseCase
+import com.agendaqr.destinations.domain.UpdateOperationUseCase
+import com.agendaqr.destinations.domain.isDemoProfile
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+
+/**
+ * Grafo de dependencias de una sesión autenticada .
+ *
+ * Construye y retiene TODO lo que depende del usuario: scope de sync, cola
+ * durable, repositorios locales crudos compartidos, wrappers de escritura
+ * que encolan, procesador, recovery y los ViewModels de los cuatro flujos.
+ *
+ * Reglas preservadas (no renegociables):
+ * - aislamiento por usuario: cada clave de almacenamiento es user-scoped
+ *   y el grafo se reconstruye al cambiar `profileId`;
+ * - modelo local-first: la UI escribe vía los wrappers Sync (encolan) y el
+ *   procesador opera sobre los locales crudos compartidos;
+ * - el scope se cancela solo al salir de composición esta sesión; el
+ *   coordinator se detiene por separado con `recovery.stop()` para que
+ *   "Reintentar ahora" y los `syncScope.launch` sigan funcionando.
+ */
+@Suppress("LongParameterList", "TooManyFunctions")
+class AuthenticatedSessionGraph(
+    val sessionScope: CoroutineScope,
+    val syncProcessor: SyncMutationProcessor,
+    val queueObserver: SyncQueueObserver,
+    val destinationRepository: com.agendaqr.destinations.domain.DestinationRepository,
+    val comprobanteRepository: com.agendaqr.destinations.domain.ComprobanteRepository,
+    val comprobanteFiles: com.agendaqr.destinations.domain.ComprobanteFileStore,
+    val importPayloadStore: ImportPayloadStore,
+    val saveImportBatch: SaveImportBatchUseCase,
+    val destinationsViewModel: DestinationsViewModel,
+    val operationsViewModel: OperationsViewModel,
+    val contextsViewModel: ContextsViewModel,
+    val globalSearchViewModel: GlobalSearchViewModel,
+    /**
+     * ¿Hay backend remoto configurado? En modo local (`false`) la UI de
+     * sincronización se oculta: no hay cuenta ni destino al que sincronizar.
+     */
+    val remoteConfigured: Boolean = true,
+)
+
+/**
+ * Construye el grafo ligado a [profileId] con el mismo ciclo de vida que la
+ * sesión: sobrevive a recomposiciones, se reconstruye al cambiar usuario
+ * y libera sus recursos al salir de composición.
+ */
+@Composable
+fun rememberAuthenticatedSessionGraph(profileId: String): AuthenticatedSessionGraph {
+    // UN scope cancelable ligado a la sesión: sync y ViewModels
+    // comparten ciclo de vida; el cierre de sesión cancela TODO.
+    val sessionScope = remember(profileId) { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
+    DisposableEffect(sessionScope) {
+        onDispose { sessionScope.coroutineContext.cancel() }
+    }
+    val syncQueue = remember(profileId) { LocalSyncQueue() }
+    val syncEnqueuer = remember(syncQueue) { SyncMutationEnqueuer(syncQueue) }
+    // Estado local crudo compartido: los wrappers Sync son la vía de escritura
+    // de UI (encolan), y el procesador opera sobre estos mismos locales sin
+    // re-encolar al aplicar snapshots ganadores del servidor.
+    val contextLocal = remember(profileId) {
+        LocalContextRepository(storageKey = profileScopedKey("agendaqr.contexts.v1"))
+    }
+    val destinationLocal = remember(profileId) {
+        LocalDestinationRepository(storageKey = profileScopedKey("agendaqr.destinations.v1"))
+    }
+    val operationLocal = remember(profileId) {
+        LocalOperationRepository(storageKey = profileScopedKey("agendaqr.operations.v1"))
+    }
+    val comprobanteLocal = remember(profileId) {
+        LocalComprobanteRepository(storageKey = profileScopedKey("agendaqr.comprobantes.v1"))
+    }
+    val contextRepository = remember(syncQueue) { createSyncedContextRepository(syncQueue, contextLocal) }
+    val destinationRepository = remember(syncEnqueuer) { createSyncedDestinationRepository(syncEnqueuer, destinationLocal) }
+    val operationRepository = remember(syncEnqueuer) { createSyncedOperationRepository(syncEnqueuer, operationLocal) }
+    val fileStore = remember(profileId) { createComprobanteFileStore() }
+    val importPayloadStore = remember(profileId) { createImportPayloadStore() }
+    val comprobanteRepository = remember(syncEnqueuer, fileStore) {
+        createSyncedComprobanteRepository(fileStore, syncEnqueuer, comprobanteLocal)
+    }
+    val syncProcessor = remember(syncQueue, contextLocal, destinationLocal, operationLocal, comprobanteLocal, fileStore) {
+        SyncMutationProcessor(
+            queue = syncQueue,
+            contexts = contextLocal,
+            destinations = destinationLocal,
+            operations = operationLocal,
+            comprobantes = comprobanteLocal,
+            remoteContexts = createRemoteContextRepository(),
+            remoteDestinations = createRemoteDestinationRepository(),
+            remoteOperations = createRemoteOperationRepository(),
+            remoteComprobantes = createRemoteComprobanteRepository(),
+            fileStore = fileStore,
+        )
+    }
+    val networkMonitor = remember { platformNetworkMonitor() }
+    // Sin configuración remota NO se arranca el ciclo de sincronización: la
+    // ausencia de Supabase es un estado soportado (modo local) y no debe
+    // producir reintentos indefinidos contra un backend inexistente. La cola
+    // local sigue acumulando mutaciones pendientes para cuando se conecte.
+    // El perfil de demostración tampoco sincroniza nunca: sus datos son
+    // ficticios y no deben salir del dispositivo.
+    val remoteConfigured = remember(profileId) { isRemoteConfigured() && !isDemoProfile(profileId) }
+    val recovery = remember(syncProcessor, sessionScope, networkMonitor) {
+        SyncRecoveryCoordinator(syncProcessor, sessionScope, networkMonitor = networkMonitor)
+    }
+    DisposableEffect(recovery, remoteConfigured) {
+        if (remoteConfigured) recovery.start()
+        onDispose { recovery.stop() }
+    }
+    val queueObserver = remember(syncQueue) { SyncQueueObserver(syncQueue) }
+    val saveImportBatch = remember(destinationRepository, comprobanteRepository, fileStore, importPayloadStore) {
+        SaveImportBatchUseCase(destinationRepository, comprobanteRepository, fileStore, importPayloadStore)
+    }
+    val historyRepository = remember(profileId) { createDeletedOperationHistoryRepository() }
+    val destinationsViewModel = remember(destinationRepository, sessionScope) {
+        DestinationsViewModel(
+            observe = ObserveDestinationsUseCase(destinationRepository),
+            get = GetDestinationUseCase(destinationRepository),
+            save = SaveDestinationUseCase(destinationRepository),
+            update = UpdateDestinationUseCase(destinationRepository),
+            delete = DeleteDestinationUseCase(destinationRepository),
+            toggleFavorite = ToggleFavoriteUseCase(destinationRepository),
+            scope = sessionScope,
+        )
+    }
+    val operationsViewModel = remember(operationRepository, comprobanteRepository, fileStore, historyRepository, sessionScope) {
+        OperationsViewModel(
+            observeOperations = ObserveOperationsUseCase(operationRepository),
+            observeContexts = ObserveContextsUseCase(contextRepository),
+            observeUnassociated = ObserveUnassociatedComprobantesUseCase(comprobanteRepository),
+            observeOperationComprobantes = ObserveOperationComprobantesUseCase(comprobanteRepository),
+            getOperation = GetOperationUseCase(operationRepository),
+            saveOperation = SaveOperationUseCase(operationRepository),
+            updateOperation = UpdateOperationUseCase(operationRepository),
+            deleteOperation = DeleteOperationWithHistoryUseCase(operationRepository, comprobanteRepository, fileStore, historyRepository),
+            associate = AssociateComprobanteToOperationUseCase(operationRepository, comprobanteRepository),
+            unassociate = UnassociateComprobanteUseCase(comprobanteRepository),
+            saveComprobante = SaveComprobanteUseCase(comprobanteRepository, fileStore),
+            findDuplicates = FindDuplicateComprobantesUseCase(comprobanteRepository, fileStore),
+            getComprobante = GetComprobanteUseCase(comprobanteRepository),
+            suggestReceiptAssociation = SuggestReceiptAssociationUseCase(comprobanteRepository, operationRepository),
+            deleteComprobante = DeleteComprobanteUseCase(comprobanteRepository, fileStore),
+            comprobanteFiles = fileStore,
+            scope = sessionScope,
+        )
+    }
+    val contextsViewModel = remember(contextRepository, destinationRepository, operationRepository, comprobanteRepository, sessionScope) {
+        ContextsViewModel(
+            observe = ObserveContextsUseCase(contextRepository),
+            observeContents = ObserveContextContentsUseCase(
+                contextRepository,
+                destinationRepository,
+                operationRepository,
+                comprobanteRepository,
+            ),
+            get = GetContextUseCase(contextRepository),
+            // U3/ADR-0003: creación de contextos (opción C).
+            save = com.agendaqr.destinations.domain.SaveContextUseCase(contextRepository),
+            scope = sessionScope,
+        )
+    }
+    val globalSearchViewModel = remember(contextRepository, destinationRepository, operationRepository, comprobanteRepository, sessionScope) {
+        GlobalSearchViewModel(
+            search = SearchAgendaQrUseCase(
+                contextRepository,
+                destinationRepository,
+                operationRepository,
+                comprobanteRepository,
+            ),
+            scope = sessionScope,
+        )
+    }
+    return remember(
+        sessionScope, syncProcessor, queueObserver,
+        destinationRepository, comprobanteRepository, fileStore,
+        importPayloadStore, saveImportBatch,
+        destinationsViewModel, operationsViewModel, contextsViewModel, globalSearchViewModel,
+        remoteConfigured,
+    ) {
+        AuthenticatedSessionGraph(
+            sessionScope = sessionScope,
+            syncProcessor = syncProcessor,
+            queueObserver = queueObserver,
+            destinationRepository = destinationRepository,
+            comprobanteRepository = comprobanteRepository,
+            comprobanteFiles = fileStore,
+            importPayloadStore = importPayloadStore,
+            saveImportBatch = saveImportBatch,
+            destinationsViewModel = destinationsViewModel,
+            operationsViewModel = operationsViewModel,
+            contextsViewModel = contextsViewModel,
+            globalSearchViewModel = globalSearchViewModel,
+            remoteConfigured = remoteConfigured,
+        )
+    }
+}

@@ -1,0 +1,153 @@
+package com.agendaqr.destinations.domain
+
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+
+enum class AgendaSearchResultType {
+    CONTEXT,
+    QR,
+    ACTIVITY,
+    COMPROBANTE,
+}
+
+data class AgendaSearchResult(
+    val type: AgendaSearchResultType,
+    val id: String,
+    val title: String,
+    val subtitle: String? = null,
+    val contextId: String? = null,
+    val destinationId: String? = null,
+    val operationId: String? = null,
+    /**
+     * Fecha del resultado en milisegundos epoch, cuando su tipo tiene una:
+     * actividad = fecha de la operación; comprobante = fecha de alta. El
+     * dominio expone el dato crudo y la presentación decide el formato (así
+     * "ayer" sigue siendo un cálculo de la capa de UI). Null en contextos y
+     * QRs, que no tienen fecha propia.
+     */
+    val dateMillis: Long? = null,
+)
+
+data class AgendaSearchQuery(
+    val text: String,
+)
+
+class SearchAgendaQrUseCase(
+    private val contexts: ContextRepository,
+    private val destinations: DestinationRepository,
+    private val operations: OperationRepository,
+    private val comprobantes: ComprobanteRepository,
+) {
+    operator fun invoke(query: AgendaSearchQuery): Flow<List<AgendaSearchResult>> =
+        combine(
+            contexts.observe(),
+            destinations.observe(),
+            operations.observe(),
+            comprobantes.observe(),
+        ) { contextList, destinationList, operationList, receiptList ->
+            val text = query.text.trim().lowercase()
+            if (text.isEmpty()) {
+                emptyList()
+            } else {
+                val contextsById = contextList.associateBy { it.id }
+                buildList {
+                    contextList.forEach { context ->
+                        if (context.matches(text)) {
+                            add(
+                                AgendaSearchResult(
+                                    type = AgendaSearchResultType.CONTEXT,
+                                    id = context.id,
+                                    title = context.name,
+                                    subtitle = context.note,
+                                    contextId = context.id,
+                                )
+                            )
+                        }
+                    }
+
+                    destinationList.forEach { destination ->
+                        // A QR is findable both by its own text and through the
+                        // context it belongs to: searching a context name must
+                        // surface its QRs.
+                        val matchesThroughContext = destination.contextId
+                            ?.let { contextsById[it] }
+                            ?.matches(text) == true
+                        if (destination.matches(text) || matchesThroughContext) {
+                            add(
+                                AgendaSearchResult(
+                                    type = AgendaSearchResultType.QR,
+                                    id = destination.id,
+                                    title = destination.name,
+                                    subtitle = destination.category ?: destination.note,
+                                    contextId = destination.contextId,
+                                    destinationId = destination.id,
+                                )
+                            )
+                        }
+                    }
+
+                    operationList.forEach { operation ->
+                        if (operation.matches(text)) {
+                            add(
+                                AgendaSearchResult(
+                                    type = AgendaSearchResultType.ACTIVITY,
+                                    id = operation.id,
+                                    title = operation.personOrEntity ?: operation.concept ?: operation.type.name,
+                                    subtitle = listOfNotNull(
+                                        operation.amount,
+                                        operation.currency,
+                                        operation.concept,
+                                    ).joinToString(" · ").ifBlank { null },
+                                    contextId = operation.contextId,
+                                    destinationId = operation.destinationId,
+                                    operationId = operation.id,
+                                    dateMillis = operation.occurredAt,
+                                )
+                            )
+                        }
+                    }
+
+                    receiptList.forEach { receipt ->
+                        if (receipt.matches(text)) {
+                            add(
+                                AgendaSearchResult(
+                                    type = AgendaSearchResultType.COMPROBANTE,
+                                    id = receipt.id,
+                                    title = receipt.file.substringAfterLast('/'),
+                                    subtitle = receipt.provenance?.name ?: receipt.mimeType,
+                                    contextId = receipt.contextId,
+                                    operationId = receipt.operationId,
+                                    dateMillis = receipt.createdAt,
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+    private fun Context.matches(text: String): Boolean =
+        listOfNotNull(name, note).any { it.contains(text, ignoreCase = true) }
+
+    private fun Destination.matches(text: String): Boolean =
+        listOfNotNull(name, category, note).any { it.contains(text, ignoreCase = true) }
+
+    private fun Operation.matches(text: String): Boolean =
+        listOfNotNull(
+            type.name,
+            amount,
+            currency,
+            personOrEntity,
+            concept,
+            note,
+        ).any { it.contains(text, ignoreCase = true) }
+
+    private fun Comprobante.matches(text: String): Boolean =
+        listOfNotNull(
+            id,
+            file,
+            mimeType,
+            extension,
+            provenance?.name,
+        ).any { it.contains(text, ignoreCase = true) }
+}

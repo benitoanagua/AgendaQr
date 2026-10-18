@@ -1,0 +1,169 @@
+name: Android validation
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+      # Release assembly in CI is a candidate build, not production signing:
+      # allow the explicit debug-keystore RC path (production keystore stays
+      # out of CI; PRODUCTION_RELEASE remains BLOCKED without it).
+      ORG_GRADLE_PROJECT_allowDebugSigningForRc: "true"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Validate Supabase CI configuration
+        # Unit tests never touch Supabase; missing secrets warn (no fail).
+        if: ${{ env.SUPABASE_URL == '' || env.SUPABASE_PUBLISHABLE_KEY == '' }}
+        run: echo "Supabase secrets missing (warning only; unit tests do not need them)"
+        continue-on-error: true
+
+      - name: Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-v2-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-v2-
+
+      - name: Architecture and design-system gates
+        run: ./gradlew verifyAgendaQrArchitecture --stacktrace
+
+      - name: Domain unit tests
+        run: ./gradlew :feature:destinations:domain:testDebugUnitTest --stacktrace
+
+      - name: Upload domain test reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: domain-test-reports-${{ github.run_id }}
+          path: |
+            feature/destinations/domain/build/test-results/testDebugUnitTest/**
+            feature/destinations/domain/build/reports/tests/testDebugUnitTest/**
+          if-no-files-found: warn
+
+      - name: Data unit tests
+        run: ./gradlew :feature:destinations:data:testDebugUnitTest --stacktrace
+
+      - name: Presentation unit tests
+        run: ./gradlew :feature:destinations:presentation:testDebugUnitTest --stacktrace
+
+      - name: Upload presentation test reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: presentation-test-reports-${{ github.run_id }}
+          path: |
+            feature/destinations/presentation/build/test-results/testDebugUnitTest/**
+            feature/destinations/presentation/build/reports/tests/testDebugUnitTest/**
+          if-no-files-found: warn
+
+      - name: Android unit tests
+        run: ./gradlew :androidApp:testDebugUnitTest --stacktrace
+
+      - name: Core UI unit tests
+        run: ./gradlew :core:ui:testDebugUnitTest --stacktrace
+
+      - name: Android debug assembly
+        run: ./gradlew :androidApp:assembleDebug --stacktrace
+
+      - name: Android lint
+        run: ./gradlew :androidApp:lint --stacktrace
+
+      - name: Android release assembly
+        run: ./gradlew :androidApp:assembleRelease --stacktrace
+
+  instrumented-tests:
+    # Instrumentados en emulador (ACTION_SEND, singleTask, URI
+    # revocada). NO BLOQUEANTE hasta 5 corridas estables en CI.
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Run instrumented tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          script: ./gradlew :androidApp:connectedDebugAndroidTest -PallowDebugSigningForRc=true --stacktrace
+      - name: Upload instrumented reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: instrumented-reports-${{ github.run_id }}
+          path: androidApp/build/outputs/androidTest-results/**
+          if-no-files-found: warn
+
+  ios-compile:
+    runs-on: macos-latest
+    env:
+      ORG_GRADLE_PROJECT_allowDebugSigningForRc: "true"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Kotlin iOS simulator compilation
+        run: ./gradlew :shared:compileKotlinIosSimulatorArm64 :feature:destinations:data:compileKotlinIosSimulatorArm64 :feature:destinations:presentation:compileKotlinIosSimulatorArm64 :core:ui:compileKotlinIosSimulatorArm64 --stacktrace
+
+  supabase-acceptance:
+    # Blocking: the harness is deterministic against a stock
+    # postgres:15 (verified locally with podman and green on every PR run
+    # since its introduction). Since the RLS two-user isolation test
+    # (platform-stubs define auth.uid() from the session claim), RLS
+    # *behavior* is gated here too; only auth/storage *runtime* semantics
+    # of the hosted platform remain outside.
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run 006 FK acceptance harness
+        env:
+          DATABASE_URL: jdbc:postgresql://localhost:5432/postgres?user=postgres&password=postgres
+        run: ./gradlew :supabase:acceptance:test -PallowDebugSigningForRc=true --console=plain

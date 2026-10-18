@@ -1,0 +1,105 @@
+package com.agendaqr.destinations.data
+
+import com.agendaqr.destinations.domain.Destination
+import com.agendaqr.destinations.domain.DestinationRepository
+import com.agendaqr.destinations.domain.QrAsset
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.postgrest.from
+import kotlinx.datetime.Instant
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlin.time.ExperimentalTime
+
+@OptIn(ExperimentalTime::class)
+interface RemoteDestinationRepository {
+    suspend fun observe(): List<Destination>
+    suspend fun save(destination: Destination)
+    suspend fun update(destination: Destination)
+    suspend fun delete(id: String)
+    /** Lectura puntual; por defecto filtra el snapshot (Supabase no expone single barato en KMP). */
+    suspend fun get(id: String): Destination? = observe().firstOrNull { it.id == id }
+}
+
+class SupabaseDestinationRepository(
+    /** Resuelto al usar el repositorio, no al construirlo (ver nota en SupabaseContextRepository). */
+    private val clientProvider: () -> SupabaseClient = { AgendaQrSupabase.client },
+) : RemoteDestinationRepository {
+    private val client: SupabaseClient get() = clientProvider()
+
+    override suspend fun observe(): List<Destination> =
+        client.from("destinations")
+            .select()
+            .decodeList<DestinationRow>()
+            .map { it.toDomain() }
+
+    override suspend fun save(destination: Destination) {
+        client.from("destinations").upsert(destination.toRow())
+    }
+
+    override suspend fun update(destination: Destination) {
+        client.from("destinations").update(destination.toRow()) {
+            filter { eq("id", destination.id) }
+        }
+    }
+
+    override suspend fun delete(id: String) {
+        client.from("destinations").delete {
+            filter { eq("id", id) }
+        }
+    }
+
+    private fun currentUserId(): String =
+        client.auth.currentUserOrNull()?.id
+            ?: error("Authentication required for destination synchronization")
+
+    private fun Destination.toRow() = DestinationRow(
+        id = id,
+        userId = currentUserId(),
+        name = name,
+        qrRawContent = qr.encoded,
+        qrKind = "UNKNOWN",
+        category = category,
+        note = note,
+        favorite = favorite,
+        createdAt = Instant.fromEpochMilliseconds(createdAt),
+        updatedAt = Instant.fromEpochMilliseconds(updatedAt),
+        contextId = contextId,
+    )
+
+    private fun DestinationRow.toDomain() = Destination(
+        id = id,
+        name = name,
+        qr = QrAsset(encoded = qrRawContent),
+        category = category,
+        note = note,
+        favorite = favorite,
+        createdAt = createdAt.toEpochMilliseconds(),
+        updatedAt = updatedAt.toEpochMilliseconds(),
+        contextId = contextId,
+    )
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+@Serializable
+internal data class DestinationRow(
+    val id: String,
+    @SerialName("user_id") val userId: String,
+    val name: String,
+    @SerialName("qr_raw_content") val qrRawContent: String,
+    @SerialName("qr_kind") val qrKind: String,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
+    val category: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
+    val note: String? = null,
+    val favorite: Boolean = false,
+    @SerialName("created_at") val createdAt: Instant,
+    @SerialName("updated_at") val updatedAt: Instant,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
+    @SerialName("context_id") val contextId: String? = null,
+)
+
+fun createRemoteDestinationRepository(): RemoteDestinationRepository =
+    SupabaseDestinationRepository()

@@ -1,0 +1,101 @@
+# UX — Flujos confirmados V1
+
+La UI visual está bajo el contrato de diseño y la especificación UX/UI V1 congelada en `02-especificacion-ux-ui-v1.md`.
+
+## Principio
+
+> Una pantalla = una intención principal + una acción principal.
+
+Este documento resume los flujos funcionales. La especificación completa de pantallas, estados, recuperación y accesibilidad vive en `docs/04-ux/02-especificacion-ux-ui-v1.md`.
+
+## Destinos / QR
+
+### Captura e importación
+
+    Galería / Desde otra app / Cámara
+                  ↓
+              importar
+                  ↓
+               analizar
+                  ↓
+              clasificar
+                  ↓
+                revisar
+                  ↓
+               guardar
+
+Galería es la entrada principal para información que ya existe. Cámara es un medio de captura.
+
+### Reutilización
+
+    Buscar → Seleccionar → Contexto / QR → Mostrar / reutilizar / compartir
+
+## Operación primero
+
+    Registrar
+       ↓
+    Datos
+       ↓
+    (opcional) seleccionar contexto
+       ↓
+    Guardar
+
+El contexto no bloquea el registro. El draft se conserva al entrar temporalmente al selector.
+
+## Comprobante primero
+
+    Recibir / importar comprobante
+                 ↓
+              analizar
+                 ↓
+               revisar
+                 ↓
+          ┌──────┴──────┐
+          ↓             ↓
+       asociar      guardar sin asociar
+
+Un comprobante puede guardarse sin operación y asociarse después.
+
+## Ambigüedad
+
+    Revisar → ambiguo → una pregunta clara → seleccionar candidato
+
+No se selecciona automáticamente cuando la ambigüedad puede cambiar el significado.
+
+## Importación masiva
+
+    Importar → Analizar → Clasificar → Resultado
+                                  ├→ reconocidos → guardar
+                                  ├→ duplicados → informar
+                                  └→ pendientes → revisar después
+
+Los elementos válidos no quedan bloqueados por los pendientes.
+
+## Offline y errores
+
+Offline es transversal:
+
+    Guardado → Pendiente → Sincronizando → Sincronizado
+
+Los errores muestran recuperación contextual. No existe una pantalla global de error.
+
+## Eliminación
+
+Eliminar operación con comprobantes:
+
+    Advertencia contextual → Confirmar → Eliminar archivos asociados → Conservar histórico mínimo
+
+Eliminar comprobante:
+
+    Eliminar archivo → Operación permanece
+
+## Contrato de navegación
+
+Back vuelve al estado anterior y conserva el draft cuando existe. Cancelar abandona la intención actual.
+
+Salir del editor de actividad con cambios sin guardar pide "¿Descartar cambios?" (Seguir editando / Descartar); sin cambios sale de inmediato. El Back del sistema sigue el mismo camino.
+
+El bloqueo por pasar a segundo plano concede una gracia acotada de 120 s cuando el propio usuario lanzó un flujo externo desde la app (galería, cámara, selectores, compartir); vencida la gracia, se bloquea al volver. Sin marca previa, el bloqueo es inmediato (fail-closed). Al volver a primer plano (`ON_RESUME`) la marca pendiente se limpia siempre: un flujo translúcido que no produce `ON_STOP` (hoja de compartir o diálogo de permiso) no deja una gracia viva que impida un bloqueo posterior.
+
+La matriz de estados/eventos está en la suite de estados y eventos de
+`docs/QUALITY.md`.

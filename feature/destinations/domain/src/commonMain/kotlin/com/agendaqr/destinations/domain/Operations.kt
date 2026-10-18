@@ -1,0 +1,242 @@
+package com.agendaqr.destinations.domain
+
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.serialization.Serializable
+
+@Serializable
+enum class OperationType {
+    PAGO,
+    COBRO,
+}
+
+@Serializable
+data class Operation(
+    val id: String,
+    val type: OperationType,
+    val occurredAt: Long,
+    val createdAt: Long,
+    val updatedAt: Long = createdAt,
+    val amount: String? = null,
+    val currency: String? = null,
+    val personOrEntity: String? = null,
+    val destinationId: String? = null,
+    val concept: String? = null,
+    val note: String? = null,
+    /** Context containing this activity. Nullable to preserve legacy activities. */
+    val contextId: String? = null,
+)
+
+@Serializable
+enum class ReceiptProvenance {
+    ENVIADO,
+    RECIBIDO,
+    DESCONOCIDO,
+}
+
+@Serializable
+data class Comprobante(
+    val id: String,
+    val file: String,
+    val mimeType: String? = null,
+    val extension: String? = null,
+    val createdAt: Long,
+    val updatedAt: Long,
+    val provenance: ReceiptProvenance? = null,
+    val operationId: String? = null,
+    /** Context containing this receipt; optional because receipts may remain unassociated. */
+    val contextId: String? = null,
+)
+
+@Serializable
+data class DeletedOperationHistory(
+    val date: Long,
+    val type: OperationType,
+    val amount: String? = null,
+    val personOrEntity: String? = null,
+)
+
+interface OperationRepository {
+    fun observe(): Flow<List<Operation>>
+    suspend fun get(id: String): Operation?
+    suspend fun save(operation: Operation)
+    suspend fun update(operation: Operation)
+    suspend fun delete(id: String)
+}
+
+interface ComprobanteRepository {
+    fun observe(): Flow<List<Comprobante>>
+    suspend fun get(id: String): Comprobante?
+    suspend fun save(comprobante: Comprobante)
+    suspend fun update(comprobante: Comprobante)
+    suspend fun delete(id: String)
+}
+
+interface DeletedOperationHistoryRepository {
+    fun observe(): Flow<List<DeletedOperationHistory>>
+    suspend fun save(history: DeletedOperationHistory)
+}
+
+fun Operation.hasSensitiveChangesComparedTo(other: Operation): Boolean =
+    type != other.type ||
+        occurredAt != other.occurredAt ||
+        amount != other.amount ||
+        currency != other.currency ||
+        personOrEntity != other.personOrEntity ||
+        destinationId != other.destinationId
+
+interface ComprobanteFileStore {
+    suspend fun save(id: String, bytes: ByteArray, extension: String): String
+    suspend fun read(file: String): ByteArray?
+    suspend fun delete(file: String)
+}
+
+class ObserveOperationsUseCase(private val repository: OperationRepository) {
+    operator fun invoke(): Flow<List<Operation>> = repository.observe()
+}
+
+class GetOperationUseCase(private val repository: OperationRepository) {
+    suspend operator fun invoke(id: String): Operation? = repository.get(id)
+}
+
+class SaveOperationUseCase(private val repository: OperationRepository) {
+    suspend operator fun invoke(operation: Operation) = repository.save(operation)
+}
+
+class UpdateOperationUseCase(private val repository: OperationRepository) {
+    suspend operator fun invoke(operation: Operation) = repository.update(operation.copy(updatedAt = nowMillis()))
+}
+
+class GetComprobanteUseCase(private val repository: ComprobanteRepository) {
+    suspend operator fun invoke(id: String): Comprobante? = repository.get(id)
+}
+
+class ObserveUnassociatedComprobantesUseCase(
+    private val repository: ComprobanteRepository,
+) {
+    operator fun invoke(): Flow<List<Comprobante>> =
+        repository.observe().map { receipts ->
+            receipts.filter { it.operationId == null }
+        }
+}
+
+class ObserveOperationComprobantesUseCase(
+    private val repository: ComprobanteRepository,
+) {
+    operator fun invoke(operationId: String): Flow<List<Comprobante>> =
+        repository.observe().map { receipts ->
+            receipts.filter { it.operationId == operationId }
+        }
+}
+
+class AssociateComprobanteToOperationUseCase(
+    private val operationRepository: OperationRepository,
+    private val comprobanteRepository: ComprobanteRepository,
+) {
+    suspend operator fun invoke(comprobanteId: String, operationId: String): Comprobante {
+        requireNotNull(operationRepository.get(operationId)) {
+            "Operation not found: $operationId"
+        }
+        val comprobante = requireNotNull(comprobanteRepository.get(comprobanteId)) {
+            "Comprobante not found: $comprobanteId"
+        }
+        val operation = requireNotNull(operationRepository.get(operationId))
+        return comprobante.copy(
+            operationId = operationId,
+            contextId = comprobante.contextId ?: operation.contextId,
+        ).also {
+            comprobanteRepository.update(it)
+        }
+    }
+}
+
+class UnassociateComprobanteUseCase(
+    private val repository: ComprobanteRepository,
+) {
+    suspend operator fun invoke(comprobanteId: String): Comprobante {
+        val comprobante = requireNotNull(repository.get(comprobanteId)) {
+            "Comprobante not found: $comprobanteId"
+        }
+        return comprobante.copy(operationId = null).also {
+            repository.update(it)
+        }
+    }
+}
+
+class FindDuplicateComprobantesUseCase(
+    private val repository: ComprobanteRepository,
+    private val fileStore: ComprobanteFileStore,
+) {
+    suspend operator fun invoke(bytes: ByteArray): List<Comprobante> {
+        if (bytes.isEmpty()) return emptyList()
+        return repository.observe().first().filter { receipt ->
+            fileStore.read(receipt.file)?.contentEquals(bytes) == true
+        }
+    }
+}
+
+class SaveComprobanteUseCase(
+    private val repository: ComprobanteRepository,
+    private val fileStore: ComprobanteFileStore,
+) {
+    suspend operator fun invoke(
+        comprobante: Comprobante,
+        bytes: ByteArray,
+        extension: String,
+        mimeType: String = "application/octet-stream",
+    ): Comprobante {
+        val file = fileStore.save(comprobante.id, bytes, extension)
+        val now = nowMillis()
+        return try {
+            comprobante.copy(
+                file = file,
+                extension = extension,
+                mimeType = mimeType,
+                updatedAt = now,
+            ).also { repository.save(it) }
+        } catch (error: Throwable) {
+            fileStore.delete(file)
+            throw error
+        }
+    }
+}
+
+class DeleteComprobanteUseCase(
+    private val repository: ComprobanteRepository,
+    private val fileStore: ComprobanteFileStore,
+) {
+    suspend operator fun invoke(comprobante: Comprobante) {
+        repository.delete(comprobante.id)
+        runCatching { fileStore.delete(comprobante.file) }
+    }
+}
+
+class DeleteOperationWithHistoryUseCase(
+    private val operationRepository: OperationRepository,
+    private val comprobanteRepository: ComprobanteRepository,
+    private val fileStore: ComprobanteFileStore,
+    private val historyRepository: DeletedOperationHistoryRepository,
+) {
+    suspend operator fun invoke(operationId: String): DeletedOperationHistory? {
+        val operation = operationRepository.get(operationId) ?: return null
+        val receipts = comprobanteRepository.observe().first().filter { it.operationId == operationId }
+        val history = DeletedOperationHistory(
+            date = operation.occurredAt,
+            type = operation.type,
+            amount = operation.amount,
+            personOrEntity = operation.personOrEntity,
+        )
+        // Persist history first so audit trail survives even if subsequent deletes partially fail.
+        historyRepository.save(history)
+
+        receipts.forEach { receipt ->
+            comprobanteRepository.delete(receipt.id)
+            runCatching { fileStore.delete(receipt.file) }
+        }
+
+        operationRepository.delete(operationId)
+
+        return history
+    }
+}

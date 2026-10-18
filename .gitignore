@@ -1,0 +1,35 @@
+.gradle/
+build/
+.idea/
+*.iml
+local.properties
+.DS_Store
+app/google-services.json
+
+# Kotlin toolchain artifacts
+.kotlin/
+
+# Android signing
+*.jks
+*.keystore
+*.p12
+keystore.properties
+release.keystore
+
+# Supabase CLI temporary files
+supabase/.temp/
+supabase/.branches/
+
+# Las capturas de verificación (Roborazzi) se generan localmente y se
+# fijan por hash en docs/04-ux/visual-hashes/manifest.json. La única
+# excepción de binarios versionados es la evidencia previa TDesign.
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.bmp
+
+# Evidencia previa congelada para la migración TDesign (T1).
+!docs/04-ux/visual-hashes/before/
+!docs/04-ux/visual-hashes/before/*.png

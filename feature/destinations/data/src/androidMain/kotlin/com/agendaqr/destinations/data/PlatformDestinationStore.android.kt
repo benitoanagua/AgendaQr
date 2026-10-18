@@ -1,0 +1,59 @@
+package com.agendaqr.destinations.data
+
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+
+import android.content.Context
+import android.content.SharedPreferences
+
+object AgendaQrAndroidStorage {
+    private var preferences: SharedPreferences? = null
+    private var applicationFilesDir: java.io.File? = null
+
+    fun initialize(context: Context) {
+        val applicationContext = context.applicationContext
+        preferences = applicationContext.getSharedPreferences("agendaqr", Context.MODE_PRIVATE)
+        applicationFilesDir = applicationContext.filesDir
+    }
+
+    internal fun requirePreferences(): SharedPreferences =
+        requireNotNull(preferences) { "AgendaQrAndroidStorage must be initialized before creating the repository." }
+
+    internal fun requireFilesDir(): java.io.File =
+        requireNotNull(applicationFilesDir) {
+            "AgendaQrAndroidStorage must be initialized before creating the repository."
+        }
+
+
+}
+
+private object AndroidDestinationStore : DestinationStore {
+    override fun read(key: String): String? = AgendaQrAndroidStorage.requirePreferences().getString(key, null)
+    override fun write(key: String, value: String) { AgendaQrAndroidStorage.requirePreferences().edit().putString(key, value).apply() }
+    override fun remove(key: String) { AgendaQrAndroidStorage.requirePreferences().edit().remove(key).apply() }
+    override fun keys(): Set<String> = AgendaQrAndroidStorage.requirePreferences().all.keys
+}
+
+actual fun platformDestinationStore(): DestinationStore = AndroidDestinationStore
+
+
+private const val SYNC_QUEUE_PREFIX = "agendaqr.sync.queue.v1"
+
+private class PlatformSyncQueueStore : SyncQueueStore {
+    private val delegate = platformDestinationStore()
+    private fun key(): String = profileScopedKey(SYNC_QUEUE_PREFIX)
+    @OptIn(ExperimentalTime::class)
+    override fun read(): List<PendingSyncMutation> {
+        val raw = delegate.read(key()) ?: "[]"
+        return try {
+            decodeSyncQueue(raw)
+        } catch (error: SyncQueueCorruptionException) {
+            val timestamp = Clock.System.now().toEpochMilliseconds()
+            delegate.write("${key()}.corrupt.$timestamp", raw)
+            throw error
+        }
+    }
+    override fun write(items: List<PendingSyncMutation>) { delegate.write(key(), encodeSyncQueue(items)) }
+}
+
+actual fun platformSyncQueueStore(): SyncQueueStore = PlatformSyncQueueStore()

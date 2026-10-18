@@ -1,0 +1,83 @@
+package com.agendaqr.destinations.data
+
+import com.agendaqr.destinations.domain.Context
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.postgrest.from
+import kotlinx.datetime.Instant
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+interface RemoteContextRepository {
+    suspend fun observe(): List<Context>
+    suspend fun save(context: Context)
+    suspend fun update(context: Context)
+    suspend fun delete(id: String)
+    /** Lectura puntual; por defecto filtra el snapshot. */
+    suspend fun get(id: String): Context? = observe().firstOrNull { it.id == id }
+}
+
+class SupabaseContextRepository(
+    /**
+     * El cliente se resuelve AL USAR el repositorio, no al construirlo: el
+     * grafo local debe poder montarse sin Supabase configurado (estado
+     * soportado). Si no hay configuración, el primer acceso lanza y el sync lo
+     * trata como error remoto recuperable (no destruye datos locales).
+     */
+    private val clientProvider: () -> SupabaseClient = { AgendaQrSupabase.client },
+) : RemoteContextRepository {
+    private val client: SupabaseClient get() = clientProvider()
+    override suspend fun observe(): List<Context> =
+        client.from("contexts").select().decodeList<ContextRow>().map { it.toDomain() }
+
+    override suspend fun save(context: Context) {
+        client.from("contexts").upsert(context.toRow())
+    }
+
+    override suspend fun update(context: Context) {
+        client.from("contexts").update(context.toRow()) {
+            filter { eq("id", context.id) }
+        }
+    }
+
+    override suspend fun delete(id: String) {
+        client.from("contexts").delete { filter { eq("id", id) } }
+    }
+
+    private fun currentUserId(): String =
+        client.auth.currentUserOrNull()?.id
+            ?: error("Authentication required for context synchronization")
+
+    private fun Context.toRow() = ContextRow(
+        id = id,
+        userId = currentUserId(),
+        name = name,
+        note = note,
+        createdAt = Instant.fromEpochMilliseconds(createdAt),
+        updatedAt = Instant.fromEpochMilliseconds(updatedAt),
+    )
+
+    private fun ContextRow.toDomain() = Context(
+        id = id,
+        name = name,
+        note = note,
+        createdAt = createdAt.toEpochMilliseconds(),
+        updatedAt = updatedAt.toEpochMilliseconds(),
+    )
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+@Serializable
+internal data class ContextRow(
+    val id: String,
+    @SerialName("user_id") val userId: String,
+    val name: String,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
+    val note: String? = null,
+    @SerialName("created_at") val createdAt: Instant,
+    @SerialName("updated_at") val updatedAt: Instant,
+)
+
+fun createRemoteContextRepository(): RemoteContextRepository = SupabaseContextRepository()

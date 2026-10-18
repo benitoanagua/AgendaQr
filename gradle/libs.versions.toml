@@ -1,0 +1,67 @@
+[versions]
+agp = "8.11.1"
+kotlin = "2.2.20"
+compose = "1.8.2"
+serialization = "1.9.0"
+coroutines = "1.10.2"
+activity = "1.10.1"
+zxing = "3.5.3"
+camerax = "1.4.2"
+# androidx.compose.ui alineado con CMP 1.8.2 (ui-test-junit4 para Robolectric).
+androidx-compose = "1.8.2"
+robolectric = "4.14.1"
+coreKtx = "1.16.0"
+supabase = "3.2.4"
+ktor = "3.3.0"
+datetime = "0.7.1"
+# Capturas de referencia. Roborazzi (Apache 2.0) sobre la suite
+# Robolectric existente — ADR-0007. Compat: AGP 8.11, robolectric
+# 4.14.1, Compose 1.8.2 (verificado por compilación).
+roborazzi = "1.26.0"
+# Biometría Android (BiometricPrompt; requiere FragmentActivity). Apache 2.0.
+biometric = "1.1.0"
+# Host del prompt: FragmentActivity (biometric la trae; se declara explícita
+# en androidApp para compilar MainActivity contra ella).
+androidxFragment = "1.8.6"
+# Recolección con ciclo de vida en commonMain. El
+# artifact androidx.lifecycle:lifecycle-runtime-compose es SOLO Android
+# (verificado contra su .module: sin variantes ios/wasm). Se usa la
+# publicación KMP de JetBrains (org.jetbrains.androidx), 2.9.4 estable,
+# con variantes android/ios/wasm — compat con CMP 1.8.2 verificada por
+# compilación de los tres targets.
+lifecycle = "2.9.4"
+
+[plugins]
+# Solo los alias con uso real (alias(libs.plugins.*)): los módulos
+# aplican Kotlin/AGP/Compose mediante los convention plugins de
+# build-logic, que fijan sus propias coordenadas.
+roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+[libraries]
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
+serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
+coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+androidx-fragment = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidxFragment" }
+zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
+androidx-test-core = { group = "androidx.test", name = "core-ktx", version = "1.6.1" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit-ktx", version = "1.2.1" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version = "1.6.2" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version = "1.6.1" }
+# UiAutomator (instrumentados, ADR-0010): dependencia ausente en el build
+# original — los instrumentados no compilaban (job no bloqueante de CI).
+# Añadida en la migración AgendaMobile para poder ejecutar la suite real.
+uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version = "2.3.0" }
+camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
+camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
+camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
+camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
+roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
+roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
+roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
+lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
+material3-window-size = { group = "org.jetbrains.compose.material3", name = "material3-window-size-class", version.ref = "compose" }
