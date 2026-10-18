@@ -149,10 +149,10 @@ class LocalAccessGateTest {
             }
         }
         compose.waitForIdle()
+        // Paso "crear el código" (V1.16): título y acción de continuar; sin
+        // credenciales remotas en ningún paso.
         compose.onNodeWithText(AppStrings.ConfiguraTuPin, useUnmergedTree = true).assertExists()
-        compose.onNodeWithText(AppStrings.Pin, useUnmergedTree = true).assertExists()
-        compose.onNodeWithText(AppStrings.ConfirmaElPin, useUnmergedTree = true).assertExists()
-        compose.onNodeWithText(AppStrings.GuardarPin, useUnmergedTree = true).assertExists()
+        compose.onNodeWithText(AppStrings.Continuar, useUnmergedTree = true).assertExists()
         // No hay ningún campo ni copy de correo/contraseña: no es un login remoto.
         compose.onNodeWithText(AppStrings.Correo, useUnmergedTree = true).assertDoesNotExist()
         compose.onNodeWithText(AppStrings.Contrasena, useUnmergedTree = true).assertDoesNotExist()

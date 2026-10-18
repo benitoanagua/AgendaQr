@@ -254,12 +254,14 @@ class ScreensA11yCoverageTest {
         compose.onNodeWithText("Sincronizado").assertDoesNotExist()
     }
 
-    // S02 — orden congelado: Galería → archivo → Cámara → ayuda al pie.
+    // S02 — orden de acciones (S02 de Stitch, V1.17): la jerarquía declarada
+    // Galería → Cámara manda en el grupo único; el PDF queda al pie y la
+    // ayuda de share después de las acciones.
     // Misma razon NATIVE+w360 que el test anterior (posiciones reales).
     @Test
     @Config(sdk = [34], qualifiers = "w360dp-h800dp")
     @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
-    fun s02_frozen_order_gallery_file_camera_share_footer() {
+    fun s02_action_order_follows_declared_hierarchy() {
         compose.setContent {
             AmTheme {
                 AddDestinationScreen(
@@ -272,14 +274,14 @@ class ScreensA11yCoverageTest {
         // Las acciones se agrupan antes de la ayuda de share al pie. En
         // Robolectric corre Android (sharedImportsSupported = true).
         val gallery = compose.onNodeWithText("Elegir de la galería").getBoundsInRoot().top
-        val pdf = compose.onNodeWithText(AppStrings.ElegirArchivoPdf).getBoundsInRoot().top
         val camera = compose.onNodeWithText("Cámara").getBoundsInRoot().top
+        val pdf = compose.onNodeWithText(AppStrings.ElegirArchivoPdf).getBoundsInRoot().top
         val share = compose.onNodeWithText(
             AppStrings.shareFromAnotherAppHint,
         ).getBoundsInRoot().top
-        assertTrue(gallery < pdf, "Galería debe estar sobre el selector PDF")
-        assertTrue(pdf < camera, "El selector PDF debe estar sobre Cámara")
-        assertTrue(camera < share, "La ayuda de share debe quedar al pie de las acciones")
+        assertTrue(gallery < camera, "Galería debe estar sobre Cámara (jerarquía declarada)")
+        assertTrue(camera < pdf, "Cámara debe estar sobre el selector PDF")
+        assertTrue(pdf < share, "La ayuda de share debe quedar al pie de las acciones")
     }
 
     // S07 — tipo con semántica de selección: un chip marcado, 48dp.

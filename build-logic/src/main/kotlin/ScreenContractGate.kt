@@ -113,7 +113,7 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content"),
             components = listOf(
-                "AmScreenScaffold", "AmListRow", "AmListBody", "AmSectionHeader", "AmQrPreview",
+                "AmScreenScaffold", "AmIconBadge", "AmListRow", "AmListBody", "AmQrPreview",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf("$A11Y/ScreensA11yCoverageTest.kt", "$A11Y/S02UiPolishTest.kt"),

@@ -2,30 +2,35 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import com.agendaqr.core.ui.components.AmIconBadge
+import com.agendaqr.core.ui.components.AmIcons
 import com.agendaqr.core.ui.components.AmListBody
 import com.agendaqr.core.ui.components.AmScreenScaffold
-import com.agendaqr.core.ui.components.AmSectionHeader
 import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.AmText
 import com.agendaqr.core.ui.components.AmTopBar
+import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmType
 
 /**
- * S02 — Añadir (V1.4, ADR-0014).
+ * S02 — Añadir (V1.3, ADR-0013; composición V1.17/ADR-0024).
  *
  * Esta pantalla solo decide cómo traer un recurso existente. No pide nombre,
  * categoría ni contexto antes de que Agenda QR haya entendido el recurso.
  * La revisión ocurre después de la clasificación (S09).
  *
- * Grupos visuales (separados a 20 dp): explicación · fuentes de
- * galería/archivo (alternativas, 8 dp entre sí) · cámara con su contexto
- * de privacidad. La galería es la acción primaria; el resto son
- * alternativas y no compiten por el peso visual. El bloque "Desde otra
- * app" es una ayuda breve y solo aparece donde la plataforma soporta
- * compartir hacia Agenda QR.
+ * Composición desde la pantalla S02 de Stitch (ADR-0024): héroe centrado y
+ * un único grupo de métodos en el orden de la jerarquía que la propia spec
+ * declara — Galería → Cámara → Archivo (PDF) — con "Desde otra app" como
+ * ayuda breve al pie, solo donde la plataforma soporta compartir hacia
+ * Agenda QR. La galería es la acción primaria; el resto son alternativas y
+ * no compiten por el peso visual.
  */
 @Composable
 fun AddDestinationScreen(
@@ -34,8 +39,7 @@ fun AddDestinationScreen(
     onBack: () -> Unit,
 ) {
     // V1.4 (§12): la flecha atrás vive en la barra superior (la misma en
-    // ambas plataformas); el orden congelado S02 (Galería → Desde otra app
-    // → Cámara) no cambia.
+    // ambas plataformas).
     AmScreenScaffold(
         scrollable = true,
         topBar = {
@@ -49,30 +53,30 @@ fun AddDestinationScreen(
         statusContent = appHosts?.status,
         verticalArrangement = Arrangement.spacedBy(AmSpacing.Xl),
     ) {
-        AmText(
-            AppStrings.TraeAAgendaQrAlgo,
-            color = AmColor.TextSecondary,
-        )
-
-        // Galería y archivo son celdas del grupo; una única acción de
-        // galería conserva la selección múltiple y el enrutado por cantidad.
-        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-            AmSectionHeader(text = AppStrings.DesdeArchivos)
-            AmListBody {
-                QrGalleryControls(
-                    onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
-                )
-                QrPdfPickerControl()
-            }
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+        ) {
+            AmIconBadge(icon = AmIcons.QrCode, tone = AmTone.Info)
+            AmText(
+                AppStrings.TraeAAgendaQrAlgo,
+                color = AmColor.TextSecondary,
+            )
         }
 
-        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-            AmSectionHeader(text = AppStrings.DesdeLaCamara)
-            AmListBody {
-                QrCameraEntryControl(
-                    onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
-                )
-            }
+        // Grupo único de métodos (S02 de Stitch, V1.17): el orden sigue la
+        // jerarquía declarada por la spec (Galería → Cámara) y el PDF queda
+        // al pie del grupo. Divisores entre filas, ninguno tras la última.
+        AmListBody {
+            QrGalleryControls(
+                onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
+            )
+            QrCameraEntryControl(
+                onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
+                showDivider = true,
+            )
+            QrPdfPickerControl(showDivider = false)
         }
 
         if (sharedImportsSupported()) {
