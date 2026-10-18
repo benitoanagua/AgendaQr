@@ -1001,3 +1001,154 @@ fun renderScreenContractDoc(screens: List<ScreenContract>): String = buildString
 
 fun screenContractDocIsStale(committed: String?, rendered: String): Boolean =
     committed?.replace("\r\n", "\n") != rendered
+
+// ---------------------------------------------------------------------------
+// Referencia primaria de composición UX/UI: proyecto Google Stitch
+// "TDesign Screen Templates" (ADR-0024). Registro tipado (no prosa): el gate
+// lo cruza contra el contrato por pantalla. Cada superficie tiene una pantalla
+// de Stitch o una exclusión declarada con motivo; nada queda sin explicar.
+// ---------------------------------------------------------------------------
+
+data class StitchScreen(val id: String, val title: String, val surface: String)
+
+data class StitchExclusion(val surface: String, val reason: String)
+
+data class StitchProject(
+    val name: String,
+    val title: String,
+    val screens: List<StitchScreen>,
+    val exclusions: List<StitchExclusion>,
+)
+
+/**
+ * Proyecto Stitch inspeccionado por MCP (`list_screens`/`get_screen`): 12
+ * pantallas con diseño real, cada una mapeada a una superficie del contrato.
+ * Las 7 superficies sin diseño en el proyecto declaran su motivo de exclusión.
+ */
+val stitchTDesign: StitchProject = StitchProject(
+    name = "projects/14722565667748094207",
+    title = "TDesign Screen Templates",
+    screens = listOf(
+        StitchScreen("0a932278a2ce4319ab2037fad9e33487", "S01 — Inicio (Agenda QR)", "home"),
+        StitchScreen("969e742ab31b42578182e1858600712b", "S02 — Añadir", "add"),
+        StitchScreen("7e61a9c6281844deaa4f5aef667f42e6", "S04 — Buscar y Resultados", "search"),
+        StitchScreen("ccbb1b4a67524a9fa18085ec1654f52c", "S06 — Contextos", "contexts"),
+        StitchScreen("f75644b1b0f34ed9a53a334f904cb5f3", "S07-list — Actividades", "operations"),
+        StitchScreen("031d0f657eee4f29838aaa12c8001cce", "S07 — Registrar Actividad", "operationeditor"),
+        StitchScreen("abc14a9a650640658ac9cd1c9d02780d", "S08 — Seleccionar contexto", "contextpicker"),
+        StitchScreen("a75ca0eb22ca4f0d83a26b6271e2c803", "S09 — Revisar QR", "importreview"),
+        StitchScreen("1a1756f8592a4d5fab8a375f10c5b52a", "S12 — Resultado de importación masiva", "importbatch"),
+        StitchScreen("1f1c308186cb4950a635298b83f278f3", "S00 — Acceso local", "localaccess"),
+        StitchScreen("333c4142a5d84bd9a73efdfc1d941855", "Detalle de Destino QR", "destinationdetail"),
+        StitchScreen("a96a5c5dc2ce482db7079a9fada4cab3", "Detalle de Actividad", "operationdetail"),
+    ),
+    exclusions = listOf(
+        StitchExclusion(
+            "destinationedit",
+            "Sin pantalla propia en Stitch: la edición de metadatos del destino se resuelve con el editor de la Actividad (S07) y el Detalle de Destino QR.",
+        ),
+        StitchExclusion(
+            "qrfullscreen",
+            "Sin pantalla propia: el Detalle de Destino QR ofrece \"Mostrar QR\" como acción, no como superficie con diseño independiente.",
+        ),
+        StitchExclusion(
+            "contextdetail",
+            "Sin pantalla propia: los conteos y el estado del fondo ya aparecen en las tarjetas de S06 Contextos; el detalle por contexto no está diseñado.",
+        ),
+        StitchExclusion(
+            "unassociated",
+            "Sin pantalla propia: la bandeja de comprobantes sueltos se referencia desde S07-list Actividades (\"Comprobantes\") pero no tiene diseño dedicado.",
+        ),
+        StitchExclusion(
+            "account",
+            "Sin pantalla propia: \"Cuenta y respaldo\" es una acción de la barra de S01 Inicio, sin diseño de pantalla dedicado en el proyecto.",
+        ),
+        StitchExclusion(
+            "authform",
+            "Sin pantalla propia: el proyecto no diseña el formulario de autenticación de cuenta; S00 Acceso local cubre el acceso por PIN.",
+        ),
+        StitchExclusion(
+            "camera",
+            "Sin pantalla propia: la cámara aparece como método de captura dentro de S02 Añadir (\"Cámara en vivo\"), sin superficie independiente.",
+        ),
+    ),
+)
+
+/**
+ * Trazabilidad Stitch ↔ contrato. Función pura: recibe el registro y el
+ * contrato y devuelve las violaciones; vacía significa consistente.
+ */
+fun stitchTraceabilityViolations(
+    project: StitchProject,
+    screens: List<ScreenContract>,
+): List<String> = buildList {
+    if (!Regex("^projects/\\d+$").matches(project.name)) {
+        add("stitch-proyecto: '${project.name}' no tiene el formato projects/{id}")
+    }
+    if (project.title.isBlank()) add("stitch-titulo: el proyecto no declara título")
+
+    val knownSurfaces = screens.map { it.surface }.toSet()
+    val mapped = project.screens.map { it.surface }
+    val excluded = project.exclusions.map { it.surface }
+
+    project.screens.forEach { screen ->
+        if (!Regex("^[0-9a-f]{32}$").matches(screen.id)) {
+            add("stitch-id: '${screen.id}' (${screen.title}) no es un id de pantalla de 32 hex")
+        }
+        if (screen.title.isBlank()) add("stitch-titulo-pantalla: ${screen.id} no declara título")
+        if (screen.surface !in knownSurfaces) {
+            add("stitch-orbita: '${screen.title}' apunta a una superficie inexistente '${screen.surface}'")
+        }
+    }
+
+    mapped.groupBy { it }.filterValues { it.size > 1 }.keys.forEach {
+        add("stitch-duplicado: la superficie '$it' está mapeada a más de una pantalla de Stitch")
+    }
+    (mapped intersect excluded.toSet()).forEach {
+        add("stitch-contradiccion: la superficie '$it' está mapeada y excluida a la vez")
+    }
+    project.exclusions.forEach { exclusion ->
+        if (exclusion.surface !in knownSurfaces) {
+            add("stitch-orbita-exclusion: '${exclusion.surface}' no corresponde a ninguna superficie del contrato")
+        }
+        if (exclusion.reason.trim().length < 40) {
+            add("stitch-exclusion-sin-motivo: '${exclusion.surface}' no explica por qué no tiene pantalla de Stitch")
+        }
+    }
+    screens.forEach { screen ->
+        if (screen.surface !in mapped && screen.surface !in excluded) {
+            add("stitch-sin-mapeo: ${screen.id} (${screen.surface}) no tiene pantalla de Stitch ni exclusión declarada")
+        }
+    }
+}
+
+/** Documento humano generado desde el registro tipado; el gate lo mantiene en sincronía. */
+fun renderStitchTraceabilityDoc(project: StitchProject, screens: List<ScreenContract>): String {
+    val bySurface = screens.associateBy { it.surface }
+    return buildString {
+        appendLine("# Trazabilidad Stitch ↔ contrato de pantallas")
+        appendLine()
+        appendLine("> Generado por `generateStitchTraceabilityDoc` desde el registro `stitchTDesign` y el")
+        appendLine("> contrato estructurado. No editar a mano: `verifyScreenContract` falla si diverge.")
+        appendLine()
+        appendLine("**Proyecto Stitch (referencia primaria de composición, ADR-0024):** `" + project.name +
+            "` — \"" + project.title + "\".")
+        appendLine()
+        appendLine("## Pantallas con diseño en Stitch")
+        appendLine()
+        appendLine("| Superficie | Contrato | Pantalla de Stitch | ID de pantalla |")
+        appendLine("|---|---|---|---|")
+        project.screens.sortedBy { it.surface }.forEach { s ->
+            appendLine("| `" + s.surface + "` | " + (bySurface[s.surface]?.id ?: "—") + " | " + s.title + " | `" + s.id + "` |")
+        }
+        appendLine()
+        appendLine("## Superficies sin diseño en Stitch (exclusión declarada)")
+        appendLine()
+        appendLine("| Superficie | Contrato | Motivo |")
+        appendLine("|---|---|---|")
+        project.exclusions.sortedBy { it.surface }.forEach { e ->
+            appendLine("| `" + e.surface + "` | " + (bySurface[e.surface]?.id ?: "—") + " | " + e.reason + " |")
+        }
+        appendLine()
+    }
+}
