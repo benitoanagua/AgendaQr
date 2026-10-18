@@ -1,8 +1,10 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — V1.9 para contrato funcional; identidad visual definida por ADR-0020/ADR-0021/ADR-0022 y desarrollada en `docs/05-design-system/00-contrato-normativo-diseno.md`  
+**Estado:** FROZEN — V1.9 para el contrato funcional; composición visual e interacción según V1.13/ADR-0023
 **Fecha:** 2026-10-11  
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
+
+**Autorización vigente (V1.13):** se permite enmendar la composición de las pantallas y los patrones de interacción para adoptar TDesign Mobile. Permanecen congelados la intención, el modelo mental (§2), las reglas (§3), las reglas de negocio, el orden de los flujos, la navegación conceptual y su back stack, el contrato local-first, el copy funcional y la guía de voz (ADR-0008), además de la accesibilidad (§11).
 
 ## Historial de enmiendas
 
@@ -21,8 +23,9 @@
 | V1.10 | 2026-10-16 | Enmienda visual por ADR-0020: identidad propia inspirada en aplicaciones chinas de consumo; paleta azul tecnológico + superficies neutras azul-gris; sin cambios en navegación, flujos, copy funcional o reglas de negocio. |
 | V1.11 | 2026-10-17 | Enmienda visual por ADR-0021: Ant Design Mobile deja de ser referencia; §12 incorpora las referencias de patrón por pantalla (apps chinas de consumo) sin cambios de navegación, flujos, copy ni reglas de negocio. |
 | V1.12 | 2026-10-17 | Enmienda visual por ADR-0022: la dirección vigente es la Super-App de alta densidad (paleta, escala tipográfica, densidad y gradientes del Anexo A, con pisos de accesibilidad); S01 gana la rejilla de acciones existentes y pierde el botón flotante con hub; el resto de flujos, navegación y copy quedan intactos. |
+| V1.13 | 2026-10-17 | Enmienda autorizada explícitamente por el propietario para adoptar TDesign Mobile 1.16.2: §4 recompone las pantallas y §12 sustituye la dirección visual. Se mantienen intención, modelo mental, reglas de negocio, orden de flujos, navegación conceptual/back stack, contrato local-first, accesibilidad y copy funcional. ADR-0023 sustituye la autoridad visual anterior. |
 
-La composición funcional vigente corresponde a V1.9 salvo la composición de S01 (V1.12); la identidad visual vigente corresponde a V1.12/ADR-0022. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
+La composición funcional y las reglas de producto siguen siendo V1.9, salvo los cambios de composición de S01 autorizados en V1.12 y las composiciones visuales/interacciones de presentación autorizadas en V1.13. La autoridad visual vigente es TDesign Mobile 1.16.2/ADR-0023. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
 ## 1. Contrato principal
 
@@ -67,12 +70,13 @@ Contexto es una superficie de continuidad, no una nueva taxonomía de navegació
 
 ## 4. Pantallas
 
-### S00 — Acceso local (V1.6, ADR-0016)
+### S00 — Acceso local (V1.6, ADR-0016; composición V1.13)
 Intención: entrar al dispositivo propio. No es un login: no hay correo, contraseña ni red.
 
     PRIMER ARRANQUE      configurar PIN (código + confirmación) → Guardar
     ARRANQUES POSTERIORES desbloquear con PIN
 
+- Contenido centrado con marca, título y descripción; los campos numéricos del PIN usan el patrón Input. La acción primaria permanece fija al pie. Biometría y cambio a PIN son acciones de texto cuando correspondan.
 - El perfil local se crea solo, sin cuenta; el PIN protege el acceso al dispositivo.
 - El PIN es de 4 a 12 dígitos, campo numérico oculto; el error se asocia al campo.
 - Confirmación distinta → error "no coinciden" sin crear credencial.
@@ -81,36 +85,22 @@ Intención: entrar al dispositivo propio. No es un login: no hay correo, contras
 - Con biometría disponible e inscrita, el desbloqueo la solicita sola una vez por bloqueo (con el PIN como respaldo); la demostración solo existe en el primer arranque.
 - El PIN es local; nunca viaja a la red y no es la clave de cifrado de los datos.
 
-### S01 — Inicio (V1.12, ADR-0022)
+### S01 — Inicio (composición V1.12; presentación V1.13)
 Intención: encontrar o iniciar algo. Buscar domina visualmente; las creaciones viven en la rejilla de acciones.
 
-Composición (la intención no cambia; solo cambia la presentación):
+Composición:
 
-    [cabecera con banda de gradiente de acción: título "Agenda QR" y
-      campo de búsqueda en píldora blanca sobre la banda]
-    [rejilla de acciones ("King Kong") con las MISMAS tres creaciones del
-      hub anterior, una por celda: Traer un QR / Registrar actividad /
-      Crear contexto — sin acciones nuevas ni duplicadas]
-    [filtros de la lista como píldoras: Todos · Favoritos (activo sólido, idempotente)]
-    [sección "Favoritos": carrusel horizontal (la siguiente tarjeta asoma como indicio)]
-    [sección "Todos los destinos": lista densa en tarjeta (sin los favoritos del carrusel)]
-      [fila: tile QR tonal · título · metadato caption · favorito (estrella)]
-      [estado vacío informativo sin acción duplicada; "Traer un QR" permanece
-        en la rejilla de acciones]
-    [tarjeta de disponibilidad sin conexión]
+    [navbar "Agenda QR" centrada, overflow "…" → Action-sheet]
+    [Search de 40 dp como disparador hacia S04]
+    [rejilla existente: Traer un QR / Registrar actividad / Crear contexto]
+    [Tabs o Segmented: Todos · Favoritos]
+    [Favoritos: carrusel horizontal]
+    [Todos los destinos: Cell-group con tile QR, título, descripción y favorito]
+    [Empty informativo sin repetir "Traer un QR"]
+    [Notice-bar de disponibilidad sin conexión]
 
-- Inicio es una superficie densa con tarjetas y rejilla, no un panel: una
-  sola entrada de búsqueda y las acciones de pantalla viven en la cabecera
-  y la barra de navegación inferior. Sin acciones rápidas duplicadas en el
-  cuerpo.
-- La rejilla de acciones reutiliza exactamente las creaciones existentes
-  (traer QR → S02, crear contexto → diálogo de creación, registrar
-  actividad → S07 sin preasociación), una por celda, con icono Lucide
-  sobre cuadrado tonal, etiqueta corta a 12 sp y objetivo ≥ 48 dp. No se
-  añaden celdas decorativas.
-- El botón flotante con hub de Inicio se retira para no duplicar acciones
-  (ADR-0022 enmienda esta sección); el FAB de otras superficies, si existe,
-  no se toca.
+- La rejilla reutiliza exactamente las tres creaciones existentes; no añade ni duplica acciones. Cada celda conserva su navegación y efecto actuales.
+- Inicio no usa FAB. Los filtros conservan su semántica idempotente y la lista excluye los favoritos ya presentados en el carrusel.
 - Favoritos es un filtro de la propia lista (y del cuerpo de Inicio),
   no un destino aparte; en Todos la lista excluye los favoritos del
   carrusel (sin duplicación).
@@ -120,17 +110,17 @@ Composición (la intención no cambia; solo cambia la presentación):
   la app).
 - El menú "…" de la barra superior de Inicio ofrece "Cuenta y respaldo" (nube opcional) y "Bloquear".
 
-### Detalle de destino (V1.8, ADR-0018)
+### Detalle de destino (V1.8, ADR-0018; presentación V1.13)
 Intención: mostrar el QR. La única acción primaria es "Mostrar QR" (pantalla completa); Compartir es secundaria; Registrar actividad, Editar y Eliminar viven en "…". La tarjeta del QR también abre la pantalla completa. La pantalla completa muestra el QR al máximo con el nombre debajo, brillo al máximo y pantalla encendida (restaurados al salir). El contenido decodificado no aparece en las listas; en el Detalle va en bloque expandible, seleccionable y copiable.
 
-### S02 — Añadir (V1.3, ADR-0013)
+Composición: navbar con atrás y overflow "…" (Action-sheet); QR en tarjeta sobre lienzo blanco; "Mostrar QR" como acción primaria y "Compartir" como secundaria. Los metadatos se agrupan como Cell-group; el contenido decodificado permanece expandible y copiable. Eliminar conserva su confirmación destructiva.
+
+### S02 — Añadir (V1.3, ADR-0013; presentación V1.13)
 Intención: traer algo que el usuario ya tiene.
 
-    ELEGIR DE LA GALERÍA (una o varias imágenes)
-    ELEGIR ARCHIVO (PDF, opcional; solo donde la plataforma lo soporta)
-    ESCANEAR CON LA CÁMARA
-    [texto de privacidad de la cámara junto a esta acción]
-    ["Desde otra app": ayuda breve, solo donde la plataforma lo soporta]
+    [Cell-group: Galería → Archivo (PDF, solo donde se soporta) → Cámara]
+    [privacidad de cámara como descripción de su celda]
+    [ayuda "Desde otra app" en Footer, solo donde se soporta]
 
 - Galería es una única acción con selección múltiple: 1 elemento →
   revisión única (S09); 2 o más → lote (S12). No existe el par
@@ -140,34 +130,45 @@ Intención: traer algo que el usuario ya tiene.
   compartir hacia Agenda QR.
 - Jerarquía conservada: Galería → Cámara.
 
-### S03 — Cámara
+### S03 — Cámara (presentación V1.13)
 Intención: capturar un QR físico. La detección debe ser automática cuando sea posible. No se muestran métricas técnicas del scanner.
 
-### S04 — Buscar
+Composición: navbar transparente sobre la vista previa y marco de escaneo con esquinas de marca. No se añaden métricas ni controles que cambien el flujo de captura.
+
+### S04 — Buscar (presentación V1.13)
 Intención: encontrar cualquier cosa de Agenda QR. Los resultados pueden ser heterogéneos y muestran su tipo mediante texto/semántica. El foco automático solo llega desde el disparador de Inicio; por pestaña se entra sin foco.
 
-### S05 — Resultados
+Composición: Search con acción "Cancelar" en marca. Los resultados se agrupan por tipo en Cell-group y llevan Tag textual; la consulta se conserva al volver.
+
+### S05 — Resultados (presentación V1.13)
 Superficie de decisión. Al volver se conserva la consulta.
 
-### S06 — Contexto (V1.3, ADR-0013)
+Composición: Search y resultados agrupados por tipo en Cell-group; Empty cuando no hay resultados y el estado de error conserva su recuperación. No se altera el foco ni la persistencia de la consulta.
+
+### S06 — Contexto (V1.3, ADR-0013; presentación V1.13)
 Intención: comprender y continuar dentro de un contexto. No es un dashboard financiero. La acción primaria depende del flujo que llevó al usuario allí.
 
-Composición: la superficie del contexto se estructura como **secciones QR · Actividades · Comprobantes** (pestañas estándar), reflejando directamente el modelo mental de §2; no crea taxonomía nueva de navegación. El acento del contexto (§12, Color) tiñe sus encabezados de sección y elementos de foco. La barra superior lleva el título y la flecha atrás; las acciones de la pantalla viven en el cuerpo (§12, Navegación y chrome).
+Composición: navbar con título y atrás; Tabs QR · Actividades · Comprobantes, como secciones del mismo contexto y no como destinos raíz. El contenido usa Cell-group. El acento del contexto se conserva para encabezados y marcadores.
 
-### S07 — Registrar (V1.8, ADR-0018)
+### S07 — Registrar (V1.8, ADR-0018; presentación V1.13)
 Intención: registrar una actividad. El contexto ayuda pero no bloquea el registro. Captura rápida con divulgación progresiva: Tipo · Importe+Moneda · Persona o entidad · Fecha y hora · Contexto · Más detalles (plegado salvo que existan) · Guardar fijo abajo.
 
+- Formulario en celdas: Tipo con Segmented; Importe y moneda en Input; entidad con sugerencias; fecha/hora en selector dentro de AmBottomSheet con atajos Hoy/Ayer como Tags; Contexto como celda navegable hacia S08; Más detalles como Collapse. Guardar conserva su posición fija.
 - Importe opcional con validación real (dígitos y un separador decimal, máx. 2 decimales); moneda BOB/USD/Otra (por defecto, la última usada); persona con sugerencias de contrapartes recientes.
 - Fecha y hora con selectores (sin texto libre) y atajos Hoy/Ayer; por defecto, ahora con hora.
 - Salir con cambios pide "¿Descartar cambios?"; sin cambios sale de inmediato. El Back del sistema sigue el mismo camino.
 
-### S08 — Seleccionar contexto
+### S08 — Seleccionar contexto (presentación V1.13)
 Intención: elegir contexto para el flujo padre. Al terminar, vuelve al flujo original conservando el draft.
 
-### S09 — Revisar QR
+Composición: AmBottomSheet dentro del árbol de composición, con Search y lista de opciones Radio en celdas. Si no se puede verificar de forma reproducible, se conserva el patrón de selección en página completa, sin perder el draft ni cambiar el back stack.
+
+### S09 — Revisar QR (presentación V1.13)
 Intención: verificar lo que Agenda QR entendió antes de guardar. Debe mostrar evidencia suficiente sin exponer payload técnico innecesario.
 
-### S10 — Revisar comprobante
+Composición: vista previa del QR en tarjeta, evidencia agrupada en Cell-group, avisos en Notice-bar/Message y acción primaria Guardar fija al pie. No se muestra payload técnico innecesario.
+
+### S10 — Revisar comprobante (presentación V1.13)
 Intención: confirmar y, cuando corresponda, asociar.
 
     ASOCIAR
@@ -175,24 +176,32 @@ Intención: confirmar y, cuando corresponda, asociar.
 
 Ambos son resultados legítimos.
 
-### S11 — Resolver ambigüedad
+Composición: vista previa y Cell-group. Asociar es primaria; "Guardar sin asociar" es secundaria `default`; ambos resultados legítimos y permanecen disponibles según el estado actual.
+
+### S11 — Resolver ambigüedad (presentación V1.13)
 Intención: resolver una única duda que el sistema no puede decidir con seguridad.
 
-### S12 — Resultado de importación masiva (V1.3, ADR-0013)
+Composición: una pregunta y un Radio-group de celdas; Continuar es primaria y permanece deshabilitada hasta seleccionar una opción.
+
+### S12 — Resultado de importación masiva (V1.3, ADR-0013; presentación V1.13)
 Superficie de decisión derivada de Añadir.
 
-    [barra superior: título "Resultado de importación" + atrás]
-    [lista agrupada]
-      ✓ reconocidos
-      ! duplicados
-      ? pendientes
-    [ GUARDAR RECONOCIDOS — botón principal fijo abajo,
-      solo cuando hay elementos reconocibles ]
-    [ Revisar N pendientes — botón secundario ]
+    [Result: estado final, resumen y descripción]
+    [Cell-group de elementos con Tag textual de estado]
+    [GUARDAR RECONOCIDOS — primaria fija, solo si existen reconocidos]
+    [Revisar N pendientes — secundaria; Descartar — acción de texto]
 
 Los válidos no dependen de los pendientes. Mientras se guarda no hay
 vuelta (el lote se perdería); el Back del estado de revisión regresa al
 resultado (flujo padre).
+No se añade confeti ni feedback animado nuevo; el resultado conserva los
+mensajes y las transiciones funcionales existentes.
+
+### Actividades y detalle (presentación V1.13)
+La lista mantiene los filtros y la búsqueda existentes; se compone como Cell-group con título, descripción y nota de importe/fecha. Si la superficie ya ofrece una acción flotante, conserva esa función. El detalle presenta el importe con cifras tabulares y sus metadatos en Cell-group, con Tag textual para el estado. No se modifica el modelo de operaciones ni su significado.
+
+### Cuenta y respaldo (presentación V1.13)
+La nube sigue siendo opcional y nunca es puerta de entrada al perfil local. El estado de cuenta/respaldo se presenta en Cell-group; AuthScreen conserva su acción primaria plana y los errores ofrecen explicación y recuperación mediante Notice-bar o Message.
 
 ## 5. Estados transversales
 
@@ -294,75 +303,86 @@ Reglas vigentes V1.3:
 - **Escalado de fuente:** el contenido esencial y las acciones primarias
   no se truncan con la fuente del sistema al 200 %.
 
-## 12. Contrato visual — V1.12, ADR-0020, ADR-0021 y ADR-0022
+## 12. Contrato visual — V1.13, ADR-0023
 
 > **Precedencia:** esta sección define la dirección visual de producto. Para tokens, contraste, componentes, estados, accesibilidad, pruebas y gobernanza, prevalece `docs/05-design-system/00-contrato-normativo-diseno.md`. La UX funcional y la navegación raíz no cambian por esta enmienda.
 
-La dirección visual vigente es la **Super-App de alta densidad** (ADR-0022; Anexo A en `docs/05-design-system/08-referencia-super-app.md`): útil desde el primer vistazo, densa, vibrante y jerárquica, con gradientes y una rejilla de accesos. No se copia una superapp ni se añaden adornos culturales genéricos; se imitan patrones, nunca activos. La interfaz sigue siendo nativa en Compose Multiplatform.
+La dirección visual vigente es TDesign Mobile 1.16.2 (ADR-0023), adoptada como especificación de valores y patrones desde el paquete oficial `tdesign-mobile-vue@1.16.2`, no como dependencia de ejecución. `core/ui` es su implementación canónica en Compose Multiplatform. Los componentes y tokens oficiales se adaptan únicamente por las desviaciones explícitas de ADR-0023; no se copian código ni activos de terceros.
 
-### Referencias por pantalla (ADR-0021, ADR-0022)
+### Composición e interacción
 
-Se imitan patrones de UX de apps móviles chinas de consumo, nunca activos (iconos, ilustraciones, logotipos, textos, colores de marca ni composiciones calcadas). Inicio adopta el bazar denso (cabecera con gradiente, búsqueda en píldora, rejilla de acciones existentes, favoritos y lista densa); WeChat: búsqueda, contextos y barra inferior; Alipay y WeChat Pay: detalle de actividad e importación; HyperOS y WeChat: formularios. La tabla completa y la auditoría viven en el contrato §16.
+La composición por pantalla se especifica en §4 y usa patrones TDesign cuando corresponden al flujo existente. No se añaden gestos, acciones ni estados que AgendaQr no tuviera. La navegación raíz, sus cuatro destinos, el back stack y el orden de los flujos permanecen invariantes.
 
 ### Principios
 
-1. La densidad es utilidad: aprovechar el espacio con filas compactas y pocas tarjetas anidadas.
-2. Una intención principal y una acción principal por pantalla; la primaria es siempre píldora con gradiente.
-3. Color de acción rojo de marca con gradiente a naranja; azul fintech para enlaces/confianza; tonos semánticos solo para estados.
-4. El QR es un elemento central del producto: alto contraste, lienzo blanco y acciones directas.
-5. Accesibilidad, funcionamiento offline y consistencia Android/iOS son invariantes: se ajustan valores, no se quita el estilo.
+1. Una intención y una acción primaria por pantalla; las acciones existentes conservan su semántica y jerarquía.
+2. Las superficies y estados usan los tokens TDesign de `core/ui`, sin gradientes, brillo decorativo ni colores locales.
+3. El QR conserva su lienzo blanco para lectura fiable.
+4. Accesibilidad, funcionamiento offline y consistencia de intención entre Android/iOS son invariantes.
 
 ### Navegación y chrome
 
-- Se conservan las convenciones existentes: barra superior jerárquica de 56 dp, navegación inferior de 56 dp solo en superficies raíz, back stack restaurable y comportamiento nativo de Atrás.
+- Navbar de 48 dp con título centrado 18/26, atrás a la izquierda y acciones a la derecha; overflow abre Action-sheet. La navegación inferior conserva sus cuatro destinos y etiquetas siempre visibles.
 - La navegación raíz continúa siendo Inicio, Buscar, Actividades y Contextos; los detalles, editores e importaciones no duplican esa barra.
-- La barra de navegación utiliza selección por color y etiqueta legible, sin indicador decorativo tipo píldora.
+- La barra raíz usa el estado activo de marca y divisor superior, sin indicador de píldora.
+- Tabs tiene ítems de 48 dp e indicador de 16×3 dp con radio 4 dp.
 - Tablet/plegables mantienen adaptación por `WindowSizeClass` y límite de ancho de contenido.
 - No se cambia la navegación funcional como parte de la reforma visual.
 
 ### Composición, listas y tarjetas
 
-- Una cabecera clara por pantalla; acciones contextuales visibles limitadas a las más importantes.
-- Las listas son la composición base para destinos, actividades, contextos y comprobantes. Cada fila distingue título, metadatos y acción sin competir por atención.
-- Las tarjetas se reservan para contenido agrupado o acciones que se benefician de un límite visual; no envolver cada fila en una tarjeta independiente.
-- Las secciones usan espaciado consistente; el encabezado permanece próximo al contenido que introduce.
-- Los estados vacíos incluyen una explicación breve y la acción más útil cuando existe.
-- Los estados de error, carga, éxito y sincronización conservan texto e iconografía; el color no es la única señal.
+- Cell-group es la composición de listas y ajustes: fila con icono opcional, título, descripción, nota derecha y chevron cuando navega; padding 16 dp, título 16/24 y descripción 14/22. El divisor conserva inset 16 dp y el encabezado de grupo usa 14 sp sobre fondo secundario.
+- El encabezado de grupo tiene altura 45 dp.
+- Las tarjetas se reservan para contenido agrupado; no se envuelve cada fila en una tarjeta independiente.
+- La barra fija inferior `AmBottomAction` contiene como máximo una primaria, mide 48 dp visuales, respeta safe-area e IME y se separa del contenido por divisor.
+- Empty usa icono de 96 dp, descripción y acción útil separada 32 dp; no repite una acción ya disponible. Skeleton usa radios 6/3 dp; Loading usa marca sin animación decorativa.
+- Result usa icono de 80 dp, título 20/28 y descripción secundaria.
+- Los errores comunican qué ocurrió, qué pasó con los datos y cómo recuperarse; el color no es la única señal.
+- Toast se presenta mediante `AmSnackbarHost`/`AmFeedbackEvent` y es efímero; Message es una tarjeta elevada para avisos de operación; Notice-bar reserva avisos persistentes como modo local/sin conexión. La notice-bar usa padding 16×13 dp e icono de 22 dp.
+- Tag usa radio 4 dp (o forma round cuando la semántica lo requiere); su texto de estado no depende solo del color.
 
 ### Campos y formularios
 
-- Etiqueta persistente, contenido, ayuda y error contextual claramente asociados.
-- El buscador tiene un tratamiento propio y reconocible, con foco visible y objetivo táctil mínimo de 48 dp.
+- Input mantiene etiqueta, contenido, ayuda y error contextual asociados; el error incluye icono, texto y semántica `error()`.
+- Search tiene altura 40 dp y radio 6 dp, con foco visible y acción de cancelar cuando corresponda.
 - La obligatoriedad, los errores y los estados de guardado se comunican con texto/semántica, no solo con color.
 - Las acciones fijas respetan las barras del sistema y el teclado (IME); no ocultan el contenido editable.
 - Los flujos de importación conservan selección, revisión y confirmación con jerarquía visual consistente.
 
 ### Botones y acciones
 
-- Una acción primaria por contexto; las secundarias no compiten en relleno o tamaño.
-- Las acciones destructivas se separan visual y semánticamente de las habituales.
+- Los botones usan tamaños visuales oficiales 48/40/32/28 dp, radio 6 dp y estado plano; el área interactiva sigue siendo ≥48 dp.
+- La etiqueta del botón usa 16 sp/600; `default` usa superficie gray-3 y `outline` conserva el borde funcional con contraste suficiente.
+- Primaria usa `primary`; secundaria `default`/`light` u `outline`; terciaria `text`; destructiva `danger` y requiere confirmación con etiqueta específica de consecuencia.
 - Acciones frecuentes visibles donde ahorren pasos; no duplicar la misma acción en varias zonas de una pantalla.
-- Todos los controles interactivos conservan objetivo táctil mínimo de 48 dp, foco, estado presionado y estado deshabilitado accesibles.
+- El estado presionado usa el token activo TDesign; se conservan foco por teclado/D-pad, háptica de plataforma y estado deshabilitado accesible. No hay escala de pulsación ni spring.
+- Dialog usa ancho de 311 dp, radio 12 dp, título centrado 18 sp/600, cuerpo 16 sp y padding inferior de 24 dp; los botones pueden apilarse cuando sus etiquetas no caben.
 
 ### Tipografía e iconografía
 
-- Se adopta la escala del Anexo A (ADR-0022): H1 20/600, H2 16/600, cuerpo 14/400, metadatos y apoyo 12, etiquetas compactas 11–12, importe hero 30/800 con símbolo de moneda 14/700 y cifras tabulares. Mínimo absoluto 11 sp.
-- MiSans Global y una familia monoespaciada son candidatas para evaluación local, no dependencias aprobadas. No se empaquetará una fuente hasta validar cobertura, licencia, tamaño y capturas en Android/iOS.
-- Lucide permanece como familia única a través de `AmIcon`/`AmIcons`. No se mezclan familias ni se migran iconos sin comparar las pantallas reales.
-- Los importes y datos técnicos usan cifras tabulares; no se aplica estética de consola a toda la interfaz.
+- Se usa la escala oficial TDesign de tamaños e interlíneas con fuente del sistema, en `sp`; no se empaquetan fuentes. El piso de 11 sp se mantiene: el token oficial body-extraSmall de 10 sp no se aplica a texto visible y se usa el siguiente tamaño oficial (12 sp) como mínimo de texto.
+- Los importes conservan cifras tabulares. Se mantiene el escalado del sistema hasta 200 % y se valida en 320 dp y 360 dp.
+- La iconografía se migra a TDesign Icons a través de `AmIcon`/`AmIcons`; no se mezclan familias ni se añade una dependencia visual de runtime.
 
 ### Color y tema oscuro
 
-- Tema claro: fondo `F5F6F8`, superficie `FFFFFF`, secundaria `F1F2F5`, texto principal `1A1A1A`, texto secundario `666666`, acción `E4001F` con gradiente a `BE4F00`.
-- Tema oscuro: fondo `0A0A0A`, superficie `1A1A1A` con borde sutil, secundaria `141414`, texto `E6E6E6`/`9A9A9A`, acción `FF5A70`.
-- Los roles semánticos de éxito, advertencia, peligro e información se definen en los tokens, con variante oscurecida cuando se usan como texto o glifo significativo (éxito `008156`, enlace `0067F7`; en oscuro rojo `FF5A70`, azul `4D9BFF`). Contraste de texto ≥ 4.5:1 y foco/bordes funcionales ≥ 3:1.
+- Claro y oscuro usan las paletas oficiales TDesign 1.16.2 para marca, estados, neutros, texto, superficies y bordes. No se admiten gradientes ni roles promo/fintech.
+- Para texto, glifos significativos y rellenos con texto superpuesto se usa el siguiente escalón de la misma paleta TDesign que cumpla contraste ≥4.5:1 (≥3:1 para elementos no textuales). No se introducen colores fuera de la paleta, salvo los 12 acentos de contexto conservados por ADR-0023.
 - El lienzo del QR permanece blanco en ambos temas para preservar su zona de silencio escaneable.
 - El tema oscuro se diseña como una paleta independiente, no como inversión mecánica del claro.
 
 ### Movimiento
 
-- Las transiciones usan los tokens de `AmMotion` (200–300 ms, easing de rebote `cubic-bezier(0.34,1.56,0.64,1)`, escala de pulsación 0.95 con háptica). El brillo de entrada dura ≤ 5 s y luego queda estático.
-- El movimiento reducido elimina la animación (duración 0, escala 1, brillo estático, sin confeti) en lugar de acelerarla. El contenido en movimiento es detenible.
+- Las transiciones usan `cubic-bezier(0.38, 0, 0.24, 1)` y duraciones 200/240/280 ms. No se usa spring ni escala de pulsación.
+- Movimiento reducido elimina la transición; no se añade confeti, shimmer ni otro movimiento que no tenga función existente.
+
+### Excepciones documentadas
+
+- Los 12 acentos deterministas de contexto se conservan por identidad de dominio; su hash FNV-1a y pares AA no cambian.
+- `AmNavRail` se conserva en tablet/plegables, donde TDesign Mobile no define un equivalente.
+- Los componentes mantienen targets interactivos ≥48 dp aunque el tamaño visual TDesign sea menor.
+- La sombra CSS de varias capas se representa en Compose con la capa dominante o `drawBehind`; la diferencia queda declarada en el contrato normativo.
+- Selectores y Action-sheet usan `AmBottomSheet` como overlay dentro del árbol de composición para permitir pruebas Robolectric. Si no resulta verificable, se conserva `AmDialog` con lista y se registra la desviación.
 
 ## 13. Fuera de esta congelación
 
@@ -370,4 +390,4 @@ Fuera del alcance de esta especificación conceptual: detalles internos de Kotli
 
 ## 14. Estado
 
-**UX/UI V1.9 funcional + V1.12 visual: FROZEN** (ADR-0019, ADR-0020, ADR-0021 y ADR-0022, 2026-10-17).
+**UX/UI V1.9 funcional + V1.13 de composición/visual: FROZEN** (ADR-0019 y ADR-0023, 2026-10-17). La autorización V1.13 modifica solo composición y patrones de interacción; las invariantes listadas al inicio permanecen congeladas.

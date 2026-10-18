@@ -84,14 +84,16 @@ Quedan consolidados, sin alterar las reglas de negocio existentes:
 
 La implementación debe adaptarse al contrato UX/UI; un fallo de implementación no modifica automáticamente la especificación.
 
-## D-18 — Sistema visual de AgendaQr (ADR-0020, parcialmente suplantada)
+## D-18 — Sistema visual de AgendaQr (histórica; ADR-0020 suplantada por ADR-0023)
 
-La identidad visual activa es propia de AgendaQr: una herramienta móvil moderna, compacta y pulida, inspirada en aplicaciones chinas de consumo por su utilidad cotidiana, jerarquía funcional y densidad controlada. No replica una librería ni introduce dependencias web. Se implementa en Kotlin/Compose Multiplatform dentro de `core/ui`, con tokens semánticos, temas claro/oscuro y componentes compartidos. Material 3 es detalle de implementación; Android e iOS conservan sus convenciones de navegación.
+En el momento de su aprobación, D-18 definió una identidad visual propia de AgendaQr: herramienta móvil moderna, compacta y pulida, inspirada en aplicaciones chinas de consumo por su utilidad cotidiana, jerarquía funcional y densidad controlada. El registro se conserva como historia.
 
-La paleta usa azul tecnológico, superficies neutras con matiz azul-gris y estados semánticos accesibles. Lucide y la fuente de sistema se conservan en esta fase; cualquier cambio de iconografía o tipografía requiere comparación visual, revisión de licencia y validación local. Las decisiones anteriores sobre Ant Design Mobile (ADR-0014/0017) quedan como historia, no como autoridad visual activa. ADR-0021 fija las referencias de patrón por pantalla (apps chinas de consumo) sin copiar activos. La especificación funcional vigente es V1.9. El estado real de validación por plataforma se documenta únicamente en `docs/STATE.md`.
+> Suplantada por D-20 (ADR-0023). No usar la paleta, iconografía ni referencias de D-18 como autoridad vigente.
 
-> **Parcialmente suplantada por D-19 (ADR-0022):** la **paleta** y la **escala tipográfica** de D-18 quedan reemplazadas por la dirección Super-App de alta densidad. De D-18 siguen vigentes la navegación de plataforma, el lienzo QR blanco, Lucide, la fuente de sistema, el prefijo `Am*` y la ausencia de dependencias web.
+## D-19 — Dirección visual Super-App de alta densidad (histórica; ADR-0022 suplantada por ADR-0023)
 
-## D-19 — Dirección visual Super-App de alta densidad (ADR-0022)
+ADR-0022 fue la autoridad visual desde su aprobación hasta ADR-0023. Su dirección, valores y anexos se conservan únicamente como historia; no implementarlos como contrato actual.
 
-La autoridad visual vigente es la especificación Super-App de alta densidad (`docs/05-design-system/08-referencia-super-app.md`): densidad, vibrancia, gradiente de acción rojo→naranja, escala 14/12 (mínimo 11 sp), rejilla de accesos y sombras por niveles `AmElevation`. ADR-0022 suplanta la paleta y la escala de ADR-0020, enmienda ADR-0021 (Inicio gana rejilla de acciones existentes y pierde el FAB con hub) y la spec S01, y resuelve los conflictos con los pisos de accesibilidad ajustando valores, no quitando el estilo: contraste, foco por teclado, objetivos ≥ 48 dp, escalado al 200 %, movimiento reducido y contenido en movimiento detenible. Lo que el producto no puede sostener con datos reales (carrito, cuentas regresivas, monedas, niveles, «HOT/限时/-50 %», servicio flotante, insignias de conteo) no se simula. El estado real de validación por plataforma se documenta únicamente en `docs/STATE.md`.
+## D-20 — Adopción fiel de TDesign Mobile (ADR-0023)
+
+TDesign Mobile 1.16.2 es la autoridad visual y de patrones de interacción. Sus valores se implementan en `core/ui`, sin añadir TDesign Vue como dependencia de ejecución. La especificación UX/UI V1.13 delimita las composiciones autorizadas; intención, reglas de negocio, navegación/back stack, copy y accesibilidad siguen congelados. Las desviaciones autorizadas están enumeradas en ADR-0023.

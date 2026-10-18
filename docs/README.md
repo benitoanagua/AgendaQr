@@ -18,12 +18,12 @@
 | Documento | Contenido |
 |---|---|
 | [`04-ux/01-flujos-confirmados.md`](04-ux/01-flujos-confirmados.md) | Flujos confirmados |
-| [`04-ux/02-especificacion-ux-ui-v1.md`](04-ux/02-especificacion-ux-ui-v1.md) | Especificación UX/UI V1.12 (congelada) |
+| [`04-ux/02-especificacion-ux-ui-v1.md`](04-ux/02-especificacion-ux-ui-v1.md) | Especificación UX/UI V1.13 (composición visual; contrato funcional congelado) |
 | [`04-ux/04-capacidades-y-comportamientos.md`](04-ux/04-capacidades-y-comportamientos.md) | Capacidades y comportamientos |
 | [`04-ux/05-guia-de-voz.md`](04-ux/05-guia-de-voz.md) | Guía de voz (tuteo) |
 | [`04-ux/visual-hashes/before/README.md`](04-ux/visual-hashes/before/README.md) | Capturas visuales previas a la adopción de TDesign (T1) |
 
-## Sistema de diseño (identidad visual AgendaQr)
+## Sistema de diseño (TDesign Mobile)
 
 | Documento | Contenido |
 |---|---|
@@ -31,7 +31,7 @@
 | [`05-design-system/02-implementacion-diseno.md`](05-design-system/02-implementacion-diseno.md) | Reglas de implementación |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros |
 | [`05-design-system/07-evaluacion-tipografia.md`](05-design-system/07-evaluacion-tipografia.md) | Evaluación de la tipografía candidata MiSans Global (no adoptada) |
-| [`05-design-system/08-referencia-super-app.md`](05-design-system/08-referencia-super-app.md) | Referencia de dirección visual Super-App (autoridad visual vigente según ADR-0022) |
+| [`05-design-system/08-referencia-super-app.md`](05-design-system/08-referencia-super-app.md) | Referencia histórica Super-App (suplantada por ADR-0023) |
 
 ## Decisiones
 
@@ -55,9 +55,10 @@
 | [`07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md`](07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md) | ADR histórico: alineación con Ant Design Mobile 5.43.0 (suplantada por ADR-0020 y ADR-0021) |
 | [`07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md`](07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md) | ADR: correcciones UX de captura rápida (enmienda ADR-0016 y la congelación UX en su alcance) |
 | [`07-decisiones/ADR-0019-enmienda-v1-9-inicio-vacio.md`](07-decisiones/ADR-0019-enmienda-v1-9-inicio-vacio.md) | ADR: enmienda V1.9 inicio vacío y separadores oscuros |
-| [`07-decisiones/ADR-0020-identidad-visual-agendaqr.md`](07-decisiones/ADR-0020-identidad-visual-agendaqr.md) | ADR: identidad visual propia inspirada en aplicaciones chinas de consumo (parcialmente suplantada por ADR-0022 en paleta y escala) |
-| [`07-decisiones/ADR-0021-referencias-apps-chinas-por-pantalla.md`](07-decisiones/ADR-0021-referencias-apps-chinas-por-pantalla.md) | ADR: referencias de apps chinas de consumo por pantalla y auditoría de brecha (parcialmente suplantada por ADR-0022) |
-| [`07-decisiones/ADR-0022-direccion-visual-super-app.md`](07-decisiones/ADR-0022-direccion-visual-super-app.md) | ADR: dirección visual Super-App de alta densidad (autoridad visual vigente) |
+| [`07-decisiones/ADR-0020-identidad-visual-agendaqr.md`](07-decisiones/ADR-0020-identidad-visual-agendaqr.md) | ADR histórico: identidad visual AgendaQr (suplantado por ADR-0023) |
+| [`07-decisiones/ADR-0021-referencias-apps-chinas-por-pantalla.md`](07-decisiones/ADR-0021-referencias-apps-chinas-por-pantalla.md) | ADR histórico: referencias por pantalla y auditoría de brecha (suplantado por ADR-0023) |
+| [`07-decisiones/ADR-0022-direccion-visual-super-app.md`](07-decisiones/ADR-0022-direccion-visual-super-app.md) | ADR histórico: Super-App (suplantado por ADR-0023) |
+| [`07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md`](07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md) | ADR: adopción fiel de TDesign Mobile (autoridad visual vigente) |
 
 ## Cómo se mantiene
 
