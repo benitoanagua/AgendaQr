@@ -1,31 +1,22 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — V1.9 para el contrato funcional; composición visual e interacción según V1.13/ADR-0023
+**Estado:** FROZEN — contrato funcional V1.9 y composición V1.13/ADR-0023
 **Fecha:** 2026-10-11  
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
 
-**Autorización vigente (V1.13):** se permite enmendar la composición de las pantallas y los patrones de interacción para adoptar TDesign Mobile. Permanecen congelados la intención, el modelo mental (§2), las reglas (§3), las reglas de negocio, el orden de los flujos, la navegación conceptual y su back stack, el contrato local-first, el copy funcional y la guía de voz (ADR-0008), además de la accesibilidad (§11).
+**Alcance de V1.13:** la composición de pantallas y los patrones de interacción siguen TDesign Mobile. La intención, el modelo mental (§2), las reglas (§3), las reglas de negocio, el orden de los flujos, la navegación conceptual y su back stack, el contrato local-first, el copy funcional, la guía de voz (ADR-0008) y la accesibilidad (§11) permanecen congelados.
 
 ## Historial de enmiendas
 
 | Versión | Fecha | Alcance |
 |---|---|---|
 | V1.0 | 2026-09-23 | Congelación original. |
-| V1.1 | 2026-10-05 | Enmienda por ADR-0005 (lenguaje visual Metro dentro de Xauxa): S01, S06, §11 y §12 reescritos. |
-| V1.2 | 2026-10-11 | Enmienda por ADR-0012 (UI convencional sobre Material 3, misma en ambas plataformas): §12 reescrito como diseño convencional (M1–M13 eliminados), §4 S01/S02/S12 recompuestos, §3 y §11 ajustados donde cambian. Intención, navegación conceptual, modelo mental, reglas de negocio y recuperación de errores: intactos. Aprobación explícita del propietario para enmendar la congelación registrada en ADR-0012. |
-| V1.3 | 2026-10-12 | Enmienda por ADR-0013 (sistema de diseño propio AgendaMobile): §12 actualizado a la autoría, paleta, formas y modo oscuro de AgendaMobile. Intención, navegación, modelo mental, reglas de negocio, accesibilidad y copy: intactos. |
-| V1.4 | 2026-10-13 | Enmienda por ADR-0014 (referencia Ant Design Mobile + navegación convencional Android/iOS): §12 actualizado a la referencia, paleta, radios y componentes oficiales; navegación jerárquica y de destinos conforme a plataforma. Intención, navegación conceptual, modelo mental, reglas de negocio, accesibilidad y copy: intactos. |
-| V1.5 | 2026-10-13 | Enmienda de compacidad (escala compacta neutra): §12 delega tipografía (cuerpo 14, título 18, tracking neutro), barras compactas (superior 56 dp, inferior 64 dp sin píldora) y densidad al contrato normativo. Intención, flujos, reglas de negocio, accesibilidad y copy: intactos. |
 | V1.6 | 2026-10-14 | Enmienda por ADR-0016 (identidad local sin cuenta): §4 añade S00 Acceso local (configurar PIN en el primer arranque, desbloquear con PIN) y S01 cambia "Cerrar sesión" por "Cuenta y respaldo" + "Bloquear" en el menú "…". El acceso deja de ser una pantalla de login remoto. Modelo mental, reglas de negocio, accesibilidad y copy de las pantallas existentes: intactos. |
-| V1.7 | 2026-10-16 | Enmienda por ADR-0017 (alineación fiel con Ant Design Mobile 5.43.0): §12 reescrito a los valores oficiales (escala 17/15/13, radios 2/4/6/8, paleta oscura oficial, diálogo con fila hairline, buscador SearchBar, secundario = botón `default`); corrige el error "barra inferior 64 dp" de V1.5 (son 56 dp). Intención, flujos y copy: intactos. Aprobación explícita del propietario para enmendar la congelación del §12 (alineación con Ant Design Mobile, ADR-0017); intención, flujos y copy intactos. |
 | V1.8 | 2026-10-16 | Enmienda por ADR-0018 (correcciones UX de captura rápida): S00 (gracia de bloqueo 120 s, biometría automática, demo solo al inicio), S01 (hub de creación, sin duplicados, Favoritos, lista sin favoritos del carrusel), Detalle de destino (Mostrar QR como primaria, pantalla completa con brillo), S07 (editor con divulgación progresiva, validación real, descarte confirmado), S04 (foco solo desde Inicio). Intención, modelo mental y reglas de negocio: intactos. Aprobación explícita del propietario para enmendar la congelación en lo que ADR-0018 cambia. |
 | V1.9 | 2026-10-16 | Enmienda por ADR-0019 (inicio vacío): S01 vacío de primera ejecución muestra "Traer un QR", el FAB se oculta sin destinos ni búsqueda, y se retira el encabezado "Todos los destinos" sobre el vacío. Intención, modelo mental y reglas de negocio: intactos. |
-| V1.10 | 2026-10-16 | Enmienda visual por ADR-0020: identidad propia inspirada en aplicaciones chinas de consumo; paleta azul tecnológico + superficies neutras azul-gris; sin cambios en navegación, flujos, copy funcional o reglas de negocio. |
-| V1.11 | 2026-10-17 | Enmienda visual por ADR-0021: Ant Design Mobile deja de ser referencia; §12 incorpora las referencias de patrón por pantalla (apps chinas de consumo) sin cambios de navegación, flujos, copy ni reglas de negocio. |
-| V1.12 | 2026-10-17 | Enmienda visual por ADR-0022: la dirección vigente es la Super-App de alta densidad (paleta, escala tipográfica, densidad y gradientes del Anexo A, con pisos de accesibilidad); S01 gana la rejilla de acciones existentes y pierde el botón flotante con hub; el resto de flujos, navegación y copy quedan intactos. |
-| V1.13 | 2026-10-17 | Enmienda autorizada explícitamente por el propietario para adoptar TDesign Mobile 1.16.2: §4 recompone las pantallas y §12 sustituye la dirección visual. Se mantienen intención, modelo mental, reglas de negocio, orden de flujos, navegación conceptual/back stack, contrato local-first, accesibilidad y copy funcional. ADR-0023 sustituye la autoridad visual anterior. |
+| V1.13 | 2026-10-17 | Composición y patrones de interacción conforme al sistema de diseño vigente; la intención, las reglas de negocio, la navegación y el copy funcional permanecen intactos. |
 
-La composición funcional y las reglas de producto siguen siendo V1.9, salvo los cambios de composición de S01 autorizados en V1.12 y las composiciones visuales/interacciones de presentación autorizadas en V1.13. La autoridad visual vigente es TDesign Mobile 1.16.2/ADR-0023. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
+La composición funcional y las reglas de producto corresponden a V1.9; V1.13 define la composición de pantallas y los patrones de interacción. ADR-0023 y el contrato normativo de diseño fijan el sistema vigente. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
 ## 1. Contrato principal
 
@@ -382,7 +373,7 @@ La composición por pantalla se especifica en §4 y usa patrones TDesign cuando 
 - `AmNavRail` se conserva en tablet/plegables, donde TDesign Mobile no define un equivalente.
 - Los componentes mantienen targets interactivos ≥48 dp aunque el tamaño visual TDesign sea menor.
 - La sombra CSS de varias capas se representa en Compose con la capa dominante o `drawBehind`; la diferencia queda declarada en el contrato normativo.
-- Selectores y Action-sheet usan `AmBottomSheet` como overlay dentro del árbol de composición para permitir pruebas Robolectric. Si no resulta verificable, se conserva `AmDialog` con lista y se registra la desviación.
+- Los menús de opciones y selectores usan `AmDialog` con listas; la alternativa permite verificar de forma estable sus acciones bajo Robolectric sin cambiar el flujo.
 
 ## 13. Fuera de esta congelación
 

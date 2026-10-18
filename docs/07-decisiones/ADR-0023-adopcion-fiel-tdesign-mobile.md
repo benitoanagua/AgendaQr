@@ -1,55 +1,90 @@
-# ADR-0023 — Adopción fiel de TDesign Mobile (UI y UX)
+# ADR-0023 — Sistema de diseño de AgendaQr
 
-**Estado:** ACEPTADO — 2026-10-17, autorización explícita del propietario
-**Suplanta:** ADR-0020, ADR-0021 y ADR-0022 como autoridad visual; no altera sus registros históricos.
-**Relaciona:** especificación UX/UI V1.13, contrato normativo de diseño, ADR-0007 (capturas), ADR-0008 (voz), ADR-0015 (jerarquía financiera).
+**Estado:** ACEPTADO — 2026-10-17
+**Relaciona:** especificación UX/UI V1.13, contrato normativo de diseño,
+ADR-0007 (capturas), ADR-0008 (voz), ADR-0015 (jerarquía financiera).
 
-## 1. Contexto
+## 1. Decisión
 
-La implementación visual AgendaQr heredó decisiones de identidad propia y de dirección Super-App que ya no coinciden con el sistema de diseño deseado. El propietario autorizó expresamente cambiar la composición y los patrones de interacción de las pantallas a TDesign Mobile, manteniendo congeladas la intención, el modelo mental, las reglas de negocio, el orden de flujos, la navegación conceptual/back stack, el contrato local-first, el copy funcional, la guía de voz y la accesibilidad.
+AgendaQr usa TDesign Mobile 1.16.2 como especificación de valores visuales y
+patrones de interacción. Su implementación Compose Multiplatform vive en
+`core/ui`; las pantallas componen las APIs de ese módulo. TDesign no es una
+dependencia de ejecución.
 
-La fuente verificable es el paquete oficial `tdesign-mobile-vue@1.16.2`, en sus tokens y estilos de componentes Mobile. AgendaQr adopta esos valores y especificaciones en `core/ui`; TDesign no se añade como dependencia de ejecución.
+La fuente normativa de los valores es el paquete oficial
+`tdesign-mobile-vue@1.16.2`, en sus temas Mobile, escalas y estilos de
+componentes. Los tests de tokens fijan esos valores y señalan esta versión como
+fuente.
 
-## 2. Decisión
+Las pantallas mantienen la intención, el modelo mental, las reglas de negocio,
+el orden de los flujos, la navegación conceptual y el back stack, la persistencia
+local-first, el copy funcional, la guía de voz y los requisitos de accesibilidad
+definidos por el producto.
 
-1. TDesign Mobile 1.16.2 es la única autoridad visual: paletas clara/oscura, roles semánticos, superficies, radios, espaciado, tipografía, motion, elevación y especificaciones de componentes.
-2. `core/ui` contiene los tokens y componentes canónicos. Las pantallas solo componen sus APIs para adoptar los patrones descritos en la especificación UX/UI V1.13.
-3. La geometría y los valores son los oficiales. El uso de Compose Multiplatform/material3 como puente de implementación no convierte sus defaults ni el tema de plantilla en fuente visual.
-4. Se conserva el área táctil interactiva mínima de 48 dp, el foco de teclado/D-pad y la háptica de plataforma. El estado presionado usa los tokens activos de TDesign, sin gradiente, escala ni spring.
-5. Se mantienen los cuatro destinos raíz, el back stack, las reglas de acceso local, los flujos, estados de dominio, copy funcional y accesibilidad existentes. No se incorporan gestos o componentes que añadan capacidad de producto.
-6. Los iconos se migran al catálogo TDesign Icons a través de `AmIcon`/`AmIcons`, solo después de verificar la correspondencia de cada glifo. La licencia MIT y su atribución se registran antes de distribuir los recursos.
+## 2. Aplicación
+
+1. Los temas claro y oscuro, roles semánticos, superficies, radios, espaciado,
+   tipografía, movimiento, elevación y componentes siguen las especificaciones
+   Mobile de TDesign 1.16.2.
+2. `core/ui` mantiene los tokens y componentes canónicos. El gate
+   `verifyDesignSystemCompliance` evita literales visuales y controles
+   prefabricados de `material3` fuera de esa capa.
+3. La implementación usa Material 3 como infraestructura de componentes base;
+   sus valores predeterminados no son autoridad visual.
+4. El estado presionado usa los tokens activos de TDesign, sin gradiente,
+   escala ni spring. Se conservan el foco de teclado/D-pad y la háptica de
+   plataforma.
+5. Los targets interactivos miden al menos 48 dp y el texto visible al menos
+   11 sp. El tamaño visual de cada componente sigue la escala oficial aplicable.
+6. Los cuatro destinos raíz, el back stack y las acciones existentes conservan
+   sus contratos. No se incorporan gestos ni capacidades de producto nuevos.
+7. `AmIcon` y `AmIcons` exponen los glifos TDesign usados por el producto. Los
+   recursos derivados y avisos de licencia se registran antes de distribuirlos.
 
 ## 3. Desviaciones autorizadas
 
-| ID | Desviación | Resolución |
+| ID | Desviación | Aplicación |
 |---|---|---|
-| D-01 | `AmAccents` contiene 12 tonos deterministas para identidad de contexto; TDesign define cuatro familias cromáticas y grises. | Se conservan los 12 tonos y el hash FNV-1a. Es la única paleta cromática fuera de TDesign; sus pares AA no se alteran. |
-| D-02 | Algunos colores oficiales no alcanzan contraste para texto, glifo significativo o relleno con texto encima. | Se usa el siguiente escalón de la misma paleta TDesign que cumple ≥4.5:1 para texto y ≥3:1 para elementos no textuales; no se crean colores. |
-| D-03 | Los botones y otros controles TDesign pueden medir menos de 48 dp. | Se conserva su tamaño visual oficial y se amplía el target interactivo a ≥48 dp. |
-| D-04 | El token oficial `body-extraSmall` es 10 sp, por debajo del piso de texto de AgendaQr. | El valor fuente se documenta; no se aplica a texto visible. El menor tamaño de texto compuesto es el siguiente tamaño oficial, 12 sp, manteniendo el piso de 11 sp. |
-| D-05 | TDesign Mobile no ofrece un equivalente de rail adaptativo. | Se conserva `AmNavRail` en tablet/plegables, con tokens TDesign y sin alterar la navegación conceptual. |
-| D-06 | CSS define sombras de múltiples capas y Compose no las reproduce directamente. | La elevación se aproxima con la capa dominante de TDesign o `drawBehind`; la diferencia se registra en el contrato y el gate. |
-| D-07 | Las hojas nativas `Dialog`/`ModalBottomSheet` no son verificables de forma estable con Robolectric. | `AmBottomSheet` se implementa como overlay en el mismo árbol (scrim y panel animado). Si no se puede verificar, se mantiene `AmDialog` con lista y se documenta el caso. |
-| D-08 | El set de fuentes de TDesign incluye familias específicas de plataforma. | Se usa la fuente del sistema; no se empaquetan fuentes ni se altera el texto. |
+| D-01 | `AmAccents` contiene 12 tonos deterministas para identificar contextos. | Se conservan los tonos y el hash FNV-1a; sus pares de contraste mantienen la cobertura existente. |
+| D-02 | Algunos colores de la paleta no alcanzan el contraste requerido para texto o indicadores. | Se elige el siguiente escalón de la misma familia TDesign que cumple ≥4.5:1 para texto y ≥3:1 para elementos no textuales. |
+| D-03 | Algunos controles TDesign tienen una superficie visual menor que el target accesible. | La geometría visual sigue la especificación y el target interactivo es ≥48 dp. |
+| D-04 | `body-extraSmall` mide 10 sp. | No se usa para texto visible; el mínimo de texto aplicado es el siguiente tamaño oficial, 12 sp. |
+| D-05 | TDesign Mobile no define un rail adaptativo. | `AmNavRail` conserva la navegación en ventanas amplias y usa los tokens del sistema. |
+| D-06 | Las sombras CSS de varias capas no tienen una reproducción directa en Compose. | Se usa la capa dominante de la sombra TDesign o una representación equivalente en `drawBehind`; la diferencia se documenta en el contrato. |
+| D-07 | El overlay de hoja inferior no ofrece interacciones verificables de forma estable en Robolectric. | Los menús de opciones y selectores se presentan con `AmDialog` y listas; su contenido y flujo se mantienen accesibles y comprobables. |
+| D-08 | Las familias tipográficas de TDesign varían por plataforma. | Se usa la fuente del sistema, sin empaquetar fuentes ni modificar el copy. |
 
-Los estados de error, éxito y advertencia mantienen contraste con la paleta oficial. El lienzo QR sigue siendo blanco. Las diferencias entre APIs de plataforma se limitan a los servicios nativos existentes y no cambian la intención ni el flujo.
+Los estados conservan contraste; el lienzo QR permanece blanco. Las
+implementaciones nativas se limitan a servicios de plataforma y mantienen la
+misma intención y transición funcional.
 
 ## 4. Consecuencias
 
-- ADR-0020, ADR-0021 y ADR-0022 quedan como historia y ya no autorizan cambios visuales actuales.
-- La especificación UX/UI pasa a V1.13: §4 define las composiciones autorizadas y §12 los patrones y reglas compartidas. La numeración vigente de esa especificación termina en §14; su fuente actual no contiene §16. El apartado de referencias por pantalla §16 pertenece al contrato normativo y se actualizará allí, sin crear una sección duplicada en la especificación.
-- El contrato normativo, sus excepciones/gate, los tests, los componentes, las pantallas y las licencias se migran en tareas separadas de esta decisión.
-- `tdesign-mobile-vue` y `tdesign-icons-svg` no se añaden como dependencias de la app.
-- Capturas visuales previas y su procedencia se conservan en `docs/04-ux/visual-hashes/before/`; capturas nuevas se revisan en claro/oscuro y se fijan por el mecanismo de ADR-0007.
+- `core/ui` concentra los tokens, componentes y vectores Compose del sistema.
+- La especificación UX/UI describe la composición por pantalla; el contrato
+  normativo define valores, componentes, accesibilidad, excepciones y validación.
+- `tdesign-mobile-vue` y `tdesign-icons-svg` no forman parte del grafo de
+  dependencias de ejecución.
+- La licencia MIT de los vectores TDesign y su aviso de atribución figuran en
+  `docs/05-design-system/06-licencias-terceros.md` y en los avisos Android.
+- Las capturas se verifican por tema, tamaño y escala de fuente según ADR-0007.
 
 ## 5. Criterios de aceptación
 
-1. Cada token visual adoptado coincide con `tdesign-mobile-vue@1.16.2` y su test cita el paquete como fuente.
-2. Los pares de contraste claro/oscuro alcanzan los pisos AA establecidos usando solo la paleta TDesign, salvo D-01.
-3. El gate de diseño pasa; cada excepción aparece tanto en el contrato normativo como en `exceptionRegistry`.
-4. Todos los targets visibles e interactivos conservan ≥48 dp, el texto mantiene ≥11 sp y los layouts se validan con 320/360 dp y fuente 200 %.
-5. Cada pantalla de §4 sigue el patrón indicado o tiene una desviación con causa; ninguna añade acción o cambia una regla congelada.
-6. Se registran las licencias MIT de TDesign Mobile y TDesign Icons y no se empaquetan sus librerías Vue/CSS como dependencia de runtime.
-7. Capturas antes/después por pantalla, tema, ancho y escala no muestran recortes ni solapes; las cuatro capturas de regresión del 16-oct se conservan y verifican.
-8. Los tests de navegación/back stack pasan sin cambios funcionales.
-9. CI, pruebas por plataforma y validación de runtime/dispositivo se reportan con su resultado real; una compilación no se presenta como validación runtime.
+1. Los tests de tokens fijan los valores adoptados y citan
+   `tdesign-mobile-vue@1.16.2`.
+2. Los tests de contraste verifican ambos temas y los umbrales de texto e
+   indicadores.
+3. El gate de diseño pasa y cada excepción ejecutable aparece también en el
+   contrato normativo.
+4. Los targets interactivos conservan ≥48 dp, el texto visible ≥11 sp y los
+   layouts se validan a 320/360 dp y escala de fuente 200 %.
+5. Cada pantalla sigue el patrón aplicable o registra una desviación con su
+   motivo, sin cambiar reglas funcionales.
+6. Las licencias y atribuciones están presentes y las librerías Vue/CSS no se
+   incluyen como dependencias de ejecución.
+7. Las capturas no muestran recortes ni solapes y sus hashes quedan fijados por
+   el mecanismo de ADR-0007.
+8. Las pruebas de navegación y back stack pasan sin cambios de contrato.
+9. Las compilaciones, pruebas y comprobaciones de runtime se informan según lo
+   ejecutado; compilar no se considera validación de runtime.
