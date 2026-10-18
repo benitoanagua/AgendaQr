@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.core.ui.components.AmBadge
 import com.agendaqr.core.ui.components.AmCompactAction
-import com.agendaqr.core.ui.components.AmHeroHeader
 import com.agendaqr.core.ui.components.AmQuickAction
 import com.agendaqr.core.ui.components.AmDialog
 import com.agendaqr.core.ui.components.AmDialogList
@@ -37,7 +36,9 @@ import com.agendaqr.core.ui.components.AmSectionHeader
 import com.agendaqr.core.ui.components.AmTappableCard
 import com.agendaqr.core.ui.components.AmSkeleton
 import com.agendaqr.core.ui.components.AmSnackbarHost
+import com.agendaqr.core.ui.components.AmSearchTrigger
 import com.agendaqr.core.ui.components.AmText
+import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmEmptyState
@@ -81,11 +82,8 @@ fun DestinationsScreen(
     AmScreenScaffold(
         scrollable = state.destinations.isNotEmpty(),
         topBar = {
-            AmHeroHeader(
+            AmTopBar(
                 title = AppStrings.AgendaQr,
-                searchLabel = AppStrings.BuscarEnAgendaQr,
-                searchPlaceholder = AppStrings.searchPlaceholder,
-                onSearchClick = onOpenSearch,
                 overflowActions = listOf(
                     AmOverflowAction(AppStrings.CuentaYRespaldo, onClick = onOpenAccount),
                     AmOverflowAction(AppStrings.Bloquear, onClick = onLock),
@@ -102,6 +100,12 @@ fun DestinationsScreen(
         floatingActionButton = null,
         verticalArrangement = Arrangement.spacedBy(AmSpacing.Lg),
     ) {
+        AmSearchTrigger(
+            label = AppStrings.BuscarEnAgendaQr,
+            placeholder = AppStrings.searchPlaceholder,
+            onClick = onOpenSearch,
+        )
+
         // §10: errores recuperables y contextuales, visibles sin scroll.
         state.error?.let { error ->
             val (bannerAction, bannerDismiss) = error.bannerActions(
