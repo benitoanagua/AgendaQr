@@ -1,6 +1,9 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -77,10 +80,23 @@ private fun AmDialogAction(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed = interactionSource.collectIsPressedAsState().value
     Box(
         modifier = modifier
             .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
-            .clickable(role = Role.Button, onClickLabel = label, onClick = onClick),
+            .background(
+                if (pressed) AmColor.SurfaceActive else AmColor.Transparent,
+                AmShapes.Small,
+            )
+            .clickable(
+                role = Role.Button,
+                onClickLabel = label,
+                interactionSource = interactionSource,
+                // Las acciones de diálogo son TDButton: color activo, sin ripple.
+                indication = null,
+                onClick = onClick,
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Text(

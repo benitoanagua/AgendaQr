@@ -356,6 +356,7 @@ real.
 | D-08 | Fuentes tipográficas de plataforma. | Se usa la fuente del sistema y no se distribuyen archivos de fuente. |
 | D-09 | Familia numérica `TCloudNumber`. | No se empaqueta; los importes usan cifras tabulares de la fuente del sistema. |
 | D-10 | La fuente no expone tokens de movimiento. | Los valores se declaran en `AmMotion`. |
+| D-11 | Retroalimentación de pulsación en algunas superficies (acción de texto, chip de filtro, ítems de `AmNavBar`/`AmNavRail`). | TDesign resuelve `TDButton`, `TDCell` y `TDBottomTabBar` con color activo y sin ripple; los botones, celdas, tarjetas y acciones de diálogo ya usan el token activo (`AmColor.SurfaceActive`). El resto conserva la indicación de la plataforma como deuda acotada: solo afecta al feedback de pulsación, no a función, jerarquía ni accesibilidad. |
 
 ## 16. Composición por pantalla
 

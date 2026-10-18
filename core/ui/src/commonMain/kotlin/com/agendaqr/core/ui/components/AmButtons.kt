@@ -3,7 +3,6 @@ package com.agendaqr.core.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -207,7 +206,9 @@ private fun AmButtonImpl(
             role = Role.Button,
             onClickLabel = label,
             interactionSource = interactionSource,
-            indication = LocalIndication.current,
+            // TDesign no dibuja ripple: TDButton cambia de color en
+            // `onTapDown` (ya resuelto por `resolved` con el estado pressed).
+            indication = null,
             onClick = {
                 if (hapticFeedback) {
                     haptics.performHapticFeedback(HapticFeedbackType.LongPress)
