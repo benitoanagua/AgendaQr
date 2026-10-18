@@ -40,6 +40,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Feedback transitorio (Snackbar) y persistente (AppStatusHost) | `RootNavigationChromeTest` + `AppStatusHostTest` |
 | Reformas visuales por pantalla (brechas G1–G9: botón primario fijo al pie, tarjetas de ajustes con encabezado de sección, insignia de estado con texto, evidencia decodificada en tarjeta, metadatos de fecha y marca de tipo en resultados) | gate del design system + Robolectric de presentación + verificación de layout (`LayoutReferenceTest`) |
 | S01 Inicio alineado con su pantalla de Stitch (ADR-0024, spec V1.15): navbar «Inicio» como el resto de raíces y filtros Todos/Favoritos como control segmentado con conteo y semántica de selección | Robolectric de presentación (`DestinationsScreenA11yTest`: etiqueta estable + `selected` + rol radio) + verificación de layout (`LayoutReferenceTest` s01 claro/oscuro) |
+| S00 desbloqueo alineado con su pantalla de Stitch (ADR-0024, spec V1.16): héroe, puntos enmascarados y teclado propio 3×4 con borrado accesible; envío explícito (PIN 4–12), biometría y demo como acciones de texto | `:core:ui` (`AmAccessibilityContractTest`: teclas con rol y ≥48 dp, borrado con nombre accesible) + Robolectric (`LocalAccessGateTest`, `AgendaQrLocalStartupTest`, `LocalAccessBiometricTest`) |
 | Dirección visual TDesign Mobile 0.2.7 (ADR-0023): tokens, componentes, acciones de Inicio, escala tipográfica, elevación, movimiento y pulsación | gate del design system + Robolectric de presentación + verificación de layout (escenarios 320 dp, escala de fuente 200 % y estados de botones); revisión en dispositivo real pendiente y declarada como no verificada |
 | Contrato de interacción por pantalla (19 superficies: ruta real, destinos válidos, estados, gestos, componentes, pruebas con señal de accesibilidad y escenarios de captura) | `verifyScreenContract` + `verifyScreenContractFixtures` (dentro de `verifyAgendaQrArchitecture`): cruza el contrato con `AppRoute`/rutas de flujo, archivos, símbolos de `core/ui`, claves de `AppStrings`, pruebas y el documento generado |
 | Trazabilidad Stitch ↔ contrato de pantallas (ADR-0024): proyecto Stitch `TDesign Screen Templates` (`projects/14722565667748094207`), 12 superficies con pantalla real de Stitch y 7 exclusiones con motivo | `verifyScreenContract` + `verifyScreenContractFixtures` (divergencias `stitch-*`) + documento generado `04-ux/06-trazabilidad-stitch-tdesign.md`; inventario verificado por MCP (`list_projects`, `list_screens`, `get_screen` sobre las 12 pantallas y sus HTML/screenshot) |
@@ -88,10 +89,12 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
 ## 4. Pendientes conocidos
 
 - **Migración de composición por pantalla al proyecto Stitch (ADR-0024):**
-  la trazabilidad superficie ↔ pantalla de Stitch es ejecutable y S01 ya está
-  alineado (V1.15). Quedan S00/S02/S04/S06/S07/S07-list/S08/S09/S12 y los
-  detalles; cada rediseño exige propagar el cambio a especificación,
-  contrato estructurado, código y pruebas en el mismo cambio lógico.
+  la trazabilidad superficie ↔ pantalla de Stitch es ejecutable; S01 (V1.15)
+  y el desbloqueo de S00 (V1.16) ya están alineados. Quedan el onboarding de
+  S00 (sin pantalla de Stitch; exige rediseñar el flujo código+confirmación),
+  S02/S04/S06/S07/S07-list/S08/S09/S12 y los detalles; cada rediseño exige
+  propagar el cambio a especificación, contrato estructurado, código y
+  pruebas en el mismo cambio lógico.
 - **Productor de la galería estricta de capturas (§2):** sin pruebas de
   captura por superficie, `build/captures/gallery/` queda vacío y el gate solo
   valida capturas cuando existen.
