@@ -24,7 +24,7 @@ import org.robolectric.annotation.Config
  * en el gate existente (testDebugUnitTest) sin emulador.
  */
 @RunWith(RobolectricTestRunner::class)
-// Layout MCP de S01 (garantía + carrusel + pestañas + lista): la fila con
+// Layout MCP de S01 (garantía + carrusel + segmentado + lista): la fila con
 // el favorito queda bajo el pliegue de la ventana por defecto de
 // Robolectric; viewport alto para que el objetivo de 48 dp sea real.
 @Config(sdk = [34], qualifiers = "w360dp-h800dp")
@@ -70,9 +70,9 @@ class DestinationsScreenA11yTest {
     }
 
     @Test
-    fun app_title_is_a_semantic_heading() {
+    fun screen_title_is_a_semantic_heading() {
         setContent()
-        compose.onNodeWithText("Agenda QR")
+        compose.onNodeWithText("Inicio")
             .assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading))
     }
 
@@ -121,9 +121,10 @@ class DestinationsScreenA11yTest {
 
     @Test
     fun favorites_filter_state_is_text_and_semantics_not_color() {
-        // U-01: el filtro Favoritos es un FilterChip; la etiqueta NO
-        // cambia ("Favoritos" siempre) y el estado se expresa con
-        // semántica `selected` + `stateDescription`, nunca solo con color.
+        // U-01: el filtro Favoritos es un segmento; la etiqueta NO cambia
+        // ("Favoritos" siempre) y el estado se expresa con semántica
+        // `selected` + rol radio (anuncio nativo de selección), nunca solo
+        // con color.
         compose.setContent {
             AmTheme {
                 DestinationsScreen(
@@ -140,7 +141,7 @@ class DestinationsScreenA11yTest {
         compose.onNodeWithText("Favoritos")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, true))
         compose.onNodeWithText("Favoritos")
-            .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, AppStrings.Seleccionado))
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton))
     }
 
     @Test

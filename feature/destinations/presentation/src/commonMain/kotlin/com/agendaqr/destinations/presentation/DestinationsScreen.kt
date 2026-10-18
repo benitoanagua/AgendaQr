@@ -23,7 +23,8 @@ import com.agendaqr.core.ui.components.AmQuickAction
 import com.agendaqr.core.ui.components.AmDialog
 import com.agendaqr.core.ui.components.AmDialogList
 import com.agendaqr.core.ui.components.AmFavoriteToggle
-import com.agendaqr.core.ui.components.AmFilterChip
+import com.agendaqr.core.ui.components.AmSegmentedControl
+import com.agendaqr.core.ui.components.AmSegmentedOption
 import com.agendaqr.core.ui.components.AmIcon
 import com.agendaqr.core.ui.components.AmIconBadge
 import com.agendaqr.core.ui.components.AmIcons
@@ -50,11 +51,13 @@ import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.destinations.domain.Destination
 
 /**
- * S01 — Inicio (V1.4): tarjeta de garantía local con acciones rápidas,
- * pestañas cápsula con conteo real, carrusel de favoritos y lista
- * agrupada con "Ver QR" por fila. Todas las acciones son reales: S02
- * (traer QR), pantalla completa del código (RF-05) y favoritos del
- * dominio.
+ * S01 — Inicio: acciones rápidas, control segmentado con conteo real,
+ * carrusel de favoritos y lista agrupada con "Ver QR" por fila. Composición
+ * alineada con la pantalla S01 del proyecto Stitch `TDesign Screen
+ * Templates` (ADR-0024): navbar con el nombre de la superficie y filtros
+ * Todos/Favoritos como segmentado mutuamente excluyente. Todas las
+ * acciones son reales: S02 (traer QR), pantalla completa del código
+ * (RF-05) y favoritos del dominio.
  */
 @Composable
 fun DestinationsScreen(
@@ -83,7 +86,7 @@ fun DestinationsScreen(
         scrollable = state.destinations.isNotEmpty(),
         topBar = {
             AmTopBar(
-                title = AppStrings.AgendaQr,
+                title = AppStrings.Inicio,
                 overflowActions = listOf(
                     AmOverflowAction(AppStrings.CuentaYRespaldo, onClick = onOpenAccount),
                     AmOverflowAction(AppStrings.Bloquear, onClick = onLock),
@@ -146,24 +149,25 @@ fun DestinationsScreen(
             )
         }
 
-        // Pestañas cápsula: filtros reales con conteo.
-        Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-            AmFilterChip(
-                label = AppStrings.Todos,
-                selected = !state.favoriteOnly,
-                onClick = { onAction(DestinationAction.SetFavoritesOnly(false)) },
-                count = state.destinations.size,
-                stateDescription = AppStrings.Seleccionado,
-            )
-            AmFilterChip(
-                label = AppStrings.Favoritos,
-                selected = state.favoriteOnly,
-                onClick = { onAction(DestinationAction.SetFavoritesOnly(true)) },
-                count = favorites.size,
-                icon = AmIcons.Favorite,
-                stateDescription = AppStrings.Seleccionado,
-            )
-        }
+        // Segmentado Todos/Favoritos (S01 de Stitch, ADR-0024; la spec
+        // admite "Tabs o Segmented"): filtros reales mutuamente
+        // excluyentes con conteo. La selección vive en la semántica
+        // (`selectableGroup` + rol radio), nunca solo en el color.
+        AmSegmentedControl(
+            options = listOf(
+                AmSegmentedOption(
+                    label = AppStrings.Todos,
+                    count = state.destinations.size,
+                ),
+                AmSegmentedOption(
+                    label = AppStrings.Favoritos,
+                    icon = AmIcons.Favorite,
+                    count = favorites.size,
+                ),
+            ),
+            selectedIndex = if (state.favoriteOnly) 1 else 0,
+            onSelect = { index -> onAction(DestinationAction.SetFavoritesOnly(index == 1)) },
+        )
 
         // Favoritos (U-10: es lo que son, no "frecuentes"): carrusel
         // horizontal; la siguiente tarjeta asoma como indicio (sin

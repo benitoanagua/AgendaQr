@@ -252,10 +252,6 @@ internal object AppStrings {
     val QrImportado = "QR importado"
     val ComprobanteNoEncontrado = "Comprobante no encontrado"
     val Favoritos = "Favoritos"
-    /** Descripción de estado accesible de los chips de filtro
-     * seleccionados (U-01: la etiqueta no cambia; el estado va por
-     * semántica `selected` + `stateDescription`). */
-    val Seleccionado = "Seleccionado"
     /** S12: descripciones honestas de cada pendiente (guía de voz). */
     val elementoYaGuardado = "Parece que este elemento ya está guardado."
     val elementoSinClasificar = "No pudimos clasificar este elemento."
