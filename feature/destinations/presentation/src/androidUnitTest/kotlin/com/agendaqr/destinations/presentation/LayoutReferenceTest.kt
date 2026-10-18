@@ -66,11 +66,13 @@ import com.agendaqr.destinations.domain.ImportBatch
 import com.agendaqr.destinations.domain.ImportCandidate
 import com.agendaqr.destinations.domain.ImportKind
 import com.agendaqr.destinations.presentation.AppStrings
+import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 /**
  * Verificación de layout de las pantallas críticas en claro y oscuro
@@ -80,6 +82,9 @@ import org.robolectric.annotation.Config
  * escala de fuente 100 % y 200 %.
  */
 @RunWith(RobolectricTestRunner::class)
+// NATIVE: render real de píxeles (requisito de Roborazzi; es el modo por
+// defecto de Robolectric 4.14, se declara explícitamente por claridad).
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = "w360dp-h740dp")
 open class LayoutReferenceTest {
 
@@ -102,9 +107,24 @@ open class LayoutReferenceTest {
         }
         compose.waitForIdle()
         assertLayoutHolds("$name$viewportSuffix")
+        capture("$name$viewportSuffix")
         compose.runOnIdle { fontScale = 2f }
         compose.waitForIdle()
         assertLayoutHolds("$name$viewportSuffix-font-200")
+    }
+
+    /**
+     * Captura la raíz si (y solo si) la galería se pidió con
+     * `-Pagendaqr.capture=true` y el viewport nativo es de 360 dp. Las
+     * variantes de 320 dp y tablet (w720dp) siguen verificándose por
+     * aserciones, pero no se capturan: la galería tiene una sola captura
+     * por escenario y tema. Sin el flag no escribe nada (ADR-0007).
+     */
+    private fun capture(name: String) {
+        if (System.getProperty("agendaqr.capture") != "true") return
+        val width = compose.onRoot().getUnclippedBoundsInRoot().let { it.right - it.left }.value
+        if (width < 357f || width > 363f) return
+        compose.onRoot().captureRoboImage("build/roborazzi/$name.png")
     }
 
     /**
