@@ -636,7 +636,7 @@ fun AmFilterChip(
                     modifier = Modifier
                         .background(
                             if (selected) AmColor.OnAccent.copy(alpha = 0.25f) else AmColor.SurfaceContainerHighest,
-                            AmShapes.ExtraSmall,
+                            AmShapes.Band,
                         )
                         .padding(horizontal = AmSpacing.Xs),
                 ) {
@@ -684,7 +684,7 @@ fun AmSegmentedControl(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(AmColor.SurfaceSecondary, AmShapes.ExtraSmall)
+            .background(AmColor.SurfaceSecondary, AmShapes.Small)
             .selectableGroup()
             .padding(AmSpacing.Xs),
         horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
@@ -695,10 +695,10 @@ fun AmSegmentedControl(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(AmShapes.ExtraSmall)
+                    .clip(AmShapes.Small)
                     .then(
                         if (selected) {
-                            Modifier.background(AmColor.Surface, AmShapes.ExtraSmall)
+                            Modifier.background(AmColor.Surface, AmShapes.Small)
                         } else {
                             Modifier
                         },
@@ -734,7 +734,7 @@ fun AmSegmentedControl(
                             modifier = Modifier
                                 .background(
                                     if (selected) activeColor.copy(alpha = 0.2f) else AmColor.SurfaceContainerHighest,
-                                    AmShapes.ExtraSmall,
+                                    AmShapes.Band,
                                 )
                                 .padding(horizontal = AmSpacing.Xs),
                         ) {

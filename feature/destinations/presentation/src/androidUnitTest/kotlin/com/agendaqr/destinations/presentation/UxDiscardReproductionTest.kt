@@ -2,9 +2,8 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.test.hasSetTextAction
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
@@ -75,7 +74,7 @@ class UxDiscardReproductionTest {
         }
         compose.waitForIdle()
         // Escribir un importe: el editor queda "sucio".
-        compose.onAllNodes(hasSetTextAction() and hasText(AppStrings.MontoOpcional))[0]
+        compose.onNodeWithContentDescription(AppStrings.MontoOpcional)
             .performTextInput("120")
         compose.waitForIdle()
         // Volver atrás con cambios sin guardar.
@@ -129,7 +128,7 @@ class UxDiscardReproductionTest {
             }
         }
         compose.waitForIdle()
-        compose.onAllNodes(hasSetTextAction() and hasText(AppStrings.MontoOpcional))[0]
+        compose.onNodeWithContentDescription(AppStrings.MontoOpcional)
             .performTextInput("120")
         compose.waitForIdle()
         vm.onAction(OperationAction.Back)

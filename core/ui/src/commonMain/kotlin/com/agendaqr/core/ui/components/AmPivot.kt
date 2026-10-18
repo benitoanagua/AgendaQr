@@ -1,16 +1,22 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
+import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.AmTextStyles
 import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.core.ui.theme.asTextOn
@@ -21,10 +27,8 @@ import com.agendaqr.core.ui.theme.asTextOn
  */
 
 /**
- * Encabezado de sección (List header de la referencia): 15 sp en texto
- * secundario, peso normal, con semántica `heading()`. El acento de
- * contexto solo tiñe los encabezados de SU superficie (S06) cuando el
- * llamador pasa un [accent] legible como texto.
+ * Cabecera de grupo de celdas con altura mínima de 45 dp y semántica
+ * `heading()`. El acento de contexto solo tiñe el texto cuando es legible.
  */
 @Composable
 fun AmSectionHeader(
@@ -32,15 +36,25 @@ fun AmSectionHeader(
     modifier: Modifier = Modifier,
     accent: Color? = null,
 ) {
-    val textColor = accent?.asTextOn(AmColor.Background, AmColor.AccentText)
+    val textColor = accent?.asTextOn(AmColor.SurfaceSecondary, AmColor.AccentText)
         ?: AmColor.TextSecondary
-    Text(
-        text = text,
-        modifier = modifier.semantics { heading() },
-        style = AmTextStyles.SectionHeader,
-        fontFamily = AmType.FamilyUi,
-        color = textColor,
-    )
+    androidx.compose.foundation.layout.Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = AmMetrics.SectionHeaderHeight)
+            .background(AmColor.SurfaceSecondary)
+            .padding(horizontal = AmMetrics.ListDividerInset),
+        contentAlignment = androidx.compose.ui.Alignment.CenterStart,
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier.semantics { heading() },
+            style = AmTextStyles.SectionHeader,
+            fontFamily = AmType.FamilyUi,
+            fontWeight = FontWeight.Normal,
+            color = textColor,
+        )
+    }
 }
 
 /**
@@ -80,6 +94,9 @@ fun AmPivot(
         indicator = {
             androidx.compose.material3.TabRowDefaults.PrimaryIndicator(
                 modifier = Modifier.tabIndicatorOffset(selectedIndex),
+                width = AmMetrics.TabIndicatorWidth,
+                height = AmMetrics.TabIndicatorHeight,
+                shape = AmShapes.Band,
                 color = AmColor.Accent,
             )
         },

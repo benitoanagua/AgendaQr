@@ -150,8 +150,7 @@ class AmUiPolishContractTest {
 
     @Test
     fun body_text_keeps_canonical_lineheight() {
-        // Caracterización: el cuerpo por defecto es 14/21 (Anexo A Body 14
-        // con proporción 1.5); AmText aplica la proporción 1.5 → 21 sp.
+        // AmText mantiene una proporción de interlineado de 1.5.
         setScaledContent(1.0f) {
             AmText("Cuerpo de dos lineas para probar interlineado expandido")
         }
@@ -232,6 +231,19 @@ class AmUiPolishContractTest {
     }
 
     // --- Tarea A: metadato final (endMeta) de AmListRow ---
+
+    @Test
+    fun list_row_description_uses_the_body_type_scale() {
+        setScaledContent(1f) {
+            AmListRow(
+                title = "Mercado",
+                subtitle = "Contexto de compras",
+            )
+        }
+        val style = layoutOf("Contexto de compras").layoutInput.style
+        assertEquals(14.sp, style.fontSize)
+        assertEquals(22.sp, style.lineHeight)
+    }
 
     @Test
     fun end_meta_keeps_the_title_line_and_right_alignment_when_there_is_room() {

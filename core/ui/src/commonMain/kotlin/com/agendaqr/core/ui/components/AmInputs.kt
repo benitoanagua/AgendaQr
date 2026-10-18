@@ -11,14 +11,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
@@ -47,10 +48,7 @@ import com.agendaqr.core.ui.theme.AmTextStyles
 import com.agendaqr.core.ui.theme.AmType
 
 /**
- * Entradas (patrón Form/List de la referencia): campo SIN borde, fondo
- * transparente, con etiqueta, texto de apoyo y error contextual. La guía
- * hairline inferior aparece en reposo (Divider), en foco (acento) y en
- * error (peligro); el error también con icono + texto debajo del campo.
+ * Entrada de formulario con etiqueta persistente y divisor inferior.
  *
  * - El error se expresa con icono + texto debajo del campo (nunca solo
  *   color) y se asocia también a la semántica del campo editable.
@@ -80,78 +78,72 @@ fun AmTextField(
     leadingIcon: ImageVector? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val focused by interactionSource.collectIsFocusedAsState()
     Column(
         modifier = modifier.fillMaxWidth(),
-        // La ayuda/error vive bajo el campo con aire mínimo (4 dp) y
-        // alineada al texto editable (padding horizontal del campo, 16 dp):
-        // sin esto la ayuda parece de otro campo y el error toca el hairline.
         verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
     ) {
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
+        Text(
+            label,
+            style = AmTextStyles.Label,
+            color = if (!enabled) AmColor.OnDisabled else AmColor.TextPrimary,
+        )
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
-                // El error se asocia al nodo editable, no solo al texto
-                // hermano; los lectores de pantalla lo anuncian al
-                // enfocar el campo.
-                .semantics {
-                    if (isError && errorMessage != null) error(errorMessage)
-                },
-            enabled = enabled,
-            readOnly = readOnly,
-            isError = isError,
-            singleLine = singleLine,
-            minLines = minLines,
-            label = { Text(label) },
-            keyboardOptions = keyboardOptions,
-            keyboardActions = keyboardActions,
-            visualTransformation = visualTransformation,
-            leadingIcon = leadingIcon?.let { glyph ->
-                {
-                    AmIcon(
-                        imageVector = glyph,
-                        contentDescription = null,
-                        tint = if (isError) AmColor.Danger else AmColor.TextTertiary,
-                    )
-                }
+                .padding(horizontal = AmSpacing.Lg),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+        ) {
+            leadingIcon?.let { glyph ->
+                AmIcon(
+                    imageVector = glyph,
+                    contentDescription = null,
+                    tint = when {
+                        isError -> AmColor.Danger
+                        focused -> AmColor.Focus
+                        else -> AmColor.TextTertiary
+                    },
+                )
+            }
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier
+                    .weight(1f)
+                    .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
+                    .semantics {
+                        contentDescription = label
+                        if (isError && errorMessage != null) error(errorMessage)
+                    },
+                enabled = enabled,
+                readOnly = readOnly,
+                singleLine = singleLine,
+                minLines = minLines,
+                textStyle = AmTextStyles.Body.copy(
+                    color = when {
+                        !enabled -> AmColor.OnDisabled
+                        isError -> AmColor.Danger
+                        else -> AmColor.TextPrimary
+                    },
+                ),
+                keyboardOptions = keyboardOptions,
+                keyboardActions = keyboardActions,
+                visualTransformation = visualTransformation,
+                interactionSource = interactionSource,
+                cursorBrush = SolidColor(if (isError) AmColor.Danger else AmColor.Focus),
+            )
+            trailing?.invoke()
+        }
+        HorizontalDivider(
+            thickness = AmMetrics.Border,
+            color = when {
+                isError -> AmColor.Danger
+                focused -> AmColor.Focus
+                else -> AmColor.Divider
             },
-            trailingIcon = trailing?.let { slot -> { slot() } },
-            shape = AmShapes.Medium,
-            colors = TextFieldDefaults.colors(
-                // Fondo sutil en tema oscuro para mejor contraste; transparente en claro.
-                // Guía hairline: Divider en reposo, acento en foco.
-                unfocusedContainerColor = AmColor.Transparent,
-                focusedContainerColor = AmColor.Transparent,
-                disabledContainerColor = AmColor.Transparent,
-                errorContainerColor = AmColor.Transparent,
-                unfocusedIndicatorColor = AmColor.Divider,
-                focusedIndicatorColor = AmColor.Focus,
-                disabledIndicatorColor = AmColor.Transparent,
-                errorIndicatorColor = AmColor.Danger,
-                unfocusedTextColor = AmColor.TextPrimary,
-                focusedTextColor = AmColor.TextPrimary,
-                disabledTextColor = AmColor.OnDisabled,
-                errorTextColor = AmColor.Danger,
-                cursorColor = AmColor.Focus,
-                errorCursorColor = AmColor.Danger,
-                selectionColors = null,
-                unfocusedLabelColor = AmColor.TextSecondary,
-                focusedLabelColor = AmColor.AccentText,
-                disabledLabelColor = AmColor.OnDisabled,
-                errorLabelColor = AmColor.Danger,
-                unfocusedPlaceholderColor = AmColor.TextSecondary,
-                focusedPlaceholderColor = AmColor.TextSecondary,
-                disabledPlaceholderColor = AmColor.OnDisabled,
-                errorPlaceholderColor = AmColor.Danger,
-                unfocusedLeadingIconColor = AmColor.TextSecondary,
-                focusedLeadingIconColor = AmColor.AccentText,
-                errorLeadingIconColor = AmColor.Danger,
-                unfocusedTrailingIconColor = AmColor.TextSecondary,
-                focusedTrailingIconColor = AmColor.AccentText,
-                errorTrailingIconColor = AmColor.Danger,
-            ),
         )
         when {
             // El error informa con icono + texto, nunca solo por color;
@@ -220,75 +212,73 @@ fun AmSearchField(
     }
     val focusRequester = remember { FocusRequester() }
     if (autoFocus) {
-        LaunchedEffect(Unit) { runCatching { focusRequester.requestFocus() } }
+        LaunchedEffect(Unit) { focusRequester.requestFocus() }
     }
-    val interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+    val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
-    TextField(
+    BasicTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier
             .fillMaxWidth()
-            // Altura mínima 48 dp (desviación documentada frente a los
-            // 32 px de la referencia): el campo es su propio target.
             .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
-            // Borde de acento SOLO en foco (E-04); transparente en reposo
-            // para que el layout no salte.
-            .border(
-                AmMetrics.Border,
-                if (focused) AmColor.Focus else AmColor.Transparent,
-                AmShapes.Pill,
-            )
             .focusRequester(focusRequester)
-            // Nombre accesible del campo: la etiqueta no se dibuja
-            // (SearchBar de la referencia no lleva label flotante).
             .semantics { contentDescription = label },
         interactionSource = interactionSource,
+        textStyle = AmTextStyles.Body.copy(color = AmColor.TextPrimary),
+        cursorBrush = SolidColor(AmColor.Focus),
         keyboardOptions = keyboardOptions,
-        placeholder = {
-            Text(
-                placeholder,
-                style = AmTextStyles.Label,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
         singleLine = true,
-        shape = AmShapes.Pill,
-        leadingIcon = { AmIcon(imageVector = AmIcons.Search, contentDescription = null, tint = AmColor.TextTertiary) },
-        trailingIcon = if (onClear != null && value.isNotEmpty()) {
-            {
-                IconButton(onClick = onClear) {
+        decorationBox = { innerTextField ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = AmMetrics.ControlMinSize),
+                contentAlignment = Alignment.Center,
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = AmMetrics.FieldCompactHeight)
+                        .background(AmColor.SurfaceSecondary, AmShapes.Pill)
+                        .border(
+                            AmMetrics.Border,
+                            if (focused) AmColor.Focus else AmColor.Transparent,
+                            AmShapes.Pill,
+                        )
+                        .padding(horizontal = AmSpacing.Md),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                ) {
                     AmIcon(
-                        imageVector = AmIcons.Cancel,
-                        contentDescription = clearLabel,
-                        tint = AmColor.TextSecondary,
+                        imageVector = AmIcons.Search,
+                        contentDescription = null,
+                        tint = AmColor.TextTertiary,
                     )
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (value.isEmpty()) {
+                            Text(
+                                placeholder,
+                                style = AmTextStyles.Body,
+                                color = AmColor.TextSecondary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                        innerTextField()
+                    }
+                    if (onClear != null && value.isNotEmpty()) {
+                        IconButton(onClick = onClear) {
+                            AmIcon(
+                                imageVector = AmIcons.Cancel,
+                                contentDescription = clearLabel,
+                                tint = AmColor.TextSecondary,
+                            )
+                        }
+                    }
                 }
             }
-        } else {
-            null
         },
-        colors = TextFieldDefaults.colors(
-            // Caja de búsqueda (referencia): relleno box en reposo y en
-            // foco; el foco lo marca el borde de acento (E-04), sin el
-            // indicador inferior de M3.
-            unfocusedContainerColor = AmColor.SurfaceSecondary,
-            focusedContainerColor = AmColor.SurfaceSecondary,
-            disabledContainerColor = AmColor.Transparent,
-            unfocusedIndicatorColor = AmColor.Transparent,
-            focusedIndicatorColor = AmColor.Transparent,
-            disabledIndicatorColor = AmColor.Transparent,
-            unfocusedTextColor = AmColor.TextPrimary,
-            focusedTextColor = AmColor.TextPrimary,
-            disabledTextColor = AmColor.OnDisabled,
-            unfocusedPlaceholderColor = AmColor.TextSecondary,
-            focusedPlaceholderColor = AmColor.TextSecondary,
-            disabledPlaceholderColor = AmColor.OnDisabled,
-            unfocusedLeadingIconColor = AmColor.TextTertiary,
-            focusedLeadingIconColor = AmColor.TextTertiary,
-            cursorColor = AmColor.Focus,
-        ),
     )
 }
 
@@ -306,9 +296,7 @@ fun AmSearchTrigger(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .background(AmColor.SurfaceSecondary, AmShapes.Pill)
-            .border(AmMetrics.Border, AmColor.Divider, AmShapes.Pill),
+        modifier = modifier.defaultMinSize(minHeight = AmMetrics.ControlMinSize),
     ) {
         // El campo decorativo queda fuera del árbol de accesibilidad: el
         // control es un solo botón con nombre accesible (la superposición).
@@ -369,7 +357,7 @@ fun AmAmountField(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
     ) {
-        Text(label, style = AmTextStyles.BodySmall, color = AmColor.TextSecondary)
+        Text(label, style = AmTextStyles.Label, color = AmColor.TextSecondary)
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
@@ -386,22 +374,14 @@ fun AmAmountField(
                 onValueChange = onValueChange,
                 modifier = Modifier
                     .weight(1f)
-                    .defaultMinSize(minHeight = AmMetrics.ControlMinSize),
+                    .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
+                    .semantics { contentDescription = label },
                 textStyle = AmTextStyles.Amount.copy(color = AmColor.TextPrimary),
                 keyboardOptions = keyboardOptions,
                 singleLine = true,
                 cursorBrush = androidx.compose.ui.graphics.SolidColor(AmColor.Focus),
                 decorationBox = { inner ->
-                    Box(contentAlignment = Alignment.CenterStart) {
-                        if (value.isEmpty()) {
-                            Text(
-                                label,
-                                style = AmTextStyles.Amount,
-                                color = AmColor.TextTertiary,
-                            )
-                        }
-                        inner()
-                    }
+                    Box(contentAlignment = Alignment.CenterStart) { inner() }
                 },
             )
             if (onClear != null) {

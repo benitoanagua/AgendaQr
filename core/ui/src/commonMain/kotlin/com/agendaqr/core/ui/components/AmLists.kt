@@ -59,7 +59,7 @@ fun AmBadge(
     round: Boolean = false,
 ) {
     val toneColor = if (tone == AmTone.Neutral) AmColor.TextSecondary else tone.content()
-    val shape = if (round) AmShapes.Pill else AmShapes.ExtraSmall
+    val shape = if (round) AmShapes.Pill else AmShapes.Band
     Box(
         modifier = modifier
             .border(
@@ -98,7 +98,7 @@ fun AmTonalTag(
     val label = if (uppercase) text.uppercase() else text
     Box(
         modifier = modifier
-            .background(tone.container(), if (round) AmShapes.Pill else AmShapes.ExtraSmall)
+            .background(tone.container(), if (round) AmShapes.Pill else AmShapes.Band)
             .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
         contentAlignment = Alignment.Center,
     ) {
@@ -180,11 +180,11 @@ fun AmMetaRow(
         icon?.let {
             AmIcon(imageVector = it, contentDescription = null, tint = AmColor.TextTertiary)
         }
-        Text(label, style = AmTextStyles.Caption, color = AmColor.TextSecondary)
+        Text(label, style = AmTextStyles.Body, color = AmColor.TextSecondary)
         Text(
             value,
             modifier = Modifier.weight(1f),
-            style = AmTextStyles.BodySmall,
+            style = AmTextStyles.Body,
             color = AmColor.TextPrimary,
             textAlign = TextAlign.End,
         )
@@ -282,10 +282,7 @@ fun AmHairline(
 }
 
 /**
- * Cuerpo de lista (card mode): tarjeta de superficie con radio 12
- * (Anexo A: tarjeta de lista) y sombra E-1 sobre el fondo gris (E-05),
- * delimitada por hairline (1 dp, excepción E-03 del gate), que agrupa
- * celdas contiguas separadas por hairlines inset. Las filas usan
+ * Grupo de celdas sobre una superficie continua. Las filas usan
  * `showDivider` salvo la última; el cuerpo mide su contenido.
  */
 @Composable
@@ -296,13 +293,10 @@ fun AmListBody(
     contentPadding: PaddingValues = PaddingValues(AmSpacing.None),
     content: @Composable () -> Unit,
 ) {
-    val shape = AmShapes.Medium
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .amElevation(AmElevation.Shadow1, shape)
-            .background(AmColor.Surface, shape)
-            .border(AmMetrics.Border, AmColor.Border, shape)
+            .background(AmColor.Surface)
             .padding(contentPadding),
     ) {
         content()
@@ -442,7 +436,7 @@ fun AmListRow(
                             )
                             Text(
                                 shortMeta,
-                                style = AmTextStyles.BodySmall,
+                                style = AmTextStyles.Body,
                                 color = AmColor.TextTertiary,
                             )
                         }
@@ -478,7 +472,7 @@ fun AmListRow(
                             subtitle?.let {
                                 Text(
                                     it,
-                                    style = AmTextStyles.BodySmall,
+                                    style = AmTextStyles.Body,
                                     color = AmColor.TextSecondary,
                                     maxLines = subtitleMaxLines,
                                     overflow = TextOverflow.Ellipsis,
@@ -514,14 +508,8 @@ fun AmListRow(
             )
         }
         if (showDivider) {
-            // Hairline alineado con el CONTENIDO cuando hay marca a la
-            // izquierda (tile/punto), no con el borde de la tarjeta
-            // ([AmMetrics.ListDividerInset]).
-            val hasLeading = leading != null || accent != null
             HorizontalDivider(
-                modifier = Modifier.padding(
-                    start = if (hasLeading) AmMetrics.ListDividerInset else AmSpacing.Lg,
-                ),
+                modifier = Modifier.padding(start = AmMetrics.ListDividerInset),
                 thickness = AmMetrics.Border,
                 color = AmColor.Divider,
             )

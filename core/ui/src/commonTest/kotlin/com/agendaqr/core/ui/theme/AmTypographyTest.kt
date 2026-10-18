@@ -28,7 +28,10 @@ class AmTypographyTest {
         assertEquals(14.sp, AmType.Body)
         assertEquals(12.sp, AmType.BodySmall)
         assertEquals(28.sp, AmType.Amount)
+        assertEquals(14.sp, AmType.AmountSymbol)
         assertEquals(36.sp, AmType.LineAmount)
+        assertEquals(20.sp, AmType.LineAmountSymbol)
+        assertEquals(14.sp, AmType.SectionHeader)
     }
 
     @Test
@@ -81,6 +84,12 @@ class AmTypographyTest {
         assertEquals(36.sp, AmTextStyles.Amount.lineHeight)
         assertEquals(FontWeight.SemiBold, AmTextStyles.Amount.fontWeight)
         assertEquals("tnum", AmTextStyles.Amount.fontFeatureSettings)
+        assertEquals(14.sp, AmTextStyles.AmountSymbol.fontSize)
+        assertEquals(20.sp, AmTextStyles.AmountSymbol.lineHeight)
+        assertEquals(FontWeight.Bold, AmTextStyles.AmountSymbol.fontWeight)
+        assertEquals(14.sp, AmTextStyles.SectionHeader.fontSize)
+        assertEquals(22.sp, AmTextStyles.SectionHeader.lineHeight)
+        assertEquals(FontWeight.Normal, AmTextStyles.SectionHeader.fontWeight)
         assertEquals(12.sp, AmTextStyles.Tag.fontSize)
         assertEquals(18.sp, AmTextStyles.Title.fontSize)
         assertEquals(26.sp, AmTextStyles.Title.lineHeight)

@@ -167,8 +167,8 @@ fun AmStatusPill(
     /** Contenido final (p. ej. el estado "Al día" del llamador). */
     trailing: (@Composable (() -> Unit))? = null,
 ) {
-    val container = if (inverse) AmColor.InverseSurface else AmColor.SurfaceContainerLow
-    val content = if (inverse) AmColor.InverseOnSurface else AmColor.TextSecondary
+    val container = if (inverse) AmColor.InverseSurface else tone.container()
+    val content = if (inverse) AmColor.InverseOnSurface else tone.content()
     Row(
         modifier = modifier
             .background(container, AmShapes.Pill)
@@ -193,7 +193,7 @@ fun AmStatusPill(
                 )
             }
         }
-        Text(text, style = AmTextStyles.BodySmall, color = content)
+        Text(text, style = AmTextStyles.Tag, color = content)
         trailing?.invoke()
     }
 }

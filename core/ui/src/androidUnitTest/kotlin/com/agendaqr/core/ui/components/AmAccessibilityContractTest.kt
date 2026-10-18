@@ -11,8 +11,11 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.mutableStateOf
 import com.agendaqr.core.ui.theme.AmTheme
@@ -82,6 +85,38 @@ class AmAccessibilityContractTest {
     }
 
     @Test
+    fun search_field_has_a_named_48dp_edit_target() {
+        compose.setContent {
+            AmTheme {
+                AmSearchField(
+                    value = "",
+                    onValueChange = {},
+                    label = "Buscar destinos",
+                    placeholder = "Nombre o categoría",
+                )
+            }
+        }
+
+        compose.onNodeWithContentDescription("Buscar destinos")
+            .assertExists()
+            .assertHeightIsAtLeast(48.dp)
+    }
+
+    @Test
+    fun section_header_has_the_group_height() {
+        compose.setContent {
+            AmTheme {
+                AmSectionHeader(
+                    text = "Destinos",
+                    modifier = Modifier.testTag("section-header"),
+                )
+            }
+        }
+
+        compose.onNodeWithTag("section-header").assertHeightIsAtLeast(45.dp)
+    }
+
+    @Test
     fun selected_list_row_exposes_selected_semantics() {
         // El punto de acento del AmListRow solo aparece con la identidad
         // REAL de un contexto; la selección se expresa con la semántica
@@ -116,7 +151,7 @@ class AmAccessibilityContractTest {
 
         // El label del campo se fusiona con el nodo editable (nombre
         // accesible) y el error se asocia a esa misma semántica.
-        compose.onNodeWithText("Correo")
+        compose.onNodeWithContentDescription("Correo")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Error, "Ingresa un correo válido"))
         compose.onNodeWithText("Ingresa un correo válido").assertExists()
     }
@@ -134,7 +169,7 @@ class AmAccessibilityContractTest {
             }
         }
 
-        compose.onNodeWithText("Código de reserva")
+        compose.onNodeWithContentDescription("Código de reserva")
             .assertExists()
             .assertIsNotEnabled()
     }
@@ -153,7 +188,7 @@ class AmAccessibilityContractTest {
         }
 
         // readOnly permite foco/selección y copia; no equivale a disabled.
-        compose.onNodeWithText("Referencia")
+        compose.onNodeWithContentDescription("Referencia")
             .assertExists()
             .assertIsEnabled()
         compose.onNodeWithText("REF-456").assertExists()
@@ -174,13 +209,13 @@ class AmAccessibilityContractTest {
             }
         }
 
-        compose.onNodeWithText("Identificador")
+        compose.onNodeWithContentDescription("Identificador")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Error, "Formato inválido"))
         compose.onNodeWithText("Formato inválido").assertExists()
 
         compose.runOnIdle { message.value = "Usa al menos 8 caracteres" }
 
-        compose.onNodeWithText("Identificador")
+        compose.onNodeWithContentDescription("Identificador")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Error, "Usa al menos 8 caracteres"))
         compose.onNodeWithText("Usa al menos 8 caracteres").assertExists()
     }

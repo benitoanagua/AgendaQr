@@ -44,6 +44,10 @@ class AmTokenScaleTest {
         assertEquals(40.dp, AmMetrics.ButtonCompactHeight)
         assertEquals(32.dp, AmMetrics.ChipCompactHeight)
         assertEquals(40.dp, AmMetrics.FieldCompactHeight)
+        assertEquals(45.dp, AmMetrics.SectionHeaderHeight)
+        assertEquals(16.dp, AmMetrics.ListDividerInset)
+        assertEquals(16.dp, AmMetrics.TabIndicatorWidth)
+        assertEquals(3.dp, AmMetrics.TabIndicatorHeight)
         assertEquals(311.dp, AmMetrics.DialogMinWidth)
         assertEquals(96.dp, AmMetrics.EmptyStateGlyphSize)
     }

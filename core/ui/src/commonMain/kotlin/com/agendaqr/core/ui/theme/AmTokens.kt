@@ -432,9 +432,13 @@ object AmMetrics {
     val IconSizeCompact = 18.dp
     /** Ancho de las mini-tarjetas del carrusel de favoritos. */
     val FavCardWidth = 184.dp
-    /** Insets del hairline de una fila con marca a la izquierda: alinea el
-     * separador con el texto, no con el borde de la tarjeta. */
-    val ListDividerInset = 56.dp
+    /** Inset del divisor de una celda respecto al borde del grupo. */
+    val ListDividerInset = 16.dp
+    /** Alto mínimo de la cabecera de un grupo de celdas. */
+    val SectionHeaderHeight = 45.dp
+    /** Tamaño del indicador de pestaña. */
+    val TabIndicatorWidth = 16.dp
+    val TabIndicatorHeight = 3.dp
     /** Altura máxima de una lista dentro de un diálogo/hoja: alcanzable
      * con scroll cuando es larga; por debajo mide su contenido. */
     val DialogListMaxHeight = 320.dp
@@ -505,9 +509,9 @@ object AmType {
     val TitleMedium: TextUnit = 16.sp
     val TitleSmall: TextUnit = 14.sp
     val Amount: TextUnit = 28.sp
-    val AmountSymbol: TextUnit = 28.sp
+    val AmountSymbol: TextUnit = 14.sp
     val RowTitle: TextUnit = 16.sp
-    val SectionHeader: TextUnit = 16.sp
+    val SectionHeader: TextUnit = 14.sp
     val Body: TextUnit = 14.sp
     val Label: TextUnit = 16.sp
     val BodySmall: TextUnit = 12.sp
@@ -520,6 +524,7 @@ object AmType {
     val LineHeightCaption: TextUnit = 20.sp
     val LineHeightSection: TextUnit = 24.sp
     val LineAmount: TextUnit = 36.sp
+    val LineAmountSymbol: TextUnit = 20.sp
     val LineHeightRowTitle: TextUnit = 24.sp
     val LineHeightHeadlineLarge: TextUnit = 44.sp
     val LineHeightHeadlineMedium: TextUnit = 36.sp
@@ -675,9 +680,8 @@ object AmTextStyles {
 
     val AmountSymbol = TextStyle(
         fontSize = AmType.AmountSymbol,
-        fontWeight = FontWeight.SemiBold,
-        lineHeight = AmType.LineAmount,
-        fontFeatureSettings = "tnum",
+        fontWeight = FontWeight.Bold,
+        lineHeight = AmType.LineAmountSymbol,
     )
 
     /** Subtítulo/metadato de fila (texto secundario, 12 sp). */
@@ -699,12 +703,11 @@ object AmTextStyles {
         lineHeight = AmType.LineHeightCaption,
     )
 
-    /** Encabezado de sección y H2 (16 sp/600, Anexo H2; el color lo
-     * decide el llamador). */
+    /** Cabecera de grupo de celdas: 14/22 regular sobre superficie secundaria. */
     val SectionHeader = TextStyle(
         fontSize = AmType.SectionHeader,
-        fontWeight = FontWeight.SemiBold,
-        lineHeight = AmType.LineHeightSection,
+        fontWeight = FontWeight.Normal,
+        lineHeight = AmType.LineHeightBody,
     )
 
     val Title = TextStyle(
