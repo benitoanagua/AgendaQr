@@ -30,15 +30,36 @@ problemas de fondo:
 existente. No se generan, versionan ni hashean capturas; la comparación de
 hashes y su manifiesto dejan de existir.
 
-La galería visual (cuando se pide bajo demanda) se produce fuera del control
-de versiones, en `build/`, y `verifyScreenContract` la valida si está
-presente: esquema de nombre determinista
-`<superficie>--<estado>--<ancho>dp--<tema>--font<escala>.png`, dimensiones
-reales del bitmap coherentes con el ancho declarado (sin zoom, recorte ni
-viewport falso), sin duplicados byte-exactos ni repeticiones de la misma
-superficie/estado/configuración, y con cobertura de las configuraciones
-requeridas. Si no hay artefactos, el gate no falla: la galería no se
-versiona.
+La galería visual se produce **bajo demanda** y fuera del control de
+versiones, en `build/`; nada se versiona ni se hashea. Hay dos artefactos
+con propósitos distintos:
+
+1. **Capturas de referencia de layout** (`build/roborazzi/<escenario>.png`),
+   una por escenario y tema a 360 dp (claro/oscuro), sin variantes de ancho,
+   tablet ni escala de fuente. El resto de configuraciones (320 dp, tablet
+   w720dp, fuente 200 %) se sigue verificando por aserciones, sin
+   capturarse. Reproducen como imagen cada escenario que ya comprueban las
+   pruebas de layout; no se validan contra el contrato por pantalla (son
+   escenarios de componente/pantalla, no la galería estricta por
+   superficie). Se generan con:
+
+   ```bash
+   ./gradlew :feature:destinations:presentation:testDebugUnitTest \
+       -Pagendaqr.capture=true
+   ```
+
+   Sin el flag la captura es un no-op: los tests siguen verificando el
+   layout y no escriben ninguna imagen.
+
+2. **Galería estricta por superficie** (`build/captures/gallery/`), con
+   esquema de nombre determinista
+   `<superficie>--<estado>--<ancho>dp--<tema>--font<escala>.png`. Cuando
+   existe, `verifyScreenContract` la valida: dimensiones reales del bitmap
+   coherentes con el ancho declarado (sin zoom, recorte ni viewport falso),
+   sin duplicados byte-exactos ni repeticiones de la misma
+   superficie/estado/configuración, y con cobertura de las configuraciones
+   requeridas. Si no hay artefactos, el gate no falla porque la galería no
+   se versiona.
 
 Las pruebas de layout (`LayoutReferenceTest`, `LayoutReferenceExtraTest`)
 componen cada escenario real de las pantallas críticas —claro/oscuro,
