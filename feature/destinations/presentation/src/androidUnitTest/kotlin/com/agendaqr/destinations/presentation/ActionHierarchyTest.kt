@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmTheme
 import com.agendaqr.destinations.domain.ImportBatch
 import com.agendaqr.destinations.domain.ImportCandidate
@@ -77,6 +78,8 @@ class ActionHierarchyTest {
         // Nivel 3: acción principal del elemento sin clasificar.
         compose.onNodeWithText(AppStrings.ReintentarClasificacion).assertExists()
         compose.onNodeWithText(AppStrings.Descartar).assertExists()
+        assertTouchTarget(AppStrings.ReintentarClasificacion)
+        assertTouchTarget(AppStrings.Descartar)
         // Nivel 4: sin acción incompatible con el estado.
         compose.onNodeWithText(AppStrings.GuardarDeTodosModos).assertDoesNotExist()
         compose.onNodeWithText(AppStrings.VerExistente).assertDoesNotExist()
@@ -106,6 +109,9 @@ class ActionHierarchyTest {
         compose.onNodeWithText(AppStrings.VerExistente).assertExists()
         compose.onNodeWithText(AppStrings.GuardarDeTodosModos).assertExists()
         compose.onNodeWithText(AppStrings.ReintentarClasificacion).assertDoesNotExist()
+        assertTouchTarget(AppStrings.VerExistente)
+        assertTouchTarget(AppStrings.GuardarDeTodosModos)
+        assertTouchTarget(AppStrings.Descartar)
 
         val saveBounds = compose.onNodeWithText(AppStrings.GuardarDeTodosModos)
             .getUnclippedBoundsInRoot()
@@ -142,5 +148,13 @@ class ActionHierarchyTest {
 
     private fun assertTrue(message: String, condition: () -> Boolean) {
         check(condition()) { message }
+    }
+
+    private fun assertTouchTarget(label: String) {
+        val bounds = compose.onNodeWithText(label).getUnclippedBoundsInRoot()
+        val height = bounds.bottom - bounds.top
+        assertTrue("$label debe conservar un objetivo táctil de 48 dp") {
+            height >= AmMetrics.ControlMinSize
+        }
     }
 }

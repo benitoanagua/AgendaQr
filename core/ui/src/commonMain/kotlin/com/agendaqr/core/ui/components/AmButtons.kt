@@ -3,7 +3,9 @@ package com.agendaqr.core.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,13 +18,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -33,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -40,106 +40,246 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmColorScheme
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
+import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.core.ui.theme.LocalAmColorScheme
 
-/** Shared button wrappers preserve 48 dp targets and stable loading layouts. */
+enum class AmButtonVariant { Primary, Default, Danger, Light, Outline, Text }
 
-/**
- * Cuerpo compartido de los botones de acción con carga: la etiqueta
- * PERMANECE en el layout con alpha 0 y el spinner se superpone centrado —
- * sin salto de ancho; el estado "ocupado" se anuncia con
- * [busyDescription] (stateDescription, copy del llamador).
- *
- */
+enum class AmButtonSize(
+    val visualHeight: Dp,
+    val horizontalPadding: Dp,
+    val iconSize: Dp,
+) {
+    Large(
+        visualHeight = AmMetrics.ButtonLargeHeight,
+        horizontalPadding = AmMetrics.ButtonLargeHorizontalPadding,
+        iconSize = AmMetrics.IconSize,
+    ),
+    Medium(
+        visualHeight = AmMetrics.ButtonCompactHeight,
+        horizontalPadding = AmSpacing.Lg,
+        iconSize = AmMetrics.ButtonMediumIconSize,
+    ),
+    Small(
+        visualHeight = AmMetrics.ButtonSmallHeight,
+        horizontalPadding = AmSpacing.Md,
+        iconSize = AmMetrics.IconSizeCompact,
+    ),
+    ExtraSmall(
+        visualHeight = AmMetrics.ButtonExtraSmallHeight,
+        horizontalPadding = AmSpacing.Sm,
+        iconSize = AmMetrics.IconSizeCompact,
+    ),
+}
+
+internal data class AmButtonColors(
+    val container: Color,
+    val content: Color,
+    val border: Color? = null,
+)
+
+internal fun resolveAmButtonColors(
+    variant: AmButtonVariant,
+    scheme: AmColorScheme,
+    enabled: Boolean,
+    pressed: Boolean,
+): AmButtonColors = when (variant) {
+    AmButtonVariant.Primary -> when {
+        !enabled -> AmButtonColors(scheme.accentDisabled, scheme.textPrimary)
+        pressed -> AmButtonColors(scheme.accentActive, scheme.accentActiveContent)
+        else -> AmButtonColors(scheme.accent, scheme.onAccent)
+    }
+    AmButtonVariant.Default -> when {
+        !enabled -> AmButtonColors(scheme.disabled, scheme.textTertiary)
+        pressed -> AmButtonColors(scheme.componentActive, scheme.textPrimary)
+        else -> AmButtonColors(scheme.surfaceContainerHigh, scheme.textPrimary)
+    }
+    AmButtonVariant.Danger -> when {
+        !enabled -> AmButtonColors(scheme.dangerDisabled, scheme.textPrimary)
+        pressed -> AmButtonColors(scheme.dangerActive, scheme.onDanger)
+        else -> AmButtonColors(scheme.dangerFill, scheme.onDanger)
+    }
+    AmButtonVariant.Light -> when {
+        !enabled -> AmButtonColors(scheme.disabled, scheme.textTertiary)
+        pressed -> AmButtonColors(scheme.accentLightActive, scheme.accentText)
+        else -> AmButtonColors(scheme.accentContainer, scheme.accentText)
+    }
+    AmButtonVariant.Outline -> AmButtonColors(
+        container = if (pressed && enabled) scheme.surfaceActive else scheme.transparent,
+        content = if (enabled) scheme.textPrimary else scheme.textTertiary,
+        border = scheme.functionalBorder,
+    )
+    AmButtonVariant.Text -> AmButtonColors(
+        container = if (pressed && enabled) scheme.surfaceActive else scheme.transparent,
+        content = if (enabled) scheme.accentText else scheme.textTertiary,
+    )
+}
+
+/** TDesign Mobile button with a 48 dp interaction target and compact visual size. */
 @Composable
-internal fun AmLoadingButton(
+fun AmButton(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    variant: AmButtonVariant = AmButtonVariant.Primary,
+    size: AmButtonSize = AmButtonSize.Large,
+    enabled: Boolean = true,
+    isLoading: Boolean = false,
+    busyDescription: String? = null,
+    icon: ImageVector? = null,
+    contentColor: Color? = null,
+    fontWeight: FontWeight? = null,
+    contentPadding: PaddingValues? = null,
+) {
+    AmButtonImpl(
+        label = label,
+        onClick = onClick,
+        modifier = modifier,
+        variant = variant,
+        size = size,
+        enabled = enabled,
+        isLoading = isLoading,
+        busyDescription = busyDescription,
+        icon = icon,
+        contentColor = contentColor,
+        fontWeight = fontWeight,
+        contentPadding = contentPadding,
+        hapticFeedback = false,
+    )
+}
+
+@Composable
+private fun AmButtonImpl(
     label: String,
     onClick: () -> Unit,
     modifier: Modifier,
+    variant: AmButtonVariant,
+    size: AmButtonSize,
     enabled: Boolean,
     isLoading: Boolean,
     busyDescription: String?,
-    containerColor: Color,
-    contentColor: Color,
-    disabledContainerColor: Color,
-    disabledContentColor: Color,
-    icon: ImageVector? = null,
+    icon: ImageVector?,
+    contentColor: Color?,
+    fontWeight: FontWeight?,
+    contentPadding: PaddingValues?,
+    hapticFeedback: Boolean,
 ) {
-    val haptics = LocalHapticFeedback.current
     val interactionSource = remember { MutableInteractionSource() }
-    // Píldora completa (Anexo A: botones primarios 20+).
-    val shape = AmShapes.Pill
-    Button(
-        modifier = modifier
-            .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
-            // Deshabilitado con opacidad .4 (referencia); el estado
-            // habilitado/deshabilitado también vive en la semántica.
-            .then(if (!enabled || isLoading) Modifier.alpha(0.4f) else Modifier)
-            .then(
-                if (isLoading && busyDescription != null) {
-                    Modifier.semantics { stateDescription = busyDescription }
-                } else {
-                    Modifier
-                },
-            ),
-        onClick = {
-            // Háptica ligera de pulsación (Anexo A: feedback táctil
-            // obligatorio); respeta la configuración del sistema.
-            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-            onClick()
-        },
-        enabled = enabled && !isLoading,
-        shape = shape,
-        interactionSource = interactionSource,
-        // Padding vertical propio a cero: la altura la fija el contenido
-        // (48 dp de objetivo táctil), no el relleno interno de Material.
-        // Horizontal compacto de 16 dp.
-        contentPadding = PaddingValues(
-            horizontal = AmSpacing.Lg,
-            vertical = AmSpacing.None,
-        ),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
-            contentColor = contentColor,
-            disabledContainerColor = disabledContainerColor,
-            disabledContentColor = disabledContentColor,
-        ),
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            // Altura DETERMINÍSTICA 48: el contenido manda sobre el nodo
-            // semántico del M3 (el floor externo no lo alcanza en todos
-            // los árboles) y con métricas degeneradas el contenido mide 44.
+    val pressed by interactionSource.collectIsPressedAsState()
+    val isEnabled = enabled && !isLoading
+    val resolved = resolveAmButtonColors(
+        variant = variant,
+        scheme = LocalAmColorScheme.current,
+        enabled = isEnabled,
+        pressed = pressed,
+    )
+    val foreground = contentColor?.takeIf { isEnabled } ?: resolved.content
+    val labelStyle = if (size == AmButtonSize.Small || size == AmButtonSize.ExtraSmall) {
+        AmTextStyles.ButtonLabel.copy(
+            fontSize = AmType.Body,
+            lineHeight = AmType.LineHeightBody,
+        )
+    } else {
+        AmTextStyles.ButtonLabel
+    }
+    val shape = AmShapes.Small
+    val haptics = LocalHapticFeedback.current
+    val buttonModifier = modifier
+        .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
+        .clip(shape)
+        .then(
+            if (isLoading && busyDescription != null) {
+                Modifier.semantics { stateDescription = busyDescription }
+            } else {
+                Modifier
+            },
+        )
+        .clickable(
+            enabled = isEnabled,
+            role = Role.Button,
+            onClickLabel = label,
+            interactionSource = interactionSource,
+            indication = LocalIndication.current,
+            onClick = {
+                if (hapticFeedback) {
+                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                }
+                onClick()
+            },
+        )
+    Layout(
+        modifier = buttonModifier,
+        content = {
             Row(
-                modifier = Modifier.defaultMinSize(minHeight = AmMetrics.ControlMinSize)
+                modifier = Modifier
+                    .heightIn(min = size.visualHeight)
+                    .clip(shape)
+                    .background(resolved.container, shape)
+                    .then(
+                        resolved.border?.let { Modifier.border(AmMetrics.Border, it, shape) } ?: Modifier,
+                    )
+                    .padding(
+                        contentPadding
+                            ?: PaddingValues(
+                                horizontal = size.horizontalPadding,
+                                vertical = AmSpacing.None,
+                            ),
+                    )
                     .then(if (isLoading) Modifier.alpha(0f) else Modifier),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
             ) {
-                if (!isLoading && icon != null) {
+                icon?.let {
                     AmIcon(
-                        imageVector = icon,
+                        imageVector = it,
                         contentDescription = null,
-                        tint = contentColor,
+                        size = size.iconSize,
+                        tint = foreground,
                     )
                 }
                 Text(
-                    label,
-                    style = AmTextStyles.ButtonLabel,
+                    text = label,
+                    style = labelStyle,
+                    fontWeight = fontWeight ?: FontWeight.SemiBold,
+                    color = foreground,
                 )
             }
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(AmSpacing.Xxl),
-                    color = contentColor,
+                    modifier = Modifier.size(size.iconSize),
+                    color = foreground,
                 )
             }
-        }
-    }
+        },
+        measurePolicy = { measurables, constraints ->
+            val rowConstraints = constraints.copy(
+                minWidth = if (constraints.hasFixedWidth) constraints.maxWidth else constraints.minWidth,
+                minHeight = minOf(size.visualHeight.roundToPx(), constraints.maxHeight),
+            )
+            val row = measurables.first().measure(rowConstraints)
+            val width = row.width.coerceIn(constraints.minWidth, constraints.maxWidth)
+            val height = maxOf(row.height, AmMetrics.ControlMinSize.roundToPx())
+                .coerceIn(constraints.minHeight, constraints.maxHeight)
+            val spinner = if (isLoading) {
+                val spinnerSize = size.iconSize.roundToPx()
+                measurables[1].measure(Constraints.fixed(spinnerSize, spinnerSize))
+            } else {
+                null
+            }
+            layout(width, height) {
+                row.placeRelative((width - row.width) / 2, (height - row.height) / 2)
+                spinner?.placeRelative((width - spinner.width) / 2, (height - spinner.height) / 2)
+            }
+        },
+    )
 }
 
 /** Primary action with the TDesign brand fill and accessible foreground. */
@@ -155,19 +295,22 @@ fun AmPrimaryButton(
     /** Glifo decorativo: la etiqueta visible sigue siendo el nombre
      * accesible (contrato de accesibilidad). */
     icon: ImageVector? = null,
+    size: AmButtonSize = AmButtonSize.Large,
 ) {
-    AmLoadingButton(
+    AmButtonImpl(
         label = label,
         onClick = onClick,
         modifier = modifier,
+        variant = AmButtonVariant.Primary,
+        size = size,
         enabled = enabled,
         isLoading = isLoading,
         busyDescription = busyDescription,
         icon = icon,
-        containerColor = AmColor.Accent,
-        contentColor = AmColor.OnAccent,
-        disabledContainerColor = AmColor.Disabled,
-        disabledContentColor = AmColor.OnDisabled,
+        contentColor = null,
+        fontWeight = null,
+        contentPadding = null,
+        hapticFeedback = true,
     )
 }
 
@@ -192,33 +335,26 @@ fun AmDangerButton(
     busyDescription: String? = null,
     /** Glifo de la consecuencia (decorativo: la etiqueta comunica). */
     icon: ImageVector = AmIcons.Trash,
+    size: AmButtonSize = AmButtonSize.Large,
 ) {
-    AmLoadingButton(
+    AmButtonImpl(
         label = label,
         onClick = onClick,
         modifier = modifier,
+        variant = AmButtonVariant.Danger,
+        size = size,
         enabled = enabled,
         isLoading = isLoading,
         busyDescription = busyDescription,
         icon = icon,
-        containerColor = AmColor.DangerContainer,
-        contentColor = AmColor.Danger,
-        disabledContainerColor = AmColor.Disabled,
-        disabledContentColor = AmColor.OnDisabled,
+        contentColor = null,
+        fontWeight = null,
+        contentPadding = null,
+        hapticFeedback = true,
     )
 }
 
-/**
- * Nivel 2 — Acción secundaria.
- * Alternativa importante, pero no la acción principal.
- * Tratamiento menos dominante: variante tonal con background SurfaceContainerLow
- * y border Divider (hairline) para diferenciarla visualmente de la primaria.
- * Área táctil mínima de 48 dp aunque la superficie visible sea 40 dp (mandato de compactación):
- * la zona interactiva completa es 48 dp, la superficie mostrada puede ser menor.
- * Nunca compite visualmente con la acción primaria.
- * Ideal para: acciones alternativas, navegación auxiliar, compartir, editar.
- * Debe haber como máximo una acción secundaria destacada por contexto.
- */
+/** Secondary action; [solid] preserves the legacy mapping to the primary fill. */
 @Composable
 fun AmSecondaryButton(
     label: String,
@@ -227,72 +363,68 @@ fun AmSecondaryButton(
     enabled: Boolean = true,
     isLoading: Boolean = false,
     icon: ImageVector? = null,
-    /** Variante sólida de acento (misma métrica compacta). */
     solid: Boolean = false,
+    size: AmButtonSize = AmButtonSize.Medium,
 ) {
-    // Zona interactiva: 48 dp aunque la superficie visible sea 40. La
-    // superficie (fondo + borde) se dibuja en una capa que ocupa todo el
-    // ancho disponible cuando el llamador pasa fillMaxWidth(), y se ajusta
-    // al contenido en caso contrario (matchParentSize sobre el Box exterior).
-    val container = if (solid) AmColor.Accent else AmColor.SurfaceContainerLow
-    val content = if (solid) {
-        AmColor.OnAccent
-    } else {
-        AmColor.TextPrimary
-    }
-    val borderModifier = if (solid) {
-        Modifier
-    } else {
-        Modifier.border(AmMetrics.Border, AmColor.Divider, AmShapes.Small)
-    }
-    Box(
-        modifier = modifier
-            .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
-            .clickable(
-                enabled = enabled && !isLoading,
-                role = Role.Button,
-                onClickLabel = label,
-                onClick = onClick,
-            )
-            .then(if (!enabled || isLoading) Modifier.alpha(0.4f) else Modifier),
-        contentAlignment = Alignment.Center,
-    ) {
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .heightIn(min = AmMetrics.ButtonCompactHeight)
-                .background(container, AmShapes.Small)
-                .then(borderModifier),
-        )
-        Row(
-            modifier = Modifier.padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Xs),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(AmSpacing.Xxl),
-                    color = content,
-                )
-            } else {
-                if (icon != null) {
-                    AmIcon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        size = AmMetrics.IconSizeCompact,
-                        tint = content,
-                    )
-                }
-                Text(
-                    label,
-                    style = AmTextStyles.ButtonLabel,
-                    color = content,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        }
-    }
+    AmButtonImpl(
+        label = label,
+        onClick = onClick,
+        modifier = modifier,
+        variant = if (solid) AmButtonVariant.Primary else AmButtonVariant.Default,
+        size = size,
+        enabled = enabled,
+        isLoading = isLoading,
+        busyDescription = null,
+        icon = icon,
+        contentColor = null,
+        fontWeight = null,
+        contentPadding = null,
+        hapticFeedback = false,
+    )
+}
+
+@Composable
+fun AmLightButton(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    isLoading: Boolean = false,
+    icon: ImageVector? = null,
+    size: AmButtonSize = AmButtonSize.Medium,
+) {
+    AmButton(
+        label = label,
+        onClick = onClick,
+        modifier = modifier,
+        variant = AmButtonVariant.Light,
+        size = size,
+        enabled = enabled,
+        isLoading = isLoading,
+        icon = icon,
+    )
+}
+
+@Composable
+fun AmOutlineButton(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    isLoading: Boolean = false,
+    icon: ImageVector? = null,
+    size: AmButtonSize = AmButtonSize.Medium,
+) {
+    AmButton(
+        label = label,
+        onClick = onClick,
+        modifier = modifier,
+        variant = AmButtonVariant.Outline,
+        size = size,
+        enabled = enabled,
+        isLoading = isLoading,
+        icon = icon,
+    )
 }
 
 /**
@@ -351,7 +483,7 @@ fun AmCompactAction(
 /**
  * Nivel 3 — Acción terciaria.
  * Alternativas contextuales, navegación auxiliar y acciones de menor prioridad.
- * Acción de texto: `TextButton` con área táctil de 48 dp — la etiqueta
+ * Acción de texto TDesign con área táctil de 48 dp — la etiqueta
  * completa mantiene su target accesible sin peso visual de botón.
  * [color] lo anula el llamador cuando la acción vive sobre un fondo
  * donde el acento no cumple 4.5:1 (p. ej. dentro de un banner de tono,
@@ -373,13 +505,14 @@ fun AmTextAction(
     /** Variante: Default (acento) o Danger (destructiva). Prohíbe el uso de
      *  grises (TextSecondary/TextTertiary) como color de acción. */
     variant: AmTextActionVariant = AmTextActionVariant.Default,
-    /** Padding interno del TextButton. Por defecto el canónico (16 dp
+    /** Padding interno. Por defecto el canónico (16 dp
      *  horizontal). Pásale `PaddingValues(AmSpacing.None)` para alinear el
      *  texto al borde de la superficie contenedora. */
     contentPadding: PaddingValues = PaddingValues(
         horizontal = AmSpacing.Md,
         vertical = AmSpacing.None,
     ),
+    size: AmButtonSize = AmButtonSize.Large,
 ) {
     val actionColor = color ?: when (variant) {
         AmTextActionVariant.Default -> AmColor.AccentText
@@ -390,33 +523,21 @@ fun AmTextAction(
         AmTextActionVariant.Neutral -> FontWeight.SemiBold
         else -> null
     }
-    TextButton(
-        modifier = modifier.defaultMinSize(minHeight = AmMetrics.ControlMinSize),
+    AmButtonImpl(
+        label = label,
         onClick = onClick,
+        modifier = modifier,
+        variant = AmButtonVariant.Text,
+        size = size,
         enabled = enabled,
-        shape = AmShapes.Small,
+        isLoading = false,
+        busyDescription = null,
+        icon = icon,
+        contentColor = actionColor,
+        fontWeight = fontWeight,
         contentPadding = contentPadding,
-    ) {
-        Row(
-            modifier = Modifier.defaultMinSize(minHeight = AmMetrics.ControlMinSize),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
-        ) {
-            if (icon != null) {
-                AmIcon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = if (enabled) actionColor else AmColor.OnDisabled,
-                )
-            }
-            Text(
-                label,
-                style = AmTextStyles.ButtonLabel,
-                fontWeight = fontWeight,
-                color = if (enabled) actionColor else AmColor.OnDisabled,
-            )
-        }
-    }
+        hapticFeedback = false,
+    )
 }
 
 /**

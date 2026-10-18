@@ -218,7 +218,7 @@ class S02UiPolishTest {
         // glifo de 18 dp (IconSizeCompact); los primarios conservan 24.
         return all.firstOrNull { node ->
             node != text &&
-                listOf(18f, 24f).any { expected ->
+                listOf(18f, 20f, 24f).any { expected ->
                     abs(node.size.width - expected * pxPerDp) <= 1f &&
                         abs(node.size.height - expected * pxPerDp) <= 1f
                 } &&

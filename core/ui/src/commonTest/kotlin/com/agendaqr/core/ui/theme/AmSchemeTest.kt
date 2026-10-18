@@ -89,6 +89,12 @@ class AmSchemeTest {
         "surfaceContainer" to surfaceContainer,
         "surfaceContainerHigh" to surfaceContainerHigh,
         "surfaceContainerHighest" to surfaceContainerHighest,
+        "surfaceActive" to surfaceActive,
+        "componentActive" to componentActive,
+        "accentActiveContent" to accentActiveContent,
+        "dangerActive" to dangerActive,
+        "dangerDisabled" to dangerDisabled,
+        "transparent" to transparent,
     )
 
     @Test
@@ -183,6 +189,11 @@ class AmSchemeTest {
         assertEquals("FFF3F3F3", argb(light.surfaceContainer))
         assertEquals("FFE7E7E7", argb(light.surfaceContainerHigh))
         assertEquals("FFDCDCDC", argb(light.surfaceContainerHighest))
+        assertEquals("FFE7E7E7", argb(light.surfaceActive))
+        assertEquals("FFA6A6A6", argb(light.componentActive))
+        assertEquals("FFFFFFFF", argb(light.accentActiveContent))
+        assertEquals("FF881F1C", argb(light.dangerActive))
+        assertEquals("FFFFB9B0", argb(light.dangerDisabled))
 
         val dark = DarkAmColorScheme
         assertEquals("FF181818", argb(dark.background))
@@ -218,13 +229,18 @@ class AmSchemeTest {
         assertEquals("FF181818", argb(dark.surfaceContainer))
         assertEquals("FF383838", argb(dark.surfaceContainerHigh))
         assertEquals("FF4B4B4B", argb(dark.surfaceContainerHighest))
+        assertEquals("FF2C2C2C", argb(dark.surfaceActive))
+        assertEquals("FF4B4B4B", argb(dark.componentActive))
+        assertEquals("FF1B2F51", argb(dark.accentActiveContent))
+        assertEquals("FFC64751", argb(dark.dangerActive))
+        assertEquals("FF703439", argb(dark.dangerDisabled))
     }
 
     @Test
     fun both_schemes_expose_the_same_complete_semantic_roles() {
         val lightFields = LightAmColorScheme.fields()
         val darkFields = DarkAmColorScheme.fields()
-        assertEquals(43, lightFields.size)
+        assertEquals(49, lightFields.size)
         assertEquals(lightFields.keys, darkFields.keys)
         assertTrue(lightFields.values.none { it == Color.Unspecified })
         assertTrue(darkFields.values.none { it == Color.Unspecified })
@@ -237,7 +253,15 @@ class AmSchemeTest {
     fun text_and_filled_state_pairs_meet_wcag_aa() {
         listOf(LightAmColorScheme, DarkAmColorScheme).forEach { scheme ->
             assertTrue(contrast(scheme.onAccent, scheme.accent) >= 4.5, "onAccent/accent")
+            assertTrue(
+                contrast(scheme.accentActiveContent, scheme.accentActive) >= 4.5,
+                "accentActiveContent/accentActive",
+            )
             assertTrue(contrast(scheme.onDanger, scheme.dangerFill) >= 4.5, "onDanger/dangerFill")
+            assertTrue(contrast(scheme.onDanger, scheme.dangerActive) >= 4.5, "onDanger/dangerActive")
+            assertTrue(contrast(scheme.textPrimary, scheme.dangerDisabled) >= 4.5, "textPrimary/dangerDisabled")
+            assertTrue(contrast(scheme.textPrimary, scheme.componentActive) >= 4.5, "textPrimary/componentActive")
+            assertTrue(contrast(scheme.accentText, scheme.surfaceActive) >= 4.5, "accentText/surfaceActive")
             assertTrue(contrast(scheme.onSuccessFill, scheme.successFill) >= 4.5, "onSuccessFill/successFill")
             assertTrue(contrast(scheme.onWarningFill, scheme.warningFill) >= 4.5, "onWarningFill/warningFill")
             assertTrue(contrast(scheme.accentText, scheme.background) >= 4.5, "accentText/background")

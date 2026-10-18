@@ -83,6 +83,10 @@ internal object AmPalette {
     val darkSurfaceContainerHigh = darkGray[10]
     val lightSurfaceContainerHighest = lightGray[3]
     val darkSurfaceContainerHighest = darkGray[9]
+    val lightSurfaceActive = lightGray[2]
+    val darkSurfaceActive = darkGray[11]
+    val lightComponentActive = lightGray[5]
+    val darkComponentActive = darkGray[9]
     val lightBorder = lightGray[3]
     val darkBorder = darkGray[8]
     val lightFunctionalBorder = lightGray[6]
@@ -99,6 +103,8 @@ internal object AmPalette {
     val darkAccent = darkBrand[6]
     val lightAccentActive = lightBrand[7]
     val darkAccentActive = darkBrand[8]
+    val lightAccentActiveContent = Color.White
+    val darkAccentActiveContent = darkBrand[0]
     val lightAccentDisabled = lightBrand[2]
     val darkAccentDisabled = darkBrand[2]
     val lightAccentFocus = lightBrand[0]
@@ -115,6 +121,10 @@ internal object AmPalette {
     val darkDanger = darkErrorScale[7]
     val lightDangerFill = lightErrorScale[6]
     val darkDangerFill = darkErrorScale[5]
+    val lightDangerActive = lightErrorScale[7]
+    val darkDangerActive = darkErrorScale[5]
+    val lightDangerDisabled = lightErrorScale[2]
+    val darkDangerDisabled = darkErrorScale[2]
     val lightDangerContainer = lightErrorScale[0]
     val darkDangerContainer = darkErrorScale[0]
     val lightSuccess = lightSuccessScale[6]
@@ -149,6 +159,7 @@ internal object AmPalette {
     val darkScrim = Color(0x66000000)
     /** Lienzo del QR: blanco en ambos temas para preservar su escaneabilidad. */
     val qrCanvas = Color.White
+    val transparent = Color.Transparent
 }
 
 data class AmColorScheme(
@@ -195,6 +206,12 @@ data class AmColorScheme(
     val surfaceContainer: Color,
     val surfaceContainerHigh: Color,
     val surfaceContainerHighest: Color,
+    val surfaceActive: Color,
+    val componentActive: Color,
+    val accentActiveContent: Color,
+    val dangerActive: Color,
+    val dangerDisabled: Color,
+    val transparent: Color,
 )
 
 val LightAmColorScheme = AmColorScheme(
@@ -241,6 +258,12 @@ val LightAmColorScheme = AmColorScheme(
     surfaceContainer = AmPalette.lightSurfaceContainer,
     surfaceContainerHigh = AmPalette.lightSurfaceContainerHigh,
     surfaceContainerHighest = AmPalette.lightSurfaceContainerHighest,
+    surfaceActive = AmPalette.lightSurfaceActive,
+    componentActive = AmPalette.lightComponentActive,
+    accentActiveContent = AmPalette.lightAccentActiveContent,
+    dangerActive = AmPalette.lightDangerActive,
+    dangerDisabled = AmPalette.lightDangerDisabled,
+    transparent = AmPalette.transparent,
 )
 
 val DarkAmColorScheme = AmColorScheme(
@@ -287,6 +310,12 @@ val DarkAmColorScheme = AmColorScheme(
     surfaceContainer = AmPalette.darkSurfaceContainer,
     surfaceContainerHigh = AmPalette.darkSurfaceContainerHigh,
     surfaceContainerHighest = AmPalette.darkSurfaceContainerHighest,
+    surfaceActive = AmPalette.darkSurfaceActive,
+    componentActive = AmPalette.darkComponentActive,
+    accentActiveContent = AmPalette.darkAccentActiveContent,
+    dangerActive = AmPalette.darkDangerActive,
+    dangerDisabled = AmPalette.darkDangerDisabled,
+    transparent = AmPalette.transparent,
 )
 
 // NOTA: el default del CompositionLocal es el esquema OSCURO. AmTheme
@@ -320,6 +349,8 @@ object AmColor {
     val OnAccentContainer: Color @Composable get() = LocalAmColorScheme.current.onAccentContainer
     val Danger: Color @Composable get() = LocalAmColorScheme.current.danger
     val DangerFill: Color @Composable get() = LocalAmColorScheme.current.dangerFill
+    val DangerActive: Color @Composable get() = LocalAmColorScheme.current.dangerActive
+    val DangerDisabled: Color @Composable get() = LocalAmColorScheme.current.dangerDisabled
     val OnDanger: Color @Composable get() = LocalAmColorScheme.current.onDanger
     val DangerContainer: Color @Composable get() = LocalAmColorScheme.current.dangerContainer
     val Success: Color @Composable get() = LocalAmColorScheme.current.success
@@ -334,6 +365,9 @@ object AmColor {
     val InfoContainer: Color @Composable get() = LocalAmColorScheme.current.infoContainer
     val SurfaceContainerHighest: Color @Composable get() = LocalAmColorScheme.current.surfaceContainerHighest
     val SurfaceContainerHigh: Color @Composable get() = LocalAmColorScheme.current.surfaceContainerHigh
+    val SurfaceActive: Color @Composable get() = LocalAmColorScheme.current.surfaceActive
+    val ComponentActive: Color @Composable get() = LocalAmColorScheme.current.componentActive
+    val AccentActiveContent: Color @Composable get() = LocalAmColorScheme.current.accentActiveContent
     val SurfaceContainerLow: Color @Composable get() = LocalAmColorScheme.current.surfaceContainerLow
     val InverseSurface: Color @Composable get() = LocalAmColorScheme.current.inverseSurface
     val InverseOnSurface: Color @Composable get() = LocalAmColorScheme.current.inverseOnSurface
@@ -369,7 +403,12 @@ object AmMetrics {
     /** Altura VISUAL compacta de botones secundarios: la zona interactiva
      * sigue siendo 48 dp (mandato de compactación: la superficie visible
      * puede ser menor que el target). */
+    val ButtonLargeHeight = 48.dp
     val ButtonCompactHeight = 40.dp
+    val ButtonSmallHeight = 32.dp
+    val ButtonExtraSmallHeight = 28.dp
+    val ButtonLargeHorizontalPadding = 20.dp
+    val ButtonMediumIconSize = 20.dp
     /** Altura visual de píldoras/chips compactos. */
     val ChipCompactHeight = 32.dp
     /** Altura visual compacta de entradas. */
