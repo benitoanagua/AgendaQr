@@ -37,6 +37,10 @@ test.
   `feature/destinations/presentation/build/roborazzi/` (no versionados).
 - La "referencia" es `docs/04-ux/visual-hashes/manifest.json`: SHA-256 de
   cada PNG (TEXTO versionado).
+- Excepción temporal y acotada: `docs/04-ux/visual-hashes/before/` conserva
+  las capturas requeridas como evidencia previa de la migración TDesign
+  (T1). No convierte los PNG generados habitualmente en artefactos
+  versionados.
 - Regresión visual = comparación de hashes:
   `./gradlew verifyVisualHashes` (regenera + compara).
 

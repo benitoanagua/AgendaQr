@@ -10,18 +10,22 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import kotlin.math.abs
 import com.agendaqr.core.ui.components.AmIcon
@@ -81,15 +85,30 @@ import org.robolectric.annotation.Config
 // (sin esto las capturas salen en negro/idénticas).
 @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = "w360dp-h740dp")
-class VisualReferenceScreenshotTest {
+open class VisualReferenceScreenshotTest {
 
     @get:Rule
     val compose = createComposeRule()
 
+    protected open val captureSuffix: String = ""
+
     private fun shot(name: String, dark: Boolean, content: @androidx.compose.runtime.Composable () -> Unit) {
-        compose.setContent { AmTheme(darkTheme = dark) { content() } }
+        var fontScale by mutableFloatStateOf(1f)
+        compose.setContent {
+            val density = LocalDensity.current.density
+            AmTheme(darkTheme = dark) {
+                CompositionLocalProvider(
+                    LocalDensity provides Density(density = density, fontScale = fontScale),
+                ) {
+                    content()
+                }
+            }
+        }
         compose.waitForIdle()
-        compose.onRoot().captureRoboImage("build/roborazzi/$name.png")
+        compose.onRoot().captureRoboImage("build/roborazzi/$name$captureSuffix.png")
+        compose.runOnIdle { fontScale = 2f }
+        compose.waitForIdle()
+        compose.onRoot().captureRoboImage("build/roborazzi/$name$captureSuffix-font-200.png")
     }
 
     companion object {
@@ -505,6 +524,7 @@ class VisualReferenceScreenshotTest {
                                 )
                             }
                         }
+
                     }
                 }
             }
@@ -571,6 +591,7 @@ class VisualReferenceScreenshotTest {
                                             )
                                         }
                                     }
+
                                 },
                                 onClick = {},
                                 showDivider = !isLast,
@@ -1342,4 +1363,10 @@ class VisualReferenceScreenshotTest {
             onSelect = {},
         )
     }
+}
+
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [34], qualifiers = "w320dp-h640dp")
+class VisualReferenceScreenshot320Test : VisualReferenceScreenshotTest() {
+    override val captureSuffix: String = "-320dp"
 }
