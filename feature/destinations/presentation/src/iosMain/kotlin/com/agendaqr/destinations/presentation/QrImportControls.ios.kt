@@ -40,7 +40,7 @@ actual fun QrImportControls(
             icon = com.agendaqr.core.ui.components.AmIcons.Gallery,
             onClick = { IosQrImportController.openMultiple(onResult = onResult) },
         )
-        QrCameraEntryControl(onResult = onResult)
+        QrCameraEntryControl(onResult = onResult, showDivider = false)
     }
 }
 
@@ -67,6 +67,7 @@ actual fun QrGalleryControls(
 @Composable
 actual fun QrCameraEntryControl(
     onResult: (QrImportResult) -> Unit,
+    showDivider: Boolean,
 ) {
     // Misma política de permiso que Android — contexto
     // antes de pedir, y "Abrir ajustes" cuando está denegado (la URL de
@@ -118,6 +119,7 @@ actual fun QrCameraEntryControl(
             },
             leading = { AmIconBadge(icon = AmIcons.Camera, tone = AmTone.Info) },
             showChevron = true,
+            showDivider = showDivider,
         )
     }
 }
@@ -136,13 +138,13 @@ actual fun sharedImportsSupported(): Boolean = false
  * docs/STATE.md.
  */
 @Composable
-actual fun QrPdfPickerControl() {
+actual fun QrPdfPickerControl(showDivider: Boolean) {
     AmListRow(
         title = AppStrings.ElegirArchivoPdf,
         titleMaxLines = Int.MAX_VALUE,
         onClick = { IosPdfPicker.present() },
         leading = { AmIconBadge(icon = AmIcons.Attachment, tone = AmTone.Info) },
         showChevron = true,
-        showDivider = true,
+        showDivider = showDivider,
     )
 }

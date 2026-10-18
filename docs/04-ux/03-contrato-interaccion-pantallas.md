@@ -51,7 +51,7 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - estados: `content`, `permission`
 - gestos: —
 - capturas: `content`
-- componentes: `AmScreenScaffold`, `AmListRow`, `AmListBody`, `AmSectionHeader`, `AmQrPreview`
+- componentes: `AmScreenScaffold`, `AmIconBadge`, `AmListRow`, `AmListBody`, `AmQrPreview`
 - pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ScreensA11yCoverageTest.kt`
 - pruebas: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ScreensA11yCoverageTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/S02UiPolishTest.kt`
 

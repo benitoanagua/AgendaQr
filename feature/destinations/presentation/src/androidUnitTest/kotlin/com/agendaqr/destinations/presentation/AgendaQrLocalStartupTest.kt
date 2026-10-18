@@ -1,11 +1,9 @@
 package com.agendaqr.destinations.presentation
 
 import android.content.Context
-import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
 import com.agendaqr.destinations.data.AgendaQrAndroidStorage
 import com.agendaqr.destinations.data.createLocalProtectionRepository
@@ -48,7 +46,7 @@ class AgendaQrLocalStartupTest {
 
         // Pantalla de acceso LOCAL (PIN), no credenciales remotas.
         compose.onNodeWithText(AppStrings.ConfiguraTuPin, useUnmergedTree = true).assertExists()
-        compose.onNodeWithText(AppStrings.GuardarPin, useUnmergedTree = true).assertExists()
+        compose.onNodeWithText(AppStrings.Continuar, useUnmergedTree = true).assertExists()
         compose.onNodeWithText(AppStrings.IniciarSesion, useUnmergedTree = true).assertDoesNotExist()
         compose.onNodeWithText(AppStrings.Correo, useUnmergedTree = true).assertDoesNotExist()
         compose.onNodeWithText(AppStrings.Contrasena, useUnmergedTree = true).assertDoesNotExist()
@@ -64,8 +62,15 @@ class AgendaQrLocalStartupTest {
             .getString("agendaqr.local.profile.v1", null)
         assertNotNull(rawProfile)
 
-        compose.onAllNodes(hasSetTextAction())[0].performTextInput("1234")
-        compose.onAllNodes(hasSetTextAction())[1].performTextInput("1234")
+        // Flujo del onboarding en dos pasos con teclado propio (V1.16):
+        // crear el código, confirmarlo y guardar.
+        "1234".forEach { digit ->
+            compose.onNodeWithText(digit.toString()).performClick()
+        }
+        compose.onNodeWithText(AppStrings.Continuar, useUnmergedTree = true).performClick()
+        "1234".forEach { digit ->
+            compose.onNodeWithText(digit.toString()).performClick()
+        }
         compose.onNodeWithText(AppStrings.GuardarPin, useUnmergedTree = true).performClick()
         compose.waitForIdle()
 
