@@ -310,10 +310,13 @@ El conjunto de IDs de esta tabla debe coincidir exactamente con
 | E-03 | Borde de grupos y tarjetas de contenido en `AmLists.kt`. | `border:AmLists.kt` |
 | E-04 | Borde de foco del campo de búsqueda en `AmInputs.kt`. | `border:AmInputs.kt` |
 | E-05 | Elevación de las superficies de lista en `AmLists.kt`. | `shadow:AmLists.kt` |
-| E-06 | Elevación de botones en `AmButtons.kt`. | `shadow:AmButtons.kt` |
 
 Toda excepción nueva requiere justificación, prueba y actualización simultánea
-del contrato y del gate.
+del contrato y del gate. `verifyScreenContract` comprueba además que cada
+excepción registrada siga usándose en el archivo declarado: E-06 (elevación de
+botones) se retiró porque TDesign no da sombra a los botones y `AmButtons.kt`
+no eleva ninguna superficie, de modo que el registro quedó alineado con el uso
+real.
 
 ## 13. Verificación
 
