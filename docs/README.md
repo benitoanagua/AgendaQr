@@ -22,6 +22,7 @@
 | [`04-ux/03-contrato-interaccion-pantallas.md`](04-ux/03-contrato-interaccion-pantallas.md) | Contrato de interacción por pantalla (generado; verificado por `verifyScreenContract`) |
 | [`04-ux/04-capacidades-y-comportamientos.md`](04-ux/04-capacidades-y-comportamientos.md) | Capacidades y comportamientos |
 | [`04-ux/05-guia-de-voz.md`](04-ux/05-guia-de-voz.md) | Guía de voz (tuteo) |
+| [`04-ux/06-trazabilidad-stitch-tdesign.md`](04-ux/06-trazabilidad-stitch-tdesign.md) | Trazabilidad Stitch ↔ contrato de pantallas (generado; verificado por `verifyScreenContract`) |
 
 ## Sistema de diseño (TDesign Mobile)
 
@@ -50,7 +51,7 @@
 | [`07-decisiones/ADR-0012-ui-convencional-material3.md`](07-decisiones/ADR-0012-ui-convencional-material3.md) | ADR histórico; autoría visual sustituida por ADR-0013 |
 | [`07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md`](07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md) | ADR histórico; autoría visual sustituida por ADR-0014 |
 | [`07-decisiones/ADR-0014-referencia-ant-design-mobile.md`](07-decisiones/ADR-0014-referencia-ant-design-mobile.md) | ADR histórico: referencia Ant Design Mobile (suplantada por ADR-0020 y ADR-0021) |
-| [`07-decisiones/ADR-0015-referencia-stitch-jerarquia-financiera.md`](07-decisiones/ADR-0015-referencia-stitch-jerarquia-financiera.md) | ADR: patrones financieros de la referencia Stitch (segmentado, tags tonales, hero QR); paleta e Inter no adoptadas (acotada por ADR-0017) |
+| [`07-decisiones/ADR-0015-referencia-stitch-jerarquia-financiera.md`](07-decisiones/ADR-0015-referencia-stitch-jerarquia-financiera.md) | ADR histórico: patrones financieros de la referencia Stitch (segmentado, tags tonales, hero QR); su fuente Stitch fue sustituida por ADR-0024 |
 | [`07-decisiones/ADR-0016-identidad-local-sin-cuenta.md`](07-decisiones/ADR-0016-identidad-local-sin-cuenta.md) | ADR: identidad local sin cuenta, login no obligatorio, namespace por perfil, PIN, migración y limitaciones |
 | [`07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md`](07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md) | ADR histórico: alineación con Ant Design Mobile 5.43.0 (suplantada por ADR-0020 y ADR-0021) |
 | [`07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md`](07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md) | ADR: correcciones UX de captura rápida (enmienda ADR-0016 y la congelación UX en su alcance) |
@@ -58,7 +59,8 @@
 | [`07-decisiones/ADR-0020-identidad-visual-agendaqr.md`](07-decisiones/ADR-0020-identidad-visual-agendaqr.md) | ADR histórico: identidad visual AgendaQr (suplantado por ADR-0023) |
 | [`07-decisiones/ADR-0021-referencias-apps-chinas-por-pantalla.md`](07-decisiones/ADR-0021-referencias-apps-chinas-por-pantalla.md) | ADR histórico: referencias por pantalla y auditoría de brecha (suplantado por ADR-0023) |
 | [`07-decisiones/ADR-0022-direccion-visual-super-app.md`](07-decisiones/ADR-0022-direccion-visual-super-app.md) | ADR histórico: Super-App (suplantado por ADR-0023) |
-| [`07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md`](07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md) | ADR: adopción fiel de TDesign Mobile (autoridad visual vigente) |
+| [`07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md`](07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md) | ADR: adopción fiel de TDesign Mobile (autoridad de tokens y componentes vigente) |
+| [`07-decisiones/ADR-0024-stitch-tdesign-screen-templates.md`](07-decisiones/ADR-0024-stitch-tdesign-screen-templates.md) | ADR: el proyecto Stitch `TDesign Screen Templates` es la referencia primaria de composición UX/UI (enmienda ADR-0023; sustituye la fuente Stitch de ADR-0015) |
 
 ## Cómo se mantiene
 

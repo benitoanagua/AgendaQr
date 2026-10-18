@@ -1,9 +1,12 @@
 # ADR-0023 — Sistema de diseño de AgendaQr
 
-**Estado:** ACEPTADO — versión 0.2.7 del 2026-10-18
+**Estado:** ACEPTADO — versión 0.2.7 del 2026-10-18 · **Enmendada por ADR-0024**
+(2026-10-18: la composición, navegación, jerarquía y gestos se alinean con el
+proyecto Stitch `TDesign Screen Templates`; la autoridad de tokens y
+componentes sigue siendo esta ADR)
 **Relaciona:** especificación UX/UI V1.13, contrato normativo de diseño,
 ADR-0007 (verificación de layout), ADR-0008 (voz), ADR-0015 (jerarquía
-financiera).
+financiera), ADR-0024 (referencia de composición).
 
 ## 1. Decisión
 
@@ -24,6 +27,11 @@ el orden de los flujos, la navegación conceptual y el back stack, la persistenc
 local-first, el copy funcional, la guía de voz y los requisitos de accesibilidad
 definidos por el producto.
 
+> Enmendado por ADR-0024: la composición, la navegación, la jerarquía de
+> acciones, el back stack y los gestos pueden cambiar para seguir el proyecto
+> Stitch `TDesign Screen Templates`. La persistencia local-first, el copy, la
+> guía de voz y la accesibilidad del producto se conservan.
+
 ## 2. Aplicación
 
 1. Los temas claro y oscuro, roles semánticos, superficies, radios, espaciado,
@@ -41,6 +49,9 @@ definidos por el producto.
    11 sp. El tamaño visual de cada componente sigue la escala oficial aplicable.
 6. Los cuatro destinos raíz, el back stack y las acciones existentes conservan
    sus contratos. No se incorporan gestos ni capacidades de producto nuevos.
+   *(Enmendado por ADR-0024: la navegación, el back stack y los gestos pueden
+   alinearse con Stitch `TDesign Screen Templates`; los límites de dominio y
+   privacidad se conservan.)*
 7. `AmIcon` y `AmIcons` exponen los glifos TDesign usados por el producto. Los
    recursos derivados y avisos de licencia se registran antes de distribuirlos.
 
@@ -91,5 +102,7 @@ misma intención y transición funcional.
 6. Las licencias y atribuciones están presentes y las librerías Flutter/Dart no
    se incluyen como dependencias de ejecución.
 7. Las pruebas de navegación y back stack pasan sin cambios de contrato.
+   *(Enmendado por ADR-0024: los cambios de navegación autorizados actualizan
+   contrato y pruebas en el mismo cambio lógico.)*
 8. Las compilaciones, pruebas y comprobaciones de runtime se informan según lo
    ejecutado; compilar no se considera validación de runtime.

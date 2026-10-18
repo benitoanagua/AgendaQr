@@ -41,6 +41,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Reformas visuales por pantalla (brechas G1–G9: botón primario fijo al pie, tarjetas de ajustes con encabezado de sección, insignia de estado con texto, evidencia decodificada en tarjeta, metadatos de fecha y marca de tipo en resultados) | gate del design system + Robolectric de presentación + verificación de layout (`LayoutReferenceTest`) |
 | Dirección visual TDesign Mobile 0.2.7 (ADR-0023): tokens, componentes, acciones de Inicio, escala tipográfica, elevación, movimiento y pulsación | gate del design system + Robolectric de presentación + verificación de layout (escenarios 320 dp, escala de fuente 200 % y estados de botones); revisión en dispositivo real pendiente y declarada como no verificada |
 | Contrato de interacción por pantalla (19 superficies: ruta real, destinos válidos, estados, gestos, componentes, pruebas con señal de accesibilidad y escenarios de captura) | `verifyScreenContract` + `verifyScreenContractFixtures` (dentro de `verifyAgendaQrArchitecture`): cruza el contrato con `AppRoute`/rutas de flujo, archivos, símbolos de `core/ui`, claves de `AppStrings`, pruebas y el documento generado |
+| Trazabilidad Stitch ↔ contrato de pantallas (ADR-0024): proyecto Stitch `TDesign Screen Templates` (`projects/14722565667748094207`), 12 superficies con pantalla real de Stitch y 7 exclusiones con motivo | `verifyScreenContract` + `verifyScreenContractFixtures` (divergencias `stitch-*`) + documento generado `04-ux/06-trazabilidad-stitch-tdesign.md`; inventario verificado por MCP (`list_projects`, `list_screens`, `get_screen` sobre las 12 pantallas y sus HTML/screenshot) |
 | Pulsación fiel a TDesign en botones, celdas, tarjetas y acciones de diálogo (color activo, sin ripple) | `:core:ui:testDebugUnitTest`; desviación D-11 para el resto de superficies |
 
 ## 2. Implementado pero NO VERIFICADO en este entorno
@@ -62,7 +63,7 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
 | Prompt biométrico en dispositivo | Código implementado (`BiometricPrompt` con host `FragmentActivity` en Android, `LocalAuthentication`/`LAContext` en iOS); el mapeo de errores y la invariante fail-closed están probados en JVM, pero el prompt sobre hardware real no puede ejecutarse aquí | abrir la app con PIN configurado en dispositivo con biometría inscrita: éxito desbloquea; fallo/cancelación mantiene el bloqueo con el PIN visible |
 | Runtime del selector PDF de iOS (`UIDocumentPickerViewController`) | Implementado y compilado contra bindings reales; el contrato del sistema requiere simulador/dispositivo | elegir un PDF en «Elegir archivo (PDF)» en S02 → llega al diálogo «Comprobante recibido» |
 | NavigationRail en tablet/plegable | El layout se verifica por test (w720dp, `LayoutReferenceTest`); falta el render en hardware real | render real en tablet/plegable |
-| Galería visual de capturas (claro/oscuro, 320/360 dp, fuente 200 %, tablet con NavigationRail) | No se genera en este entorno: no hay render Robolectric con capturas ni emulador, y ADR-0007 prohíbe versionarlas. `verifyScreenContract` valida las capturas si existen (esquema de nombre, dimensiones reales, duplicados y cobertura) | generar la galería bajo demanda con el esquema `<superficie>--<estado>--<ancho>dp--<tema>--font<escala>.png` en `build/` y publicarla como artefacto de CI |
+| Galería estricta por superficie (`build/captures/gallery/`: claro/oscuro, 320/360 dp, fuente 200 %, tablet con NavigationRail) | Sin productor todavía: las pruebas de layout expandidas no cubren todas las superficies (p. ej. `contextdetail`, `operationeditor`, `camera`). La galería de referencias de layout sí se regenera bajo demanda (`:feature:destinations:presentation:captureScreenshots -Pagendaqr.capture=true`: 74 PNG a 360 dp, claro/oscuro, con índice `build/roborazzi/index.html`) y no se versiona (ADR-0007) | `verifyScreenContract` valida las capturas estrictas si existen (esquema, dimensiones reales, duplicados, cobertura); producirlas exige ampliar las pruebas de captura por superficie |
 
 ## 3. Límites conocidos (decisiones, no defectos)
 
@@ -85,6 +86,15 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
 
 ## 4. Pendientes conocidos
 
+- **Migración de composición por pantalla al proyecto Stitch (ADR-0024):** la
+  trazabilidad superficie ↔ pantalla de Stitch es ejecutable, pero las
+  pantallas todavía componen según la especificación UX/UI V1.13 previa.
+  Rediseñar S00/S01/S02/S04/S06/S07/S07-list/S08/S09/S12 y los detalles contra
+  sus pantallas de Stitch exige propagar cada cambio a especificación,
+  contrato estructurado, código y pruebas en el mismo cambio lógico.
+- **Productor de la galería estricta de capturas (§2):** sin pruebas de
+  captura por superficie, `build/captures/gallery/` queda vacío y el gate solo
+  valida capturas cuando existen.
 - **Share Extension de iOS:** `sharedImportsSupported()` devuelve false en iOS; el
   bloque «Desde otra app» de S02 no se muestra hasta que la extensión exista.
   **Bloqueo concreto:** el proyecto Xcode no está versionado en el repositorio
