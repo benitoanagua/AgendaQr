@@ -20,8 +20,8 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Migración de bytes de comprobantes heredados (`<base>/comprobantes/<user_id>/` → perfil local) | `LegacyComprobanteBytesMigrationTest` (idempotencia, no-borrado, fallo parcial, aislamiento) |
 | Modo de demostración aislado (perfil `demo-profile-v1`, sin sync) | `DemoDataTest` + `DemoSeederTest` (determinista, idempotente, no toca perfil real) |
 | Migración de instalaciones previas al perfil local | data tests (idempotencia, no borra origen, no mezcla cuentas, detección por claves sin cliente remoto) |
-| Nube opcional («Cuenta y respaldo» detrás de Inicio) | compilación Android/iOS + gate + captura `account-{light,dark}` (SignedOut con doble determinista) |
-| Chrome e insets (TopBar, NavigationBar/Rail, Scaffold con contentWindowInsets) | Robolectric suite + gate (incl. captura tablet w720dp con NavigationRail) |
+| Nube opcional («Cuenta y respaldo» detrás de Inicio) | compilación Android/iOS + gate + verificación de layout `account-{light,dark}` (SignedOut con doble determinista) |
+| Chrome e insets (TopBar, NavigationBar/Rail, Scaffold con contentWindowInsets) | Robolectric suite + gate (incl. verificación de layout tablet w720dp con NavigationRail) |
 | Edge-to-edge Android (`enableEdgeToEdge`) | ensamblado |
 | Predictive back (PredictiveBackHandler con progreso) | compilación 3 targets |
 | Búsqueda global (S04/S05) | Robolectric suite |
@@ -43,7 +43,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 
 ## 2. Implementado pero NO VERIFICADO en este entorno
 
-No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local de las nuevas capturas visuales.
+No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local de las verificaciones de layout.
 
 | Capacidad | Motivo | Cómo se verifica |
 |---|---|---|

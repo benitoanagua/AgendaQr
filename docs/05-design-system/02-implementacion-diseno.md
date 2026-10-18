@@ -33,7 +33,7 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 ## 2. Reglas de token
 
 - Todo literal visual (hex, `dp`, `sp`, `Color(...)`, `Color.<nombre>`, formas con esquinas) vive en `AmTokens.kt`. El resto del repositorio consume `AmColor`/`AmSpacing`/`AmShapes`/`AmRadius`/`AmMetrics`/`AmType`/`AmTextStyles`/`AmMotion`.
-- Un cambio visual es un cambio de token + pin actualizado en `AmSchemeTest` + capturas regeneradas; nunca un literal nuevo en una pantalla. Las referencias externas orientan la exploración, no determinan los valores.
+- Un cambio visual es un cambio de token + pin actualizado en `AmSchemeTest`; nunca un literal nuevo en una pantalla. Las referencias externas orientan la exploración, no determinan los valores.
 - Los pares de color llegan verificados: `AmSchemeTest` fija los umbrales (4.5:1 contenido, 3:1 bordes/foco, 3:1 suelo deshabilitado); `AmContrastPairsTest` fija los bloques de identidad de contexto, el par del botón primario y el rol focus.
 
 ## 3. Reglas de componente
