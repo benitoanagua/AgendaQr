@@ -1,6 +1,6 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — contrato funcional V1.9 y composición V1.16/ADR-0023, enmendada por ADR-0024
+**Estado:** FROZEN — contrato funcional V1.9 y composición V1.18/ADR-0023, enmendada por ADR-0024
 **Fecha:** 2026-10-11  
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
 
@@ -18,6 +18,8 @@
 | V1.14 | 2026-10-18 | Reconciliación contra TDesign 0.2.7 y el contrato normativo: se corrige la contradicción interna de S07/S08 (selector de contexto, fecha y hora se presentan con `AmDialog` y listas, nunca con bottom sheet, D-07) y se enlaza el contrato de interacción por pantalla (`04-ux/03-contrato-interaccion-pantallas.md`), verificado por `verifyScreenContract`. La reunión de la congelación no aporta ni quita gestos, pantallas ni navegación: la auditoría no halló ningún patrón de TDesign que los exija. |
 | V1.15 | 2026-10-18 | Enmienda por ADR-0024 (composición desde el proyecto Stitch `TDesign Screen Templates`): S01 alinea la navbar con el nombre de la superficie ("Inicio", como Contextos y Buscar) y los filtros Todos/Favoritos pasan de píldoras a control segmentado mutuamente excluyente con conteo real. No se adoptan del S01 de Stitch, con motivo registrado: el glifo `tune` del disparador de búsqueda (prometería filtros que viven en S04), la píldora persistente "Modo local activo" (engañosa con respaldo activo), el botón QR de la barra superior (duplicaría la acción rápida), "Desliza para ver más" (V1.13: la tarjeta asomada es el indicio) y la miniatura QR en las tarjetas de favoritos (exposición en la raíz que exige decisión de producto). Intención, reglas de negocio, navegación y copy funcional: intactos. |
 | V1.16 | 2026-10-18 | Enmienda por ADR-0024: el desbloqueo local (S00) adopta la entrada propia de su pantalla de Stitch — héroe centrado, puntos enmascarados y teclado 3×4 con borrado accesible — en lugar del campo de texto con IME. El envío sigue siendo explícito (PIN de 4 a 12), la biometría y la demostración permanecen como acciones de texto, y la configuración inicial conserva el patrón Input (sin pantalla de Stitch; alineación pendiente de decisión). No se adoptan, con motivo registrado: "¿Olvidaste tu PIN? Ver respaldo local" (canal de recuperación NO IMPLEMENTADO) y el copy criptográfico ("datos cifrados", "llave maestra", ".vault") — el cifrado en reposo no existe y el PIN no es clave de cifrado. Intención, reglas de negocio y copy funcional existente: intactos. |
+| V1.17 | 2026-10-18 | Enmienda por ADR-0024: S02 adopta la composición de su pantalla de Stitch — héroe centrado y un único grupo de métodos en el orden de la jerarquía que esta especificación declara (Galería → Cámara, con Archivo al pie); se retiran los rótulos "Desde archivos"/"Desde la cámara" y el PDF deja de interponerse entre la galería y la cámara. La ayuda "Desde otra app" sigue siendo texto breve al pie (no se adopta la tarjeta destacada de Stitch: contradice la decisión de mantenerla como ayuda no destacada). No se adoptan los badges por método ("Recomendado", "100% local", chips de formato) ni el copy nuevo de Stitch (copy funcional congelado). Intención, reglas de negocio y rutas: intactos. |
+| V1.18 | 2026-10-18 | Enmienda por ADR-0024 (resuelve la decisión pendiente de V1.16): la configuración inicial del PIN (S00) se alinea al desbloqueo y usa el teclado propio en dos pasos — crear el código (acción "Continuar", exige la longitud mínima del dominio) y confirmarlo (acción "Guardar PIN") — con héroe, puntos enmascarados y errores como texto. Borrar con la confirmación vacía vuelve al paso de creación sin perder el código. La demostración sigue disponible como acción de texto. Intención, reglas de negocio y gate del PIN: intactos (la validación sigue viviendo en el gate). |
 
 La composición funcional y las reglas de producto corresponden a V1.9; V1.13 define la composición de pantallas y los patrones de interacción. ADR-0023 y el contrato normativo de diseño fijan el sistema vigente. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
@@ -69,15 +71,15 @@ componentes y pruebas) vive en
 [`03-contrato-interaccion-pantallas.md`](03-contrato-interaccion-pantallas.md),
 generado desde el contrato estructurado y verificado por `verifyScreenContract`.
 
-### S00 — Acceso local (V1.6, ADR-0016; composición V1.16)
+### S00 — Acceso local (V1.6, ADR-0016; composición V1.18)
 Intención: entrar al dispositivo propio. No es un login: no hay correo, contraseña ni red.
 
-    PRIMER ARRANQUE      configurar PIN (código + confirmación) → Guardar
+    PRIMER ARRANQUE      configurar PIN (código + confirmación, dos pasos) → Guardar
     ARRANQUES POSTERIORES desbloquear con PIN
 
-- Contenido centrado con héroe, título y descripción. El desbloqueo entra el PIN con teclado propio y puntos enmascarados (S00 de Stitch, V1.16); la configuración inicial conserva el patrón Input. La acción primaria permanece fija al pie. Biometría y cambio a PIN son acciones de texto cuando correspondan.
+- Contenido centrado con héroe, título y descripción. Desbloqueo y configuración entran el PIN con teclado propio y puntos enmascarados (S00 de Stitch, V1.16; configuración en dos pasos crear → confirmar, V1.18). La acción de cada paso permanece fija al pie. Biometría y cambio a PIN son acciones de texto cuando correspondan.
 - El perfil local se crea solo, sin cuenta; el PIN protege el acceso al dispositivo.
-- El PIN es de 4 a 12 dígitos, oculto; en el desbloqueo los errores y los intentos restantes viven como texto bajo los puntos, y en la configuración el error se asocia al campo.
+- El PIN es de 4 a 12 dígitos, oculto; los errores y los intentos restantes viven como texto bajo los puntos. El paso de creación exige la longitud mínima del dominio; una confirmación distinta reporta "no coinciden" sin crear credencial.
 - Confirmación distinta → error "no coinciden" sin crear credencial.
 - Código incorrecto → error con intentos restantes; al agotar intentos hay un bloqueo temporal progresivo.
 - El bloqueo ocurre al pasar la app a segundo plano; al reanudar se vuelve a pedir el PIN. Con un flujo externo iniciado por la app (galería, cámara, selectores, compartir) hay una gracia acotada de 120 s; vencida, se bloquea al volver.
@@ -114,10 +116,10 @@ Intención: mostrar el QR. La única acción primaria es "Mostrar QR" (pantalla 
 
 Composición: navbar con atrás y overflow "…" (Action-sheet); QR en tarjeta sobre lienzo blanco; "Mostrar QR" como acción primaria y "Compartir" como secundaria. Los metadatos se agrupan como Cell-group; el contenido decodificado permanece expandible y copiable. Eliminar conserva su confirmación destructiva.
 
-### S02 — Añadir (V1.3, ADR-0013; presentación V1.13)
+### S02 — Añadir (V1.3, ADR-0013; composición V1.17)
 Intención: traer algo que el usuario ya tiene.
 
-    [Cell-group: Galería → Archivo (PDF, solo donde se soporta) → Cámara]
+    [héroe centrado; Cell-group único: Galería → Cámara → Archivo (PDF, solo donde se soporta)]
     [privacidad de cámara como descripción de su celda]
     [ayuda "Desde otra app" en Footer, solo donde se soporta]
 
@@ -127,7 +129,9 @@ Intención: traer algo que el usuario ya tiene.
 - El bloque "Desde otra app" es una ayuda breve, no una sección
   permanente destacada, y solo aparece donde la plataforma soporta
   compartir hacia Agenda QR.
-- Jerarquía conservada: Galería → Cámara.
+- Jerarquía conservada: Galería → Cámara. Desde V1.17 el orden visual
+  sigue esa jerarquía (Archivo al pie del grupo único), como en la
+  pantalla S02 de Stitch; antes el PDF se interponía entre ambas.
 
 ### S03 — Cámara (presentación V1.13)
 Intención: capturar un QR físico. La detección debe ser automática cuando sea posible. No se muestran métricas técnicas del scanner.
