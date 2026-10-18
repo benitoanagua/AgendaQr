@@ -1,6 +1,6 @@
 # Reglas de implementación del sistema de diseño
 
-**Estado:** Guía de implementación. El contrato normativo vigente es `00-contrato-normativo-diseno.md` (ADR-0022); esta guía resume la estructura de `core/ui` y las reglas ejecutables del sistema.
+**Estado:** Guía de implementación. El contrato normativo vigente es `00-contrato-normativo-diseno.md` (ADR-0023, TDesign Mobile 0.2.7); esta guía resume la estructura de `core/ui` y las reglas ejecutables del sistema.
 
 ## 1. Mapa de la implementación
 
@@ -14,14 +14,14 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 │   └── ReducedMotion.kt   # expect/actual: LocalReducedMotion + ProvideReducedMotion
 └── components/
     ├── AmText.kt          # AmText, AmHeading (texto con interlineado propio)
-    ├── AmIcon.kt          # AmIcon + AmIcons (Lucide, único punto de entrada)
+    ├── AmIcon.kt          # AmIcon + AmIcons (TDesign Icons, único punto de entrada)
     ├── AmTone.kt           # AmTone + toneColors + glifo por tono
-    ├── AmButtons.kt       # acciones primarias con gradiente, secundarias y destructivas; filtros, segmentado, favorito
+    ├── AmButtons.kt       # acciones planas (sin gradiente), secundarias y destructivas; filtros, segmentado, favorito
     ├── AmInputs.kt        # AmTextField, AmAmountField (cifras tabulares), AmSearchField y AmSearchTrigger
     ├── AmLists.kt         # filas, tarjetas, badges, metadatos y AmQuickAction (rejilla de Inicio)
     ├── AmStatus.kt        # banners, estados, carga, esqueleto, feedback de éxito
     ├── AmClipboard.kt     # rememberAmClipboard (expect/actual: copiar contenido al portapapeles)
-    ├── AmChrome.kt        # AmTopBar, AmHeroHeader, navegación raíz, FAB reutilizable, transición de superficies
+    ├── AmChrome.kt        # AmTopBar, AmHeroHeader, navegación raíz, transición de superficies (sin FAB: Inicio usa la rejilla de acciones)
     ├── AmScaffold.kt      # AmScreenScaffold (contenedor de pantalla), AmBottomAction (acción principal fija: ancho completo + navigationBars + IME)
     ├── AmDialogs.kt       # AmDialog y AmDialogList con formas y estilos de tokens
     ├── AmFeedback.kt      # skeleton, paginación, scanner y marco de medios
@@ -59,7 +59,7 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 
 ## 5. Validación
 
-- Gates estáticos: `verifyDesignSystemCompliance`, `verifyDesignSystemFixtures`, `verifyControlMinSize`.
+- Gates estáticos: `verifyDesignSystemCompliance`, `verifyDesignSystemFixtures`, `verifyControlMinSize`, `verifyScreenContract` (contrato de interacción por pantalla, excepciones en uso y capturas), `verifyScreenContractFixtures`.
 - Contratos de sistema: `AmSchemeTest`, `AmTypographyTest`, `AmAccentTest`, `AmSurfaceMotionTest`, `AmContrastPairsTest` (commonTest); `AmAccessibilityContractTest`, `AmTabsLayoutTest`, `AmUiPolishContractTest` (androidUnitTest/Robolectric).
 - Verificación de layout: `LayoutReferenceTest`, `LayoutReferenceExtraTest` (ADR-0007).
 - Agregador: `verifyAgendaQrArchitecture`.
