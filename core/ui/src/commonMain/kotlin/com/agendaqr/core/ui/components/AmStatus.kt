@@ -1,13 +1,9 @@
 package com.agendaqr.core.ui.components
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,33 +13,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
-import com.agendaqr.core.ui.motion.LocalReducedMotion
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
-import com.agendaqr.core.ui.theme.AmMotion
 import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
 import com.agendaqr.core.ui.theme.AmType
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
  * Estados: banner de estado (alerta tonal redondeada),
@@ -285,41 +270,16 @@ fun AmSection(
     }
 }
 
-/** Fracción del lado que ocupa el glifo del check dentro de su círculo. */
-private const val AmSuccessIconFraction = 0.55f
-
-/**
- * Confirmación de éxito (Anexo A: check animado con rebote + doble
- * háptica). Es decorativo cuando acompaña el banner o evento que comunica el
- * resultado; no crea un segundo anuncio accesible. Con movimiento reducido el
- * check aparece estático y sin háptica de celebración.
- */
+/** Confirmación visual decorativa que acompaña al texto del resultado. */
 @Composable
 fun AmSuccessCheck(
     modifier: Modifier = Modifier,
     /** Lado del círculo de confirmación. */
-    size: Dp = AmMetrics.EmptyStateGlyphSize,
+    size: Dp = AmMetrics.ResultGlyphSize,
 ) {
-    val reducedMotion = LocalReducedMotion.current
-    val haptics = LocalHapticFeedback.current
-    val scale = remember { Animatable(if (reducedMotion) 1f else 0f) }
-    LaunchedEffect(reducedMotion) {
-        if (reducedMotion) {
-            scale.snapTo(1f)
-        } else {
-            scale.animateTo(
-                targetValue = 1f,
-                animationSpec = tween(AmMotion.DurationMediumMs, easing = AmMotion.Easings.Standard),
-            )
-            // Doble vibración sutil de confirmación (Anexo A).
-            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-        }
-    }
     Box(
         modifier = modifier
-            .size(size)
-            .scale(scale.value),
+            .size(size),
         contentAlignment = Alignment.Center,
     ) {
         Box(
@@ -331,60 +291,8 @@ fun AmSuccessCheck(
             AmIcon(
                 imageVector = AmIcons.CircleCheck,
                 contentDescription = null,
-                size = size * AmSuccessIconFraction,
+                size = size * 0.55f,
                 tint = AmColor.Success,
-            )
-        }
-    }
-}
-
-/** Partículas del estallido: número de trazos simultáneos. */
-private const val AmSuccessBurstParticles = 8
-
-/** Fracción del radio que ocupa cada partícula del estallido. */
-private const val AmSuccessBurstParticleRadius = 0.08f
-
-/**
- * Confeti breve de resultado (Anexo A: SOLO el resultado de importación
- * completada, S12). Animación única y acotada (≤ [AmMotion.DurationLongMs])
- * que termina en reposo; con movimiento reducido no se dibuja nada (el
- * check y el anuncio comunican el éxito). Las partículas usan los roles
- * semánticos del tema; no depende de datos simulados.
- */
-@Composable
-fun AmSuccessBurst(
-    modifier: Modifier = Modifier,
-    /** Lado del área del estallido. */
-    size: Dp = AmMetrics.EmptyStateGlyphSize,
-) {
-    if (LocalReducedMotion.current) return
-    val progress = remember { Animatable(0f) }
-    LaunchedEffect(Unit) {
-        progress.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(AmMotion.DurationLongMs, easing = AmMotion.Easings.Standard),
-        )
-    }
-    val colors: List<Color> = listOf(
-        AmColor.Accent,
-        AmColor.Warning,
-        AmColor.Success,
-        AmColor.Info,
-    )
-    Canvas(modifier = modifier.size(size)) {
-        val radius = this.size.minDimension / 2f
-        val p = progress.value
-        val alpha = (1f - p).coerceIn(0f, 1f)
-        repeat(AmSuccessBurstParticles) { index ->
-            val angle = (index.toFloat() / AmSuccessBurstParticles) * 2f * PI.toFloat()
-            val distance = radius * p
-            drawCircle(
-                color = colors[index % colors.size].copy(alpha = alpha),
-                radius = radius * AmSuccessBurstParticleRadius,
-                center = Offset(
-                    x = center.x + cos(angle) * distance,
-                    y = center.y + sin(angle) * distance,
-                ),
             )
         }
     }

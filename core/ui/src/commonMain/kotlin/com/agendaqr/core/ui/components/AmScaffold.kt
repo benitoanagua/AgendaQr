@@ -23,6 +23,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.theme.AmColor
@@ -167,49 +169,63 @@ fun AmScreenScaffold(
         }
     }
 
-    if (navDestinations.isNotEmpty() && expanded) {
-        // Expandido: riel lateral + contenido centrado.
-        Row(modifier = modifier.fillMaxSize()) {
-            AmNavRail(
-                destinations = navDestinations,
-                selectedId = navSelectedId.orEmpty(),
-                onSelect = onNavSelect,
-            )
-            Box(modifier = Modifier.weight(1f).fillMaxSize()) {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = { topBar?.invoke() },
-                    snackbarHost = { snackbarHost?.invoke() },
-                    floatingActionButton = { floatingActionButton?.invoke() },
-                    bottomBar = { bottomAction?.invoke() },
-                    contentWindowInsets = effectiveInsets,
-                ) { innerPadding ->
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-                        scaffoldContent(innerPadding)
-                    }
-                }
-            }
-        }
-    } else {
-        Scaffold(
-            modifier = modifier.fillMaxSize(),
-            topBar = { topBar?.invoke() },
-            bottomBar = {
-                if (navDestinations.isNotEmpty()) {
-                    AmNavBar(
+    val actionSheetController = remember { AmActionSheetController() }
+    CompositionLocalProvider(LocalAmActionSheetController provides actionSheetController) {
+        Box(modifier = modifier.fillMaxSize()) {
+            if (navDestinations.isNotEmpty() && expanded) {
+                // Expandido: riel lateral + contenido centrado.
+                Row(modifier = Modifier.fillMaxSize()) {
+                    AmNavRail(
                         destinations = navDestinations,
                         selectedId = navSelectedId.orEmpty(),
                         onSelect = onNavSelect,
                     )
-                } else {
-                    bottomAction?.invoke()
+                    Box(modifier = Modifier.weight(1f).fillMaxSize()) {
+                        Scaffold(
+                            modifier = Modifier.fillMaxSize(),
+                            topBar = { topBar?.invoke() },
+                            snackbarHost = { snackbarHost?.invoke() },
+                            floatingActionButton = { floatingActionButton?.invoke() },
+                            bottomBar = { bottomAction?.invoke() },
+                            contentWindowInsets = effectiveInsets,
+                        ) { innerPadding ->
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.TopCenter,
+                            ) {
+                                scaffoldContent(innerPadding)
+                            }
+                        }
+                    }
                 }
-            },
-            snackbarHost = { snackbarHost?.invoke() },
-            floatingActionButton = { floatingActionButton?.invoke() },
-            contentWindowInsets = effectiveInsets,
-        ) { innerPadding ->
-            scaffoldContent(innerPadding)
+            } else {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = { topBar?.invoke() },
+                    bottomBar = {
+                        if (navDestinations.isNotEmpty()) {
+                            AmNavBar(
+                                destinations = navDestinations,
+                                selectedId = navSelectedId.orEmpty(),
+                                onSelect = onNavSelect,
+                            )
+                        } else {
+                            bottomAction?.invoke()
+                        }
+                    },
+                    snackbarHost = { snackbarHost?.invoke() },
+                    floatingActionButton = { floatingActionButton?.invoke() },
+                    contentWindowInsets = effectiveInsets,
+                ) { innerPadding ->
+                    scaffoldContent(innerPadding)
+                }
+            }
+            actionSheetController.request?.let { request ->
+                AmActionSheet(
+                    request = request,
+                    onDismissRequest = actionSheetController::dismiss,
+                )
+            }
         }
     }
 }

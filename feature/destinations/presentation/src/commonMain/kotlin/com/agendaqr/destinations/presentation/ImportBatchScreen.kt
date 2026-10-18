@@ -31,7 +31,6 @@ import com.agendaqr.core.ui.components.AmTopBar
 import com.agendaqr.core.ui.components.AmSecondaryButton
 import com.agendaqr.core.ui.components.AmStatusBanner
 import com.agendaqr.core.ui.components.AmStatusPill
-import com.agendaqr.core.ui.components.AmSuccessBurst
 import com.agendaqr.core.ui.components.AmSuccessCheck
 import com.agendaqr.core.ui.components.AmCard
 import com.agendaqr.core.ui.components.AmIcons
@@ -40,6 +39,7 @@ import com.agendaqr.core.ui.components.AmTextAction
 import com.agendaqr.core.ui.components.AmLoading
 import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmType
 import com.agendaqr.destinations.domain.ImportBatch
@@ -137,18 +137,11 @@ fun ImportBatchScreen(
                 BatchResultContent(state.batch, onAction, isSaving = true)
             }
             is ImportBatchUiState.Saved -> {
-                // ADR-0022 / contrato §9: confirmación visual S12 (check +
-                // confeti breve). El snackbar (AmFeedbackEvent) anuncia el
-                // éxito en la transición; el check es decorativo para evitar
-                // duplicar el anuncio y proporciona la doble háptica (por eso
-                // el evento desactiva su háptica simple). Movimiento reducido:
-                // burst vacío, check estático sin háptica.
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center,
                 ) {
-                    AmSuccessBurst()
-                    AmSuccessCheck()
+                    AmSuccessCheck(size = AmMetrics.ResultGlyphSize)
                 }
                 AmStatusBanner(
                     title = AppStrings.GuardadoOk,

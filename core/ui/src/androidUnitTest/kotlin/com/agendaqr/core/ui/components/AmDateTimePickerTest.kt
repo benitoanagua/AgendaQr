@@ -9,15 +9,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-/**
- * Los selectores de fecha y hora funcionan bajo Robolectric (a diferencia
- * de `ModalBottomSheet`, cuya ventana no despacha acciones semánticas):
- * son `Dialog`/`AlertDialog` de Compose y el contrato de pruebas UI los
- * cubre.
- */
+/** Comprueba los flujos de confirmación y descarte de fecha y hora. */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class AmDateTimePickerTest {
@@ -29,63 +26,72 @@ class AmDateTimePickerTest {
     fun date_dialog_confirms_the_selected_day() {
         // Medianoche UTC exacta de un día civil: el picker la conserva.
         val utcMidnight = 1_791_158_400_000L
-        var confirmed: Long? = null
-        var dismissed = false
+        val confirmed = AtomicReference<Long?>()
+        val dismissed = AtomicBoolean(false)
         compose.setContent {
             AmTheme {
-                AmDatePickerDialog(
-                    selectedDateUtc = utcMidnight,
-                    onConfirm = { confirmed = it },
-                    onDismiss = { dismissed = true },
-                    confirmLabel = "Elegir",
-                    dismissLabel = "Cancelar",
-                )
+                AmScreenScaffold {
+                    AmDatePickerDialog(
+                        selectedDateUtc = utcMidnight,
+                        onConfirm = { confirmed.set(it) },
+                        onDismiss = { dismissed.set(true) },
+                        confirmLabel = "Elegir",
+                        dismissLabel = "Cancelar",
+                    )
+                }
             }
         }
         compose.waitForIdle()
         compose.onNodeWithText("Elegir").performClick()
-        assertEquals(utcMidnight, confirmed)
-        assertTrue(!dismissed)
+        compose.waitForIdle()
+        assertEquals(utcMidnight, confirmed.get())
+        assertTrue(!dismissed.get())
     }
 
     @Test
     fun date_dialog_dismisses_without_confirming() {
-        var confirmed: Long? = null
-        var dismissed = false
+        val confirmed = AtomicReference<Long?>()
+        val dismissed = AtomicBoolean(false)
         compose.setContent {
             AmTheme {
-                AmDatePickerDialog(
-                    selectedDateUtc = null,
-                    onConfirm = { confirmed = it },
-                    onDismiss = { dismissed = true },
-                    confirmLabel = "Elegir",
-                    dismissLabel = "Cancelar",
-                )
+                AmScreenScaffold {
+                    AmDatePickerDialog(
+                        selectedDateUtc = null,
+                        onConfirm = { confirmed.set(it) },
+                        onDismiss = { dismissed.set(true) },
+                        confirmLabel = "Elegir",
+                        dismissLabel = "Cancelar",
+                    )
+                }
             }
         }
         compose.waitForIdle()
         compose.onNodeWithText("Cancelar").performClick()
-        assertTrue(confirmed == null)
-        assertTrue(dismissed)
+        compose.waitForIdle()
+        assertTrue(confirmed.get() == null)
+        assertTrue(dismissed.get())
     }
 
     @Test
     fun time_dialog_confirms_the_entered_time() {
-        var confirmed: Pair<Int, Int>? = null
+        val confirmed = AtomicReference<Pair<Int, Int>?>()
         compose.setContent {
             AmTheme {
-                AmTimePickerDialog(
-                    initialHour = 14,
-                    initialMinute = 30,
-                    onConfirm = { hour, minute -> confirmed = hour to minute },
-                    onDismiss = {},
-                    confirmLabel = "Elegir",
-                    dismissLabel = "Cancelar",
-                )
+                AmScreenScaffold {
+                    AmTimePickerDialog(
+                        initialHour = 14,
+                        initialMinute = 30,
+                        onConfirm = { hour, minute -> confirmed.set(hour to minute) },
+                        onDismiss = {},
+                        confirmLabel = "Elegir",
+                        dismissLabel = "Cancelar",
+                    )
+                }
             }
         }
         compose.waitForIdle()
         compose.onNodeWithText("Elegir").performClick()
-        assertEquals(14 to 30, confirmed)
+        compose.waitForIdle()
+        assertEquals(14 to 30, confirmed.get())
     }
 }

@@ -23,16 +23,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.background
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.Modifier
@@ -114,7 +108,12 @@ fun AmTopBar(
             "AmTopBar: overflowActions necesita overflowLabel (copy del llamador)"
         }
     }
-    var overflowOpen by remember { mutableStateOf(false) }
+    val actionSheetController = LocalAmActionSheetController.current
+    if (overflowActions.isNotEmpty()) {
+        requireNotNull(actionSheetController) {
+            "AmTopBar con overflowActions debe estar dentro de AmScreenScaffold"
+        }
+    }
     Layout(
         modifier = modifier
             .fillMaxWidth()
@@ -152,31 +151,14 @@ fun AmTopBar(
                     }
                 }
                 if (overflowActions.isNotEmpty()) {
-                    Box {
-                        IconButton(onClick = { overflowOpen = true }) {
-                            AmIcon(
-                                imageVector = AmIcons.More,
-                                contentDescription = overflowLabel,
-                                tint = AmColor.TextPrimary,
-                            )
-                        }
-                        DropdownMenu(
-                            expanded = overflowOpen,
-                            onDismissRequest = { overflowOpen = false },
-                        ) {
-                            overflowActions.forEach { option ->
-                                DropdownMenuItem(
-                                    text = { Text(option.label) },
-                                    leadingIcon = option.icon?.let { glyph ->
-                                        { AmIcon(imageVector = glyph, contentDescription = null, tint = AmColor.TextPrimary) }
-                                    },
-                                    onClick = {
-                                        overflowOpen = false
-                                        option.onClick()
-                                    },
-                                )
-                            }
-                        }
+                    IconButton(onClick = {
+                        actionSheetController?.show(overflowActions, overflowLabel)
+                    }) {
+                        AmIcon(
+                            imageVector = AmIcons.More,
+                            contentDescription = overflowLabel,
+                            tint = AmColor.TextPrimary,
+                        )
                     }
                 }
             }
@@ -441,6 +423,15 @@ fun AmHeroHeader(
     overflowLabel: String,
     modifier: Modifier = Modifier,
 ) {
+    val actionSheetController = LocalAmActionSheetController.current
+    if (overflowActions.isNotEmpty()) {
+        require(overflowLabel.isNotBlank()) {
+            "AmHeroHeader: overflowActions necesita overflowLabel"
+        }
+        requireNotNull(actionSheetController) {
+            "AmHeroHeader con overflowActions debe estar dentro de AmScreenScaffold"
+        }
+    }
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -467,38 +458,14 @@ fun AmHeroHeader(
                     .semantics { heading() },
             )
             if (overflowActions.isNotEmpty()) {
-                Box {
-                    var overflowOpen by remember { mutableStateOf(false) }
-                    IconButton(onClick = { overflowOpen = true }) {
-                        AmIcon(
-                            imageVector = AmIcons.More,
-                            contentDescription = overflowLabel,
-                            tint = AmColor.OnAccent,
-                        )
-                    }
-                    DropdownMenu(
-                        expanded = overflowOpen,
-                        onDismissRequest = { overflowOpen = false },
-                    ) {
-                        overflowActions.forEach { option ->
-                            DropdownMenuItem(
-                                text = { Text(option.label) },
-                                leadingIcon = option.icon?.let { glyph ->
-                                    {
-                                        AmIcon(
-                                            imageVector = glyph,
-                                            contentDescription = null,
-                                            tint = AmColor.TextPrimary,
-                                        )
-                                    }
-                                },
-                                onClick = {
-                                    overflowOpen = false
-                                    option.onClick()
-                                },
-                            )
-                        }
-                    }
+                IconButton(onClick = {
+                    actionSheetController?.show(overflowActions, overflowLabel)
+                }) {
+                    AmIcon(
+                        imageVector = AmIcons.More,
+                        contentDescription = overflowLabel,
+                        tint = AmColor.OnAccent,
+                    )
                 }
             }
         }

@@ -21,20 +21,9 @@ import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
 
 /**
- * Selectores de fecha y hora (envoltorios finos de los pickers de M3 con
- * tokens del sistema). Todo el copy llega por parámetros (ADR-0008).
- *
- * Las fechas viajan como milisegundos UTC de la medianoche del día civil:
- * el picker muestra días civiles, y la zona del dispositivo solo se aplica
- * al combinar fecha + hora en la llamada ([combineDateAndTime] vive en la
- * capa de presentación, no aquí).
- */
-
-/**
- * Diálogo de fecha: calendario con confirmar/descarte. [selectedDateUtc]
- * son los milisegundos UTC de la medianoche del día seleccionado (null =
- * sin selección inicial); [onConfirm] devuelve lo mismo para el día
- * elegido.
+ * Selectores de fecha y hora. Las fechas viajan como milisegundos UTC de
+ * la medianoche del día civil; la zona del dispositivo se aplica al
+ * combinar fecha y hora en la capa de presentación.
  */
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +31,6 @@ fun AmDatePickerDialog(
     selectedDateUtc: Long?,
     onConfirm: (utcDateMillis: Long) -> Unit,
     onDismiss: () -> Unit,
-    /** copy del llamador (sin defaults hardcodeados). */
     confirmLabel: String,
     dismissLabel: String,
     title: String? = null,
@@ -84,10 +72,6 @@ fun AmDatePickerDialog(
     }
 }
 
-/**
- * Diálogo de hora: entrada de hora con confirmar/descarte.
- * [onConfirm] devuelve la hora y el minuto elegidos (0–23, 0–59).
- */
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun AmTimePickerDialog(
@@ -95,10 +79,8 @@ fun AmTimePickerDialog(
     initialMinute: Int,
     onConfirm: (hour: Int, minute: Int) -> Unit,
     onDismiss: () -> Unit,
-    /** copy del llamador (sin defaults hardcodeados). */
     confirmLabel: String,
     dismissLabel: String,
-    /** Reloj de 24 h (formato del dispositivo). */
     is24Hour: Boolean = true,
     title: String? = null,
 ) {

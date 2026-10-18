@@ -445,11 +445,12 @@ object AmMetrics {
     /** Ancho mínimo del popup de un diálogo (Dialog de la referencia:
      * 280 px → 280 dp). */
     val DialogMinWidth = 311.dp
-    /** Ancho máximo del popup de un diálogo como fracción del ancho de
-     * ventana (Dialog de la referencia: 75vw). */
-    const val DialogMaxWidthFraction = 1f
+    /** Fracción del ancho disponible para diálogos en ventanas estrechas. */
+    const val DialogMaxWidthFraction = 0.9f
     /** Círculo tonal del glifo del estado vacío. */
     val EmptyStateGlyphSize = 96.dp
+    /** Glifo del resultado de un flujo completado. */
+    val ResultGlyphSize = 80.dp
     /** Contenedor del icono de una celda de acción rápida en Inicio. */
     val GridIconContainerSize = 48.dp
     /** Largo del trazo de las esquinas del encuadre del scanner. */

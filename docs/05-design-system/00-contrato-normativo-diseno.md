@@ -150,7 +150,7 @@ botones apilan a ancho disponible antes de comprimir texto).
 
 ### Nota sobre la hoja inferior
 
-El patrón de hoja para selectores se evaluó con `ModalBottomSheet` de M3 y se retiró: la ventana de la hoja no despacha acciones semánticas bajo Robolectric (el contrato de pruebas UI de este repositorio), dejando el flujo S08 inverificable en el gate. Los selectores permanecen como `AmDialog` con lista desplazable. Reevaluar cuando el entorno lo soporte (ver ADR-0013/ADR-0014, riesgos).
+El Action-sheet y los selectores usan `AmDialog` con lista desplazable. La hoja inferior en composición no despacha las acciones de forma fiable bajo Robolectric; esta alternativa conserva controles comprobables y accesibles.
 
 ## 10. Accesibilidad como contrato
 
@@ -228,7 +228,7 @@ Las excepciones del sistema visual y de la plataforma se documentan aquí. No ex
 | `AmTextField` con etiqueta persistente y guía hairline | Etiqueta persistente y estado de foco/error accesibles |
 | Placeholder en texto secundario | Contraste AA |
 | Segmentado sin sombra en el ítem activo (el diseño de origen usa sombra suave) | El gate prohíbe `shadow(`; el límite lo da el bloque tonal |
-| Hoja inferior 12 sin uso; selectores como `AmDialog` con lista | `ModalBottomSheet` no despacha acciones bajo Robolectric (bloqueo documentado) |
+| Action-sheet y selectores como `AmDialog` con lista; hoja inferior en composición no usada | Las acciones de la hoja inferior no se despachan de forma fiable bajo Robolectric |
 | Recalibraciones de paleta y contenido de acento | La accesibilidad y la legibilidad prevalecen sobre el parecido con cualquier referencia |
 
 ## 16. Referencias de patrón por pantalla (ADR-0021, ADR-0022)

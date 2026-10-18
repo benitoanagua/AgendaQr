@@ -28,27 +28,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.unit.Constraints
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
 
-/**
- * Superposiciones (referencia: Dialog): los diálogos confirman (dos
- * acciones claras) y resuelven selecciones acotadas.
- *
- * NOTA (ADR-0014, riesgos): el patrón de hoja para selectores (ActionSheet
- * de la referencia) se evaluó con `ModalBottomSheet` de M3 y se retiró:
- * la ventana de la hoja no despacha acciones semánticas bajo Robolectric
- * (el contrato de pruebas UI de este repositorio), por lo que el flujo
- * S08 quedaba inverificable en el gate. Reevaluar cuando el entorno de
- * pruebas lo soporte.
- */
+/** Dialogs confirm decisions and host bounded choices in a scrollable list. */
 
 /**
  * Lista dentro de un diálogo: filas de selección con scroll cuando
@@ -199,40 +192,99 @@ fun AmDialog(
                         thickness = AmMetrics.Border,
                         color = AmColor.Divider,
                     )
-                    Row(
+                    BoxWithConstraints(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .selectableGroup()
-                            .defaultMinSize(minHeight = AmMetrics.ControlMinSize),
+                            .selectableGroup(),
                     ) {
-                        if (dismissLabel != null) {
-                            AmDialogAction(
-                                label = dismissLabel,
-                                emphasized = false,
-                                color = AmColor.TextPrimary,
-                                onClick = onDismiss,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .then(
-                                        if (destructive) {
-                                            Modifier.focusRequester(dismissFocus)
-                                        } else {
-                                            Modifier
-                                        },
-                                    ),
-                            )
-                            VerticalDivider(
-                                thickness = AmMetrics.Border,
-                                color = AmColor.Divider,
-                            )
+                        val density = LocalDensity.current
+                        val textMeasurer = rememberTextMeasurer()
+                        val halfTextWidth = with(density) {
+                            (maxWidth / 2 - AmSpacing.Md * 2).roundToPx().coerceAtLeast(0)
                         }
-                        AmDialogAction(
-                            label = confirmLabel,
-                            emphasized = !confirmAsText,
-                            color = if (destructive) AmColor.Danger else AmColor.AccentText,
-                            onClick = onConfirm,
-                            modifier = Modifier.weight(1f),
-                        )
+                        val labelsNeedStack = dismissLabel != null && (
+                            textMeasurer.measure(
+                                text = dismissLabel,
+                                style = AmTextStyles.Body,
+                                maxLines = 1,
+                                constraints = Constraints(maxWidth = halfTextWidth),
+                            ).hasVisualOverflow ||
+                                textMeasurer.measure(
+                                    text = confirmLabel,
+                                    style = AmTextStyles.Body,
+                                    maxLines = 1,
+                                    constraints = Constraints(maxWidth = halfTextWidth),
+                                ).hasVisualOverflow
+                            )
+                        if (labelsNeedStack) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .defaultMinSize(minHeight = AmMetrics.ControlMinSize),
+                            ) {
+                                AmDialogAction(
+                                    label = dismissLabel.orEmpty(),
+                                    emphasized = false,
+                                    color = AmColor.TextPrimary,
+                                    onClick = onDismiss,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .then(
+                                            if (destructive) {
+                                                Modifier.focusRequester(dismissFocus)
+                                            } else {
+                                                Modifier
+                                            },
+                                        ),
+                                )
+                                HorizontalDivider(
+                                    thickness = AmMetrics.Border,
+                                    color = AmColor.Divider,
+                                )
+                                AmDialogAction(
+                                    label = confirmLabel,
+                                    emphasized = !confirmAsText,
+                                    color = if (destructive) AmColor.Danger else AmColor.AccentText,
+                                    onClick = onConfirm,
+                                    modifier = Modifier.fillMaxWidth(),
+                                )
+                            }
+                        } else {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .defaultMinSize(minHeight = AmMetrics.ControlMinSize),
+                            ) {
+                                if (dismissLabel != null) {
+                                    AmDialogAction(
+                                        label = dismissLabel,
+                                        emphasized = false,
+                                        color = AmColor.TextPrimary,
+                                        onClick = onDismiss,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .then(
+                                                if (destructive) {
+                                                    Modifier.focusRequester(dismissFocus)
+                                                } else {
+                                                    Modifier
+                                                },
+                                            ),
+                                    )
+                                    VerticalDivider(
+                                        thickness = AmMetrics.Border,
+                                        color = AmColor.Divider,
+                                    )
+                                }
+                                AmDialogAction(
+                                    label = confirmLabel,
+                                    emphasized = !confirmAsText,
+                                    color = if (destructive) AmColor.Danger else AmColor.AccentText,
+                                    onClick = onConfirm,
+                                    modifier = Modifier.weight(1f),
+                                )
+                            }
+                        }
                     }
                 }
             }
