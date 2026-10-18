@@ -207,9 +207,9 @@ fun AmTappableCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .amElevation(AmElevation.E1, shape)
+            .amElevation(AmElevation.Shadow1, shape)
             .background(AmColor.Surface, shape)
-            .border(AmMetrics.Border, AmColor.SurfaceBorder, shape)
+            .border(AmMetrics.Border, AmColor.Border, shape)
             .clickable(role = Role.Button, onClick = onClick)
             .padding(AmSpacing.Md),
     ) {
@@ -300,9 +300,9 @@ fun AmListBody(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .amElevation(AmElevation.E1, shape)
+            .amElevation(AmElevation.Shadow1, shape)
             .background(AmColor.Surface, shape)
-            .border(AmMetrics.Border, AmColor.SurfaceBorder, shape)
+            .border(AmMetrics.Border, AmColor.Border, shape)
             .padding(contentPadding),
     ) {
         content()
@@ -329,9 +329,9 @@ fun AmCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .amElevation(AmElevation.E1, shape)
+            .amElevation(AmElevation.Shadow1, shape)
             .background(AmColor.Surface, shape)
-            .border(AmMetrics.Border, AmColor.SurfaceBorder, shape)
+            .border(AmMetrics.Border, AmColor.Border, shape)
             .padding(contentPadding),
     ) {
         content()

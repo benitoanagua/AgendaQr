@@ -1,13 +1,9 @@
 package com.agendaqr.core.ui.components
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,8 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -47,47 +41,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import com.agendaqr.core.ui.motion.LocalReducedMotion
 import com.agendaqr.core.ui.theme.AmColor
-import com.agendaqr.core.ui.theme.AmElevation
 import com.agendaqr.core.ui.theme.AmMetrics
-import com.agendaqr.core.ui.theme.AmMotion
 import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
-import com.agendaqr.core.ui.theme.AmTracking
-import com.agendaqr.core.ui.theme.AmType
-import com.agendaqr.core.ui.theme.amActionGradient
-import com.agendaqr.core.ui.theme.amElevation
 
-/**
- * Botones y chips de la dirección Super-App (ADR-0022): la acción primaria
- * es SIEMPRE píldora con gradiente de acción y sombra E-3; la destructiva
- * nunca rellena con gradiente (tono peligro + glifo + consecuencia); el
- * secundario equivale al botón `default` (fondo claro + hairline + texto
- * primario). Deshabilitado con opacidad .4, área táctil mínima de 48 dp y
- * estado de carga que no desplaza el layout.
- */
-
-/**
- * Escala de pulsación del Anexo A (`scale(0.95)` + háptica). Con movimiento
- * reducido la escala es 1 (no se anima): el feedback no desaparece, deja de
- * moverse. La interacción la aporta el control que consume el source.
- */
-@Composable
-private fun rememberAmPressScale(
-    interactionSource: InteractionSource,
-    active: Boolean,
-): Float {
-    val pressed by interactionSource.collectIsPressedAsState()
-    val reducedMotion = LocalReducedMotion.current
-    val scale by animateFloatAsState(
-        targetValue = if (pressed && active && !reducedMotion) AmMotion.PressScale else 1f,
-        animationSpec = tween(AmMotion.DurationShortMs, easing = AmMotion.Easings.Spring),
-        label = "am_press_scale",
-    )
-    return scale
-}
+/** Shared button wrappers preserve 48 dp targets and stable loading layouts. */
 
 /**
  * Cuerpo compartido de los botones de acción con carga: la etiqueta
@@ -95,9 +55,6 @@ private fun rememberAmPressScale(
  * sin salto de ancho; el estado "ocupado" se anuncia con
  * [busyDescription] (stateDescription, copy del llamador).
  *
- * [brush] dibuja el relleno (gradiente de acción) por detrás y deja
- * transparente el contenedor de M3; null usa los colores sólidos/tonales.
- * [elevation] proyecta la sombra del nivel (E-3 en la acción primaria).
  */
 @Composable
 internal fun AmLoadingButton(
@@ -112,32 +69,14 @@ internal fun AmLoadingButton(
     disabledContainerColor: Color,
     disabledContentColor: Color,
     icon: ImageVector? = null,
-    brush: Brush? = null,
-    elevation: AmElevation = AmElevation.None,
 ) {
     val haptics = LocalHapticFeedback.current
     val interactionSource = remember { MutableInteractionSource() }
-    val scale = rememberAmPressScale(
-        interactionSource = interactionSource,
-        active = enabled && !isLoading,
-    )
     // Píldora completa (Anexo A: botones primarios 20+).
     val shape = AmShapes.Pill
     Button(
         modifier = modifier
             .defaultMinSize(minHeight = AmMetrics.ControlMinSize)
-            .scale(scale)
-            .then(
-                when {
-                    // Gradiente activo: sombra E-3 + relleno de marca.
-                    brush != null && enabled -> Modifier
-                        .amElevation(elevation, shape)
-                        .background(brush, shape)
-                    // Deshabilitado real con gradiente: bloque `Disabled`.
-                    brush != null -> Modifier.background(AmColor.Disabled, shape)
-                    else -> Modifier
-                },
-            )
             // Deshabilitado con opacidad .4 (referencia); el estado
             // habilitado/deshabilitado también vive en la semántica.
             .then(if (!enabled || isLoading) Modifier.alpha(0.4f) else Modifier)
@@ -165,11 +104,9 @@ internal fun AmLoadingButton(
             vertical = AmSpacing.None,
         ),
         colors = ButtonDefaults.buttonColors(
-            // Con gradiente el contenedor de M3 queda transparente; el
-            // relleno lo dibuja el modificador (arriba).
-            containerColor = if (brush != null) AmColor.Transparent else containerColor,
+            containerColor = containerColor,
             contentColor = contentColor,
-            disabledContainerColor = if (brush != null) AmColor.Transparent else disabledContainerColor,
+            disabledContainerColor = disabledContainerColor,
             disabledContentColor = disabledContentColor,
         ),
     ) {
@@ -205,14 +142,7 @@ internal fun AmLoadingButton(
     }
 }
 
-/** Nivel 1 — Acción primaria.
- *  Acción principal claramente identificable por sección o contexto.
- *  Utilizada para completar el objetivo más importante del usuario en ese estado.
- *  Píldora con el gradiente de acción (`actionGradientStart→Mid→End`),
- *  sombra E-3, texto blanco 14/600 con tracking positivo, escala 0.95 y
- *  háptica al pulsar (Anexo A). Siempre debe haber exactamente una acción
- *  primaria por sección/contexto cuando el objetivo del producto lo requiera.
- */
+/** Primary action with the TDesign brand fill and accessible foreground. */
 @Composable
 fun AmPrimaryButton(
     label: String,
@@ -235,19 +165,17 @@ fun AmPrimaryButton(
         busyDescription = busyDescription,
         icon = icon,
         containerColor = AmColor.Accent,
-        contentColor = AmColor.OnActionGradient,
+        contentColor = AmColor.OnAccent,
         disabledContainerColor = AmColor.Disabled,
         disabledContentColor = AmColor.OnDisabled,
-        brush = amActionGradient(),
-        elevation = AmElevation.E3,
     )
 }
 
 /**
  * Nivel 4 — Acción destructiva o excepcional.
  * Descartar, eliminar o realizar una operación con consecuencias especiales.
- * NO debe competir visualmente con la acción primaria: SIN gradiente, se
- * pinta en tono peligro (bloque `dangerContainer` con contenido `danger`),
+ * NO debe competir visualmente con la acción primaria: usa el tono de peligro
+ * y el contenedor correspondientes,
  * con glifo (papelera/aviso por defecto) y la etiqueta específica de
  * consecuencia del llamador (el color nunca es la única señal).
  * Requiere confirmación cuando la acción pueda provocar una pérdida
@@ -730,5 +658,3 @@ fun AmFavoriteToggle(
         )
     }
 }
-
-

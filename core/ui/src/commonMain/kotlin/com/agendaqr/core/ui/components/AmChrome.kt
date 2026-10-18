@@ -47,7 +47,6 @@ import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTextStyles
 import com.agendaqr.core.ui.theme.AmType
-import com.agendaqr.core.ui.theme.amActionGradient
 
 /** Etiqueta de pestaña (referencia: etiqueta 10 px; 11 sp por
  * altura de barra M3). */
@@ -384,9 +383,8 @@ fun <S> AnimatedContentTransitionScope<S>.amReducedSurfaceExit(): ExitTransition
     fadeOut(tween(AmMotion.DurationReducedMs))
 
 /**
- * Cabecera hero de Inicio (Anexo A): banda con gradiente de acción
- * (`ActionGradientStart→Mid→End`), texto blanco y campo de búsqueda en
- * píldora integrado en la banda. El fondo permanece estático para
+ * Cabecera de Inicio: fondo sólido de marca, texto con su par accesible y
+ * campo de búsqueda integrado. El fondo permanece estático para
  * conservar el contraste del texto durante toda la interacción.
  *
  * El título es un encabezado semántico (heading) para TalkBack/VoiceOver.
@@ -407,12 +405,12 @@ fun AmHeroHeader(
         modifier = modifier
             .fillMaxWidth()
             .statusBarsPadding()
-            .background(amActionGradient())
+            .background(AmColor.Accent)
             .padding(horizontal = AmSpacing.ScreenMargin)
             .padding(top = AmSpacing.Sm, bottom = AmSpacing.Md),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            // Título blanco sobre el gradiente (≥ 4.5:1 con OnActionGradient).
+            // El texto usa el par accesible del color primario.
             Text(
                 title,
                 style = androidx.compose.ui.text.TextStyle(
@@ -420,7 +418,7 @@ fun AmHeroHeader(
                     lineHeight = AmType.LineHeightTitleLarge,
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
                     fontFamily = AmType.FamilyUi,
-                    color = AmColor.OnActionGradient,
+                    color = AmColor.OnAccent,
                 ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -435,7 +433,7 @@ fun AmHeroHeader(
                         AmIcon(
                             imageVector = AmIcons.More,
                             contentDescription = overflowLabel,
-                            tint = AmColor.OnActionGradient,
+                            tint = AmColor.OnAccent,
                         )
                     }
                     DropdownMenu(

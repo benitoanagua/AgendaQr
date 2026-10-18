@@ -2,6 +2,7 @@ package com.agendaqr.core.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
@@ -11,13 +12,89 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 
-/**
- * Tema (ADR-0022): la identidad visual es propia de AgendaQr; [AmColorScheme] es la autoridad de color;
- * Material 3 es la implementación. El esquema de M3 se deriva COMPLETO del
- * esquema semántico — incluidos los contenedores — para que ningún
- * componente herede la plantilla base de Material. Los componentes
- * envolventes heredan `typography` y `shapes`.
- */
+internal fun AmColorScheme.asMaterialColorScheme(darkTheme: Boolean): ColorScheme {
+    return if (darkTheme) {
+        darkColorScheme(
+            primary = accent,
+            onPrimary = onAccent,
+            primaryContainer = accentContainer,
+            onPrimaryContainer = onAccentContainer,
+            inversePrimary = accentText,
+            secondary = accent,
+            onSecondary = onAccent,
+            secondaryContainer = surfaceSecondary,
+            onSecondaryContainer = textPrimary,
+            tertiary = accent,
+            onTertiary = onAccent,
+            tertiaryContainer = infoContainer,
+            onTertiaryContainer = info,
+            error = dangerFill,
+            onError = onDanger,
+            errorContainer = dangerContainer,
+            onErrorContainer = danger,
+            background = background,
+            onBackground = textPrimary,
+            surface = surface,
+            onSurface = textPrimary,
+            surfaceVariant = surfaceSecondary,
+            onSurfaceVariant = textSecondary,
+            surfaceTint = accent,
+            inverseSurface = inverseSurface,
+            inverseOnSurface = inverseOnSurface,
+            outline = functionalBorder,
+            outlineVariant = border,
+            scrim = scrim,
+            surfaceDim = background,
+            surfaceBright = surface,
+            surfaceContainerLowest = background,
+            surfaceContainerLow = surfaceContainerLow,
+            surfaceContainer = surfaceContainer,
+            surfaceContainerHigh = surfaceContainerHigh,
+            surfaceContainerHighest = surfaceContainerHighest,
+        )
+    } else {
+        lightColorScheme(
+            primary = accent,
+            onPrimary = onAccent,
+            primaryContainer = accentContainer,
+            onPrimaryContainer = onAccentContainer,
+            inversePrimary = accentText,
+            secondary = accent,
+            onSecondary = onAccent,
+            secondaryContainer = surfaceSecondary,
+            onSecondaryContainer = textPrimary,
+            tertiary = accent,
+            onTertiary = onAccent,
+            tertiaryContainer = infoContainer,
+            onTertiaryContainer = info,
+            error = dangerFill,
+            onError = onDanger,
+            errorContainer = dangerContainer,
+            onErrorContainer = danger,
+            background = background,
+            onBackground = textPrimary,
+            surface = surface,
+            onSurface = textPrimary,
+            surfaceVariant = surfaceSecondary,
+            onSurfaceVariant = textSecondary,
+            surfaceTint = accent,
+            inverseSurface = inverseSurface,
+            inverseOnSurface = inverseOnSurface,
+            outline = functionalBorder,
+            outlineVariant = border,
+            scrim = scrim,
+            surfaceDim = background,
+            surfaceBright = surface,
+            surfaceContainerLowest = background,
+            surfaceContainerLow = surfaceContainerLow,
+            surfaceContainer = surfaceContainer,
+            surfaceContainerHigh = surfaceContainerHigh,
+            surfaceContainerHighest = surfaceContainerHighest,
+        )
+    }
+}
+
+/** Material 3 is an adapter; the semantic TDesign tokens remain authoritative. */
 @Composable
 fun AmTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -36,80 +113,7 @@ fun AmTheme(
                 large = AmShapes.Large,
                 extraLarge = AmShapes.ExtraLarge,
             ),
-            colorScheme = if (darkTheme) {
-                darkColorScheme(
-                    primary = scheme.accent,
-                    onPrimary = scheme.onAccent,
-                    primaryContainer = scheme.accentContainer,
-                    onPrimaryContainer = scheme.onAccentContainer,
-                    // UN solo acento; los slots M3 restantes
-                    // se cubren con roles propios (info), no con una
-                    // segunda marca.
-                    secondary = scheme.accent,
-                    onSecondary = scheme.onAccent,
-                    secondaryContainer = scheme.surfaceSecondary,
-                    onSecondaryContainer = scheme.textPrimary,
-                    tertiary = scheme.info,
-                    onTertiary = scheme.onAccent,
-                    tertiaryContainer = scheme.infoContainer,
-                    onTertiaryContainer = scheme.info,
-                    error = scheme.danger,
-                    onError = scheme.onDanger,
-                    errorContainer = scheme.dangerContainer,
-                    onErrorContainer = scheme.danger,
-                    background = scheme.background,
-                    onBackground = scheme.textPrimary,
-                    surface = scheme.surface,
-                    onSurface = scheme.textPrimary,
-                    surfaceVariant = scheme.surfaceSecondary,
-                    onSurfaceVariant = scheme.textSecondary,
-                    surfaceContainerLowest = scheme.background,
-                    surfaceContainerLow = scheme.surfaceContainerLow,
-                    surfaceContainer = scheme.surfaceContainer,
-                    surfaceContainerHigh = scheme.surfaceContainerHigh,
-                    surfaceContainerHighest = scheme.surfaceContainerHighest,
-                    outline = scheme.divider,
-                    outlineVariant = scheme.border,
-                    inverseSurface = scheme.inverseSurface,
-                    inverseOnSurface = scheme.inverseOnSurface,
-                    inversePrimary = scheme.inverseAccent,
-                )
-            } else {
-                lightColorScheme(
-                    primary = scheme.accent,
-                    onPrimary = scheme.onAccent,
-                    primaryContainer = scheme.accentContainer,
-                    onPrimaryContainer = scheme.onAccentContainer,
-                    secondary = scheme.accent,
-                    onSecondary = scheme.onAccent,
-                    secondaryContainer = scheme.surfaceSecondary,
-                    onSecondaryContainer = scheme.textPrimary,
-                    tertiary = scheme.info,
-                    onTertiary = scheme.onAccent,
-                    tertiaryContainer = scheme.infoContainer,
-                    onTertiaryContainer = scheme.info,
-                    error = scheme.danger,
-                    onError = scheme.onDanger,
-                    errorContainer = scheme.dangerContainer,
-                    onErrorContainer = scheme.danger,
-                    background = scheme.background,
-                    onBackground = scheme.textPrimary,
-                    surface = scheme.surface,
-                    onSurface = scheme.textPrimary,
-                    surfaceVariant = scheme.surfaceSecondary,
-                    onSurfaceVariant = scheme.textSecondary,
-                    surfaceContainerLowest = scheme.background,
-                    surfaceContainerLow = scheme.surfaceContainerLow,
-                    surfaceContainer = scheme.surfaceContainer,
-                    surfaceContainerHigh = scheme.surfaceContainerHigh,
-                    surfaceContainerHighest = scheme.surfaceContainerHighest,
-                    outline = scheme.divider,
-                    outlineVariant = scheme.border,
-                    inverseSurface = scheme.inverseSurface,
-                    inverseOnSurface = scheme.inverseOnSurface,
-                    inversePrimary = scheme.inverseAccent,
-                )
-            },
+            colorScheme = scheme.asMaterialColorScheme(darkTheme),
         ) {
             Surface(
                 modifier = Modifier.fillMaxSize(),

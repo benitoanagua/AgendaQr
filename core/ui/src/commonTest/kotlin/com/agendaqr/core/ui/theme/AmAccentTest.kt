@@ -10,10 +10,9 @@ import kotlin.test.assertTrue
 
 /**
  * Paleta de identidad de contextos (contrato §4): 12 tonos
- * contemporáneos de etiqueta más el acento de marca AgendaQr. Estos tests fijan
- * los colores exactos (no se recalculan ni se cambian), verifican que
- * cada par acento/texto cumple WCAG AA, y fijan el determinismo
- * multiplataforma de [accentFor].
+ * contemporáneos de etiqueta más el acento de marca AgendaQr. TDesign Mobile
+ * 1.16.2 supplies the shared UI palette; these domain identity colors remain
+ * the explicit accessibility-approved exception. Tests pin values and FNV-1a.
  */
 class AmAccentTest {
 

@@ -309,7 +309,7 @@ fun AmSuccessCheck(
         } else {
             scale.animateTo(
                 targetValue = 1f,
-                animationSpec = tween(AmMotion.DurationMediumMs, easing = AmMotion.Easings.Spring),
+                animationSpec = tween(AmMotion.DurationMediumMs, easing = AmMotion.Easings.Standard),
             )
             // Doble vibración sutil de confirmación (Anexo A).
             haptics.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -367,9 +367,9 @@ fun AmSuccessBurst(
     }
     val colors: List<Color> = listOf(
         AmColor.Accent,
-        AmColor.Promo,
+        AmColor.Warning,
         AmColor.Success,
-        AmColor.Fintech,
+        AmColor.Info,
     )
     Canvas(modifier = modifier.size(size)) {
         val radius = this.size.minDimension / 2f

@@ -5,134 +5,105 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Tipografía (contrato §5, ADR-0014): familia de sistema en todos los
- * estilos, roles estándar de M3 desde tokens y sin fuente empaquetada.
+ * TDesign Mobile 1.16.2 type scale from `theme/_font.less`, with the
+ * approved system-font and 11 sp minimum deviations.
  */
 class AmTypographyTest {
 
     @Test
-    fun sizes_keep_the_display_hierarchy() {
-        // La jerarquía de encabezados/cuerpo se lee también por el tamaño;
-        // todos en sp: el escalado de fuente del sistema se respeta.
-        assertTrue(AmType.Display.value > AmType.Headline.value)
-        assertTrue(AmType.Headline.value > AmType.TitleLarge.value)
-        assertTrue(AmType.TitleLarge.value > AmType.Body.value)
-        assertTrue(AmType.Body.value > AmType.Caption.value)
-        assertTrue(AmType.Caption.value > AmType.CaptionSmall.value)
+    fun canonical_sizes_and_line_heights_match_tdesign() {
+        assertEquals(64.sp, AmType.Display)
+        assertEquals(48.sp, AmType.DisplayMedium)
+        assertEquals(36.sp, AmType.HeadlineLarge)
+        assertEquals(28.sp, AmType.Headline)
+        assertEquals(24.sp, AmType.HeadlineSmall)
+        assertEquals(20.sp, AmType.TitleLarge)
+        assertEquals(18.sp, AmType.Title)
+        assertEquals(16.sp, AmType.TitleMedium)
+        assertEquals(14.sp, AmType.TitleSmall)
+        assertEquals(16.sp, AmType.Label)
+        assertEquals(14.sp, AmType.Body)
+        assertEquals(12.sp, AmType.BodySmall)
+        assertEquals(28.sp, AmType.Amount)
+        assertEquals(36.sp, AmType.LineAmount)
     }
 
     @Test
-    fun ui_family_is_the_platform_default_sans() {
-        // Roboto en Android, SF en iOS: delegar en el sistema evita
-        // empaquetar una copia redundante y respeta al usuario.
+    fun typography_uses_the_platform_default_sans_family() {
         assertEquals(FontFamily.Default, AmType.FamilyUi)
+        val roles = listOf(
+            AmMaterialTypography.headlineLarge,
+            AmMaterialTypography.headlineMedium,
+            AmMaterialTypography.headlineSmall,
+            AmMaterialTypography.titleLarge,
+            AmMaterialTypography.titleMedium,
+            AmMaterialTypography.titleSmall,
+            AmMaterialTypography.bodyLarge,
+            AmMaterialTypography.bodyMedium,
+            AmMaterialTypography.bodySmall,
+            AmMaterialTypography.labelLarge,
+            AmMaterialTypography.labelMedium,
+            AmMaterialTypography.labelSmall,
+        )
+        assertTrue(roles.all { it.fontFamily == FontFamily.Default })
     }
 
     @Test
-    fun m3_roles_carry_the_canonical_sizes() {
-        // Título de pantalla/H1 (titleLarge, 20), titular destacado
-        // (headlineMedium/Headline, 24), cuerpo (bodyLarge, 14) y etiqueta
-        // (labelLarge, 14): escala del Anexo A (ADR-0022), en sp.
+    fun material_roles_have_explicit_tdesign_sizes_and_line_heights() {
+        assertEquals(36.sp, AmMaterialTypography.headlineLarge.fontSize)
+        assertEquals(44.sp, AmMaterialTypography.headlineLarge.lineHeight)
+        assertEquals(28.sp, AmMaterialTypography.headlineMedium.fontSize)
+        assertEquals(36.sp, AmMaterialTypography.headlineMedium.lineHeight)
+        assertEquals(24.sp, AmMaterialTypography.headlineSmall.fontSize)
+        assertEquals(32.sp, AmMaterialTypography.headlineSmall.lineHeight)
         assertEquals(20.sp, AmMaterialTypography.titleLarge.fontSize)
-        assertEquals(24.sp, AmMaterialTypography.headlineMedium.fontSize)
-        assertEquals(14.sp, AmMaterialTypography.bodyLarge.fontSize)
-        assertEquals(14.sp, AmMaterialTypography.labelLarge.fontSize)
+        assertEquals(28.sp, AmMaterialTypography.titleLarge.lineHeight)
+        assertEquals(16.sp, AmMaterialTypography.titleMedium.fontSize)
+        assertEquals(24.sp, AmMaterialTypography.titleMedium.lineHeight)
+        assertEquals(14.sp, AmMaterialTypography.titleSmall.fontSize)
+        assertEquals(22.sp, AmMaterialTypography.titleSmall.lineHeight)
+        assertEquals(16.sp, AmMaterialTypography.bodyLarge.fontSize)
+        assertEquals(24.sp, AmMaterialTypography.bodyLarge.lineHeight)
+        assertEquals(14.sp, AmMaterialTypography.bodyMedium.fontSize)
+        assertEquals(22.sp, AmMaterialTypography.bodyMedium.lineHeight)
+        assertEquals(12.sp, AmMaterialTypography.bodySmall.fontSize)
+        assertEquals(20.sp, AmMaterialTypography.bodySmall.lineHeight)
     }
 
     @Test
-    fun m3_roles_use_the_system_family() {
-        // Sin fuente empaquetada: todos los roles resuelven a la sans del
-        // sistema.
-        val roles = listOf(
-            AmMaterialTypography.headlineLarge,
-            AmMaterialTypography.headlineMedium,
-            AmMaterialTypography.headlineSmall,
-            AmMaterialTypography.titleLarge,
-            AmMaterialTypography.titleMedium,
-            AmMaterialTypography.titleSmall,
-            AmMaterialTypography.bodyLarge,
-            AmMaterialTypography.bodyMedium,
-            AmMaterialTypography.bodySmall,
-            AmMaterialTypography.labelLarge,
-            AmMaterialTypography.labelMedium,
-            AmMaterialTypography.labelSmall,
-        )
-        assertTrue(
-            roles.all { it.fontFamily == FontFamily.Default },
-            "todos los roles usan la familia de sistema",
-        )
-    }
-
-    @Test
-    fun line_heights_exceed_their_font_size() {
-        // El interlineado de cada rol es mayor que su tamaño: un titular
-        // a dos líneas nunca se solapa (escalado de fuente).
-        val roles = listOf(
-            AmMaterialTypography.headlineLarge,
-            AmMaterialTypography.headlineMedium,
-            AmMaterialTypography.headlineSmall,
-            AmMaterialTypography.titleLarge,
-            AmMaterialTypography.titleMedium,
-            AmMaterialTypography.titleSmall,
-            AmMaterialTypography.bodyLarge,
-            AmMaterialTypography.bodyMedium,
-            AmMaterialTypography.bodySmall,
-            AmMaterialTypography.labelLarge,
-            AmMaterialTypography.labelMedium,
-            AmMaterialTypography.labelSmall,
-        )
-        roles.forEach { style ->
-            assertTrue(
-                style.lineHeight.value > style.fontSize.value,
-                "lineHeight ${style.lineHeight} <= fontSize ${style.fontSize} en un rol M3",
-            )
-        }
-    }
-
-    @Test
-    fun tracking_is_neutral_by_default() {
-        // Sin tracking amplio como característica general (brief de
-        // rediseño): los roles usan espaciado neutro y los estilos del
-        // sistema lo consumen desde los tokens.
-        listOf(
-            AmTracking.TitleMedium, AmTracking.TitleSmall,
-            AmTracking.BodyLarge, AmTracking.BodyMedium, AmTracking.BodySmall,
-            AmTracking.LabelLarge, AmTracking.LabelMedium, AmTracking.LabelSmall,
-        ).forEach { assertEquals(0.sp, it) }
-        assertEquals(AmTracking.BodyLarge, AmMaterialTypography.bodyLarge.letterSpacing)
-        assertEquals(AmTracking.LabelLarge, AmMaterialTypography.labelLarge.letterSpacing)
-    }
-
-    @Test
-    fun section_header_stays_in_the_label_scale() {
-        // Encabezado de sección y título de fila (H2 16/600), etiqueta/botón
-        // 14, metadato/caption 12, importe hero 30 y tags 11 (Anexo A).
-        assertEquals(16f, AmType.SectionHeader.value)
-        assertEquals(16f, AmTextStyles.SectionHeader.fontSize.value)
-        assertEquals(16f, AmTextStyles.RowTitle.fontSize.value)
-        assertEquals(14f, AmTextStyles.ButtonLabel.fontSize.value)
-        assertEquals(12f, AmTextStyles.BodySmall.fontSize.value)
-        assertEquals(30f, AmTextStyles.Amount.fontSize.value)
-        assertEquals(14f, AmTextStyles.AmountSymbol.fontSize.value)
-        assertEquals(11f, AmTextStyles.Tag.fontSize.value)
-    }
-
-    @Test
-    fun weights_follow_the_reference_with_documented_exceptions() {
-        // Los títulos H2 (fila/sección) y la etiqueta de acción usan
-        // semi-bold (600) del Anexo A; el importe es extra-bold (800) con
-        // símbolo bold (700). Tag y texto de apoyo se quedan en el peso
-        // regular del sistema (null = regular).
-        assertNull(AmTextStyles.Tag.fontWeight)
-        assertNull(AmTextStyles.Support.fontWeight)
-        assertEquals(FontWeight.SemiBold, AmTextStyles.RowTitle.fontWeight)
-        assertEquals(FontWeight.SemiBold, AmTextStyles.SectionHeader.fontWeight)
+    fun primary_action_and_amount_styles_use_the_reference_weights() {
+        assertEquals(16.sp, AmTextStyles.ButtonLabel.fontSize)
         assertEquals(FontWeight.SemiBold, AmTextStyles.ButtonLabel.fontWeight)
-        assertEquals(FontWeight.ExtraBold, AmTextStyles.Amount.fontWeight)
-        assertEquals(FontWeight.Bold, AmTextStyles.AmountSymbol.fontWeight)
+        assertEquals(28.sp, AmTextStyles.Amount.fontSize)
+        assertEquals(36.sp, AmTextStyles.Amount.lineHeight)
+        assertEquals(FontWeight.SemiBold, AmTextStyles.Amount.fontWeight)
+        assertEquals("tnum", AmTextStyles.Amount.fontFeatureSettings)
+        assertEquals(12.sp, AmTextStyles.Tag.fontSize)
+        assertEquals(18.sp, AmTextStyles.Title.fontSize)
+        assertEquals(26.sp, AmTextStyles.Title.lineHeight)
+        assertEquals(FontWeight.SemiBold, AmTextStyles.Title.fontWeight)
+    }
+
+    @Test
+    fun styles_respect_the_minimum_visible_size_and_system_font_scaling() {
+        val styles = listOf(
+            AmTextStyles.ButtonLabel,
+            AmTextStyles.Body,
+            AmTextStyles.Label,
+            AmTextStyles.BodySmall,
+            AmTextStyles.RowTitle,
+            AmTextStyles.Amount,
+            AmTextStyles.AmountSymbol,
+            AmTextStyles.Caption,
+            AmTextStyles.Tag,
+            AmTextStyles.Support,
+            AmTextStyles.SectionHeader,
+            AmTextStyles.Title,
+        )
+        assertTrue(styles.all { it.fontSize.value >= 11f })
+        assertTrue(styles.all { it.fontSize.isSp })
     }
 }
