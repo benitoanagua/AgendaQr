@@ -413,12 +413,12 @@ object AmMetrics {
     val ChipCompactHeight = 32.dp
     /** Altura visual compacta de entradas. */
     val FieldCompactHeight = 40.dp
-    /** Altura de la barra superior compacta (NavBar de la referencia mide
-     * 45 px; 56 dp aloja objetivos táctiles de 48). */
+    /** Altura visual de la barra superior. */
     val TopBarHeight = 48.dp
-    /** Altura de la barra inferior compacta (TabBar de la referencia mide
-     * 48 px; 56 dp con etiqueta 11 sp aloja objetivos de 48 dp por ítem). */
+    /** Altura visual y objetivo de cada destino de la barra inferior. */
     val NavBarHeight = 48.dp
+    /** Ancho del riel de navegación para ventanas amplias. */
+    val NavRailWidth = 80.dp
     /** Ancho máximo del contenido en medium/expanded. */
     val ContentMaxWidth = 720.dp
     val QrPreviewSize = 240.dp

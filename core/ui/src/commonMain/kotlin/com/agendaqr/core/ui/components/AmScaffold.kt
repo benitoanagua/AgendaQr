@@ -15,14 +15,17 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.background
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.amWindowWidthSizeClass
@@ -46,18 +49,28 @@ fun AmBottomAction(
     /** stateDescription de "ocupado" (texto del llamador). */
     busyDescription: String? = null,
 ) {
-    AmPrimaryButton(
-        label = label,
-        onClick = onClick,
+    Column(
         modifier = modifier
             .fillMaxWidth()
+            .background(AmColor.Surface)
             .navigationBarsPadding()
-            .imePadding()
-            .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
-        enabled = enabled,
-        isLoading = isLoading,
-        busyDescription = busyDescription,
-    )
+            .imePadding(),
+    ) {
+        HorizontalDivider(
+            thickness = AmMetrics.Border,
+            color = AmColor.Divider,
+        )
+        AmPrimaryButton(
+            label = label,
+            onClick = onClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
+            enabled = enabled,
+            isLoading = isLoading,
+            busyDescription = busyDescription,
+        )
+    }
 }
 
 /**

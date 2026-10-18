@@ -13,6 +13,7 @@ import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTheme
@@ -40,6 +41,33 @@ class AmScaffoldOverlapContractTest {
 
     @get:Rule
     val compose = createComposeRule()
+
+    @Test
+    fun top_bar_title_stays_centered_with_asymmetric_actions() {
+        compose.setContent {
+            AmTheme {
+                AmTopBar(
+                    title = "Detalle",
+                    actions = listOf(
+                        AmTopBarAction(
+                            label = "Buscar",
+                            icon = AmIcons.Search,
+                            onClick = {},
+                        ),
+                    ),
+                )
+            }
+        }
+        compose.waitForIdle()
+        val title = compose.onNodeWithText("Detalle").getUnclippedBoundsInRoot()
+        val root = compose.onRoot().getUnclippedBoundsInRoot()
+        val titleCenter = (title.left.value + title.right.value) / 2f
+        val rootCenter = (root.left.value + root.right.value) / 2f
+        assertTrue(
+            "El título debe permanecer centrado: title=$title root=$root",
+            kotlin.math.abs(titleCenter - rootCenter) <= 1f,
+        )
+    }
 
     @Test
     fun bottom_action_dock_never_covers_content() {
