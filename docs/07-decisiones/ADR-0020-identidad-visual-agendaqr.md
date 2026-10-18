@@ -20,7 +20,7 @@ La intención aprobada es que AgendaQr se perciba como una aplicación móvil ch
 5. **El QR es el elemento distintivo del producto.** El lienzo sigue blanco en ambos temas y conserva el contraste y la zona de silencio necesarios para el escaneo.
 6. **Sin migración prematura de dependencias.** Se conserva Compose Multiplatform, el prefijo de código `Am*`, la familia de iconos Lucide y la fuente de sistema. MiSans Global y una familia monoespaciada quedan como candidatas para comparar en local; no se empaquetan fuentes en esta decisión.
 7. **No se altera el comportamiento.** Navegación, reglas de negocio, persistencia, sincronización, flujos y copy funcional quedan fuera del alcance. Las convenciones de navegación siguen siendo las de Android/iOS.
-8. **Validación visual local obligatoria.** Todo cambio de tokens actualiza `AmSchemeTest`, los contratos de contraste y las capturas Roborazzi/hashes. No se considera validado el rediseño hasta revisar las capturas claro/oscuro en Inicio, detalle QR, búsqueda, importación y formularios.
+8. **Validación local obligatoria.** Todo cambio de tokens actualiza `AmSchemeTest`, los contratos de contraste y la verificación de layout (`LayoutReferenceTest`, ADR-0007). La revisión en dispositivo real sigue siendo manual y se declara como no verificada.
 
 ## Consecuencias
 

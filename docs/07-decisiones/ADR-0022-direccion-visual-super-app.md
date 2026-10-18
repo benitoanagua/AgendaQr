@@ -56,7 +56,7 @@ La dirección de alta densidad choca con invariantes de accesibilidad y de plata
 - El contrato normativo pasa a **versión 4.0**; la especificación UX/UI a **V1.12**.
 - En el momento de aprobar este ADR, ADR-0020 quedó parcialmente sustituido en paleta/escala y ADR-0021 en referencias/rejilla. ADR-0023 los suplanta ahora como autoridad visual e iconográfica; su contenido restante es histórico y no es una norma vigente.
 - Se retira el botón flotante con hub **de Inicio** (no de otras pantallas); las pruebas que dependían de él se actualizan en el mismo cambio.
-- Al ser una reforma de tokens, todas las capturas Roborazzi cambian y deben regenerarse y revisarse antes de fijar hashes.
+- Al ser una reforma de tokens, los escenarios de `LayoutReferenceTest` se revisan con la nueva paleta (ADR-0007).
 
 ## Riesgos
 

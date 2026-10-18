@@ -19,14 +19,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.SemanticsNode
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import org.junit.Assert.assertTrue
 import kotlin.math.abs
 import com.agendaqr.core.ui.components.AmIcon
 import com.agendaqr.core.ui.components.AmIconBadge
@@ -63,7 +66,6 @@ import com.agendaqr.destinations.domain.ImportBatch
 import com.agendaqr.destinations.domain.ImportCandidate
 import com.agendaqr.destinations.domain.ImportKind
 import com.agendaqr.destinations.presentation.AppStrings
-import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -71,28 +73,22 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Capturas de referencia de las pantallas críticas en claro y oscuro
- * (ADR-0007). Los PNG se generan en
- * `feature/destinations/presentation/build/roborazzi/` y NO se versionan
- * (decisión del 2026-10-09: sin binarios de imagen en git): la regresión
- * se detecta comparando el SHA-256 de cada PNG contra
- * `docs/04-ux/visual-hashes/manifest.json` (verificar con
- * `./gradlew verifyVisualHashes`, tarea sensible al entorno —
- * ver ADR).
+ * Verificación de layout de las pantallas críticas en claro y oscuro
+ * (ADR-0007). Sin capturas ni hashes versionados: cada escenario se
+ * compone y se comprueba por aserciones de layout (raíz visible, árbol
+ * semántico no vacío, texto visible y ausencia de recortes laterales) a
+ * escala de fuente 100 % y 200 %.
  */
 @RunWith(RobolectricTestRunner::class)
-// NATIVE graphics: requisito de Roborazzi para render real de píxeles
-// (sin esto las capturas salen en negro/idénticas).
-@org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = "w360dp-h740dp")
-open class VisualReferenceScreenshotTest {
+open class LayoutReferenceTest {
 
     @get:Rule
     val compose = createComposeRule()
 
-    protected open val captureSuffix: String = ""
+    protected open val viewportSuffix: String = ""
 
-    private fun shot(name: String, dark: Boolean, content: @androidx.compose.runtime.Composable () -> Unit) {
+    private fun verifyLayout(name: String, dark: Boolean, content: @androidx.compose.runtime.Composable () -> Unit) {
         var fontScale by mutableFloatStateOf(1f)
         compose.setContent {
             val density = LocalDensity.current.density
@@ -105,14 +101,60 @@ open class VisualReferenceScreenshotTest {
             }
         }
         compose.waitForIdle()
-        compose.onRoot().captureRoboImage("build/roborazzi/$name$captureSuffix.png")
+        assertLayoutHolds("$name$viewportSuffix")
         compose.runOnIdle { fontScale = 2f }
         compose.waitForIdle()
-        compose.onRoot().captureRoboImage("build/roborazzi/$name$captureSuffix-font-200.png")
+        assertLayoutHolds("$name$viewportSuffix-font-200")
+    }
+
+    /**
+     * Aserciones que sustituyen a la captura: la raíz se compone y se
+     * muestra, el árbol semántico no está vacío, hay texto visible y
+     * ningún nodo sobresale lateralmente del root (sin recortes
+     * laterales). El contenido dentro de un contenedor con scroll
+     * horizontal queda exento porque su desborde es intencional.
+     */
+    private fun assertLayoutHolds(label: String) {
+        val root = compose.onRoot().getUnclippedBoundsInRoot()
+        compose.onRoot().assertIsDisplayed()
+        val rootWidth = (root.right - root.left).value
+        val rootHeight = (root.bottom - root.top).value
+        assertTrue(
+            "$label: el layout no tiene tamaño (root=$root)",
+            rootWidth > 200f && rootHeight > 320f,
+        )
+        val nodes = compose.onAllNodes(AnyNode, useUnmergedTree = true).fetchSemanticsNodes()
+        assertTrue("$label: la pantalla no compone nodos", nodes.isNotEmpty())
+        assertTrue(
+            "$label: no hay texto visible en la pantalla",
+            nodes.any { node ->
+                node.config.contains(SemanticsProperties.Text) && node.boundsInRoot.width > 0f
+            },
+        )
+        nodes.forEach { node ->
+            if (node.insideHorizontalScroll()) return@forEach
+            val bounds = node.boundsInRoot
+            if (bounds.width <= 0f) return@forEach
+            assertTrue(
+                "$label: nodo fuera del root horizontalmente ($bounds, root=$root)",
+                bounds.left >= root.left.value - 1f && bounds.right <= root.right.value + 1f,
+            )
+        }
+    }
+
+    private fun SemanticsNode.insideHorizontalScroll(): Boolean {
+        var current: SemanticsNode? = parent
+        while (current != null) {
+            if (current.config.contains(SemanticsProperties.HorizontalScrollAxisRange)) return true
+            current = current.parent
+        }
+        return false
     }
 
     companion object {
-        // Timestamp realista para pruebas visuales: 15 ene 2024 10:30:00 (milisegundos)
+        /** Matcher que selecciona todos los nodos del árbol semántico. */
+        val AnyNode = SemanticsMatcher("[any]") { true }
+        // Timestamp realista para pruebas de layout: 15 ene 2024 10:30:00 (milisegundos)
         const val TEST_TIMESTAMP = 1705314600000L
         // QR REAL para las capturas: PNG legible generado con ZXing (ver
         // QrTestFixture). Nunca una imagen ficticia (el fixture anterior era
@@ -120,14 +162,14 @@ open class VisualReferenceScreenshotTest {
         val TEST_QR_BASE64: String = QrTestFixture.base64Png
     }
 
-    @Test fun s01_light() = shot("s01-light", dark = false) {
+    @Test fun s01_light() = verifyLayout("s01-light", dark = false) {
         DestinationsScreen(
             state = DestinationsUiState(
                 destinations = listOf(
                     com.agendaqr.destinations.domain.Destination(
                         id = "d-1", name = "Carniceria Don Bife",
                         qr = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
-                        createdAt = VisualReferenceScreenshotTest.TEST_TIMESTAMP, updatedAt = VisualReferenceScreenshotTest.TEST_TIMESTAMP,
+                        createdAt = LayoutReferenceTest.TEST_TIMESTAMP, updatedAt = LayoutReferenceTest.TEST_TIMESTAMP,
                     ),
                 ),
                 isLoading = false,
@@ -160,14 +202,14 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun s01_dark() = shot("s01-dark", dark = true) {
+    @Test fun s01_dark() = verifyLayout("s01-dark", dark = true) {
         DestinationsScreen(
             state = DestinationsUiState(
                 destinations = listOf(
                     com.agendaqr.destinations.domain.Destination(
                         id = "d-1", name = "Carniceria Don Bife",
                         qr = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
-                        createdAt = VisualReferenceScreenshotTest.TEST_TIMESTAMP, updatedAt = VisualReferenceScreenshotTest.TEST_TIMESTAMP,
+                        createdAt = LayoutReferenceTest.TEST_TIMESTAMP, updatedAt = LayoutReferenceTest.TEST_TIMESTAMP,
                     ),
                 ),
                 isLoading = false,
@@ -198,7 +240,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun login_light() = shot("login-light", dark = false) {
+    @Test fun login_light() = verifyLayout("login-light", dark = false) {
         AuthScreen(
             state = AuthUiState(email = "", password = "", isSubmitting = false),
             onEmailChanged = {},
@@ -208,7 +250,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun login_dark() = shot("login-dark", dark = true) {
+    @Test fun login_dark() = verifyLayout("login-dark", dark = true) {
         AuthScreen(
             state = AuthUiState(email = "", password = "", isSubmitting = false),
             onEmailChanged = {},
@@ -218,30 +260,36 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun import_batch_light() = shot("import-batch-light", dark = false) {
+    @Test fun import_batch_light() = verifyLayout("import-batch-light", dark = false) {
         ImportBatchScreen(state = ImportBatchUiState.Idle, onAction = {})
     }
 
-    @Test fun import_batch_dark() = shot("import-batch-dark", dark = true) {
+    @Test fun import_batch_dark() = verifyLayout("import-batch-dark", dark = true) {
         ImportBatchScreen(state = ImportBatchUiState.Idle, onAction = {})
     }
 
-    @Test fun s02_add_light() = shot("s02-add-light", dark = false) {
+    @Test fun s02_add_light() = verifyLayout("s02-add-light", dark = false) {
         AddDestinationScreen(onImport = {}, onBack = {})
     }
 
-    @Test fun s02_add_dark() = shot("s02-add-dark", dark = true) {
+    @Test fun s02_add_dark() = verifyLayout("s02-add-dark", dark = true) {
         AddDestinationScreen(onImport = {}, onBack = {})
     }
 
     // Fallo de decodificación del QR: estado explícito (glifo sobre el
     // marco tonal), nunca un rectángulo blanco sin contexto (§9).
-    @Test fun qr_preview_fallback_light() = shot("qr-preview-fallback-light", dark = false) {
-        com.agendaqr.core.ui.components.AmQrPreview("!!")
+    @Test fun qr_preview_fallback_light() = verifyLayout("qr-preview-fallback-light", dark = false) {
+        com.agendaqr.core.ui.components.AmQrPreview(
+            encodedQr = "!!",
+            unavailableMessage = AppStrings.QrNoSePudoMostrar,
+        )
     }
 
-    @Test fun qr_preview_fallback_dark() = shot("qr-preview-fallback-dark", dark = true) {
-        com.agendaqr.core.ui.components.AmQrPreview("!!")
+    @Test fun qr_preview_fallback_dark() = verifyLayout("qr-preview-fallback-dark", dark = true) {
+        com.agendaqr.core.ui.components.AmQrPreview(
+            encodedQr = "!!",
+            unavailableMessage = AppStrings.QrNoSePudoMostrar,
+        )
     }
 
     private fun searchFixture() = GlobalSearchUiState(
@@ -265,7 +313,7 @@ open class VisualReferenceScreenshotTest {
         ),
     )
 
-    @Test fun s04_search_light() = shot("s04-search-light", dark = false) {
+    @Test fun s04_search_light() = verifyLayout("s04-search-light", dark = false) {
         GlobalSearchScreen(
             state = searchFixture(),
             navChrome = rootChrome(appRouteNameOf(AppRoute.Search)),
@@ -274,7 +322,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun s04_search_dark() = shot("s04-search-dark", dark = true) {
+    @Test fun s04_search_dark() = verifyLayout("s04-search-dark", dark = true) {
         GlobalSearchScreen(
             state = searchFixture(),
             navChrome = rootChrome(appRouteNameOf(AppRoute.Search)),
@@ -296,7 +344,7 @@ open class VisualReferenceScreenshotTest {
         isLoading = false,
     )
 
-    @Test fun s06_contexts_light() = shot("s06-contexts-light", dark = false) {
+    @Test fun s06_contexts_light() = verifyLayout("s06-contexts-light", dark = false) {
         ContextsScreen(
             state = contextsFixture(),
             onAction = {},
@@ -305,7 +353,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun s06_contexts_dark() = shot("s06-contexts-dark", dark = true) {
+    @Test fun s06_contexts_dark() = verifyLayout("s06-contexts-dark", dark = true) {
         ContextsScreen(
             state = contextsFixture(),
             onAction = {},
@@ -314,12 +362,11 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    // La ventana del diálogo crea una segunda raíz y la versión de
-    // Roborazzi del proyecto solo captura una raíz exacta: el diálogo se
-    // verifica por semántica (ContextPickerDialogTest,
-    // AmDialogProminenceTest), no por captura.
+    // El diálogo se abre en su propia ventana (una segunda raíz): su
+    // contenido se verifica por semántica (ContextPickerDialogTest,
+    // AmDialogProminenceTest), no desde la raíz de la pantalla.
 
-    @Test fun s09_review_light() = shot("s09-review-light", dark = false) {
+    @Test fun s09_review_light() = verifyLayout("s09-review-light", dark = false) {
         ImportReviewScreen(
             assets = listOf(
                 com.agendaqr.destinations.domain.QrAsset(
@@ -332,7 +379,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun s09_review_dark() = shot("s09-review-dark", dark = true) {
+    @Test fun s09_review_dark() = verifyLayout("s09-review-dark", dark = true) {
         ImportReviewScreen(
             assets = listOf(
                 com.agendaqr.destinations.domain.QrAsset(
@@ -351,7 +398,7 @@ open class VisualReferenceScreenshotTest {
         createdAt = TEST_TIMESTAMP, updatedAt = TEST_TIMESTAMP,
     )
 
-    @Test fun edit_destination_light() = shot("edit-destination-light", dark = false) {
+    @Test fun edit_destination_light() = verifyLayout("edit-destination-light", dark = false) {
         DestinationEditorScreen(
             existing = editorFixture(),
             onSave = {},
@@ -360,7 +407,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun edit_destination_dark() = shot("edit-destination-dark", dark = true) {
+    @Test fun edit_destination_dark() = verifyLayout("edit-destination-dark", dark = true) {
         DestinationEditorScreen(
             existing = editorFixture(),
             onSave = {},
@@ -379,7 +426,7 @@ open class VisualReferenceScreenshotTest {
         createdAt = TEST_TIMESTAMP, updatedAt = TEST_TIMESTAMP,
     )
 
-    @Test fun destination_detail_light() = shot("destination-detail-light", dark = false) {
+    @Test fun destination_detail_light() = verifyLayout("destination-detail-light", dark = false) {
         DestinationDetailScreen(
             destination = detailFixture(),
             onShowQr = {},
@@ -390,7 +437,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun destination_detail_dark() = shot("destination-detail-dark", dark = true) {
+    @Test fun destination_detail_dark() = verifyLayout("destination-detail-dark", dark = true) {
         DestinationDetailScreen(
             destination = detailFixture(),
             onShowQr = {},
@@ -406,11 +453,11 @@ open class VisualReferenceScreenshotTest {
     // OperationsScreen completo requiere OperationsViewModel (precedente
     // S10: no se compone en Robolectric); aquí se captura el patrón
     // visual con los mismos helpers internos que usa la pantalla.
-    @Test fun s07_operation_row_light() = shot("s07-operation-row-light", dark = false) {
+    @Test fun s07_operation_row_light() = verifyLayout("s07-operation-row-light", dark = false) {
         operationListScreenPattern(selected = 0)
     }
 
-    @Test fun s07_operation_row_dark() = shot("s07-operation-row-dark", dark = true) {
+    @Test fun s07_operation_row_dark() = verifyLayout("s07-operation-row-dark", dark = true) {
         operationListScreenPattern(selected = 2)
     }
 
@@ -615,7 +662,7 @@ open class VisualReferenceScreenshotTest {
 
     // --- Acceso local (Fase B): onboarding, bloqueo, PIN incorrecto y
     // biometría. Son la puerta de entrada real (sin login remoto).
-    @Test fun local_onboarding_light() = shot("local-onboarding-light", dark = false) {
+    @Test fun local_onboarding_light() = verifyLayout("local-onboarding-light", dark = false) {
         LocalOnboardingScreen(
             state = LocalAccessUiState(mode = LocalAccessMode.Onboarding),
             onPinChanged = {},
@@ -625,7 +672,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun local_onboarding_dark() = shot("local-onboarding-dark", dark = true) {
+    @Test fun local_onboarding_dark() = verifyLayout("local-onboarding-dark", dark = true) {
         LocalOnboardingScreen(
             state = LocalAccessUiState(mode = LocalAccessMode.Onboarding),
             onPinChanged = {},
@@ -635,7 +682,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun local_onboarding_mismatch_light() = shot("local-onboarding-mismatch-light", dark = false) {
+    @Test fun local_onboarding_mismatch_light() = verifyLayout("local-onboarding-mismatch-light", dark = false) {
         LocalOnboardingScreen(
             state = LocalAccessUiState(
                 mode = LocalAccessMode.Onboarding,
@@ -650,7 +697,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun local_onboarding_mismatch_dark() = shot("local-onboarding-mismatch-dark", dark = true) {
+    @Test fun local_onboarding_mismatch_dark() = verifyLayout("local-onboarding-mismatch-dark", dark = true) {
         LocalOnboardingScreen(
             state = LocalAccessUiState(
                 mode = LocalAccessMode.Onboarding,
@@ -665,7 +712,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun local_lock_light() = shot("local-lock-light", dark = false) {
+    @Test fun local_lock_light() = verifyLayout("local-lock-light", dark = false) {
         LocalLockScreen(
             state = LocalAccessUiState(mode = LocalAccessMode.Locked),
             onPinChanged = {},
@@ -674,7 +721,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun local_lock_dark() = shot("local-lock-dark", dark = true) {
+    @Test fun local_lock_dark() = verifyLayout("local-lock-dark", dark = true) {
         LocalLockScreen(
             state = LocalAccessUiState(mode = LocalAccessMode.Locked),
             onPinChanged = {},
@@ -683,7 +730,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun local_lock_incorrect_light() = shot("local-lock-incorrect-light", dark = false) {
+    @Test fun local_lock_incorrect_light() = verifyLayout("local-lock-incorrect-light", dark = false) {
         LocalLockScreen(
             state = LocalAccessUiState(
                 mode = LocalAccessMode.Locked,
@@ -697,7 +744,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun local_lock_incorrect_dark() = shot("local-lock-incorrect-dark", dark = true) {
+    @Test fun local_lock_incorrect_dark() = verifyLayout("local-lock-incorrect-dark", dark = true) {
         LocalLockScreen(
             state = LocalAccessUiState(
                 mode = LocalAccessMode.Locked,
@@ -713,7 +760,7 @@ open class VisualReferenceScreenshotTest {
 
     // Biometría disponible con fallback visible: el PIN sigue presente como
     // vía principal; la biometría es solo el atajo secundario.
-    @Test fun local_lock_biometric_light() = shot("local-lock-biometric-light", dark = false) {
+    @Test fun local_lock_biometric_light() = verifyLayout("local-lock-biometric-light", dark = false) {
         LocalLockScreen(
             state = LocalAccessUiState(
                 mode = LocalAccessMode.Locked,
@@ -727,7 +774,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun local_lock_biometric_dark() = shot("local-lock-biometric-dark", dark = true) {
+    @Test fun local_lock_biometric_dark() = verifyLayout("local-lock-biometric-dark", dark = true) {
         LocalLockScreen(
             state = LocalAccessUiState(
                 mode = LocalAccessMode.Locked,
@@ -742,7 +789,7 @@ open class VisualReferenceScreenshotTest {
     }
 
     // S01 vacío y con error recuperable (estados reales, no solo poblado).
-    @Test fun s01_empty_light() = shot("s01-empty-light", dark = false) {
+    @Test fun s01_empty_light() = verifyLayout("s01-empty-light", dark = false) {
         DestinationsScreen(
             state = DestinationsUiState(destinations = emptyList(), isLoading = false),
             onAction = {},
@@ -750,7 +797,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun s01_empty_dark() = shot("s01-empty-dark", dark = true) {
+    @Test fun s01_empty_dark() = verifyLayout("s01-empty-dark", dark = true) {
         DestinationsScreen(
             state = DestinationsUiState(destinations = emptyList(), isLoading = false),
             onAction = {},
@@ -758,7 +805,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun s01_error_light() = shot("s01-error-light", dark = false) {
+    @Test fun s01_error_light() = verifyLayout("s01-error-light", dark = false) {
         DestinationsScreen(
             state = DestinationsUiState(
                 destinations = emptyList(),
@@ -770,7 +817,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun s01_error_dark() = shot("s01-error-dark", dark = true) {
+    @Test fun s01_error_dark() = verifyLayout("s01-error-dark", dark = true) {
         DestinationsScreen(
             state = DestinationsUiState(
                 destinations = emptyList(),
@@ -783,7 +830,7 @@ open class VisualReferenceScreenshotTest {
     }
 
     // S04: vacío sin resultados y error de búsqueda con reintento.
-    @Test fun s04_search_empty_light() = shot("s04-search-empty-light", dark = false) {
+    @Test fun s04_search_empty_light() = verifyLayout("s04-search-empty-light", dark = false) {
         GlobalSearchScreen(
             state = GlobalSearchUiState(query = "inexistente"),
             navChrome = rootChrome(appRouteNameOf(AppRoute.Search)),
@@ -792,7 +839,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun s04_search_empty_dark() = shot("s04-search-empty-dark", dark = true) {
+    @Test fun s04_search_empty_dark() = verifyLayout("s04-search-empty-dark", dark = true) {
         GlobalSearchScreen(
             state = GlobalSearchUiState(query = "inexistente"),
             navChrome = rootChrome(appRouteNameOf(AppRoute.Search)),
@@ -801,7 +848,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun s04_search_error_light() = shot("s04-search-error-light", dark = false) {
+    @Test fun s04_search_error_light() = verifyLayout("s04-search-error-light", dark = false) {
         GlobalSearchScreen(
             state = GlobalSearchUiState(
                 query = "mercado",
@@ -813,7 +860,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun s04_search_error_dark() = shot("s04-search-error-dark", dark = true) {
+    @Test fun s04_search_error_dark() = verifyLayout("s04-search-error-dark", dark = true) {
         GlobalSearchScreen(
             state = GlobalSearchUiState(
                 query = "mercado",
@@ -851,23 +898,23 @@ open class VisualReferenceScreenshotTest {
         ),
     )
 
-    @Test fun import_batch_result_light() = shot("import-batch-result-light", dark = false) {
+    @Test fun import_batch_result_light() = verifyLayout("import-batch-result-light", dark = false) {
         ImportBatchScreen(state = ImportBatchUiState.Result(importBatchFixture()), onAction = {})
     }
 
-    @Test fun import_batch_result_dark() = shot("import-batch-result-dark", dark = true) {
+    @Test fun import_batch_result_dark() = verifyLayout("import-batch-result-dark", dark = true) {
         ImportBatchScreen(state = ImportBatchUiState.Result(importBatchFixture()), onAction = {})
     }
 
-    @Test fun import_batch_review_light() = shot("import-batch-review-light", dark = false) {
+    @Test fun import_batch_review_light() = verifyLayout("import-batch-review-light", dark = false) {
         ImportBatchScreen(state = ImportBatchUiState.Review(importBatchFixture()), onAction = {})
     }
 
-    @Test fun import_batch_review_dark() = shot("import-batch-review-dark", dark = true) {
+    @Test fun import_batch_review_dark() = verifyLayout("import-batch-review-dark", dark = true) {
         ImportBatchScreen(state = ImportBatchUiState.Review(importBatchFixture()), onAction = {})
     }
 
-    @Test fun import_batch_error_light() = shot("import-batch-error-light", dark = false) {
+    @Test fun import_batch_error_light() = verifyLayout("import-batch-error-light", dark = false) {
         ImportBatchScreen(
             state = ImportBatchUiState.Error(
                 error = userFacingError(IllegalStateException("batch save failed"), ErrorFlow.ImportBatchSave),
@@ -877,7 +924,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun import_batch_error_dark() = shot("import-batch-error-dark", dark = true) {
+    @Test fun import_batch_error_dark() = verifyLayout("import-batch-error-dark", dark = true) {
         ImportBatchScreen(
             state = ImportBatchUiState.Error(
                 error = userFacingError(IllegalStateException("batch save failed"), ErrorFlow.ImportBatchSave),
@@ -888,7 +935,7 @@ open class VisualReferenceScreenshotTest {
     }
 
     // S06 vacío: sin contextos, con guía de creación.
-    @Test fun s06_contexts_empty_light() = shot("s06-contexts-empty-light", dark = false) {
+    @Test fun s06_contexts_empty_light() = verifyLayout("s06-contexts-empty-light", dark = false) {
         ContextsScreen(
             state = ContextsUiState(contexts = emptyList(), isLoading = false),
             onAction = {},
@@ -897,7 +944,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun s06_contexts_empty_dark() = shot("s06-contexts-empty-dark", dark = true) {
+    @Test fun s06_contexts_empty_dark() = verifyLayout("s06-contexts-empty-dark", dark = true) {
         ContextsScreen(
             state = ContextsUiState(contexts = emptyList(), isLoading = false),
             onAction = {},
@@ -908,7 +955,7 @@ open class VisualReferenceScreenshotTest {
 
     // Cuenta y respaldo: estado ocupado del formulario (la superficie
     // opcional que conserva el login remoto fuera del arranque).
-    @Test fun login_submitting_light() = shot("login-submitting-light", dark = false) {
+    @Test fun login_submitting_light() = verifyLayout("login-submitting-light", dark = false) {
         AuthScreen(
             state = AuthUiState(email = "persona@example.com", password = "secreta123", isSubmitting = true),
             onEmailChanged = {},
@@ -918,7 +965,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun login_submitting_dark() = shot("login-submitting-dark", dark = true) {
+    @Test fun login_submitting_dark() = verifyLayout("login-submitting-dark", dark = true) {
         AuthScreen(
             state = AuthUiState(email = "persona@example.com", password = "secreta123", isSubmitting = true),
             onEmailChanged = {},
@@ -929,7 +976,7 @@ open class VisualReferenceScreenshotTest {
     }
 
     // S09 con varios QR: conteo plural y guardado múltiple.
-    @Test fun s09_review_multi_light() = shot("s09-review-multi-light", dark = false) {
+    @Test fun s09_review_multi_light() = verifyLayout("s09-review-multi-light", dark = false) {
         ImportReviewScreen(
             assets = listOf(
                 com.agendaqr.destinations.domain.QrAsset(
@@ -950,7 +997,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun s09_review_multi_dark() = shot("s09-review-multi-dark", dark = true) {
+    @Test fun s09_review_multi_dark() = verifyLayout("s09-review-multi-dark", dark = true) {
         ImportReviewScreen(
             assets = listOf(
                 com.agendaqr.destinations.domain.QrAsset(
@@ -973,7 +1020,7 @@ open class VisualReferenceScreenshotTest {
 
     // Biometría lista (Available, sin mensaje de fallback): solo el atajo
     // visible junto al PIN — distinto del estado de fallo ya capturado.
-    @Test fun local_lock_biometric_ready_light() = shot("local-lock-biometric-ready-light", dark = false) {
+    @Test fun local_lock_biometric_ready_light() = verifyLayout("local-lock-biometric-ready-light", dark = false) {
         LocalLockScreen(
             state = LocalAccessUiState(
                 mode = LocalAccessMode.Locked,
@@ -986,7 +1033,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun local_lock_biometric_ready_dark() = shot("local-lock-biometric-ready-dark", dark = true) {
+    @Test fun local_lock_biometric_ready_dark() = verifyLayout("local-lock-biometric-ready-dark", dark = true) {
         LocalLockScreen(
             state = LocalAccessUiState(
                 mode = LocalAccessMode.Locked,
@@ -1001,21 +1048,21 @@ open class VisualReferenceScreenshotTest {
 
     // S12 Saving: guardado local en curso — acción primaria ocupada, sin
     // vuelta atrás (§3); nunca "Guardado" antes de persistir (§5).
-    @Test fun import_batch_saving_light() = shot("import-batch-saving-light", dark = false) {
+    @Test fun import_batch_saving_light() = verifyLayout("import-batch-saving-light", dark = false) {
         ImportBatchScreen(state = ImportBatchUiState.Saving(importBatchFixture()), onAction = {})
     }
 
-    @Test fun import_batch_saving_dark() = shot("import-batch-saving-dark", dark = true) {
+    @Test fun import_batch_saving_dark() = verifyLayout("import-batch-saving-dark", dark = true) {
         ImportBatchScreen(state = ImportBatchUiState.Saving(importBatchFixture()), onAction = {})
     }
 
     // S12 Saved: persistencia local terminada; los pendientes conservan su
     // revisión (procesamiento parcial del contrato).
-    @Test fun import_batch_saved_light() = shot("import-batch-saved-light", dark = false) {
+    @Test fun import_batch_saved_light() = verifyLayout("import-batch-saved-light", dark = false) {
         ImportBatchScreen(state = ImportBatchUiState.Saved(importBatchFixture()), onAction = {})
     }
 
-    @Test fun import_batch_saved_dark() = shot("import-batch-saved-dark", dark = true) {
+    @Test fun import_batch_saved_dark() = verifyLayout("import-batch-saved-dark", dark = true) {
         ImportBatchScreen(state = ImportBatchUiState.Saved(importBatchFixture()), onAction = {})
     }
 
@@ -1034,16 +1081,16 @@ open class VisualReferenceScreenshotTest {
             override suspend fun signOut() = error("Not in a visual capture")
         }
 
-    @Test fun account_light() = shot("account-light", dark = false) {
+    @Test fun account_light() = verifyLayout("account-light", dark = false) {
         AccountScreen(navChrome = null, appHosts = null, onBack = {}, authRepository = signedOutAuthRepository)
     }
 
-    @Test fun account_dark() = shot("account-dark", dark = true) {
+    @Test fun account_dark() = verifyLayout("account-dark", dark = true) {
         AccountScreen(navChrome = null, appHosts = null, onBack = {}, authRepository = signedOutAuthRepository)
     }
 
     // UX-030: nombres largos no solapan ni tapan la acción primaria.
-    @Test fun s01_long_name_light() = shot("s01-long-name-light", dark = false) {
+    @Test fun s01_long_name_light() = verifyLayout("s01-long-name-light", dark = false) {
         DestinationsScreen(
             state = DestinationsUiState(
                 destinations = listOf(
@@ -1061,7 +1108,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun s01_long_name_dark() = shot("s01-long-name-dark", dark = true) {
+    @Test fun s01_long_name_dark() = verifyLayout("s01-long-name-dark", dark = true) {
         DestinationsScreen(
             state = DestinationsUiState(
                 destinations = listOf(
@@ -1083,7 +1130,7 @@ open class VisualReferenceScreenshotTest {
     // — evidencia del diseño adaptativo (AmScreenScaffold expanded).
     @Test
     @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
-    fun tablet_s01_light() = shot("tablet-s01-light", dark = false) {
+    fun tablet_s01_light() = verifyLayout("tablet-s01-light", dark = false) {
         DestinationsScreen(
             state = DestinationsUiState(
                 destinations = listOf(
@@ -1102,7 +1149,7 @@ open class VisualReferenceScreenshotTest {
 
     @Test
     @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
-    fun tablet_s01_dark() = shot("tablet-s01-dark", dark = true) {
+    fun tablet_s01_dark() = verifyLayout("tablet-s01-dark", dark = true) {
         DestinationsScreen(
             state = DestinationsUiState(
                 destinations = listOf(
@@ -1122,7 +1169,7 @@ open class VisualReferenceScreenshotTest {
     // --- Escenarios nuevos: estados de importación ---
 
     // Error de persistencia con todos los candidatos fallidos
-    @Test fun import_batch_error_all_failed_light() = shot("import-batch-error-all-failed-light", dark = false) {
+    @Test fun import_batch_error_all_failed_light() = verifyLayout("import-batch-error-all-failed-light", dark = false) {
         ImportBatchScreen(
             state = ImportBatchUiState.Error(
                 error = userFacingError(IllegalStateException("storage unavailable"), ErrorFlow.ImportBatchSave),
@@ -1132,7 +1179,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun import_batch_error_all_failed_dark() = shot("import-batch-error-all-failed-dark", dark = true) {
+    @Test fun import_batch_error_all_failed_dark() = verifyLayout("import-batch-error-all-failed-dark", dark = true) {
         ImportBatchScreen(
             state = ImportBatchUiState.Error(
                 error = userFacingError(IllegalStateException("storage unavailable"), ErrorFlow.ImportBatchSave),
@@ -1143,7 +1190,7 @@ open class VisualReferenceScreenshotTest {
     }
 
     // Guardado parcial: algunos guardados, algunos pendientes
-    @Test fun import_batch_partial_save_light() = shot("import-batch-partial-save-light", dark = false) {
+    @Test fun import_batch_partial_save_light() = verifyLayout("import-batch-partial-save-light", dark = false) {
         val partialBatch = ImportBatch(
             candidates = listOf(
                 ImportCandidate(
@@ -1160,7 +1207,7 @@ open class VisualReferenceScreenshotTest {
         ImportBatchScreen(state = ImportBatchUiState.Saved(partialBatch), onAction = {})
     }
 
-    @Test fun import_batch_partial_save_dark() = shot("import-batch-partial-save-dark", dark = true) {
+    @Test fun import_batch_partial_save_dark() = verifyLayout("import-batch-partial-save-dark", dark = true) {
         val partialBatch = ImportBatch(
             candidates = listOf(
                 ImportCandidate(
@@ -1178,7 +1225,7 @@ open class VisualReferenceScreenshotTest {
     }
 
     // Reintento después de un error
-    @Test fun import_batch_retry_after_error_light() = shot("import-batch-retry-after-error-light", dark = false) {
+    @Test fun import_batch_retry_after_error_light() = verifyLayout("import-batch-retry-after-error-light", dark = false) {
         ImportBatchScreen(
             state = ImportBatchUiState.Error(
                 error = userFacingError(IllegalStateException("storage unavailable"), ErrorFlow.ImportBatchSave),
@@ -1188,7 +1235,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun import_batch_retry_after_error_dark() = shot("import-batch-retry-after-error-dark", dark = true) {
+    @Test fun import_batch_retry_after_error_dark() = verifyLayout("import-batch-retry-after-error-dark", dark = true) {
         ImportBatchScreen(
             state = ImportBatchUiState.Error(
                 error = userFacingError(IllegalStateException("storage unavailable"), ErrorFlow.ImportBatchSave),
@@ -1199,16 +1246,16 @@ open class VisualReferenceScreenshotTest {
     }
 
     // Estado después de un reintento exitoso
-    @Test fun import_batch_after_successful_retry_light() = shot("import-batch-after-successful-retry-light", dark = false) {
+    @Test fun import_batch_after_successful_retry_light() = verifyLayout("import-batch-after-successful-retry-light", dark = false) {
         ImportBatchScreen(state = ImportBatchUiState.Saved(importBatchFixture()), onAction = {})
     }
 
-    @Test fun import_batch_after_successful_retry_dark() = shot("import-batch-after-successful-retry-dark", dark = true) {
+    @Test fun import_batch_after_successful_retry_dark() = verifyLayout("import-batch-after-successful-retry-dark", dark = true) {
         ImportBatchScreen(state = ImportBatchUiState.Saved(importBatchFixture()), onAction = {})
     }
 
     // Revisión con varias incidencias y nombres largos
-    @Test fun import_batch_review_multiple_issues_light() = shot("import-batch-review-multiple-issues-light", dark = false) {
+    @Test fun import_batch_review_multiple_issues_light() = verifyLayout("import-batch-review-multiple-issues-light", dark = false) {
         val longNameBatch = ImportBatch(
             candidates = listOf(
                 ImportCandidate(
@@ -1238,7 +1285,7 @@ open class VisualReferenceScreenshotTest {
         ImportBatchScreen(state = ImportBatchUiState.Review(longNameBatch), onAction = {})
     }
 
-    @Test fun import_batch_review_multiple_issues_dark() = shot("import-batch-review-multiple-issues-dark", dark = true) {
+    @Test fun import_batch_review_multiple_issues_dark() = verifyLayout("import-batch-review-multiple-issues-dark", dark = true) {
         val longNameBatch = ImportBatch(
             candidates = listOf(
                 ImportCandidate(
@@ -1271,20 +1318,20 @@ open class VisualReferenceScreenshotTest {
     // Importación en viewport pequeño (w320dp)
     @Test
     @org.robolectric.annotation.Config(qualifiers = "w320dp-h640dp")
-    fun import_batch_small_viewport_light() = shot("import-batch-small-viewport-light", dark = false) {
+    fun import_batch_small_viewport_light() = verifyLayout("import-batch-small-viewport-light", dark = false) {
         ImportBatchScreen(state = ImportBatchUiState.Result(importBatchFixture()), onAction = {})
     }
 
     @Test
     @org.robolectric.annotation.Config(qualifiers = "w320dp-h640dp")
-    fun import_batch_small_viewport_dark() = shot("import-batch-small-viewport-dark", dark = true) {
+    fun import_batch_small_viewport_dark() = verifyLayout("import-batch-small-viewport-dark", dark = true) {
         ImportBatchScreen(state = ImportBatchUiState.Result(importBatchFixture()), onAction = {})
     }
 
     // Login con texto ampliado (simulado con qualifier de densidad)
     @Test
     @org.robolectric.annotation.Config(qualifiers = "w320dp-h640dp")
-    fun login_small_viewport_light() = shot("login-small-viewport-light", dark = false) {
+    fun login_small_viewport_light() = verifyLayout("login-small-viewport-light", dark = false) {
         AuthScreen(
             state = AuthUiState(email = "", password = "", isSubmitting = false),
             onEmailChanged = {},
@@ -1296,7 +1343,7 @@ open class VisualReferenceScreenshotTest {
 
     @Test
     @org.robolectric.annotation.Config(qualifiers = "w320dp-h640dp")
-    fun login_small_viewport_dark() = shot("login-small-viewport-dark", dark = true) {
+    fun login_small_viewport_dark() = verifyLayout("login-small-viewport-dark", dark = true) {
         AuthScreen(
             state = AuthUiState(email = "", password = "", isSubmitting = false),
             onEmailChanged = {},
@@ -1307,7 +1354,7 @@ open class VisualReferenceScreenshotTest {
     }
 
     // Login con error
-    @Test fun login_error_light() = shot("login-error-light", dark = false) {
+    @Test fun login_error_light() = verifyLayout("login-error-light", dark = false) {
         AuthScreen(
             state = AuthUiState(
                 email = "invalid",
@@ -1323,7 +1370,7 @@ open class VisualReferenceScreenshotTest {
         )
     }
 
-    @Test fun login_error_dark() = shot("login-error-dark", dark = true) {
+    @Test fun login_error_dark() = verifyLayout("login-error-dark", dark = true) {
         AuthScreen(
             state = AuthUiState(
                 email = "invalid",
@@ -1367,6 +1414,6 @@ open class VisualReferenceScreenshotTest {
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], qualifiers = "w320dp-h640dp")
-class VisualReferenceScreenshot320Test : VisualReferenceScreenshotTest() {
-    override val captureSuffix: String = "-320dp"
+class LayoutReference320Test : LayoutReferenceTest() {
+    override val viewportSuffix: String = "-320dp"
 }

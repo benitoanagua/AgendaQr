@@ -28,7 +28,7 @@ El producto necesita un sistema de diseño propio, mobile-first, con nombre neut
 
 ## Riesgos y mitigaciones
 
-- **Regresión visual involuntaria**: mitigada con el pin de valores en `AmSchemeTest` + manifiesto de hashes renovado + capturas Roborazzi.
+- **Regresión visual involuntaria**: mitigada con el pin de valores en `AmSchemeTest`, los contratos de contraste y la verificación de layout (`LayoutReferenceTest`, ADR-0007).
 - **Contraste en pares nuevos**: todos los pares calculados y fijados por prueba antes de llegar a pantalla.
 - **Patrón hoja inferior (Ant ActionSheet/Vant Picker)**: se evaluó con `ModalBottomSheet` para S08 y la asociación de comprobantes, y se retiró: la ventana de la hoja no despacha acciones semánticas bajo Robolectric (contrato de pruebas UI del repo), dejando el flujo inverificable en el gate. Los selectores permanecen como `AmDialog`. El patrón de hoja inferior no forma parte del sistema vigente; los selectores usan `AmDialog` hasta que una alternativa pueda cumplir el mismo contrato funcional y de pruebas.
 - **Validación iOS**: solo compilación de targets en este entorno; el runtime requiere Xcode (`IOS_RUNTIME_CHECKLIST`).

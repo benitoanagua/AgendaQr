@@ -120,9 +120,8 @@ Esa expresión genera fricción sostenida con el ecosistema:
   accesibilidad y contraste y se añaden las del nuevo contrato
   (NavigationBar, AppStatusHost, Snackbar, campos, IconToggleButton,
   escalado 200 %).
-- **Regresión visual:** los 8 hashes Roborazzi cambian; se regeneran con
-  `recordRoborazziDebug` + `recordVisualHashes` y se revisan los PNG
-  localmente.
+- **Regresión de layout:** los escenarios de `LayoutReferenceTest` se
+  actualizan y se verifican por aserciones (ADR-0007).
 - **Gate:** `verifyDesignSystemCompliance` se actualiza al nuevo
   contrato (formas desde tokens; sigue prohibiendo literales crudos
   fuera de la capa de tokens). No se desactiva. La tabla de excepciones

@@ -316,7 +316,7 @@ evalúa en configuración).
 | Tipografía y layout | `AmTypographyTest`, `AmPivotLayoutTest`, `AmUiPolishContractTest` | roles, interlineado, escalado de fuente |
 | Accesibilidad de componentes | `AmAccessibilityContractTest`, `ScreensA11yCoverageTest` | semántica, roles, targets |
 | Correcciones UX (ADR-0018) | `UxFilterReproductionTest`, `UxDateReproductionTest`, `UxEditorDiscardTest`, `UxAmountValidationTest`, `UxHomeHubTest`, `UxHomeFavoritesTest`, `DestinationsSectionStateTest`, `UxUnassociatedTest`, `UxLockSearchTest`, `QrFullscreenTest`, `ExternalFlowTrackerTest`, `ExternalFlowLockPolicyTest`, `AmDateTimePickerTest`, `AppStringsCopyContractTest` | filtros idempotentes, fecha con hora, descarte confirmado, importe válido, hub y favoritos de Inicio (lista sin duplicar el carrusel, sin mensaje falso), bandeja sin primarios, biometría/foco, brillo restaurado, gracia de bloqueo (STOP/START/RESUME con limpieza en primer plano) y presupuesto de copy ≤ 60 caracteres, bajo Robolectric/JVM |
-| Regresión visual | `recordRoborazzi` → `recordVisualHashes` / `verifyVisualHashes` | 90 capturas (45 escenarios × claro/oscuro, incl. tablet w720dp con NavigationRail, textos largos y rejilla King Kong a 320 dp) por SHA-256 (ADR-0007, sensible al entorno) |
+| Layout | `LayoutReferenceTest`, `LayoutReferenceExtraTest` (presentación) | escenarios claro/oscuro a 360 dp y 320 dp, tablet w720dp con NavigationRail, textos largos y escala de fuente 200 % verificados por aserciones de layout (ADR-0007) |
 | Arranque local-first y PIN | `:feature:destinations:presentation:testDebugUnitTest --tests "*AgendaQrLocalStartupTest"` | arranque real sin cuenta, perfil local, desbloqueo |
 | Máquina de estados del acceso local | `--tests "*LocalAccessGateTest"` | configurar → desbloquear → bloquear, saneado, intentos, bloqueo temporal |
 | Biometría (atajo fail-closed) + demo | `--tests "*LocalAccessBiometricTest" --tests "*DemoDataTest" --tests "*DemoSeederTest"` | éxito biométrico desbloquea, fallo conserva bloqueo + fallback PIN; dataset demo determinista, siembra idempotente y aislada |
@@ -360,22 +360,20 @@ total (ningún elemento guardado → estado `Error` con opción de reintento).
 - **small viewport:** importación en viewport reducido (layout adaptado).
 - **login error:** error de autenticación durante la importación.
 
-### Detalle: regresión visual (Roborazzi)
+### Detalle: verificación de layout
 
-**Procedimiento de generación y verificación de hashes:**
+Cada escenario se compone en Robolectric y se comprueba por aserciones
+(ADR-0007); no se generan ni versionan capturas:
 
-1. **Generación:** `./gradlew recordRoborazzi` ejecuta los escenarios en
-   Robolectric y genera las capturas PNG en
-   `feature/destinations/presentation/build/roborazzi/`.
-2. **Hash:** `recordVisualHashes` calcula el SHA-256 de cada captura y lo
-   almacena en el manifiesto.
-3. **Verificación:** `verifyVisualHashes` compara el SHA-256 de cada captura
-   actual contra el manifiesto. Cualquier diferencia indica un cambio visual
-   no esperado.
-
-**Sensibilidad al entorno:** el hash es sensible al JDK/OS (ADR-0007). La
-verificación debe ejecutarse en el mismo entorno que generó el manifiesto, o
-regenerar el manifiesto con `recordVisualHashes` antes de comparar.
+1. **Composición:** `LayoutReferenceTest`/`LayoutReferenceExtraTest` componen
+   las pantallas reales en claro y oscuro, a 360 dp y 320 dp, en tablet
+   w720dp con `AmNavRail` y a escala de fuente 100 % y 200 %.
+2. **Aserciones:** la raíz se muestra con tamaño, el árbol semántico no está
+   vacío, hay texto visible y ningún nodo sobresale lateralmente del root
+   (sin recortes laterales), salvo lo que vive dentro de un contenedor con
+   scroll horizontal.
+3. **Sin entorno:** la verificación es determinista y no depende del JDK ni
+   del sistema operativo.
 
 ### Detalle: jerarquía de acciones (4 niveles)
 
@@ -425,7 +423,7 @@ Pruebas de módulos:
 
 ### Android (runtime verificable en este entorno)
 
-Pruebas unitarias JVM (Robolectric/Roborazzi), gates estáticos, lint, ensamblado
+Pruebas unitarias JVM (Robolectric), gates estáticos, lint, ensamblado
 debug y release. El arranque real se comprueba componiendo `AgendaQrApp()` en
 Robolectric (`AgendaQrLocalStartupTest`).
 
@@ -511,7 +509,7 @@ oscuro. **Éxito:** nada cortado ni solapado.
   cámara, foco nativo, motion y predictive back reales `NO VERIFICADO` (ver §5).
 - No hay backend Supabase en este entorno: aceptación JDBC y sincronización real
   `NO VERIFICADO`.
-- La regresión visual (`verifyVisualHashes`) es sensible al entorno (JDK/OS):
-  usar en el mismo entorno que generó el manifiesto o regenerarlo (ADR-0007).
+- La verificación de layout es determinista (ADR-0007); la revisión estética
+  en dispositivo real queda fuera del gate y se declara como no verificada.
 - El estado de implementación por plataforma se mantiene en
   [STATE.md](STATE.md).

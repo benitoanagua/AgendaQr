@@ -209,7 +209,7 @@ del contrato y del gate.
 | Interacción y foco | `AmAccessibilityContractTest`, `ScreensA11yCoverageTest` |
 | Touch targets | `verifyControlMinSize` |
 | Literales, controles y excepciones | `verifyDesignSystemCompliance`, `verifyDesignSystemFixtures` |
-| Regresión visual | `recordRoborazzi`, `recordVisualHashes`, `verifyVisualHashes` |
+| Layout | `LayoutReferenceTest`, `LayoutReferenceExtraTest` (ADR-0007) |
 | Documentación | `verifyDocs` |
 
 ## 14. Gobernanza

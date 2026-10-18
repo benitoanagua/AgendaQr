@@ -61,5 +61,5 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 
 - Gates estáticos: `verifyDesignSystemCompliance`, `verifyDesignSystemFixtures`, `verifyControlMinSize`.
 - Contratos de sistema: `AmSchemeTest`, `AmTypographyTest`, `AmAccentTest`, `AmSurfaceMotionTest`, `AmContrastPairsTest` (commonTest); `AmAccessibilityContractTest`, `AmPivotLayoutTest`, `AmUiPolishContractTest` (androidUnitTest/Robolectric).
-- Regresión visual: `recordRoborazzi` → `recordVisualHashes`/`verifyVisualHashes` (ADR-0007).
+- Verificación de layout: `LayoutReferenceTest`, `LayoutReferenceExtraTest` (ADR-0007).
 - Agregador: `verifyAgendaQrArchitecture`.

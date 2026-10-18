@@ -14,10 +14,6 @@ coreKtx = "1.16.0"
 supabase = "3.2.4"
 ktor = "3.3.0"
 datetime = "0.7.1"
-# Capturas de referencia. Roborazzi (Apache 2.0) sobre la suite
-# Robolectric existente — ADR-0007. Compat: AGP 8.11, robolectric
-# 4.14.1, Compose 1.8.2 (verificado por compilación).
-roborazzi = "1.26.0"
 # Biometría Android (BiometricPrompt; requiere FragmentActivity). Apache 2.0.
 biometric = "1.1.0"
 # Host del prompt: FragmentActivity (biometric la trae; se declara explícita
@@ -35,7 +31,6 @@ lifecycle = "2.9.4"
 # Solo los alias con uso real (alias(libs.plugins.*)): los módulos
 # aplican Kotlin/AGP/Compose mediante los convention plugins de
 # build-logic, que fijan sus propias coordenadas.
-roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 [libraries]
@@ -60,8 +55,5 @@ camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "
 camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
 camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
 camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
-roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
-roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
-roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
 lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 material3-window-size = { group = "org.jetbrains.compose.material3", name = "material3-window-size-class", version.ref = "compose" }

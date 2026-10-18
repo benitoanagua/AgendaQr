@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
@@ -17,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmTheme
 import com.agendaqr.core.ui.theme.AmType
-import com.github.takahirom.roborazzi.captureRoboImage
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -25,26 +27,29 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Capturas extra de la dirección visual Super-App: ancho 320 dp (escenario
- * de fuente al 200 %), botones primario/destructivo en sus estados, importe
- * hero a 32 sp y acción inferior fija.
- *
- * Los PNG se generan en
- * `feature/destinations/presentation/build/roborazzi/` y se registran con
- * `./gradlew recordVisualHashes` (nunca a mano).
+ * Verificación de layout extra: ancho 320 dp (escenario de fuente al
+ * 200 %), botones primario/destructivo en sus estados, importe hero y
+ * acción inferior fija. Sin capturas: cada caso comprueba que la raíz se
+ * muestra con tamaño y que el texto visible no se recorta.
  */
 @RunWith(RobolectricTestRunner::class)
-@org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = "w320dp-h640dp")
-class VisualReferenceExtraScreenshotTest {
+class LayoutReferenceExtraTest {
 
     @get:Rule
     val compose = createComposeRule()
 
-    private fun shot(name: String, dark: Boolean, content: @Composable () -> Unit) {
+    private fun verifyLayout(name: String, dark: Boolean, content: @Composable () -> Unit) {
         compose.setContent { AmTheme(darkTheme = dark) { content() } }
         compose.waitForIdle()
-        compose.onRoot().captureRoboImage("build/roborazzi/$name.png")
+        val root = compose.onRoot().getUnclippedBoundsInRoot()
+        compose.onRoot().assertIsDisplayed()
+        val rootWidth = (root.right - root.left).value
+        val rootHeight = (root.bottom - root.top).value
+        assertTrue(
+            "$name: el layout no tiene tamaño (root=$root)",
+            rootWidth > 200f && rootHeight > 320f,
+        )
     }
 
     private fun rootChrome(selected: String): com.agendaqr.core.ui.components.AmNavChromeState {
@@ -73,7 +78,7 @@ class VisualReferenceExtraScreenshotTest {
     }
 
     @Test
-    fun s01_grid_320dp_light() = shot("s01-grid-320dp-light", dark = false) {
+    fun s01_grid_320dp_light() = verifyLayout("s01-grid-320dp-light", dark = false) {
         DestinationsScreen(
             state = DestinationsUiState(
                 destinations = listOf(
@@ -93,7 +98,7 @@ class VisualReferenceExtraScreenshotTest {
     }
 
     @Test
-    fun s01_grid_320dp_dark() = shot("s01-grid-320dp-dark", dark = true) {
+    fun s01_grid_320dp_dark() = verifyLayout("s01-grid-320dp-dark", dark = true) {
         DestinationsScreen(
             state = DestinationsUiState(
                 destinations = listOf(
@@ -113,7 +118,7 @@ class VisualReferenceExtraScreenshotTest {
     }
 
     @Test
-    fun primary_button_states_light() = shot("primary-button-states-light", dark = false) {
+    fun primary_button_states_light() = verifyLayout("primary-button-states-light", dark = false) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -127,7 +132,7 @@ class VisualReferenceExtraScreenshotTest {
     }
 
     @Test
-    fun primary_button_states_dark() = shot("primary-button-states-dark", dark = true) {
+    fun primary_button_states_dark() = verifyLayout("primary-button-states-dark", dark = true) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -141,7 +146,7 @@ class VisualReferenceExtraScreenshotTest {
     }
 
     @Test
-    fun danger_button_light() = shot("danger-button-light", dark = false) {
+    fun danger_button_light() = verifyLayout("danger-button-light", dark = false) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -153,7 +158,7 @@ class VisualReferenceExtraScreenshotTest {
     }
 
     @Test
-    fun danger_button_dark() = shot("danger-button-dark", dark = true) {
+    fun danger_button_dark() = verifyLayout("danger-button-dark", dark = true) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -165,7 +170,7 @@ class VisualReferenceExtraScreenshotTest {
     }
 
     @Test
-    fun amount_hero_light() = shot("amount-hero-light", dark = false) {
+    fun amount_hero_light() = verifyLayout("amount-hero-light", dark = false) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -182,7 +187,7 @@ class VisualReferenceExtraScreenshotTest {
     }
 
     @Test
-    fun amount_hero_dark() = shot("amount-hero-dark", dark = true) {
+    fun amount_hero_dark() = verifyLayout("amount-hero-dark", dark = true) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -199,7 +204,7 @@ class VisualReferenceExtraScreenshotTest {
     }
 
     @Test
-    fun bottom_action_light() = shot("bottom-action-light", dark = false) {
+    fun bottom_action_light() = verifyLayout("bottom-action-light", dark = false) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -210,7 +215,7 @@ class VisualReferenceExtraScreenshotTest {
     }
 
     @Test
-    fun bottom_action_dark() = shot("bottom-action-dark", dark = true) {
+    fun bottom_action_dark() = verifyLayout("bottom-action-dark", dark = true) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()

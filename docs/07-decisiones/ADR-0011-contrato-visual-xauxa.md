@@ -58,7 +58,7 @@ Este ADR formaliza las decisiones visuales transversales.
   columnsFor, scaleFactor, tileRows, stagger, contraste en reposo/presión).
 - `XauxaAccessibilityContractTest` (Robolectric): contratos de a11y.
 - `verifyDesignSystemCompliance`: gate estático con fixtures.
-- `verifyVisualHashes`: regresión visual (hashes SHA-256).
+- `LayoutReferenceTest`: verificación de layout (ADR-0007).
 
 ## Criterio de retirada
 

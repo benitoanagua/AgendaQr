@@ -1,67 +1,60 @@
-# ADR-0007 — Capturas de referencia: Roborazzi + manifiesto de hashes
+# ADR-0007 — Verificación de layout sin capturas versionadas
 
-**Estado:** APROBADA (técnica, ronda 2 — 2026-10-09)
-**Área:** Área D de la auditoría ronda 2 · Alcance: teléfonos Android (Robolectric JVM)
+**Estado:** APROBADA (técnica) — actualizada
+**Relaciona:** ADR-0023 (fuente normativa de diseño), ADR-0010 (instrumentados).
 
 ## Contexto
 
-La aceptación de la ronda exige capturas de referencia de las pantallas
-críticas en claro y oscuro. Restricciones duras:
+La aceptación visual exige comprobar que las pantallas críticas se
+componen sin recortes ni solapes en claro y oscuro, a 320/360 dp, con
+escala de fuente al 100 % y 200 % y en tablet. Restricciones duras:
 
-1. **El repo no versiona binarios de imagen** (decisión del
-   propietario, 2026-10-09: `.gitignore` ignora png/jpg/jpeg/gif/webp/bmp).
-2. La suite existente de UI corre sobre **Robolectric** en JVM
-   (`testDebugUnitTest`), sin emulador en CI.
+1. El repo **no versiona binarios de imagen** (`.gitignore` ignora
+   png/jpg/jpeg/gif/webp/bmp).
+2. La suite de UI corre sobre **Robolectric** en JVM, sin emulador en CI.
+
+La verificación anterior se apoyaba en capturas PNG generadas en la suite
+Robolectric y un `manifest.json` de SHA-256. Ese mecanismo tenía dos
+problemas de fondo:
+
+- El render NATIVE de Robolectric **depende del entorno** (JDK, sistema
+  operativo): el mismo código produce hashes distintos en cada entorno, así
+  que el hash no es una referencia estable.
+- Las capturas y su manifiesto **cambiaban en cada reforma de tokens** y no
+  aportaban una verificación determinista al gate: la comparación de hashes
+  nunca formó parte de `verifyAgendaQrArchitecture` ni del CI.
 
 ## Decisión
 
-**Roborazzi 1.26.0** (`roborazzi` + `roborazzi-compose` +
-`roborazzi-junit-rule`, Apache 2.0) sobre la suite Robolectric existente.
+**Verificación de layout por aserciones** sobre la suite Robolectric
+existente. No se generan, versionan ni hashean capturas; la comparación de
+hashes y su manifiesto dejan de existir.
 
-Por qué no Paparazzi: exige layoutlib nativo + generación por módulo y no
-reutiliza la infraestructura Robolectric ya existente (los tests de
-accesibilidad y de fuente grande viven ahí); Roborazzi comparte el mismo
-runner, las mismas `@Config(qualifiers="w320dp…")` y corre en el JVM del
-gate actual. Compatibilidad verificada en esta pasada por compilación y
-ejecución: AGP 8.11.1, Kotlin 2.2.20, Compose 1.8.2, Robolectric 4.14.1.
+Las pruebas de layout (`LayoutReferenceTest`, `LayoutReferenceExtraTest`)
+componen cada escenario real de las pantallas críticas —claro/oscuro,
+360 dp, 320 dp, tablet w720dp con `AmNavRail`, fuentes largas y escala de
+fuente 100 %/200 %— y comprueban:
 
-**Hallazgo crítico de integración:** sin
-`@GraphicsMode(GraphicsMode.Mode.NATIVE)` las capturas salían todas negras
-e idénticas entre temas (modo LEGACY de Robolectric no pinta). La anotación
-es obligatoria en cada clase de captura y está documentada en el propio
-test.
+- la raíz se compone, se muestra y tiene tamaño;
+- el árbol semántico no está vacío y contiene texto visible;
+- ningún nodo sobresale lateralmente del root (sin recortes laterales),
+  salvo el contenido dentro de un contenedor con scroll horizontal, cuyo
+  desborde es intencional.
 
-## Estrategia de referencia sin binarios
+La protección determinista de recortes y solapes se completa con las
+pruebas ya existentes: `AmScaffoldOverlapContractTest` (el contenido nunca
+queda bajo el dock de acciones ni el FAB), `ScreensA11yCoverageTest` y
+`AmAccessibilityContractTest` (objetivos táctiles y texto visible),
+`FontScaleContractTest`/`AmPivotLayoutTest` (escala de fuente).
 
-- Los PNG se generan en
-  `feature/destinations/presentation/build/roborazzi/` (no versionados).
-- La "referencia" es `docs/04-ux/visual-hashes/manifest.json`: SHA-256 de
-  cada PNG (TEXTO versionado).
-- Excepción temporal y acotada: `docs/04-ux/visual-hashes/before/` conserva
-  las capturas requeridas como evidencia previa de la migración TDesign
-  (T1). No convierte los PNG generados habitualmente en artefactos
-  versionados.
-- Regresión visual = comparación de hashes:
-  `./gradlew verifyVisualHashes` (regenera + compara).
+## Consecuencias
 
-**Sensibilidad al entorno:** el render NATIVE de Robolectric depende de la
-plataforma (JDK, sistema). La comparación de hashes es determinista en un
-mismo entorno (el manifest se generó en Linux x86_64 + JDK 17) y NO se
-cuelga del CI por defecto: si cambia el entorno, se regenera el manifest y
-el diff se revisa localmente con los PNG. El mecanismo es opt-in para
-quien quiera blindarlo en su entorno.
-
-## Pantallas capturadas (claro + oscuro)
-
-S01 Inicio, login (AuthScreen), S02 Añadir, importación masiva (Idle). Los
-componentes del DS tienen además los tests de layout/fontScale
-(`Round2FontScaleTest`), que son la protección determinista del gate para
-recortes/solapes.
-
-## Comandos
-
-```bash
-./gradlew :feature:destinations:presentation:recordRoborazzi \
-  -PallowDebugSigningForRc=true          # genera los PNG
-./gradlew verifyVisualHashes  # regenera y compara hashes
-```
+- El repo no contiene capturas de UI ni manifiestos de hashes.
+- La verificación es determinista y no depende del JDK ni del sistema
+  operativo.
+- La regresión puramente estética (color o espaciado sutil) ya no se
+  detecta automáticamente; su cobertura es por contrato de tokens
+  (`AmSchemeTest`, `AmContrastPairsTest`, `AmTypographyTest`) y revisión
+  humana en dispositivo, que se declara como no verificada en el CI.
+- Compilar y pasar las pruebas de layout no sustituye la validación en
+  hardware real, que sigue siendo una comprobación manual.

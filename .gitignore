@@ -20,16 +20,11 @@ release.keystore
 supabase/.temp/
 supabase/.branches/
 
-# Las capturas de verificación (Roborazzi) se generan localmente y se
-# fijan por hash en docs/04-ux/visual-hashes/manifest.json. La única
-# excepción de binarios versionados es la evidencia previa TDesign.
+# El repo no versiona binarios de imagen: la verificación de layout es
+# por aserciones (ADR-0007), no por capturas.
 *.png
 *.jpg
 *.jpeg
 *.gif
 *.webp
 *.bmp
-
-# Evidencia previa congelada para la migración TDesign (T1).
-!docs/04-ux/visual-hashes/before/
-!docs/04-ux/visual-hashes/before/*.png

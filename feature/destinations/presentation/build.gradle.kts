@@ -1,8 +1,5 @@
 plugins {
     id("agendaqr.compose-library")
-    // Capturas de referencia con Roborazzi (ADR-0007) sobre la suite
-    // Robolectric existente.
-    alias(libs.plugins.roborazzi)
 }
 
 android {
@@ -50,10 +47,6 @@ kotlin {
             implementation("androidx.compose.ui:ui-test-junit4:${libs.versions.androidx.compose.get()}")
             implementation("androidx.compose.ui:ui-test-manifest:${libs.versions.androidx.compose.get()}")
             implementation("org.robolectric:robolectric:${libs.versions.robolectric.get()}")
-            // Capturas de referencia (ADR-0007).
-            implementation(libs.roborazzi)
-            implementation(libs.roborazzi.compose)
-            implementation(libs.roborazzi.junit.rule)
         }
     }
 }

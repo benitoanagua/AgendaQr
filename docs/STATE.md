@@ -38,8 +38,8 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Iconografía TDesign convertida a vectores Compose (34 glifos fuente) | compilación Android/iOS + gate |
 | Tokens de color Warning e Info añadidos a AmColor | gate del design system |
 | Feedback transitorio (Snackbar) y persistente (AppStatusHost) | `RootNavigationChromeTest` + `AppStatusHostTest` |
-| Reformas de referencia visual por pantalla (ADR-0021, brechas G1–G9: botón primario fijo al pie, tarjetas de ajustes con encabezado de sección, insignia de estado con texto, evidencia decodificada en tarjeta, metadatos de fecha y marca de tipo en resultados) | gate del design system + Robolectric de presentación + capturas regeneradas (`verifyVisualHashes` PASS, 80 capturas) |
-| Dirección visual Super-App (ADR-0022, Anexo A): tokens, componentes, rejilla King Kong en Inicio, escala tipográfica, elevación y movimiento | gate del design system + Robolectric de presentación + `verifyVisualHashes` PASS (90 capturas, incl. escenarios 320 dp y estados de botones); inspección cruzada en hojas de contacto de 45 pares claro/oscuro y revisión a tamaño completo de Inicio, Buscar, detalle QR, operaciones e importación |
+| Reformas de referencia visual por pantalla (ADR-0021, brechas G1–G9: botón primario fijo al pie, tarjetas de ajustes con encabezado de sección, insignia de estado con texto, evidencia decodificada en tarjeta, metadatos de fecha y marca de tipo en resultados) | gate del design system + Robolectric de presentación + verificación de layout (`LayoutReferenceTest`) |
+| Dirección visual Super-App (ADR-0022, Anexo A): tokens, componentes, rejilla King Kong en Inicio, escala tipográfica, elevación y movimiento | gate del design system + Robolectric de presentación + verificación de layout (escenarios 320 dp, escala de fuente 200 % y estados de botones); revisión en dispositivo real pendiente y declarada como no verificada |
 
 ## 2. Implementado pero NO VERIFICADO en este entorno
 
@@ -59,7 +59,7 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
 | Sincronización real contra Supabase (subida/bajada) | Requiere backend y cuenta reales | prueba de aceptación contra un proyecto Supabase |
 | Prompt biométrico en dispositivo | Código implementado (`BiometricPrompt` con host `FragmentActivity` en Android, `LocalAuthentication`/`LAContext` en iOS); el mapeo de errores y la invariante fail-closed están probados en JVM, pero el prompt sobre hardware real no puede ejecutarse aquí | abrir la app con PIN configurado en dispositivo con biometría inscrita: éxito desbloquea; fallo/cancelación mantiene el bloqueo con el PIN visible |
 | Runtime del selector PDF de iOS (`UIDocumentPickerViewController`) | Implementado y compilado contra bindings reales; el contrato del sistema requiere simulador/dispositivo | elegir un PDF en «Elegir archivo (PDF)» en S02 → llega al diálogo «Comprobante recibido» |
-| NavigationRail en tablet/plegable | Captura tablet registrada en Roborazzi (w720dp); falta render en hardware real | render real en tablet/plegable |
+| NavigationRail en tablet/plegable | El layout se verifica por test (w720dp, `LayoutReferenceTest`); falta el render en hardware real | render real en tablet/plegable |
 
 ## 3. Límites conocidos (decisiones, no defectos)
 
