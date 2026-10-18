@@ -209,6 +209,7 @@ class S02UiPolishTest {
                 .assertHeightIsAtLeast(48.dp)
                 .assert(hasClickAction())
         }
+        compose.onNodeWithText(AppStrings.PermisoCamaraContexto).assertIsDisplayed()
         compose.onAllNodesWithText("Galería (varios)", useUnmergedTree = true).assertCountEquals(0)
     }
 }

@@ -341,6 +341,7 @@ internal fun CameraQrEntry(
             AmListRow(
                 title = AppStrings.Camara,
                 subtitle = AppStrings.PermisoCamaraContexto,
+                subtitleMaxLines = Int.MAX_VALUE,
                 onClick = requestCamera,
                 leading = {
                     AmIconBadge(

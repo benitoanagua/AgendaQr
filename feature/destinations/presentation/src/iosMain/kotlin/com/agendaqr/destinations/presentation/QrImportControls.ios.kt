@@ -56,6 +56,7 @@ actual fun QrGalleryControls(
 ) {
     AmListRow(
         title = AppStrings.ElegirDeLaGaleria,
+        titleMaxLines = Int.MAX_VALUE,
         onClick = { IosQrImportController.openMultiple(onResult = onResult) },
         leading = { AmIconBadge(icon = AmIcons.Gallery, tone = AmTone.Info) },
         showChevron = true,
@@ -97,6 +98,7 @@ actual fun QrCameraEntryControl(
         AmListRow(
             title = AppStrings.Camara,
             subtitle = AppStrings.PermisoCamaraContexto,
+            subtitleMaxLines = Int.MAX_VALUE,
             onClick = {
                 IosQrCameraPresenter(
                     onQr = { result ->
@@ -137,6 +139,7 @@ actual fun sharedImportsSupported(): Boolean = false
 actual fun QrPdfPickerControl() {
     AmListRow(
         title = AppStrings.ElegirArchivoPdf,
+        titleMaxLines = Int.MAX_VALUE,
         onClick = { IosPdfPicker.present() },
         leading = { AmIconBadge(icon = AmIcons.Attachment, tone = AmTone.Info) },
         showChevron = true,

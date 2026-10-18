@@ -37,6 +37,7 @@ fun AddDestinationScreen(
     // ambas plataformas); el orden congelado S02 (Galería → Desde otra app
     // → Cámara) no cambia.
     AmScreenScaffold(
+        scrollable = true,
         topBar = {
             AmTopBar(
                 title = AppStrings.Anadir,

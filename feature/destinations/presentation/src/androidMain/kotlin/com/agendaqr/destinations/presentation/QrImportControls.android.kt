@@ -56,6 +56,7 @@ actual fun QrGalleryControls(
     }
     AmListRow(
         title = AppStrings.ElegirDeLaGaleria,
+        titleMaxLines = Int.MAX_VALUE,
         onClick = AgendaQrAndroidImportLauncher::gallery,
         leading = { AmIconBadge(icon = AmIcons.Gallery, tone = AmTone.Info) },
         showChevron = true,
@@ -78,6 +79,7 @@ actual fun QrCameraEntryControl(
 actual fun QrPdfPickerControl() {
     AmListRow(
         title = AppStrings.ElegirArchivoPdf,
+        titleMaxLines = Int.MAX_VALUE,
         onClick = AgendaQrAndroidImportLauncher::pdf,
         leading = { AmIconBadge(icon = AmIcons.Attachment, tone = AmTone.Info) },
         showChevron = true,
