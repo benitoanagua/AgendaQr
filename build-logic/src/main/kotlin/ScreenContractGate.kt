@@ -135,7 +135,8 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content"),
             components = listOf(
-                "AmScreenScaffold", "AmQrPreview", "AmBottomAction", "AmPrimaryButton",
+                "AmScreenScaffold", "AmTopBar", "AmQrPreview", "AmCard",
+                "AmEmptyState", "AmBottomAction", "AmStatusBanner",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf("$A11Y/ScreensA11yCoverageTest.kt", "$A11Y/LayoutReferenceTest.kt"),
@@ -228,7 +229,7 @@ object ScreenContracts {
             captureStates = listOf("empty", "content"),
             components = listOf(
                 "AmScreenScaffold", "AmSearchField", "AmListRow", "AmListBody",
-                "AmSectionHeader", "AmEmptyState", "AmTonalTag", "AmNavBar",
+                "AmSectionHeader", "AmEmptyState", "AmNavBar",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -254,8 +255,9 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("empty", "content"),
             components = listOf(
-                "AmScreenScaffold", "AmListRow", "AmListBody", "AmSectionHeader",
-                "AmEmptyState", "AmDialogList", "AmNavBar",
+                "AmScreenScaffold", "AmTopBar", "AmListRow", "AmListBody",
+                "AmTabs", "AmContextBadge", "AmEmptyState", "AmLoading",
+                "AmStatusBanner", "AmTextAction", "AmNavBar",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -412,7 +414,8 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("selection"),
             components = listOf(
-                "AmDialog", "AmDialogList", "AmSearchField", "AmPrimaryButton",
+                "AmDialog", "AmDialogList", "AmListRow", "AmTextField",
+                "AmTextAction",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(

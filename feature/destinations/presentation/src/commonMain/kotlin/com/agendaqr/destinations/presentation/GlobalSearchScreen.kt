@@ -96,7 +96,11 @@ fun GlobalSearchScreen(
                     if (group.isNotEmpty()) {
                         item(key = "group:" + type.name) {
                             Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                                AmSectionHeader(text = searchResultTypeLabel(type))
+                                AmSectionHeader(
+                                    // S04 de Stitch (V1.19): el encabezado lleva el
+                                    // conteo real del grupo.
+                                    text = searchResultTypeLabel(type) + " (" + group.size + ")",
+                                )
                                 AmListBody {
                                     group.forEachIndexed { index, result ->
                                         AmListRow(
