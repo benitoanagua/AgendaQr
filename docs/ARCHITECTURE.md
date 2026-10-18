@@ -46,13 +46,13 @@ ejecución real con Xcode.
    requisitos, dominio, alcance, decisiones y reglas de negocio. Cubre también
    el comportamiento funcional UX (contrato UX/UI V1 congelado).
 2. **Identidad visual propia de AgendaQr.** Define paleta, superficies, texto,
-   estados, radios, densidad, controles, iconografía y feedback, con patrones
-   de apps móviles chinas de consumo como referencia por pantalla. Android e
+   estados, radios, densidad, controles, iconografía y feedback, siguiendo
+   TDesign Mobile (`tdesign_flutter@0.2.7`) como fuente por pantalla. Android e
    iOS definen las convenciones de navegación y comportamiento. El contrato
    normativo es `docs/05-design-system/00-contrato-normativo-diseno.md`;
-   [ADR-0020](07-decisiones/ADR-0020-identidad-visual-agendaqr.md) y
-   [ADR-0021](07-decisiones/ADR-0021-referencias-apps-chinas-por-pantalla.md)
-   lo respaldan. Ant Design Mobile y Vant no son referencia.
+   [ADR-0023](07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md) es la
+   autoridad visual vigente. Design systems previos (por ejemplo Ant Design
+   Mobile) no son referencia.
 3. **WaraWerse — referencia técnica.** Solo para Kotlin Multiplatform, Compose,
    modularización, Gradle/build logic y prácticas de testing. No introduce
    lógica de negocio.

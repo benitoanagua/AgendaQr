@@ -1,6 +1,8 @@
 # Referencia de dirección visual Super-App
 
-Fuente de la dirección visual vigente según ADR-0022.
+Referencia histórica. Fuente de la dirección visual Super-App según ADR-0022,
+suplantada por ADR-0023 (TDesign Mobile 0.2.7). Se conserva como anexo
+histórico; no es autoridad vigente.
 
 > Especificación Arquitectónica de Diseño · Estilo Super-App China (Alta Densidad)
 
