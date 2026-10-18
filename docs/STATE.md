@@ -38,8 +38,10 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Iconografía TDesign convertida a vectores Compose (34 glifos fuente) | compilación Android/iOS + gate |
 | Tokens de color Warning e Info añadidos a AmColor | gate del design system |
 | Feedback transitorio (Snackbar) y persistente (AppStatusHost) | `RootNavigationChromeTest` + `AppStatusHostTest` |
-| Reformas de referencia visual por pantalla (ADR-0021, brechas G1–G9: botón primario fijo al pie, tarjetas de ajustes con encabezado de sección, insignia de estado con texto, evidencia decodificada en tarjeta, metadatos de fecha y marca de tipo en resultados) | gate del design system + Robolectric de presentación + verificación de layout (`LayoutReferenceTest`) |
-| Dirección visual Super-App (ADR-0022, Anexo A): tokens, componentes, rejilla King Kong en Inicio, escala tipográfica, elevación y movimiento | gate del design system + Robolectric de presentación + verificación de layout (escenarios 320 dp, escala de fuente 200 % y estados de botones); revisión en dispositivo real pendiente y declarada como no verificada |
+| Reformas visuales por pantalla (brechas G1–G9: botón primario fijo al pie, tarjetas de ajustes con encabezado de sección, insignia de estado con texto, evidencia decodificada en tarjeta, metadatos de fecha y marca de tipo en resultados) | gate del design system + Robolectric de presentación + verificación de layout (`LayoutReferenceTest`) |
+| Dirección visual TDesign Mobile 0.2.7 (ADR-0023): tokens, componentes, acciones de Inicio, escala tipográfica, elevación, movimiento y pulsación | gate del design system + Robolectric de presentación + verificación de layout (escenarios 320 dp, escala de fuente 200 % y estados de botones); revisión en dispositivo real pendiente y declarada como no verificada |
+| Contrato de interacción por pantalla (19 superficies: ruta real, destinos válidos, estados, gestos, componentes, pruebas con señal de accesibilidad y escenarios de captura) | `verifyScreenContract` + `verifyScreenContractFixtures` (dentro de `verifyAgendaQrArchitecture`): cruza el contrato con `AppRoute`/rutas de flujo, archivos, símbolos de `core/ui`, claves de `AppStrings`, pruebas y el documento generado |
+| Pulsación fiel a TDesign en botones, celdas, tarjetas y acciones de diálogo (color activo, sin ripple) | `:core:ui:testDebugUnitTest`; desviación D-11 para el resto de superficies |
 
 ## 2. Implementado pero NO VERIFICADO en este entorno
 
@@ -60,6 +62,7 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
 | Prompt biométrico en dispositivo | Código implementado (`BiometricPrompt` con host `FragmentActivity` en Android, `LocalAuthentication`/`LAContext` en iOS); el mapeo de errores y la invariante fail-closed están probados en JVM, pero el prompt sobre hardware real no puede ejecutarse aquí | abrir la app con PIN configurado en dispositivo con biometría inscrita: éxito desbloquea; fallo/cancelación mantiene el bloqueo con el PIN visible |
 | Runtime del selector PDF de iOS (`UIDocumentPickerViewController`) | Implementado y compilado contra bindings reales; el contrato del sistema requiere simulador/dispositivo | elegir un PDF en «Elegir archivo (PDF)» en S02 → llega al diálogo «Comprobante recibido» |
 | NavigationRail en tablet/plegable | El layout se verifica por test (w720dp, `LayoutReferenceTest`); falta el render en hardware real | render real en tablet/plegable |
+| Galería visual de capturas (claro/oscuro, 320/360 dp, fuente 200 %, tablet con NavigationRail) | No se genera en este entorno: no hay render Robolectric con capturas ni emulador, y ADR-0007 prohíbe versionarlas. `verifyScreenContract` valida las capturas si existen (esquema de nombre, dimensiones reales, duplicados y cobertura) | generar la galería bajo demanda con el esquema `<superficie>--<estado>--<ancho>dp--<tema>--font<escala>.png` en `build/` y publicarla como artefacto de CI |
 
 ## 3. Límites conocidos (decisiones, no defectos)
 
@@ -67,8 +70,8 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
 - `FLAG_SECURE` no implementado (ADR-0009 propuesto): las pantallas sensibles admiten capturas; implementarlo bloquea screenshots del QR.
 - Paginación local de 50 en 50 (U-22): se conserva sin cambios; reportada como opcional.
 
-- Divisor decorativo Super-App (`#EEEEEE` claro / `#2A2A2A` oscuro) y borde de superficie (`#E2E4E9` / `#333333`): válidos como separadores; los límites funcionales siguen ≥ 3:1 (contrato §4.4, ADR-0022).
-- Cuerpo a 14 sp (escala Anexo A, ADR-0022; mínimo absoluto 11 sp): a 320 dp y 200 % de fuente los desbordamientos se resuelven con layout, nunca bajando la escala; la suite de layout lo verifica.
+- Divisor decorativo (`#EEEEEE` claro / `#2A2A2A` oscuro) y borde de superficie (`#E2E4E9` / `#333333`): tokens de la capa de color; válidos como separadores, y los límites funcionales siguen ≥ 3:1 (contrato §4.4).
+- Cuerpo a 14 sp (escala del contrato §5; mínimo absoluto 11 sp): a 320 dp y 200 % de fuente los desbordamientos se resuelven con layout, nunca bajando la escala; la suite de layout lo verifica.
 
 - Glifos «Editar», «Compartir» y «Mostrar QR» sin icono asignado (contrato
   normativo §7): esas acciones de barra superior van como acción de texto (con su

@@ -58,6 +58,7 @@ definidos por el producto.
 | D-08 | Las familias tipográficas de TDesign varían por plataforma. | Se usa la fuente del sistema, sin empaquetar fuentes ni modificar el copy. |
 | D-09 | La familia numérica `TCloudNumber` no se empaqueta. | Los importes usan la fuente del sistema con cifras tabulares y el peso que fija la escala. |
 | D-10 | La fuente no expone tokens de movimiento. | Los valores de easing y duración se declaran en `AmMotion`. |
+| D-11 | Retroalimentación de pulsación de algunas superficies. | `TDButton`, `TDCell` y `TDBottomTabBar` usan color activo sin ripple; botones, celdas, tarjetas y acciones de diálogo ya usan `AmColor.SurfaceActive`. La acción de texto, el chip de filtro y los ítems de navegación conservan la indicación de la plataforma como deuda acotada, sin impacto en función, jerarquía ni accesibilidad. |
 
 Los estados conservan contraste; el lienzo QR permanece blanco. Las
 implementaciones nativas se limitan a servicios de plataforma y mantienen la

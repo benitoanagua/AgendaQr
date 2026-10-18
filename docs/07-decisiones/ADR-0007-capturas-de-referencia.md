@@ -30,6 +30,16 @@ problemas de fondo:
 existente. No se generan, versionan ni hashean capturas; la comparación de
 hashes y su manifiesto dejan de existir.
 
+La galería visual (cuando se pide bajo demanda) se produce fuera del control
+de versiones, en `build/`, y `verifyScreenContract` la valida si está
+presente: esquema de nombre determinista
+`<superficie>--<estado>--<ancho>dp--<tema>--font<escala>.png`, dimensiones
+reales del bitmap coherentes con el ancho declarado (sin zoom, recorte ni
+viewport falso), sin duplicados byte-exactos ni repeticiones de la misma
+superficie/estado/configuración, y con cobertura de las configuraciones
+requeridas. Si no hay artefactos, el gate no falla: la galería no se
+versiona.
+
 Las pruebas de layout (`LayoutReferenceTest`, `LayoutReferenceExtraTest`)
 componen cada escenario real de las pantallas críticas —claro/oscuro,
 360 dp, 320 dp, tablet w720dp con `AmNavRail`, fuentes largas y escala de

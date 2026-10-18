@@ -3,6 +3,8 @@ package com.agendaqr.core.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -17,6 +19,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -204,13 +207,22 @@ fun AmTappableCard(
     content: @Composable () -> Unit,
 ) {
     val shape = AmShapes.Medium
+    // TDCell usa `GestureDetector` con color activo en `onTapDown`: la
+    // pulsación se resuelve con el token activo, sin ripple Material.
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed = interactionSource.collectIsPressedAsState().value
     Column(
         modifier = modifier
             .fillMaxWidth()
             .amElevation(AmElevation.Shadow1, shape)
-            .background(AmColor.Surface, shape)
+            .background(if (pressed) AmColor.SurfaceActive else AmColor.Surface, shape)
             .border(AmMetrics.Border, AmColor.Border, shape)
-            .clickable(role = Role.Button, onClick = onClick)
+            .clickable(
+                role = Role.Button,
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick,
+            )
             .padding(AmSpacing.Md),
     ) {
         content()
@@ -400,11 +412,19 @@ fun AmListRow(
                 maxWidth <= AmMetrics.ListRowEndMetaMinWidth ||
                     LocalDensity.current.fontScale >= AmMetrics.ListRowEndMetaStackFontScale
                 )
+            // TDCell: color activo en la pulsación (sin ripple Material).
+            val interactionSource = remember { MutableInteractionSource() }
+            val pressed = interactionSource.collectIsPressedAsState().value
             ListItem(
                 modifier = Modifier
                     .then(
                         if (onClick != null) {
-                            Modifier.clickable(role = Role.Button, onClick = onClick)
+                            Modifier.clickable(
+                                role = Role.Button,
+                                interactionSource = interactionSource,
+                                indication = null,
+                                onClick = onClick,
+                            )
                         } else {
                             Modifier
                         },
@@ -412,7 +432,13 @@ fun AmListRow(
                     .then(
                         if (selected) Modifier.semantics { this.selected = true } else Modifier,
                     ),
-                colors = ListItemDefaults.colors(containerColor = AmColor.Transparent),
+                colors = ListItemDefaults.colors(
+                    containerColor = if (pressed && onClick != null) {
+                        AmColor.SurfaceActive
+                    } else {
+                        AmColor.Transparent
+                    },
+                ),
                 headlineContent = {
                     val shortMeta = endMeta
                     if (shortMeta == null) {

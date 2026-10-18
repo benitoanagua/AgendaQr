@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-10-17  
 **Rama:** `consolidate/cleanup-20261017`  
-**Autoridad visual:** ADR-0022 y `05-design-system/00-contrato-normativo-diseno.md`
+**Autoridad visual en la fecha del inventario:** ADR-0022 y `05-design-system/00-contrato-normativo-diseno.md`. Instantánea histórica: la autoridad vigente hoy es ADR-0023 (TDesign Mobile 0.2.7).
 
 ## Estadísticas
 
@@ -27,14 +27,16 @@ históricas a versiones previas.
 - **Código transitorio:** no se encontraron marcadores técnicos de deuda activos en
   Kotlin dentro de `core`, `feature`, `shared` o `androidApp`.
 - **Código huérfano:** no se retiraron implementaciones por el solo hecho de
-  que ADR-0020/0021 estén parcialmente suplantados; ADR-0022 conserva
-  expresamente sus decisiones no reemplazadas.
+  que ADR-0020/0021 estén parcialmente suplantados; ADR-0022 conservaba
+  expresamente sus decisiones no reemplazadas (hoy la autoridad vigente es
+  ADR-0023).
 - **Código zombie:** no se encontraron `NotImplementedError`,
   `UnsupportedOperationException`, `@Ignore` ni `@Disabled` en archivos Kotlin
   de producción y pruebas.
 - **Documentación:** se alinearon la guía de implementación y los comentarios
-  de `core/ui` con ADR-0022. Los ADR históricos y la evaluación tipográfica no
-  adoptada permanecen como contexto referenciado.
+  de `core/ui` con la autoridad visual entonces vigente (ADR-0022; hoy
+  ADR-0023). Los ADR históricos y la evaluación tipográfica no adoptada
+  permanecen como contexto referenciado.
 
 ## Cambios funcionales relacionados
 

@@ -15,6 +15,7 @@
 | V1.8 | 2026-10-16 | Enmienda por ADR-0018 (correcciones UX de captura rápida): S00 (gracia de bloqueo 120 s, biometría automática, demo solo al inicio), S01 (hub de creación, sin duplicados, Favoritos, lista sin favoritos del carrusel), Detalle de destino (Mostrar QR como primaria, pantalla completa con brillo), S07 (editor con divulgación progresiva, validación real, descarte confirmado), S04 (foco solo desde Inicio). Intención, modelo mental y reglas de negocio: intactos. Aprobación explícita del propietario para enmendar la congelación en lo que ADR-0018 cambia. |
 | V1.9 | 2026-10-16 | Enmienda por ADR-0019 (inicio vacío): S01 vacío de primera ejecución muestra "Traer un QR", el FAB se oculta sin destinos ni búsqueda, y se retira el encabezado "Todos los destinos" sobre el vacío. Intención, modelo mental y reglas de negocio: intactos. |
 | V1.13 | 2026-10-17 | Composición y patrones de interacción conforme al sistema de diseño vigente; la intención, las reglas de negocio, la navegación y el copy funcional permanecen intactos. |
+| V1.14 | 2026-10-18 | Reconciliación contra TDesign 0.2.7 y el contrato normativo: se corrige la contradicción interna de S07/S08 (selector de contexto, fecha y hora se presentan con `AmDialog` y listas, nunca con bottom sheet, D-07) y se enlaza el contrato de interacción por pantalla (`04-ux/03-contrato-interaccion-pantallas.md`), verificado por `verifyScreenContract`. La reunión de la congelación no aporta ni quita gestos, pantallas ni navegación: la auditoría no halló ningún patrón de TDesign que los exija. |
 
 La composición funcional y las reglas de producto corresponden a V1.9; V1.13 define la composición de pantallas y los patrones de interacción. ADR-0023 y el contrato normativo de diseño fijan el sistema vigente. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
@@ -60,6 +61,11 @@ Contexto es una superficie de continuidad, no una nueva taxonomía de navegació
 - Los estados técnicos no crean navegación artificial.
 
 ## 4. Pantallas
+
+El detalle ejecutable por pantalla (ruta, destinos válidos, estados, gestos,
+componentes y pruebas) vive en
+[`03-contrato-interaccion-pantallas.md`](03-contrato-interaccion-pantallas.md),
+generado desde el contrato estructurado y verificado por `verifyScreenContract`.
 
 ### S00 — Acceso local (V1.6, ADR-0016; composición V1.13)
 Intención: entrar al dispositivo propio. No es un login: no hay correo, contraseña ni red.
@@ -144,7 +150,7 @@ Composición: navbar con título y atrás; Tabs QR · Actividades · Comprobante
 ### S07 — Registrar (V1.8, ADR-0018; presentación V1.13)
 Intención: registrar una actividad. El contexto ayuda pero no bloquea el registro. Captura rápida con divulgación progresiva: Tipo · Importe+Moneda · Persona o entidad · Fecha y hora · Contexto · Más detalles (plegado salvo que existan) · Guardar fijo abajo.
 
-- Formulario en celdas: Tipo con Segmented; Importe y moneda en Input; entidad con sugerencias; fecha/hora en selector dentro de AmBottomSheet con atajos Hoy/Ayer como Tags; Contexto como celda navegable hacia S08; Más detalles como Collapse. Guardar conserva su posición fija.
+- Formulario en celdas: Tipo con Segmented; Importe y moneda en Input; entidad con sugerencias; fecha/hora en selector dentro de `AmDialog` con atajos Hoy/Ayer como Tags; Contexto como celda navegable hacia S08; Más detalles como Collapse. Guardar conserva su posición fija.
 - Importe opcional con validación real (dígitos y un separador decimal, máx. 2 decimales); moneda BOB/USD/Otra (por defecto, la última usada); persona con sugerencias de contrapartes recientes.
 - Fecha y hora con selectores (sin texto libre) y atajos Hoy/Ayer; por defecto, ahora con hora.
 - Salir con cambios pide "¿Descartar cambios?"; sin cambios sale de inmediato. El Back del sistema sigue el mismo camino.
@@ -152,7 +158,7 @@ Intención: registrar una actividad. El contexto ayuda pero no bloquea el regist
 ### S08 — Seleccionar contexto (presentación V1.13)
 Intención: elegir contexto para el flujo padre. Al terminar, vuelve al flujo original conservando el draft.
 
-Composición: AmBottomSheet dentro del árbol de composición, con Search y lista de opciones Radio en celdas. Si no se puede verificar de forma reproducible, se conserva el patrón de selección en página completa, sin perder el draft ni cambiar el back stack.
+Composición: `AmDialog` con Search y lista de opciones Radio en celdas. Si no se puede verificar de forma reproducible, se conserva el patrón de selección en página completa, sin perder el draft ni cambiar el back stack.
 
 ### S09 — Revisar QR (presentación V1.13)
 Intención: verificar lo que Agenda QR entendió antes de guardar. Debe mostrar evidencia suficiente sin exponer payload técnico innecesario.
@@ -302,7 +308,7 @@ La dirección visual vigente es `tdesign_flutter@0.2.7` (ADR-0023), adoptada com
 
 ### Composición e interacción
 
-La composición por pantalla se especifica en §4 y usa patrones TDesign cuando corresponden al flujo existente. No se añaden gestos, acciones ni estados que AgendaQr no tuviera. La navegación raíz, sus cuatro destinos, el back stack y el orden de los flujos permanecen invariantes.
+La composición por pantalla se especifica en §4 y usa patrones TDesign cuando corresponden al flujo existente. No se añaden gestos, acciones ni estados que AgendaQr no tuviera. La navegación raíz, sus cuatro destinos, el back stack y el orden de los flujos permanecen invariantes. La congelación cede ante una decisión explícita del propietario (ADR-0016, ADR-0018 y ADR-0023 son precedentes); la auditoría contra TDesign 0.2.7 (enmienda V1.14) no encontró ningún patrón oficial que obligue a cambiar navegación, back stack o gestos.
 
 ### Principios
 

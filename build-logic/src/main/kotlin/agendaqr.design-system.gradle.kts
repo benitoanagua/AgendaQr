@@ -22,6 +22,19 @@ fun Project.productionKotlinSources(): Sequence<File> = sequence {
 
 fun visualSources(): List<File> = productionKotlinSources().toList()
 
+/**
+ * Documentos de encargo (prompts) conservados como registro de las
+ * instrucciones recibidas. No son documentación normativa viva: usan
+ * numeración de etapas y no se indexan en `docs/README.md`. Allowlist
+ * explícita y acotada: propietario = propietario del repositorio;
+ * revisión = 2026-10-18. Si un prompt pasa a ser norma, se mueve fuera de
+ * `docs/prompts/` y queda sujeto a todas las reglas.
+ */
+private val docsExemptPrefixes = listOf("prompts/")
+
+private fun docsIsExempt(relativePath: String): Boolean =
+    docsExemptPrefixes.any { relativePath.startsWith(it) }
+
 /** Capa de tokens: el único archivo con literales visuales. */
 private val TokenLayerFile = "AmTokens.kt"
 private val ThemeLayerFile = "AmTheme.kt"
@@ -54,9 +67,11 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-03" to listOf("border:AmLists.kt"),
     "E-04" to listOf("border:AmInputs.kt"),
     // `Modifier.shadow` se centraliza en la capa de tokens; solo los
-    // archivos registrados pueden invocarlo.
+    // archivos registrados pueden invocarlo (o elevarse vía `amElevation`).
+    // E-06 (elevación de botones) se retiró: TDesign no da sombra a los
+    // botones (son planos) y `AmButtons.kt` no eleva nada; un registro sin
+    // uso lo detecta `verifyScreenContract`.
     "E-05" to listOf("shadow:AmLists.kt"),
-    "E-06" to listOf("shadow:AmButtons.kt"),
 )
 
 /** Archivos con `.border(`/`BorderStroke(` permitidos: ninguno. */
@@ -342,7 +357,7 @@ tasks.register("verifyDocs") {
                 .map { it.groupValues[1] }.toSet()
             allMd.forEach { file ->
                 val rel = file.relativeTo(docs).path
-                if (rel != "README.md" && rel !in linked) {
+                if (rel != "README.md" && !docsIsExempt(rel) && rel !in linked) {
                     violations.add("orphan: $rel (not in docs/README.md)")
                 }
             }
@@ -356,6 +371,7 @@ tasks.register("verifyDocs") {
             "\\bFIXME\\b" to "FIXME",
         )
         allMd.forEach { file ->
+            if (docsIsExempt(file.relativeTo(docs).path)) return@forEach
             val content = file.readText()
             val isAdr = file.name.startsWith("ADR-")
             markers.forEach { (pattern, desc) ->
@@ -710,8 +726,306 @@ tasks.register("verifyArchitectureBoundaries") {
     }
 }
 
+/** Código de producción como pares (ruta relativa, contenido). */
+fun productionKotlinPairs(): List<Pair<String, String>> =
+    productionKotlinSources().toList().map { it.relativeTo(rootDir).path to it.readText() }
+
+/** Lector de archivos por ruta relativa al repositorio (null si no existe). */
+fun repoRead(relativePath: String): String? =
+    file(relativePath).takeIf { it.isFile }?.readText()
+
+private val screenContractDocPath = "docs/04-ux/03-contrato-interaccion-pantallas.md"
+
+/** Recolecta capturas PNG declaradas bajo build/ (nunca versionadas). */
+fun collectCaptureArtifacts(): Pair<List<CaptureArtifact>, List<String>> {
+    val artifacts = mutableListOf<CaptureArtifact>()
+    val malformed = mutableListOf<String>()
+    listOf("feature/destinations/presentation", "androidApp", "core/ui").forEach { module ->
+        val dir = file("$module/build")
+        if (!dir.exists()) return@forEach
+        dir.walkTopDown()
+            .filter { it.isFile && it.extension == "png" && it.path.contains("roborazzi") }
+            .forEach { png ->
+                val rel = png.relativeTo(rootDir).path
+                val name = parseCaptureName(png.name)
+                val bytes = png.readBytes()
+                val dimensions = if (name == null) null else pngDimensions(bytes)
+                when {
+                    name == null || dimensions == null ->
+                        malformed += "$rel (no cumple el esquema de nombre o no es un PNG legible)"
+                    else -> artifacts += CaptureArtifact(
+                        relPath = rel,
+                        name = name,
+                        widthPx = dimensions.first,
+                        heightPx = dimensions.second,
+                        sha256 = sha256(bytes),
+                    )
+                }
+            }
+    }
+    return artifacts to malformed
+}
+
+tasks.register("generateScreenContractDoc") {
+    group = "verification"
+    description = "Renders docs/04-ux/03-contrato-interaccion-pantallas.md from the structured contract."
+    doLast {
+        val target = file(screenContractDocPath)
+        target.parentFile.mkdirs()
+        target.writeText(renderScreenContractDoc(ScreenContracts.all))
+        logger.lifecycle("generateScreenContractDoc: wrote ${screenContractDocPath}")
+    }
+}
+
+tasks.register("generateCaptureManifest") {
+    group = "verification"
+    description = "Writes the on-demand capture manifest (build/captures/manifest.json) from existing PNGs."
+    doLast {
+        val (artifacts, malformed) = collectCaptureArtifacts()
+        malformed.forEach { logger.warn("generateCaptureManifest: artefacto malformado: $it") }
+        val target = file(captureManifestPath)
+        target.parentFile.mkdirs()
+        target.writeText(renderCaptureManifest(artifacts, ScreenContracts.all))
+        logger.lifecycle(
+            "generateCaptureManifest: wrote $captureManifestPath (${artifacts.size} capturas)",
+        )
+    }
+}
+
+tasks.register("verifyScreenContract") {
+    group = "verification"
+    description = "Cross-checks the structured per-screen contract against code, tests and generated doc."
+    doLast {
+        val production = productionKotlinPairs()
+        val violations = screenContractViolations(ScreenContracts.all, ::repoRead, production).toMutableList()
+        violations += exceptionUsageViolations(exceptionRegistry, production)
+
+        val rendered = renderScreenContractDoc(ScreenContracts.all)
+        val committed = file(screenContractDocPath).takeIf { it.isFile }?.readText()
+        if (screenContractDocIsStale(committed, rendered)) {
+            violations += "contrato-doc-desactualizado: $screenContractDocPath difiere del contrato; " +
+                "ejecuta ./gradlew generateScreenContractDoc"
+        }
+
+        val (artifacts, malformed) = collectCaptureArtifacts()
+        malformed.forEach { violations += "captura-nombre: $it" }
+        if (artifacts.isNotEmpty()) {
+            violations += captureViolations(artifacts, ScreenContracts.all)
+            val manifest = file(captureManifestPath).takeIf { it.isFile }?.readText()
+            violations += captureManifestViolations(artifacts, ScreenContracts.all, manifest)
+        }
+
+        if (violations.isNotEmpty()) {
+            throw GradleException(
+                "Screen contract violations (${violations.size}):\n" +
+                    violations.take(40).joinToString("\n") { "  $it" } +
+                    if (violations.size > 40) "\n  ... and ${violations.size - 40} more" else ""
+            )
+        }
+        logger.lifecycle(
+            "verifyScreenContract: PASS (${ScreenContracts.all.size} superficies; " +
+                "${artifacts.size} capturas verificadas)"
+        )
+    }
+}
+
+tasks.register("verifyScreenContractFixtures") {
+    group = "verification"
+    description = "Self-test: the contract validator must fail on each divergence class."
+    doLast {
+        val destinationsFile =
+            "feature/destinations/presentation/src/commonMain/kotlin/com/agendaqr/destinations/presentation/DestinationsState.kt"
+        val appRouteFile =
+            "feature/destinations/presentation/src/commonMain/kotlin/com/agendaqr/destinations/presentation/AppRoute.kt"
+        val repo = mapOf(
+            appRouteFile to "sealed interface AppRoute {\n    data object Home : AppRoute\n}",
+            destinationsFile to "sealed interface DestinationRoute {\n" +
+                "    data object List : DestinationRoute\n    data object Add : DestinationRoute\n}",
+            "src/Home.kt" to "class HomeSurface",
+            "src/Add.kt" to "class AddDestinationScreen",
+            "tests/HomeTest.kt" to "class HomeTest { fun renders() {} }",
+            "tests/AddTest.kt" to "class AddTest { fun renders() {} }",
+            "a11y/HomeA11yTest.kt" to "fun t() { node.contentDescription == null }",
+            "a11y/AddA11yTest.kt" to "fun t() { node.assertIsEnabled() }",
+            "a11y/WeakA11yTest.kt" to "class Weak { fun nothing() {} }",
+        )
+        val read: (String) -> String? = { repo[it] }
+        val core = listOf(
+            "core/ui/AmButtons.kt" to "fun AmPrimaryButton() = Unit",
+            "core/ui/AmLists.kt" to "fun AmListRow() = Unit",
+        )
+        fun screen(
+            id: String,
+            surface: String,
+            kind: SurfaceKind,
+            route: String,
+            covers: List<String>,
+            source: String,
+            tests: List<String>,
+            a11y: List<String>,
+            destinations: List<String> = listOf("system-exit"),
+            components: List<String> = listOf("AmPrimaryButton"),
+            states: List<String> = listOf("content"),
+            captureStates: List<String> = listOf("content"),
+            gestures: List<String> = emptyList(),
+        ) = ScreenContract(
+            id = id, surface = surface, title = surface, kind = kind, route = route, covers = covers,
+            source = source, entryPoints = listOf("entry"), exits = listOf("system-exit"),
+            destinations = destinations, primaryAction = null, primaryActionKey = null,
+            states = states, gestures = gestures, captureStates = captureStates,
+            components = components, a11yTests = a11y, tests = tests,
+        )
+        val valid = listOf(
+            screen(
+                "S01", "home", SurfaceKind.Root, "AppRoute.Home",
+                listOf("AppRoute.Home", "DestinationRoute.List"), "src/Home.kt",
+                listOf("tests/HomeTest.kt"), listOf("a11y/HomeA11yTest.kt"),
+                destinations = listOf("DestinationRoute.Add", "system-exit"),
+            ),
+            screen(
+                "S02", "add", SurfaceKind.Inner, "DestinationRoute.Add",
+                listOf("DestinationRoute.Add"), "src/Add.kt",
+                listOf("tests/AddTest.kt"), listOf("a11y/AddA11yTest.kt"),
+            ),
+        )
+        require(screenContractViolations(valid, read, core).isEmpty()) {
+            "el contrato sintético válido no debe fallar: ${screenContractViolations(valid, read, core)}"
+        }
+
+        // Pantalla real sin contrato.
+        require(screenContractViolations(listOf(valid[0]), read, core).isNotEmpty()) {
+            "una ruta sin contrato debe fallar"
+        }
+        // Destino inexistente.
+        require(
+            screenContractViolations(listOf(valid[0].copy(destinations = listOf("AppRoute.Nope")), valid[1]), read, core)
+                .isNotEmpty(),
+        ) { "un destino inexistente debe fallar" }
+        // Referencia de prueba inexistente.
+        require(
+            screenContractViolations(listOf(valid[0].copy(tests = listOf("tests/Missing.kt")), valid[1]), read, core)
+                .isNotEmpty(),
+        ) { "una prueba inexistente debe fallar" }
+        // Pantalla sin cobertura a11y real.
+        require(
+            screenContractViolations(listOf(valid[0].copy(a11yTests = listOf("a11y/WeakA11yTest.kt")), valid[1]), read, core)
+                .isNotEmpty(),
+        ) { "una prueba a11y sin señal debe fallar" }
+        // Componente inventado.
+        require(
+            screenContractViolations(listOf(valid[0].copy(components = listOf("AmNonexistent")), valid[1]), read, core)
+                .isNotEmpty(),
+        ) { "un componente inexistente debe fallar" }
+        // Estado fuera del vocabulario.
+        require(
+            screenContractViolations(listOf(valid[0].copy(states = listOf("weird")), valid[1]), read, core)
+                .isNotEmpty(),
+        ) { "un estado fuera del vocabulario debe fallar" }
+
+        // Excepción documentada sin uso (registro zombie).
+        val zombie = exceptionUsageViolations(mapOf("E-99" to listOf("border:AmLists.kt")), core)
+        require(zombie.isNotEmpty()) { "una excepción sin uso debe fallar" }
+        val used = exceptionUsageViolations(
+            mapOf("E-01" to listOf("border:AmButtons.kt")),
+            listOf("core/ui/AmButtons.kt" to "Modifier.border(BorderStroke(1.dp, color), shape)"),
+        )
+        require(used.isEmpty()) { "una excepción usada no debe fallar: $used" }
+
+        // Capturas: esquema de nombre.
+        val parsed = parseCaptureName("home--content--320dp--light--font100.png")
+        require(parsed != null && parsed.surface == "home" && parsed.widthDp == 320 && parsed.fontScale == 100) {
+            "el esquema de nombre válido debe parsear"
+        }
+        require(parseCaptureName("account-dark-320dp.png") == null) {
+            "un nombre ambiguo debe rechazarse"
+        }
+        // Dimensiones reales desde la cabecera PNG.
+        fun fakePng(width: Int, height: Int): ByteArray {
+            val bytes = ByteArray(24)
+            intArrayOf(137, 80, 78, 71, 13, 10, 26, 10).forEachIndexed { i, v -> bytes[i] = v.toByte() }
+            bytes[11] = 13
+            "IHDR".forEachIndexed { i, c -> bytes[12 + i] = c.code.toByte() }
+            fun put(offset: Int, value: Int) {
+                bytes[offset] = (value ushr 24).toByte()
+                bytes[offset + 1] = (value ushr 16).toByte()
+                bytes[offset + 2] = (value ushr 8).toByte()
+                bytes[offset + 3] = value.toByte()
+            }
+            put(16, width); put(20, height)
+            return bytes
+        }
+        val dims = pngDimensions(fakePng(640, 800))
+        require(dims == (640 to 800)) { "pngDimensions debe leer el IHDR: $dims" }
+        require(pngDimensions(ByteArray(24)) == null) { "una cabecera inválida debe ser null" }
+
+        fun artifact(path: String, px: Int, hash: String): CaptureArtifact =
+            CaptureArtifact(path, parseCaptureName(path.substringAfterLast('/'))!!, px, 800, hash)
+        val screens = listOf(valid[0], valid[1])
+        // Densidad no soportada (viewport falso / zoom).
+        require(
+            captureViolations(
+                listOf(artifact("a/home--content--320dp--light--font100.png", 641, "h1")),
+                screens,
+            ).any { it.contains("captura-zoom") },
+        ) { "una densidad no soportada debe fallar" }
+        // Duplicado byte-exacto y misma configuración.
+        val repeated = captureViolations(
+            listOf(
+                artifact("a/home--content--320dp--light--font100.png", 320, "same"),
+                artifact("b/home--content--320dp--light--font100.png", 320, "same"),
+            ),
+            screens,
+        )
+        require(repeated.any { it.contains("captura-duplicada") }) { "un duplicado byte-exacto debe fallar" }
+        require(repeated.any { it.contains("captura-repetida") }) { "una configuración repetida debe fallar" }
+        // Captura de superficie inexistente.
+        require(
+            captureViolations(
+                listOf(artifact("a/ghost--content--320dp--light--font100.png", 320, "h")),
+                screens,
+            ).any { it.contains("captura-orbita") },
+        ) { "una superficie inexistente debe fallar" }
+
+        // Manifiesto: ausente con artefactos presentes.
+        val someArtifacts = listOf(
+            artifact("a/home--content--320dp--light--font100.png", 320, "h1"),
+            artifact("a/add--content--320dp--light--font100.png", 320, "h2"),
+        )
+        require(
+            captureManifestViolations(someArtifacts, screens, null).any { it.contains("manifiesto-ausente") },
+        ) { "capturas sin manifiesto deben fallar" }
+        val manifest = renderCaptureManifest(someArtifacts, screens)
+        require(captureManifestViolations(someArtifacts, screens, manifest).isEmpty()) {
+            "un manifiesto sincronizado no debe fallar"
+        }
+        require(
+            captureManifestViolations(someArtifacts, screens, "$manifest ").any {
+                it.contains("manifiesto-desactualizado")
+            },
+        ) { "un manifiesto desincronizado debe fallar" }
+
+        // Documentación generada desincronizada.
+        val rendered = renderScreenContractDoc(valid)
+        require(screenContractDocIsStale("algo distinto\n", rendered)) {
+            "un documento desincronizado debe detectarse"
+        }
+        require(!screenContractDocIsStale(rendered, rendered)) {
+            "un documento idéntico no debe marcarse como desactualizado"
+        }
+    }
+}
+
 tasks.register("verifyAgendaQrArchitecture") {
     group = "verification"
-    dependsOn("verifyDesignSystemCompliance", "verifyArchitectureBoundaries", "verifyDesignSystemFixtures", "verifyNoScripts", "verifyControlMinSize", "verifyDocs")
+    dependsOn(
+        "verifyDesignSystemCompliance",
+        "verifyArchitectureBoundaries",
+        "verifyDesignSystemFixtures",
+        "verifyNoScripts",
+        "verifyControlMinSize",
+        "verifyDocs",
+        "verifyScreenContract",
+        "verifyScreenContractFixtures",
+    )
     description = "Runs the complete Agenda QR architecture and design-system gates."
 }

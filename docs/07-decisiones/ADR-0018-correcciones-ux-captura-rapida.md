@@ -1,6 +1,7 @@
 # ADR-0018 — Correcciones UX: captura rápida, recuperación y coherencia
 
 **Estado:** APROBADA — 2026-10-16
+**Enmienda 2026-10-18:** D5 (FAB «Añadir» y hub) quedó sustituido por ADR-0022 y ADR-0023: S01 usa la rejilla de acciones existentes y no muestra FAB. El resto de este ADR sigue vigente.
 **Relaciona:** ADR-0009 (propuesto, sin implementar), ADR-0016 (enmendada: política de bloqueo), ADR-0017 (tokens intactos), especificación UX/UI V1.8 (`docs/04-ux/02-especificacion-ux-ui-v1.md`).
 
 ## Contexto

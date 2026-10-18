@@ -308,9 +308,10 @@ evalúa en configuración).
 
 | Puerta | Comando | Qué verifica |
 |---|---|---|
-| Arquitectura + design system + no-scripts | `./gradlew verifyAgendaQrArchitecture` | `verifyDocs`, `verifyNoScripts`, `verifyDesignSystemCompliance`, `verifyDesignSystemFixtures`, `verifyControlMinSize`, `verifyArchitectureBoundaries` |
+| Arquitectura + design system + no-scripts | `./gradlew verifyAgendaQrArchitecture` | `verifyDocs`, `verifyNoScripts`, `verifyDesignSystemCompliance`, `verifyDesignSystemFixtures`, `verifyControlMinSize`, `verifyArchitectureBoundaries`, `verifyScreenContract`, `verifyScreenContractFixtures` |
 | Área táctil mínima | `verifyControlMinSize` | `AmMetrics.ControlMinSize == 48.dp` |
 | Contrato de diseño | `verifyDesignSystemCompliance` + `verifyDesignSystemFixtures` | literales visuales fuera de tokens, imports prohibidos, copy, bordes, interacción cruda, tabla de excepciones |
+| Contrato de interacción por pantalla | `verifyScreenContract` + `verifyScreenContractFixtures` | superficie real sin contrato o contrato obsoleto, destino inexistente, prueba ausente o sin señal a11y, componente inventado, clave de copy ausente, excepción registrada sin uso, capturas con viewport falso, duplicadas o con cobertura incompleta |
 | Documentación | `verifyDocs` | enlaces vivos, todo `.md` alcanzable desde `docs/README.md`, sin marcadores transitorios, ADR citadas existentes |
 | Contraste y esquema | `AmSchemeTest`, `AmContrastPairsTest`, `AmAccentTest` | umbrales y pares fijados (incl. el contenido informativo `accentText` sobre wathet) |
 | Tipografía y layout | `AmTypographyTest`, `AmTabsLayoutTest`, `AmUiPolishContractTest` | roles, interlineado, escalado de fuente |
@@ -399,9 +400,9 @@ la javadoc de `AmButtons.kt` y verificable por composición:
 - El botón global «Guardar reconocidos» vive fijo abajo y se separa de las
   acciones por elemento; en estado de error su etiqueta pasa a «Reintentar
   guardado».
-- Inicio S01: rejilla «King Kong» con las 3 acciones rápidas existentes
+- Inicio S01: rejilla de acciones con las 3 acciones rápidas existentes
   (Traer QR, Registrar operación, Crear contexto); sin FAB ni hub duplicado
-  (Anexo A, ADR-0022).
+  (ADR-0022 y ADR-0023; el anexo histórico Super-App no es autoridad).
 - Selector de contexto S08: «Quitar contexto» sale del slot de salida del
   diálogo y vive en el contenido como acción destructiva (peligro + glifo);
   «Cancelar» es la única salida.
