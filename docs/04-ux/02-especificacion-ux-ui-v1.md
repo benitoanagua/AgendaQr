@@ -1,6 +1,6 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — contrato funcional V1.9 y composición V1.13/ADR-0023
+**Estado:** FROZEN — contrato funcional V1.9 y composición V1.15/ADR-0023, enmendada por ADR-0024
 **Fecha:** 2026-10-11  
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
 
@@ -16,6 +16,7 @@
 | V1.9 | 2026-10-16 | Enmienda por ADR-0019 (inicio vacío): S01 vacío de primera ejecución muestra "Traer un QR", el FAB se oculta sin destinos ni búsqueda, y se retira el encabezado "Todos los destinos" sobre el vacío. Intención, modelo mental y reglas de negocio: intactos. |
 | V1.13 | 2026-10-17 | Composición y patrones de interacción conforme al sistema de diseño vigente; la intención, las reglas de negocio, la navegación y el copy funcional permanecen intactos. |
 | V1.14 | 2026-10-18 | Reconciliación contra TDesign 0.2.7 y el contrato normativo: se corrige la contradicción interna de S07/S08 (selector de contexto, fecha y hora se presentan con `AmDialog` y listas, nunca con bottom sheet, D-07) y se enlaza el contrato de interacción por pantalla (`04-ux/03-contrato-interaccion-pantallas.md`), verificado por `verifyScreenContract`. La reunión de la congelación no aporta ni quita gestos, pantallas ni navegación: la auditoría no halló ningún patrón de TDesign que los exija. |
+| V1.15 | 2026-10-18 | Enmienda por ADR-0024 (composición desde el proyecto Stitch `TDesign Screen Templates`): S01 alinea la navbar con el nombre de la superficie ("Inicio", como Contextos y Buscar) y los filtros Todos/Favoritos pasan de píldoras a control segmentado mutuamente excluyente con conteo real. No se adoptan del S01 de Stitch, con motivo registrado: el glifo `tune` del disparador de búsqueda (prometería filtros que viven en S04), la píldora persistente "Modo local activo" (engañosa con respaldo activo), el botón QR de la barra superior (duplicaría la acción rápida), "Desliza para ver más" (V1.13: la tarjeta asomada es el indicio) y la miniatura QR en las tarjetas de favoritos (exposición en la raíz que exige decisión de producto). Intención, reglas de negocio, navegación y copy funcional: intactos. |
 
 La composición funcional y las reglas de producto corresponden a V1.9; V1.13 define la composición de pantallas y los patrones de interacción. ADR-0023 y el contrato normativo de diseño fijan el sistema vigente. Las capacidades verificadas, las limitaciones por plataforma y los resultados de las puertas de calidad se mantienen en `docs/STATE.md` y `docs/QUALITY.md`. Si la implementación se aparta de esta especificación, se corrige el código o se aprueba una enmienda explícita; la especificación gobierna intención, composición funcional y flujos.
 
@@ -82,15 +83,15 @@ Intención: entrar al dispositivo propio. No es un login: no hay correo, contras
 - Con biometría disponible e inscrita, el desbloqueo la solicita sola una vez por bloqueo (con el PIN como respaldo); la demostración solo existe en el primer arranque.
 - El PIN es local; nunca viaja a la red y no es la clave de cifrado de los datos.
 
-### S01 — Inicio (composición V1.12; presentación V1.13)
+### S01 — Inicio (composición V1.15; presentación V1.13)
 Intención: encontrar o iniciar algo. Buscar domina visualmente; las creaciones viven en la rejilla de acciones.
 
 Composición:
 
-    [navbar "Agenda QR" centrada, overflow "…" → Action-sheet]
+    [navbar "Inicio" centrada, overflow "…" → Action-sheet ("Cuenta y respaldo", "Bloquear")]
     [Search de 40 dp como disparador hacia S04]
     [rejilla existente: Traer un QR / Registrar actividad / Crear contexto]
-    [Tabs o Segmented: Todos · Favoritos]
+    [Segmented: Todos · Favoritos, con conteo real]
     [Favoritos: carrusel horizontal]
     [Todos los destinos: Cell-group con tile QR, título, descripción y favorito]
     [Empty informativo sin repetir "Traer un QR"]
