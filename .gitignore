@@ -28,3 +28,7 @@ supabase/.branches/
 *.gif
 *.webp
 *.bmp
+
+# Los encargos/prompts no se versionan: son entrada local, no documentación
+# normativa. La documentación viva vive en docs/ y se indexa en docs/README.md.
+docs/prompts/
