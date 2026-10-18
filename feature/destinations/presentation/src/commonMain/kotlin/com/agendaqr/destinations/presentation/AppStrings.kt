@@ -391,6 +391,8 @@ internal object AppStrings {
     val PinErrorIncorrecto = "PIN incorrecto"
     val PinErrorBloqueado = "Demasiados intentos. Espera antes de reintentar."
     val IntentosRestantes = "Intentos restantes: "
+    /** Tecla de borrado del teclado del PIN (S00): nombre accesible. */
+    val BorrarDigito = "Borrar dígito"
     val SoloEnEsteDispositivo = "Solo en este dispositivo"
     val CuentaYRespaldo = "Cuenta y respaldo"
     val CuentaConectada = "Cuenta conectada"

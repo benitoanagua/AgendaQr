@@ -515,9 +515,13 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("locked", "error"),
             components = listOf(
-                "AmTextField", "AmPrimaryButton", "AmSectionHeader", "AmBottomAction",
+                "AmScreenScaffold", "AmIconBadge", "AmPinDots", "AmKeypad",
+                "AmBottomAction", "AmSecondaryButton",
             ),
-            a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
+            a11yTests = listOf(
+                "$A11Y/ScreensA11yCoverageTest.kt",
+                "$CORE_A11Y/AmAccessibilityContractTest.kt",
+            ),
             tests = listOf(
                 "$A11Y/LocalAccessGateTest.kt",
                 "$A11Y/LocalAccessBiometricTest.kt",

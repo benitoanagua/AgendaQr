@@ -127,7 +127,11 @@ class LocalAccessBiometricTest {
                 LocalLockScreen(state = lockedAvailable, onPinChanged = {}, onSubmit = {}, onBiometric = {})
             }
         }
-        compose.onNodeWithText(AppStrings.UsarBiometria).assertIsDisplayed()
+        // Con el teclado propio (V1.16) el botón queda bajo el pliegue del
+        // viewport de prueba; se desplaza hasta él antes de exigir visibilidad.
+        compose.onNodeWithText(AppStrings.UsarBiometria)
+            .performScrollTo()
+            .assertIsDisplayed()
         compose.onNodeWithText(AppStrings.Desbloquear).assertIsDisplayed()
     }
 
@@ -145,7 +149,11 @@ class LocalAccessBiometricTest {
             }
         }
         compose.onNodeWithText(AppStrings.UsarBiometria).assertDoesNotExist()
-        compose.onNodeWithText(AppStrings.ExplorarDemostracion).assertIsDisplayed()
+        // Bajo el pliegue del viewport de prueba (teclado propio, V1.16):
+        // desplazarse hasta la acción antes de exigir visibilidad.
+        compose.onNodeWithText(AppStrings.ExplorarDemostracion)
+            .performScrollTo()
+            .assertIsDisplayed()
         compose.onNodeWithText(AppStrings.ExplorarDemostracion).performClick()
         assertTrue(demoTapped)
     }

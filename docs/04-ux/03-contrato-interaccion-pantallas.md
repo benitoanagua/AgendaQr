@@ -336,8 +336,8 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - estados: `locked`, `error`, `content`
 - gestos: —
 - capturas: `locked`, `error`
-- componentes: `AmTextField`, `AmPrimaryButton`, `AmSectionHeader`, `AmBottomAction`
-- pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ScreensA11yCoverageTest.kt`
+- componentes: `AmScreenScaffold`, `AmIconBadge`, `AmPinDots`, `AmKeypad`, `AmBottomAction`, `AmSecondaryButton`
+- pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ScreensA11yCoverageTest.kt`, `core/ui/src/androidUnitTest/kotlin/com/agendaqr/core/ui/components/AmAccessibilityContractTest.kt`
 - pruebas: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/LocalAccessGateTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/LocalAccessBiometricTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/AgendaQrLocalStartupTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/UxLockSearchTest.kt`
 
 ### S03 — Cámara
