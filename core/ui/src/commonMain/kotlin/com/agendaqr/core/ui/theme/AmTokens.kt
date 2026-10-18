@@ -22,7 +22,8 @@ import androidx.compose.ui.unit.sp
 import kotlin.math.pow
 
 /**
- * Tokens TDesign Mobile 1.16.2. Las primitivas permanecen internas; los
+ * Tokens de `tdesign_flutter@0.2.7` (`lib/src/theme/td_default_theme.dart`).
+ * Las primitivas permanecen internas; los
  * consumidores usan roles semánticos y [AmTheme] solo los adapta a M3.
  */
 internal object AmPalette {

@@ -8,8 +8,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * TDesign Mobile 1.16.2 type scale from `theme/_font.less`, with the
- * approved system-font and 11 sp minimum deviations.
+ * `tdesign_flutter@0.2.7` type scale from the `font` map of
+ * `lib/src/theme/td_default_theme.dart`, with the approved system-font and
+ * 11 sp minimum deviations.
  */
 class AmTypographyTest {
 

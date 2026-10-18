@@ -8,7 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /**
- * TDesign Mobile 1.16.2 state and brand contrasts, plus the unchanged
+ * `tdesign_flutter@0.2.7` state and brand contrasts, plus the unchanged
  * domain-specific context accent palette.
  */
 class AmContrastPairsTest {

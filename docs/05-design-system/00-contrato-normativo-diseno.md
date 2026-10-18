@@ -1,6 +1,6 @@
 # Contrato normativo de diseño
 
-**Estado:** Normativo — versión 5.0
+**Estado:** Normativo — versión 6.0
 **Autoridad:** ADR-0023 y este documento definen el sistema de diseño de
 AgendaQr. La especificación UX/UI define intención, flujos y composición por
 pantalla. La implementación canónica vive en `core/ui`; las pantallas componen
@@ -8,17 +8,20 @@ sus componentes y tokens.
 
 ## 1. Principios
 
-1. Los valores, estados, componentes y patrones de interacción siguen TDesign
-   Mobile 1.16.2. `tdesign-mobile-vue@1.16.2` es la fuente de referencia; no es
-   una dependencia de ejecución.
-2. Las reglas de producto, la navegación, la persistencia y el copy funcional
+1. Los valores, estados, componentes y patrones de interacción siguen
+   `tdesign_flutter@0.2.7`. Esa es la fuente de referencia y no es una
+   dependencia de ejecución.
+2. Cuando cualquier otra fuente contradiga a `tdesign_flutter@0.2.7`, prevalece
+   el código de `0.2.7`: tokens en
+   `lib/src/theme/td_default_theme.dart` y componentes en `lib/src/components/`.
+3. Las reglas de producto, la navegación, la persistencia y el copy funcional
    se conservan según sus contratos vigentes.
-3. Android e iOS comparten intención y jerarquía. Los servicios nativos
+4. Android e iOS comparten intención y jerarquía. Los servicios nativos
    conservan las convenciones propias de cada plataforma.
-4. El estado se comunica con texto o semántica además del color.
-5. Los cambios de diseño se implementan en `core/ui`; las pantallas no definen
+5. El estado se comunica con texto o semántica además del color.
+6. Los cambios de diseño se implementan en `core/ui`; las pantallas no definen
    valores visuales locales.
-6. El sistema admite fuente del sistema escalada hasta 200 % sin recortar
+7. El sistema admite fuente del sistema escalada hasta 200 % sin recortar
    contenido esencial ni acciones.
 
 ## 2. Capas de implementación
@@ -30,7 +33,7 @@ sus componentes y tokens.
 | Componentes | `core/ui/.../components/` | Acciones, campos, listas, estados, diálogo, feedback, medios e iconografía. |
 | Patrones | `AmScaffold`, chrome y componentes de lista | Navegación, barras fijas, grupos y composición adaptable. |
 | Pantallas | `feature/destinations/presentation` | Componen patrones y exponen el comportamiento definido por producto. |
-| Pruebas | `core/ui` y `feature/destinations/presentation` | Tokens, contraste, interacción, accesibilidad, layout y regresión visual. |
+| Pruebas | `core/ui` y `feature/destinations/presentation` | Tokens, contraste, interacción, accesibilidad y layout. |
 
 Compose Material 3 se usa como infraestructura de componentes base; ningún
 componente hereda su estilo.
@@ -59,58 +62,131 @@ componente hereda su estilo.
 
 ## 4. Color
 
-Los temas claro y oscuro usan las escalas TDesign 1.16.2 de marca, grises,
-éxito, advertencia y error. Los componentes consumen roles semánticos, no
-índices de escala.
+Los temas claro y oscuro usan las escalas de `td_default_theme.dart`
+(`default` y `defaultDark`): marca, grises, éxito, advertencia y error. Los
+componentes consumen roles semánticos, no índices de escala.
 
-| Rol | Aplicación |
-|---|---|
-| `background` | Fondo de página. |
-| `surface`, `surfaceSecondary`, `surfaceContainer*` | Superficies y niveles de contenedor. |
-| `textPrimary`, `textSecondary`, `textTertiary` | Jerarquía de texto. |
-| `accent`, `accentText`, `accentContainer`, `onAccent` | Marca, selección y acción primaria. |
-| `danger`, `dangerFill`, `dangerContainer`, `onDanger` | Error y acción destructiva. |
-| `success`, `successFill`, `successContainer`, `onSuccessFill` | Confirmación y estado correcto. |
-| `warning`, `warningFill`, `warningContainer`, `onWarningFill` | Aviso. |
-| `info`, `infoContainer` | Información. |
-| `focus`, `disabled`, `onDisabled` | Foco y estado inactivo. |
-| `border`, `functionalBorder`, `divider` | Contornos, límites funcionales y separadores. |
-| `inverseSurface`, `inverseOnSurface`, `scrim`, `qrCanvas` | Feedback inverso, superposición y lienzo del QR. |
+### 4.1 Escalas de la fuente
 
-El tema claro usa `#0052D9` como marca y `#F3F3F3` como fondo; el tema oscuro
-usa `#2667D4` como marca y `#181818` como fondo. Los tests fijan las escalas y
-roles completos para ambos temas.
+| Escala | Tema claro | Tema oscuro |
+|---|---|---|
+| `brandColor1..10` | `#f2f3ff`, `#d9e1ff`, `#b5c7ff`, `#8eabff`, `#618dff`, `#366ef4`, `#0052d9`, `#003cab`, `#002a7c`, `#001a57` | `#1b2f51`, `#173463`, `#143975`, `#103d88`, `#0d429a`, `#054bbe`, `#2667d4`, `#4582e6`, `#699ef5`, `#96bbf8` |
+| `grayColor1..14` | `#f3f3f3`, `#eeeeee`, `#e8e8e8`, `#dddddd`, `#c6c6c6`, `#a6a6a6`, `#8b8b8b`, `#777777`, `#5e5e5e`, `#4b4b4b`, `#393939`, `#2c2c2c`, `#242424`, `#181818` | idéntica |
+| `errorColor1..10` | `#fff0ed`, `#ffd8d2`, `#ffb9b0`, `#ff9285`, `#f6685d`, `#d54941`, `#ad352f`, `#881f1c`, `#68070a`, `#490002` | `#472324`, `#5e2a2d`, `#703439`, `#83383e`, `#a03f46`, `#c64751`, `#de6670`, `#ec888e`, `#edb1b6`, `#eeced0` |
+| `warningColor1..10` | `#fff1e9`, `#ffd9c2`, `#ffb98c`, `#fa9550`, `#e37318`, `#be5a00`, `#954500`, `#713300`, `#532300`, `#3b1700` | `#4f2a1d`, `#582f21`, `#733c23`, `#a75d2b`, `#cf6e2d`, `#dc7633`, `#e8935c`, `#ecbf91`, `#eed7bf`, `#f3e9dc` |
+| `successColor1..10` | `#e3f9e9`, `#c6f3d7`, `#92dab2`, `#56c08d`, `#2ba471`, `#008858`, `#006c45`, `#005334`, `#003b23`, `#002515` | `#193a2a`, `#1a4230`, `#17533d`, `#0d7a55`, `#059465`, `#43af8a`, `#46bf96`, `#80d2b6`, `#b4e1d3`, `#deede8` |
+| Texto gris (`fontGyColor1..4`) | `#E5000000`, `#99000000`, `#66000000`, `#42000000` | idéntica |
+| Texto blanco (`fontWhColor1..4`) | `#ffffff`, `#8CFFFFFF`, `#59FFFFFF`, `#38FFFFFF` | `#E5FFFFFF`, `#8CFFFFFF`, `#59FFFFFF`, `#38FFFFFF` |
 
-Para texto se elige un par de la paleta TDesign con contraste ≥4.5:1; para
-indicadores no textuales, ≥3:1. El lienzo QR es blanco en ambos temas. El color
-no comunica por sí solo error, éxito, selección ni deshabilitado.
+### 4.2 Correspondencia de roles
+
+La tabla siguiente fija qué clave de la fuente alimenta cada rol de `AmColor`.
+
+| Rol AgendaQr | Clave de la fuente (claro) | Clave de la fuente (oscuro) |
+|---|---|---|
+| `background` | `bgColorPage` (`gray2`) | `bgColorPage` (`gray14`) |
+| `surface` | `bgColorContainer` (`#ffffff`) | `bgColorContainer` (`gray13`) |
+| `surfaceSecondary` | `bgColorSecondaryContainer` (`gray1`) | `bgColorSecondaryContainer` (`gray12`) |
+| `surfaceContainer` | `bgColorPage` (`gray2`) | `bgColorPage` (`gray14`) |
+| `surfaceContainerLow` | `bgColorContainer` (`#ffffff`) | `bgColorContainer` (`gray13`) |
+| `surfaceContainerHigh` | `bgColorComponent` (`gray3`) | `bgColorComponent` (`gray11`) |
+| `surfaceContainerHighest` | `bgColorSecondaryComponent` (`gray4`) | `bgColorSecondaryComponent` (`gray10`) |
+| `surfaceActive` | `bgColorComponent` (`gray3`) | `bgColorSecondaryContainerHover` (`gray11`) |
+| `componentActive` | `bgColorComponentActive` (`gray6`) | `bgColorComponentActive` (`gray9`) |
+| `border` | `componentBorderColor` (`gray4`) | `componentBorderColor` (`gray9`) |
+| `functionalBorder` | `componentStrokeColor` (`gray3`) | `componentStrokeColor` (`gray11`) |
+| `divider` | `bgColorContainerActive` (`gray3`) | `bgColorContainerActive` (`gray10`) |
+| `textPrimary` | `textColorPrimary` (`fontGyColor1`) | `textColorPrimary` (`fontWhColor1`) |
+| `textSecondary` | `textColorSecondary` (`fontGyColor2`) | `textColorSecondary` (`fontWhColor2`) |
+| `textPlaceholder` | `textColorPlaceholder` (`fontGyColor3`) | `textColorPlaceholder` (`fontWhColor3`) |
+| `textTertiary` | `textDisabledColor` (`fontGyColor4`) | `textDisabledColor` (`fontWhColor4`) |
+| `accent` | `brandNormalColor` (`brandColor7`) | `brandNormalColor` (`brandColor8`) |
+| `accentActive` | `brandActiveColor` (`brandColor8`) | `brandActiveColor` (`brandColor9`) |
+| `accentActiveContent` | texto anti (`#ffffff`) | `brandColor1` |
+| `accentDisabled` | `brandDisabledColor` (`brandColor3`) | `brandDisabledColor` (`brandColor3`) |
+| `accentFocus` | `brandFocusColor` (`brandColor2`) | `brandFocusColor` (`brandColor2`) |
+| `accentLightActive` | `brandColorLightHover` (`brandColor2`) | `brandColorLightHover` (`brandColor2`) |
+| `accentText` | `textColorBrand` (`brandColor7`) | `textColorBrand` (`brandColor8`) |
+| `accentContainer` | `brandLightColor` (`brandColor1`) | `brandLightColor` (`brandColor1`) |
+| `danger` | `errorNormalColor` (`errorColor6`) | `errorNormalColor` (`errorColor6`) |
+| `dangerFill` | `errorColor7` | `errorColor6` |
+| `dangerActive` | `errorColor8` | `errorColor6` |
+| `dangerDisabled` | `errorDisabledColor` (`errorColor3`) | `errorDisabledColor` (`errorColor3`) |
+| `dangerContainer` | `errorLightColor` (`errorColor1`) | `errorLightColor` (`errorColor1`) |
+| `success` | `successColor7` | `successNormalColor` (`successColor5`) |
+| `successFill` | `successNormalColor` (`successColor5`) | `successHoverColor` (`successColor4`) |
+| `successContainer` | `successLightColor` (`successColor1`) | `successLightColor` (`successColor1`) |
+| `warning` | `warningColor7` | `warningNormalColor` (`warningColor5`) |
+| `warningFill` | `warningNormalColor` (`warningColor5`) | `warningHoverColor` (`warningColor4`) |
+| `warningContainer` | `warningLightColor` (`warningColor1`) | `warningLightColor` (`warningColor1`) |
+| `info`, `infoContainer` | `textColorBrand`, `brandLightColor` | `textColorBrand`, `brandLightColor` |
+| `disabled` | `bgColorComponentDisabled` (`gray2`) | `bgColorComponentDisabled` (`gray12`) |
+| `onDisabled` | `textDisabledColor` (`fontGyColor4`) | `textDisabledColor` (`fontWhColor4`) |
+| `focus` | `brandNormalColor` (`brandColor7`) | `brandNormalColor` (`brandColor8`) |
+| `inverseSurface` | `grayColor14` | `grayColor2` |
+| `inverseOnSurface` | `#ffffff` | `fontGyColor1` |
+| `scrim` | `#99000000` | `#66000000` |
+| `qrCanvas` | `#ffffff` | `#ffffff` |
+
+Los tests fijan las escalas y los roles completos para ambos temas. Para texto
+se elige un par de la paleta TDesign con contraste ≥4.5:1; para indicadores no
+textuales, ≥3:1. El lienzo QR es blanco en ambos temas. El color no comunica por
+sí solo error, éxito, selección ni deshabilitado.
 
 ## 5. Tipografía
 
 - Se usa la fuente del sistema; no se empaquetan familias tipográficas.
-- Los valores de tamaño e interlínea se fijan en `AmType` y
-  `AmTextStyles`. La escala incluye cuerpo 10/16, 12/20, 14/22 y 16/24;
-  títulos 14/22, 16/24, 18/26 y 20/28; titulares 24/32, 28/36 y 36/44;
-  display 48/56 y 64/72.
-- El texto visible usa un mínimo de 11 sp; el token de 10 sp no se asigna a
-  copy visible. El tamaño compacto aplicado es 12 sp.
-- Los títulos usan peso 600 cuando corresponde; los importes usan 28/36,
-  peso 600 y cifras tabulares.
+- La escala es la de `td_default_theme.dart`, campo `font`, idéntico en ambos
+  temas; el peso `fontWeight: 6` equivale a `w600`:
+
+| Clave de la fuente | Tamaño | Interlínea | Peso |
+|---|---|---|---|
+| `fontDisplayLarge` | 64 | 72 | 600 |
+| `fontDisplayMedium` | 48 | 56 | 600 |
+| `fontHeadlineLarge` | 36 | 44 | 600 |
+| `fontHeadlineMedium` | 28 | 36 | 600 |
+| `fontHeadlineSmall` | 24 | 32 | 600 |
+| `fontTitleExtraLarge` | 20 | 28 | 600 |
+| `fontTitleLarge` | 18 | 26 | 600 |
+| `fontTitleMedium` | 16 | 24 | 600 |
+| `fontTitleSmall` | 14 | 22 | 400 |
+| `fontBodyExtraLarge` | 18 | 26 | 400 |
+| `fontBodyLarge` | 16 | 24 | 400 |
+| `fontBodyMedium` | 14 | 22 | 400 |
+| `fontBodySmall` | 12 | 20 | 400 |
+| `fontBodyExtraSmall` | 10 | 16 | 400 |
+| `fontMarkLarge` | 16 | 24 | 600 |
+| `fontMarkMedium` | 14 | 22 | 600 |
+| `fontMarkSmall` | 12 | 20 | 600 |
+| `fontMarkExtraSmall` | 10 | 16 | 600 |
+| `fontLinkLarge` / `Medium` / `Small` | 16 / 14 / 12 | 24 / 22 / 20 | 400 |
+
+- La familia numérica de la fuente es `TCloudNumber`; no se empaqueta (D-09).
+- El texto visible usa un mínimo de 11 sp; `fontBodyExtraSmall` (10 sp) no se
+  asigna a copy visible (D-04).
+- Los importes usan 28/36, peso 600 y cifras tabulares.
 - Todo texto respeta el escalado de fuente del sistema.
 
 ## 6. Espaciado, formas y métricas
 
-- Espaciado: 8, 12, 16, 24, 32, 48 y 80 dp. Se admite 4 dp para separación
-  micro interna. El margen de pantalla es 16 dp.
-- Radios: 3, 6, 9, 12 y 999 dp; las etiquetas pueden usar 4 dp.
-- Targets interactivos: mínimo 48 dp.
-- Botones: tamaños visuales 48, 40, 32 y 28 dp.
-- Barra superior e inferior: 48 dp; ícono estándar 24 dp.
-- Búsqueda y campos: 40 dp visuales, con target interactivo mínimo de 48 dp.
-- Contenedor de icono de acción de inicio: 48 dp.
-- Icono de Empty: 96 dp; icono de Result: 80 dp.
-- Cabecera de grupo: 45 dp; divisor inset: 16 dp.
-- Diálogo: ancho de referencia 311 dp, limitado al espacio disponible.
+- Espaciado desde `spacer` de la fuente: 4, 8, 12, 16, 24, 32, 40, 48, 64, 96
+  y 160 dp. El margen de pantalla es 16 dp.
+- Radios desde `radius` de la fuente: 3, 6, 9, 12 y 9999 dp (`radiusRound` y
+  `radiusCircle`).
+- La elevación usa las sombras `shadowsBase`, `shadowsMiddle` y `shadowsTop`
+  (tres capas cada una); Compose conserva la capa dominante halvando su radio
+  de desenfoque (D-06).
+- Targets interactivos: mínimo 48 dp (D-03).
+- Botones (`td_button.dart`): alto y ancho visual 48, 40, 32 y 28 dp; icono
+  24, 20, 18 y 14 dp; relleno horizontal 20, 16, 12 y 8 dp; etiqueta
+  `fontMarkLarge` en grande/mediano y `fontMarkMedium` en pequeño/minúsculo.
+- Barra superior (`td_nav_bar.dart`): 48 dp.
+- Barra inferior (`td_bottom_tab_bar.dart`): 56 dp.
+- Divisor (`td_divider.dart`): 0.5 dp; celda con divisor inset.
+- Icono de Empty (`td_empty.dart`): 96 dp; icono de Result
+  (`td_result.dart`): 70 dp.
+- Búsqueda y campos: superficie visual compacta con target interactivo de
+  48 dp (D-03); la barra de búsqueda de la fuente mide 56 dp.
 - Contenido en ventanas amplias: ancho máximo 720 dp.
 
 Las métricas se declaran en `AmSpacing`, `AmRadius` y `AmMetrics`; las
@@ -122,7 +198,7 @@ Los glifos de producto proceden de TDesign Icons, convertidos a vectores
 Compose en `core/ui`. `AmIcons` ofrece un nombre estable por concepto y
 `AmIcon` centraliza tamaño, tinte y semántica. El catálogo no es una
 dependencia de ejecución. La atribución MIT figura en
-`06-licencias-terceros.md`.
+[`06-licencias-terceros.md`](06-licencias-terceros.md).
 
 Los iconos decorativos usan descripción nula. Todo icono interactivo tiene
 etiqueta visible o una descripción accesible explícita; ningún estado depende
@@ -133,10 +209,40 @@ solo del glifo.
 - Easing: `cubic-bezier(0.38, 0, 0.24, 1)`.
 - Duraciones: 200, 240 y 280 ms.
 - Movimiento reducido: duración cero.
+- `tdesign_flutter@0.2.7` no expone tokens de movimiento; los valores se
+  declaran en `AmMotion` (D-10).
 - No se usan escala de pulsación, spring ni movimiento ornamental en bucle.
 - La háptica de plataforma y el foco por teclado/D-pad se conservan.
 
 ## 9. Componentes y patrones
+
+Cada componente de AgendaQr corresponde a un componente de
+`tdesign_flutter@0.2.7`; su geometría y sus estados siguen ese origen.
+
+| Componente AgendaQr | Origen en `tdesign_flutter@0.2.7` |
+|---|---|
+| `AmTopBar` | `TDNavBar` |
+| `AmNavBar` | `TDBottomTabBar` |
+| `AmListRow`, `AmListBody` | `TDCell`, `TDCellGroup` |
+| `AmHairline`, divisores | `TDDivider`, `TDInsetDivider` |
+| `AmPrimaryButton`, `AmSecondaryButton`, `AmDangerButton`, `AmTextAction` | `TDButton` |
+| `AmTextField`, `AmAmountField` | `TDInput`, `TDTextarea` |
+| `AmSearchField`, `AmSearchTrigger` | `TDSearchBar` |
+| `AmTonalTag` | `TDTag` |
+| `AmBadge` | `TDBadge` |
+| `AmPivot` | `TDTabs`, `TDHorizontalTabBar` |
+| `AmSegmentedControl` | `TDTabs` |
+| `AmFilterChip` | `TDTag` (`TDSelectTag`) |
+| `AmCard`, `AmTappableCard` | `TDCellGroup` (tema tarjeta) |
+| `AmEmptyState` | `TDEmpty` |
+| `AmStatusBanner` | `TDNoticeBar` |
+| `AmStatusPill` | `TDTag` |
+| `AmDialog`, `AmDialogList` | `TDDialog`, `TDActionSheet` |
+| `AmSnackbarHost` | `TDToast`, `TDMessage` |
+| `AmLoading`, `AmSkeleton` | `TDLoading`, `TDSkeleton` |
+| `AmQrPreview`, `AmMediaFrame` | `TDImage`, `TDImageViewer` |
+| `AmScannerFrame` | `TDImage` (marco de lectura) |
+| `AmExtendedFab` | `TDFab` |
 
 | Grupo | Componentes | Regla de composición |
 |---|---|---|
@@ -214,7 +320,7 @@ del contrato y del gate.
 
 ## 14. Gobernanza
 
-1. Un cambio de valor visual actualiza el token, sus pruebas y capturas.
+1. Un cambio de valor visual actualiza el token y sus pruebas.
 2. Un componente nuevo necesita consumidor real o propósito contractual,
    contrato accesible y pruebas de estado.
 3. Un cambio de composición mantiene la intención y las reglas de producto de
@@ -225,16 +331,18 @@ del contrato y del gate.
 
 ## 15. Desviaciones vigentes
 
-| Desviación | Resolución |
-|---|---|
-| Identidad de contextos con 12 tonos deterministas. | Se conserva `AmAccents` y el hash FNV-1a; las pruebas verifican los pares legibles. |
-| Algunos tonos oficiales no alcanzan el contraste requerido. | Se usa el siguiente escalón de la familia TDesign con contraste suficiente. |
-| Controles de menor tamaño visual que el target accesible. | La superficie conserva la geometría oficial y el target llega a 48 dp. |
-| `body-extraSmall` de 10 sp. | No se usa en texto visible; el tamaño compacto visible es 12 sp. |
-| Navegación lateral para ventanas amplias. | `AmNavRail` mantiene los cuatro destinos con los tokens del sistema. |
-| Sombras CSS con múltiples capas. | Compose usa la capa dominante declarada en los tokens. |
-| Selector de contexto, fecha, hora y menú de desbordamiento. | Se presentan mediante `AmDialog` y listas; la composición permite interacción verificable bajo Robolectric. |
-| Fuentes tipográficas de plataforma. | Se usa la fuente del sistema y no se distribuyen archivos de fuente. |
+| ID | Desviación | Resolución |
+|---|---|---|
+| D-01 | Identidad de contextos con 12 tonos deterministas. | Se conserva `AmAccents` y el hash FNV-1a; las pruebas verifican los pares legibles. |
+| D-02 | Algunos tonos oficiales no alcanzan el contraste requerido. | Se usa el siguiente escalón de la familia TDesign con contraste suficiente. |
+| D-03 | Controles de menor tamaño visual que el target accesible. | La superficie conserva la geometría oficial y el target llega a 48 dp. |
+| D-04 | `fontBodyExtraSmall` de 10 sp. | No se usa en texto visible; el tamaño compacto visible es 12 sp. |
+| D-05 | Navegación lateral para ventanas amplias. | `AmNavRail` mantiene los cuatro destinos con los tokens del sistema. |
+| D-06 | Sombras de varias capas. | Compose usa la capa dominante declarada en los tokens. |
+| D-07 | Selector de contexto, fecha, hora y menú de desbordamiento. | Se presentan mediante `AmDialog` y listas; la composición permite interacción verificable bajo Robolectric. |
+| D-08 | Fuentes tipográficas de plataforma. | Se usa la fuente del sistema y no se distribuyen archivos de fuente. |
+| D-09 | Familia numérica `TCloudNumber`. | No se empaqueta; los importes usan cifras tabulares de la fuente del sistema. |
+| D-10 | La fuente no expone tokens de movimiento. | Los valores se declaran en `AmMotion`. |
 
 ## 16. Composición por pantalla
 

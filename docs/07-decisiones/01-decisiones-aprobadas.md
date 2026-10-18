@@ -96,4 +96,4 @@ ADR-0022 fue la autoridad visual desde su aprobación hasta ADR-0023. Su direcci
 
 ## D-20 — Adopción fiel de TDesign Mobile (ADR-0023)
 
-TDesign Mobile 1.16.2 es la autoridad visual y de patrones de interacción. Sus valores se implementan en `core/ui`, sin añadir TDesign Vue como dependencia de ejecución. La especificación UX/UI V1.13 delimita las composiciones autorizadas; intención, reglas de negocio, navegación/back stack, copy y accesibilidad siguen congelados. Las desviaciones autorizadas están enumeradas en ADR-0023.
+`tdesign_flutter@0.2.7` es la autoridad visual y de patrones de interacción. Sus valores se implementan en `core/ui`, sin añadir TDesign Flutter como dependencia de ejecución. La especificación UX/UI V1.13 delimita las composiciones autorizadas; intención, reglas de negocio, navegación/back stack, copy y accesibilidad siguen congelados. Las desviaciones autorizadas están enumeradas en ADR-0023.

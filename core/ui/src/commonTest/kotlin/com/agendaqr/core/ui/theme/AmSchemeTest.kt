@@ -11,8 +11,8 @@ import kotlin.test.assertTrue
 import kotlin.math.pow
 
 /**
- * TDesign Mobile 1.16.2 color-token contract. Palette values come from
- * `package/esm/_common/style/mobile/theme/_light.less` and `_dark.less`.
+ * `tdesign_flutter@0.2.7` color-token contract. Palette values come from
+ * `lib/src/theme/td_default_theme.dart` (`default` and `defaultDark`).
  */
 class AmSchemeTest {
 

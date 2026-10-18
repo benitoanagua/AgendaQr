@@ -298,7 +298,7 @@ Reglas vigentes V1.3:
 
 > **Precedencia:** esta sección define la dirección visual de producto. Para tokens, contraste, componentes, estados, accesibilidad, pruebas y gobernanza, prevalece `docs/05-design-system/00-contrato-normativo-diseno.md`. La UX funcional y la navegación raíz no cambian por esta enmienda.
 
-La dirección visual vigente es TDesign Mobile 1.16.2 (ADR-0023), adoptada como especificación de valores y patrones desde el paquete oficial `tdesign-mobile-vue@1.16.2`, no como dependencia de ejecución. `core/ui` es su implementación canónica en Compose Multiplatform. Los componentes y tokens oficiales se adaptan únicamente por las desviaciones explícitas de ADR-0023; no se copian código ni activos de terceros.
+La dirección visual vigente es `tdesign_flutter@0.2.7` (ADR-0023), adoptada como especificación de valores y patrones desde el código del paquete oficial, no como dependencia de ejecución. `core/ui` es su implementación canónica en Compose Multiplatform. Los componentes y tokens oficiales se adaptan únicamente por las desviaciones explícitas de ADR-0023; no se copian código ni activos de terceros.
 
 ### Composición e interacción
 
@@ -357,7 +357,7 @@ La composición por pantalla se especifica en §4 y usa patrones TDesign cuando 
 
 ### Color y tema oscuro
 
-- Claro y oscuro usan las paletas oficiales TDesign 1.16.2 para marca, estados, neutros, texto, superficies y bordes. No se admiten gradientes ni roles promo/fintech.
+- Claro y oscuro usan las paletas oficiales de `tdesign_flutter@0.2.7` para marca, estados, neutros, texto, superficies y bordes. No se admiten gradientes ni roles promo/fintech.
 - Para texto, glifos significativos y rellenos con texto superpuesto se usa el siguiente escalón de la misma paleta TDesign que cumpla contraste ≥4.5:1 (≥3:1 para elementos no textuales). No se introducen colores fuera de la paleta, salvo los 12 acentos de contexto conservados por ADR-0023.
 - El lienzo del QR permanece blanco en ambos temas para preservar su zona de silencio escaneable.
 - El tema oscuro se diseña como una paleta independiente, no como inversión mecánica del claro.

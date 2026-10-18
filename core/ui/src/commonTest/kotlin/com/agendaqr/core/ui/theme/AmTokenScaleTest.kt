@@ -6,8 +6,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * TDesign Mobile 1.16.2 geometry tokens from `_radius.less` and
- * `_spacer.less`; Compose shadows approximate the source CSS blur radius.
+ * `tdesign_flutter@0.2.7` geometry tokens from the `radius` and `spacer`
+ * maps of `lib/src/theme/td_default_theme.dart`; Compose shadows approximate
+ * the source blur radius.
  */
 class AmTokenScaleTest {
 
