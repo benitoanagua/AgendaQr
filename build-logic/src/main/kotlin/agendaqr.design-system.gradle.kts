@@ -22,6 +22,19 @@ fun Project.productionKotlinSources(): Sequence<File> = sequence {
 
 fun visualSources(): List<File> = productionKotlinSources().toList()
 
+/**
+ * Documentos de encargo (prompts) conservados como registro de las
+ * instrucciones recibidas. No son documentación normativa viva: usan
+ * numeración de etapas y no se indexan en `docs/README.md`. Allowlist
+ * explícita y acotada: propietario = propietario del repositorio;
+ * revisión = 2026-10-18. Si un prompt pasa a ser norma, se mueve fuera de
+ * `docs/prompts/` y queda sujeto a todas las reglas.
+ */
+private val docsExemptPrefixes = listOf("prompts/")
+
+private fun docsIsExempt(relativePath: String): Boolean =
+    docsExemptPrefixes.any { relativePath.startsWith(it) }
+
 /** Capa de tokens: el único archivo con literales visuales. */
 private val TokenLayerFile = "AmTokens.kt"
 private val ThemeLayerFile = "AmTheme.kt"
@@ -344,7 +357,7 @@ tasks.register("verifyDocs") {
                 .map { it.groupValues[1] }.toSet()
             allMd.forEach { file ->
                 val rel = file.relativeTo(docs).path
-                if (rel != "README.md" && rel !in linked) {
+                if (rel != "README.md" && !docsIsExempt(rel) && rel !in linked) {
                     violations.add("orphan: $rel (not in docs/README.md)")
                 }
             }
@@ -358,6 +371,7 @@ tasks.register("verifyDocs") {
             "\\bFIXME\\b" to "FIXME",
         )
         allMd.forEach { file ->
+            if (docsIsExempt(file.relativeTo(docs).path)) return@forEach
             val content = file.readText()
             val isAdr = file.name.startsWith("ADR-")
             markers.forEach { (pattern, desc) ->
