@@ -262,6 +262,7 @@ private fun rotateBitmap(bitmap: Bitmap, degrees: Int): Bitmap {
 internal fun CameraQrEntry(
     onOpen: () -> Unit,
     cellPresentation: Boolean = false,
+    showDivider: Boolean = false,
 ) {
     val context = LocalContext.current
     // el estado de "ya se pidió" y el error del permiso
@@ -350,6 +351,7 @@ internal fun CameraQrEntry(
                     )
                 },
                 showChevron = true,
+                showDivider = showDivider,
             )
         } else {
             AmText(

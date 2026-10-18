@@ -290,9 +290,6 @@ internal object AppStrings {
     /** Rótulos de sección de los grupos del editor (S07). */
     val ImporteYMoneda = "Importe y moneda"
     val FechaYHora = "Fecha y hora"
-    /** Rótulos de sección de las fuentes de importación (S02). */
-    val DesdeArchivos = "Desde archivos"
-    val DesdeLaCamara = "Desde la cámara"
     /** Metadatos: etiquetas cortas sin puntuación (fila compacta). */
     val LabelPersonaOEntidad = "Persona o entidad"
     val LabelMoneda = "Moneda"
@@ -377,7 +374,8 @@ internal object AppStrings {
     // ------------------------------------------------------------------
     val ConfiguraTuPin = "Configura tu PIN"
     val ConfiguraTuPinDescripcion = "Protege el acceso aquí; no es el PIN del teléfono."
-    val Pin = "PIN"
+    /** Acción del paso "crear el código" del onboarding (S00, V1.16). */
+    val Continuar = "Continuar"
     val ConfirmaElPin = "Confirma el PIN"
     val GuardarPin = "Guardar PIN"
     val DesbloqueaAgendaQr = "Desbloquea Agenda QR"
@@ -393,7 +391,6 @@ internal object AppStrings {
     val IntentosRestantes = "Intentos restantes: "
     /** Tecla de borrado del teclado del PIN (S00): nombre accesible. */
     val BorrarDigito = "Borrar dígito"
-    val SoloEnEsteDispositivo = "Solo en este dispositivo"
     val CuentaYRespaldo = "Cuenta y respaldo"
     val CuentaConectada = "Cuenta conectada"
     val ConectarCuentaDescripcion = "Conectar una cuenta es opcional."

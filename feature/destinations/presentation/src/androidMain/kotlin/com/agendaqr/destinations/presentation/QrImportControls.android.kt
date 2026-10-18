@@ -67,23 +67,25 @@ actual fun QrGalleryControls(
 @Composable
 actual fun QrCameraEntryControl(
     onResult: (QrImportResult) -> Unit,
+    showDivider: Boolean,
 ) {
     CameraCaptureHost(
         onQr = { asset -> onResult(QrImportResult(listOf(asset))) },
         cellPresentation = true,
+        showDivider = showDivider,
     )
 }
 
 /** Android: PDF vía OpenDocument por el canal de comprobantes entrantes. */
 @Composable
-actual fun QrPdfPickerControl() {
+actual fun QrPdfPickerControl(showDivider: Boolean) {
     AmListRow(
         title = AppStrings.ElegirArchivoPdf,
         titleMaxLines = Int.MAX_VALUE,
         onClick = AgendaQrAndroidImportLauncher::pdf,
         leading = { AmIconBadge(icon = AmIcons.Attachment, tone = AmTone.Info) },
         showChevron = true,
-        showDivider = true,
+        showDivider = showDivider,
     )
 }
 
@@ -99,6 +101,7 @@ actual fun sharedImportsSupported(): Boolean = true
 internal fun CameraCaptureHost(
     onQr: (QrAsset) -> Unit,
     cellPresentation: Boolean = false,
+    showDivider: Boolean = false,
 ) {
     var cameraOpen by androidx.compose.runtime.remember {
         androidx.compose.runtime.mutableStateOf(false)
@@ -106,6 +109,7 @@ internal fun CameraCaptureHost(
     CameraQrEntry(
         onOpen = { cameraOpen = true },
         cellPresentation = cellPresentation,
+        showDivider = showDivider,
     )
     if (cameraOpen) {
         CameraQrCaptureOverlay(

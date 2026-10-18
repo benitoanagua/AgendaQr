@@ -25,10 +25,12 @@ expect fun QrGalleryControls(
     onResult: (QrImportResult) -> Unit,
 )
 
-/** Solo Cámara: captura propia con detección (S03). */
+/** Solo Cámara: captura propia con detección (S03). El divisor lo decide la
+ * agrupación de la pantalla (S02 la agrupa con Galería y Archivo). */
 @Composable
 expect fun QrCameraEntryControl(
     onResult: (QrImportResult) -> Unit,
+    showDivider: Boolean,
 )
 
 /**
@@ -38,7 +40,7 @@ expect fun QrCameraEntryControl(
  * estado de implementación).
  */
 @Composable
-expect fun QrPdfPickerControl()
+expect fun QrPdfPickerControl(showDivider: Boolean)
 
 /**
  * ¿Soporta esta plataforma recibir compartidos desde otras apps?
