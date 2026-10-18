@@ -752,8 +752,8 @@ fun AmSegmentedControl(
 }
 
 /**
- * Conmutador de favorito: `IconToggleButton` M3 con la estrella de
- * Lucide. El estado seleccionado se expone en la semántica del control y
+ * Conmutador de favorito: `IconToggleButton` con glifo TDesign. El estado
+ * seleccionado se expone en la semántica del control y
  * la descripción accesible la aporta el llamador (debe cambiar con el
  * estado). El color acompaña; nunca es la única señal.
  */

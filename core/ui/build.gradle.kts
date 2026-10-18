@@ -1,8 +1,6 @@
 plugins { id("agendaqr.compose-library") }
 
-// Sistema de diseño (ADR-0022 y contrato normativo): vive en este módulo. Sin
-// recursos empaquetados: la iconografía es Lucide vía AmIcon y el logo de
-// marca vive en docs/branding (SVG, fuente de verdad del ícono).
+// Sistema de diseño y vectores de iconos del producto viven en este módulo.
 
 android {
     namespace = "com.agendaqr.core.ui"
@@ -21,9 +19,6 @@ kotlin {
             // Tokens de movimiento (Easing) y las transiciones de
             // superficie consumen androidx.compose.animation(.core).
             implementation(compose.animation)
-            // Iconografía Lucide (ISC) consumida SOLO a través de AmIcon.
-            // Licencia registrada en docs/05-design-system/06-licencias-terceros.md.
-            implementation(libs.icons.lucide)
             // WindowSizeClass para la adaptación compacto/medium/expanded
             // (AmNavBar vs AmNavRail, contenido centrado con
             // ContentMaxWidth).

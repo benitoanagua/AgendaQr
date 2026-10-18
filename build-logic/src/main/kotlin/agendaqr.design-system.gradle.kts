@@ -26,6 +26,7 @@ fun visualSources(): List<File> = productionKotlinSources().toList()
 /** Capa de tokens: el único archivo con literales visuales. */
 private val TokenLayerFile = "AmTokens.kt"
 private val ThemeLayerFile = "AmTheme.kt"
+private val IconVectorFile = "TDesignIconVectors.kt"
 
 /**
  * Allowlist de literales de UI permitidos en feature/: solo identificadores
@@ -77,8 +78,8 @@ val shadowAllowedFiles: Set<String> =
     }
 
 fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = buildList {
-    // Solo Lucide vía AmIcon: los APIs de iconos de Material están
-    // prohibidos en producción.
+    // Solo los vectores TDesign vía AmIcon; los APIs de iconos de Material
+    // están prohibidos en producción.
     val bannedImports = listOf(
         "androidx.compose.material.icons",
         "Icons.Filled", "Icons.Outlined", "Icons.Rounded", "Icons.Default",
@@ -108,11 +109,12 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
     )
     val isFeatureSource = path.contains("/feature/")
     val isTokenLayer = path.endsWith(TokenLayerFile)
+    val isIconVectorSource = path.endsWith(IconVectorFile)
     lines.forEachIndexed { index, line ->
         val location = "$path:${index + 1}"
         if (bannedImports.any(line::contains)) add("$location: forbidden Material icon API: $line")
         if (!isTokenLayer && rawHex.containsMatchIn(line)) add("$location: raw hex outside token layer: $line")
-        if (!isTokenLayer && rawDp.containsMatchIn(line)) add("$location: raw dp outside token layer: $line")
+        if (!isTokenLayer && !isIconVectorSource && rawDp.containsMatchIn(line)) add("$location: raw dp outside token layer: $line")
         if (!isTokenLayer && rawSp.containsMatchIn(line)) add("$location: raw sp outside token layer: $line")
         if (!isTokenLayer && rawColor.containsMatchIn(line)) add("$location: raw Color constructor outside token layer: $line")
         if (shapesAllowedFiles.none { path.endsWith(it) } &&
@@ -130,7 +132,7 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
         }
         // Colores nombrados de Compose fuera de la capa de tokens: todo
         // literal visual va al rol semántico (QrCanvas, TextPrimary…).
-        if (!isTokenLayer &&
+        if (!isTokenLayer && !isIconVectorSource &&
             Regex("\\bColor\\.(Black|White|Transparent|Red|Gray|LightGray|DarkGray|Yellow|Green|Blue|Cyan|Magenta|Unspecified)\\b")
                 .containsMatchIn(line)
         ) {
@@ -726,7 +728,7 @@ tasks.register("verifyDesignSystemFixtures") {
             }
         }
         // Iconos: los presets de Material están prohibidos en producción;
-        // Lucide va por AmIcons.
+        // TDesign va por AmIcons.
         listOf("Icons.Default", "Icons.AutoMirrored", "Icons.Sharp", "Icons.TwoTone").forEach { preset ->
             require(kotlinDesignViolations(componentsPath, listOf("val i = ${preset}.Add")).isNotEmpty()) {
                 "$preset must fail (material icons are banned)"

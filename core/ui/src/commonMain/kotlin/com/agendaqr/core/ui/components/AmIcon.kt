@@ -8,62 +8,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Dp
+import com.agendaqr.core.ui.icons.TDesignIconVectors
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
-import com.composables.icons.lucide.ArrowLeft
-import com.composables.icons.lucide.ArrowDownLeft
-import com.composables.icons.lucide.ArrowUpRight
-import com.composables.icons.lucide.Calendar
-import com.composables.icons.lucide.Camera
-import com.composables.icons.lucide.ChevronRight
-import com.composables.icons.lucide.CircleCheck
-import com.composables.icons.lucide.Clock
-import com.composables.icons.lucide.Copy
-import com.composables.icons.lucide.Delete
-import com.composables.icons.lucide.Ellipsis
-import com.composables.icons.lucide.Folder
-import com.composables.icons.lucide.House
-import com.composables.icons.lucide.Image
-import com.composables.icons.lucide.ImageOff
-import com.composables.icons.lucide.Inbox
-import com.composables.icons.lucide.Info
-import com.composables.icons.lucide.Lock
-import com.composables.icons.lucide.Maximize
-import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.NotebookPen
-import com.composables.icons.lucide.Paperclip
-import com.composables.icons.lucide.Plus
-import com.composables.icons.lucide.QrCode
-import com.composables.icons.lucide.Receipt
-import com.composables.icons.lucide.ScanLine
-import com.composables.icons.lucide.Search
-import com.composables.icons.lucide.SearchX
-import com.composables.icons.lucide.Share2
-import com.composables.icons.lucide.ShieldCheck
-import com.composables.icons.lucide.Star
-import com.composables.icons.lucide.Store
-import com.composables.icons.lucide.TriangleAlert
-import com.composables.icons.lucide.Wallet
-import com.composables.icons.lucide.X
 
 /**
- * Iconografía (ADR-0014): único punto de entrada de
- * iconos de producto. Set: Lucide (ISC — ver
- * `docs/05-design-system/06-licencias-terceros.md`), glifos de línea de
- * trazo uniforme, un solo color, sin relleno.
- *
- * Reglas (contrato de accesibilidad):
- * - TODO icono interactivo lleva su etiqueta de texto visible compuesta
- *   por el llamador (botón/fila/barra); este componente jamás dibuja un
- *   icono interactivo suelto como única señal.
- * - [contentDescription] nulo = icono decorativo; se excluye por completo
- *   de la accesibilidad ([clearAndSetSemantics]).
- * - [size] viene por defecto de [AmMetrics.IconSize]: ningún componente
- *   fija tamaños de icono como literales.
- *
- * El set Material de iconos queda prohibido en producto (invariante del
- * gate del sistema de diseño): este archivo es el único lugar que toca
- * `com.composables.icons.lucide`.
+ * Product icon entry point. Interactive icons always have a visible text
+ * label composed by the caller; a null description marks a decorative icon.
  */
 @Composable
 fun AmIcon(
@@ -86,92 +37,42 @@ fun AmIcon(
     )
 }
 
-/**
- * Mapeo de glifos, confirmado contra el catálogo real de
- * Lucide 1.1.0 (`com.composables:icons-lucide`). Un único glifo por
- * concepto; fuera de esta lista no se añaden iconos sin decisión.
- */
+/** Stable product concepts mapped to TDesign Mobile outline glyphs. */
 object AmIcons {
-    /** buscar. */
-    val Search: ImageVector get() = Lucide.Search
-    /** añadir. */
-    val Add: ImageVector get() = Lucide.Plus
-    /** registrar (icono de recibo). */
-    val Register: ImageVector get() = Lucide.Receipt
-    /** favorito. */
-    val Favorite: ImageVector get() = Lucide.Star
-    /** contexto (carpeta). */
-    val Context: ImageVector get() = Lucide.Folder
-    /** atrás (flecha de la barra superior). */
-    val Back: ImageVector get() = Lucide.ArrowLeft
-    /** cancelar. */
-    val Cancel: ImageVector get() = Lucide.X
-    /** menú "…" de la barra superior. */
-    val More: ImageVector get() = Lucide.Ellipsis
-    /** Inicio (destino raíz de la NavigationBar). */
-    val Home: ImageVector get() = Lucide.House
-    /** Galería. */
-    val Gallery: ImageVector get() = Lucide.Image
-    /** Cámara. */
-    val Camera: ImageVector get() = Lucide.Camera
-
-    // Glifos de ESTADO: el estado nunca se comunica solo por color
-    // (contrato de accesibilidad) — banner/inline llevan icono por tono.
-    /** Info (tono informativo). */
-    val Info: ImageVector get() = Lucide.Info
-    /** Aviso (tono de advertencia). */
-    val Warning: ImageVector get() = Lucide.TriangleAlert
-    /** Confirmación (tono de éxito). */
-    val CircleCheck: ImageVector get() = Lucide.CircleCheck
-
-    // Glifos de estados vacíos y de resultado (decorativos: el título y
-    // el subtítulo comunican; el glifo solo ancla visualmente).
-    /** Código QR (estado vacío de destinos/QR). */
-    val QrCode: ImageVector get() = Lucide.QrCode
-    /** Sin resultados de búsqueda. */
-    val SearchX: ImageVector get() = Lucide.SearchX
-    /** Bandeja vacía (sin actividad asociada). */
-    val Inbox: ImageVector get() = Lucide.Inbox
-    /** Imagen no disponible. */
-    val ImageOff: ImageVector get() = Lucide.ImageOff
-    /** Escanear (entrada de captura). */
-    val ScanLine: ImageVector get() = Lucide.ScanLine
-    /** Cobro (entrada de dinero; flecha entrante). */
-    val Income: ImageVector get() = Lucide.ArrowDownLeft
-    /** Pago (salida de dinero; flecha saliente). */
-    val Expense: ImageVector get() = Lucide.ArrowUpRight
-    /** Comprobante adjunto (sujeta-papeles). */
-    val Attachment: ImageVector get() = Lucide.Paperclip
-    // ------------------------------------------------------------------
-    // Glifos de filas, formularios y micro-estados (ADR-0015). Un glifo
-    // por concepto; decorativos salvo indicación.
-    // ------------------------------------------------------------------
-    /** Comercio/entidad (fila de persona o entidad). */
-    val Store: ImageVector get() = Lucide.Store
-    /** Fecha/momento ocurrido. */
-    val Calendar: ImageVector get() = Lucide.Calendar
-    /** Momento registrado (reloj). */
-    val Clock: ImageVector get() = Lucide.Clock
-    /** Navegación hacia adelante (fila con detalle propio). */
-    val ChevronRight: ImageVector get() = Lucide.ChevronRight
-    /** Seguridad/verificación local. */
-    val ShieldCheck: ImageVector get() = Lucide.ShieldCheck
-    /** Moneda. */
-    val Wallet: ImageVector get() = Lucide.Wallet
-    /** Valor automático de solo lectura. */
-    val Lock: ImageVector get() = Lucide.Lock
-    /** Borrado de importe (⌫). */
-    val Erase: ImageVector get() = Lucide.Delete
-    /** Nota/concepto (lápiz de nota). */
-    val NoteEdit: ImageVector get() = Lucide.NotebookPen
-    /** Editar (lápiz). */
-    val Edit: ImageVector get() = Lucide.NotebookPen
-    /** Eliminar (papelera). */
-    val Trash: ImageVector get() = Lucide.Delete
-    /** Compartir (salida del contenido). */
-    val Share: ImageVector get() = Lucide.Share2
-    /** Copiar al portapapeles (dos rectángulos). */
-    val Copy: ImageVector get() = Lucide.Copy
-    /** Mostrar a pantalla completa (expandir). */
-    val Maximize: ImageVector get() = Lucide.Maximize
+    val Search: ImageVector get() = TDesignIconVectors.Search
+    val Add: ImageVector get() = TDesignIconVectors.Add
+    val Register: ImageVector get() = TDesignIconVectors.Register
+    val Favorite: ImageVector get() = TDesignIconVectors.Favorite
+    val Context: ImageVector get() = TDesignIconVectors.Context
+    val Back: ImageVector get() = TDesignIconVectors.Back
+    val Cancel: ImageVector get() = TDesignIconVectors.Cancel
+    val More: ImageVector get() = TDesignIconVectors.More
+    val Home: ImageVector get() = TDesignIconVectors.Home
+    val Gallery: ImageVector get() = TDesignIconVectors.Gallery
+    val Camera: ImageVector get() = TDesignIconVectors.Camera
+    val Info: ImageVector get() = TDesignIconVectors.Info
+    val Warning: ImageVector get() = TDesignIconVectors.Warning
+    val CircleCheck: ImageVector get() = TDesignIconVectors.CircleCheck
+    val QrCode: ImageVector get() = TDesignIconVectors.QrCode
+    val SearchX: ImageVector get() = TDesignIconVectors.SearchX
+    val Inbox: ImageVector get() = TDesignIconVectors.Inbox
+    val ImageOff: ImageVector get() = TDesignIconVectors.ImageOff
+    val ScanLine: ImageVector get() = TDesignIconVectors.ScanLine
+    val Income: ImageVector get() = TDesignIconVectors.Income
+    val Expense: ImageVector get() = TDesignIconVectors.Expense
+    val Attachment: ImageVector get() = TDesignIconVectors.Attachment
+    val Store: ImageVector get() = TDesignIconVectors.Store
+    val Calendar: ImageVector get() = TDesignIconVectors.Calendar
+    val Clock: ImageVector get() = TDesignIconVectors.Clock
+    val ChevronRight: ImageVector get() = TDesignIconVectors.ChevronRight
+    val ShieldCheck: ImageVector get() = TDesignIconVectors.ShieldCheck
+    val Wallet: ImageVector get() = TDesignIconVectors.Wallet
+    val Lock: ImageVector get() = TDesignIconVectors.Lock
+    val Erase: ImageVector get() = TDesignIconVectors.Erase
+    val NoteEdit: ImageVector get() = TDesignIconVectors.NoteEdit
+    val Edit: ImageVector get() = TDesignIconVectors.NoteEdit
+    val Trash: ImageVector get() = TDesignIconVectors.Erase
+    val Share: ImageVector get() = TDesignIconVectors.Share
+    val Copy: ImageVector get() = TDesignIconVectors.Copy
+    val Maximize: ImageVector get() = TDesignIconVectors.Maximize
 }

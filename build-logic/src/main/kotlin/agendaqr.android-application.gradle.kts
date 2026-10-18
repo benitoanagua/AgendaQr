@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-// Aviso de licencias de terceros (Lucide + envoltorio composeicons): se
+// Aviso de licencias de terceros: se
 // copia a assets generados en tiempo de build y AGP lo empaqueta en el
 // APK. La fuente canónica vive en `third-party-notices/`; no hay scripts
 // externos.

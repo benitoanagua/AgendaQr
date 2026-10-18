@@ -35,7 +35,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Permisos de cámara (política de ajustes) | unit + compilación de instrumentados |
 | Navegación (back stack restaurable + NavigationBar 4 destinos) | commonTest + `RootNavigationChromeTest` |
 | Accesibilidad (contraste, foco visible, háptica, anuncios, targets 48dp) | `core:ui` tests + Robolectric |
-| Iconografía (Lucide ISC vía AmIcon) | compilación 2 targets + gate |
+| Iconografía TDesign convertida a vectores Compose (34 glifos fuente) | compilación Android/iOS + gate |
 | Tokens de color Warning e Info añadidos a AmColor | gate del design system |
 | Feedback transitorio (Snackbar) y persistente (AppStatusHost) | `RootNavigationChromeTest` + `AppStatusHostTest` |
 | Reformas de referencia visual por pantalla (ADR-0021, brechas G1–G9: botón primario fijo al pie, tarjetas de ajustes con encabezado de sección, insignia de estado con texto, evidencia decodificada en tarjeta, metadatos de fecha y marca de tipo en resultados) | gate del design system + Robolectric de presentación + capturas regeneradas (`verifyVisualHashes` PASS, 80 capturas) |
