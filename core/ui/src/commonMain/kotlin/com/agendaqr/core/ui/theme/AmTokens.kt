@@ -472,6 +472,8 @@ object AmMetrics {
     val IconSizeCompact = 18.dp
     /** Ancho de las mini-tarjetas del carrusel de favoritos. */
     val FavCardWidth = 184.dp
+    /** Lado de los puntos enmascarados del PIN (S00, ADR-0024). */
+    val PinDotSize = 12.dp
     /** Inset del divisor de una celda respecto al borde del grupo. */
     val ListDividerInset = 16.dp
     /** Alto mínimo de la cabecera de un grupo de celdas. */
