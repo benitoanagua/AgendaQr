@@ -414,6 +414,7 @@ object AmColor {
     val Transparent: Color = Color.Transparent
 }
 
+/** Pasos de `spacer4..spacer160` de `td_default_theme.dart`. */
 object AmSpacing {
     val None = 0.dp
     val Xs = 4.dp
@@ -423,7 +424,7 @@ object AmSpacing {
     val Xl = 24.dp
     val Xxl = 32.dp
     val Xxxl = 48.dp
-    val Huge = 80.dp
+    val Huge = 96.dp
     val ScreenMargin = 16.dp
 }
 
@@ -432,6 +433,8 @@ object AmSpacing {
  */
 object AmMetrics {
     val Border = 1.dp
+    /** Grosor de divisor (`height` de `TDDivider`). */
+    val DividerHeight = 0.5.dp
     /** Borde fuerte FUNCIONAL (marco del encuadre del scanner). */
     val BorderStrong = 3.dp
     /** Área táctil mínima (accesibilidad, invariante del gate). */
@@ -451,8 +454,9 @@ object AmMetrics {
     val FieldCompactHeight = 40.dp
     /** Altura visual de la barra superior. */
     val TopBarHeight = 48.dp
-    /** Altura visual y objetivo de cada destino de la barra inferior. */
-    val NavBarHeight = 48.dp
+    /** Altura visual y objetivo de cada destino de la barra inferior
+     * (`TDBottomTabBar`). */
+    val NavBarHeight = 56.dp
     /** Ancho del riel de navegación para ventanas amplias. */
     val NavRailWidth = 80.dp
     /** Ancho máximo del contenido en medium/expanded. */
@@ -485,8 +489,8 @@ object AmMetrics {
     const val DialogMaxWidthFraction = 0.9f
     /** Círculo tonal del glifo del estado vacío. */
     val EmptyStateGlyphSize = 96.dp
-    /** Glifo del resultado de un flujo completado. */
-    val ResultGlyphSize = 80.dp
+    /** Glifo del resultado de un flujo completado (`TDResult`). */
+    val ResultGlyphSize = 70.dp
     /** Contenedor del icono de una celda de acción rápida en Inicio. */
     val GridIconContainerSize = 48.dp
     /** Largo del trazo de las esquinas del encuadre del scanner. */
@@ -508,15 +512,18 @@ object AmMetrics {
     const val ListRowEndMetaStackFontScale = 2f
 }
 
+/**
+ * Radios `radiusSmall`, `radiusDefault`, `radiusLarge`, `radiusExtraLarge`
+ * y `radiusRound` de `td_default_theme.dart`.
+ */
 object AmRadius {
     val ExtraSmall = 3.dp
-    val Band = 4.dp
     val Small = 6.dp
     val Medium = 9.dp
     val Large = 12.dp
     val ExtraLarge = 12.dp
     val GridIcon = 6.dp
-    val Round = 999.dp
+    val Round = 9999.dp
 }
 
 /**
@@ -526,7 +533,6 @@ object AmRadius {
  */
 object AmShapes {
     val ExtraSmall = RoundedCornerShape(AmRadius.ExtraSmall)
-    val Band = RoundedCornerShape(AmRadius.Band)
     val Small = RoundedCornerShape(AmRadius.Small)
     val Medium = RoundedCornerShape(AmRadius.Medium)
     val Large = RoundedCornerShape(AmRadius.Large)

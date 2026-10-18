@@ -45,7 +45,7 @@ La protección determinista de recortes y solapes se completa con las
 pruebas ya existentes: `AmScaffoldOverlapContractTest` (el contenido nunca
 queda bajo el dock de acciones ni el FAB), `ScreensA11yCoverageTest` y
 `AmAccessibilityContractTest` (objetivos táctiles y texto visible),
-`FontScaleContractTest`/`AmPivotLayoutTest` (escala de fuente).
+`FontScaleContractTest`/`AmTabsLayoutTest` (escala de fuente).
 
 ## Consecuencias
 

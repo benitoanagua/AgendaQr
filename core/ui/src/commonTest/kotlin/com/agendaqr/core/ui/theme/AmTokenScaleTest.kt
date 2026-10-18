@@ -21,26 +21,27 @@ class AmTokenScaleTest {
         assertEquals(24.dp, AmSpacing.Xl)
         assertEquals(32.dp, AmSpacing.Xxl)
         assertEquals(48.dp, AmSpacing.Xxxl)
-        assertEquals(80.dp, AmSpacing.Huge)
+        assertEquals(96.dp, AmSpacing.Huge)
         assertEquals(16.dp, AmSpacing.ScreenMargin)
     }
 
     @Test
     fun radius_scale_matches_tdesign_mobile() {
         assertEquals(3.dp, AmRadius.ExtraSmall)
-        assertEquals(4.dp, AmRadius.Band)
         assertEquals(6.dp, AmRadius.Small)
         assertEquals(9.dp, AmRadius.Medium)
         assertEquals(12.dp, AmRadius.Large)
         assertEquals(12.dp, AmRadius.ExtraLarge)
-        assertEquals(999.dp, AmRadius.Round)
+        assertEquals(9999.dp, AmRadius.Round)
     }
 
     @Test
     fun component_dimensions_pin_the_reference_sizes() {
         assertEquals(48.dp, AmMetrics.ControlMinSize)
+        assertEquals(1.dp, AmMetrics.Border)
+        assertEquals(0.5.dp, AmMetrics.DividerHeight)
         assertEquals(48.dp, AmMetrics.TopBarHeight)
-        assertEquals(48.dp, AmMetrics.NavBarHeight)
+        assertEquals(56.dp, AmMetrics.NavBarHeight)
         assertEquals(80.dp, AmMetrics.NavRailWidth)
         assertEquals(40.dp, AmMetrics.ButtonCompactHeight)
         assertEquals(32.dp, AmMetrics.ChipCompactHeight)
@@ -51,6 +52,7 @@ class AmTokenScaleTest {
         assertEquals(3.dp, AmMetrics.TabIndicatorHeight)
         assertEquals(311.dp, AmMetrics.DialogMinWidth)
         assertEquals(96.dp, AmMetrics.EmptyStateGlyphSize)
+        assertEquals(70.dp, AmMetrics.ResultGlyphSize)
     }
 
     @Test

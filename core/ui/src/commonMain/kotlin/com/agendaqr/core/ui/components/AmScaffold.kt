@@ -59,7 +59,7 @@ fun AmBottomAction(
             .imePadding(),
     ) {
         HorizontalDivider(
-            thickness = AmMetrics.Border,
+            thickness = AmMetrics.DividerHeight,
             color = AmColor.Divider,
         )
         AmPrimaryButton(

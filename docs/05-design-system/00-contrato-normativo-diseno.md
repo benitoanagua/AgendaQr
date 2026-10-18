@@ -229,26 +229,30 @@ Cada componente de AgendaQr corresponde a un componente de
 |---|---|
 | `AmTopBar` | `TDNavBar` |
 | `AmNavBar` | `TDBottomTabBar` |
-| `AmListRow`, `AmListBody` | `TDCell`, `TDCellGroup` |
+| `AmNavRail` | Sin equivalente (D-05) |
+| `AmListRow`, `AmListBody`, `AmSectionHeader`, `AmMetaRow` | `TDCell`, `TDCellGroup` |
 | `AmHairline`, divisores | `TDDivider`, `TDInsetDivider` |
-| `AmPrimaryButton`, `AmSecondaryButton`, `AmDangerButton`, `AmTextAction` | `TDButton` |
+| `AmButton`, `AmPrimaryButton`, `AmSecondaryButton`, `AmOutlineButton`, `AmLightButton`, `AmDangerButton`, `AmTextAction`, `AmBottomAction`, `AmIconButton`, `AmCompactAction` | `TDButton` |
 | `AmTextField`, `AmAmountField` | `TDInput`, `TDTextarea` |
 | `AmSearchField`, `AmSearchTrigger` | `TDSearchBar` |
-| `AmTonalTag` | `TDTag` |
-| `AmBadge` | `TDBadge` |
-| `AmPivot` | `TDTabs`, `TDHorizontalTabBar` |
-| `AmSegmentedControl` | `TDTabs` |
-| `AmFilterChip` | `TDTag` (`TDSelectTag`) |
-| `AmCard`, `AmTappableCard` | `TDCellGroup` (tema tarjeta) |
+| `AmTonalTag`, `AmFilterChip`, `AmStatusPill` | `TDTag` (`TDSelectTag`) |
+| `AmBadge`, `AmIconBadge` | `TDBadge` |
+| `AmTabs` | `TDTabs`, `TDHorizontalTabBar` |
+| `AmSegmentedControl` | `TDTabs` (grupo de opciones) |
+| `AmCard`, `AmTappableCard`, `AmQuickAction` | `TDCellGroup` (tema tarjeta) |
 | `AmEmptyState` | `TDEmpty` |
 | `AmStatusBanner` | `TDNoticeBar` |
-| `AmStatusPill` | `TDTag` |
-| `AmDialog`, `AmDialogList` | `TDDialog`, `TDActionSheet` |
-| `AmSnackbarHost` | `TDToast`, `TDMessage` |
+| `AmDialog`, `AmDialogList`, `AmActionSheet` | `TDDialog`, `TDActionSheet` |
+| `AmDatePickerDialog` | `TDCalendar` |
+| `AmTimePickerDialog` | `TDPicker` |
+| `AmSnackbarHost`, `AmFeedbackEvent` | `TDToast`, `TDMessage` |
 | `AmLoading`, `AmSkeleton` | `TDLoading`, `TDSkeleton` |
 | `AmQrPreview`, `AmMediaFrame` | `TDImage`, `TDImageViewer` |
 | `AmScannerFrame` | `TDImage` (marco de lectura) |
 | `AmExtendedFab` | `TDFab` |
+| `AmText`, `AmHeading`, `AmHeroHeader`, `AmSection` | `TDText` |
+| `AmSuccessCheck`, `AmContextBadge`, `AmFavoriteToggle` | `TDIcons`, `TDAvatar` |
+| `AmClipboard` | Servicio de plataforma |
 
 | Grupo | Componentes | Regla de composición |
 |---|---|---|
@@ -256,7 +260,7 @@ Cada componente de AgendaQr corresponde a un componente de
 | Acciones | `AmPrimaryButton`, `AmSecondaryButton`, `AmDangerButton`, `AmTextAction`, `AmBottomAction` | Como máximo una primaria por contexto; el target mide ≥48 dp; acción fija solo cuando existe guardado real. |
 | Campos | `AmTextField`, `AmAmountField`, `AmSearchField`, `AmSearchTrigger` | Etiqueta y error asociados; búsqueda con foco visible; la acción de limpiar tiene nombre accesible. |
 | Listas | `AmListRow`, `AmListBody`, `AmSectionHeader`, `AmMetaRow` | Las filas relacionadas forman un Cell-group; las filas usan divisores inset y chevron solo cuando navegan. |
-| Selección | `AmSegmentedControl`, `AmPivot`, `AmFilterChip`, `AmTonalTag`, `AmBadge` | El estado seleccionado tiene semántica; los tags comunican su tipo con texto. |
+| Selección | `AmSegmentedControl`, `AmTabs`, `AmFilterChip`, `AmTonalTag`, `AmBadge` | El estado seleccionado tiene semántica; los tags comunican su tipo con texto. |
 | Superficies | `AmCard`, `AmTappableCard`, `AmHairline` | Tarjetas para contenido agrupado; las filas no se envuelven en tarjetas individuales. |
 | Estados | `AmEmptyState`, `AmLoading`, `AmSkeleton`, `AmStatusBanner`, `AmStatusPill` | Estados de error explican qué ocurrió, qué pasó con los datos y cómo recuperarse. |
 | Feedback | `AmSnackbarHost`, `AmFeedbackEvent` | Confirmación efímera con texto; los avisos persistentes usan el host de estado. |

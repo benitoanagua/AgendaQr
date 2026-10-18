@@ -71,7 +71,7 @@ fun AmSectionHeader(
  */
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
-fun AmPivot(
+fun AmTabs(
     sections: List<String>,
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
@@ -79,8 +79,8 @@ fun AmPivot(
     accent: Color? = null,
     content: @Composable (Int) -> Unit,
 ) {
-    require(sections.isNotEmpty()) { "AmPivot necesita al menos una sección" }
-    require(selectedIndex in sections.indices) { "AmPivot: índice fuera de rango" }
+    require(sections.isNotEmpty()) { "AmTabs necesita al menos una sección" }
+    require(selectedIndex in sections.indices) { "AmTabs: índice fuera de rango" }
     // El acento de contexto solo es texto de pestaña si es legible
     // (>= 4.5:1); si no, cae al acento legible del sistema.
     val selectedTextColor = accent?.asTextOn(AmColor.Background, AmColor.AccentText)
@@ -96,13 +96,13 @@ fun AmPivot(
                 modifier = Modifier.tabIndicatorOffset(selectedIndex),
                 width = AmMetrics.TabIndicatorWidth,
                 height = AmMetrics.TabIndicatorHeight,
-                shape = AmShapes.Band,
+                shape = AmShapes.ExtraSmall,
                 color = AmColor.Accent,
             )
         },
         divider = {
             androidx.compose.material3.HorizontalDivider(
-                thickness = AmMetrics.Border,
+                thickness = AmMetrics.DividerHeight,
                 color = AmColor.Divider,
             )
         },

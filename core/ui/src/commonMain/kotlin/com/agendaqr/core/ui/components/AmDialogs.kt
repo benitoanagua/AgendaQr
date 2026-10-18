@@ -189,7 +189,7 @@ fun AmDialog(
                     // Pie: hairline + fila de acciones a ancho completo
                     // (Dialog de la referencia), alto táctil de 48 dp.
                     HorizontalDivider(
-                        thickness = AmMetrics.Border,
+                        thickness = AmMetrics.DividerHeight,
                         color = AmColor.Divider,
                     )
                     BoxWithConstraints(
@@ -238,7 +238,7 @@ fun AmDialog(
                                         ),
                                 )
                                 HorizontalDivider(
-                                    thickness = AmMetrics.Border,
+                                    thickness = AmMetrics.DividerHeight,
                                     color = AmColor.Divider,
                                 )
                                 AmDialogAction(
@@ -272,7 +272,7 @@ fun AmDialog(
                                             ),
                                     )
                                     VerticalDivider(
-                                        thickness = AmMetrics.Border,
+                                        thickness = AmMetrics.DividerHeight,
                                         color = AmColor.Divider,
                                     )
                                 }

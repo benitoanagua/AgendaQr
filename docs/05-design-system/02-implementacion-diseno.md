@@ -26,7 +26,7 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
     ├── AmDialogs.kt       # AmDialog y AmDialogList con formas y estilos de tokens
     ├── AmFeedback.kt      # skeleton, paginación, scanner y marco de medios
     ├── AmFeedbackEvent.kt # AmFeedbackHost, AmSnackbarHost y eventos de feedback
-    ├── AmPivot.kt         # AmSectionHeader y AmPivot (pestañas)
+    ├── AmTabs.kt         # AmSectionHeader y AmTabs (pestañas)
     └── AmQrPreview.kt     # preview QR multiplataforma; lienzo blanco y estado explícito ante errores
 ```
 
@@ -60,6 +60,6 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 ## 5. Validación
 
 - Gates estáticos: `verifyDesignSystemCompliance`, `verifyDesignSystemFixtures`, `verifyControlMinSize`.
-- Contratos de sistema: `AmSchemeTest`, `AmTypographyTest`, `AmAccentTest`, `AmSurfaceMotionTest`, `AmContrastPairsTest` (commonTest); `AmAccessibilityContractTest`, `AmPivotLayoutTest`, `AmUiPolishContractTest` (androidUnitTest/Robolectric).
+- Contratos de sistema: `AmSchemeTest`, `AmTypographyTest`, `AmAccentTest`, `AmSurfaceMotionTest`, `AmContrastPairsTest` (commonTest); `AmAccessibilityContractTest`, `AmTabsLayoutTest`, `AmUiPolishContractTest` (androidUnitTest/Robolectric).
 - Verificación de layout: `LayoutReferenceTest`, `LayoutReferenceExtraTest` (ADR-0007).
 - Agregador: `verifyAgendaQrArchitecture`.

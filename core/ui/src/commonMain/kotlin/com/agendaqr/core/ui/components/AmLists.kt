@@ -59,7 +59,7 @@ fun AmBadge(
     round: Boolean = false,
 ) {
     val toneColor = if (tone == AmTone.Neutral) AmColor.TextSecondary else tone.content()
-    val shape = if (round) AmShapes.Pill else AmShapes.Band
+    val shape = if (round) AmShapes.Pill else AmShapes.ExtraSmall
     Box(
         modifier = modifier
             .border(
@@ -98,7 +98,7 @@ fun AmTonalTag(
     val label = if (uppercase) text.uppercase() else text
     Box(
         modifier = modifier
-            .background(tone.container(), if (round) AmShapes.Pill else AmShapes.Band)
+            .background(tone.container(), if (round) AmShapes.Pill else AmShapes.ExtraSmall)
             .padding(horizontal = AmSpacing.Sm, vertical = AmSpacing.Xs),
         contentAlignment = Alignment.Center,
     ) {
@@ -276,7 +276,7 @@ fun AmHairline(
         } else {
             Modifier
         }.then(modifier),
-        thickness = AmMetrics.Border,
+        thickness = AmMetrics.DividerHeight,
         color = AmColor.Divider,
     )
 }
@@ -510,7 +510,7 @@ fun AmListRow(
         if (showDivider) {
             HorizontalDivider(
                 modifier = Modifier.padding(start = AmMetrics.ListDividerInset),
-                thickness = AmMetrics.Border,
+                thickness = AmMetrics.DividerHeight,
                 color = AmColor.Divider,
             )
         }

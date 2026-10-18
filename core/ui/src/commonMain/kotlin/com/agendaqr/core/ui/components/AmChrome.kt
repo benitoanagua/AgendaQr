@@ -271,7 +271,7 @@ fun AmNavBar(
             .background(AmColor.Surface),
     ) {
         HorizontalDivider(
-            thickness = AmMetrics.Border,
+            thickness = AmMetrics.DividerHeight,
             color = AmColor.Divider,
         )
         Row(

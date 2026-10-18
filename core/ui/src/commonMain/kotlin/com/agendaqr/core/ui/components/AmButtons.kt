@@ -636,7 +636,7 @@ fun AmFilterChip(
                     modifier = Modifier
                         .background(
                             if (selected) AmColor.OnAccent.copy(alpha = 0.25f) else AmColor.SurfaceContainerHighest,
-                            AmShapes.Band,
+                            AmShapes.ExtraSmall,
                         )
                         .padding(horizontal = AmSpacing.Xs),
                 ) {
@@ -734,7 +734,7 @@ fun AmSegmentedControl(
                             modifier = Modifier
                                 .background(
                                     if (selected) activeColor.copy(alpha = 0.2f) else AmColor.SurfaceContainerHighest,
-                                    AmShapes.Band,
+                                    AmShapes.ExtraSmall,
                                 )
                                 .padding(horizontal = AmSpacing.Xs),
                         ) {

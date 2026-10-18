@@ -138,7 +138,7 @@ fun AmTextField(
             trailing?.invoke()
         }
         HorizontalDivider(
-            thickness = AmMetrics.Border,
+            thickness = AmMetrics.DividerHeight,
             color = when {
                 isError -> AmColor.Danger
                 focused -> AmColor.Focus
@@ -397,6 +397,6 @@ fun AmAmountField(
                 }
             }
         }
-        HorizontalDivider(thickness = AmMetrics.Border, color = AmColor.Divider)
+        HorizontalDivider(thickness = AmMetrics.DividerHeight, color = AmColor.Divider)
     }
 }

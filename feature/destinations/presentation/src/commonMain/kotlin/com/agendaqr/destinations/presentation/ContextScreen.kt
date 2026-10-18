@@ -14,7 +14,7 @@ import com.agendaqr.core.ui.components.AmSnackbarHost
 import com.agendaqr.core.ui.components.AmNavChromeState
 import com.agendaqr.core.ui.components.AmEmptyState
 import com.agendaqr.core.ui.components.AmIcons
-import com.agendaqr.core.ui.components.AmPivot
+import com.agendaqr.core.ui.components.AmTabs
 import com.agendaqr.core.ui.components.AmListBody
 import com.agendaqr.core.ui.components.AmListRow
 import com.agendaqr.core.ui.components.AmLoading
@@ -216,7 +216,7 @@ private fun ContextDetail(
             // Pestañas estándar QR · Actividades · Comprobantes (modelo
             // mental §2; sin crear navegación nueva — la conmutación es local).
             var pivotSection by remember { mutableStateOf(0) }
-            AmPivot(
+            AmTabs(
                 sections = listOf(AppStrings.Qr, AppStrings.Operaciones, AppStrings.Comprobantes),
                 selectedIndex = pivotSection,
                 onSelect = { pivotSection = it },

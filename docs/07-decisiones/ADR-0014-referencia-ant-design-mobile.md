@@ -31,7 +31,7 @@ La pasada anterior dotó al producto de un sistema de diseño propio (AgendaMobi
 | List/Item (hairlines) | `AmListRow` (+ `showDivider`) | Título 14, descripción 12 (escala compacta); filas separadas en listas no contiguas (desviación documentada) |
 | Tag (outline/round) | `AmBadge` | Etiqueta de estado con texto, nunca solo color |
 | Selector/CapsuleTabs | `AmFilterChip` | Seleccionado: borde de acento + fondo wathet |
-| Tabs (indicador, pestaña activa de acento) | `AmPivot` | Indicador de acento, desplazable |
+| Tabs (indicador, pestaña activa de acento) | `AmTabs` | Indicador de acento, desplazable |
 | TabBar (48px, icono 24, etiqueta 10, activo de acento, sin píldora) | `AmNavBar` (64 dp propio + hairline, sin píldora M3) / `AmNavRail` M3 | Etiqueta 11 sp; objetivo 64 dp; selección con semántica |
 | NavBar (atrás + título + acciones) | `AmTopBar` propia de 56 dp | Título 18 sp Medium a la izquierda por convención Android (desviación documentada); acciones de 48 dp |
 | Modal (título centrado 18, contenido 15) | `AmDialog` | Botonera de plataforma; foco conservativo en destructivas |

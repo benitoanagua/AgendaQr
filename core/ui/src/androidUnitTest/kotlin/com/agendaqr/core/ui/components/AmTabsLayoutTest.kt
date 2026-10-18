@@ -29,7 +29,7 @@ import org.robolectric.annotation.Config
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], qualifiers = "w320dp-h640dp")
-class AmPivotLayoutTest {
+class AmTabsLayoutTest {
 
     @get:Rule
     val compose = createComposeRule()
@@ -41,7 +41,7 @@ class AmPivotLayoutTest {
                 CompositionLocalProvider(
                     LocalDensity provides Density(density = 1f, fontScale = fontScale),
                 ) {
-                    AmPivot(
+                    AmTabs(
                         sections = listOf("QR", "Actividades", "Comprobantes"),
                         selectedIndex = selected,
                         onSelect = { selected = it },

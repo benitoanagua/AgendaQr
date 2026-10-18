@@ -56,7 +56,7 @@ D13. **Sin cambios:** barra superior 56 dp con título a la izquierda y barra in
 | Tag (outline/round) | `AmBadge`/`AmTonalTag` | Radio 2, `round` opt-in |
 | CapsuleTabs | `AmFilterChip` | Reposo box sin borde, activo acento |
 | Selector | — (no usado) | — |
-| Tabs | `AmPivot` | Indicador de acento, desplazable |
+| Tabs | `AmTabs` | Indicador de acento, desplazable |
 | TabBar | `AmNavBar`/`AmNavRail` | 56 dp, etiqueta 11 (desviación) |
 | NavBar | `AmTopBar` | 56 dp, título a la izquierda (plataforma) |
 | Dialog | `AmDialog` | Fila de acciones hairline |
