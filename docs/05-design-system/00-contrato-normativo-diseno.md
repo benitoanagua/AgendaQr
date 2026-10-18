@@ -80,53 +80,59 @@ componentes consumen roles semánticos, no índices de escala.
 
 ### 4.2 Correspondencia de roles
 
-La tabla siguiente fija qué clave de la fuente alimenta cada rol de `AmColor`.
+La tabla siguiente fija la clave de la fuente que alimenta cada rol de
+`AmColor`. Una entrada `D-02` indica que el valor vigente es el escalón
+siguiente de la misma familia que cumple el umbral; el valor exacto queda
+fijado por `AmSchemeTest`.
 
-| Rol AgendaQr | Clave de la fuente (claro) | Clave de la fuente (oscuro) |
+| Rol AgendaQr | Clave o paso de la fuente (claro) | Clave o paso de la fuente (oscuro) |
 |---|---|---|
-| `background` | `bgColorPage` (`gray2`) | `bgColorPage` (`gray14`) |
-| `surface` | `bgColorContainer` (`#ffffff`) | `bgColorContainer` (`gray13`) |
-| `surfaceSecondary` | `bgColorSecondaryContainer` (`gray1`) | `bgColorSecondaryContainer` (`gray12`) |
+| `background` | `bgColorPage` (`gray2` `#EEEEEE`) | `bgColorPage` (`gray14` `#181818`) |
+| `surface` | `bgColorContainer` (`#ffffff`) | `bgColorContainer` (`gray13` `#242424`) |
+| `surfaceSecondary` | `bgColorSecondaryContainer` (`gray1` `#F3F3F3`) | `bgColorSecondaryContainer` (`gray12` `#2C2C2C`) |
 | `surfaceContainer` | `bgColorPage` (`gray2`) | `bgColorPage` (`gray14`) |
 | `surfaceContainerLow` | `bgColorContainer` (`#ffffff`) | `bgColorContainer` (`gray13`) |
-| `surfaceContainerHigh` | `bgColorComponent` (`gray3`) | `bgColorComponent` (`gray11`) |
-| `surfaceContainerHighest` | `bgColorSecondaryComponent` (`gray4`) | `bgColorSecondaryComponent` (`gray10`) |
-| `surfaceActive` | `bgColorComponent` (`gray3`) | `bgColorSecondaryContainerHover` (`gray11`) |
-| `componentActive` | `bgColorComponentActive` (`gray6`) | `bgColorComponentActive` (`gray9`) |
+| `surfaceContainerHigh` | `bgColorComponent` (`gray3` `#E8E8E8`) | `bgColorComponent` (`gray11` `#393939`) |
+| `surfaceContainerHighest` | `bgColorSecondaryComponent` (`gray4` `#DDDDDD`) | `bgColorSecondaryComponent` (`gray10` `#4B4B4B`) |
+| `surfaceActive` | `bgColorContainerActive` (`gray3`) | `bgColorSecondaryContainer` (`gray12`) por D-02 |
+| `componentActive` | `bgColorComponentActive` (`gray6` `#A6A6A6`) | `bgColorComponentActive` (`gray9` `#5E5E5E`) |
 | `border` | `componentBorderColor` (`gray4`) | `componentBorderColor` (`gray9`) |
-| `functionalBorder` | `componentStrokeColor` (`gray3`) | `componentStrokeColor` (`gray11`) |
-| `divider` | `bgColorContainerActive` (`gray3`) | `bgColorContainerActive` (`gray10`) |
-| `textPrimary` | `textColorPrimary` (`fontGyColor1`) | `textColorPrimary` (`fontWhColor1`) |
-| `textSecondary` | `textColorSecondary` (`fontGyColor2`) | `textColorSecondary` (`fontWhColor2`) |
-| `textPlaceholder` | `textColorPlaceholder` (`fontGyColor3`) | `textColorPlaceholder` (`fontWhColor3`) |
-| `textTertiary` | `textDisabledColor` (`fontGyColor4`) | `textDisabledColor` (`fontWhColor4`) |
-| `accent` | `brandNormalColor` (`brandColor7`) | `brandNormalColor` (`brandColor8`) |
+| `functionalBorder` | `gray7` `#8B8B8B` por D-02 | `gray8` `#777777` por D-02 |
+| `divider` | `gray3` `#E8E8E8` | `gray11` `#393939` |
+| `textPrimary` | `textColorPrimary` (`fontGyColor1` `#E5000000`) | `textColorPrimary` (`fontWhColor1` `#E5FFFFFF`) |
+| `textSecondary` | `textColorSecondary` (`fontGyColor2` `#99000000`) | `textColorSecondary` (`fontWhColor2` `#8CFFFFFF`) |
+| `textPlaceholder` | `gray9` `#5E5E5E` por D-02 | `fontWhColor2` `#8CFFFFFF` por D-02 |
+| `textTertiary` | `gray9` `#5E5E5E` (la fuente usa `fontGyColor4` con alfa) | `gray6` `#A6A6A6` (la fuente usa `fontWhColor4` con alfa) |
+| `accent` | `brandNormalColor` (`brandColor7` `#0052D9`) | `brandColor7` `#2667D4` por D-02 |
 | `accentActive` | `brandActiveColor` (`brandColor8`) | `brandActiveColor` (`brandColor9`) |
-| `accentActiveContent` | texto anti (`#ffffff`) | `brandColor1` |
+| `accentActiveContent` | texto anti (`#ffffff`) | `brandLightColor` (`brandColor1`) |
 | `accentDisabled` | `brandDisabledColor` (`brandColor3`) | `brandDisabledColor` (`brandColor3`) |
-| `accentFocus` | `brandFocusColor` (`brandColor2`) | `brandFocusColor` (`brandColor2`) |
+| `accentFocus` | `brandFocusColor` (`brandColor2` `#D9E1FF`) | `brandFocusColor` (`brandColor2` `#173463`) |
 | `accentLightActive` | `brandColorLightHover` (`brandColor2`) | `brandColorLightHover` (`brandColor2`) |
-| `accentText` | `textColorBrand` (`brandColor7`) | `textColorBrand` (`brandColor8`) |
+| `accentText` | `textColorBrand` (`brandColor7`) | `brandColor9` `#699EF5` por D-02 |
 | `accentContainer` | `brandLightColor` (`brandColor1`) | `brandLightColor` (`brandColor1`) |
-| `danger` | `errorNormalColor` (`errorColor6`) | `errorNormalColor` (`errorColor6`) |
-| `dangerFill` | `errorColor7` | `errorColor6` |
-| `dangerActive` | `errorColor8` | `errorColor6` |
+| `danger` | `errorColor7` `#AD352F` por D-02 | `errorColor8` `#EC888E` por D-02 |
+| `dangerFill` | `errorColor7` `#AD352F` por D-02 | `errorColor6` `#C64751` por D-02 |
+| `dangerActive` | `errorColor8` `#881F1C` | `errorColor6` `#C64751` |
 | `dangerDisabled` | `errorDisabledColor` (`errorColor3`) | `errorDisabledColor` (`errorColor3`) |
 | `dangerContainer` | `errorLightColor` (`errorColor1`) | `errorLightColor` (`errorColor1`) |
-| `success` | `successColor7` | `successNormalColor` (`successColor5`) |
-| `successFill` | `successNormalColor` (`successColor5`) | `successHoverColor` (`successColor4`) |
+| `success` | `successColor7` `#006C45` por D-02 | `successColor6` `#43AF8A` por D-02 |
+| `successFill` | `successColor6` `#008858` por D-02 | `successColor5` `#059465` |
 | `successContainer` | `successLightColor` (`successColor1`) | `successLightColor` (`successColor1`) |
-| `warning` | `warningColor7` | `warningNormalColor` (`warningColor5`) |
-| `warningFill` | `warningNormalColor` (`warningColor5`) | `warningHoverColor` (`warningColor4`) |
+| `warning` | `warningColor7` `#954500` por D-02 | `warningColor7` `#E8935C` por D-02 |
+| `warningFill` | `warningColor6` `#BE5A00` por D-02 | `warningColor5` `#CF6E2D` |
 | `warningContainer` | `warningLightColor` (`warningColor1`) | `warningLightColor` (`warningColor1`) |
-| `info`, `infoContainer` | `textColorBrand`, `brandLightColor` | `textColorBrand`, `brandLightColor` |
+| `info` | `textColorBrand` (`brandColor7`) | `brandColor9` `#699EF5` por D-02 |
+| `infoContainer` | `brandLightColor` (`brandColor1`) | `brandLightColor` (`brandColor1`) |
+| `focus` | `brandNormalColor` (`brandColor7`) | `brandColor9` `#699EF5` por D-02 |
 | `disabled` | `bgColorComponentDisabled` (`gray2`) | `bgColorComponentDisabled` (`gray12`) |
 | `onDisabled` | `textDisabledColor` (`fontGyColor4`) | `textDisabledColor` (`fontWhColor4`) |
-| `focus` | `brandNormalColor` (`brandColor7`) | `brandNormalColor` (`brandColor8`) |
-| `inverseSurface` | `grayColor14` | `grayColor2` |
+| `inverseSurface` | `gray14` | `gray2` |
 | `inverseOnSurface` | `#ffffff` | `fontGyColor1` |
 | `scrim` | `#99000000` | `#66000000` |
 | `qrCanvas` | `#ffffff` | `#ffffff` |
+| `onAccent`, `onDanger` | `#ffffff` | `#ffffff` |
+| `onSuccessFill`, `onWarningFill` | `#ffffff` | `gray14` |
 
 Los tests fijan las escalas y los roles completos para ambos temas. Para texto
 se elige un par de la paleta TDesign con contraste ≥4.5:1; para indicadores no

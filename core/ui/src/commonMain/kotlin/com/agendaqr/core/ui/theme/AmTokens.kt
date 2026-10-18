@@ -60,92 +60,123 @@ internal object AmPalette {
         0xFF43AF8A, 0xFF46BF96, 0xFF80D2B6, 0xFFB4E1D3, 0xFFDEEDE8,
     ).map(::Color)
     val lightGray = listOf(
-        0xFFF3F3F3, 0xFFEEEEEE, 0xFFE7E7E7, 0xFFDCDCDC, 0xFFC5C5C5,
+        0xFFF3F3F3, 0xFFEEEEEE, 0xFFE8E8E8, 0xFFDDDDDD, 0xFFC6C6C6,
         0xFFA6A6A6, 0xFF8B8B8B, 0xFF777777, 0xFF5E5E5E, 0xFF4B4B4B,
-        0xFF383838, 0xFF2C2C2C, 0xFF242424, 0xFF181818,
+        0xFF393939, 0xFF2C2C2C, 0xFF242424, 0xFF181818,
     ).map(::Color)
     val darkGray = listOf(
         0xFFF3F3F3, 0xFFEEEEEE, 0xFFE8E8E8, 0xFFDDDDDD, 0xFFC6C6C6,
         0xFFA6A6A6, 0xFF8B8B8B, 0xFF777777, 0xFF5E5E5E, 0xFF4B4B4B,
-        0xFF383838, 0xFF2C2C2C, 0xFF242424, 0xFF181818,
+        0xFF393939, 0xFF2C2C2C, 0xFF242424, 0xFF181818,
     ).map(::Color)
 
-    val lightBackground = lightGray[0]
+    /** `bgColorPage` = `grayColor2`. */
+    val lightBackground = lightGray[1]
     val darkBackground = darkGray[13]
     val lightSurface = Color.White
     val darkSurface = darkGray[12]
+    /** `bgColorSecondaryContainer` = `grayColor1`. */
     val lightSurfaceSecondary = lightGray[0]
     val darkSurfaceSecondary = darkGray[11]
     val lightSurfaceContainerLow = lightSurface
     val darkSurfaceContainerLow = darkSurface
     val lightSurfaceContainer = lightBackground
     val darkSurfaceContainer = darkBackground
+    /** `bgColorComponent` = `grayColor3`. */
     val lightSurfaceContainerHigh = lightGray[2]
     val darkSurfaceContainerHigh = darkGray[10]
+    /** `bgColorSecondaryComponent` = `grayColor4`. */
     val lightSurfaceContainerHighest = lightGray[3]
     val darkSurfaceContainerHighest = darkGray[9]
+    /** `bgColorContainerActive` / `bgColorSecondaryContainer` (D-02 en oscuro). */
     val lightSurfaceActive = lightGray[2]
     val darkSurfaceActive = darkGray[11]
+    /** `bgColorComponentActive` = `grayColor6` / `grayColor9`. */
     val lightComponentActive = lightGray[5]
-    val darkComponentActive = darkGray[9]
+    val darkComponentActive = darkGray[8]
+    /** `componentBorderColor` = `grayColor4` / `grayColor9`. */
     val lightBorder = lightGray[3]
     val darkBorder = darkGray[8]
     val lightFunctionalBorder = lightGray[6]
     val darkFunctionalBorder = darkGray[7]
+    /** Divisor: paso gris de la escala (`grayColor3` / `grayColor11`). */
     val lightDivider = lightGray[2]
     val darkDivider = darkGray[10]
-    val lightText = Color(0xE6000000)
-    val darkText = Color.White
+    /** `textColorPrimary` = `fontGyColor1` / `fontWhColor1`. */
+    val lightText = Color(0xE5000000)
+    val darkText = Color(0xE5FFFFFF)
+    /** `textColorSecondary` = `fontGyColor2` / `fontWhColor2`. */
     val lightTextSecondary = Color(0x99000000)
     val darkTextSecondary = Color(0x8CFFFFFF)
+    /** `textColorPlaceholder`: escalado a un paso con contraste ≥4.5:1 (D-02). */
+    val lightTextPlaceholder = lightGray[8]
+    val darkTextPlaceholder = Color(0x8CFFFFFF)
+    /** `textDisabledColor` = `fontGyColor4` / `fontWhColor4` en tono sólido. */
     val lightTextTertiary = lightGray[8]
     val darkTextTertiary = darkGray[5]
+    /** `brandNormalColor`; en oscuro `brandColor7` por contraste (D-02). */
     val lightAccent = lightBrand[6]
     val darkAccent = darkBrand[6]
+    /** `brandActiveColor` = `brandColor8` / `brandColor9`. */
     val lightAccentActive = lightBrand[7]
     val darkAccentActive = darkBrand[8]
     val lightAccentActiveContent = Color.White
     val darkAccentActiveContent = darkBrand[0]
+    /** `brandDisabledColor` = `brandColor3`. */
     val lightAccentDisabled = lightBrand[2]
     val darkAccentDisabled = darkBrand[2]
-    val lightAccentFocus = lightBrand[0]
-    val darkAccentFocus = darkBrand[0]
+    /** `brandFocusColor` = `brandColor2`. */
+    val lightAccentFocus = lightBrand[1]
+    val darkAccentFocus = darkBrand[1]
+    /** `brandColorLightHover` = `brandColor2`. */
     val lightAccentLightActive = lightBrand[1]
     val darkAccentLightActive = darkBrand[1]
     val lightOnAccent = Color.White
     val darkOnAccent = Color.White
+    /** `textColorBrand`; en oscuro `brandColor9` por contraste (D-02). */
     val lightAccentText = lightBrand[6]
     val darkAccentText = darkBrand[8]
+    /** `brandLightColor` = `brandColor1`. */
     val lightAccentContainer = lightBrand[0]
     val darkAccentContainer = darkBrand[0]
+    /** `errorActiveColor` (D-02 en ambos temas). */
     val lightDanger = lightErrorScale[6]
     val darkDanger = darkErrorScale[7]
+    /** Relleno de peligro con texto claro: `errorColor7` / `errorColor6` (D-02). */
     val lightDangerFill = lightErrorScale[6]
     val darkDangerFill = darkErrorScale[5]
     val lightDangerActive = lightErrorScale[7]
     val darkDangerActive = darkErrorScale[5]
+    /** `errorDisabledColor` = `errorColor3`. */
     val lightDangerDisabled = lightErrorScale[2]
     val darkDangerDisabled = darkErrorScale[2]
+    /** `errorLightColor` = `errorColor1`. */
     val lightDangerContainer = lightErrorScale[0]
     val darkDangerContainer = darkErrorScale[0]
+    /** `successNormalColor` escalado por contraste (D-02). */
     val lightSuccess = lightSuccessScale[6]
     val darkSuccessText = darkSuccessScale[5]
     val lightSuccessFill = lightSuccessScale[5]
     val darkSuccessFill = darkSuccessScale[4]
     val lightSuccessOnFill = Color.White
     val darkSuccessOnFill = darkGray[13]
+    /** `successLightColor` = `successColor1`. */
     val lightSuccessContainer = lightSuccessScale[0]
     val darkSuccessContainer = darkSuccessScale[0]
+    /** `warningNormalColor` escalado por contraste (D-02). */
     val lightWarning = lightWarningScale[6]
     val darkWarningText = darkWarningScale[6]
     val lightWarningFill = lightWarningScale[5]
     val darkWarningFill = darkWarningScale[4]
     val lightWarningOnFill = Color.White
     val darkWarningOnFill = darkGray[13]
+    /** `warningLightColor` = `warningColor1`. */
     val lightWarningContainer = lightWarningScale[0]
     val darkWarningContainer = darkWarningScale[0]
+    /** `bgColorComponentDisabled` = `grayColor2` / `grayColor12`. */
     val lightDisabled = lightGray[1]
     val darkDisabled = darkGray[11]
+    /** `textDisabledColor` = `fontGyColor4` / `fontWhColor4`. */
     val lightOnDisabled = Color(0x42000000)
     val darkOnDisabled = Color(0x38FFFFFF)
     val lightInverseSurface = lightGray[13]
@@ -172,6 +203,7 @@ data class AmColorScheme(
     val divider: Color,
     val textPrimary: Color,
     val textSecondary: Color,
+    val textPlaceholder: Color,
     val textTertiary: Color,
     val accent: Color,
     val accentActive: Color,
@@ -224,6 +256,7 @@ val LightAmColorScheme = AmColorScheme(
     divider = AmPalette.lightDivider,
     textPrimary = AmPalette.lightText,
     textSecondary = AmPalette.lightTextSecondary,
+    textPlaceholder = AmPalette.lightTextPlaceholder,
     textTertiary = AmPalette.lightTextTertiary,
     accent = AmPalette.lightAccent,
     accentActive = AmPalette.lightAccentActive,
@@ -276,6 +309,7 @@ val DarkAmColorScheme = AmColorScheme(
     divider = AmPalette.darkDivider,
     textPrimary = AmPalette.darkText,
     textSecondary = AmPalette.darkTextSecondary,
+    textPlaceholder = AmPalette.darkTextPlaceholder,
     textTertiary = AmPalette.darkTextTertiary,
     accent = AmPalette.darkAccent,
     accentActive = AmPalette.darkAccentActive,
@@ -338,6 +372,7 @@ object AmColor {
     val Divider: Color @Composable get() = LocalAmColorScheme.current.divider
     val TextPrimary: Color @Composable get() = LocalAmColorScheme.current.textPrimary
     val TextSecondary: Color @Composable get() = LocalAmColorScheme.current.textSecondary
+    val TextPlaceholder: Color @Composable get() = LocalAmColorScheme.current.textPlaceholder
     val TextTertiary: Color @Composable get() = LocalAmColorScheme.current.textTertiary
     val Accent: Color @Composable get() = LocalAmColorScheme.current.accent
     val AccentActive: Color @Composable get() = LocalAmColorScheme.current.accentActive

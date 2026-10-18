@@ -260,7 +260,7 @@ fun AmSearchField(
                             Text(
                                 placeholder,
                                 style = AmTextStyles.Body,
-                                color = AmColor.TextSecondary,
+                                color = AmColor.TextPlaceholder,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )

@@ -54,6 +54,7 @@ class AmSchemeTest {
         "divider" to divider,
         "textPrimary" to textPrimary,
         "textSecondary" to textSecondary,
+        "textPlaceholder" to textPlaceholder,
         "textTertiary" to textTertiary,
         "accent" to accent,
         "accentActive" to accentActive,
@@ -145,12 +146,12 @@ class AmSchemeTest {
         )
         assertScale(
             AmPalette.lightGray,
-            listOf("FFF3F3F3", "FFEEEEEE", "FFE7E7E7", "FFDCDCDC", "FFC5C5C5", "FFA6A6A6", "FF8B8B8B", "FF777777", "FF5E5E5E", "FF4B4B4B", "FF383838", "FF2C2C2C", "FF242424", "FF181818"),
+            listOf("FFF3F3F3", "FFEEEEEE", "FFE8E8E8", "FFDDDDDD", "FFC6C6C6", "FFA6A6A6", "FF8B8B8B", "FF777777", "FF5E5E5E", "FF4B4B4B", "FF393939", "FF2C2C2C", "FF242424", "FF181818"),
             "light gray",
         )
         assertScale(
             AmPalette.darkGray,
-            listOf("FFF3F3F3", "FFEEEEEE", "FFE8E8E8", "FFDDDDDD", "FFC6C6C6", "FFA6A6A6", "FF8B8B8B", "FF777777", "FF5E5E5E", "FF4B4B4B", "FF383838", "FF2C2C2C", "FF242424", "FF181818"),
+            listOf("FFF3F3F3", "FFEEEEEE", "FFE8E8E8", "FFDDDDDD", "FFC6C6C6", "FFA6A6A6", "FF8B8B8B", "FF777777", "FF5E5E5E", "FF4B4B4B", "FF393939", "FF2C2C2C", "FF242424", "FF181818"),
             "dark gray",
         )
     }
@@ -158,19 +159,20 @@ class AmSchemeTest {
     @Test
     fun semantic_tokens_use_the_tdesign_light_and_dark_roles() {
         val light = LightAmColorScheme
-        assertEquals("FFF3F3F3", argb(light.background))
+        assertEquals("FFEEEEEE", argb(light.background))
         assertEquals("FFFFFFFF", argb(light.surface))
         assertEquals("FFF3F3F3", argb(light.surfaceSecondary))
-        assertEquals("FFDCDCDC", argb(light.border))
+        assertEquals("FFDDDDDD", argb(light.border))
         assertEquals("FF8B8B8B", argb(light.functionalBorder))
-        assertEquals("FFE7E7E7", argb(light.divider))
-        assertEquals("E6000000", argb(light.textPrimary))
+        assertEquals("FFE8E8E8", argb(light.divider))
+        assertEquals("E5000000", argb(light.textPrimary))
         assertEquals("99000000", argb(light.textSecondary))
+        assertEquals("FF5E5E5E", argb(light.textPlaceholder))
         assertEquals("FF5E5E5E", argb(light.textTertiary))
         assertEquals("FF0052D9", argb(light.accent))
         assertEquals("FF003CAB", argb(light.accentActive))
         assertEquals("FFB5C7FF", argb(light.accentDisabled))
-        assertEquals("FFF2F3FF", argb(light.accentFocus))
+        assertEquals("FFD9E1FF", argb(light.accentFocus))
         assertEquals("FFD9E1FF", argb(light.accentLightActive))
         assertEquals("FFFFFFFF", argb(light.onAccent))
         assertEquals("FFF2F3FF", argb(light.accentContainer))
@@ -186,10 +188,10 @@ class AmSchemeTest {
         assertEquals("FFFFF1E9", argb(light.warningContainer))
         assertEquals("FF0052D9", argb(light.info))
         assertEquals("FFF2F3FF", argb(light.infoContainer))
-        assertEquals("FFF3F3F3", argb(light.surfaceContainer))
-        assertEquals("FFE7E7E7", argb(light.surfaceContainerHigh))
-        assertEquals("FFDCDCDC", argb(light.surfaceContainerHighest))
-        assertEquals("FFE7E7E7", argb(light.surfaceActive))
+        assertEquals("FFEEEEEE", argb(light.surfaceContainer))
+        assertEquals("FFE8E8E8", argb(light.surfaceContainerHigh))
+        assertEquals("FFDDDDDD", argb(light.surfaceContainerHighest))
+        assertEquals("FFE8E8E8", argb(light.surfaceActive))
         assertEquals("FFA6A6A6", argb(light.componentActive))
         assertEquals("FFFFFFFF", argb(light.accentActiveContent))
         assertEquals("FF881F1C", argb(light.dangerActive))
@@ -201,14 +203,15 @@ class AmSchemeTest {
         assertEquals("FF2C2C2C", argb(dark.surfaceSecondary))
         assertEquals("FF5E5E5E", argb(dark.border))
         assertEquals("FF777777", argb(dark.functionalBorder))
-        assertEquals("FF383838", argb(dark.divider))
-        assertEquals("FFFFFFFF", argb(dark.textPrimary))
+        assertEquals("FF393939", argb(dark.divider))
+        assertEquals("E5FFFFFF", argb(dark.textPrimary))
         assertEquals("8CFFFFFF", argb(dark.textSecondary))
+        assertEquals("8CFFFFFF", argb(dark.textPlaceholder))
         assertEquals("FFA6A6A6", argb(dark.textTertiary))
         assertEquals("FF2667D4", argb(dark.accent))
         assertEquals("FF699EF5", argb(dark.accentActive))
         assertEquals("FF143975", argb(dark.accentDisabled))
-        assertEquals("FF1B2F51", argb(dark.accentFocus))
+        assertEquals("FF173463", argb(dark.accentFocus))
         assertEquals("FF173463", argb(dark.accentLightActive))
         assertEquals("FFFFFFFF", argb(dark.onAccent))
         assertEquals("FF1B2F51", argb(dark.accentContainer))
@@ -227,10 +230,10 @@ class AmSchemeTest {
         assertEquals("FF699EF5", argb(dark.info))
         assertEquals("FF1B2F51", argb(dark.infoContainer))
         assertEquals("FF181818", argb(dark.surfaceContainer))
-        assertEquals("FF383838", argb(dark.surfaceContainerHigh))
+        assertEquals("FF393939", argb(dark.surfaceContainerHigh))
         assertEquals("FF4B4B4B", argb(dark.surfaceContainerHighest))
         assertEquals("FF2C2C2C", argb(dark.surfaceActive))
-        assertEquals("FF4B4B4B", argb(dark.componentActive))
+        assertEquals("FF5E5E5E", argb(dark.componentActive))
         assertEquals("FF1B2F51", argb(dark.accentActiveContent))
         assertEquals("FFC64751", argb(dark.dangerActive))
         assertEquals("FF703439", argb(dark.dangerDisabled))
@@ -240,7 +243,7 @@ class AmSchemeTest {
     fun both_schemes_expose_the_same_complete_semantic_roles() {
         val lightFields = LightAmColorScheme.fields()
         val darkFields = DarkAmColorScheme.fields()
-        assertEquals(49, lightFields.size)
+        assertEquals(50, lightFields.size)
         assertEquals(lightFields.keys, darkFields.keys)
         assertTrue(lightFields.values.none { it == Color.Unspecified })
         assertTrue(darkFields.values.none { it == Color.Unspecified })
@@ -270,6 +273,10 @@ class AmSchemeTest {
             assertTrue(contrast(scheme.textPrimary, scheme.surface) >= 4.5, "textPrimary/surface")
             assertTrue(contrast(scheme.textSecondary, scheme.background) >= 4.5, "textSecondary/background")
             assertTrue(contrast(scheme.textTertiary, scheme.surface) >= 4.5, "textTertiary/surface")
+            assertTrue(
+                contrast(scheme.textPlaceholder, scheme.surfaceSecondary) >= 4.5,
+                "textPlaceholder/surfaceSecondary",
+            )
             assertTrue(contrast(scheme.focus, scheme.background) >= 3.0, "focus/background")
             assertTrue(contrast(scheme.functionalBorder, scheme.surface) >= 3.0, "functionalBorder/surface")
         }
