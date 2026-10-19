@@ -6,6 +6,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.Density
 import com.agendaqr.core.ui.theme.AmTheme
@@ -44,11 +45,16 @@ class AmStatusBannerLayoutTest {
         }
         compose.waitForIdle()
         val screenRight = compose.onRoot().getBoundsInRoot().right
-        val messageNode = compose.onNodeWithText(longMessage, substring = true).getBoundsInRoot()
-        val messageWidth = messageNode.right.value - messageNode.left.value
+        val banner = compose.onNodeWithTag("am-status-banner").getBoundsInRoot()
+        val bannerWidth = banner.right.value - banner.left.value
         assertTrue(
-            messageWidth >= screenRight.value * 0.5f,
-            "mensaje ocupa < 50% del ancho útil (dark=$dark scale=$scale): $messageWidth",
+            bannerWidth >= screenRight.value - 1f,
+            "el banner no ocupa todo el ancho disponible (dark=$dark scale=$scale): $bannerWidth / ${screenRight.value}",
+        )
+        val messageNode = compose.onNodeWithText(longMessage, substring = true).getBoundsInRoot()
+        assertTrue(
+            messageNode.left.value >= banner.left.value,
+            "el mensaje empieza fuera del banner (dark=$dark scale=$scale)",
         )
         val node = compose.onNodeWithText("Reintentar").getBoundsInRoot()
         assertTrue(
