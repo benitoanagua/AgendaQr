@@ -5,7 +5,7 @@
 **Suplanta:** ADR-0020 en su **paleta** y su **escala tipográfica**; ADR-0021 en el reparto de referencias por pantalla y en la prohibición de la rejilla de Inicio.
 **Enmienda:** especificación UX/UI §4 S01 (Inicio gana rejilla de acciones existentes) y §12; contrato normativo (`docs/05-design-system/00-contrato-normativo-diseno.md`) a versión 4.0.
 **Referencia histórica:** `docs/05-design-system/08-referencia-super-app.md` (Anexo A del encargo), conservado como registro de la dirección sustituida.
-**Relaciona:** ADR-0007 (verificación de layout), ADR-0008 (guía de voz), ADR-0015 (jerarquía financiera), ADR-0021 (referencias por pantalla).
+**Relaciona:** ADR-0007 (verificación de layout), ADR-0008 (guía de voz), ADR-0021 (referencias por pantalla).
 
 ## Contexto
 

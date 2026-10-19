@@ -98,8 +98,4 @@ ADR-0022 fue la autoridad visual desde su aprobación hasta ADR-0023. Su direcci
 
 `tdesign_flutter@0.2.7` es la autoridad de tokens, componentes, medidas, estados y accesibilidad. Sus valores se implementan en `core/ui`, sin añadir TDesign Flutter como dependencia de ejecución. La especificación UX/UI V1.13 delimita las composiciones autorizadas; reglas de negocio, copy y accesibilidad siguen congelados. Las desviaciones autorizadas están enumeradas en ADR-0023.
 
-> La cláusula original de intención, navegación y back stack congelados quedó enmendada por D-21 (ADR-0024).
-
-## D-21 — Composición desde el proyecto Stitch `TDesign Screen Templates` (ADR-0024)
-
-El proyecto de Google Stitch `TDesign Screen Templates` (`projects/14722565667748094207`) es la referencia primaria de composición de pantallas: estructura, jerarquía, densidad, patrones de interacción y flujo UX/UI. Se autoriza alinear intención de pantalla, navegación, jerarquía de acciones, back stack y gestos con ese proyecto, propagando cada cambio a ADR, especificación, contrato estructurado, código y pruebas. Los límites de producto, dominio, privacidad e integridad se conservan. La trazabilidad superficie ↔ pantalla de Stitch es ejecutable: `ScreenContractGate.kt` registra el mapeo y `verifyScreenContract` falla ante huecos sin explicar.
+La especificación UX/UI vigente define las composiciones autorizadas. Cualquier cambio de intención, navegación, jerarquía de acciones, back stack o gestos requiere una decisión de producto documentada y actualización coordinada del contrato, el código y las pruebas.
