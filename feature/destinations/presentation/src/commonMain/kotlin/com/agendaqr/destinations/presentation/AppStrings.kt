@@ -279,7 +279,7 @@ internal object AppStrings {
     val ContextoGenerico = "Contexto"
     // ------------------------------------------------------------------
     // Jerarquía financiera de Actividades y metadatos de detalle
-    // (patrón de apps financieras de consumo, ADR-0015 y ADR-0021).
+    // (patrón de apps financieras de consumo, ADR-0021).
     // ------------------------------------------------------------------
     /** Filtro de tipo del historial: todas las actividades. */
     val Todos = "Todos"
@@ -298,7 +298,7 @@ internal object AppStrings {
     val SignoCobro = "+"
     val SignoPago = "−"
     // ------------------------------------------------------------------
-    // Reaseguro y estados de apps de consumo (ADR-0015 y ADR-0021).
+    // Reaseguro y estados de apps de consumo (ADR-0021).
     // ------------------------------------------------------------------
     /** Píldora de reaseguro local-first (S01, siempre cierta). */
     val GuardadoEnTuTelefono = "Guardado en tu teléfono"
