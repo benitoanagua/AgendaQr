@@ -882,9 +882,14 @@ private fun jsonString(value: String): String =
  * Manifiesto determinista de la galería: metadatos por artefacto (pantalla,
  * estado, tema, ancho, densidad, escala de fuente, tamaño real del bitmap,
  * hash, si es obligatorio y por qué se incluye). No incluye la imagen.
+ *
+ * Fase 6: cada entrada declara además el identificador de su pantalla de
+ * Stitch cuando la superficie tiene una (ADR-0024) y el test que produce
+ * la galería estricta.
  */
 fun renderCaptureManifest(artifacts: List<CaptureArtifact>, screens: List<ScreenContract>): String {
     val bySurface = screens.associateBy { it.surface }
+    val stitchBySurface = stitchTDesign.screens.associate { it.surface to it.id }
     val entries = artifacts.sortedBy { it.relPath }.map { artifact ->
         val name = artifact.name
         val screen = bySurface[name.surface]
@@ -896,6 +901,7 @@ fun renderCaptureManifest(artifacts: List<CaptureArtifact>, screens: List<Screen
             "scenarioId" to jsonString(scenarioId),
             "screen" to jsonString(screen?.id ?: ""),
             "surface" to jsonString(name.surface),
+            "stitchScreenId" to jsonString(stitchBySurface[name.surface] ?: ""),
             "state" to jsonString(name.state),
             "theme" to jsonString(name.theme),
             "widthDp" to name.widthDp.toString(),
@@ -906,6 +912,7 @@ fun renderCaptureManifest(artifacts: List<CaptureArtifact>, screens: List<Screen
             "sha256" to jsonString(artifact.sha256),
             "required" to required.toString(),
             "inclusionReason" to jsonString(inclusion),
+            "sourceTest" to jsonString(captureSourceTest),
         )
         val body = fields.joinToString(",\n") { (key, value) -> "      \"$key\": $value" }
         "    {\n$body\n    }"
@@ -913,7 +920,8 @@ fun renderCaptureManifest(artifacts: List<CaptureArtifact>, screens: List<Screen
     val configs = requiredCaptureConfigs.joinToString(", ") { jsonString(it) }
     return buildString {
         appendLine("{")
-        appendLine("  \"schema\": \"agendaqr.captures/1\",")
+        appendLine("  \"schema\": \"agendaqr.captures/2\",")
+        appendLine("  \"project\": " + jsonString(stitchTDesign.name) + ",")
         appendLine("  \"requiredConfigs\": [$configs],")
         appendLine("  \"entryCount\": ${artifacts.size},")
         appendLine("  \"entries\": [")
@@ -922,6 +930,10 @@ fun renderCaptureManifest(artifacts: List<CaptureArtifact>, screens: List<Screen
         appendLine("}")
     }
 }
+
+/** Único test que produce la galería estricta por superficie (ADR-0007). */
+const val captureSourceTest =
+    "feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/LayoutReferenceTest.kt"
 
 /**
  * Reglas del manifiesto: cuando hay capturas, deben tener metadatos completos

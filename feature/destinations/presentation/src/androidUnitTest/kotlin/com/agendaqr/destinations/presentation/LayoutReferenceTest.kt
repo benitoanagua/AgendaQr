@@ -24,8 +24,13 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -65,6 +70,20 @@ import com.agendaqr.destinations.domain.BiometricAvailability
 import com.agendaqr.destinations.domain.ImportBatch
 import com.agendaqr.destinations.domain.ImportCandidate
 import com.agendaqr.destinations.domain.ImportKind
+import com.agendaqr.destinations.domain.AssociateComprobanteToOperationUseCase
+import com.agendaqr.destinations.domain.DeleteComprobanteUseCase
+import com.agendaqr.destinations.domain.DeleteOperationWithHistoryUseCase
+import com.agendaqr.destinations.domain.FindDuplicateComprobantesUseCase
+import com.agendaqr.destinations.domain.GetOperationUseCase
+import com.agendaqr.destinations.domain.ObserveContextsUseCase
+import com.agendaqr.destinations.domain.ObserveOperationComprobantesUseCase
+import com.agendaqr.destinations.domain.ObserveOperationsUseCase
+import com.agendaqr.destinations.domain.ObserveUnassociatedComprobantesUseCase
+import com.agendaqr.destinations.domain.SaveComprobanteUseCase
+import com.agendaqr.destinations.domain.SaveOperationUseCase
+import com.agendaqr.destinations.domain.SuggestReceiptAssociationUseCase
+import com.agendaqr.destinations.domain.UnassociateComprobanteUseCase
+import com.agendaqr.destinations.domain.UpdateOperationUseCase
 import com.agendaqr.destinations.presentation.AppStrings
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
@@ -108,9 +127,14 @@ open class LayoutReferenceTest {
         compose.waitForIdle()
         assertLayoutHolds("$name$viewportSuffix")
         capture("$name$viewportSuffix")
+        captureStrict(name, dark, fontScale = 100)
         compose.runOnIdle { fontScale = 2f }
         compose.waitForIdle()
         assertLayoutHolds("$name$viewportSuffix-font-200")
+        // La escala 200 % se captura solo en el subconjunto denso de la galería;
+        // el resto de escenarios la sigue verificando por aserciones.
+        val strictBase = name.removeSuffix("-light").removeSuffix("-dark")
+        if (strictBase in font200Scenarios) captureStrict(name, dark, fontScale = 200)
     }
 
     /**
@@ -125,6 +149,116 @@ open class LayoutReferenceTest {
         val width = compose.onRoot().getUnclippedBoundsInRoot().let { it.right - it.left }.value
         if (width < 357f || width > 363f) return
         compose.onRoot().captureRoboImage("build/roborazzi/$name.png")
+    }
+
+    /**
+     * Escenario → (superficie, estado) de la galería estricta por superficie
+     * (ADR-0007): un escenario canónico por par declarado en el
+     * contrato. Clave = nombre base, sin sufijo de tema ni de viewport.
+     * `verifyScreenContract` valida cada archivo producido cuando la galería
+     * existe (esquema, dimensiones reales, duplicados y cobertura).
+     */
+    private val strictScenarioMap: Map<String, Pair<String, String>> = mapOf(
+        "s01" to ("home" to "content"),
+        "s01-empty" to ("home" to "empty"),
+        "s01-error" to ("home" to "error"),
+        "tablet-s01" to ("home" to "content"),
+        "s02-add" to ("add" to "content"),
+        "s09-review" to ("importreview" to "content"),
+        "destination-detail" to ("destinationdetail" to "content"),
+        "destination-detail-error" to ("destinationdetail" to "error"),
+        "edit-destination" to ("destinationedit" to "content"),
+        "qr-fullscreen" to ("qrfullscreen" to "content"),
+        "s04-search" to ("search" to "content"),
+        "s04-search-empty" to ("search" to "empty"),
+        "tablet-s04-search" to ("search" to "content"),
+        "s06-contexts" to ("contexts" to "content"),
+        "s06-contexts-empty" to ("contexts" to "empty"),
+        "tablet-s06-contexts" to ("contexts" to "content"),
+        "context-detail" to ("contextdetail" to "content"),
+        "context-detail-empty" to ("contextdetail" to "empty"),
+        "s07-list" to ("operations" to "content"),
+        "s07-list-empty" to ("operations" to "empty"),
+        "tablet-s07-list" to ("operations" to "content"),
+        "operation-detail" to ("operationdetail" to "content"),
+        "operation-editor" to ("operationeditor" to "content"),
+        "unassociated" to ("unassociated" to "content"),
+        // Hallazgo del gate: el estado vacío de la bandeja de comprobantes
+        // sin asociar es byte-idéntico al vacío de Actividades — ambas
+        // superficies comparten la misma composición de vacío, así que la
+        // segunda captura no aporta cobertura (el gate la rechaza como
+        // duplicada y el test sigue verificándola por aserciones). Pendiente
+        // de decisión de producto: copy propio para el vacío de la bandeja.
+        "context-picker" to ("contextpicker" to "selection"),
+        "import-batch-review" to ("importbatch" to "review"),
+        "import-batch-error" to ("importbatch" to "error"),
+        "import-batch-saved" to ("importbatch" to "saved"),
+        "account" to ("account" to "content"),
+        "account-error" to ("account" to "error"),
+        "login" to ("authform" to "content"),
+        "login-error" to ("authform" to "error"),
+        "local-lock" to ("localaccess" to "locked"),
+        "local-lock-incorrect" to ("localaccess" to "error"),
+        "camera-capture" to ("camera" to "content"),
+    )
+
+    /**
+     * Subconjunto capturado a 320 dp: la clase hermana
+     * [LayoutReference320Test] sigue VERIFICANDO todos los escenarios a
+     * 320 dp por aserciones; la galería solo duplica en 320 dp los
+     * escenarios donde la densidad aporta evidencia de revisión.
+     */
+    private val strict320Scenarios = setOf(
+        "s01", "s02-add", "destination-detail", "s09-review", "operation-editor", "local-lock",
+    )
+
+    /** Escenarios capturados también con fuente al 200 % (revisión de legibilidad). */
+    private val font200Scenarios = setOf(
+        "s01", "destination-detail", "operation-editor",
+    )
+
+    /** Superficies de diálogo (Overlay): la captura es la ventana del
+     * diálogo, completa y sin recortes, al tamaño real del componente. */
+    private val dialogScenarios = setOf("context-picker", "camera-capture")
+
+    private val dialogRootMatcher = SemanticsMatcher("isDialog") {
+        it.config.contains(SemanticsProperties.IsDialog)
+    }
+
+    /**
+     * Escribe la captura de la galería estricta si (y solo si) el escenario
+     * está mapeado, la galería se pidió con `-Pagendaqr.capture=true` y el
+     * ancho medido es un viewport declarado (320/360/720 dp). El nombre y el
+     * tema salen del propio test: nada de metadatos falsos (ADR-0007).
+     */
+    private fun captureStrict(name: String, dark: Boolean, fontScale: Int) {
+        if (System.getProperty("agendaqr.capture") != "true") return
+        val base = name.removeSuffix(viewportSuffix)
+            .removeSuffix("-light")
+            .removeSuffix("-dark")
+        val (surface, state) = strictScenarioMap[base] ?: return
+        if (viewportSuffix.isNotEmpty() && base !in strict320Scenarios) return
+        val theme = if (dark) "dark" else "light"
+        if (base in dialogScenarios) {
+            // Overlay: se mide y captura la VENTANA del diálogo completa
+            // (su raíz semántica), no la raíz de la pantalla que queda
+            // detrás. El test fija la ventana del host para que el diálogo
+            // mide un viewport declarado (AmDialog: 0.9 × 400 = 360 dp).
+            val dialog = compose.onNode(dialogRootMatcher)
+            val bounds = dialog.getUnclippedBoundsInRoot()
+            val dialogWidthDp = Math.round((bounds.right - bounds.left).value)
+            if (dialogWidthDp !in setOf(320, 360, 720)) return
+            dialog.captureRoboImage(
+                "build/captures/gallery/$surface--$state--${dialogWidthDp}dp--$theme--font$fontScale.png",
+            )
+            return
+        }
+        val width = compose.onRoot().getUnclippedBoundsInRoot().let { it.right - it.left }.value
+        val widthDp = Math.round(width)
+        if (widthDp !in setOf(320, 360, 720)) return
+        compose.onRoot().captureRoboImage(
+            "build/captures/gallery/$surface--$state--${widthDp}dp--$theme--font$fontScale.png",
+        )
     }
 
     /**
@@ -1428,6 +1562,557 @@ open class LayoutReferenceTest {
             ),
             selectedId = selected,
             onSelect = {},
+        )
+    }
+
+    // ------------------------------------------------------------------
+    // Galería estricta por superficie (ADR-0007): escenarios de las
+    // superficies que no tenían productor. Los fixtures reutilizan los
+    // helpers de este archivo; las pantallas de operaciones se componen con
+    // un OperationsViewModel real sobre repositorios fake (el mismo patrón
+    // que usa commonTest), que sustituye el precedente "S10" de no componer
+    // OperationsScreen en Robolectric.
+    // ------------------------------------------------------------------
+
+    @Test fun qr_fullscreen_light() = verifyLayout("qr-fullscreen-light", dark = false) {
+        QrFullscreenPattern(
+            encodedQr = TEST_QR_BASE64,
+            onBack = {},
+            destinationName = "Carniceria Don Bife",
+        )
+    }
+
+    @Test fun qr_fullscreen_dark() = verifyLayout("qr-fullscreen-dark", dark = true) {
+        QrFullscreenPattern(
+            encodedQr = TEST_QR_BASE64,
+            onBack = {},
+            destinationName = "Carniceria Don Bife",
+        )
+    }
+
+    @Test fun destination_detail_error_light() = verifyLayout("destination-detail-error-light", dark = false) {
+        DestinationDetailScreen(
+            destination = detailFixture(),
+            onShowQr = {},
+            onEdit = {},
+            onDelete = {},
+            onShare = {},
+            onBack = {},
+            syncStatus = ElementSyncStatus.Dead,
+            onRetrySync = {},
+        )
+    }
+
+    @Test fun destination_detail_error_dark() = verifyLayout("destination-detail-error-dark", dark = true) {
+        DestinationDetailScreen(
+            destination = detailFixture(),
+            onShowQr = {},
+            onEdit = {},
+            onDelete = {},
+            onShare = {},
+            onBack = {},
+            syncStatus = ElementSyncStatus.Dead,
+            onRetrySync = {},
+        )
+    }
+
+    private fun contextContentsFixture(empty: Boolean): ContextsUiState {
+        val context = com.agendaqr.destinations.domain.Context(
+            id = "ctx-1", name = "Mercado", note = "Compras semanales",
+            createdAt = TEST_TIMESTAMP, updatedAt = TEST_TIMESTAMP,
+        )
+        return ContextsUiState(
+            contexts = listOf(context),
+            contents = com.agendaqr.destinations.domain.ContextContents(
+                context = context,
+                destinations = if (empty) emptyList() else listOf(detailFixture()),
+                operations = if (empty) {
+                    emptyList()
+                } else {
+                    listOf(
+                        Operation(
+                            "op-1", OperationType.PAGO,
+                            occurredAt = TEST_TIMESTAMP, createdAt = TEST_TIMESTAMP,
+                            amount = "4850", currency = "ARS", personOrEntity = "Cafetería Central",
+                        ),
+                    )
+                },
+                comprobantes = if (empty) {
+                    emptyList()
+                } else {
+                    listOf(
+                        com.agendaqr.destinations.domain.Comprobante(
+                            id = "r-1", file = "recibo_ketal.jpg",
+                            createdAt = TEST_TIMESTAMP, updatedAt = TEST_TIMESTAMP,
+                            provenance = com.agendaqr.destinations.domain.ReceiptProvenance.RECIBIDO,
+                        ),
+                    )
+                },
+            ),
+            route = ContextRoute.Detail("ctx-1"),
+            isLoading = false,
+        )
+    }
+
+    @Test fun context_detail_light() = verifyLayout("context-detail-light", dark = false) {
+        ContextsScreen(
+            state = contextContentsFixture(empty = false),
+            onAction = {},
+            onBack = {},
+        )
+    }
+
+    @Test fun context_detail_dark() = verifyLayout("context-detail-dark", dark = true) {
+        ContextsScreen(
+            state = contextContentsFixture(empty = false),
+            onAction = {},
+            onBack = {},
+        )
+    }
+
+    @Test fun context_detail_empty_light() = verifyLayout("context-detail-empty-light", dark = false) {
+        ContextsScreen(
+            state = contextContentsFixture(empty = true),
+            onAction = {},
+            onBack = {},
+        )
+    }
+
+    @Test fun context_detail_empty_dark() = verifyLayout("context-detail-empty-dark", dark = true) {
+        ContextsScreen(
+            state = contextContentsFixture(empty = true),
+            onAction = {},
+            onBack = {},
+        )
+    }
+
+    /**
+     * Selector de contexto (S08, Overlay): el diálogo abre su propia
+     * ventana, así que no se verifica ni captura desde la raíz — el título
+     * se comprueba por semántica y la captura estricta toma la ventana
+     * completa del diálogo. La ventana del host se fija en w400dp para que
+     * el diálogo (0.9 × 400) mida exactamente 360 dp.
+     */
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w400dp-h840dp")
+    fun context_picker_light() {
+        compose.setContent {
+            AmTheme(darkTheme = false) {
+                ContextPickerDialog(
+                    contexts = contextsFixture().contexts,
+                    selection = ContextSelection(contextId = "ctx-1"),
+                    onSelect = {},
+                    onRemove = {},
+                    onCancel = {},
+                    onCreateContext = { _, _ -> },
+                )
+            }
+        }
+        compose.waitForIdle()
+        compose.onNodeWithText(AppStrings.SeleccionarContexto).assertIsDisplayed()
+        captureStrict("context-picker", dark = false, fontScale = 100)
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w400dp-h840dp")
+    fun context_picker_dark() {
+        compose.setContent {
+            AmTheme(darkTheme = true) {
+                ContextPickerDialog(
+                    contexts = contextsFixture().contexts,
+                    selection = ContextSelection(contextId = "ctx-1"),
+                    onSelect = {},
+                    onRemove = {},
+                    onCancel = {},
+                    onCreateContext = { _, _ -> },
+                )
+            }
+        }
+        compose.waitForIdle()
+        compose.onNodeWithText(AppStrings.SeleccionarContexto).assertIsDisplayed()
+        captureStrict("context-picker", dark = true, fontScale = 100)
+    }
+
+    /** Repositorio de autenticación que siempre falla (estado error de cuenta). */
+    private class FailingAuthRepository : com.agendaqr.destinations.domain.AuthRepository {
+        override val state = kotlinx.coroutines.flow.MutableStateFlow<com.agendaqr.destinations.domain.AuthState>(
+            com.agendaqr.destinations.domain.AuthState.SignedOut,
+        )
+
+        override suspend fun signIn(email: String, password: String): com.agendaqr.destinations.domain.AuthUser =
+            throw IllegalStateException("invalid credentials")
+
+        override suspend fun signUp(email: String, password: String): com.agendaqr.destinations.domain.SignUpResult =
+            throw IllegalStateException("invalid credentials")
+
+        override suspend fun signOut() = Unit
+    }
+
+    /**
+     * Cuenta con error de inicio de sesión: el estado se alcanza por la
+     * interacción real (credenciales inválidas contra el repositorio que
+     * falla); la captura solo ocurre cuando el error ES visible.
+     */
+    @Test fun account_error_light() {
+        compose.setContent {
+            AmTheme(darkTheme = false) {
+                AccountScreen(
+                    navChrome = null,
+                    appHosts = null,
+                    onBack = {},
+                    authRepository = FailingAuthRepository(),
+                )
+            }
+        }
+        compose.waitForIdle()
+        compose.onAllNodes(hasSetTextAction())[0].performTextInput("demo@ejemplo.com")
+        compose.onAllNodes(hasSetTextAction())[1].performTextInput("invalida")
+        compose.onNodeWithText(AppStrings.IniciarSesion).performClick()
+        compose.waitUntil {
+            compose.onAllNodesWithText(AppStrings.ErrorSignInWhat).fetchSemanticsNodes().isNotEmpty()
+        }
+        assertLayoutHolds("account-error-light")
+        capture("account-error-light")
+        captureStrict("account-error", dark = false, fontScale = 100)
+    }
+
+    @Test fun account_error_dark() {
+        compose.setContent {
+            AmTheme(darkTheme = true) {
+                AccountScreen(
+                    navChrome = null,
+                    appHosts = null,
+                    onBack = {},
+                    authRepository = FailingAuthRepository(),
+                )
+            }
+        }
+        compose.waitForIdle()
+        compose.onAllNodes(hasSetTextAction())[0].performTextInput("demo@ejemplo.com")
+        compose.onAllNodes(hasSetTextAction())[1].performTextInput("invalida")
+        compose.onNodeWithText(AppStrings.IniciarSesion).performClick()
+        compose.waitUntil {
+            compose.onAllNodesWithText(AppStrings.ErrorSignInWhat).fetchSemanticsNodes().isNotEmpty()
+        }
+        assertLayoutHolds("account-error-dark")
+        capture("account-error-dark")
+        captureStrict("account-error", dark = true, fontScale = 100)
+    }
+
+    /** Operación y comprobante de ejemplo para la familia de Actividades. */
+    private fun operationFixture(id: String) = Operation(
+        id, OperationType.PAGO,
+        occurredAt = TEST_TIMESTAMP, createdAt = TEST_TIMESTAMP,
+        amount = "4850", currency = "ARS", personOrEntity = "Cafetería Central",
+        concept = "Desayuno de trabajo",
+    )
+
+    private fun unassociatedReceiptFixture(id: String) =
+        com.agendaqr.destinations.domain.Comprobante(
+            id = id, file = "recibo_$id.jpg",
+            createdAt = TEST_TIMESTAMP, updatedAt = TEST_TIMESTAMP,
+            provenance = com.agendaqr.destinations.domain.ReceiptProvenance.RECIBIDO,
+        )
+
+    private class FakeOperations(initial: List<Operation> = emptyList()) :
+        com.agendaqr.destinations.domain.OperationRepository {
+        private val state = kotlinx.coroutines.flow.MutableStateFlow(initial)
+        override fun observe(): kotlinx.coroutines.flow.Flow<List<Operation>> = state
+        override suspend fun get(id: String) = state.value.firstOrNull { it.id == id }
+        override suspend fun save(operation: Operation) {
+            state.value = state.value.filterNot { it.id == operation.id } + operation
+        }
+        override suspend fun update(operation: Operation) {
+            state.value = state.value.map { if (it.id == operation.id) operation else it }
+        }
+        override suspend fun delete(id: String) {
+            state.value = state.value.filterNot { it.id == id }
+        }
+    }
+
+    private class FakeReceipts(initial: List<com.agendaqr.destinations.domain.Comprobante> = emptyList()) :
+        com.agendaqr.destinations.domain.ComprobanteRepository {
+        private val state = kotlinx.coroutines.flow.MutableStateFlow(initial)
+        override fun observe(): kotlinx.coroutines.flow.Flow<List<com.agendaqr.destinations.domain.Comprobante>> = state
+        override suspend fun get(id: String) = state.value.firstOrNull { it.id == id }
+        override suspend fun save(comprobante: com.agendaqr.destinations.domain.Comprobante) {
+            state.value = state.value + comprobante
+        }
+        override suspend fun update(comprobante: com.agendaqr.destinations.domain.Comprobante) {
+            state.value = state.value.map { if (it.id == comprobante.id) comprobante else it }
+        }
+        override suspend fun delete(id: String) {
+            state.value = state.value.filterNot { it.id == id }
+        }
+    }
+
+    private class FakeContextsRepository : com.agendaqr.destinations.domain.ContextRepository {
+        private val state = kotlinx.coroutines.flow.MutableStateFlow<List<com.agendaqr.destinations.domain.Context>>(
+            emptyList(),
+        )
+        override fun observe(): kotlinx.coroutines.flow.Flow<List<com.agendaqr.destinations.domain.Context>> = state
+        override suspend fun get(id: String) = state.value.firstOrNull { it.id == id }
+        override suspend fun save(context: com.agendaqr.destinations.domain.Context) {
+            state.value = state.value + context
+        }
+        override suspend fun update(context: com.agendaqr.destinations.domain.Context) {
+            state.value = state.value.map { if (it.id == context.id) context else it }
+        }
+        override suspend fun delete(id: String) {
+            state.value = state.value.filterNot { it.id == id }
+        }
+    }
+
+    private class MemoryFiles : com.agendaqr.destinations.domain.ComprobanteFileStore {
+        private val files = mutableMapOf<String, ByteArray>()
+        override suspend fun save(id: String, bytes: ByteArray, extension: String): String {
+            val path = "file://$id.$extension"
+            files[path] = bytes.copyOf()
+            return path
+        }
+        override suspend fun read(file: String): ByteArray? = files[file]?.copyOf()
+        override suspend fun delete(file: String) {
+            files.remove(file)
+        }
+    }
+
+    private class FakeHistory : com.agendaqr.destinations.domain.DeletedOperationHistoryRepository {
+        private val state = kotlinx.coroutines.flow.MutableStateFlow<List<com.agendaqr.destinations.domain.DeletedOperationHistory>>(
+            emptyList(),
+        )
+        override fun observe(): kotlinx.coroutines.flow.Flow<List<com.agendaqr.destinations.domain.DeletedOperationHistory>> = state
+        override suspend fun save(history: com.agendaqr.destinations.domain.DeletedOperationHistory) {
+            state.value = state.value + history
+        }
+    }
+
+    private fun operationsViewModel(
+        operations: List<Operation> = emptyList(),
+        receipts: List<com.agendaqr.destinations.domain.Comprobante> = emptyList(),
+    ): OperationsViewModel {
+        val operationRepo = FakeOperations(operations)
+        val receiptRepo = FakeReceipts(receipts)
+        val files = MemoryFiles()
+        val contexts = FakeContextsRepository()
+        val history = FakeHistory()
+        val scope = kotlinx.coroutines.CoroutineScope(
+            kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.Unconfined,
+        )
+        return OperationsViewModel(
+            observeOperations = ObserveOperationsUseCase(operationRepo),
+            observeContexts = ObserveContextsUseCase(contexts),
+            observeUnassociated = ObserveUnassociatedComprobantesUseCase(receiptRepo),
+            observeOperationComprobantes = ObserveOperationComprobantesUseCase(receiptRepo),
+            getOperation = GetOperationUseCase(operationRepo),
+            saveOperation = SaveOperationUseCase(operationRepo),
+            updateOperation = UpdateOperationUseCase(operationRepo),
+            deleteOperation = DeleteOperationWithHistoryUseCase(operationRepo, receiptRepo, files, history),
+            associate = AssociateComprobanteToOperationUseCase(operationRepo, receiptRepo),
+            unassociate = UnassociateComprobanteUseCase(receiptRepo),
+            saveComprobante = SaveComprobanteUseCase(receiptRepo, files),
+            findDuplicates = FindDuplicateComprobantesUseCase(receiptRepo, files),
+            getComprobante = com.agendaqr.destinations.domain.GetComprobanteUseCase(receiptRepo),
+            suggestReceiptAssociation = SuggestReceiptAssociationUseCase(receiptRepo, operationRepo),
+            deleteComprobante = DeleteComprobanteUseCase(receiptRepo, files),
+            comprobanteFiles = files,
+            scope = scope,
+        )
+    }
+
+    @Test fun s07_list_light() = verifyLayout("s07-list-light", dark = false) {
+        val vm = operationsViewModel(operations = listOf(operationFixture("op-1"), operationFixture("op-2")))
+        OperationListScreen(
+            state = vm.state.value,
+            viewModel = vm,
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
+        )
+    }
+
+    @Test fun s07_list_dark() = verifyLayout("s07-list-dark", dark = true) {
+        val vm = operationsViewModel(operations = listOf(operationFixture("op-1"), operationFixture("op-2")))
+        OperationListScreen(
+            state = vm.state.value,
+            viewModel = vm,
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
+        )
+    }
+
+    @Test fun s07_list_empty_light() = verifyLayout("s07-list-empty-light", dark = false) {
+        val vm = operationsViewModel()
+        OperationListScreen(
+            state = vm.state.value,
+            viewModel = vm,
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
+        )
+    }
+
+    @Test fun s07_list_empty_dark() = verifyLayout("s07-list-empty-dark", dark = true) {
+        val vm = operationsViewModel()
+        OperationListScreen(
+            state = vm.state.value,
+            viewModel = vm,
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
+        )
+    }
+
+    @Test fun operation_detail_light() = verifyLayout("operation-detail-light", dark = false) {
+        val vm = operationsViewModel(operations = listOf(operationFixture("op-1")))
+        vm.onAction(OperationAction.Open("op-1"))
+        OperationDetailScreen(state = vm.state.value, viewModel = vm)
+    }
+
+    @Test fun operation_detail_dark() = verifyLayout("operation-detail-dark", dark = true) {
+        val vm = operationsViewModel(operations = listOf(operationFixture("op-1")))
+        vm.onAction(OperationAction.Open("op-1"))
+        OperationDetailScreen(state = vm.state.value, viewModel = vm)
+    }
+
+    @Test fun operation_editor_light() = verifyLayout("operation-editor-light", dark = false) {
+        val vm = operationsViewModel(operations = listOf(operationFixture("op-1")))
+        OperationEditorScreen(state = vm.state.value, viewModel = vm, existing = null)
+    }
+
+    @Test fun operation_editor_dark() = verifyLayout("operation-editor-dark", dark = true) {
+        val vm = operationsViewModel(operations = listOf(operationFixture("op-1")))
+        OperationEditorScreen(state = vm.state.value, viewModel = vm, existing = null)
+    }
+
+    @Test fun unassociated_light() = verifyLayout("unassociated-light", dark = false) {
+        val vm = operationsViewModel(
+            receipts = listOf(unassociatedReceiptFixture("r-1"), unassociatedReceiptFixture("r-2")),
+        )
+        vm.onAction(OperationAction.OpenUnassociated)
+        OperationListScreen(
+            state = vm.state.value,
+            viewModel = vm,
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
+        )
+    }
+
+    @Test fun unassociated_dark() = verifyLayout("unassociated-dark", dark = true) {
+        val vm = operationsViewModel(
+            receipts = listOf(unassociatedReceiptFixture("r-1"), unassociatedReceiptFixture("r-2")),
+        )
+        vm.onAction(OperationAction.OpenUnassociated)
+        OperationListScreen(
+            state = vm.state.value,
+            viewModel = vm,
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
+        )
+    }
+
+    @Test fun unassociated_empty_light() = verifyLayout("unassociated-empty-light", dark = false) {
+        val vm = operationsViewModel()
+        vm.onAction(OperationAction.OpenUnassociated)
+        OperationListScreen(
+            state = vm.state.value,
+            viewModel = vm,
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
+        )
+    }
+
+    @Test fun unassociated_empty_dark() = verifyLayout("unassociated-empty-dark", dark = true) {
+        val vm = operationsViewModel()
+        vm.onAction(OperationAction.OpenUnassociated)
+        OperationListScreen(
+            state = vm.state.value,
+            viewModel = vm,
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
+        )
+    }
+
+    // S03 — Cámara: el overlay de captura es una ventana de diálogo propia
+    // a pantalla completa (igual que S08); se verifica su contenido por
+    // semántica y la captura estricta toma esa ventana al tamaño real del
+    // viewport. El preview real requiere hardware: el render JVM muestra
+    // la composición del marco tal como se compone (evidencia honesta del
+    // entorno, sin hardware simulado).
+    @Test fun camera_capture_light() {
+        compose.setContent {
+            AmTheme(darkTheme = false) {
+                CameraQrCaptureOverlay(onQr = {}, onDismiss = {})
+            }
+        }
+        compose.waitForIdle()
+        compose.onNodeWithText(AppStrings.EncuadreElCodigoQr).assertIsDisplayed()
+        captureStrict("camera-capture", dark = false, fontScale = 100)
+    }
+
+    @Test fun camera_capture_dark() {
+        compose.setContent {
+            AmTheme(darkTheme = true) {
+                CameraQrCaptureOverlay(onQr = {}, onDismiss = {})
+            }
+        }
+        compose.waitForIdle()
+        compose.onNodeWithText(AppStrings.EncuadreElCodigoQr).assertIsDisplayed()
+        captureStrict("camera-capture", dark = true, fontScale = 100)
+    }
+
+    // Tablet w720dp: raíces restantes con NavigationRail.
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
+    fun tablet_s04_search_light() = verifyLayout("tablet-s04-search-light", dark = false) {
+        GlobalSearchScreen(
+            state = searchFixture(),
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Search)),
+            onAction = {},
+            onSelect = {},
+        )
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
+    fun tablet_s04_search_dark() = verifyLayout("tablet-s04-search-dark", dark = true) {
+        GlobalSearchScreen(
+            state = searchFixture(),
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Search)),
+            onAction = {},
+            onSelect = {},
+        )
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
+    fun tablet_s06_contexts_light() = verifyLayout("tablet-s06-contexts-light", dark = false) {
+        ContextsScreen(
+            state = contextsFixture(),
+            onAction = {},
+            onBack = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Contexts)),
+        )
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
+    fun tablet_s06_contexts_dark() = verifyLayout("tablet-s06-contexts-dark", dark = true) {
+        ContextsScreen(
+            state = contextsFixture(),
+            onAction = {},
+            onBack = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Contexts)),
+        )
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
+    fun tablet_s07_list_light() = verifyLayout("tablet-s07-list-light", dark = false) {
+        val vm = operationsViewModel(operations = listOf(operationFixture("op-1"), operationFixture("op-2")))
+        OperationListScreen(
+            state = vm.state.value,
+            viewModel = vm,
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
+        )
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
+    fun tablet_s07_list_dark() = verifyLayout("tablet-s07-list-dark", dark = true) {
+        val vm = operationsViewModel(operations = listOf(operationFixture("op-1"), operationFixture("op-2")))
+        OperationListScreen(
+            state = vm.state.value,
+            viewModel = vm,
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
         )
     }
 }
