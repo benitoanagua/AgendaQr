@@ -914,7 +914,7 @@ fun renderCaptureManifest(artifacts: List<CaptureArtifact>, screens: List<Screen
     val configs = requiredCaptureConfigs.joinToString(", ") { jsonString(it) }
     return buildString {
         appendLine("{")
-        appendLine("  \"schema\": \"agendaqr.captures/2\",")
+        appendLine("  \"schema\": \"agendaqr.captures/3\",")
         appendLine("  \"requiredConfigs\": [$configs],")
         appendLine("  \"entryCount\": ${artifacts.size},")
         appendLine("  \"entries\": [")

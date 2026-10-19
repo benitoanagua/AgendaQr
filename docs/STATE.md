@@ -92,10 +92,10 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
 ## 4. Pendientes conocidos
 
 - **Revisión de composición por pantalla según UX/UI y TDesign:**
-  COMPLETA para las superficies revisadas (V1.15–V1.21);
-  la trazabilidad es ejecutable y las 7 exclusiones tienen motivo. Cambios
-  de composición adoptados en S01/S00/S02/S04; el resto quedó reconciliado
-  con matriz y motivos registrados en la spec. **Decisiones de producto
+  implementada para S01/S00/S02/S04 y validada con pruebas de presentación,
+  accesibilidad y layout. El resto de superficies conserva la composición
+  especificada; las capacidades no respaldadas siguen fuera del alcance.
+  **Decisiones de producto
   pendientes** (no son deuda de migración): teclado propio para el importe
   (S07), fila de filtros en S04, balance neto mensual y encabezados por día
   (S07-list), "Destino QR vinculado" en el detalle de actividad (el vínculo
