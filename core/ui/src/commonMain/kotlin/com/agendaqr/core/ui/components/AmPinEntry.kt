@@ -26,7 +26,7 @@ import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmType
 
 /**
- * Puntos del PIN (S00 de Stitch, ADR-0024): indicador enmascarado de la
+ * Indicador enmascarado de puntos del PIN (S00): indicador enmascarado de la
  * entrada. Decorativos por diseño — cada tecla anuncia su dígito y los
  * errores y los intentos restantes viven como texto en la pantalla, así
  * que el punto no duplica señal accesible.
@@ -58,7 +58,7 @@ fun AmPinDots(
 }
 
 /**
- * Teclado numérico propio del acceso local (S00 de Stitch, ADR-0024):
+ * Teclado numérico propio del acceso local (S00):
  * retícula 3×4 con 1–9, hueco inferior-izquierdo, 0 y borrado. Cada tecla
  * es un único botón con el objetivo táctil completo (≥48 dp) y la
  * pulsación fiel de TDesign: color activo del token, sin ripple (D-11).

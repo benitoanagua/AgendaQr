@@ -24,7 +24,7 @@ import com.agendaqr.destinations.domain.BiometricAvailability
 import com.agendaqr.destinations.domain.PinPolicy
 
 /**
- * Desbloqueo local (composición S00 de Stitch, ADR-0024/spec V1.16).
+ * Desbloqueo local (composición S00, spec V1.16).
  * Sustituye al login remoto como puerta de entrada: se muestra cuando ya
  * existe un PIN configurado y la app está bloqueada.
  *

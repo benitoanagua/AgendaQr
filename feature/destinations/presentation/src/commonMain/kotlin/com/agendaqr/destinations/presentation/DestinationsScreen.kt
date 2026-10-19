@@ -53,8 +53,7 @@ import com.agendaqr.destinations.domain.Destination
 /**
  * S01 — Inicio: acciones rápidas, control segmentado con conteo real,
  * carrusel de favoritos y lista agrupada con "Ver QR" por fila. Composición
- * alineada con la pantalla S01 del proyecto Stitch `TDesign Screen
- * Templates` (ADR-0024): navbar con el nombre de la superficie y filtros
+ * alineada con la especificación UX/UI vigente: navbar con el nombre de la superficie y filtros
  * Todos/Favoritos como segmentado mutuamente excluyente. Todas las
  * acciones son reales: S02 (traer QR), pantalla completa del código
  * (RF-05) y favoritos del dominio.
@@ -149,7 +148,7 @@ fun DestinationsScreen(
             )
         }
 
-        // Segmentado Todos/Favoritos (S01 de Stitch, ADR-0024; la spec
+        // Segmentado Todos/Favoritos (S01; la spec
         // admite "Tabs o Segmented"): filtros reales mutuamente
         // excluyentes con conteo. La selección vive en la semántica
         // (`selectableGroup` + rol radio), nunca solo en el color.

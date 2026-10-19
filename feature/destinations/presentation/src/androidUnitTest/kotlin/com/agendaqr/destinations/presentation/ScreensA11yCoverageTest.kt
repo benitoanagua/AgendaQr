@@ -254,7 +254,7 @@ class ScreensA11yCoverageTest {
         compose.onNodeWithText("Sincronizado").assertDoesNotExist()
     }
 
-    // S02 — orden de acciones (S02 de Stitch, V1.17): la jerarquía declarada
+    // S02 — orden de acciones (S02, V1.17): la jerarquía declarada
     // Galería → Cámara manda en el grupo único; el PDF queda al pie y la
     // ayuda de share después de las acciones.
     // Misma razon NATIVE+w360 que el test anterior (posiciones reales).
