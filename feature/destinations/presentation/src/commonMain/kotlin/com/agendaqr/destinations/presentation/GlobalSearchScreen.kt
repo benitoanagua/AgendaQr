@@ -97,7 +97,7 @@ fun GlobalSearchScreen(
                         item(key = "group:" + type.name) {
                             Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
                                 AmSectionHeader(
-                                    // S04 de Stitch (V1.19): el encabezado lleva el
+                                    // S04 (V1.19): el encabezado lleva el
                                     // conteo real del grupo.
                                     text = searchResultTypeLabel(type) + " (" + group.size + ")",
                                 )
