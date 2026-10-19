@@ -159,12 +159,16 @@ fun AgendaQrApp() {
         when {
             demoActive && !demoReady -> AmLoading(message = AppStrings.Cargando)
             demoShowing -> Column {
+                // Demo edge-to-edge: el margen de pantalla lo pide el
+                // banner (ScreenMargin, una sola vez); el host solo pone
+                // el separador vertical hacia la app de abajo.
                 AmStatusBanner(
                     message = AppStrings.DemostracionAislada,
                     title = AppStrings.ModoDemostracion,
                     tone = AmTone.Info,
                     action = AmBannerAction(AppStrings.SalirDeDemostracion, ::exitDemo),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = AmSpacing.Md, vertical = AmSpacing.Sm),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = AmSpacing.Sm),
+                    screenMargin = AmSpacing.ScreenMargin,
                 )
                 AgendaQrLocalApp(
                     profileId = DEMO_PROFILE_ID,

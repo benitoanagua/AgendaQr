@@ -286,7 +286,7 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - capturas: `review`, `error`, `saved`
 - componentes: `AmScreenScaffold`, `AmStatusBanner`, `AmListRow`, `AmListBody`, `AmBottomAction`, `AmEmptyState`, `AmDialogList`
 - pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ScreensA11yCoverageTest.kt`
-- pruebas: `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchReducerTest.kt`, `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchCoordinatorTest.kt`, `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchPendingItemsTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ActionHierarchyTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchErrorBannerLayoutTest.kt`
+- pruebas: `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchReducerTest.kt`, `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchCoordinatorTest.kt`, `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchPendingItemsTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ActionHierarchyTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchBannerLayoutTest.kt`
 
 ### account — Cuenta y respaldo
 

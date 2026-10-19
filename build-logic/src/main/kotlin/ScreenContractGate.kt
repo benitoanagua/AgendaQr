@@ -450,7 +450,7 @@ object ScreenContracts {
                 "$PRESENTATION/commonTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchCoordinatorTest.kt",
                 "$PRESENTATION/commonTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchPendingItemsTest.kt",
                 "$A11Y/ActionHierarchyTest.kt",
-                "$A11Y/ImportBatchErrorBannerLayoutTest.kt",
+                "$A11Y/ImportBatchBannerLayoutTest.kt",
             ),
         ),
         ScreenContract(

@@ -36,18 +36,18 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
 /**
- * Bloque de error de S12 (Resultado de importación): el contenedor del
- * mensaje debe ocupar TODO el ancho útil del contenido de la pantalla
- * (un solo margen de pantalla, sin duplicar el del scaffold), con
- * título y descripción completos, jerarquía tipográfica clara,
- * crecimiento vertical libre y las acciones/etapas del resumen
+ * Bloque de resultado de S12 (Resultado de importación): el contenedor del
+ * mensaje (error Y confirmación de guardado) debe ocupar TODO el ancho útil
+ * del contenido de la pantalla (un solo margen de pantalla, sin duplicar el
+ * del scaffold), con título y descripción completos, jerarquía tipográfica
+ * clara, crecimiento vertical libre y las acciones/etapas del resumen
  * intactas (ADR-0007: verificación por aserciones, sin capturas
  * versionadas).
  */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = "w360dp-h740dp")
-class ImportBatchErrorBannerLayoutTest {
+class ImportBatchBannerLayoutTest {
 
     @get:Rule
     val compose = createComposeRule()
@@ -376,5 +376,59 @@ class ImportBatchErrorBannerLayoutTest {
         assertNoOverlap("360-light-long-copy")
         compose.onNodeWithText(reviewPendingLabel(importBatchFixture())).assertIsDisplayed()
         compose.onNodeWithText(AppStrings.reintentarGuardado).assertIsDisplayed()
+    }
+
+    // ---------------------------------------------------------------------
+    // Éxito: la confirmación de guardado comparte geometría con el error.
+    // ---------------------------------------------------------------------
+
+    /** Compone S12 en estado Saved (confirmación de guardado). */
+    private fun composeSavedScreen(dark: Boolean = false) {
+        compose.setContent {
+            AmTheme(darkTheme = dark) {
+                ImportBatchScreen(
+                    state = ImportBatchUiState.Saved(batch = importBatchFixture()),
+                    onAction = {},
+                )
+            }
+        }
+        compose.waitForIdle()
+    }
+
+    /**
+     * §10: los estados de error y éxito mantienen la MISMA geometría —
+     * un solo margen de pantalla y ancho útil completo — con sus textos
+     * completos y sin solapes con el resto del estado.
+     */
+    @Test
+    fun saved_block_matches_error_geometry() {
+        composeSavedScreen(dark = false)
+        assertBannerFillsContentWidth("360-light-saved")
+        assertTextsComplete(
+            "360-light-saved",
+            listOf(AppStrings.GuardadoOk, AppStrings.batchSavedKeepReviewNotice),
+        )
+        // El glyph de éxito y el bloque no solapan la acción de revisión.
+        val banner = compose.onNode(bannerMatcher).getUnclippedBoundsInRoot()
+        val reviewButton = compose
+            .onNodeWithText(reviewPendingLabel(importBatchFixture()))
+            .getUnclippedBoundsInRoot()
+        println("saved: banner=$banner reviewButton=$reviewButton")
+        assertTrue(
+            "el bloque solapa la acción de revisar (banner=$banner button=$reviewButton)",
+            banner.bottom <= reviewButton.top,
+        )
+        compose.onNodeWithText(reviewPendingLabel(importBatchFixture())).assertIsDisplayed()
+    }
+
+    @Test
+    @Config(sdk = [34], qualifiers = "w320dp-h640dp")
+    fun saved_block_matches_error_geometry_compact_320dp() {
+        composeSavedScreen(dark = true)
+        assertBannerFillsContentWidth("320-dark-saved")
+        assertTextsComplete(
+            "320-dark-saved",
+            listOf(AppStrings.GuardadoOk, AppStrings.batchSavedKeepReviewNotice),
+        )
     }
 }

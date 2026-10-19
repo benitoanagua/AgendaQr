@@ -55,12 +55,16 @@ internal fun AppStatusHost(
                 onRetry = onDismissImportError,
                 onClear = onDismissImportError,
             )
+            // Host edge-to-edge (slot statusContent, sin margen del
+            // contenido): el banner pide SU margen de pantalla para quedar
+            // al ancho útil con un solo margen, igual que los badges.
             AmStatusBanner(
                 title = error.what,
                 message = error.dataStatus,
                 tone = AmTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,
+                screenMargin = AmSpacing.ScreenMargin,
             )
         } else if (hasFailed && pendingCount > 0) {
             // Banner completo SOLO con mutaciones FAILED: el usuario debe
@@ -69,6 +73,7 @@ internal fun AppStatusHost(
                 message = syncPendingLabel(pendingCount, retrying = true),
                 tone = AmTone.Danger,
                 action = AmBannerAction(AppStrings.ReintentarAhora, onRetryNow),
+                screenMargin = AmSpacing.ScreenMargin,
             )
         } else if (isOffline || pendingCount > 0) {
             // Indicador compacto: chips con texto (el significado nunca

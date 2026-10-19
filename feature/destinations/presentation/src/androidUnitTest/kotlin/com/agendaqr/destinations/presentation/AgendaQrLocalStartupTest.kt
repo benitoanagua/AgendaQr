@@ -1,13 +1,20 @@
 package com.agendaqr.destinations.presentation
 
 import android.content.Context
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
+import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.destinations.data.AgendaQrAndroidStorage
 import com.agendaqr.destinations.data.createLocalProtectionRepository
+import kotlin.math.abs
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -90,5 +97,37 @@ class AgendaQrLocalStartupTest {
         compose.onNodeWithText(AppStrings.DesbloqueaAgendaQr, useUnmergedTree = true).assertExists()
         compose.onNodeWithText(AppStrings.Desbloquear, useUnmergedTree = true).assertExists()
         compose.onNodeWithText(AppStrings.IniciarSesion, useUnmergedTree = true).assertDoesNotExist()
+    }
+
+    @Test
+    @Config(sdk = [34], qualifiers = "w360dp-h740dp")
+    fun demo_mode_banner_fills_useful_width_with_single_margin() {
+        compose.setContent { AgendaQrApp() }
+        compose.waitForIdle()
+        compose.onNodeWithText(AppStrings.ExplorarDemostracion, useUnmergedTree = true).performClick()
+        compose.waitUntil(timeoutMillis = 15_000) {
+            compose.onAllNodesWithText(AppStrings.ModoDemostracion, useUnmergedTree = true)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        val root = compose.onRoot().getBoundsInRoot()
+        val banner = compose.onNodeWithTag("am-status-banner").getBoundsInRoot()
+        val margin = AmSpacing.ScreenMargin
+        println("demo: root=$root banner=$banner")
+        assertTrue(
+            "demo: margen izquierdo ${banner.left}, esperado $margin",
+            abs(banner.left.value - margin.value) <= 1f,
+        )
+        assertTrue(
+            "demo: margen derecho ${root.right - banner.right}, esperado $margin",
+            abs((root.right - banner.right).value - margin.value) <= 1f,
+        )
+        assertTrue(
+            "demo: ancho ${banner.right - banner.left} != útil ${root.right - root.left - margin * 2}",
+            abs(
+                (banner.right - banner.left).value -
+                    (root.right - root.left - margin * 2).value,
+            ) <= 1f,
+        )
+        compose.onNodeWithText(AppStrings.SalirDeDemostracion, useUnmergedTree = true).assertExists()
     }
 }
