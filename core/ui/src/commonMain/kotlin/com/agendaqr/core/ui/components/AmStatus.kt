@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -63,15 +64,12 @@ fun AmStatusBanner(
      *  no se renderiza fila de acciones cuando tampoco hay [action]. */
     dismiss: AmBannerAction? = null,
     /**
-     * Margen horizontal propio del banner. Por defecto es
-     * [AmSpacing.ScreenMargin]: el componente suele componerse fuera de un
-     * contenedor ya acotado (bandeja de estado, overlay de cámara). Cuando
-     * el llamador vive DENTRO del contenido con margen del
-     * `AmScreenScaffold`, debe pasar [AmSpacing.None]: si no, los dos
-     * márgenes se suman y el bloque se estrecha 16 dp por lado (defecto
-     * registrado en S12).
+     * Margen horizontal adicional propio del banner. Por defecto es cero:
+     * las pantallas ya aplican el margen de contenido desde AmScreenScaffold.
+     * Pasar [AmSpacing.ScreenMargin] solo cuando el banner se componga en un
+     * host realmente edge-to-edge que no tenga margen exterior propio.
      */
-    screenMargin: Dp = AmSpacing.ScreenMargin,
+    screenMargin: Dp = AmSpacing.None,
 ) {
     val resolvedTone = tone ?: AmTone.Neutral
     val background = resolvedTone.container()
@@ -81,6 +79,7 @@ fun AmStatusBanner(
             .fillMaxWidth()
             .padding(horizontal = screenMargin)
             .background(background, AmShapes.Medium)
+            .testTag("am-status-banner")
             .semantics { liveRegion = LiveRegionMode.Polite }
             .padding(horizontal = AmSpacing.Md, vertical = AmSpacing.Md),
         verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
