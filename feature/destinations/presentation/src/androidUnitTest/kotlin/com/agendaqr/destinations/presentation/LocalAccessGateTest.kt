@@ -172,7 +172,7 @@ class LocalAccessGateTest {
         compose.waitForIdle()
         compose.onNodeWithText(AppStrings.DesbloqueaAgendaQr, useUnmergedTree = true).assertExists()
         compose.onNodeWithText(AppStrings.Desbloquear, useUnmergedTree = true).assertExists()
-        // Entrada propia (S00 de Stitch): teclas de dígito con rol de botón
+        // Entrada propia (S00): teclas de dígito con rol de botón
         // y borrado con nombre accesible.
         compose.onNodeWithText("1", useUnmergedTree = true).assertExists()
         compose.onNodeWithContentDescription(AppStrings.BorrarDigito).assertExists()

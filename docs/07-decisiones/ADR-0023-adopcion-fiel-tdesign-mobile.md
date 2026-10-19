@@ -97,7 +97,7 @@ misma intención y transición funcional.
    motivo, sin cambiar reglas funcionales.
 6. Las licencias y atribuciones están presentes y las librerías Flutter/Dart no
    se incluyen como dependencias de ejecución.
-7. Las pruebas de navegación y back stack pasan sin cambios de contrato.
-   Los cambios autorizados actualizan contrato y pruebas en el mismo cambio lógico.
+7. Las pruebas de navegación y back stack pasan. Todo cambio autorizado actualiza
+   el contrato y las pruebas en el mismo cambio lógico.
 8. Las compilaciones, pruebas y comprobaciones de runtime se informan según lo
    ejecutado; compilar no se considera validación de runtime.
