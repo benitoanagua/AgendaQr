@@ -19,13 +19,13 @@ import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmType
 
 /**
- * S02 — Añadir (V1.3, ADR-0013; composición V1.17/ADR-0024).
+ * S02 — Añadir (V1.3, ADR-0013; composición V1.17).
  *
  * Esta pantalla solo decide cómo traer un recurso existente. No pide nombre,
  * categoría ni contexto antes de que Agenda QR haya entendido el recurso.
  * La revisión ocurre después de la clasificación (S09).
  *
- * Composición desde la pantalla S02 de Stitch (ADR-0024): héroe centrado y
+ * Composición de S02 según la especificación UX/UI: héroe centrado y
  * un único grupo de métodos en el orden de la jerarquía que la propia spec
  * declara — Galería → Cámara → Archivo (PDF) — con "Desde otra app" como
  * ayuda breve al pie, solo donde la plataforma soporta compartir hacia
@@ -65,7 +65,7 @@ fun AddDestinationScreen(
             )
         }
 
-        // Grupo único de métodos (S02 de Stitch, V1.17): el orden sigue la
+        // Grupo único de métodos (S02, V1.17): el orden sigue la
         // jerarquía declarada por la spec (Galería → Cámara) y el PDF queda
         // al pie del grupo. Divisores entre filas, ninguno tras la última.
         AmListBody {

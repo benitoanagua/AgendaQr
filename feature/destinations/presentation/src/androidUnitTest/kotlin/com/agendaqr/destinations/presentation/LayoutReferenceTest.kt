@@ -570,7 +570,7 @@ open class LayoutReferenceTest {
         )
     }
 
-    // Detalle y exhibición QR (referencia Stitch): hero de 320 dp con
+    // Detalle y exhibición QR (referencia de layout UX/UI): hero de 320 dp con
     // metadatos en tarjeta compacta.
     private fun detailFixture() = com.agendaqr.destinations.domain.Destination(
         id = "d-1", name = "Carniceria Don Bife",
@@ -602,7 +602,7 @@ open class LayoutReferenceTest {
         )
     }
 
-    // Anatomía de fila de actividad (referencia Stitch): insignia
+    // Anatomía de fila de actividad (referencia de layout UX/UI): insignia
     // direccional + contraparte + tipo/fecha + monto con signo. El
     // OperationsScreen completo requiere OperationsViewModel (precedente
     // S10: no se compone en Robolectric); aquí se captura el patrón
@@ -615,7 +615,7 @@ open class LayoutReferenceTest {
         operationListScreenPattern(selected = 2)
     }
 
-    // Patrón visual de la pantalla de operaciones (referencia Stitch):
+    // Patrón visual de la pantalla de operaciones (referencia de layout UX/UI):
     // Usa la estructura real de OperationListScreen: AmScreenScaffold con
     // márgenes, búsqueda, filtros, AmListBody con AmListRow.
     // OperationsScreen completo requiere OperationsViewModel (S10: no en Robolectric);

@@ -722,8 +722,6 @@ fun repoRead(relativePath: String): String? =
 
 private val screenContractDocPath = "docs/04-ux/03-contrato-interaccion-pantallas.md"
 
-private val stitchDocPath = "docs/04-ux/06-trazabilidad-stitch-tdesign.md"
-
 /**
  * Galería estricta por superficie (`<superficie>--<estado>--<ancho>dp--<tema>--font<escala>.png`).
  * Es un artefacto distinto de las capturas de referencia de layout
@@ -772,17 +770,6 @@ tasks.register("generateScreenContractDoc") {
         target.parentFile.mkdirs()
         target.writeText(renderScreenContractDoc(ScreenContracts.all))
         logger.lifecycle("generateScreenContractDoc: wrote ${screenContractDocPath}")
-    }
-}
-
-tasks.register("generateStitchTraceabilityDoc") {
-    group = "verification"
-    description = "Renders $stitchDocPath from the typed Stitch registry and the screen contract."
-    doLast {
-        val target = file(stitchDocPath)
-        target.parentFile.mkdirs()
-        target.writeText(renderStitchTraceabilityDoc(stitchTDesign, ScreenContracts.all))
-        logger.lifecycle("generateStitchTraceabilityDoc: wrote $stitchDocPath")
     }
 }
 
@@ -845,14 +832,6 @@ tasks.register("verifyScreenContract") {
         if (screenContractDocIsStale(committed, rendered)) {
             violations += "contrato-doc-desactualizado: $screenContractDocPath difiere del contrato; " +
                 "ejecuta ./gradlew generateScreenContractDoc"
-        }
-
-        violations += stitchTraceabilityViolations(stitchTDesign, ScreenContracts.all)
-        val stitchRendered = renderStitchTraceabilityDoc(stitchTDesign, ScreenContracts.all)
-        val stitchCommitted = file(stitchDocPath).takeIf { it.isFile }?.readText()
-        if (screenContractDocIsStale(stitchCommitted, stitchRendered)) {
-            violations += "stitch-doc-desactualizado: $stitchDocPath difiere del registro; " +
-                "ejecuta ./gradlew generateStitchTraceabilityDoc"
         }
 
         val (artifacts, malformed) = collectCaptureArtifacts()
@@ -1061,50 +1040,6 @@ tasks.register("verifyScreenContractFixtures") {
             "un documento idéntico no debe marcarse como desactualizado"
         }
 
-        // Trazabilidad Stitch: registro completo (mapeo + exclusión) contra el contrato.
-        val stitchOk = StitchProject(
-            name = "projects/123",
-            title = "Proyecto",
-            screens = listOf(StitchScreen("0".repeat(32), "Inicio", "home")),
-            exclusions = listOf(
-                StitchExclusion("add", "Superficie sin diseño en el proyecto; se compone con los componentes canónicos."),
-            ),
-        )
-        require(stitchTraceabilityViolations(stitchOk, screens).isEmpty()) {
-            "un registro Stitch completo no debe fallar: ${stitchTraceabilityViolations(stitchOk, screens)}"
-        }
-        require(
-            stitchTraceabilityViolations(stitchOk.copy(exclusions = emptyList()), screens)
-                .any { it.contains("stitch-sin-mapeo") },
-        ) { "una superficie sin mapeo ni exclusión debe fallar" }
-        require(
-            stitchTraceabilityViolations(
-                stitchOk.copy(screens = listOf(StitchScreen("a".repeat(32), "Fantasma", "ghost"))),
-                screens,
-            ).any { it.contains("stitch-orbita") },
-        ) { "una pantalla de Stitch huérfana debe fallar" }
-        require(
-            stitchTraceabilityViolations(
-                stitchOk.copy(screens = listOf(StitchScreen("NO-HEX", "Inicio", "home"))),
-                screens,
-            ).any { it.contains("stitch-id") },
-        ) { "un id de pantalla inválido debe fallar" }
-        require(
-            stitchTraceabilityViolations(
-                stitchOk.copy(exclusions = listOf(StitchExclusion("add", "n/a"))),
-                screens,
-            ).any { it.contains("stitch-exclusion-sin-motivo") },
-        ) { "una exclusión sin motivo debe fallar" }
-        require(
-            stitchTraceabilityViolations(
-                stitchOk.copy(
-                    exclusions = listOf(
-                        StitchExclusion("home", "Mapeada y excluida a la vez con un motivo largo y explícito."),
-                    ),
-                ),
-                screens,
-            ).any { it.contains("stitch-contradiccion") },
-        ) { "una superficie mapeada y excluida a la vez debe fallar" }
     }
 }
 

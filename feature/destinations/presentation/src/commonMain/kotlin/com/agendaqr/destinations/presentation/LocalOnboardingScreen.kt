@@ -34,7 +34,7 @@ private enum class PinSetupStep { Create, Confirm }
  * Primer arranque: el perfil local ya existe (se crea sin conexión) y aquí el
  * usuario configura su PIN. No es un login: no hay correo, contraseña ni red.
  *
- * Composición del desbloqueo (S00 de Stitch, ADR-0024/spec V1.16): héroe,
+ * Composición del desbloqueo (S00, spec V1.16): héroe,
  * puntos enmascarados y teclado propio en dos pasos — crear el código y
  * confirmarlo — con la acción de cada paso fija al pie. El paso de creación
  * exige la longitud mínima de [PinPolicy] antes de continuar; borrar con la
