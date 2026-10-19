@@ -801,6 +801,37 @@ tasks.register("generateCaptureManifest") {
     }
 }
 
+/**
+ * Galería estricta en un solo comando (ADR-0007): produce las
+ * capturas (tests con `-Pagendaqr.capture=true`), su manifiesto y los
+ * índices navegables. Requiere el flag explícito; nada se versiona y el
+ * gate (`verifyScreenContract`) valida la galería cuando existe.
+ */
+tasks.register("captureGallery") {
+    group = "verification"
+    description = "Produces the strict per-surface gallery plus its manifest on demand (requires -Pagendaqr.capture=true)."
+    dependsOn(":feature:destinations:presentation:captureScreenshots", ":generateCaptureManifest")
+    doLast {
+        val (artifacts, malformed) = collectCaptureArtifacts()
+        malformed.forEach { logger.warn("captureGallery: artefacto malformado: $it") }
+        val byWidth = artifacts.groupBy { it.name.widthDp }
+            .entries.sortedBy { it.key }
+            .joinToString { "${it.value.size} a ${it.key}dp" }
+        val byFont = artifacts.groupBy { it.name.fontScale }
+            .entries.sortedBy { it.key }
+            .joinToString { "${it.value.size} a font${it.key}" }
+        logger.lifecycle(
+            "captureGallery: ${artifacts.size} capturas estrictas ($byWidth; $byFont); " +
+                "manifiesto en $captureManifestPath",
+        )
+    }
+}
+
+// El manifiesto se escribe DESPUÉS de que los tests produzcan la galería.
+tasks.named("generateCaptureManifest") {
+    mustRunAfter(":feature:destinations:presentation:captureScreenshots")
+}
+
 tasks.register("verifyScreenContract") {
     group = "verification"
     description = "Cross-checks the structured per-screen contract against code, tests and generated doc."
