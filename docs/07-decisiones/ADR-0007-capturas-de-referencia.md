@@ -61,6 +61,38 @@ con propósitos distintos:
    requeridas. Si no hay artefactos, el gate no falla porque la galería no
    se versiona.
 
+**Productor (Fase 6).** `LayoutReferenceTest` produce la galería estricta con
+un mapa explícito escenario → (superficie, estado): cada superficie del
+contrato y sus estados declarados quedan capturados. La matriz prioriza
+pantallas y estados únicos sobre combinaciones: 360 dp en claro/oscuro como
+núcleo de revisión, un subconjunto denso a 320 dp, las superficies raíz con
+`NavigationRail` a 720 dp (tablet) y un subconjunto legible a fuente 200 %;
+todas las demás combinaciones siguen verificándose por aserciones. Los
+overlays (S08 selector, S03 cámara) se capturan como su ventana de diálogo
+completa, al tamaño real del componente. Hallazgo registrado: el vacío de
+la bandeja de comprobantes sin asociar es byte-idéntico al vacío de
+Actividades (comparten composición), así que solo se conserva una captura;
+el copy propio del vacío queda como decisión de producto pendiente.
+
+**Manifiesto (schema `agendaqr.captures/2`).** `build/captures/manifest.json`
+declara por entrada la pantalla de AgendaQr, el identificador de su
+pantalla de Stitch (ADR-0024; vacío para las superficies excluidas), estado,
+tema, ancho, densidad, escala de fuente, dimensiones reales del bitmap,
+hash, si es obligatorio, el motivo de inclusión y el test de origen. Cuando
+hay capturas, el gate exige el manifiesto presente y sincronizado.
+
+**Comandos.** Referencias de layout: `./gradlew
+:feature:destinations:presentation:testDebugUnitTest -Pagendaqr.capture=true`.
+Galería estricta completa con manifiesto e índices en un solo comando:
+
+```bash
+./gradlew captureGallery -Pagendaqr.capture=true
+```
+
+Con el flag las galerías se regeneran siempre completas y frescas (limpieza
+previa; los PNG son efectos laterales que Gradle no rastrea); sin el flag,
+la captura es un no-op y las pruebas siguen verificando el layout.
+
 Las pruebas de layout (`LayoutReferenceTest`, `LayoutReferenceExtraTest`)
 componen cada escenario real de las pantallas críticas —claro/oscuro,
 360 dp, 320 dp, tablet w720dp con `AmNavRail`, fuentes largas y escala de
