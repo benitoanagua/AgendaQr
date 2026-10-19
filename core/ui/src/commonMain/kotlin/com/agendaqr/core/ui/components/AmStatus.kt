@@ -62,6 +62,16 @@ fun AmStatusBanner(
     /** Acción de descarte (p. ej. descartar). Puede ser null; si es null
      *  no se renderiza fila de acciones cuando tampoco hay [action]. */
     dismiss: AmBannerAction? = null,
+    /**
+     * Margen horizontal propio del banner. Por defecto es
+     * [AmSpacing.ScreenMargin]: el componente suele componerse fuera de un
+     * contenedor ya acotado (bandeja de estado, overlay de cámara). Cuando
+     * el llamador vive DENTRO del contenido con margen del
+     * `AmScreenScaffold`, debe pasar [AmSpacing.None]: si no, los dos
+     * márgenes se suman y el bloque se estrecha 16 dp por lado (defecto
+     * registrado en S12).
+     */
+    screenMargin: Dp = AmSpacing.ScreenMargin,
 ) {
     val resolvedTone = tone ?: AmTone.Neutral
     val background = resolvedTone.container()
@@ -69,13 +79,14 @@ fun AmStatusBanner(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = AmSpacing.ScreenMargin)
+            .padding(horizontal = screenMargin)
             .background(background, AmShapes.Medium)
             .semantics { liveRegion = LiveRegionMode.Polite }
             .padding(horizontal = AmSpacing.Md, vertical = AmSpacing.Md),
         verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
     ) {
-        // Fila 1: icono + título/mensaje a ancho completo.
+        // Fila 1: icono discreto (compacto, alineado al inicio del título)
+        // + título/mensaje a ancho completo.
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top,
@@ -85,23 +96,29 @@ fun AmStatusBanner(
                 AmIcon(
                     imageVector = glyph,
                     contentDescription = null,
+                    size = AmMetrics.IconSizeCompact,
                     tint = foreground,
                 )
             }
-            Column(modifier = Modifier.weight(1f)) {
+            // Jerarquía del mensaje: título semibold dominante, descripción
+            // cuerpo normal con separación propia (sin heredar la altura
+            // del título).
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+            ) {
                 title?.let {
-                    Text(
-                        it,
+                    AmHeading(
+                        text = it,
+                        size = AmType.TitleMedium,
+                        fontWeight = FontWeight.SemiBold,
                         color = foreground,
-                        style = AmTextStyles.Title,
-                        fontWeight = FontWeight.Bold,
                     )
                 }
                 if (message.isNotBlank()) {
-                    Text(
-                        message,
+                    AmText(
+                        text = message,
                         color = foreground,
-                        fontSize = AmType.Label,
                     )
                 }
             }
