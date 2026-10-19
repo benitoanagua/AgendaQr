@@ -161,10 +161,14 @@ fun ImportBatchScreen(
             is ImportBatchUiState.Error -> {
                 // El banner no lleva acción: el botón fijo inferior
                 // "Reintentar guardado" es la única fuente de la acción.
+                // screenMargin=None: el contenido del scaffold YA lleva el
+                // margen de pantalla; el propio del banner lo duplicaría
+                // y estrecharía el bloque 16 dp por lado.
                 AmStatusBanner(
                     title = state.error.what,
-                message = state.error.dataStatus,
+                    message = state.error.dataStatus,
                     tone = AmTone.Danger,
+                    screenMargin = AmSpacing.None,
                 )
                 state.batch?.let { BatchResultContent(it, onAction, isSaving = false) }
             }
