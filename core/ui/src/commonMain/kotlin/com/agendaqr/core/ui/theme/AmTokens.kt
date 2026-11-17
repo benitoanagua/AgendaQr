@@ -423,6 +423,8 @@ object AmShapes {
     val ExtraLarge = RoundedCornerShape(AmRadius.ExtraLarge)
     val GridIcon = RoundedCornerShape(AmRadius.GridIcon)
     val Pill = RoundedCornerShape(AmRadius.Round)
+    /** D-04: hoja inferior modular con el radio publicado ExtraLarge (16 dp). */
+    val BottomSheet = RoundedCornerShape(AmRadius.ExtraLarge)
 }
 
 /** Pesos `font-weight` publicados: la familia Inter estática cubre estos cortes. */

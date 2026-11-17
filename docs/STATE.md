@@ -57,6 +57,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Contrato de interacción por pantalla (19 superficies: ruta real, destinos válidos, estados, gestos, componentes, pruebas con señal de accesibilidad y escenarios de captura) | `verifyScreenContract` + `verifyScreenContractFixtures` (dentro de `verifyAgendaQrArchitecture`): cruza el contrato con `AppRoute`/rutas de flujo, archivos, símbolos de `core/ui`, claves de `AppStrings`, pruebas y el documento generado |
 | Pulsación anterior fiel a TDesign en botones, celdas, tarjetas y acciones de diálogo (color activo, sin ripple; estado previo a ADR-0025) | `:core:ui:testDebugUnitTest`; desviación D-11 para el resto de superficies |
 | Sistema visual vigente Polaris 9.4.2 en `core/ui`: tokens semánticos claros/oscuros, Inter 4.0 empaquetado, pares AA, acentos X-06, movimiento, previews claro/oscuro/200 % y avisos de licencia | `verifyAgendaQrArchitecture` + `:core:ui:testDebugUnitTest` (84 pruebas) + `:androidApp:assembleDebug` con `-PallowDebugSigningForRc=true`; iOS **NO VERIFICADO** |
+| Capa aditiva de componentes: layout, enlaces/grupos de acciones, formularios (`AmSelect`/`AmCheckbox`/`AmRadioButton`/`AmSwitch`), progreso, hoja modal, tabla de índices y extensiones canónicas X-01/X-02/X-03 | `:core:ui:testDebugUnitTest` (91 pruebas, incluido `AmPhase3ContractTest`) + `verifyAgendaQrArchitecture`; render iOS y TalkBack/VoiceOver **NO VERIFICADOS** |
 
 ## 2. Implementado pero NO VERIFICADO en este entorno
 
