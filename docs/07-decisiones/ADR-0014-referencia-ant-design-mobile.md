@@ -1,5 +1,7 @@
 # ADR-0014 — Referencia visual Ant Design Mobile y navegación convencional Android/iOS
 
+
+> **REEMPLAZADO como autoridad visual por [ADR-0025](ADR-0025-adopcion-ui-ux-polaris.md).** El contenido se conserva únicamente como registro histórico.
 **Estado:** SUPLANTADA por ADR-0020 y ADR-0021 (historia conservada). Fue APROBADA — 2026-10-13 — **Enmendada por ADR-0017** (2026-10-16: corrige la tabla de correspondencia y los valores — escala 17/15/13, radios oficiales, paleta oscura oficial, secundario = botón `default`, barra inferior 56 dp; la historia de esta decisión se conserva)
 **Suplanta:** la autoría visual de ADR-0013 (AgendaMobile como referencia). Conserva de ADR-0013 la arquitectura de capas, la implementación en `core/ui` y el prefijo `Am*` como convención de código (sin valor de marca).
 

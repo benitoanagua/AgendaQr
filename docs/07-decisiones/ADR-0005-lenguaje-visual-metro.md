@@ -1,5 +1,7 @@
 # ADR-0005 — Lenguaje visual Metro dentro de Xauxa
 
+
+> **REEMPLAZADO como autoridad visual por [ADR-0025](ADR-0025-adopcion-ui-ux-polaris.md).** El contenido se conserva únicamente como registro histórico.
 **Estado:** REEMPLAZADA por ADR-0013 (AgendaMobile, 2026-10-12); antes
 REEMPLAZADA PARCIALMENTE por ADR-0012 (2026-10-11). De la cadena
 histórica se conservan en AgendaMobile: iconografía Lucide, reglas de

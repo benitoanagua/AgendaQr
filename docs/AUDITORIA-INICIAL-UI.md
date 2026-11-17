@@ -73,12 +73,13 @@ No hay imports de `androidx.compose.material3.` en `commonMain`; la cámara
 Android es el único punto que usa Compose puro y
 `androidx.compose.ui.window.Dialog`.
 
-### 2.4 Código muerto
+### 2.4 Cobertura y código muerto
 
-No se ha identificado código muerto evidente en `core/ui`: los componentes y
-tokens declarados son consumidos por las pantallas o por los tests de
-contrato. Los registros de excepciones `E-01`…`E-05` están en uso; la
-excepción `E-06` ya fue retirada y el gate detecta registros zombie.
+`core/ui` tiene 48 archivos Kotlin fuente y 75 declaraciones `@Composable`,
+ninguna de ellas con `@Preview`. Los registros de excepciones `E-01`…`E-05`
+están en uso; la excepción `E-06` ya fue retirada y el gate detecta registros
+zombie. Los candidatos a código muerto y las superficies sin preview se
+detallan en §8.
 
 ## 3. Pantallas y componentes consumidos
 
@@ -171,9 +172,25 @@ Color heredado aún visible: `#0067B8` / `#004A87` en launcher, logo e
 No hay scripts `sh`/`py`/`js`/`mjs`/`cjs` propios. Únicamente los wrappers
 estándar `gradlew` y `gradlew.bat`, permitidos por `verifyNoScripts`.
 
-## 8. Código muerto en `core/ui`
+## 8. Código muerto y superficies sin preview en `core/ui`
 
-Sin hallazgos. Véase §2.4.
+Candidatos a código muerto: ninguna llamada dentro ni fuera del módulo.
+
+| Símbolo | Ubicación |
+|---|---|
+| `AmLightButton` | `AmButtons.kt:388` |
+| `AmOutlineButton` | `AmButtons.kt:410` |
+| `AmHeroHeader` | `AmChrome.kt:417` |
+| `fillPath` | `TDesignIconVectors.kt:157` (privado; los 34 vectores usan `strokePath`) |
+
+Las variantes `Light` y `Outline` siguen presentes en la resolución de colores
+y en tests. Tienen uso interno o de test, pero ningún consumo productivo
+externo: `AmDangerButton`, `AmNavRail`, `AmNavBar`, `AmHeading` y
+`decodeQrImageBitmap`.
+
+Ningún composable del módulo declara `@Preview`: la verificación visual hoy
+depende de tests Robolectric y del generador de galería. Es una brecha de
+cobertura a cubrir durante la reimplementación.
 
 ## 9. Puertas y estado de validación
 

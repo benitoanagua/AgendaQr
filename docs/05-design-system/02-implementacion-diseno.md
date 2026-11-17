@@ -1,6 +1,6 @@
 # Reglas de implementación del sistema de diseño
 
-**Estado:** Guía de implementación. El contrato normativo vigente es `00-contrato-normativo-diseno.md` (ADR-0023, TDesign Mobile 0.2.7); esta guía resume la estructura de `core/ui` y las reglas ejecutables del sistema.
+**Estado:** Guía histórica de implementación, pendiente de alineación. El contrato normativo vigente es `00-contrato-normativo-diseno.md` (ADR-0025); esta guía resume la estructura previa de `core/ui` y sus reglas ejecutables, hoy sustituidas por el contrato.
 
 ## 1. Mapa de la implementación
 

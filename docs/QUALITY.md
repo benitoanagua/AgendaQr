@@ -403,7 +403,7 @@ la javadoc de `AmButtons.kt` y verificable por composición:
   guardado».
 - Inicio S01: rejilla de acciones con las 3 acciones rápidas existentes
   (Traer QR, Registrar operación, Crear contexto); sin FAB ni hub duplicado
-  (ADR-0022 y ADR-0023; el anexo histórico Super-App no es autoridad).
+  (ADR-0022 y ADR-0023 como historia; autoridad visual vigente: ADR-0025).
 - Selector de contexto S08: «Quitar contexto» sale del slot de salida del
   diálogo y vive en el contenido como acción destructiva (peligro + glifo);
   «Cancelar» es la única salida.

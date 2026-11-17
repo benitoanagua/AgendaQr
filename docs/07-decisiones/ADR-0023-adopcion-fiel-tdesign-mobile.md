@@ -1,5 +1,7 @@
 # ADR-0023 — Sistema de diseño de AgendaQr
 
+
+> **REEMPLAZADO como autoridad visual por [ADR-0025](ADR-0025-adopcion-ui-ux-polaris.md).** El contenido se conserva únicamente como registro histórico.
 **Estado:** ACEPTADO — versión 0.2.7 del 2026-10-18
 **Relaciona:** especificación UX/UI vigente, contrato normativo de diseño,
 ADR-0007 (verificación de layout), ADR-0008 (voz), ADR-0016 (identidad local).

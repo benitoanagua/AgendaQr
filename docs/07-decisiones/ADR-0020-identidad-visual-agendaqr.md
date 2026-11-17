@@ -1,7 +1,9 @@
 # ADR-0020 — Identidad visual propia de AgendaQr
 
+
+> **REEMPLAZADO como autoridad visual por [ADR-0025](ADR-0025-adopcion-ui-ux-polaris.md).** El contenido se conserva únicamente como registro histórico.
 **Estado:** SUPLANTADO — 2026-10-17 por ADR-0023; este documento conserva únicamente el registro histórico de la decisión.
-> No usar las reglas visuales, iconos ni referencias de este ADR como norma vigente. La autoridad actual es ADR-0023 y la especificación UX/UI V1.13.
+> No usar las reglas visuales, iconos ni referencias de este ADR como norma vigente. La autoridad actual es ADR-0025 y el contrato normativo v7.
 **Enmienda:** ADR-0014 y ADR-0017 (referencia visual obligatoria Ant Design Mobile).  
 **Relaciona:** contrato normativo `docs/05-design-system/00-contrato-normativo-diseno.md`, especificación UX/UI V1.10, implementación `core/ui`.
 
