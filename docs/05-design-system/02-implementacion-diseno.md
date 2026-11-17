@@ -27,8 +27,15 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
     ├── AmDialogs.kt       # AmDialog y AmDialogList con formas y estilos de tokens
     ├── AmFeedback.kt      # skeleton, paginación, scanner y marco de medios
     ├── AmFeedbackEvent.kt # AmFeedbackHost, AmSnackbarHost y eventos de feedback
-    ├── AmTabs.kt         # AmSectionHeader y AmTabs (pestañas)
-    └── AmQrPreview.kt     # preview QR multiplataforma; lienzo blanco y estado explícito ante errores
+    ├── AmTabs.kt          # AmSectionHeader y AmTabs (pestañas)
+    ├── AmQrPreview.kt     # preview QR multiplataforma; lienzo blanco y estado explícito ante errores
+    ├── AmLayout.kt        # AmBlockStack, AmInlineStack, AmBox, AmDivider y ayudas de página
+    ├── AmActions.kt       # AmLink y AmButtonGroup sobre botones existentes
+    ├── AmForms.kt         # AmSelect, AmCheckbox, AmRadioButton, AmSwitch y grupos
+    ├── AmProgress.kt      # AmProgress, AmProgressBar y AmSpinner
+    ├── AmSheets.kt        # AmBottomSheet / AmModalSheet (D-04) con scrim y superficie tokenizada
+    ├── AmDataTable.kt     # AmIndexTable con columnas y filas inmutables
+    └── AmProductExtensions.kt # X-01 evidencia, X-02 sincronización, X-03 hoja QR
 ```
 
 ## 2. Reglas de token
@@ -50,6 +57,25 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 - Estados obligatorios: pressed/focused/selected/error/disabled/loading, cada uno con señal no exclusivamente cromática.
 - Área táctil ≥ 48 dp (`AmMetrics.ControlMinSize`), sin alturas fijas que recorten con fuente grande.
 - Iconos: solo `AmIcons`; decorativos con `contentDescription = null`; interactivos con etiqueta visible del llamador.
+
+### Componentes aditivos del sistema
+
+La capa aditiva de componentes rellena los huecos detectados sin sustituir los
+símbolos ya fijados por `verifyScreenContract`: `AmLink` y `AmButtonGroup`
+reutilizan `AmTextAction`, `AmPrimaryButton` y `AmSecondaryButton`; los
+controles de formulario (`AmSelect`, `AmCheckbox`, `AmRadioButton`, `AmSwitch`)
+reutilizan `AmDialog`, `AmDialogList`, `AmBadge` y `AmTextAction`;
+`AmProgressBar`/`AmSpinner` usan colores semánticos y anuncian su estado;
+`AmBottomSheet` usa el modal del sistema con scrim y superficie tokenizados;
+`AmIndexTable` compone columnas flexibles que crecen en altura con la fuente.
+
+Las extensiones canónicas viven ahora en `core/ui`: `AmEvidenceBadge` (X-01)
+acepta el texto del llamador y nunca afirma pago ni verificación de dinero;
+`AmSyncState` modela los estados como sealed interface y `AmSyncIndicator`
+oculta el estado sincronizado por defecto; `AmQrSheet` (X-03) garantiza el
+lienzo blanco `AmColor.QrCanvas` en ambos temas y delega el brillo a la
+plataforma. La ruta de acceso en ≤2 toques y los efectos de pantalla siguen
+residiéndo en la capa feature, donde están verificados en Android.
 
 ## 4. Reglas de pantalla
 
