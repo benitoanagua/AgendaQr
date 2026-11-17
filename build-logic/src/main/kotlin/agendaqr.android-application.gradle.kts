@@ -18,6 +18,7 @@ val generateThirdPartyNotices = tasks.register<Sync>("generateThirdPartyNotices"
 
 android {
     compileSdk = 36
+    buildToolsVersion = "36.0.0"
     // Los avisos generados entran como assets del distribuible.
     sourceSets.getByName("main").assets.srcDir(generatedThirdPartyNotices)
     defaultConfig {
