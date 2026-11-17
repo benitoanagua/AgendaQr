@@ -42,6 +42,8 @@ sealed interface AmSyncState {
     data object Synced : AmSyncState
     data object Pending : AmSyncState
     data object Syncing : AmSyncState
+    /** Error sin acción local: el reintento global lo gestiona la capa feature. */
+    data object Error : AmSyncState
     data class ErrorRecoverable(val retryLabel: String, val onRetry: () -> Unit) : AmSyncState
     data object Dead : AmSyncState
 }
@@ -59,14 +61,16 @@ private fun AmSyncState.label(labels: AmSyncLabels): String = when (this) {
     AmSyncState.Synced -> labels.synced
     AmSyncState.Pending -> labels.pending
     AmSyncState.Syncing -> labels.syncing
+    AmSyncState.Error -> labels.error
     is AmSyncState.ErrorRecoverable -> labels.error
     AmSyncState.Dead -> labels.dead
 }
 
 private fun AmSyncState.tone(): AmTone = when (this) {
     AmSyncState.Synced -> AmTone.Success
-    AmSyncState.Pending -> AmTone.Warning
+    AmSyncState.Pending -> AmTone.Neutral
     AmSyncState.Syncing -> AmTone.Info
+    AmSyncState.Error -> AmTone.Danger
     is AmSyncState.ErrorRecoverable -> AmTone.Danger
     AmSyncState.Dead -> AmTone.Neutral
 }

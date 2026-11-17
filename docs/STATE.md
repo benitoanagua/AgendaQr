@@ -58,6 +58,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Pulsación anterior fiel a TDesign en botones, celdas, tarjetas y acciones de diálogo (color activo, sin ripple; estado previo a ADR-0025) | `:core:ui:testDebugUnitTest`; desviación D-11 para el resto de superficies |
 | Sistema visual vigente Polaris 9.4.2 en `core/ui`: tokens semánticos claros/oscuros, Inter 4.0 empaquetado, pares AA, acentos X-06, movimiento, previews claro/oscuro/200 % y avisos de licencia | `verifyAgendaQrArchitecture` + `:core:ui:testDebugUnitTest` (84 pruebas) + `:androidApp:assembleDebug` con `-PallowDebugSigningForRc=true`; iOS **NO VERIFICADO** |
 | Capa aditiva de componentes: layout, enlaces/grupos de acciones, formularios (`AmSelect`/`AmCheckbox`/`AmRadioButton`/`AmSwitch`), progreso, hoja modal, tabla de índices y extensiones canónicas X-01/X-02/X-03 | `:core:ui:testDebugUnitTest` (91 pruebas, incluido `AmPhase3ContractTest`) + `verifyAgendaQrArchitecture`; render iOS y TalkBack/VoiceOver **NO VERIFICADOS** |
+| Pantallas: X-02 delegado a `AmSyncIndicator` desde `ElementSyncBadge` y X-01 aplicado en el detalle de operación con `AmEvidenceBadge`; X-03 permanece en `AmQrPreview` + efectos de brillo por plataforma | `:feature:destinations:presentation:testDebugUnitTest` (524 pruebas, incluido `AmExtensionAdoptionTest`) + `verifyAgendaQrArchitecture`; iOS **NO VERIFICADO** |
 
 ## 2. Implementado pero NO VERIFICADO en este entorno
 

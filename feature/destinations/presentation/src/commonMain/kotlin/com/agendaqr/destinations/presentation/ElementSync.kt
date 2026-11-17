@@ -1,6 +1,8 @@
 package com.agendaqr.destinations.presentation
 
-import com.agendaqr.core.ui.components.AmBadge
+import com.agendaqr.core.ui.components.AmSyncIndicator
+import com.agendaqr.core.ui.components.AmSyncLabels
+import com.agendaqr.core.ui.components.AmSyncState
 import com.agendaqr.core.ui.components.AmTone
 import com.agendaqr.destinations.data.PendingSyncMutation
 import com.agendaqr.destinations.data.SyncMutationState
@@ -60,11 +62,27 @@ fun ElementSyncStatus.tone(): AmTone = when (this) {
  * que el usuario necesita saber (Pendiente, Sincronizando o Error). El
  * estado sigue siendo consultable en el detalle.
  */
+private fun ElementSyncStatus.toAmSyncState(): AmSyncState = when (this) {
+    ElementSyncStatus.Synced -> AmSyncState.Synced
+    ElementSyncStatus.Pending -> AmSyncState.Pending
+    ElementSyncStatus.Syncing -> AmSyncState.Syncing
+    ElementSyncStatus.ErrorRecoverable, ElementSyncStatus.Dead -> AmSyncState.Error
+}
+
 @Composable
 fun ElementSyncBadge(status: ElementSyncStatus, showWhenSynced: Boolean = false) {
-    if (showWhenSynced || status != ElementSyncStatus.Synced) {
-        AmBadge(text = status.label, tone = status.tone(), round = true)
-    }
+    val labels = AmSyncLabels(
+        synced = ElementSyncStatus.Synced.label,
+        pending = ElementSyncStatus.Pending.label,
+        syncing = ElementSyncStatus.Syncing.label,
+        error = status.label,
+        dead = ElementSyncStatus.Dead.label,
+    )
+    AmSyncIndicator(
+        state = status.toAmSyncState(),
+        labels = labels,
+        showWhenSynced = showWhenSynced,
+    )
 }
 
 /**

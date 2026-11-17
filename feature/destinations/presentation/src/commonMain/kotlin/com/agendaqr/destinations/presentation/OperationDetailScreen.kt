@@ -190,6 +190,14 @@ internal fun OperationDetailScreen(
                 AmText(AppStrings.SinComprobanteAdjunto, color = AmColor.TextSecondary)
                 AmTextAction(label = AppStrings.attachReceiptNow, onClick = { viewModel.openUnassociatedForOperation(operation.id) })
             } else {
+                // X-01: insignia de evidencia reutilizable (icono + texto).
+                // El texto afirma solo la recepción del comprobante; nunca
+                // dinero verificado ni pago.
+                AmEvidenceBadge(
+                    text = AppStrings.receiptReceivedTitle,
+                    icon = AmIcons.Attachment,
+                    tone = AmTone.Success,
+                )
                 AmListBody {
                     for (receipt in state.operationComprobantes) {
                         // §12 V1.4: comprobante como fila con identidad

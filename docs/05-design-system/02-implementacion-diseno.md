@@ -77,6 +77,14 @@ lienzo blanco `AmColor.QrCanvas` en ambos temas y delega el brillo a la
 plataforma. La ruta de acceso en ≤2 toques y los efectos de pantalla siguen
 residiéndo en la capa feature, donde están verificados en Android.
 
+En las pantallas, `ElementSyncBadge` traduce el estado del dominio a
+`AmSyncState` y delega el render en `AmSyncIndicator`, conservando el copy de
+`ElementSyncStatus` y el reintento global de `AppStatusHost`. El detalle de
+operación usa `AmEvidenceBadge` cuando hay comprobantes asociados, sin
+introducir afirmaciones monetarias. El QR a pantalla completa continúa sobre
+`AmQrPreview` (lienzo blanco verificado en ambos temas) y los efectos de
+brillo siguen siendo `expect/actual` en la capa feature.
+
 ## 4. Reglas de pantalla
 
 - La capa feature compone SOLO componentes del sistema (`core:ui`); importar controles M3 en `feature/`, `shared/` o `androidApp/` es una fuga del sistema y falla el gate.
