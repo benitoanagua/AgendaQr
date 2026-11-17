@@ -76,7 +76,7 @@ el copy propio del vacío queda como decisión de producto pendiente.
 
 **Manifiesto (schema `agendaqr.captures/2`).** `build/captures/manifest.json`
 declara por entrada la pantalla de AgendaQr, el identificador de su
-pantalla de Stitch (ADR-0024; vacío para las superficies excluidas), estado,
+pantalla de Stitch (campo histórico, sin ADR asociado; vacío para las superficies excluidas), estado,
 tema, ancho, densidad, escala de fuente, dimensiones reales del bitmap,
 hash, si es obligatorio, el motivo de inclusión y el test de origen. Cuando
 hay capturas, el gate exige el manifiesto presente y sincronizado.
