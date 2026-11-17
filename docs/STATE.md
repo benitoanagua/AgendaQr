@@ -8,6 +8,12 @@
 Las puertas, sus comandos y la validación por plataforma están en
 [QUALITY.md](QUALITY.md).
 
+> Las filas visuales de §1 describen la implementación anterior a la adopción
+> de ADR-0025. La autoridad visual vigente es ADR-0025 y el contrato normativo
+> v7; la migración de `core/ui` está en curso y su resultado se registrará aquí
+> cuando las puertas lo verifiquen. iOS permanece **NO VERIFICADO** en este
+> entorno (sin macOS/Xcode).
+
 ## 1. Implementado y verificado
 
 | Área | Verificación |
@@ -45,9 +51,9 @@ Las puertas, sus comandos y la validación por plataforma están en
 | S07/S07-list/S12 y los detalles (destinationdetail/operationdetail) reconciliados con la especificación UX/UI vigente (spec V1.21) sin cambios de composición: ya responden a los diseños en lo verificable (segmentado, FAB, encabezado de mes, tags, hoja de opciones, contenido expandible/copiable, estadísticas del lote); los contratos de estas 5 superficies no tenían deriva | Robolectric de presentación (445 pruebas) + `verifyScreenContract` (19 superficies) |
 | Galería estricta por superficie (ADR-0007): 94 capturas — las 19 superficies y sus estados declarados a 360 dp claro/oscuro, subconjunto denso a 320 dp, raíces con `NavigationRail` a 720 dp (tablet), subconjunto a fuente 200 %; overlays (S08/S03) capturados como su ventana de diálogo; manifiesto `agendaqr.captures/3` con dimensiones reales y test de origen | `./gradlew captureGallery -Pagendaqr.capture=true` produce ambas galerías + manifiesto; `verifyScreenContract` valida esquema, dimensiones reales, duplicados y cobertura (94 capturas verificadas) |
 | S02 Añadir ajustado a la composición UX/UI vigente (spec V1.17): héroe centrado y grupo único de métodos en orden de jerarquía declarada (Galería → Cámara → Archivo), divisores correctos vía parámetro en los controles de importación | Robolectric de presentación (`ScreensA11yCoverageTest.s02_action_order_follows_declared_hierarchy`, `S02UiPolishTest`) + compilación de los tres targets (controles expect/actual) |
-| Dirección visual TDesign Mobile 0.2.7 (ADR-0023): tokens, componentes, acciones de Inicio, escala tipográfica, elevación, movimiento y pulsación | gate del design system + Robolectric de presentación + verificación de layout (escenarios 320 dp, escala de fuente 200 % y estados de botones); revisión en dispositivo real pendiente y declarada como no verificada |
+| Dirección visual anterior TDesign Mobile 0.2.7 (ADR-0023; estado previo a ADR-0025): tokens, componentes, acciones de Inicio, escala tipográfica, elevación, movimiento y pulsación | gate del design system + Robolectric de presentación + verificación de layout (escenarios 320 dp, escala de fuente 200 % y estados de botones); revisión en dispositivo real pendiente y declarada como no verificada |
 | Contrato de interacción por pantalla (19 superficies: ruta real, destinos válidos, estados, gestos, componentes, pruebas con señal de accesibilidad y escenarios de captura) | `verifyScreenContract` + `verifyScreenContractFixtures` (dentro de `verifyAgendaQrArchitecture`): cruza el contrato con `AppRoute`/rutas de flujo, archivos, símbolos de `core/ui`, claves de `AppStrings`, pruebas y el documento generado |
-| Pulsación fiel a TDesign en botones, celdas, tarjetas y acciones de diálogo (color activo, sin ripple) | `:core:ui:testDebugUnitTest`; desviación D-11 para el resto de superficies |
+| Pulsación anterior fiel a TDesign en botones, celdas, tarjetas y acciones de diálogo (color activo, sin ripple; estado previo a ADR-0025) | `:core:ui:testDebugUnitTest`; desviación D-11 para el resto de superficies |
 
 ## 2. Implementado pero NO VERIFICADO en este entorno
 

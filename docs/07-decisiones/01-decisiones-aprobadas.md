@@ -94,8 +94,12 @@ En el momento de su aprobación, D-18 definió una identidad visual propia de Ag
 
 ADR-0022 fue la autoridad visual desde su aprobación hasta ADR-0023. Su dirección, valores y anexos se conservan únicamente como historia; no implementarlos como contrato actual.
 
-## D-20 — Adopción fiel de TDesign Mobile (ADR-0023)
+## D-20 — Adopción fiel de TDesign Mobile (ADR-0023, histórica)
 
-`tdesign_flutter@0.2.7` es la autoridad de tokens, componentes, medidas, estados y accesibilidad. Sus valores se implementan en `core/ui`, sin añadir TDesign Flutter como dependencia de ejecución. La especificación UX/UI V1.13 delimita las composiciones autorizadas; reglas de negocio, copy y accesibilidad siguen congelados. Las desviaciones autorizadas están enumeradas en ADR-0023.
+`tdesign_flutter@0.2.7` fue la autoridad de tokens, componentes, medidas, estados y accesibilidad. Sus valores se implementan en `core/ui`, sin añadir TDesign Flutter como dependencia de ejecución. La especificación UX/UI V1.13 delimita las composiciones autorizadas; reglas de negocio, copy y accesibilidad siguen congelados. Las desviaciones autorizadas están enumeradas en ADR-0023.
 
 La especificación UX/UI vigente define las composiciones autorizadas. Cualquier cambio de intención, navegación, jerarquía de acciones, back stack o gestos requiere una decisión de producto documentada y actualización coordinada del contrato, el código y las pruebas.
+
+## D-21 — Adopción del sistema visual ADR-0025 (vigente)
+
+El sistema visual normativo es el adoptado en ADR-0025 y se gobierna por el contrato normativo v7 y su instantánea versionada. Sustituye a D-20 como autoridad de tokens, componentes, medidas, estados y accesibilidad, preservando el contrato funcional congelado de la especificación UX/UI. El riesgo legal de la licencia de la fuente de valores está aceptado y documentado en ADR-0025.

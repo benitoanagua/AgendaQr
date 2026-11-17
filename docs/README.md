@@ -7,7 +7,7 @@
 | Documento | Contenido |
 |---|---|
 | [`AUDITORIA-INICIAL-UI.md`](AUDITORIA-INICIAL-UI.md) | Auditoría inicial de `core/ui`, documentación y valores visuales |
-| [`CLEANUP-SUMMARY.md`](CLEANUP-SUMMARY.md) | Resultado del inventario de consolidación UI/UX del 2026-10-17 |
+| [`CLEANUP-SUMMARY.md`](CLEANUP-SUMMARY.md) | Instantánea histórica (no normativa) de la consolidación UI/UX del 2026-10-17 |
 | [`PRODUCT.md`](PRODUCT.md) | Producto, alcance, límites, requisitos, dominio y exclusiones de V1 |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Módulos, fuentes de verdad, local-first, identidad local, Supabase, sync y hosts |
 | [`QUALITY.md`](QUALITY.md) | Estrategia de pruebas, suite de estados/eventos, puertas y validación |
@@ -24,15 +24,16 @@
 | [`04-ux/04-capacidades-y-comportamientos.md`](04-ux/04-capacidades-y-comportamientos.md) | Capacidades y comportamientos |
 | [`04-ux/05-guia-de-voz.md`](04-ux/05-guia-de-voz.md) | Guía de voz (tuteo) |
 
-## Sistema de diseño (TDesign Mobile)
+## Sistema de diseño (Polaris reimplementado en Kotlin)
 
 | Documento | Contenido |
 |---|---|
-| [`05-design-system/00-contrato-normativo-diseno.md`](05-design-system/00-contrato-normativo-diseno.md) | Contrato normativo (fuente única) |
-| [`05-design-system/02-implementacion-diseno.md`](05-design-system/02-implementacion-diseno.md) | Reglas de implementación |
-| [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros |
-| [`05-design-system/07-evaluacion-tipografia.md`](05-design-system/07-evaluacion-tipografia.md) | Evaluación de la tipografía candidata MiSans Global (no adoptada) |
-| [`05-design-system/08-referencia-super-app.md`](05-design-system/08-referencia-super-app.md) | Referencia histórica Super-App (suplantada por ADR-0023) |
+| [`05-design-system/00-contrato-normativo-diseno.md`](05-design-system/00-contrato-normativo-diseno.md) | Contrato normativo único: fuente, tokens, extensiones y desviaciones |
+| [`05-design-system/09-instantanea-tokens-polaris-9.4.2.md`](05-design-system/09-instantanea-tokens-polaris-9.4.2.md) | Instantánea versionada de valores Polaris 9.4.2 |
+| [`05-design-system/02-implementacion-diseno.md`](05-design-system/02-implementacion-diseno.md) | Reglas de implementación (histórico; pendiente de alineación) |
+| [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros (pendiente de alineación) |
+| [`05-design-system/07-evaluacion-tipografia.md`](05-design-system/07-evaluacion-tipografia.md) | Evaluación histórica de MiSans Global (no adoptada) |
+| [`05-design-system/08-referencia-super-app.md`](05-design-system/08-referencia-super-app.md) | Referencia histórica Super-App (sin autoridad) |
 
 ## Decisiones
 
@@ -55,10 +56,11 @@
 | [`07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md`](07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md) | ADR histórico: alineación con Ant Design Mobile 5.43.0 (suplantada por ADR-0020 y ADR-0021) |
 | [`07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md`](07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md) | ADR: correcciones UX de captura rápida (enmienda ADR-0016 y la congelación UX en su alcance) |
 | [`07-decisiones/ADR-0019-enmienda-v1-9-inicio-vacio.md`](07-decisiones/ADR-0019-enmienda-v1-9-inicio-vacio.md) | ADR: enmienda V1.9 inicio vacío y separadores oscuros |
-| [`07-decisiones/ADR-0020-identidad-visual-agendaqr.md`](07-decisiones/ADR-0020-identidad-visual-agendaqr.md) | ADR histórico: identidad visual AgendaQr (suplantado por ADR-0023) |
-| [`07-decisiones/ADR-0021-referencias-apps-chinas-por-pantalla.md`](07-decisiones/ADR-0021-referencias-apps-chinas-por-pantalla.md) | ADR histórico: referencias por pantalla y auditoría de brecha (suplantado por ADR-0023) |
-| [`07-decisiones/ADR-0022-direccion-visual-super-app.md`](07-decisiones/ADR-0022-direccion-visual-super-app.md) | ADR histórico: Super-App (suplantado por ADR-0023) |
-| [`07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md`](07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md) | ADR: adopción fiel de TDesign Mobile (autoridad de tokens y componentes vigente) |
+| [`07-decisiones/ADR-0020-identidad-visual-agendaqr.md`](07-decisiones/ADR-0020-identidad-visual-agendaqr.md) | ADR histórico: identidad visual AgendaQr (suplantado; véase ADR-0025) |
+| [`07-decisiones/ADR-0021-referencias-apps-chinas-por-pantalla.md`](07-decisiones/ADR-0021-referencias-apps-chinas-por-pantalla.md) | ADR histórico: referencias por pantalla y auditoría de brecha (suplantado; véase ADR-0025) |
+| [`07-decisiones/ADR-0022-direccion-visual-super-app.md`](07-decisiones/ADR-0022-direccion-visual-super-app.md) | ADR histórico: Super-App (suplantado; véase ADR-0025) |
+| [`07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md`](07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md) | ADR histórico: TDesign Mobile (reemplazado) |
+| [`07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md`](07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md) | ADR: adopción del UI/UX de Polaris (autoridad visual vigente) |
 
 ## Cómo se mantiene
 

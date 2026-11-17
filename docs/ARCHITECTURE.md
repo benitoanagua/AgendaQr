@@ -45,14 +45,16 @@ ejecución real con Xcode.
 1. **Agenda QR — autoridad de producto.** Única fuente para producto,
    requisitos, dominio, alcance, decisiones y reglas de negocio. Cubre también
    el comportamiento funcional UX (contrato UX/UI V1 congelado).
-2. **Identidad visual propia de AgendaQr.** Define paleta, superficies, texto,
-   estados, radios, densidad, controles, iconografía y feedback, siguiendo
-   TDesign Mobile (`tdesign_flutter@0.2.7`) como fuente por pantalla. Android e
-   iOS definen las convenciones de navegación y comportamiento. El contrato
-   normativo es `docs/05-design-system/00-contrato-normativo-diseno.md`;
-   [ADR-0023](07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md) es la
-   autoridad visual vigente. Design systems previos (por ejemplo Ant Design
-   Mobile) no son referencia.
+2. **Sistema visual Polaris reimplementado en Kotlin.** Define paleta,
+   superficies, texto, estados, radios, densidad, controles, iconografía y
+   feedback a partir de `@shopify/polaris-tokens@9.4.2` y la documentación
+   oficial. Android e iOS definen las convenciones de navegación y
+   comportamiento. El contrato normativo es
+   `docs/05-design-system/00-contrato-normativo-diseno.md`;
+   [ADR-0025](07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md) es la autoridad
+   visual vigente. Los sistemas de diseño previos (Metro, Xauxa, agendas propios,
+   Ant Design Mobile, Super-App, TDesign) no son referencia. La identidad visual
+   anterior de AgendaQr, incluido su color de marca, deja de existir.
 3. **WaraWerse — referencia técnica.** Solo para Kotlin Multiplatform, Compose,
    modularización, Gradle/build logic y prácticas de testing. No introduce
    lógica de negocio.
