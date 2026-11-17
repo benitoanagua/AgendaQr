@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -19,181 +18,103 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import agendaqr.core.ui.generated.resources.Res
+import agendaqr.core.ui.generated.resources.inter_bold
+import agendaqr.core.ui.generated.resources.inter_medium
+import agendaqr.core.ui.generated.resources.inter_regular
+import agendaqr.core.ui.generated.resources.inter_semi_bold
+import org.jetbrains.compose.resources.Font
 import kotlin.math.pow
 
 /**
- * Tokens de `tdesign_flutter@0.2.7` (`lib/src/theme/td_default_theme.dart`).
- * Las primitivas permanecen internas; los
- * consumidores usan roles semánticos y [AmTheme] solo los adapta a M3.
+ * Capa de tokens del sistema visual. Los valores primitivos son una
+ * transcripción de `docs/05-design-system/09-instantanea-tokens-polaris-9.4.2.md`
+ * (tarball `@shopify/polaris-tokens@9.4.2`, capturado el 2026-11-17).
+ *
+ * Reglas de esta capa:
+ * - Es el ÚNICO archivo de producción autorizado a contener literales
+ *   visuales (hex, dp, sp, pesos, radios, duraciones, alfas).
+ * - Las primitivas son internas; los consumidores usan [AmColorScheme],
+ *   [AmColor], [AmSpacing], [AmMetrics], [AmType], [AmMotion] y [AmElevation].
+ * - Las derivaciones necesarias para móvil,tema oscuro y accesibilidad están
+ *   gobernadas por D-01, D-02, D-07, X-05 y X-06 del contrato normativo.
+ * - No se usa ningún nombre, logotipo ni marca del sistema de origen en el
+ *   producto; las referencias son solo de ingeniería.
  */
 internal object AmPalette {
-    val lightBrand = listOf(
-        0xFFF2F3FF, 0xFFD9E1FF, 0xFFB5C7FF, 0xFF8EABFF, 0xFF618DFF,
-        0xFF366EF4, 0xFF0052D9, 0xFF003CAB, 0xFF002A7C, 0xFF001A57,
-    ).map(::Color)
-    val darkBrand = listOf(
-        0xFF1B2F51, 0xFF173463, 0xFF143975, 0xFF103D88, 0xFF0D429A,
-        0xFF054BBE, 0xFF2667D4, 0xFF4582E6, 0xFF699EF5, 0xFF96BBF8,
-    ).map(::Color)
-    val lightWarningScale = listOf(
-        0xFFFFF1E9, 0xFFFFD9C2, 0xFFFFB98C, 0xFFFA9550, 0xFFE37318,
-        0xFFBE5A00, 0xFF954500, 0xFF713300, 0xFF532300, 0xFF3B1700,
-    ).map(::Color)
-    val darkWarningScale = listOf(
-        0xFF4F2A1D, 0xFF582F21, 0xFF733C23, 0xFFA75D2B, 0xFFCF6E2D,
-        0xFFDC7633, 0xFFE8935C, 0xFFECBF91, 0xFFEED7BF, 0xFFF3E9DC,
-    ).map(::Color)
-    val lightErrorScale = listOf(
-        0xFFFFF0ED, 0xFFFFD8D2, 0xFFFFB9B0, 0xFFFF9285, 0xFFF6685D,
-        0xFFD54941, 0xFFAD352F, 0xFF881F1C, 0xFF68070A, 0xFF490002,
-    ).map(::Color)
-    val darkErrorScale = listOf(
-        0xFF472324, 0xFF5E2A2D, 0xFF703439, 0xFF83383E, 0xFFA03F46,
-        0xFFC64751, 0xFFDE6670, 0xFFEC888E, 0xFFEDB1B6, 0xFFEECED0,
-    ).map(::Color)
-    val lightSuccessScale = listOf(
-        0xFFE3F9E9, 0xFFC6F3D7, 0xFF92DAB2, 0xFF56C08D, 0xFF2BA471,
-        0xFF008858, 0xFF006C45, 0xFF005334, 0xFF003B23, 0xFF002515,
-    ).map(::Color)
-    val darkSuccessScale = listOf(
-        0xFF193A2A, 0xFF1A4230, 0xFF17533D, 0xFF0D7A55, 0xFF059465,
-        0xFF43AF8A, 0xFF46BF96, 0xFF80D2B6, 0xFFB4E1D3, 0xFFDEEDE8,
-    ).map(::Color)
-    val lightGray = listOf(
-        0xFFF3F3F3, 0xFFEEEEEE, 0xFFE8E8E8, 0xFFDDDDDD, 0xFFC6C6C6,
-        0xFFA6A6A6, 0xFF8B8B8B, 0xFF777777, 0xFF5E5E5E, 0xFF4B4B4B,
-        0xFF393939, 0xFF2C2C2C, 0xFF242424, 0xFF181818,
-    ).map(::Color)
-    val darkGray = listOf(
-        0xFFF3F3F3, 0xFFEEEEEE, 0xFFE8E8E8, 0xFFDDDDDD, 0xFFC6C6C6,
-        0xFFA6A6A6, 0xFF8B8B8B, 0xFF777777, 0xFF5E5E5E, 0xFF4B4B4B,
-        0xFF393939, 0xFF2C2C2C, 0xFF242424, 0xFF181818,
-    ).map(::Color)
+    // Escalas publicadas por el paquete de tokens (valores rgba de la instantánea).
+    val white = Color(0xFFFFFFFF)
+    val black = Color(0xFF000000)
+    val gray50 = Color(0xFFF1F1F1)
+    val gray100 = Color(0xFFEBEBEB)
+    val gray200 = Color(0xFFE3E3E3)
+    val gray300 = Color(0xFFD4D4D4)
+    val gray400 = Color(0xFFB5B5B5)
+    val gray500 = Color(0xFF8A8A8A)
+    val gray600 = Color(0xFF616161)
+    val gray700 = Color(0xFF4A4A4A)
+    val gray800 = Color(0xFF303030)
+    val gray900 = Color(0xFF1A1A1A)
+    /** `--p-color-text` claro y `--p-color-text` de `dark-experimental`. */
+    val lightText = gray800
+    val darkText = Color(0xFFE3E3E3)
 
-    /** `bgColorPage` = `grayColor2`. */
-    val lightBackground = lightGray[1]
-    val darkBackground = darkGray[13]
-    val lightSurface = Color.White
-    val darkSurface = darkGray[12]
-    /** `bgColorSecondaryContainer` = `grayColor1`. */
-    val lightSurfaceSecondary = lightGray[0]
-    val darkSurfaceSecondary = darkGray[11]
-    val lightSurfaceContainerLow = lightSurface
-    val darkSurfaceContainerLow = darkSurface
-    val lightSurfaceContainer = lightBackground
-    val darkSurfaceContainer = darkBackground
-    /** `bgColorComponent` = `grayColor3`. */
-    val lightSurfaceContainerHigh = lightGray[2]
-    val darkSurfaceContainerHigh = darkGray[10]
-    /** `bgColorSecondaryComponent` = `grayColor4`. */
-    val lightSurfaceContainerHighest = lightGray[3]
-    val darkSurfaceContainerHighest = darkGray[9]
-    /** `bgColorContainerActive` / `bgColorSecondaryContainer` (D-02 en oscuro). */
-    val lightSurfaceActive = lightGray[2]
-    val darkSurfaceActive = darkGray[11]
-    /** `bgColorComponentActive` = `grayColor6` / `grayColor9`. */
-    val lightComponentActive = lightGray[5]
-    val darkComponentActive = darkGray[8]
-    /** `componentBorderColor` = `grayColor4` / `grayColor9`. */
-    val lightBorder = lightGray[3]
-    val darkBorder = darkGray[8]
-    val lightFunctionalBorder = lightGray[6]
-    val darkFunctionalBorder = darkGray[7]
-    /** Divisor: paso gris de la escala (`grayColor3` / `grayColor11`). */
-    val lightDivider = lightGray[2]
-    val darkDivider = darkGray[10]
-    /** `textColorPrimary` = `fontGyColor1` / `fontWhColor1`. */
-    val lightText = Color(0xE5000000)
-    val darkText = Color(0xE5FFFFFF)
-    /** `textColorSecondary` = `fontGyColor2` / `fontWhColor2`. */
-    val lightTextSecondary = Color(0x99000000)
-    val darkTextSecondary = Color(0x8CFFFFFF)
-    /** `textColorPlaceholder`: escalado a un paso con contraste ≥4.5:1 (D-02). */
-    val lightTextPlaceholder = lightGray[8]
-    val darkTextPlaceholder = Color(0x8CFFFFFF)
-    /** `textDisabledColor` = `fontGyColor4` / `fontWhColor4` en tono sólido. */
-    val lightTextTertiary = lightGray[8]
-    val darkTextTertiary = darkGray[5]
-    /** `brandNormalColor`; en oscuro `brandColor7` por contraste (D-02). */
-    val lightAccent = lightBrand[6]
-    val darkAccent = darkBrand[6]
-    /** `brandActiveColor` = `brandColor8` / `brandColor9`. */
-    val lightAccentActive = lightBrand[7]
-    val darkAccentActive = darkBrand[8]
-    val lightAccentActiveContent = Color.White
-    val darkAccentActiveContent = darkBrand[0]
-    /** `brandDisabledColor` = `brandColor3`. */
-    val lightAccentDisabled = lightBrand[2]
-    val darkAccentDisabled = darkBrand[2]
-    /** `brandFocusColor` = `brandColor2`. */
-    val lightAccentFocus = lightBrand[1]
-    val darkAccentFocus = darkBrand[1]
-    /** `brandColorLightHover` = `brandColor2`. */
-    val lightAccentLightActive = lightBrand[1]
-    val darkAccentLightActive = darkBrand[1]
-    val lightOnAccent = Color.White
-    val darkOnAccent = Color.White
-    /** `textColorBrand`; en oscuro `brandColor9` por contraste (D-02). */
-    val lightAccentText = lightBrand[6]
-    val darkAccentText = darkBrand[8]
-    /** `brandLightColor` = `brandColor1`. */
-    val lightAccentContainer = lightBrand[0]
-    val darkAccentContainer = darkBrand[0]
-    /** `errorActiveColor` (D-02 en ambos temas). */
-    val lightDanger = lightErrorScale[6]
-    val darkDanger = darkErrorScale[7]
-    /** Relleno de peligro con texto claro: `errorColor7` / `errorColor6` (D-02). */
-    val lightDangerFill = lightErrorScale[6]
-    val darkDangerFill = darkErrorScale[5]
-    val lightDangerActive = lightErrorScale[7]
-    val darkDangerActive = darkErrorScale[5]
-    /** `errorDisabledColor` = `errorColor3`. */
-    val lightDangerDisabled = lightErrorScale[2]
-    val darkDangerDisabled = darkErrorScale[2]
-    /** `errorLightColor` = `errorColor1`. */
-    val lightDangerContainer = lightErrorScale[0]
-    val darkDangerContainer = darkErrorScale[0]
-    /** `successNormalColor` escalado por contraste (D-02). */
-    val lightSuccess = lightSuccessScale[6]
-    val darkSuccessText = darkSuccessScale[5]
-    val lightSuccessFill = lightSuccessScale[5]
-    val darkSuccessFill = darkSuccessScale[4]
-    val lightSuccessOnFill = Color.White
-    val darkSuccessOnFill = darkGray[13]
-    /** `successLightColor` = `successColor1`. */
-    val lightSuccessContainer = lightSuccessScale[0]
-    val darkSuccessContainer = darkSuccessScale[0]
-    /** `warningNormalColor` escalado por contraste (D-02). */
-    val lightWarning = lightWarningScale[6]
-    val darkWarningText = darkWarningScale[6]
-    val lightWarningFill = lightWarningScale[5]
-    val darkWarningFill = darkWarningScale[4]
-    val lightWarningOnFill = Color.White
-    val darkWarningOnFill = darkGray[13]
-    /** `warningLightColor` = `warningColor1`. */
-    val lightWarningContainer = lightWarningScale[0]
-    val darkWarningContainer = darkWarningScale[0]
-    /** `bgColorComponentDisabled` = `grayColor2` / `grayColor12`. */
-    val lightDisabled = lightGray[1]
-    val darkDisabled = darkGray[11]
-    /** `textDisabledColor` = `fontGyColor4` / `fontWhColor4`. */
-    val lightOnDisabled = Color(0x42000000)
-    val darkOnDisabled = Color(0x38FFFFFF)
-    val lightInverseSurface = lightGray[13]
-    val darkInverseSurface = darkGray[1]
-    val lightInverseOnSurface = Color.White
-    val darkInverseOnSurface = Color(0xE6000000)
-    val lightFocus = lightBrand[6]
-    val darkFocus = darkBrand[8]
-    val lightInfoContainer = lightBrand[0]
-    val darkInfoContainer = darkBrand[0]
-    val lightScrim = Color(0x99000000)
-    val darkScrim = Color(0x66000000)
-    /** Lienzo del QR: blanco en ambos temas para preservar su escaneabilidad. */
-    val qrCanvas = Color.White
+    val emphasis = Color(0xFF005BDB)
+    val emphasisHover = Color(0xFF004299)
+    val emphasisActive = Color(0xFF002E6A)
+    val emphasisSurface = Color(0xFFF0F2FF)
+    val emphasisSurfaceHover = Color(0xFFEAEDFF)
+    val emphasisOnFill = Color(0xFFFCFDFF)
+
+    val info = Color(0xFF003A5A)
+    val infoFill = Color(0xFF91D0FF)
+    val infoSurface = Color(0xFFEAF4FF)
+
+    val success = Color(0xFF014B40)
+    val successFill = Color(0xFF047B5D)
+    val successHover = Color(0xFF035E4C)
+    val successSurface = Color(0xFFCDFED4)
+    val successOnFill = Color(0xFFFAFFFB)
+
+    val warning = Color(0xFF5E4200)
+    val warningFill = Color(0xFFFFB800)
+    val warningSurface = Color(0xFFFFF1E3)
+    val warningOnFill = Color(0xFF251A00)
+
+    val critical = Color(0xFF8E0B21)
+    val criticalFill = Color(0xFFC70A24)
+    val criticalHover = Color(0xFFA30A24)
+    val criticalSurface = Color(0xFFFEE8EB)
+    val criticalBorder = Color(0xFFFEC1C7)
+    val criticalOnFill = Color(0xFFFFFAFB)
+
+    /** `--p-color-bg-surface-secondary` / `--p-color-bg-surface-tertiary`. */
+    val lightSurfaceSecondary = Color(0xFFF7F7F7)
+    val lightSurfaceTertiary = Color(0xFFF3F3F3)
+    val lightSurfaceActive = Color(0xFFF3F3F3)
+    val lightInputBorder = Color(0xFF8A8A8A)
+    val lightDisabledFill = Color(0x0D000000)
+    val lightScrim = Color(0xB5000000)
+
+    /** Derivaciones X-05 del tema oscuro: valores del propio tema publicado. */
+    val darkSurfaceSecondary = gray800
+    val darkSurfaceHover = Color(0xFF4A4A4A)
+    val darkSurfaceSelected = Color(0xFF616161)
+    val darkInputBorder = gray500
+    val darkDisabledFill = Color(0x1CFFFFFF)
+    val darkDisabledText = gray500
+    val darkTextOnBrandFill = gray800
+    val darkTextCritical = Color(0xFFFED1D7)
+    val darkTextSuccess = successSurface
+    val darkTextWarning = warningFill
+    val darkTextInfo = infoFill
+
+    /** X-03: el QR siempre negro sobre blanco, con independencia del tema. */
+    val qrCanvas = white
     val transparent = Color.Transparent
 }
 
+/** Roles semánticos completos; espejo de los 50 roles consumidos por el producto. */
 data class AmColorScheme(
     val background: Color,
     val surface: Color,
@@ -248,121 +169,133 @@ data class AmColorScheme(
 )
 
 val LightAmColorScheme = AmColorScheme(
-    background = AmPalette.lightBackground,
-    surface = AmPalette.lightSurface,
+    background = AmPalette.gray50,
+    surface = AmPalette.white,
     surfaceSecondary = AmPalette.lightSurfaceSecondary,
-    border = AmPalette.lightBorder,
-    functionalBorder = AmPalette.lightFunctionalBorder,
-    divider = AmPalette.lightDivider,
-    textPrimary = AmPalette.lightText,
-    textSecondary = AmPalette.lightTextSecondary,
-    textPlaceholder = AmPalette.lightTextPlaceholder,
-    textTertiary = AmPalette.lightTextTertiary,
-    accent = AmPalette.lightAccent,
-    accentActive = AmPalette.lightAccentActive,
-    accentDisabled = AmPalette.lightAccentDisabled,
-    accentFocus = AmPalette.lightAccentFocus,
-    accentLightActive = AmPalette.lightAccentLightActive,
-    onAccent = AmPalette.lightOnAccent,
-    accentContainer = AmPalette.lightAccentContainer,
-    onAccentContainer = AmPalette.lightAccentText,
-    accentText = AmPalette.lightAccentText,
-    danger = AmPalette.lightDanger,
-    dangerFill = AmPalette.lightDangerFill,
-    onDanger = Color.White,
-    dangerContainer = AmPalette.lightDangerContainer,
-    success = AmPalette.lightSuccess,
-    successFill = AmPalette.lightSuccessFill,
-    onSuccessFill = AmPalette.lightSuccessOnFill,
-    successContainer = AmPalette.lightSuccessContainer,
-    warning = AmPalette.lightWarning,
-    warningFill = AmPalette.lightWarningFill,
-    onWarningFill = AmPalette.lightWarningOnFill,
-    warningContainer = AmPalette.lightWarningContainer,
-    info = AmPalette.lightAccentText,
-    infoContainer = AmPalette.lightInfoContainer,
-    focus = AmPalette.lightFocus,
-    disabled = AmPalette.lightDisabled,
-    onDisabled = AmPalette.lightOnDisabled,
-    inverseSurface = AmPalette.lightInverseSurface,
-    inverseOnSurface = AmPalette.lightInverseOnSurface,
+    border = AmPalette.gray200,
+    functionalBorder = AmPalette.lightInputBorder,
+    divider = AmPalette.gray200,
+    textPrimary = AmPalette.gray800,
+    textSecondary = AmPalette.gray600,
+    // D-02: el placeholder publicado no llega a AA; se usa el rol secundario.
+    textPlaceholder = AmPalette.gray600,
+    textTertiary = AmPalette.gray600,
+    accent = AmPalette.emphasis,
+    accentActive = AmPalette.emphasisHover,
+    accentDisabled = AmPalette.gray400,
+    accentFocus = AmPalette.emphasis,
+    accentLightActive = AmPalette.emphasisSurfaceHover,
+    onAccent = AmPalette.emphasisOnFill,
+    accentContainer = AmPalette.emphasisSurface,
+    onAccentContainer = AmPalette.emphasis,
+    accentText = AmPalette.emphasis,
+    danger = AmPalette.critical,
+    dangerFill = AmPalette.criticalFill,
+    onDanger = AmPalette.criticalOnFill,
+    dangerContainer = AmPalette.criticalSurface,
+    success = AmPalette.success,
+    successFill = AmPalette.successFill,
+    onSuccessFill = AmPalette.successOnFill,
+    successContainer = AmPalette.successSurface,
+    warning = AmPalette.warning,
+    warningFill = AmPalette.warningFill,
+    onWarningFill = AmPalette.warningOnFill,
+    warningContainer = AmPalette.warningSurface,
+    info = AmPalette.info,
+    infoContainer = AmPalette.infoSurface,
+    focus = AmPalette.emphasis,
+    disabled = AmPalette.lightDisabledFill,
+    onDisabled = AmPalette.gray400,
+    inverseSurface = AmPalette.gray800,
+    inverseOnSurface = AmPalette.darkText,
     scrim = AmPalette.lightScrim,
     qrCanvas = AmPalette.qrCanvas,
-    surfaceContainerLow = AmPalette.lightSurfaceContainerLow,
-    surfaceContainer = AmPalette.lightSurfaceContainer,
-    surfaceContainerHigh = AmPalette.lightSurfaceContainerHigh,
-    surfaceContainerHighest = AmPalette.lightSurfaceContainerHighest,
+    surfaceContainerLow = AmPalette.white,
+    surfaceContainer = AmPalette.lightSurfaceSecondary,
+    surfaceContainerHigh = AmPalette.gray50,
+    surfaceContainerHighest = AmPalette.gray100,
     surfaceActive = AmPalette.lightSurfaceActive,
-    componentActive = AmPalette.lightComponentActive,
-    accentActiveContent = AmPalette.lightAccentActiveContent,
-    dangerActive = AmPalette.lightDangerActive,
-    dangerDisabled = AmPalette.lightDangerDisabled,
+    componentActive = AmPalette.lightSurfaceSecondary,
+    accentActiveContent = AmPalette.emphasisOnFill,
+    dangerActive = AmPalette.criticalHover,
+    dangerDisabled = AmPalette.criticalBorder,
     transparent = AmPalette.transparent,
 )
 
 val DarkAmColorScheme = AmColorScheme(
-    background = AmPalette.darkBackground,
-    surface = AmPalette.darkSurface,
+    background = AmPalette.gray900,
+    surface = AmPalette.gray800,
     surfaceSecondary = AmPalette.darkSurfaceSecondary,
-    border = AmPalette.darkBorder,
-    functionalBorder = AmPalette.darkFunctionalBorder,
-    divider = AmPalette.darkDivider,
+    border = AmPalette.darkSurfaceHover,
+    functionalBorder = AmPalette.darkInputBorder,
+    divider = AmPalette.darkSurfaceHover,
     textPrimary = AmPalette.darkText,
-    textSecondary = AmPalette.darkTextSecondary,
-    textPlaceholder = AmPalette.darkTextPlaceholder,
-    textTertiary = AmPalette.darkTextTertiary,
-    accent = AmPalette.darkAccent,
-    accentActive = AmPalette.darkAccentActive,
-    accentDisabled = AmPalette.darkAccentDisabled,
-    accentFocus = AmPalette.darkAccentFocus,
-    accentLightActive = AmPalette.darkAccentLightActive,
-    onAccent = AmPalette.darkOnAccent,
-    accentContainer = AmPalette.darkAccentContainer,
-    onAccentContainer = AmPalette.darkAccentText,
-    accentText = AmPalette.darkAccentText,
-    danger = AmPalette.darkDanger,
-    dangerFill = AmPalette.darkDangerFill,
-    onDanger = Color.White,
-    dangerContainer = AmPalette.darkDangerContainer,
-    success = AmPalette.darkSuccessText,
-    successFill = AmPalette.darkSuccessFill,
-    onSuccessFill = AmPalette.darkSuccessOnFill,
-    successContainer = AmPalette.darkSuccessContainer,
-    warning = AmPalette.darkWarningText,
-    warningFill = AmPalette.darkWarningFill,
-    onWarningFill = AmPalette.darkWarningOnFill,
-    warningContainer = AmPalette.darkWarningContainer,
-    info = AmPalette.darkAccentText,
-    infoContainer = AmPalette.darkInfoContainer,
-    focus = AmPalette.darkFocus,
-    disabled = AmPalette.darkDisabled,
-    onDisabled = AmPalette.darkOnDisabled,
-    inverseSurface = AmPalette.darkInverseSurface,
-    inverseOnSurface = AmPalette.darkInverseOnSurface,
-    scrim = AmPalette.darkScrim,
+    textSecondary = AmPalette.gray400,
+    textPlaceholder = AmPalette.gray400,
+    textTertiary = AmPalette.gray400,
+    accent = AmPalette.white,
+    accentActive = AmPalette.gray100,
+    accentDisabled = AmPalette.gray600,
+    accentFocus = AmPalette.darkTextInfo,
+    accentLightActive = AmPalette.darkSurfaceHover,
+    onAccent = AmPalette.darkTextOnBrandFill,
+    accentContainer = AmPalette.gray800,
+    onAccentContainer = AmPalette.darkTextInfo,
+    accentText = AmPalette.darkTextInfo,
+    danger = AmPalette.darkTextCritical,
+    dangerFill = AmPalette.criticalFill,
+    onDanger = AmPalette.criticalOnFill,
+    dangerContainer = AmPalette.gray800,
+    success = AmPalette.darkTextSuccess,
+    successFill = AmPalette.successFill,
+    onSuccessFill = AmPalette.successOnFill,
+    successContainer = AmPalette.gray800,
+    warning = AmPalette.darkTextWarning,
+    warningFill = AmPalette.warningFill,
+    onWarningFill = AmPalette.warningOnFill,
+    warningContainer = AmPalette.gray800,
+    info = AmPalette.darkTextInfo,
+    infoContainer = AmPalette.gray800,
+    focus = AmPalette.darkTextInfo,
+    disabled = AmPalette.darkDisabledFill,
+    onDisabled = AmPalette.darkDisabledText,
+    inverseSurface = AmPalette.gray50,
+    inverseOnSurface = AmPalette.gray900,
+    scrim = AmPalette.lightScrim,
     qrCanvas = AmPalette.qrCanvas,
-    surfaceContainerLow = AmPalette.darkSurfaceContainerLow,
-    surfaceContainer = AmPalette.darkSurfaceContainer,
-    surfaceContainerHigh = AmPalette.darkSurfaceContainerHigh,
-    surfaceContainerHighest = AmPalette.darkSurfaceContainerHighest,
-    surfaceActive = AmPalette.darkSurfaceActive,
-    componentActive = AmPalette.darkComponentActive,
-    accentActiveContent = AmPalette.darkAccentActiveContent,
-    dangerActive = AmPalette.darkDangerActive,
-    dangerDisabled = AmPalette.darkDangerDisabled,
+    surfaceContainerLow = AmPalette.gray900,
+    surfaceContainer = AmPalette.gray800,
+    surfaceContainerHigh = AmPalette.darkSurfaceHover,
+    surfaceContainerHighest = AmPalette.darkSurfaceSelected,
+    // D-02: #616161 deja `accentText` por debajo de AA; se usa el hover publicado.
+    surfaceActive = AmPalette.darkSurfaceHover,
+    componentActive = AmPalette.gray800,
+    accentActiveContent = AmPalette.darkTextOnBrandFill,
+    dangerActive = AmPalette.criticalHover,
+    dangerDisabled = AmPalette.critical,
     transparent = AmPalette.transparent,
 )
 
-// NOTA: el default del CompositionLocal es el esquema OSCURO. AmTheme
-// SIEMPRE proporciona el esquema real (claro u oscuro según el sistema);
-// este default solo afecta a composiciones sin AmTheme (tooling/previews).
+// El default del CompositionLocal es el esquema OSCURO: AmTheme siempre
+// proporciona el esquema real; este valor solo afecta a tooling sin AmTheme.
 val LocalAmColorScheme = compositionLocalOf { DarkAmColorScheme }
 
+/** Familia de la interfaz. Se resuelve dentro de la composición (recursos CMP). */
+val LocalAmFontFamily = compositionLocalOf<FontFamily> { FontFamily.Default }
+
 /**
- * Roles semánticos de color: la ÚNICA puerta de color del producto.
- * Ninguna pantalla introduce literales; los estados nunca dependen solo
- * del color (icono/texto por tono, contrato de accesibilidad).
+ * Carga los TTF estáticos de Inter (SIL OFL 1.1) distribuidos como recursos
+ * multiplataforma. Las cuatro fuentes son las que publica la release 4.0.
  */
+@Composable
+internal fun rememberAmInterFontFamily(): FontFamily = FontFamily(
+    Font(resource = Res.font.inter_regular, weight = AmWeight.Regular),
+    Font(resource = Res.font.inter_medium, weight = AmWeight.Medium),
+    Font(resource = Res.font.inter_semi_bold, weight = AmWeight.SemiBold),
+    Font(resource = Res.font.inter_bold, weight = AmWeight.Bold),
+)
+
+/** Única puerta de color del producto; ningún componente introduce literales. */
 object AmColor {
     val Background: Color @Composable get() = LocalAmColorScheme.current.background
     val Surface: Color @Composable get() = LocalAmColorScheme.current.surface
@@ -405,21 +338,23 @@ object AmColor {
     val ComponentActive: Color @Composable get() = LocalAmColorScheme.current.componentActive
     val AccentActiveContent: Color @Composable get() = LocalAmColorScheme.current.accentActiveContent
     val SurfaceContainerLow: Color @Composable get() = LocalAmColorScheme.current.surfaceContainerLow
+    val SurfaceContainer: Color @Composable get() = LocalAmColorScheme.current.surfaceContainer
     val InverseSurface: Color @Composable get() = LocalAmColorScheme.current.inverseSurface
     val InverseOnSurface: Color @Composable get() = LocalAmColorScheme.current.inverseOnSurface
     val Focus: Color @Composable get() = LocalAmColorScheme.current.focus
     val Disabled: Color @Composable get() = LocalAmColorScheme.current.disabled
     val OnDisabled: Color @Composable get() = LocalAmColorScheme.current.onDisabled
     val QrCanvas: Color @Composable get() = LocalAmColorScheme.current.qrCanvas
+    val Scrim: Color @Composable get() = LocalAmColorScheme.current.scrim
     val Transparent: Color = Color.Transparent
 }
 
-/** Pasos de `spacer4..spacer160` de `td_default_theme.dart`. */
+/** Escala `space` publicada, interpretada como dp (D-01: 1rem = 16dp). */
 object AmSpacing {
     val None = 0.dp
-    val Xs = 4.dp
-    val Sm = 8.dp
-    val Md = 12.dp
+    val Xs = 2.dp
+    val Sm = 4.dp
+    val Md = 8.dp
     val Lg = 16.dp
     val Xl = 24.dp
     val Xxl = 32.dp
@@ -428,111 +363,58 @@ object AmSpacing {
     val ScreenMargin = 16.dp
 }
 
-/**
- * Métricas semánticas de interacción y composición (contrato §metría).
- */
+/** Métricas de interacción y composición (D-02 para la escala táctil). */
 object AmMetrics {
     val Border = 1.dp
-    /** Grosor de divisor (`height` de `TDDivider`). */
-    val DividerHeight = 0.5.dp
-    /** Borde fuerte FUNCIONAL (marco del encuadre del scanner). */
-    val BorderStrong = 3.dp
-    /** Área táctil mínima (accesibilidad, invariante del gate). */
+    val DividerHeight = 1.dp
+    val BorderStrong = 4.dp
     val ControlMinSize = 48.dp
-    /** Altura VISUAL compacta de botones secundarios: la zona interactiva
-     * sigue siendo 48 dp (mandato de compactación: la superficie visible
-     * puede ser menor que el target). */
     val ButtonLargeHeight = 48.dp
     val ButtonCompactHeight = 40.dp
     val ButtonSmallHeight = 32.dp
-    val ButtonExtraSmallHeight = 28.dp
+    val ButtonExtraSmallHeight = 24.dp
     val ButtonLargeHorizontalPadding = 20.dp
     val ButtonMediumIconSize = 20.dp
-    /** Altura visual de píldoras/chips compactos. */
     val ChipCompactHeight = 32.dp
-    /** Altura visual compacta de entradas. */
     val FieldCompactHeight = 40.dp
-    /** Altura visual de la barra superior. */
     val TopBarHeight = 48.dp
-    /** Altura visual y objetivo de cada destino de la barra inferior
-     * (`TDBottomTabBar`). */
-    val NavBarHeight = 56.dp
-    /** Ancho del riel de navegación para ventanas amplias. */
+    val NavBarHeight = 64.dp
     val NavRailWidth = 80.dp
-    /** Ancho máximo del contenido en medium/expanded. */
     val ContentMaxWidth = 720.dp
     val QrPreviewSize = 240.dp
-    /** Lado del marco de revisión (S09): aprovecha el ancho disponible sin
-     * deformar el código (siempre 1:1). */
     val QrReviewSize = 320.dp
-    /** Tamaño de icono estándar de acciones y filas. */
     val IconSize = 24.dp
-    /** Icono compacto: segmentados, metadatos y ayudas (glifo acompaña,
-     * no domina, la etiqueta de texto). */
-    val IconSizeCompact = 18.dp
-    /** Ancho de las mini-tarjetas del carrusel de favoritos. */
+    val IconSizeCompact = 20.dp
     val FavCardWidth = 184.dp
-    /** Lado de los puntos enmascarados del PIN (S00). */
     val PinDotSize = 12.dp
-    /** Inset del divisor de una celda respecto al borde del grupo. */
     val ListDividerInset = 16.dp
-    /** Alto mínimo de la cabecera de un grupo de celdas. */
-    val SectionHeaderHeight = 45.dp
-    /** Tamaño del indicador de pestaña. */
+    val SectionHeaderHeight = 48.dp
     val TabIndicatorWidth = 16.dp
-    val TabIndicatorHeight = 3.dp
-    /** Altura máxima de una lista dentro de un diálogo/hoja: alcanzable
-     * con scroll cuando es larga; por debajo mide su contenido. */
+    val TabIndicatorHeight = 4.dp
     val DialogListMaxHeight = 320.dp
-    /** Ancho mínimo del popup de un diálogo (Dialog de la referencia:
-     * 280 px → 280 dp). */
     val DialogMinWidth = 311.dp
-    /** Fracción del ancho disponible para diálogos en ventanas estrechas. */
     const val DialogMaxWidthFraction = 0.9f
-    /** Círculo tonal del glifo del estado vacío. */
     val EmptyStateGlyphSize = 96.dp
-    /** Glifo del resultado de un flujo completado (`TDResult`). */
-    val ResultGlyphSize = 70.dp
-    /** Contenedor del icono de una celda de acción rápida en Inicio. */
+    val ResultGlyphSize = 64.dp
     val GridIconContainerSize = 48.dp
-    /** Largo del trazo de las esquinas del encuadre del scanner. */
     val ScannerCornerLength = 24.dp
-    /** Insignia de contexto (M4): círculo de 40 dp, mismo tile que la
-     * marca tipada de las filas financieras. */
     val ContextBadgeSize = 40.dp
-    /** Espacio que el FAB necesita por encima de la barra inferior para no
-     * tapar el último elemento del contenido desplazable: alto real del FAB
-     * ([ControlMinSize]) + el margen del Scaffold ([AmSpacing.Lg]). Es un
-     * valor DERIVADO de componentes reales, no una constante a mano. */
     val FabClearance = ControlMinSize + AmSpacing.Lg
-    /** Ancho de fila a partir del cual el metadato final de la celda
-     * (`AmListRow` `endMeta`) comparte la línea del título; por debajo pasa
-     * a su propia línea para no comprimir el título en un teléfono angosto. */
     val ListRowEndMetaMinWidth = 320.dp
-    /** Escala de fuente del sistema a partir de la cual el metadato final
-     * pasa a su propia línea (el texto grande nunca recorta el título). */
     const val ListRowEndMetaStackFontScale = 2f
 }
 
-/**
- * Radios `radiusSmall`, `radiusDefault`, `radiusLarge`, `radiusExtraLarge`
- * y `radiusRound` de `td_default_theme.dart`.
- */
+/** Escala `border-radius` publicada. */
 object AmRadius {
-    val ExtraSmall = 3.dp
-    val Small = 6.dp
-    val Medium = 9.dp
+    val ExtraSmall = 2.dp
+    val Small = 4.dp
+    val Medium = 8.dp
     val Large = 12.dp
-    val ExtraLarge = 12.dp
-    val GridIcon = 6.dp
+    val ExtraLarge = 16.dp
+    val GridIcon = 8.dp
     val Round = 9999.dp
 }
 
-/**
- * Conjunto de formas: [AmTheme] lo entrega a
- * `MaterialTheme.shapes` y los componentes envolventes fijan los radios
- * que M3 no mapea por rol (botones, campos, chips).
- */
 object AmShapes {
     val ExtraSmall = RoundedCornerShape(AmRadius.ExtraSmall)
     val Small = RoundedCornerShape(AmRadius.Small)
@@ -543,17 +425,26 @@ object AmShapes {
     val Pill = RoundedCornerShape(AmRadius.Round)
 }
 
+/** Pesos `font-weight` publicados: la familia Inter estática cubre estos cortes. */
+object AmWeight {
+    val Regular = FontWeight(450)
+    val Medium = FontWeight(550)
+    val SemiBold = FontWeight(650)
+    val Bold = FontWeight(700)
+}
+
+/** Tamaños e interlineados de los roles `text-*` de la instantánea. */
 object AmType {
-    val Display: TextUnit = 64.sp
-    val DisplayMedium: TextUnit = 48.sp
+    val Display: TextUnit = 36.sp
+    val DisplayMedium: TextUnit = 40.sp
     val HeadlineLarge: TextUnit = 36.sp
-    val Headline: TextUnit = 28.sp
+    val Headline: TextUnit = 32.sp
     val HeadlineSmall: TextUnit = 24.sp
     val TitleLarge: TextUnit = 20.sp
     val Title: TextUnit = 18.sp
     val TitleMedium: TextUnit = 16.sp
     val TitleSmall: TextUnit = 14.sp
-    val Amount: TextUnit = 28.sp
+    val Amount: TextUnit = 30.sp
     val AmountSymbol: TextUnit = 14.sp
     val RowTitle: TextUnit = 16.sp
     val SectionHeader: TextUnit = 14.sp
@@ -561,216 +452,214 @@ object AmType {
     val Label: TextUnit = 16.sp
     val BodySmall: TextUnit = 12.sp
     val Caption: TextUnit = 12.sp
-    val CaptionSmall: TextUnit = 12.sp
+    val CaptionSmall: TextUnit = 11.sp
     val LineHeightLabel: TextUnit = 24.sp
-    val LineHeightDialog: TextUnit = 26.sp
-    val LineHeightBody: TextUnit = 22.sp
-    val LineHeightBodySmall: TextUnit = 20.sp
-    val LineHeightCaption: TextUnit = 20.sp
-    val LineHeightSection: TextUnit = 24.sp
-    val LineAmount: TextUnit = 36.sp
+    val LineHeightDialog: TextUnit = 28.sp
+    val LineHeightBody: TextUnit = 20.sp
+    val LineHeightBodySmall: TextUnit = 16.sp
+    val LineHeightCaption: TextUnit = 16.sp
+    val LineHeightSection: TextUnit = 20.sp
+    val LineAmount: TextUnit = 40.sp
     val LineAmountSymbol: TextUnit = 20.sp
     val LineHeightRowTitle: TextUnit = 24.sp
-    val LineHeightHeadlineLarge: TextUnit = 44.sp
-    val LineHeightHeadlineMedium: TextUnit = 36.sp
+    val LineHeightHeadlineLarge: TextUnit = 48.sp
+    val LineHeightHeadlineMedium: TextUnit = 40.sp
     val LineHeightHeadlineSmall: TextUnit = 32.sp
-    val LineHeightTitleLarge: TextUnit = 28.sp
-    val LineHeightTitleMedium: TextUnit = 24.sp
-    val LineHeightTitleSmall: TextUnit = 22.sp
-    val LineHeightLabelSmall: TextUnit = 20.sp
-    val FamilyUi: FontFamily = FontFamily.Default
+    val LineHeightTitleLarge: TextUnit = 24.sp
+    val LineHeightTitleMedium: TextUnit = 20.sp
+    val LineHeightTitleSmall: TextUnit = 20.sp
+    val LineHeightLabelSmall: TextUnit = 16.sp
+
+    /** Familia efectiva de la interfaz (Inter dentro de [AmTheme]). */
+    val FamilyUi: FontFamily @Composable get() = LocalAmFontFamily.current
 }
 
+/** `font-letter-spacing` publicado, en sp. */
 object AmTracking {
-    val TitleMedium: TextUnit = 0.sp
-    val TitleSmall: TextUnit = 0.sp
-    val BodyLarge: TextUnit = 0.sp
-    val BodyMedium: TextUnit = 0.sp
-    val BodySmall: TextUnit = 0.sp
-    val LabelLarge: TextUnit = 0.sp
-    val LabelMedium: TextUnit = 0.sp
-    val LabelSmall: TextUnit = 0.sp
-    val ButtonLabel: TextUnit = 0.sp
+    val Densest: TextUnit = (-0.54).sp
+    val Denser: TextUnit = (-0.3).sp
+    val Dense: TextUnit = (-0.2).sp
+    val Normal: TextUnit = 0.sp
+    val TitleMedium: TextUnit = Normal
+    val TitleSmall: TextUnit = Normal
+    val BodyLarge: TextUnit = Normal
+    val BodyMedium: TextUnit = Normal
+    val BodySmall: TextUnit = Normal
+    val LabelLarge: TextUnit = Normal
+    val LabelMedium: TextUnit = Normal
+    val LabelSmall: TextUnit = Normal
+    val ButtonLabel: TextUnit = Normal
 }
 
-/**
- * Tipografía Material 3: [AmTheme] la entrega a
- * `MaterialTheme(typography = …)` y cada componente M3 hereda la misma
- * familia y tamaños.
- */
+/** Tipografía M3: adaptador de tipos; no aporta valores visuales propios. */
 val AmMaterialTypography: Typography = Typography(
     headlineLarge = TextStyle(
         fontSize = AmType.HeadlineLarge,
         lineHeight = AmType.LineHeightHeadlineLarge,
-        fontWeight = FontWeight.SemiBold,
-        fontFamily = AmType.FamilyUi,
+        fontWeight = AmWeight.Bold,
+        letterSpacing = AmTracking.Densest,
     ),
     headlineMedium = TextStyle(
         fontSize = AmType.Headline,
         lineHeight = AmType.LineHeightHeadlineMedium,
-        fontWeight = FontWeight.SemiBold,
-        fontFamily = AmType.FamilyUi,
+        fontWeight = AmWeight.Bold,
+        letterSpacing = AmTracking.Denser,
     ),
     headlineSmall = TextStyle(
         fontSize = AmType.HeadlineSmall,
         lineHeight = AmType.LineHeightHeadlineSmall,
-        fontWeight = FontWeight.SemiBold,
-        fontFamily = AmType.FamilyUi,
+        fontWeight = AmWeight.Bold,
+        letterSpacing = AmTracking.Dense,
     ),
     titleLarge = TextStyle(
         fontSize = AmType.TitleLarge,
         lineHeight = AmType.LineHeightTitleLarge,
-        fontWeight = FontWeight.SemiBold,
-        fontFamily = AmType.FamilyUi,
+        fontWeight = AmWeight.SemiBold,
+        letterSpacing = AmTracking.Dense,
     ),
     titleMedium = TextStyle(
         fontSize = AmType.TitleMedium,
         lineHeight = AmType.LineHeightTitleMedium,
+        fontWeight = AmWeight.SemiBold,
         letterSpacing = AmTracking.TitleMedium,
-        fontWeight = FontWeight.SemiBold,
-        fontFamily = AmType.FamilyUi,
     ),
     titleSmall = TextStyle(
         fontSize = AmType.TitleSmall,
         lineHeight = AmType.LineHeightTitleSmall,
+        fontWeight = AmWeight.SemiBold,
         letterSpacing = AmTracking.TitleSmall,
-        fontWeight = FontWeight.SemiBold,
-        fontFamily = AmType.FamilyUi,
     ),
     bodyLarge = TextStyle(
         fontSize = AmType.Label,
         lineHeight = AmType.LineHeightLabel,
+        fontWeight = AmWeight.Regular,
         letterSpacing = AmTracking.BodyLarge,
-        fontFamily = AmType.FamilyUi,
     ),
     bodyMedium = TextStyle(
         fontSize = AmType.Body,
         lineHeight = AmType.LineHeightBody,
+        fontWeight = AmWeight.Regular,
         letterSpacing = AmTracking.BodyMedium,
-        fontFamily = AmType.FamilyUi,
     ),
     bodySmall = TextStyle(
         fontSize = AmType.BodySmall,
         lineHeight = AmType.LineHeightBodySmall,
+        fontWeight = AmWeight.Regular,
         letterSpacing = AmTracking.BodySmall,
-        fontFamily = AmType.FamilyUi,
     ),
     labelLarge = TextStyle(
         fontSize = AmType.Label,
         lineHeight = AmType.LineHeightLabel,
+        fontWeight = AmWeight.SemiBold,
         letterSpacing = AmTracking.LabelLarge,
-        fontWeight = FontWeight.SemiBold,
-        fontFamily = AmType.FamilyUi,
     ),
     labelMedium = TextStyle(
         fontSize = AmType.Body,
         lineHeight = AmType.LineHeightBody,
+        fontWeight = AmWeight.SemiBold,
         letterSpacing = AmTracking.LabelMedium,
-        fontWeight = FontWeight.SemiBold,
-        fontFamily = AmType.FamilyUi,
     ),
     labelSmall = TextStyle(
         fontSize = AmType.BodySmall,
         lineHeight = AmType.LineHeightLabelSmall,
+        fontWeight = AmWeight.SemiBold,
         letterSpacing = AmTracking.LabelSmall,
-        fontWeight = FontWeight.SemiBold,
-        fontFamily = AmType.FamilyUi,
     ),
 )
 
-/**
- * Estilos tipográficos canónicos del sistema: reúnen fontSize, peso,
- * tracking e interlineado. Los componentes consumen estos estilos en
- * lugar de repetir tríos de tokens.
- */
+/** Sustituye la familia de todos los roles sin alterar su geometría. */
+internal fun Typography.withAmFontFamily(family: FontFamily): Typography = copy(
+    headlineLarge = headlineLarge.copy(fontFamily = family),
+    headlineMedium = headlineMedium.copy(fontFamily = family),
+    headlineSmall = headlineSmall.copy(fontFamily = family),
+    titleLarge = titleLarge.copy(fontFamily = family),
+    titleMedium = titleMedium.copy(fontFamily = family),
+    titleSmall = titleSmall.copy(fontFamily = family),
+    bodyLarge = bodyLarge.copy(fontFamily = family),
+    bodyMedium = bodyMedium.copy(fontFamily = family),
+    bodySmall = bodySmall.copy(fontFamily = family),
+    labelLarge = labelLarge.copy(fontFamily = family),
+    labelMedium = labelMedium.copy(fontFamily = family),
+    labelSmall = labelSmall.copy(fontFamily = family),
+)
+
+/** Estilos canónicos: reúnen tamaño, peso, tracking e interlineado. */
 object AmTextStyles {
     val ButtonLabel = TextStyle(
         fontSize = AmType.Label,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = AmWeight.SemiBold,
         letterSpacing = AmTracking.ButtonLabel,
         lineHeight = AmType.LineHeightLabel,
     )
-
-    /** Cuerpo de texto (mensajes, filas): 14/20 (Anexo Body 14/400). */
     val Body = TextStyle(
         fontSize = AmType.Body,
+        fontWeight = AmWeight.Regular,
         lineHeight = AmType.LineHeightBody,
     )
-
-    /** Etiqueta de acción de texto, contenido de modal y cápsula (14 sp). */
     val Label = TextStyle(
         fontSize = AmType.Label,
+        fontWeight = AmWeight.Regular,
         lineHeight = AmType.LineHeightLabel,
     )
-
-    /** Metadato/descripción (12 sp, Anexo Caption 12/400). */
     val BodySmall = TextStyle(
         fontSize = AmType.BodySmall,
+        fontWeight = AmWeight.Regular,
         lineHeight = AmType.LineHeightBodySmall,
     )
-
-    /** Título de fila y H2 (16 sp/600, Anexo H2). */
     val RowTitle = TextStyle(
         fontSize = AmType.RowTitle,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = AmWeight.SemiBold,
         lineHeight = AmType.LineHeightRowTitle,
     )
-
     val Amount = TextStyle(
         fontSize = AmType.Amount,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = AmWeight.SemiBold,
         lineHeight = AmType.LineAmount,
         fontFeatureSettings = "tnum",
     )
-
     val AmountSymbol = TextStyle(
         fontSize = AmType.AmountSymbol,
-        fontWeight = FontWeight.Bold,
+        fontWeight = AmWeight.Bold,
         lineHeight = AmType.LineAmountSymbol,
     )
-
-    /** Subtítulo/metadato de fila (texto secundario, 12 sp). */
     val Caption = TextStyle(
         fontSize = AmType.Caption,
+        fontWeight = AmWeight.Regular,
         lineHeight = AmType.LineHeightCaption,
     )
-
-    /** Etiqueta/insignia mínima (11 sp normal, Tag de la referencia). */
     val Tag = TextStyle(
         fontSize = AmType.CaptionSmall,
+        fontWeight = AmWeight.Regular,
         lineHeight = AmType.LineHeightLabelSmall,
     )
-
-    /** Texto de apoyo (errores, ayuda, badges) — rol labelMedium de M3. */
     val Support = TextStyle(
         fontSize = AmType.Caption,
+        fontWeight = AmWeight.Regular,
         letterSpacing = AmTracking.LabelMedium,
         lineHeight = AmType.LineHeightCaption,
     )
-
-    /** Cabecera de grupo de celdas: 14/22 regular sobre superficie secundaria. */
     val SectionHeader = TextStyle(
         fontSize = AmType.SectionHeader,
-        fontWeight = FontWeight.Normal,
-        lineHeight = AmType.LineHeightBody,
+        fontWeight = AmWeight.Regular,
+        lineHeight = AmType.LineHeightSection,
     )
-
     val Title = TextStyle(
         fontSize = AmType.Title,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = AmWeight.SemiBold,
+        letterSpacing = AmTracking.Dense,
         lineHeight = AmType.LineHeightDialog,
     )
 }
 
-
+/** Duraciones y curvas publicadas; los roles de producto son X-04. */
 object AmMotion {
-    const val DurationShortMs = 200
-    const val DurationMediumMs = 240
-    const val DurationLongMs = 280
     const val DurationReducedMs = 0
-    const val EasingControlX1 = 0.38f
-    const val EasingControlY1 = 0f
-    const val EasingControlX2 = 0.24f
+    const val DurationShortMs = 150
+    const val DurationMediumMs = 200
+    const val DurationLongMs = 250
+    const val EasingControlX1 = 0.25f
+    const val EasingControlY1 = 0.1f
+    const val EasingControlX2 = 0.25f
     const val EasingControlY2 = 1f
 
     object Easings {
@@ -780,23 +669,24 @@ object AmMotion {
             EasingControlX2,
             EasingControlY2,
         )
+        val In: Easing = CubicBezierEasing(0.42f, 0f, 1f, 1f)
+        val Out: Easing = CubicBezierEasing(0.19f, 0.91f, 0.38f, 1f)
+        val InOut: Easing = CubicBezierEasing(0.42f, 0f, 0.58f, 1f)
+        val Linear: Easing = CubicBezierEasing(0f, 0f, 1f, 1f)
     }
 }
 
-/**
- * Source shadows have multiple CSS layers. Compose keeps the largest-blur
- * layer; its blur radius is halved for elevation and its opacity is retained.
- */
+/** Sombras publicadas: se conserva el desenfoque y la opacidad de cada capa. */
 enum class AmElevation(
     val elevation: Dp,
     val lightAlpha: Float,
     val darkAlpha: Float,
 ) {
     None(0.dp, 0f, 0f),
-    Shadow1(5.dp, 0.05f, 0.08f),
-    Shadow2(7.dp, 0.05f, 0.10f),
-    Shadow3(15.dp, 0.05f, 0.12f),
-    Shadow4(4.dp, 0.06f, 0.06f),
+    Shadow1(1.dp, 0.07f, 0.07f),
+    Shadow2(3.dp, 0.07f, 0.07f),
+    Shadow3(6.dp, 0.20f, 0.20f),
+    Shadow4(16.dp, 0.22f, 0.22f),
 }
 
 @Composable
@@ -817,51 +707,32 @@ fun Modifier.amElevation(
     )
 }
 
-/**
- * Identidad de contexto: acento estable derivado de forma
- * determinista del identificador del contexto. [background] es el bloque
- * de identidad (marcador de fila, tinte de pestañas de S06) y
- * [onAccent] el único texto admitido sobre él. El par es fijo y
- * verificado (≥ 4.5:1) en ambos temas.
- */
+/** Identidad de contexto X-06: pares fijos de la instantánea, validados a AA. */
 data class AmAccent(val id: String, val background: Color, val onAccent: Color)
 
-/**
- * Paleta de identidad de contextos: 12 tonos contemporáneos de etiqueta
- * (no la paleta de acentos histórica) más el acento de marca AgendaQr. Cada par
- * está verificado por AmAccentTest; onAccent es siempre negro o blanco
- * puro para mantener los pares robustos en ambas plataformas.
- */
 object AmAccents {
-    val System = AmAccent("system", Color(0xFF245FE5), Color(0xFFFFFFFF))
+    val System = AmAccent("system", AmPalette.emphasis, AmPalette.white)
 
-    private val Blue = AmAccent("blue", Color(0xFF1D4ED8), Color(0xFFFFFFFF))
-    private val Sky = AmAccent("sky", Color(0xFF0369A1), Color(0xFFFFFFFF))
-    private val Teal = AmAccent("teal", Color(0xFF0F766E), Color(0xFFFFFFFF))
-    private val Cyan = AmAccent("cyan", Color(0xFF0E7490), Color(0xFFFFFFFF))
-    private val Emerald = AmAccent("emerald", Color(0xFF047857), Color(0xFFFFFFFF))
-    private val Green = AmAccent("green", Color(0xFF15803D), Color(0xFFFFFFFF))
-    private val Lime = AmAccent("lime", Color(0xFF4D7C0F), Color(0xFFFFFFFF))
-    private val Amber = AmAccent("amber", Color(0xFFA16207), Color(0xFFFFFFFF))
-    private val Orange = AmAccent("orange", Color(0xFFC2410C), Color(0xFFFFFFFF))
-    private val Red = AmAccent("red", Color(0xFFB91C1C), Color(0xFFFFFFFF))
-    private val Rose = AmAccent("rose", Color(0xFFBE123C), Color(0xFFFFFFFF))
-    private val Violet = AmAccent("violet", Color(0xFF6D28D9), Color(0xFFFFFFFF))
+    private val Blue = AmAccent("blue", AmPalette.emphasisHover, AmPalette.white)
+    private val Ink = AmAccent("ink", AmPalette.info, AmPalette.white)
+    private val Emerald = AmAccent("emerald", AmPalette.successFill, AmPalette.white)
+    private val Forest = AmAccent("forest", AmPalette.successHover, AmPalette.white)
+    private val Red = AmAccent("red", AmPalette.criticalFill, AmPalette.white)
+    private val Wine = AmAccent("wine", AmPalette.critical, AmPalette.white)
+    private val Violet = AmAccent("violet", Color(0xFF5700D1), AmPalette.white)
+    private val Indigo = AmAccent("indigo", Color(0xFF7126FF), AmPalette.white)
+    private val Magenta = AmAccent("magenta", Color(0xFFC530C5), AmPalette.white)
+    private val Sky = AmAccent("sky", AmPalette.infoFill, AmPalette.gray900)
+    private val Amber = AmAccent("amber", AmPalette.warningFill, AmPalette.gray900)
+    private val Lemon = AmAccent("lemon", Color(0xFFFFE600), AmPalette.gray900)
 
     val Admitted: List<AmAccent> = listOf(
-        Blue, Sky, Teal, Cyan, Emerald, Green,
-        Lime, Amber, Orange, Red, Rose, Violet,
+        Blue, Ink, Emerald, Forest, Red, Wine,
+        Violet, Indigo, Magenta, Sky, Amber, Lemon,
     )
 }
 
-/**
- * Acento por contexto, determinista e independiente de la plataforma.
- *
- * Hash propio FNV-1a (32 bits, sobre los bytes UTF-8 del identificador):
- * explícitamente NO `String.hashCode`, para que la asignación sea idéntica
- * en Android e iOS y no cambie entre ejecuciones. [contextId] nulo
- * devuelve el acento de sistema.
- */
+/** Hash FNV-1a sobre UTF-8: asignación idéntica en Android e iOS. */
 fun accentFor(contextId: String?): AmAccent {
     if (contextId == null) return AmAccents.System
     var hash: UInt = 0x811C9DC5u
@@ -871,12 +742,6 @@ fun accentFor(contextId: String?): AmAccent {
     }
     return AmAccents.Admitted[(hash % AmAccents.Admitted.size.toUInt()).toInt()]
 }
-
-// ---------------------------------------------------------------------------------
-// Matemática de contraste en la capa de tokens (accesibilidad): funciones
-// PURAS (no composable) que usan los componentes para decidir colores
-// legibles y los tests para fijar los umbrales.
-// ---------------------------------------------------------------------------------
 
 private fun linearChannel(channel: Float): Double {
     val c = channel.toDouble()
@@ -896,11 +761,6 @@ fun contrastRatio(a: Color, b: Color): Double {
     return (hi + 0.05) / (lo + 0.05)
 }
 
-/**
- * Este color usado como TEXTO sobre [background]: se devuelve tal cual si
- * cumple >= 4.5:1 (umbral de texto normal) y si no cae al [fallback]
- * legible. Los acentos de contexto marcan identidad con el bloque de
- * color, pero NUNCA como texto ilegible.
- */
+/** Texto legible sobre [background]; si falla AA, cae al [fallback]. */
 fun Color.asTextOn(background: Color, fallback: Color): Color =
     if (contrastRatio(this, background) >= 4.5) this else fallback

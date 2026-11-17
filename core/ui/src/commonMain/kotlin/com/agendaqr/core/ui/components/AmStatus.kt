@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import com.agendaqr.core.ui.theme.AmWeight
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmShapes
@@ -110,7 +111,7 @@ fun AmStatusBanner(
                     AmHeading(
                         text = it,
                         size = AmType.TitleMedium,
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = AmWeight.SemiBold,
                         color = foreground,
                     )
                 }
@@ -142,7 +143,7 @@ fun AmStatusBanner(
                     label = a.label,
                     onClick = a.onClick,
                     color = foreground,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = AmWeight.SemiBold,
                 )
             }
         }
@@ -253,7 +254,7 @@ fun AmEmptyState(
         }
         // Título de estado vacío (17 sp) distinto del título de pantalla
         // (18 sp): evita la misma jerarquía visual entre ambos.
-        AmHeading(text = title, size = AmType.Body, fontWeight = FontWeight.SemiBold)
+        AmHeading(text = title, size = AmType.Body, fontWeight = AmWeight.SemiBold)
         subtitle?.let { Text(it, color = AmColor.TextSecondary, fontSize = AmType.Label) }
         if (actionLabel != null && onAction != null) {
             AmPrimaryButton(actionLabel, onAction)

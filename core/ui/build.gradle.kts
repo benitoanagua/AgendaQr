@@ -23,6 +23,11 @@ kotlin {
             // (AmNavBar vs AmNavRail, contenido centrado con
             // ContentMaxWidth).
             implementation(libs.material3.window.size)
+            // Inter se distribuye como recurso multiplataforma (D-05): el
+            // generador produce Res.font.* en tiempo de compilación.
+            implementation(compose.components.resources)
+            // Previews de token en claro, oscuro y 200 % de fuente.
+            implementation(compose.components.uiToolingPreview)
         }
         androidUnitTest.dependencies {
             implementation(kotlin("test"))

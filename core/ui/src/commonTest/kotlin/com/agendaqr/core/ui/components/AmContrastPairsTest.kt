@@ -8,8 +8,8 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /**
- * `tdesign_flutter@0.2.7` state and brand contrasts, plus the unchanged
- * domain-specific context accent palette.
+ * Pares de estado y acento de `@shopify/polaris-tokens@9.4.2`, más la
+ * paleta de identidad de contextos validada en X-06.
  */
 class AmContrastPairsTest {
 

@@ -242,7 +242,7 @@ class AmUiPolishContractTest {
         }
         val style = layoutOf("Contexto de compras").layoutInput.style
         assertEquals(14.sp, style.fontSize)
-        assertEquals(22.sp, style.lineHeight)
+        assertEquals(20.sp, style.lineHeight)
     }
 
     @Test

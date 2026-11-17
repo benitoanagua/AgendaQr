@@ -6,8 +6,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Motion values declared in `AmMotion`; `tdesign_flutter@0.2.7` exposes no
- * motion tokens (D-10).
+ * Duraciones y curvas de `@shopify/polaris-tokens@9.4.2`. Los roles de
+ * producto son derivaciones documentadas (X-04).
  */
 class AmSurfaceMotionTest {
 
@@ -17,20 +17,20 @@ class AmSurfaceMotionTest {
     }
 
     @Test
-    fun durations_match_tdesign_mobile() {
-        assertEquals(200, AmMotion.DurationShortMs)
-        assertEquals(240, AmMotion.DurationMediumMs)
-        assertEquals(280, AmMotion.DurationLongMs)
+    fun durations_match_the_published_motion_scale() {
+        assertEquals(150, AmMotion.DurationShortMs)
+        assertEquals(200, AmMotion.DurationMediumMs)
+        assertEquals(250, AmMotion.DurationLongMs)
         assertTrue(AmMotion.DurationShortMs > AmMotion.DurationReducedMs)
         assertTrue(AmMotion.DurationShortMs < AmMotion.DurationMediumMs)
         assertTrue(AmMotion.DurationMediumMs < AmMotion.DurationLongMs)
     }
 
     @Test
-    fun standard_easing_matches_tdesign_cubic_bezier() {
-        assertEquals(0.38f, AmMotion.EasingControlX1)
-        assertEquals(0f, AmMotion.EasingControlY1)
-        assertEquals(0.24f, AmMotion.EasingControlX2)
+    fun standard_easing_matches_the_published_cubic_bezier() {
+        assertEquals(0.25f, AmMotion.EasingControlX1)
+        assertEquals(0.1f, AmMotion.EasingControlY1)
+        assertEquals(0.25f, AmMotion.EasingControlX2)
         assertEquals(1f, AmMotion.EasingControlY2)
     }
 

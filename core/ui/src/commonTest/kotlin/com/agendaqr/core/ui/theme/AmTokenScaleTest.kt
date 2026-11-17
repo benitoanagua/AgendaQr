@@ -6,17 +6,19 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * `tdesign_flutter@0.2.7` geometry tokens from the `radius` and `spacer`
- * maps of `lib/src/theme/td_default_theme.dart`; Compose shadows approximate
- * the source blur radius.
+ * Geometría transcrita de `@shopify/polaris-tokens@9.4.2`
+ * (`docs/05-design-system/09-instantanea-tokens-polaris-9.4.2.md`).
+ * `1rem = 16dp` (D-01) y la escala táctil de 48dp (D-02) son las únicas
+ * adaptaciones móviles documentadas.
  */
 class AmTokenScaleTest {
 
     @Test
-    fun spacing_uses_the_tdesign_scale_with_only_the_documented_micro_step() {
-        assertEquals(4.dp, AmSpacing.Xs)
-        assertEquals(8.dp, AmSpacing.Sm)
-        assertEquals(12.dp, AmSpacing.Md)
+    fun spacing_uses_the_published_space_scale() {
+        assertEquals(0.dp, AmSpacing.None)
+        assertEquals(2.dp, AmSpacing.Xs)
+        assertEquals(4.dp, AmSpacing.Sm)
+        assertEquals(8.dp, AmSpacing.Md)
         assertEquals(16.dp, AmSpacing.Lg)
         assertEquals(24.dp, AmSpacing.Xl)
         assertEquals(32.dp, AmSpacing.Xxl)
@@ -26,42 +28,52 @@ class AmTokenScaleTest {
     }
 
     @Test
-    fun radius_scale_matches_tdesign_mobile() {
-        assertEquals(3.dp, AmRadius.ExtraSmall)
-        assertEquals(6.dp, AmRadius.Small)
-        assertEquals(9.dp, AmRadius.Medium)
+    fun radius_scale_matches_the_published_border_radius_scale() {
+        assertEquals(2.dp, AmRadius.ExtraSmall)
+        assertEquals(4.dp, AmRadius.Small)
+        assertEquals(8.dp, AmRadius.Medium)
         assertEquals(12.dp, AmRadius.Large)
-        assertEquals(12.dp, AmRadius.ExtraLarge)
+        assertEquals(16.dp, AmRadius.ExtraLarge)
+        assertEquals(8.dp, AmRadius.GridIcon)
         assertEquals(9999.dp, AmRadius.Round)
     }
 
     @Test
-    fun component_dimensions_pin_the_reference_sizes() {
+    fun component_dimensions_pin_the_polaris_reference_sizes() {
         assertEquals(48.dp, AmMetrics.ControlMinSize)
         assertEquals(1.dp, AmMetrics.Border)
-        assertEquals(0.5.dp, AmMetrics.DividerHeight)
+        assertEquals(1.dp, AmMetrics.DividerHeight)
+        assertEquals(4.dp, AmMetrics.BorderStrong)
         assertEquals(48.dp, AmMetrics.TopBarHeight)
-        assertEquals(56.dp, AmMetrics.NavBarHeight)
+        assertEquals(64.dp, AmMetrics.NavBarHeight)
         assertEquals(80.dp, AmMetrics.NavRailWidth)
+        assertEquals(48.dp, AmMetrics.ButtonLargeHeight)
         assertEquals(40.dp, AmMetrics.ButtonCompactHeight)
+        assertEquals(32.dp, AmMetrics.ButtonSmallHeight)
+        assertEquals(24.dp, AmMetrics.ButtonExtraSmallHeight)
         assertEquals(32.dp, AmMetrics.ChipCompactHeight)
         assertEquals(40.dp, AmMetrics.FieldCompactHeight)
-        assertEquals(45.dp, AmMetrics.SectionHeaderHeight)
+        assertEquals(48.dp, AmMetrics.SectionHeaderHeight)
         assertEquals(16.dp, AmMetrics.ListDividerInset)
         assertEquals(16.dp, AmMetrics.TabIndicatorWidth)
-        assertEquals(3.dp, AmMetrics.TabIndicatorHeight)
+        assertEquals(4.dp, AmMetrics.TabIndicatorHeight)
         assertEquals(311.dp, AmMetrics.DialogMinWidth)
         assertEquals(96.dp, AmMetrics.EmptyStateGlyphSize)
-        assertEquals(70.dp, AmMetrics.ResultGlyphSize)
+        assertEquals(64.dp, AmMetrics.ResultGlyphSize)
     }
 
     @Test
-    fun compose_shadow_approximations_derive_from_tdesign_css_blurs() {
+    fun elevation_keeps_the_published_shadow_blurs() {
         assertEquals(0.dp, AmElevation.None.elevation)
-        assertEquals(5.dp, AmElevation.Shadow1.elevation)
-        assertEquals(7.dp, AmElevation.Shadow2.elevation)
-        assertEquals(15.dp, AmElevation.Shadow3.elevation)
-        assertEquals(4.dp, AmElevation.Shadow4.elevation)
+        assertEquals(0f, AmElevation.None.lightAlpha)
+        assertEquals(1.dp, AmElevation.Shadow1.elevation)
+        assertEquals(0.07f, AmElevation.Shadow1.lightAlpha)
+        assertEquals(3.dp, AmElevation.Shadow2.elevation)
+        assertEquals(0.07f, AmElevation.Shadow2.lightAlpha)
+        assertEquals(6.dp, AmElevation.Shadow3.elevation)
+        assertEquals(0.20f, AmElevation.Shadow3.lightAlpha)
+        assertEquals(16.dp, AmElevation.Shadow4.elevation)
+        assertEquals(0.22f, AmElevation.Shadow4.lightAlpha)
     }
 
     @Test

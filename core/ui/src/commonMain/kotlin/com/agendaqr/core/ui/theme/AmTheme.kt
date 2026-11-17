@@ -94,7 +94,7 @@ internal fun AmColorScheme.asMaterialColorScheme(darkTheme: Boolean): ColorSchem
     }
 }
 
-/** Material 3 is an adapter; the semantic TDesign tokens remain authoritative. */
+/** Material 3 adapts types only; the semantic Polaris tokens remain authoritative. */
 @Composable
 fun AmTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -103,9 +103,10 @@ fun AmTheme(
     val scheme = if (darkTheme) DarkAmColorScheme else LightAmColorScheme
     CompositionLocalProvider(
         LocalAmColorScheme provides scheme,
+        LocalAmFontFamily provides rememberAmInterFontFamily(),
     ) {
         MaterialTheme(
-            typography = AmMaterialTypography,
+            typography = AmMaterialTypography.withAmFontFamily(AmType.FamilyUi),
             shapes = Shapes(
                 extraSmall = AmShapes.ExtraSmall,
                 small = AmShapes.Small,

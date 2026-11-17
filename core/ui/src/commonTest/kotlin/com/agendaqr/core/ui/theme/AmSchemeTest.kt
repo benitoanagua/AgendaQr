@@ -11,8 +11,10 @@ import kotlin.test.assertTrue
 import kotlin.math.pow
 
 /**
- * `tdesign_flutter@0.2.7` color-token contract. Palette values come from
- * `lib/src/theme/td_default_theme.dart` (`default` and `defaultDark`).
+ * Contrato de color de `@shopify/polaris-tokens@9.4.2`
+ * (`docs/05-design-system/09-instantanea-tokens-polaris-9.4.2.md`).
+ * Los roles semánticos se derivan de la capa primitiva publicada; las
+ * adaptaciones D-02/D-07 y X-05 se documentan en el contrato normativo.
  */
 class AmSchemeTest {
 
@@ -99,144 +101,152 @@ class AmSchemeTest {
     )
 
     @Test
-    fun official_palette_scales_are_pinned_for_both_themes() {
-        fun assertScale(actual: List<Color>, expected: List<String>, name: String) {
-            assertEquals(expected, actual.map(::argb), name)
-        }
+    fun official_palette_primitives_are_pinned() {
+        fun assertColor(actual: Color, expected: String, name: String) =
+            assertEquals(expected, argb(actual), name)
 
-        assertScale(
-            AmPalette.lightBrand,
-            listOf("FFF2F3FF", "FFD9E1FF", "FFB5C7FF", "FF8EABFF", "FF618DFF", "FF366EF4", "FF0052D9", "FF003CAB", "FF002A7C", "FF001A57"),
-            "light brand",
-        )
-        assertScale(
-            AmPalette.darkBrand,
-            listOf("FF1B2F51", "FF173463", "FF143975", "FF103D88", "FF0D429A", "FF054BBE", "FF2667D4", "FF4582E6", "FF699EF5", "FF96BBF8"),
-            "dark brand",
-        )
-        assertScale(
-            AmPalette.lightSuccessScale,
-            listOf("FFE3F9E9", "FFC6F3D7", "FF92DAB2", "FF56C08D", "FF2BA471", "FF008858", "FF006C45", "FF005334", "FF003B23", "FF002515"),
-            "light success",
-        )
-        assertScale(
-            AmPalette.darkSuccessScale,
-            listOf("FF193A2A", "FF1A4230", "FF17533D", "FF0D7A55", "FF059465", "FF43AF8A", "FF46BF96", "FF80D2B6", "FFB4E1D3", "FFDEEDE8"),
-            "dark success",
-        )
-        assertScale(
-            AmPalette.lightWarningScale,
-            listOf("FFFFF1E9", "FFFFD9C2", "FFFFB98C", "FFFA9550", "FFE37318", "FFBE5A00", "FF954500", "FF713300", "FF532300", "FF3B1700"),
-            "light warning",
-        )
-        assertScale(
-            AmPalette.darkWarningScale,
-            listOf("FF4F2A1D", "FF582F21", "FF733C23", "FFA75D2B", "FFCF6E2D", "FFDC7633", "FFE8935C", "FFECBF91", "FFEED7BF", "FFF3E9DC"),
-            "dark warning",
-        )
-        assertScale(
-            AmPalette.lightErrorScale,
-            listOf("FFFFF0ED", "FFFFD8D2", "FFFFB9B0", "FFFF9285", "FFF6685D", "FFD54941", "FFAD352F", "FF881F1C", "FF68070A", "FF490002"),
-            "light error",
-        )
-        assertScale(
-            AmPalette.darkErrorScale,
-            listOf("FF472324", "FF5E2A2D", "FF703439", "FF83383E", "FFA03F46", "FFC64751", "FFDE6670", "FFEC888E", "FFEDB1B6", "FFEECED0"),
-            "dark error",
-        )
-        assertScale(
-            AmPalette.lightGray,
-            listOf("FFF3F3F3", "FFEEEEEE", "FFE8E8E8", "FFDDDDDD", "FFC6C6C6", "FFA6A6A6", "FF8B8B8B", "FF777777", "FF5E5E5E", "FF4B4B4B", "FF393939", "FF2C2C2C", "FF242424", "FF181818"),
-            "light gray",
-        )
-        assertScale(
-            AmPalette.darkGray,
-            listOf("FFF3F3F3", "FFEEEEEE", "FFE8E8E8", "FFDDDDDD", "FFC6C6C6", "FFA6A6A6", "FF8B8B8B", "FF777777", "FF5E5E5E", "FF4B4B4B", "FF393939", "FF2C2C2C", "FF242424", "FF181818"),
-            "dark gray",
-        )
+        assertColor(AmPalette.white, "FFFFFFFF", "white")
+        assertColor(AmPalette.black, "FF000000", "black")
+        assertColor(AmPalette.gray50, "FFF1F1F1", "gray50")
+        assertColor(AmPalette.gray100, "FFEBEBEB", "gray100")
+        assertColor(AmPalette.gray200, "FFE3E3E3", "gray200")
+        assertColor(AmPalette.gray300, "FFD4D4D4", "gray300")
+        assertColor(AmPalette.gray400, "FFB5B5B5", "gray400")
+        assertColor(AmPalette.gray500, "FF8A8A8A", "gray500")
+        assertColor(AmPalette.gray600, "FF616161", "gray600")
+        assertColor(AmPalette.gray700, "FF4A4A4A", "gray700")
+        assertColor(AmPalette.gray800, "FF303030", "gray800")
+        assertColor(AmPalette.gray900, "FF1A1A1A", "gray900")
+        assertColor(AmPalette.lightText, "FF303030", "lightText")
+        assertColor(AmPalette.darkText, "FFE3E3E3", "darkText")
+
+        assertColor(AmPalette.emphasis, "FF005BDB", "emphasis")
+        assertColor(AmPalette.emphasisHover, "FF004299", "emphasisHover")
+        assertColor(AmPalette.emphasisActive, "FF002E6A", "emphasisActive")
+        assertColor(AmPalette.emphasisSurface, "FFF0F2FF", "emphasisSurface")
+        assertColor(AmPalette.emphasisSurfaceHover, "FFEAEDFF", "emphasisSurfaceHover")
+        assertColor(AmPalette.emphasisOnFill, "FFFCFDFF", "emphasisOnFill")
+        assertColor(AmPalette.info, "FF003A5A", "info")
+        assertColor(AmPalette.infoFill, "FF91D0FF", "infoFill")
+        assertColor(AmPalette.infoSurface, "FFEAF4FF", "infoSurface")
+        assertColor(AmPalette.success, "FF014B40", "success")
+        assertColor(AmPalette.successFill, "FF047B5D", "successFill")
+        assertColor(AmPalette.successHover, "FF035E4C", "successHover")
+        assertColor(AmPalette.successSurface, "FFCDFED4", "successSurface")
+        assertColor(AmPalette.successOnFill, "FFFAFFFB", "successOnFill")
+        assertColor(AmPalette.warning, "FF5E4200", "warning")
+        assertColor(AmPalette.warningFill, "FFFFB800", "warningFill")
+        assertColor(AmPalette.warningSurface, "FFFFF1E3", "warningSurface")
+        assertColor(AmPalette.warningOnFill, "FF251A00", "warningOnFill")
+        assertColor(AmPalette.critical, "FF8E0B21", "critical")
+        assertColor(AmPalette.criticalFill, "FFC70A24", "criticalFill")
+        assertColor(AmPalette.criticalHover, "FFA30A24", "criticalHover")
+        assertColor(AmPalette.criticalSurface, "FFFEE8EB", "criticalSurface")
+        assertColor(AmPalette.criticalBorder, "FFFEC1C7", "criticalBorder")
+        assertColor(AmPalette.criticalOnFill, "FFFFFAFB", "criticalOnFill")
     }
 
     @Test
-    fun semantic_tokens_use_the_tdesign_light_and_dark_roles() {
+    fun semantic_tokens_use_the_polaris_light_and_dark_roles() {
         val light = LightAmColorScheme
-        assertEquals("FFEEEEEE", argb(light.background))
+        assertEquals("FFF1F1F1", argb(light.background))
         assertEquals("FFFFFFFF", argb(light.surface))
-        assertEquals("FFF3F3F3", argb(light.surfaceSecondary))
-        assertEquals("FFDDDDDD", argb(light.border))
-        assertEquals("FF8B8B8B", argb(light.functionalBorder))
-        assertEquals("FFE8E8E8", argb(light.divider))
-        assertEquals("E5000000", argb(light.textPrimary))
-        assertEquals("99000000", argb(light.textSecondary))
-        assertEquals("FF5E5E5E", argb(light.textPlaceholder))
-        assertEquals("FF5E5E5E", argb(light.textTertiary))
-        assertEquals("FF0052D9", argb(light.accent))
-        assertEquals("FF003CAB", argb(light.accentActive))
-        assertEquals("FFB5C7FF", argb(light.accentDisabled))
-        assertEquals("FFD9E1FF", argb(light.accentFocus))
-        assertEquals("FFD9E1FF", argb(light.accentLightActive))
-        assertEquals("FFFFFFFF", argb(light.onAccent))
-        assertEquals("FFF2F3FF", argb(light.accentContainer))
-        assertEquals("FF0052D9", argb(light.onAccentContainer))
-        assertEquals("FFAD352F", argb(light.danger))
-        assertEquals("FFAD352F", argb(light.dangerFill))
-        assertEquals("FFFFF0ED", argb(light.dangerContainer))
-        assertEquals("FF006C45", argb(light.success))
-        assertEquals("FF008858", argb(light.successFill))
-        assertEquals("FFE3F9E9", argb(light.successContainer))
-        assertEquals("FF954500", argb(light.warning))
-        assertEquals("FFBE5A00", argb(light.warningFill))
-        assertEquals("FFFFF1E9", argb(light.warningContainer))
-        assertEquals("FF0052D9", argb(light.info))
-        assertEquals("FFF2F3FF", argb(light.infoContainer))
-        assertEquals("FFEEEEEE", argb(light.surfaceContainer))
-        assertEquals("FFE8E8E8", argb(light.surfaceContainerHigh))
-        assertEquals("FFDDDDDD", argb(light.surfaceContainerHighest))
-        assertEquals("FFE8E8E8", argb(light.surfaceActive))
-        assertEquals("FFA6A6A6", argb(light.componentActive))
-        assertEquals("FFFFFFFF", argb(light.accentActiveContent))
-        assertEquals("FF881F1C", argb(light.dangerActive))
-        assertEquals("FFFFB9B0", argb(light.dangerDisabled))
+        assertEquals("FFF7F7F7", argb(light.surfaceSecondary))
+        assertEquals("FFE3E3E3", argb(light.border))
+        assertEquals("FF8A8A8A", argb(light.functionalBorder))
+        assertEquals("FFE3E3E3", argb(light.divider))
+        assertEquals("FF303030", argb(light.textPrimary))
+        assertEquals("FF616161", argb(light.textSecondary))
+        assertEquals("FF616161", argb(light.textPlaceholder))
+        assertEquals("FF616161", argb(light.textTertiary))
+        assertEquals("FF005BDB", argb(light.accent))
+        assertEquals("FF004299", argb(light.accentActive))
+        assertEquals("FFB5B5B5", argb(light.accentDisabled))
+        assertEquals("FF005BDB", argb(light.accentFocus))
+        assertEquals("FFEAEDFF", argb(light.accentLightActive))
+        assertEquals("FFFCFDFF", argb(light.onAccent))
+        assertEquals("FFF0F2FF", argb(light.accentContainer))
+        assertEquals("FF005BDB", argb(light.onAccentContainer))
+        assertEquals("FF8E0B21", argb(light.danger))
+        assertEquals("FFC70A24", argb(light.dangerFill))
+        assertEquals("FFFFFAFB", argb(light.onDanger))
+        assertEquals("FFFEE8EB", argb(light.dangerContainer))
+        assertEquals("FF014B40", argb(light.success))
+        assertEquals("FF047B5D", argb(light.successFill))
+        assertEquals("FFFAFFFB", argb(light.onSuccessFill))
+        assertEquals("FFCDFED4", argb(light.successContainer))
+        assertEquals("FF5E4200", argb(light.warning))
+        assertEquals("FFFFB800", argb(light.warningFill))
+        assertEquals("FF251A00", argb(light.onWarningFill))
+        assertEquals("FFFFF1E3", argb(light.warningContainer))
+        assertEquals("FF003A5A", argb(light.info))
+        assertEquals("FFEAF4FF", argb(light.infoContainer))
+        assertEquals("FF005BDB", argb(light.focus))
+        assertEquals("0D000000", argb(light.disabled))
+        assertEquals("FFB5B5B5", argb(light.onDisabled))
+        assertEquals("FF303030", argb(light.inverseSurface))
+        assertEquals("FFE3E3E3", argb(light.inverseOnSurface))
+        assertEquals("B5000000", argb(light.scrim))
+        assertEquals("FFFFFFFF", argb(light.qrCanvas))
+        assertEquals("FFFFFFFF", argb(light.surfaceContainerLow))
+        assertEquals("FFF7F7F7", argb(light.surfaceContainer))
+        assertEquals("FFF1F1F1", argb(light.surfaceContainerHigh))
+        assertEquals("FFEBEBEB", argb(light.surfaceContainerHighest))
+        assertEquals("FFF3F3F3", argb(light.surfaceActive))
+        assertEquals("FFF7F7F7", argb(light.componentActive))
+        assertEquals("FFFCFDFF", argb(light.accentActiveContent))
+        assertEquals("FFA30A24", argb(light.dangerActive))
+        assertEquals("FFFEC1C7", argb(light.dangerDisabled))
 
         val dark = DarkAmColorScheme
-        assertEquals("FF181818", argb(dark.background))
-        assertEquals("FF242424", argb(dark.surface))
-        assertEquals("FF2C2C2C", argb(dark.surfaceSecondary))
-        assertEquals("FF5E5E5E", argb(dark.border))
-        assertEquals("FF777777", argb(dark.functionalBorder))
-        assertEquals("FF393939", argb(dark.divider))
-        assertEquals("E5FFFFFF", argb(dark.textPrimary))
-        assertEquals("8CFFFFFF", argb(dark.textSecondary))
-        assertEquals("8CFFFFFF", argb(dark.textPlaceholder))
-        assertEquals("FFA6A6A6", argb(dark.textTertiary))
-        assertEquals("FF2667D4", argb(dark.accent))
-        assertEquals("FF699EF5", argb(dark.accentActive))
-        assertEquals("FF143975", argb(dark.accentDisabled))
-        assertEquals("FF173463", argb(dark.accentFocus))
-        assertEquals("FF173463", argb(dark.accentLightActive))
-        assertEquals("FFFFFFFF", argb(dark.onAccent))
-        assertEquals("FF1B2F51", argb(dark.accentContainer))
-        assertEquals("FF699EF5", argb(dark.onAccentContainer))
-        assertEquals("FFEC888E", argb(dark.danger))
-        assertEquals("FFC64751", argb(dark.dangerFill))
-        assertEquals("FF472324", argb(dark.dangerContainer))
-        assertEquals("FF43AF8A", argb(dark.success))
-        assertEquals("FF059465", argb(dark.successFill))
-        assertEquals("FF181818", argb(dark.onSuccessFill))
-        assertEquals("FF193A2A", argb(dark.successContainer))
-        assertEquals("FFE8935C", argb(dark.warning))
-        assertEquals("FFCF6E2D", argb(dark.warningFill))
-        assertEquals("FF181818", argb(dark.onWarningFill))
-        assertEquals("FF4F2A1D", argb(dark.warningContainer))
-        assertEquals("FF699EF5", argb(dark.info))
-        assertEquals("FF1B2F51", argb(dark.infoContainer))
-        assertEquals("FF181818", argb(dark.surfaceContainer))
-        assertEquals("FF393939", argb(dark.surfaceContainerHigh))
-        assertEquals("FF4B4B4B", argb(dark.surfaceContainerHighest))
-        assertEquals("FF2C2C2C", argb(dark.surfaceActive))
-        assertEquals("FF5E5E5E", argb(dark.componentActive))
-        assertEquals("FF1B2F51", argb(dark.accentActiveContent))
-        assertEquals("FFC64751", argb(dark.dangerActive))
-        assertEquals("FF703439", argb(dark.dangerDisabled))
+        assertEquals("FF1A1A1A", argb(dark.background))
+        assertEquals("FF303030", argb(dark.surface))
+        assertEquals("FF303030", argb(dark.surfaceSecondary))
+        assertEquals("FF4A4A4A", argb(dark.border))
+        assertEquals("FF8A8A8A", argb(dark.functionalBorder))
+        assertEquals("FF4A4A4A", argb(dark.divider))
+        assertEquals("FFE3E3E3", argb(dark.textPrimary))
+        assertEquals("FFB5B5B5", argb(dark.textSecondary))
+        assertEquals("FFB5B5B5", argb(dark.textPlaceholder))
+        assertEquals("FFB5B5B5", argb(dark.textTertiary))
+        assertEquals("FFFFFFFF", argb(dark.accent))
+        assertEquals("FFEBEBEB", argb(dark.accentActive))
+        assertEquals("FF616161", argb(dark.accentDisabled))
+        assertEquals("FF91D0FF", argb(dark.accentFocus))
+        assertEquals("FF4A4A4A", argb(dark.accentLightActive))
+        assertEquals("FF303030", argb(dark.onAccent))
+        assertEquals("FF303030", argb(dark.accentContainer))
+        assertEquals("FF91D0FF", argb(dark.onAccentContainer))
+        assertEquals("FFFED1D7", argb(dark.danger))
+        assertEquals("FFC70A24", argb(dark.dangerFill))
+        assertEquals("FFFFFAFB", argb(dark.onDanger))
+        assertEquals("FF303030", argb(dark.dangerContainer))
+        assertEquals("FFCDFED4", argb(dark.success))
+        assertEquals("FF047B5D", argb(dark.successFill))
+        assertEquals("FFFAFFFB", argb(dark.onSuccessFill))
+        assertEquals("FF303030", argb(dark.successContainer))
+        assertEquals("FFFFB800", argb(dark.warning))
+        assertEquals("FFFFB800", argb(dark.warningFill))
+        assertEquals("FF251A00", argb(dark.onWarningFill))
+        assertEquals("FF303030", argb(dark.warningContainer))
+        assertEquals("FF91D0FF", argb(dark.info))
+        assertEquals("FF303030", argb(dark.infoContainer))
+        assertEquals("FF91D0FF", argb(dark.focus))
+        assertEquals("1CFFFFFF", argb(dark.disabled))
+        assertEquals("FF8A8A8A", argb(dark.onDisabled))
+        assertEquals("FFF1F1F1", argb(dark.inverseSurface))
+        assertEquals("FF1A1A1A", argb(dark.inverseOnSurface))
+        assertEquals("B5000000", argb(dark.scrim))
+        assertEquals("FFFFFFFF", argb(dark.qrCanvas))
+        assertEquals("FF1A1A1A", argb(dark.surfaceContainerLow))
+        assertEquals("FF303030", argb(dark.surfaceContainer))
+        assertEquals("FF4A4A4A", argb(dark.surfaceContainerHigh))
+        assertEquals("FF616161", argb(dark.surfaceContainerHighest))
+        assertEquals("FF4A4A4A", argb(dark.surfaceActive))
+        assertEquals("FF303030", argb(dark.componentActive))
+        assertEquals("FF303030", argb(dark.accentActiveContent))
+        assertEquals("FFA30A24", argb(dark.dangerActive))
+        assertEquals("FF8E0B21", argb(dark.dangerDisabled))
     }
 
     @Test
@@ -298,5 +308,4 @@ class AmSchemeTest {
             assertEquals(scheme.info, scheme.toneColors(AmTone.Info).content)
         }
     }
-
 }

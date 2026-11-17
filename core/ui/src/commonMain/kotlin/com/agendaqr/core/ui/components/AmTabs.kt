@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import com.agendaqr.core.ui.theme.AmWeight
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmShapes
@@ -51,7 +52,7 @@ fun AmSectionHeader(
             modifier = Modifier.semantics { heading() },
             style = AmTextStyles.SectionHeader,
             fontFamily = AmType.FamilyUi,
-            fontWeight = FontWeight.Normal,
+            fontWeight = AmWeight.Regular,
             color = textColor,
         )
     }
