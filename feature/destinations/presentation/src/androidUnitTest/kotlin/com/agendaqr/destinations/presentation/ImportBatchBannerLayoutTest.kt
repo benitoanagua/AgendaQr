@@ -17,9 +17,11 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
+import com.agendaqr.core.ui.theme.AmWeight
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmTheme
 import com.agendaqr.destinations.domain.ImportBatch
@@ -300,7 +302,7 @@ class ImportBatchBannerLayoutTest {
         )
         assertTrue(
             "título fontWeight=${titleStyle.fontWeight}, esperado SemiBold",
-            titleStyle.fontWeight == FontWeight.SemiBold,
+            titleStyle.fontWeight == AmWeight.SemiBold,
         )
         compose.onNodeWithText(title)
             .assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading))
@@ -319,17 +321,18 @@ class ImportBatchBannerLayoutTest {
         compose.onNodeWithText(description)
             .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Heading))
 
-        // Icono compacto: margen Md (12) + icono 18 + hueco Sm (8) = 38
-        // desde el borde del bloque hasta el inicio del título.
+        // Icono compacto: padding Md + icono compacto + hueco Sm, todos
+        // tokens, desde el borde del bloque hasta el inicio del título.
         val banner = compose.onNode(bannerMatcher).getUnclippedBoundsInRoot()
         val titleBounds = compose.onNodeWithText(title).getUnclippedBoundsInRoot()
         val iconOffset = titleBounds.left - banner.left
+        val expectedOffset = AmSpacing.Md + AmMetrics.IconSizeCompact + AmSpacing.Sm
         assertTrue(
-            "el título no arranca tras el icono compacto (offset=$iconOffset, esperado 38.dp)",
-            abs(iconOffset.value - 38f) <= 1f,
+            "el título no arranca tras el icono compacto (offset=$iconOffset, esperado $expectedOffset)",
+            abs(iconOffset.value - expectedOffset.value) <= 1f,
         )
 
-        // Separación vertical clara entre título y descripción (Xs=4).
+        // Separación vertical clara entre título y descripción.
         val descBounds = compose.onNodeWithText(description).getUnclippedBoundsInRoot()
         val gap = descBounds.top - titleBounds.bottom
         println("jerarquía: title=$titleBounds desc=$descBounds gap=$gap")
