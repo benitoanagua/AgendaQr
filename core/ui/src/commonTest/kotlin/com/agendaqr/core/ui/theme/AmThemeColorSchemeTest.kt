@@ -3,7 +3,7 @@ package com.agendaqr.core.ui.theme
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/** `tdesign_flutter@0.2.7` tokens are mapped to every Material 3 color slot. */
+/** Semantic Polaris tokens are mapped to every Material 3 color slot. */
 class AmThemeColorSchemeTest {
 
     @Test

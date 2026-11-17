@@ -9,10 +9,9 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 /**
- * Paleta de identidad de contextos (contrato §4): 12 tonos
- * contemporáneos de etiqueta más el acento de marca AgendaQr. `tdesign_flutter@0.2.7`
- * supplies the shared UI palette; these domain identity colors remain
- * the explicit accessibility-approved exception. Tests pin values and FNV-1a.
+ * Identidad de contextos (X-06): pares deterministas tomados de la
+ * instantánea de `@shopify/polaris-tokens@9.4.2`, todos validados a AA.
+ * El acento de sistema usa `emphasis` + blanco.
  */
 class AmAccentTest {
 
@@ -39,11 +38,19 @@ class AmAccentTest {
     fun the_palette_is_exactly_the_12_admitted_accents_plus_system() {
         assertEquals(12, AmAccents.Admitted.size)
         val expected = mapOf(
-            "system" to "245FE5",
-            "blue" to "1D4ED8", "sky" to "0369A1", "teal" to "0F766E",
-            "cyan" to "0E7490", "emerald" to "047857", "green" to "15803D",
-            "lime" to "4D7C0F", "amber" to "A16207", "orange" to "C2410C",
-            "red" to "B91C1C", "rose" to "BE123C", "violet" to "6D28D9",
+            "system" to "005BDB",
+            "blue" to "004299",
+            "ink" to "003A5A",
+            "emerald" to "047B5D",
+            "forest" to "035E4C",
+            "red" to "C70A24",
+            "wine" to "8E0B21",
+            "violet" to "5700D1",
+            "indigo" to "7126FF",
+            "magenta" to "C530C5",
+            "sky" to "91D0FF",
+            "amber" to "FFB800",
+            "lemon" to "FFE600",
         )
         val actual = (AmAccents.Admitted + AmAccents.System)
             .associate { it.id to hex(it.background) }
@@ -55,14 +62,12 @@ class AmAccentTest {
         // Texto normal >= 4.5:1; el par es fijo e idéntico en claro y
         // oscuro (par autónomo), por lo que una única comprobación cubre
         // ambos temas.
-        val black = Color(0xFF000000)
-        val white = Color(0xFFFFFFFF)
         (AmAccents.Admitted + AmAccents.System).forEach { accent ->
             val ratio = contrast(accent.background, accent.onAccent)
             assertTrue(ratio >= 4.5, "${accent.id}: onAccent/background = $ratio < 4.5")
             assertTrue(
-                accent.onAccent == black || accent.onAccent == white,
-                "${accent.id}: onAccent debe ser negro o blanco puro",
+                accent.onAccent == AmPalette.white || accent.onAccent == AmPalette.gray900,
+                "${accent.id}: onAccent debe ser blanco o tinta oscura verificada",
             )
         }
     }
@@ -96,9 +101,11 @@ class AmAccentTest {
     fun accent_as_text_never_returns_below_threshold() {
         // Los acentos de contexto NO se usan como texto si su par no llega
         // a 4.5:1: asTextOn cae al fallback legible del tema.
+        val blue = AmAccents.Admitted.first { it.id == "blue" }
+        val sky = AmAccents.Admitted.first { it.id == "sky" }
         val cases = listOf(
-            AmAccent("lime", Color(0xFF4D7C0F), Color(0xFFFFFFFF)) to LightAmColorScheme,
-            AmAccent("violet", Color(0xFF6D28D9), Color(0xFFFFFFFF)) to DarkAmColorScheme,
+            blue to LightAmColorScheme,
+            sky to DarkAmColorScheme,
         )
         cases.forEach { (accent, scheme) ->
             val asText = accent.background.asTextOn(scheme.background, scheme.accentText)
@@ -107,7 +114,8 @@ class AmAccentTest {
                 "${accent.id} asTextOn ${if (scheme === LightAmColorScheme) "light" else "dark"}",
             )
         }
-        // Un acento ilegible sobre el fondo cae SIEMPRE al fallback.
+        // El azul de sistema no es legible sobre el fondo oscuro: cae SIEMPRE
+        // al texto de acento del tema.
         assertEquals(
             DarkAmColorScheme.accentText,
             AmAccents.System.background.asTextOn(DarkAmColorScheme.background, DarkAmColorScheme.accentText),

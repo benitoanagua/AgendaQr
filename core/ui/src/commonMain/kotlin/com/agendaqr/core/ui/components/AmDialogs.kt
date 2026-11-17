@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.unit.Constraints
+import com.agendaqr.core.ui.theme.AmWeight
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmShapes
@@ -102,7 +103,7 @@ private fun AmDialogAction(
         Text(
             label,
             style = AmTextStyles.Body,
-            fontWeight = if (emphasized) FontWeight.Bold else null,
+            fontWeight = if (emphasized) AmWeight.Bold else null,
             color = color,
             textAlign = TextAlign.Center,
         )
@@ -183,7 +184,7 @@ fun AmDialog(
                             .padding(top = AmSpacing.Xl, start = AmSpacing.Lg, end = AmSpacing.Lg)
                             .semantics { heading() },
                         style = AmTextStyles.Title,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = AmWeight.Bold,
                         textAlign = TextAlign.Center,
                         color = AmColor.TextPrimary,
                     )

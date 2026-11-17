@@ -11,11 +11,11 @@ import kotlin.test.assertEquals
 class AmButtonStyleTest {
 
     @Test
-    fun sizes_match_tdesign_visual_heights_and_preserve_touch_target() {
+    fun sizes_match_polaris_visual_heights_and_preserve_touch_target() {
         assertEquals(48.dp, AmButtonSize.Large.visualHeight)
         assertEquals(40.dp, AmButtonSize.Medium.visualHeight)
         assertEquals(32.dp, AmButtonSize.Small.visualHeight)
-        assertEquals(28.dp, AmButtonSize.ExtraSmall.visualHeight)
+        assertEquals(24.dp, AmButtonSize.ExtraSmall.visualHeight)
         assertEquals(48.dp, AmMetrics.ControlMinSize)
     }
 

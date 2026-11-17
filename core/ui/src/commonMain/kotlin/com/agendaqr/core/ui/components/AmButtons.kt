@@ -41,6 +41,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import com.agendaqr.core.ui.theme.AmWeight
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmColorScheme
 import com.agendaqr.core.ui.theme.AmMetrics
@@ -249,7 +250,7 @@ private fun AmButtonImpl(
                 Text(
                     text = label,
                     style = labelStyle,
-                    fontWeight = fontWeight ?: FontWeight.SemiBold,
+                    fontWeight = fontWeight ?: AmWeight.SemiBold,
                     color = foreground,
                 )
             }
@@ -474,7 +475,7 @@ fun AmCompactAction(
             Text(
                 label,
                 style = AmTextStyles.BodySmall,
-                fontWeight = fontWeight ?: FontWeight.Medium,
+                fontWeight = fontWeight ?: AmWeight.Medium,
                 color = color ?: if (prominent) AmColor.AccentText else AmColor.TextSecondary,
             )
         }
@@ -521,7 +522,7 @@ fun AmTextAction(
         AmTextActionVariant.Danger -> AmColor.Danger
     }
     val fontWeight = when (variant) {
-        AmTextActionVariant.Neutral -> FontWeight.SemiBold
+        AmTextActionVariant.Neutral -> AmWeight.SemiBold
         else -> null
     }
     AmButtonImpl(

@@ -7,8 +7,9 @@
 ```
 core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 ├── theme/
-│   ├── AmTokens.kt        # tokens privados (AmPalette) + semánticos (única capa con literales)
-│   ├── AmTheme.kt         # puente claro/oscuro a Material 3 (esquema M3 derivado completo)
+│   ├── AmTokens.kt        # tokens primitivos y semánticos Polaris 9.4.2 (única capa con literales)
+│   ├── AmTheme.kt         # puente claro/oscuro a Material 3 + inyección de Inter
+│   ├── AmPreviews.kt      # galería claro/oscuro/200 % para revisión de roles semánticos
 │   └── AmWindowSize.kt    # expect: clase de ancho de ventana (compacto/medium/expanded)
 ├── motion/
 │   └── ReducedMotion.kt   # expect/actual: LocalReducedMotion + ProvideReducedMotion

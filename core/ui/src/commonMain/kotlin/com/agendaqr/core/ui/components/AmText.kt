@@ -11,6 +11,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
+import com.agendaqr.core.ui.theme.AmWeight
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmType
 
@@ -42,7 +43,7 @@ fun AmHeading(
     text: String,
     modifier: Modifier = Modifier,
     size: TextUnit = AmType.Headline,
-    fontWeight: FontWeight = FontWeight.Bold,
+    fontWeight: FontWeight = AmWeight.Bold,
     color: Color = AmColor.TextPrimary,
 ) {
     Text(

@@ -36,17 +36,17 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
+import com.agendaqr.core.ui.theme.AmWeight
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmMotion
 import com.agendaqr.core.ui.theme.AmSpacing
 import com.agendaqr.core.ui.theme.AmType
 
-/** Etiqueta de destino de navegación: 12/20. */
+/** Etiqueta de destino de navegación: 12/20. La familia se aplica desde AmTheme. */
 private val AmTabLabelStyle = androidx.compose.ui.text.TextStyle(
     fontSize = AmType.BodySmall,
     lineHeight = AmType.LineHeightBodySmall,
-    fontFamily = AmType.FamilyUi,
 )
 
 /**
@@ -167,7 +167,7 @@ fun AmTopBar(
                 style = androidx.compose.ui.text.TextStyle(
                     fontSize = AmType.TitleLarge,
                     lineHeight = AmType.LineHeightTitleLarge,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                    fontWeight = AmWeight.SemiBold,
                     fontFamily = AmType.FamilyUi,
                 ),
                 maxLines = 1,
@@ -307,11 +307,12 @@ fun AmNavBar(
                         destination.label,
                         style = AmTabLabelStyle.copy(
                             fontWeight = if (selected) {
-                                androidx.compose.ui.text.font.FontWeight.SemiBold
+                                AmWeight.SemiBold
                             } else {
-                                androidx.compose.ui.text.font.FontWeight.Normal
+                                AmWeight.Regular
                             },
                         ),
+                        fontFamily = AmType.FamilyUi,
                         color = if (selected) AmColor.AccentText else AmColor.TextSecondary,
                         maxLines = 1,
                     )
@@ -366,11 +367,12 @@ fun AmNavRail(
                     destination.label,
                     style = AmTabLabelStyle.copy(
                         fontWeight = if (selected) {
-                            androidx.compose.ui.text.font.FontWeight.SemiBold
+                            AmWeight.SemiBold
                         } else {
-                            androidx.compose.ui.text.font.FontWeight.Normal
+                            AmWeight.Regular
                         },
                     ),
+                    fontFamily = AmType.FamilyUi,
                     color = if (selected) AmColor.AccentText else AmColor.TextSecondary,
                     maxLines = 1,
                 )
@@ -447,7 +449,7 @@ fun AmHeroHeader(
                 style = androidx.compose.ui.text.TextStyle(
                     fontSize = AmType.TitleLarge,
                     lineHeight = AmType.LineHeightTitleLarge,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                    fontWeight = AmWeight.Bold,
                     fontFamily = AmType.FamilyUi,
                     color = AmColor.OnAccent,
                 ),

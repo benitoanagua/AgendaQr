@@ -1,14 +1,44 @@
-# Evaluación de tipografía: MiSans Global
+# Evaluación de tipografía
 
-Informe de evaluación de la fuente candidata MiSans Global (Xiaomi) que ADR-0020 dejó
-anotada "para comparar en local; no se empaquetan fuentes en esta decisión". **No se
-empaqueta ninguna fuente en este informe** y no se tocan `AmTokens.kt`, `AmTypographyTest`
-ni los hashes visuales.
+Estado vigente: Inter 4.0 se empaqueta como recurso multiplataforma en
+`core/ui/src/commonMain/composeResources/font/` y `AmTheme` inyecta
+`AmType.FamilyUi` en todos los roles de `AmMaterialTypography`. El proyecto
+ya no depende de la fuente de sistema. Los tamaños y pesos siguen viniendo
+de `@shopify/polaris-tokens@9.4.2`; la escala con la fuente del sistema se
+respeta hasta 200 %. El texto íntegro de la licencia está en
+`docs/05-design-system/06-licencias-terceros.md`.
 
-Estado de la tipografía vigente: `AmTokens.FamilyUi = FontFamily.Default` (fuente de
-sistema). El proyecto no empaqueta una familia propia.
+El resto del documento conserva el informe histórico de MiSans Global
+(Xiaomi), la candidata que ADR-0020 dejó anotada «para comparar en local».
+Su conclusión sigue siendo no adoptarla: la licencia no permite
+redistribuir el archivo de fuente.
 
-## 1. Licencia (consultada el 2026-10-16)
+## Decisión vigente: Inter 4.0 (SIL OFL 1.1)
+
+- Fuente verificable: release 4.0 de
+  <https://github.com/rsms/inter/releases/tag/v4.0>, paquete
+  `Inter-4.0.zip`.
+- Licencia: SIL Open Font License 1.1. Permite empaquetado, subconjuntos y
+  redistribución del archivo de fuente siempre que se conserve el aviso y
+  no se use el nombre reservado en derivados. Aviso incluido en Android e
+  iOS no verificado; detalle en `docs/05-design-system/06-licencias-terceros.md`.
+- Formato: cuatro TTF estáticos (Regular/Medium/SemiBold/Bold), sin
+  ejes variables, para evitar dependencias de `FontVariation` y mantener
+  un nombre de peso verificable por archivo.
+- Pesos: los cuatro de la escala Polaris publicada (450/550/650/700),
+  sin interpolaciones propias.
+- Cobertura y peso medidos: los TTF se distribuyen con el releasing
+  oficial; el tamaño exacto del distribuible no se ha medido en este
+  entorno. Resultado del tamaño: **NO VERIFICADO**.
+- Comparación visual: sustituye a la fuente de sistema en los roles
+  Polaris; las previews claro/oscuro/200 % de `AmPreviews.kt` permiten
+  revisarlos. No se han generado capturas de pantalla verificadas.
+- Conclusión: adoptar Inter 4.0 con OFL 1.1; la adopción queda respaldada
+  por `:core:ui:testDebugUnitTest` y el gate de arquitectura.
+
+## Informe histórico: MiSans Global
+
+### 1. Licencia (consultada el 2026-10-16)
 
 - Fuente: acuerdo 《MiSans 字体知识产权许可协议》 de Xiaomi, publicado desde la página de
   fuentes de HyperOS <https://hyperos.mi.com/font/>.
@@ -31,7 +61,7 @@ sistema). El proyecto no empaqueta una familia propia.
 - Conclusión de licencia: **no empaquetar MiSans Global** sin un acuerdo comercial
   específico con el titular.
 
-## 2. Cobertura
+### 2. Cobertura
 
 No verificada sobre el archivo local: no se descargó la fuente (obtenerla para comparar
 implica manejar un archivo cuya redistribución el acuerdo no permite). Según la
@@ -41,7 +71,7 @@ composición latina) no se pudieron comprobar en el archivo.
 
 Resultado: **NO VERIFICADO**.
 
-## 3. Peso
+### 3. Peso
 
 No medido sobre el archivo (no se descargó). Referencia: los pesos estáticos de MiSans
 cubren el rango CJK completo y, sin subconjuntar, pesan del orden de decenas de MB por peso;
@@ -50,7 +80,7 @@ Subconjuntar a latín, que lo reduciría a cientos de KB, está prohibido por el
 
 Resultado: **NO VERIFICADO** (estimación cualitativa, sin medición).
 
-## 4. Comparación visual
+### 4. Comparación visual
 
 No ejecutada. Requeriría obtener el archivo de la fuente y generar capturas lado a lado
 (fuente de sistema frente a candidata) en claro y oscuro de Inicio, detalle QR, Actividades y
@@ -58,16 +88,16 @@ un formulario, más las comprobaciones de desborde a 320 dp y 200 % de fuente. M
 licencia no permita el empaquetado, su resultado no cambiaría la recomendación. Se puede
 ejecutar en un parche no commiteado si se obtiene una licencia comercial.
 
-## 5. Recomendación
+### 5. Recomendación
 
 - **No adoptar ni empaquetar** MiSans Global con la licencia vigente: el acuerdo no permite
   redistribuir el archivo de fuente ni adaptarlo, y es revocable.
-- Si se quiere una tipografía propia, elegir una familia con licencia que permita
-  empaquetado y subconjuntos (por ejemplo OFL), y evaluarla en su propio informe con
-  cobertura, peso y capturas medidos.
-- Mantener la fuente de sistema mientras no exista esa decisión.
+- Se eligió Inter 4.0 (OFL 1.1) como familia con licencia que permite empaquetado
+  y subconjuntos, evaluada en la sección de decisión vigente.
+- Mantener Inter 4.0 como familia por defecto; la fuente de sistema sigue
+  como fallback dentro de `FontFamily`.
 
-## 6. Riesgos registrados
+### 6. Riesgos registrados
 
 - Licencia revocable: una adopción podría quedar sin base legal si Xiaomi cambia los
   términos.

@@ -8,11 +8,13 @@
 Las puertas, sus comandos y la validación por plataforma están en
 [QUALITY.md](QUALITY.md).
 
-> Las filas visuales de §1 describen la implementación anterior a la adopción
-> de ADR-0025. La autoridad visual vigente es ADR-0025 y el contrato normativo
-> v7; la migración de `core/ui` está en curso y su resultado se registrará aquí
-> cuando las puertas lo verifiquen. iOS permanece **NO VERIFICADO** en este
-> entorno (sin macOS/Xcode).
+> Las filas visuales anteriores de §1 describen la implementación previa a
+> ADR-0025. La autoridad visual vigente es ADR-0025 y el contrato normativo v7:
+> `core/ui` ya usa tokens semánticos Polaris 9.4.2, Inter 4.0 (OFL 1.1),
+> claro/oscuro, pares AA y previews a 200 %. La migración está verificada en
+> Android/JVM por el gate de arquitectura y por `:core:ui:testDebugUnitTest`
+> (84 pruebas). El render en iOS, incluido el empaquetado de Inter y los avisos
+> de licencia, permanece **NO VERIFICADO** en este entorno (sin macOS/Xcode).
 
 ## 1. Implementado y verificado
 
@@ -54,6 +56,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Dirección visual anterior TDesign Mobile 0.2.7 (ADR-0023; estado previo a ADR-0025): tokens, componentes, acciones de Inicio, escala tipográfica, elevación, movimiento y pulsación | gate del design system + Robolectric de presentación + verificación de layout (escenarios 320 dp, escala de fuente 200 % y estados de botones); revisión en dispositivo real pendiente y declarada como no verificada |
 | Contrato de interacción por pantalla (19 superficies: ruta real, destinos válidos, estados, gestos, componentes, pruebas con señal de accesibilidad y escenarios de captura) | `verifyScreenContract` + `verifyScreenContractFixtures` (dentro de `verifyAgendaQrArchitecture`): cruza el contrato con `AppRoute`/rutas de flujo, archivos, símbolos de `core/ui`, claves de `AppStrings`, pruebas y el documento generado |
 | Pulsación anterior fiel a TDesign en botones, celdas, tarjetas y acciones de diálogo (color activo, sin ripple; estado previo a ADR-0025) | `:core:ui:testDebugUnitTest`; desviación D-11 para el resto de superficies |
+| Sistema visual vigente Polaris 9.4.2 en `core/ui`: tokens semánticos claros/oscuros, Inter 4.0 empaquetado, pares AA, acentos X-06, movimiento, previews claro/oscuro/200 % y avisos de licencia | `verifyAgendaQrArchitecture` + `:core:ui:testDebugUnitTest` (84 pruebas) + `:androidApp:assembleDebug` con `-PallowDebugSigningForRc=true`; iOS **NO VERIFICADO** |
 
 ## 2. Implementado pero NO VERIFICADO en este entorno
 
@@ -62,6 +65,7 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
 | Capacidad | Motivo | Cómo se verifica |
 |---|---|---|
 | Runtime iOS (arranque y render) | Requiere Xcode/simulador | [OPERATIONS.md](OPERATIONS.md) (checklist iOS) |
+| Sistema visual vigente en iOS (tokens Polaris, Inter 4.0 y avisos de licencia) | Sin macOS/Xcode: `core/ui` compila en common, pero el render y el empaquetado de recursos en el bundle iOS no se han ejecutado | ejecutar la app iOS en simulador y revisar claro/oscuro y fuente 200 % |
 | CI del PR #143 (commit `ed18b9e`) y push a `main` (`bebe66a`) | En ambos runs, `test`, `ios-compile` y `supabase-acceptance` terminaron en **success**; `instrumented-tests` terminó en **failure** (12/15 fallos en PR; no bloqueante por `continue-on-error: true`). El run de `main` también finalizó y no se declara el workflow completo verde. | [Android validation — PR #143](https://github.com/benitoanagua/AgendaQr/actions/runs/39071445726) · [Android validation — main `bebe66a`](https://github.com/benitoanagua/AgendaQr/actions/runs/39071868104) |
 | CI del PR #144 (commit `5c59aaf`) | Los checks bloqueantes `test`, `ios-compile` y `supabase-acceptance` terminaron en **success**. `instrumented-tests` terminó en **failure**: 8/15 fallos; pasan las 3 pruebas de `ShareIntentsTest`, el escenario de error de correo, el de demo sin sincronización y el de movimiento reducido. Persisten fallos en el recorrido de permisos/cámara, acceso a destinos demo, restauración del formulario, capturas del emulador y clicables S01 sin nombre accesible. El job es no bloqueante (`continue-on-error: true`); no se declara el workflow completo verde ni se afirma validación en dispositivo físico. | [Android validation — PR #144](https://github.com/benitoanagua/AgendaQr/actions/runs/39075364369) |
 | TalkBack/VoiceOver interactivo | Requiere dispositivo físico | [QUALITY.md](QUALITY.md) §5 |
@@ -94,6 +98,12 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
 - Autofill de credenciales: `KeyboardOptions.contentType` no existe en Compose
   1.8.2 (llega con 1.9); el autofill funciona por `keyboardType` Email/Password
   (iOS lo mapea a `textContentType`).
+- Riesgo legal de la reimplementación visual: los recursos de diseño de
+  Polaris tienen una licencia restrictiva. El propietario aceptó el riesgo
+  documentado; solo se reimplementan tokens y patrones en Kotlin/Compose, sin
+  runtime, nombre, logo ni marca en la app, la UI ni la documentación de
+  producto. Las referencias técnicas quedan confinadas a documentación de
+  ingeniería.
 
 ## 4. Pendientes conocidos
 
