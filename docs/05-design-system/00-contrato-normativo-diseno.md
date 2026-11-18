@@ -33,9 +33,10 @@ La versión 12 citada originalmente corresponde a `@shopify/polaris`
 
 ## 2. Reglas de uso
 
-1. **Un solo origen.** Todo color, espaciado, radio, tipografía, elevación y
-   duración se declara en la capa de tokens de `core/ui`. Los componentes
-   consumen **únicamente tokens semánticos**.
+1. **Un solo origen.** Todo color, alfa, espaciado, radio, tipografía,
+   proporción de composición, elevación y duración se declara en la capa de
+   tokens de `core/ui`. Los componentes consumen **únicamente tokens
+   semánticos**.
 2. **Capas.** La capa primitiva reproduce las escalas de la instantánea. La
    capa semántica expone roles: `surface`, `text`, `border`, `action` y tonos
    `info`, `success`, `warning`, `critical`. Ningún componente referencia un
@@ -101,6 +102,7 @@ Construidas solo con tokens y componentes de Polaris; no son valores propios.
 | D-05 | Inter empaquetado | El sistema web usa fallback de fuentes; la app debe ser multiplataforma y consistente. |
 | D-06 | Escalado de fuente del sistema hasta 200 % | Requisito de accesibilidad móvil. |
 | D-07 | Derivación del tema oscuro | `dark-experimental` no cubre todos los roles (PV-02). |
+| D-08 | Proporciones internas de composición | Alfas de selección y fracciones de ancho/glifo/desplazamiento no son escalas publicadas; se concentran en `AmTokens.kt` y se conservan para no alterar el layout verificado. |
 
 ## 5. Gobernanza
 

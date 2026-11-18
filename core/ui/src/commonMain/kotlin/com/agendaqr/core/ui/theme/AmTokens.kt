@@ -295,6 +295,17 @@ internal fun rememberAmInterFontFamily(): FontFamily = FontFamily(
     Font(resource = Res.font.inter_bold, weight = AmWeight.Bold),
 )
 
+/**
+ * Alfas semánticos. Los valores de selección son los publicados en la
+ * instantánea para los estados pressed/selected (`rgba(…, 0.25)` y
+ * `rgba(…, 0.20)`); [Hidden] significa «sin pintura», no un color nuevo.
+ */
+object AmAlpha {
+    const val Hidden = 0f
+    const val SelectedOnAccent = 0.25f
+    const val SelectedOnTone = 0.2f
+}
+
 /** Única puerta de color del producto; ningún componente introduce literales. */
 object AmColor {
     val Background: Color @Composable get() = LocalAmColorScheme.current.background
@@ -404,6 +415,20 @@ object AmMetrics {
     const val ListRowEndMetaStackFontScale = 2f
 }
 
+/**
+ * Proporciones internas de composición (D-08). No son escalas publicadas:
+ * se conservan de la implementación auditada y se concentran aquí para que
+ * ningún componente defina geometría propia. No alteran los valores de la
+ * instantánea ni los tamaños táctiles.
+ */
+object AmComposition {
+    /** Ancho de la línea de título del skeleton respecto al ancho disponible. */
+    const val SkeletonTitleWidthFraction = 0.6f
+
+    /** Tamaño del glifo dentro del círculo de confirmación de resultado. */
+    const val SuccessCheckIconFraction = 0.55f
+}
+
 /** Escala `border-radius` publicada. */
 object AmRadius {
     val ExtraSmall = 2.dp
@@ -471,6 +496,15 @@ object AmType {
     val LineHeightTitleMedium: TextUnit = 20.sp
     val LineHeightTitleSmall: TextUnit = 20.sp
     val LineHeightLabelSmall: TextUnit = 16.sp
+
+    /**
+     * Interlineados proporcionales derivados de los pares publicados
+     * `--p-font-line-height-*` (instantánea §tipografía). Se usan solo cuando
+     * el rol recibe un tamaño arbitrario; los tamaños canónicos conservan su
+     * `lineHeight` publicado.
+     */
+    const val HeadingLineHeightRatio = 1.25f
+    const val BodyLineHeightRatio = 1.5f
 
     /** Familia efectiva de la interfaz (Inter dentro de [AmTheme]). */
     val FamilyUi: FontFamily @Composable get() = LocalAmFontFamily.current
@@ -663,6 +697,13 @@ object AmMotion {
     const val EasingControlY1 = 0.1f
     const val EasingControlX2 = 0.25f
     const val EasingControlY2 = 1f
+
+    /** Desplazamiento lateral de la superficie como fracción de su ancho (D-08). */
+    const val SurfaceSlideFraction = 8
+
+    /** Geometría del predictive back nativo (D-03), como fracción 0–1. */
+    const val PredictiveBackShrink = 0.08f
+    const val PredictiveBackFade = 0.5f
 
     object Easings {
         val Standard: Easing = CubicBezierEasing(

@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import com.agendaqr.core.ui.theme.AmComposition
 import com.agendaqr.core.ui.theme.AmWeight
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmMetrics
@@ -308,7 +309,7 @@ fun AmSuccessCheck(
             AmIcon(
                 imageVector = AmIcons.CircleCheck,
                 contentDescription = null,
-                size = size * 0.55f,
+                size = size * AmComposition.SuccessCheckIconFraction,
                 tint = AmColor.Success,
             )
         }

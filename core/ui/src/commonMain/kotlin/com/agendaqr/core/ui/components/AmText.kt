@@ -16,20 +16,6 @@ import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmType
 
 /**
- * Proporción display/titular: interlineado más prieto que el cuerpo,
- * pero siempre > 1.1× del tamaño (un titular no hereda el interlineado
- * del cuerpo).
- */
-private const val HeadingLineHeightRatio = 1.25f
-
-/**
- * Proporción de cuerpo/UI: coincide con los estilos canónicos
- * (Body 14, proporción 1.5). Fijarla explícitamente cierra la herencia del ambiente
- * para tamaños mayores.
- */
-private const val BodyLineHeightRatio = 1.5f
-
-/**
  * Encabezado: todo título con semántica `heading()` usa la
  * familia de sistema y los tokens tipográficos del sistema.
  *
@@ -50,7 +36,7 @@ fun AmHeading(
         text = text,
         modifier = modifier.semantics { heading() },
         fontSize = size,
-        lineHeight = TextUnit(size.value * HeadingLineHeightRatio, TextUnitType.Sp),
+        lineHeight = TextUnit(size.value * AmType.HeadingLineHeightRatio, TextUnitType.Sp),
         fontFamily = AmType.FamilyUi,
         fontWeight = fontWeight,
         color = color,
@@ -78,7 +64,7 @@ fun AmText(
         text = text,
         modifier = modifier,
         fontSize = size,
-        lineHeight = TextUnit(size.value * BodyLineHeightRatio, TextUnitType.Sp),
+        lineHeight = TextUnit(size.value * AmType.BodyLineHeightRatio, TextUnitType.Sp),
         fontFamily = AmType.FamilyUi,
         fontWeight = fontWeight,
         color = color,

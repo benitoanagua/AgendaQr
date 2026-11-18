@@ -25,6 +25,7 @@ import com.agendaqr.core.ui.components.amReducedSurfaceExit
 import com.agendaqr.core.ui.components.amSurfaceEnter
 import com.agendaqr.core.ui.components.amSurfaceExit
 import com.agendaqr.core.ui.motion.LocalReducedMotion
+import com.agendaqr.core.ui.theme.AmMotion
 import com.agendaqr.destinations.data.SyncMutationState
 import com.agendaqr.destinations.domain.AgendaSearchResultType
 import kotlinx.coroutines.launch
@@ -277,12 +278,12 @@ internal fun AuthenticatedAppRoot(
             // el progreso del gesto (cancelar la restaura; confirmar corre
             // la transición estándar). Con reduced motion el gesto no
             // añade animación (solo el estado del gesto cambia).
-            val predictiveScale = 1f - (backProgress * PredictiveBackShrink)
+            val predictiveScale = 1f - (backProgress * AmMotion.PredictiveBackShrink)
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .graphicsLayer {
-                        alpha = 1f - (backProgress * PredictiveBackFade)
+                        alpha = 1f - (backProgress * AmMotion.PredictiveBackFade)
                         scaleX = predictiveScale
                         scaleY = predictiveScale
                     },
@@ -407,9 +408,3 @@ internal fun AuthenticatedAppRoot(
         }
     }
 }
-
-/** Cuánto se encoge la superficie con el predictive back (fracción 0–1). */
-internal const val PredictiveBackShrink = 0.08f
-
-/** Cuánto funde la superficie con el predictive back (fracción 0–1). */
-internal const val PredictiveBackFade = 0.5f

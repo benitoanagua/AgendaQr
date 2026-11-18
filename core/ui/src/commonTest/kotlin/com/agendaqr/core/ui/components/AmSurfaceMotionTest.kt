@@ -1,6 +1,7 @@
 package com.agendaqr.core.ui.components
 
 import com.agendaqr.core.ui.theme.AmMotion
+import com.agendaqr.core.ui.theme.AmMotion.SurfaceSlideFraction
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -36,6 +37,13 @@ class AmSurfaceMotionTest {
 
     @Test
     fun the_slide_remains_a_small_fraction_of_the_width() {
-        assertEquals(8, AmSurfaceSlideFraction)
+        assertEquals(8, SurfaceSlideFraction)
+        assertEquals(SurfaceSlideFraction, AmMotion.SurfaceSlideFraction)
+    }
+
+    @Test
+    fun predictive_back_geometry_is_centralized() {
+        assertEquals(0.08f, AmMotion.PredictiveBackShrink)
+        assertEquals(0.5f, AmMotion.PredictiveBackFade)
     }
 }
