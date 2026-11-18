@@ -89,7 +89,7 @@ fun AqLoadMoreFooter(
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(AqSpacing.Xxl),
-                    color = AqColor.AccentText,
+                    color = AqColor.EmphasisFill,
                 )
                 Text(loadingLabel, fontSize = AqType.Label, color = AqColor.TextSecondary)
             }
@@ -118,7 +118,7 @@ fun AqScannerFrame(
         modifier = modifier
             .size(size)
             .aqScannerCorners(
-                color = AqColor.Accent,
+                color = AqColor.EmphasisFill,
                 cornerLength = cornerLength,
                 stroke = stroke,
             ),

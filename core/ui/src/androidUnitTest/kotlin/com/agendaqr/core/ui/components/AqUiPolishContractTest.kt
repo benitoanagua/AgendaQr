@@ -180,10 +180,10 @@ class AqUiPolishContractTest {
 
     @Test
     fun section_header_accent_meets_text_contrast_in_both_themes() {
-        val light = contrastRatio(LightAmColorScheme.accentText, LightAmColorScheme.background)
+        val light = contrastRatio(LightAmColorScheme.emphasisText, LightAmColorScheme.background)
         assertTrue(light >= 4.5, "acento de sección en claro: $light < 4.5")
         val dark = contrastRatio(
-            DarkAmColorScheme.accentText,
+            DarkAmColorScheme.emphasisText,
             DarkAmColorScheme.background,
         )
         assertTrue(dark >= 4.5, "acento de sección en oscuro: $dark < 4.5")

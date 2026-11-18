@@ -43,7 +43,7 @@ fun AqProgressBar(
                 )
                 liveRegion = LiveRegionMode.Polite
             },
-        color = AqColor.Accent,
+        color = AqColor.EmphasisFill,
         trackColor = AqColor.SurfaceContainerHighest,
     )
 }
@@ -59,7 +59,7 @@ fun AqSpinner(
             this.contentDescription = contentDescription
             liveRegion = LiveRegionMode.Polite
         },
-        color = AqColor.Accent,
+        color = AqColor.EmphasisFill,
         trackColor = AqColor.SurfaceContainerHighest,
     )
 }

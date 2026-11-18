@@ -59,7 +59,9 @@ internal object AqPalette {
     val lightText = gray800
     val darkText = Color(0xFFE3E3E3)
 
-    val emphasis = Color(0xFF005BDB)
+    /** `--p-color-bg-fill-emphasis`, `text-emphasis`, `border-emphasis`,
+     * `icon-emphasis` y `text-link` (`:142,162,196,213,221,245`). */
+    val emphasis = Color(0xFF005BD3)
     val emphasisHover = Color(0xFF004299)
     val emphasisActive = Color(0xFF002E6A)
     val emphasisSurface = Color(0xFFF0F2FF)
@@ -96,6 +98,17 @@ internal object AqPalette {
     val lightDisabledFill = Color(0x0D000000)
     val lightScrim = Color(0xB5000000)
 
+    /** `--p-color-bg-fill-brand*` del tema claro (`:116-120`). */
+    val brandFill = gray800
+    val brandFillHover = gray900
+    val brandFillActive = gray900
+    val brandFillSelected = gray800
+    val brandFillDisabled = Color(0x2B000000)
+
+    /** `--p-color-bg-fill-selected` y `bg-surface-selected` (`:68,107`). */
+    val selectionFill = Color(0xFFCCCCCC)
+    val selectionSurface = gray50
+
     /** Derivaciones X-05 del tema oscuro: valores del propio tema publicado. */
     val darkSurfaceSecondary = gray800
     val darkSurfaceHover = Color(0xFF4A4A4A)
@@ -104,6 +117,13 @@ internal object AqPalette {
     val darkDisabledFill = Color(0x1CFFFFFF)
     val darkDisabledText = gray500
     val darkTextOnBrandFill = gray800
+    val darkTextOnBrandFillDisabled = gray500
+    /** `--p-color-bg-fill-brand*` de `dark-experimental` (`:550,555,559,563,573`). */
+    val darkBrandFill = white
+    val darkBrandFillHover = Color(0xFFF3F3F3)
+    val darkBrandFillActive = Color(0xFFF7F7F7)
+    val darkBrandFillSelected = Color(0xFFD4D4D4)
+    val darkBrandFillDisabled = Color(0x38FFFFFF)
     val darkTextCritical = Color(0xFFFED1D7)
     val darkTextSuccess = successSurface
     val darkTextWarning = warningFill
@@ -114,7 +134,7 @@ internal object AqPalette {
     val transparent = Color.Transparent
 }
 
-/** Roles semánticos completos; espejo de los 50 roles consumidos por el producto. */
+/** Roles semánticos completos; espejo de los 59 roles consumidos por el producto. */
 data class AqColorScheme(
     val background: Color,
     val surface: Color,
@@ -126,15 +146,25 @@ data class AqColorScheme(
     val textSecondary: Color,
     val textPlaceholder: Color,
     val textTertiary: Color,
-    val accent: Color,
-    val accentActive: Color,
-    val accentDisabled: Color,
-    val accentFocus: Color,
-    val accentLightActive: Color,
-    val onAccent: Color,
-    val accentContainer: Color,
-    val onAccentContainer: Color,
-    val accentText: Color,
+    val brandFill: Color,
+    val brandFillHover: Color,
+    val brandFillActive: Color,
+    val brandFillSelected: Color,
+    val brandFillDisabled: Color,
+    val onBrandFill: Color,
+    val onBrandFillDisabled: Color,
+    val emphasisFill: Color,
+    val emphasisBorder: Color,
+    val emphasisText: Color,
+    val emphasisIcon: Color,
+    val emphasisSurface: Color,
+    val emphasisSurfaceHover: Color,
+    val emphasisOnFill: Color,
+    val link: Color,
+    val selectionFill: Color,
+    val selectionSurface: Color,
+    val selectionBorder: Color,
+    val selectionIcon: Color,
     val danger: Color,
     val dangerFill: Color,
     val onDanger: Color,
@@ -162,7 +192,6 @@ data class AqColorScheme(
     val surfaceContainerHighest: Color,
     val surfaceActive: Color,
     val componentActive: Color,
-    val accentActiveContent: Color,
     val dangerActive: Color,
     val dangerDisabled: Color,
     val transparent: Color,
@@ -180,15 +209,25 @@ val LightAmColorScheme = AqColorScheme(
     // D-02: el placeholder publicado no llega a AA; se usa el rol secundario.
     textPlaceholder = AqPalette.gray600,
     textTertiary = AqPalette.gray600,
-    accent = AqPalette.emphasis,
-    accentActive = AqPalette.emphasisHover,
-    accentDisabled = AqPalette.gray400,
-    accentFocus = AqPalette.emphasis,
-    accentLightActive = AqPalette.emphasisSurfaceHover,
-    onAccent = AqPalette.emphasisOnFill,
-    accentContainer = AqPalette.emphasisSurface,
-    onAccentContainer = AqPalette.emphasis,
-    accentText = AqPalette.emphasis,
+    brandFill = AqPalette.brandFill,
+    brandFillHover = AqPalette.brandFillHover,
+    brandFillActive = AqPalette.brandFillActive,
+    brandFillSelected = AqPalette.brandFillSelected,
+    brandFillDisabled = AqPalette.brandFillDisabled,
+    onBrandFill = AqPalette.white,
+    onBrandFillDisabled = AqPalette.white,
+    emphasisFill = AqPalette.emphasis,
+    emphasisBorder = AqPalette.emphasis,
+    emphasisText = AqPalette.emphasis,
+    emphasisIcon = AqPalette.emphasis,
+    emphasisSurface = AqPalette.emphasisSurface,
+    emphasisSurfaceHover = AqPalette.emphasisSurfaceHover,
+    emphasisOnFill = AqPalette.emphasisOnFill,
+    link = AqPalette.emphasis,
+    selectionFill = AqPalette.selectionFill,
+    selectionSurface = AqPalette.selectionSurface,
+    selectionBorder = AqPalette.emphasis,
+    selectionIcon = AqPalette.emphasis,
     danger = AqPalette.critical,
     dangerFill = AqPalette.criticalFill,
     onDanger = AqPalette.criticalOnFill,
@@ -216,7 +255,6 @@ val LightAmColorScheme = AqColorScheme(
     surfaceContainerHighest = AqPalette.gray100,
     surfaceActive = AqPalette.lightSurfaceActive,
     componentActive = AqPalette.lightSurfaceSecondary,
-    accentActiveContent = AqPalette.emphasisOnFill,
     dangerActive = AqPalette.criticalHover,
     dangerDisabled = AqPalette.criticalBorder,
     transparent = AqPalette.transparent,
@@ -233,15 +271,27 @@ val DarkAmColorScheme = AqColorScheme(
     textSecondary = AqPalette.gray400,
     textPlaceholder = AqPalette.gray400,
     textTertiary = AqPalette.gray400,
-    accent = AqPalette.white,
-    accentActive = AqPalette.gray100,
-    accentDisabled = AqPalette.gray600,
-    accentFocus = AqPalette.darkTextInfo,
-    accentLightActive = AqPalette.darkSurfaceHover,
-    onAccent = AqPalette.darkTextOnBrandFill,
-    accentContainer = AqPalette.gray800,
-    onAccentContainer = AqPalette.darkTextInfo,
-    accentText = AqPalette.darkTextInfo,
+    brandFill = AqPalette.darkBrandFill,
+    brandFillHover = AqPalette.darkBrandFillHover,
+    brandFillActive = AqPalette.darkBrandFillActive,
+    brandFillSelected = AqPalette.darkBrandFillSelected,
+    brandFillDisabled = AqPalette.darkBrandFillDisabled,
+    onBrandFill = AqPalette.darkTextOnBrandFill,
+    onBrandFillDisabled = AqPalette.darkTextOnBrandFillDisabled,
+    // X-05/PV-06: el tema oscuro no publica emphasis/link; se usan los
+    // valores publicados más cercanos que cumplen AA sobre las superficies.
+    emphasisFill = AqPalette.infoFill,
+    emphasisBorder = AqPalette.infoFill,
+    emphasisText = AqPalette.infoFill,
+    emphasisIcon = AqPalette.infoFill,
+    emphasisSurface = AqPalette.gray800,
+    emphasisSurfaceHover = AqPalette.darkSurfaceHover,
+    emphasisOnFill = AqPalette.gray900,
+    link = AqPalette.infoFill,
+    selectionFill = AqPalette.darkSurfaceSelected,
+    selectionSurface = AqPalette.darkSurfaceSelected,
+    selectionBorder = AqPalette.infoFill,
+    selectionIcon = AqPalette.infoFill,
     danger = AqPalette.darkTextCritical,
     dangerFill = AqPalette.criticalFill,
     onDanger = AqPalette.criticalOnFill,
@@ -267,10 +317,9 @@ val DarkAmColorScheme = AqColorScheme(
     surfaceContainer = AqPalette.gray800,
     surfaceContainerHigh = AqPalette.darkSurfaceHover,
     surfaceContainerHighest = AqPalette.darkSurfaceSelected,
-    // D-02: #616161 deja `accentText` por debajo de AA; se usa el hover publicado.
+    // D-02: #616161 deja el énfasis por debajo de AA; se usa el hover publicado.
     surfaceActive = AqPalette.darkSurfaceHover,
     componentActive = AqPalette.gray800,
-    accentActiveContent = AqPalette.darkTextOnBrandFill,
     dangerActive = AqPalette.criticalHover,
     dangerDisabled = AqPalette.critical,
     transparent = AqPalette.transparent,
@@ -302,7 +351,7 @@ internal fun rememberAmInterFontFamily(): FontFamily = FontFamily(
  */
 object AqAlpha {
     const val Hidden = 0f
-    const val SelectedOnAccent = 0.25f
+    const val SelectedOnFill = 0.25f
     const val SelectedOnTone = 0.2f
 }
 
@@ -318,15 +367,25 @@ object AqColor {
     val TextSecondary: Color @Composable get() = LocalAmColorScheme.current.textSecondary
     val TextPlaceholder: Color @Composable get() = LocalAmColorScheme.current.textPlaceholder
     val TextTertiary: Color @Composable get() = LocalAmColorScheme.current.textTertiary
-    val Accent: Color @Composable get() = LocalAmColorScheme.current.accent
-    val AccentActive: Color @Composable get() = LocalAmColorScheme.current.accentActive
-    val AccentDisabled: Color @Composable get() = LocalAmColorScheme.current.accentDisabled
-    val AccentFocus: Color @Composable get() = LocalAmColorScheme.current.accentFocus
-    val AccentLightActive: Color @Composable get() = LocalAmColorScheme.current.accentLightActive
-    val OnAccent: Color @Composable get() = LocalAmColorScheme.current.onAccent
-    val AccentText: Color @Composable get() = LocalAmColorScheme.current.accentText
-    val AccentContainer: Color @Composable get() = LocalAmColorScheme.current.accentContainer
-    val OnAccentContainer: Color @Composable get() = LocalAmColorScheme.current.onAccentContainer
+    val BrandFill: Color @Composable get() = LocalAmColorScheme.current.brandFill
+    val BrandFillHover: Color @Composable get() = LocalAmColorScheme.current.brandFillHover
+    val BrandFillActive: Color @Composable get() = LocalAmColorScheme.current.brandFillActive
+    val BrandFillSelected: Color @Composable get() = LocalAmColorScheme.current.brandFillSelected
+    val BrandFillDisabled: Color @Composable get() = LocalAmColorScheme.current.brandFillDisabled
+    val OnBrandFill: Color @Composable get() = LocalAmColorScheme.current.onBrandFill
+    val OnBrandFillDisabled: Color @Composable get() = LocalAmColorScheme.current.onBrandFillDisabled
+    val EmphasisFill: Color @Composable get() = LocalAmColorScheme.current.emphasisFill
+    val EmphasisBorder: Color @Composable get() = LocalAmColorScheme.current.emphasisBorder
+    val EmphasisText: Color @Composable get() = LocalAmColorScheme.current.emphasisText
+    val EmphasisIcon: Color @Composable get() = LocalAmColorScheme.current.emphasisIcon
+    val EmphasisSurface: Color @Composable get() = LocalAmColorScheme.current.emphasisSurface
+    val EmphasisSurfaceHover: Color @Composable get() = LocalAmColorScheme.current.emphasisSurfaceHover
+    val OnEmphasisFill: Color @Composable get() = LocalAmColorScheme.current.emphasisOnFill
+    val Link: Color @Composable get() = LocalAmColorScheme.current.link
+    val SelectionFill: Color @Composable get() = LocalAmColorScheme.current.selectionFill
+    val SelectionSurface: Color @Composable get() = LocalAmColorScheme.current.selectionSurface
+    val SelectionBorder: Color @Composable get() = LocalAmColorScheme.current.selectionBorder
+    val SelectionIcon: Color @Composable get() = LocalAmColorScheme.current.selectionIcon
     val Danger: Color @Composable get() = LocalAmColorScheme.current.danger
     val DangerFill: Color @Composable get() = LocalAmColorScheme.current.dangerFill
     val DangerActive: Color @Composable get() = LocalAmColorScheme.current.dangerActive
@@ -347,7 +406,6 @@ object AqColor {
     val SurfaceContainerHigh: Color @Composable get() = LocalAmColorScheme.current.surfaceContainerHigh
     val SurfaceActive: Color @Composable get() = LocalAmColorScheme.current.surfaceActive
     val ComponentActive: Color @Composable get() = LocalAmColorScheme.current.componentActive
-    val AccentActiveContent: Color @Composable get() = LocalAmColorScheme.current.accentActiveContent
     val SurfaceContainerLow: Color @Composable get() = LocalAmColorScheme.current.surfaceContainerLow
     val SurfaceContainer: Color @Composable get() = LocalAmColorScheme.current.surfaceContainer
     val InverseSurface: Color @Composable get() = LocalAmColorScheme.current.inverseSurface

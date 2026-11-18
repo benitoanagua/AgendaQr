@@ -261,7 +261,7 @@ fun AqDialog(
                                 AqDialogAction(
                                     label = confirmLabel,
                                     emphasized = !confirmAsText,
-                                    color = if (destructive) AqColor.Danger else AqColor.AccentText,
+                                    color = if (destructive) AqColor.Danger else AqColor.Link,
                                     onClick = onConfirm,
                                     modifier = Modifier.fillMaxWidth(),
                                 )
@@ -296,7 +296,7 @@ fun AqDialog(
                                 AqDialogAction(
                                     label = confirmLabel,
                                     emphasized = !confirmAsText,
-                                    color = if (destructive) AqColor.Danger else AqColor.AccentText,
+                                    color = if (destructive) AqColor.Danger else AqColor.Link,
                                     onClick = onConfirm,
                                     modifier = Modifier.weight(1f),
                                 )

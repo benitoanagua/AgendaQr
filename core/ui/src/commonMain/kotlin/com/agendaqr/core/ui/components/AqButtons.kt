@@ -94,9 +94,9 @@ internal fun resolveAmButtonColors(
     pressed: Boolean,
 ): AqButtonColors = when (variant) {
     AqButtonVariant.Primary -> when {
-        !enabled -> AqButtonColors(scheme.accentDisabled, scheme.textPrimary)
-        pressed -> AqButtonColors(scheme.accentActive, scheme.accentActiveContent)
-        else -> AqButtonColors(scheme.accent, scheme.onAccent)
+        !enabled -> AqButtonColors(scheme.brandFillDisabled, scheme.onBrandFillDisabled)
+        pressed -> AqButtonColors(scheme.brandFillActive, scheme.onBrandFill)
+        else -> AqButtonColors(scheme.brandFill, scheme.onBrandFill)
     }
     AqButtonVariant.Default -> when {
         !enabled -> AqButtonColors(scheme.disabled, scheme.textTertiary)
@@ -110,8 +110,8 @@ internal fun resolveAmButtonColors(
     }
     AqButtonVariant.Light -> when {
         !enabled -> AqButtonColors(scheme.disabled, scheme.textTertiary)
-        pressed -> AqButtonColors(scheme.accentLightActive, scheme.accentText)
-        else -> AqButtonColors(scheme.accentContainer, scheme.accentText)
+        pressed -> AqButtonColors(scheme.emphasisSurfaceHover, scheme.emphasisText)
+        else -> AqButtonColors(scheme.emphasisSurface, scheme.emphasisText)
     }
     AqButtonVariant.Outline -> AqButtonColors(
         container = if (pressed && enabled) scheme.surfaceActive else scheme.transparent,
@@ -120,7 +120,7 @@ internal fun resolveAmButtonColors(
     )
     AqButtonVariant.Text -> AqButtonColors(
         container = if (pressed && enabled) scheme.surfaceActive else scheme.transparent,
-        content = if (enabled) scheme.accentText else scheme.textTertiary,
+        content = if (enabled) scheme.link else scheme.textTertiary,
     )
 }
 
@@ -470,14 +470,14 @@ fun AqCompactAction(
                     imageVector = it,
                     contentDescription = null,
                     size = AqMetrics.IconSizeCompact,
-                    tint = color ?: if (prominent) AqColor.AccentText else AqColor.TextSecondary,
+                    tint = color ?: if (prominent) AqColor.Link else AqColor.TextSecondary,
                 )
             }
             Text(
                 label,
                 style = AqTextStyles.BodySmall,
                 fontWeight = fontWeight ?: AqWeight.Medium,
-                color = color ?: if (prominent) AqColor.AccentText else AqColor.TextSecondary,
+                color = color ?: if (prominent) AqColor.Link else AqColor.TextSecondary,
             )
         }
     }
@@ -518,7 +518,7 @@ fun AqTextAction(
     size: AqButtonSize = AqButtonSize.Large,
 ) {
     val actionColor = color ?: when (variant) {
-        AqTextActionVariant.Default -> AqColor.AccentText
+        AqTextActionVariant.Default -> AqColor.Link
         AqTextActionVariant.Neutral -> AqColor.TextPrimary
         AqTextActionVariant.Danger -> AqColor.Danger
     }
@@ -612,7 +612,7 @@ fun AqFilterChip(
                 }
                 .then(
                     if (selected) {
-                        Modifier.background(AqColor.Accent, AqShapes.Pill)
+                        Modifier.background(AqColor.SelectionFill, AqShapes.Pill)
                     } else {
                         Modifier.background(AqColor.SurfaceSecondary, AqShapes.Pill)
                     },
@@ -626,19 +626,19 @@ fun AqFilterChip(
                     imageVector = it,
                     contentDescription = null,
                     size = AqMetrics.IconSizeCompact,
-                    tint = if (selected) AqColor.OnAccent else AqColor.TextSecondary,
+                    tint = if (selected) AqColor.TextPrimary else AqColor.TextSecondary,
                 )
             }
             Text(
                 label,
                 style = AqTextStyles.Label,
-                color = if (selected) AqColor.OnAccent else AqColor.TextPrimary,
+                color = AqColor.TextPrimary,
             )
             count?.takeIf { it != 0 }?.let {
                 Box(
                     modifier = Modifier
                         .background(
-                            if (selected) AqColor.OnAccent.copy(alpha = AqAlpha.SelectedOnAccent) else AqColor.SurfaceContainerHighest,
+                            if (selected) AqColor.TextPrimary.copy(alpha = AqAlpha.SelectedOnFill) else AqColor.SurfaceContainerHighest,
                             AqShapes.ExtraSmall,
                         )
                         .padding(horizontal = AqSpacing.Xs),
@@ -646,7 +646,7 @@ fun AqFilterChip(
                     Text(
                         it.toString(),
                         style = AqTextStyles.Tag,
-                        color = if (selected) AqColor.OnAccent else AqColor.TextSecondary,
+                        color = if (selected) AqColor.TextPrimary else AqColor.TextSecondary,
                     )
                 }
             }
@@ -694,7 +694,7 @@ fun AqSegmentedControl(
     ) {
         options.forEachIndexed { index, option ->
             val selected = index == selectedIndex
-            val activeColor = option.activeTone?.content() ?: AqColor.AccentText
+            val activeColor = option.activeTone?.content() ?: AqColor.EmphasisText
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -778,7 +778,7 @@ fun AqFavoriteToggle(
         AqIcon(
             imageVector = AqIcons.Favorite,
             contentDescription = null,
-            tint = if (favorite) AqColor.Accent else AqColor.TextTertiary,
+            tint = if (favorite) AqColor.SelectionIcon else AqColor.TextTertiary,
         )
     }
 }

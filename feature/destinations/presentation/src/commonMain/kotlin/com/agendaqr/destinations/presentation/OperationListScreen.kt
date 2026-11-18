@@ -194,7 +194,7 @@ internal fun OperationListScreen(
                             imageVector = AqIcons.Calendar,
                             contentDescription = null,
                             size = AqMetrics.IconSizeCompact,
-                            tint = AqColor.AccentText,
+                            tint = AqColor.EmphasisIcon,
                         )
                         Column {
                             AqText(

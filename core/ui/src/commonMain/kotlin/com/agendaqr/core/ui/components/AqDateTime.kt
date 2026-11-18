@@ -110,7 +110,7 @@ fun AqTimePickerDialog(
                 onClick = { onConfirm(state.hour, state.minute) },
                 shape = AqShapes.Small,
             ) {
-                Text(confirmLabel, style = AqTextStyles.ButtonLabel, color = AqColor.AccentText)
+                Text(confirmLabel, style = AqTextStyles.ButtonLabel, color = AqColor.Link)
             }
         },
         dismissButton = {

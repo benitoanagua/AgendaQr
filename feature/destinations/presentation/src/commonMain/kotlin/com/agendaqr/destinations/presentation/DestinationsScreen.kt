@@ -181,7 +181,7 @@ fun DestinationsScreen(
                         imageVector = AqIcons.Favorite,
                         contentDescription = null,
                         size = AqMetrics.IconSizeCompact,
-                        tint = AqColor.AccentText,
+                        tint = AqColor.SelectionIcon,
                     )
                     AqSectionHeader(text = AppStrings.Favoritos)
                 }

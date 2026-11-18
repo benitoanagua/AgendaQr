@@ -23,15 +23,15 @@ class AqButtonStyleTest {
     fun variants_resolve_normal_pressed_and_disabled_colors_in_both_themes() {
         listOf(LightAmColorScheme, DarkAmColorScheme).forEach { scheme ->
             assertEquals(
-                AqButtonColors(scheme.accent, scheme.onAccent),
+                AqButtonColors(scheme.brandFill, scheme.onBrandFill),
                 resolveAmButtonColors(AqButtonVariant.Primary, scheme, enabled = true, pressed = false),
             )
             assertEquals(
-                AqButtonColors(scheme.accentActive, scheme.accentActiveContent),
+                AqButtonColors(scheme.brandFillActive, scheme.onBrandFill),
                 resolveAmButtonColors(AqButtonVariant.Primary, scheme, enabled = true, pressed = true),
             )
             assertEquals(
-                AqButtonColors(scheme.accentDisabled, scheme.textPrimary),
+                AqButtonColors(scheme.brandFillDisabled, scheme.onBrandFillDisabled),
                 resolveAmButtonColors(AqButtonVariant.Primary, scheme, enabled = false, pressed = false),
             )
             assertEquals(
@@ -55,11 +55,11 @@ class AqButtonStyleTest {
                 resolveAmButtonColors(AqButtonVariant.Danger, scheme, enabled = false, pressed = false),
             )
             assertEquals(
-                AqButtonColors(scheme.accentContainer, scheme.accentText),
+                AqButtonColors(scheme.emphasisSurface, scheme.emphasisText),
                 resolveAmButtonColors(AqButtonVariant.Light, scheme, enabled = true, pressed = false),
             )
             assertEquals(
-                AqButtonColors(scheme.accentLightActive, scheme.accentText),
+                AqButtonColors(scheme.emphasisSurfaceHover, scheme.emphasisText),
                 resolveAmButtonColors(AqButtonVariant.Light, scheme, enabled = true, pressed = true),
             )
             assertEquals(
@@ -75,11 +75,11 @@ class AqButtonStyleTest {
                 resolveAmButtonColors(AqButtonVariant.Outline, scheme, enabled = true, pressed = true),
             )
             assertEquals(
-                AqButtonColors(Color.Transparent, scheme.accentText),
+                AqButtonColors(Color.Transparent, scheme.link),
                 resolveAmButtonColors(AqButtonVariant.Text, scheme, enabled = true, pressed = false),
             )
             assertEquals(
-                AqButtonColors(scheme.surfaceActive, scheme.accentText),
+                AqButtonColors(scheme.surfaceActive, scheme.link),
                 resolveAmButtonColors(AqButtonVariant.Text, scheme, enabled = true, pressed = true),
             )
             assertEquals(
