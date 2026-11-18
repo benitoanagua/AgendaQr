@@ -244,7 +244,7 @@
 | H1 | QR Preview | `AqQrPreview` | PARTIAL | Sí | NO VERIFICADO | Parcial | `QrPreviewContractTest`, `QrFullscreenTest` | contentDescription "QR" fijo (P-02 aceptado); copia al portapapeles no en el componente | `decodeQrImageBitmap` expect/actual; `AqQrSheet` para pantalla completa | Alta | `decodeImageBitmap` (expect/actual) |
 | H2 | Image Preview | `AqMediaFrame` + `Image` | PARTIAL | Sí | NO VERIFICADO | Parcial | — | `AqMediaFrame` es contenedor genérico; no hay visor de imagen dedicado | `AqMediaFrame` cubre marco de medios | Media | `AqMediaFrame` |
 | H3 | Image Viewer | `AqQrSheet` (QR fullscreen) | PARTIAL | Sí | NO VERIFICADO | Parcial | `QrFullscreenTest` | Solo para QR; no visor genérico de imágenes | `AqQrSheet` es específica de QR (X-03) | Media | `AqQrSheet`, `AqBottomSheet` |
-| H4 | Carousel | `HomeSurface` (carrusel horizontal de favoritos) | PARTIAL | Sí | NO VERIFICADO | Parcial | `UxHomeFavoritesTest` | Carrusel implementado en feature, no en `core/ui` | Evaluar extraer a `AqCarousel` si se reutiliza | Baja | Implementación local de feature |
+| H4 | Carousel | `core/ui/.../AqLists.kt` → `AqCarousel` | COMPLETE | Sí | NO VERIFICADO | Parcial | `AqCarouselTest` | Usado en S01 carrusel de favoritos; ancho fijo por ítem, siguiente asoma | Sin cambios | Media | `AqIcon`, `AqTextStyles` |
 | H5 | Media Attachment | `AqMediaFrame` | PARTIAL | Sí | NO VERIFICADO | Parcial | — | Marco de medios para QR y comprobantes; sin progreso de subida visual | `AqMediaFrame` cubre presentación | Media | `AqMediaFrame` |
 | H6 | Thumbnail | `AqQrPreview` + `AqIcon(ImageOff)` | PARTIAL | Sí | NO VERIFICADO | Parcial | — | Sin miniatura dedicada; estado "sin imagen" con glifo | `AqQrPreview` muestra glifo cuando no decodifica | Baja | `AqQrPreview` |
 | H7 | Document Preview | `ComprobanteViewer` (feature) | PARTIAL | Sí | NO VERIFICADO | Parcial | — | Visor de comprobante/PDF en feature, no en `core/ui` | No mover a core/ui sin requerimiento | Baja | Implementación de feature |
@@ -327,9 +327,9 @@
 
 | Clasificación | Cantidad | Patrón |
 |---|---|---|
-| COMPLETE | 44 | B1, B2, B4, B6, B7, B13, B14, B15, B16, C3, C17, C18, C26, C27, E1, E2, E4, E15, F3, F4, F5, F6, F7, F10, F12, F14, G1, G2, G3, G5, G6, G9, G13, G14, H10, I1, I2, I3, I4, I5, I6, I7, I8, I9, I12, I13, I14, I15, I16, I17, I18 |
-| PARTIAL | 74 | A1, A2, A5, A6, A7, A9, A10, A11, A12, A13, A15, B3, B5, B10, B11, C1-C2, C4-C12, C15-C25, D1-D7, D11, E3, E5-E14, E16, F1, F8-F11, F13, G4, G7-G8, G10-G12, G15-G17, H1-H9, I10-I11, J4, J7, J8, J10-J16 |
-| MISSING | 11 | C13, C14, C21, D10, D12, E10, E11, E16, F2, F9, G7, G8, G12, G17, H4, H8, J1-J3, J5, J6, J9, J17 (algunos NOT_APPLICABLE) |
+| COMPLETE | 45 | B1, B2, B4, B6, B7, B13, B14, B15, B16, C3, C17, C18, C26, C27, E1, E2, E4, E15, F3, F4, F5, F6, F7, F10, F12, F14, G1, G2, G3, G5, G6, G9, G13, G14, H4, H10, I1, I2, I3, I4, I5, I6, I7, I8, I9, I12, I13, I14, I15, I16, I17, I18 |
+| PARTIAL | 73 | A1, A2, A5, A6, A7, A9, A10, A11, A12, A13, A15, B3, B5, B10, B11, C1-C2, C4-C12, C15-C25, D1-D7, D11, E3, E5-E14, E16, F1, F8-F11, F13, G4, G7-G8, G10-G12, G15-G17, H1-H3, H5-H9, I10-I11, J4, J7, J8, J10-J16 |
+| MISSING | 11 | C13, C14, C21, D10, D12, E10, E11, E16, F2, F9, G7, G8, G12, G17, H8, J1-J3, J5, J6, J9, J17 (algunos NOT_APPLICABLE) |
 | NOT_APPLICABLE | 31 | A4, A8, A12, A14, B8, B12, C6, C11 (dropdown en línea), C20, C22, C23, C24, D8, D9, E8, E9, H4 (parcial), I11, J1, J2, J3, J5, J6, J9, J17 |
 
 ### Riesgos arquitectónicos principales
