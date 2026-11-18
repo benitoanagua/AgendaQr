@@ -8,10 +8,10 @@ La intención funcional y las reglas de producto viven en [`02-especificacion-ux
 
 ## Configuraciones de captura requeridas
 
-- `light-360`
-- `dark-360`
+- `light`
+- `dark`
 
-Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de nombre es `<superficie>--<estado>--<ancho>dp--<tema>.png`; no se admite zoom, recorte ni viewport falso.
+Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de nombre es `<superficie>--<estado>--<tema>.png`; el ancho único (360 dp) vive en el manifiesto y no se repite en el nombre. No se admite zoom, recorte ni viewport falso.
 
 ## Superficies
 

@@ -40,17 +40,18 @@ La galería visual se produce **bajo demanda** y fuera del control de
 versiones, en `build/`; nada se versiona ni se hashea. Hay un único
 artefacto de capturas: la **galería estricta por superficie**
 (`build/captures/gallery/`), con esquema de nombre determinista
-`<superficie>--<estado>--360dp--<tema>.png` y un único ancho, 360 dp.
+`<superficie>--<estado>--<tema>.png`. El ancho es único (360 dp) y vive como
+metadato del manifiesto: no se repite en el nombre del archivo.
 Sustituye al par anterior de galerías duplicadas
 (`build/roborazzi/` y `build/captures/gallery/`): las pruebas siguen
 componiendo y verificando cada escenario por aserciones, y solo los
 escenarios declarados en el contrato escriben imagen.
 
 Cuando la galería existe, `verifyScreenContract` la valida: dimensiones
-reales del bitmap coherentes con el ancho declarado (sin zoom, recorte ni
-viewport falso), sin duplicados byte-exactos ni repeticiones de la misma
-superficie/estado/configuración, y con cobertura de las dos
-configuraciones requeridas (`light-360`, `dark-360`). Si no hay artefactos,
+reales del bitmap coherentes con el único ancho (360 dp, declarado en el
+manifiesto; sin zoom, recorte ni viewport falso), sin duplicados byte-exactos
+ni repeticiones de la misma superficie/estado/configuración, y con cobertura
+de las dos configuraciones requeridas (`light`, `dark`). Si no hay artefactos,
 el gate no falla porque la galería no
 se versiona. Con el flag `-Pagendaqr.capture=true`, que la produce, las
 pruebas corren siempre frescas y se limpia la galería antes de regenerarla.
@@ -70,7 +71,7 @@ asociar es byte-idéntico al vacío de Actividades (comparten composición),
 así que solo se conserva una captura; el copy propio del vacío queda como
 decisión de producto pendiente.
 
-**Manifiesto (schema `agendaqr.captures/5`).** `build/captures/manifest.json`
+**Manifiesto (schema `agendaqr.captures/6`).** `build/captures/manifest.json`
 declara por entrada la pantalla de AgendaQr, el identificador de su
 pantalla de Stitch (campo histórico, sin ADR asociado; vacío para las superficies excluidas), estado,
 tema, ancho, densidad, dimensiones reales del bitmap, hash, si es

@@ -129,7 +129,7 @@ tasks.register("captureScreenshots") {
               figcaption{font-size:11px;color:#555;margin-top:6px;word-break:break-all}
             </style>
             <h1>Galería estricta por superficie (${images.size})</h1>
-            <p>Esquema <superficie>--<estado>--<ancho>dp--<tema>. Validada por <code>verifyScreenContract</code>; manifiesto en <code>build/captures/manifest.json</code>.</p>
+            <p>Esquema <superficie>--<estado>--<tema>. El ancho único (360 dp) está en el manifiesto. Validada por <code>verifyScreenContract</code>; manifiesto en <code>build/captures/manifest.json</code>.</p>
             <div class="grid">
             $cards
             </div>

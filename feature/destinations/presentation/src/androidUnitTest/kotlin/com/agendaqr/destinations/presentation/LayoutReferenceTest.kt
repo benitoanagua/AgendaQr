@@ -187,14 +187,14 @@ open class LayoutReferenceTest {
             val bounds = dialog.getUnclippedBoundsInRoot()
             if (Math.round((bounds.right - bounds.left).value) != 360) return
             dialog.captureRoboImage(
-                "build/captures/gallery/$surface--$state--360dp--$theme.png",
+                "build/captures/gallery/$surface--$state--$theme.png",
             )
             return
         }
         val width = compose.onRoot().getUnclippedBoundsInRoot().let { it.right - it.left }.value
         if (Math.round(width) != 360) return
         compose.onRoot().captureRoboImage(
-            "build/captures/gallery/$surface--$state--360dp--$theme.png",
+            "build/captures/gallery/$surface--$state--$theme.png",
         )
     }
 
