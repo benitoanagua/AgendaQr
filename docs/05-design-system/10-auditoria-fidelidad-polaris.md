@@ -307,3 +307,18 @@ seguimiento del sistema en `AqTheme`**; el default del local debe ser
   `AmountSymbol`, `RowTitle`, `SectionHeader`, `CaptionSmall` y `Tag`.
 - Verificación: gates y pruebas de `core/ui` en verde. iOS sigue **no
   verificado** en este entorno.
+
+## 14. Estado tras F4
+
+- `AqElevation` incorpora `offsetY`, `spread` y las seis sombras publicadas
+  `shadow-100…600` (`:363-368`). El color de la sombra pasa de negro a
+  `rgba(26,26,26,α)`, tal como la instantánea.
+- `shadow-100` queda anulada en el tema claro móvil (`:497`): las tarjetas que
+  usan `AqElevation.Shadow1` son planas en `light-mobile` y conservan la sombra
+  en `dark-experimental`, donde no existe esa anulación.
+- D-10 registra que `Modifier.shadow` no puede representar `spread`; la
+  geometría completa se conserva en el token y el radio de desenfoque aplicado
+  es el publicado. Las insets de botones siguen resueltas con borde 1 dp,
+  equivalente móvil documentado en H4.
+- Verificación: gates y pruebas de `core/ui` en verde. iOS sigue **no
+  verificado** en este entorno.
