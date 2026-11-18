@@ -30,6 +30,7 @@
 |---|---|
 | [`05-design-system/00-contrato-normativo-diseno.md`](05-design-system/00-contrato-normativo-diseno.md) | Contrato normativo único: fuente, tokens, extensiones y desviaciones |
 | [`05-design-system/09-instantanea-tokens-polaris-9.4.2.md`](05-design-system/09-instantanea-tokens-polaris-9.4.2.md) | Instantánea versionada de valores Polaris 9.4.2 |
+| [`05-design-system/10-auditoria-fidelidad-polaris.md`](05-design-system/10-auditoria-fidelidad-polaris.md) | Auditoría de fidelidad de `core/ui` contra la instantánea |
 | [`05-design-system/02-implementacion-diseno.md`](05-design-system/02-implementacion-diseno.md) | Reglas de implementación (histórico; pendiente de alineación) |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros (pendiente de alineación) |
 | [`05-design-system/07-evaluacion-tipografia.md`](05-design-system/07-evaluacion-tipografia.md) | Evaluación histórica de MiSans Global (no adoptada) |
