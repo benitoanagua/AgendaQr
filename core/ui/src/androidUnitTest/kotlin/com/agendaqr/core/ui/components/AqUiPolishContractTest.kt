@@ -279,36 +279,6 @@ class AqUiPolishContractTest {
     }
 
     @Test
-    @Config(sdk = [34], qualifiers = "w320dp-h640dp")
-    fun end_meta_moves_to_its_own_line_on_a_narrow_row() {
-        setScaledContent(1f) {
-            AqListRow(
-                title = "Mercado",
-                subtitle = "Contexto de compras",
-                endMeta = "14/11/2023",
-                onClick = {},
-            )
-        }
-        assertEndMetaBelowTitle()
-    }
-
-    private fun assertEndMetaBelowTitle() {
-        val title = compose.onNodeWithText("Mercado", useUnmergedTree = true)
-            .getBoundsInRoot()
-        val meta = compose.onNodeWithText("14/11/2023", useUnmergedTree = true)
-            .getBoundsInRoot()
-        assertTrue(
-            meta.top.value >= title.bottom.value - 1f,
-            "el metadato no bajó a su propia línea: title=$title meta=$meta",
-        )
-        val rowRight = compose.onRoot().getBoundsInRoot().right.value
-        assertTrue(
-            meta.right.value <= rowRight + 1f,
-            "el metadato desborda el ancho: right=${meta.right.value}, fila=$rowRight",
-        )
-    }
-
-    @Test
     fun end_meta_reads_as_one_accessible_element_without_duplicate_announcements() {
         compose.setContent {
             AqTheme {

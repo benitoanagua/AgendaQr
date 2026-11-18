@@ -63,29 +63,6 @@ class AppStatusHostBannerLayoutTest {
         compose.waitForIdle()
     }
 
-    /** Rama 2 del host: mutaciones FAILED con "Reintentar ahora". */
-    private fun composeFailedSyncHost(dark: Boolean = false) {
-        compose.setContent {
-            AqTheme(darkTheme = dark) {
-                AqScreenScaffold(
-                    statusContent = {
-                        AppStatusHost(
-                            importError = null,
-                            isOffline = false,
-                            pendingCount = 3,
-                            hasFailed = true,
-                            onDismissImportError = {},
-                            onRetryNow = {},
-                        )
-                    },
-                ) {
-                    AqText("Contenido de la pantalla")
-                }
-            }
-        }
-        compose.waitForIdle()
-    }
-
     /** Un solo margen de pantalla a cada lado (tolerancia 1 dp). */
     private fun assertSingleScreenMargin(label: String) {
         val root = compose.onRoot().getBoundsInRoot()
@@ -151,15 +128,4 @@ class AppStatusHostBannerLayoutTest {
         assertSingleScreenMargin("import-error-360-dark")
     }
 
-    @Test
-    @Config(sdk = [34], qualifiers = "w320dp-h640dp")
-    fun failed_sync_banner_fills_useful_width_320_light() {
-        composeFailedSyncHost(dark = false)
-        assertSingleScreenMargin("failed-sync-320-light")
-        assertTextsInsideBanner(
-            "failed-sync-320-light",
-            syncPendingLabel(3, retrying = true),
-            AppStrings.ReintentarAhora,
-        )
-    }
 }

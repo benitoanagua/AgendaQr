@@ -115,5 +115,5 @@ brillo siguen siendo `expect/actual` en la capa feature.
 
 - Gates estáticos: `verifyDesignSystemCompliance`, `verifyDesignSystemFixtures`, `verifyControlMinSize`, `verifyScreenContract` (contrato de interacción por pantalla, excepciones en uso y capturas), `verifyScreenContractFixtures`.
 - Contratos de sistema: `AqSchemeTest`, `AqTypographyTest`, `AqAccentTest`, `AqSurfaceMotionTest`, `AqContrastPairsTest` (commonTest); `AqAccessibilityContractTest`, `AqTabsLayoutTest`, `AqUiPolishContractTest` (androidUnitTest/Robolectric).
-- Verificación de layout: `LayoutReferenceTest`, `LayoutReferenceExtraTest` (ADR-0007).
+- Verificación de layout: `LayoutReferenceTest` (ADR-0007).
 - Agregador: `verifyAgendaQrArchitecture`.

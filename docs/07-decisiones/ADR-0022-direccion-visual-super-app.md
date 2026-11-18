@@ -27,7 +27,7 @@ La dirección de alta densidad choca con invariantes de accesibilidad y de plata
 | Rojo como acción primaria | El tono de peligro también es rojo | Primaria = siempre píldora con gradiente. Destructiva = nunca rellena con gradiente: contorno o tono + glifo de papelera/aviso + etiqueta específica de consecuencia + confirmación. |
 | Sombras E-1/E-2/E-3 | El gate prohíbe `shadow(` | Se permiten mediante el token `AqElevation` y excepciones E-05/E-06 registradas a la vez en contrato §12 y en `exceptionRegistry` del gate (el gate se extiende para interpretar reglas `shadow:`). El `RoundedCornerShape` sigue siendo exclusivo de la capa de tokens. |
 | Rejilla "King Kong" de 4–5 columnas | Spec S01: "sin acciones rápidas duplicadas" | Se implementa en Inicio con **solo las acciones que ya existen** (las del hub del botón flotante) y se retira el botón flotante con hub **de Inicio** para no duplicar. Enmienda a S01. |
-| Etiqueta ≤ 4 caracteres (2 chinos) | Español y escalado al 200 % | Etiqueta corta de una línea (≤ 12 caracteres) a 12 sp; con fuente grande o 320 dp la rejilla pasa a menos columnas o a dos líneas, sin recortes. |
+| Etiqueta ≤ 4 caracteres (2 chinos) | Español y escalado al 200 % | Etiqueta corta de una línea (≤ 12 caracteres) a 12 sp; con fuente grande la rejilla pasa a menos columnas o a dos líneas, sin recortes. |
 | Precio rojo en e-commerce | Aquí no hay precios comerciales; el rojo en finanzas se lee como egreso/peligro | El **Importe** adopta la tipografía del Anexo A (28–32, peso 800, tabular, símbolo de moneda más pequeño) y conserva color neutro con signo. La adaptación de dominio queda documentada; pintarlo rojo es un cambio de un token, no lo hace este ADR. |
 | Cuerpo 14, H1 18–20, H2 16, Caption 12 | Escala previa 17/15/13 | Se adopta la escala del Anexo A. Mínimo absoluto 11 sp (badges 12 → 11–12). Todo en `sp`, validado al 150 % en la verificación automática; el 200 % se conserva y se revisa manualmente (ADR-0007). |
 | Estado de foco "no aplica" | Teclado, D-pad, Switch Access | Sin anillo permanente en táctil; el indicador `AqColor.Focus` se conserva para foco por teclado/D-pad/Switch Access. El estado táctil es escala + háptica. |
@@ -43,7 +43,7 @@ La dirección de alta densidad choca con invariantes de accesibilidad y de plata
 
 3. **No aplicable (no se simula).** Carrito volador, cuentas regresivas de oferta, monedas virtuales, niveles, etiquetas "HOT/限时/-50 %", servicio al cliente flotante e insignias de conteo en la barra inferior quedan **fuera de alcance** porque exigen funciones o datos que el producto no tiene; no se inventan datos. El brillo animado infinito, el confeti fuera de S12 y las mascotas animadas también quedan fuera o acotados según la tabla. Las bandas tipo cinta se admiten con textos reales de estado.
 
-4. **Piso de accesibilidad innegociable (se ajustan valores, no se quita el estilo):** texto ≥ 4.5:1; componentes y bordes funcionales ≥ 3:1 en claro y oscuro; objetivos ≥ 48 dp; escalado de fuente hasta 200 % sin recortes a 320 y 360 dp; ningún estado solo por color; movimiento reducido = inmediato; contenido en movimiento detenible. El lienzo QR permanece blanco en ambos temas.
+4. **Piso de accesibilidad innegociable (se ajustan valores, no se quita el estilo):** texto ≥ 4.5:1; componentes y bordes funcionales ≥ 3:1 en claro y oscuro; objetivos ≥ 48 dp; escalado de fuente hasta 200 % sin recortes a 360 dp; ningún estado solo por color; movimiento reducido = inmediato; contenido en movimiento detenible. El lienzo QR permanece blanco en ambos temas.
 
 5. **Excepciones nuevas del gate** (registradas a la vez en contrato §12 y en `exceptionRegistry`; el gate se extiende para interpretarlas):
    - **E-05** — Sombra E-1/E-2 de superficies elevadas (tarjetas de lista y tarjetas destacadas) sobre fondo gris.
@@ -64,7 +64,7 @@ La dirección de alta densidad choca con invariantes de accesibilidad y de plata
 
 - **Contraste con texto blanco sobre el gradiente:** oscurecer ambos extremos vuelve el gradiente rojo profundo → naranja quemado. Mitigación: valores AA de partida fijados por prueba; la alternativa de brillo (texto oscuro sobre el gradiente original) exige decisión del propietario.
 - **Parecido con una app concreta:** se mitiga con la regla de imitar patrones, nunca activos (iconos, ilustraciones, logotipos, textos, colores de marca, composiciones calcadas).
-- **Escala 14/12 y densidad:** se prueba a 320/360 dp y 100 %/150 % de fuente; el layout cede antes que la legibilidad. El 200 % se conserva en producción pero quedó fuera de la verificación automática (ADR-0007).
+- **Escala 14/12 y densidad:** se prueba a 360 dp y 100 %/150 % de fuente; el layout cede antes que la legibilidad. El 200 % se conserva en producción pero quedó fuera de la verificación automática (ADR-0007).
 - **Sombras en Compose Multiplatform:** la aproximación de las sombras CSS del Anexo a `shadow` de Compose se documenta; no hay sombras de color exactas y se aproximan con color ambiental/puntual.
 
 ## Consolidación (2026-10-17)

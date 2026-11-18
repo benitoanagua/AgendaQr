@@ -50,6 +50,6 @@ La pasada anterior dotó al producto de un sistema de diseño propio (AgendaMobi
 
 ## Riesgos
 
-- **Densidad y tamaños**: la escala 17/15/13 crece frente a 16/14/12; la suite de layout a 320/360 dp y 100 %/150 % verifica no-desbordamiento. El 200 % se conserva en producción pero quedó fuera de la verificación automática (ADR-0007).
+- **Densidad y tamaños**: la escala 17/15/13 crece frente a 16/14/12; la suite de layout a 360 dp y 100 %/150 % verifica no-desbordamiento. El 200 % se conserva en producción pero quedó fuera de la verificación automática (ADR-0007).
 - **Validación visual**: verificación de layout por aserciones (ADR-0007); revisión humana en dispositivo pendiente.
 - **iOS runtime**: solo compilación en este entorno (checklist existente).

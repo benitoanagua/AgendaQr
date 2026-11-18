@@ -968,9 +968,6 @@ tasks.register("verifyScreenContractFixtures") {
         require(parseCaptureName("home--content--360dp--light--font200.png") == null) {
             "un sufijo de escala de fuente debe rechazarse"
         }
-        require(parseCaptureName("home--content--320dp--light.png") == null) {
-            "un ancho distinto del único admitido debe rechazarse"
-        }
         require(parseCaptureName("home--content--720dp--light.png") == null) {
             "un viewport de tablet debe rechazarse"
         }

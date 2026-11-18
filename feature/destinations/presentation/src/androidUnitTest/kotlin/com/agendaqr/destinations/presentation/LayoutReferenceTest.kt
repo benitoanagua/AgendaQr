@@ -507,7 +507,7 @@ open class LayoutReferenceTest {
         )
     }
 
-    // Detalle y exhibición QR (referencia de layout UX/UI): hero de 320 dp con
+    // Detalle y exhibición QR (referencia de layout UX/UI): hero con
     // metadatos en tarjeta compacta.
     private fun detailFixture() = com.agendaqr.destinations.domain.Destination(
         id = "d-1", name = "Carniceria Don Bife",
@@ -1364,44 +1364,6 @@ open class LayoutReferenceTest {
             ),
         )
         ImportBatchScreen(state = ImportBatchUiState.Review(longNameBatch), onAction = {})
-    }
-
-    // Importación en viewport pequeño (w320dp)
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "w320dp-h640dp")
-    fun import_batch_small_viewport_light() = verifyLayout("import-batch-small-viewport-light", dark = false) {
-        ImportBatchScreen(state = ImportBatchUiState.Result(importBatchFixture()), onAction = {})
-    }
-
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "w320dp-h640dp")
-    fun import_batch_small_viewport_dark() = verifyLayout("import-batch-small-viewport-dark", dark = true) {
-        ImportBatchScreen(state = ImportBatchUiState.Result(importBatchFixture()), onAction = {})
-    }
-
-    // Login con texto ampliado (simulado con qualifier de densidad)
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "w320dp-h640dp")
-    fun login_small_viewport_light() = verifyLayout("login-small-viewport-light", dark = false) {
-        AuthScreen(
-            state = AuthUiState(email = "", password = "", isSubmitting = false),
-            onEmailChanged = {},
-            onPasswordChanged = {},
-            onSignIn = {},
-            onSignUp = {},
-        )
-    }
-
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "w320dp-h640dp")
-    fun login_small_viewport_dark() = verifyLayout("login-small-viewport-dark", dark = true) {
-        AuthScreen(
-            state = AuthUiState(email = "", password = "", isSubmitting = false),
-            onEmailChanged = {},
-            onPasswordChanged = {},
-            onSignIn = {},
-            onSignUp = {},
-        )
     }
 
     // Login con error

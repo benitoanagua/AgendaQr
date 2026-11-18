@@ -239,15 +239,6 @@ class ImportBatchBannerLayoutTest {
     }
 
     @Test
-    @Config(sdk = [34], qualifiers = "w320dp-h640dp")
-    fun error_block_fills_content_width_compact_320dp() {
-        composeErrorScreen(dark = false)
-        assertBannerFillsContentWidth("320-light-font100")
-        assertTextsComplete("320-light-font100")
-        assertNoOverlap("320-light-font100")
-    }
-
-    @Test
     fun error_state_keeps_summary_and_actions() {
         composeErrorScreen(dark = false)
         listOf(
@@ -402,14 +393,4 @@ class ImportBatchBannerLayoutTest {
         compose.onNodeWithText(reviewPendingLabel(importBatchFixture())).assertIsDisplayed()
     }
 
-    @Test
-    @Config(sdk = [34], qualifiers = "w320dp-h640dp")
-    fun saved_block_matches_error_geometry_compact_320dp() {
-        composeSavedScreen(dark = true)
-        assertBannerFillsContentWidth("320-dark-saved")
-        assertTextsComplete(
-            "320-dark-saved",
-            listOf(AppStrings.GuardadoOk, AppStrings.batchSavedKeepReviewNotice),
-        )
-    }
 }

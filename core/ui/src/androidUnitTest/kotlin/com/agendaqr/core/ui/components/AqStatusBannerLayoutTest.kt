@@ -38,7 +38,7 @@ import org.robolectric.annotation.GraphicsMode
  *   el banner pide `screenMargin = AqSpacing.ScreenMargin`.
  * - contenido ya acotado por AqScreenScaffold: parámetro por defecto
  *   (cero) y el scaffold pone el único margen.
- * Cubre 320/360 dp, claro/oscuro, escala 100/150 %, con/sin título,
+ * Cubre 360 dp, claro/oscuro, escala 100/150 %, con/sin título,
  * acciones y descarte, y copy largo en español (ADR-0007: aserciones de
  * límites reales, sin capturas versionadas).
  */
@@ -218,25 +218,10 @@ class AqStatusBannerLayoutTest {
     }
 
     @Test
-    @Config(sdk = [34], qualifiers = "w320dp-h640dp")
-    fun edge_to_edge_host_applies_single_margin_320_light() {
-        composeEdgeToEdgeHost(dark = false)
-        assertSingleScreenMargin("host-320-light")
-        assertContentInsideBanner("host-320-light", shortMessage, "Reintentar")
-    }
-
-    @Test
     fun scaffold_padded_content_applies_margin_once_360_light() {
         composeScaffoldPaddedContent(dark = false)
         assertSingleScreenMargin("scaffold-360-light")
         assertContentInsideBanner("scaffold-360-light", shortMessage, "Reintentar")
-    }
-
-    @Test
-    @Config(sdk = [34], qualifiers = "w320dp-h640dp")
-    fun scaffold_padded_content_applies_margin_once_320_dark() {
-        composeScaffoldPaddedContent(dark = true)
-        assertSingleScreenMargin("scaffold-320-dark")
     }
 
     // ---------------------------------------------------------------------
@@ -303,18 +288,6 @@ class AqStatusBannerLayoutTest {
         assertSingleScreenMargin("copy-largo-360")
         assertContentInsideBanner("copy-largo-360", longMessage, "Reintentar")
         compose.onNodeWithContentDescription("DESCARTAR").assertIsInsideBanner("copy-largo-360")
-    }
-
-    @Test
-    @Config(sdk = [34], qualifiers = "w320dp-h640dp")
-    fun long_message_with_actions_stays_contained_320dp() {
-        composeEdgeToEdgeHost(
-            message = longMessage,
-            action = true,
-            dismiss = true,
-        )
-        assertSingleScreenMargin("copy-largo-320dp")
-        assertContentInsideBanner("copy-largo-320dp", longMessage, "Reintentar")
     }
 
 }

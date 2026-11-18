@@ -7,8 +7,8 @@
 
 La verificación automática de la aceptación visual comprueba que las
 pantallas críticas se componen sin recortes ni solapes en claro y oscuro,
-a 360 dp en la galería, con aserciones puntuales a 320 dp y escala de fuente
-al 100 % y 150 % en suites de componentes. Restricciones duras:
+a 360 dp en la galería, con escala de fuente al 100 % y 150 % en suites de
+componentes. Restricciones duras:
 
 1. El repo **no versiona binarios de imagen** (`.gitignore` ignora
    png/jpg/jpeg/gif/webp/bmp).
@@ -59,8 +59,8 @@ pruebas corren siempre frescas y se limpia la galería antes de regenerarla.
 un mapa explícito escenario → (superficie, estado): cada superficie del
 contrato y sus estados declarados quedan capturados. La matriz prioriza
 pantallas y estados únicos sobre combinaciones: solo 360 dp en claro/oscuro.
-Se retiraron las raíces a 320 dp y 720 dp (tablet) y el subconjunto a fuente
-200 %: la capacidad adaptativa
+Se retiraron las raíces a anchos alternativos y a 720 dp (tablet) y el
+subconjunto a fuente 200 %: la capacidad adaptativa
 de `NavigationRail` y el escalado tipográfico siguen existiendo en
 producción, pero ya no tienen verificación automática de galería ni de
 layout (ver Consecuencias). Los overlays (S08 selector, S03 cámara) se
@@ -89,10 +89,9 @@ Con el flag la galería se regenera siempre completa y fresca (limpieza
 previa; los PNG son efectos laterales que Gradle no rastrea); sin el flag,
 la captura es un no-op y las pruebas siguen verificando el layout.
 
-Las pruebas de layout (`LayoutReferenceTest`, `LayoutReferenceExtraTest`)
-componen cada escenario real de las pantallas críticas —claro/oscuro y
-360 dp en la galería, con aserciones puntuales a 320 dp y fuentes largas—
-y comprueban:
+Las pruebas de layout (`LayoutReferenceTest`) componen cada escenario real
+de las pantallas críticas —claro/oscuro, 360 dp y fuentes largas— y
+comprueban:
 
 - la raíz se compone, se muestra y tiene tamaño;
 - el árbol semántico no está vacío y contiene texto visible;
@@ -112,18 +111,17 @@ queda bajo el dock de acciones ni el FAB), `ScreensA11yCoverageTest` y
 - El repo no contiene capturas de UI ni manifiestos de hashes versionados.
 - La verificación es determinista y no depende del JDK ni del sistema
   operativo.
-- Se retira `LayoutReference320Test`: ni la galería ni esa suite de raíces
-  se producen a 320 dp. Quedan aserciones puntuales a 320 dp en
-  `LayoutReferenceExtraTest`, `AqTabsLayoutTest`, `DestinationRowLayoutTest`
-  y suites de componentes, sin capturas.
+- Se retiran las suites de raíces a anchos alternativos: ni la galería ni
+  esas suites se producen fuera de 360 dp. La cobertura JVM de fuente queda
+  en `AqTabsLayoutTest` y `AqResponsiveLayoutContractTest`.
 - Se reduce la cobertura automática: ya no se validan las raíces en tablet
   (`NavigationRail`) ni el layout con fuente al 200 %. Ambas capacidades se
   conservan en producción y quedan como revisión manual en dispositivo, con
   el riesgo explícitamente documentado.
 - Se retiran las suites específicas de escala de fuente
   (`FontScaleScreensTest`, `AuthFontScaleTest`, `FontScaleContractTest`): la
-  cobertura JVM que queda vive en `AqTabsLayoutTest`,
-  `AqResponsiveLayoutContractTest` y `DestinationRowLayoutTest`; no hay
+  cobertura JVM que queda vive en `AqTabsLayoutTest` y
+  `AqResponsiveLayoutContractTest`; no hay
   verificación instrumentada de fuente.
 - La regresión puramente estética (color o espaciado sutil) ya no se
   detecta automáticamente; su cobertura es por contrato de tokens
