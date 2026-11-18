@@ -21,7 +21,7 @@ históricas a versiones previas.
 ## Categorías revisadas
 
 - **Código muerto:** la búsqueda de composables públicos de `core/ui` encontró
-  dos elementos sin caller (`AmSuccessCheck`, `AmSuccessBurst`). El contrato
+  dos elementos sin caller (`AqSuccessCheck`, `AqSuccessBurst`). El contrato
   vigente los reserva para el feedback de éxito S12, así que se conservaron.
   No se eliminó código sin confirmar que fuera ajeno a un contrato activo.
 - **Código transitorio:** no se encontraron marcadores técnicos de deuda activos en
@@ -45,7 +45,7 @@ el estado vacío de una instalación nueva. Se retiró el CTA redundante del
 estado vacío; la rejilla sigue siendo el acceso a la misma acción. Se conserva
 la presentación del estado vacío y todos los flujos de negocio.
 
-El build multiplataforma también reveló que `AmSchemeTest` dependía de
+El build multiplataforma también reveló que `AqSchemeTest` dependía de
 `javaClass`, no disponible en Kotlin/Native. El mensaje de aserción ahora usa
 etiquetas explícitas «light»/«dark» sin reflexión; las verificaciones de
 contraste no cambian.
@@ -65,7 +65,7 @@ de errores biométricos pasan.
   la suite completa de presentación, con 365 pruebas.
 - `:androidApp:assembleDebug`: pasó.
 - Compilación de tests comunes iOS (`:core:ui:compileTestKotlinIosArm64`):
-  pasó después del ajuste portátil de `AmSchemeTest`.
+  pasó después del ajuste portátil de `AqSchemeTest`.
 - `:feature:destinations:data:lintDebug` y `BiometricPromptErrorMappingTest`:
   pasaron después de la corrección AndroidX.
 - El primer intento de `verifyDocs` detectó que el propio informe repetía el

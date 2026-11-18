@@ -15,12 +15,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
-import com.agendaqr.core.ui.components.AmSnackbarHost
+import com.agendaqr.core.ui.components.AqSnackbarHost
 import com.agendaqr.core.ui.components.*
-import com.agendaqr.core.ui.components.AmExtendedFab
-import com.agendaqr.core.ui.components.AmNavChromeState
-import com.agendaqr.core.ui.components.AmSegmentedControl
-import com.agendaqr.core.ui.components.AmTopBar
+import com.agendaqr.core.ui.components.AqExtendedFab
+import com.agendaqr.core.ui.components.AqNavChromeState
+import com.agendaqr.core.ui.components.AqSegmentedControl
+import com.agendaqr.core.ui.components.AqTopBar
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.destinations.domain.*
@@ -29,7 +29,7 @@ import com.agendaqr.destinations.domain.*
 fun OperationsScreen(
     state: OperationsUiState,
     viewModel: OperationsViewModel,
-    navChrome: AmNavChromeState? = null,
+    navChrome: AqNavChromeState? = null,
     appHosts: AppHosts? = null,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
     onRetrySync: () -> Unit = {},
@@ -47,7 +47,7 @@ fun OperationsScreen(
     state.pendingIncoming?.let { incoming ->
         val duplicate = state.pendingDuplicates.isNotEmpty()
         val saving = state.isSavingReceipt
-        AmDialog(
+        AqDialog(
             title = if (duplicate)  AppStrings.ComprobanteDuplicado else AppStrings.receiptReceivedTitle,
             message = if (duplicate) {
                 AppStrings.duplicateReceiptWarningPrefix + incoming.extension
@@ -95,7 +95,7 @@ fun OperationsScreen(
 internal fun OperationListScreen(
     state: OperationsUiState,
     viewModel: OperationsViewModel,
-    navChrome: AmNavChromeState? = null,
+    navChrome: AqNavChromeState? = null,
     appHosts: AppHosts? = null,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
@@ -113,27 +113,27 @@ internal fun OperationListScreen(
     }
     val paged = filtered.take(visibleCount)
 
-    AmScreenScaffold(
+    AqScreenScaffold(
         topBar = {
-            AmTopBar(title = AppStrings.Operaciones)
+            AqTopBar(title = AppStrings.Operaciones)
         },
         navDestinations = navChrome?.destinations.orEmpty(),
         navSelectedId = navChrome?.selectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
-        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
         floatingActionButton = {
-            AmExtendedFab(
+            AqExtendedFab(
                 label = AppStrings.RegistrarOperacion,
-                icon = AmIcons.Add,
+                icon = AqIcons.Add,
                 onClick = { viewModel.onAction(OperationAction.New) },
             )
         },
     ) {
         // Grupo de entrada: búsqueda + control segmentado (8 dp).
         // SegmentedControl: 3 opciones con badges de conteo.
-        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-            AmSearchField(
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqSearchField(
                 value = state.query,
                 onValueChange = { viewModel.onAction(OperationAction.Search(it)) },
                 label = AppStrings.Buscar,
@@ -141,21 +141,21 @@ internal fun OperationListScreen(
                 onClear = { viewModel.onAction(OperationAction.Search("")) },
                 clearLabel = AppStrings.Limpiar
             )
-            AmSegmentedControl(
+            AqSegmentedControl(
                 options = listOf(
-                    com.agendaqr.core.ui.components.AmSegmentedOption(
+                    com.agendaqr.core.ui.components.AqSegmentedOption(
                         label = AppStrings.Todas,
                         count = operations.size,
                     ),
-                    com.agendaqr.core.ui.components.AmSegmentedOption(
+                    com.agendaqr.core.ui.components.AqSegmentedOption(
                         label = AppStrings.Pago,
-                        icon = AmIcons.Expense,
+                        icon = AqIcons.Expense,
                         count = pagosCount,
                     ),
-                    com.agendaqr.core.ui.components.AmSegmentedOption(
+                    com.agendaqr.core.ui.components.AqSegmentedOption(
                         label = AppStrings.Cobro,
-                        icon = AmIcons.Income,
-                        activeTone = AmTone.Success,
+                        icon = AqIcons.Income,
+                        activeTone = AqTone.Success,
                         count = cobrosCount,
                     ),
                 ),
@@ -166,10 +166,10 @@ internal fun OperationListScreen(
             // "Comprobantes sueltos" no es un filtro de tipo: es navegación
             // a la bandeja. Se muestra como botón secundario de ancho completo.
             if (state.unassociated.isNotEmpty()) {
-                AmSecondaryButton(
+                AqSecondaryButton(
                     label = AppStrings.ComprobantesSueltos + " (" + state.unassociated.size + ")",
                     onClick = { viewModel.onAction(OperationAction.OpenUnassociated) },
-                    icon = AmIcons.Inbox,
+                    icon = AqIcons.Inbox,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -178,33 +178,33 @@ internal fun OperationListScreen(
         // Barra de mes con reaseguro local: mes del registro más reciente
         // + conteo + píldora de respaldo. Vive en su propia tarjeta.
         if (filtered.isNotEmpty()) {
-            AmListBody {
+            AqListBody {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = AmSpacing.Md, vertical = AmSpacing.Sm),
+                        .padding(horizontal = AqSpacing.Md, vertical = AqSpacing.Sm),
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Row(
                         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                     ) {
-                        AmIcon(
-                            imageVector = AmIcons.Calendar,
+                        AqIcon(
+                            imageVector = AqIcons.Calendar,
                             contentDescription = null,
-                            size = AmMetrics.IconSizeCompact,
-                            tint = AmColor.AccentText,
+                            size = AqMetrics.IconSizeCompact,
+                            tint = AqColor.AccentText,
                         )
                         Column {
-                            AmText(
+                            AqText(
                                 monthYearLabel(filtered.first().occurredAt),
-                                size = AmType.BodySmall,
+                                size = AqType.BodySmall,
                                 fontWeight = FontWeight.SemiBold,
                             )
-                            AmText(
+                            AqText(
                                 filtered.size.toString() + " " + AppStrings.RegistrosLocales,
-                                color = AmColor.TextSecondary,
+                                color = AqColor.TextSecondary,
                             )
                         }
                     }
@@ -218,18 +218,18 @@ internal fun OperationListScreen(
                 onRetry = { viewModel.onAction(OperationAction.RetryFailed) },
                 onClear = { viewModel.onAction(OperationAction.ClearError) },
             )
-            AmStatusBanner(
+            AqStatusBanner(
                 title = err.what,
                 message = err.dataStatus,
-                tone = AmTone.Danger,
+                tone = AqTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,
             )
         }
 
         if (filtered.isEmpty()) {
-            AmEmptyState(
-                icon = AmIcons.Register,
+            AqEmptyState(
+                icon = AqIcons.Register,
                 title = if (state.query.isBlank()) AppStrings.AunNoHayOperaciones else AppStrings.NoHayCoincidencias,
                 subtitle = if (state.query.isBlank()) AppStrings.registerFirstPaymentHint else AppStrings.tryAnotherSearchHint,
                 // El FAB "Registrar" cubre la misma acción en la primera
@@ -239,10 +239,10 @@ internal fun OperationListScreen(
             )
         } else {
             // Lista agrupada (Card mode / ListBody):
-            // AmListBody + AmListRow con separadores hairline.
+            // AqListBody + AqListRow con separadores hairline.
             // Cada fila: insignia direccional + título/concepto + importe
             // coloreado con signo + metadato "ocurrido · Reg:" + tags.
-            AmListBody(
+            AqListBody(
                 modifier = Modifier.fillMaxWidth().weight(1f),
             ) {
                 Column {
@@ -250,15 +250,15 @@ internal fun OperationListScreen(
                         val syncStatus = syncLookup.status(SyncResource.OPERATION, operation.id)
                         val amountText = operationAmountText(operation)
                         val amountColor = if (operation.type == OperationType.COBRO) {
-                            AmColor.Success
+                            AqColor.Success
                         } else {
-                            AmColor.Danger
+                            AqColor.Danger
                         }
                         val contextName = state.contexts.firstOrNull { it.id == operation.contextId }?.name
                         val showContextOrSync = contextName != null || syncStatus != ElementSyncStatus.Synced
                         val isLast = index == paged.lastIndex && paged.size >= filtered.size
 
-                        AmListRow(
+                        AqListRow(
                             modifier = Modifier.fillMaxWidth(),
                             title = operationTitle(operation),
                             subtitle = operation.concept?.takeIf { it.isNotBlank() },
@@ -267,46 +267,46 @@ internal fun OperationListScreen(
                             // la hora de registro queda con el resto del meta.
                             endMeta = formatDate(operation.occurredAt),
                             leading = {
-                                AmIconBadge(
+                                AqIconBadge(
                                     icon = operationTypeIcon(operation.type),
                                     tone = operationTypeTone(operation.type),
                                 )
                             },
                             trailing = {
                                 amountText?.let {
-                                    AmText(
+                                    AqText(
                                         it,
-                                        size = AmType.SectionHeader,
+                                        size = AqType.SectionHeader,
                                         fontWeight = FontWeight.SemiBold,
                                         color = amountColor,
                                     )
                                 }
                             },
                             meta = {
-                                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+                                Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+                                        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
                                     ) {
-                                        AmIcon(
-                                            imageVector = AmIcons.Clock,
+                                        AqIcon(
+                                            imageVector = AqIcons.Clock,
                                             contentDescription = null,
-                                            size = AmMetrics.IconSizeCompact,
-                                            tint = AmColor.TextTertiary,
+                                            size = AqMetrics.IconSizeCompact,
+                                            tint = AqColor.TextTertiary,
                                         )
-                                        AmText(
+                                        AqText(
                                             AppStrings.RegPrefijo + formatTime(operation.createdAt),
-                                            color = AmColor.TextTertiary,
-                                            size = AmType.Caption,
+                                            color = AqColor.TextTertiary,
+                                            size = AqType.Caption,
                                         )
                                     }
                                     if (showContextOrSync) {
-                                        Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+                                        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
                                             contextName?.let {
-                                                AmTonalTag(text = it, tone = AmTone.Neutral)
+                                                AqTonalTag(text = it, tone = AqTone.Neutral)
                                             }
                                             if (syncStatus != ElementSyncStatus.Synced) {
-                                                AmTonalTag(text = syncStatus.label, tone = syncStatus.tone())
+                                                AqTonalTag(text = syncStatus.label, tone = syncStatus.tone())
                                             }
                                         }
                                     }
@@ -319,10 +319,10 @@ internal fun OperationListScreen(
                 }
             }
 
-            // Cargar más (fuera del AmListBody para no tener separador extra).
+            // Cargar más (fuera del AqListBody para no tener separador extra).
             if (paged.size < filtered.size) {
-                AmLoadMoreFooter(
-                    modifier = Modifier.fillMaxWidth().padding(top = AmSpacing.Sm),
+                AqLoadMoreFooter(
+                    modifier = Modifier.fillMaxWidth().padding(top = AqSpacing.Sm),
                     onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(filtered.size) },
                     loadMoreLabel = AppStrings.CargarMas,
                     loadingLabel = AppStrings.Cargando,
@@ -343,31 +343,31 @@ internal fun UnassociatedScreen(
     var selectedReceipt by remember { mutableStateOf<Comprobante?>(null) }
     // V1.4 (§12): bandeja con título y flecha atrás en la barra superior
     // (no es destino raíz: no lleva navegación inferior).
-    AmScreenScaffold(
+    AqScreenScaffold(
         topBar = {
-            AmTopBar(
+            AqTopBar(
                 title = AppStrings.ComprobantesSinAsociar,
                 onBack = { viewModel.onAction(OperationAction.Back) },
                 backLabel = AppStrings.Volver,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
             if (state.unassociated.isEmpty()) {
-                AmEmptyState(icon = AmIcons.Inbox, title = AppStrings.noUnassociatedReceipts)
+                AqEmptyState(icon = AqIcons.Inbox, title = AppStrings.noUnassociatedReceipts)
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth().weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                 ) {
                     items(state.unassociated, key = { it.id }) { receipt ->
                         // U-15: una sola primaria por pantalla — la fila
                         // entera abre el flujo de asociación (diálogo con
                         // candidatas); "Crear actividad desde esto" es
                         // acción de texto. Sin botones primarios por fila.
-                        AmListBody {
-                            AmListRow(
+                        AqListBody {
+                            AqListRow(
                                 title = AppStrings.receiptReceivedTitle,
                                 subtitle = formatDate(receipt.createdAt),
                                 onClick = { selectedReceipt = receipt },
@@ -375,7 +375,7 @@ internal fun UnassociatedScreen(
                                     ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                                 },
                                 trailing = {
-                                    AmTextAction(label = AppStrings.createOperationFromThis, onClick = {
+                                    AqTextAction(label = AppStrings.createOperationFromThis, onClick = {
                                         viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
                                     })
                                 },
@@ -392,7 +392,7 @@ internal fun UnassociatedScreen(
         val candidateOperations = suggestedOperations.ifEmpty { state.operations }
         // Selector de operación: elige de la lista en el propio diálogo
         // (la acción principal es elegir; Cancelar y Back son salidas).
-        AmDialog(
+        AqDialog(
             title = when (suggestion?.kind) {
                 ReceiptMatchKind.SINGLE -> AppStrings.singleMatchTitle
                 ReceiptMatchKind.MULTIPLE -> AppStrings.ACualCorresponde
@@ -405,20 +405,20 @@ internal fun UnassociatedScreen(
             content = {
                 // Con muchas operaciones candidatas la lista queda
                 // alcanzable por scroll (accesibilidad).
-                AmDialogList {
+                AqDialogList {
                     when {
-                        suggestion == null -> AmText(AppStrings.analyzingReceipt, color = AmColor.TextSecondary)
+                        suggestion == null -> AqText(AppStrings.analyzingReceipt, color = AqColor.TextSecondary)
                         suggestion.kind == ReceiptMatchKind.NONE ->
-                            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                                AmText(
+                            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                                AqText(
                                     AppStrings.noAutomaticMatch,
-                                    color = AmColor.TextSecondary,
+                                    color = AqColor.TextSecondary,
                                 )
                                 if (candidateOperations.isEmpty()) {
-                                    AmText(AppStrings.noOperationsAvailable, color = AmColor.TextSecondary)
+                                    AqText(AppStrings.noOperationsAvailable, color = AqColor.TextSecondary)
                                 } else {
                                     candidateOperations.forEachIndexed { index, operation ->
-                                        AmListRow(
+                                        AqListRow(
                                             title = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
                                             subtitle = operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
                                             onClick = {
@@ -431,12 +431,12 @@ internal fun UnassociatedScreen(
                                 }
                             }
                         candidateOperations.isEmpty() ->
-                            AmText(
+                            AqText(
                                 AppStrings.LasOperacionesCandidatasYaNo,
-                                color = AmColor.TextSecondary,
+                                color = AqColor.TextSecondary,
                             )
                         else -> candidateOperations.forEachIndexed { index, operation ->
-                            AmListRow(
+                            AqListRow(
                                 title = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
                                 subtitle = operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
                                 onClick = {

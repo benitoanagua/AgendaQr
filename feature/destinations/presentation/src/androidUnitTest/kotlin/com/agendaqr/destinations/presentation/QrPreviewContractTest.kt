@@ -3,9 +3,9 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import com.agendaqr.core.ui.components.AmQrPreview
+import com.agendaqr.core.ui.components.AqQrPreview
 import com.agendaqr.core.ui.components.decodeQrImageBitmap
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.theme.AqTheme
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -24,7 +24,7 @@ import org.robolectric.annotation.GraphicsMode
  *    ficticia ni un bloque de color).
  * 2. `decodeQrImageBitmap` interpreta los bytes almacenados como IMAGEN en
  *    ambas plataformas y devuelve `null` ante contenido que no es imagen.
- * 3. El QR RENDERIZADO por [AmQrPreview] se puede volver a leer con el
+ * 3. El QR RENDERIZADO por [AqQrPreview] se puede volver a leer con el
  *    decodificador del proyecto (ZXing).
  */
 @RunWith(RobolectricTestRunner::class)
@@ -64,8 +64,8 @@ class QrPreviewContractTest {
     @Test
     fun preview_draws_the_real_qr_image_for_a_valid_payload() {
         compose.setContent {
-            AmTheme(darkTheme = false) {
-                AmQrPreview(
+            AqTheme(darkTheme = false) {
+                AqQrPreview(
                     encodedQr = QrTestFixture.base64Png,
                     unavailableMessage = UNAVAILABLE,
                 )
@@ -81,8 +81,8 @@ class QrPreviewContractTest {
     @Test
     fun preview_shows_an_explicit_error_state_instead_of_a_fake_qr() {
         compose.setContent {
-            AmTheme(darkTheme = false) {
-                AmQrPreview(
+            AqTheme(darkTheme = false) {
+                AqQrPreview(
                     // Base64 válido de "hello": no es una imagen.
                     encodedQr = "aGVsbG8=",
                     unavailableMessage = UNAVAILABLE,

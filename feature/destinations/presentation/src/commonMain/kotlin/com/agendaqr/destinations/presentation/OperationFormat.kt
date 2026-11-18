@@ -210,7 +210,7 @@ internal fun operationTypeLabel(type: OperationType): String = when (type) {
 /**
  * Título de la fila de actividad: la contraparte es
  * el contenido principal; el tipo queda como texto del subtítulo (la
- * forma de la flecha del [com.agendaqr.core.ui.components.AmIconBadge]
+ * forma de la flecha del [com.agendaqr.core.ui.components.AqIconBadge]
  * acompaña, nunca sustituye). Sin contraparte ni concepto, el propio tipo.
  */
 internal fun operationTitle(operation: Operation): String =
@@ -234,24 +234,24 @@ internal fun operationAmountText(operation: Operation): String? {
 /** Icono direccional de la actividad (decorativo; el texto comunica). */
 internal fun operationTypeIcon(type: OperationType): androidx.compose.ui.graphics.vector.ImageVector =
     if (type == OperationType.PAGO) {
-        com.agendaqr.core.ui.components.AmIcons.Expense
+        com.agendaqr.core.ui.components.AqIcons.Expense
     } else {
-        com.agendaqr.core.ui.components.AmIcons.Income
+        com.agendaqr.core.ui.components.AqIcons.Income
     }
 
 /** Tono semántico del tipo (pago = salida, danger; cobro = entrada, success). */
-internal fun operationTypeTone(type: OperationType): com.agendaqr.core.ui.components.AmTone =
+internal fun operationTypeTone(type: OperationType): com.agendaqr.core.ui.components.AqTone =
     if (type == OperationType.PAGO) {
-        com.agendaqr.core.ui.components.AmTone.Danger
+        com.agendaqr.core.ui.components.AqTone.Danger
     } else {
-        com.agendaqr.core.ui.components.AmTone.Success
+        com.agendaqr.core.ui.components.AqTone.Success
     }
 
 /** Tono de la etiqueta tonal de procedencia del comprobante. */
-internal fun provenanceTone(provenance: ReceiptProvenance?): com.agendaqr.core.ui.components.AmTone =
+internal fun provenanceTone(provenance: ReceiptProvenance?): com.agendaqr.core.ui.components.AqTone =
     when (provenance) {
-        ReceiptProvenance.ENVIADO -> com.agendaqr.core.ui.components.AmTone.Info
-        ReceiptProvenance.RECIBIDO -> com.agendaqr.core.ui.components.AmTone.Success
-        ReceiptProvenance.DESCONOCIDO, null -> com.agendaqr.core.ui.components.AmTone.Neutral
+        ReceiptProvenance.ENVIADO -> com.agendaqr.core.ui.components.AqTone.Info
+        ReceiptProvenance.RECIBIDO -> com.agendaqr.core.ui.components.AqTone.Success
+        ReceiptProvenance.DESCONOCIDO, null -> com.agendaqr.core.ui.components.AqTone.Neutral
     }
 

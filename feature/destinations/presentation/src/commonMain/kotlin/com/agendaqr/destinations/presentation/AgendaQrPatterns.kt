@@ -7,20 +7,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AmEmptyState
-import com.agendaqr.core.ui.components.AmQrPreview
-import com.agendaqr.core.ui.components.AmScreenScaffold
-import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.components.AmTopBar
-import com.agendaqr.core.ui.theme.AmMetrics
-import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.core.ui.components.AqEmptyState
+import com.agendaqr.core.ui.components.AqQrPreview
+import com.agendaqr.core.ui.components.AqScreenScaffold
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.components.AqTopBar
+import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqType
 
 @Composable
 fun DestinationNotFound(onBack: () -> Unit) {
-    AmScreenScaffold(
+    AqScreenScaffold(
         topBar = {
-            AmTopBar(
+            AqTopBar(
                 title = AppStrings.DestinoNoEncontrado,
                 onBack = onBack,
                 backLabel = AppStrings.Volver,
@@ -29,7 +29,7 @@ fun DestinationNotFound(onBack: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        AmEmptyState(
+        AqEmptyState(
             title = AppStrings.DestinoNoEncontrado,
             subtitle = AppStrings.PudoHaberSidoEliminadoEn,
             actionLabel = AppStrings.VolverALaLista,
@@ -49,34 +49,34 @@ fun QrFullscreenPattern(
     // se restauran al salir (incluida rotación, Back y bloqueo).
     QrDisplayScreenEffects()
     // V1.4 (§12): "QR" en la barra superior con flecha atrás.
-    AmScreenScaffold(
+    AqScreenScaffold(
         topBar = {
-            AmTopBar(
+            AqTopBar(
                 title = AppStrings.Qr,
                 onBack = onBack,
                 backLabel = AppStrings.Volver,
             )
         },
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(AmSpacing.Lg, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg, Alignment.CenterVertically),
     ) {
         BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
             // Lado = mínimo entre ancho y alto disponibles menos margen:
             // lo más grande posible sin recortar (siempre 1:1).
-            val side = (minOf(maxWidth, maxHeight) - AmSpacing.Xxxl).coerceAtLeast(AmMetrics.QrPreviewSize)
+            val side = (minOf(maxWidth, maxHeight) - AqSpacing.Xxxl).coerceAtLeast(AqMetrics.QrPreviewSize)
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(AmSpacing.Lg),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
             ) {
-                AmQrPreview(
+                AqQrPreview(
                     encodedQr,
                     size = side,
                     unavailableMessage = AppStrings.QrNoSePudoMostrar,
                 )
                 if (destinationName.isNotBlank()) {
-                    AmText(
+                    AqText(
                         destinationName,
-                        size = AmType.Title,
+                        size = AqType.Title,
                         fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                     )

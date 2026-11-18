@@ -18,7 +18,7 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.sp
 import com.agendaqr.core.ui.theme.DarkAmColorScheme
 import com.agendaqr.core.ui.theme.LightAmColorScheme
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -117,7 +117,7 @@ class S02UiPolishTest {
     @Test
     fun s01_recientes_is_a_section_header_in_standard_color() {
         compose.setContent {
-            AmTheme(darkTheme = false) {
+            AqTheme(darkTheme = false) {
                 DestinationsScreen(state = s01State(), onAction = {})
             }
         }
@@ -132,7 +132,7 @@ class S02UiPolishTest {
     @Test
     fun s01_otros_destinos_is_the_section_header_when_the_carousel_shows_favorites() {
         compose.setContent {
-            AmTheme(darkTheme = false) {
+            AqTheme(darkTheme = false) {
                 DestinationsScreen(state = s01StateWithFavorite(), onAction = {})
             }
         }
@@ -149,7 +149,7 @@ class S02UiPolishTest {
     @Test
     fun s02_share_hint_is_plain_secondary_text_not_a_heading() {
         compose.setContent {
-            AmTheme(darkTheme = false) {
+            AqTheme(darkTheme = false) {
                 AddDestinationScreen(onImport = {}, onBack = {})
             }
         }
@@ -165,7 +165,7 @@ class S02UiPolishTest {
     @Test
     fun s01_section_header_uses_readable_standard_color_in_dark_theme() {
         compose.setContent {
-            AmTheme(darkTheme = true) {
+            AqTheme(darkTheme = true) {
                 DestinationsScreen(state = s01State(), onAction = {})
             }
         }
@@ -179,7 +179,7 @@ class S02UiPolishTest {
     @Test
     fun s01_otros_destinos_header_uses_readable_standard_color_in_dark_theme() {
         compose.setContent {
-            AmTheme(darkTheme = true) {
+            AqTheme(darkTheme = true) {
                 DestinationsScreen(state = s01StateWithFavorite(), onAction = {})
             }
         }
@@ -194,7 +194,7 @@ class S02UiPolishTest {
     @Test
     fun s02_import_sources_are_labelled_interactive_cells() {
         compose.setContent {
-            AmTheme(darkTheme = false) {
+            AqTheme(darkTheme = false) {
                 AddDestinationScreen(onImport = {}, onBack = {})
             }
         }

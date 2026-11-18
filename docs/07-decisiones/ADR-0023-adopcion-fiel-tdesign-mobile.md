@@ -50,24 +50,24 @@ estructurado, el código y las pruebas.
    sus contratos. No se incorporan gestos ni capacidades de producto nuevos.
    Los cambios de navegación requieren una decisión explícita y actualización
    coordinada de especificación, contrato y pruebas.
-7. `AmIcon` y `AmIcons` exponen los glifos TDesign usados por el producto. Los
+7. `AqIcon` y `AqIcons` exponen los glifos TDesign usados por el producto. Los
    recursos derivados y avisos de licencia se registran antes de distribuirlos.
 
 ## 3. Desviaciones autorizadas
 
 | ID | Desviación | Aplicación |
 |---|---|---|
-| D-01 | `AmAccents` contiene 12 tonos deterministas para identificar contextos. | Se conservan los tonos y el hash FNV-1a; sus pares de contraste mantienen la cobertura existente. |
+| D-01 | `AqAccents` contiene 12 tonos deterministas para identificar contextos. | Se conservan los tonos y el hash FNV-1a; sus pares de contraste mantienen la cobertura existente. |
 | D-02 | Algunos colores de la paleta oficial no alcanzan el contraste requerido para texto o indicadores. | Se elige el siguiente escalón de la misma familia TDesign que cumple ≥4.5:1 para texto y ≥3:1 para elementos no textuales. |
 | D-03 | Algunos controles TDesign tienen una superficie visual menor que el target accesible. | La geometría visual sigue la especificación y el target interactivo es ≥48 dp. |
 | D-04 | `fontBodyExtraSmall` mide 10 sp. | No se usa para texto visible; el mínimo de texto aplicado es el siguiente tamaño oficial, 12 sp. |
-| D-05 | TDesign Mobile no define un rail adaptativo. | `AmNavRail` conserva la navegación en ventanas amplias y usa los tokens del sistema. |
+| D-05 | TDesign Mobile no define un rail adaptativo. | `AqNavRail` conserva la navegación en ventanas amplias y usa los tokens del sistema. |
 | D-06 | Las sombras de varias capas no tienen una reproducción directa en Compose. | Se usa la capa dominante de la sombra TDesign o una representación equivalente en `drawBehind`; la diferencia se documenta en el contrato. |
-| D-07 | El overlay de hoja inferior no ofrece interacciones verificables de forma estable en Robolectric. | Los menús de opciones y selectores se presentan con `AmDialog` y listas; su contenido y flujo se mantienen accesibles y comprobables. |
+| D-07 | El overlay de hoja inferior no ofrece interacciones verificables de forma estable en Robolectric. | Los menús de opciones y selectores se presentan con `AqDialog` y listas; su contenido y flujo se mantienen accesibles y comprobables. |
 | D-08 | Las familias tipográficas de TDesign varían por plataforma. | Se usa la fuente del sistema, sin empaquetar fuentes ni modificar el copy. |
 | D-09 | La familia numérica `TCloudNumber` no se empaqueta. | Los importes usan la fuente del sistema con cifras tabulares y el peso que fija la escala. |
-| D-10 | La fuente no expone tokens de movimiento. | Los valores de easing y duración se declaran en `AmMotion`. |
-| D-11 | Retroalimentación de pulsación de algunas superficies. | `TDButton`, `TDCell` y `TDBottomTabBar` usan color activo sin ripple; botones, celdas, tarjetas y acciones de diálogo ya usan `AmColor.SurfaceActive`. La acción de texto, el chip de filtro y los ítems de navegación conservan la indicación de la plataforma como deuda acotada, sin impacto en función, jerarquía ni accesibilidad. |
+| D-10 | La fuente no expone tokens de movimiento. | Los valores de easing y duración se declaran en `AqMotion`. |
+| D-11 | Retroalimentación de pulsación de algunas superficies. | `TDButton`, `TDCell` y `TDBottomTabBar` usan color activo sin ripple; botones, celdas, tarjetas y acciones de diálogo ya usan `AqColor.SurfaceActive`. La acción de texto, el chip de filtro y los ítems de navegación conservan la indicación de la plataforma como deuda acotada, sin impacto en función, jerarquía ni accesibilidad. |
 
 Los estados conservan contraste; el lienzo QR permanece blanco. Las
 implementaciones nativas se limitan a servicios de plataforma y mantienen la

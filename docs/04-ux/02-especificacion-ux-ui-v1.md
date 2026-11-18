@@ -15,7 +15,7 @@
 | V1.8 | 2026-10-16 | Enmienda por ADR-0018 (correcciones UX de captura rápida): S00 (gracia de bloqueo 120 s, biometría automática, demo solo al inicio), S01 (hub de creación, sin duplicados, Favoritos, lista sin favoritos del carrusel), Detalle de destino (Mostrar QR como primaria, pantalla completa con brillo), S07 (editor con divulgación progresiva, validación real, descarte confirmado), S04 (foco solo desde Inicio). Intención, modelo mental y reglas de negocio: intactos. Aprobación explícita del propietario para enmendar la congelación en lo que ADR-0018 cambia. |
 | V1.9 | 2026-10-16 | Enmienda por ADR-0019 (inicio vacío): S01 vacío de primera ejecución muestra "Traer un QR", el FAB se oculta sin destinos ni búsqueda, y se retira el encabezado "Todos los destinos" sobre el vacío. Intención, modelo mental y reglas de negocio: intactos. |
 | V1.13 | 2026-10-17 | Composición y patrones de interacción conforme al sistema de diseño vigente; la intención, las reglas de negocio, la navegación y el copy funcional permanecen intactos. |
-| V1.14 | 2026-10-18 | Reconciliación contra TDesign 0.2.7 y el contrato normativo: se corrige la contradicción interna de S07/S08 (selector de contexto, fecha y hora se presentan con `AmDialog` y listas, nunca con bottom sheet, D-07) y se enlaza el contrato de interacción por pantalla (`04-ux/03-contrato-interaccion-pantallas.md`), verificado por `verifyScreenContract`. La reunión de la congelación no aporta ni quita gestos, pantallas ni navegación: la auditoría no halló ningún patrón de TDesign que los exija (registro histórico; la autoridad visual vigente es ADR-0025). |
+| V1.14 | 2026-10-18 | Reconciliación contra TDesign 0.2.7 y el contrato normativo: se corrige la contradicción interna de S07/S08 (selector de contexto, fecha y hora se presentan con `AqDialog` y listas, nunca con bottom sheet, D-07) y se enlaza el contrato de interacción por pantalla (`04-ux/03-contrato-interaccion-pantallas.md`), verificado por `verifyScreenContract`. La reunión de la congelación no aporta ni quita gestos, pantallas ni navegación: la auditoría no halló ningún patrón de TDesign que los exija (registro histórico; la autoridad visual vigente es ADR-0025). |
 | V1.15 | 2026-10-18 | Revisión de composición de S01: la barra superior usa el nombre de la superficie ("Inicio") y Todos/Favoritos pasa a ser un control segmentado mutuamente excluyente con conteo real. Se descartan controles redundantes, indicaciones ambiguas y exposición de miniaturas QR en la raíz por razones de coherencia y privacidad. |
 | V1.16 | 2026-10-18 | S00 adopta una entrada de PIN consistente entre plataformas: héroe centrado, puntos enmascarados y teclado propio 3×4 con borrado accesible. El envío sigue siendo explícito (PIN de 4 a 12); biometría y demostración permanecen como acciones de texto. Se excluye cualquier promesa de recuperación no implementada o de cifrado en reposo inexistente. |
 | V1.17 | 2026-10-18 | S02 ordena los métodos en un único grupo: Galería → Cámara, con Archivo al pie; se retiran rótulos redundantes. "Desde otra app" permanece como ayuda breve no destacada y se conserva el copy funcional vigente. |
@@ -159,7 +159,7 @@ Composición: navbar con título y atrás; Tabs QR · Actividades · Comprobante
 ### S07 — Registrar (V1.8, ADR-0018; presentación V1.13)
 Intención: registrar una actividad. El contexto ayuda pero no bloquea el registro. Captura rápida con divulgación progresiva: Tipo · Importe+Moneda · Persona o entidad · Fecha y hora · Contexto · Más detalles (plegado salvo que existan) · Guardar fijo abajo.
 
-- Formulario en celdas: Tipo con Segmented; Importe y moneda en Input; entidad con sugerencias; fecha/hora en selector dentro de `AmDialog` con atajos Hoy/Ayer como Tags; Contexto como celda navegable hacia S08; Más detalles como Collapse. Guardar conserva su posición fija.
+- Formulario en celdas: Tipo con Segmented; Importe y moneda en Input; entidad con sugerencias; fecha/hora en selector dentro de `AqDialog` con atajos Hoy/Ayer como Tags; Contexto como celda navegable hacia S08; Más detalles como Collapse. Guardar conserva su posición fija.
 - Importe opcional con validación real (dígitos y un separador decimal, máx. 2 decimales); moneda BOB/USD/Otra (por defecto, la última usada); persona con sugerencias de contrapartes recientes.
 - Fecha y hora con selectores (sin texto libre) y atajos Hoy/Ayer; por defecto, ahora con hora.
 - Salir con cambios pide "¿Descartar cambios?"; sin cambios sale de inmediato. El Back del sistema sigue el mismo camino.
@@ -167,7 +167,7 @@ Intención: registrar una actividad. El contexto ayuda pero no bloquea el regist
 ### S08 — Seleccionar contexto (composición V1.20)
 Intención: elegir contexto para el flujo padre. Al terminar, vuelve al flujo original conservando el draft.
 
-Composición: `AmDialog` con lista de opciones Radio en celdas, creación sin salir del draft y "Quitar contexto" como acción destructiva dentro del contenido; "Cancelar" es la única salida (V1.20: sin búsqueda — el selector trabaja sobre pocos elementos). Si no se puede verificar de forma reproducible, se conserva el patrón de selección en página completa, sin perder el draft ni cambiar el back stack.
+Composición: `AqDialog` con lista de opciones Radio en celdas, creación sin salir del draft y "Quitar contexto" como acción destructiva dentro del contenido; "Cancelar" es la única salida (V1.20: sin búsqueda — el selector trabaja sobre pocos elementos). Si no se puede verificar de forma reproducible, se conserva el patrón de selección en página completa, sin perder el draft ni cambiar el back stack.
 
 ### S09 — Revisar QR (presentación V1.13)
 Intención: verificar lo que Agenda QR entendió antes de guardar. Debe mostrar evidencia suficiente sin exponer payload técnico innecesario.
@@ -341,11 +341,11 @@ La composición por pantalla se especifica en §4 y conserva la intención y el 
 
 - Cell-group sigue siendo la composición de listas y ajustes: fila con icono opcional, título, descripción, nota derecha y chevron cuando navega. El divisor y el encabezado de grupo se resuelven con tokens semánticos.
 - Las tarjetas se reservan para contenido agrupado; no se envuelve cada fila en una tarjeta independiente.
-- La barra fija inferior `AmBottomAction` contiene como máximo una primaria, respeta safe-area e IME y se separa del contenido por divisor.
+- La barra fija inferior `AqBottomAction` contiene como máximo una primaria, respeta safe-area e IME y se separa del contenido por divisor.
 - Empty usa icono, descripción y acción útil; no repite una acción ya disponible. Skeleton y Loading no introducen movimiento decorativo.
 - Result usa icono, título y descripción secundaria.
 - Los errores comunican qué ocurrió, qué pasó con los datos y cómo recuperarse; el color no es la única señal.
-- Toast se presenta mediante `AmSnackbarHost`/`AmFeedbackEvent` y es efímero; Message es una tarjeta elevada para avisos de operación; Notice-bar reserva avisos persistentes como modo local/sin conexión.
+- Toast se presenta mediante `AqSnackbarHost`/`AqFeedbackEvent` y es efímero; Message es una tarjeta elevada para avisos de operación; Notice-bar reserva avisos persistentes como modo local/sin conexión.
 - Tag comunica el estado con texto y semántica, no solo con color.
 
 ### Campos y formularios
@@ -368,7 +368,7 @@ La composición por pantalla se especifica en §4 y conserva la intención y el 
 
 - La tipografía es Inter (SIL OFL 1.1), empaquetada como recurso multiplataforma (D-05); sus roles, tamaños e interlíneas se toman del contrato normativo y de la instantánea versionada.
 - Los importes conservan cifras tabulares. Se mantiene el escalado del sistema hasta 200 % (D-06); la validación automática cubre 100 %/150 % en 320 dp y 360 dp y el 200 % queda como revisión manual (ADR-0007).
-- La iconografía se expone a través de `AmIcon`/`AmIcons` desde un único set vectorial; no se mezclan familias ni se añade una dependencia visual de runtime.
+- La iconografía se expone a través de `AqIcon`/`AqIcons` desde un único set vectorial; no se mezclan familias ni se añade una dependencia visual de runtime.
 
 ### Color y tema oscuro
 
@@ -385,10 +385,10 @@ La composición por pantalla se especifica en §4 y conserva la intención y el 
 ### Excepciones documentadas
 
 - Los acentos de contexto conservan su asignación determinista por dominio (X-06); sus pares se seleccionan entre los colores verificados de la instantánea y se validan a AA.
-- `AmNavRail` se conserva en tablet/plegables donde el sistema visual de referencia no define un equivalente; se rige por el contrato normativo. ADR-0007 retiró su verificación de layout automática; requiere revisión manual en dispositivo.
+- `AqNavRail` se conserva en tablet/plegables donde el sistema visual de referencia no define un equivalente; se rige por el contrato normativo. ADR-0007 retiró su verificación de layout automática; requiere revisión manual en dispositivo.
 - Los componentes mantienen targets interactivos ≥48 dp aunque el tamaño visual de referencia sea menor (D-02).
 - La sombra CSS de varias capas se representa en Compose con la capa dominante o `drawBehind`; la diferencia queda declarada en el contrato normativo.
-- Los menús de opciones y selectores usan `AmDialog` con listas; la alternativa permite verificar de forma estable sus acciones bajo Robolectric sin cambiar el flujo.
+- Los menús de opciones y selectores usan `AqDialog` con listas; la alternativa permite verificar de forma estable sus acciones bajo Robolectric sin cambiar el flujo.
 
 ## 13. Fuera de esta congelación
 

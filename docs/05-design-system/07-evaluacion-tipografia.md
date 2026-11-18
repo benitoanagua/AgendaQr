@@ -1,8 +1,8 @@
 # Evaluación de tipografía
 
 Estado vigente: Inter 4.0 se empaqueta como recurso multiplataforma en
-`core/ui/src/commonMain/composeResources/font/` y `AmTheme` inyecta
-`AmType.FamilyUi` en todos los roles de `AmMaterialTypography`. El proyecto
+`core/ui/src/commonMain/composeResources/font/` y `AqTheme` inyecta
+`AqType.FamilyUi` en todos los roles de `AqMaterialTypography`. El proyecto
 ya no depende de la fuente de sistema. Los tamaños y pesos siguen viniendo
 de `@shopify/polaris-tokens@9.4.2`; la escala con la fuente del sistema se
 respeta hasta 200 %. El texto íntegro de la licencia está en
@@ -31,7 +31,7 @@ redistribuir el archivo de fuente.
   oficial; el tamaño exacto del distribuible no se ha medido en este
   entorno. Resultado del tamaño: **NO VERIFICADO**.
 - Comparación visual: sustituye a la fuente de sistema en los roles
-  Polaris; las previews claro/oscuro/200 % de `AmPreviews.kt` permiten
+  Polaris; las previews claro/oscuro/200 % de `AqPreviews.kt` permiten
   revisarlos. No se han generado capturas de pantalla verificadas.
 - Conclusión: adoptar Inter 4.0 con OFL 1.1; la adopción queda respaldada
   por `:core:ui:testDebugUnitTest` y el gate de arquitectura.

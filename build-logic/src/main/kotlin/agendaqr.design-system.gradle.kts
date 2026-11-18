@@ -23,8 +23,8 @@ fun Project.productionKotlinSources(): Sequence<File> = sequence {
 fun visualSources(): List<File> = productionKotlinSources().toList()
 
 /** Capa de tokens: el único archivo con literales visuales. */
-private val TokenLayerFile = "AmTokens.kt"
-private val ThemeLayerFile = "AmTheme.kt"
+private val TokenLayerFile = "AqTokens.kt"
+private val ThemeLayerFile = "AqTheme.kt"
 private val IconVectorFile = "TDesignIconVectors.kt"
 
 /**
@@ -49,16 +49,16 @@ fun isUiLiteralAllowed(text: String): Boolean =
  * de foco y de estado vive en los componentes M3 y en el canvas).
  */
 val exceptionRegistry: Map<String, List<String>> = mapOf(
-    "E-01" to listOf("border:AmButtons.kt"),
-    "E-02" to listOf("border:AmLists.kt"),
-    "E-03" to listOf("border:AmLists.kt"),
-    "E-04" to listOf("border:AmInputs.kt"),
+    "E-01" to listOf("border:AqButtons.kt"),
+    "E-02" to listOf("border:AqLists.kt"),
+    "E-03" to listOf("border:AqLists.kt"),
+    "E-04" to listOf("border:AqInputs.kt"),
     // `Modifier.shadow` se centraliza en la capa de tokens; solo los
-    // archivos registrados pueden invocarlo (o elevarse vía `amElevation`).
+    // archivos registrados pueden invocarlo (o elevarse vía `aqElevation`).
     // E-06 (elevación de botones) se retiró: TDesign no da sombra a los
-    // botones (son planos) y `AmButtons.kt` no eleva nada; un registro sin
+    // botones (son planos) y `AqButtons.kt` no eleva nada; un registro sin
     // uso lo detecta `verifyScreenContract`.
-    "E-05" to listOf("shadow:AmLists.kt"),
+    "E-05" to listOf("shadow:AqLists.kt"),
 )
 
 /** Archivos con `.border(`/`BorderStroke(` permitidos: ninguno. */
@@ -78,7 +78,7 @@ val shadowAllowedFiles: Set<String> =
     }
 
 fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = buildList {
-    // Solo los vectores TDesign vía AmIcon; los APIs de iconos de Material
+    // Solo los vectores TDesign vía AqIcon; los APIs de iconos de Material
     // están prohibidos en producción.
     val bannedImports = listOf(
         "androidx.compose.material.icons",
@@ -110,7 +110,7 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
     val isFeatureSource = path.contains("/feature/")
     val isTokenLayer = path.endsWith(TokenLayerFile)
     // Los vectores declaran dimensiones intrínsecas y un color monocromo
-    // que se reemplaza por el tinte semántico en AmIcon.
+    // que se reemplaza por el tinte semántico en AqIcon.
     val isIconVectorSource = path.endsWith(IconVectorFile)
     lines.forEachIndexed { index, line ->
         val location = "$path:${index + 1}"
@@ -130,7 +130,7 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
         if (!isTokenLayer &&
             (line.contains("CircleShape") || line.contains("RectangleShape"))
         ) {
-            add("$location: production code must use AmShapes/token API (no CircleShape/RectangleShape): $line")
+            add("$location: production code must use AqShapes/token API (no CircleShape/RectangleShape): $line")
         }
         // Colores nombrados de Compose fuera de la capa de tokens: todo
         // literal visual va al rol semántico (QrCanvas, TextPrimary…).
@@ -138,15 +138,15 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
             Regex("\\bColor\\.(Black|White|Transparent|Red|Gray|LightGray|DarkGray|Yellow|Green|Blue|Cyan|Magenta|Unspecified)\\b")
                 .containsMatchIn(line)
         ) {
-            add("$location: Color.<name> outside token layer (use a semantic role from AmTokens.kt): $line")
+            add("$location: Color.<name> outside token layer (use a semantic role from AqTokens.kt): $line")
         }
         // Duraciones literales en animaciones: toda animación consume
-        // AmMotion (tween(150) local diluye el lenguaje de movimiento).
+        // AqMotion (tween(150) local diluye el lenguaje de movimiento).
         val literalDuration = Regex("\\btween\\(\\s*\\d|\\bdurationMillis\\s*=\\s*\\d|\\bdelayMillis\\s*=\\s*\\d")
         if (!isTokenLayer && literalDuration.containsMatchIn(line)) {
-            add("$location: raw animation duration; use AmMotion tokens: $line")
+            add("$location: raw animation duration; use AqMotion tokens: $line")
         }
-        if (!path.endsWith(ThemeLayerFile) && forbiddenVisualAuthority.any(line::contains)) add("$location: MaterialTheme cannot be the visual authority outside AmTheme: $line")
+        if (!path.endsWith(ThemeLayerFile) && forbiddenVisualAuthority.any(line::contains)) add("$location: MaterialTheme cannot be the visual authority outside AqTheme: $line")
         // `.border(`/`BorderStroke(` prohibidos en todo el código de
         // producción (las excepciones registradas son la única vía).
         val hasBorderCall = line.contains(".border(") || Regex("\\bBorderStroke\\s*\\(").containsMatchIn(line)
@@ -164,7 +164,7 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
         }
         // Copy de UI en feature/ debe salir de AppStrings.
         if (isFeatureSource) {
-            val uiCall = Regex("(AmText|AmHeading|AmEmptyState|AmStatusBanner|AmPrimaryButton|AmSecondaryButton|AmTextAction|AmDialog)\\(\\s*\"([^\"]+)\"").find(line)
+            val uiCall = Regex("(AqText|AqHeading|AqEmptyState|AqStatusBanner|AqPrimaryButton|AqSecondaryButton|AqTextAction|AqDialog)\\(\\s*\"([^\"]+)\"").find(line)
             if (uiCall != null && !isUiLiteralAllowed(uiCall.groupValues[2])) {
                 add("$location: UI string literal outside AppStrings: ${uiCall.groupValues[2]}")
             }
@@ -270,13 +270,13 @@ fun checkViolations(): List<String> {
  */
 tasks.register("verifyControlMinSize") {
     group = "verification"
-    description = "AmMetrics.ControlMinSize must remain 48.dp."
+    description = "AqMetrics.ControlMinSize must remain 48.dp."
     doLast {
-        val tokens = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/AmTokens.kt")
+        val tokens = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/AqTokens.kt")
         if (!tokens.exists()) return@doLast
         val content = tokens.readText()
         if (!content.contains("val ControlMinSize = 48.dp")) {
-            throw GradleException("Design gate failed: AmMetrics.ControlMinSize must remain 48.dp.")
+            throw GradleException("Design gate failed: AqMetrics.ControlMinSize must remain 48.dp.")
         }
     }
 }
@@ -431,7 +431,7 @@ tasks.register("verifyDesignSystemCompliance") {
     doLast {
         val violations = checkViolations().toMutableList()
         if (file("design-tokens.json").exists()) {
-            violations += "design-tokens.json was retired as an editable source (AmTokens.kt is canonical); delete it instead of editing"
+            violations += "design-tokens.json was retired as an editable source (AqTokens.kt is canonical); delete it instead of editing"
         }
         // La lista de excepciones del gate DEBE coincidir con la tabla del
         // contrato: sin entrada en AMBAS partes, no existe excepción válida.
@@ -488,14 +488,14 @@ tasks.register("verifyDesignSystemFixtures") {
         }
 
         // Copy de UI en feature/: el literal crudo DEBE fallar…
-        val rawLiteral = "AmText(\"Sin conexión\", color = AmColor.TextSecondary)"
+        val rawLiteral = "AqText(\"Sin conexión\", color = AqColor.TextSecondary)"
         require(kotlinDesignViolations(featurePath, listOf(rawLiteral)).isNotEmpty()) {
             "feature/ UI literal that must fail passed"
         }
         // …y el mismo texto vía AppStrings o id técnico debe pasar.
         val allowedD2 = listOf(
-            "AmText(AppStrings.offlineBanner, color = AmColor.TextSecondary)",
-            "AmText(\"operation-123\", color = AmColor.TextSecondary)",
+            "AqText(AppStrings.offlineBanner, color = AqColor.TextSecondary)",
+            "AqText(\"operation-123\", color = AqColor.TextSecondary)",
         )
         val falseLiterals = allowedD2.filter { kotlinDesignViolations(featurePath, listOf(it)).isNotEmpty() }
         require(falseLiterals.isEmpty()) {
@@ -517,7 +517,7 @@ tasks.register("verifyDesignSystemFixtures") {
         val allowedExpressions = listOf(
             "errorMessage = if (emailError) AppStrings.IngresaUnCorreoValido else null",
             "label = when (type) { PAGO -> AppStrings.Pago else -> AppStrings.Cobro }",
-            "AmText(\"ctx-\" + id, color = AmColor.TextSecondary)",
+            "AqText(\"ctx-\" + id, color = AqColor.TextSecondary)",
         )
         val falseExpressionFlags = allowedExpressions.filter {
             kotlinDesignViolations(featurePath, listOf(it)).isNotEmpty()
@@ -529,8 +529,8 @@ tasks.register("verifyDesignSystemFixtures") {
         // Copy en core/ui/components DEBE fallar…
         val componentsPath = "/repo/core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/Fixture.kt"
         val copyInComponents = listOf(
-            "Text(\"Cargando archivo…\", color = AmColor.TextSecondary)",
-            "AmTextAction(label = \"Quitar\", onClick = {})",
+            "Text(\"Cargando archivo…\", color = AqColor.TextSecondary)",
+            "AqTextAction(label = \"Quitar\", onClick = {})",
         )
         val missedCopy = copyInComponents.filter { kotlinDesignViolations(componentsPath, listOf(it)).isEmpty() }
         require(missedCopy.isEmpty()) {
@@ -539,10 +539,10 @@ tasks.register("verifyDesignSystemFixtures") {
         // …y lo que NO es copy debe pasar: parámetros, mensajes de
         // desarrollador, labels de animación y glifos de un carácter.
         val allowedInComponents = listOf(
-            "Text(loadingLabel, color = AmColor.TextSecondary)",
+            "Text(loadingLabel, color = AqColor.TextSecondary)",
             "require(visibleActions.size <= 3) { \"máximo 3 acciones visibles\" }",
             "animateFloatAsState(targetValue = 1f, label = \"am_press\")",
-            "Text(\"×\", fontSize = AmType.Title)",
+            "Text(\"×\", fontSize = AqType.Title)",
         )
         val falseCopyFlags = allowedInComponents.filter { kotlinDesignViolations(componentsPath, listOf(it)).isNotEmpty() }
         require(falseCopyFlags.isEmpty()) {
@@ -578,8 +578,8 @@ tasks.register("verifyDesignSystemFixtures") {
         require(kotlinDesignViolations(componentShapePath, listOf(shapeInFeature)).isNotEmpty()) {
             "components/ RoundedCornerShape must fail"
         }
-        val tokenShapeFixture = "val AmShapeMedium = RoundedCornerShape(size = AmRadius.Medium)"
-        val tokenShapePath = "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/AmTokens.kt"
+        val tokenShapeFixture = "val AqShapeMedium = RoundedCornerShape(size = AqRadius.Medium)"
+        val tokenShapePath = "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/AqTokens.kt"
         require(kotlinDesignViolations(tokenShapePath, listOf(tokenShapeFixture)).isEmpty()) {
             "token layer must allow the shape set"
         }
@@ -587,12 +587,12 @@ tasks.register("verifyDesignSystemFixtures") {
         // Bordes: `.border(`/`BorderStroke(` DEBEN fallar en todo el
         // código de producción (el sistema no dibuja bordes; el foco y
         // el estado viven en los componentes M3 y en el canvas).
-        val borderInFeature = "Modifier.border(BorderStroke(AmMetrics.Border, AmColor.Accent), AmShapes.Medium)"
+        val borderInFeature = "Modifier.border(BorderStroke(AqMetrics.Border, AqColor.Accent), AqShapes.Medium)"
         listOf(
             featurePath,
             "/repo/shared/src/commonMain/kotlin/Fixture.kt",
-            "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/AmTone.kt",
-            "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/AmDialogs.kt",
+            "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/AqTone.kt",
+            "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/AqDialogs.kt",
         ).forEach { bannedPath ->
             require(kotlinDesignViolations(bannedPath, listOf(borderInFeature)).isNotEmpty()) {
                 ".border( must fail in production code: $bannedPath"
@@ -614,8 +614,8 @@ tasks.register("verifyDesignSystemFixtures") {
                 "$colorLiteral in token layer must pass"
             }
         }
-        require(kotlinDesignViolations(featurePath, listOf("val bg = AmColor.Transparent")).isEmpty()) {
-            "AmColor.Transparent must pass"
+        require(kotlinDesignViolations(featurePath, listOf("val bg = AqColor.Transparent")).isEmpty()) {
+            "AqColor.Transparent must pass"
         }
         listOf(
             "animateFloatAsState(1f, tween(150))",
@@ -626,8 +626,8 @@ tasks.register("verifyDesignSystemFixtures") {
                 "raw animation duration must fail: $durationLiteral"
             }
         }
-        require(kotlinDesignViolations(featurePath, listOf("animateFloatAsState(1f, tween(AmMotion.DurationShortMs))")).isEmpty()) {
-            "AmMotion token duration must pass"
+        require(kotlinDesignViolations(featurePath, listOf("animateFloatAsState(1f, tween(AqMotion.DurationShortMs))")).isEmpty()) {
+            "AqMotion token duration must pass"
         }
         // Shapes fuera del design system: en feature/, SHARED y
         // androidApp/ también están prohibidas.
@@ -648,20 +648,20 @@ tasks.register("verifyDesignSystemFixtures") {
             }
         }
         // Iconos: los presets de Material están prohibidos en producción;
-        // TDesign va por AmIcons.
+        // TDesign va por AqIcons.
         listOf("Icons.Default", "Icons.AutoMirrored", "Icons.Sharp", "Icons.TwoTone").forEach { preset ->
             require(kotlinDesignViolations(componentsPath, listOf("val i = ${preset}.Add")).isNotEmpty()) {
                 "$preset must fail (material icons are banned)"
             }
         }
-        require(kotlinDesignViolations(componentsPath, listOf("val i = AmIcons.Add")).isEmpty()) {
-            "AmIcons must pass"
+        require(kotlinDesignViolations(componentsPath, listOf("val i = AqIcons.Add")).isEmpty()) {
+            "AqIcons must pass"
         }
 
         // D2 extendida: ifBlank/Elvis/plantillas en la capa de UI DEBEN
         // fallar…
         listOf(
-            "AmText(operation.amount.orEmpty().ifBlank { \"sin monto\" }, color = AmColor.TextPrimary)",
+            "AqText(operation.amount.orEmpty().ifBlank { \"sin monto\" }, color = AqColor.TextPrimary)",
             "val extension = candidate.extension ?: \"Elemento importado\"",
         ).forEach { line ->
             require(kotlinDesignViolations(featurePath, listOf(line)).isNotEmpty()) {
@@ -876,8 +876,8 @@ tasks.register("verifyScreenContractFixtures") {
         )
         val read: (String) -> String? = { repo[it] }
         val core = listOf(
-            "core/ui/AmButtons.kt" to "fun AmPrimaryButton() = Unit",
-            "core/ui/AmLists.kt" to "fun AmListRow() = Unit",
+            "core/ui/AqButtons.kt" to "fun AqPrimaryButton() = Unit",
+            "core/ui/AqLists.kt" to "fun AqListRow() = Unit",
         )
         fun screen(
             id: String,
@@ -889,7 +889,7 @@ tasks.register("verifyScreenContractFixtures") {
             tests: List<String>,
             a11y: List<String>,
             destinations: List<String> = listOf("system-exit"),
-            components: List<String> = listOf("AmPrimaryButton"),
+            components: List<String> = listOf("AqPrimaryButton"),
             states: List<String> = listOf("content"),
             captureStates: List<String> = listOf("content"),
             gestures: List<String> = emptyList(),
@@ -938,7 +938,7 @@ tasks.register("verifyScreenContractFixtures") {
         ) { "una prueba a11y sin señal debe fallar" }
         // Componente inventado.
         require(
-            screenContractViolations(listOf(valid[0].copy(components = listOf("AmNonexistent")), valid[1]), read, core)
+            screenContractViolations(listOf(valid[0].copy(components = listOf("AqNonexistent")), valid[1]), read, core)
                 .isNotEmpty(),
         ) { "un componente inexistente debe fallar" }
         // Estado fuera del vocabulario.
@@ -948,11 +948,11 @@ tasks.register("verifyScreenContractFixtures") {
         ) { "un estado fuera del vocabulario debe fallar" }
 
         // Excepción documentada sin uso (registro zombie).
-        val zombie = exceptionUsageViolations(mapOf("E-99" to listOf("border:AmLists.kt")), core)
+        val zombie = exceptionUsageViolations(mapOf("E-99" to listOf("border:AqLists.kt")), core)
         require(zombie.isNotEmpty()) { "una excepción sin uso debe fallar" }
         val used = exceptionUsageViolations(
-            mapOf("E-01" to listOf("border:AmButtons.kt")),
-            listOf("core/ui/AmButtons.kt" to "Modifier.border(BorderStroke(1.dp, color), shape)"),
+            mapOf("E-01" to listOf("border:AqButtons.kt")),
+            listOf("core/ui/AqButtons.kt" to "Modifier.border(BorderStroke(1.dp, color), shape)"),
         )
         require(used.isEmpty()) { "una excepción usada no debe fallar: $used" }
 

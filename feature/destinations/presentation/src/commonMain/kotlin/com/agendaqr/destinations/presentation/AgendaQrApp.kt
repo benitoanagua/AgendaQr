@@ -16,12 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.agendaqr.core.ui.components.AmBannerAction
-import com.agendaqr.core.ui.components.AmStatusBanner
-import com.agendaqr.core.ui.components.AmLoading
-import com.agendaqr.core.ui.components.AmTone
-import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.components.AqBannerAction
+import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqLoading
+import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.data.DemoSeeder
 import com.agendaqr.destinations.data.LegacyComprobanteBytesMigration
 import com.agendaqr.destinations.data.LegacyLocalDataMigration
@@ -58,7 +58,7 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun AgendaQrApp() {
-    AmTheme {
+    AqTheme {
         val profile = remember {
             val repository = createLocalProfileRepository()
             val created = repository.getOrCreate()
@@ -157,18 +157,18 @@ fun AgendaQrApp() {
         }
 
         when {
-            demoActive && !demoReady -> AmLoading(message = AppStrings.Cargando)
+            demoActive && !demoReady -> AqLoading(message = AppStrings.Cargando)
             demoShowing -> Column {
                 // Demo edge-to-edge: el margen de pantalla lo pide el
                 // banner (ScreenMargin, una sola vez); el host solo pone
                 // el separador vertical hacia la app de abajo.
-                AmStatusBanner(
+                AqStatusBanner(
                     message = AppStrings.DemostracionAislada,
                     title = AppStrings.ModoDemostracion,
-                    tone = AmTone.Info,
-                    action = AmBannerAction(AppStrings.SalirDeDemostracion, ::exitDemo),
-                    modifier = Modifier.fillMaxWidth().padding(vertical = AmSpacing.Sm),
-                    screenMargin = AmSpacing.ScreenMargin,
+                    tone = AqTone.Info,
+                    action = AqBannerAction(AppStrings.SalirDeDemostracion, ::exitDemo),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = AqSpacing.Sm),
+                    screenMargin = AqSpacing.ScreenMargin,
                 )
                 AgendaQrLocalApp(
                     profileId = DEMO_PROFILE_ID,

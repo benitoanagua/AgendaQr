@@ -5,11 +5,11 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.agendaqr.core.ui.components.AmNavChromeState
-import com.agendaqr.core.ui.components.amReducedSurfaceEnter
-import com.agendaqr.core.ui.components.amReducedSurfaceExit
-import com.agendaqr.core.ui.components.amSurfaceEnter
-import com.agendaqr.core.ui.components.amSurfaceExit
+import com.agendaqr.core.ui.components.AqNavChromeState
+import com.agendaqr.core.ui.components.aqReducedSurfaceEnter
+import com.agendaqr.core.ui.components.aqReducedSurfaceExit
+import com.agendaqr.core.ui.components.aqSurfaceEnter
+import com.agendaqr.core.ui.components.aqSurfaceExit
 import com.agendaqr.core.ui.motion.LocalReducedMotion
 
 
@@ -25,7 +25,7 @@ internal fun HomeSurface(
     graph: AuthenticatedSessionGraph,
     onLock: () -> Unit,
     nav: AppBackStack,
-    navChrome: AmNavChromeState? = null,
+    navChrome: AqNavChromeState? = null,
     appHosts: AppHosts? = null,
     syncLookup: ElementSyncLookup,
     onRetrySync: () -> Unit,
@@ -41,9 +41,9 @@ internal fun HomeSurface(
             if (reducedMotion) {
                 // ReducedMotion (§11): sin desplazamiento; la pantalla cambia
                 // en el sitio y la comprensión no depende de la animación.
-                amReducedSurfaceEnter() togetherWith amReducedSurfaceExit()
+                aqReducedSurfaceEnter() togetherWith aqReducedSurfaceExit()
             } else {
-                amSurfaceEnter(reverse = reverse) togetherWith amSurfaceExit(reverse = reverse)
+                aqSurfaceEnter(reverse = reverse) togetherWith aqSurfaceExit(reverse = reverse)
             }
         },
         label = AppStrings.DestinationRouteTransition,

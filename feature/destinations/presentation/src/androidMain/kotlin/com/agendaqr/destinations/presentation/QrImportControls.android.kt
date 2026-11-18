@@ -8,12 +8,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.agendaqr.core.ui.components.AmIcons
-import com.agendaqr.core.ui.components.AmIconBadge
-import com.agendaqr.core.ui.components.AmListRow
-import com.agendaqr.core.ui.components.AmPrimaryButton
-import com.agendaqr.core.ui.components.AmSecondaryButton
-import com.agendaqr.core.ui.components.AmTone
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqIconBadge
+import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqPrimaryButton
+import com.agendaqr.core.ui.components.AqSecondaryButton
+import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.destinations.domain.QrAsset
 
 /**
@@ -29,14 +29,14 @@ actual fun QrImportControls(
     LaunchedEffect(Unit) {
         AgendaQrAndroidImportLauncher.results.collect(onResult)
     }
-    Column(verticalArrangement = Arrangement.spacedBy(com.agendaqr.core.ui.theme.AmSpacing.Sm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(com.agendaqr.core.ui.theme.AqSpacing.Sm)) {
         // En el editor la acción primaria ES Guardar (botón fijo abajo):
         // las fuentes de imagen son alternativas y no compiten por el
         // peso visual (jerarquía de botones, §7).
-        AmSecondaryButton(
+        AqSecondaryButton(
             label = AppStrings.ElegirDeLaGaleria,
             onClick = AgendaQrAndroidImportLauncher::gallery,
-            icon = com.agendaqr.core.ui.components.AmIcons.Gallery,
+            icon = com.agendaqr.core.ui.components.AqIcons.Gallery,
         )
         CameraCaptureHost(onQr = { asset -> onResult(QrImportResult(listOf(asset))) })
     }
@@ -54,11 +54,11 @@ actual fun QrGalleryControls(
     LaunchedEffect(Unit) {
         AgendaQrAndroidImportLauncher.results.collect(onResult)
     }
-    AmListRow(
+    AqListRow(
         title = AppStrings.ElegirDeLaGaleria,
         titleMaxLines = Int.MAX_VALUE,
         onClick = AgendaQrAndroidImportLauncher::gallery,
-        leading = { AmIconBadge(icon = AmIcons.Gallery, tone = AmTone.Info) },
+        leading = { AqIconBadge(icon = AqIcons.Gallery, tone = AqTone.Info) },
         showChevron = true,
         showDivider = true,
     )
@@ -79,11 +79,11 @@ actual fun QrCameraEntryControl(
 /** Android: PDF vía OpenDocument por el canal de comprobantes entrantes. */
 @Composable
 actual fun QrPdfPickerControl(showDivider: Boolean) {
-    AmListRow(
+    AqListRow(
         title = AppStrings.ElegirArchivoPdf,
         titleMaxLines = Int.MAX_VALUE,
         onClick = AgendaQrAndroidImportLauncher::pdf,
-        leading = { AmIconBadge(icon = AmIcons.Attachment, tone = AmTone.Info) },
+        leading = { AqIconBadge(icon = AqIcons.Attachment, tone = AqTone.Info) },
         showChevron = true,
         showDivider = showDivider,
     )

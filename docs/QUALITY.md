@@ -290,10 +290,10 @@ Invariantes del sistema visual y accesibilidad (contrato normativo,
 `docs/05-design-system/00-contrato-normativo-diseno.md`):
 
 - I19 Contraste de acentos: cada par acento/texto cumple ≥ 4.5:1 en texto normal
-  (`AmAccentTest`).
+  (`AqAccentTest`).
 - I20 Todo control interactivo expone su rol y etiqueta accesible
   (`ScreensA11yCoverageTest`, `DestinationsScreenA11yTest`,
-  `AmAccessibilityContractTest`), con targets de 48 dp.
+  `AqAccessibilityContractTest`), con targets de 48 dp.
 - I21 Reduced motion desactiva la transición de superficies.
 - I22 No hay bucles de animación decorativos.
 - I23 Los controles evitan el borde de reposo universal (guía hairline en
@@ -309,15 +309,15 @@ evalúa en configuración).
 | Puerta | Comando | Qué verifica |
 |---|---|---|
 | Arquitectura + design system + no-scripts | `./gradlew verifyAgendaQrArchitecture` | `verifyDocs`, `verifyNoScripts`, `verifyDesignSystemCompliance`, `verifyDesignSystemFixtures`, `verifyControlMinSize`, `verifyArchitectureBoundaries`, `verifyScreenContract`, `verifyScreenContractFixtures` |
-| Área táctil mínima | `verifyControlMinSize` | `AmMetrics.ControlMinSize == 48.dp` |
+| Área táctil mínima | `verifyControlMinSize` | `AqMetrics.ControlMinSize == 48.dp` |
 | Contrato de diseño | `verifyDesignSystemCompliance` + `verifyDesignSystemFixtures` | literales visuales fuera de tokens, imports prohibidos, copy, bordes, interacción cruda, tabla de excepciones |
 | Contrato de interacción por pantalla | `verifyScreenContract` + `verifyScreenContractFixtures` | superficie real sin contrato o contrato obsoleto, destino inexistente, prueba ausente o sin señal a11y, componente inventado, clave de copy ausente, excepción registrada sin uso, capturas con viewport falso, duplicadas o con cobertura incompleta, desalineación entre superficie, contrato, código, pruebas y documentación generada |
 | Documentación | `verifyDocs` | enlaces vivos, todo `.md` alcanzable desde `docs/README.md`, sin marcadores transitorios, ADR citadas existentes |
-| Contraste y esquema | `AmSchemeTest`, `AmContrastPairsTest`, `AmAccentTest` | umbrales y pares fijados (incl. el contenido informativo `accentText` sobre wathet) |
+| Contraste y esquema | `AqSchemeTest`, `AqContrastPairsTest`, `AqAccentTest` | umbrales y pares fijados (incl. el contenido informativo `accentText` sobre wathet) |
 | Galería de capturas (bajo demanda, ADR-0007) | `./gradlew captureGallery -Pagendaqr.capture=true` | produce una única galería estricta por superficie (360 dp, claro/oscuro, fuente 100 %) con manifiesto `agendaqr.captures/5` e índice navegable; `verifyScreenContract` la valida cuando existe (esquema, dimensiones reales, duplicados, cobertura) |
-| Tipografía y layout | `AmTypographyTest`, `AmTabsLayoutTest`, `AmUiPolishContractTest` | roles, interlineado, escalado de fuente al 100 %/150 % |
-| Accesibilidad de componentes | `AmAccessibilityContractTest`, `ScreensA11yCoverageTest` | semántica, roles, targets |
-| Correcciones UX (ADR-0018) | `UxFilterReproductionTest`, `UxDateReproductionTest`, `UxEditorDiscardTest`, `UxAmountValidationTest`, `UxHomeHubTest`, `UxHomeFavoritesTest`, `DestinationsSectionStateTest`, `UxUnassociatedTest`, `UxLockSearchTest`, `QrFullscreenTest`, `ExternalFlowTrackerTest`, `ExternalFlowLockPolicyTest`, `AmDateTimePickerTest`, `AppStringsCopyContractTest` | filtros idempotentes, fecha con hora, descarte confirmado, importe válido, hub y favoritos de Inicio (lista sin duplicar el carrusel, sin mensaje falso), bandeja sin primarios, biometría/foco, brillo restaurado, gracia de bloqueo (STOP/START/RESUME con limpieza en primer plano) y presupuesto de copy ≤ 60 caracteres, bajo Robolectric/JVM |
+| Tipografía y layout | `AqTypographyTest`, `AqTabsLayoutTest`, `AqUiPolishContractTest` | roles, interlineado, escalado de fuente al 100 %/150 % |
+| Accesibilidad de componentes | `AqAccessibilityContractTest`, `ScreensA11yCoverageTest` | semántica, roles, targets |
+| Correcciones UX (ADR-0018) | `UxFilterReproductionTest`, `UxDateReproductionTest`, `UxEditorDiscardTest`, `UxAmountValidationTest`, `UxHomeHubTest`, `UxHomeFavoritesTest`, `DestinationsSectionStateTest`, `UxUnassociatedTest`, `UxLockSearchTest`, `QrFullscreenTest`, `ExternalFlowTrackerTest`, `ExternalFlowLockPolicyTest`, `AqDateTimePickerTest`, `AppStringsCopyContractTest` | filtros idempotentes, fecha con hora, descarte confirmado, importe válido, hub y favoritos de Inicio (lista sin duplicar el carrusel, sin mensaje falso), bandeja sin primarios, biometría/foco, brillo restaurado, gracia de bloqueo (STOP/START/RESUME con limpieza en primer plano) y presupuesto de copy ≤ 60 caracteres, bajo Robolectric/JVM |
 | Layout | `LayoutReferenceTest`, `LayoutReferenceExtraTest` (presentación) | escenarios claro/oscuro a 360 dp y textos largos, verificados por aserciones de layout (ADR-0007); quedan aserciones puntuales a 320 dp en `LayoutReferenceExtraTest`; ya no se verifican las raíces completas a 320 dp, en tablet ni con fuente al 200 % |
 | Arranque local-first y PIN | `:feature:destinations:presentation:testDebugUnitTest --tests "*AgendaQrLocalStartupTest"` | arranque real sin cuenta, perfil local, desbloqueo |
 | Máquina de estados del acceso local | `--tests "*LocalAccessGateTest"` | configurar → desbloquear → bloquear, saneado, intentos, bloqueo temporal |
@@ -326,7 +326,7 @@ evalúa en configuración).
 | Migración de bytes heredados | `--tests "*LegacyComprobanteBytesMigrationTest"` | idempotencia, no-borrado del origen, fallo parcial sin aborto, reintento recupera, aislamiento por propietario |
 | Namespace por perfil + migración | `--tests "*LocalIdentityTest"` | claves por perfil, detección heredada por claves sin cliente remoto, migración idempotente |
 | Contrato de QR | `--tests "*QrPreviewContractTest"` | fixture es QR real; bytes del dominio → imagen; payload no-imagen → error |
-| Contrato de no solapamiento | `:core:ui:testDebugUnitTest --tests "*AmScaffoldOverlapContractTest"` | el contenido termina por encima del dock/FAB |
+| Contrato de no solapamiento | `:core:ui:testDebugUnitTest --tests "*AqScaffoldOverlapContractTest"` | el contenido termina por encima del dock/FAB |
 | Ensamblado Android | `:androidApp:assembleDebug` / `assembleRelease` | compilación del host |
 | Compilación iOS | `:core:ui:compileKotlinIosSimulatorArm64 :feature:destinations:presentation:compileKotlinIosSimulatorArm64` | compila (runtime requiere Xcode) |
 | Lint Android | `:androidApp:lint` | sin problemas nuevos |
@@ -384,14 +384,14 @@ galería validada por el gate:
 ### Detalle: jerarquía de acciones (4 niveles)
 
 El sistema de diseño define una jerarquía semántica de acciones documentada en
-la javadoc de `AmButtons.kt` y verificable por composición:
+la javadoc de `AqButtons.kt` y verificable por composición:
 
 | Nivel | Componente | Tratamiento | Uso |
 |---|---|---|---|
-| 1 — Primaria | `AmPrimaryButton` / `AmBottomAction` | Relleno de acento (`AmColor.Accent`) | El objetivo principal del usuario por sección; como máximo una por contexto |
-| 2 — Secundaria | `AmSecondaryButton` | Tonal (`SurfaceContainerLow` + hairline `Divider`); variante `solid` para la acción insignia de una tarjeta | Alternativas importantes que no compiten con la primaria |
-| 3 — Terciaria | `AmTextAction` | Texto con área táctil de 48 dp | Acciones contextuales y navegación auxiliar |
-| 4 — Destructiva | `AmDangerButton` / `AmDialog(destructive = true)` | Tono peligro + texto específico; confirmación cuando hay pérdida irreversible | Descartar/eliminar; nunca compite visualmente con la primaria |
+| 1 — Primaria | `AqPrimaryButton` / `AqBottomAction` | Relleno de acento (`AqColor.Accent`) | El objetivo principal del usuario por sección; como máximo una por contexto |
+| 2 — Secundaria | `AqSecondaryButton` | Tonal (`SurfaceContainerLow` + hairline `Divider`); variante `solid` para la acción insignia de una tarjeta | Alternativas importantes que no compiten con la primaria |
+| 3 — Terciaria | `AqTextAction` | Texto con área táctil de 48 dp | Acciones contextuales y navegación auxiliar |
+| 4 — Destructiva | `AqDangerButton` / `AqDialog(destructive = true)` | Tono peligro + texto específico; confirmación cuando hay pérdida irreversible | Descartar/eliminar; nunca compite visualmente con la primaria |
 
 **Reglas aplicadas en los flujos:**
 

@@ -25,15 +25,15 @@ La dirección de alta densidad choca con invariantes de accesibilidad y de plata
 |---|---|---|
 | Rojo `#FF2442` → naranja `#FF6A00` con texto blanco | Blanco/rojo 3.76:1 y blanco/naranja 2.87:1 (< 4.5:1) | Gradiente con extremos oscurecidos hasta ≥ 4.5:1 con texto blanco: claro `#E4001F → #D12810 → #BE4F00`; oscuro con extremos aclarados (`#FF5A70`/`#FF8A3D`) para texto oscuro ≥ 4.5:1. Valores fijados por prueba. |
 | Rojo como acción primaria | El tono de peligro también es rojo | Primaria = siempre píldora con gradiente. Destructiva = nunca rellena con gradiente: contorno o tono + glifo de papelera/aviso + etiqueta específica de consecuencia + confirmación. |
-| Sombras E-1/E-2/E-3 | El gate prohíbe `shadow(` | Se permiten mediante el token `AmElevation` y excepciones E-05/E-06 registradas a la vez en contrato §12 y en `exceptionRegistry` del gate (el gate se extiende para interpretar reglas `shadow:`). El `RoundedCornerShape` sigue siendo exclusivo de la capa de tokens. |
+| Sombras E-1/E-2/E-3 | El gate prohíbe `shadow(` | Se permiten mediante el token `AqElevation` y excepciones E-05/E-06 registradas a la vez en contrato §12 y en `exceptionRegistry` del gate (el gate se extiende para interpretar reglas `shadow:`). El `RoundedCornerShape` sigue siendo exclusivo de la capa de tokens. |
 | Rejilla "King Kong" de 4–5 columnas | Spec S01: "sin acciones rápidas duplicadas" | Se implementa en Inicio con **solo las acciones que ya existen** (las del hub del botón flotante) y se retira el botón flotante con hub **de Inicio** para no duplicar. Enmienda a S01. |
 | Etiqueta ≤ 4 caracteres (2 chinos) | Español y escalado al 200 % | Etiqueta corta de una línea (≤ 12 caracteres) a 12 sp; con fuente grande o 320 dp la rejilla pasa a menos columnas o a dos líneas, sin recortes. |
 | Precio rojo en e-commerce | Aquí no hay precios comerciales; el rojo en finanzas se lee como egreso/peligro | El **Importe** adopta la tipografía del Anexo A (28–32, peso 800, tabular, símbolo de moneda más pequeño) y conserva color neutro con signo. La adaptación de dominio queda documentada; pintarlo rojo es un cambio de un token, no lo hace este ADR. |
 | Cuerpo 14, H1 18–20, H2 16, Caption 12 | Escala previa 17/15/13 | Se adopta la escala del Anexo A. Mínimo absoluto 11 sp (badges 12 → 11–12). Todo en `sp`, validado al 150 % en la verificación automática; el 200 % se conserva y se revisa manualmente (ADR-0007). |
-| Estado de foco "no aplica" | Teclado, D-pad, Switch Access | Sin anillo permanente en táctil; el indicador `AmColor.Focus` se conserva para foco por teclado/D-pad/Switch Access. El estado táctil es escala + háptica. |
-| Easing spring `cubic-bezier(0.34,1.56,0.64,1)`, 200–300 ms, escala 0.95 | Gate: sin duraciones literales; movimiento reducido | Se adopta como tokens de `AmMotion`. Movimiento reducido = duración 0 y escala 1. |
+| Estado de foco "no aplica" | Teclado, D-pad, Switch Access | Sin anillo permanente en táctil; el indicador `AqColor.Focus` se conserva para foco por teclado/D-pad/Switch Access. El estado táctil es escala + háptica. |
+| Easing spring `cubic-bezier(0.34,1.56,0.64,1)`, 200–300 ms, escala 0.95 | Gate: sin duraciones literales; movimiento reducido | Se adopta como tokens de `AqMotion`. Movimiento reducido = duración 0 y escala 1. |
 | Brillo (shimmer) en banners en reposo | Contenido en movimiento > 5 s debe poder detenerse | Brillo de entrada de ≤ 5 s y luego estático; en esqueletos de carga puede repetirse mientras dure la carga. Movimiento reducido = estático. |
-| Háptica obligatoria al tocar; doble vibración en éxito | Dependencia de plataforma | La háptica por evento usa `AmFeedbackEvent`; en la confirmación S12, `AmSuccessCheck` da el doble pulso y `AmFeedbackEvent` desactiva el pulso simple para evitar una tercera vibración. Ambos respetan el feedback de plataforma. |
+| Háptica obligatoria al tocar; doble vibración en éxito | Dependencia de plataforma | La háptica por evento usa `AqFeedbackEvent`; en la confirmación S12, `AqSuccessCheck` da el doble pulso y `AqFeedbackEvent` desactiva el pulso simple para evitar una tercera vibración. Ambos respetan el feedback de plataforma. |
 | Confeti en éxito, cohete en pull-to-refresh | Decoración | Confeti breve y solo en el resultado de importación completada (S12); respeta movimiento reducido. Pull-to-refresh personalizado solo si la pantalla ya lo tiene; si no, no se añade. |
 | Carrito volador, cuentas regresivas, monedas, niveles, "HOT/限时/-50 %", servicio al cliente flotante, insignias de conteo en la barra inferior | Requieren funciones o datos que el producto no tiene | **No aplicable**; no se inventan datos. Las insignias tipo cinta sí existen como componente, con textos reales de estado ("Nuevo", "Duplicado", "Pendiente"). |
 | Fuentes PingFang SC / Noto Sans SC | No se empaquetan fuentes | La fuente de sistema ya resuelve CJK (Noto en Android, PingFang en iOS); no se empaqueta nada. |
@@ -51,7 +51,7 @@ La dirección de alta densidad choca con invariantes de accesibilidad y de plata
 
 6. **No cambia el comportamiento.** Navegación, flujos de negocio, reglas de PIN, persistencia, sincronización, modelos de dominio y copy funcional quedan intactos. Excepción única autorizada: la rejilla de Inicio (§4 S01), que reorganiza acciones existentes sin crear funciones nuevas ni duplicarlas.
 
-7. **Validación visual local obligatoria.** Todo cambio de tokens actualiza `AmSchemeTest`, los contratos de contraste y tipografía, y exige regenerar capturas y hashes (ADR-0007) con revisión humana previa. No se declara validado el rediseño sin capturas claro/oscuro revisadas.
+7. **Validación visual local obligatoria.** Todo cambio de tokens actualiza `AqSchemeTest`, los contratos de contraste y tipografía, y exige regenerar capturas y hashes (ADR-0007) con revisión humana previa. No se declara validado el rediseño sin capturas claro/oscuro revisadas.
 
 ## Consecuencias
 
@@ -75,8 +75,8 @@ ADR-0021 en documentación descartable. La guía de implementación y los
 comentarios de la capa `core/ui` se alinearon con ADR-0022 y el contrato
 normativo.
 
-La importación completada en S12 compone `AmSuccessCheck` y `AmSuccessBurst`.
-El check es decorativo: `AmFeedbackEvent` ya anuncia el resultado, por lo que
+La importación completada en S12 compone `AqSuccessCheck` y `AqSuccessBurst`.
+El check es decorativo: `AqFeedbackEvent` ya anuncia el resultado, por lo que
 no se añade un segundo `liveRegion`. Ambos respetan movimiento reducido. No se
 archivaron ADRs ni se eliminó documentación histórica.
 

@@ -17,15 +17,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.PredictiveBackHandler
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.agendaqr.core.ui.components.AmNavChromeState
-import com.agendaqr.core.ui.components.AmNavDestination
-import com.agendaqr.core.ui.components.AmIcons
-import com.agendaqr.core.ui.components.amReducedSurfaceEnter
-import com.agendaqr.core.ui.components.amReducedSurfaceExit
-import com.agendaqr.core.ui.components.amSurfaceEnter
-import com.agendaqr.core.ui.components.amSurfaceExit
+import com.agendaqr.core.ui.components.AqNavChromeState
+import com.agendaqr.core.ui.components.AqNavDestination
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.aqReducedSurfaceEnter
+import com.agendaqr.core.ui.components.aqReducedSurfaceExit
+import com.agendaqr.core.ui.components.aqSurfaceEnter
+import com.agendaqr.core.ui.components.aqSurfaceExit
 import com.agendaqr.core.ui.motion.LocalReducedMotion
-import com.agendaqr.core.ui.theme.AmMotion
+import com.agendaqr.core.ui.theme.AqMotion
 import com.agendaqr.destinations.data.SyncMutationState
 import com.agendaqr.destinations.domain.AgendaSearchResultType
 import kotlinx.coroutines.launch
@@ -100,7 +100,7 @@ internal fun AuthenticatedAppRoot(
     // la cola pasa de >0 a 0 (no se repite en recomposiciones; el token
     // solo cambia en la transición). V1.2: se publica como Snackbar
     // transitorio (con háptico y anuncio accesible por evento).
-    val feedbackHost = remember { com.agendaqr.core.ui.components.AmFeedbackHost() }
+    val feedbackHost = remember { com.agendaqr.core.ui.components.AqFeedbackHost() }
     var syncDoneEvent by remember { mutableStateOf<Any?>(null) }
     var previousPendingCount by remember { mutableStateOf(0) }
     LaunchedEffect(pendingCount, showSyncUi) {
@@ -109,7 +109,7 @@ internal fun AuthenticatedAppRoot(
         }
         previousPendingCount = pendingCount
     }
-    com.agendaqr.core.ui.components.AmFeedbackEvent(
+    com.agendaqr.core.ui.components.AqFeedbackEvent(
         event = syncDoneEvent,
         message = AppStrings.SincronizacionCompletada,
         feedbackHost = feedbackHost,
@@ -187,16 +187,16 @@ internal fun AuthenticatedAppRoot(
     // (con foco) frente a pestaña (sin foco).
     var searchAutoFocus by rememberSaveable { mutableStateOf(true) }
     val navChrome = remember(top) {
-        AmNavChromeState(
+        AqNavChromeState(
             destinations = listOf(
-                AmNavDestination(appRouteNameOf(AppRoute.Home), AppStrings.Inicio, AmIcons.Home),
-                AmNavDestination(appRouteNameOf(AppRoute.Search), AppStrings.Buscar, AmIcons.Search),
-                AmNavDestination(appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones, AmIcons.Register),
-                AmNavDestination(appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos, AmIcons.Context),
+                AqNavDestination(appRouteNameOf(AppRoute.Home), AppStrings.Inicio, AqIcons.Home),
+                AqNavDestination(appRouteNameOf(AppRoute.Search), AppStrings.Buscar, AqIcons.Search),
+                AqNavDestination(appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones, AqIcons.Register),
+                AqNavDestination(appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos, AqIcons.Context),
             ),
             selectedId = appRouteNameOf(top),
             onSelect = { name ->
-                val destination = appRouteForName(name) ?: return@AmNavChromeState
+                val destination = appRouteForName(name) ?: return@AqNavChromeState
                 searchAutoFocus = false
                 nav.popToRoot()
                 if (destination != AppRoute.Home) nav.push(destination)
@@ -267,9 +267,9 @@ internal fun AuthenticatedAppRoot(
                 val to = stack.indexOf(targetState)
                 val reverse = to in 0..from
                 if (reducedMotion) {
-                    amReducedSurfaceEnter() togetherWith amReducedSurfaceExit()
+                    aqReducedSurfaceEnter() togetherWith aqReducedSurfaceExit()
                 } else {
-                    amSurfaceEnter(reverse = reverse) togetherWith amSurfaceExit(reverse = reverse)
+                    aqSurfaceEnter(reverse = reverse) togetherWith aqSurfaceExit(reverse = reverse)
                 }
             },
             label = AppStrings.SurfaceRouteTransition,
@@ -278,12 +278,12 @@ internal fun AuthenticatedAppRoot(
             // el progreso del gesto (cancelar la restaura; confirmar corre
             // la transición estándar). Con reduced motion el gesto no
             // añade animación (solo el estado del gesto cambia).
-            val predictiveScale = 1f - (backProgress * AmMotion.PredictiveBackShrink)
+            val predictiveScale = 1f - (backProgress * AqMotion.PredictiveBackShrink)
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .graphicsLayer {
-                        alpha = 1f - (backProgress * AmMotion.PredictiveBackFade)
+                        alpha = 1f - (backProgress * AqMotion.PredictiveBackFade)
                         scaleX = predictiveScale
                         scaleY = predictiveScale
                     },

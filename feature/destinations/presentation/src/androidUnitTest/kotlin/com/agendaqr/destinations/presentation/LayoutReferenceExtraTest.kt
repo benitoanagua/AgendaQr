@@ -11,14 +11,14 @@ import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
-import com.agendaqr.core.ui.components.AmBottomAction
-import com.agendaqr.core.ui.components.AmDangerButton
-import com.agendaqr.core.ui.components.AmPrimaryButton
+import com.agendaqr.core.ui.components.AqBottomAction
+import com.agendaqr.core.ui.components.AqDangerButton
+import com.agendaqr.core.ui.components.AqPrimaryButton
 import androidx.compose.material3.Text
 import androidx.compose.ui.text.font.FontWeight
-import com.agendaqr.core.ui.theme.AmColor
-import com.agendaqr.core.ui.theme.AmTheme
-import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqTheme
+import com.agendaqr.core.ui.theme.AqType
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -40,7 +40,7 @@ class LayoutReferenceExtraTest {
     val compose = createComposeRule()
 
     private fun verifyLayout(name: String, dark: Boolean, content: @Composable () -> Unit) {
-        compose.setContent { AmTheme(darkTheme = dark) { content() } }
+        compose.setContent { AqTheme(darkTheme = dark) { content() } }
         compose.waitForIdle()
         val root = compose.onRoot().getUnclippedBoundsInRoot()
         compose.onRoot().assertIsDisplayed()
@@ -52,24 +52,24 @@ class LayoutReferenceExtraTest {
         )
     }
 
-    private fun rootChrome(selected: String): com.agendaqr.core.ui.components.AmNavChromeState {
-        return com.agendaqr.core.ui.components.AmNavChromeState(
+    private fun rootChrome(selected: String): com.agendaqr.core.ui.components.AqNavChromeState {
+        return com.agendaqr.core.ui.components.AqNavChromeState(
             destinations = listOf(
-                com.agendaqr.core.ui.components.AmNavDestination(
+                com.agendaqr.core.ui.components.AqNavDestination(
                     appRouteNameOf(AppRoute.Home), AppStrings.Inicio,
-                    com.agendaqr.core.ui.components.AmIcons.Home,
+                    com.agendaqr.core.ui.components.AqIcons.Home,
                 ),
-                com.agendaqr.core.ui.components.AmNavDestination(
+                com.agendaqr.core.ui.components.AqNavDestination(
                     appRouteNameOf(AppRoute.Search), AppStrings.Buscar,
-                    com.agendaqr.core.ui.components.AmIcons.Search,
+                    com.agendaqr.core.ui.components.AqIcons.Search,
                 ),
-                com.agendaqr.core.ui.components.AmNavDestination(
+                com.agendaqr.core.ui.components.AqNavDestination(
                     appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones,
-                    com.agendaqr.core.ui.components.AmIcons.Register,
+                    com.agendaqr.core.ui.components.AqIcons.Register,
                 ),
-                com.agendaqr.core.ui.components.AmNavDestination(
+                com.agendaqr.core.ui.components.AqNavDestination(
                     appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos,
-                    com.agendaqr.core.ui.components.AmIcons.Context,
+                    com.agendaqr.core.ui.components.AqIcons.Context,
                 ),
             ),
             selectedId = selected,
@@ -125,9 +125,9 @@ class LayoutReferenceExtraTest {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            AmPrimaryButton(label = "Guardar", onClick = {}, modifier = Modifier.fillMaxWidth())
-            AmPrimaryButton(label = "Guardar", onClick = {}, enabled = false, modifier = Modifier.fillMaxWidth())
-            AmPrimaryButton(label = "Guardando", onClick = {}, isLoading = true, modifier = Modifier.fillMaxWidth())
+            AqPrimaryButton(label = "Guardar", onClick = {}, modifier = Modifier.fillMaxWidth())
+            AqPrimaryButton(label = "Guardar", onClick = {}, enabled = false, modifier = Modifier.fillMaxWidth())
+            AqPrimaryButton(label = "Guardando", onClick = {}, isLoading = true, modifier = Modifier.fillMaxWidth())
         }
     }
 
@@ -139,9 +139,9 @@ class LayoutReferenceExtraTest {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            AmPrimaryButton(label = "Guardar", onClick = {}, modifier = Modifier.fillMaxWidth())
-            AmPrimaryButton(label = "Guardar", onClick = {}, enabled = false, modifier = Modifier.fillMaxWidth())
-            AmPrimaryButton(label = "Guardando", onClick = {}, isLoading = true, modifier = Modifier.fillMaxWidth())
+            AqPrimaryButton(label = "Guardar", onClick = {}, modifier = Modifier.fillMaxWidth())
+            AqPrimaryButton(label = "Guardar", onClick = {}, enabled = false, modifier = Modifier.fillMaxWidth())
+            AqPrimaryButton(label = "Guardando", onClick = {}, isLoading = true, modifier = Modifier.fillMaxWidth())
         }
     }
 
@@ -153,7 +153,7 @@ class LayoutReferenceExtraTest {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            AmDangerButton(label = "Eliminar", onClick = {}, modifier = Modifier.fillMaxWidth())
+            AqDangerButton(label = "Eliminar", onClick = {}, modifier = Modifier.fillMaxWidth())
         }
     }
 
@@ -165,7 +165,7 @@ class LayoutReferenceExtraTest {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            AmDangerButton(label = "Eliminar", onClick = {}, modifier = Modifier.fillMaxWidth())
+            AqDangerButton(label = "Eliminar", onClick = {}, modifier = Modifier.fillMaxWidth())
         }
     }
 
@@ -179,9 +179,9 @@ class LayoutReferenceExtraTest {
         ) {
             Text(
                 text = "1250.00",
-                fontSize = AmType.Amount,
+                fontSize = AqType.Amount,
                 fontWeight = FontWeight.ExtraBold,
-                color = AmColor.TextPrimary,
+                color = AqColor.TextPrimary,
             )
         }
     }
@@ -196,9 +196,9 @@ class LayoutReferenceExtraTest {
         ) {
             Text(
                 text = "1250.00",
-                fontSize = AmType.Amount,
+                fontSize = AqType.Amount,
                 fontWeight = FontWeight.ExtraBold,
-                color = AmColor.TextPrimary,
+                color = AqColor.TextPrimary,
             )
         }
     }
@@ -210,7 +210,7 @@ class LayoutReferenceExtraTest {
                 .fillMaxWidth()
                 .padding(16.dp),
         ) {
-            AmBottomAction(label = "Guardar", onClick = {})
+            AqBottomAction(label = "Guardar", onClick = {})
         }
     }
 
@@ -221,7 +221,7 @@ class LayoutReferenceExtraTest {
                 .fillMaxWidth()
                 .padding(16.dp),
         ) {
-            AmBottomAction(label = "Guardar", onClick = {})
+            AqBottomAction(label = "Guardar", onClick = {})
         }
     }
 

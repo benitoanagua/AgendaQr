@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.domain.AssociateComprobanteToOperationUseCase
 import com.agendaqr.destinations.domain.Comprobante
 import com.agendaqr.destinations.domain.ComprobanteFileStore
@@ -56,7 +56,7 @@ class UxUnassociatedTest {
 
     private fun render(vm: OperationsViewModel) {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 val state by vm.state.collectAsState()
                 UnassociatedScreen(state = state, viewModel = vm)
             }

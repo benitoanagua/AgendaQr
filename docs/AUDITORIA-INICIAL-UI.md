@@ -11,9 +11,9 @@ dominio ni de sincronización.
 - El sistema visual vigente es **TDesign Mobile `tdesign_flutter@0.2.7`**
   (ADR-0023), no Polaris. No existe ni una sola mención a «Polaris» ni a
   «Shopify» en todo el repositorio, en código ni en documentación.
-- `core/ui` centraliza el estilo con una capa primitiva interna (`AmPalette`)
-  y una capa semántica pública (`AmColor`, `AmSpacing`, `AmType`, `AmMotion`,
-  `AmElevation`, `AmMetrics`). Las pantallas no importan Material 3.
+- `core/ui` centraliza el estilo con una capa primitiva interna (`AqPalette`)
+  y una capa semántica pública (`AqColor`, `AqSpacing`, `AqType`, `AqMotion`,
+  `AqElevation`, `AqMetrics`). Las pantallas no importan Material 3.
 - Los valores visuales hardcodeados en Kotlin de producción fuera de la capa
   de tokens son **limitados**: predominan `FontWeight.*`, alfas/ratios
   adimensionales y dos constantes de predictive back. El grueso de los
@@ -34,39 +34,39 @@ dominio ni de sincronización.
 
 | Capa | Archivos |
 |---|---|
-| Tokens y tema | `theme/AmTokens.kt`, `theme/AmTheme.kt`, `theme/AmWindowSize.kt` (+ `androidMain`, `iosMain`) |
+| Tokens y tema | `theme/AqTokens.kt`, `theme/AqTheme.kt`, `theme/AqWindowSize.kt` (+ `androidMain`, `iosMain`) |
 | Iconografía | `icons/TDesignIconVectors.kt` |
 | Movimiento | `motion/ReducedMotion.kt` (+ `androidMain`, `iosMain`) |
-| Componentes (`commonMain`) | `AmButtons.kt`, `AmInputs.kt`, `AmLists.kt`, `AmText.kt`, `AmStatus.kt`, `AmFeedback.kt`, `AmFeedbackEvent.kt`, `AmDialogs.kt`, `AmActionSheet.kt`, `AmTabs.kt`, `AmChrome.kt`, `AmScaffold.kt`, `AmIcon.kt`, `AmQrPreview.kt` (+ `androidMain`, `iosMain`), `AmClipboard.kt` (+ `androidMain`, `iosMain`), `AmPinEntry.kt`, `AmDateTime.kt`, `AmTone.kt` |
+| Componentes (`commonMain`) | `AqButtons.kt`, `AqInputs.kt`, `AqLists.kt`, `AqText.kt`, `AqStatus.kt`, `AqFeedback.kt`, `AqFeedbackEvent.kt`, `AqDialogs.kt`, `AqActionSheet.kt`, `AqTabs.kt`, `AqChrome.kt`, `AqScaffold.kt`, `AqIcon.kt`, `AqQrPreview.kt` (+ `androidMain`, `iosMain`), `AqClipboard.kt` (+ `androidMain`, `iosMain`), `AqPinEntry.kt`, `AqDateTime.kt`, `AqTone.kt` |
 | Pruebas | 9 archivos en `commonTest`, 9 en `androidUnitTest` |
 
 ### 2.2 Tokens
 
-- `AmPalette` (`internal`): escalas `lightBrand`/`darkBrand`, `lightWarning`/
+- `AqPalette` (`internal`): escalas `lightBrand`/`darkBrand`, `lightWarning`/
   `darkWarning`, `lightError`/`darkError`, `lightSuccess`/`darkSuccess`,
   `lightGray`/`darkGray`, además de derivados de superficie, texto, borde,
   foco e información. Es la única capa que declara colores crudos.
-- APIs públicas semánticas: `AmColor` (surface/text/border/action/tonos),
-  `AmSpacing`, `AmType`, `AmMotion`, `AmElevation`, `AmMetrics`, `AmTone`.
-- `AmTheme.kt` es el único puente autorizado a `MaterialTheme.colorScheme` y
+- APIs públicas semánticas: `AqColor` (surface/text/border/action/tonos),
+  `AqSpacing`, `AqType`, `AqMotion`, `AqElevation`, `AqMetrics`, `AqTone`.
+- `AqTheme.kt` es el único puente autorizado a `MaterialTheme.colorScheme` y
   construye las `Shapes` desde tokens.
 - `TDesignIconVectors.kt` es la única excepción permitida para viewport y color
   monocromo de vectores.
 
 ### 2.3 Componentes y consumidores
 
-Las familias expuestas cubren acciones (`AmPrimaryButton`,
-`AmSecondaryButton`, `AmTextAction`, `AmIconButton`, `AmExtendedFab`,
-`AmCompactAction`, `AmQuickAction`, `AmBottomAction`), formularios
-(`AmTextField`, `AmPinEntry`, `AmDateTimePicker`), contenido (`AmText`,
-`AmHeading`, `AmCard`, `AmTappableCard`, `AmListBody`, `AmListRow`,
-`AmMetaRow`, `AmSectionHeader`, `AmHairline`, `AmQrPreview`), feedback
-(`AmStatusBanner`, `AmStatusPill`, `AmBadge`, `AmIconBadge`, `AmContextBadge`,
-`AmEmptyState`, `AmSkeleton`, `AmLoading`, `AmSnackbarHost`,
-`AmSuccessCheck`), overlays (`AmDialog`, `AmDialogList`, `AmActionSheet`),
-navegación y chrome (`AmScreenScaffold`, `AmTopBar`, `AmTabs`,
-`AmSegmentedControl`, `AmNavChromeState`, `AmNavRail`) e intensión
-(`AmTone`, `AmIcons`, `AmIcon`, `rememberAmClipboard`).
+Las familias expuestas cubren acciones (`AqPrimaryButton`,
+`AqSecondaryButton`, `AqTextAction`, `AqIconButton`, `AqExtendedFab`,
+`AqCompactAction`, `AqQuickAction`, `AqBottomAction`), formularios
+(`AqTextField`, `AqPinEntry`, `AqDateTimePicker`), contenido (`AqText`,
+`AqHeading`, `AqCard`, `AqTappableCard`, `AqListBody`, `AqListRow`,
+`AqMetaRow`, `AqSectionHeader`, `AqHairline`, `AqQrPreview`), feedback
+(`AqStatusBanner`, `AqStatusPill`, `AqBadge`, `AqIconBadge`, `AqContextBadge`,
+`AqEmptyState`, `AqSkeleton`, `AqLoading`, `AqSnackbarHost`,
+`AqSuccessCheck`), overlays (`AqDialog`, `AqDialogList`, `AqActionSheet`),
+navegación y chrome (`AqScreenScaffold`, `AqTopBar`, `AqTabs`,
+`AqSegmentedControl`, `AqNavChromeState`, `AqNavRail`) e intensión
+(`AqTone`, `AqIcons`, `AqIcon`, `rememberAmClipboard`).
 
 Todas las pantallas de `feature/destinations/presentation` consumen estas APIs.
 No hay imports de `androidx.compose.material3.` en `commonMain`; la cámara
@@ -104,11 +104,11 @@ detallan en §8.
 
 | Archivo | Hallazgo |
 |---|---|
-| `core/ui/.../components/AmText.kt` | Ratios `1.25f`/`1.5f` para interlineado; `FontWeight.Bold` por defecto. |
-| `core/ui/.../components/AmButtons.kt` | `Modifier.alpha(0f)`, alfas `0.25f`/`0.2f`, `FontWeight.SemiBold`/`Medium`. |
-| `core/ui/.../components/AmStatus.kt` | `FontWeight.SemiBold`; ratio `0.55f` para el tamaño del indicador. |
-| `core/ui/.../components/AmChrome.kt` | `AmSurfaceSlideFraction = 8`, pesos tipográficos directos. Las duraciones sí usan `AmMotion`. |
-| `core/ui/.../components/AmFeedbackEvent.kt` | `SnackbarDuration.Short` (enum, no milisegundos). |
+| `core/ui/.../components/AqText.kt` | Ratios `1.25f`/`1.5f` para interlineado; `FontWeight.Bold` por defecto. |
+| `core/ui/.../components/AqButtons.kt` | `Modifier.alpha(0f)`, alfas `0.25f`/`0.2f`, `FontWeight.SemiBold`/`Medium`. |
+| `core/ui/.../components/AqStatus.kt` | `FontWeight.SemiBold`; ratio `0.55f` para el tamaño del indicador. |
+| `core/ui/.../components/AqChrome.kt` | `AqSurfaceSlideFraction = 8`, pesos tipográficos directos. Las duraciones sí usan `AqMotion`. |
+| `core/ui/.../components/AqFeedbackEvent.kt` | `SnackbarDuration.Short` (enum, no milisegundos). |
 | `feature/.../AuthenticatedAppRoot.kt` | `PredictiveBackShrink = 0.08f`, `PredictiveBackFade = 0.5f`. |
 | Pantallas varias | `FontWeight.SemiBold`/`Medium` en `AuthScreen`, `ImportBatchScreen`, `OperationListScreen`, `OperationDetailScreen`, `LocalLockScreen`, `LocalOnboardingScreen`, `DestinationsScreen`, `AgendaQrPatterns`. |
 | `feature/.../data/DemoQr.android.kt` | `0xFF000000` y `0xFFFFFFFF` para píxeles del QR demo. |
@@ -178,14 +178,14 @@ Candidatos a código muerto: ninguna llamada dentro ni fuera del módulo.
 
 | Símbolo | Ubicación |
 |---|---|
-| `AmLightButton` | `AmButtons.kt:388` |
-| `AmOutlineButton` | `AmButtons.kt:410` |
-| `AmHeroHeader` | `AmChrome.kt:417` |
+| `AqLightButton` | `AqButtons.kt:388` |
+| `AqOutlineButton` | `AqButtons.kt:410` |
+| `AqHeroHeader` | `AqChrome.kt:417` |
 | `fillPath` | `TDesignIconVectors.kt:157` (privado; los 34 vectores usan `strokePath`) |
 
 Las variantes `Light` y `Outline` siguen presentes en la resolución de colores
 y en tests. Tienen uso interno o de test, pero ningún consumo productivo
-externo: `AmDangerButton`, `AmNavRail`, `AmNavBar`, `AmHeading` y
+externo: `AqDangerButton`, `AqNavRail`, `AqNavBar`, `AqHeading` y
 `decodeQrImageBitmap`.
 
 Ningún composable del módulo declara `@Preview`: la verificación visual hoy

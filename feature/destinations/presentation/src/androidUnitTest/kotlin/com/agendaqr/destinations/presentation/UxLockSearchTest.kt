@@ -9,7 +9,7 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.domain.BiometricAvailability
 import org.junit.Rule
 import org.junit.Test
@@ -36,7 +36,7 @@ class UxLockSearchTest {
         var lockSequence by mutableStateOf(7)
         var pin by mutableStateOf("")
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 LocalLockScreen(
                     state = LocalAccessUiState(
                         mode = LocalAccessMode.Locked,
@@ -64,7 +64,7 @@ class UxLockSearchTest {
     @Test
     fun biometric_button_stays_as_fallback() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 LocalLockScreen(
                     state = LocalAccessUiState(
                         mode = LocalAccessMode.Locked,
@@ -83,7 +83,7 @@ class UxLockSearchTest {
     @Test
     fun search_focus_only_with_autofocus() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 GlobalSearchScreen(
                     state = GlobalSearchUiState(),
                     onAction = {},
@@ -100,7 +100,7 @@ class UxLockSearchTest {
     @Test
     fun search_tab_entry_has_no_focus() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 GlobalSearchScreen(
                     state = GlobalSearchUiState(),
                     onAction = {},

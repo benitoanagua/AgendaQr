@@ -3,7 +3,7 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,7 +27,7 @@ class AppStatusHostTest {
     @Test
     fun import_error_banner_wins_over_everything_else() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 AppStatusHost(
                     importError = "No se pudo abrir el archivo compartido.",
                     isOffline = true,
@@ -50,7 +50,7 @@ class AppStatusHostTest {
     @Test
     fun failed_sync_shows_full_banner_with_retry_now() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 AppStatusHost(
                     importError = null,
                     isOffline = false,
@@ -69,7 +69,7 @@ class AppStatusHostTest {
     @Test
     fun offline_and_pending_without_failures_are_compact_indicators() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 AppStatusHost(
                     importError = null,
                     isOffline = true,
@@ -92,7 +92,7 @@ class AppStatusHostTest {
     @Test
     fun quiet_state_renders_nothing() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 AppStatusHost(
                     importError = null,
                     isOffline = false,

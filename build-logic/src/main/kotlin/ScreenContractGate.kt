@@ -79,9 +79,9 @@ object ScreenContracts {
             gestures = listOf("predictive-back", "horizontal-scroll"),
             captureStates = listOf("empty", "content", "error"),
             components = listOf(
-                "AmScreenScaffold", "AmTopBar", "AmNavBar", "AmSearchTrigger", "AmQuickAction",
-                "AmSegmentedControl", "AmListRow", "AmListBody", "AmSectionHeader",
-                "AmEmptyState", "AmStatusBanner", "AmFavoriteToggle", "AmActionSheet",
+                "AqScreenScaffold", "AqTopBar", "AqNavBar", "AqSearchTrigger", "AqQuickAction",
+                "AqSegmentedControl", "AqListRow", "AqListBody", "AqSectionHeader",
+                "AqEmptyState", "AqStatusBanner", "AqFavoriteToggle", "AqActionSheet",
             ),
             a11yTests = listOf("$A11Y/DestinationsScreenA11yTest.kt"),
             tests = listOf(
@@ -110,7 +110,7 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content"),
             components = listOf(
-                "AmScreenScaffold", "AmIconBadge", "AmListRow", "AmListBody", "AmQrPreview",
+                "AqScreenScaffold", "AqIconBadge", "AqListRow", "AqListBody", "AqQrPreview",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf("$A11Y/ScreensA11yCoverageTest.kt", "$A11Y/S02UiPolishTest.kt"),
@@ -132,8 +132,8 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content"),
             components = listOf(
-                "AmScreenScaffold", "AmTopBar", "AmQrPreview", "AmCard",
-                "AmEmptyState", "AmBottomAction", "AmStatusBanner",
+                "AqScreenScaffold", "AqTopBar", "AqQrPreview", "AqCard",
+                "AqEmptyState", "AqBottomAction", "AqStatusBanner",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf("$A11Y/ScreensA11yCoverageTest.kt", "$A11Y/LayoutReferenceTest.kt"),
@@ -158,8 +158,8 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content", "error"),
             components = listOf(
-                "AmScreenScaffold", "AmQrPreview", "AmListBody", "AmListRow",
-                "AmBottomAction", "AmPrimaryButton", "AmSecondaryButton", "AmActionSheet", "AmDialog",
+                "AqScreenScaffold", "AqQrPreview", "AqListBody", "AqListRow",
+                "AqBottomAction", "AqPrimaryButton", "AqSecondaryButton", "AqActionSheet", "AqDialog",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf("$A11Y/QrFullscreenTest.kt", "$A11Y/LayoutReferenceTest.kt"),
@@ -181,7 +181,7 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content"),
             components = listOf(
-                "AmScreenScaffold", "AmTextField", "AmPrimaryButton", "AmBottomAction", "AmDialogList",
+                "AqScreenScaffold", "AqTextField", "AqPrimaryButton", "AqBottomAction", "AqDialogList",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf("$A11Y/LayoutReferenceTest.kt"),
@@ -202,7 +202,7 @@ object ScreenContracts {
             states = listOf("content", "error"),
             gestures = emptyList(),
             captureStates = listOf("content"),
-            components = listOf("AmQrPreview", "AmTopBar"),
+            components = listOf("AqQrPreview", "AqTopBar"),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf("$A11Y/QrFullscreenTest.kt"),
         ),
@@ -225,8 +225,8 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("empty", "content"),
             components = listOf(
-                "AmScreenScaffold", "AmSearchField", "AmListRow", "AmListBody",
-                "AmSectionHeader", "AmEmptyState", "AmNavBar",
+                "AqScreenScaffold", "AqSearchField", "AqListRow", "AqListBody",
+                "AqSectionHeader", "AqEmptyState", "AqNavBar",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -252,9 +252,9 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("empty", "content"),
             components = listOf(
-                "AmScreenScaffold", "AmTopBar", "AmListRow", "AmListBody",
-                "AmTabs", "AmContextBadge", "AmEmptyState", "AmLoading",
-                "AmStatusBanner", "AmTextAction", "AmNavBar",
+                "AqScreenScaffold", "AqTopBar", "AqListRow", "AqListBody",
+                "AqTabs", "AqContextBadge", "AqEmptyState", "AqLoading",
+                "AqStatusBanner", "AqTextAction", "AqNavBar",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -280,8 +280,8 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content", "empty"),
             components = listOf(
-                "AmScreenScaffold", "AmTabs", "AmListRow", "AmListBody",
-                "AmEmptyState", "AmContextBadge",
+                "AqScreenScaffold", "AqTabs", "AqListRow", "AqListBody",
+                "AqEmptyState", "AqContextBadge",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -308,8 +308,8 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("empty", "content"),
             components = listOf(
-                "AmScreenScaffold", "AmSegmentedControl", "AmExtendedFab", "AmListRow",
-                "AmListBody", "AmEmptyState", "AmDialogList", "AmNavBar",
+                "AqScreenScaffold", "AqSegmentedControl", "AqExtendedFab", "AqListRow",
+                "AqListBody", "AqEmptyState", "AqDialogList", "AqNavBar",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -334,8 +334,8 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content"),
             components = listOf(
-                "AmScreenScaffold", "AmListBody", "AmListRow", "AmTonalTag",
-                "AmActionSheet", "AmDialogList",
+                "AqScreenScaffold", "AqListBody", "AqListRow", "AqTonalTag",
+                "AqActionSheet", "AqDialogList",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -359,9 +359,9 @@ object ScreenContracts {
             gestures = listOf("horizontal-scroll"),
             captureStates = listOf("content"),
             components = listOf(
-                "AmScreenScaffold", "AmSegmentedControl", "AmAmountField", "AmTextField",
-                "AmBottomAction", "AmDialogList", "AmDatePickerDialog", "AmTimePickerDialog",
-                "AmSectionHeader",
+                "AqScreenScaffold", "AqSegmentedControl", "AqAmountField", "AqTextField",
+                "AqBottomAction", "AqDialogList", "AqDatePickerDialog", "AqTimePickerDialog",
+                "AqSectionHeader",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -389,7 +389,7 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("empty", "content"),
             components = listOf(
-                "AmScreenScaffold", "AmListRow", "AmEmptyState", "AmDialogList",
+                "AqScreenScaffold", "AqListRow", "AqEmptyState", "AqDialogList",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf("$A11Y/UxUnassociatedTest.kt"),
@@ -411,8 +411,8 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("selection"),
             components = listOf(
-                "AmDialog", "AmDialogList", "AmListRow", "AmTextField",
-                "AmTextAction",
+                "AqDialog", "AqDialogList", "AqListRow", "AqTextField",
+                "AqTextAction",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -438,8 +438,8 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("review", "error", "saved"),
             components = listOf(
-                "AmScreenScaffold", "AmStatusBanner", "AmListRow", "AmListBody",
-                "AmBottomAction", "AmEmptyState", "AmDialogList",
+                "AqScreenScaffold", "AqStatusBanner", "AqListRow", "AqListBody",
+                "AqBottomAction", "AqEmptyState", "AqDialogList",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -467,7 +467,7 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content", "error"),
             components = listOf(
-                "AmScreenScaffold", "AmListBody", "AmListRow", "AmStatusBanner", "AmLoading",
+                "AqScreenScaffold", "AqListBody", "AqListRow", "AqStatusBanner", "AqLoading",
             ),
             a11yTests = listOf("$A11Y/AccessibilityStatesFormsTest.kt"),
             tests = listOf("$A11Y/AccessibilityStatesFormsTest.kt"),
@@ -488,7 +488,7 @@ object ScreenContracts {
             states = listOf("content", "loading", "error", "saving"),
             gestures = emptyList(),
             captureStates = listOf("content", "error"),
-            components = listOf("AmTextField", "AmPrimaryButton", "AmStatusBanner"),
+            components = listOf("AqTextField", "AqPrimaryButton", "AqStatusBanner"),
             a11yTests = listOf("$A11Y/AccessibilityStatesFormsTest.kt"),
             tests = listOf(
                 "$A11Y/AccessibilityStatesFormsTest.kt",
@@ -512,12 +512,12 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("locked", "error"),
             components = listOf(
-                "AmScreenScaffold", "AmIconBadge", "AmPinDots", "AmKeypad",
-                "AmBottomAction", "AmSecondaryButton",
+                "AqScreenScaffold", "AqIconBadge", "AqPinDots", "AqKeypad",
+                "AqBottomAction", "AqSecondaryButton",
             ),
             a11yTests = listOf(
                 "$A11Y/ScreensA11yCoverageTest.kt",
-                "$CORE_A11Y/AmAccessibilityContractTest.kt",
+                "$CORE_A11Y/AqAccessibilityContractTest.kt",
             ),
             tests = listOf(
                 "$A11Y/LocalAccessGateTest.kt",
@@ -542,7 +542,7 @@ object ScreenContracts {
             states = listOf("content", "permission", "error"),
             gestures = emptyList(),
             captureStates = listOf("content"),
-            components = listOf("AmScannerFrame", "AmTopBar", "AmPrimaryButton"),
+            components = listOf("AqScannerFrame", "AqTopBar", "AqPrimaryButton"),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
                 "$PRESENTATION/commonTest/kotlin/com/agendaqr/destinations/presentation/CameraPermissionPolicyTest.kt",
@@ -746,7 +746,7 @@ fun exceptionUsageViolations(
             val used = when (kind) {
                 "border" -> source.contains(".border(") || Regex("\\bBorderStroke\\s*\\(").containsMatchIn(source)
                 "shadow" -> source.contains("shadow(") || source.contains(".shadow(") ||
-                    source.contains("amElevation(")
+                    source.contains("aqElevation(")
                 else -> true
             }
             if (!used) {

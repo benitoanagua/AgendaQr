@@ -3,7 +3,7 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.domain.Destination
 import com.agendaqr.destinations.domain.QrAsset
 import org.junit.Rule
@@ -39,7 +39,7 @@ class UxHomeFavoritesTest {
         onAction: (DestinationAction) -> Unit = {},
     ) {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 DestinationsScreen(state = state, onAction = onAction)
             }
         }

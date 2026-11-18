@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AmBadge
-import com.agendaqr.core.ui.components.AmFeedbackHost
-import com.agendaqr.core.ui.components.AmBannerAction
-import com.agendaqr.core.ui.components.AmStatusBanner
-import com.agendaqr.core.ui.components.AmTone
-import com.agendaqr.core.ui.theme.AmSpacing
+import com.agendaqr.core.ui.components.AqBadge
+import com.agendaqr.core.ui.components.AqFeedbackHost
+import com.agendaqr.core.ui.components.AqBannerAction
+import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.theme.AqSpacing
 
 /**
  * Hosts compartidos de la sesión (§12 V1.4): el estado persistente que se
@@ -24,7 +24,7 @@ class AppHosts(
     /** Estado persistente (banners/indicadores compactos) bajo la barra. */
     val status: (@Composable () -> Unit)? = null,
     /** Host del Snackbar para eventos transitorios. */
-    val feedback: AmFeedbackHost? = null,
+    val feedback: AqFeedbackHost? = null,
 )
 
 /**
@@ -58,42 +58,42 @@ internal fun AppStatusHost(
             // Host edge-to-edge (slot statusContent, sin margen del
             // contenido): el banner pide SU margen de pantalla para quedar
             // al ancho útil con un solo margen, igual que los badges.
-            AmStatusBanner(
+            AqStatusBanner(
                 title = error.what,
                 message = error.dataStatus,
-                tone = AmTone.Danger,
+                tone = AqTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,
-                screenMargin = AmSpacing.ScreenMargin,
+                screenMargin = AqSpacing.ScreenMargin,
             )
         } else if (hasFailed && pendingCount > 0) {
             // Banner completo SOLO con mutaciones FAILED: el usuario debe
             // poder reintentar AHORA (los datos están a salvo localmente).
-            AmStatusBanner(
+            AqStatusBanner(
                 message = syncPendingLabel(pendingCount, retrying = true),
-                tone = AmTone.Danger,
-                action = AmBannerAction(AppStrings.ReintentarAhora, onRetryNow),
-                screenMargin = AmSpacing.ScreenMargin,
+                tone = AqTone.Danger,
+                action = AqBannerAction(AppStrings.ReintentarAhora, onRetryNow),
+                screenMargin = AqSpacing.ScreenMargin,
             )
         } else if (isOffline || pendingCount > 0) {
             // Indicador compacto: chips con texto (el significado nunca
             // depende solo del color, §11).
             Row(
                 modifier = Modifier.padding(
-                    start = AmSpacing.ScreenMargin,
-                    end = AmSpacing.ScreenMargin,
-                    top = AmSpacing.Sm,
+                    start = AqSpacing.ScreenMargin,
+                    end = AqSpacing.ScreenMargin,
+                    top = AqSpacing.Sm,
                 ),
-                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm, Alignment.Start),
+                horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm, Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (isOffline) {
-                    AmBadge(text = AppStrings.SinConexion, tone = AmTone.Warning, round = true)
+                    AqBadge(text = AppStrings.SinConexion, tone = AqTone.Warning, round = true)
                 }
                 if (pendingCount > 0) {
-                    AmBadge(
+                    AqBadge(
                         text = syncPendingLabel(pendingCount, retrying = false),
-                        tone = AmTone.Info,
+                        tone = AqTone.Info,
                         round = true,
                     )
                 }

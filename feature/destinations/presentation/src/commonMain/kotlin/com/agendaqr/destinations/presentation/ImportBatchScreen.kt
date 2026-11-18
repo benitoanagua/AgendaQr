@@ -16,32 +16,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AmSnackbarHost
-import com.agendaqr.core.ui.components.AmDialog
-import com.agendaqr.core.ui.components.AmFeedbackEvent
-import com.agendaqr.core.ui.components.AmListBody
-import com.agendaqr.core.ui.components.AmListRow
-import com.agendaqr.core.ui.components.AmMetaRow
-import com.agendaqr.core.ui.components.AmSectionHeader
-import com.agendaqr.core.ui.components.AmTextActionVariant
-import com.agendaqr.core.ui.components.AmBottomAction
-import com.agendaqr.core.ui.components.AmQrPreview
-import com.agendaqr.core.ui.components.AmScreenScaffold
-import com.agendaqr.core.ui.components.AmTopBar
-import com.agendaqr.core.ui.components.AmSecondaryButton
-import com.agendaqr.core.ui.components.AmStatusBanner
-import com.agendaqr.core.ui.components.AmStatusPill
-import com.agendaqr.core.ui.components.AmSuccessCheck
-import com.agendaqr.core.ui.components.AmCard
-import com.agendaqr.core.ui.components.AmIcons
-import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.components.AmTextAction
-import com.agendaqr.core.ui.components.AmLoading
-import com.agendaqr.core.ui.components.AmTone
-import com.agendaqr.core.ui.theme.AmColor
-import com.agendaqr.core.ui.theme.AmMetrics
-import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.core.ui.components.AqSnackbarHost
+import com.agendaqr.core.ui.components.AqDialog
+import com.agendaqr.core.ui.components.AqFeedbackEvent
+import com.agendaqr.core.ui.components.AqListBody
+import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqMetaRow
+import com.agendaqr.core.ui.components.AqSectionHeader
+import com.agendaqr.core.ui.components.AqTextActionVariant
+import com.agendaqr.core.ui.components.AqBottomAction
+import com.agendaqr.core.ui.components.AqQrPreview
+import com.agendaqr.core.ui.components.AqScreenScaffold
+import com.agendaqr.core.ui.components.AqTopBar
+import com.agendaqr.core.ui.components.AqSecondaryButton
+import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqStatusPill
+import com.agendaqr.core.ui.components.AqSuccessCheck
+import com.agendaqr.core.ui.components.AqCard
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.components.AqTextAction
+import com.agendaqr.core.ui.components.AqLoading
+import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.destinations.domain.ImportBatch
 import com.agendaqr.destinations.domain.ImportCandidate
 import com.agendaqr.destinations.domain.ImportKind
@@ -75,7 +75,7 @@ fun ImportBatchScreen(
         }
         wasSaving = state is ImportBatchUiState.Saving || state is ImportBatchUiState.Saved
     }
-    AmFeedbackEvent(
+    AqFeedbackEvent(
         event = savedEvent,
         message = AppStrings.GuardadoOk,
         haptic = false,
@@ -93,20 +93,20 @@ fun ImportBatchScreen(
         is ImportBatchUiState.Error -> state.batch
         else -> null
     }
-    AmScreenScaffold(
+    AqScreenScaffold(
         scrollable = true,
         topBar = {
-            AmTopBar(
+            AqTopBar(
                 title = AppStrings.ResultadoDeImportacion,
                 onBack = if (state is ImportBatchUiState.Saving) null else ({ onAction(ImportBatchAction.Back) }),
                 backLabel = if (state is ImportBatchUiState.Review) AppStrings.VolverAResultado else AppStrings.Volver,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
         bottomAction = if (currentBatch?.canSaveRecognized() == true) {
             {
-                AmBottomAction(
+                AqBottomAction(
                     label = if (state is ImportBatchUiState.Error) {
                         AppStrings.reintentarGuardado
                     } else {
@@ -128,7 +128,7 @@ fun ImportBatchScreen(
             // lleva una acción real ("Elegir imágenes"), no una pantalla
             // vacía.
             ImportBatchUiState.Idle -> {
-                AmText(AppStrings.TraeVariosElementosAAgenda, color = AmColor.TextSecondary)
+                AqText(AppStrings.TraeVariosElementosAAgenda, color = AqColor.TextSecondary)
                 ImportBatchPickerButton(label = AppStrings.ElegirImagenes)
             }
             is ImportBatchUiState.Result -> BatchResultContent(state.batch, onAction, isSaving = false)
@@ -141,16 +141,16 @@ fun ImportBatchScreen(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center,
                 ) {
-                    AmSuccessCheck(size = AmMetrics.ResultGlyphSize)
+                    AqSuccessCheck(size = AqMetrics.ResultGlyphSize)
                 }
-                AmStatusBanner(
+                AqStatusBanner(
                     title = AppStrings.GuardadoOk,
                     message = AppStrings.batchSavedKeepReviewNotice,
-                    tone = AmTone.Success,
+                    tone = AqTone.Success,
                 )
                 state.batch.let { batch ->
                     if (batch.pendingItems().isNotEmpty()) {
-                        AmSecondaryButton(
+                        AqSecondaryButton(
                             label = reviewPendingLabel(batch),
                             onClick = { onAction(ImportBatchAction.ReviewPending) },
                             modifier = Modifier.fillMaxWidth(),
@@ -163,10 +163,10 @@ fun ImportBatchScreen(
                 // "Reintentar guardado" es la única fuente de la acción.
                 // El margen de pantalla lo aplica una sola vez el contenido
                 // del scaffold; el banner no suma el suyo por defecto.
-                AmStatusBanner(
+                AqStatusBanner(
                     title = state.error.what,
                     message = state.error.dataStatus,
-                    tone = AmTone.Danger,
+                    tone = AqTone.Danger,
                 )
                 state.batch?.let { BatchResultContent(it, onAction, isSaving = false) }
             }
@@ -174,18 +174,18 @@ fun ImportBatchScreen(
     }
 
     existing?.let { preview ->
-        AmDialog(
+        AqDialog(
             title = AppStrings.ElementoExistente,
             confirmLabel = AppStrings.Cerrar,
             onConfirm = { onAction(ImportBatchAction.CloseExisting) },
             onDismiss = { onAction(ImportBatchAction.CloseExisting) },
             content = {
-                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
                     when {
-                        preview.qrAsset != null -> AmQrPreview(preview.qrAsset.encoded)
+                        preview.qrAsset != null -> AqQrPreview(preview.qrAsset.encoded)
                         preview.comprobanteBytes != null ->
                             ComprobantePreview(preview.comprobanteBytes, preview.comprobanteMimeType)
-                        else -> AmText(AppStrings.NoPudimosMostrarElElemento, color = AmColor.TextSecondary)
+                        else -> AqText(AppStrings.NoPudimosMostrarElElemento, color = AqColor.TextSecondary)
                     }
                 }
             },
@@ -207,27 +207,27 @@ private fun BatchResultContent(
 ) {
     // Tarjeta resumen como filas etiqueta-valor: cada estado del lote con
     // su conteo real alineado a la derecha (singular honesto por conteo).
-    AmCard {
-        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+    AqCard {
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
             if (batch.uniqueRecognized.isNotEmpty()) {
-                AmMetaRow(
+                AqMetaRow(
                     label = AppStrings.Reconocidos,
                     value = batch.uniqueRecognized.size.toString(),
-                    icon = AmIcons.CircleCheck,
+                    icon = AqIcons.CircleCheck,
                 )
             }
             if (batch.duplicates.isNotEmpty()) {
-                AmMetaRow(
+                AqMetaRow(
                     label = AppStrings.PosiblesDuplicados,
                     value = batch.duplicates.size.toString(),
-                    icon = AmIcons.Warning,
+                    icon = AqIcons.Warning,
                 )
             }
             if (batch.unknown.isNotEmpty()) {
-                AmMetaRow(
+                AqMetaRow(
                     label = AppStrings.PendientesDeRevision,
                     value = batch.unknown.size.toString(),
-                    icon = AmIcons.Info,
+                    icon = AqIcons.Info,
                 )
             }
         }
@@ -237,7 +237,7 @@ private fun BatchResultContent(
     // completo; "Guardar reconocidos" vive fijo abajo (botón principal del
     // scaffold).
     if (batch.pendingItems().isNotEmpty()) {
-        AmSecondaryButton(
+        AqSecondaryButton(
             reviewPendingLabel(batch),
             onClick = { onAction(ImportBatchAction.ReviewPending) },
             modifier = Modifier.fillMaxWidth(),
@@ -256,10 +256,10 @@ private fun BatchReviewContent(
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
 ) {
-    AmSectionHeader(text = AppStrings.ElementosQueNecesitanRevision + " (" + batch.pendingItems().size + ")")
+    AqSectionHeader(text = AppStrings.ElementosQueNecesitanRevision + " (" + batch.pendingItems().size + ")")
     // Pendientes como tarjetas independientes (nivel 3 de superficies):
     // cada una con su contenido + acciones; separadas a 8 dp.
-    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
         batch.pendingItems().forEachIndexed { index, candidate ->
             PendingItemCard(candidate, batch, onAction, isSaving, index)
         }
@@ -286,15 +286,15 @@ private fun PendingItemCard(
     // así que pide confirmación; el de un duplicado no pierde nada (el
     // original existe) y se ejecuta directo.
     var showDiscardConfirm by remember(candidate.id) { mutableStateOf(false) }
-    com.agendaqr.core.ui.components.AmCard {
-        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+    com.agendaqr.core.ui.components.AqCard {
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
             // Nombre útil, dato del archivo o motivo, y estado. El estado se
             // expresa con una insignia CON texto (el glifo y el tono solo
             // acompañan): la insignia va en su propia línea para no recortar
             // el ancho del título, tampoco a 320 dp ni con fuente al 200 %.
-            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
-                AmText(text = pendingItemName(candidate, index), fontWeight = androidx.compose.ui.text.font.FontWeight.Medium)
-                AmText(
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
+                AqText(text = pendingItemName(candidate, index), fontWeight = androidx.compose.ui.text.font.FontWeight.Medium)
+                AqText(
                     text = if (candidate.displayName?.isNotBlank() == true) {
                         (candidate.extension?.let { AppStrings.ArchivoPrefijo + it + " · " } ?: "") + when (candidate.kind) {
                             ImportKind.QR -> "QR"
@@ -308,23 +308,23 @@ private fun PendingItemCard(
                             else -> AppStrings.elementoPendienteRevision
                         }
                     },
-                    size = AmType.BodySmall,
-                    color = AmColor.TextSecondary,
+                    size = AqType.BodySmall,
+                    color = AqColor.TextSecondary,
                 )
-                AmStatusPill(
+                AqStatusPill(
                     text = if (isDuplicate) AppStrings.PosibleDuplicado else AppStrings.PendienteDeRevision,
-                    icon = if (isDuplicate) AmIcons.Warning else AmIcons.Info,
-                    tone = if (isDuplicate) AmTone.Warning else AmTone.Info,
+                    icon = if (isDuplicate) AqIcons.Warning else AqIcons.Info,
+                    tone = if (isDuplicate) AqTone.Warning else AqTone.Info,
                 )
             }
             // Acción principal de ancho completo (tonal).
             when {
-                isDuplicate -> AmSecondaryButton(
+                isDuplicate -> AqSecondaryButton(
                     label = AppStrings.VerExistente,
                     onClick = { onAction(ImportBatchAction.ViewExisting(candidate.id)) },
                     modifier = Modifier.fillMaxWidth(),
                 )
-                else -> AmSecondaryButton(
+                else -> AqSecondaryButton(
                     label = AppStrings.ReintentarClasificacion,
                     onClick = { onAction(ImportBatchAction.RetryCandidate(candidate.id)) },
                     modifier = Modifier.fillMaxWidth(),
@@ -335,20 +335,20 @@ private fun PendingItemCard(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(
-                    AmSpacing.Sm,
+                    AqSpacing.Sm,
                     alignment = Alignment.End,
                 ),
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
             ) {
                 if (isDuplicate) {
-                    AmTextAction(
+                    AqTextAction(
                         label = AppStrings.GuardarDeTodosModos,
                         onClick = { onAction(ImportBatchAction.SaveDuplicateAnyway(candidate.id)) },
-                        variant = AmTextActionVariant.Neutral,
-                        contentPadding = PaddingValues(horizontal = AmSpacing.None, vertical = AmSpacing.None),
+                        variant = AqTextActionVariant.Neutral,
+                        contentPadding = PaddingValues(horizontal = AqSpacing.None, vertical = AqSpacing.None),
                     )
                 }
-                AmTextAction(
+                AqTextAction(
                     label = AppStrings.Descartar,
                     onClick = {
                         if (isDuplicate) {
@@ -357,14 +357,14 @@ private fun PendingItemCard(
                             showDiscardConfirm = true
                         }
                     },
-                    variant = AmTextActionVariant.Danger,
-                    contentPadding = PaddingValues(horizontal = AmSpacing.None, vertical = AmSpacing.None),
+                    variant = AqTextActionVariant.Danger,
+                    contentPadding = PaddingValues(horizontal = AqSpacing.None, vertical = AqSpacing.None),
                 )
             }
         }
     }
     if (showDiscardConfirm) {
-        AmDialog(
+        AqDialog(
             title = AppStrings.Descartar,
             message = AppStrings.descartarElementoWarning,
             // Etiqueta específica (no "Descartar" genérico): nombra la

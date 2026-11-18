@@ -10,7 +10,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.unit.dp
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.domain.Destination
 import com.agendaqr.destinations.domain.QrAsset
 import org.junit.Rule
@@ -43,7 +43,7 @@ class DestinationsScreenA11yTest {
 
     private fun setContent(onOpenSearch: () -> Unit = {}) {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
                         destinations = listOf(sample),
@@ -93,7 +93,7 @@ class DestinationsScreenA11yTest {
         // QR muestra "Pendiente" (badge con texto) cuando su mutación está
         // en la cola, no solo un cambio de color.
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
                         destinations = listOf(sample),
@@ -126,7 +126,7 @@ class DestinationsScreenA11yTest {
         // `selected` + rol radio (anuncio nativo de selección), nunca solo
         // con color.
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
                         destinations = listOf(sample),
@@ -147,7 +147,7 @@ class DestinationsScreenA11yTest {
     @Test
     fun favorites_filter_without_filter_returns_to_textual_rest_state() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
                         destinations = listOf(sample),
@@ -171,7 +171,7 @@ class DestinationsScreenA11yTest {
         // Todos los favoritos viven en el carrusel).
         var toggled: Boolean? = null
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
                         destinations = listOf(sample.copy(favorite = true)),
