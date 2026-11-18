@@ -222,7 +222,8 @@ fun AqTappableCard(
                 indication = null,
                 onClick = onClick,
             )
-            .padding(AqSpacing.Md),
+            .testTag("aq-tappable-card")
+            .padding(AqSpacing.Lg),
     ) {
         content()
     }

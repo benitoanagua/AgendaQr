@@ -47,7 +47,7 @@ data class AqFieldState(
     val helperMessage: String? = null,
 )
 
-private fun Modifier.fieldSemantics(state: AqFieldState): Modifier =
+internal fun Modifier.fieldSemantics(state: AqFieldState): Modifier =
     if (state.isError && state.errorMessage != null) {
         this.semantics { error(state.errorMessage) }
     } else {
@@ -55,7 +55,7 @@ private fun Modifier.fieldSemantics(state: AqFieldState): Modifier =
     }
 
 @Composable
-private fun AqFieldMessages(state: AqFieldState) {
+internal fun AqFieldMessages(state: AqFieldState) {
     val message = if (state.isError) state.errorMessage else state.helperMessage
     if (!message.isNullOrBlank()) {
         AqText(
@@ -89,13 +89,19 @@ fun AqSelect(
     val selected = options.firstOrNull { it.id == selectedId }
     val borderColor = when {
         state.isError -> AqColor.Danger
+        !state.enabled -> AqColor.Disabled
         else -> AqColor.FunctionalBorder
     }
     Column(
         modifier = modifier.fillMaxWidth().fieldSemantics(state),
         verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
     ) {
-        AqText(text = label, size = AqType.Label, fontWeight = AqWeight.Medium)
+        AqText(
+            text = label,
+            size = AqType.Label,
+            fontWeight = AqWeight.Medium,
+            color = if (state.enabled) AqColor.TextPrimary else AqColor.OnDisabled,
+        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -114,10 +120,18 @@ fun AqSelect(
             AqText(
                 text = selected?.label ?: placeholder,
                 size = AqType.Body,
-                color = if (selected == null) AqColor.TextPlaceholder else AqColor.TextPrimary,
+                color = when {
+                    !state.enabled -> AqColor.OnDisabled
+                    selected == null -> AqColor.TextPlaceholder
+                    else -> AqColor.TextPrimary
+                },
                 modifier = Modifier.weight(1f),
             )
-            AqIcon(imageVector = AqIcons.ChevronRight, contentDescription = null)
+            AqIcon(
+                imageVector = AqIcons.ChevronRight,
+                contentDescription = null,
+                tint = if (state.enabled) AqColor.TextSecondary else AqColor.OnDisabled,
+            )
         }
         AqFieldMessages(state)
     }
@@ -164,8 +178,7 @@ fun AqCheckbox(
                 enabled = state.enabled,
                 role = Role.Checkbox,
                 onClick = { onCheckedChange(!checked) },
-            )
-            .padding(vertical = AqSpacing.Sm),
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Checkbox(
@@ -175,9 +188,18 @@ fun AqCheckbox(
             modifier = Modifier.clearAndSetSemantics { }.size(AqMetrics.ControlMinSize),
         )
         Column(modifier = Modifier.padding(start = AqSpacing.Md).weight(1f)) {
-            AqText(text = label, size = AqType.Body, fontWeight = AqWeight.Medium)
+            AqText(
+                text = label,
+                size = AqType.Body,
+                fontWeight = AqWeight.Medium,
+                color = if (state.enabled) AqColor.TextPrimary else AqColor.OnDisabled,
+            )
             if (description != null) {
-                AqText(text = description, size = AqType.Caption, color = AqColor.TextSecondary)
+                AqText(
+                    text = description,
+                    size = AqType.Caption,
+                    color = if (state.enabled) AqColor.TextSecondary else AqColor.OnDisabled,
+                )
             }
             AqFieldMessages(state)
         }
@@ -204,8 +226,7 @@ fun AqRadioButton(
                 enabled = state.enabled,
                 role = Role.RadioButton,
                 onClick = onSelected,
-            )
-            .padding(vertical = AqSpacing.Sm),
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         RadioButton(
@@ -215,9 +236,18 @@ fun AqRadioButton(
             modifier = Modifier.clearAndSetSemantics { }.size(AqMetrics.ControlMinSize),
         )
         Column(modifier = Modifier.padding(start = AqSpacing.Md).weight(1f)) {
-            AqText(text = label, size = AqType.Body, fontWeight = AqWeight.Medium)
+            AqText(
+                text = label,
+                size = AqType.Body,
+                fontWeight = AqWeight.Medium,
+                color = if (state.enabled) AqColor.TextPrimary else AqColor.OnDisabled,
+            )
             if (description != null) {
-                AqText(text = description, size = AqType.Caption, color = AqColor.TextSecondary)
+                AqText(
+                    text = description,
+                    size = AqType.Caption,
+                    color = if (state.enabled) AqColor.TextSecondary else AqColor.OnDisabled,
+                )
             }
             AqFieldMessages(state)
         }
@@ -244,14 +274,22 @@ fun AqSwitch(
                 enabled = state.enabled,
                 role = Role.Switch,
                 onClick = { onCheckedChange(!checked) },
-            )
-            .padding(vertical = AqSpacing.Sm),
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            AqText(text = label, size = AqType.Body, fontWeight = AqWeight.Medium)
+            AqText(
+                text = label,
+                size = AqType.Body,
+                fontWeight = AqWeight.Medium,
+                color = if (state.enabled) AqColor.TextPrimary else AqColor.OnDisabled,
+            )
             if (description != null) {
-                AqText(text = description, size = AqType.Caption, color = AqColor.TextSecondary)
+                AqText(
+                    text = description,
+                    size = AqType.Caption,
+                    color = if (state.enabled) AqColor.TextSecondary else AqColor.OnDisabled,
+                )
             }
             AqFieldMessages(state)
         }
@@ -278,14 +316,22 @@ fun AqChoiceGroup(
         modifier = modifier.fieldSemantics(state),
         verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
     ) {
-        AqText(text = label, size = AqType.Label, fontWeight = AqWeight.Medium)
+        AqText(
+            text = label,
+            size = AqType.Label,
+            fontWeight = AqWeight.Medium,
+            color = if (state.enabled) AqColor.TextPrimary else AqColor.OnDisabled,
+        )
+        // Los hijos solo heredan habilitación/error de borde; el mensaje lo
+        // pinta UNA vez el grupo, no cada opción.
+        val childState = state.copy(isError = false, errorMessage = null, helperMessage = null)
         options.forEach { option ->
             AqRadioButton(
                 label = option.label,
                 description = option.description,
                 selected = option.id == selectedId,
                 onSelected = { onSelected(option.id) },
-                state = state,
+                state = childState,
             )
         }
         AqFieldMessages(state)
@@ -306,14 +352,20 @@ fun AqCheckboxGroup(
         modifier = modifier.fieldSemantics(state),
         verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
     ) {
-        AqText(text = label, size = AqType.Label, fontWeight = AqWeight.Medium)
+        AqText(
+            text = label,
+            size = AqType.Label,
+            fontWeight = AqWeight.Medium,
+            color = if (state.enabled) AqColor.TextPrimary else AqColor.OnDisabled,
+        )
+        val childState = state.copy(isError = false, errorMessage = null, helperMessage = null)
         options.forEach { option ->
             AqCheckbox(
                 label = option.label,
                 description = option.description,
                 checked = option.id in checkedIds,
                 onCheckedChange = { onToggle(option.id, it) },
-                state = state,
+                state = childState,
             )
         }
         AqFieldMessages(state)

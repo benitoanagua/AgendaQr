@@ -63,6 +63,28 @@ class AqContrastPairsTest {
         }
     }
 
+    /**
+     * Etiqueta, ayuda y error de un campo: el texto debe conservar AA sobre
+     * la superficie de la página y sobre la superficie del propio campo en
+     * ambos temas (la ayuda y la etiqueta usan `textSecondary`; el error,
+     * `danger`).
+     */
+    @Test
+    fun form_label_help_and_error_meet_aa_on_surface_and_input_surface() {
+        listOf(LightAqColorScheme, DarkAqColorScheme).forEach { scheme ->
+            listOf(scheme.surface, scheme.inputSurface).forEach { surface ->
+                assertTrue(
+                    contrastRatio(scheme.textSecondary, surface) >= 4.5,
+                    "textSecondary/surface",
+                )
+                assertTrue(
+                    contrastRatio(scheme.danger, surface) >= 4.5,
+                    "danger/surface",
+                )
+            }
+        }
+    }
+
     /** D-11: los contenedores tonales oscuros derivados conservan AA. */
     @Test
     fun tone_content_meets_aa_on_derived_containers_in_both_themes() {

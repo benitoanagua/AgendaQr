@@ -9,7 +9,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 [QUALITY.md](QUALITY.md).
 
 > Las filas visuales anteriores de §1 describen la implementación previa a
-> ADR-0025. La autoridad visual vigente es ADR-0025 y el contrato normativo v8.0:
+> ADR-0025. La autoridad visual vigente es ADR-0025 y el contrato normativo v8.2:
 > `core/ui` ya usa tokens semánticos Polaris 9.4.2, Inter 4.0 (OFL 1.1),
 > claro/oscuro, pares AA y previews a 200 %. La migración está verificada en
 > Android/JVM por el gate de arquitectura y por `:core:ui:testDebugUnitTest`

@@ -22,7 +22,7 @@ import org.robolectric.annotation.GraphicsMode
 /**
  * AppStatusHost vive en el slot `statusContent` de [AqScreenScaffold]: a
  * ancho completo bajo la barra superior, FUERA del margen del contenido
- * (edge-to-edge). Sus banners piden `screenMargin = ScreenMargin` para
+ * (edge-to-edge). El host aplica `AqSpacing.ScreenMargin` a sus banners para
  * quedar al ancho útil con un solo margen — la misma geometría que los
  * banners dentro del contenido de las pantallas (contrato revisado en
  * [AqStatusBannerLayoutTest] y [ImportBatchBannerLayoutTest]).

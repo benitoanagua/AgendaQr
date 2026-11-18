@@ -32,12 +32,12 @@ import org.robolectric.annotation.GraphicsMode
 
 /**
  * Contrato de ancho/margen de [AqStatusBanner]: el bloque tonal ocupa el
- * ancho útil de SU contenedor y el margen de pantalla se aplica exactamente
- * una vez, según el tipo de contenedor:
+ * ancho útil de SU contenedor y el margen de pantalla lo aplica el HOST
+ * exactamente una vez:
  * - host edge-to-edge (p. ej. slot `statusContent`, app demo, overlay):
- *   el banner pide `screenMargin = AqSpacing.ScreenMargin`.
- * - contenido ya acotado por AqScreenScaffold: parámetro por defecto
- *   (cero) y el scaffold pone el único margen.
+ *   el host pone `Modifier.padding(horizontal = AqSpacing.ScreenMargin)`.
+ * - contenido ya acotado por AqScreenScaffold: el scaffold pone el único
+ *   margen y el banner no añade ninguno.
  * Cubre 360 dp, claro/oscuro, escala 100/150 %, con/sin título,
  * acciones y descarte, y copy largo en español (ADR-0007: aserciones de
  * límites reales, sin capturas versionadas).
@@ -104,7 +104,7 @@ class AqStatusBannerLayoutTest {
     // contenedor (tolerancia 1 dp).
     // ---------------------------------------------------------------------
 
-    /** Host edge-to-edge real: el banner pide su margen de pantalla. */
+    /** Host edge-to-edge real: el HOST pone el margen de pantalla. */
     private fun composeEdgeToEdgeHost(
         dark: Boolean = false,
         title: String? = null,
@@ -124,7 +124,7 @@ class AqStatusBannerLayoutTest {
                             tone = AqTone.Danger,
                             action = if (action) AqBannerAction("Reintentar", {}) else null,
                             dismiss = if (dismiss) AqBannerAction("DESCARTAR", {}) else null,
-                            screenMargin = screenMargin,
+                            modifier = Modifier.padding(horizontal = screenMargin),
                         )
                     }
                 }
