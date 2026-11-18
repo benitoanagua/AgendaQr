@@ -58,15 +58,25 @@ class AqSchemeTest {
         "textSecondary" to textSecondary,
         "textPlaceholder" to textPlaceholder,
         "textTertiary" to textTertiary,
-        "accent" to accent,
-        "accentActive" to accentActive,
-        "accentDisabled" to accentDisabled,
-        "accentFocus" to accentFocus,
-        "accentLightActive" to accentLightActive,
-        "onAccent" to onAccent,
-        "accentContainer" to accentContainer,
-        "onAccentContainer" to onAccentContainer,
-        "accentText" to accentText,
+        "brandFill" to brandFill,
+        "brandFillHover" to brandFillHover,
+        "brandFillActive" to brandFillActive,
+        "brandFillSelected" to brandFillSelected,
+        "brandFillDisabled" to brandFillDisabled,
+        "onBrandFill" to onBrandFill,
+        "onBrandFillDisabled" to onBrandFillDisabled,
+        "emphasisFill" to emphasisFill,
+        "emphasisBorder" to emphasisBorder,
+        "emphasisText" to emphasisText,
+        "emphasisIcon" to emphasisIcon,
+        "emphasisSurface" to emphasisSurface,
+        "emphasisSurfaceHover" to emphasisSurfaceHover,
+        "emphasisOnFill" to emphasisOnFill,
+        "link" to link,
+        "selectionFill" to selectionFill,
+        "selectionSurface" to selectionSurface,
+        "selectionBorder" to selectionBorder,
+        "selectionIcon" to selectionIcon,
         "danger" to danger,
         "dangerFill" to dangerFill,
         "onDanger" to onDanger,
@@ -94,7 +104,6 @@ class AqSchemeTest {
         "surfaceContainerHighest" to surfaceContainerHighest,
         "surfaceActive" to surfaceActive,
         "componentActive" to componentActive,
-        "accentActiveContent" to accentActiveContent,
         "dangerActive" to dangerActive,
         "dangerDisabled" to dangerDisabled,
         "transparent" to transparent,
@@ -120,12 +129,22 @@ class AqSchemeTest {
         assertColor(AqPalette.lightText, "FF303030", "lightText")
         assertColor(AqPalette.darkText, "FFE3E3E3", "darkText")
 
-        assertColor(AqPalette.emphasis, "FF005BDB", "emphasis")
+        assertColor(AqPalette.emphasis, "FF005BD3", "emphasis")
         assertColor(AqPalette.emphasisHover, "FF004299", "emphasisHover")
         assertColor(AqPalette.emphasisActive, "FF002E6A", "emphasisActive")
         assertColor(AqPalette.emphasisSurface, "FFF0F2FF", "emphasisSurface")
         assertColor(AqPalette.emphasisSurfaceHover, "FFEAEDFF", "emphasisSurfaceHover")
         assertColor(AqPalette.emphasisOnFill, "FFFCFDFF", "emphasisOnFill")
+        assertColor(AqPalette.brandFill, "FF303030", "brandFill")
+        assertColor(AqPalette.brandFillHover, "FF1A1A1A", "brandFillHover")
+        assertColor(AqPalette.brandFillDisabled, "2B000000", "brandFillDisabled")
+        assertColor(AqPalette.selectionFill, "FFCCCCCC", "selectionFill")
+        assertColor(AqPalette.selectionSurface, "FFF1F1F1", "selectionSurface")
+        assertColor(AqPalette.darkBrandFill, "FFFFFFFF", "darkBrandFill")
+        assertColor(AqPalette.darkBrandFillHover, "FFF3F3F3", "darkBrandFillHover")
+        assertColor(AqPalette.darkBrandFillActive, "FFF7F7F7", "darkBrandFillActive")
+        assertColor(AqPalette.darkBrandFillSelected, "FFD4D4D4", "darkBrandFillSelected")
+        assertColor(AqPalette.darkBrandFillDisabled, "38FFFFFF", "darkBrandFillDisabled")
         assertColor(AqPalette.info, "FF003A5A", "info")
         assertColor(AqPalette.infoFill, "FF91D0FF", "infoFill")
         assertColor(AqPalette.infoSurface, "FFEAF4FF", "infoSurface")
@@ -159,14 +178,25 @@ class AqSchemeTest {
         assertEquals("FF616161", argb(light.textSecondary))
         assertEquals("FF616161", argb(light.textPlaceholder))
         assertEquals("FF616161", argb(light.textTertiary))
-        assertEquals("FF005BDB", argb(light.accent))
-        assertEquals("FF004299", argb(light.accentActive))
-        assertEquals("FFB5B5B5", argb(light.accentDisabled))
-        assertEquals("FF005BDB", argb(light.accentFocus))
-        assertEquals("FFEAEDFF", argb(light.accentLightActive))
-        assertEquals("FFFCFDFF", argb(light.onAccent))
-        assertEquals("FFF0F2FF", argb(light.accentContainer))
-        assertEquals("FF005BDB", argb(light.onAccentContainer))
+        assertEquals("FF303030", argb(light.brandFill))
+        assertEquals("FF1A1A1A", argb(light.brandFillHover))
+        assertEquals("FF1A1A1A", argb(light.brandFillActive))
+        assertEquals("FF303030", argb(light.brandFillSelected))
+        assertEquals("2B000000", argb(light.brandFillDisabled))
+        assertEquals("FFFFFFFF", argb(light.onBrandFill))
+        assertEquals("FFFFFFFF", argb(light.onBrandFillDisabled))
+        assertEquals("FF005BD3", argb(light.emphasisFill))
+        assertEquals("FF005BD3", argb(light.emphasisBorder))
+        assertEquals("FF005BD3", argb(light.emphasisText))
+        assertEquals("FF005BD3", argb(light.emphasisIcon))
+        assertEquals("FFF0F2FF", argb(light.emphasisSurface))
+        assertEquals("FFEAEDFF", argb(light.emphasisSurfaceHover))
+        assertEquals("FFFCFDFF", argb(light.emphasisOnFill))
+        assertEquals("FF005BD3", argb(light.link))
+        assertEquals("FFCCCCCC", argb(light.selectionFill))
+        assertEquals("FFF1F1F1", argb(light.selectionSurface))
+        assertEquals("FF005BD3", argb(light.selectionBorder))
+        assertEquals("FF005BD3", argb(light.selectionIcon))
         assertEquals("FF8E0B21", argb(light.danger))
         assertEquals("FFC70A24", argb(light.dangerFill))
         assertEquals("FFFFFAFB", argb(light.onDanger))
@@ -181,7 +211,7 @@ class AqSchemeTest {
         assertEquals("FFFFF1E3", argb(light.warningContainer))
         assertEquals("FF003A5A", argb(light.info))
         assertEquals("FFEAF4FF", argb(light.infoContainer))
-        assertEquals("FF005BDB", argb(light.focus))
+        assertEquals("FF005BD3", argb(light.focus))
         assertEquals("0D000000", argb(light.disabled))
         assertEquals("FFB5B5B5", argb(light.onDisabled))
         assertEquals("FF303030", argb(light.inverseSurface))
@@ -194,7 +224,6 @@ class AqSchemeTest {
         assertEquals("FFEBEBEB", argb(light.surfaceContainerHighest))
         assertEquals("FFF3F3F3", argb(light.surfaceActive))
         assertEquals("FFF7F7F7", argb(light.componentActive))
-        assertEquals("FFFCFDFF", argb(light.accentActiveContent))
         assertEquals("FFA30A24", argb(light.dangerActive))
         assertEquals("FFFEC1C7", argb(light.dangerDisabled))
 
@@ -209,14 +238,25 @@ class AqSchemeTest {
         assertEquals("FFB5B5B5", argb(dark.textSecondary))
         assertEquals("FFB5B5B5", argb(dark.textPlaceholder))
         assertEquals("FFB5B5B5", argb(dark.textTertiary))
-        assertEquals("FFFFFFFF", argb(dark.accent))
-        assertEquals("FFEBEBEB", argb(dark.accentActive))
-        assertEquals("FF616161", argb(dark.accentDisabled))
-        assertEquals("FF91D0FF", argb(dark.accentFocus))
-        assertEquals("FF4A4A4A", argb(dark.accentLightActive))
-        assertEquals("FF303030", argb(dark.onAccent))
-        assertEquals("FF303030", argb(dark.accentContainer))
-        assertEquals("FF91D0FF", argb(dark.onAccentContainer))
+        assertEquals("FFFFFFFF", argb(dark.brandFill))
+        assertEquals("FFF3F3F3", argb(dark.brandFillHover))
+        assertEquals("FFF7F7F7", argb(dark.brandFillActive))
+        assertEquals("FFD4D4D4", argb(dark.brandFillSelected))
+        assertEquals("38FFFFFF", argb(dark.brandFillDisabled))
+        assertEquals("FF303030", argb(dark.onBrandFill))
+        assertEquals("FF8A8A8A", argb(dark.onBrandFillDisabled))
+        assertEquals("FF91D0FF", argb(dark.emphasisFill))
+        assertEquals("FF91D0FF", argb(dark.emphasisBorder))
+        assertEquals("FF91D0FF", argb(dark.emphasisText))
+        assertEquals("FF91D0FF", argb(dark.emphasisIcon))
+        assertEquals("FF303030", argb(dark.emphasisSurface))
+        assertEquals("FF4A4A4A", argb(dark.emphasisSurfaceHover))
+        assertEquals("FF1A1A1A", argb(dark.emphasisOnFill))
+        assertEquals("FF91D0FF", argb(dark.link))
+        assertEquals("FF616161", argb(dark.selectionFill))
+        assertEquals("FF616161", argb(dark.selectionSurface))
+        assertEquals("FF91D0FF", argb(dark.selectionBorder))
+        assertEquals("FF91D0FF", argb(dark.selectionIcon))
         assertEquals("FFFED1D7", argb(dark.danger))
         assertEquals("FFC70A24", argb(dark.dangerFill))
         assertEquals("FFFFFAFB", argb(dark.onDanger))
@@ -244,7 +284,6 @@ class AqSchemeTest {
         assertEquals("FF616161", argb(dark.surfaceContainerHighest))
         assertEquals("FF4A4A4A", argb(dark.surfaceActive))
         assertEquals("FF303030", argb(dark.componentActive))
-        assertEquals("FF303030", argb(dark.accentActiveContent))
         assertEquals("FFA30A24", argb(dark.dangerActive))
         assertEquals("FF8E0B21", argb(dark.dangerDisabled))
     }
@@ -253,7 +292,7 @@ class AqSchemeTest {
     fun both_schemes_expose_the_same_complete_semantic_roles() {
         val lightFields = LightAmColorScheme.fields()
         val darkFields = DarkAmColorScheme.fields()
-        assertEquals(50, lightFields.size)
+        assertEquals(59, lightFields.size)
         assertEquals(lightFields.keys, darkFields.keys)
         assertTrue(lightFields.values.none { it == Color.Unspecified })
         assertTrue(darkFields.values.none { it == Color.Unspecified })
@@ -265,20 +304,30 @@ class AqSchemeTest {
     @Test
     fun text_and_filled_state_pairs_meet_wcag_aa() {
         listOf(LightAmColorScheme, DarkAmColorScheme).forEach { scheme ->
-            assertTrue(contrast(scheme.onAccent, scheme.accent) >= 4.5, "onAccent/accent")
+            assertTrue(contrast(scheme.onBrandFill, scheme.brandFill) >= 4.5, "onBrandFill/brandFill")
             assertTrue(
-                contrast(scheme.accentActiveContent, scheme.accentActive) >= 4.5,
-                "accentActiveContent/accentActive",
+                contrast(scheme.onBrandFill, scheme.brandFillActive) >= 4.5,
+                "onBrandFill/brandFillActive",
+            )
+            assertTrue(
+                contrast(scheme.textPrimary, scheme.selectionFill) >= 4.5,
+                "textPrimary/selectionFill",
+            )
+            assertTrue(
+                contrast(scheme.emphasisText, scheme.emphasisSurface) >= 4.5,
+                "emphasisText/emphasisSurface",
             )
             assertTrue(contrast(scheme.onDanger, scheme.dangerFill) >= 4.5, "onDanger/dangerFill")
             assertTrue(contrast(scheme.onDanger, scheme.dangerActive) >= 4.5, "onDanger/dangerActive")
             assertTrue(contrast(scheme.textPrimary, scheme.dangerDisabled) >= 4.5, "textPrimary/dangerDisabled")
             assertTrue(contrast(scheme.textPrimary, scheme.componentActive) >= 4.5, "textPrimary/componentActive")
-            assertTrue(contrast(scheme.accentText, scheme.surfaceActive) >= 4.5, "accentText/surfaceActive")
+            assertTrue(contrast(scheme.emphasisText, scheme.surfaceActive) >= 4.5, "emphasisText/surfaceActive")
             assertTrue(contrast(scheme.onSuccessFill, scheme.successFill) >= 4.5, "onSuccessFill/successFill")
             assertTrue(contrast(scheme.onWarningFill, scheme.warningFill) >= 4.5, "onWarningFill/warningFill")
-            assertTrue(contrast(scheme.accentText, scheme.background) >= 4.5, "accentText/background")
-            assertTrue(contrast(scheme.accentText, scheme.surface) >= 4.5, "accentText/surface")
+            assertTrue(contrast(scheme.emphasisText, scheme.background) >= 4.5, "emphasisText/background")
+            assertTrue(contrast(scheme.emphasisText, scheme.surface) >= 4.5, "emphasisText/surface")
+            assertTrue(contrast(scheme.link, scheme.background) >= 4.5, "link/background")
+            assertTrue(contrast(scheme.link, scheme.surface) >= 4.5, "link/surface")
             assertTrue(contrast(scheme.textPrimary, scheme.background) >= 4.5, "textPrimary/background")
             assertTrue(contrast(scheme.textPrimary, scheme.surface) >= 4.5, "textPrimary/surface")
             assertTrue(contrast(scheme.textSecondary, scheme.background) >= 4.5, "textSecondary/background")

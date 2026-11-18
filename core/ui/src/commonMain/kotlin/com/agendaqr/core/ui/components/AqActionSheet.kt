@@ -54,7 +54,7 @@ internal fun AqActionSheet(
                                 AqIcon(
                                     imageVector = icon,
                                     contentDescription = null,
-                                    tint = AqColor.Accent,
+                                    tint = AqColor.EmphasisIcon,
                                 )
                             }
                         },

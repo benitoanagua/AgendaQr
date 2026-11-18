@@ -160,7 +160,7 @@ internal fun AuthForm(
                             text = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
                             size = AqType.Caption,
                             fontWeight = FontWeight.Medium,
-                            color = AqColor.AccentText,
+                            color = AqColor.Link,
                         )
                     }
                 },

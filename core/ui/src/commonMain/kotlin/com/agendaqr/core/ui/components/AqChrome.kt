@@ -301,7 +301,7 @@ fun AqNavBar(
                         imageVector = destination.icon,
                         contentDescription = null,
                         size = AqMetrics.ButtonMediumIconSize,
-                        tint = if (selected) AqColor.Accent else AqColor.TextSecondary,
+                        tint = if (selected) AqColor.SelectionIcon else AqColor.TextSecondary,
                     )
                     Text(
                         destination.label,
@@ -313,7 +313,7 @@ fun AqNavBar(
                             },
                         ),
                         fontFamily = AqType.FamilyUi,
-                        color = if (selected) AqColor.AccentText else AqColor.TextSecondary,
+                        color = if (selected) AqColor.EmphasisText else AqColor.TextSecondary,
                         maxLines = 1,
                     )
                 }
@@ -361,7 +361,7 @@ fun AqNavRail(
                     imageVector = destination.icon,
                     contentDescription = null,
                     size = AqMetrics.ButtonMediumIconSize,
-                    tint = if (selected) AqColor.Accent else AqColor.TextSecondary,
+                    tint = if (selected) AqColor.SelectionIcon else AqColor.TextSecondary,
                 )
                 Text(
                     destination.label,
@@ -373,7 +373,7 @@ fun AqNavRail(
                         },
                     ),
                     fontFamily = AqType.FamilyUi,
-                    color = if (selected) AqColor.AccentText else AqColor.TextSecondary,
+                    color = if (selected) AqColor.EmphasisText else AqColor.TextSecondary,
                     maxLines = 1,
                 )
             }
@@ -435,7 +435,7 @@ fun AqHeroHeader(
         modifier = modifier
             .fillMaxWidth()
             .statusBarsPadding()
-            .background(AqColor.Accent)
+            .background(AqColor.BrandFill)
             .padding(horizontal = AqSpacing.ScreenMargin)
             .padding(top = AqSpacing.Sm, bottom = AqSpacing.Md),
     ) {
@@ -448,7 +448,7 @@ fun AqHeroHeader(
                     lineHeight = AqType.LineHeightTitleLarge,
                     fontWeight = AqWeight.Bold,
                     fontFamily = AqType.FamilyUi,
-                    color = AqColor.OnAccent,
+                    color = AqColor.OnBrandFill,
                 ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -463,7 +463,7 @@ fun AqHeroHeader(
                     AqIcon(
                         imageVector = AqIcons.More,
                         contentDescription = overflowLabel,
-                        tint = AqColor.OnAccent,
+                        tint = AqColor.OnBrandFill,
                     )
                 }
             }

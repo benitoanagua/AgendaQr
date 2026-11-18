@@ -49,7 +49,7 @@ fun AqPinDots(
                 modifier = Modifier
                     .size(AqMetrics.PinDotSize)
                     .background(
-                        if (index < filled) AqColor.Accent else AqColor.SurfaceContainerHighest,
+                        if (index < filled) AqColor.EmphasisFill else AqColor.SurfaceContainerHighest,
                         AqShapes.Pill,
                     ),
             )

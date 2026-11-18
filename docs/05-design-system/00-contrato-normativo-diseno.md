@@ -30,6 +30,7 @@ La versión 12 citada originalmente corresponde a `@shopify/polaris`
 | PV-03 | Equivalente móvil oficial de `rem` | Polaris publica px a 16px de root; se adopta 1rem = 16dp como desviación documentada (D-01). |
 | PV-04 | Roles de movimiento semánticos | Polaris publica duraciones y easings primitivos; los roles de producto se derivan y se marcan como extensión. |
 | PV-05 | Escala táctil | Polaris no especifica objetivos de 48dp; se toma el mínimo accesible de plataforma (D-02). |
+| PV-06 | Enlace, foco y énfasis en `dark-experimental` | El tema oscuro no publica `text-link`, `border-focus` ni roles `emphasis`. El valor heredado `#005BD3` no alcanza 3:1 sobre las superficies oscuras; se usa el verificable `#91D0FF` publicado en `:121` (X-05), que sí cumple AA. |
 
 ## 2. Reglas de uso
 

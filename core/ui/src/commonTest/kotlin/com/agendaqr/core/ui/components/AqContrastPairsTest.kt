@@ -27,7 +27,7 @@ class AqContrastPairsTest {
             "light" to LightAmColorScheme,
             "dark" to DarkAmColorScheme,
         ).forEach { (name, scheme) ->
-            assertTrue(contrastRatio(scheme.onAccent, scheme.accent) >= 4.5, "$name primary")
+            assertTrue(contrastRatio(scheme.onBrandFill, scheme.brandFill) >= 4.5, "$name primary")
             assertTrue(contrastRatio(scheme.onDanger, scheme.dangerFill) >= 4.5, "$name danger")
             assertTrue(contrastRatio(scheme.onSuccessFill, scheme.successFill) >= 4.5, "$name success")
             assertTrue(contrastRatio(scheme.onWarningFill, scheme.warningFill) >= 4.5, "$name warning")

@@ -37,7 +37,7 @@ fun AqSectionHeader(
     modifier: Modifier = Modifier,
     accent: Color? = null,
 ) {
-    val textColor = accent?.asTextOn(AqColor.SurfaceSecondary, AqColor.AccentText)
+    val textColor = accent?.asTextOn(AqColor.SurfaceSecondary, AqColor.EmphasisText)
         ?: AqColor.TextSecondary
     androidx.compose.foundation.layout.Box(
         modifier = modifier
@@ -84,8 +84,8 @@ fun AqTabs(
     require(selectedIndex in sections.indices) { "AqTabs: índice fuera de rango" }
     // El acento de contexto solo es texto de pestaña si es legible
     // (>= 4.5:1); si no, cae al acento legible del sistema.
-    val selectedTextColor = accent?.asTextOn(AqColor.Background, AqColor.AccentText)
-        ?: AqColor.AccentText
+    val selectedTextColor = accent?.asTextOn(AqColor.Background, AqColor.EmphasisText)
+        ?: AqColor.EmphasisText
     PrimaryScrollableTabRow(
         selectedTabIndex = selectedIndex,
         modifier = modifier.fillMaxWidth(),
@@ -98,7 +98,7 @@ fun AqTabs(
                 width = AqMetrics.TabIndicatorWidth,
                 height = AqMetrics.TabIndicatorHeight,
                 shape = AqShapes.ExtraSmall,
-                color = AqColor.Accent,
+                color = AqColor.EmphasisBorder,
             )
         },
         divider = {

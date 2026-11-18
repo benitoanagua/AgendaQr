@@ -648,7 +648,7 @@ open class LayoutReferenceTest {
                                 imageVector = AqIcons.Calendar,
                                 contentDescription = null,
                                 size = AqMetrics.IconSizeCompact,
-                                tint = AqColor.AccentText,
+                                tint = AqColor.SelectionIcon,
                             )
                             Column {
                                 AqText(

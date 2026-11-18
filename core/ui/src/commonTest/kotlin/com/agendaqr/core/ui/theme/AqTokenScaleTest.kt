@@ -79,7 +79,7 @@ class AqTokenScaleTest {
     @Test
     fun composition_fractions_and_alphas_are_centralized() {
         assertEquals(0f, AqAlpha.Hidden)
-        assertEquals(0.25f, AqAlpha.SelectedOnAccent)
+        assertEquals(0.25f, AqAlpha.SelectedOnFill)
         assertEquals(0.2f, AqAlpha.SelectedOnTone)
         assertEquals(0.6f, AqComposition.SkeletonTitleWidthFraction)
         assertEquals(0.55f, AqComposition.SuccessCheckIconFraction)

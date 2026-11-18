@@ -236,3 +236,28 @@ seguimiento del sistema en `AqTheme`**; el default del local debe ser
 5. Tema oscuro: superficie `#303030`, texto `#E3E3E3`, foco azul.
 6. Fuente del sistema al 150 %: sin recortes en S01, Añadir, importación
    masiva, Mostrar QR y login.
+
+## 11. Estado tras F1
+
+- La acción primaria consume `brandFill` (`#303030` / `#FFFFFF`),
+  `brandFillHover`, `brandFillActive`, `brandFillSelected`,
+  `brandFillDisabled` (`rgba(0,0,0,.17)` / `rgba(255,255,255,.22)`) y los pares
+  `onBrandFill` / `onBrandFillDisabled`, todos tomados de `:116-120,167-170`
+  y `:550-551,555,559,563,572-573`. `AqHeroHeader` usa el mismo par de marca.
+- Se retiraron los roles `accent*` de `AqColorScheme`, `AqColor` y del puente
+  Material. Los usos se separaron en: `link` (acciones de texto), `focus`
+  (`border-focus`), `emphasis*` (relleno, borde, texto, glifo y superficie) y
+  `selection*` (relleno, superficie, borde y glifo de selección).
+  `accentFocus` desaparece: `focus` es el único rol de foco.
+- `AqPalette.emphasis` pasa a `#005BD3` (`:142,162,196,213,221,245`). El
+  primario ya no depende de ese valor.
+- En oscuro, los roles `emphasis`/`link`/`focus` no están publicados. Se aplica
+  PV-06: `#91D0FF` (`:121`) cumple AA y conserva el comportamiento accesible,
+  frente al `#005BD3` heredado que queda por debajo de 3:1.
+- La píldora seleccionada usa `selectionFill` (`#CCCCCC` / `#616161`) con
+  `textPrimary`; el indicador de pestañas usa `emphasisBorder`; favoritos e
+  iconos de selección usan `selectionIcon`.
+- Verificación: gates de arquitectura y documentos en verde;
+  `:core:ui:testDebugUnitTest` cubre los pares AA de marca, enlace, foco,
+  énfasis y selección en ambos temas. iOS sigue **no verificado** en este
+  entorno.
