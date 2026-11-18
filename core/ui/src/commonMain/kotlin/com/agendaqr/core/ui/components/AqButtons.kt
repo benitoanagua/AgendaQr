@@ -675,6 +675,8 @@ data class AqSegmentedOption(
  * (fill-content) con la opción activa sobre píldora `Surface`, radios 2.
  * Mutuamente excluyente por semántica (`selectableGroup` + rol radio).
  * Cada opción conserva el objetivo táctil de 48 dp.
+ * [enabled] controla si las opciones responden a la selección; cuando es
+ * falso, el segmento se muestra deshabilitado y no emite onSelect.
  */
 @Composable
 fun AqSegmentedControl(
@@ -682,6 +684,9 @@ fun AqSegmentedControl(
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    /** Cuando falso, las opciones no son seleccionables y se muestran
+     *  con el estilo deshabilitado. */
+    enabled: Boolean = true,
 ) {
     require(options.isNotEmpty()) { "AqSegmentedControl necesita al menos una opción" }
     require(selectedIndex in options.indices) { "AqSegmentedControl: índice fuera de rango" }
@@ -696,12 +701,18 @@ fun AqSegmentedControl(
         options.forEachIndexed { index, option ->
             val selected = index == selectedIndex
             val activeColor = option.activeTone?.content() ?: AqColor.EmphasisText
+            val optionEnabled = enabled
+            val textColor = when {
+                !optionEnabled -> AqColor.OnDisabled
+                selected -> activeColor
+                else -> AqColor.TextSecondary
+            }
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .clip(AqShapes.Medium)
                     .then(
-                        if (selected) {
+                        if (selected && optionEnabled) {
                             Modifier.background(AqColor.SelectionSurface, AqShapes.Medium)
                                 .border(AqMetrics.Border, AqColor.SelectionBorder, AqShapes.Medium)
                         } else {
@@ -711,7 +722,8 @@ fun AqSegmentedControl(
                     .selectable(
                         selected = selected,
                         role = Role.RadioButton,
-                        onClick = { onSelect(index) },
+                        enabled = optionEnabled,
+                        onClick = { if (optionEnabled) onSelect(index) },
                     )
                     .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
                 contentAlignment = Alignment.Center,
@@ -725,20 +737,20 @@ fun AqSegmentedControl(
                             imageVector = it,
                             contentDescription = null,
                             size = AqMetrics.IconSizeCompact,
-                            tint = if (selected) activeColor else AqColor.TextSecondary,
+                            tint = if (selected && optionEnabled) activeColor else AqColor.OnDisabled,
                         )
                     }
                     Text(
                         option.label,
                         style = AqTextStyles.Label,
-                        color = if (selected) activeColor else AqColor.TextSecondary,
+                        color = textColor,
                         maxLines = 1,
                     )
                     option.count?.let {
                         Box(
                             modifier = Modifier
                                 .background(
-                                    if (selected) activeColor.copy(alpha = AqAlpha.SelectedOnTone) else AqColor.SurfaceContainerHighest,
+                                    if (selected && optionEnabled) activeColor.copy(alpha = AqAlpha.SelectedOnTone) else AqColor.SurfaceContainerHighest,
                                     AqShapes.Small,
                                 )
                                 .padding(horizontal = AqSpacing.Xs),
@@ -746,7 +758,7 @@ fun AqSegmentedControl(
                             Text(
                                 it.toString(),
                                 style = AqTextStyles.Tag,
-                                color = if (selected) activeColor else AqColor.TextSecondary,
+                                color = textColor,
                             )
                         }
                     }
