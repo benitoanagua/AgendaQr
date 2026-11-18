@@ -13,7 +13,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 > `core/ui` ya usa tokens semánticos Polaris 9.4.2, Inter 4.0 (OFL 1.1),
 > claro/oscuro, pares AA y previews a 200 %. La migración está verificada en
 > Android/JVM por el gate de arquitectura y por `:core:ui:testDebugUnitTest`
-> (84 pruebas). El render en iOS, incluido el empaquetado de Inter y los avisos
+> (93 pruebas). El render en iOS, incluido el empaquetado de Inter y los avisos
 > de licencia, permanece **NO VERIFICADO** en este entorno (sin macOS/Xcode).
 
 ## 1. Implementado y verificado
@@ -60,6 +60,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Capa aditiva de componentes: layout, enlaces/grupos de acciones, formularios (`AmSelect`/`AmCheckbox`/`AmRadioButton`/`AmSwitch`), progreso, hoja modal, tabla de índices y extensiones canónicas X-01/X-02/X-03 | `:core:ui:testDebugUnitTest` (91 pruebas, incluido `AmPhase3ContractTest`) + `verifyAgendaQrArchitecture`; render iOS y TalkBack/VoiceOver **NO VERIFICADOS** |
 | Pantallas: X-02 delegado a `AmSyncIndicator` desde `ElementSyncBadge` y X-01 aplicado en el detalle de operación con `AmEvidenceBadge`; X-03 permanece en `AmQrPreview` + efectos de brillo por plataforma | `:feature:destinations:presentation:testDebugUnitTest` (524 pruebas, incluido `AmExtensionAdoptionTest`) + `verifyAgendaQrArchitecture`; iOS **NO VERIFICADO** |
 | Limpieza de literales visuales residuales: alfas, proporciones de interlineado/composición y geometría de transición centralizados en `AmTokens.kt` (D-08), sin cambios de valor ni de comportamiento | `:core:ui:testDebugUnitTest` (93 pruebas, con `AmTokenScaleTest`/`AmSurfaceMotionTest` ampliados) + `:feature:destinations:presentation:testDebugUnitTest` (524 pruebas) + gate exacto en verde; iOS y capturas **NO VERIFICADOS** |
+| Cierre del plan de migración visual: productor de galería estricta ejecutado (94 capturas, manifiesto `agendaqr.captures/3`), documentación sincronizada y gates finales en verde | `./gradlew captureGallery -Pagendaqr.capture=true` + `./gradlew verifyAgendaQrArchitecture :androidApp:testDebugUnitTest :androidApp:assembleDebug -PallowDebugSigningForRc=true --console=plain`: `verifyDocs: PASS (41 documents)`, `verifyNoScripts: PASS (no forbidden scripts)`, `verifyScreenContract: PASS (19 superficies; 94 capturas verificadas)`, `:androidApp:testDebugUnitTest` NO-SOURCE; `:core:ui:testDebugUnitTest` (93) y `:feature:destinations:presentation:testDebugUnitTest` (524) en verde; revisión estética en dispositivo y runtime iOS **NO VERIFICADOS** |
 
 ## 2. Implementado pero NO VERIFICADO en este entorno
 

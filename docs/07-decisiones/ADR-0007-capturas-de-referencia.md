@@ -61,7 +61,7 @@ con propósitos distintos:
    requeridas. Si no hay artefactos, el gate no falla porque la galería no
    se versiona.
 
-**Productor (Fase 6).** `LayoutReferenceTest` produce la galería estricta con
+**Productor.** `LayoutReferenceTest` produce la galería estricta con
 un mapa explícito escenario → (superficie, estado): cada superficie del
 contrato y sus estados declarados quedan capturados. La matriz prioriza
 pantallas y estados únicos sobre combinaciones: 360 dp en claro/oscuro como
@@ -74,7 +74,7 @@ la bandeja de comprobantes sin asociar es byte-idéntico al vacío de
 Actividades (comparten composición), así que solo se conserva una captura;
 el copy propio del vacío queda como decisión de producto pendiente.
 
-**Manifiesto (schema `agendaqr.captures/2`).** `build/captures/manifest.json`
+**Manifiesto (schema `agendaqr.captures/3`).** `build/captures/manifest.json`
 declara por entrada la pantalla de AgendaQr, el identificador de su
 pantalla de Stitch (campo histórico, sin ADR asociado; vacío para las superficies excluidas), estado,
 tema, ancho, densidad, escala de fuente, dimensiones reales del bitmap,
