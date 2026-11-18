@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import agendaqr.core.ui.generated.resources.Res
@@ -535,46 +536,73 @@ object AqWeight {
 
 /** Tamaños e interlineados de los roles `text-*` de la instantánea. */
 object AqType {
-    val Display: TextUnit = 36.sp
+    /** Roles `heading-*` de `light-mobile` (`:412-441,512-517`). */
+    val Heading3Xl: TextUnit = 36.sp
+    val LineHeightHeading3Xl: TextUnit = 48.sp
+    val Heading2Xl: TextUnit = 32.sp
+    val LineHeightHeading2Xl: TextUnit = 40.sp
+    val HeadingXl: TextUnit = 22.sp
+    val LineHeightHeadingXl: TextUnit = 28.sp
+    val HeadingLg: TextUnit = 18.sp
+    val LineHeightHeadingLg: TextUnit = 24.sp
+    val HeadingMd: TextUnit = 16.sp
+    val LineHeightHeadingMd: TextUnit = 20.sp
+    val HeadingSm: TextUnit = 14.sp
+    val LineHeightHeadingSm: TextUnit = 20.sp
+    val HeadingXs: TextUnit = 12.sp
+    val LineHeightHeadingXs: TextUnit = 16.sp
+
+    /** Roles `body-*` de `light-mobile` (`:442-461,518-525`). */
+    val BodyLg: TextUnit = 18.sp
+    val LineHeightBodyLg: TextUnit = 28.sp
+    val BodyMd: TextUnit = 16.sp
+    val LineHeightBodyMd: TextUnit = 24.sp
+    val BodySm: TextUnit = 14.sp
+    val LineHeightBodySm: TextUnit = 20.sp
+    val BodyXs: TextUnit = 12.sp
+    val LineHeightBodyXs: TextUnit = 16.sp
+
+    /** Alias conservados para el adaptador Material y los estilos de producto. */
+    val Display = Heading3Xl
     val DisplayMedium: TextUnit = 40.sp
-    val HeadlineLarge: TextUnit = 36.sp
-    val Headline: TextUnit = 32.sp
+    val HeadlineLarge = Heading3Xl
+    val Headline = Heading2Xl
+    /** 24/32 no tiene equivalente móvil publicado: se mantiene como extensión. */
     val HeadlineSmall: TextUnit = 24.sp
     val TitleLarge: TextUnit = 20.sp
-    val Title: TextUnit = 18.sp
-    val TitleMedium: TextUnit = 16.sp
-    val TitleSmall: TextUnit = 14.sp
+    val Title = HeadingLg
+    val TitleMedium = HeadingMd
+    val TitleSmall = HeadingSm
     val Amount: TextUnit = 30.sp
-    val AmountSymbol: TextUnit = 14.sp
-    val RowTitle: TextUnit = 16.sp
-    val SectionHeader: TextUnit = 14.sp
-    val Body: TextUnit = 14.sp
-    val Label: TextUnit = 16.sp
-    val BodySmall: TextUnit = 12.sp
-    val Caption: TextUnit = 12.sp
+    val AmountSymbol = HeadingSm
+    val RowTitle = HeadingMd
+    val SectionHeader = HeadingSm
+    val Body = BodySm
+    val Label = BodyMd
+    val BodySmall = BodyXs
+    val Caption = BodyXs
     val CaptionSmall: TextUnit = 11.sp
-    val LineHeightLabel: TextUnit = 24.sp
-    val LineHeightDialog: TextUnit = 28.sp
-    val LineHeightBody: TextUnit = 20.sp
-    val LineHeightBodySmall: TextUnit = 16.sp
-    val LineHeightCaption: TextUnit = 16.sp
-    val LineHeightSection: TextUnit = 20.sp
+    val LineHeightLabel = LineHeightBodyMd
+    val LineHeightDialog = LineHeightBodyLg
+    val LineHeightBody = LineHeightBodySm
+    val LineHeightBodySmall = LineHeightBodyXs
+    val LineHeightCaption = LineHeightBodyXs
+    val LineHeightSection = LineHeightHeadingSm
     val LineAmount: TextUnit = 40.sp
-    val LineAmountSymbol: TextUnit = 20.sp
-    val LineHeightRowTitle: TextUnit = 24.sp
-    val LineHeightHeadlineLarge: TextUnit = 48.sp
-    val LineHeightHeadlineMedium: TextUnit = 40.sp
+    val LineAmountSymbol = LineHeightHeadingMd
+    val LineHeightRowTitle = LineHeightBodyMd
+    val LineHeightHeadlineLarge = LineHeightHeading3Xl
+    val LineHeightHeadlineMedium = LineHeightHeading2Xl
     val LineHeightHeadlineSmall: TextUnit = 32.sp
     val LineHeightTitleLarge: TextUnit = 24.sp
-    val LineHeightTitleMedium: TextUnit = 20.sp
-    val LineHeightTitleSmall: TextUnit = 20.sp
-    val LineHeightLabelSmall: TextUnit = 16.sp
+    val LineHeightTitleMedium = LineHeightHeadingMd
+    val LineHeightTitleSmall = LineHeightHeadingSm
+    val LineHeightLabelSmall = LineHeightBodyXs
 
     /**
-     * Interlineados proporcionales derivados de los pares publicados
-     * `--p-font-line-height-*` (instantánea §tipografía). Se usan solo cuando
-     * el rol recibe un tamaño arbitrario; los tamaños canónicos conservan su
-     * `lineHeight` publicado.
+     * Ratios derivados de los pares publicados `heading-2xl` (40/32) y
+     * `body-md` (24/16). Se aplican solo a tamaños arbitrarios (PV-08);
+     * los roles canónicos conservan su `lineHeight` publicado.
      */
     const val HeadingLineHeightRatio = 1.25f
     const val BodyLineHeightRatio = 1.5f
@@ -600,80 +628,94 @@ object AqTracking {
     val ButtonLabel: TextUnit = Normal
 }
 
+/** Geometría completa de un rol tipográfico publicado. */
+internal data class AqTextRole(
+    val size: TextUnit,
+    val lineHeight: TextUnit,
+    val weight: FontWeight,
+    val tracking: TextUnit,
+)
+
+/** Resolución de tamaños canónicos y de tamaños arbitrarios (PV-08). */
+internal object AqTextRoles {
+    val Heading3Xl = AqTextRole(
+        AqType.Heading3Xl, AqType.LineHeightHeading3Xl, AqWeight.Bold, AqTracking.Densest,
+    )
+    val Heading2Xl = AqTextRole(
+        AqType.Heading2Xl, AqType.LineHeightHeading2Xl, AqWeight.Bold, AqTracking.Denser,
+    )
+    val HeadingXl = AqTextRole(
+        AqType.HeadingXl, AqType.LineHeightHeadingXl, AqWeight.Bold, AqTracking.Dense,
+    )
+    val HeadingLg = AqTextRole(
+        AqType.HeadingLg, AqType.LineHeightHeadingLg, AqWeight.SemiBold, AqTracking.Dense,
+    )
+    val HeadingMd = AqTextRole(
+        AqType.HeadingMd, AqType.LineHeightHeadingMd, AqWeight.SemiBold, AqTracking.Normal,
+    )
+    val HeadingSm = AqTextRole(
+        AqType.HeadingSm, AqType.LineHeightHeadingSm, AqWeight.SemiBold, AqTracking.Normal,
+    )
+    val HeadingXs = AqTextRole(
+        AqType.HeadingXs, AqType.LineHeightHeadingXs, AqWeight.SemiBold, AqTracking.Normal,
+    )
+    val BodyLg = AqTextRole(
+        AqType.BodyLg, AqType.LineHeightBodyLg, AqWeight.Regular, AqTracking.Normal,
+    )
+    val BodyMd = AqTextRole(
+        AqType.BodyMd, AqType.LineHeightBodyMd, AqWeight.Regular, AqTracking.Normal,
+    )
+    val BodySm = AqTextRole(
+        AqType.BodySm, AqType.LineHeightBodySm, AqWeight.Regular, AqTracking.Normal,
+    )
+    val BodyXs = AqTextRole(
+        AqType.BodyXs, AqType.LineHeightBodyXs, AqWeight.Regular, AqTracking.Normal,
+    )
+
+    fun of(size: TextUnit, heading: Boolean): AqTextRole = when (size.value) {
+        AqType.Heading3Xl.value -> Heading3Xl
+        AqType.Heading2Xl.value -> Heading2Xl
+        AqType.HeadlineSmall.value -> HeadingXl.copy(size = size)
+        AqType.HeadingXl.value -> HeadingXl
+        AqType.HeadingLg.value -> if (heading) HeadingLg else BodyLg
+        AqType.HeadingMd.value -> if (heading) HeadingMd else BodyMd
+        AqType.HeadingSm.value -> if (heading) HeadingSm else BodySm
+        AqType.HeadingXs.value -> if (heading) HeadingXs else BodyXs
+        else -> fallback(size, heading)
+    }
+
+    private fun fallback(size: TextUnit, heading: Boolean) = AqTextRole(
+        size = size,
+        lineHeight = TextUnit(
+            size.value * if (heading) AqType.HeadingLineHeightRatio else AqType.BodyLineHeightRatio,
+            TextUnitType.Sp,
+        ),
+        weight = if (heading) AqWeight.Bold else AqWeight.Regular,
+        tracking = if (heading) AqTracking.Dense else AqTracking.Normal,
+    )
+}
+
 /** Tipografía M3: adaptador de tipos; no aporta valores visuales propios. */
+private fun AqTextRole.asTextStyle() = TextStyle(
+    fontSize = size,
+    lineHeight = lineHeight,
+    fontWeight = weight,
+    letterSpacing = tracking,
+)
+
 val AqMaterialTypography: Typography = Typography(
-    headlineLarge = TextStyle(
-        fontSize = AqType.HeadlineLarge,
-        lineHeight = AqType.LineHeightHeadlineLarge,
-        fontWeight = AqWeight.Bold,
-        letterSpacing = AqTracking.Densest,
-    ),
-    headlineMedium = TextStyle(
-        fontSize = AqType.Headline,
-        lineHeight = AqType.LineHeightHeadlineMedium,
-        fontWeight = AqWeight.Bold,
-        letterSpacing = AqTracking.Denser,
-    ),
-    headlineSmall = TextStyle(
-        fontSize = AqType.HeadlineSmall,
-        lineHeight = AqType.LineHeightHeadlineSmall,
-        fontWeight = AqWeight.Bold,
-        letterSpacing = AqTracking.Dense,
-    ),
-    titleLarge = TextStyle(
-        fontSize = AqType.TitleLarge,
-        lineHeight = AqType.LineHeightTitleLarge,
-        fontWeight = AqWeight.SemiBold,
-        letterSpacing = AqTracking.Dense,
-    ),
-    titleMedium = TextStyle(
-        fontSize = AqType.TitleMedium,
-        lineHeight = AqType.LineHeightTitleMedium,
-        fontWeight = AqWeight.SemiBold,
-        letterSpacing = AqTracking.TitleMedium,
-    ),
-    titleSmall = TextStyle(
-        fontSize = AqType.TitleSmall,
-        lineHeight = AqType.LineHeightTitleSmall,
-        fontWeight = AqWeight.SemiBold,
-        letterSpacing = AqTracking.TitleSmall,
-    ),
-    bodyLarge = TextStyle(
-        fontSize = AqType.Label,
-        lineHeight = AqType.LineHeightLabel,
-        fontWeight = AqWeight.Regular,
-        letterSpacing = AqTracking.BodyLarge,
-    ),
-    bodyMedium = TextStyle(
-        fontSize = AqType.Body,
-        lineHeight = AqType.LineHeightBody,
-        fontWeight = AqWeight.Regular,
-        letterSpacing = AqTracking.BodyMedium,
-    ),
-    bodySmall = TextStyle(
-        fontSize = AqType.BodySmall,
-        lineHeight = AqType.LineHeightBodySmall,
-        fontWeight = AqWeight.Regular,
-        letterSpacing = AqTracking.BodySmall,
-    ),
-    labelLarge = TextStyle(
-        fontSize = AqType.Label,
-        lineHeight = AqType.LineHeightLabel,
-        fontWeight = AqWeight.SemiBold,
-        letterSpacing = AqTracking.LabelLarge,
-    ),
-    labelMedium = TextStyle(
-        fontSize = AqType.Body,
-        lineHeight = AqType.LineHeightBody,
-        fontWeight = AqWeight.SemiBold,
-        letterSpacing = AqTracking.LabelMedium,
-    ),
-    labelSmall = TextStyle(
-        fontSize = AqType.BodySmall,
-        lineHeight = AqType.LineHeightLabelSmall,
-        fontWeight = AqWeight.SemiBold,
-        letterSpacing = AqTracking.LabelSmall,
-    ),
+    headlineLarge = AqTextRoles.Heading3Xl.asTextStyle(),
+    headlineMedium = AqTextRoles.Heading2Xl.asTextStyle(),
+    headlineSmall = AqTextRoles.HeadingXl.asTextStyle(),
+    titleLarge = AqTextRoles.HeadingLg.asTextStyle(),
+    titleMedium = AqTextRoles.HeadingMd.asTextStyle(),
+    titleSmall = AqTextRoles.HeadingSm.asTextStyle(),
+    bodyLarge = AqTextRoles.BodyLg.asTextStyle(),
+    bodyMedium = AqTextRoles.BodyMd.asTextStyle(),
+    bodySmall = AqTextRoles.BodySm.asTextStyle(),
+    labelLarge = AqTextRoles.BodyMd.copy(weight = AqWeight.SemiBold).asTextStyle(),
+    labelMedium = AqTextRoles.BodySm.copy(weight = AqWeight.SemiBold).asTextStyle(),
+    labelSmall = AqTextRoles.BodyXs.copy(weight = AqWeight.SemiBold).asTextStyle(),
 )
 
 /** Sustituye la familia de todos los roles sin alterar su geometría. */
@@ -694,32 +736,28 @@ internal fun Typography.withAmFontFamily(family: FontFamily): Typography = copy(
 
 /** Estilos canónicos: reúnen tamaño, peso, tracking e interlineado. */
 object AqTextStyles {
+    val Heading3Xl = AqTextRoles.Heading3Xl.asTextStyle()
+    val Heading2Xl = AqTextRoles.Heading2Xl.asTextStyle()
+    val HeadingXl = AqTextRoles.HeadingXl.asTextStyle()
+    val HeadingLg = AqTextRoles.HeadingLg.asTextStyle()
+    val HeadingMd = AqTextRoles.HeadingMd.asTextStyle()
+    val HeadingSm = AqTextRoles.HeadingSm.asTextStyle()
+    val HeadingXs = AqTextRoles.HeadingXs.asTextStyle()
+    val BodyLg = AqTextRoles.BodyLg.asTextStyle()
+    val BodyMd = AqTextRoles.BodyMd.asTextStyle()
+    val BodySm = AqTextRoles.BodySm.asTextStyle()
+    val BodyXs = AqTextRoles.BodyXs.asTextStyle()
+
     val ButtonLabel = TextStyle(
         fontSize = AqType.Label,
         fontWeight = AqWeight.SemiBold,
         letterSpacing = AqTracking.ButtonLabel,
         lineHeight = AqType.LineHeightLabel,
     )
-    val Body = TextStyle(
-        fontSize = AqType.Body,
-        fontWeight = AqWeight.Regular,
-        lineHeight = AqType.LineHeightBody,
-    )
-    val Label = TextStyle(
-        fontSize = AqType.Label,
-        fontWeight = AqWeight.Regular,
-        lineHeight = AqType.LineHeightLabel,
-    )
-    val BodySmall = TextStyle(
-        fontSize = AqType.BodySmall,
-        fontWeight = AqWeight.Regular,
-        lineHeight = AqType.LineHeightBodySmall,
-    )
-    val RowTitle = TextStyle(
-        fontSize = AqType.RowTitle,
-        fontWeight = AqWeight.SemiBold,
-        lineHeight = AqType.LineHeightRowTitle,
-    )
+    val Body = BodySm
+    val Label = BodyMd
+    val BodySmall = BodyXs
+    val RowTitle = BodyMd.copy(fontWeight = AqWeight.SemiBold)
     val Amount = TextStyle(
         fontSize = AqType.Amount,
         fontWeight = AqWeight.SemiBold,
@@ -731,33 +769,16 @@ object AqTextStyles {
         fontWeight = AqWeight.Bold,
         lineHeight = AqType.LineAmountSymbol,
     )
-    val Caption = TextStyle(
-        fontSize = AqType.Caption,
-        fontWeight = AqWeight.Regular,
-        lineHeight = AqType.LineHeightCaption,
-    )
+    val Caption = BodyXs
     val Tag = TextStyle(
         fontSize = AqType.CaptionSmall,
         fontWeight = AqWeight.Regular,
         lineHeight = AqType.LineHeightLabelSmall,
     )
-    val Support = TextStyle(
-        fontSize = AqType.Caption,
-        fontWeight = AqWeight.Regular,
-        letterSpacing = AqTracking.LabelMedium,
-        lineHeight = AqType.LineHeightCaption,
-    )
-    val SectionHeader = TextStyle(
-        fontSize = AqType.SectionHeader,
-        fontWeight = AqWeight.Regular,
-        lineHeight = AqType.LineHeightSection,
-    )
-    val Title = TextStyle(
-        fontSize = AqType.Title,
-        fontWeight = AqWeight.SemiBold,
-        letterSpacing = AqTracking.Dense,
-        lineHeight = AqType.LineHeightDialog,
-    )
+    val Support = BodyXs.copy(letterSpacing = AqTracking.LabelMedium)
+    val SectionHeader = BodySm
+    /** Rol de producto: `heading-lg`, antes mezclado con `body-lg`. */
+    val Title = HeadingLg
 }
 
 /** Duraciones y curvas publicadas; los roles de producto son X-04. */

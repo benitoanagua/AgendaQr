@@ -141,8 +141,8 @@ class AqUiPolishContractTest {
         }
         val layout = layoutOf("Titular de comprobante pendiente de revision larga")
         val style = layout.layoutInput.style
-        // Headline 24 sp con el interlineado ambiente (24 sp) queda a 1.0x:
-        // pegado. El encabezado fija interlineado propio (> 1.1x).
+        // El rol heading-2xl publica 32/40 sp. El encabezado fija ese
+        // interlineado canónico (> 1.1x) en lugar del ambiente.
         val ratio = style.lineHeight.value / style.fontSize.value
         assertTrue(ratio >= 1.1f, "heading hereda interlineado ambiente (ratio=$ratio)")
         assertLinesDoNotOverlap("heading", layout)
@@ -150,13 +150,13 @@ class AqUiPolishContractTest {
 
     @Test
     fun body_text_keeps_canonical_lineheight() {
-        // AqText mantiene una proporción de interlineado de 1.5.
+        // body-sm publica 14/20 sp en light-mobile (instantánea :522-523).
         setScaledContent(1.0f) {
             AqText("Cuerpo de dos lineas para probar interlineado expandido")
         }
         val style = layoutOf("Cuerpo de dos lineas para probar interlineado expandido").layoutInput.style
         assertEquals(14.sp, style.fontSize)
-        assertEquals(21.sp, style.lineHeight)
+        assertEquals(20.sp, style.lineHeight)
     }
 
     @Test
