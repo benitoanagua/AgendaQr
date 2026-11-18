@@ -12,7 +12,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.unit.dp
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.domain.Comprobante
 import com.agendaqr.destinations.domain.Destination
 import com.agendaqr.destinations.domain.Operation
@@ -51,7 +51,7 @@ class ScreensA11yCoverageTest {
     @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
     fun s02_add_screen_headings_and_touch_targets() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 AddDestinationScreen(
                     onImport = { },
                     onBack = { },
@@ -74,7 +74,7 @@ class ScreensA11yCoverageTest {
     @Test
     fun s04_search_intro_is_textual_and_heading_exists() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 GlobalSearchScreen(
                     state = GlobalSearchUiState(query = ""),
                     onAction = { },
@@ -92,7 +92,7 @@ class ScreensA11yCoverageTest {
     @Test
     fun s06_empty_state_primary_action_and_rows() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 ContextsScreen(
                     state = ContextsUiState(isLoading = false),
                     onAction = { },
@@ -110,7 +110,7 @@ class ScreensA11yCoverageTest {
     @Test
     fun s09_review_qr_headings_and_actions() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 ImportReviewScreen(
                     assets = listOf(QrAsset(encoded = "eA==")),
                     onSaveAll = { },
@@ -130,7 +130,7 @@ class ScreensA11yCoverageTest {
     @Test
     fun s07_editor_and_s08_picker_semantics() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 ContextPickerDialog(
                     contexts = listOf(
                         com.agendaqr.destinations.domain.Context("ctx-1", "Mercado", createdAt = 1, updatedAt = 1),
@@ -170,7 +170,7 @@ class ScreensA11yCoverageTest {
             ),
         )
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 ImportBatchScreen(
                     state = ImportBatchUiState.Result(batch),
                     onAction = { },
@@ -194,7 +194,7 @@ class ScreensA11yCoverageTest {
     @Test
     fun s10_receipt_preview_renders_without_crash() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 ComprobantePreview(
                     bytes = byteArrayOf(1, 2, 3),
                     mimeType = "image/png",
@@ -210,7 +210,7 @@ class ScreensA11yCoverageTest {
     @Test
     fun s01_destination_row_states_and_labels() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 DestinationsScreen(
                     state = DestinationsUiState(
                         destinations = listOf(
@@ -263,7 +263,7 @@ class ScreensA11yCoverageTest {
     @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
     fun s02_action_order_follows_declared_hierarchy() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 AddDestinationScreen(
                     onImport = { },
                     onBack = { },
@@ -289,7 +289,7 @@ class ScreensA11yCoverageTest {
     fun s07_type_selector_shows_single_selection() {
         var selected = OperationType.PAGO
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 OperationTypeSelector(
                     type = selected,
                     onSelect = { selected = it },
@@ -308,13 +308,13 @@ class ScreensA11yCoverageTest {
     // Defectos registrados en docs/STATE.md,
     // resueltos por V1.1 (verificación explícita): "Volver" ya no se parte
     // en dos líneas y el primario nunca queda recortado al final del
-    // scroll: ambos viven en la AmScreenScaffold anclado a los insets.
+    // scroll: ambos viven en la AqScreenScaffold anclado a los insets.
     @Test
     fun t07_actions_live_in_the_top_bar_and_save_stays_reachable() {
         var saved = false
         var backed = false
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 ImportReviewScreen(
                     assets = listOf(com.agendaqr.destinations.domain.QrAsset("eA==", content = "qr-real")),
                     onSaveAll = { saved = true },

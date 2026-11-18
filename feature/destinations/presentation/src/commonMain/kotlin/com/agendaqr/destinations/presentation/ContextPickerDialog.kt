@@ -13,18 +13,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AmDialog
-import com.agendaqr.core.ui.components.AmDialogList
-import com.agendaqr.core.ui.components.AmIcons
-import com.agendaqr.core.ui.components.AmListRow
-import com.agendaqr.core.ui.components.AmSecondaryButton
-import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.components.AmTextField
-import com.agendaqr.core.ui.components.AmTextAction
-import com.agendaqr.core.ui.components.AmTone
-import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.components.AqDialog
+import com.agendaqr.core.ui.components.AqDialogList
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqSecondaryButton
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.components.AqTextField
+import com.agendaqr.core.ui.components.AqTextAction
+import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.accentFor
-import com.agendaqr.core.ui.theme.AmSpacing
+import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.destinations.domain.Context
 
 /**
@@ -92,7 +92,7 @@ internal fun ContextPickerDialog(
     val selectedId = justCreatedContextId ?: selection.contextId
 
     when (step) {
-        ContextPickerStep.Create -> AmDialog(
+        ContextPickerStep.Create -> AqDialog(
             title = AppStrings.CrearContexto,
             confirmLabel = AppStrings.Crear,
             onConfirm = {
@@ -109,15 +109,15 @@ internal fun ContextPickerDialog(
             // Back/fuera vuelve a la lista: nunca destruye el draft.
             onDismissRequest = { step = ContextPickerStep.List },
             content = {
-                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                    AmTextField(
+                Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                    AqTextField(
                         label = AppStrings.Nombre,
                         value = name,
                         onValueChange = { name = it },
                         isError = submitted && name.isBlank(),
                         errorMessage = if (submitted && name.isBlank()) AppStrings.ElNombreEsObligatorio else null,
                     )
-                    AmTextField(
+                    AqTextField(
                         label = AppStrings.Nota,
                         value = note,
                         onValueChange = { note = it },
@@ -128,7 +128,7 @@ internal fun ContextPickerDialog(
             },
         )
 
-        ContextPickerStep.List -> AmDialog(
+        ContextPickerStep.List -> AqDialog(
             title = AppStrings.SeleccionarContexto,
             confirmLabel = AppStrings.Cancelar,
             // La acción principal es elegir de la lista; Cancelar es la
@@ -142,11 +142,11 @@ internal fun ContextPickerDialog(
             // selección por accidente.
             onDismissRequest = onCancel,
             content = {
-                AmDialogList {
+                AqDialogList {
                     // Crear sin salir del draft, arriba de la lista: el
                     // slot de texto del diálogo recorta el fondo en
                     // pantallas bajas.
-                    AmTextAction(
+                    AqTextAction(
                         label = AppStrings.CrearContexto,
                         onClick = {
                             submitted = false
@@ -156,13 +156,13 @@ internal fun ContextPickerDialog(
                         },
                     )
                     if (contexts.isEmpty()) {
-                        AmText(
+                        AqText(
                             text = AppStrings.SinContextosDisponibles,
-                            color = AmColor.TextSecondary,
+                            color = AqColor.TextSecondary,
                         )
                     } else {
                         contexts.forEachIndexed { index, context ->
-                            AmListRow(
+                            AqListRow(
                                 title = context.name,
                                 subtitle = context.note?.takeIf { it.isNotBlank() },
                                 // El acento derivado identifica el contexto;
@@ -183,11 +183,11 @@ internal fun ContextPickerDialog(
                     // + texto en tono peligro (el color nunca es la única
                     // señal). Solo cuando hay selección que quitar.
                     if (selection.canRemove) {
-                        AmTextAction(
+                        AqTextAction(
                             label = AppStrings.QuitarContexto,
                             onClick = onRemove,
-                            color = AmColor.Danger,
-                            icon = AmIcons.Erase,
+                            color = AqColor.Danger,
+                            icon = AqIcons.Erase,
                         )
                     }
                 }
@@ -210,7 +210,7 @@ internal fun ContextCreationDialog(
     var note by rememberSaveable { mutableStateOf("") }
     // sobrevive a recreación.
     var submitted by rememberSaveable { mutableStateOf(false) }
-    AmDialog(
+    AqDialog(
         title = AppStrings.CrearContexto,
         confirmLabel = AppStrings.Crear,
         onConfirm = {
@@ -221,15 +221,15 @@ internal fun ContextCreationDialog(
         onDismiss = onDismiss,
         onDismissRequest = onDismiss,
         content = {
-            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                AmTextField(
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                AqTextField(
                     label = AppStrings.Nombre,
                     value = name,
                     onValueChange = { name = it },
                     isError = submitted && name.isBlank(),
                     errorMessage = if (submitted && name.isBlank()) AppStrings.ElNombreEsObligatorio else null,
                 )
-                AmTextField(
+                AqTextField(
                     label = AppStrings.Nota,
                     value = note,
                     onValueChange = { note = it },

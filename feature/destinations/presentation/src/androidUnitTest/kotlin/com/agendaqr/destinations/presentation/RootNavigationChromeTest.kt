@@ -3,13 +3,13 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.agendaqr.core.ui.components.AmFeedbackHost
-import com.agendaqr.core.ui.components.AmIcons
-import com.agendaqr.core.ui.components.AmNavDestination
-import com.agendaqr.core.ui.components.AmNavBar
-import com.agendaqr.core.ui.components.AmSnackbarHost
-import com.agendaqr.core.ui.components.AmFeedbackEvent
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.components.AqFeedbackHost
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqNavDestination
+import com.agendaqr.core.ui.components.AqNavBar
+import com.agendaqr.core.ui.components.AqSnackbarHost
+import com.agendaqr.core.ui.components.AqFeedbackEvent
+import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -29,17 +29,17 @@ class RootNavigationChromeTest {
     val compose = createComposeRule()
 
     private fun destinations() = listOf(
-        AmNavDestination(appRouteNameOf(AppRoute.Home), AppStrings.Inicio, AmIcons.Home),
-        AmNavDestination(appRouteNameOf(AppRoute.Search), AppStrings.Buscar, AmIcons.Search),
-        AmNavDestination(appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones, AmIcons.Register),
-        AmNavDestination(appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos, AmIcons.Context),
+        AqNavDestination(appRouteNameOf(AppRoute.Home), AppStrings.Inicio, AqIcons.Home),
+        AqNavDestination(appRouteNameOf(AppRoute.Search), AppStrings.Buscar, AqIcons.Search),
+        AqNavDestination(appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones, AqIcons.Register),
+        AqNavDestination(appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos, AqIcons.Context),
     )
 
     @Test
     fun nav_bar_shows_all_four_destinations_with_labels() {
         compose.setContent {
-            AmTheme {
-                AmNavBar(
+            AqTheme {
+                AqNavBar(
                     destinations = destinations(),
                     selectedId = appRouteNameOf(AppRoute.Home),
                     onSelect = {},
@@ -58,8 +58,8 @@ class RootNavigationChromeTest {
     fun switching_destination_keeps_home_as_root_and_back_returns_to_it() {
         val nav = AppBackStack()
         compose.setContent {
-            AmTheme {
-                AmNavBar(
+            AqTheme {
+                AqNavBar(
                     destinations = destinations(),
                     selectedId = appRouteNameOf(nav.top),
                     onSelect = { name ->
@@ -84,37 +84,37 @@ class RootNavigationChromeTest {
 
     @Test
     fun transient_feedback_publishes_to_the_snackbar_host() {
-        val host = AmFeedbackHost()
+        val host = AqFeedbackHost()
         compose.setContent {
-            AmTheme {
-                AmFeedbackEvent(
+            AqTheme {
+                AqFeedbackEvent(
                     event = Any(),
                     message = AppStrings.SincronizacionCompletada,
                     feedbackHost = host,
                 )
-                AmSnackbarHost(host)
+                AqSnackbarHost(host)
             }
         }
         compose.waitForIdle()
         // El evento transitorio vive en el Snackbar del Scaffold; el
-        // anuncio accesible lo mantiene el propio AmFeedbackEvent.
+        // anuncio accesible lo mantiene el propio AqFeedbackEvent.
         compose.onNodeWithText(AppStrings.SincronizacionCompletada).assertExists()
     }
 
     @Test
     fun snackbar_action_runs_the_callback_when_tapped() {
-        val host = AmFeedbackHost()
+        val host = AqFeedbackHost()
         var acted = false
         compose.setContent {
-            AmTheme {
-                AmFeedbackEvent(
+            AqTheme {
+                AqFeedbackEvent(
                     event = Any(),
                     message = "No pudimos sincronizar.",
                     feedbackHost = host,
                     actionLabel = AppStrings.Reintentar,
                     onAction = { acted = true },
                 )
-                AmSnackbarHost(host)
+                AqSnackbarHost(host)
             }
         }
         compose.waitForIdle()

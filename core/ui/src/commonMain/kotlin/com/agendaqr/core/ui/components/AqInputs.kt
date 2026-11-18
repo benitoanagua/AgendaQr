@@ -1,0 +1,402 @@
+package com.agendaqr.core.ui.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.error
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqShapes
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqTextStyles
+import com.agendaqr.core.ui.theme.AqType
+
+/**
+ * Entrada de formulario con etiqueta persistente y divisor inferior.
+ *
+ * - El error se expresa con icono + texto debajo del campo (nunca solo
+ *   color) y se asocia también a la semántica del campo editable.
+ * - La obligatoriedad la expresa el llamador con copy (texto de apoyo o
+ *   error al enviar), no con asterisco decorativo.
+ * - El slot [trailing] vive dentro del campo (p. ej. mostrar/ocultar
+ *   contraseña); el glifo y su copy son del llamador.
+ */
+@Composable
+fun AqTextField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    isError: Boolean = false,
+    errorMessage: String? = null,
+    helperMessage: String? = null,
+    singleLine: Boolean = true,
+    minLines: Int = 1,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    /** Glifo decorativo del concepto del campo (comercio, nota,
+     *  moneda…). El label sigue siendo la señal. */
+    leadingIcon: ImageVector? = null,
+    trailing: (@Composable () -> Unit)? = null,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val focused by interactionSource.collectIsFocusedAsState()
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+    ) {
+        Text(
+            label,
+            style = AqTextStyles.Label,
+            color = if (!enabled) AqColor.OnDisabled else AqColor.TextPrimary,
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                .padding(horizontal = AqSpacing.Lg),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        ) {
+            leadingIcon?.let { glyph ->
+                AqIcon(
+                    imageVector = glyph,
+                    contentDescription = null,
+                    tint = when {
+                        isError -> AqColor.Danger
+                        focused -> AqColor.Focus
+                        else -> AqColor.TextTertiary
+                    },
+                )
+            }
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier
+                    .weight(1f)
+                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                    .semantics {
+                        contentDescription = label
+                        if (isError && errorMessage != null) error(errorMessage)
+                    },
+                enabled = enabled,
+                readOnly = readOnly,
+                singleLine = singleLine,
+                minLines = minLines,
+                textStyle = AqTextStyles.Body.copy(
+                    color = when {
+                        !enabled -> AqColor.OnDisabled
+                        isError -> AqColor.Danger
+                        else -> AqColor.TextPrimary
+                    },
+                ),
+                keyboardOptions = keyboardOptions,
+                keyboardActions = keyboardActions,
+                visualTransformation = visualTransformation,
+                interactionSource = interactionSource,
+                cursorBrush = SolidColor(if (isError) AqColor.Danger else AqColor.Focus),
+            )
+            trailing?.invoke()
+        }
+        HorizontalDivider(
+            thickness = AqMetrics.DividerHeight,
+            color = when {
+                isError -> AqColor.Danger
+                focused -> AqColor.Focus
+                else -> AqColor.Divider
+            },
+        )
+        when {
+            // El error informa con icono + texto, nunca solo por color;
+            // liveRegion cortés — el lector lo anuncia al aparecer.
+            isError && errorMessage != null -> {
+                Row(
+                    modifier = Modifier.padding(horizontal = AqSpacing.Lg),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+                ) {
+                    AqIcon(
+                        imageVector = AqIcons.Cancel,
+                        contentDescription = null,
+                        tint = AqColor.Danger,
+                    )
+                    Text(
+                        errorMessage,
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                        style = AqTextStyles.Support,
+                        color = AqColor.Danger,
+                    )
+                }
+            }
+            helperMessage != null -> {
+                Text(
+                    helperMessage,
+                    modifier = Modifier.padding(horizontal = AqSpacing.Lg),
+                    style = AqTextStyles.Support,
+                    color = AqColor.TextSecondary,
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Campo de búsqueda (SearchBar de la referencia): relleno box
+ * (`SurfaceSecondary`), PÍLDORA (Anexo A: inputs/buscador 20+, radio
+ * completo), glifo de búsqueda y limpieza opcional etiquetada; SIN
+ * etiqueta flotante visible — el nombre accesible va por semántica
+ * ([label] como contentDescription) y la pista visible es el
+ * placeholder; en foco, borde de acento de 1 dp (excepción E-04). La
+ * entrada real de búsqueda de producto (S04). La altura mínima de 48 dp
+ * conserva el objetivo táctil (la referencia mide 32 px; desviación
+ * documentada).
+ */
+@Composable
+fun AqSearchField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    /** copy desde el llamador (sin defaults hardcodeados). */
+    label: String,
+    placeholder: String,
+    onClear: (() -> Unit)? = null,
+    /** nombre accesible de la acción de limpiar, copy del llamador. */
+    clearLabel: String = "",
+    /** Teclado y acción IME según el dato (el llamador decide). */
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    /** Foco al entrar cuando el flujo lo justifica (p. ej. destino
+     * Buscar): abre el teclado sin tocar dos veces. */
+    autoFocus: Boolean = false,
+) {
+    if (onClear != null) require(clearLabel.isNotBlank()) {
+        "AqSearchField: onClear necesita clearLabel (copy del llamador)"
+    }
+    val focusRequester = remember { FocusRequester() }
+    if (autoFocus) {
+        LaunchedEffect(Unit) { focusRequester.requestFocus() }
+    }
+    val interactionSource = remember { MutableInteractionSource() }
+    val focused by interactionSource.collectIsFocusedAsState()
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+            .focusRequester(focusRequester)
+            .semantics { contentDescription = label },
+        interactionSource = interactionSource,
+        textStyle = AqTextStyles.Body.copy(color = AqColor.TextPrimary),
+        cursorBrush = SolidColor(AqColor.Focus),
+        keyboardOptions = keyboardOptions,
+        singleLine = true,
+        decorationBox = { innerTextField ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
+                contentAlignment = Alignment.Center,
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = AqMetrics.FieldCompactHeight)
+                        .background(AqColor.SurfaceSecondary, AqShapes.Pill)
+                        .border(
+                            AqMetrics.Border,
+                            if (focused) AqColor.Focus else AqColor.Transparent,
+                            AqShapes.Pill,
+                        )
+                        .padding(horizontal = AqSpacing.Md),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+                ) {
+                    AqIcon(
+                        imageVector = AqIcons.Search,
+                        contentDescription = null,
+                        tint = AqColor.TextTertiary,
+                    )
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (value.isEmpty()) {
+                            Text(
+                                placeholder,
+                                style = AqTextStyles.Body,
+                                color = AqColor.TextPlaceholder,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                        innerTextField()
+                    }
+                    if (onClear != null && value.isNotEmpty()) {
+                        IconButton(onClick = onClear) {
+                            AqIcon(
+                                imageVector = AqIcons.Cancel,
+                                contentDescription = clearLabel,
+                                tint = AqColor.TextSecondary,
+                            )
+                        }
+                    }
+                }
+            }
+        },
+    )
+}
+
+/**
+ * Disparador de búsqueda: la BARRA que abre la pantalla de búsqueda (S01)
+ * sin campo editable — la entrada real vive en S04. Un ÚNICO nodo
+ * semántico con rol Button y nombre accesible; la indicación de pulsación
+ * es la estándar del tema.
+ */
+@Composable
+fun AqSearchTrigger(
+    label: String,
+    placeholder: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier.defaultMinSize(minHeight = AqMetrics.ControlMinSize),
+    ) {
+        // El campo decorativo queda fuera del árbol de accesibilidad: el
+        // control es un solo botón con nombre accesible (la superposición).
+        Box(Modifier.clearAndSetSemantics {}) {
+            AqSearchField(
+                value = "",
+                onValueChange = {},
+                label = label,
+                placeholder = placeholder,
+            )
+        }
+        Box(
+            Modifier
+                .matchParentSize()
+                .clickable(
+                    role = Role.Button,
+                    onClickLabel = label,
+                    onClick = onClick,
+                )
+                // clearAndSetSemantics: el campo decorativo queda fuera del
+                // árbol; el control es un solo botón con nombre accesible.
+                .clearAndSetSemantics {
+                    contentDescription = label
+                    role = Role.Button
+                    onClick(label = label) {
+                        onClick()
+                        true
+                    }
+                },
+        )
+    }
+}
+
+/**
+ * Entrada de importe: cifra hero del Anexo A (30 sp/800, tabular) con
+ * símbolo opcional de moneda más pequeño (14 sp/700), acción de borrado ⌫
+ * etiquetada y guía hairline — la altura la fija el contenido con un
+ * objetivo táctil de 48 dp en el borrado. El valor sigue siendo texto
+ * libre del dominio; nada se formatea ni valida aquí.
+ */
+@Composable
+fun AqAmountField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    /** Símbolo mostrado a la izquierda (copy del llamador; p. ej. "$"). */
+    currencySymbol: String? = null,
+    /** Borrado del importe; su descripción accesible es [clearLabel]. */
+    onClear: (() -> Unit)? = null,
+    clearLabel: String = "",
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+) {
+    if (onClear != null) require(clearLabel.isNotBlank()) {
+        "AqAmountField: onClear necesita clearLabel (copy del llamador)"
+    }
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+    ) {
+        Text(label, style = AqTextStyles.Label, color = AqColor.TextSecondary)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        ) {
+            currencySymbol?.let {
+                Text(
+                    it,
+                    style = AqTextStyles.AmountSymbol,
+                    color = AqColor.TextPrimary,
+                )
+            }
+            androidx.compose.foundation.text.BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier
+                    .weight(1f)
+                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                    .semantics { contentDescription = label },
+                textStyle = AqTextStyles.Amount.copy(color = AqColor.TextPrimary),
+                keyboardOptions = keyboardOptions,
+                singleLine = true,
+                cursorBrush = androidx.compose.ui.graphics.SolidColor(AqColor.Focus),
+                decorationBox = { inner ->
+                    Box(contentAlignment = Alignment.CenterStart) { inner() }
+                },
+            )
+            if (onClear != null) {
+                AqIconButton(
+                    contentDescription = clearLabel,
+                    onClick = onClear,
+                ) {
+                    AqIcon(
+                        imageVector = AqIcons.Erase,
+                        contentDescription = null,
+                        tint = AqColor.TextTertiary,
+                    )
+                }
+            }
+        }
+        HorizontalDivider(thickness = AqMetrics.DividerHeight, color = AqColor.Divider)
+    }
+}

@@ -17,37 +17,37 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.destinations.data.SyncResource
-import com.agendaqr.core.ui.components.AmBadge
-import com.agendaqr.core.ui.components.AmCompactAction
-import com.agendaqr.core.ui.components.AmQuickAction
-import com.agendaqr.core.ui.components.AmDialog
-import com.agendaqr.core.ui.components.AmDialogList
-import com.agendaqr.core.ui.components.AmFavoriteToggle
-import com.agendaqr.core.ui.components.AmSegmentedControl
-import com.agendaqr.core.ui.components.AmSegmentedOption
-import com.agendaqr.core.ui.components.AmIcon
-import com.agendaqr.core.ui.components.AmIconBadge
-import com.agendaqr.core.ui.components.AmIcons
-import com.agendaqr.core.ui.components.AmListRow
-import com.agendaqr.core.ui.components.AmListBody
-import com.agendaqr.core.ui.components.AmNavChromeState
-import com.agendaqr.core.ui.components.AmOverflowAction
-import com.agendaqr.core.ui.components.AmScreenScaffold
-import com.agendaqr.core.ui.components.AmSectionHeader
-import com.agendaqr.core.ui.components.AmTappableCard
-import com.agendaqr.core.ui.components.AmSkeleton
-import com.agendaqr.core.ui.components.AmSnackbarHost
-import com.agendaqr.core.ui.components.AmSearchTrigger
-import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.components.AmTopBar
-import com.agendaqr.core.ui.components.AmTone
-import com.agendaqr.core.ui.components.AmStatusBanner
-import com.agendaqr.core.ui.components.AmEmptyState
-import com.agendaqr.core.ui.components.AmLoadMoreFooter
-import com.agendaqr.core.ui.theme.AmColor
-import com.agendaqr.core.ui.theme.AmMetrics
-import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.core.ui.components.AqBadge
+import com.agendaqr.core.ui.components.AqCompactAction
+import com.agendaqr.core.ui.components.AqQuickAction
+import com.agendaqr.core.ui.components.AqDialog
+import com.agendaqr.core.ui.components.AqDialogList
+import com.agendaqr.core.ui.components.AqFavoriteToggle
+import com.agendaqr.core.ui.components.AqSegmentedControl
+import com.agendaqr.core.ui.components.AqSegmentedOption
+import com.agendaqr.core.ui.components.AqIcon
+import com.agendaqr.core.ui.components.AqIconBadge
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqListBody
+import com.agendaqr.core.ui.components.AqNavChromeState
+import com.agendaqr.core.ui.components.AqOverflowAction
+import com.agendaqr.core.ui.components.AqScreenScaffold
+import com.agendaqr.core.ui.components.AqSectionHeader
+import com.agendaqr.core.ui.components.AqTappableCard
+import com.agendaqr.core.ui.components.AqSkeleton
+import com.agendaqr.core.ui.components.AqSnackbarHost
+import com.agendaqr.core.ui.components.AqSearchTrigger
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.components.AqTopBar
+import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqEmptyState
+import com.agendaqr.core.ui.components.AqLoadMoreFooter
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.destinations.domain.Destination
 
 /**
@@ -62,7 +62,7 @@ import com.agendaqr.destinations.domain.Destination
 fun DestinationsScreen(
     state: DestinationsUiState,
     onAction: (DestinationAction) -> Unit,
-    navChrome: AmNavChromeState? = null,
+    navChrome: AqNavChromeState? = null,
     appHosts: AppHosts? = null,
     onOpenSearch: () -> Unit = {},
     onOpenContexts: () -> Unit = {},
@@ -81,28 +81,28 @@ fun DestinationsScreen(
     val paged = state.visibleDestinations.take(visibleCount)
     val favorites = state.favorites
 
-    AmScreenScaffold(
+    AqScreenScaffold(
         scrollable = state.destinations.isNotEmpty(),
         topBar = {
-            AmTopBar(
+            AqTopBar(
                 title = AppStrings.Inicio,
                 overflowActions = listOf(
-                    AmOverflowAction(AppStrings.CuentaYRespaldo, onClick = onOpenAccount),
-                    AmOverflowAction(AppStrings.Bloquear, onClick = onLock),
+                    AqOverflowAction(AppStrings.CuentaYRespaldo, onClick = onOpenAccount),
+                    AqOverflowAction(AppStrings.Bloquear, onClick = onLock),
                 ),
                 overflowLabel = AppStrings.Mas,
             )
         },
         navDestinations = navChrome?.destinations.orEmpty(),
-        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
 
         navSelectedId = navChrome?.selectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
         floatingActionButton = null,
-        verticalArrangement = Arrangement.spacedBy(AmSpacing.Lg),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
     ) {
-        AmSearchTrigger(
+        AqSearchTrigger(
             label = AppStrings.BuscarEnAgendaQr,
             placeholder = AppStrings.searchPlaceholder,
             onClick = onOpenSearch,
@@ -114,10 +114,10 @@ fun DestinationsScreen(
                 onRetry = { onAction(DestinationAction.RetryFailed) },
                 onClear = { onAction(DestinationAction.ClearError) },
             )
-            AmStatusBanner(
+            AqStatusBanner(
                 title = error.what,
                 message = error.dataStatus,
-                tone = AmTone.Danger,
+                tone = AqTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,
             )
@@ -126,23 +126,23 @@ fun DestinationsScreen(
         // Rejilla "King Kong" de acciones rápidas existentes — mismas tres acciones del hub anterior, sin duplicar.
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
         ) {
-            AmQuickAction(
+            AqQuickAction(
                 label = AppStrings.TraerQr,
-                icon = AmIcons.QrCode,
+                icon = AqIcons.QrCode,
                 onClick = onScanQr,
                 modifier = Modifier.weight(1f),
             )
-            AmQuickAction(
+            AqQuickAction(
                 label = AppStrings.RegistrarOperacion,
-                icon = AmIcons.Register,
+                icon = AqIcons.Register,
                 onClick = onRegisterOperation,
                 modifier = Modifier.weight(1f),
             )
-            AmQuickAction(
+            AqQuickAction(
                 label = AppStrings.CrearContexto,
-                icon = AmIcons.Context,
+                icon = AqIcons.Context,
                 onClick = { showCreateContext = true },
                 modifier = Modifier.weight(1f),
             )
@@ -152,15 +152,15 @@ fun DestinationsScreen(
         // admite "Tabs o Segmented"): filtros reales mutuamente
         // excluyentes con conteo. La selección vive en la semántica
         // (`selectableGroup` + rol radio), nunca solo en el color.
-        AmSegmentedControl(
+        AqSegmentedControl(
             options = listOf(
-                AmSegmentedOption(
+                AqSegmentedOption(
                     label = AppStrings.Todos,
                     count = state.destinations.size,
                 ),
-                AmSegmentedOption(
+                AqSegmentedOption(
                     label = AppStrings.Favoritos,
-                    icon = AmIcons.Favorite,
+                    icon = AqIcons.Favorite,
                     count = favorites.size,
                 ),
             ),
@@ -172,24 +172,24 @@ fun DestinationsScreen(
         // horizontal; la siguiente tarjeta asoma como indicio (sin
         // instrucción de deslizamiento).
         if (state.showsFavoritesCarousel) {
-            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+                    horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
                 ) {
-                    AmIcon(
-                        imageVector = AmIcons.Favorite,
+                    AqIcon(
+                        imageVector = AqIcons.Favorite,
                         contentDescription = null,
-                        size = AmMetrics.IconSizeCompact,
-                        tint = AmColor.AccentText,
+                        size = AqMetrics.IconSizeCompact,
+                        tint = AqColor.AccentText,
                     )
-                    AmSectionHeader(text = AppStrings.Favoritos)
+                    AqSectionHeader(text = AppStrings.Favoritos)
                 }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Md),
+                    horizontalArrangement = Arrangement.spacedBy(AqSpacing.Md),
                 ) {
                     favorites.forEach { destination ->
                         FavoriteDestinationCard(
@@ -213,39 +213,39 @@ fun DestinationsScreen(
             state.hasOtherDestinations ||
             state.query.isNotBlank()
         if (showsLowerSection) {
-            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
                 if (!state.destinations.isEmpty()) {
-                    AmSectionHeader(
+                    AqSectionHeader(
                         text = if (showsFavoritesCarousel) AppStrings.OtrosDestinos else AppStrings.TodosLosDestinos,
                     )
                 }
                 when {
                     // la carga inicial se anuncia con el skeleton del DS.
-                    state.isLoading -> AmSkeleton(lines = 4)
-                    state.destinations.isEmpty() -> AmEmptyState(
-                        icon = AmIcons.QrCode,
+                    state.isLoading -> AqSkeleton(lines = 4)
+                    state.destinations.isEmpty() -> AqEmptyState(
+                        icon = AqIcons.QrCode,
                         title = AppStrings.AunNoHayDestinos,
                         subtitle = AppStrings.emptyDestinationsHint,
                     )
                     // Filtro Favoritos sin favoritos: mensaje propio y salida
                     // real al filtro Todos (antes "Limpiar búsqueda" no
                     // cambiaba el filtro).
-                    state.favoriteOnly && state.visibleDestinations.isEmpty() && state.query.isBlank() -> AmEmptyState(
-                        icon = AmIcons.Favorite,
+                    state.favoriteOnly && state.visibleDestinations.isEmpty() && state.query.isBlank() -> AqEmptyState(
+                        icon = AqIcons.Favorite,
                         title = AppStrings.AunNoHayFavoritos,
                         subtitle = AppStrings.MarcaUnDestinoConEstrella,
                         actionLabel = AppStrings.VerTodos,
                         onAction = { onAction(DestinationAction.SetFavoritesOnly(false)) },
                     )
-                    state.visibleDestinations.isEmpty() -> AmEmptyState(
-                        icon = AmIcons.QrCode,
+                    state.visibleDestinations.isEmpty() -> AqEmptyState(
+                        icon = AqIcons.QrCode,
                         title = AppStrings.NoSeEncontraronDestinos,
                         subtitle = AppStrings.PruebaConOtraBusquedaOLimpia,
                         actionLabel = AppStrings.LimpiarBusqueda,
                         onAction = { onAction(DestinationAction.Search("")) },
                     )
                     else -> {
-                        AmListBody {
+                        AqListBody {
                             paged.forEachIndexed { index, destination ->
                                 DestinationRow(
                                     destination,
@@ -256,7 +256,7 @@ fun DestinationsScreen(
                             }
                         }
                         if (paged.size < state.visibleDestinations.size) {
-                            AmLoadMoreFooter(
+                            AqLoadMoreFooter(
                                 onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(state.visibleDestinations.size) },
                                 loadMoreLabel = AppStrings.CargarMas,
                                 loadingLabel = AppStrings.Cargando,
@@ -292,29 +292,29 @@ private fun FavoriteDestinationCard(
 ) {
     // La superficie presionable vive en el DS (feature/ sin clickable
     // crudo): tarjeta compacta de ancho de token.
-    com.agendaqr.core.ui.components.AmTappableCard(
+    com.agendaqr.core.ui.components.AqTappableCard(
         onClick = onClick,
-        modifier = Modifier.width(AmMetrics.FavCardWidth),
+        modifier = Modifier.width(AqMetrics.FavCardWidth),
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                AmIconBadge(icon = AmIcons.QrCode, tone = AmTone.Info)
+                AqIconBadge(icon = AqIcons.QrCode, tone = AqTone.Info)
                 destination.category?.let {
-                    AmBadge(text = it, tone = AmTone.Neutral)
+                    AqBadge(text = it, tone = AqTone.Neutral)
                 }
             }
             Column {
-                AmText(
+                AqText(
                     destination.name.ifBlank { AppStrings.SinNombre },
-                    size = AmType.RowTitle,
+                    size = AqType.RowTitle,
                     fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
                 )
-                AmText(
+                AqText(
                     destinationSubtitle(destination) ?: "",
-                    color = AmColor.TextSecondary,
+                    color = AqColor.TextSecondary,
                 )
             }
         }
@@ -330,16 +330,16 @@ fun DestinationRow(
 ) {
     // Fila del destino: miniatura QR a la izquierda, título con
     // identidad, metadato de sincronización y favorito a la derecha.
-    AmListRow(
+    AqListRow(
         title = destination.name.ifBlank { AppStrings.SinNombre },
         subtitle = destinationSubtitle(destination),
         showDivider = showDivider,
         onClick = { onAction(DestinationAction.Open(destination.id)) },
         leading = {
-            AmIconBadge(icon = AmIcons.QrCode, tone = AmTone.Neutral)
+            AqIconBadge(icon = AqIcons.QrCode, tone = AqTone.Neutral)
         },
         meta = {
-            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
                 // U-12/D9: el contenido decodificado NO aparece en la lista
                 // (privacidad + no parece un enlace); vive en el Detalle.
                 ElementSyncBadge(
@@ -348,7 +348,7 @@ fun DestinationRow(
             }
         },
         trailing = {
-            AmFavoriteToggle(
+            AqFavoriteToggle(
                 favorite = destination.favorite,
                 contentDescription = if (destination.favorite) {
                     AppStrings.QuitarFavorito

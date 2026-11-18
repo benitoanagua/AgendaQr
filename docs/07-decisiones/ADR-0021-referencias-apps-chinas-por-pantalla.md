@@ -37,17 +37,17 @@ ADR-0020 declaró la identidad de AgendaQr como "inspirada en aplicaciones móvi
 
 | Superficie | Implementación verificada | Brecha frente al patrón |
 |---|---|---|
-| S01 Inicio | Búsqueda como primer bloque, filtros `AmFilterChip`, carrusel de favoritos, `AmListBody` + filas, FAB con hub de tres creaciones (`AmIconBadge`) | Ninguna estructural |
-| Detalle de destino | `AmQrPreview` en `AmTappableCard` sobre lienzo blanco, dock con "Mostrar QR" primaria y "Compartir" secundaria, `AmCard` con `AmMetaRow` | Ninguna estructural |
-| S04–S05 Buscar y resultados | `AmSearchField` (48 dp mínimo, desviación documentada) como cuerpo, resultados agrupados por tipo con `AmSectionHeader` + `AmListBody`/`AmListRow` con marca de tipo a la izquierda y fecha final en actividad y comprobante, estados de vacío, carga y error | Ninguna estructural |
+| S01 Inicio | Búsqueda como primer bloque, filtros `AqFilterChip`, carrusel de favoritos, `AqListBody` + filas, FAB con hub de tres creaciones (`AqIconBadge`) | Ninguna estructural |
+| Detalle de destino | `AqQrPreview` en `AqTappableCard` sobre lienzo blanco, dock con "Mostrar QR" primaria y "Compartir" secundaria, `AqCard` con `AqMetaRow` | Ninguna estructural |
+| S04–S05 Buscar y resultados | `AqSearchField` (48 dp mínimo, desviación documentada) como cuerpo, resultados agrupados por tipo con `AqSectionHeader` + `AqListBody`/`AqListRow` con marca de tipo a la izquierda y fecha final en actividad y comprobante, estados de vacío, carga y error | Ninguna estructural |
 | S06 / S08 Contexto | Filas con marca tonal a la izquierda, título y descripción, separador discreto | Ninguna estructural |
-| Actividades y su detalle | Hero con píldora de tipo y cifra neutra, filas etiqueta-valor, `AmListRow` con `endMeta` | Ninguna estructural en Actividades; en Inicio no aplica (la fila lleva la acción de favorito en `trailing`) |
-| S09–S12 Importación | Resumen en `AmCard` con filas etiqueta-valor (`AmMetaRow`) de reconocidos, duplicados y pendientes; `PendingItemCard` por elemento con insignia de estado con texto; `ImportReviewScreen` con vista previa y evidencia decodificada en tarjeta | Ninguna estructural |
-| S00 Acceso local | Título y descripción, campos `AmTextField` agrupados en `AmListBody` con rótulo de sección, botón primario fijo al pie (`bottomAction`), bloque de demostración opcional | Ninguna estructural |
-| S02 Añadir | Texto de intención y controles de fuente agrupados por rótulo de sección (archivos y cámara) | Ninguna: los controles son botones, no filas, así que no usan `AmListBody` (deliberado) |
-| S07 Editor de actividad | Selector segmentado de tipo, `AmCard` de importe y moneda, grupos en `AmListBody` con rótulo de sección, botón primario fijo al pie | Ninguna estructural |
-| Navegación raíz | `AmNavBar` de 56 dp, color + etiqueta, sin píldora | Ninguna |
-| Formularios | `AmTextField` con etiqueta flotante persistente y guía hairline | Deliberada: la etiqueta persistente es un requisito de accesibilidad |
+| Actividades y su detalle | Hero con píldora de tipo y cifra neutra, filas etiqueta-valor, `AqListRow` con `endMeta` | Ninguna estructural en Actividades; en Inicio no aplica (la fila lleva la acción de favorito en `trailing`) |
+| S09–S12 Importación | Resumen en `AqCard` con filas etiqueta-valor (`AqMetaRow`) de reconocidos, duplicados y pendientes; `PendingItemCard` por elemento con insignia de estado con texto; `ImportReviewScreen` con vista previa y evidencia decodificada en tarjeta | Ninguna estructural |
+| S00 Acceso local | Título y descripción, campos `AqTextField` agrupados en `AqListBody` con rótulo de sección, botón primario fijo al pie (`bottomAction`), bloque de demostración opcional | Ninguna estructural |
+| S02 Añadir | Texto de intención y controles de fuente agrupados por rótulo de sección (archivos y cámara) | Ninguna: los controles son botones, no filas, así que no usan `AqListBody` (deliberado) |
+| S07 Editor de actividad | Selector segmentado de tipo, `AqCard` de importe y moneda, grupos en `AqListBody` con rótulo de sección, botón primario fijo al pie | Ninguna estructural |
+| Navegación raíz | `AqNavBar` de 56 dp, color + etiqueta, sin píldora | Ninguna |
+| Formularios | `AqTextField` con etiqueta flotante persistente y guía hairline | Deliberada: la etiqueta persistente es un requisito de accesibilidad |
 
 ### Brechas priorizadas
 
@@ -56,16 +56,16 @@ Prioridad por relación impacto/esfuerzo. El riesgo se mide sobre las capturas e
 | ID | Brecha | Superficie | Impacto | Esfuerzo | Riesgo |
 |---|---|---|---|---|---|
 | G1 | Botón primario fijo al pie (`bottomAction`) en lugar de dentro del scroll | S00 | Alto | Bajo | Alto en capturas (login-* y local-*); neutro en accesibilidad |
-| G2 | Estado del lote como insignia con texto (`AmStatusPill`/`AmTonalTag`) en vez de icono + texto suelto | S09–S12 | Alto | Medio | Alto en capturas (import-batch-*); refuerza la señal no dependiente del color |
-| G3 | Resumen del lote como filas etiqueta-valor (`AmMetaRow`) para reconocidos, duplicados y pendientes | S09–S12 | Medio | Medio | Alto en capturas (import-batch-*) |
-| G4 | Campos agrupados en tarjetas de ajustes (`AmListBody` + `AmSectionHeader`) | S00 | Medio | Medio | Alto en capturas (local-*); neutro en accesibilidad |
+| G2 | Estado del lote como insignia con texto (`AqStatusPill`/`AqTonalTag`) en vez de icono + texto suelto | S09–S12 | Alto | Medio | Alto en capturas (import-batch-*); refuerza la señal no dependiente del color |
+| G3 | Resumen del lote como filas etiqueta-valor (`AqMetaRow`) para reconocidos, duplicados y pendientes | S09–S12 | Medio | Medio | Alto en capturas (import-batch-*) |
+| G4 | Campos agrupados en tarjetas de ajustes (`AqListBody` + `AqSectionHeader`) | S00 | Medio | Medio | Alto en capturas (local-*); neutro en accesibilidad |
 | G5 | Evidencia decodificada como fila etiqueta-valor o tarjeta en vez de texto suelto | S09 | Bajo | Bajo | Medio en capturas (s09-review-*) |
 | G6 | `endMeta` con fecha en resultados de actividad y comprobante | S04–S05 | Medio | Alto (requiere campo de fecha en el dominio de búsqueda) | Medio en capturas (s04-search-*); neutro en accesibilidad |
 | G7 | Encabezados de sección para las fuentes de importación | S02 | Bajo | Bajo | Medio en capturas (s02-add-*) |
 | G8 | Encabezados de sección para los grupos del editor | S07 | Bajo | Bajo | Nulo (el editor no tiene captura directa) |
 | G9 | Marca de tipo a la izquierda en cada resultado | S04–S05 | Bajo | Bajo | Medio en capturas (s04-search-*); se solapa con el encabezado de sección |
 
-Ninguna de estas brechas se implementa sin decisión del propietario. Las que cambian capturas exigen regenerarlas y revisarlas en local (ADR-0007, ADR-0020 §8) antes de darse por válidas. La brecha del metadato a la derecha en `AmListRow` se cerró con el parámetro `endMeta`, aplicado a la fecha real de Actividades y de las actividades de un contexto.
+Ninguna de estas brechas se implementa sin decisión del propietario. Las que cambian capturas exigen regenerarlas y revisarlas en local (ADR-0007, ADR-0020 §8) antes de darse por válidas. La brecha del metadato a la derecha en `AqListRow` se cerró con el parámetro `endMeta`, aplicado a la fecha real de Actividades y de las actividades de un contexto.
 
 ### Brechas implementadas
 
@@ -74,12 +74,12 @@ El propietario aprobó las nueve brechas (G1–G9, incluida G6 con su excepción
 - **G8** — Encabezados de sección en los grupos del editor (S07): `Importe y moneda`, `Fecha y hora`, `Persona o entidad` y `Contexto`, con el rótulo pegado a su cuerpo. Commit: «Agrega encabezados de sección a los grupos del editor».
 - **G7** — Encabezados de sección para las fuentes de importación (S02): `Desde archivos` y `Desde la cámara`. Commit: «Agrega encabezados de sección a las fuentes de importación».
 - **G5** — Evidencia decodificada (S09) como tarjeta del sistema con etiqueta `Contenido` y valor, en lugar de texto suelto. Commit: «Presenta la evidencia decodificada como tarjeta en la revisión».
-- **G3** — Resumen del lote (S09–S12) como filas etiqueta-valor `AmMetaRow` (reconocidos, duplicados, pendientes) con su conteo a la derecha. Commit: «Convierte el resumen del lote en filas etiqueta-valor».
-- **G2** — Estado de cada elemento pendiente (S12) como insignia con texto `AmStatusPill` (`Posible duplicado` / `Pendiente de revisión`) en su propia línea, para no recortar el título a 320 dp ni con la fuente al 200 %; el glifo y el tono acompañan y el texto comunica. Commit: «Expresa el estado de cada pendiente como insignia con texto».
+- **G3** — Resumen del lote (S09–S12) como filas etiqueta-valor `AqMetaRow` (reconocidos, duplicados, pendientes) con su conteo a la derecha. Commit: «Convierte el resumen del lote en filas etiqueta-valor».
+- **G2** — Estado de cada elemento pendiente (S12) como insignia con texto `AqStatusPill` (`Posible duplicado` / `Pendiente de revisión`) en su propia línea, para no recortar el título a 320 dp ni con la fuente al 200 %; el glifo y el tono acompañan y el texto comunica. Commit: «Expresa el estado de cada pendiente como insignia con texto».
 - **G1** — Botón primario de S00 (Guardar PIN, Desbloquear) fijo al pie con `bottomAction` en lugar de dentro del scroll; la acción aplica `navigationBarsPadding` + `imePadding`, así que no queda bajo el teclado numérico. Commit: «Fija al pie la acción primaria del acceso local».
-- **G4** — Campos de S00 agrupados en `AmListBody` con rótulo de sección `Solo en este dispositivo`, en lugar de una columna suelta. Commit: «Agrupa en tarjeta los campos del acceso local».
+- **G4** — Campos de S00 agrupados en `AqListBody` con rótulo de sección `Solo en este dispositivo`, en lugar de una columna suelta. Commit: «Agrupa en tarjeta los campos del acceso local».
 - **G6** — Fecha final en los resultados de búsqueda (S04–S05): `AgendaSearchResult` gana el campo `dateMillis` (actividad = `occurredAt`; comprobante = `createdAt`) y la fila lo muestra con `endMeta`; el formato y el "ayer" quedan en la capa de presentación. Es la única brecha aprobada que toca el modelo de dominio: autorización explícita del propietario, excepción puntual a la regla de no tocar modelos de dominio de ADR-0020 §7. Commit: «Muestra la fecha en los resultados de búsqueda».
-- **G9** — Marca de tipo a la izquierda en cada resultado (S04–S05): `AmIconBadge` con el glifo del tipo (contexto, QR, actividad, comprobante). El encabezado de sección sigue siendo la señal textual del tipo; el glifo acompaña (nunca color/glifo solos). Commit: «Añade la marca de tipo a los resultados de búsqueda».
+- **G9** — Marca de tipo a la izquierda en cada resultado (S04–S05): `AqIconBadge` con el glifo del tipo (contexto, QR, actividad, comprobante). El encabezado de sección sigue siendo la señal textual del tipo; el glifo acompaña (nunca color/glifo solos). Commit: «Añade la marca de tipo a los resultados de búsqueda».
 
 ## Consecuencias
 

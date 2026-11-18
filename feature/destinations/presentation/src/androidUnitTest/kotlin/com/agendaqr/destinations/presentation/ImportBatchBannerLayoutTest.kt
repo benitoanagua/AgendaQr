@@ -17,13 +17,13 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
-import com.agendaqr.core.ui.theme.AmWeight
+import com.agendaqr.core.ui.theme.AqWeight
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.agendaqr.core.ui.theme.AmMetrics
-import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.domain.ImportBatch
 import com.agendaqr.destinations.domain.ImportCandidate
 import com.agendaqr.destinations.domain.ImportKind
@@ -70,7 +70,7 @@ class ImportBatchBannerLayoutTest {
         fontScale = scale
         compose.setContent {
             val density = LocalDensity.current.density
-            AmTheme(darkTheme = dark) {
+            AqTheme(darkTheme = dark) {
                 CompositionLocalProvider(LocalDensity provides Density(density, fontScale)) {
                     ImportBatchScreen(
                         state = ImportBatchUiState.Error(
@@ -125,7 +125,7 @@ class ImportBatchBannerLayoutTest {
     private fun assertBannerFillsContentWidth(label: String) {
         val root = compose.onRoot().getUnclippedBoundsInRoot()
         val banner = compose.onNode(bannerMatcher).getUnclippedBoundsInRoot()
-        val margin = AmSpacing.ScreenMargin
+        val margin = AqSpacing.ScreenMargin
         val bannerWidth = banner.right - banner.left
         val expectedWidth = root.right - root.left - margin * 2
         println(
@@ -184,7 +184,7 @@ class ImportBatchBannerLayoutTest {
 
     /**
      * TextLayoutResult del nodo de texto (dos lecturas estables sin
-     * fusionar, igual que en S02UiPolishTest/AmUiPolishContractTest).
+     * fusionar, igual que en S02UiPolishTest/AqUiPolishContractTest).
      */
     private fun layoutOf(text: String): TextLayoutResult {
         fun query(): TextLayoutResult? {
@@ -280,7 +280,7 @@ class ImportBatchBannerLayoutTest {
         )
         assertTrue(
             "título fontWeight=${titleStyle.fontWeight}, esperado SemiBold",
-            titleStyle.fontWeight == AmWeight.SemiBold,
+            titleStyle.fontWeight == AqWeight.SemiBold,
         )
         compose.onNodeWithText(title)
             .assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading))
@@ -304,7 +304,7 @@ class ImportBatchBannerLayoutTest {
         val banner = compose.onNode(bannerMatcher).getUnclippedBoundsInRoot()
         val titleBounds = compose.onNodeWithText(title).getUnclippedBoundsInRoot()
         val iconOffset = titleBounds.left - banner.left
-        val expectedOffset = AmSpacing.Md + AmMetrics.IconSizeCompact + AmSpacing.Sm
+        val expectedOffset = AqSpacing.Md + AqMetrics.IconSizeCompact + AqSpacing.Sm
         assertTrue(
             "el título no arranca tras el icono compacto (offset=$iconOffset, esperado $expectedOffset)",
             abs(iconOffset.value - expectedOffset.value) <= 1f,
@@ -366,7 +366,7 @@ class ImportBatchBannerLayoutTest {
     /** Compone S12 en estado Saved (confirmación de guardado). */
     private fun composeSavedScreen(dark: Boolean = false) {
         compose.setContent {
-            AmTheme(darkTheme = dark) {
+            AqTheme(darkTheme = dark) {
                 ImportBatchScreen(
                     state = ImportBatchUiState.Saved(batch = importBatchFixture()),
                     onAction = {},

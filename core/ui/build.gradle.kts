@@ -6,7 +6,7 @@ android {
     namespace = "com.agendaqr.core.ui"
     testOptions {
         // Pruebas de UI Compose sobre Robolectric en androidUnitTest
-        // (AmAccessibilityContractTest, AmResponsiveLayoutContractTest):
+        // (AqAccessibilityContractTest, AqResponsiveLayoutContractTest):
         // necesitan el manifest de test (ComponentActivity) y los recursos.
         unitTests.isIncludeAndroidResources = true
     }
@@ -20,7 +20,7 @@ kotlin {
             // superficie consumen androidx.compose.animation(.core).
             implementation(compose.animation)
             // WindowSizeClass para la adaptación compacto/medium/expanded
-            // (AmNavBar vs AmNavRail, contenido centrado con
+            // (AqNavBar vs AqNavRail, contenido centrado con
             // ContentMaxWidth).
             implementation(libs.material3.window.size)
             // Inter se distribuye como recurso multiplataforma (D-05): el

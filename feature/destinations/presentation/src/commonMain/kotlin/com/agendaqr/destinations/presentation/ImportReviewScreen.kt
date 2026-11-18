@@ -11,21 +11,21 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AmSnackbarHost
-import com.agendaqr.core.ui.components.AmCard
-import com.agendaqr.core.ui.components.AmEmptyState
-import com.agendaqr.core.ui.components.AmIcons
-import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.components.AmBottomAction
-import com.agendaqr.core.ui.components.AmQrPreview
-import com.agendaqr.core.ui.components.AmScreenScaffold
-import com.agendaqr.core.ui.components.AmTopBar
-import com.agendaqr.core.ui.components.AmStatusBanner
-import com.agendaqr.core.ui.components.AmTone
-import com.agendaqr.core.ui.theme.AmColor
-import com.agendaqr.core.ui.theme.AmMetrics
-import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.core.ui.components.AqSnackbarHost
+import com.agendaqr.core.ui.components.AqCard
+import com.agendaqr.core.ui.components.AqEmptyState
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.components.AqBottomAction
+import com.agendaqr.core.ui.components.AqQrPreview
+import com.agendaqr.core.ui.components.AqScreenScaffold
+import com.agendaqr.core.ui.components.AqTopBar
+import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.destinations.domain.QrAsset
 
 @Composable
@@ -42,20 +42,20 @@ fun ImportReviewScreen(
     // V1.4 (§12): "Revisar QR" en la barra superior; Guardar/Guardar todo es
     // el botón principal FIJO abajo (acción real de guardado). Mientras se
     // guarda no hay vuelta (§3).
-    AmScreenScaffold(
+    AqScreenScaffold(
         modifier = modifier,
         topBar = {
-            AmTopBar(
+            AqTopBar(
                 title = AppStrings.RevisarQr,
                 onBack = if (isSaving) null else onBack,
                 backLabel = AppStrings.Volver,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
         bottomAction = if (assets.isNotEmpty()) {
             {
-                AmBottomAction(
+                AqBottomAction(
                     label = when {
                         isSaving -> AppStrings.Guardando
                         assets.size == 1 -> AppStrings.Guardar
@@ -75,28 +75,28 @@ fun ImportReviewScreen(
                 onRetry = onSaveAll,
                 onClear = onClearError,
             )
-            AmStatusBanner(
+            AqStatusBanner(
                 title = err.what,
                 message = err.dataStatus,
-                tone = AmTone.Danger,
+                tone = AqTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,
             )
         }
         if (assets.isEmpty()) {
-            AmEmptyState(
-                icon = AmIcons.ScanLine,
+            AqEmptyState(
+                icon = AqIcons.ScanLine,
                 title = AppStrings.NoHayQrParaRevisar,
                 subtitle = AppStrings.VuelveEImportaDesdeCamara,
                 actionLabel = AppStrings.Volver,
                 onAction = onBack,
             )
         } else {
-            AmText(
+            AqText(
                 if (assets.size == 1) AppStrings.UnQrListoParaGuardar
                 else assets.size.toString() + AppStrings.QrListosParaGuardarSufijo,
-                size = AmType.Label,
-                color = AmColor.TextSecondary,
+                size = AqType.Label,
+                color = AqColor.TextSecondary,
             )
             if (assets.size == 1) {
                 // Un solo código: vista previa grande (aprovecha el ancho
@@ -106,9 +106,9 @@ fun ImportReviewScreen(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     // Vista previa + evidencia decodificada como grupo (8 dp).
-                    verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm, Alignment.CenterVertically),
+                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm, Alignment.CenterVertically),
                 ) {
-                    AmQrPreview(asset.encoded, size = AmMetrics.QrReviewSize)
+                    AqQrPreview(asset.encoded, size = AqMetrics.QrReviewSize)
                     asset.content?.takeIf { it.isNotBlank() }?.let { content ->
                         DecodedEvidenceCard(content)
                     }
@@ -116,7 +116,7 @@ fun ImportReviewScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth().weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                 ) {
                     itemsIndexed(assets) { _, asset ->
                         // S09/el código va centrado (antes quedaba pegado a
@@ -125,9 +125,9 @@ fun ImportReviewScreen(
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                         ) {
-                            AmQrPreview(asset.encoded)
+                            AqQrPreview(asset.encoded)
                             // S09: evidencia de lo que Agenda QR entendió — el texto
                             // decodificado, sin exponer payload técnico.
                             asset.content?.takeIf { it.isNotBlank() }?.let { content ->
@@ -148,17 +148,17 @@ fun ImportReviewScreen(
  */
 @Composable
 private fun DecodedEvidenceCard(content: String) {
-    AmCard {
-        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
-            AmText(
+    AqCard {
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
+            AqText(
                 AppStrings.Contenido,
-                size = AmType.Caption,
-                color = AmColor.TextSecondary,
+                size = AqType.Caption,
+                color = AqColor.TextSecondary,
             )
-            AmText(
+            AqText(
                 content,
-                size = AmType.Label,
-                color = AmColor.TextPrimary,
+                size = AqType.Label,
+                color = AqColor.TextPrimary,
                 maxLines = 2,
             )
         }

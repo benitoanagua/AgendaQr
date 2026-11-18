@@ -102,7 +102,7 @@ Construidas solo con tokens y componentes de Polaris; no son valores propios.
 | D-05 | Inter empaquetado | El sistema web usa fallback de fuentes; la app debe ser multiplataforma y consistente. |
 | D-06 | Escalado de fuente del sistema hasta 200 % | Requisito de accesibilidad móvil. La capacidad se conserva en producción; la verificación automática cubre 100 %/150 % y el 200 % queda como revisión manual (ADR-0007). |
 | D-07 | Derivación del tema oscuro | `dark-experimental` no cubre todos los roles (PV-02). |
-| D-08 | Proporciones internas de composición | Alfas de selección y fracciones de ancho/glifo/desplazamiento no son escalas publicadas; se concentran en `AmTokens.kt` y se conservan para no alterar el layout verificado. |
+| D-08 | Proporciones internas de composición | Alfas de selección y fracciones de ancho/glifo/desplazamiento no son escalas publicadas; se concentran en `AqTokens.kt` y se conservan para no alterar el layout verificado. |
 
 ## 5. Gobernanza
 
@@ -125,11 +125,11 @@ en el archivo señalado con valores tomados de tokens semánticos.
 
 | ID | API permitida | Archivo | Motivo |
 |---|---|---|---|
-| E-01 | `border` | `AmButtons.kt` | Borde de foco y variante contorneada |
-| E-02 | `border` | `AmLists.kt` | Borde de tarjetas y filas |
-| E-03 | `border` | `AmLists.kt` | Separador interno de tarjetas |
-| E-04 | `border` | `AmInputs.kt` | Foco y estado de error de campos |
-| E-05 | `shadow` | `AmLists.kt` | Elevación de tarjetas mediante `amElevation` |
+| E-01 | `border` | `AqButtons.kt` | Borde de foco y variante contorneada |
+| E-02 | `border` | `AqLists.kt` | Borde de tarjetas y filas |
+| E-03 | `border` | `AqLists.kt` | Separador interno de tarjetas |
+| E-04 | `border` | `AqInputs.kt` | Foco y estado de error de campos |
+| E-05 | `shadow` | `AqLists.kt` | Elevación de tarjetas mediante `aqElevation` |
 
 E-06 (elevación de botones) está retirada: los botones son planos y un
 registro sin uso se detecta como excepción zombie.

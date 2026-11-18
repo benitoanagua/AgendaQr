@@ -32,34 +32,34 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.junit.Assert.assertTrue
 import kotlin.math.abs
-import com.agendaqr.core.ui.components.AmIcon
-import com.agendaqr.core.ui.components.AmIconBadge
-import com.agendaqr.core.ui.components.AmListRow
-import com.agendaqr.core.ui.components.AmSegmentedControl
-import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.components.AmTonalTag
-import com.agendaqr.core.ui.components.AmTappableCard
-import com.agendaqr.core.ui.components.AmFilterChip
-import com.agendaqr.core.ui.components.AmScreenScaffold
-import com.agendaqr.core.ui.components.AmTopBar
-import com.agendaqr.core.ui.components.AmExtendedFab
-import com.agendaqr.core.ui.components.AmIcons
-import com.agendaqr.core.ui.components.AmSearchField
-import com.agendaqr.core.ui.components.AmListBody
-import com.agendaqr.core.ui.components.AmStatusPill
-import com.agendaqr.core.ui.components.AmStatusBanner
-import com.agendaqr.core.ui.components.AmEmptyState
-import com.agendaqr.core.ui.components.AmLoadMoreFooter
-import com.agendaqr.core.ui.components.AmSecondaryButton
-import com.agendaqr.core.ui.components.AmCompactAction
-import com.agendaqr.core.ui.components.AmHairline
-import com.agendaqr.core.ui.components.AmTone
+import com.agendaqr.core.ui.components.AqIcon
+import com.agendaqr.core.ui.components.AqIconBadge
+import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqSegmentedControl
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.components.AqTonalTag
+import com.agendaqr.core.ui.components.AqTappableCard
+import com.agendaqr.core.ui.components.AqFilterChip
+import com.agendaqr.core.ui.components.AqScreenScaffold
+import com.agendaqr.core.ui.components.AqTopBar
+import com.agendaqr.core.ui.components.AqExtendedFab
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqSearchField
+import com.agendaqr.core.ui.components.AqListBody
+import com.agendaqr.core.ui.components.AqStatusPill
+import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqEmptyState
+import com.agendaqr.core.ui.components.AqLoadMoreFooter
+import com.agendaqr.core.ui.components.AqSecondaryButton
+import com.agendaqr.core.ui.components.AqCompactAction
+import com.agendaqr.core.ui.components.AqHairline
+import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.components.content
-import com.agendaqr.core.ui.theme.AmTheme
-import com.agendaqr.core.ui.theme.AmColor
-import com.agendaqr.core.ui.theme.AmMetrics
-import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.core.ui.theme.AqTheme
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.destinations.domain.Operation
 import com.agendaqr.destinations.domain.OperationType
 import com.agendaqr.destinations.domain.BiometricAvailability
@@ -106,7 +106,7 @@ open class LayoutReferenceTest {
     val compose = createComposeRule()
 
     private fun verifyLayout(name: String, dark: Boolean, content: @androidx.compose.runtime.Composable () -> Unit) {
-        compose.setContent { AmTheme(darkTheme = dark) { content() } }
+        compose.setContent { AqTheme(darkTheme = dark) { content() } }
         compose.waitForIdle()
         assertLayoutHolds(name)
         captureStrict(name, dark)
@@ -182,7 +182,7 @@ open class LayoutReferenceTest {
             // Overlay: se mide y captura la VENTANA del diálogo completa
             // (su raíz semántica), no la raíz de la pantalla que queda
             // detrás. El test fija la ventana del host para que el diálogo
-            // mide el viewport declarado (AmDialog: 0.9 × 400 = 360 dp).
+            // mide el viewport declarado (AqDialog: 0.9 × 400 = 360 dp).
             val dialog = compose.onNode(dialogRootMatcher)
             val bounds = dialog.getUnclippedBoundsInRoot()
             if (Math.round((bounds.right - bounds.left).value) != 360) return
@@ -268,23 +268,23 @@ open class LayoutReferenceTest {
             onAction = {},
             // La captura de referencia incluye el chrome de producción: la
             // barra inferior aparece en las superficies raíz autenticadas.
-            navChrome = com.agendaqr.core.ui.components.AmNavChromeState(
+            navChrome = com.agendaqr.core.ui.components.AqNavChromeState(
                 destinations = listOf(
-                    com.agendaqr.core.ui.components.AmNavDestination(
+                    com.agendaqr.core.ui.components.AqNavDestination(
                         appRouteNameOf(AppRoute.Home), AppStrings.Inicio,
-                        com.agendaqr.core.ui.components.AmIcons.Home,
+                        com.agendaqr.core.ui.components.AqIcons.Home,
                     ),
-                    com.agendaqr.core.ui.components.AmNavDestination(
+                    com.agendaqr.core.ui.components.AqNavDestination(
                         appRouteNameOf(AppRoute.Search), AppStrings.Buscar,
-                        com.agendaqr.core.ui.components.AmIcons.Search,
+                        com.agendaqr.core.ui.components.AqIcons.Search,
                     ),
-                    com.agendaqr.core.ui.components.AmNavDestination(
+                    com.agendaqr.core.ui.components.AqNavDestination(
                         appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones,
-                        com.agendaqr.core.ui.components.AmIcons.Register,
+                        com.agendaqr.core.ui.components.AqIcons.Register,
                     ),
-                    com.agendaqr.core.ui.components.AmNavDestination(
+                    com.agendaqr.core.ui.components.AqNavDestination(
                         appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos,
-                        com.agendaqr.core.ui.components.AmIcons.Context,
+                        com.agendaqr.core.ui.components.AqIcons.Context,
                     ),
                 ),
                 selectedId = appRouteNameOf(AppRoute.Home),
@@ -306,23 +306,23 @@ open class LayoutReferenceTest {
                 isLoading = false,
             ),
             onAction = {},
-            navChrome = com.agendaqr.core.ui.components.AmNavChromeState(
+            navChrome = com.agendaqr.core.ui.components.AqNavChromeState(
                 destinations = listOf(
-                    com.agendaqr.core.ui.components.AmNavDestination(
+                    com.agendaqr.core.ui.components.AqNavDestination(
                         appRouteNameOf(AppRoute.Home), AppStrings.Inicio,
-                        com.agendaqr.core.ui.components.AmIcons.Home,
+                        com.agendaqr.core.ui.components.AqIcons.Home,
                     ),
-                    com.agendaqr.core.ui.components.AmNavDestination(
+                    com.agendaqr.core.ui.components.AqNavDestination(
                         appRouteNameOf(AppRoute.Search), AppStrings.Buscar,
-                        com.agendaqr.core.ui.components.AmIcons.Search,
+                        com.agendaqr.core.ui.components.AqIcons.Search,
                     ),
-                    com.agendaqr.core.ui.components.AmNavDestination(
+                    com.agendaqr.core.ui.components.AqNavDestination(
                         appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones,
-                        com.agendaqr.core.ui.components.AmIcons.Register,
+                        com.agendaqr.core.ui.components.AqIcons.Register,
                     ),
-                    com.agendaqr.core.ui.components.AmNavDestination(
+                    com.agendaqr.core.ui.components.AqNavDestination(
                         appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos,
-                        com.agendaqr.core.ui.components.AmIcons.Context,
+                        com.agendaqr.core.ui.components.AqIcons.Context,
                     ),
                 ),
                 selectedId = appRouteNameOf(AppRoute.Home),
@@ -370,14 +370,14 @@ open class LayoutReferenceTest {
     // Fallo de decodificación del QR: estado explícito (glifo sobre el
     // marco tonal), nunca un rectángulo blanco sin contexto (§9).
     @Test fun qr_preview_fallback_light() = verifyLayout("qr-preview-fallback-light", dark = false) {
-        com.agendaqr.core.ui.components.AmQrPreview(
+        com.agendaqr.core.ui.components.AqQrPreview(
             encodedQr = "!!",
             unavailableMessage = AppStrings.QrNoSePudoMostrar,
         )
     }
 
     @Test fun qr_preview_fallback_dark() = verifyLayout("qr-preview-fallback-dark", dark = true) {
-        com.agendaqr.core.ui.components.AmQrPreview(
+        com.agendaqr.core.ui.components.AqQrPreview(
             encodedQr = "!!",
             unavailableMessage = AppStrings.QrNoSePudoMostrar,
         )
@@ -455,7 +455,7 @@ open class LayoutReferenceTest {
 
     // El diálogo se abre en su propia ventana (una segunda raíz): su
     // contenido se verifica por semántica (ContextPickerDialogTest,
-    // AmDialogProminenceTest), no desde la raíz de la pantalla.
+    // AqDialogProminenceTest), no desde la raíz de la pantalla.
 
     @Test fun s09_review_light() = verifyLayout("s09-review-light", dark = false) {
         ImportReviewScreen(
@@ -553,8 +553,8 @@ open class LayoutReferenceTest {
     }
 
     // Patrón visual de la pantalla de operaciones (referencia de layout UX/UI):
-    // Usa la estructura real de OperationListScreen: AmScreenScaffold con
-    // márgenes, búsqueda, filtros, AmListBody con AmListRow.
+    // Usa la estructura real de OperationListScreen: AqScreenScaffold con
+    // márgenes, búsqueda, filtros, AqListBody con AqListRow.
     // OperationsScreen completo requiere OperationsViewModel (S10: no en Robolectric);
     // se compone el patrón visual con estado y callbacks explícitos.
     @androidx.compose.runtime.Composable
@@ -580,26 +580,26 @@ open class LayoutReferenceTest {
         val pagosCount = operations.count { it.type == OperationType.PAGO }
         val cobrosCount = operations.count { it.type == OperationType.COBRO }
 
-        AmScreenScaffold(
-            topBar = { AmTopBar(title = AppStrings.Operaciones) },
+        AqScreenScaffold(
+            topBar = { AqTopBar(title = AppStrings.Operaciones) },
             navDestinations = listOf(
-                com.agendaqr.core.ui.components.AmNavDestination("home", AppStrings.Inicio, AmIcons.Home),
-                com.agendaqr.core.ui.components.AmNavDestination("search", AppStrings.Buscar, AmIcons.Search),
-                com.agendaqr.core.ui.components.AmNavDestination("operations", AppStrings.Operaciones, AmIcons.Register),
-                com.agendaqr.core.ui.components.AmNavDestination("contexts", AppStrings.Contextos, AmIcons.Context),
+                com.agendaqr.core.ui.components.AqNavDestination("home", AppStrings.Inicio, AqIcons.Home),
+                com.agendaqr.core.ui.components.AqNavDestination("search", AppStrings.Buscar, AqIcons.Search),
+                com.agendaqr.core.ui.components.AqNavDestination("operations", AppStrings.Operaciones, AqIcons.Register),
+                com.agendaqr.core.ui.components.AqNavDestination("contexts", AppStrings.Contextos, AqIcons.Context),
             ),
             navSelectedId = "operations",
             onNavSelect = {},
             floatingActionButton = {
-                AmExtendedFab(
+                AqExtendedFab(
                     label = AppStrings.RegistrarOperacion,
-                    icon = AmIcons.Add,
+                    icon = AqIcons.Add,
                     onClick = {},
                 )
             },
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                AmSearchField(
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                AqSearchField(
                     value = "",
                     onValueChange = {},
                     label = AppStrings.Buscar,
@@ -607,21 +607,21 @@ open class LayoutReferenceTest {
                     onClear = {},
                     clearLabel = AppStrings.Limpiar,
                 )
-                AmSegmentedControl(
+                AqSegmentedControl(
                     options = listOf(
-                        com.agendaqr.core.ui.components.AmSegmentedOption(
+                        com.agendaqr.core.ui.components.AqSegmentedOption(
                             label = AppStrings.Todas,
                             count = operations.size,
                         ),
-                        com.agendaqr.core.ui.components.AmSegmentedOption(
+                        com.agendaqr.core.ui.components.AqSegmentedOption(
                             label = AppStrings.Pago,
-                            icon = AmIcons.Expense,
+                            icon = AqIcons.Expense,
                             count = pagosCount,
                         ),
-                        com.agendaqr.core.ui.components.AmSegmentedOption(
+                        com.agendaqr.core.ui.components.AqSegmentedOption(
                             label = AppStrings.Cobro,
-                            icon = AmIcons.Income,
-                            activeTone = AmTone.Success,
+                            icon = AqIcons.Income,
+                            activeTone = AqTone.Success,
                             count = cobrosCount,
                         ),
                     ),
@@ -632,33 +632,33 @@ open class LayoutReferenceTest {
             }
 
             if (filtered.isNotEmpty()) {
-                AmListBody {
+                AqListBody {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = AmSpacing.Md, vertical = AmSpacing.Sm),
+                            .padding(horizontal = AqSpacing.Md, vertical = AqSpacing.Sm),
                         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Row(
                             verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                         ) {
-                            AmIcon(
-                                imageVector = AmIcons.Calendar,
+                            AqIcon(
+                                imageVector = AqIcons.Calendar,
                                 contentDescription = null,
-                                size = AmMetrics.IconSizeCompact,
-                                tint = AmColor.AccentText,
+                                size = AqMetrics.IconSizeCompact,
+                                tint = AqColor.AccentText,
                             )
                             Column {
-                                AmText(
+                                AqText(
                                     monthYearLabel(filtered.first().occurredAt),
-                                    size = AmType.BodySmall,
+                                    size = AqType.BodySmall,
                                     fontWeight = FontWeight.SemiBold,
                                 )
-                                AmText(
+                                AqText(
                                     filtered.size.toString() + " " + AppStrings.RegistrosLocales,
-                                    color = AmColor.TextSecondary,
+                                    color = AqColor.TextSecondary,
                                 )
                             }
                         }
@@ -668,64 +668,64 @@ open class LayoutReferenceTest {
             }
 
             if (filtered.isEmpty()) {
-                AmEmptyState(
-                    icon = AmIcons.Register,
+                AqEmptyState(
+                    icon = AqIcons.Register,
                     title = AppStrings.AunNoHayOperaciones,
                     subtitle = AppStrings.registerFirstPaymentHint,
                     actionLabel = AppStrings.RegistrarOperacion,
                     onAction = {},
                 )
             } else {
-                AmListBody(
+                AqListBody(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                 ) {
                     Column {
                         filtered.forEachIndexed { index, operation ->
                             val amountText = operationAmountText(operation)
                             val amountColor = if (operation.type == OperationType.COBRO) {
-                                AmColor.Success
+                                AqColor.Success
                             } else {
-                                AmColor.Danger
+                                AqColor.Danger
                             }
                             val isLast = index == filtered.lastIndex
 
-                            AmListRow(
+                            AqListRow(
                                 modifier = Modifier.fillMaxWidth(),
                                 title = operationTitle(operation),
                                 subtitle = operation.concept?.takeIf { it.isNotBlank() },
                                 endMeta = formatDate(operation.occurredAt),
                                 leading = {
-                                    AmIconBadge(
+                                    AqIconBadge(
                                         icon = operationTypeIcon(operation.type),
                                         tone = operationTypeTone(operation.type),
                                     )
                                 },
                                 trailing = {
                                     amountText?.let {
-                                        AmText(
+                                        AqText(
                                             it,
-                                            size = AmType.SectionHeader,
+                                            size = AqType.SectionHeader,
                                             fontWeight = FontWeight.SemiBold,
                                             color = amountColor,
                                         )
                                     }
                                 },
                                 meta = {
-                                    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+                                    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+                                            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
                                         ) {
-                                            AmIcon(
-                                                imageVector = AmIcons.Clock,
+                                            AqIcon(
+                                                imageVector = AqIcons.Clock,
                                                 contentDescription = null,
-                                                size = AmMetrics.IconSizeCompact,
-                                                tint = AmColor.TextTertiary,
+                                                size = AqMetrics.IconSizeCompact,
+                                                tint = AqColor.TextTertiary,
                                             )
-                                            AmText(
+                                            AqText(
                                                 AppStrings.RegPrefijo + formatTime(operation.createdAt),
-                                                color = AmColor.TextTertiary,
-                                                size = AmType.Caption,
+                                                color = AqColor.TextTertiary,
+                                                size = AqType.Caption,
                                             )
                                         }
                                     }
@@ -739,8 +739,8 @@ open class LayoutReferenceTest {
                 }
 
                 if (filtered.size < operations.size) {
-                    AmLoadMoreFooter(
-                        modifier = Modifier.fillMaxWidth().padding(top = AmSpacing.Sm),
+                    AqLoadMoreFooter(
+                        modifier = Modifier.fillMaxWidth().padding(top = AqSpacing.Sm),
                         onLoadMore = {},
                         loadMoreLabel = AppStrings.CargarMas,
                         loadingLabel = AppStrings.Cargando,
@@ -1437,24 +1437,24 @@ open class LayoutReferenceTest {
         )
     }
 
-    internal fun rootChrome(selected: String): com.agendaqr.core.ui.components.AmNavChromeState {
-        return com.agendaqr.core.ui.components.AmNavChromeState(
+    internal fun rootChrome(selected: String): com.agendaqr.core.ui.components.AqNavChromeState {
+        return com.agendaqr.core.ui.components.AqNavChromeState(
             destinations = listOf(
-                com.agendaqr.core.ui.components.AmNavDestination(
+                com.agendaqr.core.ui.components.AqNavDestination(
                     appRouteNameOf(AppRoute.Home), AppStrings.Inicio,
-                    com.agendaqr.core.ui.components.AmIcons.Home,
+                    com.agendaqr.core.ui.components.AqIcons.Home,
                 ),
-                com.agendaqr.core.ui.components.AmNavDestination(
+                com.agendaqr.core.ui.components.AqNavDestination(
                     appRouteNameOf(AppRoute.Search), AppStrings.Buscar,
-                    com.agendaqr.core.ui.components.AmIcons.Search,
+                    com.agendaqr.core.ui.components.AqIcons.Search,
                 ),
-                com.agendaqr.core.ui.components.AmNavDestination(
+                com.agendaqr.core.ui.components.AqNavDestination(
                     appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones,
-                    com.agendaqr.core.ui.components.AmIcons.Register,
+                    com.agendaqr.core.ui.components.AqIcons.Register,
                 ),
-                com.agendaqr.core.ui.components.AmNavDestination(
+                com.agendaqr.core.ui.components.AqNavDestination(
                     appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos,
-                    com.agendaqr.core.ui.components.AmIcons.Context,
+                    com.agendaqr.core.ui.components.AqIcons.Context,
                 ),
             ),
             selectedId = selected,
@@ -1594,7 +1594,7 @@ open class LayoutReferenceTest {
     @org.robolectric.annotation.Config(qualifiers = "w400dp-h840dp")
     fun context_picker_light() {
         compose.setContent {
-            AmTheme(darkTheme = false) {
+            AqTheme(darkTheme = false) {
                 ContextPickerDialog(
                     contexts = contextsFixture().contexts,
                     selection = ContextSelection(contextId = "ctx-1"),
@@ -1614,7 +1614,7 @@ open class LayoutReferenceTest {
     @org.robolectric.annotation.Config(qualifiers = "w400dp-h840dp")
     fun context_picker_dark() {
         compose.setContent {
-            AmTheme(darkTheme = true) {
+            AqTheme(darkTheme = true) {
                 ContextPickerDialog(
                     contexts = contextsFixture().contexts,
                     selection = ContextSelection(contextId = "ctx-1"),
@@ -1652,7 +1652,7 @@ open class LayoutReferenceTest {
      */
     @Test fun account_error_light() {
         compose.setContent {
-            AmTheme(darkTheme = false) {
+            AqTheme(darkTheme = false) {
                 AccountScreen(
                     navChrome = null,
                     appHosts = null,
@@ -1674,7 +1674,7 @@ open class LayoutReferenceTest {
 
     @Test fun account_error_dark() {
         compose.setContent {
-            AmTheme(darkTheme = true) {
+            AqTheme(darkTheme = true) {
                 AccountScreen(
                     navChrome = null,
                     appHosts = null,
@@ -1924,7 +1924,7 @@ open class LayoutReferenceTest {
     // entorno, sin hardware simulado).
     @Test fun camera_capture_light() {
         compose.setContent {
-            AmTheme(darkTheme = false) {
+            AqTheme(darkTheme = false) {
                 CameraQrCaptureOverlay(onQr = {}, onDismiss = {})
             }
         }
@@ -1935,7 +1935,7 @@ open class LayoutReferenceTest {
 
     @Test fun camera_capture_dark() {
         compose.setContent {
-            AmTheme(darkTheme = true) {
+            AqTheme(darkTheme = true) {
                 CameraQrCaptureOverlay(onQr = {}, onDismiss = {})
             }
         }

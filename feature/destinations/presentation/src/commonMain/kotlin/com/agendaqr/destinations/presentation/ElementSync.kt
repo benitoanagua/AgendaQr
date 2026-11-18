@@ -1,9 +1,9 @@
 package com.agendaqr.destinations.presentation
 
-import com.agendaqr.core.ui.components.AmSyncIndicator
-import com.agendaqr.core.ui.components.AmSyncLabels
-import com.agendaqr.core.ui.components.AmSyncState
-import com.agendaqr.core.ui.components.AmTone
+import com.agendaqr.core.ui.components.AqSyncIndicator
+import com.agendaqr.core.ui.components.AqSyncLabels
+import com.agendaqr.core.ui.components.AqSyncState
+import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.destinations.data.PendingSyncMutation
 import com.agendaqr.destinations.data.SyncMutationState
 import com.agendaqr.destinations.data.SyncResource
@@ -46,11 +46,11 @@ enum class ElementSyncStatus(val label: String) {
     Dead("No se pudo sincronizar"),
 }
 
-fun ElementSyncStatus.tone(): AmTone = when (this) {
-    ElementSyncStatus.Synced -> AmTone.Success
-    ElementSyncStatus.Pending -> AmTone.Neutral
-    ElementSyncStatus.Syncing -> AmTone.Info
-    ElementSyncStatus.ErrorRecoverable, ElementSyncStatus.Dead -> AmTone.Danger
+fun ElementSyncStatus.tone(): AqTone = when (this) {
+    ElementSyncStatus.Synced -> AqTone.Success
+    ElementSyncStatus.Pending -> AqTone.Neutral
+    ElementSyncStatus.Syncing -> AqTone.Info
+    ElementSyncStatus.ErrorRecoverable, ElementSyncStatus.Dead -> AqTone.Danger
 }
 
 /**
@@ -62,23 +62,23 @@ fun ElementSyncStatus.tone(): AmTone = when (this) {
  * que el usuario necesita saber (Pendiente, Sincronizando o Error). El
  * estado sigue siendo consultable en el detalle.
  */
-private fun ElementSyncStatus.toAmSyncState(): AmSyncState = when (this) {
-    ElementSyncStatus.Synced -> AmSyncState.Synced
-    ElementSyncStatus.Pending -> AmSyncState.Pending
-    ElementSyncStatus.Syncing -> AmSyncState.Syncing
-    ElementSyncStatus.ErrorRecoverable, ElementSyncStatus.Dead -> AmSyncState.Error
+private fun ElementSyncStatus.toAmSyncState(): AqSyncState = when (this) {
+    ElementSyncStatus.Synced -> AqSyncState.Synced
+    ElementSyncStatus.Pending -> AqSyncState.Pending
+    ElementSyncStatus.Syncing -> AqSyncState.Syncing
+    ElementSyncStatus.ErrorRecoverable, ElementSyncStatus.Dead -> AqSyncState.Error
 }
 
 @Composable
 fun ElementSyncBadge(status: ElementSyncStatus, showWhenSynced: Boolean = false) {
-    val labels = AmSyncLabels(
+    val labels = AqSyncLabels(
         synced = ElementSyncStatus.Synced.label,
         pending = ElementSyncStatus.Pending.label,
         syncing = ElementSyncStatus.Syncing.label,
         error = status.label,
         dead = ElementSyncStatus.Dead.label,
     )
-    AmSyncIndicator(
+    AqSyncIndicator(
         state = status.toAmSyncState(),
         labels = labels,
         showWhenSynced = showWhenSynced,

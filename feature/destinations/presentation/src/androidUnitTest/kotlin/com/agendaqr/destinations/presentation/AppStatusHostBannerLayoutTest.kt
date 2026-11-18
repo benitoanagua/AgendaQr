@@ -6,10 +6,10 @@ import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
-import com.agendaqr.core.ui.components.AmScreenScaffold
-import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.components.AqScreenScaffold
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqTheme
 import kotlin.math.abs
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -20,12 +20,12 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
 /**
- * AppStatusHost vive en el slot `statusContent` de [AmScreenScaffold]: a
+ * AppStatusHost vive en el slot `statusContent` de [AqScreenScaffold]: a
  * ancho completo bajo la barra superior, FUERA del margen del contenido
  * (edge-to-edge). Sus banners piden `screenMargin = ScreenMargin` para
  * quedar al ancho útil con un solo margen — la misma geometría que los
  * banners dentro del contenido de las pantallas (contrato revisado en
- * [AmStatusBannerLayoutTest] y [ImportBatchBannerLayoutTest]).
+ * [AqStatusBannerLayoutTest] y [ImportBatchBannerLayoutTest]).
  */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -43,8 +43,8 @@ class AppStatusHostBannerLayoutTest {
     /** Rama 1 del host: error recuperable de importación (título+acción). */
     private fun composeImportErrorHost(dark: Boolean = false) {
         compose.setContent {
-            AmTheme(darkTheme = dark) {
-                AmScreenScaffold(
+            AqTheme(darkTheme = dark) {
+                AqScreenScaffold(
                     statusContent = {
                         AppStatusHost(
                             importError = "No se pudo leer el archivo seleccionado",
@@ -56,7 +56,7 @@ class AppStatusHostBannerLayoutTest {
                         )
                     },
                 ) {
-                    AmText("Contenido de la pantalla")
+                    AqText("Contenido de la pantalla")
                 }
             }
         }
@@ -66,8 +66,8 @@ class AppStatusHostBannerLayoutTest {
     /** Rama 2 del host: mutaciones FAILED con "Reintentar ahora". */
     private fun composeFailedSyncHost(dark: Boolean = false) {
         compose.setContent {
-            AmTheme(darkTheme = dark) {
-                AmScreenScaffold(
+            AqTheme(darkTheme = dark) {
+                AqScreenScaffold(
                     statusContent = {
                         AppStatusHost(
                             importError = null,
@@ -79,7 +79,7 @@ class AppStatusHostBannerLayoutTest {
                         )
                     },
                 ) {
-                    AmText("Contenido de la pantalla")
+                    AqText("Contenido de la pantalla")
                 }
             }
         }
@@ -90,7 +90,7 @@ class AppStatusHostBannerLayoutTest {
     private fun assertSingleScreenMargin(label: String) {
         val root = compose.onRoot().getBoundsInRoot()
         val banner = compose.onNode(bannerMatcher).getBoundsInRoot()
-        val margin = AmSpacing.ScreenMargin
+        val margin = AqSpacing.ScreenMargin
         val width = banner.right - banner.left
         val useful = root.right - root.left - margin * 2
         println(

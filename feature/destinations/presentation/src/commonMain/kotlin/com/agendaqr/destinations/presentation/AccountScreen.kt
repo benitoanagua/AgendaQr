@@ -9,18 +9,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.agendaqr.core.ui.components.AmLoading
-import com.agendaqr.core.ui.components.AmNavChromeState
-import com.agendaqr.core.ui.components.AmScreenScaffold
-import com.agendaqr.core.ui.components.AmSecondaryButton
-import com.agendaqr.core.ui.components.AmSnackbarHost
-import com.agendaqr.core.ui.components.AmStatusBanner
-import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.components.AmTone
-import com.agendaqr.core.ui.components.AmTopBar
-import com.agendaqr.core.ui.theme.AmColor
-import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.core.ui.components.AqLoading
+import com.agendaqr.core.ui.components.AqNavChromeState
+import com.agendaqr.core.ui.components.AqScreenScaffold
+import com.agendaqr.core.ui.components.AqSecondaryButton
+import com.agendaqr.core.ui.components.AqSnackbarHost
+import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.components.AqTopBar
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.destinations.data.createAuthRepository
 import com.agendaqr.destinations.domain.AuthState
 import com.agendaqr.destinations.domain.ObserveAuthStateUseCase
@@ -38,7 +38,7 @@ import com.agendaqr.destinations.domain.SignUpUseCase
  */
 @Composable
 internal fun AccountScreen(
-    navChrome: AmNavChromeState?,
+    navChrome: AqNavChromeState?,
     appHosts: AppHosts?,
     onBack: () -> Unit,
     authRepository: com.agendaqr.destinations.domain.AuthRepository? = null,
@@ -56,10 +56,10 @@ internal fun AccountScreen(
     }
     val authState by authViewModel.state.collectAsStateWithLifecycle()
 
-    AmScreenScaffold(
+    AqScreenScaffold(
         scrollable = true,
         topBar = {
-            AmTopBar(
+            AqTopBar(
                 title = AppStrings.CuentaYRespaldo,
                 onBack = onBack,
                 backLabel = AppStrings.Volver,
@@ -68,12 +68,12 @@ internal fun AccountScreen(
         navDestinations = navChrome?.destinations.orEmpty(),
         navSelectedId = navChrome?.selectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
-        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
-        verticalArrangement = Arrangement.spacedBy(AmSpacing.Lg),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
     ) {
         when (val session = authState.authState) {
-            AuthState.Loading -> AmLoading()
+            AuthState.Loading -> AqLoading()
             AuthState.SignedOut -> AuthForm(
                 heading = null,
                 description = AppStrings.ConectarCuentaDescripcion,
@@ -87,22 +87,22 @@ internal fun AccountScreen(
             )
             is AuthState.SignedIn -> Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(AmSpacing.Md),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
                 horizontalAlignment = Alignment.Start,
             ) {
-                AmText(
+                AqText(
                     AppStrings.CuentaConectada,
-                    size = AmType.SectionHeader,
-                    color = AmColor.TextPrimary,
+                    size = AqType.SectionHeader,
+                    color = AqColor.TextPrimary,
                 )
                 session.user.email?.let { email ->
-                    AmText(email, size = AmType.Body, color = AmColor.TextSecondary)
+                    AqText(email, size = AqType.Body, color = AqColor.TextSecondary)
                 }
-                AmStatusBanner(
+                AqStatusBanner(
                     message = AppStrings.DatosLocalesSeConservan,
-                    tone = AmTone.Info,
+                    tone = AqTone.Info,
                 )
-                AmSecondaryButton(
+                AqSecondaryButton(
                     AppStrings.DesconectarCuenta,
                     onClick = authViewModel::signOut,
                     modifier = Modifier.fillMaxWidth(),

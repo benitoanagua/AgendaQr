@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.domain.Destination
 import com.agendaqr.destinations.domain.QrAsset
 import org.junit.Rule
@@ -54,7 +54,7 @@ class QrFullscreenTest {
         onShare: () -> Unit = {},
     ) {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 DestinationDetailScreen(
                     destination = destination(),
                     onShowQr = onShowQr,
@@ -94,7 +94,7 @@ class QrFullscreenTest {
     fun fullscreen_shows_the_destination_name_and_keeps_back() {
         var backed = false
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 QrFullscreenPattern(
                     encodedQr = "eA==",
                     destinationName = "Carniceria Don Bife",
@@ -122,7 +122,7 @@ class QrFullscreenTest {
             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON != 0
         compose.setContent {
             CompositionLocalProvider(LocalContext provides activity) {
-                AmTheme {
+                AqTheme {
                     if (showEffects) QrDisplayScreenEffects()
                 }
             }

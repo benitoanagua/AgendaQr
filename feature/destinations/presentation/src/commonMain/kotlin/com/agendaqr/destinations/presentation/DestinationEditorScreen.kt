@@ -13,20 +13,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AmSnackbarHost
-import com.agendaqr.core.ui.components.AmBottomAction
-import com.agendaqr.core.ui.components.AmListBody
-import com.agendaqr.core.ui.components.AmScreenScaffold
-import com.agendaqr.core.ui.components.AmQrPreview
-import com.agendaqr.core.ui.components.AmSecondaryButton
-import com.agendaqr.core.ui.components.AmStatusBanner
-import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.components.AmTextField
-import com.agendaqr.core.ui.components.AmTopBar
-import com.agendaqr.core.ui.components.AmTone
-import com.agendaqr.core.ui.theme.AmColor
-import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.core.ui.components.AqSnackbarHost
+import com.agendaqr.core.ui.components.AqBottomAction
+import com.agendaqr.core.ui.components.AqListBody
+import com.agendaqr.core.ui.components.AqScreenScaffold
+import com.agendaqr.core.ui.components.AqQrPreview
+import com.agendaqr.core.ui.components.AqSecondaryButton
+import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.components.AqTextField
+import com.agendaqr.core.ui.components.AqTopBar
+import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.destinations.domain.Context
 import com.agendaqr.destinations.domain.Destination
 import com.agendaqr.destinations.domain.QrAsset
@@ -97,27 +97,27 @@ private fun DestinationEditorContent(
     // V1.4 (§12): "Editar QR" en la barra superior con flecha atrás; Guardar
     // es el botón principal FIJO abajo (acción real de guardado), nunca
     // recortado por el scroll. Mientras se guarda no hay vuelta (§3).
-    AmScreenScaffold(
+    AqScreenScaffold(
         scrollable = true,
         topBar = {
-            AmTopBar(
+            AqTopBar(
                 title = AppStrings.EditarQr,
                 onBack = if (isSaving) null else onBack,
                 backLabel = AppStrings.Volver,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
         // Grupos funcionales (formulario · contexto · imagen · vista previa)
         // separados a 20 dp; dentro de cada grupo la distancia es menor
         // (hairlines del cuerpo de lista, 8 dp del grupo de importación).
-        verticalArrangement = Arrangement.spacedBy(AmSpacing.Xl),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Xl),
         bottomAction = {
-            AmBottomAction(
+            AqBottomAction(
                 label = if (isSaving) AppStrings.Guardando else AppStrings.Guardar,
                 onClick = {
                     submitted = true
-                    if (name.isBlank() || qr.encoded.isBlank()) return@AmBottomAction
+                    if (name.isBlank() || qr.encoded.isBlank()) return@AqBottomAction
                     val now = com.agendaqr.destinations.domain.nowMillis()
                     onSave(
                         existing.copy(
@@ -140,10 +140,10 @@ private fun DestinationEditorContent(
                 onRetry = onRetryError,
                 onClear = onClearError,
             )
-            AmStatusBanner(
+            AqStatusBanner(
                 title = err.what,
                 message = err.dataStatus,
-                tone = AmTone.Danger,
+                tone = AqTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,
             )
@@ -151,18 +151,18 @@ private fun DestinationEditorContent(
         // Sección de información: formulario agrupado (los campos sin
         // borde dibujan sus hairlines sobre el cuerpo; la nota crece con
         // su contenido en vez de reservar un bloque fijo).
-        AmListBody {
-            AmTextField(
+        AqListBody {
+            AqTextField(
                 label = AppStrings.Nombre,
                 value = name,
                 onValueChange = { name = it },
                 isError = nameError,
                 errorMessage = if (nameError) AppStrings.ElNombreEsObligatorio else null,
             )
-            AmTextField(label = AppStrings.Categoria, value = category, onValueChange = { category = it })
-            AmTextField(label = AppStrings.Nota, value = note, onValueChange = { note = it }, singleLine = false)
+            AqTextField(label = AppStrings.Categoria, value = category, onValueChange = { category = it })
+            AqTextField(label = AppStrings.Nota, value = note, onValueChange = { note = it }, singleLine = false)
         }
-        AmSecondaryButton(
+        AqSecondaryButton(
             label = selection.contextId?.let { id -> AppStrings.ParaContextoElegido + (contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico) } ?: AppStrings.ParaElegirContexto,
             onClick = { selection = selection.openPicker() },
         )
@@ -177,9 +177,9 @@ private fun DestinationEditorContent(
             }
         })
         if (qr.encoded.isNotBlank()) {
-            AmQrPreview(qr.encoded)
+            AqQrPreview(qr.encoded)
         } else if (qrError) {
-            AmText(AppStrings.FaltaElCodigoQrUsa, size = AmType.Caption, color = AmColor.Danger)
+            AqText(AppStrings.FaltaElCodigoQrUsa, size = AqType.Caption, color = AqColor.Danger)
         }
     }
     if (selection.pickerOpen) {

@@ -11,7 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AmSnackbarHost
+import com.agendaqr.core.ui.components.AqSnackbarHost
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.domain.*
@@ -31,16 +31,16 @@ internal fun OperationTypeSelector(
     onSelect: (OperationType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AmSegmentedControl(
+    AqSegmentedControl(
         options = listOf(
-            com.agendaqr.core.ui.components.AmSegmentedOption(
+            com.agendaqr.core.ui.components.AqSegmentedOption(
                 label = AppStrings.Pago,
-                icon = com.agendaqr.core.ui.components.AmIcons.Expense,
+                icon = com.agendaqr.core.ui.components.AqIcons.Expense,
             ),
-            com.agendaqr.core.ui.components.AmSegmentedOption(
+            com.agendaqr.core.ui.components.AqSegmentedOption(
                 label = AppStrings.Cobro,
-                icon = com.agendaqr.core.ui.components.AmIcons.Income,
-                activeTone = com.agendaqr.core.ui.components.AmTone.Success,
+                icon = com.agendaqr.core.ui.components.AqIcons.Income,
+                activeTone = com.agendaqr.core.ui.components.AqTone.Success,
             ),
         ),
         selectedIndex = if (type == OperationType.PAGO) 0 else 1,
@@ -59,8 +59,8 @@ private fun EditorSection(
     label: String,
     content: @Composable () -> Unit,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-        AmSectionHeader(text = label)
+    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+        AqSectionHeader(text = label)
         content()
     }
 }
@@ -150,22 +150,22 @@ internal fun OperationEditorScreen(
     // V1.4 (§12): "Registrar actividad"/"Editar actividad" en la barra
     // superior; Guardar es el botón principal FIJO abajo (acción real de
     // guardado), nunca recortado por el scroll.
-    AmScreenScaffold(
+    AqScreenScaffold(
         scrollable = true,
         topBar = {
-            AmTopBar(
+            AqTopBar(
                 title = if (existing == null) AppStrings.RegistrarOperacion else AppStrings.EditarOperacion,
                 onBack = { viewModel.onAction(OperationAction.Back) },
                 backLabel = AppStrings.Volver,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
         // Grupos funcionales (tipo · datos · contexto · detalle) separados
         // a 20 dp; dentro de cada grupo la distancia es menor.
-        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(AmSpacing.Xl),
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(AqSpacing.Xl),
         bottomAction = {
-            AmBottomAction(
+            AqBottomAction(
                 label = if (saving) {
                     AppStrings.Guardando
                 } else if (existing == null) {
@@ -178,7 +178,7 @@ internal fun OperationEditorScreen(
                     // vivo ya es visible (o aparece ahora).
                     if (!isValidAmount(amount)) {
                         amountEdited = true
-                        return@AmBottomAction
+                        return@AqBottomAction
                     }
                     val at = occurredAtMillis
                     val candidate = buildCandidate(at)
@@ -206,10 +206,10 @@ internal fun OperationEditorScreen(
                 onRetry = { viewModel.onAction(OperationAction.RetryFailed) },
                 onClear = { viewModel.onAction(OperationAction.ClearError) },
             )
-            AmStatusBanner(
+            AqStatusBanner(
                 title = err.what,
                 message = err.dataStatus,
-                tone = AmTone.Danger,
+                tone = AqTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,
             )
@@ -224,12 +224,12 @@ internal fun OperationEditorScreen(
         // Importe + moneda (U-07, D6): grupo con rótulo; entrada grande con
         // borrado y error.
         EditorSection(AppStrings.ImporteYMoneda) {
-            AmCard {
+            AqCard {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                 ) {
-                    AmAmountField(
+                    AqAmountField(
                         label = AppStrings.MontoOpcional,
                         value = amount,
                         onValueChange = {
@@ -245,19 +245,19 @@ internal fun OperationEditorScreen(
                     if (amountInvalid) {
                         Row(
                             verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
+                            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
                         ) {
-                            AmIcon(
-                                imageVector = com.agendaqr.core.ui.components.AmIcons.Cancel,
+                            AqIcon(
+                                imageVector = com.agendaqr.core.ui.components.AqIcons.Cancel,
                                 contentDescription = null,
-                                size = com.agendaqr.core.ui.theme.AmMetrics.IconSizeCompact,
-                                tint = AmColor.Danger,
+                                size = com.agendaqr.core.ui.theme.AqMetrics.IconSizeCompact,
+                                tint = AqColor.Danger,
                             )
-                            AmText(AppStrings.ImporteInvalido, color = AmColor.Danger)
+                            AqText(AppStrings.ImporteInvalido, color = AqColor.Danger)
                         }
                     }
-                    Row(horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                        AmFilterChip(
+                    Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                        AqFilterChip(
                             label = AppStrings.MonedaBob,
                             selected = currency == AppStrings.MonedaBob,
                             onClick = {
@@ -265,7 +265,7 @@ internal fun OperationEditorScreen(
                                 currencyCustomOpen = false
                             },
                         )
-                        AmFilterChip(
+                        AqFilterChip(
                             label = AppStrings.MonedaUsd,
                             selected = currency == AppStrings.MonedaUsd,
                             onClick = {
@@ -273,7 +273,7 @@ internal fun OperationEditorScreen(
                                 currencyCustomOpen = false
                             },
                         )
-                        AmFilterChip(
+                        AqFilterChip(
                             label = AppStrings.MonedaOtra,
                             selected = currencyCustomOpen,
                             onClick = {
@@ -285,11 +285,11 @@ internal fun OperationEditorScreen(
                         )
                     }
                     if (currencyCustomOpen) {
-                        AmTextField(
+                        AqTextField(
                             label = AppStrings.LabelMoneda,
                             value = currency,
                             onValueChange = { currency = it },
-                            leadingIcon = com.agendaqr.core.ui.components.AmIcons.Wallet,
+                            leadingIcon = com.agendaqr.core.ui.components.AqIcons.Wallet,
                         )
                     }
                 }
@@ -300,34 +300,34 @@ internal fun OperationEditorScreen(
         // selectores, más atajos Hoy/Ayer. Sin texto libre: la hora es
         // opcional solo para datos antiguos (medianoche = sin hora).
         EditorSection(AppStrings.FechaYHora) {
-            AmListBody {
+            AqListBody {
                 val dateValue = (relativeDayLabel(occurredAtMillis, nowMillis())?.let { it + " · " } ?: "") +
                     formatDateTime(occurredAtMillis)
-                AmListRow(
+                AqListRow(
                     title = dateValue,
                     subtitle = AppStrings.Fecha,
                     onClick = { showDatePicker = true },
                     leading = {
-                        AmIconBadge(
-                            icon = com.agendaqr.core.ui.components.AmIcons.Calendar,
-                            tone = AmTone.Info,
+                        AqIconBadge(
+                            icon = com.agendaqr.core.ui.components.AqIcons.Calendar,
+                            tone = AqTone.Info,
                         )
                     },
                     showChevron = true,
                 )
-                AmHairline()
+                AqHairline()
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Sm),
-                    horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                        .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Sm),
+                    horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                 ) {
-                    AmFilterChip(
+                    AqFilterChip(
                         label = AppStrings.Hoy,
                         selected = false,
                         onClick = { occurredAtMillis = nowMillis() },
                     )
-                    AmFilterChip(
+                    AqFilterChip(
                         label = AppStrings.Ayer,
                         selected = false,
                         onClick = { occurredAtMillis = minusCivilDays(nowMillis(), 1) },
@@ -339,20 +339,20 @@ internal fun OperationEditorScreen(
         // las últimas contrapartes (derivadas del estado, sin persistencia
         // nueva).
         EditorSection(AppStrings.LabelPersonaOEntidad) {
-            AmListBody {
-                AmTextField(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, leadingIcon = com.agendaqr.core.ui.components.AmIcons.Store, modifier = Modifier.padding(horizontal = AmSpacing.Lg))
+            AqListBody {
+                AqTextField(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, leadingIcon = com.agendaqr.core.ui.components.AqIcons.Store, modifier = Modifier.padding(horizontal = AqSpacing.Lg))
                 val counterparts = remember(state.operations) { recentCounterparts(state.operations) }
                 if (counterparts.isNotEmpty()) {
-                    AmHairline()
+                    AqHairline()
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = AmSpacing.Lg, vertical = AmSpacing.Sm)
+                            .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Sm)
                             .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                     ) {
                         counterparts.forEach { suggestion ->
-                            AmFilterChip(
+                            AqFilterChip(
                                 label = suggestion,
                                 selected = false,
                                 onClick = { person = suggestion },
@@ -365,8 +365,8 @@ internal fun OperationEditorScreen(
         // Contexto (S08): grupo con rótulo; fila de selección con chevron.
         // Cancelar nunca destruye el draft (semántica del selector intacta).
         EditorSection(AppStrings.ContextoGenerico) {
-            AmListBody {
-                AmListRow(
+            AqListBody {
+                AqListRow(
                     title = contextSelection.contextId?.let { id ->
                         AppStrings.ParaContextoElegido +
                             (state.contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico)
@@ -374,9 +374,9 @@ internal fun OperationEditorScreen(
                     subtitle = AppStrings.PuedesSinContexto,
                     onClick = { contextSelection = contextSelection.openPicker() },
                     leading = {
-                        AmIconBadge(
-                            icon = com.agendaqr.core.ui.components.AmIcons.QrCode,
-                            tone = AmTone.Info,
+                        AqIconBadge(
+                            icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
+                            tone = AqTone.Info,
                         )
                     },
                     showChevron = true,
@@ -386,17 +386,17 @@ internal fun OperationEditorScreen(
         // Más detalles (U-06, D5): concepto y nota plegados salvo que el
         // registro ya los tenga; el contexto vive en su propia tarjeta
         // de selección (S08).
-        AmListBody {
-            AmListRow(
+        AqListBody {
+            AqListRow(
                 title = AppStrings.MasDetalles,
                 onClick = { showDetails = !showDetails },
                 showChevron = true,
             )
             if (showDetails) {
-                AmHairline()
-                AmTextField(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, leadingIcon = com.agendaqr.core.ui.components.AmIcons.NoteEdit, modifier = Modifier.padding(horizontal = AmSpacing.Lg))
-                AmHairline()
-                AmTextField(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, singleLine = false, modifier = Modifier.padding(horizontal = AmSpacing.Lg))
+                AqHairline()
+                AqTextField(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, leadingIcon = com.agendaqr.core.ui.components.AqIcons.NoteEdit, modifier = Modifier.padding(horizontal = AqSpacing.Lg))
+                AqHairline()
+                AqTextField(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, singleLine = false, modifier = Modifier.padding(horizontal = AqSpacing.Lg))
             }
         }
     }
@@ -404,7 +404,7 @@ internal fun OperationEditorScreen(
     if (state.discardPrompt) {
         // U-08/D7: salir con cambios pide confirmación; el foco inicial
         // cae en la opción conservadora (destructivo).
-        AmDialog(
+        AqDialog(
             title = AppStrings.DescartarCambios,
             message = AppStrings.DescartarCambiosMensaje,
             confirmLabel = AppStrings.Descartar,
@@ -430,7 +430,7 @@ internal fun OperationEditorScreen(
     // Selectores de fecha y hora (U-03, D2): la fecha elegida abre la
     // hora; cancelar en cualquiera conserva el valor anterior.
     if (showDatePicker) {
-        AmDatePickerDialog(
+        AqDatePickerDialog(
             selectedDateUtc = utcDayMillis(occurredAtMillis),
             onConfirm = { utc ->
                 pendingDateUtc = utc
@@ -446,7 +446,7 @@ internal fun OperationEditorScreen(
     if (showTimePicker) {
         val current = Instant.fromEpochMilliseconds(occurredAtMillis)
             .toLocalDateTime(TimeZone.currentSystemDefault())
-        AmTimePickerDialog(
+        AqTimePickerDialog(
             initialHour = current.hour,
             initialMinute = current.minute,
             onConfirm = { hour, minute ->
@@ -469,7 +469,7 @@ internal fun OperationEditorScreen(
     }
 
     if (showSensitiveConfirm) {
-        AmDialog(
+        AqDialog(
             title = AppStrings.changeOperationWithReceipts,
             message = AppStrings.sensitiveChangeWarning,
             confirmLabel = AppStrings.GuardarCambio,

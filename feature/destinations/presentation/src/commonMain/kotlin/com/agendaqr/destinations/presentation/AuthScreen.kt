@@ -19,18 +19,18 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import com.agendaqr.core.ui.components.AmIconButton
-import com.agendaqr.core.ui.components.AmPrimaryButton
-import com.agendaqr.core.ui.components.AmScreenScaffold
-import com.agendaqr.core.ui.components.AmBannerAction
-import com.agendaqr.core.ui.components.AmStatusBanner
-import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.components.AmTextAction
-import com.agendaqr.core.ui.components.AmTextField
-import com.agendaqr.core.ui.components.AmTone
-import com.agendaqr.core.ui.theme.AmColor
-import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.core.ui.components.AqIconButton
+import com.agendaqr.core.ui.components.AqPrimaryButton
+import com.agendaqr.core.ui.components.AqScreenScaffold
+import com.agendaqr.core.ui.components.AqBannerAction
+import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.components.AqTextAction
+import com.agendaqr.core.ui.components.AqTextField
+import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqType
 
 /**
  * Autenticación remota OPCIONAL. Ya no es la puerta de entrada de la app: la
@@ -49,9 +49,9 @@ fun AuthScreen(
 ) {
     // V1.4 (§12): la autenticación no es un destino raíz ni tiene a dónde
     // volver: sin barra; su acción principal es el `Button` del cuerpo.
-    AmScreenScaffold(
+    AqScreenScaffold(
         scrollable = true,
-        verticalArrangement = Arrangement.spacedBy(AmSpacing.Xl),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Xl),
         horizontalAlignment = Alignment.Start,
     ) {
         AuthForm(
@@ -102,25 +102,25 @@ internal fun AuthForm(
         if (isValidEmail(state.email) && state.password.length >= 6) target()
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Md)) {
+    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Md)) {
         // Cabecera: título y descripción con jerarquía estrecha (4 dp).
         if (heading != null || description != null || descriptionDetail != null) {
-            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
                 heading?.let {
-                    AmText(it, size = AmType.Headline, fontWeight = FontWeight.SemiBold)
+                    AqText(it, size = AqType.Headline, fontWeight = FontWeight.SemiBold)
                 }
                 description?.let {
-                    AmText(it, size = AmType.Body, color = AmColor.TextSecondary)
+                    AqText(it, size = AqType.Body, color = AqColor.TextSecondary)
                 }
                 descriptionDetail?.let {
-                    AmText(it, size = AmType.Body, color = AmColor.TextSecondary)
+                    AqText(it, size = AqType.Body, color = AqColor.TextSecondary)
                 }
             }
         }
 
         // Campos: grupo funcional con etiqueta + campo + ayuda/error.
-        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-            AmTextField(
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqTextField(
                 label = AppStrings.Correo,
                 value = state.email,
                 onValueChange = onEmailChanged,
@@ -134,7 +134,7 @@ internal fun AuthForm(
                 errorMessage = if (submitted && !isValidEmail(state.email)) AppStrings.IngresaUnCorreoValido else null,
             )
 
-            AmTextField(
+            AqTextField(
                 label = AppStrings.Contrasena,
                 value = state.password,
                 onValueChange = onPasswordChanged,
@@ -152,15 +152,15 @@ internal fun AuthForm(
                 errorMessage = if (submitted && state.password.length < 6) AppStrings.Minimo6Caracteres else null,
                 helperMessage = if (!passwordError) AppStrings.Minimo6Caracteres else null,
                 trailing = {
-                    AmIconButton(
+                    AqIconButton(
                         contentDescription = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
                         onClick = { passwordVisible = !passwordVisible },
                     ) {
-                        AmText(
+                        AqText(
                             text = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
-                            size = AmType.Caption,
+                            size = AqType.Caption,
                             fontWeight = FontWeight.Medium,
-                            color = AmColor.AccentText,
+                            color = AqColor.AccentText,
                         )
                     }
                 },
@@ -171,17 +171,17 @@ internal fun AuthForm(
         state.errorMessage?.let { err ->
             val isAuthError = state.errorFlow == ErrorFlow.SignIn || state.errorFlow == ErrorFlow.SignUp
             val (action, dismiss) = if (isAuthError) {
-                AmBannerAction(AppStrings.RevisarDatos) { submitted = true; onClearError() } to null
+                AqBannerAction(AppStrings.RevisarDatos) { submitted = true; onClearError() } to null
             } else {
                 err.bannerActions(
                     onRetry = onClearError,
                     onClear = onClearError,
                 )
             }
-            AmStatusBanner(
+            AqStatusBanner(
                 title = err.what,
                 message = err.dataStatus,
-                tone = AmTone.Danger,
+                tone = AqTone.Danger,
                 action = action,
                 dismiss = dismiss,
             )
@@ -189,15 +189,15 @@ internal fun AuthForm(
 
         // Confirmación (registro exitoso).
         state.confirmationMessage?.let {
-            AmStatusBanner(it, tone = AmTone.Info)
+            AqStatusBanner(it, tone = AqTone.Info)
         }
 
         // Acciones: primaria full-width + secundaria centrada.
         Column(
-            verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            AmPrimaryButton(
+            AqPrimaryButton(
                 AppStrings.IniciarSesion,
                 onClick = { submit(onSignIn) },
                 modifier = Modifier.fillMaxWidth(),
@@ -205,7 +205,7 @@ internal fun AuthForm(
                 isLoading = state.isSubmitting,
                 busyDescription = AppStrings.IniciandoSesion,
             )
-            AmTextAction(
+            AqTextAction(
                 label = AppStrings.CrearCuenta,
                 onClick = { submit(onSignUp) },
                 enabled = !state.isSubmitting,

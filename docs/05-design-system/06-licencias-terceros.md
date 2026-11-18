@@ -47,7 +47,7 @@ SOFTWARE.
   `core/ui/src/commonMain/composeResources/files/Inter-OFL.txt`.
 - Uso: cuatro TTF estáticos (`inter_regular`, `inter_medium`,
   `inter_semi_bold`, `inter_bold`) empaquetados como recursos
-  multiplataforma y cargados desde `AmTheme` para todos los roles
+  multiplataforma y cargados desde `AqTheme` para todos los roles
   tipográficos.
 - Aviso incluido también en `androidApp/third-party-notices/` y empaquetado
   como asset Android. La distribución de avisos en iOS no está verificada.

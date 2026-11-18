@@ -9,7 +9,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
-import com.agendaqr.core.ui.theme.AmSpacing
+import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.destinations.data.AgendaQrAndroidStorage
 import com.agendaqr.destinations.data.createLocalProtectionRepository
 import kotlin.math.abs
@@ -111,7 +111,7 @@ class AgendaQrLocalStartupTest {
         }
         val root = compose.onRoot().getBoundsInRoot()
         val banner = compose.onNodeWithTag("am-status-banner").getBoundsInRoot()
-        val margin = AmSpacing.ScreenMargin
+        val margin = AqSpacing.ScreenMargin
         println("demo: root=$root banner=$banner")
         assertTrue(
             "demo: margen izquierdo ${banner.left}, esperado $margin",

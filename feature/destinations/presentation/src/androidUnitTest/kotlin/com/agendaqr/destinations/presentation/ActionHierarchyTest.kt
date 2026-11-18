@@ -4,8 +4,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.agendaqr.core.ui.theme.AmMetrics
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.domain.ImportBatch
 import com.agendaqr.destinations.domain.ImportCandidate
 import com.agendaqr.destinations.domain.ImportKind
@@ -59,7 +59,7 @@ class ActionHierarchyTest {
 
     private fun render(batch: ImportBatch, onAction: (ImportBatchAction) -> Unit) {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 ImportBatchScreen(
                     state = ImportBatchUiState.Review(batch),
                     onAction = onAction,
@@ -154,7 +154,7 @@ class ActionHierarchyTest {
         val bounds = compose.onNodeWithText(label).getUnclippedBoundsInRoot()
         val height = bounds.bottom - bounds.top
         assertTrue("$label debe conservar un objetivo táctil de 48 dp") {
-            height >= AmMetrics.ControlMinSize
+            height >= AqMetrics.ControlMinSize
         }
     }
 }

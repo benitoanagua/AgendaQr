@@ -26,19 +26,19 @@ La pasada anterior dotó al producto de un sistema de diseño propio (AgendaMobi
 
 | Familia adm | Implementación | Notas |
 |---|---|---|
-| Variables de tema (`theme-default`/`theme-dark`) | `AmColorScheme` claro/oscuro | Valores adoptados; recalibraciones AA documentadas en el contrato §4 |
-| Button (solid/outline/none, radius 4, disabled opacity) | `AmPrimaryButton`/`AmSecondaryButton`/`AmTextAction`/`AmDangerButton` | Secundario = outline de acento; deshabilitado con opacidad .4 |
-| Input (sin borde, placeholder light, clear) + Form/List | `AmTextField` (guía hairline en foco/error) | Sin borde de reposo; error con icono+texto |
-| SearchBar (32px, radio 6, fill box, borde de acento activo) | `AmSearchField`/`AmSearchTrigger` | Altura mínima 48 dp por accesibilidad (desviación documentada) |
-| List/Item (hairlines) | `AmListRow` (+ `showDivider`) | Título 14, descripción 12 (escala compacta); filas separadas en listas no contiguas (desviación documentada) |
-| Tag (outline/round) | `AmBadge` | Etiqueta de estado con texto, nunca solo color |
-| Selector/CapsuleTabs | `AmFilterChip` | Seleccionado: borde de acento + fondo wathet |
-| Tabs (indicador, pestaña activa de acento) | `AmTabs` | Indicador de acento, desplazable |
-| TabBar (48px, icono 24, etiqueta 10, activo de acento, sin píldora) | `AmNavBar` (64 dp propio + hairline, sin píldora M3) / `AmNavRail` M3 | Etiqueta 11 sp; objetivo 64 dp; selección con semántica |
-| NavBar (atrás + título + acciones) | `AmTopBar` propia de 56 dp | Título 18 sp Medium a la izquierda por convención Android (desviación documentada); acciones de 48 dp |
-| Modal (título centrado 18, contenido 15) | `AmDialog` | Botonera de plataforma; foco conservativo en destructivas |
-| Toast (centrado, oscuro) / plataforma | `AmFeedbackEvent` + Snackbar | Snackbar inferior en Android (convención de plataforma) |
-| Empty | `AmEmptyState` | Glifo + título + acción; glifo decorativo no anunciado |
+| Variables de tema (`theme-default`/`theme-dark`) | `AqColorScheme` claro/oscuro | Valores adoptados; recalibraciones AA documentadas en el contrato §4 |
+| Button (solid/outline/none, radius 4, disabled opacity) | `AqPrimaryButton`/`AqSecondaryButton`/`AqTextAction`/`AqDangerButton` | Secundario = outline de acento; deshabilitado con opacidad .4 |
+| Input (sin borde, placeholder light, clear) + Form/List | `AqTextField` (guía hairline en foco/error) | Sin borde de reposo; error con icono+texto |
+| SearchBar (32px, radio 6, fill box, borde de acento activo) | `AqSearchField`/`AqSearchTrigger` | Altura mínima 48 dp por accesibilidad (desviación documentada) |
+| List/Item (hairlines) | `AqListRow` (+ `showDivider`) | Título 14, descripción 12 (escala compacta); filas separadas en listas no contiguas (desviación documentada) |
+| Tag (outline/round) | `AqBadge` | Etiqueta de estado con texto, nunca solo color |
+| Selector/CapsuleTabs | `AqFilterChip` | Seleccionado: borde de acento + fondo wathet |
+| Tabs (indicador, pestaña activa de acento) | `AqTabs` | Indicador de acento, desplazable |
+| TabBar (48px, icono 24, etiqueta 10, activo de acento, sin píldora) | `AqNavBar` (64 dp propio + hairline, sin píldora M3) / `AqNavRail` M3 | Etiqueta 11 sp; objetivo 64 dp; selección con semántica |
+| NavBar (atrás + título + acciones) | `AqTopBar` propia de 56 dp | Título 18 sp Medium a la izquierda por convención Android (desviación documentada); acciones de 48 dp |
+| Modal (título centrado 18, contenido 15) | `AqDialog` | Botonera de plataforma; foco conservativo en destructivas |
+| Toast (centrado, oscuro) / plataforma | `AqFeedbackEvent` + Snackbar | Snackbar inferior en Android (convención de plataforma) |
+| Empty | `AqEmptyState` | Glifo + título + acción; glifo decorativo no anunciado |
 
 ## Cambios
 

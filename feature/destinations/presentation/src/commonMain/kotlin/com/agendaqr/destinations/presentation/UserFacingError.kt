@@ -1,6 +1,6 @@
 package com.agendaqr.destinations.presentation
 
-import com.agendaqr.core.ui.components.AmBannerAction
+import com.agendaqr.core.ui.components.AqBannerAction
 
 /**
  * Error listo para mostrar  — spec congelada §10:
@@ -25,7 +25,7 @@ data class UserFacingError(
 }
 
 /**
- * Acciones de banner derivadas del error, para usar con [AmStatusBanner].
+ * Acciones de banner derivadas del error, para usar con [AqStatusBanner].
  *
  * - [ErrorAction.Retry]: dos acciones: reintentar ([onRetry]) y descartar
  *   ([onClear]) con [AppStrings.Descartar].
@@ -35,10 +35,10 @@ data class UserFacingError(
 fun UserFacingError.bannerActions(
     onRetry: () -> Unit,
     onClear: () -> Unit,
-): Pair<AmBannerAction?, AmBannerAction?> = when (action) {
-    ErrorAction.Retry -> AmBannerAction(action.label, onRetry) to
-        AmBannerAction(AppStrings.Descartar, onClear)
-    else -> AmBannerAction(action.label, onClear) to null
+): Pair<AqBannerAction?, AqBannerAction?> = when (action) {
+    ErrorAction.Retry -> AqBannerAction(action.label, onRetry) to
+        AqBannerAction(AppStrings.Descartar, onClear)
+    else -> AqBannerAction(action.label, onClear) to null
 }
 
 /** Acciones que un error recuperable puede ofrecer. */

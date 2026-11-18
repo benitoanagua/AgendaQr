@@ -3,7 +3,7 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.domain.LocalProfile
 import com.agendaqr.destinations.domain.LocalProtectionRepository
 import com.agendaqr.destinations.domain.LocalProtectionStore
@@ -139,7 +139,7 @@ class LocalAccessGateTest {
     @Test
     fun onboarding_screen_shows_pin_setup_without_any_remote_credentials() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 LocalOnboardingScreen(
                     state = LocalAccessUiState(mode = LocalAccessMode.Onboarding),
                     onPinChanged = {},
@@ -161,7 +161,7 @@ class LocalAccessGateTest {
     @Test
     fun lock_screen_shows_unlock_action_and_own_keypad() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 LocalLockScreen(
                     state = LocalAccessUiState(mode = LocalAccessMode.Locked),
                     onPinChanged = {},
@@ -181,7 +181,7 @@ class LocalAccessGateTest {
     @Test
     fun lock_screen_surfaces_lockout_error() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 LocalLockScreen(
                     state = LocalAccessUiState(
                         mode = LocalAccessMode.Locked,

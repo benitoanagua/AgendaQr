@@ -5,7 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.domain.BiometricAuthResult
 import com.agendaqr.destinations.domain.BiometricAvailability
 import com.agendaqr.destinations.domain.LocalProfile
@@ -123,7 +123,7 @@ class LocalAccessBiometricTest {
             biometricAvailability = BiometricAvailability.Available,
         )
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 LocalLockScreen(state = lockedAvailable, onPinChanged = {}, onSubmit = {}, onBiometric = {})
             }
         }
@@ -139,7 +139,7 @@ class LocalAccessBiometricTest {
     fun lock_screen_hides_biometric_when_unavailable_and_offers_demo() {
         var demoTapped = false
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 LocalLockScreen(
                     state = LocalAccessUiState(mode = LocalAccessMode.Locked),
                     onPinChanged = {},
@@ -161,7 +161,7 @@ class LocalAccessBiometricTest {
     @Test
     fun onboarding_offers_demo_without_pin() {
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 LocalOnboardingScreen(
                     state = LocalAccessUiState(mode = LocalAccessMode.Onboarding),
                     onPinChanged = {},

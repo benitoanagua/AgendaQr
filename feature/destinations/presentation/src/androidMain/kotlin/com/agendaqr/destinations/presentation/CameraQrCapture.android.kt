@@ -42,16 +42,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
-import com.agendaqr.core.ui.components.AmStatusBanner
-import com.agendaqr.core.ui.components.AmFeedbackEvent
-import com.agendaqr.core.ui.components.AmIconBadge
-import com.agendaqr.core.ui.components.AmListRow
-import com.agendaqr.core.ui.components.AmScannerFrame
-import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.components.AmSecondaryButton
-import com.agendaqr.core.ui.theme.AmColor
-import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqFeedbackEvent
+import com.agendaqr.core.ui.components.AqIconBadge
+import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqScannerFrame
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.components.AqSecondaryButton
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.destinations.domain.QrAsset
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.ByteArrayOutputStream
@@ -83,7 +83,7 @@ internal fun CameraQrCaptureOverlay(
     // feedback de lectura exitosa — token por EVENTO
     // (una lectura = un anuncio; sin repetición en recomposiciones).
     var detectionToken by remember { mutableStateOf<Any?>(null) }
-    AmFeedbackEvent(event = detectionToken, message = AppStrings.CodigoQrDetectado)
+    AqFeedbackEvent(event = detectionToken, message = AppStrings.CodigoQrDetectado)
 
     DisposableEffect(Unit) {
         onDispose { analysisExecutor.shutdown() }
@@ -96,7 +96,7 @@ internal fun CameraQrCaptureOverlay(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(AmColor.Background),
+                .background(AqColor.Background),
         ) {
             if (!detected) {
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -125,26 +125,26 @@ internal fun CameraQrCaptureOverlay(
                     )
                     // Lenguaje visual del scanner del sistema sobre la vista
                     // previa: encuadre de marca del design system
-                    // (AmScannerFrame, esquinas dibujadas en canvas) y hint textual;
+                    // (AqScannerFrame, esquinas dibujadas en canvas) y hint textual;
                     // sin métricas técnicas del scanner (S03).
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(AmSpacing.Xxl),
+                            .padding(AqSpacing.Xxl),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
-                        AmScannerFrame()
+                        AqScannerFrame()
                         // El hint SE VUELVE el estado: "Código QR detectado"
                         // con liveRegion (§5/§11: el estado también se lee,
                         // nunca solo se ve).
-                        AmText(
+                        AqText(
                             if (detected) AppStrings.CodigoQrDetectado else AppStrings.EncuadreElCodigoQr,
-                            size = AmType.Label,
-                            color = AmColor.TextSecondary,
+                            size = AqType.Label,
+                            color = AqColor.TextSecondary,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
-                                .padding(top = AmSpacing.Lg)
+                                .padding(top = AqSpacing.Lg)
                                 .semantics { if (detected) liveRegion = LiveRegionMode.Polite },
                         )
                     }
@@ -153,10 +153,10 @@ internal fun CameraQrCaptureOverlay(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
-                        .padding(AmSpacing.Lg),
+                        .padding(AqSpacing.Lg),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    AmSecondaryButton(label = AppStrings.Volver, onClick = onDismiss)
+                    AqSecondaryButton(label = AppStrings.Volver, onClick = onDismiss)
                 }
             }
         }
@@ -306,7 +306,7 @@ internal fun CameraQrEntry(
             }
         }
     }
-    Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
         permissionError?.let { error ->
             val actionLabel = if (permanentlyDenied) AppStrings.AbrirAjustes else error.action.label
             val onAction = {
@@ -323,12 +323,12 @@ internal fun CameraQrEntry(
                     permissionLauncher.launch(Manifest.permission.CAMERA)
                 }
             }
-            AmStatusBanner(
+            AqStatusBanner(
                 title = error.what,
                 message = error.dataStatus,
-                tone = com.agendaqr.core.ui.components.AmTone.Danger,
-                action = com.agendaqr.core.ui.components.AmBannerAction(actionLabel, onAction),
-                dismiss = com.agendaqr.core.ui.components.AmBannerAction(AppStrings.Descartar) { permissionError = null },
+                tone = com.agendaqr.core.ui.components.AqTone.Danger,
+                action = com.agendaqr.core.ui.components.AqBannerAction(actionLabel, onAction),
+                dismiss = com.agendaqr.core.ui.components.AqBannerAction(AppStrings.Descartar) { permissionError = null },
             )
         }
         val requestCamera = {
@@ -339,29 +339,29 @@ internal fun CameraQrEntry(
             if (granted) onOpen() else permissionLauncher.launch(Manifest.permission.CAMERA)
         }
         if (cellPresentation) {
-            AmListRow(
+            AqListRow(
                 title = AppStrings.Camara,
                 subtitle = AppStrings.PermisoCamaraContexto,
                 subtitleMaxLines = Int.MAX_VALUE,
                 onClick = requestCamera,
                 leading = {
-                    AmIconBadge(
-                        icon = com.agendaqr.core.ui.components.AmIcons.Camera,
-                        tone = com.agendaqr.core.ui.components.AmTone.Info,
+                    AqIconBadge(
+                        icon = com.agendaqr.core.ui.components.AqIcons.Camera,
+                        tone = com.agendaqr.core.ui.components.AqTone.Info,
                     )
                 },
                 showChevron = true,
                 showDivider = showDivider,
             )
         } else {
-            AmText(
+            AqText(
                 AppStrings.PermisoCamaraContexto,
-                size = AmType.Caption,
-                color = AmColor.TextSecondary,
+                size = AqType.Caption,
+                color = AqColor.TextSecondary,
             )
-            AmSecondaryButton(
+            AqSecondaryButton(
                 label = AppStrings.Camara,
-                icon = com.agendaqr.core.ui.components.AmIcons.Camera,
+                icon = com.agendaqr.core.ui.components.AqIcons.Camera,
                 onClick = requestCamera,
             )
         }

@@ -15,33 +15,33 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AmSnackbarHost
-import com.agendaqr.core.ui.components.AmFeedbackEvent
-import com.agendaqr.core.ui.components.AmScreenScaffold
-import com.agendaqr.core.ui.components.AmTopBar
-import com.agendaqr.core.ui.components.AmOverflowAction
-import com.agendaqr.core.ui.components.AmCompactAction
-import com.agendaqr.core.ui.components.AmDialog
-import com.agendaqr.core.ui.components.AmEmptyState
-import com.agendaqr.core.ui.components.AmHairline
-import com.agendaqr.core.ui.components.AmIcon
-import com.agendaqr.core.ui.components.AmIcons
-import com.agendaqr.core.ui.components.AmCard
-import com.agendaqr.core.ui.components.AmListBody
-import com.agendaqr.core.ui.components.AmMetaRow
-import com.agendaqr.core.ui.components.AmQrPreview
-import com.agendaqr.core.ui.components.AmSecondaryButton
-import com.agendaqr.core.ui.components.AmTappableCard
-import com.agendaqr.core.ui.components.AmStatusPill
-import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.components.AmTextAction
-import com.agendaqr.core.ui.components.AmTone
-import com.agendaqr.core.ui.components.AmPrimaryButton
+import com.agendaqr.core.ui.components.AqSnackbarHost
+import com.agendaqr.core.ui.components.AqFeedbackEvent
+import com.agendaqr.core.ui.components.AqScreenScaffold
+import com.agendaqr.core.ui.components.AqTopBar
+import com.agendaqr.core.ui.components.AqOverflowAction
+import com.agendaqr.core.ui.components.AqCompactAction
+import com.agendaqr.core.ui.components.AqDialog
+import com.agendaqr.core.ui.components.AqEmptyState
+import com.agendaqr.core.ui.components.AqHairline
+import com.agendaqr.core.ui.components.AqIcon
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqCard
+import com.agendaqr.core.ui.components.AqListBody
+import com.agendaqr.core.ui.components.AqMetaRow
+import com.agendaqr.core.ui.components.AqQrPreview
+import com.agendaqr.core.ui.components.AqSecondaryButton
+import com.agendaqr.core.ui.components.AqTappableCard
+import com.agendaqr.core.ui.components.AqStatusPill
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.components.AqTextAction
+import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.components.AqPrimaryButton
 import com.agendaqr.core.ui.components.rememberAmClipboard
-import com.agendaqr.core.ui.theme.AmColor
-import com.agendaqr.core.ui.theme.AmMetrics
-import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.destinations.domain.Destination
 
 /**
@@ -71,12 +71,12 @@ fun DestinationDetailScreen(
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
     var copiedEvent by remember { mutableStateOf<Any?>(null) }
     val copyToClipboard = com.agendaqr.core.ui.components.rememberAmClipboard()
-    AmFeedbackEvent(
+    AqFeedbackEvent(
         event = deleteDoneEvent,
         message = AppStrings.Eliminado,
         feedbackHost = appHosts?.feedback,
     )
-    AmFeedbackEvent(
+    AqFeedbackEvent(
         event = copiedEvent,
         message = AppStrings.Copiado,
         feedbackHost = appHosts?.feedback,
@@ -85,24 +85,24 @@ fun DestinationDetailScreen(
     // es secundaria. Registrar, Editar y Eliminar viven en "…" (la
     // eliminación mantiene su diálogo destructivo). "Registrar actividad"
     // abre un formulario vacío: no promete asociación al destino.
-    AmScreenScaffold(
+    AqScreenScaffold(
         scrollable = true,
         topBar = {
-            AmTopBar(
+            AqTopBar(
                 title = destination.name.ifBlank { AppStrings.SinNombre },
                 onBack = onBack,
                 backLabel = AppStrings.Volver,
                 overflowActions = listOf(
-                    AmOverflowAction(AppStrings.RegistrarOperacion, onRegisterOperation, AmIcons.Register),
-                    AmOverflowAction(AppStrings.Editar, onEdit, AmIcons.Edit),
-                    AmOverflowAction(AppStrings.Eliminar, { showDeleteConfirm = true }, AmIcons.Trash),
+                    AqOverflowAction(AppStrings.RegistrarOperacion, onRegisterOperation, AqIcons.Register),
+                    AqOverflowAction(AppStrings.Editar, onEdit, AqIcons.Edit),
+                    AqOverflowAction(AppStrings.Eliminar, { showDeleteConfirm = true }, AqIcons.Trash),
                 ),
                 overflowLabel = AppStrings.Mas,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
-        verticalArrangement = Arrangement.spacedBy(AmSpacing.Lg),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
         bottomAction = {
             // Dock (U-04, D3): exactamente una acción primaria — Mostrar
             // QR a pantalla completa — más Compartir secundaria. El dock
@@ -112,19 +112,19 @@ fun DestinationDetailScreen(
                     .fillMaxWidth()
                     .navigationBarsPadding()
                     .imePadding()
-                    .padding(horizontal = AmSpacing.ScreenMargin, vertical = AmSpacing.Sm),
-                verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                    .padding(horizontal = AqSpacing.ScreenMargin, vertical = AqSpacing.Sm),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
             ) {
-                AmPrimaryButton(
+                AqPrimaryButton(
                     label = AppStrings.MostrarQr,
                     onClick = onShowQr,
-                    icon = AmIcons.Maximize,
+                    icon = AqIcons.Maximize,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                AmSecondaryButton(
+                AqSecondaryButton(
                     label = AppStrings.Compartir,
                     onClick = onShare,
-                    icon = AmIcons.Share,
+                    icon = AqIcons.Share,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -135,27 +135,27 @@ fun DestinationDetailScreen(
         // La tarjeta también es tocable con la misma acción de Mostrar
         // (semántica de botón); el dock conserva la primaria visible.
         if (destination.qr.encoded.isNotBlank()) {
-            AmTappableCard(onClick = onShowQr) {
+            AqTappableCard(onClick = onShowQr) {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(AmSpacing.Md),
+                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
                 ) {
-                    AmQrPreview(
+                    AqQrPreview(
                         encodedQr = destination.qr.encoded,
-                        size = AmMetrics.QrPreviewSize,
+                        size = AqMetrics.QrPreviewSize,
                         unavailableMessage = AppStrings.QrNoSePudoMostrar,
                     )
-                    AmText(
+                    AqText(
                         AppStrings.MuestraEsteCodigo,
-                        color = AmColor.TextSecondary,
+                        color = AqColor.TextSecondary,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                     )
                 }
             }
         } else {
-            AmEmptyState(
-                icon = AmIcons.ImageOff,
+            AqEmptyState(
+                icon = AqIcons.ImageOff,
                 title = AppStrings.QrSinContenido,
                 subtitle = AppStrings.EditaElDestinoParaImportar,
                 actionLabel = AppStrings.Editar,
@@ -171,10 +171,10 @@ fun DestinationDetailScreen(
             destination.qr.content?.takeIf { it.isNotBlank() } != null ||
             destination.note?.takeIf { it.isNotBlank() } != null
         if (hasMetadata || destination.qr.encoded.isNotBlank()) {
-            AmCard {
+            AqCard {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                 ) {
                     // Contenido decodificado (U-12, D9): bloque de ancho
                     // completo alineado a la izquierda, máx. 3 líneas con
@@ -182,47 +182,47 @@ fun DestinationDetailScreen(
                     // valor alineada a la derecha).
                     destination.qr.content?.takeIf { it.isNotBlank() }?.let { content ->
                         var contentExpanded by remember { mutableStateOf(false) }
-                        Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Xs)) {
-                            AmText(
+                        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
+                            AqText(
                                 AppStrings.Contenido,
-                                color = AmColor.TextSecondary,
-                                size = AmType.BodySmall,
+                                color = AqColor.TextSecondary,
+                                size = AqType.BodySmall,
                             )
                             androidx.compose.foundation.text.selection.SelectionContainer {
-                                AmText(
+                                AqText(
                                     content,
                                     maxLines = if (contentExpanded) Int.MAX_VALUE else 3,
                                 )
                             }
                             Row(
-                                horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+                                horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                AmCompactAction(
+                                AqCompactAction(
                                     label = AppStrings.Copiar,
                                     onClick = {
                                         copyToClipboard(content)
                                         copiedEvent = Any()
                                     },
-                                    icon = AmIcons.Copy,
+                                    icon = AqIcons.Copy,
                                     prominent = true,
                                 )
-                                AmTextAction(
+                                AqTextAction(
                                     label = if (contentExpanded) AppStrings.VerMenos else AppStrings.VerMas,
                                     onClick = { contentExpanded = !contentExpanded },
                                 )
                             }
                         }
                     }
-                    destination.category?.let { AmMetaRow(label = AppStrings.Categoria, value = it) }
-                    AmMetaRow(
+                    destination.category?.let { AqMetaRow(label = AppStrings.Categoria, value = it) }
+                    AqMetaRow(
                         label = AppStrings.FechaDeAlta,
                         value = formatDate(destination.createdAt),
-                        icon = AmIcons.Calendar,
+                        icon = AqIcons.Calendar,
                     )
                     destination.note?.takeIf { it.isNotBlank() }?.let {
-                        AmHairline()
-                        AmText(it, color = AmColor.TextSecondary)
+                        AqHairline()
+                        AqText(it, color = AqColor.TextSecondary)
                     }
                 }
             }
@@ -231,31 +231,31 @@ fun DestinationDetailScreen(
         // Estado de sincronización del elemento (texto, no solo color).
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
         ) {
             ElementSyncBadge(syncStatus, showWhenSynced = true)
             if (syncStatus == ElementSyncStatus.Dead) {
-                AmText(
+                AqText(
                     text = AppStrings.TuInformacionEstaGuardadaEnElDispositivo,
-                    color = AmColor.TextSecondary,
+                    color = AqColor.TextSecondary,
                 )
             }
         }
         if (syncStatus == ElementSyncStatus.ErrorRecoverable) {
             // El dato está a salvo localmente: el usuario puede reintentar.
-            AmTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
+            AqTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
         }
 
         // Reaseguro de integridad: cierto en el dominio
         // — editar un destino no toca las operaciones históricas.
-        AmStatusPill(
+        AqStatusPill(
             text = AppStrings.IntegridadHistorica,
-            icon = AmIcons.ShieldCheck,
-            tone = AmTone.Success,
+            icon = AqIcons.ShieldCheck,
+            tone = AqTone.Success,
         )
     }
     if (showDeleteConfirm) {
-        AmDialog(
+        AqDialog(
             title = AppStrings.EliminarDestino,
             message = AppStrings.irreversibleActionWarning,
             confirmLabel = AppStrings.Eliminar,

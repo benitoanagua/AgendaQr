@@ -101,10 +101,10 @@ y comprueban:
   desborde es intencional.
 
 La protección determinista de recortes y solapes se completa con las
-pruebas ya existentes: `AmScaffoldOverlapContractTest` (el contenido nunca
+pruebas ya existentes: `AqScaffoldOverlapContractTest` (el contenido nunca
 queda bajo el dock de acciones ni el FAB), `ScreensA11yCoverageTest` y
-`AmAccessibilityContractTest` (objetivos táctiles y texto visible),
-`AmTabsLayoutTest`/`AmResponsiveLayoutContractTest` (escala de fuente al
+`AqAccessibilityContractTest` (objetivos táctiles y texto visible),
+`AqTabsLayoutTest`/`AqResponsiveLayoutContractTest` (escala de fuente al
 100 %/150 %).
 
 ## Consecuencias
@@ -114,7 +114,7 @@ queda bajo el dock de acciones ni el FAB), `ScreensA11yCoverageTest` y
   operativo.
 - Se retira `LayoutReference320Test`: ni la galería ni esa suite de raíces
   se producen a 320 dp. Quedan aserciones puntuales a 320 dp en
-  `LayoutReferenceExtraTest`, `AmTabsLayoutTest`, `DestinationRowLayoutTest`
+  `LayoutReferenceExtraTest`, `AqTabsLayoutTest`, `DestinationRowLayoutTest`
   y suites de componentes, sin capturas.
 - Se reduce la cobertura automática: ya no se validan las raíces en tablet
   (`NavigationRail`) ni el layout con fuente al 200 %. Ambas capacidades se
@@ -122,12 +122,12 @@ queda bajo el dock de acciones ni el FAB), `ScreensA11yCoverageTest` y
   el riesgo explícitamente documentado.
 - Se retiran las suites específicas de escala de fuente
   (`FontScaleScreensTest`, `AuthFontScaleTest`, `FontScaleContractTest`): la
-  cobertura JVM que queda vive en `AmTabsLayoutTest`,
-  `AmResponsiveLayoutContractTest` y `DestinationRowLayoutTest`; no hay
+  cobertura JVM que queda vive en `AqTabsLayoutTest`,
+  `AqResponsiveLayoutContractTest` y `DestinationRowLayoutTest`; no hay
   verificación instrumentada de fuente.
 - La regresión puramente estética (color o espaciado sutil) ya no se
   detecta automáticamente; su cobertura es por contrato de tokens
-  (`AmSchemeTest`, `AmContrastPairsTest`, `AmTypographyTest`) y revisión
+  (`AqSchemeTest`, `AqContrastPairsTest`, `AqTypographyTest`) y revisión
   humana en dispositivo, que se declara como no verificada en el CI.
 - Compilar y pasar las pruebas de layout no sustituye la validación en
   hardware real, que sigue siendo una comprobación manual.

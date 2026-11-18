@@ -6,17 +6,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AmIconBadge
-import com.agendaqr.core.ui.components.AmIcons
-import com.agendaqr.core.ui.components.AmListBody
-import com.agendaqr.core.ui.components.AmScreenScaffold
-import com.agendaqr.core.ui.components.AmSnackbarHost
-import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.components.AmTopBar
-import com.agendaqr.core.ui.components.AmTone
-import com.agendaqr.core.ui.theme.AmColor
-import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.core.ui.components.AqIconBadge
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqListBody
+import com.agendaqr.core.ui.components.AqScreenScaffold
+import com.agendaqr.core.ui.components.AqSnackbarHost
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.components.AqTopBar
+import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqType
 
 /**
  * S02 — Añadir (V1.3, ADR-0013; composición V1.17).
@@ -40,35 +40,35 @@ fun AddDestinationScreen(
 ) {
     // V1.4 (§12): la flecha atrás vive en la barra superior (la misma en
     // ambas plataformas).
-    AmScreenScaffold(
+    AqScreenScaffold(
         scrollable = true,
         topBar = {
-            AmTopBar(
+            AqTopBar(
                 title = AppStrings.Anadir,
                 onBack = onBack,
                 backLabel = AppStrings.Volver,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
-        verticalArrangement = Arrangement.spacedBy(AmSpacing.Xl),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Xl),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
         ) {
-            AmIconBadge(icon = AmIcons.QrCode, tone = AmTone.Info)
-            AmText(
+            AqIconBadge(icon = AqIcons.QrCode, tone = AqTone.Info)
+            AqText(
                 AppStrings.TraeAAgendaQrAlgo,
-                color = AmColor.TextSecondary,
+                color = AqColor.TextSecondary,
             )
         }
 
         // Grupo único de métodos (S02, V1.17): el orden sigue la
         // jerarquía declarada por la spec (Galería → Cámara) y el PDF queda
         // al pie del grupo. Divisores entre filas, ninguno tras la última.
-        AmListBody {
+        AqListBody {
             QrGalleryControls(
                 onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
             )
@@ -80,10 +80,10 @@ fun AddDestinationScreen(
         }
 
         if (sharedImportsSupported()) {
-            AmText(
+            AqText(
                 AppStrings.shareFromAnotherAppHint,
-                size = AmType.Caption,
-                color = AmColor.TextSecondary,
+                size = AqType.Caption,
+                color = AqColor.TextSecondary,
             )
         }
     }

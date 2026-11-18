@@ -10,26 +10,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AmSnackbarHost
-import com.agendaqr.core.ui.components.AmNavChromeState
-import com.agendaqr.core.ui.components.AmEmptyState
-import com.agendaqr.core.ui.components.AmIcons
-import com.agendaqr.core.ui.components.AmTabs
-import com.agendaqr.core.ui.components.AmListBody
-import com.agendaqr.core.ui.components.AmListRow
-import com.agendaqr.core.ui.components.AmLoading
-import com.agendaqr.core.ui.components.AmScreenScaffold
-import com.agendaqr.core.ui.components.AmTopBar
-import com.agendaqr.core.ui.components.AmSecondaryButton
-import com.agendaqr.core.ui.components.AmStatusBanner
-import com.agendaqr.core.ui.components.AmText
-import com.agendaqr.core.ui.components.AmTextAction
-import com.agendaqr.core.ui.components.AmTone
-import com.agendaqr.core.ui.components.AmContextBadge
-import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.components.AqSnackbarHost
+import com.agendaqr.core.ui.components.AqNavChromeState
+import com.agendaqr.core.ui.components.AqEmptyState
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqTabs
+import com.agendaqr.core.ui.components.AqListBody
+import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqLoading
+import com.agendaqr.core.ui.components.AqScreenScaffold
+import com.agendaqr.core.ui.components.AqTopBar
+import com.agendaqr.core.ui.components.AqSecondaryButton
+import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.components.AqTextAction
+import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.components.AqContextBadge
+import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.accentFor
-import com.agendaqr.core.ui.theme.AmSpacing
-import com.agendaqr.core.ui.theme.AmType
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqType
 import androidx.compose.foundation.layout.Column
 
 /**
@@ -51,7 +51,7 @@ fun ContextsScreen(
     state: ContextsUiState,
     onAction: (ContextAction) -> Unit,
     onBack: () -> Unit,
-    navChrome: AmNavChromeState? = null,
+    navChrome: AqNavChromeState? = null,
     appHosts: AppHosts? = null,
     onOpenDestination: (String) -> Unit = {},
     onOpenOperation: (String) -> Unit = {},
@@ -96,21 +96,21 @@ private fun ContextList(
     state: ContextsUiState,
     onAction: (ContextAction) -> Unit,
     onBack: () -> Unit,
-    navChrome: AmNavChromeState?,
+    navChrome: AqNavChromeState?,
     appHosts: AppHosts? = null,
     onCreateContext: () -> Unit = {},
 ) {
     // V1.4 (§12): Contextos es destino raíz — barra superior con título y
     // navegación inferior; sin flecha atrás (la navegación raíz y el Back
     // del sistema cubren el regreso a Inicio).
-    AmScreenScaffold(
+    AqScreenScaffold(
         topBar = {
-            AmTopBar(title = AppStrings.Contextos)
+            AqTopBar(title = AppStrings.Contextos)
         },
         navDestinations = navChrome?.destinations.orEmpty(),
         navSelectedId = navChrome?.selectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
-        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
         state.error?.let { err ->
@@ -118,18 +118,18 @@ private fun ContextList(
                 onRetry = { onAction(ContextAction.RetryFailed) },
                 onClear = { onAction(ContextAction.ClearError) },
             )
-            AmStatusBanner(
+            AqStatusBanner(
                 title = err.what,
                 message = err.dataStatus,
-                tone = AmTone.Danger,
+                tone = AqTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,
             )
         }
         when {
-            state.isLoading -> AmLoading(message = AppStrings.CargandoContextos)
-            state.contexts.isEmpty() -> AmEmptyState(
-                icon = AmIcons.Context,
+            state.isLoading -> AqLoading(message = AppStrings.CargandoContextos)
+            state.contexts.isEmpty() -> AqEmptyState(
+                icon = AqIcons.Context,
                 title = AppStrings.SinContextos,
                 subtitle = AppStrings.LosContextosAgrupanTusQr,
                 // U3/ADR-0003 (opción B/C): la acción primaria del vacío es
@@ -139,22 +139,22 @@ private fun ContextList(
             )
             else -> {
                 // Lista agrupada (patrón de lista de chats y contactos, ADR-0021):
-                // AmListBody con AmListRow y hairlines — superficie de tarjeta
+                // AqListBody con AqListRow y hairlines — superficie de tarjeta
                 // que agrupa las filas y se separa del fondo de página.
-                AmListBody(
+                AqListBody(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                 ) {
                     state.contexts.forEachIndexed { index, context ->
                         // Identidad visual del contexto: bloque de acento derivado
                         // del id + nombre + descripción opcional.
-                        AmListRow(
+                        AqListRow(
                             title = context.name,
                             subtitle = context.note?.takeIf { it.isNotBlank() },
                             onClick = { onAction(ContextAction.Open(context.id)) },
                             leading = {
                                 // Bloque de identidad del contexto (M4): círculo
                                 // de 40 dp con el color del contexto.
-                                AmContextBadge(context.id)
+                                AqContextBadge(context.id)
                             },
                             showDivider = index < state.contexts.lastIndex,
                         )
@@ -181,16 +181,16 @@ private fun ContextDetail(
     // V1.4 (§12): detalle de contexto con título en la barra superior y
     // flecha atrás; las secciones siguen siendo QR · Actividades ·
     // Comprobantes (pestañas estándar).
-    AmScreenScaffold(
+    AqScreenScaffold(
         scrollable = true,
         topBar = {
-            AmTopBar(
+            AqTopBar(
                 title = contents?.context?.name ?: AppStrings.Contextos,
                 onBack = { onAction(ContextAction.Back) },
                 backLabel = AppStrings.Volver,
             )
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { AmSnackbarHost(host) } },
+        snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
         state.error?.let { err ->
@@ -198,10 +198,10 @@ private fun ContextDetail(
                 onRetry = { onAction(ContextAction.RetryFailed) },
                 onClear = { onAction(ContextAction.ClearError) },
             )
-            AmStatusBanner(
+            AqStatusBanner(
                 title = err.what,
                 message = err.dataStatus,
-                tone = AmTone.Danger,
+                tone = AqTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,
             )
@@ -211,25 +211,25 @@ private fun ContextDetail(
             // encabezados de SU superficie cuando es legible como texto.
             val contextAccent = accentFor(data.context.id).background
             data.context.note?.takeIf { it.isNotBlank() }?.let {
-                AmText(it, size = AmType.Label, color = AmColor.TextSecondary)
+                AqText(it, size = AqType.Label, color = AqColor.TextSecondary)
             }
             // Pestañas estándar QR · Actividades · Comprobantes (modelo
             // mental §2; sin crear navegación nueva — la conmutación es local).
             var pivotSection by remember { mutableStateOf(0) }
-            AmTabs(
+            AqTabs(
                 sections = listOf(AppStrings.Qr, AppStrings.Operaciones, AppStrings.Comprobantes),
                 selectedIndex = pivotSection,
                 onSelect = { pivotSection = it },
                 accent = contextAccent,
             ) { section ->
-                Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
+                Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
                     when (section) {
                         0 -> {
                             // U1: QR es invariable en español; conteo vía helper.
-                            AmText(contextSectionLabel("QR", "QR", data.destinations.size), size = AmType.Label, color = AmColor.TextSecondary)
-                            AmListBody {
+                            AqText(contextSectionLabel("QR", "QR", data.destinations.size), size = AqType.Label, color = AqColor.TextSecondary)
+                            AqListBody {
                                 data.destinations.forEachIndexed { index, destination ->
-                                    AmListRow(
+                                    AqListRow(
                                         title = destination.name.ifBlank { AppStrings.QrSinNombre },
                                         onClick = { onOpenDestination(destination.id) },
                                         showDivider = index < data.destinations.lastIndex,
@@ -239,11 +239,11 @@ private fun ContextDetail(
                         }
                         1 -> {
                             // U1: singular honesto para N=1 ("Actividad reciente · 1").
-                            AmText(contextSectionLabel(AppStrings.ActividadReciente, AppStrings.ActividadesRecientes, data.operations.size), size = AmType.Label, color = AmColor.TextSecondary)
+                            AqText(contextSectionLabel(AppStrings.ActividadReciente, AppStrings.ActividadesRecientes, data.operations.size), size = AqType.Label, color = AqColor.TextSecondary)
                             val shownOperations = data.operations.take(RECENT_ACTIVITIES_SHOWN)
-                            AmListBody {
+                            AqListBody {
                                 shownOperations.forEachIndexed { index, operation ->
-                                    AmListRow(
+                                    AqListRow(
                                         title = listOfNotNull(
                                             when (operation.type) {
                                                 com.agendaqr.destinations.domain.OperationType.PAGO -> AppStrings.Pago
@@ -262,17 +262,17 @@ private fun ContextDetail(
                                 }
                             }
                             if (data.operations.size > RECENT_ACTIVITIES_SHOWN) {
-                                AmTextAction(
+                                AqTextAction(
                                     label = AppStrings.VerMas,
                                     onClick = onOpenOperations,
                                 )
                             }
                         }
                         else -> {
-                            AmText(contextSectionLabel(AppStrings.Comprobante, AppStrings.Comprobantes, data.comprobantes.size), size = AmType.Label, color = AmColor.TextSecondary)
-                            AmListBody {
+                            AqText(contextSectionLabel(AppStrings.Comprobante, AppStrings.Comprobantes, data.comprobantes.size), size = AqType.Label, color = AqColor.TextSecondary)
+                            AqListBody {
                                 data.comprobantes.forEachIndexed { index, receipt ->
-                                    AmListRow(
+                                    AqListRow(
                                         title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
                                         subtitle = receipt.file.takeIf { it.isNotBlank() },
                                         onClick = { onOpenComprobante(receipt.id) },
@@ -284,6 +284,6 @@ private fun ContextDetail(
                     }
                 }
             }
-        } ?: AmLoading(message = AppStrings.CargandoContexto)
+        } ?: AqLoading(message = AppStrings.CargandoContexto)
     }
 }

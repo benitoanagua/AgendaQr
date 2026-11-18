@@ -22,13 +22,13 @@ internal fun ComprobanteViewerDialog(
     var showDeleteConfirm by remember { mutableStateOf(false) }
     // anuncio de eliminación confirmada (por evento).
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
-    AmFeedbackEvent(
+    AqFeedbackEvent(
         event = deleteDoneEvent,
         message = AppStrings.Eliminado,
         feedbackHost = appHosts?.feedback,
     )
     if (showDeleteConfirm) {
-        AmDialog(
+        AqDialog(
             title = AppStrings.EliminarComprobante,
             destructive = true,
             message = AppStrings.operationKeptOnReceiptDelete,
@@ -44,7 +44,7 @@ internal fun ComprobanteViewerDialog(
         return
     }
     val bytes = state.openedComprobanteBytes
-    AmDialog(
+    AqDialog(
         title = AppStrings.Comprobante,
         confirmLabel = AppStrings.Cerrar,
         onConfirm = { viewModel.onAction(OperationAction.CloseComprobante) },
@@ -54,21 +54,21 @@ internal fun ComprobanteViewerDialog(
         // solo se alcanza por su botón explícito (§3: Back ≠ destructivo).
         onDismissRequest = { viewModel.onAction(OperationAction.CloseComprobante) },
         content = {
-            Column(verticalArrangement = Arrangement.spacedBy(AmSpacing.Sm)) {
-                AmText(formatDate(receipt.createdAt), size = AmType.Label, color = AmColor.TextSecondary)
-                AmText(AppStrings.Origen + receiptProvenanceLabel(receipt.provenance), size = AmType.Label, color = AmColor.TextSecondary)
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                AqText(formatDate(receipt.createdAt), size = AqType.Label, color = AqColor.TextSecondary)
+                AqText(AppStrings.Origen + receiptProvenanceLabel(receipt.provenance), size = AqType.Label, color = AqColor.TextSecondary)
                 // estado de sincronización del comprobante, con texto.
                 ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                 when {
-                    state.isLoadingComprobante -> AmLoading(message = AppStrings.AbriendoComprobante)
+                    state.isLoadingComprobante -> AqLoading(message = AppStrings.AbriendoComprobante)
                     bytes != null -> {
                         ComprobantePreview(bytes, receipt.mimeType)
-                        AmSecondaryButton(
+                        AqSecondaryButton(
                             label = AppStrings.Compartir,
                             onClick = { shareComprobante(bytes, receipt.extension ?: "bin", receipt.mimeType) },
                         )
                     }
-                    else -> AmText(AppStrings.NoSePudoAbrirEl, size = AmType.Label, color = AmColor.TextSecondary)
+                    else -> AqText(AppStrings.NoSePudoAbrirEl, size = AqType.Label, color = AqColor.TextSecondary)
                 }
             }
         },

@@ -7,7 +7,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import com.agendaqr.core.ui.theme.AmTheme
+import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.domain.AssociateComprobanteToOperationUseCase
 import com.agendaqr.destinations.domain.Comprobante
 import com.agendaqr.destinations.domain.ComprobanteFileStore
@@ -63,7 +63,7 @@ class UxDiscardReproductionTest {
         val vm = viewModel(operations)
         vm.onAction(OperationAction.New)
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 val state by vm.state.collectAsState()
                 OperationEditorScreen(
                     state = state,
@@ -95,7 +95,7 @@ class UxDiscardReproductionTest {
         val vm = viewModel(operations)
         vm.onAction(OperationAction.New)
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 val state by vm.state.collectAsState()
                 OperationEditorScreen(
                     state = state,
@@ -118,7 +118,7 @@ class UxDiscardReproductionTest {
         val vm = viewModel(operations)
         vm.onAction(OperationAction.New)
         compose.setContent {
-            AmTheme {
+            AqTheme {
                 val state by vm.state.collectAsState()
                 OperationEditorScreen(
                     state = state,
