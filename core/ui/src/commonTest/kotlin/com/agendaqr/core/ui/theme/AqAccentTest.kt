@@ -11,7 +11,7 @@ import kotlin.test.assertTrue
 /**
  * Identidad de contextos (X-06): pares deterministas tomados de la
  * instantánea de `@shopify/polaris-tokens@9.4.2`, todos validados a AA.
- * El acento de sistema usa `emphasis` + blanco.
+ * El acento de sistema usa `emphasis` + blanco; Magenta aplica PV-07.
  */
 class AqAccentTest {
 
@@ -55,6 +55,29 @@ class AqAccentTest {
         val actual = (AqAccents.Admitted + AqAccents.System)
             .associate { it.id to hex(it.background) }
         assertEquals(expected, actual)
+
+        // F2: los literales anónimos pasan a constantes nombradas y se fija el
+        // par completo. Magenta conserva blanco aunque el par publicado sea
+        // `avatarOneOnFill` (PV-07).
+        val expectedOn = mapOf(
+            "system" to AqPalette.white,
+            "blue" to AqPalette.white,
+            "ink" to AqPalette.white,
+            "emerald" to AqPalette.white,
+            "forest" to AqPalette.white,
+            "red" to AqPalette.white,
+            "wine" to AqPalette.white,
+            "violet" to AqPalette.magicOnFill,
+            "indigo" to AqPalette.magicOnFill,
+            "magenta" to AqPalette.white,
+            "sky" to AqPalette.gray900,
+            "amber" to AqPalette.gray900,
+            "lemon" to AqPalette.gray900,
+        )
+        assertEquals(
+            expectedOn,
+            (AqAccents.Admitted + AqAccents.System).associate { it.id to it.onAccent },
+        )
     }
 
     @Test
@@ -66,10 +89,21 @@ class AqAccentTest {
             val ratio = contrast(accent.background, accent.onAccent)
             assertTrue(ratio >= 4.5, "${accent.id}: onAccent/background = $ratio < 4.5")
             assertTrue(
-                accent.onAccent == AqPalette.white || accent.onAccent == AqPalette.gray900,
-                "${accent.id}: onAccent debe ser blanco o tinta oscura verificada",
+                accent.onAccent == AqPalette.white ||
+                    accent.onAccent == AqPalette.magicOnFill ||
+                    accent.onAccent == AqPalette.gray900,
+                "${accent.id}: onAccent debe ser un par publicado verificado",
             )
         }
+    }
+
+    @Test
+    fun magenta_uses_verified_white_instead_of_the_published_avatar_pair() {
+        val magenta = AqAccents.Admitted.first { it.id == "magenta" }
+        val published = contrast(magenta.background, AqPalette.avatarOneOnFill)
+        val chosen = contrast(magenta.background, magenta.onAccent)
+        assertTrue(published < 4.5, "PV-07: par publicado $published no debería llegar a AA")
+        assertTrue(chosen >= 4.5, "PV-07: par aplicado $chosen debe cumplir AA")
     }
 
     @Test

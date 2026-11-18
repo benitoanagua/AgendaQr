@@ -9,7 +9,8 @@ import kotlin.test.assertTrue
 
 /**
  * Pares de estado y acento de `@shopify/polaris-tokens@9.4.2`, más la
- * paleta de identidad de contextos validada en X-06.
+ * paleta de identidad de contextos validada en X-06. Violet e Indigo usan
+ * `magicOnFill` (`:204`); Magenta aplica PV-07 sobre `avatarOneFill` (`:255`).
  */
 class AqContrastPairsTest {
 
