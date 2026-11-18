@@ -25,7 +25,7 @@ fun visualSources(): List<File> = productionKotlinSources().toList()
 /** Capa de tokens: el único archivo con literales visuales. */
 private val TokenLayerFile = "AqTokens.kt"
 private val ThemeLayerFile = "AqTheme.kt"
-private val IconVectorFile = "TDesignIconVectors.kt"
+private val IconVectorFile = "PolarisIconVectors.kt"
 
 /**
  * Allowlist de literales de UI permitidos en feature/: solo identificadores
@@ -55,9 +55,9 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-04" to listOf("border:AqInputs.kt"),
     // `Modifier.shadow` se centraliza en la capa de tokens; solo los
     // archivos registrados pueden invocarlo (o elevarse vía `aqElevation`).
-    // E-06 (elevación de botones) se retiró: TDesign no da sombra a los
-    // botones (son planos) y `AqButtons.kt` no eleva nada; un registro sin
-    // uso lo detecta `verifyScreenContract`.
+    // E-06 (elevación de botones) se retiró: los botones son planos y
+    // `AqButtons.kt` no eleva nada; un registro sin uso lo detecta
+    // `verifyScreenContract`.
     "E-05" to listOf("shadow:AqLists.kt"),
 )
 
@@ -78,7 +78,7 @@ val shadowAllowedFiles: Set<String> =
     }
 
 fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = buildList {
-    // Solo los vectores TDesign vía AqIcon; los APIs de iconos de Material
+    // Solo los vectores Polaris vía AqIcon; los APIs de iconos de Material
     // están prohibidos en producción.
     val bannedImports = listOf(
         "androidx.compose.material.icons",
@@ -648,7 +648,7 @@ tasks.register("verifyDesignSystemFixtures") {
             }
         }
         // Iconos: los presets de Material están prohibidos en producción;
-        // TDesign va por AqIcons.
+        // Polaris va por AqIcons.
         listOf("Icons.Default", "Icons.AutoMirrored", "Icons.Sharp", "Icons.TwoTone").forEach { preset ->
             require(kotlinDesignViolations(componentsPath, listOf("val i = ${preset}.Add")).isNotEmpty()) {
                 "$preset must fail (material icons are banned)"

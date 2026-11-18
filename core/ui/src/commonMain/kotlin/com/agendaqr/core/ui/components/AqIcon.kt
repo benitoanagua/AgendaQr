@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Dp
-import com.agendaqr.core.ui.icons.TDesignIconVectors
+import com.agendaqr.core.ui.icons.PolarisIconVectors
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 
@@ -37,42 +37,42 @@ fun AqIcon(
     )
 }
 
-/** Stable product concepts mapped to TDesign Mobile outline glyphs. */
+/** Stable product concepts mapped to the pinned Polaris Icons 9.3.1 vectors. */
 object AqIcons {
-    val Search: ImageVector get() = TDesignIconVectors.Search
-    val Add: ImageVector get() = TDesignIconVectors.Add
-    val Register: ImageVector get() = TDesignIconVectors.Register
-    val Favorite: ImageVector get() = TDesignIconVectors.Favorite
-    val Context: ImageVector get() = TDesignIconVectors.Context
-    val Back: ImageVector get() = TDesignIconVectors.Back
-    val Cancel: ImageVector get() = TDesignIconVectors.Cancel
-    val More: ImageVector get() = TDesignIconVectors.More
-    val Home: ImageVector get() = TDesignIconVectors.Home
-    val Gallery: ImageVector get() = TDesignIconVectors.Gallery
-    val Camera: ImageVector get() = TDesignIconVectors.Camera
-    val Info: ImageVector get() = TDesignIconVectors.Info
-    val Warning: ImageVector get() = TDesignIconVectors.Warning
-    val CircleCheck: ImageVector get() = TDesignIconVectors.CircleCheck
-    val QrCode: ImageVector get() = TDesignIconVectors.QrCode
-    val SearchX: ImageVector get() = TDesignIconVectors.SearchX
-    val Inbox: ImageVector get() = TDesignIconVectors.Inbox
-    val ImageOff: ImageVector get() = TDesignIconVectors.ImageOff
-    val ScanLine: ImageVector get() = TDesignIconVectors.ScanLine
-    val Income: ImageVector get() = TDesignIconVectors.Income
-    val Expense: ImageVector get() = TDesignIconVectors.Expense
-    val Attachment: ImageVector get() = TDesignIconVectors.Attachment
-    val Store: ImageVector get() = TDesignIconVectors.Store
-    val Calendar: ImageVector get() = TDesignIconVectors.Calendar
-    val Clock: ImageVector get() = TDesignIconVectors.Clock
-    val ChevronRight: ImageVector get() = TDesignIconVectors.ChevronRight
-    val ShieldCheck: ImageVector get() = TDesignIconVectors.ShieldCheck
-    val Wallet: ImageVector get() = TDesignIconVectors.Wallet
-    val Lock: ImageVector get() = TDesignIconVectors.Lock
-    val Erase: ImageVector get() = TDesignIconVectors.Erase
-    val NoteEdit: ImageVector get() = TDesignIconVectors.NoteEdit
-    val Edit: ImageVector get() = TDesignIconVectors.NoteEdit
-    val Trash: ImageVector get() = TDesignIconVectors.Erase
-    val Share: ImageVector get() = TDesignIconVectors.Share
-    val Copy: ImageVector get() = TDesignIconVectors.Copy
-    val Maximize: ImageVector get() = TDesignIconVectors.Maximize
+    val Search: ImageVector get() = PolarisIconVectors.Search
+    val Add: ImageVector get() = PolarisIconVectors.Plus
+    val Register: ImageVector get() = PolarisIconVectors.Bill
+    val Favorite: ImageVector get() = PolarisIconVectors.Star
+    val Context: ImageVector get() = PolarisIconVectors.Folder
+    val Back: ImageVector get() = PolarisIconVectors.ArrowLeft
+    val Cancel: ImageVector get() = PolarisIconVectors.XCircle
+    val More: ImageVector get() = PolarisIconVectors.MenuHorizontal
+    val Home: ImageVector get() = PolarisIconVectors.Home
+    val Gallery: ImageVector get() = PolarisIconVectors.Image
+    val Camera: ImageVector get() = PolarisIconVectors.Camera
+    val Info: ImageVector get() = PolarisIconVectors.Info
+    val Warning: ImageVector get() = PolarisIconVectors.AlertTriangle
+    val CircleCheck: ImageVector get() = PolarisIconVectors.CheckCircle
+    val QrCode: ImageVector get() = PolarisIconVectors.Shopcodes
+    val SearchX: ImageVector get() = PolarisIconVectors.AlertCircle
+    val Inbox: ImageVector get() = PolarisIconVectors.Archive
+    val ImageOff: ImageVector get() = PolarisIconVectors.ImageAlt
+    val ScanLine: ImageVector get() = PolarisIconVectors.Barcode
+    val Income: ImageVector get() = PolarisIconVectors.ArrowDown
+    val Expense: ImageVector get() = PolarisIconVectors.ArrowUp
+    val Attachment: ImageVector get() = PolarisIconVectors.Attachment
+    val Store: ImageVector get() = PolarisIconVectors.Store
+    val Calendar: ImageVector get() = PolarisIconVectors.Calendar
+    val Clock: ImageVector get() = PolarisIconVectors.Clock
+    val ChevronRight: ImageVector get() = PolarisIconVectors.ChevronRight
+    val ShieldCheck: ImageVector get() = PolarisIconVectors.ShieldCheckMark
+    val Wallet: ImageVector get() = PolarisIconVectors.Wallet
+    val Lock: ImageVector get() = PolarisIconVectors.Lock
+    val Erase: ImageVector get() = PolarisIconVectors.Delete
+    val NoteEdit: ImageVector get() = PolarisIconVectors.Edit
+    val Edit: ImageVector get() = PolarisIconVectors.Edit
+    val Trash: ImageVector get() = PolarisIconVectors.Delete
+    val Share: ImageVector get() = PolarisIconVectors.Share
+    val Copy: ImageVector get() = PolarisIconVectors.Duplicate
+    val Maximize: ImageVector get() = PolarisIconVectors.Maximize
 }
