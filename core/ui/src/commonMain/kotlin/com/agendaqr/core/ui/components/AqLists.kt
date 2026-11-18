@@ -3,6 +3,7 @@ package com.agendaqr.core.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -633,6 +636,63 @@ fun AqExpansionPanel(
                     .fillMaxWidth(),
             ) {
                 content()
+            }
+        }
+    }
+}
+
+/**
+ * Carrusel horizontal de tarjetas justificado por el carrusel de favoritos
+ * de Inicio (S01). La siguiente tarjeta asoma como indicio visual, sin
+ * instrucción de deslizamiento (UX V1: los gestos nunca son la única forma
+ * de acción; el scroll horizontal es suficiente).
+ *
+ * - Ítems con ancho fijo y objetivo táctil ≥ 48 dp.
+ * - Espaciado entre ítems con tokens del sistema.
+ * - Primer y último ítem con margen de pantalla para alinearse al borde
+ *   y que el siguiente asome.
+ * - Sin animación decorativa; el scroll es nativo de la plataforma.
+ * - Semántica de accesibilidad por ítem (contentDescription del llamador).
+ */
+data class AqCarouselItem(val id: String, val label: String? = null)
+
+@Composable
+fun AqCarousel(
+    items: List<AqCarouselItem>,
+    itemWidth: Dp = AqMetrics.FavCardWidth,
+    itemSpacing: Dp = AqSpacing.Md,
+    modifier: Modifier = Modifier,
+    content: @Composable (AqCarouselItem) -> Unit,
+) {
+    require(items.isNotEmpty()) { "AqCarousel necesita al menos un ítem" }
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(itemSpacing),
+    ) {
+        items.forEachIndexed { index, item ->
+            Box(
+                modifier = Modifier
+                    .width(itemWidth)
+                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                    .then(
+                        if (index == 0) {
+                            Modifier.padding(start = AqSpacing.ScreenMargin)
+                        } else {
+                            Modifier
+                        },
+                    )
+                    .then(
+                        if (index == items.lastIndex) {
+                            Modifier.padding(end = AqSpacing.ScreenMargin)
+                        } else {
+                            Modifier
+                        },
+                    )
+                    .testTag("aq-carousel-item-${item.id}"),
+            ) {
+                content(item)
             }
         }
     }
