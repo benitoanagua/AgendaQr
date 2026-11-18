@@ -723,11 +723,9 @@ fun repoRead(relativePath: String): String? =
 private val screenContractDocPath = "docs/04-ux/03-contrato-interaccion-pantallas.md"
 
 /**
- * Galería estricta por superficie (`<superficie>--<estado>--<ancho>dp--<tema>.png`).
- * Es un artefacto distinto de las capturas de referencia de layout
- * (`build/roborazzi/`, esquema `<escenario>.png`, generadas por
- * `-Pagendaqr.capture=true`; ver ADR-0007). Solo esta galería se valida
- * contra el contrato por pantalla.
+ * Galería estricta por superficie (`<superficie>--<estado>--<ancho>dp--<tema>.png`),
+ * único artefacto de capturas. Se genera con `-Pagendaqr.capture=true` y se
+ * valida contra el contrato por pantalla (ADR-0007).
  */
 val captureGalleryDir = "build/captures/gallery"
 
@@ -790,8 +788,8 @@ tasks.register("generateCaptureManifest") {
 
 /**
  * Galería estricta en un solo comando (ADR-0007): produce las
- * capturas (tests con `-Pagendaqr.capture=true`), su manifiesto y los
- * índices navegables. Requiere el flag explícito; nada se versiona y el
+ * capturas (tests con `-Pagendaqr.capture=true`), su manifiesto y el
+ * índice navegable. Requiere el flag explícito; nada se versiona y el
  * gate (`verifyScreenContract`) valida la galería cuando existe.
  */
 tasks.register("captureGallery") {

@@ -36,36 +36,23 @@ existente. Las capturas no se versionan y la comparación de hashes y su
 manifiesto dejan de existir como mecanismo de aceptación.
 
 La galería visual se produce **bajo demanda** y fuera del control de
-versiones, en `build/`; nada se versiona ni se hashea. Hay dos artefactos
-con propósitos distintos:
+versiones, en `build/`; nada se versiona ni se hashea. Hay un único
+artefacto de capturas: la **galería estricta por superficie**
+(`build/captures/gallery/`), con esquema de nombre determinista
+`<superficie>--<estado>--<ancho>dp--<tema>.png` y ancho restringido a
+320 o 360 dp. Sustituye al par anterior de galerías duplicadas
+(`build/roborazzi/` y `build/captures/gallery/`): las pruebas siguen
+componiendo y verificando cada escenario por aserciones, y solo los
+escenarios declarados en el contrato escriben imagen.
 
-1. **Capturas de referencia de layout** (`build/roborazzi/<escenario>.png`),
-   una por escenario y tema a 360 dp (claro/oscuro), sin variantes de ancho
-   ni de escala de fuente. El resto de configuraciones (320 dp, fuente al
-   100 %/150 %) se verifica por aserciones, sin capturarse. Reproducen como
-   imagen cada escenario que ya comprueban las pruebas de layout; no se
-   validan contra el contrato por pantalla (son escenarios de
-   componente/pantalla, no la galería estricta por superficie). Se generan
-   con:
-
-   ```bash
-   ./gradlew :feature:destinations:presentation:testDebugUnitTest \
-       -Pagendaqr.capture=true
-   ```
-
-   Sin el flag la captura es un no-op: los tests siguen verificando el
-   layout y no escriben ninguna imagen.
-
-2. **Galería estricta por superficie** (`build/captures/gallery/`), con
-   esquema de nombre determinista
-   `<superficie>--<estado>--<ancho>dp--<tema>.png` y ancho restringido a
-   320 o 360 dp. Cuando existe, `verifyScreenContract` la valida:
-   dimensiones reales del bitmap coherentes con el ancho declarado (sin
-   zoom, recorte ni viewport falso), sin duplicados byte-exactos ni
-   repeticiones de la misma superficie/estado/configuración, y con cobertura
-   de las cuatro configuraciones requeridas (`light-320`, `light-360`,
-   `dark-320`, `dark-360`). Si no hay artefactos, el gate no falla porque la
-   galería no se versiona.
+Cuando la galería existe, `verifyScreenContract` la valida: dimensiones
+reales del bitmap coherentes con el ancho declarado (sin zoom, recorte ni
+viewport falso), sin duplicados byte-exactos ni repeticiones de la misma
+superficie/estado/configuración, y con cobertura de las cuatro
+configuraciones requeridas (`light-320`, `light-360`, `dark-320`,
+`dark-360`). Si no hay artefactos, el gate no falla porque la galería no
+se versiona. Con el flag `-Pagendaqr.capture=true`, que la produce, las
+pruebas corren siempre frescas y se limpia la galería antes de regenerarla.
 
 **Productor.** `LayoutReferenceTest` produce la galería estricta con
 un mapa explícito escenario → (superficie, estado): cada superficie del
@@ -90,15 +77,14 @@ obligatorio, el motivo de inclusión y el test de origen. No incluye el campo
 `fontScale` porque el esquema de nombres ya no codifica la escala. Cuando
 hay capturas, el gate exige el manifiesto presente y sincronizado.
 
-**Comandos.** Referencias de layout: `./gradlew
-:feature:destinations:presentation:testDebugUnitTest -Pagendaqr.capture=true`.
-Galería estricta completa con manifiesto e índices en un solo comando:
+**Comandos.** Galería estricta completa con manifiesto e índice en un solo
+comando:
 
 ```bash
 ./gradlew captureGallery -Pagendaqr.capture=true
 ```
 
-Con el flag las galerías se regeneran siempre completas y frescas (limpieza
+Con el flag la galería se regenera siempre completa y fresca (limpieza
 previa; los PNG son efectos laterales que Gradle no rastrea); sin el flag,
 la captura es un no-op y las pruebas siguen verificando el layout.
 
@@ -116,7 +102,8 @@ La protección determinista de recortes y solapes se completa con las
 pruebas ya existentes: `AmScaffoldOverlapContractTest` (el contenido nunca
 queda bajo el dock de acciones ni el FAB), `ScreensA11yCoverageTest` y
 `AmAccessibilityContractTest` (objetivos táctiles y texto visible),
-`FontScaleContractTest`/`AmTabsLayoutTest` (escala de fuente al 100 %/150 %).
+`AmTabsLayoutTest`/`AmResponsiveLayoutContractTest` (escala de fuente al
+100 %/150 %).
 
 ## Consecuencias
 
@@ -127,6 +114,11 @@ queda bajo el dock de acciones ni el FAB), `ScreensA11yCoverageTest` y
   (`NavigationRail`) ni el layout con fuente al 200 %. Ambas capacidades se
   conservan en producción y quedan como revisión manual en dispositivo, con
   el riesgo explícitamente documentado.
+- Se retiran las suites específicas de escala de fuente
+  (`FontScaleScreensTest`, `AuthFontScaleTest`, `FontScaleContractTest`): la
+  cobertura JVM que queda vive en `AmTabsLayoutTest`,
+  `AmResponsiveLayoutContractTest` y `DestinationRowLayoutTest`; no hay
+  verificación instrumentada de fuente.
 - La regresión puramente estética (color o espaciado sutil) ya no se
   detecta automáticamente; su cobertura es por contrato de tokens
   (`AmSchemeTest`, `AmContrastPairsTest`, `AmTypographyTest`) y revisión

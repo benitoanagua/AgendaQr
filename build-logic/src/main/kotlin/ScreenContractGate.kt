@@ -472,10 +472,7 @@ object ScreenContracts {
                 "AmScreenScaffold", "AmListBody", "AmListRow", "AmStatusBanner", "AmLoading",
             ),
             a11yTests = listOf("$A11Y/AccessibilityStatesFormsTest.kt"),
-            tests = listOf(
-                "$A11Y/AuthFontScaleTest.kt",
-                "$A11Y/AccessibilityStatesFormsTest.kt",
-            ),
+            tests = listOf("$A11Y/AccessibilityStatesFormsTest.kt"),
         ),
         ScreenContract(
             id = "auth",
@@ -497,7 +494,6 @@ object ScreenContracts {
             a11yTests = listOf("$A11Y/AccessibilityStatesFormsTest.kt"),
             tests = listOf(
                 "$A11Y/AccessibilityStatesFormsTest.kt",
-                "$A11Y/AuthFontScaleTest.kt",
                 "$A11Y/StateRestorationTest.kt",
             ),
         ),

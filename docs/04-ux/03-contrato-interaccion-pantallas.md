@@ -302,7 +302,7 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - capturas: `content`, `error`
 - componentes: `AmScreenScaffold`, `AmListBody`, `AmListRow`, `AmStatusBanner`, `AmLoading`
 - pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/AccessibilityStatesFormsTest.kt`
-- pruebas: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/AuthFontScaleTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/AccessibilityStatesFormsTest.kt`
+- pruebas: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/AccessibilityStatesFormsTest.kt`
 
 ### auth — Cuenta: autenticación
 
@@ -319,7 +319,7 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - capturas: `content`, `error`
 - componentes: `AmTextField`, `AmPrimaryButton`, `AmStatusBanner`
 - pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/AccessibilityStatesFormsTest.kt`
-- pruebas: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/AccessibilityStatesFormsTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/AuthFontScaleTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/StateRestorationTest.kt`
+- pruebas: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/AccessibilityStatesFormsTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/StateRestorationTest.kt`
 
 ### S00 — Acceso local
 
