@@ -100,8 +100,8 @@ internal fun resolveAqButtonColors(
     }
     AqButtonVariant.Default -> when {
         !enabled -> AqButtonColors(scheme.disabled, scheme.textTertiary)
-        pressed -> AqButtonColors(scheme.componentActive, scheme.textPrimary)
-        else -> AqButtonColors(scheme.surfaceContainerHigh, scheme.textPrimary)
+        pressed -> AqButtonColors(scheme.surfaceActive, scheme.textPrimary, scheme.border)
+        else -> AqButtonColors(scheme.surface, scheme.textPrimary, scheme.border)
     }
     AqButtonVariant.Danger -> when {
         !enabled -> AqButtonColors(scheme.dangerDisabled, scheme.textPrimary)
@@ -191,7 +191,7 @@ private fun AqButtonImpl(
     } else {
         AqTextStyles.ButtonLabel
     }
-    val shape = AqShapes.Small
+    val shape = AqShapes.Medium
     val haptics = LocalHapticFeedback.current
     val buttonModifier = modifier
         .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
@@ -458,7 +458,7 @@ fun AqCompactAction(
             modifier = Modifier
                 .matchParentSize()
                 .heightIn(min = AqMetrics.ChipCompactHeight + AqSpacing.Xs)
-                .background(AqColor.SurfaceContainerLow, AqShapes.Small),
+                .background(AqColor.SurfaceContainerLow, AqShapes.Medium),
         )
         Row(
             modifier = Modifier.padding(horizontal = AqSpacing.Sm, vertical = AqSpacing.Xs),
@@ -639,7 +639,7 @@ fun AqFilterChip(
                     modifier = Modifier
                         .background(
                             if (selected) AqColor.TextPrimary.copy(alpha = AqAlpha.SelectedOnFill) else AqColor.SurfaceContainerHighest,
-                            AqShapes.ExtraSmall,
+                            AqShapes.Small,
                         )
                         .padding(horizontal = AqSpacing.Xs),
                 ) {
@@ -687,7 +687,7 @@ fun AqSegmentedControl(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(AqColor.SurfaceSecondary, AqShapes.Small)
+            .background(AqColor.SurfaceSecondary, AqShapes.Medium)
             .selectableGroup()
             .padding(AqSpacing.Xs),
         horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
@@ -698,10 +698,10 @@ fun AqSegmentedControl(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(AqShapes.Small)
+                    .clip(AqShapes.Medium)
                     .then(
                         if (selected) {
-                            Modifier.background(AqColor.Surface, AqShapes.Small)
+                            Modifier.background(AqColor.Surface, AqShapes.Medium)
                         } else {
                             Modifier
                         },
@@ -737,7 +737,7 @@ fun AqSegmentedControl(
                             modifier = Modifier
                                 .background(
                                     if (selected) activeColor.copy(alpha = AqAlpha.SelectedOnTone) else AqColor.SurfaceContainerHighest,
-                                    AqShapes.ExtraSmall,
+                                    AqShapes.Small,
                                 )
                                 .padding(horizontal = AqSpacing.Xs),
                         ) {

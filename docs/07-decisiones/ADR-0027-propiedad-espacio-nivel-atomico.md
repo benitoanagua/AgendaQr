@@ -3,7 +3,7 @@
 **Estado:** ACEPTADO — 2026-11-18
 **Relaciona:** ADR-0025 (adopción de Polaris), ADR-0026 (cierre de la
 migración), ADR-0007 (verificación de layout), ADR-0008 (guía de voz),
-contrato normativo de diseño v8.2 e informe
+contrato normativo de diseño v8.3 e informe
 [`11-auditoria-atomic-spacing.md`](../05-design-system/11-auditoria-atomic-spacing.md).
 
 ## 1. Decisión
@@ -51,7 +51,7 @@ en [`11-auditoria-atomic-spacing.md`](../05-design-system/11-auditoria-atomic-sp
 
 | ID | Desviación | Motivo |
 |---|---|---|
-| D-12 | Las agrupaciones de tarjetas de página usan un ritmo de 16 dp, mientras `light-mobile` publica `space-card-gap` de 8 dp (`09-instantanea…:511`) | Con 16 dp de relleno interno, un hueco de 8 dp entre tarjetas lee como un solo bloque; 16 dp conserva la separación de secciones a 360 dp y coincide con el ritmo de margen de pantalla. El `AqScreenScaffold` mantiene 8 dp por defecto para las páginas que no declaran agrupación explícita |
+| D-12 | Las agrupaciones de tarjetas de página usan un ritmo de 16 dp, mientras `light-mobile` publica `space-card-gap` de 8 dp (`09-instantanea…:511`) | Con 16 dp de relleno interno, un hueco de 8 dp entre tarjetas lee como un solo bloque; 16 dp conserva la separación de secciones a 360 dp y coincide con el ritmo de margen de pantalla. `AqScreenScaffold` aplica ese mismo paso de 16 dp por defecto entre organismos, de modo que la página no tenga que repetirlo |
 
 Desviaciones ya registradas que esta decisión no altera: D-01 (`1rem` =
 16 dp), D-02 (targets ≥ 48 dp), D-06 (escala hasta 200 %), D-10 (sombras) y
@@ -73,9 +73,11 @@ Hallazgos aceptados con seguimiento (detalle en el informe, §6):
 
 - **Contratos por nivel.** `AqAtomicSpacingContractTest` mide banner sin
   margen propio, margen del host, tarjeta 16 dp, fila 12 dp, dock con margen
-  de pantalla y error del importe dentro del campo. `AqUiPolishContractTest`
-  añade la alineación de etiqueta/valor/ayuda/error, 48 dp de campo, 16 dp de
-  tarjeta y banner, fila de 12 dp y opciones sin margen externo.
+  de pantalla, error del importe dentro del campo y que el contenido
+  expandido quede limitado a `ContentMaxWidth` y centrado.
+  `AqUiPolishContractTest` añade la alineación de etiqueta/valor/ayuda/error,
+  48 dp de campo, 16 dp de tarjeta y banner, fila de 12 dp, opciones sin
+  margen externo y el relleno/borde del botón secundario.
 - **Contraste.** `AqContrastPairsTest` cubre etiqueta/ayuda/error sobre
   `surface` e `inputSurface` en ambos temas con AA (4.5:1), además de foco y
   borde funcional (3:1).

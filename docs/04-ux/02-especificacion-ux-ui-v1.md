@@ -396,4 +396,4 @@ Fuera del alcance de esta especificación conceptual: detalles internos de Kotli
 
 ## 14. Estado
 
-**UX/UI V1.9 funcional + V1.21 de composición funcional: FROZEN** (ADR-0019, ADR-0025). La dirección visual (§12) está descongelada y se rige por ADR-0025 y el contrato normativo v8.2; las invariantes funcionales listadas al inicio permanecen congeladas.
+**UX/UI V1.9 funcional + V1.21 de composición funcional: FROZEN** (ADR-0019, ADR-0025). La dirección visual (§12) está descongelada y se rige por ADR-0025 y el contrato normativo v8.3; las invariantes funcionales listadas al inicio permanecen congeladas.
