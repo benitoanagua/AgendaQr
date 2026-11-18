@@ -61,7 +61,7 @@ fun AqPinDots(
  * Teclado numérico propio del acceso local (S00):
  * retícula 3×4 con 1–9, hueco inferior-izquierdo, 0 y borrado. Cada tecla
  * es un único botón con el objetivo táctil completo (≥48 dp) y la
- * pulsación fiel de TDesign: color activo del token, sin ripple (D-11).
+ * pulsación con color activo del token y sin ripple (D-11).
  *
  * El PIN es de longitud variable (4–12): no hay envío automático; la
  * pantalla mantiene su acción primaria explícita de desbloqueo.

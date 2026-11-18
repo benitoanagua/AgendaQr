@@ -1,8 +1,8 @@
 package com.agendaqr.core.ui.components
 
 import com.agendaqr.core.ui.theme.AqAccents
-import com.agendaqr.core.ui.theme.DarkAmColorScheme
-import com.agendaqr.core.ui.theme.LightAmColorScheme
+import com.agendaqr.core.ui.theme.DarkAqColorScheme
+import com.agendaqr.core.ui.theme.LightAqColorScheme
 import com.agendaqr.core.ui.theme.contrastRatio
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -25,8 +25,8 @@ class AqContrastPairsTest {
     @Test
     fun primary_and_state_fills_have_accessible_content_in_both_themes() {
         listOf(
-            "light" to LightAmColorScheme,
-            "dark" to DarkAmColorScheme,
+            "light" to LightAqColorScheme,
+            "dark" to DarkAqColorScheme,
         ).forEach { (name, scheme) ->
             assertTrue(contrastRatio(scheme.onBrandFill, scheme.brandFill) >= 4.5, "$name primary")
             assertTrue(contrastRatio(scheme.onDanger, scheme.dangerFill) >= 4.5, "$name danger")
@@ -37,7 +37,7 @@ class AqContrastPairsTest {
 
     @Test
     fun focus_and_functional_field_border_meet_non_text_contrast() {
-        listOf(LightAmColorScheme, DarkAmColorScheme).forEach { scheme ->
+        listOf(LightAqColorScheme, DarkAqColorScheme).forEach { scheme ->
             listOf(scheme.background, scheme.surface, scheme.surfaceSecondary).forEach { surface ->
                 assertTrue(contrastRatio(scheme.focus, surface) >= 3.0, "focus/surface")
             }

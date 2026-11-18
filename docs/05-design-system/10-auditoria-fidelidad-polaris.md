@@ -1,8 +1,9 @@
 # Auditoría de fidelidad a Polaris en `core/ui`
 
 **Estado:** informe de verificación (solo lectura), anexo al contrato normativo.
-**Autoridad:** ADR-0025, `00-contrato-normativo-diseno.md` v7.0 e
-`09-instantanea-tokens-polaris-9.4.2.md` (captura 2026-11-17).
+**Autoridad:** ADR-0025, ADR-0026, `00-contrato-normativo-diseno.md` v8.0 (v7.0
+como línea base de la auditoría) e `09-instantanea-tokens-polaris-9.4.2.md`
+(captura 2026-11-17).
 **Variante objetivo:** `light-mobile` (base clara); `dark-experimental` para
 oscuro. Todas las líneas citadas son del estado auditado, antes de las
 correcciones.
@@ -201,8 +202,8 @@ Los cuatro cumplen AA con su texto. En F2 pasaron a constantes nombradas de
 `magicOnFill`, `cautionFill`, `avatarOneFill` y `avatarOneOnFill`.
 `AqAccents.System` usa `emphasis` (`:757`) y hereda la corrección de F2;
 reducir la lista de 12 a pares verificables cambiaría la asignación
-`hash % size` (`AqTokens.kt:786`), por lo que F6 debe fijar ejemplos conocidos
-en `AqAccentTest`.
+`hash % size` (`AqTokens.kt:786`), por lo que se fijaron ejemplos conocidos en
+`AqAccentTest`.
 
 ## 8. H7 — Tema por defecto
 
@@ -342,3 +343,29 @@ seguimiento del sistema en `AqTheme`**; el default del local debe ser
 - Verificación: `AqIconMappingTest` fija los 36 nombres, los 34 vectores
   distintos y sus dimensiones intrínsecas; gates y pruebas de `core/ui` en
   verde. El render en iOS sigue **no verificado**.
+
+## 16. Estado tras F6 y cierre
+
+- Los diez identificadores `Am*` del censo pasan a la familia `Aq*` en
+  producción, pruebas y documentación: `LightAqColorScheme`,
+  `DarkAqColorScheme`, `LocalAqColorScheme`, `LocalAqFontFamily`,
+  `rememberAqInterFontFamily`, `withAqFontFamily`, `resolveAqButtonColors`,
+  `rememberAqClipboard`, `LocalAqActionSheetController` y `toAqSyncState`.
+  No queda ningún símbolo `Am*` en el código fuente.
+- El valor por defecto de `LocalAqColorScheme` es `LightAqColorScheme`
+  (`AqTokens.kt`): una composición sin proveedor hereda la base clara.
+  `AqTheme` ya seguía `isSystemInDarkTheme()`, por lo que el comportamiento
+  de tema del sistema no cambia.
+- Se retiran las menciones activas a sistemas anteriores en
+  `gradle/libs.versions.toml`, `iosApp/README.md`, `STATE.md`,
+  `ARCHITECTURE.md` y la especificación UX/UI V1. Los ADR históricos y el
+  índice de documentos conservan su denominación como registro histórico.
+- El contrato normativo pasa a v8.0 y ADR-0026 cierra la migración de
+  `core/ui` a Polaris. Quedan vigentes X-01…X-07 y PV-01…PV-08, D-10 y la
+  anulación de `shadow-100` en `light-mobile`.
+- Verificación: `verifyAgendaQrArchitecture`, `verifyDocs` y las pruebas de
+  `core/ui` en verde. `:androidApp:testDebugUnitTest` es `NO-SOURCE` y el
+  ensamblado de `androidApp` se ejecuta solo tras el cierre de las entregas.
+- **No verificado:** la plataforma iOS y la distribución de avisos de
+  licencia en iOS no se pueden comprobar en este entorno (sin macOS/Xcode).
+  Tampoco se ha validado en dispositivo el checklist manual de la sección 10.

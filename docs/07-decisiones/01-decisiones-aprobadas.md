@@ -102,4 +102,4 @@ La especificación UX/UI vigente define las composiciones autorizadas. Cualquier
 
 ## D-21 — Adopción del sistema visual ADR-0025 (vigente)
 
-El sistema visual normativo es el adoptado en ADR-0025 y se gobierna por el contrato normativo v7 y su instantánea versionada. Sustituye a D-20 como autoridad de tokens, componentes, medidas, estados y accesibilidad, preservando el contrato funcional congelado de la especificación UX/UI. El riesgo legal de la licencia de la fuente de valores está aceptado y documentado en ADR-0025.
+El sistema visual normativo es el adoptado en ADR-0025 y se gobierna por el contrato normativo v8.0 y su instantánea versionada. Sustituye a D-20 como autoridad de tokens, componentes, medidas, estados y accesibilidad, preservando el contrato funcional congelado de la especificación UX/UI. El riesgo legal de la licencia de la fuente de valores está aceptado y documentado en ADR-0025.

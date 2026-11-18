@@ -3,7 +3,7 @@
 
 > **REEMPLAZADO como autoridad visual por [ADR-0025](ADR-0025-adopcion-ui-ux-polaris.md).** El contenido se conserva únicamente como registro histórico.
 **Estado:** SUPLANTADO — 2026-10-17 por ADR-0023; este documento conserva únicamente el registro histórico de las referencias y auditorías.
-> No usar las referencias, reglas ni tablas de este ADR como norma vigente. La autoridad actual es ADR-0025 y el contrato normativo v7.
+> No usar las referencias, reglas ni tablas de este ADR como norma vigente. La autoridad actual es ADR-0025 y el contrato normativo v8.0.
 **Enmienda:** ADR-0020 (concreta su "inspiración" en referencias nombradas por pantalla).
 **Suplanta:** ADR-0014 y ADR-0017 (Ant Design Mobile deja de ser referencia; su historia se conserva).
 **Relaciona:** ADR-0018, contrato normativo `docs/05-design-system/00-contrato-normativo-diseno.md` §16, especificación UX/UI §12.

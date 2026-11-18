@@ -37,7 +37,7 @@ import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextAction
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.components.AqPrimaryButton
-import com.agendaqr.core.ui.components.rememberAmClipboard
+import com.agendaqr.core.ui.components.rememberAqClipboard
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSpacing
@@ -70,7 +70,7 @@ fun DestinationDetailScreen(
     // anuncio de eliminación confirmada (por evento) y copiado (por evento).
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
     var copiedEvent by remember { mutableStateOf<Any?>(null) }
-    val copyToClipboard = com.agendaqr.core.ui.components.rememberAmClipboard()
+    val copyToClipboard = com.agendaqr.core.ui.components.rememberAqClipboard()
     AqFeedbackEvent(
         event = deleteDoneEvent,
         message = AppStrings.Eliminado,

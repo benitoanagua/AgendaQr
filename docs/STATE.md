@@ -9,7 +9,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 [QUALITY.md](QUALITY.md).
 
 > Las filas visuales anteriores de §1 describen la implementación previa a
-> ADR-0025. La autoridad visual vigente es ADR-0025 y el contrato normativo v7:
+> ADR-0025. La autoridad visual vigente es ADR-0025 y el contrato normativo v8.0:
 > `core/ui` ya usa tokens semánticos Polaris 9.4.2, Inter 4.0 (OFL 1.1),
 > claro/oscuro, pares AA y previews a 200 %. La migración está verificada en
 > Android/JVM por el gate de arquitectura y por `:core:ui:testDebugUnitTest`
@@ -43,7 +43,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Permisos de cámara (política de ajustes) | unit + compilación de instrumentados |
 | Navegación (back stack restaurable + NavigationBar 4 destinos) | commonTest + `RootNavigationChromeTest` |
 | Accesibilidad (contraste, foco visible, háptica, anuncios, targets 48dp) | `core:ui` tests + Robolectric |
-| Iconografía TDesign convertida a vectores Compose (34 glifos fuente) | compilación Android/iOS + gate |
+| Iconografía Polaris convertida a vectores Compose (34 glifos fuente) | compilación Android/iOS + gate |
 | Tokens de color Warning e Info añadidos a AqColor | gate del design system |
 | Feedback transitorio (Snackbar) y persistente (AppStatusHost) | `RootNavigationChromeTest` + `AppStatusHostTest` |
 | Reformas visuales por pantalla (brechas G1–G9: botón primario fijo al pie, tarjetas de ajustes con encabezado de sección, insignia de estado con texto, evidencia decodificada en tarjeta, metadatos de fecha y marca de tipo en resultados) | gate del design system + Robolectric de presentación + verificación de layout (`LayoutReferenceTest`) |
@@ -53,9 +53,9 @@ Las puertas, sus comandos y la validación por plataforma están en
 | S07/S07-list/S12 y los detalles (destinationdetail/operationdetail) reconciliados con la especificación UX/UI vigente (spec V1.21) sin cambios de composición: ya responden a los diseños en lo verificable (segmentado, FAB, encabezado de mes, tags, hoja de opciones, contenido expandible/copiable, estadísticas del lote); los contratos de estas 5 superficies no tenían deriva | Robolectric de presentación (445 pruebas) + `verifyScreenContract` (19 superficies) |
 | Galería estricta por superficie (ADR-0007): 62 capturas — las 19 superficies y sus estados declarados a 360 dp claro/oscuro, con nombres `<superficie>--<estado>--<tema>.png` (el ancho único no se repite en el nombre), sin variantes de ancho, tablet ni fuente 200 %; overlays (S08/S03) capturados como su ventana de diálogo; manifiesto `agendaqr.captures/6` con dimensiones reales y test de origen | `./gradlew captureGallery -Pagendaqr.capture=true` produce la galería única + manifiesto e índice; `verifyScreenContract` valida esquema de nombres sin ancho, dimensiones reales, duplicados y cobertura (62 capturas verificadas) |
 | S02 Añadir ajustado a la composición UX/UI vigente (spec V1.17): héroe centrado y grupo único de métodos en orden de jerarquía declarada (Galería → Cámara → Archivo), divisores correctos vía parámetro en los controles de importación | Robolectric de presentación (`ScreensA11yCoverageTest.s02_action_order_follows_declared_hierarchy`, `S02UiPolishTest`) + compilación de los tres targets (controles expect/actual) |
-| Dirección visual anterior TDesign Mobile 0.2.7 (ADR-0023; estado previo a ADR-0025): tokens, componentes, acciones de Inicio, escala tipográfica, elevación, movimiento y pulsación | gate del design system + Robolectric de presentación + verificación de layout (escenarios a 360 dp, escala de fuente 100 %/150 % y estados de botones); revisión en dispositivo real pendiente y declarada como no verificada |
+| Dirección visual anterior (registro histórico en ADR-0023; estado previo a ADR-0025): tokens, componentes, acciones de Inicio, escala tipográfica, elevación, movimiento y pulsación | gate del design system + Robolectric de presentación + verificación de layout (escenarios a 360 dp, escala de fuente 100 %/150 % y estados de botones); revisión en dispositivo real pendiente y declarada como no verificada |
 | Contrato de interacción por pantalla (19 superficies: ruta real, destinos válidos, estados, gestos, componentes, pruebas con señal de accesibilidad y escenarios de captura) | `verifyScreenContract` + `verifyScreenContractFixtures` (dentro de `verifyAgendaQrArchitecture`): cruza el contrato con `AppRoute`/rutas de flujo, archivos, símbolos de `core/ui`, claves de `AppStrings`, pruebas y el documento generado |
-| Pulsación anterior fiel a TDesign en botones, celdas, tarjetas y acciones de diálogo (color activo, sin ripple; estado previo a ADR-0025) | `:core:ui:testDebugUnitTest`; desviación D-11 para el resto de superficies |
+| Pulsación anterior en botones, celdas, tarjetas y acciones de diálogo (color activo, sin ripple; estado previo a ADR-0025) | `:core:ui:testDebugUnitTest`; desviación D-11 para el resto de superficies |
 | Sistema visual vigente Polaris 9.4.2 en `core/ui`: tokens semánticos claros/oscuros, Inter 4.0 empaquetado, pares AA, acentos X-06, movimiento, previews claro/oscuro/200 % y avisos de licencia | `verifyAgendaQrArchitecture` + `:core:ui:testDebugUnitTest` (81 pruebas) + `:androidApp:assembleDebug` con `-PallowDebugSigningForRc=true`; iOS **NO VERIFICADO** |
 | Capa aditiva de componentes: layout, enlaces/grupos de acciones, formularios (`AqSelect`/`AqCheckbox`/`AqRadioButton`/`AqSwitch`), progreso, hoja modal, tabla de índices y extensiones canónicas X-01/X-02/X-03 | `:core:ui:testDebugUnitTest` (81 pruebas, incluido `AqPhase3ContractTest`) + `verifyAgendaQrArchitecture`; render iOS y TalkBack/VoiceOver **NO VERIFICADOS** |
 | Pantallas: X-02 delegado a `AqSyncIndicator` desde `ElementSyncBadge` y X-01 aplicado en el detalle de operación con `AqEvidenceBadge`; X-03 permanece en `AqQrPreview` + efectos de brillo por plataforma | `:feature:destinations:presentation:testDebugUnitTest` (375 pruebas, incluido `AqExtensionAdoptionTest`) + `verifyAgendaQrArchitecture`; iOS **NO VERIFICADO** |
@@ -111,7 +111,7 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
 
 ## 4. Pendientes conocidos
 
-- **Revisión de composición por pantalla según UX/UI y TDesign:**
+- **Revisión de composición por pantalla según UX/UI y el contrato normativo:**
   implementada para S01/S00/S02/S04 y validada con pruebas de presentación,
   accesibilidad y layout. El resto de superficies conserva la composición
   especificada; las capacidades no respaldadas siguen fuera del alcance.

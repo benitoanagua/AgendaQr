@@ -1,5 +1,12 @@
 # Auditoría inicial de `core/ui`, documentación y valores visuales
 
+> **Documento histórico.** Refleja el estado previo a ADR-0025 y ADR-0026.
+> Las denominaciones de sistemas visuales y las API `Am*` que aparecen en él
+> son citas del estado auditado, no nombres vigentes. La autoridad actual es
+> ADR-0025, ADR-0026 y `05-design-system/00-contrato-normativo-diseno.md` v8.0;
+> el estado final se registra en
+> [`05-design-system/10-auditoria-fidelidad-polaris.md`](05-design-system/10-auditoria-fidelidad-polaris.md).
+
 **Tipo:** informe de auditoría de solo lectura (con una excepción autorizada, §10).
 **Fecha:** 2026-11-17.
 **Alcance:** `androidApp`, `iosApp`, `shared`, `core/ui`, `feature/destinations`,

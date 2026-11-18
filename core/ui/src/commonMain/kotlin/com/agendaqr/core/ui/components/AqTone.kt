@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.agendaqr.core.ui.theme.AqColorScheme
-import com.agendaqr.core.ui.theme.LocalAmColorScheme
+import com.agendaqr.core.ui.theme.LocalAqColorScheme
 
 /**
  * Tono semántico: la base compartida de los estados de
@@ -43,11 +43,11 @@ fun AqColorScheme.toneColors(tone: AqTone): ToneColors = when (tone) {
 
 @Composable
 fun AqTone.content(): Color =
-    LocalAmColorScheme.current.toneColors(this).content
+    LocalAqColorScheme.current.toneColors(this).content
 
 @Composable
 fun AqTone.container(): Color =
-    LocalAmColorScheme.current.toneColors(this).container
+    LocalAqColorScheme.current.toneColors(this).container
 
 /**
  * Glifo del tono para feedback de estado (el estado nunca se comunica

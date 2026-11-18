@@ -53,7 +53,7 @@ androidx-test-runner = { group = "androidx.test", name = "runner", version = "1.
 androidx-test-rules = { group = "androidx.test", name = "rules", version = "1.6.1" }
 # UiAutomator (instrumentados, ADR-0010): dependencia ausente en el build
 # original — los instrumentados no compilaban (job no bloqueante de CI).
-# Añadida en la migración AgendaMobile para poder ejecutar la suite real.
+# Añadida para poder ejecutar la suite instrumentada real.
 uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version = "2.3.0" }
 camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
 camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }

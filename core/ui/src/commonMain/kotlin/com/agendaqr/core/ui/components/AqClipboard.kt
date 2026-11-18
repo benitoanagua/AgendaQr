@@ -9,4 +9,4 @@ import androidx.compose.runtime.Composable
  * pertenece a otras apps.
  */
 @Composable
-expect fun rememberAmClipboard(): (String) -> Unit
+expect fun rememberAqClipboard(): (String) -> Unit

@@ -100,13 +100,13 @@ fun AqTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val scheme = if (darkTheme) DarkAmColorScheme else LightAmColorScheme
+    val scheme = if (darkTheme) DarkAqColorScheme else LightAqColorScheme
     CompositionLocalProvider(
-        LocalAmColorScheme provides scheme,
-        LocalAmFontFamily provides rememberAmInterFontFamily(),
+        LocalAqColorScheme provides scheme,
+        LocalAqFontFamily provides rememberAqInterFontFamily(),
     ) {
         MaterialTheme(
-            typography = AqMaterialTypography.withAmFontFamily(AqType.FamilyUi),
+            typography = AqMaterialTypography.withAqFontFamily(AqType.FamilyUi),
             shapes = Shapes(
                 extraSmall = AqShapes.ExtraSmall,
                 small = AqShapes.Small,
