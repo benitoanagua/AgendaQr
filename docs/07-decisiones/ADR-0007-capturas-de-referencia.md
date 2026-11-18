@@ -7,7 +7,8 @@
 
 La verificación automática de la aceptación visual comprueba que las
 pantallas críticas se componen sin recortes ni solapes en claro y oscuro,
-a 320/360 dp, con escala de fuente al 100 % y 150 %. Restricciones duras:
+a 360 dp en la galería, con aserciones puntuales a 320 dp y escala de fuente
+al 100 % y 150 % en suites de componentes. Restricciones duras:
 
 1. El repo **no versiona binarios de imagen** (`.gitignore` ignora
    png/jpg/jpeg/gif/webp/bmp).
@@ -27,7 +28,7 @@ problemas de fondo:
 La galería había crecido además con variantes de tablet (720 dp) y de fuente
 al 200 %, con sufijo `--font<escala>` en el nombre de archivo. El coste de
 generarlas y revisarlas no compensaba la señal que aportaban: se simplifica
-la matriz a 320/360 dp, claro/oscuro, fuente 100 %.
+la matriz a 360 dp, claro/oscuro, fuente 100 %.
 
 ## Decisión
 
@@ -39,8 +40,8 @@ La galería visual se produce **bajo demanda** y fuera del control de
 versiones, en `build/`; nada se versiona ni se hashea. Hay un único
 artefacto de capturas: la **galería estricta por superficie**
 (`build/captures/gallery/`), con esquema de nombre determinista
-`<superficie>--<estado>--<ancho>dp--<tema>.png` y ancho restringido a
-320 o 360 dp. Sustituye al par anterior de galerías duplicadas
+`<superficie>--<estado>--360dp--<tema>.png` y un único ancho, 360 dp.
+Sustituye al par anterior de galerías duplicadas
 (`build/roborazzi/` y `build/captures/gallery/`): las pruebas siguen
 componiendo y verificando cada escenario por aserciones, y solo los
 escenarios declarados en el contrato escriben imagen.
@@ -48,18 +49,18 @@ escenarios declarados en el contrato escriben imagen.
 Cuando la galería existe, `verifyScreenContract` la valida: dimensiones
 reales del bitmap coherentes con el ancho declarado (sin zoom, recorte ni
 viewport falso), sin duplicados byte-exactos ni repeticiones de la misma
-superficie/estado/configuración, y con cobertura de las cuatro
-configuraciones requeridas (`light-320`, `light-360`, `dark-320`,
-`dark-360`). Si no hay artefactos, el gate no falla porque la galería no
+superficie/estado/configuración, y con cobertura de las dos
+configuraciones requeridas (`light-360`, `dark-360`). Si no hay artefactos,
+el gate no falla porque la galería no
 se versiona. Con el flag `-Pagendaqr.capture=true`, que la produce, las
 pruebas corren siempre frescas y se limpia la galería antes de regenerarla.
 
 **Productor.** `LayoutReferenceTest` produce la galería estricta con
 un mapa explícito escenario → (superficie, estado): cada superficie del
 contrato y sus estados declarados quedan capturados. La matriz prioriza
-pantallas y estados únicos sobre combinaciones: 360 dp en claro/oscuro como
-núcleo de revisión y un subconjunto denso a 320 dp. Se retiraron las raíces
-a 720 dp (tablet) y el subconjunto a fuente 200 %: la capacidad adaptativa
+pantallas y estados únicos sobre combinaciones: solo 360 dp en claro/oscuro.
+Se retiraron las raíces a 320 dp y 720 dp (tablet) y el subconjunto a fuente
+200 %: la capacidad adaptativa
 de `NavigationRail` y el escalado tipográfico siguen existiendo en
 producción, pero ya no tienen verificación automática de galería ni de
 layout (ver Consecuencias). Los overlays (S08 selector, S03 cámara) se
@@ -69,7 +70,7 @@ asociar es byte-idéntico al vacío de Actividades (comparten composición),
 así que solo se conserva una captura; el copy propio del vacío queda como
 decisión de producto pendiente.
 
-**Manifiesto (schema `agendaqr.captures/4`).** `build/captures/manifest.json`
+**Manifiesto (schema `agendaqr.captures/5`).** `build/captures/manifest.json`
 declara por entrada la pantalla de AgendaQr, el identificador de su
 pantalla de Stitch (campo histórico, sin ADR asociado; vacío para las superficies excluidas), estado,
 tema, ancho, densidad, dimensiones reales del bitmap, hash, si es
@@ -89,8 +90,9 @@ previa; los PNG son efectos laterales que Gradle no rastrea); sin el flag,
 la captura es un no-op y las pruebas siguen verificando el layout.
 
 Las pruebas de layout (`LayoutReferenceTest`, `LayoutReferenceExtraTest`)
-componen cada escenario real de las pantallas críticas —claro/oscuro,
-360 dp, 320 dp y fuentes largas— y comprueban:
+componen cada escenario real de las pantallas críticas —claro/oscuro y
+360 dp en la galería, con aserciones puntuales a 320 dp y fuentes largas—
+y comprueban:
 
 - la raíz se compone, se muestra y tiene tamaño;
 - el árbol semántico no está vacío y contiene texto visible;
@@ -110,6 +112,10 @@ queda bajo el dock de acciones ni el FAB), `ScreensA11yCoverageTest` y
 - El repo no contiene capturas de UI ni manifiestos de hashes versionados.
 - La verificación es determinista y no depende del JDK ni del sistema
   operativo.
+- Se retira `LayoutReference320Test`: ni la galería ni esa suite de raíces
+  se producen a 320 dp. Quedan aserciones puntuales a 320 dp en
+  `LayoutReferenceExtraTest`, `AmTabsLayoutTest`, `DestinationRowLayoutTest`
+  y suites de componentes, sin capturas.
 - Se reduce la cobertura automática: ya no se validan las raíces en tablet
   (`NavigationRail`) ni el layout con fuente al 200 %. Ambas capacidades se
   conservan en producción y quedan como revisión manual en dispositivo, con

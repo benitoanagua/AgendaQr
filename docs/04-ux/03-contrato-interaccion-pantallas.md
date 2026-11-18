@@ -8,9 +8,7 @@ La intención funcional y las reglas de producto viven en [`02-especificacion-ux
 
 ## Configuraciones de captura requeridas
 
-- `light-320`
 - `light-360`
-- `dark-320`
 - `dark-360`
 
 Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de nombre es `<superficie>--<estado>--<ancho>dp--<tema>.png`; no se admite zoom, recorte ni viewport falso.

@@ -314,11 +314,11 @@ evalúa en configuración).
 | Contrato de interacción por pantalla | `verifyScreenContract` + `verifyScreenContractFixtures` | superficie real sin contrato o contrato obsoleto, destino inexistente, prueba ausente o sin señal a11y, componente inventado, clave de copy ausente, excepción registrada sin uso, capturas con viewport falso, duplicadas o con cobertura incompleta, desalineación entre superficie, contrato, código, pruebas y documentación generada |
 | Documentación | `verifyDocs` | enlaces vivos, todo `.md` alcanzable desde `docs/README.md`, sin marcadores transitorios, ADR citadas existentes |
 | Contraste y esquema | `AmSchemeTest`, `AmContrastPairsTest`, `AmAccentTest` | umbrales y pares fijados (incl. el contenido informativo `accentText` sobre wathet) |
-| Galería de capturas (bajo demanda, ADR-0007) | `./gradlew captureGallery -Pagendaqr.capture=true` | produce una única galería estricta por superficie (320/360 dp, claro/oscuro, fuente 100 %) con manifiesto `agendaqr.captures/4` e índice navegable; `verifyScreenContract` la valida cuando existe (esquema, dimensiones reales, duplicados, cobertura) |
+| Galería de capturas (bajo demanda, ADR-0007) | `./gradlew captureGallery -Pagendaqr.capture=true` | produce una única galería estricta por superficie (360 dp, claro/oscuro, fuente 100 %) con manifiesto `agendaqr.captures/5` e índice navegable; `verifyScreenContract` la valida cuando existe (esquema, dimensiones reales, duplicados, cobertura) |
 | Tipografía y layout | `AmTypographyTest`, `AmTabsLayoutTest`, `AmUiPolishContractTest` | roles, interlineado, escalado de fuente al 100 %/150 % |
 | Accesibilidad de componentes | `AmAccessibilityContractTest`, `ScreensA11yCoverageTest` | semántica, roles, targets |
 | Correcciones UX (ADR-0018) | `UxFilterReproductionTest`, `UxDateReproductionTest`, `UxEditorDiscardTest`, `UxAmountValidationTest`, `UxHomeHubTest`, `UxHomeFavoritesTest`, `DestinationsSectionStateTest`, `UxUnassociatedTest`, `UxLockSearchTest`, `QrFullscreenTest`, `ExternalFlowTrackerTest`, `ExternalFlowLockPolicyTest`, `AmDateTimePickerTest`, `AppStringsCopyContractTest` | filtros idempotentes, fecha con hora, descarte confirmado, importe válido, hub y favoritos de Inicio (lista sin duplicar el carrusel, sin mensaje falso), bandeja sin primarios, biometría/foco, brillo restaurado, gracia de bloqueo (STOP/START/RESUME con limpieza en primer plano) y presupuesto de copy ≤ 60 caracteres, bajo Robolectric/JVM |
-| Layout | `LayoutReferenceTest`, `LayoutReferenceExtraTest` (presentación) | escenarios claro/oscuro a 360 dp y 320 dp y textos largos, verificados por aserciones de layout (ADR-0007); ya no se verifican tablet ni fuente al 200 % |
+| Layout | `LayoutReferenceTest`, `LayoutReferenceExtraTest` (presentación) | escenarios claro/oscuro a 360 dp y textos largos, verificados por aserciones de layout (ADR-0007); quedan aserciones puntuales a 320 dp en `LayoutReferenceExtraTest`; ya no se verifican las raíces completas a 320 dp, en tablet ni con fuente al 200 % |
 | Arranque local-first y PIN | `:feature:destinations:presentation:testDebugUnitTest --tests "*AgendaQrLocalStartupTest"` | arranque real sin cuenta, perfil local, desbloqueo |
 | Máquina de estados del acceso local | `--tests "*LocalAccessGateTest"` | configurar → desbloquear → bloquear, saneado, intentos, bloqueo temporal |
 | Biometría (atajo fail-closed) + demo | `--tests "*LocalAccessBiometricTest" --tests "*DemoDataTest" --tests "*DemoSeederTest"` | éxito biométrico desbloquea, fallo conserva bloqueo + fallback PIN; dataset demo determinista, siembra idempotente y aislada |
@@ -368,11 +368,12 @@ Cada escenario se compone en Robolectric y se comprueba por aserciones
 (ADR-0007); no se versionan capturas y, con el flag, se genera una única
 galería validada por el gate:
 
-1. **Composición:** `LayoutReferenceTest`/`LayoutReferenceExtraTest` componen
-   las pantallas reales en claro y oscuro, a 360 dp y 320 dp. Según ADR-0007
-   ya no se componen escenarios de tablet ni de fuente al 200 %: la capacidad
-   adaptativa (`NavigationRail`, tipografía grande) se conserva en producción
-   pero su revisión es manual.
+1. **Composición:** `LayoutReferenceTest` compone las pantallas reales en
+   claro y oscuro a 360 dp (único ancho de la galería) y mantiene escenarios
+   puntuales a 320 dp; `LayoutReferenceExtraTest` aporta aserciones a 320 dp.
+   Según ADR-0007 ya no se componen raíces completas a 320 dp, escenarios de
+   tablet ni de fuente al 200 %: la capacidad adaptativa (`NavigationRail`,
+   tipografía grande) se conserva en producción pero su revisión es manual.
 2. **Aserciones:** la raíz se muestra con tamaño, el árbol semántico no está
    vacío, hay texto visible y ningún nodo sobresale lateralmente del root
    (sin recortes laterales), salvo lo que vive dentro de un contenedor con

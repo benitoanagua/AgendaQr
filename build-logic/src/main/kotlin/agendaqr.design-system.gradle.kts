@@ -957,22 +957,25 @@ tasks.register("verifyScreenContractFixtures") {
         require(used.isEmpty()) { "una excepción usada no debe fallar: $used" }
 
         // Capturas: esquema de nombre.
-        val parsed = parseCaptureName("home--content--320dp--light.png")
-        require(parsed != null && parsed.surface == "home" && parsed.widthDp == 320 &&
+        val parsed = parseCaptureName("home--content--360dp--light.png")
+        require(parsed != null && parsed.surface == "home" && parsed.widthDp == 360 &&
             parsed.state == "content" && parsed.theme == "light") {
             "el esquema de nombre válido debe parsear"
         }
-        require(parseCaptureName("account-dark-320dp.png") == null) {
+        require(parseCaptureName("account-dark-360dp.png") == null) {
             "un nombre ambiguo debe rechazarse"
         }
-        require(parseCaptureName("home--content--320dp--light--font200.png") == null) {
+        require(parseCaptureName("home--content--360dp--light--font200.png") == null) {
             "un sufijo de escala de fuente debe rechazarse"
+        }
+        require(parseCaptureName("home--content--320dp--light.png") == null) {
+            "un ancho distinto del único admitido debe rechazarse"
         }
         require(parseCaptureName("home--content--720dp--light.png") == null) {
             "un viewport de tablet debe rechazarse"
         }
-        require(320 in captureWidths && 360 in captureWidths && 720 !in captureWidths) {
-            "la galería solo admite 320 y 360 dp"
+        require(captureWidths == setOf(360)) {
+            "la galería solo admite 360 dp"
         }
         // Dimensiones reales desde la cabecera PNG.
         fun fakePng(width: Int, height: Int): ByteArray {
@@ -999,15 +1002,15 @@ tasks.register("verifyScreenContractFixtures") {
         // Densidad no soportada (viewport falso / zoom).
         require(
             captureViolations(
-                listOf(artifact("a/home--content--320dp--light.png", 641, "h1")),
+                listOf(artifact("a/home--content--360dp--light.png", 641, "h1")),
                 screens,
             ).any { it.contains("captura-zoom") },
         ) { "una densidad no soportada debe fallar" }
         // Duplicado byte-exacto y misma configuración.
         val repeated = captureViolations(
             listOf(
-                artifact("a/home--content--320dp--light.png", 320, "same"),
-                artifact("b/home--content--320dp--light.png", 320, "same"),
+                artifact("a/home--content--360dp--light.png", 360, "same"),
+                artifact("b/home--content--360dp--light.png", 360, "same"),
             ),
             screens,
         )
@@ -1016,15 +1019,15 @@ tasks.register("verifyScreenContractFixtures") {
         // Captura de superficie inexistente.
         require(
             captureViolations(
-                listOf(artifact("a/ghost--content--320dp--light.png", 320, "h")),
+                listOf(artifact("a/ghost--content--360dp--light.png", 360, "h")),
                 screens,
             ).any { it.contains("captura-orbita") },
         ) { "una superficie inexistente debe fallar" }
 
         // Manifiesto: ausente con artefactos presentes.
         val someArtifacts = listOf(
-            artifact("a/home--content--320dp--light.png", 320, "h1"),
-            artifact("a/add--content--320dp--light.png", 320, "h2"),
+            artifact("a/home--content--360dp--light.png", 360, "h1"),
+            artifact("a/add--content--360dp--light.png", 360, "h2"),
         )
         require(
             captureManifestViolations(someArtifacts, screens, null).any { it.contains("manifiesto-ausente") },
