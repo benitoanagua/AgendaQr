@@ -64,13 +64,6 @@ fun AqStatusBanner(
     /** Acción de descarte (p. ej. descartar). Puede ser null; si es null
      *  no se renderiza fila de acciones cuando tampoco hay [action]. */
     dismiss: AqBannerAction? = null,
-    /**
-     * Margen horizontal adicional propio del banner. Por defecto es cero:
-     * las pantallas ya aplican el margen de contenido desde AqScreenScaffold.
-     * Pasar [AqSpacing.ScreenMargin] solo cuando el banner se componga en un
-     * host realmente edge-to-edge que no tenga margen exterior propio.
-     */
-    screenMargin: Dp = AqSpacing.None,
 ) {
     val resolvedTone = tone ?: AqTone.Neutral
     val background = resolvedTone.container()
@@ -78,7 +71,6 @@ fun AqStatusBanner(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = screenMargin)
             .background(background, AqShapes.Medium)
             .testTag("am-status-banner")
             .semantics { liveRegion = LiveRegionMode.Polite }

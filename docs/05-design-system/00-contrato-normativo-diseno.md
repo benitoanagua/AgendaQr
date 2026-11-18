@@ -1,8 +1,9 @@
 # Contrato normativo de diseño
 
-**Estado:** Normativo — versión 8.0
+**Estado:** Normativo — versión 8.2
 **Autoridad:** [ADR-0025](../07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md),
-[ADR-0026](../07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md) y este
+[ADR-0026](../07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md),
+[ADR-0027](../07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md) y este
 documento. La especificación UX/UI V1 conserva el contrato funcional
 congelado; su dirección visual queda descongelada y se rige por aquí.
 
@@ -111,6 +112,7 @@ Construidas solo con tokens y componentes de Polaris; no son valores propios.
 | D-08 | Proporciones internas de composición | Alfas de selección y fracciones de ancho/glifo/desplazamiento no son escalas publicadas; se concentran en `AqTokens.kt` y se conservan para no alterar el layout verificado. |
 | D-10 | Modelo de sombras de Compose | `Modifier.shadow` expone elevación y color, pero no `offsetY` ni `spread`. `AqElevation` conserva la geometría publicada (`:363-368`) como metadato y aplica el radio de desenfoque; `shadow-100` se anula en `light-mobile` (`:497`). |
 | D-11 | Contenedores tonales del tema oscuro | `dark-experimental` no publica contenedores de estado. Se derivan mezclando cada `*Fill` publicado al 16 % sobre `gray800` (la superficie oscura publicada), de modo que el bloque tonal se distinga de `surface` y conserve el par de contenido en AA. |
+| D-12 | Ritmo de 16 dp entre tarjetas de página | `light-mobile` publica `space-card-gap` de 8 dp (`:511`). Con 16 dp de relleno interno, un hueco de 8 dp entre tarjetas lee como un solo bloque; se usa 16 dp para conservar la separación de secciones a 360 dp. `AqScreenScaffold` mantiene 8 dp por defecto cuando la página no declara agrupación explícita. |
 
 ## 5. Gobernanza
 
@@ -150,6 +152,7 @@ registro sin uso se detecta como excepción zombie.
 | 7.0 | Se fija la instantánea de tokens 9.4.2 y la iconografía 9.3.1; se incorporan PV-06, PV-07, PV-08, D-10 y X-07. |
 | 8.0 | Se cierra la migración de `core/ui`: vocabulario `Aq*` sin identificadores heredados, esquema por defecto claro con seguimiento del sistema, retirada de menciones activas a sistemas anteriores y verificación final. Se mantiene el resto de extensiones, desviaciones y excepciones. |
 | 8.1 | Se añade el rol `inputSurface`, los pasos 12/20 dp de espaciado y la derivación D-11 de contenedores tonales oscuros; la caja de campo de `AqForms.kt` se registra como E-07. |
+| 8.2 | Se adopta la regla de propiedad del espacio por nivel atómico (ADR-0027), se registra la derivación D-12 y se corrige el espaciado de `core/ui` y de las páginas: margen de pantalla de un solo dueño, relleno de tarjeta de 16 dp, densidad de fila de 12 dp, mensajes dentro del campo y opciones sin margen externo. |
 
 La historia detallada de la revisión y el estado final, incluido lo que no se
 puede verificar en este entorno, está en

@@ -245,21 +245,13 @@ internal fun OperationEditorScreen(
                         keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                             keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal,
                         ),
+                        // La molécula del campo es dueña del mensaje de error
+                        // y de su separación (4 dp), no la pantalla.
+                        state = AqFieldState(
+                            isError = amountInvalid,
+                            errorMessage = if (amountInvalid) AppStrings.ImporteInvalido else null,
+                        ),
                     )
-                    if (amountInvalid) {
-                        Row(
-                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
-                        ) {
-                            AqIcon(
-                                imageVector = com.agendaqr.core.ui.components.AqIcons.Cancel,
-                                contentDescription = null,
-                                size = com.agendaqr.core.ui.theme.AqMetrics.IconSizeCompact,
-                                tint = AqColor.Danger,
-                            )
-                            AqText(AppStrings.ImporteInvalido, color = AqColor.Danger)
-                        }
-                    }
                     Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
                         AqFilterChip(
                             label = AppStrings.MonedaBob,
@@ -343,15 +335,16 @@ internal fun OperationEditorScreen(
         // las últimas contrapartes (derivadas del estado, sin persistencia
         // nueva).
         EditorSection(AppStrings.LabelPersonaOEntidad) {
-            AqListBody {
-                AqTextField(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, leadingIcon = com.agendaqr.core.ui.components.AqIcons.Store, modifier = Modifier.padding(horizontal = AqSpacing.Lg))
+            // El organismo (cuerpo de lista) aporta el relleno de sección;
+            // la molécula de campo no recibe padding externo.
+            AqListBody(contentPadding = PaddingValues(horizontal = AqSpacing.Lg, vertical = AqSpacing.Sm)) {
+                AqTextField(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, leadingIcon = com.agendaqr.core.ui.components.AqIcons.Store)
                 val counterparts = remember(state.operations) { recentCounterparts(state.operations) }
                 if (counterparts.isNotEmpty()) {
                     AqHairline()
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Sm)
                             .horizontalScroll(rememberScrollState()),
                         horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                     ) {
@@ -396,11 +389,19 @@ internal fun OperationEditorScreen(
                 onClick = { showDetails = !showDetails },
                 showChevron = true,
             )
-            if (showDetails) {
-                AqHairline()
-                AqTextField(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, leadingIcon = com.agendaqr.core.ui.components.AqIcons.NoteEdit, modifier = Modifier.padding(horizontal = AqSpacing.Lg))
-                AqHairline()
-                AqTextField(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, singleLine = false, modifier = Modifier.padding(horizontal = AqSpacing.Lg))
+        }
+        if (showDetails) {
+            // Campos libres: la tarjeta (organismo) aporta superficie y
+            // relleno de 16 dp; las moléculas de campo no llevan padding
+            // externo.
+            AqCard {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
+                ) {
+                    AqTextField(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, leadingIcon = com.agendaqr.core.ui.components.AqIcons.NoteEdit)
+                    AqTextField(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, singleLine = false)
+                }
             }
         }
     }

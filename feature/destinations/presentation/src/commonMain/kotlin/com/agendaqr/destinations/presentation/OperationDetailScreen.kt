@@ -83,9 +83,11 @@ internal fun OperationDetailScreen(
         // importe; el tipo lo comunica la píldora) y caja temporal.
         val amountText = operationAmountText(operation)
         val contextName = state.contexts.firstOrNull { it.id == operation.contextId }?.name
-        AqListBody {
+        // superficie y padding de sección los aporta la tarjeta (organismo);
+        // la página solo compone contenido.
+        AqCard {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(AqSpacing.Lg),
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
             ) {
                 Row(
@@ -155,9 +157,9 @@ internal fun OperationDetailScreen(
             operation.concept != null ||
             operation.note != null
         if (hasMetadata) {
-            AqListBody {
+            AqCard {
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Md),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                 ) {
                     operation.personOrEntity?.let { AqMetaRow(label = AppStrings.LabelPersonaOEntidad, value = it) }

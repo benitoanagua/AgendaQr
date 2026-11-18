@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -88,27 +87,4 @@ fun AqVerticalDivider(modifier: Modifier = Modifier) {
             .heightIn(min = AqMetrics.ControlMinSize)
             .background(AqColor.Divider),
     )
-}
-
-/** Fila de contenido ancho completo con margen de pantalla por defecto. */
-@Composable
-fun AqPageBlock(
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = AqSpacing.ScreenMargin),
-        content = content,
-    )
-}
-
-/** Ancho de contenido acotado: evita `fillMaxWidth` en composiciones internas. */
-@Composable
-fun AqContentWidth(
-    modifier: Modifier = Modifier,
-    content: @Composable BoxScope.() -> Unit,
-) {
-    Box(modifier = modifier.widthIn(max = AqMetrics.ContentMaxWidth), content = content)
 }

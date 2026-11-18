@@ -5,9 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqSnackbarHost
+import com.agendaqr.core.ui.components.AqBottomActionDock
 import com.agendaqr.core.ui.components.AqFeedbackEvent
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqTopBar
@@ -106,15 +104,9 @@ fun DestinationDetailScreen(
         bottomAction = {
             // Dock (U-04, D3): exactamente una acción primaria — Mostrar
             // QR a pantalla completa — más Compartir secundaria. El dock
-            // respeta insets de navegación y IME.
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .imePadding()
-                    .padding(horizontal = AqSpacing.ScreenMargin, vertical = AqSpacing.Sm),
-                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-            ) {
+            // del DS respeta insets de navegación/IME y el margen de
+            // pantalla; la pantalla solo declara las acciones.
+            AqBottomActionDock {
                 AqPrimaryButton(
                     label = AppStrings.MostrarQr,
                     onClick = onShowQr,

@@ -31,6 +31,7 @@
 | [`05-design-system/00-contrato-normativo-diseno.md`](05-design-system/00-contrato-normativo-diseno.md) | Contrato normativo único: fuente, tokens, extensiones y desviaciones |
 | [`05-design-system/09-instantanea-tokens-polaris-9.4.2.md`](05-design-system/09-instantanea-tokens-polaris-9.4.2.md) | Instantánea versionada de valores Polaris 9.4.2 |
 | [`05-design-system/10-auditoria-fidelidad-polaris.md`](05-design-system/10-auditoria-fidelidad-polaris.md) | Auditoría de fidelidad de `core/ui` contra la instantánea |
+| [`05-design-system/11-auditoria-atomic-spacing.md`](05-design-system/11-auditoria-atomic-spacing.md) | Auditoría de espaciado atómico y densidad de `core/ui` y las pantallas |
 | [`05-design-system/02-implementacion-diseno.md`](05-design-system/02-implementacion-diseno.md) | Reglas de implementación (histórico; pendiente de alineación) |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros (pendiente de alineación) |
 | [`05-design-system/07-evaluacion-tipografia.md`](05-design-system/07-evaluacion-tipografia.md) | Evaluación histórica de MiSans Global (no adoptada) |
@@ -63,6 +64,7 @@
 | [`07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md`](07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md) | ADR histórico: TDesign Mobile (reemplazado) |
 | [`07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md`](07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md) | ADR: adopción del UI/UX de Polaris (autoridad visual vigente) |
 | [`07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md`](07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md) | ADR: cierre de la migración de `core/ui` a Polaris |
+| [`07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md`](07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md) | ADR: propiedad del espacio por nivel atómico y densidad móvil |
 
 ## Cómo se mantiene
 

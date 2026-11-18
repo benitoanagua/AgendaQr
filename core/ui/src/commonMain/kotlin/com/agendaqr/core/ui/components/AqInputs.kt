@@ -250,7 +250,7 @@ fun AqSearchField(
                             if (focused) AqColor.Focus else AqColor.Transparent,
                             AqShapes.Pill,
                         )
-                        .padding(horizontal = AqSpacing.Md),
+                        .padding(horizontal = AqSpacing.MdPlus),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                 ) {
@@ -353,15 +353,23 @@ fun AqAmountField(
     onClear: (() -> Unit)? = null,
     clearLabel: String = "",
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    /** Estado compartido de campo (error/ayuda/deshabilitado): la molécula
+     *  es dueña del mensaje y de su separación, no la pantalla. */
+    state: AqFieldState = AqFieldState(),
 ) {
     if (onClear != null) require(clearLabel.isNotBlank()) {
         "AqAmountField: onClear necesita clearLabel (copy del llamador)"
     }
+    val contentColor = if (state.enabled) AqColor.TextPrimary else AqColor.OnDisabled
     Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+        modifier = modifier.fillMaxWidth().fieldSemantics(state),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
     ) {
-        Text(label, style = AqTextStyles.Label, color = AqColor.TextSecondary)
+        Text(
+            label,
+            style = AqTextStyles.Label,
+            color = if (state.enabled) AqColor.TextSecondary else AqColor.OnDisabled,
+        )
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
@@ -370,7 +378,7 @@ fun AqAmountField(
                 Text(
                     it,
                     style = AqTextStyles.AmountSymbol,
-                    color = AqColor.TextPrimary,
+                    color = contentColor,
                 )
             }
             androidx.compose.foundation.text.BasicTextField(
@@ -380,7 +388,8 @@ fun AqAmountField(
                     .weight(1f)
                     .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
                     .semantics { contentDescription = label },
-                textStyle = AqTextStyles.Amount.copy(color = AqColor.TextPrimary),
+                enabled = state.enabled,
+                textStyle = AqTextStyles.Amount.copy(color = contentColor),
                 keyboardOptions = keyboardOptions,
                 singleLine = true,
                 cursorBrush = androidx.compose.ui.graphics.SolidColor(AqColor.Focus),
@@ -396,11 +405,15 @@ fun AqAmountField(
                     AqIcon(
                         imageVector = AqIcons.Erase,
                         contentDescription = null,
-                        tint = AqColor.TextTertiary,
+                        tint = if (state.enabled) AqColor.TextTertiary else AqColor.OnDisabled,
                     )
                 }
             }
         }
-        HorizontalDivider(thickness = AqMetrics.DividerHeight, color = AqColor.Divider)
+        HorizontalDivider(
+            thickness = AqMetrics.DividerHeight,
+            color = if (state.isError) AqColor.Danger else AqColor.Divider,
+        )
+        AqFieldMessages(state)
     }
 }

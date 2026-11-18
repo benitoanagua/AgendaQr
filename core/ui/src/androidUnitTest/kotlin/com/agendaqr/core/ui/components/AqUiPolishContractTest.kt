@@ -448,6 +448,36 @@ class AqUiPolishContractTest {
     }
 
     @Test
+    fun choice_options_do_not_add_external_vertical_padding() {
+        // El grupo es dueño de la separación (`spacedBy`); cada opción
+        // conserva el objetivo táctil de 48 dp sin sumar 4+4 dp de margen
+        // externo (que daría 56 dp por fila).
+        compose.setContent {
+            AqTheme {
+                AqChoiceGroup(
+                    label = "Moneda",
+                    options = listOf(
+                        AqChoiceOption("bob", "Boliviano"),
+                        AqChoiceOption("usd", "Dólar"),
+                    ),
+                    selectedId = "bob",
+                    onSelected = {},
+                )
+            }
+        }
+        compose.waitForIdle()
+        listOf("Boliviano", "Dólar").forEach { label ->
+            val row = compose.onNodeWithText(label).getBoundsInRoot()
+            assertEquals(
+                48f,
+                row.bottom.value - row.top.value,
+                1f,
+                "'$label' añade margen vertical externo sobre el objetivo de 48 dp",
+            )
+        }
+    }
+
+    @Test
     fun list_row_uses_12dp_vertical_density_and_16dp_leading_inset() {
         setScaledContent(1f) {
             AqListRow(

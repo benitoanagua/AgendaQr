@@ -27,10 +27,46 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.aqWindowWidthSizeClass
+
+/**
+ * Dock inferior de acciones (organismo): superficie propia, separador
+ * hairline, inset de barras de navegación e IME y margen de pantalla. Es
+ * la ÚNICA fuente de esa cadena geométrica; las pantallas depositan sus
+ * acciones en el slot `bottomAction` del scaffold y no repiten paddings.
+ */
+@Composable
+fun AqBottomActionDock(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(AqColor.Surface)
+            .navigationBarsPadding()
+            .imePadding()
+            .testTag("aq-bottom-action-dock"),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+    ) {
+        HorizontalDivider(
+            thickness = AqMetrics.DividerHeight,
+            color = AqColor.Divider,
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = AqSpacing.ScreenMargin, vertical = AqSpacing.Sm),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        ) {
+            content()
+        }
+    }
+}
 
 /**
  * Botón de acción principal FIJO al borde inferior (el "Guardar" de los
@@ -51,23 +87,11 @@ fun AqBottomAction(
     /** stateDescription de "ocupado" (texto del llamador). */
     busyDescription: String? = null,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(AqColor.Surface)
-            .navigationBarsPadding()
-            .imePadding(),
-    ) {
-        HorizontalDivider(
-            thickness = AqMetrics.DividerHeight,
-            color = AqColor.Divider,
-        )
+    AqBottomActionDock(modifier = modifier) {
         AqPrimaryButton(
             label = label,
             onClick = onClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = AqSpacing.ScreenMargin, vertical = AqSpacing.Sm),
+            modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             isLoading = isLoading,
             busyDescription = busyDescription,

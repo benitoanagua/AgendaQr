@@ -56,15 +56,15 @@ internal fun AppStatusHost(
                 onClear = onDismissImportError,
             )
             // Host edge-to-edge (slot statusContent, sin margen del
-            // contenido): el banner pide SU margen de pantalla para quedar
-            // al ancho útil con un solo margen, igual que los badges.
+            // contenido): el HOST aplica el margen de pantalla; el banner
+            // (organismo) solo pinta su superficie y su relleno interno.
             AqStatusBanner(
                 title = error.what,
                 message = error.dataStatus,
                 tone = AqTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,
-                screenMargin = AqSpacing.ScreenMargin,
+                modifier = Modifier.padding(horizontal = AqSpacing.ScreenMargin),
             )
         } else if (hasFailed && pendingCount > 0) {
             // Banner completo SOLO con mutaciones FAILED: el usuario debe
@@ -73,7 +73,7 @@ internal fun AppStatusHost(
                 message = syncPendingLabel(pendingCount, retrying = true),
                 tone = AqTone.Danger,
                 action = AqBannerAction(AppStrings.ReintentarAhora, onRetryNow),
-                screenMargin = AqSpacing.ScreenMargin,
+                modifier = Modifier.padding(horizontal = AqSpacing.ScreenMargin),
             )
         } else if (isOffline || pendingCount > 0) {
             // Indicador compacto: chips con texto (el significado nunca

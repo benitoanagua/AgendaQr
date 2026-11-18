@@ -90,6 +90,11 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
     val rawDp = Regex("(?<![A-Za-z0-9_])(\\d+(?:\\.\\d+)?)\\.dp\\b")
     val rawSp = Regex("(?<![A-Za-z0-9_])(\\d+(?:\\.\\d+)?)\\.sp\\b")
     val rawColor = Regex("\\bColor\\s*\\(")
+    // Espaciado: los números sueltos en padding/spacedBy no pertenecen ni a
+    // páginas ni a componentes; todo paso sale de AqSpacing.
+    val rawPaddingLiteral = Regex("\\b(?:Modifier\\.)?padding\\(\\s*(?:[a-zA-Z]+\\s*=\\s*)?\\d")
+    val rawPaddingValuesLiteral = Regex("\\bPaddingValues\\(\\s*(?:[a-zA-Z]+\\s*=\\s*)?\\d")
+    val rawSpacedByLiteral = Regex("\\bspacedBy\\(\\s*\\d")
     val forbiddenVisualAuthority = listOf("MaterialTheme.colorScheme")
     // Las formas con esquinas viven SOLO en la capa de tokens; el tema
     // las pasa a MaterialTheme.shapes sin construir ninguna.
@@ -120,6 +125,15 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
         if (!isTokenLayer && !isIconVectorSource && rawDp.containsMatchIn(line)) add("$location: raw dp outside token layer: $line")
         if (!isTokenLayer && rawSp.containsMatchIn(line)) add("$location: raw sp outside token layer: $line")
         if (!isTokenLayer && rawColor.containsMatchIn(line)) add("$location: raw Color constructor outside token layer: $line")
+        if (!isTokenLayer && rawPaddingLiteral.containsMatchIn(line)) {
+            add("$location: numeric padding literal; use an AqSpacing token: $line")
+        }
+        if (!isTokenLayer && rawPaddingValuesLiteral.containsMatchIn(line)) {
+            add("$location: numeric PaddingValues literal; use AqSpacing tokens: $line")
+        }
+        if (!isTokenLayer && rawSpacedByLiteral.containsMatchIn(line)) {
+            add("$location: numeric spacedBy literal; use an AqSpacing token: $line")
+        }
         if (shapesAllowedFiles.none { path.endsWith(it) } &&
             (line.contains("RoundedCornerShape") || line.contains("CutCornerShape"))
         ) {
@@ -567,6 +581,33 @@ tasks.register("verifyDesignSystemFixtures") {
         }
         require(falseInteractionFlags.isEmpty()) {
             "core:ui interaction must not be banned: ${falseInteractionFlags.joinToString()}"
+        }
+
+        // Espaciado: padding/PaddingValues/spacedBy con números sueltos
+        // DEBEN fallar en páginas y componentes…
+        val rawSpacing = listOf(
+            "Modifier.padding(horizontal = 16.dp)",
+            "Modifier.padding(16)",
+            "contentPadding = PaddingValues(horizontal = 8.dp)",
+            "verticalArrangement = Arrangement.spacedBy(12.dp)",
+        )
+        val missedSpacing = rawSpacing.filter {
+            kotlinDesignViolations(featurePath, listOf(it)).isEmpty()
+        }
+        require(missedSpacing.isEmpty()) {
+            "numeric spacing that must fail passed: ${missedSpacing.joinToString()}"
+        }
+        // …y la misma forma con tokens debe pasar (en capa de tokens y fuera).
+        val allowedSpacing = listOf(
+            "Modifier.padding(horizontal = AqSpacing.Lg)",
+            "contentPadding = PaddingValues(horizontal = AqSpacing.Md)",
+            "verticalArrangement = Arrangement.spacedBy(AqSpacing.MdPlus)",
+        )
+        val falseSpacingFlags = allowedSpacing.filter {
+            kotlinDesignViolations(featurePath, listOf(it)).isNotEmpty()
+        }
+        require(falseSpacingFlags.isEmpty()) {
+            "Valid token spacing failed enforcement: ${falseSpacingFlags.joinToString()}"
         }
 
         // Formas fuera del design system: en feature/, shared/ y

@@ -178,11 +178,11 @@ internal fun OperationListScreen(
         // Barra de mes con reaseguro local: mes del registro más reciente
         // + conteo + píldora de respaldo. Vive en su propia tarjeta.
         if (filtered.isNotEmpty()) {
-            AqListBody {
+            // La tarjeta (organismo) aporta superficie y relleno de sección;
+            // la página no compensa con padding propio.
+            AqCard {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = AqSpacing.Md, vertical = AqSpacing.Sm),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
@@ -322,7 +322,7 @@ internal fun OperationListScreen(
             // Cargar más (fuera del AqListBody para no tener separador extra).
             if (paged.size < filtered.size) {
                 AqLoadMoreFooter(
-                    modifier = Modifier.fillMaxWidth().padding(top = AqSpacing.Sm),
+                    modifier = Modifier.fillMaxWidth(),
                     onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(filtered.size) },
                     loadMoreLabel = AppStrings.CargarMas,
                     loadingLabel = AppStrings.Cargando,
