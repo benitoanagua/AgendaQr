@@ -447,6 +447,36 @@ class AqUiPolishContractTest {
         assertEquals(16f, content.top.value - card.top.value, 0.5f, "padding superior")
     }
 
+    /**
+     * Botón secundario de la referencia: relleno `bg-fill` + borde inset de
+     * 1 px (`shadow-button` de `light-mobile`). Sin el borde, el botón
+     * desaparece sobre el fondo de página.
+     */
+    @Test
+    fun default_button_uses_surface_fill_and_a_hairline_border() {
+        val idle = resolveAqButtonColors(
+            variant = AqButtonVariant.Default,
+            scheme = LightAqColorScheme,
+            enabled = true,
+            pressed = false,
+        )
+        assertEquals(LightAqColorScheme.surface, idle.container, "relleno del secundario")
+        assertEquals(LightAqColorScheme.border, idle.border, "borde fino del secundario")
+
+        val pressed = resolveAqButtonColors(
+            variant = AqButtonVariant.Default,
+            scheme = LightAqColorScheme,
+            enabled = true,
+            pressed = true,
+        )
+        assertEquals(
+            LightAqColorScheme.surfaceActive,
+            pressed.container,
+            "relleno activo del secundario",
+        )
+        assertEquals(LightAqColorScheme.border, pressed.border, "el borde se conserva al pulsar")
+    }
+
     @Test
     fun choice_options_do_not_add_external_vertical_padding() {
         // El grupo es dueño de la separación (`spacedBy`); cada opción

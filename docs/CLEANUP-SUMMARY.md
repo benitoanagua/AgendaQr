@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-10-17  
 **Rama:** `consolidate/cleanup-20261017`  
-**Autoridad visual en la fecha del inventario:** ADR-0022 y `05-design-system/00-contrato-normativo-diseno.md`. Instantánea histórica: la autoridad vigente hoy es ADR-0025 y el contrato normativo v8.2.
+**Autoridad visual en la fecha del inventario:** ADR-0022 y `05-design-system/00-contrato-normativo-diseno.md`. Instantánea histórica: la autoridad vigente hoy es ADR-0025 y el contrato normativo v8.3.
 
 ## Estadísticas
 

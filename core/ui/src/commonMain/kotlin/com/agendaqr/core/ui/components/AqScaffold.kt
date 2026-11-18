@@ -51,6 +51,7 @@ fun AqBottomActionDock(
             .navigationBarsPadding()
             .imePadding()
             .testTag("aq-bottom-action-dock"),
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
     ) {
         HorizontalDivider(
@@ -59,9 +60,10 @@ fun AqBottomActionDock(
         )
         Column(
             modifier = Modifier
+                .widthIn(max = AqMetrics.ContentMaxWidth)
                 .fillMaxWidth()
                 .padding(horizontal = AqSpacing.ScreenMargin, vertical = AqSpacing.Sm),
-            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
         ) {
             content()
         }
@@ -137,7 +139,7 @@ fun AqScreenScaffold(
     statusContent: (@Composable () -> Unit)? = null,
     scrollable: Boolean = false,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(AqSpacing.Md),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(AqSpacing.Lg),
     contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -159,7 +161,6 @@ fun AqScreenScaffold(
             statusContent?.invoke()
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .then(
                         if (expanded) {
                             Modifier.widthIn(max = AqMetrics.ContentMaxWidth)
@@ -167,6 +168,7 @@ fun AqScreenScaffold(
                             Modifier
                         },
                     )
+                    .fillMaxWidth()
                     .weight(1f)
                     .then(if (scrollable) Modifier.verticalScroll(rememberScrollState()) else Modifier)
                     .padding(

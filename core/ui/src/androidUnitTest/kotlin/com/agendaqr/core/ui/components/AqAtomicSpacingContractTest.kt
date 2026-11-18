@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTheme
 import kotlin.math.abs
@@ -173,5 +175,39 @@ class AqAtomicSpacingContractTest {
         assertNear(12f, AqSpacing.MdPlus.value, "AqSpacing.MdPlus")
         assertNear(20f, AqSpacing.LgPlus.value, "AqSpacing.LgPlus")
         assertNear(16f, AqSpacing.ScreenMargin.value, "AqSpacing.ScreenMargin")
+    }
+
+    /**
+     * En ventana expandida la plantilla limita el contenido al ancho máximo
+     * publicado y lo centra; sin esto, las tarjetas cruzan toda la tableta y
+     * el margen de pantalla queda solo a la izquierda.
+     */
+    @Test
+    @Config(qualifiers = "w840dp-h760dp")
+    fun expanded_content_is_capped_and_centered() {
+        compose.setContent {
+            AqTheme {
+                AqScreenScaffold {
+                    AqCard(modifier = Modifier.fillMaxWidth().testTag("probe")) {
+                        AqText("Contenido")
+                    }
+                }
+            }
+        }
+        compose.waitForIdle()
+        val root = compose.onRoot().getBoundsInRoot()
+        val card = compose.onNodeWithTag("probe").getBoundsInRoot()
+        val rootWidth = (root.right - root.left).value
+        val cardWidth = (card.right - card.left).value
+        assertTrue(
+            cardWidth <= AqSpacing.ScreenMargin.value * 2 +
+                AqMetrics.ContentMaxWidth.value - 2f,
+            "el contenido expandido no respeta el ancho máximo (ancho=$cardWidth)",
+        )
+        assertNear(
+            (card.left + card.right).value / 2,
+            root.left.value + rootWidth / 2,
+            "contenido expandido centrado",
+        )
     }
 }

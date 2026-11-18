@@ -173,7 +173,7 @@ fun AqDialog(
             ).coerceAtLeast(AqMetrics.DialogMinWidth)
             Surface(
                 modifier = modifier.width(dialogWidth),
-                shape = AqShapes.Medium,
+                shape = AqShapes.ExtraLarge,
                 color = AqColor.Surface,
             ) {
                 Column {

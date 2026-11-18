@@ -42,7 +42,7 @@ fun AqDatePickerDialog(
             TextButton(
                 modifier = Modifier.defaultMinSize(minHeight = AqMetrics.ControlMinSize),
                 onClick = { state.selectedDateMillis?.let(onConfirm) },
-                shape = AqShapes.Small,
+                shape = AqShapes.Medium,
             ) {
                 Text(confirmLabel, style = AqTextStyles.ButtonLabel)
             }
@@ -51,12 +51,12 @@ fun AqDatePickerDialog(
             TextButton(
                 modifier = Modifier.defaultMinSize(minHeight = AqMetrics.ControlMinSize),
                 onClick = onDismiss,
-                shape = AqShapes.Small,
+                shape = AqShapes.Medium,
             ) {
                 Text(dismissLabel, style = AqTextStyles.ButtonLabel)
             }
         },
-        shape = AqShapes.Large,
+        shape = AqShapes.ExtraLarge,
     ) {
         Column(modifier = Modifier.padding(horizontal = AqSpacing.Md)) {
             title?.let {
@@ -93,7 +93,7 @@ fun AqTimePickerDialog(
     )
     AlertDialog(
         onDismissRequest = onDismiss,
-        shape = AqShapes.Large,
+        shape = AqShapes.ExtraLarge,
         containerColor = AqColor.Surface,
         titleContentColor = AqColor.TextPrimary,
         textContentColor = AqColor.TextPrimary,
@@ -108,7 +108,7 @@ fun AqTimePickerDialog(
             TextButton(
                 modifier = Modifier.defaultMinSize(minHeight = AqMetrics.ControlMinSize),
                 onClick = { onConfirm(state.hour, state.minute) },
-                shape = AqShapes.Small,
+                shape = AqShapes.Medium,
             ) {
                 Text(confirmLabel, style = AqTextStyles.ButtonLabel, color = AqColor.Link)
             }
@@ -117,7 +117,7 @@ fun AqTimePickerDialog(
             TextButton(
                 modifier = Modifier.defaultMinSize(minHeight = AqMetrics.ControlMinSize),
                 onClick = onDismiss,
-                shape = AqShapes.Small,
+                shape = AqShapes.Medium,
             ) {
                 Text(dismissLabel, style = AqTextStyles.ButtonLabel, color = AqColor.TextPrimary)
             }

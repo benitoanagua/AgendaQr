@@ -2,7 +2,7 @@
 
 **Estado:** informe de verificación, anexo al contrato normativo.
 **Autoridad:** ADR-0027 (propiedad del espacio), ADR-0025 (adopción de
-Polaris), ADR-0026 (cierre de la migración), contrato normativo v8.2 e
+Polaris), ADR-0026 (cierre de la migración), contrato normativo v8.3 e
 instantánea `@shopify/polaris-tokens@9.4.2`.
 **Alcance:** composables de `core/ui/src/commonMain` y
 `feature/destinations/presentation/src/commonMain` (140 `@Composable` en
@@ -57,8 +57,8 @@ Reglas derivadas:
   fila es 12 dp (`AqSpacing.MdPlus`); la separación mínima entre átomos es
   4 dp (`AqSpacing.Sm`).
 - La agrupación explícita de tarjetas usa 16 dp (D-12); cuando la página no
-  declara agrupación, `AqScreenScaffold` aplica su paso por defecto de 8 dp
-  (`AqSpacing.Md`) entre organismos.
+  declara agrupación, `AqScreenScaffold` aplica el mismo paso por defecto de
+  16 dp (`AqSpacing.Lg`) entre organismos.
 - Los mensajes de ayuda/error pertenecen a la molécula del campo y se
   separan 4 dp del control; el grupo de opciones pinta el mensaje una sola
   vez.
@@ -146,17 +146,17 @@ deshabilitado, **P** presionado, **S** seleccionado. «—» = no aplica.
 | `AqText` | `AqText.kt:53` | — | línea del rol | — | `TextPrimary`/`TextSecondary`/`TextPlaceholder` | — | N | claro/oscuro | — |
 | `AqHeading` | `AqText.kt:26` | — | línea del rol | — | `TextPrimary` | — | N | ambos | — |
 | `AqIcon` | `AqIcon.kt:20` | — | 24/20 dp intrínseco | — | `LocalContentColor`/tinte | — | N | ambos | — |
-| `AqBadge` | `AqLists.kt:56` | interno `Sm`/`Xs` | intrínseca | `ExtraSmall` | tono (`content`/`border`) | — | N | ambos | — |
-| `AqTonalTag` | `AqLists.kt:91` | interno `Sm`/`Xs` | intrínseca | `ExtraSmall`/`Pill` | tono (`container`/`content`) | — | N | ambos | — |
+| `AqBadge` | `AqLists.kt:56` | interno `Sm`/`Xs` | intrínseca | `Medium` | tono (`content`/`border`) | — | N | ambos | — |
+| `AqTonalTag` | `AqLists.kt:91` | interno `Sm`/`Xs` | intrínseca | `Medium`/`Pill` | tono (`container`/`content`) | — | N | ambos | — |
 | `AqIconBadge` | `AqLists.kt:123` | — | 48 dp (`GridIconContainerSize`) | `Large` | tono (`container`/`content`) | — | N | ambos | — |
 | `AqContextBadge` | `AqLists.kt:148` | — | 40 dp (`ContextBadgeSize`) | `Pill` | acento de contexto | — | N | ambos | — |
 | `AqStatusPill` | `AqStatus.kt:154` | interno `Sm`/`Xs` | intrínseca | `Pill` | tono (`container`/`content`) | — | N | ambos | — |
-| `AqButton` | `AqButtons.kt:129` | `contentPadding` de tokens | 48/40/32/24 dp | `Small` | `brandFill`/`onBrandFill`/`dangerFill`/`surface*` | — | N/F/P/D/carga | ambos | — |
-| `AqPrimaryButton` | `AqButtons.kt:290` | hereda | 48 dp | `Small` | `brandFill`/`onBrandFill` | — | N/P/D | ambos | — |
-| `AqDangerButton` | `AqButtons.kt:331` | hereda | 48 dp | `Small` | `dangerFill`/`onDanger` | — | N/P/D | ambos | — |
-| `AqSecondaryButton` | `AqButtons.kt:362` | hereda | 48 dp | `Small` | `surfaceSecondary`/`textPrimary`/`border` | — | N/P/D | ambos | — |
-| `AqOutlineButton` | `AqButtons.kt:412` | hereda | 48 dp | `Small` | `border`/`textPrimary` | — | N/F/P/D | ambos | — |
-| `AqCompactAction` | `AqButtons.kt:439` | interno `Md`/`Sm` | 48 dp | `Small` | `surfaceContainerLow`/`textPrimary` | — | N/P | ambos | — |
+| `AqButton` | `AqButtons.kt:129` | `contentPadding` de tokens | 48/40/32/24 dp | `Medium` | `brandFill`/`onBrandFill`/`dangerFill`/`surface*` | — | N/F/P/D/carga | ambos | — |
+| `AqPrimaryButton` | `AqButtons.kt:290` | hereda | 48 dp | `Medium` | `brandFill`/`onBrandFill` | — | N/P/D | ambos | — |
+| `AqDangerButton` | `AqButtons.kt:331` | hereda | 48 dp | `Medium` | `dangerFill`/`onDanger` | — | N/P/D | ambos | — |
+| `AqSecondaryButton` | `AqButtons.kt:362` | hereda | 48 dp | `Medium` | `surface`/`textPrimary`/`border` | — | N/P/D | ambos | — |
+| `AqOutlineButton` | `AqButtons.kt:412` | hereda | 48 dp | `Medium` | `border`/`textPrimary` | — | N/F/P/D | ambos | — |
+| `AqCompactAction` | `AqButtons.kt:439` | interno `Md`/`Sm` | 48 dp | `Medium` | `surfaceContainerLow`/`textPrimary` | — | N/P | ambos | — |
 | `AqTextAction` | `AqButtons.kt:499` | `contentPadding` por defecto `Md` horizontal | intrínseca | — | `link`/`onSurface` | Relleno externo no cero por defecto (baja) | N/F/D | ambos | baja |
 | `AqIconButton` | `AqButtons.kt:551` | impone `size(ControlMinSize)` al modifier | 48 dp | — | `LocalContentColor` | Fuerza el target sobre el llamador (baja) | N/P/D | ambos | baja |
 | `AqFilterChip` | `AqButtons.kt:578` | interno `Md`/`Sm` | 48 dp | `Pill` | `selectionFill`/`emphasisBorder` | — | N/P/S/D | ambos | — |
@@ -172,7 +172,7 @@ deshabilitado, **P** presionado, **S** seleccionado. «—» = no aplica.
 | `AqSearchField` | `AqInputs.kt:198` | interno 12 dp horizontal | 48 dp | `Pill` | `SurfaceSecondary`/`TextPlaceholder`/`Focus` | — | N/F/E/D | ambos | — |
 | `AqSearchTrigger` | `AqInputs.kt:296` | `spacedBy` de tokens | 48 dp | `Medium` | `SurfaceSecondary`/`TextSecondary` | — | N/P/D | ambos | — |
 | `AqAmountField` | `AqInputs.kt:345` | `spacedBy(Sm)` = 4 dp; mensaje propio | 48 dp | — (divisor) | `TextPrimary`/`TextSecondary`/`Danger`/`Divider`/`OnDisabled` | Corregido: el error ya no lo pinta la pantalla | N/E/D | ambos | — |
-| `AqSelect` | `AqForms.kt:75` | interno 12/8 dp; `spacedBy(Sm)` | 48 dp | `Small` | `InputSurface`/`TextPrimary`/`TextPlaceholder`/`FunctionalBorder`/`Danger`/`Disabled` | Corregido: estado deshabilitado completo | N/F/E/D | ambos | — |
+| `AqSelect` | `AqForms.kt:75` | interno 12/8 dp; `spacedBy(Sm)` | 48 dp | `Medium` | `InputSurface`/`TextPrimary`/`TextPlaceholder`/`FunctionalBorder`/`Danger`/`Disabled` | Corregido: estado deshabilitado completo | N/F/E/D | ambos | — |
 | `AqCheckbox` | `AqForms.kt:163` | sin margen externo; 8 dp junto al control | 48 dp | — | `TextPrimary`/`TextSecondary`/`OnDisabled` | Corregido: se retiró 4+4 dp externos | N/P/S/D | ambos | — |
 | `AqRadioButton` | `AqForms.kt:211` | sin margen externo; 8 dp junto al control | 48 dp | — | `TextPrimary`/`TextSecondary`/`OnDisabled` | Corregido: se retiró 4+4 dp externos | N/P/S/D | ambos | — |
 | `AqSwitch` | `AqForms.kt:259` | sin margen externo | 48 dp | — | `TextPrimary`/`TextSecondary`/`OnDisabled` | Corregido: se retiró 4+4 dp externos | N/P/S/D | ambos | — |
@@ -180,7 +180,7 @@ deshabilitado, **P** presionado, **S** seleccionado. «—» = no aplica.
 | `AqCheckboxGroup` | `AqForms.kt:343` | `spacedBy(Sm)` = 4 dp | intrínseca | — | etiqueta + hijos | Corregido: mensaje único del grupo | N/E/D | ambos | — |
 | `AqMetaRow` | `AqLists.kt:168` | `spacedBy` de tokens | intrínseca | — | `TextSecondary`/`TextPrimary` | — | N | ambos | — |
 | `AqListRow` | `AqLists.kt:374` | 16 dp horizontal / 12 dp vertical | ≥ 48 dp | — | `TextPrimary`/`TextSecondary`/`TextTertiary`/acento | — | N/P/S/D | ambos | — |
-| `AqSegmentedControl` | `AqButtons.kt:679` | interno de tokens | 48 dp | `Small` | `SurfaceSecondary`/`SelectionFill` | — | N/S/D | ambos | — |
+| `AqSegmentedControl` | `AqButtons.kt:679` | interno de tokens | 48 dp | `Medium` | `SurfaceSecondary`/`SelectionFill` | — | N/S/D | ambos | — |
 | `AqDialogList` | `AqDialogs.kt:56` | `spacedBy` de tokens | ≤ 320 dp | — | `TextPrimary`/`Surface` | — | N/S/D | ambos | — |
 | `AqStatusBanner` | `AqStatus.kt:55` | interno 16 dp; **sin margen externo** | intrínseca | `Medium` | tono (`container`/`content`) | Corregido: el margen lo pone el host | N/acción/descarte | ambos | — |
 
@@ -188,19 +188,19 @@ deshabilitado, **P** presionado, **S** seleccionado. «—» = no aplica.
 
 | Componente | Archivo:línea | Padding/margen/spacedBy | Altura | Radio | Roles de color | Violación de propiedad | Estados | Tema | Severidad |
 |---|---|---|---|---|---|---|---|---|---|
-| `AqCard` | `AqLists.kt:330` | 16 dp internos | intrínseca | `Medium` | `Surface`/`Border` | — | N | ambos | — |
-| `AqTappableCard` | `AqLists.kt:203` | **16 dp internos** (antes 8) | intrínseca | `Medium` | `Surface`/`Border` | Corregido: relleno de tarjeta | N/P/D | ambos | — |
-| `AqListBody` | `AqLists.kt:301` | 0 internos por defecto | intrínseca | `Medium` | `Surface`/`Border` | — | N | ambos | — |
-| `AqQuickAction` | `AqLists.kt:237` | interno de tokens | intrínseca | `Medium` | `Surface`/`InfoContainer` | — | N/P/D | ambos | — |
+| `AqCard` | `AqLists.kt:330` | 16 dp internos | intrínseca | `Large` | `Surface`/`Border` | — | N | ambos | — |
+| `AqTappableCard` | `AqLists.kt:203` | **16 dp internos** (antes 8) | intrínseca | `Large` | `Surface`/`Border` | Corregido: relleno de tarjeta | N/P/D | ambos | — |
+| `AqListBody` | `AqLists.kt:301` | 0 internos por defecto | intrínseca | `Large` | `Surface`/`Border` | — | N | ambos | — |
+| `AqQuickAction` | `AqLists.kt:237` | interno de tokens | intrínseca | `Large` | `Surface`/`InfoContainer` | — | N/P/D | ambos | — |
 | `AqSectionHeader` | `AqTabs.kt:35` | 16 dp interno; `SectionHeaderHeight` | 48 dp | — | `SurfaceSecondary`/`TextSecondary` | — | N | ambos | — |
-| `AqBottomActionDock` | `AqScaffold.kt:43` | **16 dp de margen** + 4 dp vertical; insets | control | — | `Surface`/`Divider` | Corregido: única fuente del dock | N | ambos | — |
+| `AqBottomActionDock` | `AqScaffold.kt:43` | **16 dp de margen** + 8 dp vertical; contenido a `ContentMaxWidth`; insets | control | — | `Surface`/`Divider` | Corregido: única fuente del dock y ancho alineado al contenido | N | ambos | — |
 | `AqTopBar` | `AqChrome.kt:92` | `statusBarsPadding` + `TopBarHeight` | ≥ 48 dp | — | `Surface`/`TextPrimary` | Aplica inset de plantilla (documentado) | N/P | ambos | baja |
 | `AqNavBar` | `AqChrome.kt:262` | `navigationBarsPadding`; 64 dp | 64 dp | — | `Surface`/`Divider`/`selectionFill` | Aplica inset de plantilla (documentado) | N/S | ambos | baja |
 | `AqNavRail` | `AqChrome.kt:330` | 80 dp de ancho; `spacedBy` | 64 dp por destino | — | `Surface`/`selectionFill` | Ancho fijo de plantilla (documentado) | N/S | ambos | baja |
 | `AqHeroHeader` | `AqChrome.kt:416` | 16 dp de margen + `statusBarsPadding` | intrínseca | — | `BrandFill`/`OnBrandFill` | Aplica margen de plantilla (documentado) | N/P | ambos | baja |
 | `AqBottomSheet` | `AqSheets.kt:36` | 16 dp internos | intrínseca | `BottomSheet` (16) | `Surface`/`Divider` | — | N | ambos | — |
-| `AqDialog` | `AqDialogs.kt:130` | 24/16 dp internos | intrínseca | `Medium` | `Surface`/`TextPrimary`/`Divider` | — | N/P | ambos | — |
-| `AqQrPreview` | `AqQrPreview.kt:56` | 8 dp internos + 16 dp del marco | 240/320 dp | `Medium` | `QrCanvas`/`TextSecondary` | Copy `"QR"` fijado (baja) | N | ambos | baja |
+| `AqDialog` | `AqDialogs.kt:130` | 24/16 dp internos | intrínseca | `ExtraLarge` | `Surface`/`TextPrimary`/`Divider` | — | N/P | ambos | — |
+| `AqQrPreview` | `AqQrPreview.kt:56` | 8 dp internos + 16 dp del marco | 240/320 dp | `Large` | `QrCanvas`/`TextSecondary` | Copy `"QR"` fijado (baja) | N | ambos | baja |
 | `AqSkeleton` | `AqFeedback.kt:39` | 16 dp externos | intrínseca | `Small` | `SurfaceSecondary` | Relleno externo de bloque (documentado) | N | ambos | baja |
 | `AqLoadMoreFooter` | `AqFeedback.kt:69` | 16 dp externos | ≥ 48 dp | — | `Surface`/`TextSecondary` | Relleno externo de bloque (documentado) | N/carga | ambos | baja |
 | `AqEmptyState` | `AqStatus.kt:220` | 48 dp externos | intrínseca | — | `TextPrimary`/`TextSecondary` | Relleno externo de estado (documentado) | N | ambos | baja |
@@ -211,7 +211,7 @@ deshabilitado, **P** presionado, **S** seleccionado. «—» = no aplica.
 
 | Componente | Archivo:línea | Padding/margen/spacedBy | Altura | Radio | Roles de color | Violación de propiedad | Estados | Tema | Severidad |
 |---|---|---|---|---|---|---|---|---|---|
-| `AqScreenScaffold` | `AqScaffold.kt:126` | 16 dp de margen; `spacedBy(Md)`; ancho máximo 720 dp; insets | pantalla | — | `Background`/`Surface` | — | N | ambos | — |
+| `AqScreenScaffold` | `AqScaffold.kt:126` | 16 dp de margen; `spacedBy(Lg)`; ancho máximo 720 dp centrado; insets | pantalla | — | `Background`/`Surface` | — | N | ambos | — |
 | `AppStatusHost` | `AppStatusHost.kt:41` | 16 dp de margen en el host | intrínseca | — | tono del banner | Corregido: el host aplica el margen | N/E | ambos | — |
 | `AgendaQrApp` (demo) | `AgendaQrApp.kt:60` | 16 dp de margen en el host | pantalla | — | `InfoContainer` | Corregido: el host aplica el margen | N | ambos | — |
 | `DestinationDetailScreen` | `DestinationDetailScreen.kt:54` | 0 dp propios; dock del DS | pantalla | — | del DS | Corregido: usa `AqBottomActionDock` | N/E/D | ambos | — |
@@ -251,6 +251,12 @@ espaciado propio.
 | A-10 | `OperationDetailScreen`/`OperationListScreen`/`OperationEditorScreen` compensaban con `Modifier.padding` de página | El relleno pasa a `AqCard`/`AqListBody(contentPadding=...)` |
 | A-11 | Imports `dp` muertos en `AqTabs.kt` y `CameraQrCapture.android.kt` | Se retiraron |
 | A-12 | El gate no cubría `padding(número)`, `PaddingValues(número)` ni `spacedBy(número)` | Se añadieron reglas y fixtures positivos/negativos |
+| A-13 | Botones, etiquetas y control segmentado usaban radios 4/2 dp, más rectos que los publicados | Botones y etiquetas fuera de filtro pasan a `radius-200` (8 dp); los contadores dentro de filtro, a `radius-100` (4 dp); el segmentado, a 8 dp |
+| A-14 | `AqCard`/`AqTappableCard` usaban radio 8 y `AqListBody` no tenía radio ni borde, aunque su KDoc declaraba el radio 12 | Tarjetas y cuerpos de lista pasan a `radius-300` (12 dp) con borde hairline y recorte de esquinas |
+| A-15 | `AqDialog` usaba radio 8 frente al `radius-400` (16 dp) del modal de la referencia | Diálogo y selectores de fecha/hora pasan a 16 dp; sus acciones de texto, a 8 dp |
+| A-16 | En ventana expandida el contenido no quedaba centrado: el `fillMaxWidth` iba antes del `widthIn` y anulaba el ancho máximo | `AqScreenScaffold` aplica `widthIn(ContentMaxWidth)` antes de `fillMaxWidth`; el contenido queda a 688 dp centrado en 840 dp |
+| A-17 | El botón secundario era un relleno gris sin borde y el paso por defecto del scaffold era 8 dp | El secundario usa `surface` + borde de 1 dp (`shadow-button` de `light-mobile`); el paso por defecto entre organismos pasa a 16 dp |
+| A-18 | El dock de acciones expandía sus botones a todo el ancho de la ventana y separaba acciones apiladas a 4 dp | El contenido del dock se limita a `ContentMaxWidth` y se centra; las acciones apiladas se separan 8 dp |
 
 ## 6. Hallazgos aceptados o pendientes
 
@@ -287,8 +293,9 @@ espaciado propio.
 |---|---|
 | `verifyDesignSystemCompliance` | Literales `.dp`/`.sp`/`Color(...)`/hex fuera de `AqTokens.kt`; ahora también `padding(número)`, `PaddingValues(número)` y `spacedBy(número)` |
 | `verifyDesignSystemFixtures` | Casos que deben fallar y casos con tokens que deben pasar, incluidos los nuevos de espaciado |
-| `AqAtomicSpacingContractTest` | Banner sin margen propio, margen del host, tarjeta 16 dp, fila 12 dp, dock con margen de pantalla, error del importe dentro del campo y pasos de la escala |
-| `AqUiPolishContractTest` | Alineación de etiqueta/valor/ayuda/error, 48 dp de campo, 16 dp de tarjeta y banner, fila 12 dp y opciones sin margen externo |
+| `AqAtomicSpacingContractTest` | Banner sin margen propio, margen del host, tarjeta 16 dp, fila 12 dp, dock con margen de pantalla, error del importe dentro del campo, pasos de la escala y contenido expandido limitado y centrado |
+| `AqUiPolishContractTest` | Alineación de etiqueta/valor/ayuda/error, 48 dp de campo, 16 dp de tarjeta y banner, fila 12 dp, opciones sin margen externo y relleno/borde del botón secundario |
+| `AqButtonStyleTest` | Resolución de color de todas las variantes en ambos temas, incluido el secundario con borde fino |
 | `AqContrastPairsTest` | Pares AA de formulario, foco, borde funcional, tonos y acentos |
 | `LayoutReferenceTest` + `captureGallery` | Geometría de las 19 superficies y capturas claras/oscuras a 360 dp |
 | `verifyScreenContract` | 62 capturas verificadas contra el manifiesto |

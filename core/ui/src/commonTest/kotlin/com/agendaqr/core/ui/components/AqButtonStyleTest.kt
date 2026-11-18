@@ -59,11 +59,11 @@ class AqButtonStyleTest {
                 resolveAqButtonColors(AqButtonVariant.Primary, scheme, enabled = false, pressed = false),
             )
             assertEquals(
-                AqButtonColors(scheme.surfaceContainerHigh, scheme.textPrimary),
+                AqButtonColors(scheme.surface, scheme.textPrimary, scheme.border),
                 resolveAqButtonColors(AqButtonVariant.Default, scheme, enabled = true, pressed = false),
             )
             assertEquals(
-                AqButtonColors(scheme.componentActive, scheme.textPrimary),
+                AqButtonColors(scheme.surfaceActive, scheme.textPrimary, scheme.border),
                 resolveAqButtonColors(AqButtonVariant.Default, scheme, enabled = true, pressed = true),
             )
             assertEquals(

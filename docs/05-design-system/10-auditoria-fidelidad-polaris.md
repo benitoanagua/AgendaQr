@@ -369,3 +369,54 @@ seguimiento del sistema en `AqTheme`**; el default del local debe ser
 - **No verificado:** la plataforma iOS y la distribución de avisos de
   licencia en iOS no se pueden comprobar en este entorno (sin macOS/Xcode).
   Tampoco se ha validado en dispositivo el checklist manual de la sección 10.
+
+## 17. Segunda pasada de fidelidad visual (contrato v8.3)
+
+Esta pasada corrige geometría visible detectada sobre las capturas de 360 dp
+y sobre ventanas expandidas. No cambia roles de color ni la propiedad del
+espacio de ADR-0027; ajusta radios, bordes y separación a los valores ya
+publicados por la instantánea.
+
+### Evidencia de geometría
+
+| Elemento | Valor publicado | Fuente |
+|---|---|---|
+| Botón (`Button`) | `border-radius-200` = 8 dp | `styles.css` de `@shopify/polaris@12.27.0`, `.Polaris-Button` |
+| Etiqueta (`Badge`, `Tag`) | `border-radius-200` = 8 dp | `.Polaris-Badge`, `.Polaris-Tag` |
+| Contador dentro de filtro | `border-radius-100` = 4 dp | `.Polaris-Badge--withinFilter` |
+| Campo (`TextField`, `Select`) | `border-radius-200` = 8 dp | `.Polaris-TextField__Backdrop`, `.Polaris-Select__Backdrop` |
+| Tarjeta / popover | `border-radius-300` = 12 dp | `.Polaris-Popover`; auditoría §7, tarjetas con radio 12 |
+| Modal | `border-radius-400` = 16 dp | `.Polaris-Modal-Dialog__Modal` |
+| Botón secundario | borde inset de 1 px | `light-mobile`: `--p-shadow-button: 0 0 0 1px var(--p-color-border) inset` (`09-instantanea…:499`) |
+
+### Correcciones aplicadas
+
+1. **Radios.** Botones, etiquetas y `AqSelect` pasan de 4 a 8 dp. Los
+   contadores de chip/segmentado pasan de 2 a 4 dp. `AqCard`,
+   `AqTappableCard`, `AqListBody`, `AqQuickAction` y `AqMediaFrame` usan
+   12 dp. `AqDialog`, `AqDatePickerDialog` y `AqTimePickerDialog` usan 16 dp.
+   El indicador de pestañas conserva 2 dp porque es una barra, no una caja.
+2. **Bordes.** El botón secundario ya no es un relleno gris: usa
+   `surface` + borde de 1 dp, también en estado pulsado. `AqListBody`
+   incorpora el borde hairline y el recorte de esquinas que su KDoc ya
+   declaraba junto a `AqCard`.
+3. **Separación.** El paso por defecto de `AqScreenScaffold` entre
+   organismos pasa de 8 a 16 dp y coincide con la agrupación de tarjetas
+   (D-12). El dock de acciones también separa sus acciones apiladas a 8 dp.
+4. **Centrado expandido.** El contenido se limita a `ContentMaxWidth`
+   (720 dp) *antes* de `fillMaxWidth`, de modo que en 840 dp la columna mide
+   688 dp útiles y queda centrada con 76 dp a cada lado. El dock replica el
+   límite para que sus botones no crucen la tableta.
+
+### Verificación
+
+- `AqAtomicSpacingContractTest` añade `expanded_content_is_capped_and_centered`.
+- `AqUiPolishContractTest` añade la comprobación del relleno y borde del
+  botón secundario.
+- `AqButtonStyleTest` fija los colores resueltos del secundario en ambos
+  temas.
+- Capturas de 360 dp regeneradas y contrato de pantallas verificado.
+
+No verificado: inspección visual automatizada de las capturas (el entorno de
+esta revisión no admite entrada de imagen), iOS y escalado al 200 % siguen
+siendo revisión manual.

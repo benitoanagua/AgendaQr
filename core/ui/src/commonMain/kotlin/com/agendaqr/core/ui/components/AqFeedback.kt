@@ -158,7 +158,7 @@ private fun Modifier.aqScannerCorners(
 
 /**
  * Marco de medios (QR, comprobante): superficie [AqColor.Surface] con el
- * radio de tarjeta de la referencia (8) — el límite del contenido es el
+ * radio de tarjeta de la referencia (12, `radius-300`) — el límite del contenido es el
  * bloque tonal en ambos temas, sin bordes decorativos (el gate solo
  * admite E-01/E-02). El fondo interno del contenido (p. ej. el lienzo
  * claro del QR, [AqColor.QrCanvas]) lo aporta quien lo dibuja.

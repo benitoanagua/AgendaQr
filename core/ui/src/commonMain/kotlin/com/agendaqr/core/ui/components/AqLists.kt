@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
@@ -61,7 +62,7 @@ fun AqBadge(
     round: Boolean = false,
 ) {
     val toneColor = if (tone == AqTone.Neutral) AqColor.TextSecondary else tone.content()
-    val shape = if (round) AqShapes.Pill else AqShapes.ExtraSmall
+    val shape = if (round) AqShapes.Pill else AqShapes.Medium
     Box(
         modifier = modifier
             .border(
@@ -100,7 +101,7 @@ fun AqTonalTag(
     val label = if (uppercase) text.uppercase() else text
     Box(
         modifier = modifier
-            .background(tone.container(), if (round) AqShapes.Pill else AqShapes.ExtraSmall)
+            .background(tone.container(), if (round) AqShapes.Pill else AqShapes.Medium)
             .padding(horizontal = AqSpacing.Sm, vertical = AqSpacing.Xs),
         contentAlignment = Alignment.Center,
     ) {
@@ -205,7 +206,7 @@ fun AqTappableCard(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    val shape = AqShapes.Medium
+    val shape = AqShapes.Large
     // TDCell usa `GestureDetector` con color activo en `onTapDown`: la
     // pulsación se resuelve con el token activo, sin ripple Material.
     val interactionSource = remember { MutableInteractionSource() }
@@ -213,6 +214,7 @@ fun AqTappableCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .clip(shape)
             .aqElevation(AqElevation.Shadow1, shape)
             .background(if (pressed) AqColor.SurfaceActive else AqColor.Surface, shape)
             .border(AqMetrics.Border, AqColor.Border, shape)
@@ -305,10 +307,14 @@ fun AqListBody(
     contentPadding: PaddingValues = PaddingValues(AqSpacing.None),
     content: @Composable () -> Unit,
 ) {
+    val shape = AqShapes.Large
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(AqColor.Surface)
+            .clip(shape)
+            .aqElevation(AqElevation.Shadow1, shape)
+            .background(AqColor.Surface, shape)
+            .border(AqMetrics.Border, AqColor.Border, shape)
             .testTag("aq-list-body")
             .padding(contentPadding),
     ) {
@@ -332,10 +338,11 @@ fun AqCard(
     contentPadding: PaddingValues = PaddingValues(AqSpacing.Lg),
     content: @Composable () -> Unit,
 ) {
-    val shape = AqShapes.Medium
+    val shape = AqShapes.Large
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .clip(shape)
             .aqElevation(AqElevation.Shadow1, shape)
             .background(AqColor.Surface, shape)
             .border(AqMetrics.Border, AqColor.Border, shape)
