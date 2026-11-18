@@ -65,6 +65,18 @@ class UxUnassociatedTest {
     }
 
     @Test
+    fun tray_shows_receipt_name_and_no_primary_buttons() {
+        val vm = viewModel()
+        render(vm)
+        // El nombre identificable del comprobante se muestra como título de fila.
+        compose.onNodeWithText("recibo_ketal.jpg").assertExists()
+        // Ningún botón primario por fila.
+        compose.onNodeWithText(AppStrings.associateToExistingOperation).assertDoesNotExist()
+        // "Crear actividad desde esto" como acción de texto.
+        compose.onNodeWithText(AppStrings.createOperationFromThis).assertExists()
+    }
+
+    @Test
     fun tray_has_no_primary_buttons_and_row_opens_association() {
         val vm = viewModel()
         render(vm)
@@ -73,7 +85,7 @@ class UxUnassociatedTest {
         // "Crear actividad desde esto" como acción de texto.
         compose.onNodeWithText(AppStrings.createOperationFromThis).assertExists()
         // La fila abre el flujo de asociación (diálogo con candidatas).
-        compose.onNodeWithText(AppStrings.receiptReceivedTitle).performClick()
+        compose.onNodeWithText("recibo_ketal.jpg").performClick()
         compose.waitForIdle()
         compose.onNodeWithText(AppStrings.noAutomaticMatch).assertExists()
     }
@@ -82,7 +94,7 @@ class UxUnassociatedTest {
     fun association_dialog_creates_operation_as_text_action() {
         val vm = viewModel()
         render(vm)
-        compose.onNodeWithText(AppStrings.receiptReceivedTitle).performClick()
+        compose.onNodeWithText("recibo_ketal.jpg").performClick()
         compose.waitForIdle()
         compose.onNodeWithText(AppStrings.createOperationFromThis).assertExists()
     }
@@ -93,7 +105,7 @@ class UxUnassociatedTest {
             listOf(
                 Comprobante(
                     id = "r-1",
-                    file = "file://r-1.bin",
+                    file = "recibo_ketal.jpg",
                     createdAt = 1_000,
                     updatedAt = 1_000,
                 ),
