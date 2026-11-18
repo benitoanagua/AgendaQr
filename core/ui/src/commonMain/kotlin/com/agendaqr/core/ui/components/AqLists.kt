@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -24,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
@@ -309,6 +308,7 @@ fun AqListBody(
         modifier = modifier
             .fillMaxWidth()
             .background(AqColor.Surface)
+            .testTag("aq-list-body")
             .padding(contentPadding),
     ) {
         content()
@@ -338,6 +338,7 @@ fun AqCard(
             .aqElevation(AqElevation.Shadow1, shape)
             .background(AqColor.Surface, shape)
             .border(AqMetrics.Border, AqColor.Border, shape)
+            .testTag("aq-card")
             .padding(contentPadding),
     ) {
         content()
@@ -415,31 +416,47 @@ fun AqListRow(
             // TDCell: color activo en la pulsación (sin ripple Material).
             val interactionSource = remember { MutableInteractionSource() }
             val pressed = interactionSource.collectIsPressedAsState().value
-            ListItem(
-                modifier = Modifier
-                    .then(
-                        if (onClick != null) {
-                            Modifier.clickable(
-                                role = Role.Button,
-                                interactionSource = interactionSource,
-                                indication = null,
-                                onClick = onClick,
-                            )
-                        } else {
-                            Modifier
-                        },
-                    )
-                    .then(
-                        if (selected) Modifier.semantics { this.selected = true } else Modifier,
-                    ),
-                colors = ListItemDefaults.colors(
-                    containerColor = if (pressed && onClick != null) {
-                        AqColor.SurfaceActive
+            // Fila propia (no ListItem de M3): el material publicado pide
+            // 12 dp verticales y M3 impone una altura mínima que centra el
+            // contenido y diluye ese relleno. El relleno vive aquí, dentro
+            // del objetivo táctil (48 dp mínimo por contenido de una línea).
+            val rowModifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    if (pressed && onClick != null) AqColor.SurfaceActive else AqColor.Transparent,
+                )
+                .semantics(mergeDescendants = true) {}
+                .then(
+                    if (onClick != null) {
+                        Modifier.clickable(
+                            role = Role.Button,
+                            interactionSource = interactionSource,
+                            indication = null,
+                            onClick = onClick,
+                        )
                     } else {
-                        AqColor.Transparent
+                        Modifier
                     },
-                ),
-                headlineContent = {
+                )
+                .then(
+                    if (selected) Modifier.semantics { this.selected = true } else Modifier,
+                )
+                .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.MdPlus)
+            Row(
+                modifier = rowModifier,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                leading?.let { content ->
+                    Box(Modifier.padding(end = AqSpacing.Lg)) { content() }
+                } ?: accent?.let { color ->
+                    Box(
+                        modifier = Modifier
+                            .padding(end = AqSpacing.Lg)
+                            .size(AqSpacing.Md)
+                            .background(color, AqShapes.Pill),
+                    )
+                }
+                Column(modifier = Modifier.weight(1f)) {
                     val shortMeta = endMeta
                     if (shortMeta == null) {
                         Text(
@@ -489,9 +506,7 @@ fun AqListRow(
                             )
                         }
                     }
-                },
-                supportingContent = if (subtitle != null || meta != null) {
-                    {
+                    if (subtitle != null || meta != null) {
                         Column(
                             verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
                         ) {
@@ -507,31 +522,24 @@ fun AqListRow(
                             meta?.invoke()
                         }
                     }
-                } else {
-                    null
-                },
-                leadingContent = leading ?: accent?.let { color ->
-                    {
-                        Box(
-                            modifier = Modifier
-                                .size(AqSpacing.Md)
-                                .background(color, AqShapes.Pill),
-                        )
+                }
+                val trailingContent: (@Composable () -> Unit)? =
+                    trailing ?: if (showChevron) {
+                        {
+                            AqIcon(
+                                imageVector = AqIcons.ChevronRight,
+                                contentDescription = null,
+                                size = AqMetrics.IconSizeCompact,
+                                tint = AqColor.TextTertiary,
+                            )
+                        }
+                    } else {
+                        null
                     }
-                },
-                trailingContent = trailing ?: if (showChevron) {
-                    {
-                        AqIcon(
-                            imageVector = AqIcons.ChevronRight,
-                            contentDescription = null,
-                            size = AqMetrics.IconSizeCompact,
-                            tint = AqColor.TextTertiary,
-                        )
-                    }
-                } else {
-                    null
-                },
-            )
+                trailingContent?.let { content ->
+                    Box(Modifier.padding(start = AqSpacing.Lg)) { content() }
+                }
+            }
         }
         if (showDivider) {
             HorizontalDivider(

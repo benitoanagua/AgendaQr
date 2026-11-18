@@ -23,13 +23,16 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import kotlin.math.abs
 import com.agendaqr.core.ui.components.AqIcon
@@ -1824,9 +1827,49 @@ open class LayoutReferenceTest {
         OperationDetailScreen(state = vm.state.value, viewModel = vm)
     }
 
-    @Test fun operation_editor_light() = verifyLayout("operation-editor-light", dark = false) {
+    /**
+     * Densidad del editor: los grupos funcionales quedan separados 16 dp
+     * (el `verticalArrangement` del scaffold) y la tarjeta de importe
+     * conserva 16 dp de relleno interno.
+     */
+    private fun assertOperationEditorDensity(label: String) {
+        val sections = compose.onAllNodesWithTag("aq-editor-section")
+            .fetchSemanticsNodes()
+            .map { it.boundsInRoot }
+            .filter { it.width > 0f && it.height > 0f }
+            .sortedBy { it.top }
+        assertTrue("$label: se esperaban al menos 2 secciones", sections.size >= 2)
+        sections.zipWithNext().forEachIndexed { index, (previous, next) ->
+            assertEquals(
+                "$label: separación entre secciones (${index + 1}/${sections.size - 1})",
+                16f,
+                next.top - previous.bottom,
+                1f,
+            )
+        }
+        val card = compose.onNodeWithTag("aq-card").getUnclippedBoundsInRoot()
+        val amountLabel = compose.onNodeWithText(AppStrings.MontoOpcional, useUnmergedTree = true)
+            .getUnclippedBoundsInRoot()
+        assertEquals(
+            "$label: relleno izquierdo de la tarjeta",
+            16f,
+            amountLabel.left.value - card.left.value,
+            1f,
+        )
+        assertEquals(
+            "$label: relleno superior de la tarjeta",
+            16f,
+            amountLabel.top.value - card.top.value,
+            1f,
+        )
+    }
+
+    @Test fun operation_editor_light() {
         val vm = operationsViewModel(operations = listOf(operationFixture("op-1")))
-        OperationEditorScreen(state = vm.state.value, viewModel = vm, existing = null)
+        verifyLayout("operation-editor-light", dark = false) {
+            OperationEditorScreen(state = vm.state.value, viewModel = vm, existing = null)
+        }
+        assertOperationEditorDensity("operation-editor-light")
     }
 
     @Test fun operation_editor_dark() = verifyLayout("operation-editor-dark", dark = true) {
@@ -1834,16 +1877,31 @@ open class LayoutReferenceTest {
         OperationEditorScreen(state = vm.state.value, viewModel = vm, existing = null)
     }
 
-    @Test fun unassociated_light() = verifyLayout("unassociated-light", dark = false) {
+    @Test fun unassociated_light() {
         val vm = operationsViewModel(
             receipts = listOf(unassociatedReceiptFixture("r-1"), unassociatedReceiptFixture("r-2")),
         )
         vm.onAction(OperationAction.OpenUnassociated)
-        OperationListScreen(
-            state = vm.state.value,
-            viewModel = vm,
-            navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
-        )
+        verifyLayout("unassociated-light", dark = false) {
+            OperationsScreen(
+                state = vm.state.value,
+                viewModel = vm,
+                navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
+            )
+        }
+        val bodies = compose.onAllNodesWithTag("aq-list-body")
+            .fetchSemanticsNodes()
+            .map { it.boundsInRoot }
+            .sortedBy { it.top }
+        assertTrue("unassociated-light: se esperaban 2 comprobantes", bodies.size >= 2)
+        bodies.zipWithNext().forEachIndexed { index, (previous, next) ->
+            assertEquals(
+                "unassociated-light: separación entre comprobantes (${index + 1})",
+                16f,
+                next.top - previous.bottom,
+                1f,
+            )
+        }
     }
 
     @Test fun unassociated_dark() = verifyLayout("unassociated-dark", dark = true) {
@@ -1851,7 +1909,7 @@ open class LayoutReferenceTest {
             receipts = listOf(unassociatedReceiptFixture("r-1"), unassociatedReceiptFixture("r-2")),
         )
         vm.onAction(OperationAction.OpenUnassociated)
-        OperationListScreen(
+        OperationsScreen(
             state = vm.state.value,
             viewModel = vm,
             navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
@@ -1861,7 +1919,7 @@ open class LayoutReferenceTest {
     @Test fun unassociated_empty_light() = verifyLayout("unassociated-empty-light", dark = false) {
         val vm = operationsViewModel()
         vm.onAction(OperationAction.OpenUnassociated)
-        OperationListScreen(
+        OperationsScreen(
             state = vm.state.value,
             viewModel = vm,
             navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
@@ -1871,7 +1929,7 @@ open class LayoutReferenceTest {
     @Test fun unassociated_empty_dark() = verifyLayout("unassociated-empty-dark", dark = true) {
         val vm = operationsViewModel()
         vm.onAction(OperationAction.OpenUnassociated)
-        OperationListScreen(
+        OperationsScreen(
             state = vm.state.value,
             viewModel = vm,
             navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),

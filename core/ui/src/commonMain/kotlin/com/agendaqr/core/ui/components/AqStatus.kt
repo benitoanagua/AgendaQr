@@ -22,7 +22,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqComposition
 import com.agendaqr.core.ui.theme.AqWeight
@@ -83,8 +82,8 @@ fun AqStatusBanner(
             .background(background, AqShapes.Medium)
             .testTag("am-status-banner")
             .semantics { liveRegion = LiveRegionMode.Polite }
-            .padding(horizontal = AqSpacing.Md, vertical = AqSpacing.Md),
-        verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Lg),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.MdPlus),
     ) {
         // Fila 1: icono discreto (compacto, alineado al inicio del título)
         // + título/mensaje a ancho completo.
@@ -133,18 +132,20 @@ fun AqStatusBanner(
                 }
             }
         }
-        // Fila 2: acción principal con peso SemiBold, altura compacta
-        // (36 dp visual / 48 dp táctil), texto alineado con el mensaje.
+        // Fila 2: acción principal como botón Default/Small, separada del
+        // contenido por 12 dp y con el relleno propio del banner.
         action?.let { a ->
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("aq-banner-actions"),
                 horizontalArrangement = Arrangement.End,
             ) {
-                AqCompactAction(
+                AqButton(
                     label = a.label,
                     onClick = a.onClick,
-                    color = foreground,
-                    fontWeight = AqWeight.SemiBold,
+                    variant = AqButtonVariant.Default,
+                    size = AqButtonSize.Small,
                 )
             }
         }

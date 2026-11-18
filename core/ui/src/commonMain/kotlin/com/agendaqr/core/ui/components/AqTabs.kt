@@ -18,6 +18,7 @@ import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqShapes
+import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.asTextOn
@@ -91,6 +92,8 @@ fun AqTabs(
         modifier = modifier.fillMaxWidth(),
         containerColor = AqColor.Transparent,
         contentColor = AqColor.TextPrimary,
+        // Sin sangría propia: la superficie ya aplica su margen de contenido.
+        edgePadding = AqSpacing.None,
         // Indicador de acento de la referencia; hairline inferior.
         indicator = {
             androidx.compose.material3.TabRowDefaults.PrimaryIndicator(

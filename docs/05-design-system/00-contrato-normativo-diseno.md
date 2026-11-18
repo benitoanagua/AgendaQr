@@ -110,6 +110,7 @@ Construidas solo con tokens y componentes de Polaris; no son valores propios.
 | D-07 | Derivación del tema oscuro | `dark-experimental` no cubre todos los roles (PV-02). |
 | D-08 | Proporciones internas de composición | Alfas de selección y fracciones de ancho/glifo/desplazamiento no son escalas publicadas; se concentran en `AqTokens.kt` y se conservan para no alterar el layout verificado. |
 | D-10 | Modelo de sombras de Compose | `Modifier.shadow` expone elevación y color, pero no `offsetY` ni `spread`. `AqElevation` conserva la geometría publicada (`:363-368`) como metadato y aplica el radio de desenfoque; `shadow-100` se anula en `light-mobile` (`:497`). |
+| D-11 | Contenedores tonales del tema oscuro | `dark-experimental` no publica contenedores de estado. Se derivan mezclando cada `*Fill` publicado al 16 % sobre `gray800` (la superficie oscura publicada), de modo que el bloque tonal se distinga de `surface` y conserve el par de contenido en AA. |
 
 ## 5. Gobernanza
 
@@ -137,6 +138,7 @@ en el archivo señalado con valores tomados de tokens semánticos.
 | E-03 | `border` | `AqLists.kt` | Separador interno de tarjetas |
 | E-04 | `border` | `AqInputs.kt` | Foco y estado de error de campos |
 | E-05 | `shadow` | `AqLists.kt` | Elevación de tarjetas mediante `aqElevation` |
+| E-07 | `border` | `AqForms.kt` | Caja del campo select (reposo, foco y error) |
 
 E-06 (elevación de botones) está retirada: los botones son planos y un
 registro sin uso se detecta como excepción zombie.
@@ -147,6 +149,7 @@ registro sin uso se detecta como excepción zombie.
 |---|---|
 | 7.0 | Se fija la instantánea de tokens 9.4.2 y la iconografía 9.3.1; se incorporan PV-06, PV-07, PV-08, D-10 y X-07. |
 | 8.0 | Se cierra la migración de `core/ui`: vocabulario `Aq*` sin identificadores heredados, esquema por defecto claro con seguimiento del sistema, retirada de menciones activas a sistemas anteriores y verificación final. Se mantiene el resto de extensiones, desviaciones y excepciones. |
+| 8.1 | Se añade el rol `inputSurface`, los pasos 12/20 dp de espaciado y la derivación D-11 de contenedores tonales oscuros; la caja de campo de `AqForms.kt` se registra como E-07. |
 
 La historia detallada de la revisión y el estado final, incluido lo que no se
 puede verificar en este entorno, está en

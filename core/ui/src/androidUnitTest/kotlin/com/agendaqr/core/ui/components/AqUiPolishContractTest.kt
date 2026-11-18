@@ -12,6 +12,8 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.semantics.SemanticsActions
@@ -303,5 +305,160 @@ class AqUiPolishContractTest {
                 texts.toSet(),
             )
         assertEquals(3, texts.size)
+    }
+
+    // --- Contrato de densidad: campo, banner, tarjeta y fila ---
+
+    @Test
+    fun text_field_label_aligns_with_the_box_left_edge_and_keeps_a_4dp_gap() {
+        setScaledContent(1f) {
+            AqTextField(label = "Comercio", value = "", onValueChange = {})
+        }
+        val label = compose.onNodeWithText("Comercio", useUnmergedTree = true).getBoundsInRoot()
+        val field = compose.onNodeWithContentDescription("Comercio", useUnmergedTree = true)
+            .getBoundsInRoot()
+        val root = compose.onRoot().getBoundsInRoot()
+        assertEquals(
+            0f,
+            label.left.value - root.left.value,
+            0.5f,
+            "la etiqueta no arranca en el borde izquierdo del contenedor",
+        )
+        assertEquals(
+            12f,
+            field.left.value - label.left.value,
+            0.5f,
+            "el texto no tiene 12 dp de relleno horizontal interno",
+        )
+        assertEquals(
+            12f,
+            root.right.value - field.right.value,
+            0.5f,
+            "el campo no alcanza el borde derecho del contenedor",
+        )
+        assertEquals(
+            4f,
+            field.top.value - label.bottom.value,
+            0.5f,
+            "la separación etiqueta/caja no es 4 dp",
+        )
+        assertEquals(
+            48f,
+            field.bottom.value - field.top.value,
+            0.5f,
+            "se perdió el objetivo táctil de 48 dp",
+        )
+    }
+
+    @Test
+    fun text_field_error_block_aligns_with_the_label() {
+        setScaledContent(1f) {
+            AqTextField(
+                label = "Comercio",
+                value = "",
+                onValueChange = {},
+                isError = true,
+                errorMessage = "Falta el comercio",
+            )
+        }
+        val label = compose.onNodeWithText("Comercio", useUnmergedTree = true).getBoundsInRoot()
+        val support = compose.onNodeWithTag("aq-field-support", useUnmergedTree = true)
+            .getBoundsInRoot()
+        val field = compose.onNodeWithContentDescription("Comercio", useUnmergedTree = true)
+            .getBoundsInRoot()
+        assertEquals(label.left.value, support.left.value, 0.5f, "el error no alinea con la etiqueta")
+        assertEquals(
+            4f,
+            support.top.value - field.bottom.value,
+            0.5f,
+            "la separación caja/error no es 4 dp",
+        )
+    }
+
+    @Test
+    fun text_field_helper_text_aligns_with_the_label() {
+        setScaledContent(1f) {
+            AqTextField(
+                label = "Nota",
+                value = "",
+                onValueChange = {},
+                helperMessage = "Opcional",
+            )
+        }
+        val label = compose.onNodeWithText("Nota", useUnmergedTree = true).getBoundsInRoot()
+        val helper = compose.onNodeWithText("Opcional", useUnmergedTree = true).getBoundsInRoot()
+        assertEquals(label.left.value, helper.left.value, 0.5f, "la ayuda no alinea con la etiqueta")
+    }
+
+    @Test
+    fun status_banner_uses_16dp_padding_and_a_12dp_action_gap() {
+        compose.setContent {
+            AqTheme(darkTheme = false) {
+                AqStatusBanner(
+                    message = "No pudimos guardar.",
+                    action = AqBannerAction("Reintentar", {}),
+                )
+            }
+        }
+        compose.waitForIdle()
+        val banner = compose.onNodeWithTag("am-status-banner").getBoundsInRoot()
+        val message = compose.onNodeWithText("No pudimos guardar.", useUnmergedTree = true)
+            .getBoundsInRoot()
+        val actions = compose.onNodeWithTag("aq-banner-actions", useUnmergedTree = true)
+            .getBoundsInRoot()
+        assertEquals(
+            16f,
+            message.left.value - banner.left.value,
+            1f,
+            "el contenido no tiene 16 dp de relleno lateral",
+        )
+        assertEquals(
+            16f,
+            message.top.value - banner.top.value,
+            1f,
+            "el contenido no arranca a 16 dp del borde superior",
+        )
+        assertEquals(
+            12f,
+            actions.top.value - message.bottom.value,
+            1f,
+            "la acción no está a 12 dp del contenido",
+        )
+        assertEquals(
+            16f,
+            banner.right.value - actions.right.value,
+            1f,
+            "la acción no tiene 16 dp de respiro hasta el borde",
+        )
+    }
+
+    @Test
+    fun card_applies_16dp_internal_padding() {
+        compose.setContent {
+            AqTheme {
+                AqCard { AqText("Contenido de tarjeta") }
+            }
+        }
+        compose.waitForIdle()
+        val card = compose.onNodeWithTag("aq-card").getBoundsInRoot()
+        val content = compose.onNodeWithText("Contenido de tarjeta", useUnmergedTree = true)
+            .getBoundsInRoot()
+        assertEquals(16f, content.left.value - card.left.value, 0.5f, "padding izquierdo")
+        assertEquals(16f, content.top.value - card.top.value, 0.5f, "padding superior")
+    }
+
+    @Test
+    fun list_row_uses_12dp_vertical_density_and_16dp_leading_inset() {
+        setScaledContent(1f) {
+            AqListRow(
+                title = "Mercado",
+                subtitle = "Compras semanales",
+                onClick = {},
+            )
+        }
+        val row = compose.onNodeWithText("Mercado").getBoundsInRoot()
+        val title = compose.onNodeWithText("Mercado", useUnmergedTree = true).getBoundsInRoot()
+        assertEquals(12f, title.top.value - row.top.value, 1f, "densidad vertical")
+        assertEquals(16f, title.left.value - row.left.value, 1f, "inset izquierdo")
     }
 }

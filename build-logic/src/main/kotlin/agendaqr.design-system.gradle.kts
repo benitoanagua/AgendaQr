@@ -53,6 +53,7 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-02" to listOf("border:AqLists.kt"),
     "E-03" to listOf("border:AqLists.kt"),
     "E-04" to listOf("border:AqInputs.kt"),
+    "E-07" to listOf("border:AqForms.kt"),
     // `Modifier.shadow` se centraliza en la capa de tokens; solo los
     // archivos registrados pueden invocarlo (o elevarse vía `aqElevation`).
     // E-06 (elevación de botones) se retiró: los botones son planos y

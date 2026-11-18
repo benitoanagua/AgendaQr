@@ -359,7 +359,7 @@ internal fun UnassociatedScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth().weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
                 ) {
                     items(state.unassociated, key = { it.id }) { receipt ->
                         // U-15: una sola primaria por pantalla — la fila
