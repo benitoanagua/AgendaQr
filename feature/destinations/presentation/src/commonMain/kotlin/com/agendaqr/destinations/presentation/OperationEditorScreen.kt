@@ -226,77 +226,78 @@ internal fun OperationEditorScreen(
             onSelect = { type = it },
         )
         // Importe + moneda (U-07, D6): grupo con rótulo; entrada grande con
-        // borrado y error.
+        // borrado y error. El campo dibuja su propia caja; no hay AqCard
+        // envolviendo que duplique la superficie.
         EditorSection(AppStrings.ImporteYMoneda) {
-            AqCard {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-                ) {
-                    AqAmountField(
-                        label = AppStrings.MontoOpcional,
-                        value = amount,
-                        onValueChange = {
-                            amount = it
-                            amountEdited = true
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            ) {
+                AqAmountField(
+                    label = AppStrings.MontoOpcional,
+                    value = amount,
+                    onValueChange = {
+                        amount = it
+                        amountEdited = true
+                    },
+                    onClear = { amount = "" },
+                    clearLabel = AppStrings.BorrarImporte,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal,
+                    ),
+                    // La molécula del campo es dueña del mensaje de error
+                    // y de su separación (4 dp), no la pantalla.
+                    state = AqFieldState(
+                        isError = amountInvalid,
+                        errorMessage = if (amountInvalid) AppStrings.ImporteInvalido else null,
+                    ),
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                    AqFilterChip(
+                        label = AppStrings.MonedaBob,
+                        selected = currency == AppStrings.MonedaBob,
+                        onClick = {
+                            currency = AppStrings.MonedaBob
+                            currencyCustomOpen = false
                         },
-                        onClear = { amount = "" },
-                        clearLabel = AppStrings.BorrarImporte,
-                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                            keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal,
-                        ),
-                        // La molécula del campo es dueña del mensaje de error
-                        // y de su separación (4 dp), no la pantalla.
-                        state = AqFieldState(
-                            isError = amountInvalid,
-                            errorMessage = if (amountInvalid) AppStrings.ImporteInvalido else null,
-                        ),
                     )
-                    Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-                        AqFilterChip(
-                            label = AppStrings.MonedaBob,
-                            selected = currency == AppStrings.MonedaBob,
-                            onClick = {
-                                currency = AppStrings.MonedaBob
-                                currencyCustomOpen = false
-                            },
-                        )
-                        AqFilterChip(
-                            label = AppStrings.MonedaUsd,
-                            selected = currency == AppStrings.MonedaUsd,
-                            onClick = {
-                                currency = AppStrings.MonedaUsd
-                                currencyCustomOpen = false
-                            },
-                        )
-                        AqFilterChip(
-                            label = AppStrings.MonedaOtra,
-                            selected = currencyCustomOpen,
-                            onClick = {
-                                if (currency == AppStrings.MonedaBob || currency == AppStrings.MonedaUsd) {
-                                    currency = ""
-                                }
-                                currencyCustomOpen = true
-                            },
-                        )
-                    }
-                    if (currencyCustomOpen) {
-                        AqTextField(
-                            label = AppStrings.LabelMoneda,
-                            value = currency,
-                            onValueChange = { currency = it },
-                            leadingIcon = com.agendaqr.core.ui.components.AqIcons.Wallet,
-                        )
-                    }
+                    AqFilterChip(
+                        label = AppStrings.MonedaUsd,
+                        selected = currency == AppStrings.MonedaUsd,
+                        onClick = {
+                            currency = AppStrings.MonedaUsd
+                            currencyCustomOpen = false
+                        },
+                    )
+                    AqFilterChip(
+                        label = AppStrings.MonedaOtra,
+                        selected = currencyCustomOpen,
+                        onClick = {
+                            if (currency == AppStrings.MonedaBob || currency == AppStrings.MonedaUsd) {
+                                currency = ""
+                            }
+                            currencyCustomOpen = true
+                        },
+                    )
+                }
+                if (currencyCustomOpen) {
+                    AqTextField(
+                        label = AppStrings.LabelMoneda,
+                        value = currency,
+                        onValueChange = { currency = it },
+                        leadingIcon = com.agendaqr.core.ui.components.AqIcons.Wallet,
+                    )
                 }
             }
         }
-        // Momento con fecha y hora (U-03, D2): grupo con rótulo, fila de
-        // selección con el valor ("Hoy · 16/10/2026 14:30") que abre los
-        // selectores, más atajos Hoy/Ayer. Sin texto libre: la hora es
-        // opcional solo para datos antiguos (medianoche = sin hora).
+        // Momento con fecha y hora (U-03, D2): fila de selección que abre
+        // los selectores, más atajos Hoy/Ayer como acciones (sin selección,
+        // sin padding correctivo).
         EditorSection(AppStrings.FechaYHora) {
-            AqListBody {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            ) {
                 val dateValue = (relativeDayLabel(occurredAtMillis, nowMillis())?.let { it + " · " } ?: "") +
                     formatDateTime(occurredAtMillis)
                 AqListRow(
@@ -311,11 +312,8 @@ internal fun OperationEditorScreen(
                     },
                     showChevron = true,
                 )
-                AqHairline()
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Sm),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                 ) {
                     AqFilterChip(
@@ -331,17 +329,22 @@ internal fun OperationEditorScreen(
                 }
             }
         }
-        // Persona o entidad (U-05): grupo con rótulo; campo + sugerencias de
-        // las últimas contrapartes (derivadas del estado, sin persistencia
-        // nueva).
+        // Persona o entidad (U-05): campo + sugerencias de contrapartes.
+        // La molécula de campo no recibe padding externo; el grupo lo
+        // dispone el organismo de sección.
         EditorSection(AppStrings.LabelPersonaOEntidad) {
-            // El organismo (cuerpo de lista) aporta el relleno de sección;
-            // la molécula de campo no recibe padding externo.
-            AqListBody(contentPadding = PaddingValues(horizontal = AqSpacing.Lg, vertical = AqSpacing.Sm)) {
-                AqTextField(label = AppStrings.PersonaOEntidadOpcional, value = person, onValueChange = { person = it }, leadingIcon = com.agendaqr.core.ui.components.AqIcons.Store)
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            ) {
+                AqTextField(
+                    label = AppStrings.PersonaOEntidadOpcional,
+                    value = person,
+                    onValueChange = { person = it },
+                    leadingIcon = com.agendaqr.core.ui.components.AqIcons.Store,
+                )
                 val counterparts = remember(state.operations) { recentCounterparts(state.operations) }
                 if (counterparts.isNotEmpty()) {
-                    AqHairline()
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -381,27 +384,20 @@ internal fun OperationEditorScreen(
             }
         }
         // Más detalles (U-06, D5): concepto y nota plegados salvo que el
-        // registro ya los tenga; el contexto vive en su propia tarjeta
-        // de selección (S08).
-        AqListBody {
-            AqListRow(
-                title = AppStrings.MasDetalles,
-                onClick = { showDetails = !showDetails },
-                showChevron = true,
-            )
-        }
+        // registro ya los tenga.
+        AqListRow(
+            title = AppStrings.MasDetalles,
+            onClick = { showDetails = !showDetails },
+            showChevron = true,
+        )
         if (showDetails) {
-            // Campos libres: la tarjeta (organismo) aporta superficie y
-            // relleno de 16 dp; las moléculas de campo no llevan padding
-            // externo.
-            AqCard {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
-                ) {
-                    AqTextField(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, leadingIcon = com.agendaqr.core.ui.components.AqIcons.NoteEdit)
-                    AqTextField(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, singleLine = false)
-                }
+            // Campos libres: cada campo dibuja su propia caja y borde.
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            ) {
+                AqTextField(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, leadingIcon = com.agendaqr.core.ui.components.AqIcons.NoteEdit)
+                AqTextField(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, singleLine = false)
             }
         }
     }
