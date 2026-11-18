@@ -65,6 +65,8 @@ object AqIcons {
     val Calendar: ImageVector get() = PolarisIconVectors.Calendar
     val Clock: ImageVector get() = PolarisIconVectors.Clock
     val ChevronRight: ImageVector get() = PolarisIconVectors.ChevronRight
+    val ArrowDown: ImageVector get() = PolarisIconVectors.ArrowDown
+    val ArrowUp: ImageVector get() = PolarisIconVectors.ArrowUp
     val ShieldCheck: ImageVector get() = PolarisIconVectors.ShieldCheckMark
     val Wallet: ImageVector get() = PolarisIconVectors.Wallet
     val Lock: ImageVector get() = PolarisIconVectors.Lock

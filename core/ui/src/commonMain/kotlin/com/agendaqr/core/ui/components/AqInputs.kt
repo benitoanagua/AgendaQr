@@ -184,6 +184,133 @@ fun AqTextField(
 }
 
 /**
+ * Entrada de texto multilínea justificada por los flujos de notas del
+ * producto (S02/S07 edición de destino, S07 registro de operación).
+ *
+ * A diferencia de [AqTextField], la caja crece en altura con el contenido
+ * y la escala de fuente (mínimo 48 dp de objetivo táctil, sin altura fija
+ * que recorte). La etiqueta es persistente y el error se expresa con
+ * icono + texto bajo el campo, nunca solo color.
+ */
+@Composable
+fun AqMultilineTextField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    isError: Boolean = false,
+    errorMessage: String? = null,
+    helperMessage: String? = null,
+    minLines: Int = 3,
+    maxLines: Int = Int.MAX_VALUE,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    leadingIcon: ImageVector? = null,
+    trailing: (@Composable () -> Unit)? = null,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val focused by interactionSource.collectIsFocusedAsState()
+    val borderColor = when {
+        isError -> AqColor.Danger
+        focused -> AqColor.Focus
+        else -> AqColor.FunctionalBorder
+    }
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+    ) {
+        Text(
+            label,
+            style = AqTextStyles.Label,
+            color = if (!enabled) AqColor.OnDisabled else AqColor.TextPrimary,
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                .background(AqColor.InputSurface, AqShapes.Medium)
+                .border(AqMetrics.Border, borderColor, AqShapes.Medium)
+                .padding(horizontal = AqSpacing.MdPlus),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        ) {
+            leadingIcon?.let { glyph ->
+                AqIcon(
+                    imageVector = glyph,
+                    contentDescription = null,
+                    tint = when {
+                        isError -> AqColor.Danger
+                        focused -> AqColor.Focus
+                        else -> AqColor.TextTertiary
+                    },
+                )
+            }
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier
+                    .weight(1f)
+                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                    .semantics {
+                        contentDescription = label
+                        if (isError && errorMessage != null) error(errorMessage)
+                    },
+                enabled = enabled,
+                readOnly = readOnly,
+                singleLine = false,
+                minLines = minLines,
+                maxLines = maxLines,
+                textStyle = AqTextStyles.Body.copy(
+                    color = when {
+                        !enabled -> AqColor.OnDisabled
+                        isError -> AqColor.Danger
+                        else -> AqColor.TextPrimary
+                    },
+                ),
+                keyboardOptions = keyboardOptions,
+                keyboardActions = keyboardActions,
+                visualTransformation = visualTransformation,
+                interactionSource = interactionSource,
+                cursorBrush = SolidColor(if (isError) AqColor.Danger else AqColor.Focus),
+            )
+            trailing?.invoke()
+        }
+        when {
+            isError && errorMessage != null -> {
+                Row(
+                    modifier = Modifier.testTag("aq-field-support"),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+                ) {
+                    AqIcon(
+                        imageVector = AqIcons.Cancel,
+                        contentDescription = null,
+                        tint = AqColor.Danger,
+                    )
+                    Text(
+                        errorMessage,
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                        style = AqTextStyles.Support,
+                        color = AqColor.Danger,
+                    )
+                }
+            }
+            helperMessage != null -> {
+                Text(
+                    helperMessage,
+                    modifier = Modifier.testTag("aq-field-support"),
+                    style = AqTextStyles.Support,
+                    color = AqColor.TextSecondary,
+                )
+            }
+        }
+    }
+}
+
+/**
  * Campo de búsqueda (SearchBar de la referencia): relleno box
  * (`SurfaceSecondary`), PÍLDORA (Anexo A: inputs/buscador 20+, radio
  * completo), glifo de búsqueda y limpieza opcional etiquetada; SIN

@@ -8,6 +8,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -563,6 +564,76 @@ fun AqListRow(
                 thickness = AqMetrics.DividerHeight,
                 color = AqColor.Divider,
             )
+        }
+    }
+}
+
+/**
+ * Panel expandible justificado por el flujo de registro de operación
+ * (S07 "Más detalles"): título + chevron que alterna entre colapsado y
+ * expandido, con el contenido revelado debajo. El estado de expansión lo
+ * posee el llamador; el DS solo renderiza y anuncia el estado.
+ *
+ * - Radio de tarjeta (Large / 12 dp), superficie y borde de tokens (E-02/E-03).
+ * - Objetivo táctil ≥ 48 dp en toda la fila de título.
+ * - Semántica `expanded` anunciada al lector de pantalla.
+ * - Sin movimiento decorativo; la animación de aparición delegada al llamador.
+ */
+@Composable
+fun AqExpansionPanel(
+    title: String,
+    expanded: Boolean,
+    onToggle: () -> Unit,
+    modifier: Modifier = Modifier,
+    /** Glifo decorativo opcional a la izquierda del título. */
+    leading: (@Composable () -> Unit)? = null,
+    content: @Composable () -> Unit,
+) {
+    val shape = AqShapes.Large
+    val chevronIcon = if (expanded) AqIcons.ArrowUp else AqIcons.ChevronRight
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(AqColor.Surface, shape)
+            .border(AqMetrics.Border, AqColor.Border, shape)
+            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+            .clickable(
+                role = Role.Button,
+                onClickLabel = title,
+                onClick = onToggle,
+            ),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.MdPlus),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        ) {
+            leading?.invoke()
+            Text(
+                text = title,
+                style = AqTextStyles.RowTitle,
+                color = AqColor.TextPrimary,
+                modifier = Modifier.weight(1f),
+            )
+            AqIcon(
+                imageVector = chevronIcon,
+                contentDescription = null,
+                size = AqMetrics.IconSizeCompact,
+                tint = AqColor.TextTertiary,
+            )
+        }
+        if (expanded) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Sm)
+                    .fillMaxWidth(),
+            ) {
+                content()
+            }
         }
     }
 }
