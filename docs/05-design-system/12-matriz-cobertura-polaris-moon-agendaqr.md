@@ -1,7 +1,7 @@
 # Matriz de cobertura Polaris / Moon / Agenda QR
 
-**Estado:** En elaboración — FASE 1 del plan de ejecución.
-**Autoridad:** ADR-0025, ADR-0026, contrato normativo v8.3, instantánea `@shopify/polaris-tokens@9.4.2`, especificación UX/UI V1 congelada.
+**Estado:** Normativo — FASE 1 del plan de ejecución (reconciliada con código real en `main` + rama `feat/polaris-mobile-ux-evolution`).
+**Autoridad:** ADR-0025, ADR-0026, contrato normativo v8.3, instantánea `@shopify/polaris-tokens@9.4.2`, iconos `@shopify/polaris-icons@9.3.1`, especificación UX/UI V1 congelada.
 **Propósito:** Inventariar cada patrón de Polaris, su equivalente en Moon (referencia de patrón móvil únicamente), su estado real en `core/ui`/`feature/destinations/presentation`, y clasificar como COMPLETE / PARTIAL / MISSING / INCONSISTENT / NOT_APPLICABLE.
 
 ## Leyenda de clasificación
@@ -12,7 +12,7 @@
 | PARTIAL | Existe el componente pero con carencias (faltan estados, tema oscuro, accesibilidad, pruebas, o usa valores fuera de tokens). |
 | MISSING | No existe implementación en `core/ui`. |
 | INCONSISTENT | Comportamiento o apariencia divergente de Polaris o de la especificación UX/UI V1. |
-| NOT_APPLICABLE | No corresponde al producto Agenda QR (sin justificación de negocio nueva). |
+| NOT_APPLICABLE | No corresponde al producto Agenda QR (justificación de producto, no por falta de implementación). |
 
 ## Columna de decisiones técnicas
 
@@ -33,10 +33,10 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | A1 | Navigation Bar (bottom) | `core/ui/.../AqChrome.kt` → `AqNavBar` | PARTIAL | Sí | NO VERIFICADO | Sí (rol Tab, targets 48 dp) | `RootNavigationChromeTest`, `ScreensA11yCoverageTest` | Sin indicador de desplazamiento para >4 destinos; sin soporte de estado "disabled" por destino | Conservar; añadir pruebas de selección por destino | Alta | `AqIcon`, `AqColor`, `AqMetrics` |
 | A2 | Navigation Rail | `core/ui/.../AqChrome.kt` → `AqNavRail` | PARTIAL | Sí | NO VERIFICADO | Sí | `ScreensA11yCoverageTest` | Verificación de layout retirada por ADR-0007 (requiere revisión manual en tablet) | Mantener para expanded/medium; documentar como no verificado en iOS | Media | `AqIcon`, `AqColor` |
-| A3 | Modal Navigation Drawer | `core/ui/.../AqSheets.kt` → `AqBottomSheet` / `AqDialog` | PARTIAL | Sí | NO VERIFICADO | Parcial | `AqActionSheetTest` | No existe un cajón lateral de navegación modal distinto del bottom sheet/dialog | Evaluar si el producto necesita un drawer lateral; UX V1 no lo declara | Baja | `AqDialog`, `AqSheets` |
+| A3 | Modal Navigation Drawer | — | NOT_APPLICABLE | — | — | — | — | UX V1 define navegación inferior (barra) y rail en tablet, no drawer lateral | No implementar; UX V1 lo descarta | — | — |
 | A4 | Permanent Navigation Drawer | — | NOT_APPLICABLE | — | — | — | — | UX V1 define navegación inferior (barra) y rail en tablet, no drawer permanente | No implementar; UX V1 lo descarta | — | — |
 | A5 | Contextual Bar | `core/ui/.../AqStatus.kt` → `AqStatusBanner` | PARTIAL | Sí | NO VERIFICADO | Sí (liveRegion polite) | `AqStatusBannerLayoutTest` | Sin barra contextual de selección múltiple (no declarada en UX V1) | Conservar como banner de estado; no añadir contextual bar sin justificación de producto | Baja | `AqTone`, `AqIcon` |
-| A6 | Top App Bar | `core/ui/.../AqChrome.kt` → `AqTopBar` | PARTIAL | Sí | NO VERIFICADO | Sí (heading, contentDescription) | `ScreensA11yCoverageTest`, `LayoutReferenceTest` | Máximo 2 acciones + overflow; sin soporte de barra de búsqueda integrada (usa AqSearchTrigger separado) | Mantener; no añadir toolbar de búsqueda dentro de TopBar sin contrato | Alta | `AqIcon`, `AqActionSheet` |
+| A6 | Top App Bar | `core/ui/.../AqChrome.kt` → `AqTopBar` | PARTIAL | Sí | NO VERIFICADO | Sí (heading, contentDescription) | `ScreensA11yCoverageTest`, `LayoutReferenceTest` | Máximo 2 acciones + overflow; sin soporte de barra de búsqueda integrada (usa `AqSearchTrigger` separado) | Mantener; no añadir toolbar de búsqueda dentro de TopBar sin contrato | Alta | `AqIcon`, `AqActionSheet` |
 | A7 | Bottom App Bar | `core/ui/.../AqScaffold.kt` → `AqBottomActionDock` + `AqBottomAction` | PARTIAL | Sí | NO VERIFICADO | Sí | `LayoutReferenceTest` | Solo una primaria fija; sin menú de acciones secundarias en el dock | Conservar; UX V1 permite máximo una primaria por pantalla | Alta | `AqPrimaryButton`, `AqScreenScaffold` |
 | A8 | Breadcrumbs | — | NOT_APPLICABLE | — | — | — | — | UX V1 no usa breadcrumbs; navegación por back stack y rutas | No implementar | — | — |
 | A9 | Navigation Tabs | `core/ui/.../AqTabs.kt` → `AqTabs` | PARTIAL | Sí | NO VERIFICADO | Parcial | `AqTabsLayoutTest` | Semántica de pestaña limitada; sin controles de pestaña con icono+etiqueta combinados | Revisar semántica de rol Tab | Media | `PrimaryScrollableTabRow` (M3 puente) |
@@ -330,7 +330,7 @@
 | COMPLETE | 45 | B1, B2, B4, B6, B7, B13, B14, B15, B16, C3, C17, C18, C26, C27, E1, E2, E4, E15, F3, F4, F5, F6, F7, F10, F12, F14, G1, G2, G3, G5, G6, G9, G13, G14, H4, H10, I1, I2, I3, I4, I5, I6, I7, I8, I9, I12, I13, I14, I15, I16, I17, I18 |
 | PARTIAL | 73 | A1, A2, A5, A6, A7, A9, A10, A11, A12, A13, A15, B3, B5, B10, B11, C1-C2, C4-C12, C15-C25, D1-D7, D11, E3, E5-E14, E16, F1, F8-F11, F13, G4, G7-G8, G10-G12, G15-G17, H1-H3, H5-H9, I10-I11, J4, J7, J8, J10-J16 |
 | MISSING | 11 | C13, C14, C21, D10, D12, E10, E11, E16, F2, F9, G7, G8, G12, G17, H8, J1-J3, J5, J6, J9, J17 (algunos NOT_APPLICABLE) |
-| NOT_APPLICABLE | 31 | A4, A8, A12, A14, B8, B12, C6, C11 (dropdown en línea), C20, C22, C23, C24, D8, D9, E8, E9, H4 (parcial), I11, J1, J2, J3, J5, J6, J9, J17 |
+| NOT_APPLICABLE | 31 | A3, A4, A8, A14, B8, B12, C6, C11 (dropdown en línea), C20, C22, C23, C24, D8, D9, E8, E9, H4 (parcial), I11, J1, J2, J3, J5, J6, J9, J17 |
 
 ### Riesgos arquitectónicos principales
 

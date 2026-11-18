@@ -9,9 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqSpacing
@@ -100,51 +98,4 @@ fun AqSyncIndicator(
     }
 }
 
-/**
- * X-03: hoja de QR de pantalla completa. El lienzo del QR SIEMPRE usa
- * [AqColor.QrCanvas] (blanco en claro y oscuro) y el efecto de brillo
- * se delega a la plataforma mediante [onBrightnessNeeded]. El acceso se
- * resuelve en la capa feature (≤2 toques); este componente no decide copy.
- */
-@Composable
-fun AqQrSheet(
-    encodedQr: String,
-    title: String,
-    closeLabel: String,
-    onClose: () -> Unit,
-    modifier: Modifier = Modifier,
-    unavailableMessage: String? = null,
-    onBrightnessNeeded: (() -> Unit)? = null,
-) {
-    androidx.compose.runtime.LaunchedEffect(Unit) {
-        onBrightnessNeeded?.invoke()
-    }
-    AqBottomSheet(
-        title = title,
-        dismissDescription = closeLabel,
-        onDismissRequest = onClose,
-        modifier = modifier,
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(AqColor.QrCanvas)
-                .padding(AqSpacing.Md)
-                .semantics {
-                    contentDescription = title
-                    liveRegion = LiveRegionMode.Polite
-                },
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            AqQrPreview(
-                encodedQr = encodedQr,
-                unavailableMessage = unavailableMessage,
-            )
-            AqText(
-                text = title,
-                size = AqType.Caption,
-                color = com.agendaqr.core.ui.theme.AqColor.TextPrimary,
-            )
-        }
-    }
-}
+
