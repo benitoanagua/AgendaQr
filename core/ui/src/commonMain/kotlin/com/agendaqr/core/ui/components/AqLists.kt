@@ -430,9 +430,17 @@ fun AqListRow(
             // del objetivo táctil (48 dp mínimo por contenido de una línea).
             val rowModifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    if (pressed && onClick != null) AqColor.SurfaceActive else AqColor.Transparent,
+                .then(
+                    if (selected) {
+                        Modifier.background(AqColor.SelectionSurface, AqShapes.Large)
+                            .border(AqMetrics.Border, AqColor.SelectionBorder, AqShapes.Large)
+                    } else if (pressed && onClick != null) {
+                        Modifier.background(AqColor.SurfaceActive)
+                    } else {
+                        Modifier.background(AqColor.Transparent)
+                    },
                 )
+                .clip(AqShapes.Large)
                 .semantics(mergeDescendants = true) {}
                 .then(
                     if (onClick != null) {

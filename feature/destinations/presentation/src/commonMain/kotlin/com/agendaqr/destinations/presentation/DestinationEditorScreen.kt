@@ -1,6 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import com.agendaqr.destinations.presentation.AppStrings
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -15,10 +16,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqSnackbarHost
 import com.agendaqr.core.ui.components.AqBottomAction
-import com.agendaqr.core.ui.components.AqListBody
+import com.agendaqr.core.ui.components.AqIconBadge
+import com.agendaqr.core.ui.components.AqListRow
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqQrPreview
-import com.agendaqr.core.ui.components.AqSecondaryButton
 import com.agendaqr.core.ui.components.AqStatusBanner
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextField
@@ -109,9 +110,8 @@ private fun DestinationEditorContent(
         snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
         // Grupos funcionales (formulario · contexto · imagen · vista previa)
-        // separados a 20 dp; dentro de cada grupo la distancia es menor
-        // (hairlines del cuerpo de lista, 8 dp del grupo de importación).
-        verticalArrangement = Arrangement.spacedBy(AqSpacing.Xl),
+        // separados a 16 dp (Lg), el paso canónico entre organismos.
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
         bottomAction = {
             AqBottomAction(
                 label = if (isSaving) AppStrings.Guardando else AppStrings.Guardar,
@@ -148,10 +148,14 @@ private fun DestinationEditorContent(
                 dismiss = bannerDismiss,
             )
         }
-        // Sección de información: formulario agrupado (los campos sin
-        // borde dibujan sus hairlines sobre el cuerpo; la nota crece con
-        // su contenido en vez de reservar un bloque fijo).
-        AqListBody {
+        // Formulario: cada campo dibuja su propia caja y borde (superficie
+        // de campo). No hay AqListBody envolviendo: evitaría una superficie
+        // duplicada sobre cada AqTextField. La separación etiqueta-campo (4
+        // dp) la gestiona AqTextField; la separación entre campos es 12 dp.
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.MdPlus),
+        ) {
             AqTextField(
                 label = AppStrings.Nombre,
                 value = name,
@@ -162,9 +166,23 @@ private fun DestinationEditorContent(
             AqTextField(label = AppStrings.Categoria, value = category, onValueChange = { category = it })
             AqTextField(label = AppStrings.Nota, value = note, onValueChange = { note = it }, singleLine = false)
         }
-        AqSecondaryButton(
-            label = selection.contextId?.let { id -> AppStrings.ParaContextoElegido + (contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico) } ?: AppStrings.ParaElegirContexto,
+        // Selección de contexto: fila seleccionable con chevron, no botón.
+        // El estado seleccionado (contextId != null) se refleja con fondo y
+        // borde de selección, no solo con el color del texto.
+        AqListRow(
+            title = selection.contextId?.let { id ->
+                AppStrings.ParaContextoElegido + (contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico)
+            } ?: AppStrings.ParaElegirContexto,
+            subtitle = AppStrings.PuedesSinContexto,
             onClick = { selection = selection.openPicker() },
+            leading = {
+                AqIconBadge(
+                    icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
+                    tone = AqTone.Info,
+                )
+            },
+            showChevron = true,
+            selected = selection.contextId != null,
         )
         // Sección de imagen: entradas de importación del QR del destino
         // (galería y cámara) y vista previa solo cuando hay contenido —

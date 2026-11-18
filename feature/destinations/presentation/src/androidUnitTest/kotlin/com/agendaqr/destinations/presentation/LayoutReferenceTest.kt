@@ -27,12 +27,14 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import kotlin.math.abs
 import com.agendaqr.core.ui.components.AqIcon
@@ -1828,9 +1830,10 @@ open class LayoutReferenceTest {
     }
 
     /**
-     * Densidad del editor: los grupos funcionales quedan separados 16 dp
-     * (el `verticalArrangement` del scaffold) y la tarjeta de importe
-     * conserva 16 dp de relleno interno.
+     * Densidad del editor de operación: los grupos funcionales quedan
+     * separados 16 dp (el `verticalArrangement` del scaffold). El campo de
+     * importe dibuja su propia caja y borde (superficie de campo), sin
+     * `AqCard` envolviendo que duplique la superficie.
      */
     private fun assertOperationEditorDensity(label: String) {
         val sections = compose.onAllNodesWithTag("aq-editor-section")
@@ -1847,21 +1850,20 @@ open class LayoutReferenceTest {
                 1f,
             )
         }
-        val card = compose.onNodeWithTag("aq-card").getUnclippedBoundsInRoot()
-        val amountLabel = compose.onNodeWithText(AppStrings.MontoOpcional, useUnmergedTree = true)
+        // El campo de importe conserva su propia caja con objetivo táctil
+        // de 48 dp, sin tarjeta de contenedor duplicada. El BasicTextField
+        // lleva el label como contentDescription.
+        val amountField = compose
+            .onNodeWithContentDescription(AppStrings.MontoOpcional, useUnmergedTree = true)
             .getUnclippedBoundsInRoot()
-        assertEquals(
-            "$label: relleno izquierdo de la tarjeta",
-            16f,
-            amountLabel.left.value - card.left.value,
-            1f,
+        assertTrue(
+            "$label: campo de importe con objetivo táctil ≥ 48 dp",
+            (amountField.bottom.value - amountField.top.value) >= 47f,
         )
-        assertEquals(
-            "$label: relleno superior de la tarjeta",
-            16f,
-            amountLabel.top.value - card.top.value,
-            1f,
-        )
+        // Sin superficie de tarjeta duplicada sobre el campo de importe:
+        // se verificó estáticamente que OperationEditorScreen no usa AqCard.
+        val cardCount = compose.onAllNodesWithTag("aq-card").fetchSemanticsNodes().size
+        assertEquals("$label: nodos aq-card inesperados", 0, cardCount)
     }
 
     @Test fun operation_editor_light() {
