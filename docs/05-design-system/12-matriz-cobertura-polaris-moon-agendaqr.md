@@ -90,7 +90,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | C1 | Text Field | `AqTextField` | PARTIAL | Sí | NO VERIFICADO | Sí (error(), contentDescription, liveRegion) | `AqAccessibilityContractTest`, `ScreensA11yCoverageTest` | Sin variante multiline nativa (`singleLine` forzable); sin contador de caracteres | `AqTextField` soporta `minLines`/`singleLine`; multiline real pendiente | Alta | `BasicTextField` (puente) |
 | C2 | Search Field | `AqSearchField` | PARTIAL | Sí | NO VERIFICADO | Sí (contentDescription, clearLabel) | `ScreensA11yCoverageTest` | Sin sugerencias en línea; `autoFocus` solo al entrar | Mantener; búsqueda global en S04 | Alta | `BasicTextField`, `AqIconButton` |
-| C3 | Multiline Text Field | — | MISSING | — | — | — | — | `AqTextField` acepta `minLines`/`singleLine=false` técnicamente, pero no expuesto como rol dedicado | Evaluar necesidad real en producto (notas en S07 usan `AqTextField`) | Media | `AqTextField` |
+| C3 | Multiline Text Field | `core/ui/.../AqInputs.kt` → `AqMultilineTextField` | COMPLETE | Sí | NO VERIFICADO | Sí (error(), contentDescription, liveRegion) | `AqMultilineTextFieldTest` | — | Usado en S02 y S07 para notas; crece con contenido y escala | Alta | `BasicTextField` (puente) |
 | C4 | Numeric Input | `AqAmountField` | PARTIAL | Sí | NO VERIFICADO | Sí (contentDescription, clearLabel) | `UxAmountValidationTest` | No formatea ni valida (por diseño, dominio lo hace); sin teclado numérico dedicado expuesto | El dominio valida importe; el componente solo transporta texto | Alta | `BasicTextField`, `AqIconButton` |
 | C5 | Amount Input | `AqAmountField` | PARTIAL | Sí | NO VERIFICADO | Sí | `UxAmountValidationTest` | Cifras tabulares (`tnum`) en `AqTextStyles.Amount`; símbolo de moneda opcional | Sin cambios | Alta | `AqAmountField` |
 | C6 | Password Input | — | MISSING | — | — | — | — | No hay entrada de contraseña en el producto V1 (PIN es numérico, no password) | NOT_APPLICABLE para V1; no implementar | — | — |
@@ -168,7 +168,7 @@
 | E12 | Context Menu | `AqActionSheet` (vía `LocalAqActionSheetController`) | PARTIAL | Sí | NO VERIFICADO | Sí | `AqActionSheetTest` | Implementado como diálogo de lista, no como menú anclado al disparador | Mantener diálogo (estable bajo Robolectric); no añadir anclaje sin justificación | Media | `AqDialog`, `AqDialogList` |
 | E13 | Dropdown Menu | `AqActionSheet` | PARTIAL | Sí | NO VERIFICADO | Sí | `AqActionSheetTest` | Misma limitación que E12 | Mantener patrón de diálogo | Media | `AqDialog` |
 | E14 | Overflow Menu | `AqActionSheet` | PARTIAL | Sí | NO VERIFICADO | Sí | `AqActionSheetTest` | Máximo acciones en lista; sin submenús | UX V1 usa overflow en TopBar y HeroHeader | Alta | `AqActionSheet`, `AqTopBarAction` |
-| E15 | Expandable Panel | `AqSection` + colapsable local (S07 "Más detalles") | PARTIAL | Sí | NO VERIFICADO | Parcial | `UxEditorDiscardTest` | Sin componente `AqExpansionPanel` dedicado; colapsado implementado localmente en feature | Evaluar componente dedicado si se reutiliza en más pantallas | Media | `AqSection` |
+| E15 | Expandable Panel | `core/ui/.../AqLists.kt` → `AqExpansionPanel` | COMPLETE | Sí | NO VERIFICADO | Sí (Role.Button, expanded semantics) | `AqExpansionPanelTest` | — | Radio Large (12 dp), superficie+borde tokens, chevron arriba/abajo | Media | `AqIcon`, `AqTextStyles` |
 | E16 | Accordion | — | MISSING | — | — | — | — | No hay acordeón en `core/ui`; S07 usa "Más detalles" plegado localmente | No añadir sin requerimiento de producto | Baja | `AqSection` |
 
 ### Notas familiares E
@@ -327,9 +327,9 @@
 
 | Clasificación | Cantidad | Patrón |
 |---|---|---|
-| COMPLETE | 42 | B1, B2, B4, B6, B7, B13, B14, B15, B16, C17, C18, C26, C27, E1, E2, E4, F3, F4, F5, F6, F7, F10, F12, F14, G1, G2, G3, G5, G6, G9, G13, G14, H10, I1, I2, I3, I4, I5, I6, I7, I8, I9, I12, I13, I14, I15, I16, I17, I18 |
-| PARTIAL | 75 | A1, A2, A5, A6, A7, A9, A10, A11, A12, A13, A15, B3, B5, B10, B11, C1-C12, C15-C25, D1-D7, D11, E3, E5-E16, F1, F8-F11, F13, G4, G7-G8, G10-G12, G15-G17, H1-H9, I10-I11, J4, J7, J8, J10-J16 |
-| MISSING | 12 | C3, C13, C14, C21, D10, D12, E10, E11, E16, F2, F9, G7, G8, G12, G17, H4, H8, J1-J3, J5, J6, J9, J17 (algunos NOT_APPLICABLE) |
+| COMPLETE | 44 | B1, B2, B4, B6, B7, B13, B14, B15, B16, C3, C17, C18, C26, C27, E1, E2, E4, E15, F3, F4, F5, F6, F7, F10, F12, F14, G1, G2, G3, G5, G6, G9, G13, G14, H10, I1, I2, I3, I4, I5, I6, I7, I8, I9, I12, I13, I14, I15, I16, I17, I18 |
+| PARTIAL | 74 | A1, A2, A5, A6, A7, A9, A10, A11, A12, A13, A15, B3, B5, B10, B11, C1-C2, C4-C12, C15-C25, D1-D7, D11, E3, E5-E14, E16, F1, F8-F11, F13, G4, G7-G8, G10-G12, G15-G17, H1-H9, I10-I11, J4, J7, J8, J10-J16 |
+| MISSING | 11 | C13, C14, C21, D10, D12, E10, E11, E16, F2, F9, G7, G8, G12, G17, H4, H8, J1-J3, J5, J6, J9, J17 (algunos NOT_APPLICABLE) |
 | NOT_APPLICABLE | 31 | A4, A8, A12, A14, B8, B12, C6, C11 (dropdown en línea), C20, C22, C23, C24, D8, D9, E8, E9, H4 (parcial), I11, J1, J2, J3, J5, J6, J9, J17 |
 
 ### Riesgos arquitectónicos principales

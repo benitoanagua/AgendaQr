@@ -18,6 +18,7 @@ import com.agendaqr.core.ui.components.AqSnackbarHost
 import com.agendaqr.core.ui.components.AqBottomAction
 import com.agendaqr.core.ui.components.AqIconBadge
 import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqMultilineTextField
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqQrPreview
 import com.agendaqr.core.ui.components.AqStatusBanner
@@ -164,7 +165,11 @@ private fun DestinationEditorContent(
                 errorMessage = if (nameError) AppStrings.ElNombreEsObligatorio else null,
             )
             AqTextField(label = AppStrings.Categoria, value = category, onValueChange = { category = it })
-            AqTextField(label = AppStrings.Nota, value = note, onValueChange = { note = it }, singleLine = false)
+            AqMultilineTextField(
+                label = AppStrings.Nota,
+                value = note,
+                onValueChange = { note = it },
+            )
         }
         // Selección de contexto: fila seleccionable con chevron, no botón.
         // El estado seleccionado (contextId != null) se refleja con fondo y
