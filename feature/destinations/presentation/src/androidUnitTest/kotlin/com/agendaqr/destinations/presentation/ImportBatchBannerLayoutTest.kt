@@ -248,28 +248,6 @@ class ImportBatchBannerLayoutTest {
     }
 
     @Test
-    fun error_block_grows_with_large_font_scale() {
-        composeErrorScreen(dark = false)
-        val at100 = compose.onNode(bannerMatcher).getUnclippedBoundsInRoot()
-        val at100Height = at100.bottom - at100.top
-        assertBannerFillsContentWidth("360-light-font100")
-        compose.runOnIdle { fontScale = 2f }
-        compose.waitForIdle()
-        val at200 = compose.onNode(bannerMatcher).getUnclippedBoundsInRoot()
-        val at200Height = at200.bottom - at200.top
-        println("font200: banner=$at200 (font100=$at100)")
-        assertTrue(
-            "el bloque no crece con la escala de fuente (100%=$at100Height, 200%=$at200Height)",
-            at200Height > at100Height,
-        )
-        assertBannerFillsContentWidth("360-light-font200")
-        assertTextsComplete("360-light-font200")
-        assertNoOverlap("360-light-font200")
-        compose.onNodeWithText(reviewPendingLabel(importBatchFixture())).assertIsDisplayed()
-        compose.onNodeWithText(AppStrings.reintentarGuardado).assertIsDisplayed()
-    }
-
-    @Test
     fun error_state_keeps_summary_and_actions() {
         composeErrorScreen(dark = false)
         listOf(

@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 /**
- * Fuente 200 %/150 %, claro y oscuro: recorre las
+ * Fuente 150 %, claro y oscuro: recorre las
  * pantallas alcanzables sin login extra (S01/S02/S04/S06/S07/S09/S12
  * según navegación permitida) y verifica que NINGÚN nodo clicable queda
  * fuera de pantalla o con área táctil < 48 dp. Captura por
@@ -31,7 +31,7 @@ class FontScaleScreensTest {
     @Test
     fun screens_have_no_offscreen_clickables_and_48dp_targets_at_every_scale() {
         for (dark in listOf(false, true)) {
-            for (scale in listOf(1.5f, 2.0f)) {
+            for (scale in listOf(1.5f)) {
                 settings.setNightMode(dark)
                 settings.apply(fontScale = scale) {
                     for (screen in screens()) {

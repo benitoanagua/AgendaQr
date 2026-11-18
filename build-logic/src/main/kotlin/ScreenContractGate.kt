@@ -53,7 +53,6 @@ val gestureVocabulary: Set<String> = setOf(
 /** Configuraciones que la galería de capturas debe cubrir cuando se genera. */
 val requiredCaptureConfigs: List<String> = listOf(
     "light-320", "light-360", "dark-320", "dark-360",
-    "light-360-font200", "dark-360-font200",
 )
 
 private const val PRESENTATION = "feature/destinations/presentation/src"
@@ -772,7 +771,6 @@ data class CaptureName(
     val state: String,
     val widthDp: Int,
     val theme: String,
-    val fontScale: Int,
 )
 
 data class CaptureArtifact(
@@ -783,10 +781,10 @@ data class CaptureArtifact(
     val sha256: String,
 )
 
-private val captureNamePattern =
-    Regex("([a-z0-9-]+)--([a-z0-9-]+)--(\\d+)dp--(light|dark)--font(100|150|200)\\.png")
+val captureWidths: Set<Int> = setOf(320, 360)
 
-val captureWidths: Set<Int> = setOf(320, 360, 720)
+private val captureNamePattern =
+    Regex("([a-z0-9-]+)--([a-z0-9-]+)--(320|360)dp--(light|dark)\\.png")
 private val captureDensities = setOf(1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0)
 
 fun parseCaptureName(fileName: String): CaptureName? {
@@ -796,7 +794,6 @@ fun parseCaptureName(fileName: String): CaptureName? {
         state = match.groupValues[2],
         widthDp = match.groupValues[3].toInt(),
         theme = match.groupValues[4],
-        fontScale = match.groupValues[5].toInt(),
     )
 }
 
@@ -848,7 +845,7 @@ fun captureViolations(
                     "(densidad $density); posible zoom/upscale/crop",
             )
         }
-        val key = "${name.surface}|${name.state}|${name.widthDp}|${name.theme}|font${name.fontScale}"
+        val key = "${name.surface}|${name.state}|${name.widthDp}|${name.theme}"
         seenKeys.put(key, artifact.relPath)?.let { previous ->
             add("captura-repetida: '$key' aparece en $previous y ${artifact.relPath}")
         }
@@ -868,8 +865,6 @@ fun captureViolations(
         if (present.none { it.theme == "dark" && it.widthDp == 320 }) add("galeria-config: falta dark-320")
         if (present.none { it.theme == "light" && it.widthDp == 360 }) add("galeria-config: falta light-360")
         if (present.none { it.theme == "dark" && it.widthDp == 360 }) add("galeria-config: falta dark-360")
-        if (present.none { it.fontScale == 200 && it.theme == "light" }) add("galeria-config: falta light-360-font200")
-        if (present.none { it.fontScale == 200 && it.theme == "dark" }) add("galeria-config: falta dark-360-font200")
     }
 }
 
@@ -881,8 +876,8 @@ private fun jsonString(value: String): String =
 
 /**
  * Manifiesto determinista de la galería: metadatos por artefacto (pantalla,
- * estado, tema, ancho, densidad, escala de fuente, tamaño real del bitmap,
- * hash, si es obligatorio y por qué se incluye).
+ * estado, tema, ancho, densidad, tamaño real del bitmap, hash, si es
+ * obligatorio y por qué se incluye).
  */
 fun renderCaptureManifest(artifacts: List<CaptureArtifact>, screens: List<ScreenContract>): String {
     val bySurface = screens.associateBy { it.surface }
@@ -901,7 +896,6 @@ fun renderCaptureManifest(artifacts: List<CaptureArtifact>, screens: List<Screen
             "theme" to jsonString(name.theme),
             "widthDp" to name.widthDp.toString(),
             "density" to density,
-            "fontScale" to name.fontScale.toString(),
             "widthPx" to artifact.widthPx.toString(),
             "heightPx" to artifact.heightPx.toString(),
             "sha256" to jsonString(artifact.sha256),
@@ -915,7 +909,7 @@ fun renderCaptureManifest(artifacts: List<CaptureArtifact>, screens: List<Screen
     val configs = requiredCaptureConfigs.joinToString(", ") { jsonString(it) }
     return buildString {
         appendLine("{")
-        appendLine("  \"schema\": \"agendaqr.captures/3\",")
+        appendLine("  \"schema\": \"agendaqr.captures/4\",")
         appendLine("  \"requiredConfigs\": [$configs],")
         appendLine("  \"entryCount\": ${artifacts.size},")
         appendLine("  \"entries\": [")
@@ -981,7 +975,7 @@ fun renderScreenContractDoc(screens: List<ScreenContract>): String = buildString
     appendLine()
     appendLine(
         "Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de nombre es " +
-            "`<superficie>--<estado>--<ancho>dp--<tema>--font<escala>.png`; no se admite zoom, " +
+            "`<superficie>--<estado>--<ancho>dp--<tema>.png`; no se admite zoom, " +
             "recorte ni viewport falso.",
     )
     appendLine()

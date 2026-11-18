@@ -27,8 +27,8 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Verificación de layout extra: ancho 320 dp (escenario de fuente al
- * 200 %), botones primario/destructivo en sus estados, importe hero y
+ * Verificación de layout extra: ancho 320 dp, botones primario/destructivo
+ * en sus estados, importe hero y
  * acción inferior fija. Sin capturas: cada caso comprueba que la raíz se
  * muestra con tamaño y que el texto visible no se recorta.
  */

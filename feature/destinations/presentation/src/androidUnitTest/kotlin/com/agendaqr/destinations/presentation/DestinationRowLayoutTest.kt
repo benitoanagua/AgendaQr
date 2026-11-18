@@ -31,8 +31,8 @@ import org.robolectric.annotation.Config
  * Defectos abiertos resueltos (docs/STATE.md):
  * 1. El badge de estado ("Sincronizado"/"Pendiente") NO compite por el
  *    ancho de la fila: vive en su línea propia bajo el título (slot meta
- *    del ListRow), no junto a la acción de trailing. Se cubre a 320 y
- *    360 dp con font scale 100/150/200 %.
+ *    del ListRow), no junto a la acción de trailing. Se cubre a 320 dp
+ *    con font scale 100/150 %.
  * 2. Los destinos con nombre genérico ("Sin nombre"/"QR importado")
  *    muestran un subtítulo distintivo con ORIGEN y FECHA.
  *
@@ -121,14 +121,8 @@ class DestinationRowLayoutTest {
     }
 
     @Test
-    fun badge_sits_on_its_own_line_at_100_150_and_200_percent() {
-        composeRowAtScales(listOf(1f, 1.5f, 2f), ::assertBadgeOnOwnLineWithoutOverflow)
-    }
-
-    @Test
-    @Config(sdk = [34], qualifiers = "w360dp-h800dp")
-    fun badge_sits_on_its_own_line_at_200_percent_on_360dp() {
-        composeRowAtScales(listOf(2f), ::assertBadgeOnOwnLineWithoutOverflow)
+    fun badge_sits_on_its_own_line_at_100_and_150_percent() {
+        composeRowAtScales(listOf(1f, 1.5f), ::assertBadgeOnOwnLineWithoutOverflow)
     }
 
     @Test

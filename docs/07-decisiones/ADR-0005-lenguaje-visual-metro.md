@@ -171,7 +171,8 @@ No hay panorama horizontal en V1.1.
    alto de SMALL/MEDIUM/WIDE de la unidad calculada (no de `TileUnit`
    fijo) y crece con la fuente; `XauxaTileGridTest`,
    `XauxaTileContractTest` y `XauxaResponsiveLayoutContractTest` cubren
-   320/360 dp y font scale 100/150/200 %.
+   320/360 dp y font scale 100/150 % (el 200 % se conserva en producción
+   pero quedó fuera de la verificación automática, ADR-0007).
 5. **Etiqueta de la app bar en idiomas largos:** la regla de etiqueta
    visible puede desbordar en idiomas de etiquetas largas; se evalúa con
    datos reales en la pasada de implementación (no se afloja la regla
@@ -187,7 +188,7 @@ No hay panorama horizontal en V1.1.
    subtítulo distintivo con origen y fecha; el badge de sincronización
    vive en su línea propia bajo el título (slot `meta` de `XauxaListRow`)
    y no compite por el ancho de la fila. Cubierto por
-   `DestinationRowLayoutTest` (320/360 dp, font scale 100/150/200 %) y
+   `DestinationRowLayoutTest` (320/360 dp, font scale 100/150 %) y
    `DestinationSubtitleTest`. No queda defecto abierto de implementación.
 8. **Contenido del tile vivo (S01):** RESUELTO (2026-10-10). El tile vivo
    se deriva de los datos SIN filtrar (el más reciente entre el último QR

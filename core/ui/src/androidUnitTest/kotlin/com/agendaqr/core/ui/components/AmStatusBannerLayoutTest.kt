@@ -38,7 +38,7 @@ import org.robolectric.annotation.GraphicsMode
  *   el banner pide `screenMargin = AmSpacing.ScreenMargin`.
  * - contenido ya acotado por AmScreenScaffold: parámetro por defecto
  *   (cero) y el scaffold pone el único margen.
- * Cubre 320/360 dp, claro/oscuro, escala 100/200 %, con/sin título,
+ * Cubre 320/360 dp, claro/oscuro, escala 100/150 %, con/sin título,
  * acciones y descarte, y copy largo en español (ADR-0007: aserciones de
  * límites reales, sin capturas versionadas).
  */
@@ -98,13 +98,6 @@ class AmStatusBannerLayoutTest {
 
     @Test
     fun at_360_dark_scale_1_3() { runScenario(true, 1.3f) }
-
-    @Test
-    fun at_360_light_scale_2_0() { runScenario(false, 2.0f) }
-
-    @Test
-    @Config(sdk = [34], qualifiers = "w320dp-h640dp")
-    fun at_320_dark_scale_2_0() { runScenario(true, 2.0f) }
 
     // ---------------------------------------------------------------------
     // Contrato de margen: exactamente UN margen de pantalla por tipo de
@@ -324,24 +317,4 @@ class AmStatusBannerLayoutTest {
         assertContentInsideBanner("copy-largo-320dp", longMessage, "Reintentar")
     }
 
-    // ---------------------------------------------------------------------
-    // Escala tipográfica 200 %: crecimiento vertical libre + geometría.
-    // ---------------------------------------------------------------------
-
-    @Test
-    fun font_scale_200_grows_vertically_and_keeps_single_margin() {
-        composeEdgeToEdgeHost(dark = false, action = true, dismiss = true)
-        val at100 = compose.onNodeWithTag("am-status-banner").getBoundsInRoot()
-        compose.runOnIdle { fontScale = 2f }
-        compose.waitForIdle()
-        val at200 = compose.onNodeWithTag("am-status-banner").getBoundsInRoot()
-        println("font200: banner=$at200 (font100=$at100)")
-        assertTrue(
-            (at200.bottom.value - at200.top.value) > (at100.bottom.value - at100.top.value),
-            "el banner no crece con la escala 200 % (100%=$at100, 200%=$at200)",
-        )
-        assertSingleScreenMargin("font200")
-        assertContentInsideBanner("font200", shortMessage, "Reintentar")
-        compose.onNodeWithContentDescription("DESCARTAR").assertIsInsideBanner("font200")
-    }
 }

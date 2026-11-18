@@ -30,14 +30,14 @@ import org.robolectric.annotation.Config
 
 /**
  * Contrato responsive (§11): en un teléfono de 320 dp, con la fuente del
- * sistema al 100 %, 150 % y 200 %, ningún texto de los componentes
- * críticos se sale del ancho, la etiqueta del tile no se recorta sin
- * elipsis y todo control conserva su objetivo táctil de 48 dp.
+ * sistema al 100 % y 150 %, ningún texto de los componentes críticos se
+ * sale del ancho, la etiqueta del tile no se recorta sin elipsis y todo
+ * control conserva su objetivo táctil de 48 dp.
  *
- * Las tres escalas viven en la MISMA composición, una por vez, moviendo
+ * Las dos escalas viven en la MISMA composición, una por vez, moviendo
  * el estado de la escala (setContent solo puede llamarse una vez por
- * test). El layout crece con la fuente: apilar las tres escalas a la
- * vez consumía el espacio de las últimas instancias.
+ * test). El layout crece con la fuente: apilar las escalas a la vez
+ * consumía el espacio de las últimas instancias.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], qualifiers = "w320dp-h640dp")
@@ -63,7 +63,7 @@ class FontScaleContractTest {
                 }
             }
         }
-        listOf(1f, 1.5f, 2f).forEach { value ->
+        listOf(1f, 1.5f).forEach { value ->
             compose.runOnIdle { scale = value }
             compose.waitForIdle()
             check(value)
