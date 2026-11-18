@@ -337,16 +337,26 @@ fun AqSearchField(
     /** Foco al entrar cuando el flujo lo justifica (p. ej. destino
      * Buscar): abre el teclado sin tocar dos veces. */
     autoFocus: Boolean = false,
+    /** Cuando falso, el campo no es editable y se muestra deshabilitado. */
+    enabled: Boolean = true,
 ) {
     if (onClear != null) require(clearLabel.isNotBlank()) {
         "AqSearchField: onClear necesita clearLabel (copy del llamador)"
     }
     val focusRequester = remember { FocusRequester() }
-    if (autoFocus) {
+    if (autoFocus && enabled) {
         LaunchedEffect(Unit) { focusRequester.requestFocus() }
     }
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
+    val textColor = if (enabled) AqColor.TextPrimary else AqColor.OnDisabled
+    val placeholderColor = if (enabled) AqColor.TextPlaceholder else AqColor.OnDisabled
+    val borderColor = when {
+        !enabled -> AqColor.OnDisabled.copy(alpha = 0.3f)
+        focused -> AqColor.Focus
+        else -> AqColor.Transparent
+    }
+    val iconTint = if (enabled) AqColor.TextTertiary else AqColor.OnDisabled
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
@@ -356,8 +366,9 @@ fun AqSearchField(
             .focusRequester(focusRequester)
             .semantics { contentDescription = label },
         interactionSource = interactionSource,
-        textStyle = AqTextStyles.Body.copy(color = AqColor.TextPrimary),
-        cursorBrush = SolidColor(AqColor.Focus),
+        enabled = enabled,
+        textStyle = AqTextStyles.Body.copy(color = textColor),
+        cursorBrush = SolidColor(if (enabled) AqColor.Focus else AqColor.OnDisabled),
         keyboardOptions = keyboardOptions,
         singleLine = true,
         decorationBox = { innerTextField ->
@@ -374,7 +385,7 @@ fun AqSearchField(
                         .background(AqColor.SurfaceSecondary, AqShapes.Pill)
                         .border(
                             AqMetrics.Border,
-                            if (focused) AqColor.Focus else AqColor.Transparent,
+                            borderColor,
                             AqShapes.Pill,
                         )
                         .padding(horizontal = AqSpacing.MdPlus),
@@ -384,21 +395,21 @@ fun AqSearchField(
                     AqIcon(
                         imageVector = AqIcons.Search,
                         contentDescription = null,
-                        tint = AqColor.TextTertiary,
+                        tint = iconTint,
                     )
                     Box(modifier = Modifier.weight(1f)) {
                         if (value.isEmpty()) {
                             Text(
                                 placeholder,
                                 style = AqTextStyles.Body,
-                                color = AqColor.TextPlaceholder,
+                                color = placeholderColor,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
                         }
                         innerTextField()
                     }
-                    if (onClear != null && value.isNotEmpty()) {
+                    if (enabled && onClear != null && value.isNotEmpty()) {
                         IconButton(onClick = onClear) {
                             AqIcon(
                                 imageVector = AqIcons.Cancel,
