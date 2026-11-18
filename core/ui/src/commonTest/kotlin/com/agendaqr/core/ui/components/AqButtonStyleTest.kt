@@ -1,6 +1,7 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.DarkAqColorScheme
 import com.agendaqr.core.ui.theme.LightAqColorScheme
@@ -9,6 +10,29 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class AqButtonStyleTest {
+
+    private fun argb(color: Color): String =
+        color.toArgb().toUInt().toString(16).uppercase().padStart(8, '0')
+
+    /**
+     * F1 pin: el primario claro usa `bg-fill-brand` (`#303030`) y el oscuro
+     * usa su contraparte publicada (`#FFFFFF`). Un `#005BDB` aquí delata que
+     * algún consumidor volvió a resolver el primario desde `emphasis`.
+     */
+    @Test
+    fun primary_variant_pins_the_brand_fill_published_per_theme() {
+        val light = resolveAqButtonColors(
+            AqButtonVariant.Primary, LightAqColorScheme, enabled = true, pressed = false,
+        )
+        assertEquals("FF303030", argb(light.container), "primario claro")
+        assertEquals("FFFFFFFF", argb(light.content), "contenido primario claro")
+
+        val dark = resolveAqButtonColors(
+            AqButtonVariant.Primary, DarkAqColorScheme, enabled = true, pressed = false,
+        )
+        assertEquals("FFFFFFFF", argb(dark.container), "primario oscuro")
+        assertEquals("FF303030", argb(dark.content), "contenido primario oscuro")
+    }
 
     @Test
     fun sizes_match_polaris_visual_heights_and_preserve_touch_target() {

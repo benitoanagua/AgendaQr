@@ -11,6 +11,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -110,6 +111,8 @@ internal object AqPalette {
     val lightSurfaceSecondary = Color(0xFFF7F7F7)
     val lightSurfaceTertiary = Color(0xFFF3F3F3)
     val lightSurfaceActive = Color(0xFFF3F3F3)
+    /** `--p-color-input-bg-surface` (`:270`); hover/active no se usan aún. */
+    val lightInputSurface = Color(0xFFFDFDFD)
     val lightInputBorder = Color(0xFF8A8A8A)
     val lightDisabledFill = Color(0x0D000000)
     val lightScrim = Color(0xB5000000)
@@ -145,16 +148,29 @@ internal object AqPalette {
     val darkTextWarning = warningFill
     val darkTextInfo = infoFill
 
+    /**
+     * D-11: `dark-experimental` no publica contenedores tonales. Se derivan
+     * mezclando el relleno semántico al 16 % sobre `gray800`, la superficie
+     * oscura publicada, de modo que el contenedor se distinga de `surface`
+     * y conserve el par de contenido en AA.
+     */
+    private const val darkToneContainerAlpha = 0.16f
+    val darkDangerContainer = criticalFill.copy(alpha = darkToneContainerAlpha).compositeOver(gray800)
+    val darkSuccessContainer = successFill.copy(alpha = darkToneContainerAlpha).compositeOver(gray800)
+    val darkWarningContainer = warningFill.copy(alpha = darkToneContainerAlpha).compositeOver(gray800)
+    val darkInfoContainer = infoFill.copy(alpha = darkToneContainerAlpha).compositeOver(gray800)
+
     /** X-03: el QR siempre negro sobre blanco, con independencia del tema. */
     val qrCanvas = white
     val transparent = Color.Transparent
 }
 
-/** Roles semánticos completos; espejo de los 59 roles consumidos por el producto. */
+/** Roles semánticos completos; espejo de los 60 roles consumidos por el producto. */
 data class AqColorScheme(
     val background: Color,
     val surface: Color,
     val surfaceSecondary: Color,
+    val inputSurface: Color,
     val border: Color,
     val functionalBorder: Color,
     val divider: Color,
@@ -217,6 +233,7 @@ val LightAqColorScheme = AqColorScheme(
     background = AqPalette.gray50,
     surface = AqPalette.white,
     surfaceSecondary = AqPalette.lightSurfaceSecondary,
+    inputSurface = AqPalette.lightInputSurface,
     border = AqPalette.gray200,
     functionalBorder = AqPalette.lightInputBorder,
     divider = AqPalette.gray200,
@@ -280,6 +297,7 @@ val DarkAqColorScheme = AqColorScheme(
     background = AqPalette.gray900,
     surface = AqPalette.gray800,
     surfaceSecondary = AqPalette.darkSurfaceSecondary,
+    inputSurface = AqPalette.gray800,
     border = AqPalette.darkSurfaceHover,
     functionalBorder = AqPalette.darkInputBorder,
     divider = AqPalette.darkSurfaceHover,
@@ -311,17 +329,17 @@ val DarkAqColorScheme = AqColorScheme(
     danger = AqPalette.darkTextCritical,
     dangerFill = AqPalette.criticalFill,
     onDanger = AqPalette.criticalOnFill,
-    dangerContainer = AqPalette.gray800,
+    dangerContainer = AqPalette.darkDangerContainer,
     success = AqPalette.darkTextSuccess,
     successFill = AqPalette.successFill,
     onSuccessFill = AqPalette.successOnFill,
-    successContainer = AqPalette.gray800,
+    successContainer = AqPalette.darkSuccessContainer,
     warning = AqPalette.darkTextWarning,
     warningFill = AqPalette.warningFill,
     onWarningFill = AqPalette.warningOnFill,
-    warningContainer = AqPalette.gray800,
+    warningContainer = AqPalette.darkWarningContainer,
     info = AqPalette.darkTextInfo,
-    infoContainer = AqPalette.gray800,
+    infoContainer = AqPalette.darkInfoContainer,
     focus = AqPalette.darkTextInfo,
     disabled = AqPalette.darkDisabledFill,
     onDisabled = AqPalette.darkDisabledText,
@@ -376,6 +394,7 @@ object AqColor {
     val Background: Color @Composable get() = LocalAqColorScheme.current.background
     val Surface: Color @Composable get() = LocalAqColorScheme.current.surface
     val SurfaceSecondary: Color @Composable get() = LocalAqColorScheme.current.surfaceSecondary
+    val InputSurface: Color @Composable get() = LocalAqColorScheme.current.inputSurface
     val Border: Color @Composable get() = LocalAqColorScheme.current.border
     val FunctionalBorder: Color @Composable get() = LocalAqColorScheme.current.functionalBorder
     val Divider: Color @Composable get() = LocalAqColorScheme.current.divider
@@ -440,7 +459,11 @@ object AqSpacing {
     val Xs = 2.dp
     val Sm = 4.dp
     val Md = 8.dp
+    /** `space-300` (12 dp). */
+    val MdPlus = 12.dp
     val Lg = 16.dp
+    /** `space-500` (20 dp). */
+    val LgPlus = 20.dp
     val Xl = 24.dp
     val Xxl = 32.dp
     val Xxxl = 48.dp

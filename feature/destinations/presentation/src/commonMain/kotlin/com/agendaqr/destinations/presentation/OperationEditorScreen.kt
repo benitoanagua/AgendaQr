@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import com.agendaqr.core.ui.components.AqSnackbarHost
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.theme.*
@@ -59,7 +60,10 @@ private fun EditorSection(
     label: String,
     content: @Composable () -> Unit,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+    Column(
+        modifier = Modifier.testTag("aq-editor-section"),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+    ) {
         AqSectionHeader(text = label)
         content()
     }
@@ -162,8 +166,8 @@ internal fun OperationEditorScreen(
         snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
         // Grupos funcionales (tipo · datos · contexto · detalle) separados
-        // a 20 dp; dentro de cada grupo la distancia es menor.
-        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(AqSpacing.Xl),
+        // a 16 dp; dentro de cada grupo la distancia es menor.
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(AqSpacing.Lg),
         bottomAction = {
             AqBottomAction(
                 label = if (saving) {

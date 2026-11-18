@@ -29,6 +29,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -48,8 +49,12 @@ import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
 
 /**
- * Entrada de formulario con etiqueta persistente y divisor inferior.
+ * Entrada de formulario con etiqueta persistente y caja de campo.
  *
+ * - La etiqueta se alinea al borde izquierdo de la caja (4 dp de
+ *   separación vertical). La caja usa `input-bg-surface`, borde de 1 dp
+ *   `functionalBorder` (foco/error lo sustituyen), radio Medium y 12 dp de
+ *   relleno horizontal interno; conserva el objetivo táctil de 48 dp.
  * - El error se expresa con icono + texto debajo del campo (nunca solo
  *   color) y se asocia también a la semántica del campo editable.
  * - La obligatoriedad la expresa el llamador con copy (texto de apoyo o
@@ -80,9 +85,14 @@ fun AqTextField(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
+    val borderColor = when {
+        isError -> AqColor.Danger
+        focused -> AqColor.Focus
+        else -> AqColor.FunctionalBorder
+    }
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
     ) {
         Text(
             label,
@@ -93,7 +103,9 @@ fun AqTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                .padding(horizontal = AqSpacing.Lg),
+                .background(AqColor.InputSurface, AqShapes.Medium)
+                .border(AqMetrics.Border, borderColor, AqShapes.Medium)
+                .padding(horizontal = AqSpacing.MdPlus),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
         ) {
@@ -137,20 +149,12 @@ fun AqTextField(
             )
             trailing?.invoke()
         }
-        HorizontalDivider(
-            thickness = AqMetrics.DividerHeight,
-            color = when {
-                isError -> AqColor.Danger
-                focused -> AqColor.Focus
-                else -> AqColor.Divider
-            },
-        )
         when {
             // El error informa con icono + texto, nunca solo por color;
             // liveRegion cortés — el lector lo anuncia al aparecer.
             isError && errorMessage != null -> {
                 Row(
-                    modifier = Modifier.padding(horizontal = AqSpacing.Lg),
+                    modifier = Modifier.testTag("aq-field-support"),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
                 ) {
@@ -170,7 +174,7 @@ fun AqTextField(
             helperMessage != null -> {
                 Text(
                     helperMessage,
-                    modifier = Modifier.padding(horizontal = AqSpacing.Lg),
+                    modifier = Modifier.testTag("aq-field-support"),
                     style = AqTextStyles.Support,
                     color = AqColor.TextSecondary,
                 )

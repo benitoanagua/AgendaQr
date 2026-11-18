@@ -42,6 +42,44 @@ class AqContrastPairsTest {
                 assertTrue(contrastRatio(scheme.focus, surface) >= 3.0, "focus/surface")
             }
             assertTrue(contrastRatio(scheme.functionalBorder, scheme.surface) >= 3.0)
+            assertTrue(
+                contrastRatio(scheme.functionalBorder, scheme.inputSurface) >= 3.0,
+                "functionalBorder/inputSurface",
+            )
+        }
+    }
+
+    @Test
+    fun field_text_meets_aa_on_the_input_surface() {
+        listOf(LightAqColorScheme, DarkAqColorScheme).forEach { scheme ->
+            assertTrue(
+                contrastRatio(scheme.textPrimary, scheme.inputSurface) >= 4.5,
+                "textPrimary/inputSurface",
+            )
+            assertTrue(
+                contrastRatio(scheme.textPlaceholder, scheme.inputSurface) >= 4.5,
+                "textPlaceholder/inputSurface",
+            )
+        }
+    }
+
+    /** D-11: los contenedores tonales oscuros derivados conservan AA. */
+    @Test
+    fun tone_content_meets_aa_on_derived_containers_in_both_themes() {
+        listOf(
+            "light" to LightAqColorScheme,
+            "dark" to DarkAqColorScheme,
+        ).forEach { (name, scheme) ->
+            val pairs = listOf(
+                "danger" to (scheme.danger to scheme.dangerContainer),
+                "success" to (scheme.success to scheme.successContainer),
+                "warning" to (scheme.warning to scheme.warningContainer),
+                "info" to (scheme.info to scheme.infoContainer),
+            )
+            pairs.forEach { (tone, colors) ->
+                val ratio = contrastRatio(colors.first, colors.second)
+                assertTrue(ratio >= 4.5, "$name $tone content/container = $ratio < 4.5:1")
+            }
         }
     }
 }

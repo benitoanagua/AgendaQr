@@ -1,6 +1,7 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -86,20 +87,28 @@ fun AqSelect(
     require(options.isNotEmpty()) { "AqSelect requiere al menos una opción" }
     var expanded by remember { mutableStateOf(false) }
     val selected = options.firstOrNull { it.id == selectedId }
-    Column(modifier = modifier.fillMaxWidth().fieldSemantics(state)) {
+    val borderColor = when {
+        state.isError -> AqColor.Danger
+        else -> AqColor.FunctionalBorder
+    }
+    Column(
+        modifier = modifier.fillMaxWidth().fieldSemantics(state),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+    ) {
         AqText(text = label, size = AqType.Label, fontWeight = AqWeight.Medium)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                .background(AqColor.Surface, AqShapes.Small)
+                .background(AqColor.InputSurface, AqShapes.Medium)
+                .border(AqMetrics.Border, borderColor, AqShapes.Medium)
                 .selectable(
                     selected = false,
                     enabled = state.enabled,
                     role = Role.DropdownList,
                     onClick = { expanded = true },
                 )
-                .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Md),
+                .padding(horizontal = AqSpacing.MdPlus, vertical = AqSpacing.Md),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AqText(

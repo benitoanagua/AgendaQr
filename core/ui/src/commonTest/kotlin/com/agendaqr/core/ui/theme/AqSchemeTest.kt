@@ -51,6 +51,7 @@ class AqSchemeTest {
         "background" to background,
         "surface" to surface,
         "surfaceSecondary" to surfaceSecondary,
+        "inputSurface" to inputSurface,
         "border" to border,
         "functionalBorder" to functionalBorder,
         "divider" to divider,
@@ -167,6 +168,13 @@ class AqSchemeTest {
         assertColor(AqPalette.warningSurface, "FFFFF1E3", "warningSurface")
         assertColor(AqPalette.warningOnFill, "FF251A00", "warningOnFill")
         assertColor(AqPalette.critical, "FF8E0B21", "critical")
+        assertColor(AqPalette.lightSurfaceSecondary, "FFF7F7F7", "lightSurfaceSecondary")
+        assertColor(AqPalette.lightSurfaceTertiary, "FFF3F3F3", "lightSurfaceTertiary")
+        assertColor(AqPalette.lightInputSurface, "FFFDFDFD", "lightInputSurface")
+        assertColor(AqPalette.darkDangerContainer, "FF482A2E", "darkDangerContainer")
+        assertColor(AqPalette.darkSuccessContainer, "FF293C37", "darkSuccessContainer")
+        assertColor(AqPalette.darkWarningContainer, "FF514628", "darkWarningContainer")
+        assertColor(AqPalette.darkInfoContainer, "FF404A51", "darkInfoContainer")
         assertColor(AqPalette.criticalFill, "FFC70A24", "criticalFill")
         assertColor(AqPalette.criticalHover, "FFA30A24", "criticalHover")
         assertColor(AqPalette.criticalSurface, "FFFEE8EB", "criticalSurface")
@@ -180,6 +188,7 @@ class AqSchemeTest {
         assertEquals("FFF1F1F1", argb(light.background))
         assertEquals("FFFFFFFF", argb(light.surface))
         assertEquals("FFF7F7F7", argb(light.surfaceSecondary))
+        assertEquals("FFFDFDFD", argb(light.inputSurface))
         assertEquals("FFE3E3E3", argb(light.border))
         assertEquals("FF8A8A8A", argb(light.functionalBorder))
         assertEquals("FFE3E3E3", argb(light.divider))
@@ -240,6 +249,7 @@ class AqSchemeTest {
         assertEquals("FF1A1A1A", argb(dark.background))
         assertEquals("FF303030", argb(dark.surface))
         assertEquals("FF303030", argb(dark.surfaceSecondary))
+        assertEquals("FF303030", argb(dark.inputSurface))
         assertEquals("FF4A4A4A", argb(dark.border))
         assertEquals("FF8A8A8A", argb(dark.functionalBorder))
         assertEquals("FF4A4A4A", argb(dark.divider))
@@ -269,17 +279,17 @@ class AqSchemeTest {
         assertEquals("FFFED1D7", argb(dark.danger))
         assertEquals("FFC70A24", argb(dark.dangerFill))
         assertEquals("FFFFFAFB", argb(dark.onDanger))
-        assertEquals("FF303030", argb(dark.dangerContainer))
+        assertEquals("FF482A2E", argb(dark.dangerContainer))
         assertEquals("FFCDFED4", argb(dark.success))
         assertEquals("FF047B5D", argb(dark.successFill))
         assertEquals("FFFAFFFB", argb(dark.onSuccessFill))
-        assertEquals("FF303030", argb(dark.successContainer))
+        assertEquals("FF293C37", argb(dark.successContainer))
         assertEquals("FFFFB800", argb(dark.warning))
         assertEquals("FFFFB800", argb(dark.warningFill))
         assertEquals("FF251A00", argb(dark.onWarningFill))
-        assertEquals("FF303030", argb(dark.warningContainer))
+        assertEquals("FF514628", argb(dark.warningContainer))
         assertEquals("FF91D0FF", argb(dark.info))
-        assertEquals("FF303030", argb(dark.infoContainer))
+        assertEquals("FF404A51", argb(dark.infoContainer))
         assertEquals("FF91D0FF", argb(dark.focus))
         assertEquals("1CFFFFFF", argb(dark.disabled))
         assertEquals("FF8A8A8A", argb(dark.onDisabled))
@@ -301,7 +311,7 @@ class AqSchemeTest {
     fun both_schemes_expose_the_same_complete_semantic_roles() {
         val lightFields = LightAqColorScheme.fields()
         val darkFields = DarkAqColorScheme.fields()
-        assertEquals(59, lightFields.size)
+        assertEquals(60, lightFields.size)
         assertEquals(lightFields.keys, darkFields.keys)
         assertTrue(lightFields.values.none { it == Color.Unspecified })
         assertTrue(darkFields.values.none { it == Color.Unspecified })
@@ -341,12 +351,15 @@ class AqSchemeTest {
             assertTrue(contrast(scheme.textPrimary, scheme.surface) >= 4.5, "textPrimary/surface")
             assertTrue(contrast(scheme.textSecondary, scheme.background) >= 4.5, "textSecondary/background")
             assertTrue(contrast(scheme.textTertiary, scheme.surface) >= 4.5, "textTertiary/surface")
-            assertTrue(
-                contrast(scheme.textPlaceholder, scheme.surfaceSecondary) >= 4.5,
-                "textPlaceholder/surfaceSecondary",
-            )
+            assertTrue(contrast(scheme.textPlaceholder, scheme.surfaceSecondary) >= 4.5, "textPlaceholder/surfaceSecondary")
+            assertTrue(contrast(scheme.textPrimary, scheme.inputSurface) >= 4.5, "textPrimary/inputSurface")
+            assertTrue(contrast(scheme.textPlaceholder, scheme.inputSurface) >= 4.5, "textPlaceholder/inputSurface")
             assertTrue(contrast(scheme.focus, scheme.background) >= 3.0, "focus/background")
             assertTrue(contrast(scheme.functionalBorder, scheme.surface) >= 3.0, "functionalBorder/surface")
+            assertTrue(
+                contrast(scheme.functionalBorder, scheme.inputSurface) >= 3.0,
+                "functionalBorder/inputSurface",
+            )
         }
     }
 

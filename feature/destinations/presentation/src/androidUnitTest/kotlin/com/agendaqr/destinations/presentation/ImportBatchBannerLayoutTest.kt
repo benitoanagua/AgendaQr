@@ -290,12 +290,12 @@ class ImportBatchBannerLayoutTest {
         compose.onNodeWithText(description)
             .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Heading))
 
-        // Icono compacto: padding Md + icono compacto + hueco Sm, todos
+        // Icono compacto: padding Lg + icono compacto + hueco Sm, todos
         // tokens, desde el borde del bloque hasta el inicio del título.
         val banner = compose.onNode(bannerMatcher).getUnclippedBoundsInRoot()
         val titleBounds = compose.onNodeWithText(title).getUnclippedBoundsInRoot()
         val iconOffset = titleBounds.left - banner.left
-        val expectedOffset = AqSpacing.Md + AqMetrics.IconSizeCompact + AqSpacing.Sm
+        val expectedOffset = AqSpacing.Lg + AqMetrics.IconSizeCompact + AqSpacing.Sm
         assertTrue(
             "el título no arranca tras el icono compacto (offset=$iconOffset, esperado $expectedOffset)",
             abs(iconOffset.value - expectedOffset.value) <= 1f,
