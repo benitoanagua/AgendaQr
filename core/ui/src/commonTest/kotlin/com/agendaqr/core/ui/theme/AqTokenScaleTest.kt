@@ -63,17 +63,33 @@ class AqTokenScaleTest {
     }
 
     @Test
-    fun elevation_keeps_the_published_shadow_blurs() {
+    fun elevation_keeps_the_published_shadow_geometry() {
         assertEquals(0.dp, AqElevation.None.elevation)
         assertEquals(0f, AqElevation.None.lightAlpha)
         assertEquals(1.dp, AqElevation.Shadow1.elevation)
+        assertEquals(1.dp, AqElevation.Shadow1.offsetY)
         assertEquals(0.07f, AqElevation.Shadow1.lightAlpha)
-        assertEquals(3.dp, AqElevation.Shadow2.elevation)
+        assertTrue(AqElevation.Shadow1.suppressedInLightMobile)
+        assertEquals(1.dp, AqElevation.Shadow2.elevation)
+        assertEquals(3.dp, AqElevation.Shadow2.offsetY)
+        assertEquals((-1).dp, AqElevation.Shadow2.spread)
         assertEquals(0.07f, AqElevation.Shadow2.lightAlpha)
         assertEquals(6.dp, AqElevation.Shadow3.elevation)
+        assertEquals(4.dp, AqElevation.Shadow3.offsetY)
+        assertEquals((-2).dp, AqElevation.Shadow3.spread)
         assertEquals(0.20f, AqElevation.Shadow3.lightAlpha)
         assertEquals(16.dp, AqElevation.Shadow4.elevation)
+        assertEquals(8.dp, AqElevation.Shadow4.offsetY)
+        assertEquals((-4).dp, AqElevation.Shadow4.spread)
         assertEquals(0.22f, AqElevation.Shadow4.lightAlpha)
+        assertEquals(20.dp, AqElevation.Shadow5.elevation)
+        assertEquals(12.dp, AqElevation.Shadow5.offsetY)
+        assertEquals((-8).dp, AqElevation.Shadow5.spread)
+        assertEquals(0.24f, AqElevation.Shadow5.lightAlpha)
+        assertEquals(20.dp, AqElevation.Shadow6.elevation)
+        assertEquals(20.dp, AqElevation.Shadow6.offsetY)
+        assertEquals((-8).dp, AqElevation.Shadow6.spread)
+        assertEquals(0.28f, AqElevation.Shadow6.lightAlpha)
     }
 
     @Test

@@ -813,17 +813,27 @@ object AqMotion {
     }
 }
 
-/** Sombras publicadas: se conserva el desenfoque y la opacidad de cada capa. */
+/**
+ * Sombras publicadas (`:363-368`). `elevation` es el radio de desenfoque;
+ * `offsetY` y `spread` se conservan como metadato porque el `Modifier.shadow`
+ * de Compose no expone spread (D-10). `shadow-100` se anula en
+ * `light-mobile` (`:497`).
+ */
 enum class AqElevation(
     val elevation: Dp,
+    val offsetY: Dp,
+    val spread: Dp,
     val lightAlpha: Float,
     val darkAlpha: Float,
+    val suppressedInLightMobile: Boolean = false,
 ) {
-    None(0.dp, 0f, 0f),
-    Shadow1(1.dp, 0.07f, 0.07f),
-    Shadow2(3.dp, 0.07f, 0.07f),
-    Shadow3(6.dp, 0.20f, 0.20f),
-    Shadow4(16.dp, 0.22f, 0.22f),
+    None(0.dp, 0.dp, 0.dp, 0f, 0f),
+    Shadow1(1.dp, 1.dp, 0.dp, 0.07f, 0.07f, true),
+    Shadow2(1.dp, 3.dp, (-1).dp, 0.07f, 0.07f),
+    Shadow3(6.dp, 4.dp, (-2).dp, 0.20f, 0.20f),
+    Shadow4(16.dp, 8.dp, (-4).dp, 0.22f, 0.22f),
+    Shadow5(20.dp, 12.dp, (-8).dp, 0.24f, 0.24f),
+    Shadow6(20.dp, 20.dp, (-8).dp, 0.28f, 0.28f),
 }
 
 @Composable
@@ -832,9 +842,10 @@ fun Modifier.aqElevation(
     shape: Shape = RectangleShape,
     clip: Boolean = false,
 ): Modifier {
-    if (level == AqElevation.None) return this
-    val alpha = if (LocalAmColorScheme.current == DarkAmColorScheme) level.darkAlpha else level.lightAlpha
-    val shadowColor = Color.Black.copy(alpha = alpha)
+    val dark = LocalAmColorScheme.current == DarkAmColorScheme
+    if (level == AqElevation.None || (!dark && level.suppressedInLightMobile)) return this
+    val alpha = if (dark) level.darkAlpha else level.lightAlpha
+    val shadowColor = AqPalette.gray900.copy(alpha = alpha)
     return shadow(
         elevation = level.elevation,
         shape = shape,
