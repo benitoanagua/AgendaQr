@@ -40,9 +40,28 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 
 ## 2. Reglas de token
 
-- Todo literal visual (hex, `dp`, `sp`, `Color(...)`, `Color.<nombre>`, formas con esquinas) vive en `AmTokens.kt`. El resto del repositorio consume `AmColor`/`AmSpacing`/`AmShapes`/`AmRadius`/`AmMetrics`/`AmType`/`AmTextStyles`/`AmMotion`.
+- Todo literal visual (hex, `dp`, `sp`, `Color(...)`, `Color.<nombre>`, formas con esquinas, alfas y proporciones) vive en `AmTokens.kt`. El resto del repositorio consume `AmAlpha`/`AmColor`/`AmSpacing`/`AmShapes`/`AmRadius`/`AmMetrics`/`AmComposition`/`AmType`/`AmTextStyles`/`AmMotion`.
 - Un cambio visual es un cambio de token + pin actualizado en `AmSchemeTest`; nunca un literal nuevo en una pantalla. Las referencias externas orientan la exploración, no determinan los valores.
 - Los pares de color llegan verificados: `AmSchemeTest` fija los umbrales (4.5:1 contenido, 3:1 bordes/foco, 3:1 suelo deshabilitado); `AmContrastPairsTest` fija los bloques de identidad de contexto, el par del botón primario y el rol focus.
+
+### Literales residuales centralizados
+
+La limpieza final concentró en `AmTokens.kt` los últimos valores visuales que
+vivían en componentes y pantallas, sin cambiar su valor:
+
+- `AmAlpha`: ocultado durante `loading` y alfas `0.25`/`0.20` de selección,
+  presentes en la instantánea publicada.
+- `AmType.HeadingLineHeightRatio` y `BodyLineHeightRatio`: derivados de los
+  pares `font-size`/`font-line-height` publicados para tamaños no canónicos.
+- `AmComposition`: ancho del título del skeleton y tamaño del glifo de
+  confirmación (D-08), conservados tal como estaban auditados.
+- `AmMotion.SurfaceSlideFraction`, `PredictiveBackShrink` y
+  `PredictiveBackFade`: geometría de transición y del back nativo (D-03/D-08).
+
+Los vectores TDesign conservan sus coordenadas y color monocromo intrínseco:
+son datos del recurso iconográfico, los únicos que `AmIcon` sustituye por un
+rol semántico. Los literales de preview (`density`, `fontScale`, progreso de
+ejemplo) no son valores de producto.
 
 ## 3. Reglas de componente
 

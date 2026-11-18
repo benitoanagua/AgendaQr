@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalDensity
 import com.agendaqr.core.ui.theme.AmColor
+import com.agendaqr.core.ui.theme.AmComposition
 import com.agendaqr.core.ui.theme.AmMetrics
 import com.agendaqr.core.ui.theme.AmShapes
 import com.agendaqr.core.ui.theme.AmSpacing
@@ -45,7 +46,7 @@ fun AmSkeleton(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth(fraction = AmSkeletonTitleFraction)
+                .fillMaxWidth(fraction = AmComposition.SkeletonTitleWidthFraction)
                 .heightIn(min = AmSpacing.Xl)
                 .background(AmColor.Surface, AmShapes.Small),
         )
@@ -59,8 +60,6 @@ fun AmSkeleton(
         }
     }
 }
-
-private const val AmSkeletonTitleFraction = 0.6f
 
 /**
  * Footer de "Cargar más". La paginación se compone de este footer: no

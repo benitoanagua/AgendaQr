@@ -41,6 +41,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import com.agendaqr.core.ui.theme.AmAlpha
 import com.agendaqr.core.ui.theme.AmWeight
 import com.agendaqr.core.ui.theme.AmColor
 import com.agendaqr.core.ui.theme.AmColorScheme
@@ -235,7 +236,7 @@ private fun AmButtonImpl(
                                 vertical = AmSpacing.None,
                             ),
                     )
-                    .then(if (isLoading) Modifier.alpha(0f) else Modifier),
+                    .then(if (isLoading) Modifier.alpha(AmAlpha.Hidden) else Modifier),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(AmSpacing.Xs),
             ) {
@@ -637,7 +638,7 @@ fun AmFilterChip(
                 Box(
                     modifier = Modifier
                         .background(
-                            if (selected) AmColor.OnAccent.copy(alpha = 0.25f) else AmColor.SurfaceContainerHighest,
+                            if (selected) AmColor.OnAccent.copy(alpha = AmAlpha.SelectedOnAccent) else AmColor.SurfaceContainerHighest,
                             AmShapes.ExtraSmall,
                         )
                         .padding(horizontal = AmSpacing.Xs),
@@ -735,7 +736,7 @@ fun AmSegmentedControl(
                         Box(
                             modifier = Modifier
                                 .background(
-                                    if (selected) activeColor.copy(alpha = 0.2f) else AmColor.SurfaceContainerHighest,
+                                    if (selected) activeColor.copy(alpha = AmAlpha.SelectedOnTone) else AmColor.SurfaceContainerHighest,
                                     AmShapes.ExtraSmall,
                                 )
                                 .padding(horizontal = AmSpacing.Xs),

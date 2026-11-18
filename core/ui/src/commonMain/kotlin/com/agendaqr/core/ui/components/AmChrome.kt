@@ -381,13 +381,10 @@ fun AmNavRail(
     }
 }
 
-/** Fracción del ancho que se desplaza la superficie saliente (1/8). */
-internal const val AmSurfaceSlideFraction = 8
-
 fun <S> AnimatedContentTransitionScope<S>.amSurfaceEnter(reverse: Boolean = false): EnterTransition =
     slideInHorizontally(
         animationSpec = tween(AmMotion.DurationShortMs, easing = AmMotion.Easings.Standard),
-        initialOffsetX = { fullWidth -> (if (reverse) -1 else 1) * fullWidth / AmSurfaceSlideFraction },
+        initialOffsetX = { fullWidth -> (if (reverse) -1 else 1) * fullWidth / AmMotion.SurfaceSlideFraction },
     ) + fadeIn(tween(AmMotion.DurationShortMs, easing = AmMotion.Easings.Standard))
 
 fun <S> AnimatedContentTransitionScope<S>.amSurfaceExit(reverse: Boolean = false): ExitTransition =
@@ -395,7 +392,7 @@ fun <S> AnimatedContentTransitionScope<S>.amSurfaceExit(reverse: Boolean = false
         animationSpec = tween(AmMotion.DurationShortMs, easing = AmMotion.Easings.Standard),
         // La superficie que sale se mueve una fracción del ancho, no el
         // 100%: es un desplazamiento pequeño, no un slide completo.
-        targetOffsetX = { fullWidth -> (if (reverse) 1 else -1) * fullWidth / AmSurfaceSlideFraction },
+        targetOffsetX = { fullWidth -> (if (reverse) 1 else -1) * fullWidth / AmMotion.SurfaceSlideFraction },
     ) + fadeOut(tween(AmMotion.DurationShortMs, easing = AmMotion.Easings.Standard))
 
 /** Variante reduced-motion de la entrada: cambio inmediato (duración 0). */

@@ -77,6 +77,17 @@ class AmTokenScaleTest {
     }
 
     @Test
+    fun composition_fractions_and_alphas_are_centralized() {
+        assertEquals(0f, AmAlpha.Hidden)
+        assertEquals(0.25f, AmAlpha.SelectedOnAccent)
+        assertEquals(0.2f, AmAlpha.SelectedOnTone)
+        assertEquals(0.6f, AmComposition.SkeletonTitleWidthFraction)
+        assertEquals(0.55f, AmComposition.SuccessCheckIconFraction)
+        assertEquals(1.25f, AmType.HeadingLineHeightRatio)
+        assertEquals(1.5f, AmType.BodyLineHeightRatio)
+    }
+
+    @Test
     fun visible_type_tokens_stay_at_or_above_the_accessibility_floor() {
         val sizes = listOf(
             AmType.Display, AmType.DisplayMedium, AmType.HeadlineLarge, AmType.Headline,
