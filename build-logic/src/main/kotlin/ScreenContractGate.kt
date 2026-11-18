@@ -51,9 +51,7 @@ val gestureVocabulary: Set<String> = setOf(
 )
 
 /** Configuraciones que la galería de capturas debe cubrir cuando se genera. */
-val requiredCaptureConfigs: List<String> = listOf(
-    "light-320", "light-360", "dark-320", "dark-360",
-)
+val requiredCaptureConfigs: List<String> = listOf("light-360", "dark-360")
 
 private const val PRESENTATION = "feature/destinations/presentation/src"
 private const val A11Y = "$PRESENTATION/androidUnitTest/kotlin/com/agendaqr/destinations/presentation"
@@ -777,10 +775,10 @@ data class CaptureArtifact(
     val sha256: String,
 )
 
-val captureWidths: Set<Int> = setOf(320, 360)
+val captureWidths: Set<Int> = setOf(360)
 
 private val captureNamePattern =
-    Regex("([a-z0-9-]+)--([a-z0-9-]+)--(320|360)dp--(light|dark)\\.png")
+    Regex("([a-z0-9-]+)--([a-z0-9-]+)--(360)dp--(light|dark)\\.png")
 private val captureDensities = setOf(1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0)
 
 fun parseCaptureName(fileName: String): CaptureName? {
@@ -857,8 +855,6 @@ fun captureViolations(
             }
         }
         val present = artifacts.map { it.name }
-        if (present.none { it.theme == "light" && it.widthDp == 320 }) add("galeria-config: falta light-320")
-        if (present.none { it.theme == "dark" && it.widthDp == 320 }) add("galeria-config: falta dark-320")
         if (present.none { it.theme == "light" && it.widthDp == 360 }) add("galeria-config: falta light-360")
         if (present.none { it.theme == "dark" && it.widthDp == 360 }) add("galeria-config: falta dark-360")
     }
@@ -905,7 +901,7 @@ fun renderCaptureManifest(artifacts: List<CaptureArtifact>, screens: List<Screen
     val configs = requiredCaptureConfigs.joinToString(", ") { jsonString(it) }
     return buildString {
         appendLine("{")
-        appendLine("  \"schema\": \"agendaqr.captures/4\",")
+        appendLine("  \"schema\": \"agendaqr.captures/5\",")
         appendLine("  \"requiredConfigs\": [$configs],")
         appendLine("  \"entryCount\": ${artifacts.size},")
         appendLine("  \"entries\": [")

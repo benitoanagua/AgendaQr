@@ -105,19 +105,17 @@ open class LayoutReferenceTest {
     @get:Rule
     val compose = createComposeRule()
 
-    protected open val viewportSuffix: String = ""
-
     private fun verifyLayout(name: String, dark: Boolean, content: @androidx.compose.runtime.Composable () -> Unit) {
         compose.setContent { AmTheme(darkTheme = dark) { content() } }
         compose.waitForIdle()
-        assertLayoutHolds("$name$viewportSuffix")
+        assertLayoutHolds(name)
         captureStrict(name, dark)
     }
 
     /**
      * Escenario → (superficie, estado) de la galería estricta por superficie
      * (ADR-0007): un escenario canónico por par declarado en el
-     * contrato. Clave = nombre base, sin sufijo de tema ni de viewport.
+     * contrato. Clave = nombre base, sin sufijo de tema.
      * `verifyScreenContract` valida cada archivo producido cuando la galería
      * existe (esquema, dimensiones reales, duplicados y cobertura).
      */
@@ -161,16 +159,6 @@ open class LayoutReferenceTest {
         "camera-capture" to ("camera" to "content"),
     )
 
-    /**
-     * Subconjunto capturado a 320 dp: la clase hermana
-     * [LayoutReference320Test] sigue VERIFICANDO todos los escenarios a
-     * 320 dp por aserciones; la galería solo duplica en 320 dp los
-     * escenarios donde la densidad aporta evidencia de revisión.
-     */
-    private val strict320Scenarios = setOf(
-        "s01", "s02-add", "destination-detail", "s09-review", "operation-editor", "local-lock",
-    )
-
     /** Superficies de diálogo (Overlay): la captura es la ventana del
      * diálogo, completa y sin recortes, al tamaño real del componente. */
     private val dialogScenarios = setOf("context-picker", "camera-capture")
@@ -182,36 +170,31 @@ open class LayoutReferenceTest {
     /**
      * Escribe la captura de la galería estricta si (y solo si) el escenario
      * está mapeado, la galería se pidió con `-Pagendaqr.capture=true` y el
-     * ancho medido es un viewport declarado (320/360 dp). El nombre y el
+     * ancho medido es el único viewport declarado (360 dp). El nombre y el
      * tema salen del propio test: nada de metadatos falsos (ADR-0007).
      */
     private fun captureStrict(name: String, dark: Boolean) {
         if (System.getProperty("agendaqr.capture") != "true") return
-        val base = name.removeSuffix(viewportSuffix)
-            .removeSuffix("-light")
-            .removeSuffix("-dark")
+        val base = name.removeSuffix("-light").removeSuffix("-dark")
         val (surface, state) = strictScenarioMap[base] ?: return
-        if (viewportSuffix.isNotEmpty() && base !in strict320Scenarios) return
         val theme = if (dark) "dark" else "light"
         if (base in dialogScenarios) {
             // Overlay: se mide y captura la VENTANA del diálogo completa
             // (su raíz semántica), no la raíz de la pantalla que queda
             // detrás. El test fija la ventana del host para que el diálogo
-            // mide un viewport declarado (AmDialog: 0.9 × 400 = 360 dp).
+            // mide el viewport declarado (AmDialog: 0.9 × 400 = 360 dp).
             val dialog = compose.onNode(dialogRootMatcher)
             val bounds = dialog.getUnclippedBoundsInRoot()
-            val dialogWidthDp = Math.round((bounds.right - bounds.left).value)
-            if (dialogWidthDp !in setOf(320, 360)) return
+            if (Math.round((bounds.right - bounds.left).value) != 360) return
             dialog.captureRoboImage(
-                "build/captures/gallery/$surface--$state--${dialogWidthDp}dp--$theme.png",
+                "build/captures/gallery/$surface--$state--360dp--$theme.png",
             )
             return
         }
         val width = compose.onRoot().getUnclippedBoundsInRoot().let { it.right - it.left }.value
-        val widthDp = Math.round(width)
-        if (widthDp !in setOf(320, 360)) return
+        if (Math.round(width) != 360) return
         compose.onRoot().captureRoboImage(
-            "build/captures/gallery/$surface--$state--${widthDp}dp--$theme.png",
+            "build/captures/gallery/$surface--$state--360dp--$theme.png",
         )
     }
 
@@ -1961,10 +1944,4 @@ open class LayoutReferenceTest {
         captureStrict("camera-capture", dark = true)
     }
 
-}
-
-@RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34], qualifiers = "w320dp-h640dp")
-class LayoutReference320Test : LayoutReferenceTest() {
-    override val viewportSuffix: String = "-320dp"
 }
