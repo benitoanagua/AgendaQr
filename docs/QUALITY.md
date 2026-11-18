@@ -314,7 +314,7 @@ evalúa en configuración).
 | Contrato de interacción por pantalla | `verifyScreenContract` + `verifyScreenContractFixtures` | superficie real sin contrato o contrato obsoleto, destino inexistente, prueba ausente o sin señal a11y, componente inventado, clave de copy ausente, excepción registrada sin uso, capturas con viewport falso, duplicadas o con cobertura incompleta, desalineación entre superficie, contrato, código, pruebas y documentación generada |
 | Documentación | `verifyDocs` | enlaces vivos, todo `.md` alcanzable desde `docs/README.md`, sin marcadores transitorios, ADR citadas existentes |
 | Contraste y esquema | `AmSchemeTest`, `AmContrastPairsTest`, `AmAccentTest` | umbrales y pares fijados (incl. el contenido informativo `accentText` sobre wathet) |
-| Galería de capturas (bajo demanda, ADR-0007) | `./gradlew captureGallery -Pagendaqr.capture=true` | produce las referencias de layout y la galería estricta por superficie (320/360 dp, claro/oscuro, fuente 100 %) con manifiesto `agendaqr.captures/4` e índices navegables; `verifyScreenContract` la valida cuando existe (esquema, dimensiones reales, duplicados, cobertura) |
+| Galería de capturas (bajo demanda, ADR-0007) | `./gradlew captureGallery -Pagendaqr.capture=true` | produce una única galería estricta por superficie (320/360 dp, claro/oscuro, fuente 100 %) con manifiesto `agendaqr.captures/4` e índice navegable; `verifyScreenContract` la valida cuando existe (esquema, dimensiones reales, duplicados, cobertura) |
 | Tipografía y layout | `AmTypographyTest`, `AmTabsLayoutTest`, `AmUiPolishContractTest` | roles, interlineado, escalado de fuente al 100 %/150 % |
 | Accesibilidad de componentes | `AmAccessibilityContractTest`, `ScreensA11yCoverageTest` | semántica, roles, targets |
 | Correcciones UX (ADR-0018) | `UxFilterReproductionTest`, `UxDateReproductionTest`, `UxEditorDiscardTest`, `UxAmountValidationTest`, `UxHomeHubTest`, `UxHomeFavoritesTest`, `DestinationsSectionStateTest`, `UxUnassociatedTest`, `UxLockSearchTest`, `QrFullscreenTest`, `ExternalFlowTrackerTest`, `ExternalFlowLockPolicyTest`, `AmDateTimePickerTest`, `AppStringsCopyContractTest` | filtros idempotentes, fecha con hora, descarte confirmado, importe válido, hub y favoritos de Inicio (lista sin duplicar el carrusel, sin mensaje falso), bandeja sin primarios, biometría/foco, brillo restaurado, gracia de bloqueo (STOP/START/RESUME con limpieza en primer plano) y presupuesto de copy ≤ 60 caracteres, bajo Robolectric/JVM |
@@ -365,7 +365,8 @@ total (ningún elemento guardado → estado `Error` con opción de reintento).
 ### Detalle: verificación de layout
 
 Cada escenario se compone en Robolectric y se comprueba por aserciones
-(ADR-0007); no se generan ni versionan capturas:
+(ADR-0007); no se versionan capturas y, con el flag, se genera una única
+galería validada por el gate:
 
 1. **Composición:** `LayoutReferenceTest`/`LayoutReferenceExtraTest` componen
    las pantallas reales en claro y oscuro, a 360 dp y 320 dp. Según ADR-0007
@@ -497,9 +498,10 @@ No hay pantalla global de error; cada verificación lista pasos y criterio de
 ### Fuente grande (Android, revisión manual)
 
 `adb shell settings put system font_scale 1.5`: recorrer las pantallas en claro y
-oscuro. **Éxito:** nada cortado ni solapado. La puerta automática cubre 100 % y
-150 %; el escalado al 200 % sigue disponible en producción, pero quedó fuera de
-la verificación automática (ADR-0007) y requiere revisión manual explícita.
+oscuro. **Éxito:** nada cortado ni solapado. No hay prueba instrumentada de
+fuente; la cobertura JVM cubre 100 % y 150 %, y el escalado al 200 % sigue
+disponible en producción pero quedó fuera de la verificación automática
+(ADR-0007) y requiere revisión manual explícita.
 
 ### Rotación
 

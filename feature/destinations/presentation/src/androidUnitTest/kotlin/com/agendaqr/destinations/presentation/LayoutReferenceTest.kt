@@ -111,22 +111,7 @@ open class LayoutReferenceTest {
         compose.setContent { AmTheme(darkTheme = dark) { content() } }
         compose.waitForIdle()
         assertLayoutHolds("$name$viewportSuffix")
-        capture("$name$viewportSuffix")
         captureStrict(name, dark)
-    }
-
-    /**
-     * Captura la raíz si (y solo si) la galería se pidió con
-     * `-Pagendaqr.capture=true` y el viewport nativo es de 360 dp. La
-     * variante de 320 dp sigue verificándose por aserciones en la clase
-     * hermana, pero no se captura aquí: la galería tiene una sola captura
-     * por escenario y tema. Sin el flag no escribe nada (ADR-0007).
-     */
-    private fun capture(name: String) {
-        if (System.getProperty("agendaqr.capture") != "true") return
-        val width = compose.onRoot().getUnclippedBoundsInRoot().let { it.right - it.left }.value
-        if (width < 357f || width > 363f) return
-        compose.onRoot().captureRoboImage("build/roborazzi/$name.png")
     }
 
     /**
@@ -1701,7 +1686,6 @@ open class LayoutReferenceTest {
             compose.onAllNodesWithText(AppStrings.ErrorSignInWhat).fetchSemanticsNodes().isNotEmpty()
         }
         assertLayoutHolds("account-error-light")
-        capture("account-error-light")
         captureStrict("account-error", dark = false)
     }
 
@@ -1724,7 +1708,6 @@ open class LayoutReferenceTest {
             compose.onAllNodesWithText(AppStrings.ErrorSignInWhat).fetchSemanticsNodes().isNotEmpty()
         }
         assertLayoutHolds("account-error-dark")
-        capture("account-error-dark")
         captureStrict("account-error", dark = true)
     }
 
