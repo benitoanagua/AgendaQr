@@ -12,6 +12,7 @@ congelado; su dirección visual queda descongelada y se rige por aquí.
 | Sistema | Polaris (reimplementación en Kotlin/Compose, sin runtime web) |
 | Fuente primaria | Documentación oficial vigente (`polaris.shopify.com`, `shopify.dev`) |
 | Fuente verificable | `@shopify/polaris-tokens@9.4.2` |
+| Fuente iconográfica verificable | `@shopify/polaris-icons@9.3.1` (`dist/svg/*Icon.svg`) |
 | Fecha de captura | 2026-11-17 |
 | Instantánea | [`09-instantanea-tokens-polaris-9.4.2.md`](09-instantanea-tokens-polaris-9.4.2.md) |
 | Temas publicados | `light`, `light-mobile`, `light-high-contrast-experimental`, `dark-experimental` |
@@ -93,6 +94,7 @@ Construidas solo con tokens y componentes de Polaris; no son valores propios.
 | X-04 | Roles de movimiento derivados | Derivados de las duraciones primitivas publicadas (PV-04). |
 | X-05 | Tema oscuro completado | Roles no publicados derivados de la capa semántica oficial (PV-02). |
 | X-06 | Acentos de contexto | La asignación determinista por dominio se conserva; los pares se seleccionan entre los colores verificados de la instantánea y se validan a AA. No son valores visuales propios. |
+| X-07 | Iconografía de producto sobre Polaris Icons | El conjunto se fija en `@shopify/polaris-icons@9.3.1`; 34 SVGs de `dist/svg` (20×20) se conservan como constantes Kotlin y se exponen mediante 36 nombres de producto. Los conceptos sin glifo oficial usan el verificable más cercano: `QrCode`→`ShopcodesIcon`, `SearchX`→`AlertCircleIcon`, `Inbox`→`ArchiveIcon`, `ImageOff`→`ImageAltIcon`, `ScanLine`→`BarcodeIcon`, `Income`→`ArrowDownIcon` y `Expense`→`ArrowUpIcon`. `Edit` y `Trash` son alias de `EditIcon` y `DeleteIcon`, no glifos nuevos. |
 
 ## 4. Desviaciones móviles
 

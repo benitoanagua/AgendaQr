@@ -216,9 +216,8 @@ seguimiento del sistema en `AqTheme`**; el default del local debe ser
 
 ## 9. Extensiones, desviaciones y riesgos
 
-- Extensiones vigentes: X-01…X-06 (contrato `:81-92`). Se prevén registros
-  nuevos para el set de iconos Polaris y para glifos sin equivalente (QR,
-  escaneo), con su versión y fecha.
+- Extensiones vigentes: X-01…X-07 (contrato `:89-97`). X-07 fija el set de
+  iconos Polaris y registra los conceptos sin equivalente oficial.
 - PV-01…PV-05 abiertos (contrato `:24-32`). Se prevén PV nuevos para el color
   de texto sobre acentos mágicos y para la reproducción de offset/spread de
   sombras en Compose.
@@ -322,3 +321,24 @@ seguimiento del sistema en `AqTheme`**; el default del local debe ser
   equivalente móvil documentado en H4.
 - Verificación: gates y pruebas de `core/ui` en verde. iOS sigue **no
   verificado** en este entorno.
+
+## 15. Estado tras F5
+
+- El origen vectorial pasa a `PolarisIconVectors.kt`, convertido de los SVG
+  oficiales de `@shopify/polaris-icons@9.3.1` (`dist/svg`). La versión queda
+  fijada en el contrato (X-07) y en constantes Kotlin trazables.
+- Los 34 vectores conservan `viewBox="0 0 20 20"`, los 74 atributos `d` como
+  constantes y los `fill-rule="evenodd"` como `PathFillType.EvenOdd`. El relleno
+  monocromo se sustituye únicamente por el tinte semántico de `AqIcon`.
+- Los 36 nombres públicos de `AqIcons` se mantienen por compatibilidad y se
+  mapean a los 34 vectores oficiales; `Edit`→`EditIcon` y `Trash`→`DeleteIcon`
+  siguen siendo alias, no glifos adicionales.
+- X-07 registra las siete extensiones sin equivalente oficial: `QrCode`,
+  `SearchX`, `Inbox`, `ImageOff`, `ScanLine`, `Income` y `Expense`, con el
+  verificable más cercano de la misma versión.
+- El aviso de licencia del paquete publicado se incorpora a los avisos de
+  terceros. La distribución del aviso en iOS sigue **no verificada** en este
+  entorno.
+- Verificación: `AqIconMappingTest` fija los 36 nombres, los 34 vectores
+  distintos y sus dimensiones intrínsecas; gates y pruebas de `core/ui` en
+  verde. El render en iOS sigue **no verificado**.

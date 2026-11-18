@@ -15,7 +15,7 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
 │   └── ReducedMotion.kt   # expect/actual: LocalReducedMotion + ProvideReducedMotion
 └── components/
     ├── AqText.kt          # AqText, AqHeading (texto con interlineado propio)
-    ├── AqIcon.kt          # AqIcon + AqIcons (TDesign Icons, único punto de entrada)
+    ├── AqIcon.kt          # AqIcon + AqIcons (Polaris Icons 9.3.1, único punto de entrada)
     ├── AqTone.kt           # AqTone + toneColors + glifo por tono
     ├── AqButtons.kt       # acciones planas (sin gradiente), secundarias y destructivas; filtros, segmentado, favorito
     ├── AqInputs.kt        # AqTextField, AqAmountField (cifras tabulares), AqSearchField y AqSearchTrigger
@@ -58,10 +58,11 @@ vivían en componentes y pantallas, sin cambiar su valor:
 - `AqMotion.SurfaceSlideFraction`, `PredictiveBackShrink` y
   `PredictiveBackFade`: geometría de transición y del back nativo (D-03/D-08).
 
-Los vectores TDesign conservan sus coordenadas y color monocromo intrínseco:
-son datos del recurso iconográfico, los únicos que `AqIcon` sustituye por un
-rol semántico. Los literales de preview (`density`, `fontScale`, progreso de
-ejemplo) no son valores de producto.
+Los vectores Polaris conservan los atributos `d`, el `viewBox` 20×20 y la
+regla de relleno publicados; son datos del recurso iconográfico y el único
+color intrínseco se sustituye por el rol semántico que recibe `AqIcon`. Los
+literales de preview (`density`, `fontScale`, progreso de ejemplo) no son
+valores de producto.
 
 ## 3. Reglas de componente
 
