@@ -35,7 +35,6 @@ import com.agendaqr.core.ui.components.AqContextBadge
 import com.agendaqr.core.ui.components.AqDatePickerDialog
 import com.agendaqr.core.ui.components.AqDangerButton
 import com.agendaqr.core.ui.components.AqDialog
-import com.agendaqr.core.ui.components.AqDivider
 import com.agendaqr.core.ui.components.AqEmptyState
 import com.agendaqr.core.ui.components.AqEvidenceBadge
 import com.agendaqr.core.ui.components.AqExpansionPanel
@@ -82,7 +81,6 @@ import com.agendaqr.core.ui.components.AqTimePickerDialog
 import com.agendaqr.core.ui.components.AqTonalTag
 import com.agendaqr.core.ui.components.AqTopBar
 import com.agendaqr.core.ui.components.AqTone
-import com.agendaqr.core.ui.components.AqVerticalDivider
 import com.agendaqr.core.ui.components.AqBannerAction
 import org.jetbrains.compose.ui.tooling.preview.Preview
 

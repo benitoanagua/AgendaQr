@@ -69,22 +69,4 @@ fun AqBox(
     )
 }
 
-/** Separador semántico equivalente a `s-divider`, sobre el hairline canónico. */
-@Composable
-fun AqDivider(
-    modifier: Modifier = Modifier,
-    insetStart: Dp = AqSpacing.None,
-) {
-    AqHairline(modifier = modifier, insetStart = insetStart)
-}
 
-/** Separador vertical para barras de acciones/etiquetas. */
-@Composable
-fun AqVerticalDivider(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .widthIn(min = AqMetrics.DividerHeight)
-            .heightIn(min = AqMetrics.ControlMinSize)
-            .background(AqColor.Divider),
-    )
-}
