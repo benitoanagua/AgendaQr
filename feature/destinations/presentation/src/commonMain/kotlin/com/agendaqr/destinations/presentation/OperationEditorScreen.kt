@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import com.agendaqr.core.ui.components.AqSnackbarHost
+import com.agendaqr.core.ui.components.AqMultilineTextField
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.domain.*
@@ -397,7 +398,11 @@ internal fun OperationEditorScreen(
                 verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
             ) {
                 AqTextField(label = AppStrings.ConceptoOpcional, value = concept, onValueChange = { concept = it }, leadingIcon = com.agendaqr.core.ui.components.AqIcons.NoteEdit)
-                AqTextField(label = AppStrings.NotaOpcional, value = note, onValueChange = { note = it }, singleLine = false)
+                AqMultilineTextField(
+                    label = AppStrings.NotaOpcional,
+                    value = note,
+                    onValueChange = { note = it },
+                )
             }
         }
     }

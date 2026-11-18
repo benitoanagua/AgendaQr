@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.core.ui.components.AqBadge
+import com.agendaqr.core.ui.components.AqCarousel
+import com.agendaqr.core.ui.components.AqCarouselItem
 import com.agendaqr.core.ui.components.AqCompactAction
 import com.agendaqr.core.ui.components.AqQuickAction
 import com.agendaqr.core.ui.components.AqDialog
@@ -185,18 +187,18 @@ fun DestinationsScreen(
                     )
                     AqSectionHeader(text = AppStrings.Favoritos)
                 }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(AqSpacing.Md),
-                ) {
-                    favorites.forEach { destination ->
-                        FavoriteDestinationCard(
-                            destination = destination,
-                            onClick = { onAction(DestinationAction.Open(destination.id)) },
-                        )
-                    }
+                AqCarousel(
+                    items = favorites.map {
+                        AqCarouselItem(it.id, it.name.ifBlank { AppStrings.SinNombre })
+                    },
+                    itemWidth = AqMetrics.FavCardWidth,
+                    itemSpacing = AqSpacing.Md,
+                ) { item ->
+                    val destination = favorites.find { it.id == item.id }!!
+                    FavoriteDestinationCard(
+                        destination = destination,
+                        onClick = { onAction(DestinationAction.Open(destination.id)) },
+                    )
                 }
             }
         }

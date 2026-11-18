@@ -3,17 +3,21 @@ package com.agendaqr.core.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -563,6 +567,133 @@ fun AqListRow(
                 thickness = AqMetrics.DividerHeight,
                 color = AqColor.Divider,
             )
+        }
+    }
+}
+
+/**
+ * Panel expandible justificado por el flujo de registro de operación
+ * (S07 "Más detalles"): título + chevron que alterna entre colapsado y
+ * expandido, con el contenido revelado debajo. El estado de expansión lo
+ * posee el llamador; el DS solo renderiza y anuncia el estado.
+ *
+ * - Radio de tarjeta (Large / 12 dp), superficie y borde de tokens (E-02/E-03).
+ * - Objetivo táctil ≥ 48 dp en toda la fila de título.
+ * - Semántica `expanded` anunciada al lector de pantalla.
+ * - Sin movimiento decorativo; la animación de aparición delegada al llamador.
+ */
+@Composable
+fun AqExpansionPanel(
+    title: String,
+    expanded: Boolean,
+    onToggle: () -> Unit,
+    modifier: Modifier = Modifier,
+    /** Glifo decorativo opcional a la izquierda del título. */
+    leading: (@Composable () -> Unit)? = null,
+    content: @Composable () -> Unit,
+) {
+    val shape = AqShapes.Large
+    val chevronIcon = if (expanded) AqIcons.ArrowUp else AqIcons.ChevronRight
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(AqColor.Surface, shape)
+            .border(AqMetrics.Border, AqColor.Border, shape)
+            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+            .clickable(
+                role = Role.Button,
+                onClickLabel = title,
+                onClick = onToggle,
+            ),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.MdPlus),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        ) {
+            leading?.invoke()
+            Text(
+                text = title,
+                style = AqTextStyles.RowTitle,
+                color = AqColor.TextPrimary,
+                modifier = Modifier.weight(1f),
+            )
+            AqIcon(
+                imageVector = chevronIcon,
+                contentDescription = null,
+                size = AqMetrics.IconSizeCompact,
+                tint = AqColor.TextTertiary,
+            )
+        }
+        if (expanded) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Sm)
+                    .fillMaxWidth(),
+            ) {
+                content()
+            }
+        }
+    }
+}
+
+/**
+ * Carrusel horizontal de tarjetas justificado por el carrusel de favoritos
+ * de Inicio (S01). La siguiente tarjeta asoma como indicio visual, sin
+ * instrucción de deslizamiento (UX V1: los gestos nunca son la única forma
+ * de acción; el scroll horizontal es suficiente).
+ *
+ * - Ítems con ancho fijo y objetivo táctil ≥ 48 dp.
+ * - Espaciado entre ítems con tokens del sistema.
+ * - Primer y último ítem con margen de pantalla para alinearse al borde
+ *   y que el siguiente asome.
+ * - Sin animación decorativa; el scroll es nativo de la plataforma.
+ * - Semántica de accesibilidad por ítem (contentDescription del llamador).
+ */
+data class AqCarouselItem(val id: String, val label: String? = null)
+
+@Composable
+fun AqCarousel(
+    items: List<AqCarouselItem>,
+    itemWidth: Dp = AqMetrics.FavCardWidth,
+    itemSpacing: Dp = AqSpacing.Md,
+    modifier: Modifier = Modifier,
+    content: @Composable (AqCarouselItem) -> Unit,
+) {
+    require(items.isNotEmpty()) { "AqCarousel necesita al menos un ítem" }
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(itemSpacing),
+    ) {
+        items.forEachIndexed { index, item ->
+            Box(
+                modifier = Modifier
+                    .width(itemWidth)
+                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                    .then(
+                        if (index == 0) {
+                            Modifier.padding(start = AqSpacing.ScreenMargin)
+                        } else {
+                            Modifier
+                        },
+                    )
+                    .then(
+                        if (index == items.lastIndex) {
+                            Modifier.padding(end = AqSpacing.ScreenMargin)
+                        } else {
+                            Modifier
+                        },
+                    )
+                    .testTag("aq-carousel-item-${item.id}"),
+            ) {
+                content(item)
+            }
         }
     }
 }
