@@ -30,7 +30,7 @@ internal class AqActionSheetController {
     }
 }
 
-internal val LocalAmActionSheetController =
+internal val LocalAqActionSheetController =
     compositionLocalOf<AqActionSheetController?> { null }
 
 @Composable

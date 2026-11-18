@@ -108,7 +108,7 @@ fun AqTopBar(
             "AqTopBar: overflowActions necesita overflowLabel (copy del llamador)"
         }
     }
-    val actionSheetController = LocalAmActionSheetController.current
+    val actionSheetController = LocalAqActionSheetController.current
     if (overflowActions.isNotEmpty()) {
         requireNotNull(actionSheetController) {
             "AqTopBar con overflowActions debe estar dentro de AqScreenScaffold"
@@ -422,7 +422,7 @@ fun AqHeroHeader(
     overflowLabel: String,
     modifier: Modifier = Modifier,
 ) {
-    val actionSheetController = LocalAmActionSheetController.current
+    val actionSheetController = LocalAqActionSheetController.current
     if (overflowActions.isNotEmpty()) {
         require(overflowLabel.isNotBlank()) {
             "AqHeroHeader: overflowActions necesita overflowLabel"

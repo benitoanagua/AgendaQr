@@ -16,8 +16,8 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.sp
-import com.agendaqr.core.ui.theme.DarkAmColorScheme
-import com.agendaqr.core.ui.theme.LightAmColorScheme
+import com.agendaqr.core.ui.theme.DarkAqColorScheme
+import com.agendaqr.core.ui.theme.LightAqColorScheme
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
 import org.junit.Test
@@ -126,7 +126,7 @@ class S02UiPolishTest {
         compose.onNodeWithText(AppStrings.TodosLosDestinos).assert(headingMatcher())
         val style = layoutOf(AppStrings.TodosLosDestinos).layoutInput.style
         assertEquals(14.sp, style.fontSize)
-        assertEquals(LightAmColorScheme.textSecondary, style.color)
+        assertEquals(LightAqColorScheme.textSecondary, style.color)
     }
 
     @Test
@@ -143,7 +143,7 @@ class S02UiPolishTest {
         compose.onNodeWithText(AppStrings.TodosLosDestinos).assertDoesNotExist()
         val style = layoutOf(AppStrings.OtrosDestinos).layoutInput.style
         assertEquals(14.sp, style.fontSize)
-        assertEquals(LightAmColorScheme.textSecondary, style.color)
+        assertEquals(LightAqColorScheme.textSecondary, style.color)
     }
 
     @Test
@@ -159,7 +159,7 @@ class S02UiPolishTest {
         compose.onNodeWithText(AppStrings.shareFromAnotherAppHint)
             .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Heading))
         val style = layoutOf(AppStrings.shareFromAnotherAppHint).layoutInput.style
-        assertEquals(LightAmColorScheme.textSecondary, style.color)
+        assertEquals(LightAqColorScheme.textSecondary, style.color)
     }
 
     @Test
@@ -173,7 +173,7 @@ class S02UiPolishTest {
         val style = layoutOf(AppStrings.TodosLosDestinos).layoutInput.style
         // La cabecera conserva 14 sp en ambos temas.
         assertEquals(14.sp, style.fontSize)
-        assertEquals(DarkAmColorScheme.textSecondary, style.color)
+        assertEquals(DarkAqColorScheme.textSecondary, style.color)
     }
 
     @Test
@@ -186,7 +186,7 @@ class S02UiPolishTest {
         compose.waitForIdle()
         val style = layoutOf(AppStrings.OtrosDestinos).layoutInput.style
         assertEquals(14.sp, style.fontSize)
-        assertEquals(DarkAmColorScheme.textSecondary, style.color)
+        assertEquals(DarkAqColorScheme.textSecondary, style.color)
     }
 
     // --- D5: los 3 controles de S02 muestran icono + etiqueta (M10/M12) ---

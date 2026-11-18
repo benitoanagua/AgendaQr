@@ -3,7 +3,7 @@
 
 > **REEMPLAZADO como autoridad visual por [ADR-0025](ADR-0025-adopcion-ui-ux-polaris.md).** El contenido se conserva únicamente como registro histórico.
 **Estado:** SUPLANTADO — 2026-10-17 por ADR-0023; se conserva para trazabilidad histórica.
-> No implementar esta dirección como norma vigente. La única autoridad visual actual es ADR-0025 y el contrato normativo v7.
+> No implementar esta dirección como norma vigente. La única autoridad visual actual es ADR-0025 y el contrato normativo v8.0.
 **Suplanta:** ADR-0020 en su **paleta** y su **escala tipográfica**; ADR-0021 en el reparto de referencias por pantalla y en la prohibición de la rejilla de Inicio.
 **Enmienda:** especificación UX/UI §4 S01 (Inicio gana rejilla de acciones existentes) y §12; contrato normativo (`docs/05-design-system/00-contrato-normativo-diseno.md`) a versión 4.0.
 **Referencia histórica:** `docs/05-design-system/08-referencia-super-app.md` (Anexo A del encargo), conservado como registro de la dirección sustituida.

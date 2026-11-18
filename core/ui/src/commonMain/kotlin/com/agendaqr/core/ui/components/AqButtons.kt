@@ -50,7 +50,7 @@ import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
-import com.agendaqr.core.ui.theme.LocalAmColorScheme
+import com.agendaqr.core.ui.theme.LocalAqColorScheme
 
 enum class AqButtonVariant { Primary, Default, Danger, Light, Outline, Text }
 
@@ -87,7 +87,7 @@ internal data class AqButtonColors(
     val border: Color? = null,
 )
 
-internal fun resolveAmButtonColors(
+internal fun resolveAqButtonColors(
     variant: AqButtonVariant,
     scheme: AqColorScheme,
     enabled: Boolean,
@@ -124,7 +124,7 @@ internal fun resolveAmButtonColors(
     )
 }
 
-/** TDesign Mobile button with a 48 dp interaction target and compact visual size. */
+/** Polaris button with a 48 dp interaction target and compact visual size. */
 @Composable
 fun AqButton(
     label: String,
@@ -176,9 +176,9 @@ private fun AqButtonImpl(
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
     val isEnabled = enabled && !isLoading
-    val resolved = resolveAmButtonColors(
+    val resolved = resolveAqButtonColors(
         variant = variant,
-        scheme = LocalAmColorScheme.current,
+        scheme = LocalAqColorScheme.current,
         enabled = isEnabled,
         pressed = pressed,
     )
@@ -208,8 +208,8 @@ private fun AqButtonImpl(
             role = Role.Button,
             onClickLabel = label,
             interactionSource = interactionSource,
-            // TDesign no dibuja ripple: TDButton cambia de color en
-            // `onTapDown` (ya resuelto por `resolved` con el estado pressed).
+            // Sin ripple: el estado presionado se resuelve en `resolved`
+            // y se refleja como cambio de color del token.
             indication = null,
             onClick = {
                 if (hapticFeedback) {
@@ -285,7 +285,7 @@ private fun AqButtonImpl(
     )
 }
 
-/** Primary action with the TDesign brand fill and accessible foreground. */
+/** Primary action with the Polaris brand fill and accessible foreground. */
 @Composable
 fun AqPrimaryButton(
     label: String,
@@ -486,7 +486,7 @@ fun AqCompactAction(
 /**
  * Nivel 3 — Acción terciaria.
  * Alternativas contextuales, navegación auxiliar y acciones de menor prioridad.
- * Acción de texto TDesign con área táctil de 48 dp — la etiqueta
+ * Acción de texto con área táctil de 48 dp — la etiqueta
  * completa mantiene su target accesible sin peso visual de botón.
  * [color] lo anula el llamador cuando la acción vive sobre un fondo
  * donde el acento no cumple 4.5:1 (p. ej. dentro de un banner de tono,
@@ -755,7 +755,7 @@ fun AqSegmentedControl(
 }
 
 /**
- * Conmutador de favorito: `IconToggleButton` con glifo TDesign. El estado
+ * Conmutador de favorito: `IconToggleButton` con glifo de Polaris. El estado
  * seleccionado se expone en la semántica del control y
  * la descripción accesible la aporta el llamador (debe cambiar con el
  * estado). El color acompaña; nunca es la única señal.

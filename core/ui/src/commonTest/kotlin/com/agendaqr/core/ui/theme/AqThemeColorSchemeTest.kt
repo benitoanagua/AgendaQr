@@ -8,12 +8,12 @@ class AqThemeColorSchemeTest {
 
     @Test
     fun light_material_scheme_has_no_default_template_colors() {
-        assertMapped(LightAmColorScheme, darkTheme = false)
+        assertMapped(LightAqColorScheme, darkTheme = false)
     }
 
     @Test
     fun dark_material_scheme_has_no_default_template_colors() {
-        assertMapped(DarkAmColorScheme, darkTheme = true)
+        assertMapped(DarkAqColorScheme, darkTheme = true)
     }
 
     private fun assertMapped(tokens: AqColorScheme, darkTheme: Boolean) {

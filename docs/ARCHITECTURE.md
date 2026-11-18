@@ -52,9 +52,11 @@ ejecución real con Xcode.
    comportamiento. El contrato normativo es
    `docs/05-design-system/00-contrato-normativo-diseno.md`;
    [ADR-0025](07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md) es la autoridad
-   visual vigente. Los sistemas de diseño previos (Metro, Xauxa, agendas propios,
-   Ant Design Mobile, Super-App, TDesign) no son referencia. La identidad visual
-   anterior de AgendaQr, incluido su color de marca, deja de existir.
+   visual vigente, junto con
+   [ADR-0026](07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md).
+   Los sistemas de diseño previos no son referencia; se conservan únicamente en
+   los ADR históricos. La identidad visual anterior de AgendaQr, incluido su
+   color de marca, deja de existir.
 3. **WaraWerse — referencia técnica.** Solo para Kotlin Multiplatform, Compose,
    modularización, Gradle/build logic y prácticas de testing. No introduce
    lógica de negocio.

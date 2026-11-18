@@ -22,8 +22,8 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.agendaqr.core.ui.theme.DarkAmColorScheme
-import com.agendaqr.core.ui.theme.LightAmColorScheme
+import com.agendaqr.core.ui.theme.DarkAqColorScheme
+import com.agendaqr.core.ui.theme.LightAqColorScheme
 import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.contrastRatio
@@ -180,23 +180,23 @@ class AqUiPolishContractTest {
 
     @Test
     fun section_header_accent_meets_text_contrast_in_both_themes() {
-        val light = contrastRatio(LightAmColorScheme.emphasisText, LightAmColorScheme.background)
+        val light = contrastRatio(LightAqColorScheme.emphasisText, LightAqColorScheme.background)
         assertTrue(light >= 4.5, "acento de sección en claro: $light < 4.5")
         val dark = contrastRatio(
-            DarkAmColorScheme.emphasisText,
-            DarkAmColorScheme.background,
+            DarkAqColorScheme.emphasisText,
+            DarkAqColorScheme.background,
         )
         assertTrue(dark >= 4.5, "acento de sección en oscuro: $dark < 4.5")
         // El encabezado por defecto usa color estándar (TextSecondary); el
         // acento (S06) solo es texto si cumple >= 4.5:1 (asTextOn).
         val standardLight = contrastRatio(
-            LightAmColorScheme.textSecondary,
-            LightAmColorScheme.background,
+            LightAqColorScheme.textSecondary,
+            LightAqColorScheme.background,
         )
         assertTrue(standardLight >= 4.5, "color estándar en claro: $standardLight < 4.5")
         val standardDark = contrastRatio(
-            DarkAmColorScheme.textSecondary,
-            DarkAmColorScheme.background,
+            DarkAqColorScheme.textSecondary,
+            DarkAqColorScheme.background,
         )
         assertTrue(standardDark >= 4.5, "color estándar en oscuro: $standardDark < 4.5")
     }

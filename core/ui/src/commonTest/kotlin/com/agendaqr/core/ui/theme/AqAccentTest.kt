@@ -138,21 +138,21 @@ class AqAccentTest {
         val blue = AqAccents.Admitted.first { it.id == "blue" }
         val sky = AqAccents.Admitted.first { it.id == "sky" }
         val cases = listOf(
-            blue to LightAmColorScheme,
-            sky to DarkAmColorScheme,
+            blue to LightAqColorScheme,
+            sky to DarkAqColorScheme,
         )
         cases.forEach { (accent, scheme) ->
             val asText = accent.background.asTextOn(scheme.background, scheme.emphasisText)
             assertTrue(
                 contrast(asText, scheme.background) >= 4.5,
-                "${accent.id} asTextOn ${if (scheme === LightAmColorScheme) "light" else "dark"}",
+                "${accent.id} asTextOn ${if (scheme === LightAqColorScheme) "light" else "dark"}",
             )
         }
         // El azul de sistema no es legible sobre el fondo oscuro: cae SIEMPRE
         // al texto de acento del tema.
         assertEquals(
-            DarkAmColorScheme.emphasisText,
-            AqAccents.System.background.asTextOn(DarkAmColorScheme.background, DarkAmColorScheme.emphasisText),
+            DarkAqColorScheme.emphasisText,
+            AqAccents.System.background.asTextOn(DarkAqColorScheme.background, DarkAqColorScheme.emphasisText),
         )
     }
 }

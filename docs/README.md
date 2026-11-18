@@ -52,9 +52,9 @@
 | [`07-decisiones/ADR-0011-contrato-visual-xauxa.md`](07-decisiones/ADR-0011-contrato-visual-xauxa.md) | ADR histórico sustituido: Xauxa |
 | [`07-decisiones/ADR-0012-ui-convencional-material3.md`](07-decisiones/ADR-0012-ui-convencional-material3.md) | ADR histórico; autoría visual sustituida por ADR-0013 |
 | [`07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md`](07-decisiones/ADR-0013-sistema-de-diseno-agendamobile.md) | ADR histórico; autoría visual sustituida por ADR-0014 |
-| [`07-decisiones/ADR-0014-referencia-ant-design-mobile.md`](07-decisiones/ADR-0014-referencia-ant-design-mobile.md) | ADR histórico: referencia Ant Design Mobile (suplantada por ADR-0020 y ADR-0021) |
+| [`07-decisiones/ADR-0014-referencia-ant-design-mobile.md`](07-decisiones/ADR-0014-referencia-ant-design-mobile.md) | ADR histórico: referencia Ant Design Mobile (suplantada; véase ADR-0025) |
 | [`07-decisiones/ADR-0016-identidad-local-sin-cuenta.md`](07-decisiones/ADR-0016-identidad-local-sin-cuenta.md) | ADR: identidad local sin cuenta, login no obligatorio, namespace por perfil, PIN, migración y limitaciones |
-| [`07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md`](07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md) | ADR histórico: alineación con Ant Design Mobile 5.43.0 (suplantada por ADR-0020 y ADR-0021) |
+| [`07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md`](07-decisiones/ADR-0017-alineacion-fiel-ant-design-mobile.md) | ADR histórico: alineación con Ant Design Mobile 5.43.0 (suplantada; véase ADR-0025) |
 | [`07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md`](07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md) | ADR: correcciones UX de captura rápida (enmienda ADR-0016 y la congelación UX en su alcance) |
 | [`07-decisiones/ADR-0019-enmienda-v1-9-inicio-vacio.md`](07-decisiones/ADR-0019-enmienda-v1-9-inicio-vacio.md) | ADR: enmienda V1.9 inicio vacío y separadores oscuros |
 | [`07-decisiones/ADR-0020-identidad-visual-agendaqr.md`](07-decisiones/ADR-0020-identidad-visual-agendaqr.md) | ADR histórico: identidad visual AgendaQr (suplantado; véase ADR-0025) |
@@ -62,6 +62,7 @@
 | [`07-decisiones/ADR-0022-direccion-visual-super-app.md`](07-decisiones/ADR-0022-direccion-visual-super-app.md) | ADR histórico: Super-App (suplantado; véase ADR-0025) |
 | [`07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md`](07-decisiones/ADR-0023-adopcion-fiel-tdesign-mobile.md) | ADR histórico: TDesign Mobile (reemplazado) |
 | [`07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md`](07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md) | ADR: adopción del UI/UX de Polaris (autoridad visual vigente) |
+| [`07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md`](07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md) | ADR: cierre de la migración de `core/ui` a Polaris |
 
 ## Cómo se mantiene
 

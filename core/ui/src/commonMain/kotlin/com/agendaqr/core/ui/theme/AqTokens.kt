@@ -213,7 +213,7 @@ data class AqColorScheme(
     val transparent: Color,
 )
 
-val LightAmColorScheme = AqColorScheme(
+val LightAqColorScheme = AqColorScheme(
     background = AqPalette.gray50,
     surface = AqPalette.white,
     surfaceSecondary = AqPalette.lightSurfaceSecondary,
@@ -276,7 +276,7 @@ val LightAmColorScheme = AqColorScheme(
     transparent = AqPalette.transparent,
 )
 
-val DarkAmColorScheme = AqColorScheme(
+val DarkAqColorScheme = AqColorScheme(
     background = AqPalette.gray900,
     surface = AqPalette.gray800,
     surfaceSecondary = AqPalette.darkSurfaceSecondary,
@@ -343,17 +343,17 @@ val DarkAmColorScheme = AqColorScheme(
 
 // El default del CompositionLocal es el esquema OSCURO: AqTheme siempre
 // proporciona el esquema real; este valor solo afecta a tooling sin AqTheme.
-val LocalAmColorScheme = compositionLocalOf { DarkAmColorScheme }
+val LocalAqColorScheme = compositionLocalOf { LightAqColorScheme }
 
 /** Familia de la interfaz. Se resuelve dentro de la composición (recursos CMP). */
-val LocalAmFontFamily = compositionLocalOf<FontFamily> { FontFamily.Default }
+val LocalAqFontFamily = compositionLocalOf<FontFamily> { FontFamily.Default }
 
 /**
  * Carga los TTF estáticos de Inter (SIL OFL 1.1) distribuidos como recursos
  * multiplataforma. Las cuatro fuentes son las que publica la release 4.0.
  */
 @Composable
-internal fun rememberAmInterFontFamily(): FontFamily = FontFamily(
+internal fun rememberAqInterFontFamily(): FontFamily = FontFamily(
     Font(resource = Res.font.inter_regular, weight = AqWeight.Regular),
     Font(resource = Res.font.inter_medium, weight = AqWeight.Medium),
     Font(resource = Res.font.inter_semi_bold, weight = AqWeight.SemiBold),
@@ -373,64 +373,64 @@ object AqAlpha {
 
 /** Única puerta de color del producto; ningún componente introduce literales. */
 object AqColor {
-    val Background: Color @Composable get() = LocalAmColorScheme.current.background
-    val Surface: Color @Composable get() = LocalAmColorScheme.current.surface
-    val SurfaceSecondary: Color @Composable get() = LocalAmColorScheme.current.surfaceSecondary
-    val Border: Color @Composable get() = LocalAmColorScheme.current.border
-    val FunctionalBorder: Color @Composable get() = LocalAmColorScheme.current.functionalBorder
-    val Divider: Color @Composable get() = LocalAmColorScheme.current.divider
-    val TextPrimary: Color @Composable get() = LocalAmColorScheme.current.textPrimary
-    val TextSecondary: Color @Composable get() = LocalAmColorScheme.current.textSecondary
-    val TextPlaceholder: Color @Composable get() = LocalAmColorScheme.current.textPlaceholder
-    val TextTertiary: Color @Composable get() = LocalAmColorScheme.current.textTertiary
-    val BrandFill: Color @Composable get() = LocalAmColorScheme.current.brandFill
-    val BrandFillHover: Color @Composable get() = LocalAmColorScheme.current.brandFillHover
-    val BrandFillActive: Color @Composable get() = LocalAmColorScheme.current.brandFillActive
-    val BrandFillSelected: Color @Composable get() = LocalAmColorScheme.current.brandFillSelected
-    val BrandFillDisabled: Color @Composable get() = LocalAmColorScheme.current.brandFillDisabled
-    val OnBrandFill: Color @Composable get() = LocalAmColorScheme.current.onBrandFill
-    val OnBrandFillDisabled: Color @Composable get() = LocalAmColorScheme.current.onBrandFillDisabled
-    val EmphasisFill: Color @Composable get() = LocalAmColorScheme.current.emphasisFill
-    val EmphasisBorder: Color @Composable get() = LocalAmColorScheme.current.emphasisBorder
-    val EmphasisText: Color @Composable get() = LocalAmColorScheme.current.emphasisText
-    val EmphasisIcon: Color @Composable get() = LocalAmColorScheme.current.emphasisIcon
-    val EmphasisSurface: Color @Composable get() = LocalAmColorScheme.current.emphasisSurface
-    val EmphasisSurfaceHover: Color @Composable get() = LocalAmColorScheme.current.emphasisSurfaceHover
-    val OnEmphasisFill: Color @Composable get() = LocalAmColorScheme.current.emphasisOnFill
-    val Link: Color @Composable get() = LocalAmColorScheme.current.link
-    val SelectionFill: Color @Composable get() = LocalAmColorScheme.current.selectionFill
-    val SelectionSurface: Color @Composable get() = LocalAmColorScheme.current.selectionSurface
-    val SelectionBorder: Color @Composable get() = LocalAmColorScheme.current.selectionBorder
-    val SelectionIcon: Color @Composable get() = LocalAmColorScheme.current.selectionIcon
-    val Danger: Color @Composable get() = LocalAmColorScheme.current.danger
-    val DangerFill: Color @Composable get() = LocalAmColorScheme.current.dangerFill
-    val DangerActive: Color @Composable get() = LocalAmColorScheme.current.dangerActive
-    val DangerDisabled: Color @Composable get() = LocalAmColorScheme.current.dangerDisabled
-    val OnDanger: Color @Composable get() = LocalAmColorScheme.current.onDanger
-    val DangerContainer: Color @Composable get() = LocalAmColorScheme.current.dangerContainer
-    val Success: Color @Composable get() = LocalAmColorScheme.current.success
-    val SuccessFill: Color @Composable get() = LocalAmColorScheme.current.successFill
-    val OnSuccessFill: Color @Composable get() = LocalAmColorScheme.current.onSuccessFill
-    val SuccessContainer: Color @Composable get() = LocalAmColorScheme.current.successContainer
-    val Warning: Color @Composable get() = LocalAmColorScheme.current.warning
-    val WarningFill: Color @Composable get() = LocalAmColorScheme.current.warningFill
-    val OnWarningFill: Color @Composable get() = LocalAmColorScheme.current.onWarningFill
-    val WarningContainer: Color @Composable get() = LocalAmColorScheme.current.warningContainer
-    val Info: Color @Composable get() = LocalAmColorScheme.current.info
-    val InfoContainer: Color @Composable get() = LocalAmColorScheme.current.infoContainer
-    val SurfaceContainerHighest: Color @Composable get() = LocalAmColorScheme.current.surfaceContainerHighest
-    val SurfaceContainerHigh: Color @Composable get() = LocalAmColorScheme.current.surfaceContainerHigh
-    val SurfaceActive: Color @Composable get() = LocalAmColorScheme.current.surfaceActive
-    val ComponentActive: Color @Composable get() = LocalAmColorScheme.current.componentActive
-    val SurfaceContainerLow: Color @Composable get() = LocalAmColorScheme.current.surfaceContainerLow
-    val SurfaceContainer: Color @Composable get() = LocalAmColorScheme.current.surfaceContainer
-    val InverseSurface: Color @Composable get() = LocalAmColorScheme.current.inverseSurface
-    val InverseOnSurface: Color @Composable get() = LocalAmColorScheme.current.inverseOnSurface
-    val Focus: Color @Composable get() = LocalAmColorScheme.current.focus
-    val Disabled: Color @Composable get() = LocalAmColorScheme.current.disabled
-    val OnDisabled: Color @Composable get() = LocalAmColorScheme.current.onDisabled
-    val QrCanvas: Color @Composable get() = LocalAmColorScheme.current.qrCanvas
-    val Scrim: Color @Composable get() = LocalAmColorScheme.current.scrim
+    val Background: Color @Composable get() = LocalAqColorScheme.current.background
+    val Surface: Color @Composable get() = LocalAqColorScheme.current.surface
+    val SurfaceSecondary: Color @Composable get() = LocalAqColorScheme.current.surfaceSecondary
+    val Border: Color @Composable get() = LocalAqColorScheme.current.border
+    val FunctionalBorder: Color @Composable get() = LocalAqColorScheme.current.functionalBorder
+    val Divider: Color @Composable get() = LocalAqColorScheme.current.divider
+    val TextPrimary: Color @Composable get() = LocalAqColorScheme.current.textPrimary
+    val TextSecondary: Color @Composable get() = LocalAqColorScheme.current.textSecondary
+    val TextPlaceholder: Color @Composable get() = LocalAqColorScheme.current.textPlaceholder
+    val TextTertiary: Color @Composable get() = LocalAqColorScheme.current.textTertiary
+    val BrandFill: Color @Composable get() = LocalAqColorScheme.current.brandFill
+    val BrandFillHover: Color @Composable get() = LocalAqColorScheme.current.brandFillHover
+    val BrandFillActive: Color @Composable get() = LocalAqColorScheme.current.brandFillActive
+    val BrandFillSelected: Color @Composable get() = LocalAqColorScheme.current.brandFillSelected
+    val BrandFillDisabled: Color @Composable get() = LocalAqColorScheme.current.brandFillDisabled
+    val OnBrandFill: Color @Composable get() = LocalAqColorScheme.current.onBrandFill
+    val OnBrandFillDisabled: Color @Composable get() = LocalAqColorScheme.current.onBrandFillDisabled
+    val EmphasisFill: Color @Composable get() = LocalAqColorScheme.current.emphasisFill
+    val EmphasisBorder: Color @Composable get() = LocalAqColorScheme.current.emphasisBorder
+    val EmphasisText: Color @Composable get() = LocalAqColorScheme.current.emphasisText
+    val EmphasisIcon: Color @Composable get() = LocalAqColorScheme.current.emphasisIcon
+    val EmphasisSurface: Color @Composable get() = LocalAqColorScheme.current.emphasisSurface
+    val EmphasisSurfaceHover: Color @Composable get() = LocalAqColorScheme.current.emphasisSurfaceHover
+    val OnEmphasisFill: Color @Composable get() = LocalAqColorScheme.current.emphasisOnFill
+    val Link: Color @Composable get() = LocalAqColorScheme.current.link
+    val SelectionFill: Color @Composable get() = LocalAqColorScheme.current.selectionFill
+    val SelectionSurface: Color @Composable get() = LocalAqColorScheme.current.selectionSurface
+    val SelectionBorder: Color @Composable get() = LocalAqColorScheme.current.selectionBorder
+    val SelectionIcon: Color @Composable get() = LocalAqColorScheme.current.selectionIcon
+    val Danger: Color @Composable get() = LocalAqColorScheme.current.danger
+    val DangerFill: Color @Composable get() = LocalAqColorScheme.current.dangerFill
+    val DangerActive: Color @Composable get() = LocalAqColorScheme.current.dangerActive
+    val DangerDisabled: Color @Composable get() = LocalAqColorScheme.current.dangerDisabled
+    val OnDanger: Color @Composable get() = LocalAqColorScheme.current.onDanger
+    val DangerContainer: Color @Composable get() = LocalAqColorScheme.current.dangerContainer
+    val Success: Color @Composable get() = LocalAqColorScheme.current.success
+    val SuccessFill: Color @Composable get() = LocalAqColorScheme.current.successFill
+    val OnSuccessFill: Color @Composable get() = LocalAqColorScheme.current.onSuccessFill
+    val SuccessContainer: Color @Composable get() = LocalAqColorScheme.current.successContainer
+    val Warning: Color @Composable get() = LocalAqColorScheme.current.warning
+    val WarningFill: Color @Composable get() = LocalAqColorScheme.current.warningFill
+    val OnWarningFill: Color @Composable get() = LocalAqColorScheme.current.onWarningFill
+    val WarningContainer: Color @Composable get() = LocalAqColorScheme.current.warningContainer
+    val Info: Color @Composable get() = LocalAqColorScheme.current.info
+    val InfoContainer: Color @Composable get() = LocalAqColorScheme.current.infoContainer
+    val SurfaceContainerHighest: Color @Composable get() = LocalAqColorScheme.current.surfaceContainerHighest
+    val SurfaceContainerHigh: Color @Composable get() = LocalAqColorScheme.current.surfaceContainerHigh
+    val SurfaceActive: Color @Composable get() = LocalAqColorScheme.current.surfaceActive
+    val ComponentActive: Color @Composable get() = LocalAqColorScheme.current.componentActive
+    val SurfaceContainerLow: Color @Composable get() = LocalAqColorScheme.current.surfaceContainerLow
+    val SurfaceContainer: Color @Composable get() = LocalAqColorScheme.current.surfaceContainer
+    val InverseSurface: Color @Composable get() = LocalAqColorScheme.current.inverseSurface
+    val InverseOnSurface: Color @Composable get() = LocalAqColorScheme.current.inverseOnSurface
+    val Focus: Color @Composable get() = LocalAqColorScheme.current.focus
+    val Disabled: Color @Composable get() = LocalAqColorScheme.current.disabled
+    val OnDisabled: Color @Composable get() = LocalAqColorScheme.current.onDisabled
+    val QrCanvas: Color @Composable get() = LocalAqColorScheme.current.qrCanvas
+    val Scrim: Color @Composable get() = LocalAqColorScheme.current.scrim
     val Transparent: Color = Color.Transparent
 }
 
@@ -608,7 +608,7 @@ object AqType {
     const val BodyLineHeightRatio = 1.5f
 
     /** Familia efectiva de la interfaz (Inter dentro de [AqTheme]). */
-    val FamilyUi: FontFamily @Composable get() = LocalAmFontFamily.current
+    val FamilyUi: FontFamily @Composable get() = LocalAqFontFamily.current
 }
 
 /** `font-letter-spacing` publicado, en sp. */
@@ -719,7 +719,7 @@ val AqMaterialTypography: Typography = Typography(
 )
 
 /** Sustituye la familia de todos los roles sin alterar su geometría. */
-internal fun Typography.withAmFontFamily(family: FontFamily): Typography = copy(
+internal fun Typography.withAqFontFamily(family: FontFamily): Typography = copy(
     headlineLarge = headlineLarge.copy(fontFamily = family),
     headlineMedium = headlineMedium.copy(fontFamily = family),
     headlineSmall = headlineSmall.copy(fontFamily = family),
@@ -842,7 +842,7 @@ fun Modifier.aqElevation(
     shape: Shape = RectangleShape,
     clip: Boolean = false,
 ): Modifier {
-    val dark = LocalAmColorScheme.current == DarkAmColorScheme
+    val dark = LocalAqColorScheme.current == DarkAqColorScheme
     if (level == AqElevation.None || (!dark && level.suppressedInLightMobile)) return this
     val alpha = if (dark) level.darkAlpha else level.lightAlpha
     val shadowColor = AqPalette.gray900.copy(alpha = alpha)

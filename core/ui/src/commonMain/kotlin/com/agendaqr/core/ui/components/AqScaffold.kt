@@ -170,7 +170,7 @@ fun AqScreenScaffold(
     }
 
     val actionSheetController = remember { AqActionSheetController() }
-    CompositionLocalProvider(LocalAmActionSheetController provides actionSheetController) {
+    CompositionLocalProvider(LocalAqActionSheetController provides actionSheetController) {
         Box(modifier = modifier.fillMaxSize()) {
             if (navDestinations.isNotEmpty() && expanded) {
                 // Expandido: riel lateral + contenido centrado.

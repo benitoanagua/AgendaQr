@@ -1,8 +1,9 @@
 # Contrato normativo de diseño
 
-**Estado:** Normativo — versión 7.0
-**Autoridad:** [ADR-0025](../07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md)
-y este documento. La especificación UX/UI V1 conserva el contrato funcional
+**Estado:** Normativo — versión 8.0
+**Autoridad:** [ADR-0025](../07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md),
+[ADR-0026](../07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md) y este
+documento. La especificación UX/UI V1 conserva el contrato funcional
 congelado; su dirección visual queda descongelada y se rige por aquí.
 
 ## 1. Fuente de valores y versión
@@ -139,3 +140,14 @@ en el archivo señalado con valores tomados de tokens semánticos.
 
 E-06 (elevación de botones) está retirada: los botones son planos y un
 registro sin uso se detecta como excepción zombie.
+
+## 6. Registro de versiones
+
+| Versión | Cambio |
+|---|---|
+| 7.0 | Se fija la instantánea de tokens 9.4.2 y la iconografía 9.3.1; se incorporan PV-06, PV-07, PV-08, D-10 y X-07. |
+| 8.0 | Se cierra la migración de `core/ui`: vocabulario `Aq*` sin identificadores heredados, esquema por defecto claro con seguimiento del sistema, retirada de menciones activas a sistemas anteriores y verificación final. Se mantiene el resto de extensiones, desviaciones y excepciones. |
+
+La historia detallada de la revisión y el estado final, incluido lo que no se
+puede verificar en este entorno, está en
+[`10-auditoria-fidelidad-polaris.md`](10-auditoria-fidelidad-polaris.md).

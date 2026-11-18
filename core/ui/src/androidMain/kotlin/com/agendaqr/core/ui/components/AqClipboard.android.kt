@@ -5,7 +5,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 
 @Composable
-actual fun rememberAmClipboard(): (String) -> Unit {
+actual fun rememberAqClipboard(): (String) -> Unit {
     val manager = LocalClipboardManager.current
     return { text -> manager.setText(AnnotatedString(text)) }
 }

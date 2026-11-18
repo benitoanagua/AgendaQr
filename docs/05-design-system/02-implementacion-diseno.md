@@ -21,7 +21,7 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
     ├── AqInputs.kt        # AqTextField, AqAmountField (cifras tabulares), AqSearchField y AqSearchTrigger
     ├── AqLists.kt         # filas, tarjetas, badges, metadatos y AqQuickAction (rejilla de Inicio)
     ├── AqStatus.kt        # banners, estados, carga, esqueleto, feedback de éxito
-    ├── AqClipboard.kt     # rememberAmClipboard (expect/actual: copiar contenido al portapapeles)
+    ├── AqClipboard.kt     # rememberAqClipboard (expect/actual: copiar contenido al portapapeles)
     ├── AqChrome.kt        # AqTopBar, AqHeroHeader, navegación raíz, transición de superficies (sin FAB: Inicio usa la rejilla de acciones)
     ├── AqScaffold.kt      # AqScreenScaffold (contenedor de pantalla), AqBottomAction (acción principal fija: ancho completo + navigationBars + IME)
     ├── AqDialogs.kt       # AqDialog y AqDialogList con formas y estilos de tokens

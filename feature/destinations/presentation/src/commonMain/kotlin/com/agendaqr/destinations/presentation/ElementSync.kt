@@ -62,7 +62,7 @@ fun ElementSyncStatus.tone(): AqTone = when (this) {
  * que el usuario necesita saber (Pendiente, Sincronizando o Error). El
  * estado sigue siendo consultable en el detalle.
  */
-private fun ElementSyncStatus.toAmSyncState(): AqSyncState = when (this) {
+private fun ElementSyncStatus.toAqSyncState(): AqSyncState = when (this) {
     ElementSyncStatus.Synced -> AqSyncState.Synced
     ElementSyncStatus.Pending -> AqSyncState.Pending
     ElementSyncStatus.Syncing -> AqSyncState.Syncing
@@ -79,7 +79,7 @@ fun ElementSyncBadge(status: ElementSyncStatus, showWhenSynced: Boolean = false)
         dead = ElementSyncStatus.Dead.label,
     )
     AqSyncIndicator(
-        state = status.toAmSyncState(),
+        state = status.toAqSyncState(),
         labels = labels,
         showWhenSynced = showWhenSynced,
     )

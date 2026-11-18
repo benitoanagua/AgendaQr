@@ -176,7 +176,7 @@ class AqSchemeTest {
 
     @Test
     fun semantic_tokens_use_the_polaris_light_and_dark_roles() {
-        val light = LightAmColorScheme
+        val light = LightAqColorScheme
         assertEquals("FFF1F1F1", argb(light.background))
         assertEquals("FFFFFFFF", argb(light.surface))
         assertEquals("FFF7F7F7", argb(light.surfaceSecondary))
@@ -236,7 +236,7 @@ class AqSchemeTest {
         assertEquals("FFA30A24", argb(light.dangerActive))
         assertEquals("FFFEC1C7", argb(light.dangerDisabled))
 
-        val dark = DarkAmColorScheme
+        val dark = DarkAqColorScheme
         assertEquals("FF1A1A1A", argb(dark.background))
         assertEquals("FF303030", argb(dark.surface))
         assertEquals("FF303030", argb(dark.surfaceSecondary))
@@ -299,20 +299,20 @@ class AqSchemeTest {
 
     @Test
     fun both_schemes_expose_the_same_complete_semantic_roles() {
-        val lightFields = LightAmColorScheme.fields()
-        val darkFields = DarkAmColorScheme.fields()
+        val lightFields = LightAqColorScheme.fields()
+        val darkFields = DarkAqColorScheme.fields()
         assertEquals(59, lightFields.size)
         assertEquals(lightFields.keys, darkFields.keys)
         assertTrue(lightFields.values.none { it == Color.Unspecified })
         assertTrue(darkFields.values.none { it == Color.Unspecified })
-        assertNotEquals(LightAmColorScheme, DarkAmColorScheme)
-        assertEquals("FFFFFFFF", argb(LightAmColorScheme.qrCanvas))
-        assertEquals(LightAmColorScheme.qrCanvas, DarkAmColorScheme.qrCanvas)
+        assertNotEquals(LightAqColorScheme, DarkAqColorScheme)
+        assertEquals("FFFFFFFF", argb(LightAqColorScheme.qrCanvas))
+        assertEquals(LightAqColorScheme.qrCanvas, DarkAqColorScheme.qrCanvas)
     }
 
     @Test
     fun text_and_filled_state_pairs_meet_wcag_aa() {
-        listOf(LightAmColorScheme, DarkAmColorScheme).forEach { scheme ->
+        listOf(LightAqColorScheme, DarkAqColorScheme).forEach { scheme ->
             assertTrue(contrast(scheme.onBrandFill, scheme.brandFill) >= 4.5, "onBrandFill/brandFill")
             assertTrue(
                 contrast(scheme.onBrandFill, scheme.brandFillActive) >= 4.5,
@@ -352,7 +352,7 @@ class AqSchemeTest {
 
     @Test
     fun state_tone_text_meets_wcag_aa_on_its_container() {
-        listOf(LightAmColorScheme, DarkAmColorScheme).forEach { scheme ->
+        listOf(LightAqColorScheme, DarkAqColorScheme).forEach { scheme ->
             AqTone.entries.forEach { tone ->
                 val colors = scheme.toneColors(tone)
                 assertTrue(

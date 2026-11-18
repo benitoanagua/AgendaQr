@@ -11,7 +11,7 @@ import kotlin.test.assertTrue
  * de `@shopify/polaris-tokens@9.4.2`, con `1rem = 16dp` (D-01).
  * La familia Inter se inyecta en composición desde `AqTheme`; la tabla
  * estática de `AqMaterialTypography` conserva el valor por defecto y se
- * reescribe con `withAmFontFamily` antes de llegar a la pantalla.
+ * reescribe con `withAqFontFamily` antes de llegar a la pantalla.
  */
 class AqTypographyTest {
 
@@ -76,7 +76,7 @@ class AqTypographyTest {
             AqMaterialTypography.labelSmall,
         )
         assertTrue(roles.all { it.fontFamily == null })
-        val injected = AqMaterialTypography.withAmFontFamily(FontFamily.Serif)
+        val injected = AqMaterialTypography.withAqFontFamily(FontFamily.Serif)
         assertTrue(
             listOf(
                 injected.headlineLarge,
