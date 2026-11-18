@@ -51,7 +51,7 @@ val gestureVocabulary: Set<String> = setOf(
 )
 
 /** Configuraciones que la galería de capturas debe cubrir cuando se genera. */
-val requiredCaptureConfigs: List<String> = listOf("light-360", "dark-360")
+val requiredCaptureConfigs: List<String> = listOf("light", "dark")
 
 private const val PRESENTATION = "feature/destinations/presentation/src"
 private const val A11Y = "$PRESENTATION/androidUnitTest/kotlin/com/agendaqr/destinations/presentation"
@@ -775,10 +775,13 @@ data class CaptureArtifact(
     val sha256: String,
 )
 
-val captureWidths: Set<Int> = setOf(360)
+/** Único viewport de la galería: no forma parte del nombre del archivo. */
+const val captureWidthDp: Int = 360
 
+// Los segmentos no contienen `--`, para que un ancho heredado no se cuele
+// dentro de `surface` o `state` y sea interpretado como parte del nombre.
 private val captureNamePattern =
-    Regex("([a-z0-9-]+)--([a-z0-9-]+)--(360)dp--(light|dark)\\.png")
+    Regex("([a-z0-9]+(?:-[a-z0-9]+)*)--([a-z0-9]+(?:-[a-z0-9]+)*)--(light|dark)\\.png")
 private val captureDensities = setOf(1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0)
 
 fun parseCaptureName(fileName: String): CaptureName? {
@@ -786,8 +789,8 @@ fun parseCaptureName(fileName: String): CaptureName? {
     return CaptureName(
         surface = match.groupValues[1],
         state = match.groupValues[2],
-        widthDp = match.groupValues[3].toInt(),
-        theme = match.groupValues[4],
+        widthDp = captureWidthDp,
+        theme = match.groupValues[3],
     )
 }
 
@@ -829,17 +832,14 @@ fun captureViolations(
         } else if (name.state !in screen.captureStates) {
             add("captura-estado: ${artifact.relPath} usa '${name.state}', no declarado para ${screen.id}")
         }
-        if (name.widthDp !in captureWidths) {
-            add("captura-viewport: ${artifact.relPath} declara ${name.widthDp}dp fuera de ${captureWidths.sorted()}")
-        }
-        val density = artifact.widthPx.toDouble() / name.widthDp
+        val density = artifact.widthPx.toDouble() / captureWidthDp
         if (density !in captureDensities) {
             add(
-                "captura-zoom: ${artifact.relPath} mide ${artifact.widthPx}px para ${name.widthDp}dp " +
+                "captura-zoom: ${artifact.relPath} mide ${artifact.widthPx}px para ${captureWidthDp}dp " +
                     "(densidad $density); posible zoom/upscale/crop",
             )
         }
-        val key = "${name.surface}|${name.state}|${name.widthDp}|${name.theme}"
+        val key = "${name.surface}|${name.state}|${name.theme}"
         seenKeys.put(key, artifact.relPath)?.let { previous ->
             add("captura-repetida: '$key' aparece en $previous y ${artifact.relPath}")
         }
@@ -855,8 +855,8 @@ fun captureViolations(
             }
         }
         val present = artifacts.map { it.name }
-        if (present.none { it.theme == "light" && it.widthDp == 360 }) add("galeria-config: falta light-360")
-        if (present.none { it.theme == "dark" && it.widthDp == 360 }) add("galeria-config: falta dark-360")
+        if (present.none { it.theme == "light" }) add("galeria-config: falta light")
+        if (present.none { it.theme == "dark" }) add("galeria-config: falta dark")
     }
 }
 
@@ -877,7 +877,7 @@ fun renderCaptureManifest(artifacts: List<CaptureArtifact>, screens: List<Screen
         val name = artifact.name
         val screen = bySurface[name.surface]
         val required = screen != null && name.state in screen.captureStates
-        val density = "%.2f".format(artifact.widthPx.toDouble() / name.widthDp)
+        val density = "%.2f".format(artifact.widthPx.toDouble() / captureWidthDp)
         val scenarioId = artifact.relPath.substringAfterLast('/').removeSuffix(".png")
         val inclusion = if (required) "estado declarado en el contrato" else "revision adicional"
         val fields = listOf(
@@ -886,7 +886,7 @@ fun renderCaptureManifest(artifacts: List<CaptureArtifact>, screens: List<Screen
             "surface" to jsonString(name.surface),
             "state" to jsonString(name.state),
             "theme" to jsonString(name.theme),
-            "widthDp" to name.widthDp.toString(),
+            "widthDp" to captureWidthDp.toString(),
             "density" to density,
             "widthPx" to artifact.widthPx.toString(),
             "heightPx" to artifact.heightPx.toString(),
@@ -901,7 +901,7 @@ fun renderCaptureManifest(artifacts: List<CaptureArtifact>, screens: List<Screen
     val configs = requiredCaptureConfigs.joinToString(", ") { jsonString(it) }
     return buildString {
         appendLine("{")
-        appendLine("  \"schema\": \"agendaqr.captures/5\",")
+        appendLine("  \"schema\": \"agendaqr.captures/6\",")
         appendLine("  \"requiredConfigs\": [$configs],")
         appendLine("  \"entryCount\": ${artifacts.size},")
         appendLine("  \"entries\": [")
@@ -967,8 +967,8 @@ fun renderScreenContractDoc(screens: List<ScreenContract>): String = buildString
     appendLine()
     appendLine(
         "Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de nombre es " +
-            "`<superficie>--<estado>--<ancho>dp--<tema>.png`; no se admite zoom, " +
-            "recorte ni viewport falso.",
+            "`<superficie>--<estado>--<tema>.png`; el ancho único (360 dp) vive en el manifiesto " +
+            "y no se repite en el nombre. No se admite zoom, recorte ni viewport falso.",
     )
     appendLine()
     appendLine("## Superficies")
