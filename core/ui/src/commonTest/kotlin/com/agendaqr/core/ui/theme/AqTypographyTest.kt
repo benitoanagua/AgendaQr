@@ -17,6 +17,28 @@ class AqTypographyTest {
 
     @Test
     fun canonical_sizes_and_line_heights_match_polaris() {
+        assertEquals(36.sp, AqType.Heading3Xl)
+        assertEquals(48.sp, AqType.LineHeightHeading3Xl)
+        assertEquals(32.sp, AqType.Heading2Xl)
+        assertEquals(40.sp, AqType.LineHeightHeading2Xl)
+        assertEquals(22.sp, AqType.HeadingXl)
+        assertEquals(28.sp, AqType.LineHeightHeadingXl)
+        assertEquals(18.sp, AqType.HeadingLg)
+        assertEquals(24.sp, AqType.LineHeightHeadingLg)
+        assertEquals(16.sp, AqType.HeadingMd)
+        assertEquals(20.sp, AqType.LineHeightHeadingMd)
+        assertEquals(14.sp, AqType.HeadingSm)
+        assertEquals(20.sp, AqType.LineHeightHeadingSm)
+        assertEquals(12.sp, AqType.HeadingXs)
+        assertEquals(16.sp, AqType.LineHeightHeadingXs)
+        assertEquals(18.sp, AqType.BodyLg)
+        assertEquals(28.sp, AqType.LineHeightBodyLg)
+        assertEquals(16.sp, AqType.BodyMd)
+        assertEquals(24.sp, AqType.LineHeightBodyMd)
+        assertEquals(14.sp, AqType.BodySm)
+        assertEquals(20.sp, AqType.LineHeightBodySm)
+        assertEquals(12.sp, AqType.BodyXs)
+        assertEquals(16.sp, AqType.LineHeightBodyXs)
         assertEquals(36.sp, AqType.Display)
         assertEquals(40.sp, AqType.DisplayMedium)
         assertEquals(36.sp, AqType.HeadlineLarge)
@@ -83,11 +105,11 @@ class AqTypographyTest {
         assertEquals(40.sp, AqMaterialTypography.headlineMedium.lineHeight)
         assertEquals(AqWeight.Bold, AqMaterialTypography.headlineMedium.fontWeight)
 
-        assertEquals(24.sp, AqMaterialTypography.headlineSmall.fontSize)
-        assertEquals(32.sp, AqMaterialTypography.headlineSmall.lineHeight)
+        assertEquals(22.sp, AqMaterialTypography.headlineSmall.fontSize)
+        assertEquals(28.sp, AqMaterialTypography.headlineSmall.lineHeight)
         assertEquals(AqWeight.Bold, AqMaterialTypography.headlineSmall.fontWeight)
 
-        assertEquals(20.sp, AqMaterialTypography.titleLarge.fontSize)
+        assertEquals(18.sp, AqMaterialTypography.titleLarge.fontSize)
         assertEquals(24.sp, AqMaterialTypography.titleLarge.lineHeight)
         assertEquals(AqWeight.SemiBold, AqMaterialTypography.titleLarge.fontWeight)
 
@@ -99,16 +121,16 @@ class AqTypographyTest {
         assertEquals(20.sp, AqMaterialTypography.titleSmall.lineHeight)
         assertEquals(AqWeight.SemiBold, AqMaterialTypography.titleSmall.fontWeight)
 
-        assertEquals(16.sp, AqMaterialTypography.bodyLarge.fontSize)
-        assertEquals(24.sp, AqMaterialTypography.bodyLarge.lineHeight)
+        assertEquals(18.sp, AqMaterialTypography.bodyLarge.fontSize)
+        assertEquals(28.sp, AqMaterialTypography.bodyLarge.lineHeight)
         assertEquals(AqWeight.Regular, AqMaterialTypography.bodyLarge.fontWeight)
 
-        assertEquals(14.sp, AqMaterialTypography.bodyMedium.fontSize)
-        assertEquals(20.sp, AqMaterialTypography.bodyMedium.lineHeight)
+        assertEquals(16.sp, AqMaterialTypography.bodyMedium.fontSize)
+        assertEquals(24.sp, AqMaterialTypography.bodyMedium.lineHeight)
         assertEquals(AqWeight.Regular, AqMaterialTypography.bodyMedium.fontWeight)
 
-        assertEquals(12.sp, AqMaterialTypography.bodySmall.fontSize)
-        assertEquals(16.sp, AqMaterialTypography.bodySmall.lineHeight)
+        assertEquals(14.sp, AqMaterialTypography.bodySmall.fontSize)
+        assertEquals(20.sp, AqMaterialTypography.bodySmall.lineHeight)
         assertEquals(AqWeight.Regular, AqMaterialTypography.bodySmall.fontWeight)
     }
 
@@ -128,8 +150,30 @@ class AqTypographyTest {
         assertEquals(AqWeight.Regular, AqTextStyles.SectionHeader.fontWeight)
         assertEquals(11.sp, AqTextStyles.Tag.fontSize)
         assertEquals(18.sp, AqTextStyles.Title.fontSize)
-        assertEquals(28.sp, AqTextStyles.Title.lineHeight)
+        assertEquals(24.sp, AqTextStyles.Title.lineHeight)
         assertEquals(AqWeight.SemiBold, AqTextStyles.Title.fontWeight)
+    }
+
+    @Test
+    fun mobile_text_roles_carry_their_published_geometry() {
+        val roles = listOf(
+            AqTextStyles.Heading3Xl to Triple(36f, 48f, AqWeight.Bold),
+            AqTextStyles.Heading2Xl to Triple(32f, 40f, AqWeight.Bold),
+            AqTextStyles.HeadingXl to Triple(22f, 28f, AqWeight.Bold),
+            AqTextStyles.HeadingLg to Triple(18f, 24f, AqWeight.SemiBold),
+            AqTextStyles.HeadingMd to Triple(16f, 20f, AqWeight.SemiBold),
+            AqTextStyles.HeadingSm to Triple(14f, 20f, AqWeight.SemiBold),
+            AqTextStyles.HeadingXs to Triple(12f, 16f, AqWeight.SemiBold),
+            AqTextStyles.BodyLg to Triple(18f, 28f, AqWeight.Regular),
+            AqTextStyles.BodyMd to Triple(16f, 24f, AqWeight.Regular),
+            AqTextStyles.BodySm to Triple(14f, 20f, AqWeight.Regular),
+            AqTextStyles.BodyXs to Triple(12f, 16f, AqWeight.Regular),
+        )
+        roles.forEach { (style, expected) ->
+            assertEquals(expected.first, style.fontSize.value)
+            assertEquals(expected.second, style.lineHeight.value)
+            assertEquals(expected.third, style.fontWeight)
+        }
     }
 
     @Test

@@ -282,3 +282,28 @@ seguimiento del sistema en `AqTheme`**; el default del local debe ser
   `AqContrastPairsTest` cubre los pares renombrados.
 - Verificación: gates de arquitectura, documentos y pruebas de `core/ui` en
   verde. iOS sigue **no verificado** en este entorno.
+
+## 13. Estado tras F3
+
+- Se publican los diez roles `text-*` de `light-mobile` con tamaño,
+  interlineado, peso y tracking completos: `heading-2xl` 32/40 (`:512,:416`),
+  `heading-xl` 22/28 (`:513-514`), `heading-lg` 18/24 (`:515,:426`),
+  `heading-md` 16/20 (`:516,:431`), `heading-sm` 14/20 (`:517,:436`),
+  `heading-xs` 12/16 (`:438,:441`), `body-lg` 18/28 (`:518-519`),
+  `body-md` 16/24 (`:520-521`), `body-sm` 14/20 (`:522-523`) y
+  `body-xs` 12/16 (`:524-525`).
+- `AqText` y `AqHeading` resuelven el rol por tamaño en lugar de aplicar un
+  ratio a cualquier tamaño. El error documentado en H3 (14 sp → 21 sp) queda
+  corregido: `body-sm` usa 20 sp. PV-08 cubre únicamente tamaños arbitrarios.
+- El adaptador Material y `AqTextStyles` dejan de mezclar `heading-lg` con
+  `body-lg`: el rol `Title` pasa de 18/28 a 18/24, y los roles `headline*` /
+  `title*` / `body*` se alinean con la tabla anterior.
+- El peso y el tracking también salen del rol: 700 con `-0.3sp` en
+  `heading-2xl`, 650 con `-0.2sp` en `heading-lg` y 450 con tracking normal
+  en cuerpo (`:303-310,412-461`). La familia Inter estática no interpola;
+  Compose selecciona el corte más cercano, restricción ya documentada en H3.
+- Se mantienen como extensiones, sin equivalente móvil publicado,
+  `HeadlineSmall` 24/32, `TitleLarge` 20/24, `DisplayMedium`, `Amount`,
+  `AmountSymbol`, `RowTitle`, `SectionHeader`, `CaptionSmall` y `Tag`.
+- Verificación: gates y pruebas de `core/ui` en verde. iOS sigue **no
+  verificado** en este entorno.

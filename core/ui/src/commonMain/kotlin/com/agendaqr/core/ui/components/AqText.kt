@@ -10,35 +10,35 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
-import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqTextRoles
 
 /**
  * Encabezado: todo título con semántica `heading()` usa la
  * familia de sistema y los tokens tipográficos del sistema.
  *
  * El tamaño sigue en `sp`: el escalado de fuente del sistema se respeta.
- * El interlineado es PROPORCIONAL al tamaño (nunca el ambiente del
- * cuerpo): sin él, un titular a dos líneas se solapa en cuanto supera
- * 24 sp.
+ * El interlineado, el peso y el tracking vienen del rol publicado más
+ * cercano; un tamaño arbitrario usa el ratio derivado de `heading-2xl`.
  */
 @Composable
 fun AqHeading(
     text: String,
     modifier: Modifier = Modifier,
     size: TextUnit = AqType.Headline,
-    fontWeight: FontWeight = AqWeight.Bold,
+    fontWeight: FontWeight? = null,
     color: Color = AqColor.TextPrimary,
 ) {
+    val role = AqTextRoles.of(size, heading = true)
     Text(
         text = text,
         modifier = modifier.semantics { heading() },
         fontSize = size,
-        lineHeight = TextUnit(size.value * AqType.HeadingLineHeightRatio, TextUnitType.Sp),
+        lineHeight = role.lineHeight,
         fontFamily = AqType.FamilyUi,
-        fontWeight = fontWeight,
+        fontWeight = fontWeight ?: role.weight,
+        letterSpacing = role.tracking,
         color = color,
     )
 }
@@ -60,13 +60,15 @@ fun AqText(
     /** Límite de líneas con elipsis (p. ej. contenido largo plegado). */
     maxLines: Int = Int.MAX_VALUE,
 ) {
+    val role = AqTextRoles.of(size, heading = false)
     Text(
         text = text,
         modifier = modifier,
         fontSize = size,
-        lineHeight = TextUnit(size.value * AqType.BodyLineHeightRatio, TextUnitType.Sp),
+        lineHeight = role.lineHeight,
         fontFamily = AqType.FamilyUi,
-        fontWeight = fontWeight,
+        fontWeight = fontWeight ?: role.weight,
+        letterSpacing = role.tracking,
         color = color,
         textAlign = textAlign,
         maxLines = maxLines,
