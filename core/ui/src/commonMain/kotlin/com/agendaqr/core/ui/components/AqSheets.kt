@@ -98,20 +98,4 @@ fun AqBottomSheet(
     }
 }
 
-/** Overlay modal genérico: reutiliza [AqBottomSheet] para no duplicar scrim ni foco. */
-@Composable
-fun AqModalSheet(
-    title: String,
-    dismissDescription: String,
-    onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    AqBottomSheet(
-        title = title,
-        dismissDescription = dismissDescription,
-        onDismissRequest = onDismissRequest,
-        modifier = modifier,
-        content = content,
-    )
-}
+
