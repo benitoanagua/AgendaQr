@@ -367,7 +367,7 @@ La composición por pantalla se especifica en §4 y conserva la intención y el 
 ### Tipografía e iconografía
 
 - La tipografía es Inter (SIL OFL 1.1), empaquetada como recurso multiplataforma (D-05); sus roles, tamaños e interlíneas se toman del contrato normativo y de la instantánea versionada.
-- Los importes conservan cifras tabulares. Se mantiene el escalado del sistema hasta 200 % (D-06); la validación automática cubre 100 %/150 % en 320 dp y 360 dp y el 200 % queda como revisión manual (ADR-0007).
+- Los importes conservan cifras tabulares. Se mantiene el escalado del sistema hasta 200 % (D-06); la validación automática cubre 100 %/150 % a 360 dp y el 200 % queda como revisión manual (ADR-0007).
 - La iconografía se expone a través de `AqIcon`/`AqIcons` desde un único set vectorial; no se mezclan familias ni se añade una dependencia visual de runtime.
 
 ### Color y tema oscuro

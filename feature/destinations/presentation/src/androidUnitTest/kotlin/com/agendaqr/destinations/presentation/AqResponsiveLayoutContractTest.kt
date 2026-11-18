@@ -33,10 +33,9 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Contrato responsive en un viewport de 360 dp, complementario al contrato
- * de 320 dp: 100/150 % de escala tipográfica, desbordamiento horizontal
- * y geometría de tiles derivada de la unidad calculada (1×1 cuadrado;
- * nunca por debajo de la unidad mínima).
+ * Contrato responsive en un viewport de 360 dp: 100/150 % de escala
+ * tipográfica, desbordamiento horizontal y geometría de tiles derivada de
+ * la unidad calculada (1×1 cuadrado; nunca por debajo de la unidad mínima).
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], qualifiers = "w360dp-h800dp")

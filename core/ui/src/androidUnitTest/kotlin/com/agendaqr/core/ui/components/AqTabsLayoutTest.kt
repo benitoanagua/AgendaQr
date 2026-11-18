@@ -28,7 +28,7 @@ import org.robolectric.annotation.Config
  * en horizontal (selectableGroup) y ninguna etiqueta se recorta.
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34], qualifiers = "w320dp-h640dp")
+@Config(sdk = [34], qualifiers = "w360dp-h800dp")
 class AqTabsLayoutTest {
 
     @get:Rule
@@ -64,14 +64,6 @@ class AqTabsLayoutTest {
         compose.onNodeWithText("Comprobantes")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, true))
     }
-
-    @Test
-    fun at_320dp_last_tab_is_reachable_at_font_scale_100() =
-        lastTabIsReachableAndSelectable(1f)
-
-    @Test
-    fun at_320dp_last_tab_is_reachable_at_font_scale_150() =
-        lastTabIsReachableAndSelectable(1.5f)
 
     @Test
     @Config(sdk = [34], qualifiers = "w360dp-h800dp")

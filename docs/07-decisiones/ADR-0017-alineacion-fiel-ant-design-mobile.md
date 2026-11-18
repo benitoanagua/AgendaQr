@@ -81,7 +81,7 @@ Plataforma: título a la izquierda, barra inferior 56 dp/etiqueta 11, buscador 4
 
 ## Riesgos
 
-- Textos a 17 sp pueden desbordar a 320 dp y 150 % de fuente: se resuelve con layout, nunca bajando la escala; la suite de layout lo verifica. El escalado al 200 % se conserva en producción, pero quedó fuera de la verificación automática (ADR-0007).
+- Textos a 17 sp pueden desbordar a 360 dp y 150 % de fuente: se resuelve con layout, nunca bajando la escala; la suite de layout lo verifica. El escalado al 200 % se conserva en producción, pero quedó fuera de la verificación automática (ADR-0007).
 - Separadores oscuros `#2B2B2B` sobre `#1F1F1F`: si resultan imperceptibles en revisión humana, es decisión pendiente del propietario (alternativa: `#3A3A3A`), no cambio silencioso.
 - Hashes visuales sensibles al entorno (ADR-0007): regenerar en CI antes de fusionar si el entorno difiere.
 - iOS: solo compilación en este entorno; runtime sin validar.

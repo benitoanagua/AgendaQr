@@ -291,7 +291,7 @@ private fun PendingItemCard(
             // Nombre útil, dato del archivo o motivo, y estado. El estado se
             // expresa con una insignia CON texto (el glifo y el tono solo
             // acompañan): la insignia va en su propia línea para no recortar
-            // el ancho del título, tampoco a 320 dp ni con fuente al 200 %.
+            // el ancho del título, tampoco con fuente al 200 %.
             Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
                 AqText(text = pendingItemName(candidate, index), fontWeight = androidx.compose.ui.text.font.FontWeight.Medium)
                 AqText(
