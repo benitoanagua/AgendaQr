@@ -66,7 +66,22 @@ internal object AqPalette {
     val emphasisActive = Color(0xFF002E6A)
     val emphasisSurface = Color(0xFFF0F2FF)
     val emphasisSurfaceHover = Color(0xFFEAEDFF)
+    val emphasisSurfaceActive = Color(0xFFE2E7FF)
     val emphasisOnFill = Color(0xFFFCFDFF)
+    val emphasisOnFillHover = Color(0xFFE2E7FF)
+    val emphasisOnFillActive = Color(0xFFD5DCFF)
+
+    /** `--p-color-text-magic*` y su texto sobre relleno (`:202-204`). */
+    val textMagic = Color(0xFF5700D1)
+    val textMagicSecondary = Color(0xFF7126FF)
+    val magicOnFill = Color(0xFFFDFDFF)
+
+    /** `--p-color-bg-fill-caution` (`:133`). */
+    val cautionFill = Color(0xFFFFE600)
+
+    /** `--p-color-avatar-one-*` (`:255-256`). El texto publicado no llega a AA: PV-07. */
+    val avatarOneFill = Color(0xFFC530C5)
+    val avatarOneOnFill = Color(0xFFFDEFFD)
 
     val info = Color(0xFF003A5A)
     val infoFill = Color(0xFF91D0FF)
@@ -820,12 +835,13 @@ object AqAccents {
     private val Forest = AqAccent("forest", AqPalette.successHover, AqPalette.white)
     private val Red = AqAccent("red", AqPalette.criticalFill, AqPalette.white)
     private val Wine = AqAccent("wine", AqPalette.critical, AqPalette.white)
-    private val Violet = AqAccent("violet", Color(0xFF5700D1), AqPalette.white)
-    private val Indigo = AqAccent("indigo", Color(0xFF7126FF), AqPalette.white)
-    private val Magenta = AqAccent("magenta", Color(0xFFC530C5), AqPalette.white)
+    private val Violet = AqAccent("violet", AqPalette.textMagic, AqPalette.magicOnFill)
+    private val Indigo = AqAccent("indigo", AqPalette.textMagicSecondary, AqPalette.magicOnFill)
+    // PV-07: el texto publicado `avatarOneOnFill` no alcanza 4.5:1 sobre este relleno.
+    private val Magenta = AqAccent("magenta", AqPalette.avatarOneFill, AqPalette.white)
     private val Sky = AqAccent("sky", AqPalette.infoFill, AqPalette.gray900)
     private val Amber = AqAccent("amber", AqPalette.warningFill, AqPalette.gray900)
-    private val Lemon = AqAccent("lemon", Color(0xFFFFE600), AqPalette.gray900)
+    private val Lemon = AqAccent("lemon", AqPalette.cautionFill, AqPalette.gray900)
 
     val Admitted: List<AqAccent> = listOf(
         Blue, Ink, Emerald, Forest, Red, Wine,

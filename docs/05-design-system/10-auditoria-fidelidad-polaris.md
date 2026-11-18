@@ -196,11 +196,13 @@ representación en la escala actual.
 | `C530C5` (`:767`) | `--p-color-avatar-one-bg-fill` (`:255`) | blanco | ~4,6:1 | par de avatar `FDEFFD` (`:256`) → PV |
 | `FFE600` (`:770`) | `--p-color-bg-fill-caution` (`:133`) | `gray900` | ~13,7:1 | ok |
 
-Los cuatro cumplen AA con su texto, pero son literales anónimos: deben pasar a
-constantes nombradas de `AqPalette` con su línea de origen. `AqAccents.System`
-usa `emphasis` (`:757`) y hereda la corrección de F2; reducir la lista de 12 a
-pares verificables cambiaría la asignación `hash % size` (`AqTokens.kt:786`),
-por lo que F6 debe fijar ejemplos conocidos en `AqAccentTest`.
+Los cuatro cumplen AA con su texto. En F2 pasaron a constantes nombradas de
+`AqPalette` con su línea de origen: `textMagic`, `textMagicSecondary`,
+`magicOnFill`, `cautionFill`, `avatarOneFill` y `avatarOneOnFill`.
+`AqAccents.System` usa `emphasis` (`:757`) y hereda la corrección de F2;
+reducir la lista de 12 a pares verificables cambiaría la asignación
+`hash % size` (`AqTokens.kt:786`), por lo que F6 debe fijar ejemplos conocidos
+en `AqAccentTest`.
 
 ## 8. H7 — Tema por defecto
 
@@ -261,3 +263,22 @@ seguimiento del sistema en `AqTheme`**; el default del local debe ser
   `:core:ui:testDebugUnitTest` cubre los pares AA de marca, enlace, foco,
   énfasis y selección en ambos temas. iOS sigue **no verificado** en este
   entorno.
+
+## 12. Estado tras F2
+
+- Se completó la capa primitiva con `emphasisSurfaceActive` (`:98`),
+  `emphasisOnFillHover` (`:200`) y `emphasisOnFillActive` (`:201`), que F1
+  dejó como deuda documentada.
+- Los cuatro literales anónimos de H6 desaparecen de `AqAccents`: Violet e
+  Indigo consumen `textMagic` / `textMagicSecondary` con `magicOnFill`
+  (`:202-204`); Magenta consume `avatarOneFill` (`:255`); Lemon consume
+  `cautionFill` (`:133`). Se mantiene la identidad de 12 pares para no
+  alterar `hash % size` (X-06).
+- PV-07: el texto publicado `avatarOneOnFill` (`:256`) queda ≈4.09:1 sobre
+  `avatarOneFill`; Magenta usa blanco para alcanzar AA y el par insuficiente
+  queda como constante documentada, sin consumo en componentes.
+- `AqAccentTest` fija ahora el par completo de los 13 acentos y comprueba
+  explícitamente PV-07. `AqSchemeTest` pinea las nuevas primitivas y
+  `AqContrastPairsTest` cubre los pares renombrados.
+- Verificación: gates de arquitectura, documentos y pruebas de `core/ui` en
+  verde. iOS sigue **no verificado** en este entorno.
