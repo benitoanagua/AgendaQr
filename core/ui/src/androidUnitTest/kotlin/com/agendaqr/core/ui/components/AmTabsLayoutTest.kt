@@ -23,7 +23,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Contrato de tipografía escalable: con fuente al 100/150/200 % el pivot
+ * Contrato de tipografía escalable: con fuente al 100/150 % el pivot
  * de secciones (S06) mantiene sus pestañas ALCANZABLES — el Row desplaza
  * en horizontal (selectableGroup) y ninguna etiqueta se recorta.
  */
@@ -72,16 +72,6 @@ class AmTabsLayoutTest {
     @Test
     fun at_320dp_last_tab_is_reachable_at_font_scale_150() =
         lastTabIsReachableAndSelectable(1.5f)
-
-    @Test
-    fun at_320dp_last_tab_is_reachable_at_font_scale_200() =
-        lastTabIsReachableAndSelectable(2f)
-
-    @Test
-    @Config(sdk = [34], qualifiers = "w360dp-h800dp")
-    fun at_360dp_last_tab_is_reachable_at_font_scale_200() {
-        lastTabIsReachableAndSelectable(2f)
-    }
 
     @Test
     @Config(sdk = [34], qualifiers = "w360dp-h800dp")

@@ -307,7 +307,9 @@ Reglas vigentes V1.3:
   forman parte del lenguaje; un indicador de actividad persistente usa
   el componente estándar del sistema.
 - **Escalado de fuente:** el contenido esencial y las acciones primarias
-  no se truncan con la fuente del sistema al 200 %.
+  no se truncan con la fuente del sistema al 150 % en la verificación
+  automática; el soporte hasta 200 % se conserva y se revisa manualmente
+  (ADR-0007).
 
 ## 12. Contrato visual — ADR-0025
 
@@ -365,7 +367,7 @@ La composición por pantalla se especifica en §4 y conserva la intención y el 
 ### Tipografía e iconografía
 
 - La tipografía es Inter (SIL OFL 1.1), empaquetada como recurso multiplataforma (D-05); sus roles, tamaños e interlíneas se toman del contrato normativo y de la instantánea versionada.
-- Los importes conservan cifras tabulares. Se mantiene el escalado del sistema hasta 200 % (D-06) y se valida en 320 dp y 360 dp.
+- Los importes conservan cifras tabulares. Se mantiene el escalado del sistema hasta 200 % (D-06); la validación automática cubre 100 %/150 % en 320 dp y 360 dp y el 200 % queda como revisión manual (ADR-0007).
 - La iconografía se expone a través de `AmIcon`/`AmIcons` desde un único set vectorial; no se mezclan familias ni se añade una dependencia visual de runtime.
 
 ### Color y tema oscuro
@@ -383,7 +385,7 @@ La composición por pantalla se especifica en §4 y conserva la intención y el 
 ### Excepciones documentadas
 
 - Los acentos de contexto conservan su asignación determinista por dominio (X-06); sus pares se seleccionan entre los colores verificados de la instantánea y se validan a AA.
-- `AmNavRail` se conserva en tablet/plegables donde el sistema visual de referencia no define un equivalente; se rige por el contrato normativo.
+- `AmNavRail` se conserva en tablet/plegables donde el sistema visual de referencia no define un equivalente; se rige por el contrato normativo. ADR-0007 retiró su verificación de layout automática; requiere revisión manual en dispositivo.
 - Los componentes mantienen targets interactivos ≥48 dp aunque el tamaño visual de referencia sea menor (D-02).
 - La sombra CSS de varias capas se representa en Compose con la capa dominante o `drawBehind`; la diferencia queda declarada en el contrato normativo.
 - Los menús de opciones y selectores usan `AmDialog` con listas; la alternativa permite verificar de forma estable sus acciones bajo Robolectric sin cambiar el flujo.

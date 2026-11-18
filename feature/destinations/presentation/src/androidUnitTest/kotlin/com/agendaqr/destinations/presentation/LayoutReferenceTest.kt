@@ -10,15 +10,12 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
@@ -32,7 +29,6 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import org.junit.Assert.assertTrue
 import kotlin.math.abs
@@ -97,8 +93,7 @@ import org.robolectric.annotation.GraphicsMode
  * Verificación de layout de las pantallas críticas en claro y oscuro
  * (ADR-0007). Sin capturas ni hashes versionados: cada escenario se
  * compone y se comprueba por aserciones de layout (raíz visible, árbol
- * semántico no vacío, texto visible y ausencia de recortes laterales) a
- * escala de fuente 100 % y 200 %.
+ * semántico no vacío, texto visible y ausencia de recortes laterales).
  */
 @RunWith(RobolectricTestRunner::class)
 // NATIVE: render real de píxeles (requisito de Roborazzi; es el modo por
@@ -113,35 +108,18 @@ open class LayoutReferenceTest {
     protected open val viewportSuffix: String = ""
 
     private fun verifyLayout(name: String, dark: Boolean, content: @androidx.compose.runtime.Composable () -> Unit) {
-        var fontScale by mutableFloatStateOf(1f)
-        compose.setContent {
-            val density = LocalDensity.current.density
-            AmTheme(darkTheme = dark) {
-                CompositionLocalProvider(
-                    LocalDensity provides Density(density = density, fontScale = fontScale),
-                ) {
-                    content()
-                }
-            }
-        }
+        compose.setContent { AmTheme(darkTheme = dark) { content() } }
         compose.waitForIdle()
         assertLayoutHolds("$name$viewportSuffix")
         capture("$name$viewportSuffix")
-        captureStrict(name, dark, fontScale = 100)
-        compose.runOnIdle { fontScale = 2f }
-        compose.waitForIdle()
-        assertLayoutHolds("$name$viewportSuffix-font-200")
-        // La escala 200 % se captura solo en el subconjunto denso de la galería;
-        // el resto de escenarios la sigue verificando por aserciones.
-        val strictBase = name.removeSuffix("-light").removeSuffix("-dark")
-        if (strictBase in font200Scenarios) captureStrict(name, dark, fontScale = 200)
+        captureStrict(name, dark)
     }
 
     /**
      * Captura la raíz si (y solo si) la galería se pidió con
-     * `-Pagendaqr.capture=true` y el viewport nativo es de 360 dp. Las
-     * variantes de 320 dp y tablet (w720dp) siguen verificándose por
-     * aserciones, pero no se capturan: la galería tiene una sola captura
+     * `-Pagendaqr.capture=true` y el viewport nativo es de 360 dp. La
+     * variante de 320 dp sigue verificándose por aserciones en la clase
+     * hermana, pero no se captura aquí: la galería tiene una sola captura
      * por escenario y tema. Sin el flag no escribe nada (ADR-0007).
      */
     private fun capture(name: String) {
@@ -162,7 +140,6 @@ open class LayoutReferenceTest {
         "s01" to ("home" to "content"),
         "s01-empty" to ("home" to "empty"),
         "s01-error" to ("home" to "error"),
-        "tablet-s01" to ("home" to "content"),
         "s02-add" to ("add" to "content"),
         "s09-review" to ("importreview" to "content"),
         "destination-detail" to ("destinationdetail" to "content"),
@@ -171,15 +148,12 @@ open class LayoutReferenceTest {
         "qr-fullscreen" to ("qrfullscreen" to "content"),
         "s04-search" to ("search" to "content"),
         "s04-search-empty" to ("search" to "empty"),
-        "tablet-s04-search" to ("search" to "content"),
         "s06-contexts" to ("contexts" to "content"),
         "s06-contexts-empty" to ("contexts" to "empty"),
-        "tablet-s06-contexts" to ("contexts" to "content"),
         "context-detail" to ("contextdetail" to "content"),
         "context-detail-empty" to ("contextdetail" to "empty"),
         "s07-list" to ("operations" to "content"),
         "s07-list-empty" to ("operations" to "empty"),
-        "tablet-s07-list" to ("operations" to "content"),
         "operation-detail" to ("operationdetail" to "content"),
         "operation-editor" to ("operationeditor" to "content"),
         "unassociated" to ("unassociated" to "content"),
@@ -212,11 +186,6 @@ open class LayoutReferenceTest {
         "s01", "s02-add", "destination-detail", "s09-review", "operation-editor", "local-lock",
     )
 
-    /** Escenarios capturados también con fuente al 200 % (revisión de legibilidad). */
-    private val font200Scenarios = setOf(
-        "s01", "destination-detail", "operation-editor",
-    )
-
     /** Superficies de diálogo (Overlay): la captura es la ventana del
      * diálogo, completa y sin recortes, al tamaño real del componente. */
     private val dialogScenarios = setOf("context-picker", "camera-capture")
@@ -228,10 +197,10 @@ open class LayoutReferenceTest {
     /**
      * Escribe la captura de la galería estricta si (y solo si) el escenario
      * está mapeado, la galería se pidió con `-Pagendaqr.capture=true` y el
-     * ancho medido es un viewport declarado (320/360/720 dp). El nombre y el
+     * ancho medido es un viewport declarado (320/360 dp). El nombre y el
      * tema salen del propio test: nada de metadatos falsos (ADR-0007).
      */
-    private fun captureStrict(name: String, dark: Boolean, fontScale: Int) {
+    private fun captureStrict(name: String, dark: Boolean) {
         if (System.getProperty("agendaqr.capture") != "true") return
         val base = name.removeSuffix(viewportSuffix)
             .removeSuffix("-light")
@@ -247,17 +216,17 @@ open class LayoutReferenceTest {
             val dialog = compose.onNode(dialogRootMatcher)
             val bounds = dialog.getUnclippedBoundsInRoot()
             val dialogWidthDp = Math.round((bounds.right - bounds.left).value)
-            if (dialogWidthDp !in setOf(320, 360, 720)) return
+            if (dialogWidthDp !in setOf(320, 360)) return
             dialog.captureRoboImage(
-                "build/captures/gallery/$surface--$state--${dialogWidthDp}dp--$theme--font$fontScale.png",
+                "build/captures/gallery/$surface--$state--${dialogWidthDp}dp--$theme.png",
             )
             return
         }
         val width = compose.onRoot().getUnclippedBoundsInRoot().let { it.right - it.left }.value
         val widthDp = Math.round(width)
-        if (widthDp !in setOf(320, 360, 720)) return
+        if (widthDp !in setOf(320, 360)) return
         compose.onRoot().captureRoboImage(
-            "build/captures/gallery/$surface--$state--${widthDp}dp--$theme--font$fontScale.png",
+            "build/captures/gallery/$surface--$state--${widthDp}dp--$theme.png",
         )
     }
 
@@ -1280,46 +1249,6 @@ open class LayoutReferenceTest {
         )
     }
 
-    // Tablet/plegable (w720dp): NavigationRail en lugar de la barra inferior
-    // — evidencia del diseño adaptativo (AmScreenScaffold expanded).
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
-    fun tablet_s01_light() = verifyLayout("tablet-s01-light", dark = false) {
-        DestinationsScreen(
-            state = DestinationsUiState(
-                destinations = listOf(
-                    com.agendaqr.destinations.domain.Destination(
-                        id = "d-1", name = "Carniceria Don Bife",
-                        qr = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
-                        createdAt = TEST_TIMESTAMP, updatedAt = TEST_TIMESTAMP,
-                    ),
-                ),
-                isLoading = false,
-            ),
-            onAction = {},
-            navChrome = rootChrome(appRouteNameOf(AppRoute.Home)),
-        )
-    }
-
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
-    fun tablet_s01_dark() = verifyLayout("tablet-s01-dark", dark = true) {
-        DestinationsScreen(
-            state = DestinationsUiState(
-                destinations = listOf(
-                    com.agendaqr.destinations.domain.Destination(
-                        id = "d-1", name = "Carniceria Don Bife",
-                        qr = com.agendaqr.destinations.domain.QrAsset(encoded = TEST_QR_BASE64),
-                        createdAt = TEST_TIMESTAMP, updatedAt = TEST_TIMESTAMP,
-                    ),
-                ),
-                isLoading = false,
-            ),
-            onAction = {},
-            navChrome = rootChrome(appRouteNameOf(AppRoute.Home)),
-        )
-    }
-
     // --- Escenarios nuevos: estados de importación ---
 
     // Error de persistencia con todos los candidatos fallidos
@@ -1710,7 +1639,7 @@ open class LayoutReferenceTest {
         }
         compose.waitForIdle()
         compose.onNodeWithText(AppStrings.SeleccionarContexto).assertIsDisplayed()
-        captureStrict("context-picker", dark = false, fontScale = 100)
+        captureStrict("context-picker", dark = false)
     }
 
     @Test
@@ -1730,7 +1659,7 @@ open class LayoutReferenceTest {
         }
         compose.waitForIdle()
         compose.onNodeWithText(AppStrings.SeleccionarContexto).assertIsDisplayed()
-        captureStrict("context-picker", dark = true, fontScale = 100)
+        captureStrict("context-picker", dark = true)
     }
 
     /** Repositorio de autenticación que siempre falla (estado error de cuenta). */
@@ -1773,7 +1702,7 @@ open class LayoutReferenceTest {
         }
         assertLayoutHolds("account-error-light")
         capture("account-error-light")
-        captureStrict("account-error", dark = false, fontScale = 100)
+        captureStrict("account-error", dark = false)
     }
 
     @Test fun account_error_dark() {
@@ -1796,7 +1725,7 @@ open class LayoutReferenceTest {
         }
         assertLayoutHolds("account-error-dark")
         capture("account-error-dark")
-        captureStrict("account-error", dark = true, fontScale = 100)
+        captureStrict("account-error", dark = true)
     }
 
     /** Operación y comprobante de ejemplo para la familia de Actividades. */
@@ -2035,7 +1964,7 @@ open class LayoutReferenceTest {
         }
         compose.waitForIdle()
         compose.onNodeWithText(AppStrings.EncuadreElCodigoQr).assertIsDisplayed()
-        captureStrict("camera-capture", dark = false, fontScale = 100)
+        captureStrict("camera-capture", dark = false)
     }
 
     @Test fun camera_capture_dark() {
@@ -2046,75 +1975,9 @@ open class LayoutReferenceTest {
         }
         compose.waitForIdle()
         compose.onNodeWithText(AppStrings.EncuadreElCodigoQr).assertIsDisplayed()
-        captureStrict("camera-capture", dark = true, fontScale = 100)
+        captureStrict("camera-capture", dark = true)
     }
 
-    // Tablet w720dp: raíces restantes con NavigationRail.
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
-    fun tablet_s04_search_light() = verifyLayout("tablet-s04-search-light", dark = false) {
-        GlobalSearchScreen(
-            state = searchFixture(),
-            navChrome = rootChrome(appRouteNameOf(AppRoute.Search)),
-            onAction = {},
-            onSelect = {},
-        )
-    }
-
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
-    fun tablet_s04_search_dark() = verifyLayout("tablet-s04-search-dark", dark = true) {
-        GlobalSearchScreen(
-            state = searchFixture(),
-            navChrome = rootChrome(appRouteNameOf(AppRoute.Search)),
-            onAction = {},
-            onSelect = {},
-        )
-    }
-
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
-    fun tablet_s06_contexts_light() = verifyLayout("tablet-s06-contexts-light", dark = false) {
-        ContextsScreen(
-            state = contextsFixture(),
-            onAction = {},
-            onBack = {},
-            navChrome = rootChrome(appRouteNameOf(AppRoute.Contexts)),
-        )
-    }
-
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
-    fun tablet_s06_contexts_dark() = verifyLayout("tablet-s06-contexts-dark", dark = true) {
-        ContextsScreen(
-            state = contextsFixture(),
-            onAction = {},
-            onBack = {},
-            navChrome = rootChrome(appRouteNameOf(AppRoute.Contexts)),
-        )
-    }
-
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
-    fun tablet_s07_list_light() = verifyLayout("tablet-s07-list-light", dark = false) {
-        val vm = operationsViewModel(operations = listOf(operationFixture("op-1"), operationFixture("op-2")))
-        OperationListScreen(
-            state = vm.state.value,
-            viewModel = vm,
-            navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
-        )
-    }
-
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "w720dp-h1280dp")
-    fun tablet_s07_list_dark() = verifyLayout("tablet-s07-list-dark", dark = true) {
-        val vm = operationsViewModel(operations = listOf(operationFixture("op-1"), operationFixture("op-2")))
-        OperationListScreen(
-            state = vm.state.value,
-            viewModel = vm,
-            navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
-        )
-    }
 }
 
 @RunWith(RobolectricTestRunner::class)

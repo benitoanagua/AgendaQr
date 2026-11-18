@@ -84,7 +84,8 @@ Resultado: **NO VERIFICADO** (estimación cualitativa, sin medición).
 
 No ejecutada. Requeriría obtener el archivo de la fuente y generar capturas lado a lado
 (fuente de sistema frente a candidata) en claro y oscuro de Inicio, detalle QR, Actividades y
-un formulario, más las comprobaciones de desborde a 320 dp y 200 % de fuente. Mientras la
+un formulario, más las comprobaciones de desborde a 320 dp y 150 % de fuente (el 200 %
+se conserva en producción, pero quedó fuera de la verificación automática, ADR-0007). Mientras la
 licencia no permita el empaquetado, su resultado no cambiaría la recomendación. Se puede
 ejecutar en un parche no commiteado si se obtiene una licencia comercial.
 

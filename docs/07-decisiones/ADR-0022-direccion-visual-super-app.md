@@ -29,7 +29,7 @@ La dirección de alta densidad choca con invariantes de accesibilidad y de plata
 | Rejilla "King Kong" de 4–5 columnas | Spec S01: "sin acciones rápidas duplicadas" | Se implementa en Inicio con **solo las acciones que ya existen** (las del hub del botón flotante) y se retira el botón flotante con hub **de Inicio** para no duplicar. Enmienda a S01. |
 | Etiqueta ≤ 4 caracteres (2 chinos) | Español y escalado al 200 % | Etiqueta corta de una línea (≤ 12 caracteres) a 12 sp; con fuente grande o 320 dp la rejilla pasa a menos columnas o a dos líneas, sin recortes. |
 | Precio rojo en e-commerce | Aquí no hay precios comerciales; el rojo en finanzas se lee como egreso/peligro | El **Importe** adopta la tipografía del Anexo A (28–32, peso 800, tabular, símbolo de moneda más pequeño) y conserva color neutro con signo. La adaptación de dominio queda documentada; pintarlo rojo es un cambio de un token, no lo hace este ADR. |
-| Cuerpo 14, H1 18–20, H2 16, Caption 12 | Escala previa 17/15/13 | Se adopta la escala del Anexo A. Mínimo absoluto 11 sp (badges 12 → 11–12). Todo en `sp`, validado al 200 %. |
+| Cuerpo 14, H1 18–20, H2 16, Caption 12 | Escala previa 17/15/13 | Se adopta la escala del Anexo A. Mínimo absoluto 11 sp (badges 12 → 11–12). Todo en `sp`, validado al 150 % en la verificación automática; el 200 % se conserva y se revisa manualmente (ADR-0007). |
 | Estado de foco "no aplica" | Teclado, D-pad, Switch Access | Sin anillo permanente en táctil; el indicador `AmColor.Focus` se conserva para foco por teclado/D-pad/Switch Access. El estado táctil es escala + háptica. |
 | Easing spring `cubic-bezier(0.34,1.56,0.64,1)`, 200–300 ms, escala 0.95 | Gate: sin duraciones literales; movimiento reducido | Se adopta como tokens de `AmMotion`. Movimiento reducido = duración 0 y escala 1. |
 | Brillo (shimmer) en banners en reposo | Contenido en movimiento > 5 s debe poder detenerse | Brillo de entrada de ≤ 5 s y luego estático; en esqueletos de carga puede repetirse mientras dure la carga. Movimiento reducido = estático. |
@@ -64,7 +64,7 @@ La dirección de alta densidad choca con invariantes de accesibilidad y de plata
 
 - **Contraste con texto blanco sobre el gradiente:** oscurecer ambos extremos vuelve el gradiente rojo profundo → naranja quemado. Mitigación: valores AA de partida fijados por prueba; la alternativa de brillo (texto oscuro sobre el gradiente original) exige decisión del propietario.
 - **Parecido con una app concreta:** se mitiga con la regla de imitar patrones, nunca activos (iconos, ilustraciones, logotipos, textos, colores de marca, composiciones calcadas).
-- **Escala 14/12 y densidad:** se prueba a 320/360 dp y 200 % de fuente; el layout cede antes que la legibilidad.
+- **Escala 14/12 y densidad:** se prueba a 320/360 dp y 100 %/150 % de fuente; el layout cede antes que la legibilidad. El 200 % se conserva en producción pero quedó fuera de la verificación automática (ADR-0007).
 - **Sombras en Compose Multiplatform:** la aproximación de las sombras CSS del Anexo a `shadow` de Compose se documenta; no hay sombras de color exactas y se aproximan con color ambiental/puntual.
 
 ## Consolidación (2026-10-17)

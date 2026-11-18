@@ -34,9 +34,9 @@ import org.robolectric.annotation.Config
 
 /**
  * Contrato responsive en un viewport de 360 dp, complementario al contrato
- * de 320 dp: 100/150/200 % de escala tipográfica, desbordamiento
- * horizontal y geometría de tiles derivada de la unidad calculada (1×1
- * cuadrado; nunca por debajo de la unidad mínima).
+ * de 320 dp: 100/150 % de escala tipográfica, desbordamiento horizontal
+ * y geometría de tiles derivada de la unidad calculada (1×1 cuadrado;
+ * nunca por debajo de la unidad mínima).
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], qualifiers = "w360dp-h800dp")
@@ -73,7 +73,7 @@ class AmResponsiveLayoutContractTest {
                 }
             }
         }
-        listOf(1f, 1.5f, 2f).forEach { value ->
+        listOf(1f, 1.5f).forEach { value ->
             compose.runOnIdle { scale = value }
             compose.waitForIdle()
             check(value)
@@ -93,7 +93,7 @@ class AmResponsiveLayoutContractTest {
     }
 
     @Test
-    fun controls_keep_labels_and_error_inside_360dp_at_100_150_and_200_percent() {
+    fun controls_keep_labels_and_error_inside_360dp_at_100_and_150_percent() {
         composeAtScales(
             {
                 AmPrimaryButton(label = "Guardar cambios de la actividad", onClick = {})

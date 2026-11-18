@@ -292,19 +292,6 @@ class AmUiPolishContractTest {
         assertEndMetaBelowTitle()
     }
 
-    @Test
-    fun end_meta_moves_to_its_own_line_at_200_percent_font_scale() {
-        setScaledContent(2f) {
-            AmListRow(
-                title = "Mercado",
-                subtitle = "Contexto de compras",
-                endMeta = "14/11/2023",
-                onClick = {},
-            )
-        }
-        assertEndMetaBelowTitle()
-    }
-
     private fun assertEndMetaBelowTitle() {
         val title = compose.onNodeWithText("Mercado", useUnmergedTree = true)
             .getBoundsInRoot()

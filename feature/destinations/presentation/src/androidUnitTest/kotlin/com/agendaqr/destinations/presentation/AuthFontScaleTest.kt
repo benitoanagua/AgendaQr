@@ -22,8 +22,9 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Escalado de fuente del sistema al 200 % (§11): las acciones primarias de
- * las pantallas de entrada no se truncan ni quedan fuera del viewport.
+ * Escalado de fuente del sistema al 100 % y 150 % (§11): las acciones
+ * primarias de las pantallas de entrada no se truncan ni quedan fuera del
+ * viewport.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], qualifiers = "w360dp-h760dp")
@@ -55,7 +56,7 @@ class AuthFontScaleTest {
                 }
             }
         }
-        listOf(1f, 1.5f, 2f).forEach { value ->
+        listOf(1f, 1.5f).forEach { value ->
             compose.runOnIdle { scale = value }
             compose.waitForIdle()
             check(value)

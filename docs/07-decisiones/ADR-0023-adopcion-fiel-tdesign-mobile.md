@@ -94,7 +94,9 @@ misma intención y transición funcional.
 3. El gate de diseño pasa y cada excepción ejecutable aparece también en el
    contrato normativo.
 4. Los targets interactivos conservan ≥48 dp, el texto visible ≥11 sp y los
-   layouts se validan a 320/360 dp y escala de fuente 200 %.
+   layouts se validan a 320/360 dp y escala de fuente 100 %/150 %; el 200 %
+   se conserva en producción pero quedó fuera de la verificación automática
+   (ADR-0007).
 5. Cada pantalla sigue el patrón aplicable o registra una desviación con su
    motivo, sin cambiar reglas funcionales.
 6. Las licencias y atribuciones están presentes y las librerías Flutter/Dart no

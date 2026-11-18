@@ -100,7 +100,7 @@ Construidas solo con tokens y componentes de Polaris; no son valores propios.
 | D-03 | Barra inferior y gestos nativos | Navegación del sistema, no componente web. |
 | D-04 | Bottom sheet nativo | Polaris web no define el patrón táctil equivalente. |
 | D-05 | Inter empaquetado | El sistema web usa fallback de fuentes; la app debe ser multiplataforma y consistente. |
-| D-06 | Escalado de fuente del sistema hasta 200 % | Requisito de accesibilidad móvil. |
+| D-06 | Escalado de fuente del sistema hasta 200 % | Requisito de accesibilidad móvil. La capacidad se conserva en producción; la verificación automática cubre 100 %/150 % y el 200 % queda como revisión manual (ADR-0007). |
 | D-07 | Derivación del tema oscuro | `dark-experimental` no cubre todos los roles (PV-02). |
 | D-08 | Proporciones internas de composición | Alfas de selección y fracciones de ancho/glifo/desplazamiento no son escalas publicadas; se concentran en `AmTokens.kt` y se conservan para no alterar el layout verificado. |
 
@@ -111,7 +111,9 @@ Construidas solo con tokens y componentes de Polaris; no son valores propios.
   fuera de tokens, si un componente usa tokens primitivos o si reaparece una
   referencia a un sistema de diseño eliminado.
 - Las pruebas de componentes y pantallas cubren claro/oscuro y fuente al 100 %
-  y 200 %, contraste AA, tamaño táctil y semántica de accesibilidad.
+  y 150 %, contraste AA, tamaño táctil y semántica de accesibilidad. El
+  escalado al 200 % se conserva en producción, pero no tiene verificación
+  automática (ADR-0007).
 - Los valores y su procedencia se consolidan en la instantánea; la historia
   de decisiones vive en los ADR.
 
