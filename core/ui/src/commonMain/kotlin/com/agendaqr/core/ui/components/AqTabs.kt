@@ -28,8 +28,10 @@ import com.agendaqr.core.ui.theme.asTextOn
  */
 
 /**
- * Cabecera de grupo de celdas con altura mínima de 45 dp y semántica
- * `heading()`. El acento de contexto solo tiñe el texto cuando es legible.
+ * Cabecera de grupo de celdas con semántica `heading()`. Título tipográfico
+ * claro sin fondo rectangular decorativo; el acento de contexto solo tiñe
+ * el texto cuando es legible. La separación de sección la aporta el
+ * llamador (p. ej. [AqSection] o un divisor), nunca un contenedor de fondo.
  */
 @Composable
 fun AqSectionHeader(
@@ -37,25 +39,19 @@ fun AqSectionHeader(
     modifier: Modifier = Modifier,
     accent: Color? = null,
 ) {
-    val textColor = accent?.asTextOn(AqColor.SurfaceSecondary, AqColor.EmphasisText)
+    val textColor = accent?.asTextOn(AqColor.Surface, AqColor.EmphasisText)
         ?: AqColor.TextSecondary
-    androidx.compose.foundation.layout.Box(
+    Text(
+        text = text,
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = AqMetrics.SectionHeaderHeight)
-            .background(AqColor.SurfaceSecondary)
-            .padding(horizontal = AqMetrics.ListDividerInset),
-        contentAlignment = androidx.compose.ui.Alignment.CenterStart,
-    ) {
-        Text(
-            text = text,
-            modifier = Modifier.semantics { heading() },
-            style = AqTextStyles.SectionHeader,
-            fontFamily = AqType.FamilyUi,
-            fontWeight = AqWeight.Regular,
-            color = textColor,
-        )
-    }
+            .padding(horizontal = AqMetrics.ListDividerInset)
+            .semantics { heading() },
+        style = AqTextStyles.SectionHeader,
+        fontFamily = AqType.FamilyUi,
+        fontWeight = AqWeight.Regular,
+        color = textColor,
+    )
 }
 
 /**

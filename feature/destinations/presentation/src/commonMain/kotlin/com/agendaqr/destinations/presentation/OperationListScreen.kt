@@ -368,7 +368,7 @@ internal fun UnassociatedScreen(
                         // acción de texto. Sin botones primarios por fila.
                         AqListBody {
                             AqListRow(
-                                title = AppStrings.receiptReceivedTitle,
+                                title = receipt.file.takeIf { it.isNotBlank() } ?: AppStrings.ElementoImportado,
                                 subtitle = formatDate(receipt.createdAt),
                                 onClick = { selectedReceipt = receipt },
                                 meta = {
