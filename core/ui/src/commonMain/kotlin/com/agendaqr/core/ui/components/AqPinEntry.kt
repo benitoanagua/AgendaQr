@@ -40,18 +40,36 @@ fun AqPinDots(
     filled: Int,
     total: Int,
     modifier: Modifier = Modifier,
+    /**
+     * Refuerzo visual del error de PIN (S00). El mensaje y los intentos
+     * siguen siendo texto en la pantalla; este flag solo cambia el tono
+     * de los puntos (Danger) para feedback inmediato tipo auth-code móvil.
+     */
+    error: Boolean = false,
 ) {
+    val filledColor = if (error) AqColor.Danger else AqColor.EmphasisFill
+    // En error, el hueco vacío usa borde Danger sobre superficie; el lleno
+    // usa relleno Danger. Nunca se elimina el mensaje textual de la pantalla.
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(AqSpacing.Md),
     ) {
         repeat(total) { index ->
+            val isFilled = index < filled
             Box(
                 modifier = Modifier
                     .size(AqMetrics.PinDotSize)
-                    .background(
-                        if (index < filled) AqColor.EmphasisFill else AqColor.SurfaceContainerHighest,
-                        AqShapes.Pill,
+                    .then(
+                        if (error && !isFilled) {
+                            Modifier
+                                .border(AqMetrics.Border, AqColor.Danger, AqShapes.Pill)
+                                .background(AqColor.Surface, AqShapes.Pill)
+                        } else {
+                            Modifier.background(
+                                if (isFilled) filledColor else AqColor.SurfaceContainerHighest,
+                                AqShapes.Pill,
+                            )
+                        },
                     ),
             )
         }
