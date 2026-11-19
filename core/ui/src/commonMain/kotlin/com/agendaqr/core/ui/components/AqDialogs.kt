@@ -40,6 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
@@ -152,6 +153,12 @@ fun AqDialog(
      * irreversible.
      */
     destructive: Boolean = false,
+    /**
+     * Pickers can use the available mobile width to preserve 48 dp calendar
+     * targets; ordinary dialogs retain the compact Polaris width by default.
+     */
+    fullWidth: Boolean = false,
+    contentHorizontalPadding: Dp = AqSpacing.Lg,
 ) {
     val dismissFocus = remember { androidx.compose.ui.focus.FocusRequester() }
     if (destructive) {
@@ -169,10 +176,14 @@ fun AqDialog(
             // Ancho objetivo: 75 % de la ventana con tope de contenido;
             // el mínimo del popup prevalece (como el min-width del CSS de
             // la referencia en pantallas estrechas).
-            val dialogWidth = minOf(
-                maxWidth * AqMetrics.DialogMaxWidthFraction,
-                AqMetrics.ContentMaxWidth,
-            ).coerceAtLeast(AqMetrics.DialogMinWidth)
+            val dialogWidth = if (fullWidth) {
+                minOf(maxWidth - AqSpacing.Md, AqMetrics.ContentMaxWidth)
+            } else {
+                minOf(
+                    maxWidth * AqMetrics.DialogMaxWidthFraction,
+                    AqMetrics.ContentMaxWidth,
+                ).coerceAtLeast(AqMetrics.DialogMinWidth)
+            }
             Surface(
                 modifier = modifier
                     .width(dialogWidth)
@@ -200,7 +211,7 @@ fun AqDialog(
                     )
                     Column(
                         modifier = Modifier
-                            .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Md)
+                            .padding(horizontal = contentHorizontalPadding, vertical = AqSpacing.Md)
                             .fillMaxWidth(),
                     ) {
                         if (content != null) {

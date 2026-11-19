@@ -7,7 +7,8 @@ import com.agendaqr.core.ui.theme.AqMetrics
 
 /**
  * Muestra el contenido de un comprobante ya cargado en memoria.
- * Android decodifica imágenes; otros targets muestran un marcador honesto.
+ * Las imágenes se decodifican por target; Android e iOS renderizan PDF con
+ * sus APIs nativas, manteniendo un fallback textual si el documento falla.
  */
 @Composable
 expect fun ComprobantePreview(

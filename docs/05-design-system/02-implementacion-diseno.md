@@ -110,12 +110,20 @@ introducir afirmaciones monetarias. El QR a pantalla completa continúa sobre
 brillo siguen siendo `expect/actual` en la capa feature.
 
 Los selectores de fecha y hora (`AqDatePickerDialog` y `AqTimePickerDialog`)
-usan ahora la anatomía de `AqDialog` para título, superficie, acciones y
-comportamiento modal. El calendario y la entrada numérica siguen usando los
-controles Material 3 como puente de plataforma; por esa diferencia de anatomía
-visual, C9 y C10 permanecen `PARTIAL` en la matriz. La selección de fecha
-conserva el contrato de medianoche UTC y la hora se combina con la zona del
-dispositivo en la feature.
+usan `AqDialog` y controles propios Compose. El calendario expone selección de
+día, navegación por mes, nombres de mes/día localizados y día seleccionado en
+semántica de radio; devuelve medianoche UTC. La hora ofrece campos numéricos
+con IME, validación inclusiva 00:00–23:59 y formato 12/24 horas; la feature
+combina el día con la zona local. `AqDesignSystemGallery` permite abrir ambos
+selectores. Las pruebas Android cubren selección UTC, confirmación, descarte,
+validación y conversión AM/PM; iOS se compila desde `commonMain`.
+
+El visor de comprobantes renderiza PDF en la capa feature: `PdfRenderer` en
+Android compone las páginas de forma diferida en una lista vertical y PDFKit
+presenta el documento continuo en iOS. El fallback textual permanece para
+PDFs inválidos o vacíos. Robolectric no implementa `PdfDocument`/`PdfRenderer`,
+así que su prueba cubre ese fallback; el render de un PDF válido requiere
+validación runtime Android, y PDFKit requiere validación runtime iOS.
 
 ## 4. Reglas de pantalla
 

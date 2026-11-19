@@ -447,6 +447,10 @@ internal fun OperationEditorScreen(
             confirmLabel = AppStrings.Elegir,
             dismissLabel = AppStrings.Cancelar,
             title = AppStrings.Fecha,
+            monthNames = AppStrings.MonthNames,
+            weekdays = AppStrings.WeekdaysShort,
+            previousMonthLabel = AppStrings.MesAnterior,
+            nextMonthLabel = AppStrings.MesSiguiente,
         )
     }
     if (showTimePicker) {
@@ -471,6 +475,9 @@ internal fun OperationEditorScreen(
             confirmLabel = AppStrings.Elegir,
             dismissLabel = AppStrings.Cancelar,
             title = AppStrings.Hora,
+            hourLabel = AppStrings.Hora,
+            minuteLabel = AppStrings.Minutos,
+            invalidTimeMessage = AppStrings.HoraInvalida,
         )
     }
 

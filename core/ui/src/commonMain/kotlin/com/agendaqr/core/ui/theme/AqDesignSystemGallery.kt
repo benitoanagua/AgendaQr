@@ -576,10 +576,42 @@ private fun AqSurfacesPreview() {
             }
         }
         AqText(
-            text = "Dialog / Bottom Sheet (requieren estado de visibilidad; se muestran en pantalla real)",
+            text = "Date Picker y Time Picker — calendario Polaris y entrada numérica",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
+        val showDatePicker = remember { mutableStateOf(false) }
+        val showTimePicker = remember { mutableStateOf(false) }
+        AqSecondaryButton("Abrir calendario", onClick = { showDatePicker.value = true })
+        AqSecondaryButton("Abrir selector de hora", onClick = { showTimePicker.value = true })
+        if (showDatePicker.value) {
+            AqDatePickerDialog(
+                selectedDateUtc = null,
+                title = "Fecha",
+                onConfirm = { showDatePicker.value = false },
+                onDismiss = { showDatePicker.value = false },
+                confirmLabel = "Elegir",
+                dismissLabel = "Cancelar",
+                monthNames = listOf("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"),
+                weekdays = listOf("domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"),
+                previousMonthLabel = "Mes anterior",
+                nextMonthLabel = "Mes siguiente",
+            )
+        }
+        if (showTimePicker.value) {
+            AqTimePickerDialog(
+                initialHour = 14,
+                initialMinute = 30,
+                title = "Hora",
+                onConfirm = { _, _ -> showTimePicker.value = false },
+                onDismiss = { showTimePicker.value = false },
+                confirmLabel = "Elegir",
+                dismissLabel = "Cancelar",
+                hourLabel = "Hora",
+                minuteLabel = "Minutos",
+                invalidTimeMessage = "Introduce una hora entre 00:00 y 23:59",
+            )
+        }
         AqText(
             text = "Expansion Panel — colapsado y expandido",
             color = AqColor.TextPrimary,

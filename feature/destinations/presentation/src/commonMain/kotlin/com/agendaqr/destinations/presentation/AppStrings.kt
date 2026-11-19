@@ -17,6 +17,12 @@ package com.agendaqr.destinations.presentation
  * paso previo obligatorio cuando V2 necesite idiomas.
  */
 internal object AppStrings {
+    val MonthNames = listOf("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre")
+    val WeekdaysShort = listOf("domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado")
+    val MesAnterior = "Mes anterior"
+    val MesSiguiente = "Mes siguiente"
+    val Minutos = "Minutos"
+    val HoraInvalida = "Introduce una hora entre 00:00 y 23:59"
     val AbriendoComprobante = "Abriendo comprobante…"
     val ActividadReciente = "Actividad reciente"
     val ActividadesRecientes = "Actividades recientes"
@@ -52,6 +58,7 @@ internal object AppStrings {
     val shareFromAnotherAppHint = "Comparte una imagen o PDF con Agenda QR desde otra app."
     val Compartir = "Compartir"
     val Comprobante = "Comprobante"
+    val Pagina = "Página"
     val receiptReceivedTitle = "Comprobante recibido"
     val Comprobante2 = "Comprobante · "
     val ComprobantesSinAsociar = "Comprobantes sin asociar"

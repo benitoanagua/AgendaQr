@@ -15,6 +15,7 @@ android {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(libs.kotlinx.datetime)
             implementation(compose.material3)
             // Tokens de movimiento (Easing) y las transiciones de
             // superficie consumen androidx.compose.animation(.core).
