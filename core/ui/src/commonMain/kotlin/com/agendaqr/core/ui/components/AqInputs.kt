@@ -113,6 +113,7 @@ fun AqTextField(
                 AqIcon(
                     imageVector = glyph,
                     contentDescription = null,
+                    size = AqMetrics.IconSizeCompact,
                     tint = when {
                         isError -> AqColor.Danger
                         focused -> AqColor.Focus
@@ -241,6 +242,7 @@ fun AqMultilineTextField(
                 AqIcon(
                     imageVector = glyph,
                     contentDescription = null,
+                    size = AqMetrics.IconSizeCompact,
                     tint = when {
                         isError -> AqColor.Danger
                         focused -> AqColor.Focus

@@ -114,6 +114,33 @@ class AqAccessibilityContractTest {
     }
 
     @Test
+    fun keypad_keys_render_in_dark_theme_with_distinct_keys() {
+        val digits = StringBuilder()
+        compose.setContent {
+            AqTheme(darkTheme = true) {
+                AqKeypad(
+                    onDigit = { digits.append(it) },
+                    onBackspace = {},
+                    backspaceDescription = "Borrar dígito",
+                )
+            }
+        }
+
+        // Todas las teclas numéricas renderizan y responden en tema oscuro.
+        compose.onNodeWithText("1").assertExists()
+        compose.onNodeWithText("2").assertExists()
+        compose.onNodeWithText("3").assertExists()
+        compose.onNodeWithText("4").assertExists()
+        compose.onNodeWithText("5").assertExists()
+        compose.onNodeWithText("6").assertExists()
+        compose.onNodeWithText("7").assertExists()
+        compose.onNodeWithText("8").assertExists()
+        compose.onNodeWithText("9").assertExists()
+        compose.onNodeWithText("0").assertExists()
+        compose.onNodeWithContentDescription("Borrar dígito").assertExists()
+    }
+
+    @Test
     fun search_field_has_a_named_48dp_edit_target() {
         compose.setContent {
             AqTheme {

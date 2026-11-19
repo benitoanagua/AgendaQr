@@ -613,7 +613,7 @@ fun AqFilterChip(
                 .then(
                     if (selected) {
                         Modifier.background(AqColor.SelectionFill, AqShapes.Pill)
-                            .border(AqMetrics.Border, AqColor.SelectionBorder, AqShapes.Pill)
+                            .border(AqMetrics.Border, AqColor.Border, AqShapes.Pill)
                     } else {
                         Modifier.background(AqColor.SurfaceSecondary, AqShapes.Pill)
                     },
@@ -714,7 +714,7 @@ fun AqSegmentedControl(
                     .then(
                         if (selected && optionEnabled) {
                             Modifier.background(AqColor.SelectionSurface, AqShapes.Medium)
-                                .border(AqMetrics.Border, AqColor.SelectionBorder, AqShapes.Medium)
+                                .border(AqMetrics.Border, AqColor.Border, AqShapes.Medium)
                         } else {
                             Modifier
                         },
