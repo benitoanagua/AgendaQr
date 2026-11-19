@@ -23,7 +23,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Contrato de tipografía escalable: con fuente al 100/150 % el pivot
+ * Contrato de tipografía escalable: con fuente al 100/150/200 % el pivot
  * de secciones (S06) mantiene sus pestañas ALCANZABLES — el Row desplaza
  * en horizontal (selectableGroup) y ninguna etiqueta se recorta.
  */
@@ -34,8 +34,9 @@ class AqTabsLayoutTest {
     @get:Rule
     val compose = createComposeRule()
 
-    private fun composePivotAt(fontScale: Float) {
+    private fun composePivotAt(initialFontScale: Float): (Float) -> Unit {
         var selected by mutableStateOf(0)
+        var fontScale by mutableStateOf(initialFontScale)
         compose.setContent {
             AqTheme {
                 CompositionLocalProvider(
@@ -50,10 +51,17 @@ class AqTabsLayoutTest {
             }
         }
         compose.waitForIdle()
+        return { scale ->
+            compose.runOnIdle {
+                fontScale = scale
+                selected = 0
+            }
+            compose.waitForIdle()
+        }
     }
 
-    private fun lastTabIsReachableAndSelectable(scale: Float) {
-        composePivotAt(scale)
+    private fun lastTabIsReachableAndSelectable(setFontScale: (Float) -> Unit, scale: Float) {
+        setFontScale(scale)
         // La última pestaña se alcanza aunque desborde el ancho: el pivot
         // desplaza en horizontal (performScrollTo falla sin scrollable).
         compose.onNodeWithText("Comprobantes")
@@ -72,5 +80,13 @@ class AqTabsLayoutTest {
         compose.onNodeWithText("QR")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab))
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun last_tab_remains_reachable_and_selectable_at_font_scales_up_to_200() {
+        val setFontScale = composePivotAt(1f)
+        listOf(1f, 1.5f, 2f).forEach { scale ->
+            lastTabIsReachableAndSelectable(setFontScale, scale)
+        }
     }
 }
