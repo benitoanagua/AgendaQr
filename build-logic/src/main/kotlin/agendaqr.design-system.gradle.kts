@@ -378,7 +378,7 @@ tasks.register("verifyDocs") {
             val content = file.readText()
             val isAdr = file.name.startsWith("ADR-")
             markers.forEach { (pattern, desc) ->
-                Regex(pattern).findAll(content).forEach { match ->
+                Regex(pattern).findAll(content).forEach { _ ->
                     // ADRs can mention "Ronda" in their context sections.
                     if (!isAdr || desc == "TODO" || desc == "FIXME") {
                         violations.add("transient: ${file.relativeTo(docs)} has $desc")

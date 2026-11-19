@@ -1,6 +1,6 @@
 package com.agendaqr.destinations.data
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals

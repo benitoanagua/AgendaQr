@@ -22,7 +22,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import com.agendaqr.core.ui.components.AqIconButton
 import com.agendaqr.core.ui.components.AqPrimaryButton
 import com.agendaqr.core.ui.components.AqScreenScaffold
-import com.agendaqr.core.ui.components.AqBannerAction
 import com.agendaqr.core.ui.components.AqStatusBanner
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextAction
@@ -128,7 +127,7 @@ internal fun AuthForm(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next,
                     capitalization = KeyboardCapitalization.None,
-                    autoCorrect = false,
+                    autoCorrectEnabled = false,
                 ),
                 isError = emailError,
                 errorMessage = if (submitted && !isValidEmail(state.email)) AppStrings.IngresaUnCorreoValido else null,
@@ -150,7 +149,6 @@ internal fun AuthForm(
                 },
                 isError = passwordError,
                 errorMessage = if (submitted && state.password.length < 6) AppStrings.Minimo6Caracteres else null,
-                helperMessage = if (!passwordError) AppStrings.Minimo6Caracteres else null,
                 trailing = {
                     AqIconButton(
                         contentDescription = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
@@ -167,24 +165,25 @@ internal fun AuthForm(
             )
         }
 
-        // Error: banner con acción de recuperación.
+        // Error: banner. Los errores de credenciales son una sola línea y sin
+        // acción: editar cualquier campo ya limpia el error.
         state.errorMessage?.let { err ->
             val isAuthError = state.errorFlow == ErrorFlow.SignIn || state.errorFlow == ErrorFlow.SignUp
-            val (action, dismiss) = if (isAuthError) {
-                AqBannerAction(AppStrings.RevisarDatos) { submitted = true; onClearError() } to null
+            if (isAuthError) {
+                AqStatusBanner(message = err.what, tone = AqTone.Danger)
             } else {
-                err.bannerActions(
+                val (action, dismiss) = err.bannerActions(
                     onRetry = onClearError,
                     onClear = onClearError,
                 )
+                AqStatusBanner(
+                    title = err.what,
+                    message = err.dataStatus,
+                    tone = AqTone.Danger,
+                    action = action,
+                    dismiss = dismiss,
+                )
             }
-            AqStatusBanner(
-                title = err.what,
-                message = err.dataStatus,
-                tone = AqTone.Danger,
-                action = action,
-                dismiss = dismiss,
-            )
         }
 
         // Confirmación (registro exitoso).

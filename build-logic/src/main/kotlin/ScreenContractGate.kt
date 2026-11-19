@@ -596,11 +596,11 @@ fun screenContractViolations(
     } ?: emptySet()
 
     val sealedEntries = mutableMapOf<String, Triple<String, String, Set<String>>>()
-    flowRouteFiles.forEach { path ->
-        val text = read(path) ?: return@forEach
-        sealedDecl.findAll(text).forEach { match ->
+    flowRouteFiles.forEach fileLoop@{ path ->
+        val text = read(path) ?: return@fileLoop
+        sealedDecl.findAll(text).forEach matchLoop@{ match ->
             val name = match.groupValues[1]
-            if (name !in routeSealedNames) return@forEach
+            if (name !in routeSealedNames) return@matchLoop
             val entries = Regex("data (?:object|class) (\\w+)[^\\n]*: *$name\\b")
                 .findAll(text).map { it.groupValues[1] }.toSet()
             sealedEntries[name] = Triple(path, text, entries)
@@ -736,12 +736,12 @@ fun exceptionUsageViolations(
     productionKotlin: List<Pair<String, String>>,
 ): List<String> = buildList {
     registry.forEach { (id, rules) ->
-        rules.forEach { rule ->
+        rules.forEach ruleLoop@{ rule ->
             val (kind, file) = rule.split(":", limit = 2).let { it[0] to it.getOrElse(1) { "" } }
             val source = productionKotlin.firstOrNull { it.first.endsWith("/$file") }?.second
             if (source == null) {
                 add("excepción-$id: el archivo registrado no existe: $file")
-                return@forEach
+                return@ruleLoop
             }
             val used = when (kind) {
                 "border" -> source.contains(".border(") || Regex("\\bBorderStroke\\s*\\(").containsMatchIn(source)

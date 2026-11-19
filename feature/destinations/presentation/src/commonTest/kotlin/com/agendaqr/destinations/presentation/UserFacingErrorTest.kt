@@ -101,39 +101,39 @@ class UserFacingErrorTest {
     fun import_read_error_never_leaks_the_technical_message() {
         val error = userFacingError(SecurityExceptionLike("Permission Denial: uid=10190"), ErrorFlow.ImportRead)
         val shown = error.display()
-        assertTrue(shown.contains("No se pudo abrir el archivo compartido."))
+        assertTrue(shown.contains(AppStrings.ErrorImportReadWhat))
         assertFalse(shown.contains("Permission"), "El texto técnico no debe mostrarse: $shown")
         assertFalse(shown.contains("uid="))
-        assertEquals("Elegir otra imagen", error.action.label)
-        assertTrue(shown.contains("Nada se guardó."), "Debe decir qué pasó con los datos")
+        assertEquals(AppStrings.ErrorElegirOtraImagen, error.action.label)
+        assertTrue(shown.contains(AppStrings.ErrorImportReadData), "Debe decir qué pasó con los datos")
     }
 
     @Test
     fun sign_in_network_error_tells_the_user_to_check_connection() {
         val error = userFacingError(ConnectTimeoutLike(), ErrorFlow.SignIn)
-        assertTrue(error.display().contains("Revisa tu conexión"))
-        assertEquals("Reintentar", error.action.label)
+        assertTrue(error.display().contains(AppStrings.ErrorSignInNetworkWhat))
+        assertEquals(AppStrings.ErrorReintentar, error.action.label)
     }
 
     @Test
     fun sign_in_auth_error_is_never_the_raw_library_message() {
         val error = userFacingError(RestExceptionLike("Invalid login credentials"), ErrorFlow.SignIn)
         val shown = error.display()
-        assertTrue(shown.contains("No pudimos iniciar sesión"))
+        assertTrue(shown.contains(AppStrings.ErrorSignInWhat))
         assertFalse(shown.contains("Invalid login credentials"))
         assertFalse(shown.contains("RestException"))
         // Credenciales inválidas: no se reenvían los mismos datos; solo descartar.
-        assertEquals("Cerrar", error.action.label)
+        assertEquals(AppStrings.ErrorCerrar, error.action.label)
     }
 
     @Test
     fun save_error_says_what_happened_to_the_data() {
         val error = userFacingError(GenericAppError("disk on fire"), ErrorFlow.SaveOperation)
         val shown = error.display()
-        assertTrue(shown.contains("No pudimos guardar la actividad."))
-        assertTrue(shown.contains("Tus cambios siguen en la pantalla."))
+        assertTrue(shown.contains(AppStrings.ErrorSaveOperationWhat))
+        assertTrue(shown.contains(AppStrings.ErrorSaveOperationData))
         assertFalse(shown.contains("disk on fire"))
-        assertEquals("Reintentar", error.action.label)
+        assertEquals(AppStrings.ErrorReintentar, error.action.label)
     }
 
     @Test
@@ -182,8 +182,8 @@ class UserFacingErrorTest {
         // Regresión del literal inglés "Operation failed".
         assertFalse(error.display().contains("Operation failed"))
         assertFalse(error.display().contains("sql"))
-        assertTrue(error.display().contains("No pudimos guardar el QR."))
-        assertEquals("Reintentar", error.action.label)
+        assertTrue(error.display().contains(AppStrings.ErrorSaveQrWhat))
+        assertEquals(AppStrings.ErrorReintentar, error.action.label)
     }
 
     @Test
@@ -226,8 +226,8 @@ class UserFacingErrorTest {
         waitUntil { vm.state.value.error != null }
         val error = vm.state.value.error
         assertNotNull(error)
-        assertTrue(error.display().contains("No pudimos guardar la actividad."))
-        assertEquals("Reintentar", error.action.label)
+        assertTrue(error.display().contains(AppStrings.ErrorSaveOperationWhat))
+        assertEquals(AppStrings.ErrorReintentar, error.action.label)
     }
 
     @Test
@@ -252,8 +252,8 @@ class UserFacingErrorTest {
         val error = viewModel.state.value.errorMessage
         assertNotNull(error)
         assertFalse(error.display().contains("Invalid login credentials"))
-        assertTrue(error.display().contains("No pudimos iniciar sesión"))
-        assertEquals("Cerrar", error.action.label)
+        assertTrue(error.display().contains(AppStrings.ErrorSignInWhat))
+        assertEquals(AppStrings.ErrorCerrar, error.action.label)
         assertEquals(ErrorFlow.SignIn, viewModel.state.value.errorFlow)
     }
 

@@ -147,6 +147,18 @@ fun AqTextField(
                 visualTransformation = visualTransformation,
                 interactionSource = interactionSource,
                 cursorBrush = SolidColor(if (isError) AqColor.Danger else AqColor.Focus),
+                // El campo mide al menos ControlMinSize, pero BasicTextField
+                // ancla el texto arriba: se centra verticalmente dentro de
+                // esa altura mínima para que el texto no quede pegado arriba.
+                decorationBox = { innerTextField ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                            .padding(vertical = AqSpacing.Sm),
+                        contentAlignment = Alignment.CenterStart,
+                    ) { innerTextField() }
+                },
             )
             trailing?.invoke()
         }
@@ -277,6 +289,18 @@ fun AqMultilineTextField(
                 visualTransformation = visualTransformation,
                 interactionSource = interactionSource,
                 cursorBrush = SolidColor(if (isError) AqColor.Danger else AqColor.Focus),
+                // El campo mide al menos ControlMinSize, pero BasicTextField
+                // ancla el texto arriba: se centra verticalmente dentro de
+                // esa altura mínima para que el texto no quede pegado arriba.
+                decorationBox = { innerTextField ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                            .padding(vertical = AqSpacing.Sm),
+                        contentAlignment = Alignment.CenterStart,
+                    ) { innerTextField() }
+                },
             )
             trailing?.invoke()
         }

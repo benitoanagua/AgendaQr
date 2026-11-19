@@ -77,7 +77,6 @@ internal fun AccountScreen(
             AuthState.SignedOut -> AuthForm(
                 heading = null,
                 description = AppStrings.ConectarCuentaDescripcion,
-                descriptionDetail = AppStrings.ConectarCuentaDetalle,
                 state = authState,
                 onEmailChanged = authViewModel::setEmail,
                 onPasswordChanged = authViewModel::setPassword,

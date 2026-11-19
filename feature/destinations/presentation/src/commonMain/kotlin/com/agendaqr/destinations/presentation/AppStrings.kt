@@ -165,7 +165,6 @@ internal object AppStrings {
     /** Estado explícito cuando el QR almacenado no puede mostrarse como imagen. */
     val QrNoSePudoMostrar = "No se pudo mostrar el código"
     val Reintentar = "REINTENTAR"
-    val RevisarDatos = "Revisar datos"
     val ReintentarAhora = "Reintentar ahora"
     val ReintentarClasificacion = "Reintentar clasificación"
     val ResultadoDeImportacion = "Resultado de importación"
@@ -247,6 +246,8 @@ internal object AppStrings {
     val Mostrar = "Mostrar"
     val Ocultar = "Ocultar"
     val IniciandoSesion = "Iniciando sesión…"
+    /** Confirmación tras registro cuando el proveedor exige verificar el correo. */
+    val RevisaTuCorreoParaConfirmar = "Revisa tu correo para confirmar tu cuenta."
     val AsociarAhora = "Asociar ahora"
     val AunNoHayOperaciones = "Aún no hay actividades"
     val NoHayCoincidencias = "No hay coincidencias"
@@ -399,9 +400,7 @@ internal object AppStrings {
     val BorrarDigito = "Borrar dígito"
     val CuentaYRespaldo = "Cuenta y respaldo"
     val CuentaConectada = "Cuenta conectada"
-    val ConectarCuentaDescripcion = "Conectar una cuenta es opcional."
-    /** Segunda línea de la cuenta opcional: que el dato sigue local. */
-    val ConectarCuentaDetalle = "Habilita respaldo y sincronización; tus datos siguen aquí."
+    val ConectarCuentaDescripcion = "Opcional: respalda y sincroniza tus datos."
     val DesconectarCuenta = "Desconectar cuenta"
     val DatosLocalesSeConservan = "Al desconectar, tus datos locales se conservan aquí."
     // ------------------------------------------------------------------
@@ -442,10 +441,10 @@ internal object AppStrings {
     val ErrorSearchWhat = "No pudimos buscar."
     val ErrorSearchData = "Tu información está a salvo."
     val ErrorSignInNetworkWhat = "No pudimos conectarnos. Revisa tu conexión."
-    val ErrorSignInWhat = "No pudimos iniciar sesión. Revisa tu correo y contraseña."
+    val ErrorSignInWhat = "Correo o contraseña incorrectos."
     val ErrorSignInData = "Tus credenciales no se guardaron."
     val ErrorSignUpNetworkWhat = "No pudimos conectarnos. Revisa tu conexión."
-    val ErrorSignUpWhat = "No pudimos crear la cuenta. Revisa tus datos."
+    val ErrorSignUpWhat = "No pudimos crear la cuenta."
     val ErrorSignUpData = "No se creó ninguna cuenta."
     val ErrorSignOutWhat = "No pudimos cerrar sesión."
     val ErrorSignOutData = "Tu información está guardada en el dispositivo."

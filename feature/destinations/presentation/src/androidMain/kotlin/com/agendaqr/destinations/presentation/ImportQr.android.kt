@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.core.content.IntentCompat
 import android.content.Context
 import com.agendaqr.destinations.domain.QrAsset
 import kotlinx.coroutines.CoroutineScope
@@ -137,10 +138,14 @@ object AgendaQrAndroidImportLauncher {
     fun handleShare(activity: Activity, intent: android.content.Intent?) {
         when (intent?.action) {
             android.content.Intent.ACTION_SEND -> {
-                intent.getParcelableExtra<Uri>(android.content.Intent.EXTRA_STREAM)?.let { importSharedUri(it, activity) }
+                IntentCompat.getParcelableExtra(
+                    intent, android.content.Intent.EXTRA_STREAM, Uri::class.java,
+                )?.let { importSharedUri(it, activity) }
             }
             android.content.Intent.ACTION_SEND_MULTIPLE -> {
-                intent.getParcelableArrayListExtra<Uri>(android.content.Intent.EXTRA_STREAM)?.let { decodeMultiple(it, activity) }
+                IntentCompat.getParcelableArrayListExtra(
+                    intent, android.content.Intent.EXTRA_STREAM, Uri::class.java,
+                )?.let { decodeMultiple(it, activity) }
             }
         }
     }

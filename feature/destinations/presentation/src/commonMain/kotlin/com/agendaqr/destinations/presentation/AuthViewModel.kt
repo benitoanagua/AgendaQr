@@ -89,7 +89,7 @@ class AuthViewModel(
                     _state.value = _state.value.copy(
                         isSubmitting = false,
                         confirmationMessage = if (result is SignUpResult.ConfirmationRequired) {
-                            "Revisa tu correo para confirmar tu cuenta."
+                            AppStrings.RevisaTuCorreoParaConfirmar
                         } else {
                             null
                         },

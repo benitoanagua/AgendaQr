@@ -38,12 +38,12 @@ class StateRestorationTest {
         }
         compose.waitForIdle()
         // Intento con datos inválidos: los errores de validación aparecen.
-        compose.onNodeWithText("Iniciar sesión").performClick()
+        compose.onNodeWithText(AppStrings.IniciarSesion).performClick()
         compose.waitForIdle()
-        compose.onNodeWithText("Ingresa un correo válido").assertExists()
+        compose.onNodeWithText(AppStrings.IngresaUnCorreoValido).assertExists()
         // Recreación (rotación/muerte de proceso): el intento se recuerda.
         restoration.emulateSavedInstanceStateRestore()
         compose.waitForIdle()
-        compose.onNodeWithText("Ingresa un correo válido").assertExists()
+        compose.onNodeWithText(AppStrings.IngresaUnCorreoValido).assertExists()
     }
 }

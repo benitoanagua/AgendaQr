@@ -10,6 +10,7 @@ import com.agendaqr.destinations.domain.DestinationRepository
 import com.agendaqr.destinations.domain.Operation
 import com.agendaqr.destinations.domain.OperationRepository
 import com.agendaqr.destinations.domain.OperationType
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -27,6 +28,7 @@ import kotlin.test.assertTrue
  * commonTest —sin harness de UI— y queda como pendiente de prueba
  * instrumentada; aquí se cubre el contrato del coordinator del que depende.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class SyncRecoveryCoordinatorTest {
 
     @Test

@@ -7,7 +7,7 @@ package com.agendaqr.destinations.presentation
 
 import com.agendaqr.destinations.domain.*
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
@@ -38,7 +38,7 @@ internal fun formatDate(millis: Long, timeZone: TimeZone = TimeZone.currentSyste
     if (millis <= 0) return AppStrings.FechaDesconocida
     val date = Instant.fromEpochMilliseconds(millis).toLocalDateTime(timeZone).date
     fun two(value: Int) = if (value < 10) "0" + value else value.toString()
-    return two(date.dayOfMonth) + "/" + two(date.monthNumber) + "/" + date.year
+    return two(date.day) + "/" + two(date.month.ordinal + 1) + "/" + date.year
 }
 
 /** Inversa estricta de [formatDate]: solo acepta dd/mm/aaaa reales. */
@@ -197,7 +197,7 @@ private val monthNames = listOf(
 /** Etiqueta de mes civil ("Mayo 2024") para la barra del historial. */
 internal fun monthYearLabel(millis: Long, timeZone: TimeZone = TimeZone.currentSystemDefault()): String {
     val date = Instant.fromEpochMilliseconds(millis).toLocalDateTime(timeZone).date
-    val month = monthNames[date.monthNumber - 1]
+    val month = monthNames[date.month.ordinal]
     return month.replaceFirstChar { it.uppercase() } + " " + date.year
 }
 

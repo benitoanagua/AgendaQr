@@ -56,9 +56,9 @@ class AccessibilityStatesFormsTest {
         compose.waitForIdle()
         // Antes: el botón nacía deshabilitado (formValid) y el error nunca
         // se veía. Ahora: habilitado, y al enviar muestra los dos errores.
-        compose.onNodeWithText("Iniciar sesión").performClick()
-        compose.onNodeWithText("Ingresa un correo válido").assertExists()
-        compose.onNodeWithText("Mínimo 6 caracteres").assertExists()
+        compose.onNodeWithText(AppStrings.IniciarSesion).performClick()
+        compose.onNodeWithText(AppStrings.IngresaUnCorreoValido).assertExists()
+        compose.onNodeWithText(AppStrings.Minimo6Caracteres).assertExists()
         assert(signIn == 0) { "No debe iniciar sesión con datos inválidos" }
     }
 
@@ -84,9 +84,9 @@ class AccessibilityStatesFormsTest {
         // Un SOLO indicador de ocupado por pantalla: el primario anuncia
         // "Iniciando sesión…" (stateDescription); el secundario queda
         // deshabilitado sin spinner propio.
-        compose.onNodeWithText("Iniciar sesión")
+        compose.onNodeWithText(AppStrings.IniciarSesion)
             .assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.StateDescription))
-        compose.onNodeWithText("Crear cuenta")
+        compose.onNodeWithText(AppStrings.CrearCuenta)
             .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.StateDescription))
     }
 
@@ -123,20 +123,20 @@ class AccessibilityStatesFormsTest {
         compose.setContent {
             AqTheme {
                 AqTextField(
-                    label = "Correo",
+                    label = AppStrings.Correo,
                     value = "no-correo",
                     onValueChange = { },
                     isError = true,
-                    errorMessage = "Ingresa un correo válido",
+                    errorMessage = AppStrings.IngresaUnCorreoValido,
                 )
             }
         }
         compose.waitForIdle()
         // La etiqueta del OutlinedTextField es el nombre accesible del campo
         // (nodo fusionado, sin asterisco: la obligatoriedad va en copy).
-        compose.onNodeWithText("Correo").assertExists()
+        compose.onNodeWithText(AppStrings.Correo).assertExists()
         // El error se anuncia cuando aparece (liveRegion cortés, §11).
-        compose.onNodeWithText("Ingresa un correo válido")
+        compose.onNodeWithText(AppStrings.IngresaUnCorreoValido)
             .assert(
                 SemanticsMatcher.expectValue(
                     SemanticsProperties.LiveRegion,

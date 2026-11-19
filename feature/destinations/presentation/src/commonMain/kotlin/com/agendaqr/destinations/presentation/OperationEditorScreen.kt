@@ -17,7 +17,7 @@ import com.agendaqr.core.ui.components.AqMultilineTextField
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.domain.*
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 

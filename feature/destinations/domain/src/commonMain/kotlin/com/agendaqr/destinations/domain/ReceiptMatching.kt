@@ -1,7 +1,7 @@
 package com.agendaqr.destinations.domain
 
 import kotlinx.coroutines.flow.first
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
