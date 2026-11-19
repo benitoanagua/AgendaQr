@@ -79,6 +79,7 @@ import com.agendaqr.core.ui.components.AqTextField
 import com.agendaqr.core.ui.components.AqTextActionVariant
 import com.agendaqr.core.ui.components.AqTimePickerDialog
 import com.agendaqr.core.ui.components.AqTonalTag
+import com.agendaqr.core.ui.components.AqTooltip
 import com.agendaqr.core.ui.components.AqTopBar
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.components.AqBannerAction
@@ -864,6 +865,26 @@ private fun AqMobileInteractionsPreview() {
                 )
             }
         }
+        AqText(
+            text = "Tooltip — etiqueta flotante tonal en estado visible",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqTooltip(
+            label = "Actualizar lista",
+            isVisible = true,
+            content = {
+                AqIconButton(
+                    contentDescription = "Actualizar lista",
+                    onClick = {},
+                ) {
+                    AqIcon(
+                    imageVector = com.agendaqr.core.ui.components.AqIcons.Search,
+                        contentDescription = null,
+                    )
+                }
+            },
+        )
     }
 }
 
