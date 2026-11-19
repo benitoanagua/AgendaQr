@@ -253,11 +253,7 @@ fun AqQuickAction(
         modifier = modifier,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                // Altura mínima uniforme: las etiquetas de diferente
-                // longitud no deben cambiar la altura de la tarjeta.
-                .heightIn(min = AqMetrics.QuickActionCardMinHeight),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
         ) {
@@ -567,9 +563,17 @@ fun AqListRow(
                 }
             }
         }
-        if (showDivider) {
+        // El divisor separa filas vecinas; nunca atraviesa la superficie
+        // de una fila seleccionada (la selección debe percibirse como una
+        // unidad visual completa).
+        if (showDivider && !selected) {
             HorizontalDivider(
-                modifier = Modifier.padding(start = AqMetrics.ListDividerInset),
+                // Márgenes simétricos: el divisor pertenece al contenido
+                // interior de la lista, no debe extenderse hasta el borde
+                // ni quedar asymmetrico respecto al relleno de la fila.
+                modifier = Modifier
+                    .padding(horizontal = AqMetrics.ListDividerInset)
+                    .testTag("aq-list-divider"),
                 thickness = AqMetrics.DividerHeight,
                 color = AqColor.Divider,
             )
