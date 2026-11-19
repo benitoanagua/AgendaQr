@@ -153,7 +153,7 @@ private fun KeypadKey(
             .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
             .clip(AqShapes.Medium)
             .background(
-                if (pressed) AqColor.SurfaceActive else AqColor.SurfaceContainerLow,
+                if (pressed) AqColor.SurfaceActive else AqColor.Surface,
                 AqShapes.Medium,
             )
             .clickable(
