@@ -89,11 +89,12 @@ fun AqTabs(
         contentColor = AqColor.TextPrimary,
         // Sin sangría propia: la superficie ya aplica su margen de contenido.
         edgePadding = AqSpacing.None,
-        // Indicador de acento de la referencia; hairline inferior.
+        // Indicador lineal inferior de selección (Polaris tabs): línea que
+        // recorre el ancho de la pestaña activa, sin ancho fijado que lo
+        // reduzca a una píldora centrada.
         indicator = {
             androidx.compose.material3.TabRowDefaults.PrimaryIndicator(
                 modifier = Modifier.tabIndicatorOffset(selectedIndex),
-                width = AqMetrics.TabIndicatorWidth,
                 height = AqMetrics.TabIndicatorHeight,
                 shape = AqShapes.ExtraSmall,
                 color = AqColor.EmphasisBorder,

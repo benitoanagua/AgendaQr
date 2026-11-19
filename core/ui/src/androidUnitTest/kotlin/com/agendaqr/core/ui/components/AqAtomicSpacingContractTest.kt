@@ -2,14 +2,18 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.getBoundsInRoot
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqQuickAction
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTheme
@@ -166,6 +170,95 @@ class AqAtomicSpacingContractTest {
         assertTrue(
             error.left.value >= label.left.value - 1f,
             "el error no debe salir del campo por la izquierda (label=$label error=$error)",
+        )
+    }
+
+    @Test
+    fun list_row_divider_is_symmetric_when_not_selected() {
+        compose.setContent {
+            AqTheme {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    AqListRow(title = "Fila", showDivider = true)
+                }
+            }
+        }
+        compose.waitForIdle()
+        val root = compose.onRoot().getBoundsInRoot()
+        val divider = compose.onNodeWithTag("aq-list-divider").getBoundsInRoot()
+        // Simetría: mismo margen a izquierda y derecha.
+        assertNear(
+            AqMetrics.ListDividerInset.value,
+            divider.left.value,
+            "divider: margen izquierdo",
+        )
+        assertNear(
+            AqMetrics.ListDividerInset.value,
+            (root.right - divider.right).value,
+            "divider: margen derecho",
+        )
+    }
+
+    @Test
+    fun list_row_selected_hides_divider() {
+        compose.setContent {
+            AqTheme {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    AqListRow(title = "Seleccionada", selected = true, showDivider = true)
+                }
+            }
+        }
+        compose.waitForIdle()
+        // La fila seleccionada no debe renderizar divisor: la selección es
+        // una unidad visual completa.
+        compose.onNodeWithTag("aq-list-divider").assertDoesNotExist()
+    }
+
+    @Test
+    fun amount_field_currency_symbol_aligns_with_value() {
+        compose.setContent {
+            AqTheme {
+                AqAmountField(
+                    label = "Importe",
+                    value = "100,00",
+                    onValueChange = {},
+                    currencySymbol = "$",
+                )
+            }
+        }
+        compose.waitForIdle()
+        val symbol = compose.onNodeWithText("$", useUnmergedTree = true).getBoundsInRoot()
+        val value = compose.onNodeWithText("100,00", useUnmergedTree = true).getBoundsInRoot()
+        // El símbolo y el importe deben superponerse verticalmente (mismo eje
+        // vertical), sin que el símbolo quede anclado al fondo.
+        assertTrue(
+            symbol.top.value <= value.bottom.value + 1f &&
+                symbol.bottom.value >= value.top.value - 1f,
+            "símbolo y importe alineados verticalmente (symbol=$symbol value=$value)",
+        )
+    }
+
+    @Test
+    fun quick_action_card_sizes_to_content() {
+        compose.setContent {
+            AqTheme {
+                Column(modifier = Modifier.height(400.dp)) {
+                    AqQuickAction(
+                        label = "Traer un QR",
+                        icon = AqIcons.QrCode,
+                        onClick = {},
+                    )
+                }
+            }
+        }
+        compose.waitForIdle()
+        val card = compose.onNodeWithTag("aq-tappable-card").getBoundsInRoot()
+        val height = (card.bottom - card.top).value
+        // La tarjeta se ajusta al contenido (ícono 48 dp + etiqueta + relleno),
+        // sin ocupar toda la altura disponible del contenedor ni imponer una
+        // altura mínima excesiva.
+        assertTrue(
+            height < 200f,
+            "tarjeta rápida ajusta su altura al contenido (alto=$height)",
         )
     }
 
