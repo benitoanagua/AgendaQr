@@ -120,7 +120,15 @@ fun AqStatusBanner(
                     contentDescription = d.label,
                     onClick = d.onClick,
                 ) {
-                    AqIcon(imageVector = AqIcons.Cancel, contentDescription = null, tint = foreground)
+                    // El descarte es una acción secundaria: su glifo es más
+                    // pequeño que el indicador de severidad del tono, para
+                    // evitar dos iconos de igual peso visual en el banner.
+                    AqIcon(
+                        imageVector = AqIcons.Cancel,
+                        contentDescription = null,
+                        size = AqMetrics.IconSizeCompact,
+                        tint = foreground,
+                    )
                 }
             }
         }
