@@ -513,11 +513,16 @@ fun AqAmountField(
             horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
         ) {
             currencySymbol?.let {
-                Text(
-                    it,
-                    style = AqTextStyles.AmountSymbol,
-                    color = contentColor,
-                )
+                Box(
+                    modifier = Modifier.heightIn(min = AqMetrics.ControlMinSize),
+                    contentAlignment = Alignment.BottomCenter,
+                ) {
+                    Text(
+                        it,
+                        style = AqTextStyles.AmountSymbol,
+                        color = contentColor,
+                    )
+                }
             }
             androidx.compose.foundation.text.BasicTextField(
                 value = value,
