@@ -269,7 +269,6 @@ internal object AppStrings {
     val checkMark = "✓ "
     val dupMark = "! "
     val pendingMark = "? "
-    val ComprobanteAdjuntoVistaPreviaPendienteEnIos = "Comprobante adjunto (vista previa pendiente en iOS)"
     val PdfAdjuntoSinVistaPrevia = "PDF adjunto (sin vista previa)"
     val VistaPreviaNoDisponible = "Vista previa no disponible"
     /** Subtítulo de fila para destinos sin nombre: origen "creado" + fecha. */

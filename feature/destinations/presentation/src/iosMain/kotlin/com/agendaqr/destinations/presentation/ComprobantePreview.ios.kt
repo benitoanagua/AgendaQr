@@ -25,18 +25,25 @@ import platform.PDFKit.kPDFDisplayDirectionVertical
 import platform.PDFKit.kPDFDisplaySinglePageContinuous
 import platform.PDFKit.PDFDocument
 import platform.PDFKit.PDFView
+import platform.UIKit.UIImage
+import platform.UIKit.UIImageView
+import platform.UIKit.UIViewContentMode
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 @Composable
 actual fun ComprobantePreview(bytes: ByteArray, mimeType: String?, modifier: Modifier) {
     val isPdf = mimeType?.contains("pdf", ignoreCase = true) == true
-    val document = remember(bytes.contentHashCode(), isPdf) {
-        if (!isPdf || bytes.isEmpty()) null
+    val media = remember(bytes.contentHashCode(), isPdf) {
+        if (bytes.isEmpty()) null
         else runCatching {
             val data = bytes.usePinned { pinned ->
                 NSData.create(pinned.addressOf(0), bytes.size.toULong())
             }
-            PDFDocument(data)?.takeIf { it.pageCount > 0u }
+            if (isPdf) {
+                PDFDocument(data)?.takeIf { it.pageCount > 0u }
+            } else {
+                UIImage(data)
+            }
         }.getOrNull()
     }
     AqMediaFrame(
@@ -46,30 +53,36 @@ actual fun ComprobantePreview(bytes: ByteArray, mimeType: String?, modifier: Mod
         ),
     ) {
         when {
-            document != null -> UIKitView(
+            isPdf && media is PDFDocument -> UIKitView(
                 factory = {
                     PDFView().apply {
                         autoScales = true
                         displayMode = kPDFDisplaySinglePageContinuous
                         displayDirection = kPDFDisplayDirectionVertical
-                        this.document = document
+                        this.document = media
                     }
                 },
                 modifier = Modifier.fillMaxSize().semantics {
                     contentDescription = AppStrings.Comprobante
                 },
-                update = { view -> if (view.document !== document) view.document = document },
+                update = { view -> if (view.document !== media) view.document = media },
+            )
+            !isPdf && media is UIImage -> UIKitView(
+                factory = {
+                    UIImageView().apply {
+                        image = media
+                        contentMode = UIViewContentMode.UIViewContentModeScaleAspectFit
+                    }
+                },
+                modifier = Modifier.fillMaxSize().semantics {
+                    contentDescription = AppStrings.Comprobante
+                },
+                update = { view -> if (view.image !== media) view.image = media },
             )
             isPdf -> PdfFallback()
             else -> {
-                // Image decoding on iOS remains a separate target-specific
-                // limitation; the document/PDF path is backed by PDFKit.
                 Box(Modifier.fillMaxSize()) {
-                    AqText(
-                        AppStrings.ComprobanteAdjuntoVistaPreviaPendienteEnIos,
-                        size = AqType.Label,
-                        color = AqColor.TextSecondary,
-                    )
+                    AqText(AppStrings.VistaPreviaNoDisponible, size = AqType.Label, color = AqColor.TextSecondary)
                 }
             }
         }

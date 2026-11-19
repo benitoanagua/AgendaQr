@@ -120,8 +120,8 @@
 
 - **Polaris:** Campos con etiqueta persistente, caja `input-bg-surface`, borde 1 dp `functionalBorder`, radio Medium (8 dp, v8.3), error con icono+texto, foco con `border-focus`.
 - **Moon:** Moon ofrece inputs con estados focused/error/disabled, clear action, password toggle. Se confirma que error con icono+texto y clear action etiquetada son patrones móviles válidos.
-- **Puentes M3:** `BasicTextField`, `Checkbox`, `RadioButton`, `Switch`, `DatePickerDialog`, `AlertDialog`, `TimeInput` se usan como infraestructura técnica; todos los valores visuales (colores, radios, espaciado) vienen de tokens Polaris.
-- **Riesgo:** Date/Time picker usan puentes M3 no totalmente Polaris; documentado como deuda controlada.
+- **Puentes M3:** `BasicTextField`, `Checkbox`, `RadioButton` y `Switch` se usan como infraestructura técnica; los selectores de fecha y hora son Compose común con `AqDialog`.
+- **Riesgo:** el runtime iOS de los selectores todavía requiere comprobación en dispositivo/simulador; la implementación común compila para los targets disponibles.
 
 ---
 
@@ -245,7 +245,7 @@
 | H2 | Image Preview | — | NOT_APPLICABLE | — | — | — | — | UX V1 solo previsualiza QR y comprobantes; no hay flujo de imágenes genéricas | Usar `AqQrPreview` o el visor de comprobante dentro de su feature | Media | `AqQrPreview`, `ComprobanteViewer` |
 | H3 | Image Viewer | — | NOT_APPLICABLE | — | — | — | — | No existe navegación entre imágenes genéricas en UX V1 | `AqQrSheet` cubre únicamente el caso de QR a pantalla completa | Media | `AqQrSheet` |
 | H4 | Carousel | `core/ui/.../AqLists.kt` → `AqCarousel` | COMPLETE | Sí | NO VERIFICADO | Parcial | `AqCarouselTest` | Usado en S01 carrusel de favoritos; ancho fijo por ítem, siguiente asoma | Sin cambios | Media | `AqIcon`, `AqTextStyles` |
-| H5 | Media Attachment | `ComprobantePreview` + `AqMediaFrame` | COMPLETE | Sí | NO VERIFICADO | Sí (vista previa identificada y fallback textual) | `ScreensA11yCoverageTest.s10_receipt_preview_renders_without_crash`, `AqMediaFrame` | — | El comprobante adjunto se muestra dentro del visor; progreso de carga no aplica a la operación local | Media | `AqMediaFrame`, `ComprobantePreview` |
+| H5 | Media Attachment | `ComprobantePreview` + `AqMediaFrame` | COMPLETE | Sí | NO VERIFICADO | Sí (imagen/PDF identificados y fallback textual) | `ScreensA11yCoverageTest.s10_receipt_preview_renders_without_crash`, `ComprobantePdfPreviewTest` | Render iOS compilado; runtime requiere dispositivo/simulador Apple | Android decodifica imágenes y PDF; iOS presenta imágenes con UIImageView y PDF con PDFKit; comprobantes inválidos tienen fallback | Media | `AqMediaFrame`, `ComprobantePreview` |
 | H6 | Thumbnail | — | NOT_APPLICABLE | — | — | — | — | UX V1 no muestra galerías de miniaturas | `AqQrPreview` y `ComprobanteViewer` presentan recursos individuales | Baja | `AqQrPreview` |
 | H7 | Document Preview | `ComprobanteViewer` + `ComprobantePreview` (feature) | PARTIAL | Sí (PdfRenderer, compilado) | Sí (PDFKit, compilado) | Sí (página identificada; accesibilidad de texto depende del renderer) | `ComprobantePdfPreviewTest` (fallback PDF inválido) | Robolectric no implementa render PDF; ejecución de PDF válido requiere Android físico/emulador e iOS requiere runtime Apple | Render diferido por página Android, vista continua con PDFKit iOS; mantener PARTIAL hasta validar documentos reales en ambas plataformas | Media | `PdfRenderer`, `PDFKit`, `UIKitView` |
 | H8 | File Attachment | — | NOT_APPLICABLE | — | — | — | — | UX V1 no ofrece carga/adjunto genérico de archivos; comprobantes usan su flujo propio | No añadir componente genérico sin caso de producto | — | — |
@@ -335,7 +335,7 @@
 ### Riesgos arquitectónicos principales
 
 1. **iOS no verificado:** Sin macOS/Xcode, todo el render en iOS (Inter empaquetado, tema oscuro, accesibilidad VoiceOver) queda como NO VERIFICADO. Solo compila.
-2. **Puentes Material 3:** `BasicTextField`, `Checkbox`, `RadioButton`, `Switch`, `DatePickerDialog`, `AlertDialog`, `TimeInput`, `SnackbarHost`, `CircularProgressIndicator`, `LinearProgressIndicator`, `PrimaryScrollableTabRow`, `IconButton`, `Text` se usan como infraestructura técnica; todos los valores visuales vienen de tokens Polaris, pero el runtime es M3.
+2. **Puentes Material 3:** `BasicTextField`, `Checkbox`, `RadioButton`, `Switch`, `AlertDialog`, `SnackbarHost`, `CircularProgressIndicator`, `LinearProgressIndicator`, `PrimaryScrollableTabRow`, `IconButton`, `Text` se usan como infraestructura técnica; los pickers de fecha/hora ya usan Compose común y `AqDialog`. Los valores visuales vienen de tokens Polaris, aunque algunos runtimes internos siguen siendo M3.
 3. **Componentes fuera del alcance funcional V1:** Password input, autocomplete, slider, stepper, swipeable list item, pull-to-refresh, timeline, popover anclado, side sheet, drawer, avatar group, file attachment y badges de navegación están clasificados `NOT_APPLICABLE` con su justificación por fila. No queda ningún patrón clasificado como `MISSING`. `AqMultilineTextField` cubre texto multilineal y `AqTooltip` está en E11/F9.
 4. **`AqBottomSheet` con gestos:** El cierre por arrastre descendente desde el handle (cuatro targets mínimos de 48 dp) está implementado; la expansión/colapso es controlada por el llamador y no hay estado intermedio. Falta trampa de foco explícita y verificación en iOS.
 5. **Gestión de foco en overlays:** `Dialog` de Compose ofrece la modalidad de ventana; el foco inicial conservativo destructivo se prueba en Android. Retención/restauración del foco y VoiceOver quedan sin verificación en dispositivo.
