@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,6 +36,7 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqElevation
 import com.agendaqr.core.ui.theme.AqMetrics
@@ -251,7 +253,11 @@ fun AqQuickAction(
         modifier = modifier,
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                // Altura mínima uniforme: las etiquetas de diferente
+                // longitud no deben cambiar la altura de la tarjeta.
+                .heightIn(min = AqMetrics.QuickActionCardMinHeight),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
         ) {
@@ -437,7 +443,7 @@ fun AqListRow(
                 .then(
                     if (selected) {
                         Modifier.background(AqColor.SelectionSurface, AqShapes.Large)
-                            .border(AqMetrics.Border, AqColor.SelectionBorder, AqShapes.Large)
+                            .border(AqMetrics.Border, AqColor.Border, AqShapes.Large)
                     } else if (pressed && onClick != null) {
                         Modifier.background(AqColor.SurfaceActive)
                     } else {

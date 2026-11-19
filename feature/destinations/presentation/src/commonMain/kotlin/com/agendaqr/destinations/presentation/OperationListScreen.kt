@@ -367,19 +367,29 @@ internal fun UnassociatedScreen(
                         // candidatas); "Crear actividad desde esto" es
                         // acción de texto. Sin botones primarios por fila.
                         AqListBody {
-                            AqListRow(
-                                title = receipt.file.takeIf { it.isNotBlank() } ?: AppStrings.ElementoImportado,
-                                subtitle = formatDate(receipt.createdAt),
-                                onClick = { selectedReceipt = receipt },
-                                meta = {
-                                    ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
-                                },
-                                trailing = {
-                                    AqTextAction(label = AppStrings.createOperationFromThis, onClick = {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                AqListRow(
+                                    title = receipt.file.takeIf { it.isNotBlank() } ?: AppStrings.ElementoImportado,
+                                    subtitle = formatDate(receipt.createdAt),
+                                    onClick = { selectedReceipt = receipt },
+                                    meta = {
+                                        ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
+                                    },
+                                    titleMaxLines = 2,
+                                )
+                                AqTextAction(
+                                    label = AppStrings.createOperationFromThis,
+                                    onClick = {
                                         viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
-                                    })
-                                },
-                            )
+                                    },
+                                    contentPadding = PaddingValues(
+                                        horizontal = AqSpacing.Lg,
+                                        vertical = AqSpacing.Sm,
+                                    ),
+                                )
+                            }
                         }
                     }
                 }

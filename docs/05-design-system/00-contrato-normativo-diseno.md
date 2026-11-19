@@ -141,6 +141,7 @@ en el archivo señalado con valores tomados de tokens semánticos.
 | E-04 | `border` | `AqInputs.kt` | Foco y estado de error de campos |
 | E-05 | `shadow` | `AqLists.kt` | Elevación de tarjetas mediante `aqElevation` |
 | E-07 | `border` | `AqForms.kt` | Caja del campo select (reposo, foco y error) |
+| E-08 | `border` | `AqPinEntry.kt` | Borde de tecla del teclado PIN (contraste en tema oscuro) |
 
 E-06 (elevación de botones) está retirada: los botones son planos y un
 registro sin uso se detecta como excepción zombie.

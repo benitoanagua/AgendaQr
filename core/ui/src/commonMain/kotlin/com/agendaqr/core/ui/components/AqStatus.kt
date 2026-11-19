@@ -126,7 +126,7 @@ fun AqStatusBanner(
                     AqIcon(
                         imageVector = AqIcons.Cancel,
                         contentDescription = null,
-                        size = AqMetrics.IconSizeCompact,
+                        size = AqSpacing.Lg,
                         tint = foreground,
                     )
                 }

@@ -505,6 +505,8 @@ object AqMetrics {
     val EmptyStateGlyphSize = 96.dp
     val ResultGlyphSize = 64.dp
     val GridIconContainerSize = 48.dp
+    /** Altura mínima uniforme de las tarjetas de acción rápida (AqQuickAction). */
+    val QuickActionCardMinHeight = 120.dp
     val ScannerCornerLength = 24.dp
     val ContextBadgeSize = 40.dp
     val FabClearance = ControlMinSize + AqSpacing.Lg
