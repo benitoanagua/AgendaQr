@@ -123,12 +123,29 @@ No se declaran PASS. Requieren Xcode, dispositivo físico/red o ejecución local
   **Decisiones de producto
   pendientes** (no son deuda de migración): teclado propio para el importe
   (S07), fila de filtros en S04, balance neto mensual y encabezados por día
-  (S07-list), "Destino QR vinculado" en el detalle de actividad (el vínculo
+  (S7-list), "Destino QR vinculado" en el detalle de actividad (el vínculo
   `Operation.destinationId` existe; falta plumbing de estado), "Filtros" en
   S12 y "Crear nuevo contexto" visible con lista llena (hoy lo impide
   ADR-0003 U3), y copy propio para el vacío de la bandeja de comprobantes
   sin asociar (hoy es byte-idéntico al vacío de Actividades — hallazgo del
   gate de capturas).
+- **Consistencia visual Polaris Mobile (rama feat/polaris-mobile-consi
+stency-phase2, PR #159):** aplicada transversalmente a componentes
+  compartidos de `core/ui` y todos sus consumidores:
+  - Teclado PIN: teclas con `SurfaceContainerHighest` + borde hairline en
+    tema oscuro (E-08).
+  - Bordes de selección: `Border` neutro en lugar de `SelectionBorder`
+    intenso en `AqFilterChip`, `AqSegmentedControl`, `AqListRow`.
+  - Banner de estado: icono de descarte más pequeño que el indicador de
+    severidad.
+  - Icono de inicio en campos: `IconSizeCompact` (20 dp) para alineación
+    con el texto corporal.
+  - Tarjetas de acción rápida: altura mínima uniforme `QuickActionCardMinHeight`.
+  - Comprobantes sin asociar: `titleMaxLines=2`, acción de texto en línea
+    separada.
+  - Gates y pruebas en verde: `verifyAgendaQrArchitecture`, `verifyDocs`,
+    `:core:ui:testDebugUnitTest`, `:feature:destinations:presentation:testDebugUnitTest`,
+    `:androidApp:assembleDebug`.
 - **Share Extension de iOS:** `sharedImportsSupported()` devuelve false en iOS; el
   bloque «Desde otra app» de S02 no se muestra hasta que la extensión exista.
   **Bloqueo concreto:** el proyecto Xcode no está versionado en el repositorio
