@@ -43,7 +43,6 @@ import com.agendaqr.core.ui.components.AqEvidenceBadge
 import com.agendaqr.core.ui.components.AqExpansionPanel
 import com.agendaqr.core.ui.components.AqFeedbackEvent
 import com.agendaqr.core.ui.components.AqFieldState
-import com.agendaqr.core.ui.components.AqFilterChip
 import com.agendaqr.core.ui.components.AqGroupedAction
 import com.agendaqr.core.ui.components.AqHeading
 import com.agendaqr.core.ui.components.AqHairline
@@ -456,6 +455,64 @@ private fun AqFormsPreview() {
                 dismissLabel = "Cancelar",
             )
         }
+        AqText(
+            text = "Jerarquía de formulario — AmountField hero, FormSection, FormField con opcional, ChipGroup",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg)) {
+            com.agendaqr.core.ui.components.AqAmountField(
+                label = "Monto",
+                optionalLabel = "Opcional",
+                value = "125.50",
+                onValueChange = {},
+                currencySymbol = "$",
+                onClear = {},
+                clearLabel = "Borrar importe",
+            )
+            com.agendaqr.core.ui.components.AqFormField(label = "Moneda") {
+                com.agendaqr.core.ui.components.AqChipGroup(
+                    options = listOf(
+                        com.agendaqr.core.ui.components.AqChipOption("BOB"),
+                        com.agendaqr.core.ui.components.AqChipOption("USD"),
+                        com.agendaqr.core.ui.components.AqChipOption("ARS"),
+                    ),
+                    selectedIndex = 2,
+                    onSelect = {},
+                    horizontalScroll = true,
+                )
+            }
+            com.agendaqr.core.ui.components.AqFormSection("Fecha y hora") {
+                AqTextField(
+                    label = "Fecha",
+                    value = "Hoy · 14:30",
+                    onValueChange = {},
+                    enabled = false,
+                )
+                com.agendaqr.core.ui.components.AqChipGroup(
+                    options = listOf(
+                        com.agendaqr.core.ui.components.AqChipOption("Hoy"),
+                        com.agendaqr.core.ui.components.AqChipOption("Ayer"),
+                    ),
+                    selectedIndex = 0,
+                    onSelect = {},
+                )
+            }
+            com.agendaqr.core.ui.components.AqFormSection("Detalles de la actividad") {
+                AqTextField(
+                    label = "Persona o entidad",
+                    optionalLabel = "Opcional",
+                    value = "",
+                    onValueChange = {},
+                )
+                com.agendaqr.core.ui.components.AqFormField(
+                    label = "Contexto",
+                    optionalLabel = "Opcional",
+                ) {
+                    AqText("Para: elegir contexto", color = AqColor.TextSecondary)
+                }
+            }
+        }
     }
 }
 
@@ -542,12 +599,17 @@ private fun AqNavigationPreview() {
             onSelect = {},
         )
         AqText(
-            text = "Tabs — desplazable con icono+etiqueta",
+            text = "Tabs — pista y píldora compartidas con el segmentado, badge de conteo",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
         com.agendaqr.core.ui.components.AqTabs(
-            sections = listOf("QR", "Actividades", "Comprobantes", "Ajustes", "Cuenta"),
+            tabs = listOf(
+                com.agendaqr.core.ui.components.AqTab("QR", count = 0),
+                com.agendaqr.core.ui.components.AqTab("Actividades", count = 12),
+                com.agendaqr.core.ui.components.AqTab("Comprobantes", count = 4),
+                com.agendaqr.core.ui.components.AqTab("Ajustes"),
+            ),
             selectedIndex = 1,
             onSelect = {},
             content = { index -> AqText(text = "Contenido pestaña $index") },
@@ -834,16 +896,20 @@ private fun AqFeedbackPreview() {
 private fun AqSelectionPreview() {
     Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
         AqText(
-            text = "Filter Chips — seleccionado, no seleccionado, deshabilitado, con conteo",
+            text = "ChipGroup — selección inequívoca (check + relleno + borde), conteo y deshabilitado",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            AqFilterChip(label = "Todos", selected = true, onClick = {}, count = 12)
-            AqFilterChip(label = "Favoritos", selected = false, onClick = {}, count = 3)
-            AqFilterChip(label = "Pago", selected = false, onClick = {}, count = 5)
-            AqFilterChip(label = "Deshabilitado", selected = false, onClick = {}, enabled = false)
-        }
+        com.agendaqr.core.ui.components.AqChipGroup(
+            options = listOf(
+                com.agendaqr.core.ui.components.AqChipOption("Todos", count = 12),
+                com.agendaqr.core.ui.components.AqChipOption("Favoritos", count = 3),
+                com.agendaqr.core.ui.components.AqChipOption("Pago", count = 5),
+                com.agendaqr.core.ui.components.AqChipOption("Deshabilitado", enabled = false),
+            ),
+            selectedIndex = 0,
+            onSelect = {},
+        )
         AqText(
             text = "Context Badge — identidad de contexto por color",
             color = AqColor.TextPrimary,

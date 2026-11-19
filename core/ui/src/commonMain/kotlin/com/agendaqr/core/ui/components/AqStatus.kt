@@ -114,19 +114,17 @@ fun AqStatusBanner(
                     )
                 }
             }
-            // Descarte como icono X accesible, no como segundo texto.
+            // Descarte como icono X simple (acción, no estado) accesible;
+            // nunca repite el glifo semántico del tono.
             dismiss?.let { d ->
                 AqIconButton(
                     contentDescription = d.label,
                     onClick = d.onClick,
                 ) {
-                    // El descarte es una acción secundaria: su glifo es más
-                    // pequeño que el indicador de severidad del tono, para
-                    // evitar dos iconos de igual peso visual en el banner.
                     AqIcon(
-                        imageVector = AqIcons.Cancel,
+                        imageVector = AqIcons.Close,
                         contentDescription = null,
-                        size = AqSpacing.Lg,
+                        size = AqMetrics.IconSizeCompact,
                         tint = foreground,
                     )
                 }

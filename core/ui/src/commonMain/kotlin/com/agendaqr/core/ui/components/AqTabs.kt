@@ -1,25 +1,32 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.PrimaryScrollableTabRow
-import androidx.compose.material3.Tab
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import com.agendaqr.core.ui.theme.AqWeight
+import com.agendaqr.core.ui.theme.AqAlpha
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
-import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.asTextOn
 
 /**
@@ -38,6 +45,9 @@ fun AqSectionHeader(
     text: String,
     modifier: Modifier = Modifier,
     accent: Color? = null,
+    /** Sangría alineada a las filas de lista; false en contextos sin
+     *  lista (p. ej. [AqFormSection]). */
+    inset: Boolean = true,
 ) {
     val textColor = accent?.asTextOn(AqColor.Surface, AqColor.EmphasisText)
         ?: AqColor.TextSecondary
@@ -45,82 +55,130 @@ fun AqSectionHeader(
         text = text,
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = AqMetrics.ListDividerInset)
+            .then(
+                if (inset) {
+                    Modifier.padding(horizontal = AqMetrics.ListDividerInset)
+                } else {
+                    Modifier
+                },
+            )
             .semantics { heading() },
         style = AqTextStyles.SectionHeader,
-        fontFamily = AqType.FamilyUi,
-        fontWeight = AqWeight.Regular,
         color = textColor,
     )
 }
 
 /**
- * Secciones con pestañas estándar (S06): `PrimaryScrollableTabRow` con
- * las secciones QR · Actividades · Comprobantes. La conmutación es
- * local: NO crea rutas ni navegación nueva (los estados técnicos no crean
- * navegación artificial).
- *
- * Con tipografía al 100/150/200 % las pestañas viven en una fila
- * DESPLAZABLE — con fuente grande las etiquetas no se comprimen ni se
- * recortan: la última pestaña se alcanza desplazando. El grupo declara
- * `selectableGroup()` (vía TabRow) y cada pestaña rol de pestaña con
- * estado `selected` y etiqueta de texto visible.
+ * Pestaña de [AqTabs]: etiqueta visible SIEMPRE (es la señal de texto) y
+ * conteo opcional en badge — el contenido de la pestaña (p. ej. "QR · 0")
+ * vive en la pestaña, nunca como texto suelto bajo la barra.
  */
-@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+data class AqTab(
+    val label: String,
+    /** Conteo real junto a la etiqueta; null = sin badge. */
+    val count: Int? = null,
+)
+
+/**
+ * Tabs de navegación entre vistas hermanas (S06): misma pista y misma
+ * píldora de selección que [AqSegmentedControl] — UN solo lenguaje de
+ * selección en el sistema. Tabs se usan para CONMUTAR contenido de una
+ * misma superficie (QR · Actividades · Comprobantes); el segmentado se
+ * usa para elegir una opción excluyente dentro de un formulario o filtro.
+ *
+ * La fila es DESPLAZABLE: con fuente grande las etiquetas no se comprimen
+ * ni se recortan. Cada pestaña conserva el objetivo táctil de 48 dp y la
+ * semántica `selectableGroup` + rol [Role.Tab] + estado `selected`.
+ * [accent] tiñe la pestaña activa solo si es legible como texto (>= 4.5:1);
+ * si no, cae al acento legible del sistema.
+ */
 @Composable
 fun AqTabs(
-    sections: List<String>,
+    tabs: List<AqTab>,
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
     accent: Color? = null,
+    /** Cuando falso, las pestañas se muestran deshabilitadas y no emiten
+     *  onSelect. */
+    enabled: Boolean = true,
     content: @Composable (Int) -> Unit,
 ) {
-    require(sections.isNotEmpty()) { "AqTabs necesita al menos una sección" }
-    require(selectedIndex in sections.indices) { "AqTabs: índice fuera de rango" }
+    require(tabs.isNotEmpty()) { "AqTabs necesita al menos una pestaña" }
+    require(selectedIndex in tabs.indices) { "AqTabs: índice fuera de rango" }
     // El acento de contexto solo es texto de pestaña si es legible
     // (>= 4.5:1); si no, cae al acento legible del sistema.
     val selectedTextColor = accent?.asTextOn(AqColor.Background, AqColor.EmphasisText)
         ?: AqColor.EmphasisText
-    PrimaryScrollableTabRow(
-        selectedTabIndex = selectedIndex,
-        modifier = modifier.fillMaxWidth(),
-        containerColor = AqColor.Transparent,
-        contentColor = AqColor.TextPrimary,
-        // Sin sangría propia: la superficie ya aplica su margen de contenido.
-        edgePadding = AqSpacing.None,
-        // Indicador lineal inferior de selección (Polaris tabs): línea que
-        // recorre el ancho de la pestaña activa, sin ancho fijado que lo
-        // reduzca a una píldora centrada.
-        indicator = {
-            androidx.compose.material3.TabRowDefaults.PrimaryIndicator(
-                modifier = Modifier.tabIndicatorOffset(selectedIndex),
-                height = AqMetrics.TabIndicatorHeight,
-                shape = AqShapes.ExtraSmall,
-                color = AqColor.EmphasisBorder,
-            )
-        },
-        divider = {
-            androidx.compose.material3.HorizontalDivider(
-                thickness = AqMetrics.DividerHeight,
-                color = AqColor.Divider,
-            )
-        },
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState())
+            .background(AqColor.SurfaceSecondary, AqShapes.Medium)
+            .selectableGroup()
+            .padding(AqSpacing.Xs),
+        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
     ) {
-        sections.forEachIndexed { index, title ->
+        tabs.forEachIndexed { index, tab ->
             val selected = index == selectedIndex
-            Tab(
-                selected = selected,
-                onClick = { onSelect(index) },
-                text = {
+            val textColor = when {
+                !enabled -> AqColor.OnDisabled
+                selected -> selectedTextColor
+                else -> AqColor.TextSecondary
+            }
+            Box(
+                modifier = Modifier
+                    .clip(AqShapes.Medium)
+                    .then(
+                        if (selected && enabled) {
+                            Modifier.background(AqColor.SelectionSurface, AqShapes.Medium)
+                                .border(AqMetrics.Border, AqColor.Border, AqShapes.Medium)
+                        } else {
+                            Modifier
+                        },
+                    )
+                    .selectable(
+                        selected = selected,
+                        role = Role.Tab,
+                        enabled = enabled,
+                        onClick = { if (enabled) onSelect(index) },
+                    )
+                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                    .padding(horizontal = AqSpacing.Lg),
+                contentAlignment = Alignment.Center,
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+                ) {
                     Text(
-                        text = title,
-                        style = AqTextStyles.Body,
-                        color = if (selected) selectedTextColor else AqColor.TextPrimary,
+                        tab.label,
+                        style = AqTextStyles.Label,
+                        color = textColor,
                         maxLines = 1,
                     )
-                },
-            )
+                    tab.count?.takeIf { it != 0 }?.let { count ->
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    if (selected && enabled) {
+                                        selectedTextColor.copy(alpha = AqAlpha.SelectedOnTone)
+                                    } else {
+                                        AqColor.SurfaceContainerHighest
+                                    },
+                                    AqShapes.Small,
+                                )
+                                .padding(horizontal = AqSpacing.Xs),
+                        ) {
+                            Text(
+                                count.toString(),
+                                style = AqTextStyles.Tag,
+                                color = textColor,
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
     content(selectedIndex)

@@ -13,7 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -30,6 +29,7 @@ import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqWeight
 
 /**
  * Autenticación remota OPCIONAL. Ya no es la puerta de entrada de la app: la
@@ -106,7 +106,7 @@ internal fun AuthForm(
         if (heading != null || description != null || descriptionDetail != null) {
             Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
                 heading?.let {
-                    AqText(it, size = AqType.Headline, fontWeight = FontWeight.SemiBold)
+                    AqText(it, size = AqType.Headline, fontWeight = AqWeight.SemiBold)
                 }
                 description?.let {
                     AqText(it, size = AqType.Body, color = AqColor.TextSecondary)
@@ -157,7 +157,7 @@ internal fun AuthForm(
                         AqText(
                             text = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
                             size = AqType.Caption,
-                            fontWeight = FontWeight.Medium,
+                            fontWeight = AqWeight.Medium,
                             color = AqColor.Link,
                         )
                     }

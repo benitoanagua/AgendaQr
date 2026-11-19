@@ -46,6 +46,8 @@ object AqIcons {
     val Context: ImageVector get() = PolarisIconVectors.Folder
     val Back: ImageVector get() = PolarisIconVectors.ArrowLeft
     val Cancel: ImageVector get() = PolarisIconVectors.XCircle
+    /** X simple sin círculo: cierre de banner/diálogo (acción, no estado). */
+    val Close: ImageVector get() = PolarisIconVectors.X
     val More: ImageVector get() = PolarisIconVectors.MenuHorizontal
     val Home: ImageVector get() = PolarisIconVectors.Home
     val Gallery: ImageVector get() = PolarisIconVectors.Image
@@ -53,8 +55,12 @@ object AqIcons {
     val Info: ImageVector get() = PolarisIconVectors.Info
     val Warning: ImageVector get() = PolarisIconVectors.AlertTriangle
     val CircleCheck: ImageVector get() = PolarisIconVectors.CheckCircle
+    /** Check simple: indicador de selección en chips y opciones. */
+    val Check: ImageVector get() = PolarisIconVectors.Check
     val QrCode: ImageVector get() = PolarisIconVectors.Shopcodes
     val SearchX: ImageVector get() = PolarisIconVectors.AlertCircle
+    /** Signo de alerta en círculo: icono de severidad de errores. */
+    val AlertCircle: ImageVector get() = PolarisIconVectors.AlertCircle
     val Inbox: ImageVector get() = PolarisIconVectors.Archive
     val ImageOff: ImageVector get() = PolarisIconVectors.ImageAlt
     val ScanLine: ImageVector get() = PolarisIconVectors.Barcode
@@ -70,7 +76,8 @@ object AqIcons {
     val ShieldCheck: ImageVector get() = PolarisIconVectors.ShieldCheckMark
     val Wallet: ImageVector get() = PolarisIconVectors.Wallet
     val Lock: ImageVector get() = PolarisIconVectors.Lock
-    val Erase: ImageVector get() = PolarisIconVectors.Delete
+    /** Borrado de texto en campos (retroceso), NO el glifo de papelera. */
+    val Erase: ImageVector get() = PolarisIconVectors.Backspace
     val NoteEdit: ImageVector get() = PolarisIconVectors.Edit
     val Edit: ImageVector get() = PolarisIconVectors.Edit
     val Trash: ImageVector get() = PolarisIconVectors.Delete

@@ -56,6 +56,9 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-07" to listOf("border:AqForms.kt"),
     // Bordes de teclas del teclado PIN (contraste en tema oscuro).
     "E-08" to listOf("border:AqPinEntry.kt"),
+    // Píldora activa de AqTabs: mismo tratamiento de selección que el
+    // control segmentado (pista + borde de la píldora).
+    "E-09" to listOf("border:AqTabs.kt"),
     // `Modifier.shadow` se centraliza en la capa de tokens; solo los
     // archivos registrados pueden invocarlo (o elevarse vía `aqElevation`).
     // E-06 (elevación de botones) se retiró: los botones son planos y

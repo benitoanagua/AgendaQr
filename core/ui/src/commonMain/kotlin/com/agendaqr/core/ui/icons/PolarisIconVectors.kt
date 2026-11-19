@@ -131,6 +131,14 @@ internal object PolarisIconVectors {
         fillPath(Paths.Maximize.TopRight)
         fillPath(Paths.Maximize.BottomLeft)
     } }
+    val X: ImageVector by lazy { icon("XIcon") { fillPath(Paths.X.Outline) } }
+    val Backspace: ImageVector by lazy { icon("BackspaceIcon") {
+        fillPath(Paths.Backspace.Cross)
+        fillPath(Paths.Backspace.Body, evenOdd = true)
+    } }
+    val Check: ImageVector by lazy { icon("CheckIcon") {
+        fillPath(Paths.Check.Outline, evenOdd = true)
+    } }
 
     private fun icon(sourceName: String, paths: ImageVector.Builder.() -> Unit): ImageVector =
         ImageVector.Builder(
@@ -324,6 +332,19 @@ internal object PolarisIconVectors {
         object Maximize {
             const val TopRight = "M12.75 3.5a.75.75 0 0 0 0 1.5h1.19l-3.22 3.22a.75.75 0 0 0 1.06 1.06l3.22-3.22v1.19a.75.75 0 0 0 1.5 0v-3a.75.75 0 0 0-.75-.75h-3Z"
             const val BottomLeft = "M7.25 16.5a.75.75 0 0 0 0-1.5h-1.19l3.22-3.22a.75.75 0 1 0-1.06-1.06l-3.22 3.22v-1.19a.75.75 0 0 0-1.5 0v3c0 .414.336.75.75.75h3Z"
+        }
+
+        object X {
+            const val Outline = "M13.97 15.03a.75.75 0 1 0 1.06-1.06l-3.97-3.97 3.97-3.97a.75.75 0 0 0-1.06-1.06l-3.97 3.97-3.97-3.97a.75.75 0 0 0-1.06 1.06l3.97 3.97-3.97 3.97a.75.75 0 1 0 1.06 1.06l3.97-3.97 3.97 3.97Z"
+        }
+
+        object Backspace {
+            const val Cross = "M14.03 7.47a.75.75 0 0 1 0 1.06l-1.47 1.47 1.47 1.47a.75.75 0 1 1-1.06 1.06l-1.47-1.47-1.47 1.47a.75.75 0 1 1-1.06-1.06l1.47-1.47-1.47-1.47a.75.75 0 0 1 1.06-1.06l1.47 1.47 1.47-1.47a.75.75 0 0 1 1.06 0Z"
+            const val Body = "M5.553 5.083a2.75 2.75 0 0 1 2.188-1.083h6.509a2.75 2.75 0 0 1 2.75 2.75v6.5a2.75 2.75 0 0 1-2.75 2.75h-6.51a2.75 2.75 0 0 1-2.187-1.083l-2.476-3.25a2.75 2.75 0 0 1 0-3.334l2.476-3.25Zm2.188.417c-.39 0-.758.182-.995.492l-2.476 3.25a1.25 1.25 0 0 0 0 1.516l2.476 3.25c.237.31.604.492.995.492h6.509c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25h-6.51Z"
+        }
+
+        object Check {
+            const val Outline = "M15.78 5.97a.75.75 0 0 1 0 1.06l-6.5 6.5a.75.75 0 0 1-1.06 0l-3.25-3.25a.75.75 0 1 1 1.06-1.06l2.72 2.72 5.97-5.97a.75.75 0 0 1 1.06 0Z"
         }
     }
 }

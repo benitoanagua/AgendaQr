@@ -24,9 +24,7 @@ internal object AppStrings {
     val Minutos = "Minutos"
     val HoraInvalida = "Introduce una hora entre 00:00 y 23:59"
     val AbriendoComprobante = "Abriendo comprobante…"
-    val ActividadReciente = "Actividad reciente"
-    val ActividadesRecientes = "Actividades recientes"
-    val attachReceiptNow = "Adjuntar comprobante ahora"
+    val attachReceiptNow = "Adjuntar comprobante"
     val AgendaQr = "Agenda QR"
     // V1.1 (ADR-0005, S01): sección de entradas recientes y tile vivo.
     val Recientes = "Recientes"
@@ -63,7 +61,6 @@ internal object AppStrings {
     val Comprobante2 = "Comprobante · "
     val ComprobantesSinAsociar = "Comprobantes sin asociar"
     val Comprobantes = "Comprobantes"
-    val ConceptoOpcional = "Concepto (opcional)"
     val Concepto = "Concepto: "
     val Contextos = "Contextos"
     val Contrasena = "Contraseña"
@@ -109,6 +106,8 @@ internal object AppStrings {
     val MonedaBob = "BOB"
     val MonedaUsd = "USD"
     val MonedaOtra = "Otra…"
+    /** Etiqueta del campo libre cuando la moneda es "Otra…" (código ISO). */
+    val CodigoMoneda = "Código de moneda"
     /** Confirmación de descarte del editor (U-08, D7). */
     val DescartarCambios = "¿Descartar cambios?"
     val DescartarCambiosMensaje = "Si sales ahora, se perderán los cambios."
@@ -137,7 +136,11 @@ internal object AppStrings {
     // (MonedaOpcional retirado en U-05: la moneda va en chips + campo
     // Otra… con LabelMoneda.)
     val Moneda = "Moneda: "
-    val MontoOpcional = "Monto (opcional)"
+    /** Marcador discreto de opcionalidad junto a la etiqueta del campo
+     *  (un solo patrón del DS; nunca "(opcional)" dentro del label). */
+    val Opcional = "Opcional"
+    /** Etiquetas de campo del editor (misma familia que LabelMoneda). */
+    val LabelMonto = "Monto"
     val MostrarQr = "Mostrar QR"
     val noAutomaticMatch = "Sin coincidencia automática. Elige una actividad."
     val NoHayQrParaRevisar = "No hay QR para revisar"
@@ -147,13 +150,11 @@ internal object AppStrings {
     val NoSePudoAbrirEl = "No se pudo abrir el comprobante"
     val Nombre = "Nombre"
     val Nota = "Nota"
-    val NotaOpcional = "Nota (opcional)"
     val Nota2 = "Nota: "
     val Operaciones = "Actividades"
     val OperacionNoEncontrada = "Actividad no encontrada"
     val Origen = "Origen: "
     val Pago = "Pago"
-    val PersonaOEntidadOpcional = "Persona o entidad (opcional)"
     val PersonaOEntidad = "Persona o entidad: "
     // (PodrasAdjuntar retirado en U-06: el editor muestra solo lo
     // definido en D5.)
@@ -250,6 +251,7 @@ internal object AppStrings {
     val RevisaTuCorreoParaConfirmar = "Revisa tu correo para confirmar tu cuenta."
     val AsociarAhora = "Asociar ahora"
     val AunNoHayOperaciones = "Aún no hay actividades"
+    val AunNoHayComprobantes = "Aún no hay comprobantes"
     val NoHayCoincidencias = "No hay coincidencias"
     val registerFirstPaymentHint = "Registra tu primer pago o cobro."
     val tryAnotherSearchHint = "Prueba con otra búsqueda."
@@ -282,7 +284,7 @@ internal object AppStrings {
     val NoSeEncontraronDestinos = "No se encontraron QR"
     val PruebaConOtraBusquedaOLimpia = "Prueba con otra búsqueda o limpia los filtros."
     val ParaContextoElegido = "Para: "
-    val ParaElegirContexto = "Para: elegir contexto (opcional)"
+    val ParaElegirContexto = "Para: elegir contexto"
     val ContextoGenerico = "Contexto"
     // ------------------------------------------------------------------
     // Jerarquía financiera de Actividades y metadatos de detalle
@@ -295,7 +297,6 @@ internal object AppStrings {
     /** Encabezado del grupo de notas del editor (S07). */
     val Notas = "Notas"
     /** Rótulos de sección de los grupos del editor (S07). */
-    val ImporteYMoneda = "Importe y moneda"
     val FechaYHora = "Fecha y hora"
     /** Metadatos: etiquetas cortas sin puntuación (fila compacta). */
     val LabelPersonaOEntidad = "Persona o entidad"

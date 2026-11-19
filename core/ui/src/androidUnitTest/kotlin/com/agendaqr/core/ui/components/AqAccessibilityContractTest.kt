@@ -74,10 +74,14 @@ class AqAccessibilityContractTest {
     }
 
     @Test
-    fun filter_chip_exposes_selected_state_and_keeps_touch_target() {
+    fun chip_group_exposes_selected_state_and_keeps_touch_target() {
         compose.setContent {
             AqTheme {
-                AqFilterChip(label = "Activos", selected = true, onClick = {})
+                AqChipGroup(
+                    options = listOf(AqChipOption("Activos")),
+                    selectedIndex = 0,
+                    onSelect = {},
+                )
             }
         }
 

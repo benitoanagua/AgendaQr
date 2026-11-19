@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.AqBottomAction
 import com.agendaqr.core.ui.components.AqIconBadge
 import com.agendaqr.core.ui.components.AqIcons
@@ -20,6 +19,7 @@ import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.destinations.domain.BiometricAvailability
 import com.agendaqr.destinations.domain.PinPolicy
 
@@ -63,7 +63,7 @@ internal fun LocalLockScreen(
             AqText(
                 AppStrings.DesbloqueaAgendaQr,
                 size = AqType.Title,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = AqWeight.SemiBold,
             )
             AqText(
                 AppStrings.DesbloqueaAgendaQrDescripcion,

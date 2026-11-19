@@ -1,6 +1,6 @@
 # Contrato normativo de diseño
 
-**Estado:** Normativo — versión 8.3
+**Estado:** Normativo — versión 8.4
 **Autoridad:** [ADR-0025](../07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md),
 [ADR-0026](../07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md),
 [ADR-0027](../07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md) y este
@@ -84,6 +84,55 @@ Tema oscuro publicado (`dark-experimental`): fondo
 `rgba(26, 26, 26, 1)`, superficie `rgba(48, 48, 48, 1)` y texto
 `rgba(227, 227, 227, 1)`. El resto se deriva según PV-02.
 
+### Jerarquía de selección, alertas, formularios y acciones (8.4)
+
+Reglas únicas del sistema; una pantalla nunca crea un patrón paralelo.
+
+**Selección — tabs vs segmentado vs chips.** Un solo lenguaje visual de
+selección: pista `surfaceSecondary` + píldora activa + badge de conteo.
+- `AqTabs` = navegación entre vistas hermanas de una misma superficie
+  (QR · Actividades · Comprobantes). Semántica `Role.Tab` + `selected`,
+  fila desplazable, objetivo ≥48 dp. El conteo vive en `AqTab.count`,
+  nunca como texto suelto bajo la barra.
+- `AqSegmentedControl` = elección excluyente dentro de un formulario o
+  filtro (Pago/Cobro, Todos/Favoritos). Semántica de radio.
+- `AqChipGroup` = conjunto compacto de opciones o atajos (moneda, Hoy/Ayer,
+  sugerencias). La selección no depende solo del color: check + relleno de
+  acento + borde reforzado.
+
+**Alertas.** `AqStatusBanner` = estado persistente/accionable bajo la barra
+superior (vía `AppStatusHost` o local). `AqSnackbarHost`/`AqFeedbackEvent` =
+confirmaciones transitorias. Los indicadores offline/pendientes compactos
+usan badge/píldora, no banner completo. En el banner, el icono leading es
+la semántica del tono (`AqTone.iconVector`, distinto por variante) y el
+cierre es `AqIcons.Close` (X simple, acción ≥48 dp con descripción), nunca
+el mismo glifo del estado.
+
+**Formularios.** Jerarquía fija: 1) campo hero (`AqAmountField`, tipografía
+`Amount` + símbolo de moneda); 2) secundarios en `AqFormSection` con
+encabezado ÚNICO — el título nombra el grupo y nunca se repite como label
+de campo; 3) opcionales con UN marcador discreto (`optionalLabel`, p. ej.
+"Opcional"), prohibido "(opcional)" dentro de la etiqueta; 4) acción
+primaria fija y dominante (`AqBottomAction`). Campos compuestos usan
+`AqFormField` (label + opcional + ayuda/error). Los atajos de fecha
+(Hoy/Ayer) son `AqChipGroup` acoplados al campo y reflejan el día elegido.
+"Otra…" muestra el valor elegido en la etiqueta del chip, sin duplicar el
+label del grupo.
+
+**Acciones.** Una acción primaria por pantalla. Jerarquía:
+`AqPrimaryButton` > `AqSecondaryButton`/`AqLightButton`/`AqOutlineButton` >
+`AqTextAction` > destructiva (`AqDangerButton` o `AqTextActionVariant.Danger`)
+que exige `AqDialog(destructive = true)` cuando es irreversible. En la barra
+superior caben máximo 2 acciones visibles + overflow: visibles las
+contextuales, en overflow las destructivas o infrecuentes, y nunca la misma
+acción en ambos sitios. En el detalle, la acción secundaria vive dentro de
+su sección y la destructiva va separada al final (o en overflow según el
+modelo de acciones de la pantalla), con una sola vía de ejecución.
+
+**Filas clave-valor.** Los metadatos de detalle usan `AqMetaRow`
+(etiqueta/valor con icono opcional); el monto y el tipo conservan la
+jerarquía hero (cifra grande + `AqTonalTag`).
+
 ## 3. Extensiones del producto
 
 Construidas solo con tokens y componentes de Polaris; no son valores propios.
@@ -96,7 +145,7 @@ Construidas solo con tokens y componentes de Polaris; no son valores propios.
 | X-04 | Roles de movimiento derivados | Derivados de las duraciones primitivas publicadas (PV-04). |
 | X-05 | Tema oscuro completado | Roles no publicados derivados de la capa semántica oficial (PV-02). |
 | X-06 | Acentos de contexto | La asignación determinista por dominio se conserva; los pares se seleccionan entre los colores verificados de la instantánea y se validan a AA. No son valores visuales propios. |
-| X-07 | Iconografía de producto sobre Polaris Icons | El conjunto se fija en `@shopify/polaris-icons@9.3.1`; 34 SVGs de `dist/svg` (20×20) se conservan como constantes Kotlin y se exponen mediante 36 nombres de producto. Los conceptos sin glifo oficial usan el verificable más cercano: `QrCode`→`ShopcodesIcon`, `SearchX`→`AlertCircleIcon`, `Inbox`→`ArchiveIcon`, `ImageOff`→`ImageAltIcon`, `ScanLine`→`BarcodeIcon`, `Income`→`ArrowDownIcon` y `Expense`→`ArrowUpIcon`. `Edit` y `Trash` son alias de `EditIcon` y `DeleteIcon`, no glifos nuevos. |
+| X-07 | Iconografía de producto sobre Polaris Icons | El conjunto se fija en `@shopify/polaris-icons@9.3.1`; 37 SVGs de `dist/svg` (20×20) se conservan como constantes Kotlin y se exponen mediante 41 nombres de producto. Los conceptos sin glifo oficial usan el verificable más cercano: `QrCode`→`ShopcodesIcon`, `SearchX`/`AlertCircle`→`AlertCircleIcon`, `Inbox`→`ArchiveIcon`, `ImageOff`→`ImageAltIcon`, `ScanLine`→`BarcodeIcon`, `Income`→`ArrowDownIcon` y `Expense`→`ArrowUpIcon`. `Edit` y `Trash` son alias de `EditIcon` y `DeleteIcon`, no glifos nuevos. `Close`→`XIcon` (cierre, acción) es distinto de `Cancel`→`XCircleIcon` (estado); `Check`→`CheckIcon` es el indicador de selección de chips; `Erase`→`BackspaceIcon` borra texto, nunca el glifo de papelera. |
 
 ## 4. Desviaciones móviles
 
@@ -142,6 +191,7 @@ en el archivo señalado con valores tomados de tokens semánticos.
 | E-05 | `shadow` | `AqLists.kt` | Elevación de tarjetas mediante `aqElevation` |
 | E-07 | `border` | `AqForms.kt` | Caja del campo select (reposo, foco y error) |
 | E-08 | `border` | `AqPinEntry.kt` | Borde de tecla del teclado PIN (contraste en tema oscuro) |
+| E-09 | `border` | `AqTabs.kt` | Borde de la píldora activa (mismo lenguaje que el segmentado) |
 
 E-06 (elevación de botones) está retirada: los botones son planos y un
 registro sin uso se detecta como excepción zombie.
@@ -155,6 +205,7 @@ registro sin uso se detecta como excepción zombie.
 | 8.1 | Se añade el rol `inputSurface`, los pasos 12/20 dp de espaciado y la derivación D-11 de contenedores tonales oscuros; la caja de campo de `AqForms.kt` se registra como E-07. |
 | 8.2 | Se adopta la regla de propiedad del espacio por nivel atómico (ADR-0027), se registra la derivación D-12 y se corrige el espaciado de `core/ui` y de las páginas: margen de pantalla de un solo dueño, relleno de tarjeta de 16 dp, densidad de fila de 12 dp, mensajes dentro del campo y opciones sin margen externo. |
 | 8.3 | Segunda pasada de fidelidad visual: radios publicados (`radius-200` en botones y etiquetas, `radius-100` en contadores de filtro, `radius-300` en tarjetas y cuerpos de lista, `radius-400` en diálogos), borde fino del botón secundario, borde hairline de `AqListBody`, paso por defecto de 16 dp entre organismos y contenido expandido limitado a `ContentMaxWidth` y centrado. |
+| 8.4 | Jerarquía unificada: `AqTabs` comparte pista/píldora/badge con `AqSegmentedControl` y gana `AqTab.count`, scroll y estado deshabilitado; `AqFilterChip` se sustituye por `AqChipGroup` (selección inequívoca: check + relleno + borde); `AqFormSection`/`AqFormField` y el marcador `optionalLabel` fijan la jerarquía de formulario; el banner separa icono de estado (`AqTone.iconVector`) del cierre (`AqIcons.Close`); `AqIcons.Erase` pasa a `BackspaceIcon` y se añaden `Close`, `Check` y `AlertCircle`. Se documenta la regla "un patrón = un componente" y los criterios de tabs vs segmentado, tipos de botón, formularios y alertas. |
 
 La historia detallada de la revisión y el estado final, incluido lo que no se
 puede verificar en este entorno, está en

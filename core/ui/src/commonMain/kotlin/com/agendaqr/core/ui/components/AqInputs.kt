@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
@@ -47,6 +48,38 @@ import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
+
+/**
+ * Etiqueta persistente del campo con el marcador de opcionalidad: UN solo
+ * patrón discreto (texto terciario junto al label), nunca "(opcional)"
+ * incrustado en cada etiqueta.
+ */
+@Composable
+private fun AqInputLabel(
+    label: String,
+    optionalLabel: String?,
+    enabled: Boolean,
+    labelColor: Color = AqColor.TextPrimary,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+    ) {
+        Text(
+            label,
+            style = AqTextStyles.Label,
+            color = if (!enabled) AqColor.OnDisabled else labelColor,
+            modifier = Modifier.weight(1f, fill = false),
+        )
+        optionalLabel?.let {
+            Text(
+                it,
+                style = AqTextStyles.Caption,
+                color = AqColor.TextTertiary,
+            )
+        }
+    }
+}
 
 /**
  * Entrada de formulario con etiqueta persistente y caja de campo.
@@ -82,6 +115,9 @@ fun AqTextField(
      *  moneda…). El label sigue siendo la señal. */
     leadingIcon: ImageVector? = null,
     trailing: (@Composable () -> Unit)? = null,
+    /** Marcador discreto de opcionalidad junto a la etiqueta
+     *  (copy del llamador, p. ej. "Opcional"). */
+    optionalLabel: String? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
@@ -94,11 +130,7 @@ fun AqTextField(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
     ) {
-        Text(
-            label,
-            style = AqTextStyles.Label,
-            color = if (!enabled) AqColor.OnDisabled else AqColor.TextPrimary,
-        )
+        AqInputLabel(label, optionalLabel, enabled)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -223,6 +255,9 @@ fun AqMultilineTextField(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     leadingIcon: ImageVector? = null,
     trailing: (@Composable () -> Unit)? = null,
+    /** Marcador discreto de opcionalidad junto a la etiqueta
+     *  (copy del llamador, p. ej. "Opcional"). */
+    optionalLabel: String? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
@@ -235,11 +270,7 @@ fun AqMultilineTextField(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
     ) {
-        Text(
-            label,
-            style = AqTextStyles.Label,
-            color = if (!enabled) AqColor.OnDisabled else AqColor.TextPrimary,
-        )
+        AqInputLabel(label, optionalLabel, enabled)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -520,6 +551,9 @@ fun AqAmountField(
     /** Estado compartido de campo (error/ayuda/deshabilitado): la molécula
      *  es dueña del mensaje y de su separación, no la pantalla. */
     state: AqFieldState = AqFieldState(),
+    /** Marcador discreto de opcionalidad junto a la etiqueta
+     *  (copy del llamador, p. ej. "Opcional"). */
+    optionalLabel: String? = null,
 ) {
     if (onClear != null) require(clearLabel.isNotBlank()) {
         "AqAmountField: onClear necesita clearLabel (copy del llamador)"
@@ -529,11 +563,7 @@ fun AqAmountField(
         modifier = modifier.fillMaxWidth().fieldSemantics(state),
         verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
     ) {
-        Text(
-            label,
-            style = AqTextStyles.Label,
-            color = if (state.enabled) AqColor.TextSecondary else AqColor.OnDisabled,
-        )
+        AqInputLabel(label, optionalLabel, state.enabled, labelColor = AqColor.TextSecondary)
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
