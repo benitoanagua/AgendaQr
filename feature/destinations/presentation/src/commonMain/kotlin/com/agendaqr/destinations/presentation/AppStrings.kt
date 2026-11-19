@@ -284,7 +284,7 @@ internal object AppStrings {
     val NoSeEncontraronDestinos = "No se encontraron QR"
     val PruebaConOtraBusquedaOLimpia = "Prueba con otra búsqueda o limpia los filtros."
     val ParaContextoElegido = "Para: "
-    val ParaElegirContexto = "Para: elegir contexto (opcional)"
+    val ParaElegirContexto = "Para: elegir contexto"
     val ContextoGenerico = "Contexto"
     // ------------------------------------------------------------------
     // Jerarquía financiera de Actividades y metadatos de detalle
