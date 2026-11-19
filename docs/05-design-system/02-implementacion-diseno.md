@@ -109,6 +109,14 @@ introducir afirmaciones monetarias. El QR a pantalla completa continúa sobre
 `AqQrPreview` (lienzo blanco verificado en ambos temas) y los efectos de
 brillo siguen siendo `expect/actual` en la capa feature.
 
+Los selectores de fecha y hora (`AqDatePickerDialog` y `AqTimePickerDialog`)
+usan ahora la anatomía de `AqDialog` para título, superficie, acciones y
+comportamiento modal. El calendario y la entrada numérica siguen usando los
+controles Material 3 como puente de plataforma; por esa diferencia de anatomía
+visual, C9 y C10 permanecen `PARTIAL` en la matriz. La selección de fecha
+conserva el contrato de medianoche UTC y la hora se combina con la zona del
+dispositivo en la feature.
+
 ## 4. Reglas de pantalla
 
 - La capa feature compone SOLO componentes del sistema (`core:ui`); importar controles M3 en `feature/`, `shared/` o `androidApp/` es una fuga del sistema y falla el gate.

@@ -1,10 +1,23 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeDown
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -101,5 +114,36 @@ class AqBottomSheetTest {
             swipeDown(startY = centerY, endY = centerY + 240f, durationMillis = 500)
         }
         assertFalse(dismissed)
+    }
+
+    @Test
+    fun dismissing_bottom_sheet_restores_focus_to_the_invoking_field() {
+        val focusRequester = FocusRequester()
+        compose.setContent {
+            AqTheme {
+                var sheetVisible by remember { mutableStateOf(false) }
+                Column {
+                    BasicTextField(
+                        value = "",
+                        onValueChange = {},
+                        modifier = Modifier.focusRequester(focusRequester).testTag("invoking-field"),
+                    )
+                    AqTextAction(label = "Abrir hoja", onClick = { sheetVisible = true })
+                }
+                LaunchedEffect(Unit) { focusRequester.requestFocus() }
+                if (sheetVisible) {
+                    AqBottomSheet(
+                        title = "Opciones",
+                        onDismissRequest = { sheetVisible = false },
+                        dismissDescription = "Cerrar",
+                    ) { }
+                }
+            }
+        }
+
+        compose.onNodeWithTag("invoking-field").assertIsFocused()
+        compose.onNodeWithText("Abrir hoja").performClick()
+        compose.onNodeWithText("Cerrar").performClick()
+        compose.onNodeWithTag("invoking-field").assertIsFocused()
     }
 }

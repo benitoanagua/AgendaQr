@@ -96,8 +96,8 @@
 | C6 | Password Input | — | NOT_APPLICABLE | — | — | — | — | UX V1 no recoge contraseñas; el PIN local es numérico y no es una contraseña | No implementar; capacidad fuera del producto V1 | — | — |
 | C7 | OTP Input | — | NOT_APPLICABLE | — | — | — | — | Agenda QR usa PIN local (C8), no códigos OTP de un solo uso | No duplicar el componente PIN con un patrón sin flujo de producto | Alta | `AqPinDots`, `AqKeypad` |
 | C8 | PIN Input | `AqPinDots` + `AqKeypad` | COMPLETE | Sí | NO VERIFICADO | Sí | `LocalAccessGateTest`, `AqAccessibilityContractTest` | — | Cifras enmascaradas, teclado 3×4, borrado accesible | Alta | `AqKeypad` |
-| C9 | Date Picker | `AqDatePickerDialog` (Material `DatePickerDialog` puente) | PARTIAL | Sí | NO VERIFICADO | Parcial | `AqDateTimePickerTest` | Usa `DatePickerDialog` de M3 como puente; forma no completamente Polaris (radios 16 dp aplicados) | Evaluar reemplazo por diálogo propio de Polaris | Media | `DatePickerDialog` (puente M3) |
-| C10 | Time Picker | `AqTimePickerDialog` (Material `AlertDialog`+`TimeInput` puente) | PARTIAL | Sí | NO VERIFICADO | Parcial | `AqDateTimePickerTest` | Mismo puente M3 que Date Picker | Evaluar reemplazo | Media | `AlertDialog`, `TimeInput` (puentes M3) |
+| C9 | Date Picker | `AqDatePickerDialog` (`AqDialog` + Material `DatePicker` puente) | PARTIAL | Sí | NO VERIFICADO | Parcial | `AqDateTimePickerTest` | El contenedor, acciones, radio y tokens siguen Polaris; el calendario sigue siendo M3 y no replica su anatomía visual | Mantener puente por ahora; reemplazar el cuerpo solo con especificación de calendario y prueba multiplataforma | Media | `AqDialog`, `DatePicker` (puente M3) |
+| C10 | Time Picker | `AqTimePickerDialog` (`AqDialog` + Material `TimeInput` puente) | PARTIAL | Sí | NO VERIFICADO | Parcial | `AqDateTimePickerTest` | Contenedor Polaris; el cuerpo numérico conserva anatomía M3 | Mantener puente por ahora; reemplazar el cuerpo solo con especificación de entrada accesible y prueba multiplataforma | Media | `AqDialog`, `TimeInput` (puente M3) |
 | C11 | Date Range Picker | — | NOT_APPLICABLE | — | — | — | — | UX V1 no declara rango de fechas | No implementar | — | — |
 | C12 | Searchable Select | — | NOT_APPLICABLE | — | — | — | — | Los selectores UX V1 tienen listas pequeñas, sin búsqueda | `AqSelect` cubre selección cerrada; no se requiere búsqueda incrustada | Media | `AqSelect` |
 | C13 | Combobox | — | NOT_APPLICABLE | — | — | — | — | UX V1 no permite opciones de texto libre ni sugiere valores | No añadir combobox sin requerimiento de producto | Media | `AqSelect` |
@@ -159,7 +159,7 @@
 | E3 | Dialog | `AqDialog` | COMPLETE | Sí | NO VERIFICADO | Sí (paneTitle, acciones etiquetadas, contenido largo desplazable) | `AqDialogAccessibilityTest`, `LayoutReferenceTest` | — | Altura acotada a la ventana; contenido y acciones permanecen accesibles mediante scroll | Alta | `AqDialogList` |
 | E4 | Confirmation Dialog | `AqDialog(destructive=...)` | COMPLETE | Sí | NO VERIFICADO | Sí (focus inicial en dismiss) | `ContextPickerDialogTest`, `ActionHierarchyTest` | — | Foco inicial en acción conservativa cuando destructive | Alta | `AqDialog` |
 | E5 | Alert Dialog | `AqDialog` (confirm/dismiss) | COMPLETE | Sí | NO VERIFICADO | Sí (paneTitle, acciones etiquetadas; destructivo distingue peligro) | `ScreensA11yCoverageTest`, `ActionHierarchyTest` | — | Alerta y confirmación comparten anatomía; el estado destructivo aporta la diferencia funcional | Media | `AqDialog` |
-| E6 | Bottom Sheet | `AqBottomSheet` (D-04) | PARTIAL | Sí | NO VERIFICADO | Sí (paneTitle, cierre explícito, target 48 dp) | `AqBottomSheetTest` | Retención/restauración de foco delegada al `Dialog` de Compose; gesto y paneTitle no validados en VoiceOver | Gesto de dismiss implementado; estado `expanded` controlado por el llamador | Media | `AqBottomSheet`, `Dialog` |
+| E6 | Bottom Sheet | `AqBottomSheet` (D-04) | COMPLETE | Sí | NO VERIFICADO | Sí (paneTitle, cierre explícito, gesto y restauración de foco probados en Android) | `AqBottomSheetTest` | — | Modal nativo de Compose; iOS/VoiceOver permanecen sin validación de runtime | Media | `AqBottomSheet`, `Dialog` |
 | E7 | Modal Bottom Sheet | `AqBottomSheet` | COMPLETE | Sí | NO VERIFICADO | Sí (paneTitle, acción explícita, gesto probado en Android) | `AqBottomSheetTest` | — | El patrón requerido es modal; `expanded` controla su presentación | Media | `AqBottomSheet` |
 | E8 | Side Sheet | — | NOT_APPLICABLE | — | — | — | — | UX V1 no declara side sheet; navegación por barra inferior y rail | No implementar | — | — |
 | E9 | Drawer | — | NOT_APPLICABLE | — | — | — | — | UX V1 no declara drawer de navegación | No implementar | — | — |
@@ -247,7 +247,7 @@
 | H4 | Carousel | `core/ui/.../AqLists.kt` → `AqCarousel` | COMPLETE | Sí | NO VERIFICADO | Parcial | `AqCarouselTest` | Usado en S01 carrusel de favoritos; ancho fijo por ítem, siguiente asoma | Sin cambios | Media | `AqIcon`, `AqTextStyles` |
 | H5 | Media Attachment | `ComprobantePreview` + `AqMediaFrame` | COMPLETE | Sí | NO VERIFICADO | Sí (vista previa identificada y fallback textual) | `ScreensA11yCoverageTest.s10_receipt_preview_renders_without_crash`, `AqMediaFrame` | — | El comprobante adjunto se muestra dentro del visor; progreso de carga no aplica a la operación local | Media | `AqMediaFrame`, `ComprobantePreview` |
 | H6 | Thumbnail | — | NOT_APPLICABLE | — | — | — | — | UX V1 no muestra galerías de miniaturas | `AqQrPreview` y `ComprobanteViewer` presentan recursos individuales | Baja | `AqQrPreview` |
-| H7 | Document Preview | `ComprobanteViewer` (feature) | PARTIAL | Sí | NO VERIFICADO | Parcial | — | Visor de comprobante/PDF en feature, no en `core/ui` | No mover a core/ui sin requerimiento | Baja | Implementación de feature |
+| H7 | Document Preview | `ComprobanteViewer` (feature) | PARTIAL | Sí | NO VERIFICADO | Parcial | `ComprobanteThumbnailTest` (fallback PDF) | Imágenes se muestran; PDF conserva un marcador sin render de páginas en Android/iOS | Mantener en la feature y renderizar PDF con soporte multiplataforma validado antes de declarar completo | Baja | Implementación nativa por plataforma |
 | H8 | File Attachment | — | NOT_APPLICABLE | — | — | — | — | UX V1 no ofrece carga/adjunto genérico de archivos; comprobantes usan su flujo propio | No añadir componente genérico sin caso de producto | — | — |
 | H9 | Upload Progress | — | NOT_APPLICABLE | — | — | — | — | UX V1 no expone subida de archivos con progreso medible | `AqProgressBar` sigue cubriendo operaciones con progreso determinado | Media | `AqProgressBar` |
 | H10 | Media Empty State | `AqEmptyState` | COMPLETE | Sí | NO VERIFICADO | Sí | `ScreensA11yCoverageTest` | Reutiliza `AqEmptyState` genérico | Sin cambios | Alta | `AqEmptyState` |
@@ -327,10 +327,10 @@
 
 | Clasificación | Cantidad | Patrón |
 |---|---|---|
-| COMPLETE | 108 | A1-A2, A6-A7, A9-A10, A12, A15, B1-B7, B9-B10, B13-B16, C1-C5, C8, C15-C19, C23-C27, D1-D7, D11, E1-E5, E7, E11-E15, F3-F7, F9-F10, F11-F12, F14, G1-G4, G5-G6, G9-G10, G13-G16, H1, H4-H5, H10, I1-I10, I12-I18, J4, J7-J8, J10-J12, J14-J16 |
-| PARTIAL | 6 | A11, C9-C10, E6, H7, J13 |
+| COMPLETE | 109 | A1-A2, A6-A7, A9-A10, A12, A15, B1-B7, B9-B10, B13-B16, C1-C5, C8, C15-C19, C23-C27, D1-D7, D11, E1-E7, E11-E15, F3-F7, F9-F12, F14, G1-G4, G5-G6, G9-G10, G13-G16, H1, H4-H5, H10, I1-I10, I12-I18, J4, J7-J8, J10-J12, J14-J16 |
+| PARTIAL | 5 | A11, C9-C10, H7, J13 |
 | MISSING | 0 | — |
-| NOT_APPLICABLE | 48 | A3-A5, A8, A13-A14, B8, B11-B12, C6-C7, C11-C14, C20-C22, D8-D10, D12, E8-E10, E16, F1-F2, F8, F13, G7-G8, G11-G12, G17, H2-H3, H6-H9, I11, J1-J3, J5-J6, J9, J17 |
+| NOT_APPLICABLE | 48 | A3-A5, A8, A13-A14, B8, B11-B12, C6-C7, C11-C14, C20-C22, D8-D10, D12, E8-E10, E16, F1-F2, F8, F13, G7-G8, G11-G12, G17, H2-H3, H6, H8-H9, I11, J1-J3, J5-J6, J9, J17 |
 
 ### Riesgos arquitectónicos principales
 

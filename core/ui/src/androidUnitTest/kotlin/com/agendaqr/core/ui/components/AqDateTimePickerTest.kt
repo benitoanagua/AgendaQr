@@ -3,6 +3,7 @@ package com.agendaqr.core.ui.components
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
 import org.junit.Test
@@ -33,6 +34,7 @@ class AqDateTimePickerTest {
                 AqScreenScaffold {
                     AqDatePickerDialog(
                         selectedDateUtc = utcMidnight,
+                        title = "Fecha",
                         onConfirm = { confirmed.set(it) },
                         onDismiss = { dismissed.set(true) },
                         confirmLabel = "Elegir",
@@ -42,7 +44,7 @@ class AqDateTimePickerTest {
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("Elegir").performClick()
+        compose.onNodeWithText("Elegir").performScrollTo().performClick()
         compose.waitForIdle()
         assertEquals(utcMidnight, confirmed.get())
         assertTrue(!dismissed.get())
@@ -57,6 +59,7 @@ class AqDateTimePickerTest {
                 AqScreenScaffold {
                     AqDatePickerDialog(
                         selectedDateUtc = null,
+                        title = "Fecha",
                         onConfirm = { confirmed.set(it) },
                         onDismiss = { dismissed.set(true) },
                         confirmLabel = "Elegir",
@@ -66,7 +69,7 @@ class AqDateTimePickerTest {
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("Cancelar").performClick()
+        compose.onNodeWithText("Cancelar").performScrollTo().performClick()
         compose.waitForIdle()
         assertTrue(confirmed.get() == null)
         assertTrue(dismissed.get())
@@ -85,6 +88,7 @@ class AqDateTimePickerTest {
                         onDismiss = {},
                         confirmLabel = "Elegir",
                         dismissLabel = "Cancelar",
+                        title = "Hora",
                     )
                 }
             }
