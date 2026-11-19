@@ -41,7 +41,7 @@
 | A8 | Breadcrumbs | — | NOT_APPLICABLE | — | — | — | — | UX V1 no usa breadcrumbs; navegación por back stack y rutas | No implementar | — | — |
 | A9 | Navigation Tabs | `core/ui/.../AqTabs.kt` → `AqTabs` | COMPLETE | Sí | NO VERIFICADO | Sí (Role.Tab, selected, target proporcionado por Tab de Compose) | `AqTabsLayoutTest` | — | Títulos de texto según S06; scroll, selección y escala 100/150/200 % verificados | Media | `PrimaryScrollableTabRow` (M3 puente) |
 | A10 | Tab Bar | `core/ui/.../AqButtons.kt` → `AqSegmentedControl` | COMPLETE | Sí | NO VERIFICADO | Sí (rol RadioButton, selectableGroup) | `ScreensA11yCoverageTest`, `DestinationsScreenA11yTest` | — | Segmentos cortos de selección única según UX V1; pestañas scrollables son otro patrón | Alta | `AqIcon`, `AqTone` |
-| A11 | Back Navigation | `AqTopBar(onBack=...)`, `PredictiveBackHandler` (host) | PARTIAL | Sí | NO VERIFICADO | Sí | `RootNavigationChromeTest` | Predictive back compilado pero sin verificación en dispositivo (ADR-0007) | Conservar back nativo; documentar iOS como no verificado | Alta | Host de plataforma |
+| A11 | Back Navigation | `AqTopBar(onBack=...)`, `PredictiveBackHandler` (host) | PARTIAL | Sí | NO VERIFICADO | Sí | `RootNavigationChromeTest`, `AppBackStackTest` | Lógica de back probada; gesto requiere runtime Android (ADB sin dispositivos y SDK sin emulador) | Conservar back nativo; documentar iOS como no verificado | Alta | Host de plataforma |
 | A12 | Overflow Menu | `AqActionSheet` (interno, vía `LocalAqActionSheetController`) | COMPLETE | Sí | NO VERIFICADO | Sí | `AqActionSheetTest` | — | Overflow móvil como diálogo de lista; no requiere anclaje para este flujo | Media | `AqDialog`, `AqDialogList` |
 | A13 | Navigation Badges | — | NOT_APPLICABLE | — | — | — | — | `AqNavBar` y `AqNavRail` no muestran conteos; UX V1 no declara notificaciones pendientes en navegación | Los conteos existentes pertenecen a filtros/segmentos, no a destinos de navegación | — | — |
 | A14 | Floating Action Button | — | NOT_APPLICABLE | — | — | — | — | UX V1.9 elimina FAB en S01; acción primaria fija en `AqBottomAction` | No implementar FAB; UX V1 lo descarta | — | — |
@@ -307,7 +307,7 @@
 | J10 | Haptic Feedback | `AqFeedbackEvent` | COMPLETE | Sí | NO VERIFICADO | Sí | `LocalAccessBiometricTest` | — | Mismo patrón validado en I18 | Media | `LocalHapticFeedback` |
 | J11 | Touch Feedback | `AqButtonImpl` (color activo, sin ripple) | COMPLETE | Sí | NO VERIFICADO | Sí | `AqButtonStyleTest` | Presión resuelta por cambio de token de color | Sin cambios | Alta | `AqButtonImpl` |
 | J12 | Nested Scrolling | `AqScreenScaffold` (verticalScroll) | COMPLETE | Sí | NO VERIFICADO | Sí | `LayoutReferenceTest` | — | El scroll vertical simple cubre UX V1; no hay caso de anidado complejo | Media | `AqScreenScaffold` |
-| J13 | Predictive Back | `PredictiveBackHandler` (host) | PARTIAL | Sí | NO VERIFICADO | Sí | `RootNavigationChromeTest` | Compilado en 3 targets; sin verificación en dispositivo (ADR-0007) | Documentar iOS como no verificado | Alta | Host de plataforma |
+| J13 | Predictive Back | `PredictiveBackHandler` (host) | PARTIAL | Sí | NO VERIFICADO | Sí | `AppBackStackTest`, `RootNavigationChromeTest` | Contrato y compilación verificados; gesto no ejecutable aquí (ADB sin dispositivos y SDK sin emulador) | Documentar runtime iOS como no verificado | Alta | Host de plataforma |
 | J14 | Edge-to-edge | `AqScreenScaffold` (contentWindowInsets) | COMPLETE | Sí | NO VERIFICADO | Sí | `LayoutReferenceTest` | Insets de contenido manejados por Scaffold | Sin cambios | Alta | `AqScreenScaffold` |
 | J15 | Keyboard-aware Layout | `AqBottomActionDock` (imePadding) | COMPLETE | Sí | NO VERIFICADO | Sí | `LayoutReferenceTest` | IME consumido; acción fija no queda bajo teclado | Sin cambios | Alta | `AqBottomActionDock` |
 | J16 | One-handed Interaction | `AqBottomAction` (acción alcanzable) | COMPLETE | Sí | NO VERIFICADO | Sí | `ScreensA11yCoverageTest` | — | Acción primaria persistente en zona inferior alcanzable | Media | `AqBottomAction` |
@@ -345,7 +345,9 @@
 | Prioridad | Verificación | Evidencia pendiente |
 |---|---|---|
 | Alta | Revisar accesibilidad de componentes `PARTIAL` | Las carencias están anotadas por fila; no se declara paridad total |
-| Alta | Verificar UI en iOS con dispositivo/simulador y VoiceOver | Compilación Kotlin/Native pasa, pero este entorno no ejecuta Xcode ni simulador iOS |
+| Alta | Verificar back predictivo con gesto Android real | `adb devices -l` no devuelve dispositivos; `/opt/android-sdk/emulator/emulator` no existe en este host |
+| Alta | Verificar UI en iOS con dispositivo/simulador y VoiceOver | Compilación Kotlin/Native pasa, pero este host Linux no tiene `xcrun` ni `xcodebuild` |
+| Media | Abrir PDF válido en Android e iOS | Robolectric no implementa `PdfRenderer`; no hay runtime Android conectado ni runtime Apple disponible |
 | Media | Verificar retención/restauración de foco en overlays | La prueba Android cubre el foco inicial destructivo, no la restauración; VoiceOver/iOS no están disponibles aquí |
 
 ---
