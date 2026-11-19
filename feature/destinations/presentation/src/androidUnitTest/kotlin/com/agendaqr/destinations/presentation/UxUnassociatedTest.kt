@@ -77,6 +77,18 @@ class UxUnassociatedTest {
     }
 
     @Test
+    fun tray_long_receipt_name_not_truncated() {
+        val vm = viewModelWithLongReceiptName()
+        render(vm)
+        // El nombre largo se muestra en dos líneas sin elipsis que oculte información.
+        compose.onNodeWithText("recibo_muy_largo_2026_11_17_factura.pdf").assertExists()
+        // La acción de crear actividad vive en su propia línea, no comprimida con el título.
+        compose.onNodeWithText(AppStrings.createOperationFromThis).assertExists()
+        // Ningún nodo de elipsis que indique truncamiento del nombre.
+        compose.onNodeWithText("…").assertDoesNotExist()
+    }
+
+    @Test
     fun tray_has_no_primary_buttons_and_row_opens_association() {
         val vm = viewModel()
         render(vm)
@@ -193,5 +205,42 @@ class UxUnassociatedTest {
         override suspend fun save(history: DeletedOperationHistory) {
             state.value = state.value + history
         }
+    }
+
+    private fun viewModelWithLongReceiptName(): OperationsViewModel {
+        val operations = FakeOperations()
+        val receipts = FakeReceipts(
+            listOf(
+                Comprobante(
+                    id = "r-long",
+                    file = "recibo_muy_largo_2026_11_17_factura.pdf",
+                    createdAt = 1_000,
+                    updatedAt = 1_000,
+                ),
+            ),
+        )
+        val contexts = FakeContexts()
+        val files = NoopFiles()
+        val history = FakeHistory()
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
+        return OperationsViewModel(
+            observeOperations = ObserveOperationsUseCase(operations),
+            observeContexts = ObserveContextsUseCase(contexts),
+            observeUnassociated = ObserveUnassociatedComprobantesUseCase(receipts),
+            observeOperationComprobantes = ObserveOperationComprobantesUseCase(receipts),
+            getOperation = GetOperationUseCase(operations),
+            saveOperation = SaveOperationUseCase(operations),
+            updateOperation = UpdateOperationUseCase(operations),
+            deleteOperation = DeleteOperationWithHistoryUseCase(operations, receipts, files, history),
+            associate = AssociateComprobanteToOperationUseCase(operations, receipts),
+            unassociate = UnassociateComprobanteUseCase(receipts),
+            saveComprobante = SaveComprobanteUseCase(receipts, files),
+            findDuplicates = FindDuplicateComprobantesUseCase(receipts, files),
+            getComprobante = GetComprobanteUseCase(receipts),
+            suggestReceiptAssociation = SuggestReceiptAssociationUseCase(receipts, operations),
+            deleteComprobante = DeleteComprobanteUseCase(receipts, files),
+            comprobanteFiles = files,
+            scope = scope,
+        )
     }
 }

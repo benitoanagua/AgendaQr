@@ -1,6 +1,7 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -153,9 +154,10 @@ private fun KeypadKey(
             .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
             .clip(AqShapes.Medium)
             .background(
-                if (pressed) AqColor.SurfaceActive else AqColor.Surface,
+                if (pressed) AqColor.SurfaceActive else AqColor.SurfaceContainerHighest,
                 AqShapes.Medium,
             )
+            .border(AqMetrics.Border, AqColor.Border, AqShapes.Medium)
             .clickable(
                 role = Role.Button,
                 interactionSource = interactionSource,
