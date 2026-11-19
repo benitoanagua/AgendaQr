@@ -33,6 +33,7 @@
 | [`05-design-system/10-auditoria-fidelidad-polaris.md`](05-design-system/10-auditoria-fidelidad-polaris.md) | Auditoría de fidelidad de `core/ui` contra la instantánea |
 | [`05-design-system/11-auditoria-atomic-spacing.md`](05-design-system/11-auditoria-atomic-spacing.md) | Auditoría de espaciado atómico y densidad de `core/ui` y las pantallas |
 | [`05-design-system/12-matriz-cobertura-polaris-moon-agendaqr.md`](05-design-system/12-matriz-cobertura-polaris-moon-agendaqr.md) | Matriz completa de cobertura Polaris / Moon / Agenda QR: clasificación, estado, carencias, riesgos y prioridades |
+| [`05-design-system/13-plan-paridad-componentes-polaris-mobile.md`](05-design-system/13-plan-paridad-componentes-polaris-mobile.md) | Plan de paridad de componentes Polaris-first y gaps mobile: criterios, backlog y definición de terminado |
 | [`05-design-system/02-implementacion-diseno.md`](05-design-system/02-implementacion-diseno.md) | Reglas de implementación (histórico; pendiente de alineación) |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros (pendiente de alineación) |
 | [`05-design-system/07-evaluacion-tipografia.md`](05-design-system/07-evaluacion-tipografia.md) | Evaluación histórica de MiSans Global (no adoptada) |
