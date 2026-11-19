@@ -74,7 +74,7 @@ class UxDiscardReproductionTest {
         }
         compose.waitForIdle()
         // Escribir un importe: el editor queda "sucio".
-        compose.onNodeWithContentDescription(AppStrings.MontoOpcional)
+        compose.onNodeWithContentDescription(AppStrings.LabelMonto)
             .performTextInput("120")
         compose.waitForIdle()
         // Volver atrás con cambios sin guardar.
@@ -128,7 +128,7 @@ class UxDiscardReproductionTest {
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithContentDescription(AppStrings.MontoOpcional)
+        compose.onNodeWithContentDescription(AppStrings.LabelMonto)
             .performTextInput("120")
         compose.waitForIdle()
         vm.onAction(OperationAction.Back)

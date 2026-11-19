@@ -50,6 +50,7 @@ import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.destinations.domain.Destination
 
 /**
@@ -312,7 +313,7 @@ private fun FavoriteDestinationCard(
                 AqText(
                     destination.name.ifBlank { AppStrings.SinNombre },
                     size = AqType.RowTitle,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                    fontWeight = AqWeight.SemiBold,
                 )
                 AqText(
                     destinationSubtitle(destination) ?: "",

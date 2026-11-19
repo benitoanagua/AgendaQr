@@ -15,6 +15,7 @@ import com.agendaqr.core.ui.components.AqTopBar
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqWeight
 
 @Composable
 fun DestinationNotFound(onBack: () -> Unit) {
@@ -77,7 +78,7 @@ fun QrFullscreenPattern(
                     AqText(
                         destinationName,
                         size = AqType.Title,
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                        fontWeight = AqWeight.SemiBold,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                     )
                 }

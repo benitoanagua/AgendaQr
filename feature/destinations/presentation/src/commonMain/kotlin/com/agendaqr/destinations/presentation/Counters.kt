@@ -47,10 +47,6 @@ internal fun unassociatedReceiptsLabel(count: Int): String =
 internal fun syncPendingLabel(count: Int, retrying: Boolean): String =
     "Sincronización pendiente: " + count + (if (retrying) " · reintentando…" else "")
 
-/** Encabezado de sección del contexto: "QR · N", "Comprobante(s) · N". */
-internal fun contextSectionLabel(nounSingular: String, nounPlural: String, count: Int): String =
-    counterLabel(nounSingular, nounPlural, count) + " · " + count
-
 /** "Guardar N reconocidos" — botón fijo (R7). */
 internal fun guardarReconocidosLabel(count: Int): String =
     "Guardar " + count + " reconocidos"

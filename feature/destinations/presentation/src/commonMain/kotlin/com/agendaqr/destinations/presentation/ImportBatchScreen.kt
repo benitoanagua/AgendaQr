@@ -42,6 +42,7 @@ import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.destinations.domain.ImportBatch
 import com.agendaqr.destinations.domain.ImportCandidate
 import com.agendaqr.destinations.domain.ImportKind
@@ -293,7 +294,7 @@ private fun PendingItemCard(
             // acompañan): la insignia va en su propia línea para no recortar
             // el ancho del título, tampoco con fuente al 200 %.
             Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
-                AqText(text = pendingItemName(candidate, index), fontWeight = androidx.compose.ui.text.font.FontWeight.Medium)
+                AqText(text = pendingItemName(candidate, index), fontWeight = AqWeight.Medium)
                 AqText(
                     text = if (candidate.displayName?.isNotBlank() == true) {
                         (candidate.extension?.let { AppStrings.ArchivoPrefijo + it + " · " } ?: "") + when (candidate.kind) {

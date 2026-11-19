@@ -44,7 +44,6 @@ import com.agendaqr.core.ui.components.AqSegmentedControl
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTonalTag
 import com.agendaqr.core.ui.components.AqTappableCard
-import com.agendaqr.core.ui.components.AqFilterChip
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqTopBar
 import com.agendaqr.core.ui.components.AqExtendedFab
@@ -1836,7 +1835,7 @@ open class LayoutReferenceTest {
      * `AqCard` envolviendo que duplique la superficie.
      */
     private fun assertOperationEditorDensity(label: String) {
-        val sections = compose.onAllNodesWithTag("aq-editor-section")
+        val sections = compose.onAllNodesWithTag("aq-form-section")
             .fetchSemanticsNodes()
             .map { it.boundsInRoot }
             .filter { it.width > 0f && it.height > 0f }
@@ -1854,7 +1853,7 @@ open class LayoutReferenceTest {
         // de 48 dp, sin tarjeta de contenedor duplicada. El BasicTextField
         // lleva el label como contentDescription.
         val amountField = compose
-            .onNodeWithContentDescription(AppStrings.MontoOpcional, useUnmergedTree = true)
+            .onNodeWithContentDescription(AppStrings.LabelMonto, useUnmergedTree = true)
             .getUnclippedBoundsInRoot()
         assertTrue(
             "$label: campo de importe con objetivo táctil ≥ 48 dp",

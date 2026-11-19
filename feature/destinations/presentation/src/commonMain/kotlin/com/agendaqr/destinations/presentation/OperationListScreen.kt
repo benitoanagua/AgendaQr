@@ -14,7 +14,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.font.FontWeight
 import com.agendaqr.core.ui.components.AqSnackbarHost
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.components.AqExtendedFab
@@ -200,7 +199,7 @@ internal fun OperationListScreen(
                             AqText(
                                 monthYearLabel(filtered.first().occurredAt),
                                 size = AqType.BodySmall,
-                                fontWeight = FontWeight.SemiBold,
+                                fontWeight = AqWeight.SemiBold,
                             )
                             AqText(
                                 filtered.size.toString() + " " + AppStrings.RegistrosLocales,
@@ -277,7 +276,7 @@ internal fun OperationListScreen(
                                     AqText(
                                         it,
                                         size = AqType.SectionHeader,
-                                        fontWeight = FontWeight.SemiBold,
+                                        fontWeight = AqWeight.SemiBold,
                                         color = amountColor,
                                     )
                                 }

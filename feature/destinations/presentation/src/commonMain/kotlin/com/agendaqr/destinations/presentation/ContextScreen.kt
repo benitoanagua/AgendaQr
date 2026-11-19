@@ -14,6 +14,7 @@ import com.agendaqr.core.ui.components.AqSnackbarHost
 import com.agendaqr.core.ui.components.AqNavChromeState
 import com.agendaqr.core.ui.components.AqEmptyState
 import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqTab
 import com.agendaqr.core.ui.components.AqTabs
 import com.agendaqr.core.ui.components.AqListBody
 import com.agendaqr.core.ui.components.AqListRow
@@ -216,8 +217,14 @@ private fun ContextDetail(
             // Pestañas estándar QR · Actividades · Comprobantes (modelo
             // mental §2; sin crear navegación nueva — la conmutación es local).
             var pivotSection by remember { mutableStateOf(0) }
+            // El conteo vive en el badge de la pestaña (AqTab.count);
+            // las secciones vacías usan el empty state estándar.
             AqTabs(
-                sections = listOf(AppStrings.Qr, AppStrings.Operaciones, AppStrings.Comprobantes),
+                tabs = listOf(
+                    AqTab(AppStrings.Qr, count = data.destinations.size),
+                    AqTab(AppStrings.Operaciones, count = data.operations.size),
+                    AqTab(AppStrings.Comprobantes, count = data.comprobantes.size),
+                ),
                 selectedIndex = pivotSection,
                 onSelect = { pivotSection = it },
                 accent = contextAccent,
@@ -225,59 +232,75 @@ private fun ContextDetail(
                 Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
                     when (section) {
                         0 -> {
-                            // U1: QR es invariable en español; conteo vía helper.
-                            AqText(contextSectionLabel("QR", "QR", data.destinations.size), size = AqType.Label, color = AqColor.TextSecondary)
-                            AqListBody {
-                                data.destinations.forEachIndexed { index, destination ->
-                                    AqListRow(
-                                        title = destination.name.ifBlank { AppStrings.QrSinNombre },
-                                        onClick = { onOpenDestination(destination.id) },
-                                        showDivider = index < data.destinations.lastIndex,
-                                    )
+                            if (data.destinations.isEmpty()) {
+                                AqEmptyState(
+                                    icon = AqIcons.QrCode,
+                                    title = AppStrings.AunNoHayDestinos,
+                                )
+                            } else {
+                                AqListBody {
+                                    data.destinations.forEachIndexed { index, destination ->
+                                        AqListRow(
+                                            title = destination.name.ifBlank { AppStrings.QrSinNombre },
+                                            onClick = { onOpenDestination(destination.id) },
+                                            showDivider = index < data.destinations.lastIndex,
+                                        )
+                                    }
                                 }
                             }
                         }
                         1 -> {
-                            // U1: singular honesto para N=1 ("Actividad reciente · 1").
-                            AqText(contextSectionLabel(AppStrings.ActividadReciente, AppStrings.ActividadesRecientes, data.operations.size), size = AqType.Label, color = AqColor.TextSecondary)
-                            val shownOperations = data.operations.take(RECENT_ACTIVITIES_SHOWN)
-                            AqListBody {
-                                shownOperations.forEachIndexed { index, operation ->
-                                    AqListRow(
-                                        title = listOfNotNull(
-                                            when (operation.type) {
-                                                com.agendaqr.destinations.domain.OperationType.PAGO -> AppStrings.Pago
-                                                com.agendaqr.destinations.domain.OperationType.COBRO -> AppStrings.Cobro
-                                            },
-                                            operation.amount,
-                                            operation.currency,
-                                            operation.personOrEntity,
-                                        ).joinToString(" · "),
-                                        // Fecha real de la actividad: metadato
-                                        // corto en la línea del título.
-                                        endMeta = formatDate(operation.occurredAt),
-                                        onClick = { onOpenOperation(operation.id) },
-                                        showDivider = index < shownOperations.lastIndex,
+                            if (data.operations.isEmpty()) {
+                                AqEmptyState(
+                                    icon = AqIcons.Register,
+                                    title = AppStrings.AunNoHayOperaciones,
+                                )
+                            } else {
+                                val shownOperations = data.operations.take(RECENT_ACTIVITIES_SHOWN)
+                                AqListBody {
+                                    shownOperations.forEachIndexed { index, operation ->
+                                        AqListRow(
+                                            title = listOfNotNull(
+                                                when (operation.type) {
+                                                    com.agendaqr.destinations.domain.OperationType.PAGO -> AppStrings.Pago
+                                                    com.agendaqr.destinations.domain.OperationType.COBRO -> AppStrings.Cobro
+                                                },
+                                                operation.amount,
+                                                operation.currency,
+                                                operation.personOrEntity,
+                                            ).joinToString(" · "),
+                                            // Fecha real de la actividad: metadato
+                                            // corto en la línea del título.
+                                            endMeta = formatDate(operation.occurredAt),
+                                            onClick = { onOpenOperation(operation.id) },
+                                            showDivider = index < shownOperations.lastIndex,
+                                        )
+                                    }
+                                }
+                                if (data.operations.size > RECENT_ACTIVITIES_SHOWN) {
+                                    AqTextAction(
+                                        label = AppStrings.VerMas,
+                                        onClick = onOpenOperations,
                                     )
                                 }
                             }
-                            if (data.operations.size > RECENT_ACTIVITIES_SHOWN) {
-                                AqTextAction(
-                                    label = AppStrings.VerMas,
-                                    onClick = onOpenOperations,
-                                )
-                            }
                         }
                         else -> {
-                            AqText(contextSectionLabel(AppStrings.Comprobante, AppStrings.Comprobantes, data.comprobantes.size), size = AqType.Label, color = AqColor.TextSecondary)
-                            AqListBody {
-                                data.comprobantes.forEachIndexed { index, receipt ->
-                                    AqListRow(
-                                        title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
-                                        subtitle = receipt.file.takeIf { it.isNotBlank() },
-                                        onClick = { onOpenComprobante(receipt.id) },
-                                        showDivider = index < data.comprobantes.lastIndex,
-                                    )
+                            if (data.comprobantes.isEmpty()) {
+                                AqEmptyState(
+                                    icon = AqIcons.Attachment,
+                                    title = AppStrings.AunNoHayComprobantes,
+                                )
+                            } else {
+                                AqListBody {
+                                    data.comprobantes.forEachIndexed { index, receipt ->
+                                        AqListRow(
+                                            title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
+                                            subtitle = receipt.file.takeIf { it.isNotBlank() },
+                                            onClick = { onOpenComprobante(receipt.id) },
+                                            showDivider = index < data.comprobantes.lastIndex,
+                                        )
+                                    }
                                 }
                             }
                         }

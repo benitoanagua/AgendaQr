@@ -68,10 +68,6 @@ internal fun OperationDetailScreen(
                         onClick = { viewModel.onAction(OperationAction.Edit(operation.id)) },
                     ),
                 ),
-                overflowActions = listOf(
-                    AqOverflowAction(AppStrings.EliminarOperacion, { showDeleteConfirm = true }),
-                ),
-                overflowLabel = AppStrings.Mas,
             )
         },
         snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
@@ -109,7 +105,7 @@ internal fun OperationDetailScreen(
                         AqText(
                             it,
                             size = AqType.Amount,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                            fontWeight = AqWeight.SemiBold,
                         )
                     }
                     Row(
@@ -124,7 +120,7 @@ internal fun OperationDetailScreen(
                         AqText(
                             operationTitle(operation),
                             size = AqType.SectionHeader,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                            fontWeight = AqWeight.SemiBold,
                         )
                     }
                 }
@@ -190,7 +186,13 @@ internal fun OperationDetailScreen(
         AqSection(AppStrings.SeccionComprobantes) {
             if (state.operationComprobantes.isEmpty()) {
                 AqText(AppStrings.SinComprobanteAdjunto, color = AqColor.TextSecondary)
-                AqTextAction(label = AppStrings.attachReceiptNow, onClick = { viewModel.openUnassociatedForOperation(operation.id) })
+                // Secundaria/tonal con icono, dentro de su sección: nunca
+                // un enlace del mismo peso que la acción destructiva.
+                AqSecondaryButton(
+                    label = AppStrings.attachReceiptNow,
+                    icon = AqIcons.Attachment,
+                    onClick = { viewModel.openUnassociatedForOperation(operation.id) },
+                )
             } else {
                 // X-01: insignia de evidencia reutilizable (icono + texto).
                 // El texto afirma solo la recepción del comprobante; nunca
@@ -230,7 +232,13 @@ internal fun OperationDetailScreen(
                 }
             }
         }
-        AqTextAction(label = AppStrings.EliminarOperacion, onClick = { showDeleteConfirm = true })
+        // Destructiva al final, separada del contenido y con el diálogo
+        // estándar: una sola vía de eliminación (sin duplicar en el menú).
+        AqDangerButton(
+            label = AppStrings.EliminarOperacion,
+            onClick = { showDeleteConfirm = true },
+            size = AqButtonSize.Medium,
+        )
     }
     if (showDeleteConfirm) {
         AqDialog(

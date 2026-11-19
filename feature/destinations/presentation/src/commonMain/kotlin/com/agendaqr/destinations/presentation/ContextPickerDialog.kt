@@ -21,6 +21,7 @@ import com.agendaqr.core.ui.components.AqSecondaryButton
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextField
 import com.agendaqr.core.ui.components.AqTextAction
+import com.agendaqr.core.ui.components.AqTextActionVariant
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.accentFor
@@ -186,7 +187,7 @@ internal fun ContextPickerDialog(
                         AqTextAction(
                             label = AppStrings.QuitarContexto,
                             onClick = onRemove,
-                            color = AqColor.Danger,
+                            variant = AqTextActionVariant.Danger,
                             icon = AqIcons.Erase,
                         )
                     }

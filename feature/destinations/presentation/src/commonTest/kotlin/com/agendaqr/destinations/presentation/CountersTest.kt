@@ -39,16 +39,6 @@ class CountersTest {
     }
 
     @Test
-    fun context_sections_agree_with_their_count() {
-        assertEquals("QR · 1", contextSectionLabel("QR", "QR", 1))
-        assertEquals("QR · 3", contextSectionLabel("QR", "QR", 3))
-        assertEquals("Comprobante · 1", contextSectionLabel("Comprobante", "Comprobantes", 1))
-        assertEquals("Comprobantes · 4", contextSectionLabel("Comprobante", "Comprobantes", 4))
-        assertEquals("Actividad reciente · 1", contextSectionLabel("Actividad reciente", "Actividades recientes", 1))
-        assertEquals("Actividades recientes · 5", contextSectionLabel("Actividad reciente", "Actividades recientes", 5))
-    }
-
-    @Test
     fun spanish_plural_rules() {
         assertEquals("pendiente", spanishPlural("pendiente", 1))
         assertEquals("pendientes", spanishPlural("pendiente", 2))
