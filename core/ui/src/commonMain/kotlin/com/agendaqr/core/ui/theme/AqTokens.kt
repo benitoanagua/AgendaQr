@@ -504,9 +504,9 @@ object AqMetrics {
     const val DialogMaxWidthFraction = 0.9f
     val EmptyStateGlyphSize = 96.dp
     val ResultGlyphSize = 64.dp
+    /** Miniatura de comprobante en filas de lista (cuadrada). */
+    val ReceiptThumbnailSize = 56.dp
     val GridIconContainerSize = 48.dp
-    /** Altura mínima uniforme de las tarjetas de acción rápida (AqQuickAction). */
-    val QuickActionCardMinHeight = 120.dp
     val ScannerCornerLength = 24.dp
     val ContextBadgeSize = 40.dp
     val FabClearance = ControlMinSize + AqSpacing.Lg
