@@ -5,8 +5,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.core.ui.theme.AqSpacing
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -43,6 +50,10 @@ class AqFilterChipTest {
         compose.onAllNodesWithText("Deshabilitado").assertCountEquals(1)
         compose.onAllNodesWithText("12").assertCountEquals(1)
         compose.onAllNodesWithText("3").assertCountEquals(1)
+        compose.onNodeWithText("Todos")
+            .assertIsSelected()
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
+            .assertHeightIsAtLeast(48.dp)
     }
 
     @Test

@@ -1,10 +1,13 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeDown
+import androidx.compose.ui.semantics.SemanticsProperties
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
 import org.junit.Test
@@ -38,6 +41,8 @@ class AqBottomSheetTest {
         compose.onNodeWithText("Título de la hoja").assertExists()
         compose.onNodeWithText("Contenido de la hoja").assertExists()
         compose.onNodeWithText("Cerrar").assertExists()
+        compose.onNodeWithTag("aq-bottom-sheet-pane", useUnmergedTree = true)
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.PaneTitle, "Título de la hoja"))
     }
 
     @Test

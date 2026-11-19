@@ -23,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.agendaqr.core.ui.theme.AqColor
@@ -81,6 +83,8 @@ fun AqBottomSheet(
                     .fillMaxWidth()
                     .aqElevation(AqElevation.Shadow3, AqShapes.BottomSheet)
                     .background(AqColor.Surface, AqShapes.BottomSheet)
+                    .semantics { paneTitle = title }
+                    .testTag("aq-bottom-sheet-pane")
                     .verticalScroll(rememberScrollState())
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },

@@ -43,7 +43,7 @@
 | A10 | Tab Bar | `core/ui/.../AqButtons.kt` → `AqSegmentedControl` | PARTIAL | Sí | NO VERIFICADO | Sí (rol RadioButton, selectableGroup) | `ScreensA11yCoverageTest`, `DestinationsScreenA11yTest` | Sin variante de pestañas desplazables con scroll independiente | Mantener para segmentado de filtros (S01) | Alta | `AqIcon`, `AqTone` |
 | A11 | Back Navigation | `AqTopBar(onBack=...)`, `PredictiveBackHandler` (host) | PARTIAL | Sí | NO VERIFICADO | Sí | `RootNavigationChromeTest` | Predictive back compilado pero sin verificación en dispositivo (ADR-0007) | Conservar back nativo; documentar iOS como no verificado | Alta | Host de plataforma |
 | A12 | Overflow Menu | `AqActionSheet` (interno, vía `LocalAqActionSheetController`) | PARTIAL | Sí | NO VERIFICADO | Sí | `AqActionSheetTest` | Implementado como diálogo de lista, no como menú contextual anclado | Mantener patrón de diálogo (estable bajo Robolectric); no añadir anclaje sin justificación | Media | `AqDialog`, `AqDialogList` |
-| A13 | Navigation Badges | `AqFilterChip(count=...)`, `AqSegmentedOption(count=...)` | PARTIAL | Sí | NO VERIFICADO | Parcial | `AqButtonStyleTest` | Badge de conteo sin rol semántico propio; conteo opcional sin aria-valuetext | Añadir semántica de badge al conteo | Media | `AqBadge`, `AqTonalTag` |
+| A13 | Navigation Badges | — | NOT_APPLICABLE | — | — | — | — | `AqNavBar` y `AqNavRail` no muestran conteos; UX V1 no declara notificaciones pendientes en navegación | Los conteos existentes pertenecen a filtros/segmentos, no a destinos de navegación | — | — |
 | A14 | Floating Action Button | — | NOT_APPLICABLE | — | — | — | — | UX V1.9 elimina FAB en S01; acción primaria fija en `AqBottomAction` | No implementar FAB; UX V1 lo descarta | — | — |
 | A15 | Extended FAB | `core/ui/.../AqChrome.kt` → `AqExtendedFab` | COMPLETE | Sí | NO VERIFICADO | Sí | `ScreensA11yCoverageTest` | — | Reutiliza `AqButton` primaria; sin cambios | Media | `AqButton` |
 
@@ -129,7 +129,7 @@
 
 | # | Patrón | Ruta de implementación | Estado real | Android | iOS | Accesibilidad | Pruebas | Carencias | Decisión técnica | Prioridad | Dependencias |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| D1 | Filter Chips | `AqFilterChip` | PARTIAL | Sí | NO VERIFICADO | Sí (selected, stateDescription) | `ScreensA11yCoverageTest`, `DestinationsScreenA11yTest` | Contador de badge sin rol semántico propio | Añadir semántica de badge al conteo | Media | `AqBadge`, `AqTonalTag` |
+| D1 | Filter Chips | `AqFilterChip` | PARTIAL | Sí | NO VERIFICADO | Sí (Role.Button, selected, etiqueta y conteo textual, 48 dp) | `AqFilterChipTest`, `DestinationsScreenA11yTest` | `stateDescription` es opcional y lo aporta el consumidor si hace falta; el conteo visible se expone como texto | Mantener conteo como contenido del chip, sin rol redundante para texto no interactivo | Media | `AqBadge`, `AqTonalTag` |
 | D2 | Choice List | `AqChoiceGroup` / `AqDialogList` + `AqRadioButton` | PARTIAL | Sí | NO VERIFICADO | Parcial | `ScreensA11yCoverageTest` | Lista de radio en diálogo, no en línea | Mantener patrón de diálogo (UX V1 S08) | Media | `AqDialog`, `AqDialogList` |
 | D3 | Selectable Cards | `AqTappableCard` + `AqListRow(selected=...)` | PARTIAL | Sí | NO VERIFICADO | Sí (selected semántica) | `ScreensA11yCoverageTest` | Sin tarjeta seleccionable con borde de selección dedicado | `AqListRow` ya usa `selectionFill`/`selectionBorder` | Media | `AqListRow`, `AqTappableCard` |
 | D4 | Multi Select | `AqCheckboxGroup` | PARTIAL | Sí | NO VERIFICADO | Sí | `ScreensA11yCoverageTest` | Sin estado indeterminado visual | `AqTriState` como modelo; componente visual pendiente | Media | `AqCheckbox` |
@@ -155,12 +155,12 @@
 | # | Patrón | Ruta de implementación | Estado real | Android | iOS | Accesibilidad | Pruebas | Carencias | Decisión técnica | Prioridad | Dependencias |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | E1 | Card | `AqCard` | COMPLETE | Sí | NO VERIFICADO | Sí | `AqUiPolishContractTest`, `LayoutReferenceTest` | Radio 12 dp (v8.3), sombra anulada en light-mobile (D-10) | Sin cambios | Alta | `AqElevation`, `AqShapes` |
-| E2 | Modal | `AqDialog` (shape ExtraLarge 16 dp) | COMPLETE | Sí | NO VERIFICADO | Parcial | `LayoutReferenceTest`, `ScreensA11yCoverageTest` | Focus management inicial en acción conservativa si destructive; sin trampa de foco explícita | Mantener `Dialog` de Compose; focus inicial documentado | Alta | `AqDialog` |
+| E2 | Modal | `AqDialog` (shape ExtraLarge 16 dp) | COMPLETE | Sí | NO VERIFICADO | Sí (paneTitle; foco destructivo en Cancelar probado) | `AqDialogAccessibilityTest`, `AccessibilityStatesFormsTest`, `LayoutReferenceTest` | Retención/restauración de foco delegado al `Dialog` de Compose; iOS no verificado | Mantener diálogo nativo con título de panel semántico | Alta | `AqDialog` |
 | E3 | Dialog | `AqDialog` | PARTIAL | Sí | NO VERIFICADO | Parcial | `LayoutReferenceTest` | Sin variante de diálogo con scroll interno propio más allá de `AqDialogList`; acciones apiladas si etiquetas no caben | Mantener; v8.3 radio 16 dp (modal) | Alta | `AqDialog`, `AqDialogList` |
 | E4 | Confirmation Dialog | `AqDialog(destructive=...)` | COMPLETE | Sí | NO VERIFICADO | Sí (focus inicial en dismiss) | `ContextPickerDialogTest`, `ActionHierarchyTest` | — | Foco inicial en acción conservativa cuando destructive | Alta | `AqDialog` |
 | E5 | Alert Dialog | `AqDialog` (confirm/dismiss) | PARTIAL | Sí | NO VERIFICADO | Parcial | `ScreensA11yCoverageTest` | Sin distinción visual propia de "alert" vs "confirmation"; usa mismo `AqDialog` | No añadir variante sin requerimiento de producto | Media | `AqDialog` |
-| E6 | Bottom Sheet | `AqBottomSheet` (D-04) | PARTIAL | Sí | NO VERIFICADO | Parcial | `ScreensA11yCoverageTest`, `AqBottomSheetTest` | Scrim semántico, superficie elevada; gesto de dismiss por arrastre hacia abajo y estados expanded/collapsed añadidos; acción visible para cerrar; sin trampa de foco explícita; iOS no verificado | Gesto de dismiss por arrastre implementado (patrón Moon); estados expanded/collapsed controlados por el llamador | Media | `AqBottomSheet`, `Dialog` |
-| E7 | Modal Bottom Sheet | `AqBottomSheet` | PARTIAL | Sí | NO VERIFICADO | Parcial | `AqBottomSheetTest` | Mismo componente que E6 con gestos y estados expanded/collapsed; sin distinción modal vs estándar | No añadir duplicado; `expanded` controla la presentación | Media | `AqBottomSheet` |
+| E6 | Bottom Sheet | `AqBottomSheet` (D-04) | PARTIAL | Sí | NO VERIFICADO | Sí (paneTitle, cierre explícito, target 48 dp) | `AqBottomSheetTest` | Retención/restauración de foco delegada al `Dialog` de Compose; gesto y paneTitle no validados en VoiceOver | Gesto de dismiss implementado; estado `expanded` controlado por el llamador | Media | `AqBottomSheet`, `Dialog` |
+| E7 | Modal Bottom Sheet | `AqBottomSheet` | PARTIAL | Sí | NO VERIFICADO | Sí (ver E6) | `AqBottomSheetTest` | Mismo componente que E6; sin variante no modal | No añadir duplicado; `expanded` controla la presentación | Media | `AqBottomSheet` |
 | E8 | Side Sheet | — | NOT_APPLICABLE | — | — | — | — | UX V1 no declara side sheet; navegación por barra inferior y rail | No implementar | — | — |
 | E9 | Drawer | — | NOT_APPLICABLE | — | — | — | — | UX V1 no declara drawer de navegación | No implementar | — | — |
 | E10 | Popover | — | NOT_APPLICABLE | — | — | — | — | UX V1 no declara contenido flotante anclado; los selectores y acciones usan diálogos | Mantener `AqDialog`/`AqActionSheet`; no hace falta overlay anclado | — | `AqDialog` |
@@ -328,17 +328,17 @@
 | Clasificación | Cantidad | Patrón |
 |---|---|---|
 | COMPLETE | 54 | A15, B1-B2, B4, B6-B7, B9, B13-B16, C3, C8, C17-C18, C25-C27, E1-E2, E4, E15, F3-F7, F10, F12, F14, G1-G3, G5, G13, H4, H10, I1-I9, I13-I17, J11, J14-J15 |
-| PARTIAL | 73 | A1-A2, A5-A7, A9-A13, B3, B5, B10-B11, C1-C2, C4-C5, C7, C9-C10, C12-C13, C15-C16, C19, C23-C24, D1-D7, D11, E3, E5-E7, E11-E14, F1, F9, F11, F13, G4, G6, G9-G11, G14-G16, H1-H3, H5-H7, H9, I10, I12, I18, J4, J7-J8, J10, J12-J13, J16 |
+| PARTIAL | 72 | A1-A2, A5-A7, A9-A12, B3, B5, B10-B11, C1-C2, C4-C5, C7, C9-C10, C12-C13, C15-C16, C19, C23-C24, D1-D7, D11, E3, E5-E7, E11-E14, F1, F9, F11, F13, G4, G6, G9-G11, G14-G16, H1-H3, H5-H7, H9, I10, I12, I18, J4, J7-J8, J10, J12-J13, J16 |
 | MISSING | 0 | — |
-| NOT_APPLICABLE | 35 | A3-A4, A8, A14, B8, B12, C6, C11, C14, C20-C22, D8-D10, D12, E8-E10, E16, F2, F8, G7-G8, G12, G17, H8, I11, J1-J3, J5-J6, J9, J17 |
+| NOT_APPLICABLE | 36 | A3-A4, A8, A13-A14, B8, B12, C6, C11, C14, C20-C22, D8-D10, D12, E8-E10, E16, F2, F8, G7-G8, G12, G17, H8, I11, J1-J3, J5-J6, J9, J17 |
 
 ### Riesgos arquitectónicos principales
 
 1. **iOS no verificado:** Sin macOS/Xcode, todo el render en iOS (Inter empaquetado, tema oscuro, accesibilidad VoiceOver) queda como NO VERIFICADO. Solo compila.
 2. **Puentes Material 3:** `BasicTextField`, `Checkbox`, `RadioButton`, `Switch`, `DatePickerDialog`, `AlertDialog`, `TimeInput`, `SnackbarHost`, `CircularProgressIndicator`, `LinearProgressIndicator`, `PrimaryScrollableTabRow`, `IconButton`, `Text` se usan como infraestructura técnica; todos los valores visuales vienen de tokens Polaris, pero el runtime es M3.
-3. **Componentes fuera del alcance funcional V1:** Password input, autocomplete, slider, stepper, swipeable list item, pull-to-refresh, timeline, popover anclado, side sheet, drawer, avatar group y file attachment están clasificados `NOT_APPLICABLE` con su justificación por fila. No queda ningún patrón clasificado como `MISSING`. `AqMultilineTextField` cubre texto multilineal y `AqTooltip` está en E11/F9.
+3. **Componentes fuera del alcance funcional V1:** Password input, autocomplete, slider, stepper, swipeable list item, pull-to-refresh, timeline, popover anclado, side sheet, drawer, avatar group, file attachment y badges de navegación están clasificados `NOT_APPLICABLE` con su justificación por fila. No queda ningún patrón clasificado como `MISSING`. `AqMultilineTextField` cubre texto multilineal y `AqTooltip` está en E11/F9.
 4. **`AqBottomSheet` con gestos:** El cierre por arrastre descendente desde el handle (cuatro targets mínimos de 48 dp) está implementado; la expansión/colapso es controlada por el llamador y no hay estado intermedio. Falta trampa de foco explícita y verificación en iOS.
-5. **`AqDialog` sin trampa de foco:** El foco inicial se gestiona con `FocusRequester` solo en diálogos destructivos.
+5. **Gestión de foco en overlays:** `Dialog` de Compose ofrece la modalidad de ventana; el foco inicial conservativo destructivo se prueba en Android. Retención/restauración del foco y VoiceOver quedan sin verificación en dispositivo.
 
 ### Verificación residual
 
@@ -346,7 +346,7 @@
 |---|---|---|
 | Alta | Revisar accesibilidad de componentes `PARTIAL` | Las carencias están anotadas por fila; no se declara paridad total |
 | Alta | Verificar UI en iOS con dispositivo/simulador y VoiceOver | Compilación Kotlin/Native pasa, pero este entorno no ejecuta Xcode ni simulador iOS |
-| Media | Verificar manejo de foco en overlays modales | La API común no tiene prueba de foco/restauración en Android+iOS; Compose gestiona el diálogo base |
+| Media | Verificar retención/restauración de foco en overlays | La prueba Android cubre el foco inicial destructivo, no la restauración; VoiceOver/iOS no están disponibles aquí |
 
 ---
 
