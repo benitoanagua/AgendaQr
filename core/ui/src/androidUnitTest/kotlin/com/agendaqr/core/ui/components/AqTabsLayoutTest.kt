@@ -43,7 +43,7 @@ class AqTabsLayoutTest {
                     LocalDensity provides Density(density = 1f, fontScale = fontScale),
                 ) {
                     AqTabs(
-                        sections = listOf("QR", "Actividades", "Comprobantes"),
+                        tabs = listOf(AqTab("QR"), AqTab("Actividades"), AqTab("Comprobantes")),
                         selectedIndex = selected,
                         onSelect = { selected = it },
                     ) { }

@@ -58,7 +58,7 @@ val AqTone.iconVector: ImageVector?
     get() = when (this) {
         AqTone.Neutral -> null
         AqTone.Success -> AqIcons.CircleCheck
-        AqTone.Danger -> AqIcons.Cancel
+        AqTone.Danger -> AqIcons.AlertCircle
         AqTone.Warning -> AqIcons.Warning
         AqTone.Info -> AqIcons.Info
     }

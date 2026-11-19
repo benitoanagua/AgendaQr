@@ -1,21 +1,20 @@
 package com.agendaqr.core.ui.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqTheme
-import com.agendaqr.core.ui.theme.AqSpacing
 import androidx.compose.ui.test.junit4.createComposeRule
 import org.junit.Rule
 import org.junit.Test
@@ -25,23 +24,24 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
-class AqFilterChipTest {
+class AqChipGroupTest {
 
     @get:Rule
     val compose = createComposeRule()
 
     @Test
-    fun filter_chip_renders_selected_and_unselected_with_count() {
+    fun chip_group_renders_options_with_selection_and_count() {
         compose.setContent {
             AqTheme {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-                ) {
-                    AqFilterChip(label = "Todos", selected = true, onClick = {}, count = 12)
-                    AqFilterChip(label = "Favoritos", selected = false, onClick = {}, count = 3)
-                    AqFilterChip(label = "Deshabilitado", selected = false, onClick = {}, enabled = false)
-                }
+                AqChipGroup(
+                    options = listOf(
+                        AqChipOption("Todos", count = 12),
+                        AqChipOption("Favoritos", count = 3),
+                        AqChipOption("Deshabilitado", enabled = false),
+                    ),
+                    selectedIndex = 0,
+                    onSelect = {},
+                )
             }
         }
 
@@ -57,13 +57,33 @@ class AqFilterChipTest {
     }
 
     @Test
-    fun filter_chip_renders_node_without_throwing() {
+    fun chip_group_emits_index_on_click() {
+        var selected by mutableStateOf(-1)
         compose.setContent {
             AqTheme {
-                AqFilterChip(
-                    label = "Chip",
-                    selected = false,
-                    onClick = {},
+                AqChipGroup(
+                    options = listOf(AqChipOption("A"), AqChipOption("B")),
+                    selectedIndex = selected,
+                    onSelect = { selected = it },
+                )
+            }
+        }
+
+        compose.onNodeWithText("B").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("B").assertIsSelected()
+        compose.onNodeWithText("A")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, false))
+    }
+
+    @Test
+    fun chip_group_renders_node_without_throwing() {
+        compose.setContent {
+            AqTheme {
+                AqChipGroup(
+                    options = listOf(AqChipOption("Chip")),
+                    selectedIndex = -1,
+                    onSelect = {},
                 )
             }
         }

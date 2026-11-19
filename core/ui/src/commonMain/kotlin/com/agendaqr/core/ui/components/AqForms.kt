@@ -2,8 +2,10 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,9 +25,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.error
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.state.ToggleableState
 import com.agendaqr.core.ui.theme.AqColor
@@ -435,3 +440,210 @@ fun AqTriState(checkedIds: Set<String>, options: List<AqChoiceOption>): Toggleab
         checkedIds.containsAll(options.map { it.id }) -> ToggleableState.On
         else -> ToggleableState.Indeterminate
     }
+
+// ---------------------------------------------------------------------------
+// Jerarquía de formulario: sección con encabezado único + campo con label
+// ---------------------------------------------------------------------------
+
+/**
+ * Sección de formulario con UN encabezado tipográfico ([AqSectionHeader],
+ * semántica `heading`). El título nombra el GRUPO ("Detalles",
+ * "Comprobante"), nunca repite el label de un campo hijo — la regla de
+ * jerarquía del DS es "encabezado de sección ≠ etiqueta de campo".
+ */
+@Composable
+fun AqFormSection(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .testTag("aq-form-section"),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
+    ) {
+        // En formulario el encabezado va al borde, sin la sangría de lista.
+        AqSectionHeader(text = title, inset = false)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
+            content = content,
+        )
+    }
+}
+
+/**
+ * Campo de formulario con etiqueta persistente, marcador de opcionalidad
+ * discreto ([optionalLabel], un solo patrón) y mensajes de ayuda/error
+ * ([AqFieldMessages]). Para contenido compuesto (chips, fechas, filas);
+ * los campos hoja usan su propio label + [optionalLabel].
+ */
+@Composable
+fun AqFormField(
+    label: String,
+    modifier: Modifier = Modifier,
+    optionalLabel: String? = null,
+    state: AqFieldState = AqFieldState(),
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth().fieldSemantics(state),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+        ) {
+            AqText(
+                text = label,
+                size = AqType.Label,
+                fontWeight = AqWeight.Medium,
+                color = if (state.enabled) AqColor.TextPrimary else AqColor.OnDisabled,
+                modifier = Modifier.weight(1f, fill = false),
+            )
+            optionalLabel?.let {
+                AqText(
+                    text = it,
+                    size = AqType.Caption,
+                    color = AqColor.TextTertiary,
+                )
+            }
+        }
+        Column(content = content)
+        AqFieldMessages(state)
+    }
+}
+
+// ---------------------------------------------------------------------------
+// ChipGroup — selección inequívoca de opciones en formulario o filtro
+// ---------------------------------------------------------------------------
+
+/** Una opción seleccionable de [AqChipGroup]. */
+data class AqChipOption(
+    val label: String,
+    /** Conteo junto a la etiqueta; null = sin conteo. */
+    val count: Int? = null,
+    val enabled: Boolean = true,
+)
+
+/**
+ * Grupo de chips seleccionables: conjunto compacto de opciones dentro de
+ * una superficie (moneda, atajos de fecha, sugerencias). La selección NO
+ * depende solo del color: el chip activo lleva check + relleno de acento
+ * + borde reforzado — distinguible en claro, oscuro y para daltónicos.
+ * Objetivo táctil de 48 dp; semántica `selectable` + `selected`.
+ *
+ * [horizontalScroll] = fila desplazable (opciones que no caben);
+ * si no, los chips fluyen y saltan de línea. [allowDeselect] permite
+ * volver a pulsar el activo para limpiarlo (`onSelect(-1)`).
+ */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+fun AqChipGroup(
+    options: List<AqChipOption>,
+    selectedIndex: Int,
+    onSelect: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    horizontalScroll: Boolean = false,
+    allowDeselect: Boolean = false,
+) {
+    require(options.isNotEmpty()) { "AqChipGroup requiere al menos una opción" }
+    val onChipClick: (Int) -> Unit = { index ->
+        onSelect(if (allowDeselect && index == selectedIndex) -1 else index)
+    }
+    if (horizontalScroll) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .horizontalScroll(androidx.compose.foundation.rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+        ) {
+            options.forEachIndexed { index, option ->
+                AqChip(
+                    option = option,
+                    selected = index == selectedIndex,
+                    onClick = { onChipClick(index) },
+                )
+            }
+        }
+    } else {
+        androidx.compose.foundation.layout.FlowRow(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+        ) {
+            options.forEachIndexed { index, option ->
+                AqChip(
+                    option = option,
+                    selected = index == selectedIndex,
+                    onClick = { onChipClick(index) },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AqChip(
+    option: AqChipOption,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    val textColor = when {
+        !option.enabled -> AqColor.OnDisabled
+        selected -> AqColor.OnEmphasisFill
+        else -> AqColor.TextPrimary
+    }
+    val containerColor = when {
+        !option.enabled -> AqColor.SurfaceSecondary
+        selected -> AqColor.EmphasisFill
+        else -> AqColor.Surface
+    }
+    val borderColor = when {
+        selected && option.enabled -> AqColor.EmphasisBorder
+        else -> AqColor.Border
+    }
+    androidx.compose.foundation.layout.Box(
+        modifier = Modifier
+            .clip(AqShapes.Medium)
+            .background(containerColor, AqShapes.Medium)
+            .border(AqMetrics.Border, borderColor, AqShapes.Medium)
+            .selectable(
+                selected = selected,
+                enabled = option.enabled,
+                role = Role.Button,
+                onClick = onClick,
+            )
+            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+            .semantics { this.selected = selected }
+            .padding(horizontal = AqSpacing.Lg),
+        contentAlignment = Alignment.Center,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+        ) {
+            if (selected) {
+                // Indicador no-color: check + relleno + borde juntos.
+                AqIcon(
+                    imageVector = AqIcons.Check,
+                    contentDescription = null,
+                    size = AqMetrics.IconSizeCompact,
+                    tint = textColor,
+                )
+            }
+            AqText(
+                text = option.label,
+                size = AqType.Label,
+                color = textColor,
+            )
+            option.count?.let { count ->
+                AqText(
+                    text = count.toString(),
+                    size = AqType.Caption,
+                    color = textColor,
+                )
+            }
+        }
+    }
+}
