@@ -12,6 +12,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqTheme
@@ -101,6 +102,58 @@ class AqTooltipTest {
         val node = compose.onNodeWithContentDescription("Acción")
         node.assertHeightIsAtLeast(48.dp)
         node.performClick()
+        assertEquals(1, clicks)
+    }
+
+    @Test
+    fun long_press_callback_is_invoked_for_a_long_press() {
+        var longPresses = 0
+        compose.setContent {
+            AqTheme {
+                AqTooltip(
+                    label = "Guardar",
+                    onLongClick = { longPresses++ },
+                    content = {
+                        AqIconButton(
+                            contentDescription = "Guardar",
+                            onClick = {},
+                        ) {
+                            Icon(imageVector = AqIcons.Search, contentDescription = null)
+                        }
+                    },
+                )
+            }
+        }
+
+        compose.onNodeWithContentDescription("Guardar").performTouchInput {
+            down(center)
+            advanceEventTime(1_000)
+            up()
+        }
+        assertEquals(1, longPresses)
+    }
+
+    @Test
+    fun regular_click_still_reaches_wrapped_control_when_long_press_is_enabled() {
+        var clicks = 0
+        compose.setContent {
+            AqTheme {
+                AqTooltip(
+                    label = "Guardar",
+                    onLongClick = {},
+                    content = {
+                        AqIconButton(
+                            contentDescription = "Guardar",
+                            onClick = { clicks++ },
+                        ) {
+                            Icon(imageVector = AqIcons.Search, contentDescription = null)
+                        }
+                    },
+                )
+            }
+        }
+
+        compose.onNodeWithContentDescription("Guardar").performClick()
         assertEquals(1, clicks)
     }
 }

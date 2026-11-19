@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.triStateToggleable
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.RadioButton
@@ -315,7 +316,7 @@ fun AqChoiceGroup(
     state: AqFieldState = AqFieldState(),
 ) {
     Column(
-        modifier = modifier.fieldSemantics(state),
+        modifier = modifier.fieldSemantics(state).selectableGroup(),
         verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
     ) {
         AqText(
@@ -351,7 +352,7 @@ fun AqCheckboxGroup(
     state: AqFieldState = AqFieldState(),
 ) {
     Column(
-        modifier = modifier.fieldSemantics(state),
+        modifier = modifier.fieldSemantics(state).selectableGroup(),
         verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
     ) {
         AqText(

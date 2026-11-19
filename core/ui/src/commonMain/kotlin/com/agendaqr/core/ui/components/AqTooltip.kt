@@ -1,6 +1,8 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -13,6 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.PointerEventPass
+import kotlinx.coroutines.withTimeoutOrNull
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
@@ -29,10 +34,10 @@ import com.agendaqr.core.ui.theme.AqType
  * verdadero.
  *
  * Patrón de interacción móvil (Moon): los controles solo-icono sin etiqueta
- * visible exponen su nombre accesible como tooltip. El llamador controla
- * [isVisible] (p. ej. tras una pulsación larga detectada en la pantalla), de
-   modo que el tooltip nunca interfiere con la interacción del contenido
- * envuelto ni roba eventos de puntero a controles anidados.
+ * visible exponen su nombre accesible como tooltip. [onLongClick] permite
+ * que el llamador actualice [isVisible] desde la pulsación larga del área
+ * envuelta. El estado sigue perteneciendo al llamador y los taps normales
+ * continúan llegando al contenido.
  *
  * - El contenido envuelto conserva su área táctil (≥ 48 dp impuesta por el
  *   llamador, p. ej. [AqIconButton]).
@@ -48,6 +53,8 @@ fun AqTooltip(
     label: String,
     isVisible: Boolean = false,
     modifier: Modifier = Modifier,
+    /** Callback opcional de long press; el llamador controla el estado visible. */
+    onLongClick: (() -> Unit)? = null,
     /** Glifo decorativo opcional a la izquierda de la etiqueta. */
     icon: ImageVector? = null,
     content: @Composable () -> Unit,
@@ -59,7 +66,31 @@ fun AqTooltip(
     val isVisibleState = rememberUpdatedState(isVisible)
 
     Box(
-        modifier = modifier,
+        modifier = modifier.then(
+            if (onLongClick != null) {
+                Modifier.pointerInput(onLongClick) {
+                    awaitEachGesture {
+                        val down = awaitFirstDown(
+                            requireUnconsumed = false,
+                            pass = PointerEventPass.Initial,
+                        )
+                        val cancelled = withTimeoutOrNull(viewConfiguration.longPressTimeoutMillis) {
+                            while (true) {
+                                val event = awaitPointerEvent(PointerEventPass.Initial)
+                                val pointer = event.changes.firstOrNull { it.id == down.id }
+                                    ?: return@withTimeoutOrNull true
+                                if (!pointer.pressed || (pointer.position - down.position).getDistance() > viewConfiguration.touchSlop) {
+                                    return@withTimeoutOrNull true
+                                }
+                            }
+                        }
+                        if (cancelled == null) onLongClick()
+                    }
+                }
+            } else {
+                Modifier
+            },
+        ),
     ) {
         content()
         if (isVisibleState.value) {
