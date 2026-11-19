@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
@@ -57,6 +58,9 @@ import com.agendaqr.core.ui.components.AqLoadMoreFooter
 import com.agendaqr.core.ui.components.AqLoading
 import com.agendaqr.core.ui.components.AqMetaRow
 import com.agendaqr.core.ui.components.AqMultilineTextField
+import com.agendaqr.core.ui.components.AqNavBar
+import com.agendaqr.core.ui.components.AqNavDestination
+import com.agendaqr.core.ui.components.AqNavRail
 import com.agendaqr.core.ui.components.AqOutlineButton
 import com.agendaqr.core.ui.components.AqProgress
 import com.agendaqr.core.ui.components.AqProgressBar
@@ -487,6 +491,38 @@ private fun AqNavigationPreview() {
                 ),
             ),
             overflowLabel = "Más",
+        )
+        AqText(
+            text = "Navigation Rail — variante expanded / tablet",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Row(modifier = Modifier.fillMaxWidth().height(AqMetrics.NavBarHeight * 4)) {
+            AqNavRail(
+                destinations = listOf(
+                    AqNavDestination("home", "Inicio", com.agendaqr.core.ui.components.AqIcons.Home),
+                    AqNavDestination("search", "Buscar", com.agendaqr.core.ui.components.AqIcons.Search),
+                    AqNavDestination("operations", "Operaciones", com.agendaqr.core.ui.components.AqIcons.Register),
+                    AqNavDestination("contexts", "Contextos", com.agendaqr.core.ui.components.AqIcons.Context),
+                ),
+                selectedId = "operations",
+                onSelect = {},
+            )
+        }
+        AqText(
+            text = "Navigation Bar — cuatro destinos",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqNavBar(
+            destinations = listOf(
+                AqNavDestination("home", "Inicio", com.agendaqr.core.ui.components.AqIcons.Home),
+                AqNavDestination("search", "Buscar", com.agendaqr.core.ui.components.AqIcons.Search),
+                AqNavDestination("operations", "Operaciones", com.agendaqr.core.ui.components.AqIcons.Register),
+                AqNavDestination("contexts", "Contextos", com.agendaqr.core.ui.components.AqIcons.Context),
+            ),
+            selectedId = "home",
+            onSelect = {},
         )
         AqText(
             text = "Segmented Control (filtros) — seleccionado, no seleccionado, conteo",

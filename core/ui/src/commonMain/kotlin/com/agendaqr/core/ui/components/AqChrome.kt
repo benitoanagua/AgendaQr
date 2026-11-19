@@ -374,7 +374,8 @@ fun AqNavRail(
                     ),
                     fontFamily = AqType.FamilyUi,
                     color = if (selected) AqColor.EmphasisText else AqColor.TextSecondary,
-                    maxLines = 1,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }

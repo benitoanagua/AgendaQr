@@ -61,10 +61,11 @@ un mapa explícito escenario → (superficie, estado): cada superficie del
 contrato y sus estados declarados quedan capturados. La matriz prioriza
 pantallas y estados únicos sobre combinaciones: solo 360 dp en claro/oscuro.
 Se retiraron las raíces a anchos alternativos y a 720 dp (tablet) y el
-subconjunto a fuente 200 %: la capacidad adaptativa
-de `NavigationRail` y el escalado tipográfico siguen existiendo en
-producción, pero ya no tienen verificación automática de galería ni de
-layout (ver Consecuencias). Los overlays (S08 selector, S03 cámara) se
+subconjunto de pantallas a fuente 200 %: no se genera galería de tablet ni
+capturas para el subconjunto de escalado. `AqNavRailLayoutTest` sí conserva
+una aserción determinista del riel a 720 dp y 200 % de fuente, sin imagen
+versionada. El resto de superficies adaptativas sigue sujeto a revisión
+manual (ver Consecuencias). Los overlays (S08 selector, S03 cámara) se
 capturan como su ventana de diálogo completa, al tamaño real del
 componente. Hallazgo registrado: el vacío de la bandeja de comprobantes sin
 asociar es byte-idéntico al vacío de Actividades (comparten composición),
@@ -115,10 +116,10 @@ queda bajo el dock de acciones ni el FAB), `ScreensA11yCoverageTest` y
 - Se retiran las suites de raíces a anchos alternativos: ni la galería ni
   esas suites se producen fuera de 360 dp. La cobertura JVM de fuente queda
   en `AqTabsLayoutTest` y `AqResponsiveLayoutContractTest`.
-- Se reduce la cobertura automática: ya no se validan las raíces en tablet
-  (`NavigationRail`) ni el layout con fuente al 200 %. Ambas capacidades se
-  conservan en producción y quedan como revisión manual en dispositivo, con
-  el riesgo explícitamente documentado.
+- Se reduce la cobertura automática de superficies completas: la galería no
+  valida raíces tablet ni todas las pantallas al 200 %. `AqNavRailLayoutTest`
+  cubre el riel a 720 dp y 200 % con aserciones de visibilidad y selección;
+  el resto de las superficies adaptativas queda para revisión manual.
 - Se retiran las suites específicas de escala de fuente
   (`FontScaleScreensTest`, `AuthFontScaleTest`, `FontScaleContractTest`): la
   cobertura JVM que queda vive en `AqTabsLayoutTest` y

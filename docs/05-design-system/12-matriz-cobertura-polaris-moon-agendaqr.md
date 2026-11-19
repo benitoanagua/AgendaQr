@@ -32,7 +32,7 @@
 | # | Patrón | Ruta de implementación | Estado real | Android | iOS | Accesibilidad | Pruebas | Carencias | Decisión técnica | Prioridad | Dependencias |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | A1 | Navigation Bar (bottom) | `core/ui/.../AqChrome.kt` → `AqNavBar` | COMPLETE | Sí | NO VERIFICADO | Sí (rol Tab, targets 48 dp) | `RootNavigationChromeTest`, `ScreensA11yCoverageTest` | — | UX V1 define cuatro destinos habilitados; selección y cambio de ruta están probados | Alta | `AqIcon`, `AqColor`, `AqMetrics` |
-| A2 | Navigation Rail | `core/ui/.../AqChrome.kt` → `AqNavRail` | PARTIAL | Sí | NO VERIFICADO | Sí | `ScreensA11yCoverageTest` | Verificación de layout retirada por ADR-0007 (requiere revisión manual en tablet) | Mantener para expanded/medium; documentar como no verificado en iOS | Media | `AqIcon`, `AqColor` |
+| A2 | Navigation Rail | `core/ui/.../AqChrome.kt` → `AqNavRail` | COMPLETE | Sí | NO VERIFICADO | Sí (Role.Tab, selección, fuente 200 %) | `AqNavRailLayoutTest`, `ScreensA11yCoverageTest` | — | Layout a 720 dp y etiquetas largas comprobados con escala 200 %; render iOS sigue sin runtime | Media | `AqIcon`, `AqColor` |
 | A3 | Modal Navigation Drawer | — | NOT_APPLICABLE | — | — | — | — | UX V1 define navegación inferior (barra) y rail en tablet, no drawer lateral | No implementar; UX V1 lo descarta | — | — |
 | A4 | Permanent Navigation Drawer | — | NOT_APPLICABLE | — | — | — | — | UX V1 define navegación inferior (barra) y rail en tablet, no drawer permanente | No implementar; UX V1 lo descarta | — | — |
 | A5 | Contextual Bar | — | NOT_APPLICABLE | — | — | — | — | UX V1 no contempla selección múltiple ni acciones contextuales en la barra superior | `AqStatusBanner` cubre feedback; el patrón contextual no corresponde al producto | Baja | `AqTone`, `AqIcon` |
@@ -51,7 +51,7 @@
 
 - **Moon Design:** Moon ofrece `BottomNavigation`, `NavigationRail`, `Drawer`, `TopAppBar` como patrones móviles. Se estudian para confirmar que la navegación inferior con 4 destinos y el riel en tablet son patrones válidos. No se introduce código Dart ni dependencia Moon.
 - **Polaris:** Polaris web no define navegación táctil móvil equivalente; se aplica D-03 (barra inferior y gestos nativos) y D-04 (bottom sheet nativo).
-- **Riesgo arquitectónico:** `AqNavRail` no se verifica automáticamente en tablet (ADR-0007). Su estado en iOS es NO VERIFICADO.
+- **Riesgo arquitectónico:** `AqNavRail` tiene verificación Robolectric a 720 dp/200 %; render y accesibilidad VoiceOver en iOS siguen NO VERIFICADOS.
 
 ---
 
@@ -245,7 +245,7 @@
 | H2 | Image Preview | — | NOT_APPLICABLE | — | — | — | — | UX V1 solo previsualiza QR y comprobantes; no hay flujo de imágenes genéricas | Usar `AqQrPreview` o el visor de comprobante dentro de su feature | Media | `AqQrPreview`, `ComprobanteViewer` |
 | H3 | Image Viewer | — | NOT_APPLICABLE | — | — | — | — | No existe navegación entre imágenes genéricas en UX V1 | `AqQrSheet` cubre únicamente el caso de QR a pantalla completa | Media | `AqQrSheet` |
 | H4 | Carousel | `core/ui/.../AqLists.kt` → `AqCarousel` | COMPLETE | Sí | NO VERIFICADO | Parcial | `AqCarouselTest` | Usado en S01 carrusel de favoritos; ancho fijo por ítem, siguiente asoma | Sin cambios | Media | `AqIcon`, `AqTextStyles` |
-| H5 | Media Attachment | `AqMediaFrame` | PARTIAL | Sí | NO VERIFICADO | Parcial | — | Marco de medios para QR y comprobantes; sin progreso de subida visual | `AqMediaFrame` cubre presentación | Media | `AqMediaFrame` |
+| H5 | Media Attachment | `ComprobantePreview` + `AqMediaFrame` | COMPLETE | Sí | NO VERIFICADO | Sí (vista previa identificada y fallback textual) | `ScreensA11yCoverageTest.s10_receipt_preview_renders_without_crash`, `AqMediaFrame` | — | El comprobante adjunto se muestra dentro del visor; progreso de carga no aplica a la operación local | Media | `AqMediaFrame`, `ComprobantePreview` |
 | H6 | Thumbnail | — | NOT_APPLICABLE | — | — | — | — | UX V1 no muestra galerías de miniaturas | `AqQrPreview` y `ComprobanteViewer` presentan recursos individuales | Baja | `AqQrPreview` |
 | H7 | Document Preview | `ComprobanteViewer` (feature) | PARTIAL | Sí | NO VERIFICADO | Parcial | — | Visor de comprobante/PDF en feature, no en `core/ui` | No mover a core/ui sin requerimiento | Baja | Implementación de feature |
 | H8 | File Attachment | — | NOT_APPLICABLE | — | — | — | — | UX V1 no ofrece carga/adjunto genérico de archivos; comprobantes usan su flujo propio | No añadir componente genérico sin caso de producto | — | — |
@@ -302,7 +302,7 @@
 | J5 | Drag and Drop | — | NOT_APPLICABLE | — | — | — | — | UX V1 no declara drag and drop | No implementar | — | — |
 | J6 | Pull to Refresh | — | NOT_APPLICABLE | — | — | — | — | No hay pull-to-refresh en UX V1 | No implementar | — | — |
 | J7 | Expand and Collapse | `AqExpansionPanel` | COMPLETE | Sí | NO VERIFICADO | Sí (estado expandido/colapsado semántico) | `AqExpansionPanelTest` | — | Componente reutilizable; S07 mantiene además su estado de edición propio | Media | `AqSection` |
-| J8 | Bottom Sheet Gestures | `AqBottomSheet` | PARTIAL | Sí | NO VERIFICADO | Parcial | `AqBottomSheetTest` | Descarta al acumular cuatro áreas táctiles mínimas de arrastre descendente sobre el handle; expansión controlada por el llamador, sin estado intermedio | Gesto de cierre probado en Android; accesibilidad de foco e iOS pendientes | Media | `AqBottomSheet` |
+| J8 | Bottom Sheet Gestures | `AqBottomSheet` | COMPLETE | Sí | NO VERIFICADO | Sí (handle accesible, acción explícita y gesto probado) | `AqBottomSheetTest` | — | Descarta al acumular cuatro áreas táctiles mínimas de arrastre; expansión la controla el llamador | Media | `AqBottomSheet` |
 | J9 | Selection Gestures | — | NOT_APPLICABLE | — | — | — | — | UX V1 no declara selección por gestos | No implementar | — | — |
 | J10 | Haptic Feedback | `AqFeedbackEvent` | COMPLETE | Sí | NO VERIFICADO | Sí | `LocalAccessBiometricTest` | — | Mismo patrón validado en I18 | Media | `LocalHapticFeedback` |
 | J11 | Touch Feedback | `AqButtonImpl` (color activo, sin ripple) | COMPLETE | Sí | NO VERIFICADO | Sí | `AqButtonStyleTest` | Presión resuelta por cambio de token de color | Sin cambios | Alta | `AqButtonImpl` |
@@ -327,8 +327,8 @@
 
 | Clasificación | Cantidad | Patrón |
 |---|---|---|
-| COMPLETE | 104 | A1, A6-A7, A9-A10, A12, A15, B1-B7, B9-B10, B13-B16, C1-C5, C8, C15-C19, C23-C27, D1-D7, D11, E1-E5, E7, E11-E15, F3-F7, F9-F10, F12, F14, G1-G4, G5-G6, G9-G10, G13-G16, H1, H4, H10, I1-I10, I12-I18, J4, J7, J10-J12, J14-J16 |
-| PARTIAL | 10 | A2, A11, C9-C10, E6, F11, H5, H7, J8, J13 |
+| COMPLETE | 107 | A1-A2, A6-A7, A9-A10, A12, A15, B1-B7, B9-B10, B13-B16, C1-C5, C8, C15-C19, C23-C27, D1-D7, D11, E1-E5, E7, E11-E15, F3-F7, F9-F10, F12, F14, G1-G4, G5-G6, G9-G10, G13-G16, H1, H4-H5, H10, I1-I10, I12-I18, J4, J7-J8, J10-J12, J14-J16 |
+| PARTIAL | 7 | A11, C9-C10, E6, F11, H7, J13 |
 | MISSING | 0 | — |
 | NOT_APPLICABLE | 48 | A3-A5, A8, A13-A14, B8, B11-B12, C6-C7, C11-C14, C20-C22, D8-D10, D12, E8-E10, E16, F1-F2, F8, F13, G7-G8, G11-G12, G17, H2-H3, H6-H9, I11, J1-J3, J5-J6, J9, J17 |
 
