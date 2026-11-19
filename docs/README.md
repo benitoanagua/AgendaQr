@@ -66,6 +66,8 @@
 | [`07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md`](07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md) | ADR: adopción del UI/UX de Polaris (autoridad visual vigente) |
 | [`07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md`](07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md) | ADR: cierre de la migración de `core/ui` a Polaris |
 | [`07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md`](07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md) | ADR: propiedad del espacio por nivel atómico y densidad móvil |
+| [`07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md`](07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md) | ADR: Moon como referencia de patrones móviles; Polaris autoridad visual |
+| [`PR-0028-moon-mobile-screens.md`](PR-0028-moon-mobile-screens.md) | PR: aplicación de patrones móviles a S00/S04/S07/S12 |
 
 ## Cómo se mantiene
 

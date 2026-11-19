@@ -348,14 +348,13 @@ internal fun OperationEditorScreen(
                 )
             }
         }
-        // 3) Divulgación progresiva (U-06, D5): concepto y nota plegados
-        //    salvo que el registro ya los tenga.
-        AqListRow(
+        // 3) Divulgación progresiva (U-06, D5; ADR-0028): concepto y nota
+        //    plegados en un panel expandible; solo el encabezado alterna.
+        AqExpansionPanel(
             title = AppStrings.MasDetalles,
-            onClick = { showDetails = !showDetails },
-            showChevron = true,
-        )
-        if (showDetails) {
+            expanded = showDetails,
+            onToggle = { showDetails = !showDetails },
+        ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),

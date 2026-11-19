@@ -32,6 +32,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.collapse
+import androidx.compose.ui.semantics.expand
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -610,17 +612,29 @@ fun AqExpansionPanel(
             .clip(shape)
             .background(AqColor.Surface, shape)
             .border(AqMetrics.Border, AqColor.Border, shape)
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-            .clickable(
-                role = Role.Button,
-                onClickLabel = title,
-                onClick = onToggle,
-            ),
+            .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
         verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                .clickable(
+                    role = Role.Button,
+                    onClickLabel = title,
+                    onClick = onToggle,
+                )
+                // Compose 1.8 no expone un estado `expanded` booleano; la
+                // señal accesible del disclosure es la acción Expandir/
+                // Contraer que el lector de pantalla anuncia en el header.
+                .semantics {
+                    if (expanded) {
+                        collapse { onToggle(); true }
+                    } else {
+                        expand { onToggle(); true }
+                    }
+                }
+                .testTag("aq-expansion-header")
                 .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.MdPlus),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
@@ -643,7 +657,8 @@ fun AqExpansionPanel(
             Column(
                 modifier = Modifier
                     .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Sm)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .testTag("aq-expansion-content"),
             ) {
                 content()
             }

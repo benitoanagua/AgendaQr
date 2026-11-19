@@ -1,9 +1,10 @@
 # Contrato normativo de diseño
 
-**Estado:** Normativo — versión 8.4
+**Estado:** Normativo — versión 8.5
 **Autoridad:** [ADR-0025](../07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md),
 [ADR-0026](../07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md),
-[ADR-0027](../07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md) y este
+[ADR-0027](../07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md),
+[ADR-0028](../07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md) y este
 documento. La especificación UX/UI V1 conserva el contrato funcional
 congelado; su dirección visual queda descongelada y se rige por aquí.
 
@@ -196,7 +197,19 @@ en el archivo señalado con valores tomados de tokens semánticos.
 E-06 (elevación de botones) está retirada: los botones son planos y un
 registro sin uso se detecta como excepción zombie.
 
-## 6. Registro de versiones
+## 6. Referencia de patrones móviles (Moon)
+
+[ADR-0028](../07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md)
+fija que **Polaris es la única autoridad visual** de Agenda QR (tokens,
+tipografía, apariencia) y que Moon Design System se usa **solo como
+referencia de patrones de interacción móvil**: accordion en S07
+(`AqExpansionPanel`), chips de filtro por tipo en S04 y S12
+(`AqChipGroup`), feedback de error en `AqPinDots`. No hay dependencia
+Flutter ni `moon_design`, ni tokens Moon; la API pública es `Aq*`.
+La clasificación completa patrón a patrón vive en
+[`12-matriz-cobertura-polaris-moon-agendaqr.md`](12-matriz-cobertura-polaris-moon-agendaqr.md).
+
+## 7. Registro de versiones
 
 | Versión | Cambio |
 |---|---|
@@ -206,6 +219,7 @@ registro sin uso se detecta como excepción zombie.
 | 8.2 | Se adopta la regla de propiedad del espacio por nivel atómico (ADR-0027), se registra la derivación D-12 y se corrige el espaciado de `core/ui` y de las páginas: margen de pantalla de un solo dueño, relleno de tarjeta de 16 dp, densidad de fila de 12 dp, mensajes dentro del campo y opciones sin margen externo. |
 | 8.3 | Segunda pasada de fidelidad visual: radios publicados (`radius-200` en botones y etiquetas, `radius-100` en contadores de filtro, `radius-300` en tarjetas y cuerpos de lista, `radius-400` en diálogos), borde fino del botón secundario, borde hairline de `AqListBody`, paso por defecto de 16 dp entre organismos y contenido expandido limitado a `ContentMaxWidth` y centrado. |
 | 8.4 | Jerarquía unificada: `AqTabs` comparte pista/píldora/badge con `AqSegmentedControl` y gana `AqTab.count`, scroll y estado deshabilitado; `AqFilterChip` se sustituye por `AqChipGroup` (selección inequívoca: check + relleno + borde); `AqFormSection`/`AqFormField` y el marcador `optionalLabel` fijan la jerarquía de formulario; el banner separa icono de estado (`AqTone.iconVector`) del cierre (`AqIcons.Close`); `AqIcons.Erase` pasa a `BackspaceIcon` y se añaden `Close`, `Check` y `AlertCircle`. Se documenta la regla "un patrón = un componente" y los criterios de tabs vs segmentado, tipos de botón, formularios y alertas. |
+| 8.5 | Se registra la referencia móvil Moon (ADR-0028): Polaris sigue como autoridad visual; Moon solo informa patrones de interacción (accordion S07, chips de filtro S04/S12, error de PIN S00). `AqExpansionPanel` limita el toggle al encabezado y expone semántica `expanded` + tags; `AqPinDots` acepta `error` sin contenido accesible propio. |
 
 La historia detallada de la revisión y el estado final, incluido lo que no se
 puede verificar en este entorno, está en
