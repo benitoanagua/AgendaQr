@@ -4,6 +4,8 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.semantics.SemanticsProperties
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
@@ -36,5 +38,29 @@ class AqDialogAccessibilityTest {
 
         compose.onNodeWithTag("aq-dialog-pane", useUnmergedTree = true)
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.PaneTitle, "Eliminar destino"))
+    }
+
+    @Test
+    fun long_dialog_content_scrolls_without_removing_the_action_footer() {
+        compose.setContent {
+            AqTheme {
+                AqDialog(
+                    title = "Opciones",
+                    confirmLabel = "Aceptar",
+                    onConfirm = {},
+                    dismissLabel = "Cancelar",
+                    onDismiss = {},
+                    content = {
+                        repeat(24) { index ->
+                            androidx.compose.material3.Text("Opción ${index + 1}")
+                        }
+                    },
+                )
+            }
+        }
+
+        compose.onNodeWithText("Opción 24").performScrollTo()
+        compose.onNodeWithText("Aceptar").assertExists()
+        compose.onNodeWithText("Cancelar").assertExists()
     }
 }

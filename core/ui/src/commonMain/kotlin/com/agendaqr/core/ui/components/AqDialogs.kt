@@ -181,7 +181,12 @@ fun AqDialog(
                 shape = AqShapes.ExtraLarge,
                 color = AqColor.Surface,
             ) {
-                Column {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = maxHeight)
+                        .verticalScroll(rememberScrollState()),
+                ) {
                     Text(
                         title,
                         modifier = Modifier

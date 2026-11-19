@@ -103,7 +103,7 @@
 | C13 | Combobox | `AqSelect` | PARTIAL | Sí | NO VERIFICADO | Parcial | — | Sin escritura libre + filtro; solo selección de lista cerrada | No añadir combobox sin requerimiento de producto | Media | `AqSelect` |
 | C14 | Autocomplete | — | NOT_APPLICABLE | — | — | — | — | UX V1 no declara sugerencias/autocompletado | No implementar sin caso de producto | — | — |
 | C15 | Dropdown | `AqSelect` | PARTIAL | Sí | NO VERIFICADO | Parcial | — | `AqSelect` usa diálogo, no desplegable en línea | Mantener patrón de diálogo (estable bajo pruebas) | Media | `AqSelect` |
-| C16 | Multi Select | `AqCheckboxGroup` | PARTIAL | Sí | NO VERIFICADO | Sí | `ScreensA11yCoverageTest` | Sin estado indeterminado visual dedicado (`AqTriState` existe como modelo, sin componente visual) | Añadir representación visual de indeterminado si lo requiere producto | Media | `AqCheckbox`, `AqTriState` |
+| C16 | Multi Select | `AqCheckboxGroup` + `AqSelectAllCheckbox` | COMPLETE | Sí | NO VERIFICADO | Sí (rol Checkbox y estado mixto semántico) | `AqSelectAllCheckboxTest`, `ScreensA11yCoverageTest` | — | El estado mixto se deriva con `AqTriState`; el consumidor define la acción al activar | Media | `AqCheckbox`, `AqTriState` |
 | C17 | Checkbox | `AqCheckbox` | COMPLETE | Sí | NO VERIFICADO | Sí (Role.Checkbox, 48 dp) | `AqAccessibilityContractTest` | — | Sin margen externo; grupo posee separación | Alta | `Checkbox` (puente M3) |
 | C18 | Radio Button | `AqRadioButton` | COMPLETE | Sí | NO VERIFICADO | Sí (Role.RadioButton, 48 dp) | `AqAccessibilityContractTest` | — | `AqChoiceGroup` para selección mutuamente excluyente | Alta | `RadioButton` (puente M3) |
 | C19 | Switch | `AqSwitch` | PARTIAL | Sí | NO VERIFICADO | Sí (Role.Switch, 48 dp) | `ScreensA11yCoverageTest` | Solo para ajustes de efecto inmediato (UX V1) | Sin cambios | Media | `Switch` (puente M3) |
@@ -132,7 +132,7 @@
 | D1 | Filter Chips | `AqFilterChip` | PARTIAL | Sí | NO VERIFICADO | Sí (Role.Button, selected, etiqueta y conteo textual, 48 dp) | `AqFilterChipTest`, `DestinationsScreenA11yTest` | `stateDescription` es opcional y lo aporta el consumidor si hace falta; el conteo visible se expone como texto | Mantener conteo como contenido del chip, sin rol redundante para texto no interactivo | Media | `AqBadge`, `AqTonalTag` |
 | D2 | Choice List | `AqChoiceGroup` / `AqDialogList` + `AqRadioButton` | PARTIAL | Sí | NO VERIFICADO | Parcial | `ScreensA11yCoverageTest` | Lista de radio en diálogo, no en línea | Mantener patrón de diálogo (UX V1 S08) | Media | `AqDialog`, `AqDialogList` |
 | D3 | Selectable Cards | `AqTappableCard` + `AqListRow(selected=...)` | PARTIAL | Sí | NO VERIFICADO | Sí (selected semántica) | `ScreensA11yCoverageTest` | Sin tarjeta seleccionable con borde de selección dedicado | `AqListRow` ya usa `selectionFill`/`selectionBorder` | Media | `AqListRow`, `AqTappableCard` |
-| D4 | Multi Select | `AqCheckboxGroup` | PARTIAL | Sí | NO VERIFICADO | Sí | `ScreensA11yCoverageTest` | Sin estado indeterminado visual | `AqTriState` como modelo; componente visual pendiente | Media | `AqCheckbox` |
+| D4 | Multi Select | `AqCheckboxGroup` + `AqSelectAllCheckbox` | COMPLETE | Sí | NO VERIFICADO | Sí (rol Checkbox y estado mixto semántico) | `AqSelectAllCheckboxTest`, `ScreensA11yCoverageTest` | — | Selección parcial representada con `TriStateCheckbox`; acción definida por el consumidor | Media | `AqCheckbox`, `AqTriState` |
 | D5 | Segmented Control | `AqSegmentedControl` | PARTIAL | Sí | NO VERIFICADO | Sí (rol RadioButton) | `DestinationsScreenA11yTest` | Solo selección única; sin modo múltiple | UX V1 usa segmentado mutuamente excluyente | Alta | `AqSegmentedOption` |
 | D6 | Filter Bar | `AqSegmentedControl` (S01 Todos/Favoritos) | PARTIAL | Sí | NO VERIFICADO | Sí | `DestinationsScreenA11yTest` | Sin filtro de texto en barra de filtros (UX V1 no lo declara) | Mantener segmento de filtros | Alta | `AqSegmentedControl` |
 | D7 | Filter Popover | `AqDialog` + `AqDialogList` | PARTIAL | Sí | NO VERIFICADO | Parcial | — | Popover anclado no implementado; se usa diálogo | Mantener diálogo; no añadir anclaje sin justificación | Media | `AqDialog` |
@@ -156,7 +156,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | E1 | Card | `AqCard` | COMPLETE | Sí | NO VERIFICADO | Sí | `AqUiPolishContractTest`, `LayoutReferenceTest` | Radio 12 dp (v8.3), sombra anulada en light-mobile (D-10) | Sin cambios | Alta | `AqElevation`, `AqShapes` |
 | E2 | Modal | `AqDialog` (shape ExtraLarge 16 dp) | COMPLETE | Sí | NO VERIFICADO | Sí (paneTitle; foco destructivo en Cancelar probado) | `AqDialogAccessibilityTest`, `AccessibilityStatesFormsTest`, `LayoutReferenceTest` | Retención/restauración de foco delegado al `Dialog` de Compose; iOS no verificado | Mantener diálogo nativo con título de panel semántico | Alta | `AqDialog` |
-| E3 | Dialog | `AqDialog` | PARTIAL | Sí | NO VERIFICADO | Parcial | `LayoutReferenceTest` | Sin variante de diálogo con scroll interno propio más allá de `AqDialogList`; acciones apiladas si etiquetas no caben | Mantener; v8.3 radio 16 dp (modal) | Alta | `AqDialog`, `AqDialogList` |
+| E3 | Dialog | `AqDialog` | COMPLETE | Sí | NO VERIFICADO | Sí (paneTitle, acciones etiquetadas, contenido largo desplazable) | `AqDialogAccessibilityTest`, `LayoutReferenceTest` | — | Altura acotada a la ventana; contenido y acciones permanecen accesibles mediante scroll | Alta | `AqDialogList` |
 | E4 | Confirmation Dialog | `AqDialog(destructive=...)` | COMPLETE | Sí | NO VERIFICADO | Sí (focus inicial en dismiss) | `ContextPickerDialogTest`, `ActionHierarchyTest` | — | Foco inicial en acción conservativa cuando destructive | Alta | `AqDialog` |
 | E5 | Alert Dialog | `AqDialog` (confirm/dismiss) | PARTIAL | Sí | NO VERIFICADO | Parcial | `ScreensA11yCoverageTest` | Sin distinción visual propia de "alert" vs "confirmation"; usa mismo `AqDialog` | No añadir variante sin requerimiento de producto | Media | `AqDialog` |
 | E6 | Bottom Sheet | `AqBottomSheet` (D-04) | PARTIAL | Sí | NO VERIFICADO | Sí (paneTitle, cierre explícito, target 48 dp) | `AqBottomSheetTest` | Retención/restauración de foco delegada al `Dialog` de Compose; gesto y paneTitle no validados en VoiceOver | Gesto de dismiss implementado; estado `expanded` controlado por el llamador | Media | `AqBottomSheet`, `Dialog` |
@@ -327,8 +327,8 @@
 
 | Clasificación | Cantidad | Patrón |
 |---|---|---|
-| COMPLETE | 54 | A15, B1-B2, B4, B6-B7, B9, B13-B16, C3, C8, C17-C18, C25-C27, E1-E2, E4, E15, F3-F7, F10, F12, F14, G1-G3, G5, G13, H4, H10, I1-I9, I13-I17, J11, J14-J15 |
-| PARTIAL | 72 | A1-A2, A5-A7, A9-A12, B3, B5, B10-B11, C1-C2, C4-C5, C7, C9-C10, C12-C13, C15-C16, C19, C23-C24, D1-D7, D11, E3, E5-E7, E11-E14, F1, F9, F11, F13, G4, G6, G9-G11, G14-G16, H1-H3, H5-H7, H9, I10, I12, I18, J4, J7-J8, J10, J12-J13, J16 |
+| COMPLETE | 57 | A15, B1-B2, B4, B6-B7, B9, B13-B16, C3, C8, C16-C18, C25-C27, D4, E1-E4, E15, F3-F7, F10, F12, F14, G1-G3, G5, G13, H4, H10, I1-I9, I13-I17, J11, J14-J15 |
+| PARTIAL | 69 | A1-A2, A5-A7, A9-A12, B3, B5, B10-B11, C1-C2, C4-C5, C7, C9-C10, C12-C13, C15, C19, C23-C24, D1-D3, D5-D7, D11, E5-E7, E11-E14, F1, F9, F11, F13, G4, G6, G9-G11, G14-G16, H1-H3, H5-H7, H9, I10, I12, I18, J4, J7-J8, J10, J12-J13, J16 |
 | MISSING | 0 | — |
 | NOT_APPLICABLE | 36 | A3-A4, A8, A13-A14, B8, B12, C6, C11, C14, C20-C22, D8-D10, D12, E8-E10, E16, F2, F8, G7-G8, G12, G17, H8, I11, J1-J3, J5-J6, J9, J17 |
 

@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.triStateToggleable
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
+import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -369,6 +371,59 @@ fun AqCheckboxGroup(
             )
         }
         AqFieldMessages(state)
+    }
+}
+
+/**
+ * Casilla de selección total con estado mixto derivado por el consumidor.
+ * Se usa junto a [AqCheckboxGroup] cuando una lista permite seleccionar
+ * todos sus elementos. El llamador decide si al pulsar un estado mixto
+ * selecciona o limpia el conjunto.
+ */
+@Composable
+fun AqSelectAllCheckbox(
+    label: String,
+    checkedState: ToggleableState,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    state: AqFieldState = AqFieldState(),
+    description: String? = null,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+            .fieldSemantics(state)
+            .triStateToggleable(
+                state = checkedState,
+                enabled = state.enabled,
+                role = Role.Checkbox,
+                onClick = onClick,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        TriStateCheckbox(
+            state = checkedState,
+            onClick = null,
+            enabled = state.enabled,
+            modifier = Modifier.clearAndSetSemantics { }.size(AqMetrics.ControlMinSize),
+        )
+        Column(modifier = Modifier.padding(start = AqSpacing.Md).weight(1f)) {
+            AqText(
+                text = label,
+                size = AqType.Body,
+                fontWeight = AqWeight.Medium,
+                color = if (state.enabled) AqColor.TextPrimary else AqColor.OnDisabled,
+            )
+            if (description != null) {
+                AqText(
+                    text = description,
+                    size = AqType.Caption,
+                    color = if (state.enabled) AqColor.TextSecondary else AqColor.OnDisabled,
+                )
+            }
+            AqFieldMessages(state)
+        }
     }
 }
 

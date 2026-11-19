@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.state.ToggleableState
 import com.agendaqr.core.ui.components.AqBadge
 import com.agendaqr.core.ui.components.AqBottomAction
 import com.agendaqr.core.ui.components.AqBottomActionDock
@@ -29,6 +30,7 @@ import com.agendaqr.core.ui.components.AqCarousel
 import com.agendaqr.core.ui.components.AqCarouselItem
 import com.agendaqr.core.ui.components.AqCheckbox
 import com.agendaqr.core.ui.components.AqCheckboxGroup
+import com.agendaqr.core.ui.components.AqSelectAllCheckbox
 import com.agendaqr.core.ui.components.AqChoiceOption
 import com.agendaqr.core.ui.components.AqChoiceGroup
 import com.agendaqr.core.ui.components.AqContextBadge
@@ -407,6 +409,12 @@ private fun AqFormsPreview() {
         Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
             Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
                 AqCheckbox(label = "Casilla", checked = true, onCheckedChange = {})
+            AqSelectAllCheckbox(
+                label = "Seleccionar todas las opciones",
+                description = "Selección parcial",
+                checkedState = ToggleableState.Indeterminate,
+                onClick = {},
+            )
                 AqCheckbox(
                     label = "Deshabilitada",
                     checked = true,

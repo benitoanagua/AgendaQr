@@ -31,7 +31,7 @@ core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/
     ├── AqQrPreview.kt     # preview QR multiplataforma; lienzo blanco y estado explícito ante errores
     ├── AqLayout.kt        # AqBlockStack, AqInlineStack, AqBox, AqDivider y ayudas de página
     ├── AqActions.kt       # AqLink y AqButtonGroup sobre botones existentes
-    ├── AqForms.kt         # AqSelect, AqCheckbox, AqRadioButton, AqSwitch y grupos
+    ├── AqForms.kt         # AqSelect, AqCheckbox/AqSelectAllCheckbox, AqRadioButton, AqSwitch y grupos
     ├── AqProgress.kt      # AqProgress, AqProgressBar y AqSpinner
     ├── AqSheets.kt        # AqBottomSheet / AqModalSheet (D-04) con scrim y superficie tokenizada
     ├── AqDataTable.kt     # AqIndexTable con columnas y filas inmutables
@@ -72,6 +72,8 @@ valores de producto.
 - `AqListRow.meta` solo metadatos/badges: prohibido colocar acciones ahí.
 - `AqTextAction` ofrece variantes `Default` (acento), `Neutral` (texto primario semibold) y `Danger` (destructiva); prohibido usar `TextSecondary`/`TextTertiary` como color de acción.
 - `AqListBody` (padding 0) agrupa filas de lista; `AqCard` (padding `AqSpacing.Lg`) para contenido libre.
+- `AqSelectAllCheckbox` representa selección total y parcial con `ToggleableState`; el consumidor deriva el estado con `AqTriState` y define si al activar el estado mixto selecciona o limpia todas las opciones. Conserva rol `Checkbox`, target de 48 dp, descripción opcional y soporte de deshabilitado.
+- `AqDialog` limita su alto a la ventana disponible y desplaza su contenido completo cuando no cabe; el título y el pie de acciones siguen dentro de la región desplazable para que ninguna acción quede inaccesible en pantallas compactas o con texto grande.
 - `AqSecondaryButton` ocupa todo el ancho cuando el llamador pasa `fillMaxWidth()` (superficie visible = ancho completo).
 - Regla de colocación: en tarjetas de pendientes, las acciones secundarias se alinean a la derecha (`Arrangement.End`), orden fijo [Guardar de todos modos] [Descartar], Descartar siempre a la derecha en tono peligro.
 - Estados obligatorios: pressed/focused/selected/error/disabled/loading, cada uno con señal no exclusivamente cromática.
