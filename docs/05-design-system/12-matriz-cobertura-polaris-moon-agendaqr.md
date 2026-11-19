@@ -194,7 +194,7 @@
 | F8 | Callout | — | NOT_APPLICABLE | — | — | — | — | UX V1 no declara callout | No implementar | — | — |
 | F9 | Tooltip | `AqTooltip` (ver E11) | COMPLETE | Sí | NO VERIFICADO | Sí (nombre accesible conservado en el control) | `AqTooltipTest` | — | El llamador controla visibilidad y puede enlazarla al callback de pulsación larga | Baja | `AqTooltip` |
 | F10 | Metadata | `AqMetaRow` | COMPLETE | Sí | NO VERIFICADO | Sí | `ScreensA11yCoverageTest` | Label + valor + acción final opcional | Sin cambios | Alta | `AqText`, `AqIcon` |
-| F11 | Description List | `AqIndexTable` | PARTIAL | Sí | NO VERIFICADO | Parcial | `ScreensA11yCoverageTest` | Tabla de índices, no lista de descripciones con términos | `AqIndexTable` cubre tabla de datos; descripción lista pendiente | Media | `AqIndexTable` |
+| F11 | Description List | `AqMetaRow` en detalles de operación/destino | COMPLETE | Sí | NO VERIFICADO | Sí (etiqueta y valor visibles como textos consecutivos) | `AqMetaRowTest`, `LayoutReferenceTest` | — | Filas compactas de término/valor adaptadas a pantallas pequeñas | Media | `AqMetaRow` |
 | F12 | Key Value Pair | `AqMetaRow` | COMPLETE | Sí | NO VERIFICADO | Sí | `ScreensA11yCoverageTest` | — | Sin cambios | Alta | `AqMetaRow` |
 | F13 | User Identity | — | NOT_APPLICABLE | — | — | — | — | UX V1 no incluye cuentas de usuario, perfiles ni roles visibles | No crear identidad de usuario sin funcionalidad de cuenta | Baja | — |
 | F14 | Empty State | `AqEmptyState` | COMPLETE | Sí | NO VERIFICADO | Sí | `ScreensA11yCoverageTest`, `LayoutReferenceTest` | Glifo decorativo (no anunciado), título, subtítulo, acción primaria opcional | Sin cambios | Alta | `AqIcon`, `AqPrimaryButton` |
@@ -327,8 +327,8 @@
 
 | Clasificación | Cantidad | Patrón |
 |---|---|---|
-| COMPLETE | 107 | A1-A2, A6-A7, A9-A10, A12, A15, B1-B7, B9-B10, B13-B16, C1-C5, C8, C15-C19, C23-C27, D1-D7, D11, E1-E5, E7, E11-E15, F3-F7, F9-F10, F12, F14, G1-G4, G5-G6, G9-G10, G13-G16, H1, H4-H5, H10, I1-I10, I12-I18, J4, J7-J8, J10-J12, J14-J16 |
-| PARTIAL | 7 | A11, C9-C10, E6, F11, H7, J13 |
+| COMPLETE | 108 | A1-A2, A6-A7, A9-A10, A12, A15, B1-B7, B9-B10, B13-B16, C1-C5, C8, C15-C19, C23-C27, D1-D7, D11, E1-E5, E7, E11-E15, F3-F7, F9-F10, F11-F12, F14, G1-G4, G5-G6, G9-G10, G13-G16, H1, H4-H5, H10, I1-I10, I12-I18, J4, J7-J8, J10-J12, J14-J16 |
+| PARTIAL | 6 | A11, C9-C10, E6, H7, J13 |
 | MISSING | 0 | — |
 | NOT_APPLICABLE | 48 | A3-A5, A8, A13-A14, B8, B11-B12, C6-C7, C11-C14, C20-C22, D8-D10, D12, E8-E10, E16, F1-F2, F8, F13, G7-G8, G11-G12, G17, H2-H3, H6-H9, I11, J1-J3, J5-J6, J9, J17 |
 
