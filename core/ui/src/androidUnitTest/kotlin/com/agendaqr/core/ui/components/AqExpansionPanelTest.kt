@@ -81,4 +81,16 @@ class AqExpansionPanelTest {
             "fila de título menor a 48 dp: $height",
         )
     }
+
+    @Test
+    fun header_tag_present_and_content_tag_only_when_expanded() {
+        composeContent(expanded = true)
+        compose.onNodeWithTag("aq-expansion-header").getBoundsInRoot()
+        compose.onNodeWithTag("aq-expansion-content").getBoundsInRoot()
+        composeContent(expanded = false)
+        compose.onNodeWithTag("aq-expansion-header").getBoundsInRoot()
+        assertFailsWith<Throwable> {
+            compose.onNodeWithTag("aq-expansion-content").getBoundsInRoot()
+        }
+    }
 }
