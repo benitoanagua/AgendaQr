@@ -374,6 +374,14 @@ internal fun UnassociatedScreen(
                                     title = receipt.file.takeIf { it.isNotBlank() } ?: AppStrings.ElementoImportado,
                                     subtitle = formatDate(receipt.createdAt),
                                     onClick = { selectedReceipt = receipt },
+                                    leading = {
+                                        // Miniatura real del comprobante (imagen) o
+                                        // representación de tipo (PDF / fallback).
+                                        ComprobanteThumbnail(
+                                            file = receipt.file,
+                                            mimeType = receipt.mimeType,
+                                        )
+                                    },
                                     meta = {
                                         ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                                     },

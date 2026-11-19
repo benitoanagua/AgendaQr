@@ -140,13 +140,32 @@ stency-phase2, PR #159):** aplicada transversalmente a componentes
     severidad.
   - Icono de inicio en campos: `IconSizeCompact` (20 dp) para alineación
     con el texto corporal.
-  - Tarjetas de acción rápida: altura mínima uniforme `QuickActionCardMinHeight`.
+  - Tarjetas de acción rápida: se ajustan al contenido (sin altura mínima
+    impuesta que genere espacio vacío).
   - Comprobantes sin asociar: `titleMaxLines=2`, acción de texto en línea
-    separada.
+    separada y miniatura real para comprobantes de imagen (icono de tipo de
+    archivo para PDF / fallback).
   - Gates y pruebas en verde: `verifyAgendaQrArchitecture`, `verifyDocs`,
     `:core:ui:testDebugUnitTest`, `:feature:destinations:presentation:testDebugUnitTest`,
     `:androidApp:assembleDebug`.
-- **Share Extension de iOS:** `sharedImportsSupported()` devuelve false en iOS; el
+- **Corrección transversal de alineación, composición y Polaris Mobile (rama
+  `feat/polaris-mobile-alignment-consistency`):** causas compartidas corregidas
+  en `core/ui` y propagadas a todos los consumidores:
+  - Alineación vertical de campos: símbolo de moneda de `AqAmountField`
+    centrado con el importe (no anclado al fondo).
+  - Divisores: márgenes simétricos en `AqListRow.showDivider` y el divisor no
+    se renderiza en filas seleccionadas (la selección es una unidad visual).
+  - Tabs: `AqTabs` usa indicador lineal inferior que recorre el ancho de la
+    pestaña activa (ya no una píldora de 16 dp).
+  - Tiles: `AqQuickAction` se ajusta al contenido sin altura impuesta
+    excesiva.
+  - Feedback: banner de estado diferencia icono de severidad y acción de
+    descarte (distinto peso visual).
+  - Comprobantes: `ComprobanteThumbnail` renderiza miniatura real para
+    imágenes (JPG/PNG), representación de documento para PDF e icono de tipo
+    de archivo para el resto.
+  - Pruebas: `AqAtomicSpacingContractTest` cubre divisores, filas
+    seleccionadas, alineación de importe y tarjetas rápidas.
   bloque «Desde otra app» de S02 no se muestra hasta que la extensión exista.
   **Bloqueo concreto:** el proyecto Xcode no está versionado en el repositorio
   (política documentada en `iosApp/README.md`) y crear el target de la extensión

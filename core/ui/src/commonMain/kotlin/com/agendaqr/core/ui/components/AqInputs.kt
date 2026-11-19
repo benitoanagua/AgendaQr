@@ -517,7 +517,10 @@ fun AqAmountField(
             currencySymbol?.let {
                 Box(
                     modifier = Modifier.heightIn(min = AqMetrics.ControlMinSize),
-                    contentAlignment = Alignment.BottomCenter,
+                    // El símbolo de moneda debe alinearse verticalmente al
+                    // centro con el importe, no anclado al fondo (evita
+                    // desalineación visual entre símbolo y cifra).
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         it,
