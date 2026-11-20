@@ -404,7 +404,7 @@ internal fun UnassociatedScreen(
                     verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
                 ) {
                     items(state.unassociated, key = { it.id }) { receipt ->
-                        // U-15: una sola primaria por pantalla — la fila
+                        // Una sola primaria por pantalla — la fila
                         // entera abre el flujo de asociación (diálogo con
                         // candidatas); "Crear actividad desde esto" es
                         // acción de texto. Sin botones primarios por fila.

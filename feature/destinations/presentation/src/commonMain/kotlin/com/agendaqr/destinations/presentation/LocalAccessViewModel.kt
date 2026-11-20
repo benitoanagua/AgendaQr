@@ -48,8 +48,8 @@ data class LocalAccessUiState(
     val biometricAvailability: BiometricAvailability = BiometricAvailability.Unavailable,
     /** El último intento biométrico falló: se muestra el fallback al PIN. */
     val biometricFallbackVisible: Boolean = false,
-    /** Bloqueos acumulados: clave del lanzamiento biométrico automático
-     * (U-20, D11) — una vez por bloqueo, no por recomposición. */
+    /** Bloqueos acumulados: clave del lanzamiento biométrico automático,
+     * una vez por bloqueo, no por recomposición. */
     val lockSequence: Int = 0,
 )
 

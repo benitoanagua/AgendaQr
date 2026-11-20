@@ -27,7 +27,7 @@ class OperationsViewModel(
     private val deleteComprobante: DeleteComprobanteUseCase,
     private val comprobanteFiles: ComprobanteFileStore,
     /**
-     * Scope de la sesión : lo aporta el grafo de la app; se cancela
+     * Scope de la sesión: lo aporta el grafo de la app; se cancela
      * al cerrar sesión, junto con todos los colecciones del ViewModel.
      */
     private val scope: CoroutineScope,
@@ -308,7 +308,7 @@ class OperationsViewModel(
         val dirty = state.value.editorDirty
         val route = state.value.route
         if (dirty && (route is OperationRoute.New || route is OperationRoute.Edit)) {
-            // U-08/D7: salir con cambios pide confirmación; sin cambios
+            // Salir con cambios pide confirmación; sin cambios
             // navega de inmediato como hoy.
             _state.update { it.copy(discardPrompt = true) }
             return

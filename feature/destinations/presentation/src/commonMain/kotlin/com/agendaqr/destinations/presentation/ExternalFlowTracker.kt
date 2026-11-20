@@ -1,7 +1,7 @@
 package com.agendaqr.destinations.presentation
 
 /**
- * Rastreador de flujos externos iniciados por la app (U-02, D1).
+ * Rastreador de flujos externos iniciados por la app.
  *
  * Vive en presentación (no en el dominio): la galería, la cámara del
  * sistema, los selectores de archivos, las hojas de compartir y los
@@ -48,7 +48,7 @@ object ExternalFlowGates {
     var tracker: ExternalFlowTracker = ExternalFlowTracker()
 }
 
-/** Gracia de bloqueo para flujos externos (D1): 120 s. Constante única
+/** Gracia de bloqueo para flujos externos: 120 s. Constante única
  * de política; si el propietario prefiere 0 s, la gracia se desactiva
  * aquí y el borrador se conserva por otra vía. */
 const val ExternalFlowGraceMillis = 120_000L

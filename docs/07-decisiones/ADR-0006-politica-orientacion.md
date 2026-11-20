@@ -1,13 +1,13 @@
 # ADR-0006 — Política de orientación en teléfonos
 
-**Estado:** DECIDIDA (técnica, ronda 2 — 2026-10-09); el bloqueo vertical queda como opción de producto sin implementar
-**Área:** UX/Android+iOS · Alcance: SOLO teléfonos (tablets/plegables fuera de esta ronda)
+**Estado:** DECIDIDA (técnica — 2026-10-09); el bloqueo vertical queda como opción de producto sin implementar
+**Área:** UX/Android+iOS · Alcance: SOLO teléfonos (tablets/plegables fuera de alcance)
 **Contexto:** `AuthenticatedAppRoot` usaba `remember { AppBackStack() }`: rotación o muerte de proceso devolvían siempre a Inicio y perdían los flags de formulario (`submitted`, `searchReturnDestinationId`).
 
 ## Decisión
 
 **Rotación libre** en teléfonos: no se bloquea `screenOrientation` ni se
-añade `configChanges` al manifest. Motivo: la ronda 2 hace el estado
+añade `configChanges` al manifest. Motivo: el estado es
 **restaurable** (back stack con `rememberSaveable` + `AppBackStackSaver`
 por nombre de ruta; flags de formulario en `rememberSaveable`), con tests
 que fijan guardar/restaurar y el fallback conservador. Bloquear la

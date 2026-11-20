@@ -1,13 +1,13 @@
 # ADR-0010 — UiAutomator en las pruebas instrumentadas
 
-**Estado:** APROBADA (pasada QA ronda 2 — 2026-10-09)
+**Estado:** APROBADA — 2026-10-09
 **Área:** Infraestructura de pruebas · androidTest
 
 ## Contexto
 
-El checklist de la ronda 2 exige interactuar con superficies FUERA de la
+El checklist de QA exige interactuar con superficies FUERA de la
 app: diálogo de permisos del sistema, ajustes de la app, cambios de
-`font_scale`/rotación/escalas de animación/modo avión, y auditoría del
+`font_scale`/rotación/escalas de animación/modo avión, y revisión del
 árbol de accesibilidad de ventanas arbitrarias. `Espresso`/`ui-test-junit4`
 solo alcanzan la propia app.
 

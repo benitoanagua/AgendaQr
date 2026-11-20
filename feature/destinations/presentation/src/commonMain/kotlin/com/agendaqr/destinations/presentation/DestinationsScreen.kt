@@ -175,7 +175,7 @@ fun DestinationsScreen(
             onSelect = { index -> onAction(DestinationAction.SetFavoritesOnly(index == 1)) },
         )
 
-        // Favoritos (U-10: es lo que son, no "frecuentes"): carrusel
+        // Favoritos (es lo que son, no "frecuentes"): carrusel
         // horizontal; la siguiente tarjeta asoma como indicio (sin
         // instrucción de deslizamiento).
         if (state.showsFavoritesCarousel) {
@@ -371,7 +371,7 @@ fun DestinationRow(
             },
             meta = {
                 Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
-                    // U-12/D9: el contenido decodificado NO aparece en la lista
+                    // El contenido decodificado NO aparece en la lista
                     // (privacidad + no parece un enlace); vive en el Detalle.
                     ElementSyncBadge(
                         syncLookup.status(SyncResource.DESTINATION, destination.id),

@@ -1,8 +1,7 @@
 # Contrato normativo de diseño
 
-**Estado:** Normativo — versión 9.0
+**Estado:** Normativo
 **Autoridad:** [ADR-0025](../07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md),
-[ADR-0026](../07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md),
 [ADR-0027](../07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md),
 [ADR-0028](../07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md),
 [ADR-0029](../07-decisiones/ADR-0029-cadena-precedencia-polaris-moon-nativo.md) y este
@@ -22,15 +21,13 @@ congelado; su dirección visual queda descongelada y se rige por aquí.
 | Temas publicados | `light`, `light-mobile`, `light-high-contrast-experimental`, `dark-experimental` |
 | Tipografía | Inter (SIL OFL 1.1) |
 
-La versión 12 citada originalmente corresponde a `@shopify/polaris`
-(componentes React), no al paquete de tokens, que llega hasta 9.4.2. Se fija
-9.4.2 por ser la versión publicada verificable más reciente.
+Se fija `@shopify/polaris-tokens@9.4.2` por ser la versión publicada verificable más reciente.
 
 **Pendiente de verificar**
 
 | ID | Valor | Acción |
 |---|---|---|
-| PV-01 | Numeración «v12» de la fuente de tokens | Confirmar si existe una distribución interna; mientras tanto usar 9.4.2. |
+| PV-01 | Distribución interna de la fuente de tokens | Confirmar si existe; mientras tanto usar 9.4.2. |
 | PV-02 | Cobertura completa del tema oscuro | `dark-experimental` no completa todos los roles; derivar desde la capa semántica y marcar como extensión. |
 | PV-03 | Equivalente móvil oficial de `rem` | Polaris publica px a 16px de root; se adopta 1rem = 16dp como desviación documentada (D-01). |
 | PV-04 | Roles de movimiento semánticos | Polaris publica duraciones y easings primitivos; los roles de producto se derivan y se marcan como extensión. |
@@ -229,23 +226,4 @@ La navegación raíz es nativa por esta cadena (Polaris se consulta primero y no
 táctil móvil; Moon se consulta segundo y no trae bottom navigation/FAB/search/swipe/refresh/
 pickers/skeleton/empty state/list cell), nunca por omisión directa. La evidencia
 patrón a patrón está en
-[`11-matriz-gaps-mobile.md`](11-matriz-gaps-mobile.md) y la fidelidad de la
-capa visual en
-[`10-auditoria-fidelidad.md`](10-auditoria-fidelidad.md).
-
-## 7. Registro de versiones
-
-| Versión | Cambio |
-|---|---|
-| 7.0 | Se fija la instantánea de tokens 9.4.2 y la iconografía 9.3.1; se incorporan PV-06, PV-07, PV-08, D-10 y X-07. |
-| 8.0 | Se cierra la migración de `core/ui`: vocabulario `Aq*` sin identificadores heredados, esquema por defecto claro con seguimiento del sistema, retirada de menciones activas a sistemas anteriores y verificación final. Se mantiene el resto de extensiones, desviaciones y excepciones. |
-| 8.1 | Se añade el rol `inputSurface`, los pasos 12/20 dp de espaciado y la derivación D-11 de contenedores tonales oscuros; la caja de campo de `AqForms.kt` se registra como E-07. |
-| 8.2 | Se adopta la regla de propiedad del espacio por nivel atómico (ADR-0027), se registra la derivación D-12 y se corrige el espaciado de `core/ui` y de las páginas: margen de pantalla de un solo dueño, relleno de tarjeta de 16 dp, densidad de fila de 12 dp, mensajes dentro del campo y opciones sin margen externo. |
-| 8.3 | Segunda pasada de fidelidad visual: radios publicados (`radius-200` en botones y etiquetas, `radius-100` en contadores de filtro, `radius-300` en tarjetas y cuerpos de lista, `radius-400` en diálogos), borde fino del botón secundario, borde hairline de `AqListBody`, paso por defecto de 16 dp entre organismos y contenido expandido limitado a `ContentMaxWidth` y centrado. |
-| 8.4 | Jerarquía unificada: `AqTabs` comparte pista/píldora/badge con `AqSegmentedControl` y gana `AqTab.count`, scroll y estado deshabilitado; `AqFilterChip` se sustituye por `AqChipGroup` (selección inequívoca: check + relleno + borde); `AqFormSection`/`AqFormField` y el marcador `optionalLabel` fijan la jerarquía de formulario; el banner separa icono de estado (`AqTone.iconVector`) del cierre (`AqIcons.Close`); `AqIcons.Erase` pasa a `BackspaceIcon` y se añaden `Close`, `Check` y `AlertCircle`. Se documenta la regla "un patrón = un componente" y los criterios de tabs vs segmentado, tipos de botón, formularios y alertas. |
-| 8.5 | Se registra la referencia móvil Moon (ADR-0028): Polaris sigue como autoridad visual; Moon solo informa patrones de interacción (accordion S07, chips de filtro S04/S12, error de PIN S00). `AqExpansionPanel` limita el toggle al encabezado y expone semántica `expanded` + tags; `AqPinDots` acepta `error` sin contenido accesible propio. |
-| 9.0 | Se formaliza la cadena de precedencia Polaris → Moon → nativo (ADR-0029) para patrones sin equivalente Polaris, con la matriz de gaps `14-matriz-gaps-mobile.md` y la auditoría de fidelidad móvil `13-auditoria-fidelidad-mobile.md`. Corrección tipográfica a la escala `light-mobile`: `Amount` 32 sp (`heading-2xl` móvil), `CaptionSmall`/`Tag` 12 sp (`body-xs` móvil) y título de `AqTopBar` 18 sp semibold (`heading-lg` móvil). |
-
-La historia detallada de la revisión y el estado final, incluido lo que no se
-puede verificar en este entorno, está en
-[`10-auditoria-fidelidad-polaris.md`](historico/10-auditoria-fidelidad-polaris.md).
+[`11-matriz-gaps-mobile.md`](11-matriz-gaps-mobile.md).

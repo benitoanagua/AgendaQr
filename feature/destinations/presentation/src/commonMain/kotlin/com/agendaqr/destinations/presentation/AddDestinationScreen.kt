@@ -19,7 +19,7 @@ import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
 
 /**
- * S02 — Añadir (V1.3, ADR-0013; composición V1.17).
+ * S02 — Añadir.
  *
  * Esta pantalla solo decide cómo traer un recurso existente. No pide nombre,
  * categoría ni contexto antes de que Agenda QR haya entendido el recurso.

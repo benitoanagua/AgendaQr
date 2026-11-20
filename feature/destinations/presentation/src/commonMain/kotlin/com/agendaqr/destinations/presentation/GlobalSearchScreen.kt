@@ -25,8 +25,8 @@ fun GlobalSearchScreen(
     appHosts: AppHosts? = null,
     onAction: (GlobalSearchAction) -> Unit,
     onSelect: (AgendaSearchResult) -> Unit,
-    /** Foco automático solo al abrir desde el disparador de Inicio
-     * (U-21); por pestaña se entra sin foco. */
+    /** Foco automático solo al abrir desde el disparador de Inicio;
+     * por pestaña se entra sin foco. */
     autoFocus: Boolean = true,
 ) {
     // V1.4 (§12): Buscar es destino raíz — barra superior con título y

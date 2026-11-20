@@ -1,7 +1,7 @@
 # ADR-0009 — Privacidad en pantalla (bloqueo de capturas) — PROPUESTO
 
 **Estado:** PROPUESTO — requiere decisión de producto y verificación en dispositivo
-**Área:** Área J de la auditoría ronda 2 · Android + iOS
+**Área:** Android + iOS
 
 ## Contexto
 

@@ -1,12 +1,12 @@
 # ADR-0018 — Correcciones UX: captura rápida, recuperación y coherencia
 
 **Estado:** APROBADA — 2026-10-16
-**Enmienda 2026-10-18:** D5 (FAB «Añadir» y hub) quedó sustituido por ADR-0022 y ADR-0023: S01 usa la rejilla de acciones existentes y no muestra FAB. El resto de este ADR sigue vigente.
-**Relaciona:** ADR-0009 (propuesto, sin implementar), ADR-0016 (enmendada: política de bloqueo), ADR-0017 (tokens intactos), especificación UX/UI V1.8 (`docs/04-ux/02-especificacion-ux-ui-v1.md`).
+**Nota:** S01 usa la rejilla de acciones existentes y no muestra FAB ni hub de creación (D5 no está vigente). El resto de este ADR sigue vigente.
+**Relaciona:** ADR-0009 (propuesto, sin implementar), ADR-0016 (enmendada: política de bloqueo), especificación UX/UI V1 (`docs/04-ux/02-especificacion-ux-ui-v1.md`).
 
 ## Contexto
 
-Una auditoría de experiencia de uso encontró defectos contra el principio del producto ("Capturar rápido. Organizar cuando sea necesario. Recuperar siempre.") y contra la especificación (una pantalla = una intención + una acción principal): filtros que conmutan al tocar el activo (U-01), bloqueo que interrumpe galería/cámara/compartir (U-02), fecha manual sin hora (U-03), jerarquía invertida en el Detalle (U-04/U-05), editor largo con validación falsa y pérdida silenciosa del borrador (U-06/U-07/U-08), Inicio distinto de la especificación (U-10), jerga y aseguramiento repetido (U-11), contenido del QR en listas (U-12), iconos engañosos (U-13), vocabulario mixto (U-14), N primarios en comprobantes (U-15), biometría manual y foco invasivo (U-20/U-21). U-22 (paginación local 50/50) se reporta sin cambios.
+Se identificaron defectos contra el principio del producto ("Capturar rápido. Organizar cuando sea necesario. Recuperar siempre.") y contra la especificación (una pantalla = una intención + una acción principal): filtros que conmutan al tocar el activo (U-01), bloqueo que interrumpe galería/cámara/compartir (U-02), fecha manual sin hora (U-03), jerarquía invertida en el Detalle (U-04/U-05), editor largo con validación falsa y pérdida silenciosa del borrador (U-06/U-07/U-08), Inicio distinto de la especificación (U-10), jerga y aseguramiento repetido (U-11), contenido del QR en listas (U-12), iconos engañosos (U-13), vocabulario mixto (U-14), N primarios en comprobantes (U-15), biometría manual y foco invasivo (U-20/U-21). U-22 (paginación local 50/50) se reporta sin cambios.
 
 El propietario aprueba explícitamente enmendar la congelación de la UX V1 en lo que este ADR cambia (jerarquía primaria del Detalle, editor, bloqueo, Inicio).
 
@@ -29,8 +29,7 @@ D7. **Comprobantes sin asociar**: la fila abre el flujo de asociación; "Crear a
 ## Consecuencias
 
 - Nuevas acciones de presentación (`SetFavoritesOnly`, `EditorDirtyChanged`, `DiscardEditor`, `DismissDiscardPrompt`); `ToggleFavorites` eliminado; lista de Todos sin favoritos del carrusel.
-- Cadenas retiradas/reescritas registradas en el informe del cambio; pruebas por hallazgo (reproducción en rojo primero para U-01/U-03/U-08, rojo local para U-02).
-- Tokens, radios y paleta intactos (ADR-0017 vigente).
+- Pruebas por hallazgo (reproducción en rojo primero para U-01/U-03/U-08, rojo local para U-02).
 
 ## Riesgos y alternativas
 

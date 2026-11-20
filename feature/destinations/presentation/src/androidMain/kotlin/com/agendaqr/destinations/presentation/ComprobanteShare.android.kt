@@ -6,7 +6,7 @@ import java.io.File
 
 actual fun shareComprobante(bytes: ByteArray, extension: String, mimeType: String?) {
     if (bytes.isEmpty()) return
-    // Flujo externo (U-02): la hoja de compartir saca la app.
+    // Flujo externo: la hoja de compartir saca la app.
     ExternalFlowGates.tracker.markLaunch()
     val current = AgendaQrAndroidShareLauncher.requireActivity()
     val safeExtension = extension.trim().trimStart('.').takeIf { it.isNotBlank() } ?: "bin"

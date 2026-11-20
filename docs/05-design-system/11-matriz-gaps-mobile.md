@@ -1,6 +1,6 @@
 # Matriz de gaps de patrones móviles y cadena de precedencia
 
-**Estado:** Normativo — cadena de precedencia UI v9.0 (ADR-0029).
+**Estado:** Normativo — cadena de precedencia UI (ADR-0029).
 **Autoridad:** Agenda QR UX/UI V1 (`docs/04-ux/02-especificacion-ux-ui-v1.md`), Polaris 9.4.2 (`09-instantanea-tokens-polaris-9.4.2.md`), Moon Design Flutter 1.1.0 (solo referencia anatómica y gestual), Convenciones Nativas Android (M3) / iOS (HIG).
 
 ---

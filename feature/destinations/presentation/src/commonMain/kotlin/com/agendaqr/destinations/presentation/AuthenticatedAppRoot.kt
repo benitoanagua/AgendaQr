@@ -31,7 +31,7 @@ import com.agendaqr.destinations.domain.AgendaSearchResultType
 import kotlinx.coroutines.launch
 
 /**
- * Navegación de superficies de la app autenticada (§12 V1.4, ADR-0014).
+ * Navegación de superficies de la app autenticada.
  *
  * El back stack ([AppBackStack]) es la única autoridad de qué superficie
  * está visible; el Back del sistema pasa primero por el flujo interno de la
@@ -155,7 +155,7 @@ internal fun AuthenticatedAppRoot(
     }
 
     // ------------------------------------------------------------------
-    // Hosts compartidos de la sesión (§12 V1.4): el AppStatusHost (estados
+    // Hosts compartidos de la sesión: el AppStatusHost (estados
     // persistentes bajo la barra superior de cada superficie) y el host
     // del Snackbar (eventos transitorios). La superficie activa los monta
     // en su Scaffold.
@@ -183,7 +183,7 @@ internal fun AuthenticatedAppRoot(
     // del back stack (Back desde otro destino vuelve a Inicio; desde
     // Inicio sale de la app).
     // ------------------------------------------------------------------
-    // U-21: el foco de Buscar depende del origen — disparador de Inicio
+    // El foco de Buscar depende del origen — disparador de Inicio
     // (con foco) frente a pestaña (sin foco).
     var searchAutoFocus by rememberSaveable { mutableStateOf(true) }
     val navChrome = remember(top) {

@@ -314,7 +314,7 @@ internal fun CameraQrEntry(
                         android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                         android.net.Uri.fromParts("package", context.packageName, null),
                     )
-                    // Flujo externo (U-02): los ajustes sacan la app.
+                    // Flujo externo: los ajustes sacan la app.
                     ExternalFlowGates.tracker.markLaunch()
                     runCatching { context.startActivity(intent) }
                     Unit

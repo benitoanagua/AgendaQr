@@ -66,7 +66,7 @@ internal fun formatTime(millis: Long, timeZone: TimeZone = TimeZone.currentSyste
 /**
  * Fecha y hora civiles ("16/10/2026 14:30"). Los datos antiguos
  * guardados a medianoche exacta se muestran sin hora (o con la hora en
- * blanco): no se reescriben salvo que el usuario la elija (U-03).
+ * blanco): no se reescriben salvo que el usuario la elija.
  */
 internal fun formatDateTime(millis: Long, timeZone: TimeZone = TimeZone.currentSystemDefault()): String {
     if (millis <= 0) return AppStrings.FechaDesconocida
@@ -150,7 +150,7 @@ internal fun relativeDayLabel(
 }
 
 /**
- * Validación real del importe (U-07, D6): dígitos y UN separador decimal
+ * Validación real del importe: dígitos y UN separador decimal
  * (`,` o `.`), máx. 2 decimales, sin espacios. Vacío = válido (el
  * importe sigue siendo opcional).
  */
@@ -172,7 +172,7 @@ internal fun isValidAmount(text: String): Boolean {
 internal fun canonizeAmount(text: String): String = text.replace(',', '.')
 
 /**
- * Moneda por defecto del editor (U-05, D6): la de la actividad más
+ * Moneda por defecto del editor: la de la actividad más
  * reciente (`operations` ya viene ordenada descendente); sin historial,
  * vacío. Derivada del estado, sin persistencia nueva.
  */
@@ -180,7 +180,7 @@ internal fun mostRecentCurrency(operations: List<Operation>): String =
     operations.firstOrNull()?.currency?.takeIf { it.isNotBlank() }.orEmpty()
 
 /**
- * Sugerencias de persona o entidad (U-05): últimas contrapartes distintas
+ * Sugerencias de persona o entidad: últimas contrapartes distintas
  * (máx. 5, las más recientes primero). Derivadas del estado, sin
  * persistencia nueva.
  */

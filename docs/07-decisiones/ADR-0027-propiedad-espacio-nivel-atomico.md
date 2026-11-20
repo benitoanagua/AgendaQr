@@ -1,10 +1,8 @@
 # ADR-0027 — Propiedad del espacio por nivel atómico
 
 **Estado:** ACEPTADO — 2026-11-18
-**Relaciona:** ADR-0025 (adopción de Polaris), ADR-0026 (cierre de la
-migración), ADR-0007 (verificación de layout), ADR-0008 (guía de voz),
-contrato normativo de diseño v8.3 e informe
-[`11-auditoria-atomic-spacing.md`](../05-design-system/historico/11-auditoria-atomic-spacing.md).
+**Relaciona:** ADR-0025 (adopción de Polaris), ADR-0007 (verificación de layout), ADR-0008 (guía de voz),
+y contrato normativo de diseño.
 
 ## 1. Decisión
 
@@ -43,9 +41,6 @@ Reglas operativas:
 Se aplica a todo `core/ui` y a `feature/destinations/presentation`. No cambia
 el contrato funcional, el dominio, la sincronización ni el copy. Las páginas
 solo componen; los valores siguen viviendo en la capa de tokens.
-
-La auditoría completa, el inventario por nivel y la tabla de hallazgos están
-en [`11-auditoria-atomic-spacing.md`](../05-design-system/historico/11-auditoria-atomic-spacing.md).
 
 ## 3. Desviaciones aceptadas
 
@@ -91,7 +86,7 @@ Hallazgos aceptados con seguimiento (detalle en el informe, §6):
 - **Pruebas.** `:core:ui:testDebugUnitTest` y
   `:feature:destinations:presentation:testDebugUnitTest` pasan.
 - **No verificado.** iOS y el checklist manual en dispositivo siguen fuera
-  del alcance de este entorno (ADR-0007, ADR-0026). El escalado al 200 % se
+  del alcance de este entorno (ADR-0007). El escalado al 200 % se
   conserva en producción y queda como revisión manual (D-06).
 
 ## 5. Consecuencias

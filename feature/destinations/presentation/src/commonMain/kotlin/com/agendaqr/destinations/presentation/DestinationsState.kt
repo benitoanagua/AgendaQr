@@ -48,7 +48,7 @@ data class DestinationsUiState(
     val visibleDestinations: List<Destination>
         get() = destinations
             .filter { it.matchesQuery() }
-            // U-10: los favoritos viven en el carrusel; la lista muestra el
+            // Los favoritos viven en el carrusel; la lista muestra el
             // resto cuando el filtro es Todos (favoriteOnly == es favorito).
             .filter { favoriteOnly == it.favorite }
             .sortedWith(compareBy<Destination> { it.name.lowercase() })
@@ -65,7 +65,7 @@ data class DestinationsUiState(
 sealed interface DestinationAction {
     data class Search(val value: String) : DestinationAction
     /** Filtro Todos/Favoritos idempotente: el chip envía el valor que
-     * representa; tocar el activo no cambia nada (U-01). */
+     * representa; tocar el activo no cambia nada. */
     data class SetFavoritesOnly(val value: Boolean) : DestinationAction
     data class Open(val id: String) : DestinationAction
     data class Edit(val id: String?) : DestinationAction
@@ -93,7 +93,7 @@ class DestinationsViewModel(
     private val delete: DeleteDestinationUseCase,
     private val toggleFavorite: ToggleFavoriteUseCase,
     /**
-     * Scope de la sesión : lo aporta el grafo de la app; se cancela
+     * Scope de la sesión: lo aporta el grafo de la app; se cancela
      * al cerrar sesión, junto con todos los colecciones del ViewModel.
      */
     private val scope: CoroutineScope,

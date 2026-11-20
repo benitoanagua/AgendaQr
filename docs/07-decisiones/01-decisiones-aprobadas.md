@@ -62,7 +62,7 @@ CRM, obligaciones, saldos, pagos parciales, reembolsos especializados, contabili
 
 ## D-16 — UX
 
-La UI/UX permanece bajo un único sistema de diseño; esta consolidación no crea un sistema visual paralelo. (Historial: D-16 nombraba a Xauxa; ADR-0005/0012 lo mantuvieron como único sistema. ADR-0013 introdujo un sistema propio. Enmienda 2026-10-13, ADR-0014: la referencia visual es Ant Design Mobile; la autoría propia queda retirada.)
+La UI/UX permanece bajo un único sistema de diseño; esta consolidación no crea un sistema visual paralelo.
 
 ## D-17 — UX/UI V1 congelada
 
@@ -84,22 +84,8 @@ Quedan consolidados, sin alterar las reglas de negocio existentes:
 
 La implementación debe adaptarse al contrato UX/UI; un fallo de implementación no modifica automáticamente la especificación.
 
-## D-18 — Sistema visual de AgendaQr (histórica; ADR-0020 suplantada por ADR-0023)
-
-En el momento de su aprobación, D-18 definió una identidad visual propia de AgendaQr: herramienta móvil moderna, compacta y pulida, inspirada en aplicaciones chinas de consumo por su utilidad cotidiana, jerarquía funcional y densidad controlada. El registro se conserva como historia.
-
-> Suplantada por D-20 (ADR-0023). No usar la paleta, iconografía ni referencias de D-18 como autoridad vigente.
-
-## D-19 — Dirección visual Super-App de alta densidad (histórica; ADR-0022 suplantada por ADR-0023)
-
-ADR-0022 fue la autoridad visual desde su aprobación hasta ADR-0023. Su dirección, valores y anexos se conservan únicamente como historia; no implementarlos como contrato actual.
-
-## D-20 — Adopción fiel de TDesign Mobile (ADR-0023, histórica)
-
-`tdesign_flutter@0.2.7` fue la autoridad de tokens, componentes, medidas, estados y accesibilidad. Sus valores se implementan en `core/ui`, sin añadir TDesign Flutter como dependencia de ejecución. La especificación UX/UI V1.13 delimita las composiciones autorizadas; reglas de negocio, copy y accesibilidad siguen congelados. Las desviaciones autorizadas están enumeradas en ADR-0023.
-
 La especificación UX/UI vigente define las composiciones autorizadas. Cualquier cambio de intención, navegación, jerarquía de acciones, back stack o gestos requiere una decisión de producto documentada y actualización coordinada del contrato, el código y las pruebas.
 
-## D-21 — Adopción del sistema visual ADR-0025 (vigente)
+## D-18 — Sistema visual (ADR-0025)
 
-El sistema visual normativo es el adoptado en ADR-0025 y se gobierna por el contrato normativo v8.3 y su instantánea versionada. Sustituye a D-20 como autoridad de tokens, componentes, medidas, estados y accesibilidad, preservando el contrato funcional congelado de la especificación UX/UI. El riesgo legal de la licencia de la fuente de valores está aceptado y documentado en ADR-0025.
+El sistema visual normativo es el adoptado en ADR-0025 y se gobierna por el contrato normativo y su instantánea versionada. Es la autoridad de tokens, componentes, medidas, estados y accesibilidad, preservando el contrato funcional congelado de la especificación UX/UI. El riesgo legal de la licencia de la fuente de valores está aceptado y documentado en ADR-0025.

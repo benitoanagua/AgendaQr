@@ -9,7 +9,7 @@ package com.agendaqr.destinations.presentation
  * Las plantillas con interpolación ($…) permanecen en sus call-sites
  * porque su valor es dinámico.
  *
- * DECISIÓN (D2): se evaluó migrar a composeResources/values/strings.xml
+ * DECISIÓN: se evaluó migrar a composeResources/values/strings.xml
  * para i18n automático; se queda el objeto centralizado porque (1)
  * strings.xml exige regenerar los accessors por módulo y trasladar
  * también los androidMain/iosMain actuales, y (2) el copy está
@@ -26,13 +26,13 @@ internal object AppStrings {
     val AbriendoComprobante = "Abriendo comprobante…"
     val attachReceiptNow = "Adjuntar comprobante"
     val AgendaQr = "Agenda QR"
-    // V1.1 (ADR-0005, S01): sección de entradas recientes y tile vivo.
+    // S01: sección de entradas recientes y tile vivo.
     val Recientes = "Recientes"
     val emptyDestinationsHint = "Agrega tu primer QR para empezar."
     val associateToExistingOperation = "Asociar a actividad existente"
     val Anadir = "Añadir"
     val searchIntroHint = "Busca QR, actividades, contextos o comprobantes."
-    /** Etiquetas de tipo y procedencia (U-21: antes literales en código). */
+    /** Etiquetas de tipo y procedencia (antes literales en código). */
     val TipoContexto = "Contexto"
     val TipoQr = "QR"
     val TipoActividad = "Actividad"
@@ -95,25 +95,25 @@ internal object AppStrings {
     val Fecha = "Fecha"
     val Hora = "Hora"
     val FechaDesconocida = "Fecha desconocida"
-    /** Atajos del selector de fecha del editor (U-03, D2). */
+    /** Atajos del selector de fecha del editor. */
     val Hoy = "Hoy"
     val Ayer = "Ayer"
     /** Confirmar del selector de fecha/hora (sin defaults hardcodeados). */
     val Elegir = "Elegir"
-    /** Error en vivo del importe (U-07, D6): validación real. */
+    /** Error en vivo del importe: validación real. */
     val ImporteInvalido = "Usa solo números y un decimal"
     val Identidad = "Identidad"
-    /** Monedas del editor (U-05, D6): lista de presentación. */
+    /** Monedas del editor: lista de presentación. */
     val MonedaBob = "BOB"
     val MonedaUsd = "USD"
     val MonedaOtra = "Otra…"
     /** Etiqueta del campo libre cuando la moneda es "Otra…" (código ISO). */
     val CodigoMoneda = "Código de moneda"
-    /** Confirmación de descarte del editor (U-08, D7). */
+    /** Confirmación de descarte del editor. */
     val DescartarCambios = "¿Descartar cambios?"
     val DescartarCambiosMensaje = "Si sales ahora, se perderán los cambios."
     val SeguirEditando = "Seguir editando"
-    /** Divulgación progresiva del editor (U-06, D5). */
+    /** Divulgación progresiva del editor. */
     val MasDetalles = "Más detalles"
     /** S02 V1.2: acción única de galería con selección múltiple. */
     val ElegirDeLaGaleria = "Elegir de la galería"
@@ -134,8 +134,6 @@ internal object AppStrings {
     val LasOperacionesCandidatasYaNo = "Las actividades candidatas ya no están disponibles."
     val Limpiar = "Limpiar"
     val LosContextosAgrupanTusQr = "Los contextos agrupan tus QR y actividades."
-    // (MonedaOpcional retirado en U-05: la moneda va en chips + campo
-    // Otra… con LabelMoneda.)
     val Moneda = "Moneda: "
     /** Marcador discreto de opcionalidad junto a la etiqueta del campo
      *  (un solo patrón del DS; nunca "(opcional)" dentro del label). */
@@ -158,8 +156,6 @@ internal object AppStrings {
     val OrigenDelCodigo = "Origen del código"
     val Pago = "Pago"
     val PersonaOEntidad = "Persona o entidad: "
-    // (PodrasAdjuntar retirado en U-06: el editor muestra solo lo
-    // definido en D5.)
     val PruebaConOtraPalabraO = "Prueba con otra palabra o revisa la ortografía."
     val PudoHaberSidoEliminada = "Pudo haber sido eliminada."
     val PudoHaberSidoEliminadoEn = "Pudo haber sido eliminado en otro dispositivo."
@@ -227,8 +223,6 @@ internal object AppStrings {
     // validación de auth + estado ocupado.
     val IngresaUnCorreoValido = "Ingresa un correo válido"
     // literales que esquivaban la regla D2 dentro de expresiones.
-    // (FormatoFecha retirado en U-03: el texto libre dd/mm/aaaa
-    // desaparece con el selector de fecha.)
     // permiso de cámara y lectura de QR.
     val AbrirAjustes = "Abrir ajustes"
     val PermisoCamaraContexto = "Usamos la cámara solo para escanear códigos QR."
@@ -291,7 +285,7 @@ internal object AppStrings {
     val ContextoGenerico = "Contexto"
     // ------------------------------------------------------------------
     // Jerarquía financiera de Actividades y metadatos de detalle
-    // (patrón de apps financieras de consumo, ADR-0021).
+    // (patrón de apps financieras de consumo).
     // ------------------------------------------------------------------
     /** Filtro de tipo del historial: todas las actividades. */
     val Todos = "Todos"
@@ -309,36 +303,26 @@ internal object AppStrings {
     val SignoCobro = "+"
     val SignoPago = "−"
     // ------------------------------------------------------------------
-    // Reaseguro y estados de apps de consumo (ADR-0021).
+    // Reaseguro y estados de apps de consumo.
     // ------------------------------------------------------------------
     /** Píldora de reaseguro local-first (S01, siempre cierta). */
     val GuardadoEnTuTelefono = "Guardado en tu teléfono"
     val VerTodo = "Ver todo"
     val DisponibilidadTotal = "Disponibilidad total"
-    // (EscanearQr retirado en U-10: acción duplicada de la tarjeta; la
-    // entrada vive en S02 y en el hub.)
     val AbrirLaCamara = "Abrir la cámara"
     val RegistrarPago = "Registrar pago"
     val CargarActividad = "Cargar actividad"
     val QueQuieresAnadir = "¿Qué quieres añadir?"
-    /** Hub de Inicio (U-10, D8): traer un QR a S02. */
+    /** Hub de Inicio: traer un QR a S02. */
     val TraerQr = "Traer un QR"
-    // (MontoHint retirado en U-07: la afirmación de validación era falsa;
-    // el error en vivo es ImporteInvalido.)
-    // (CuantoOcurrio retirado en U-03: la fila de fecha muestra su valor;
-    // la ayuda de texto libre desaparece con el selector.)
-    // (MomentoRegistrado/FirmaTemporal retirados en U-06: jerga fuera del
-    // editor; la fecha de alta sigue visible donde el dato existe.)
     val PuedesSinContexto = "Puedes registrar sin asociar un contexto"
-    // (ModoLocal/SqliteLocal retirados en U-06/U-11: jerga fuera del
-    // editor; el estado global comunica el modo.)
     /** Detalle de actividad: caja de metadatos temporales. */
     val FechaDeOperacion = "Fecha de la actividad"
     val RegistradoEnDispositivo = "Registrado en dispositivo"
     /** Acción de borrado del importe (accesible). */
     val BorrarImporte = "Borrar importe"
     // ------------------------------------------------------------------
-    // Patrones de apps de consumo (ADR-0021): historial en tarjetas, favoritos en
+    // Patrones de apps de consumo: historial en tarjetas, favoritos en
     // carrusel, pestañas cápsula con conteo y dock de acciones del
     // detalle QR.
     // ------------------------------------------------------------------
@@ -349,8 +333,6 @@ internal object AppStrings {
     val RegistrosLocales = "registros locales"
     /** Prefijo de la hora de registro local (metadato temporal). */
     val RegPrefijo = "Reg: "
-    // (DeslizaParaVerMas retirado en U-10: instrucción en lugar de
-    // indicio; la siguiente tarjeta asoma.)
     val TodosLosDestinos = "Todos los destinos"
     /** Encabezado de la lista cuando el carrusel ya muestra los favoritos. */
     val OtrosDestinos = "Otros destinos"
@@ -361,8 +343,6 @@ internal object AppStrings {
     val VerTodos = "Ver todos"
     val VerQr = "Ver QR"
     val AnadirDestino = "Añadir destino"
-    // (ImportarImagen retirado en U-10: acción duplicada de la tarjeta;
-    // la entrada vive en S02.)
     val AlmacenamientoLocal = "Almacenamiento 100% local"
     val DatosNuncaSalen = "Tus datos nunca salen de tu teléfono"
     val IndexacionSinInternet = "Indexación y análisis instantáneo sin internet."
@@ -371,13 +351,12 @@ internal object AppStrings {
     val PantallaCompleta = "Pantalla completa"
     val Copiar = "Copiar"
     val Copiado = "Copiado"
-    /** Contenido del QR en el Detalle (U-12, D9): plegado del bloque
+    /** Contenido del QR en el Detalle: plegado del bloque
      * (reutiliza VerMas de S09). */
     val VerMenos = "Ver menos"
     val FechaDeAlta = "Fecha de alta"
     val EditarMetadatosReemplazarQr = "Editar metadatos / reemplazar QR"
     val IntegridadHistorica = "Editar este destino no cambia tus actividades guardadas."
-    // (RequisitoMinimo retirado en U-06: el formulario ya lo comunica.)
     // ------------------------------------------------------------------
     // Acceso local (sin cuenta): configuración de PIN, desbloqueo y
     // bloqueo. El PIN protege el acceso en el dispositivo; NO es la

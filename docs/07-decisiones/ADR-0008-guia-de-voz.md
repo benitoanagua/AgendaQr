@@ -1,7 +1,7 @@
 # ADR-0008 — Guía de voz (tuteo) y copy de componente
 
-**Estado:** APROBADA (ronda 2 — 2026-10-09)
-**Área:** Área H de la auditoría · UX copy
+**Estado:** APROBADA — 2026-10-09
+**Área:** UX copy
 
 ## Contexto
 

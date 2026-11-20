@@ -102,7 +102,7 @@ internal fun LocalLockScreen(
             backspaceDescription = AppStrings.BorrarDigito,
         )
         if (state.biometricAvailability == BiometricAvailability.Available && onBiometric != null) {
-            // U-20/D11: solicitud automática UNA vez por bloqueo (clave por
+            // Solicitud automática UNA vez por bloqueo (clave por
             // bloqueo, no por recomposición); Cancelled no relanza (el
             // estado no cambia) y el botón queda como respaldo.
             LaunchedEffect(state.lockSequence) {

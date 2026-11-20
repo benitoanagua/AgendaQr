@@ -6,7 +6,7 @@ Aprobado (normativo para la integración UI/UX en Agenda QR).
 ## Contexto
 La capa `core/ui` cuenta con la reimplementación de Polaris y una suite de componentes y patrones móviles resultantes de la cadena de precedencia (ADR-0029: Polaris → Moon → nativo). Sin embargo, existían componentes implementados que permanecían únicamente en pruebas o galería sin uso visible en las pantallas de producción (`AqSwipeActions`, `AqPullToRefresh`, `AqBottomSheet`, `AqActionSheet`, `AqTooltip`, `AqSpinner`, `AqProgressBar`, `AqProgressBlock`, `AqSwitch`, etc.).
 
-Asimismo, la auditoría de accesibilidad identificó la necesidad de que los contenedores clicables (`AqTappableCard`, `AqQuickAction`) unifiquen su semántica mediante `mergeDescendants = true` para garantizar nombres accesibles inequívocos en TalkBack.
+Asimismo, es necesario que los contenedores clicables (`AqTappableCard`, `AqQuickAction`) unifiquen su semántica mediante `mergeDescendants = true` para garantizar nombres accesibles inequívocos en TalkBack.
 
 ## Decisión
 1. **Adopción de gestos contextuales en listas:**

@@ -64,7 +64,7 @@ internal fun HomeSurface(
                 // Acción rápida / FAB: traer un QR → S02,
                 // con cámara y galería dentro del flujo real.
                 onScanQr = { graph.destinationsViewModel.onAction(DestinationAction.Edit(null)) },
-                // Hub (U-10, D8): registrar actividad (S07, sin
+                // Hub: registrar actividad (S07, sin
                 // preasociación) y crear contexto (diálogo existente).
                 onRegisterOperation = {
                     graph.operationsViewModel.onAction(OperationAction.New)

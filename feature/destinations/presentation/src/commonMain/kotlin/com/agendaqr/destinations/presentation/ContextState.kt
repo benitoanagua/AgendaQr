@@ -44,7 +44,7 @@ class ContextsViewModel(
      */
     private val save: SaveContextUseCase? = null,
     /**
-     * Scope de la sesión : lo aporta el grafo de la app; se cancela
+     * Scope de la sesión: lo aporta el grafo de la app; se cancela
      * al cerrar sesión, junto con todos los colecciones del ViewModel.
      */
     private val scope: CoroutineScope,

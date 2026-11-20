@@ -1,8 +1,8 @@
 # ADR-0028 — Moon Design System como referencia de patrones móviles (Polaris primario)
 
 **Estado:** ACEPTADO — 2026-11-19  
-**Relaciona:** ADR-0025, ADR-0026, ADR-0027, contrato normativo de diseño,  
-[`12-matriz-cobertura-polaris-moon-agendaqr.md`](../05-design-system/historico/12-matriz-cobertura-polaris-moon-agendaqr.md),  
+**Relaciona:** ADR-0025, ADR-0027, contrato normativo de diseño,  
+[`11-matriz-gaps-mobile.md`](../05-design-system/11-matriz-gaps-mobile.md),  
 especificación UX/UI V1 congelada.
 
 ## 1. Decisión

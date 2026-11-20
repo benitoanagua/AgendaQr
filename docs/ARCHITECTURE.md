@@ -3,8 +3,7 @@
 Describe la implementación real: módulos, arranque local-first, identidad local
 y protección con PIN, persistencia y namespaces, migración de datos heredados,
 repositorios locales y remotos, cola de sincronización, Supabase, hosts de
-plataforma y límites de seguridad. Consolida los antiguos documentos de
-`06-arquitectura`.
+plataforma y límites de seguridad.
 
 ## 1. Overview
 
@@ -52,11 +51,7 @@ ejecución real con Xcode.
    comportamiento. El contrato normativo es
    `docs/05-design-system/00-contrato-normativo-diseno.md`;
    [ADR-0025](07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md) es la autoridad
-   visual vigente, junto con
-   [ADR-0026](07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md).
-   Los sistemas de diseño previos no son referencia; se conservan únicamente en
-   los ADR históricos. La identidad visual anterior de AgendaQr, incluido su
-   color de marca, deja de existir.
+   visual vigente.
 3. **WaraWerse — referencia técnica.** Solo para Kotlin Multiplatform, Compose,
    modularización, Gradle/build logic y prácticas de testing. No introduce
    lógica de negocio.
@@ -110,12 +105,12 @@ Excepciones (no son scripts de producto):
 | `gradlew` | Wrapper estándar de Gradle (posix); requerido para ejecutar builds. |
 | `gradlew.bat` | Wrapper estándar de Gradle (Windows). |
 
-Mapeo de scripts eliminados → tareas Gradle:
+Tareas Gradle equivalentes:
 
-| Antes (script) | Después (tarea Gradle) |
+| Verificación | Tarea Gradle |
 |---|---|
-| gate de design system (script de verificación retirado con el sistema anterior; el gate vive hoy en `build-logic`) | `./gradlew verifyDesignSystemCompliance` + `verifyControlMinSize` |
-| `supabase/tests/run-acceptance.sh` | `DATABASE_URL=... ./gradlew :supabase:acceptance:test` |
+| Gate de design system | `./gradlew verifyDesignSystemCompliance` + `verifyControlMinSize` |
+| Aceptación de Supabase | `DATABASE_URL=... ./gradlew :supabase:acceptance:test` |
 
 ## 4. Arranque local-first
 

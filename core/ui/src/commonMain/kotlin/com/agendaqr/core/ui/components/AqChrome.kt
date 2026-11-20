@@ -83,7 +83,7 @@ data class AqTopBarAction(
  * volver — la misma en ambas plataformas — y máx. 2 acciones visibles +
  * menú "…". Las acciones conservan objetivos de 48 dp.
  *
- * Edge-to-edge (ADR-0012): el slot topBar de Scaffold NO recibe los
+ * Edge-to-edge: el slot topBar de Scaffold NO recibe los
  * insets del sistema — esta barra los aplica por sí misma
  * (`statusBarsPadding`) para que el título nunca quede tras la barra
  * de estado, y el contenido siga fluyendo debajo.

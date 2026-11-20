@@ -56,7 +56,7 @@ sealed interface OperationAction {
     data class SaveIncoming(val openInbox: Boolean = false, val allowDuplicate: Boolean = false) : OperationAction    data object OpenUnassociated : OperationAction
     data object Back : OperationAction
     /**
-     * El editor reporta si tiene cambios sin guardar (U-08, D7): `back()`
+     * El editor reporta si tiene cambios sin guardar: `back()`
      * con `dirty` no navega, muestra la confirmación de descarte.
      */
     data class EditorDirtyChanged(val dirty: Boolean) : OperationAction

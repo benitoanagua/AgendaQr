@@ -7,7 +7,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
 
 /**
- * Brillo al máximo + pantalla encendida en Android (U-05, D4): fija
+ * Brillo al máximo + pantalla encendida en Android: fija
  * `screenBrightness` a 1f y añade `FLAG_KEEP_SCREEN_ON` mientras el QR
  * está en composición; al salir restaura el brillo previo y retira el
  * flag solo si no estaba antes (rotación: la actividad se recrea, el

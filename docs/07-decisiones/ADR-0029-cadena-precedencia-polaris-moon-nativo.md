@@ -1,7 +1,7 @@
 # ADR-0029 — Cadena de precedencia Polaris → Moon → nativo para UI móvil
 
 **Estado:** ACEPTADO — 2026-11-20
-**Relaciona:** ADR-0025 (Polaris como autoridad visual), ADR-0026 (cierre de la migración), ADR-0027 (espacio por nivel atómico), ADR-0028 (Moon como referencia de patrones móviles), contrato normativo, `05-design-system/10-auditoria-fidelidad.md` y matriz de gaps `05-design-system/11-matriz-gaps-mobile.md`.
+**Relaciona:** ADR-0025 (Polaris como autoridad visual), ADR-0027 (espacio por nivel atómico), ADR-0028 (Moon como referencia de patrones móviles), contrato normativo y matriz de gaps `05-design-system/11-matriz-gaps-mobile.md`.
 
 ## 1. Contexto y motivación
 
@@ -29,7 +29,7 @@ Moon no incluye: bottom navigation, FAB, search bar, swipe actions, pull-to-refr
 
 ## 4. Consecuencias
 
-- Se crea la matriz exhaustiva en `docs/05-design-system/11-matriz-gaps-mobile.md` y la auditoría en `docs/05-design-system/10-auditoria-fidelidad.md`.
+- La matriz exhaustiva vive en `docs/05-design-system/11-matriz-gaps-mobile.md`.
 - Se implementan los componentes primitivos de soporte móvil faltantes en `core/ui`: `AqSwipeActions` (acciones al deslizar filas en listas) y `AqPullToRefresh` (indicador y contenedor de recarga vertical), ambos nivel 3 con tokens Polaris.
 - Cada componente nuevo cuenta con ficha de diseño documentada en `docs/05-design-system/componentes/<nombre>.md`.
 - La arquitectura sigue garantizando mediante gates que ningún valor visual se hardcodee fuera de tokens.

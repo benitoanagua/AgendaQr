@@ -4,9 +4,8 @@
 Aceptado.
 
 ## Contexto
-La especificación V1.8 definía el estado vacío de Inicio con el FAB cubriendo
-la acción y sin botón propio. La ronda de correcciones UX/UI (T4) enmienda
-este comportamiento: el vacío de primera ejecución muestra la acción
+El estado vacío de Inicio no usa el FAB como única acción ni carece de botón
+propio: el vacío de primera ejecución muestra la acción
 "Traer un QR", el FAB se oculta mientras no haya destinos ni búsqueda activa,
 y se retira el encabezado "Todos los destinos" sobre el vacío.
 

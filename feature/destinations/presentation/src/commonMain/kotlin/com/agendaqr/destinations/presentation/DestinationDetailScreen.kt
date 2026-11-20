@@ -83,7 +83,7 @@ fun DestinationDetailScreen(
         message = AppStrings.Copiado,
         feedbackHost = appHosts?.feedback,
     )
-    // U-04/D3: la tarea central es MOSTRAR el QR (primaria); Compartir
+    // La tarea central es MOSTRAR el QR (primaria); Compartir
     // es secundaria. Registrar, Editar y Eliminar viven en "…" (la
     // eliminación mantiene su diálogo destructivo). "Registrar actividad"
     // abre un formulario vacío: no promete asociación al destino.
@@ -107,7 +107,7 @@ fun DestinationDetailScreen(
         statusContent = appHosts?.status,
         verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
         bottomAction = {
-            // Dock (U-04, D3): exactamente una acción primaria — Mostrar
+            // Dock: exactamente una acción primaria — Mostrar
             // QR a pantalla completa — más Compartir secundaria. El dock
             // del DS respeta insets de navegación/IME y el margen de
             // pantalla; la pantalla solo declara las acciones.
@@ -127,7 +127,7 @@ fun DestinationDetailScreen(
             }
         },
     ) {
-        // Tarjeta núcleo del QR (U-04): código real sobre lienzo claro
+        // Tarjeta núcleo del QR: código real sobre lienzo claro
         // PLANO (el marco de escáner queda para la cámara) + guía de uso.
         // La tarjeta también es tocable con la misma acción de Mostrar
         // (semántica de botón); el dock conserva la primaria visible.
@@ -160,7 +160,7 @@ fun DestinationDetailScreen(
             )
         }
 
-        // Metadatos en filas compactas (patrón de detalle de comprobante, ADR-0021): solo
+        // Metadatos en filas compactas (patrón de detalle de comprobante): solo
         // datos reales del dominio; el contenido decodificado se puede
         // COPIAR (portapapeles del sistema, feedback por evento) y la
         // fecha de alta es el createdAt real.
@@ -173,7 +173,7 @@ fun DestinationDetailScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                 ) {
-                    // Contenido decodificado (U-12, D9): bloque de ancho
+                    // Contenido decodificado: bloque de ancho
                     // completo alineado a la izquierda, máx. 3 líneas con
                     // "Ver más", seleccionable y copiable (no una fila de
                     // valor alineada a la derecha).

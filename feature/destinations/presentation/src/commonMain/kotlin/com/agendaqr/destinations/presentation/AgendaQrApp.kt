@@ -89,7 +89,7 @@ fun AgendaQrApp() {
         }
         val accessState by accessViewModel.state.collectAsStateWithLifecycle()
 
-        // Rastreador de flujos externos (U-02, D1): la app lo publica para
+        // Rastreador de flujos externos: la app lo publica para
         // que los lanzadores de plataforma marquen "justo antes de lanzar";
         // la política de bloqueo lo consulta al pasar a segundo plano. La
         // publicación es SÍNCRONA (SideEffect): un LaunchedEffect podía
@@ -137,7 +137,7 @@ fun AgendaQrApp() {
             accessViewModel.lock()
         }
 
-        // Política de bloqueo (U-02, D1): la app se bloquea al pasar a
+        // Política de bloqueo: la app se bloquea al pasar a
         // segundo plano, SALVO cuando el propio usuario lanzó un flujo
         // externo desde la app (gracia acotada de 120 s). Sin PIN
         // configurado no hay nada que proteger; en demo no se bloquea.
@@ -191,7 +191,7 @@ fun AgendaQrApp() {
                 } else {
                     null
                 },
-                // U-20/D11: la demostración solo existe en el primer
+                // La demostración solo existe en el primer
                 // arranque (onboarding); en desbloqueo no se ofrece.
             )
             accessState.mode == LocalAccessMode.Unlocked -> AgendaQrLocalApp(

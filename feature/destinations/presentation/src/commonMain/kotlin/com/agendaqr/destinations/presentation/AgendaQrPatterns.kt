@@ -46,7 +46,7 @@ fun QrFullscreenPattern(
     /** Nombre del destino bajo el QR (copy resuelto por el llamador). */
     destinationName: String = "",
 ) {
-    // U-05/D4: brillo al máximo y pantalla encendida mientras se muestra;
+    // Brillo al máximo y pantalla encendida mientras se muestra;
     // se restauran al salir (incluida rotación, Back y bloqueo).
     QrDisplayScreenEffects()
     // V1.4 (§12): "QR" en la barra superior con flecha atrás.

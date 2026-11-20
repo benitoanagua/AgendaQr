@@ -20,17 +20,12 @@ hash y valores exactos vive en
 El contrato único de uso está en
 [`00-contrato-normativo-diseno.md`](../05-design-system/00-contrato-normativo-diseno.md).
 
-La identidad visual anterior de AgendaQr, incluido su color de marca, deja de
-existir como fuente de valores. El nombre del producto se conserva; el logo,
-los colores heredados y los recursos del sistema anterior se retiran.
+El nombre del producto se conserva; no hay logo, colores ni recursos de otros
+sistemas de diseño en la app ni en la documentación de producto.
 
 ## 2. Alcance de la sustitución
 
-Quedan reemplazadas como autoridad visual, conservando su valor histórico:
-ADR-0005 (Metro), ADR-0011 (Xauxa), ADR-0012 (Material 3 convencional),
-ADR-0013 (AgendaMobile), ADR-0014 y ADR-0017 (Ant Design Mobile),
-ADR-0020 (identidad AgendaQr), ADR-0021 (apps chinas), ADR-0022 (Super-App) y
-ADR-0023 (TDesign Mobile). Cada una enlaza esta decisión desde su cabecera.
+Polaris es la única autoridad visual: ninguna otra dirección, paleta, iconografía ni sistema de diseño tiene vigencia en el repositorio.
 
 La especificación UX/UI V1 **permanece congelada en su contrato funcional**:
 flujos, reglas de negocio, navegación conceptual, local-first, copy y voice

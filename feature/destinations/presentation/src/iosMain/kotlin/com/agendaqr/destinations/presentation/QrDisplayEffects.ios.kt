@@ -6,7 +6,7 @@ import platform.UIKit.UIApplication
 import platform.UIKit.UIScreen
 
 /**
- * Brillo al máximo + pantalla encendida en iOS (U-05, D4): guarda y
+ * Brillo al máximo + pantalla encendida en iOS: guarda y
  * restaura `UIScreen.mainScreen.brightness` e `idleTimerDisabled`
  * mientras el QR está en composición. Solo compilación en este entorno
  * (runtime iOS requiere Xcode/dispositivo).

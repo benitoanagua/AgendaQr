@@ -4,7 +4,7 @@ import android.content.Intent
 import com.agendaqr.destinations.domain.Operation
 
 actual fun shareOperation(operation: Operation) {
-    // Flujo externo (U-02): la hoja de compartir saca la app.
+    // Flujo externo: la hoja de compartir saca la app.
     ExternalFlowGates.tracker.markLaunch()
     val activity = AgendaQrAndroidShareLauncher.requireActivity()
     val text = buildString {

@@ -59,7 +59,7 @@ internal fun OperationEditorScreen(
     val editorKey = existing?.id ?: "new"
     var type by rememberSaveable(editorKey) { mutableStateOf(existing?.type ?: OperationType.PAGO) }
     var amount by rememberSaveable(editorKey) { mutableStateOf(existing?.amount.orEmpty()) }
-    // Error en vivo tras la primera edición (U-07, D6): sin afirmaciones
+    // Error en vivo tras la primera edición: sin afirmaciones
     // falsas de validación.
     var amountEdited by rememberSaveable(editorKey) { mutableStateOf(false) }
     val initialCurrency = existing?.currency.orEmpty()
@@ -71,12 +71,12 @@ internal fun OperationEditorScreen(
     var person by rememberSaveable(editorKey) { mutableStateOf(existing?.personOrEntity.orEmpty()) }
     var concept by rememberSaveable(editorKey) { mutableStateOf(existing?.concept.orEmpty()) }
     var note by rememberSaveable(editorKey) { mutableStateOf(existing?.note.orEmpty()) }
-    // Divulgación progresiva (U-06, D5): concepto y nota plegados salvo
+    // Divulgación progresiva: concepto y nota plegados salvo
     // que el registro ya los tenga.
     var showDetails by rememberSaveable(editorKey) {
         mutableStateOf(existing?.concept?.isNotBlank() == true || existing?.note?.isNotBlank() == true)
     }
-    // Momento con hora (U-03, D2): milisegundos de época, sin texto
+    // Momento con hora: milisegundos de época, sin texto
     // libre. El valor por defecto de una actividad nueva es ahora, con
     // hora; los datos antiguos a medianoche se muestran sin hora y no se
     // reescriben salvo que el usuario elija.
@@ -101,7 +101,7 @@ internal fun OperationEditorScreen(
     val saving = state.isSavingOperation
     val amountInvalid = amountEdited && !isValidAmount(amount)
 
-    // U-08/D7: el editor reporta si tiene cambios; `back()` con cambios
+    // El editor reporta si tiene cambios; `back()` con cambios
     // muestra la confirmación de descarte en vez de navegar.
     val dirty = type != (existing?.type ?: OperationType.PAGO) ||
         amount != existing?.amount.orEmpty() ||
@@ -157,7 +157,7 @@ internal fun OperationEditorScreen(
                     AppStrings.GuardarCambios
                 },
                 onClick = {
-                    // U-07: sin importe válido no se guarda; el error en
+                    // Sin importe válido no se guarda; el error en
                     // vivo ya es visible (o aparece ahora).
                     if (!isValidAmount(amount)) {
                         amountEdited = true
@@ -348,7 +348,7 @@ internal fun OperationEditorScreen(
                 )
             }
         }
-        // 3) Divulgación progresiva (U-06, D5; ADR-0028): concepto y nota
+        // 3) Divulgación progresiva (ADR-0028): concepto y nota
         //    plegados en un panel expandible; solo el encabezado alterna.
         AqExpansionPanel(
             title = AppStrings.MasDetalles,
@@ -386,7 +386,7 @@ internal fun OperationEditorScreen(
     }
 
     if (state.discardPrompt) {
-        // U-08/D7: salir con cambios pide confirmación; el foco inicial
+        // Salir con cambios pide confirmación; el foco inicial
         // cae en la opción conservadora (destructivo).
         AqDialog(
             title = AppStrings.DescartarCambios,
@@ -411,7 +411,7 @@ internal fun OperationEditorScreen(
         )
     }
 
-    // Selectores de fecha y hora (U-03, D2): la fecha elegida abre la
+    // Selectores de fecha y hora: la fecha elegida abre la
     // hora; cancelar en cualquiera conserva el valor anterior.
     if (showDatePicker) {
         AqDatePickerDialog(
