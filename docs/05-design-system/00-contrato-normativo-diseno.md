@@ -225,13 +225,13 @@ nivel si el anterior está descartado por escrito:
 3. **Nativo** Android (Material 3) / iOS (HIG) — solo si los niveles 1 y 2
    están descartados; se estiliza con tokens Polaris.
 
-La navegación raíz es nativa por esta cadena (Polaris no define navegación
-táctil móvil; Moon no trae bottom navigation/FAB/search/swipe/refresh/
-pickers/skeleton/empty state/list cell), no por omisión. La evidencia
+La navegación raíz es nativa por esta cadena (Polaris se consulta primero y no define navegación
+táctil móvil; Moon se consulta segundo y no trae bottom navigation/FAB/search/swipe/refresh/
+pickers/skeleton/empty state/list cell), nunca por omisión directa. La evidencia
 patrón a patrón está en
-[`14-matriz-gaps-mobile.md`](14-matriz-gaps-mobile.md) y la fidelidad de la
+[`11-matriz-gaps-mobile.md`](11-matriz-gaps-mobile.md) (y su predecesora [`14-matriz-gaps-mobile.md`](14-matriz-gaps-mobile.md)) y la fidelidad de la
 capa visual en
-[`13-auditoria-fidelidad-mobile.md`](13-auditoria-fidelidad-mobile.md).
+[`10-auditoria-fidelidad.md`](10-auditoria-fidelidad.md) (y [`13-auditoria-fidelidad-mobile.md`](13-auditoria-fidelidad-mobile.md)).
 
 ## 7. Registro de versiones
 

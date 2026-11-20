@@ -1,0 +1,21 @@
+# Ficha de componente: Pull to Refresh (`AqPullToRefresh`)
+
+- **Nombre:** Pull to Refresh (`AqPullToRefresh`)
+- **Nivel de origen:** `native-pattern` (Nivel 3) estilizado al 100 % con tokens Polaris
+- **Anatomía:** Contenedor de lista o página desplazable que detecta el arrastre descendente desde el límite superior. Muestra una pastilla circular o indicadora flotante centrada con el spinner canónico de Polaris (`AqSpinner`), que rota proporcionalmente a la distancia de arrastre y gira continuamente cuando se alcanza el umbral de activación (trigger distance de 64 dp).
+- **Variantes y tamaños:** Indicador flotante circular (40 dp de diámetro, radio `Pill` completo, elevación `Shadow200` Polaris).
+- **Estados:**
+  - `Idle`: Oculto sobre el límite superior.
+  - `Pulling`: Descenso visible con rotación proporcional al desplazamiento.
+  - `Refreshing`: Girando en posición activa mientras `isRefreshing = true`.
+  - `Settling`: Transición suave de retorno hacia la posición oculta al finalizar.
+- **Tokens Polaris:**
+  - Fondo del indicador: `AqColor.BgSurface` (`#FFFFFF` en claro, `#262626` en oscuro).
+  - Borde del indicador: `AqColor.BorderSubdued` (1 dp hairline).
+  - Spinner / indicador: `AqColor.BrandFill` (`#303030` en claro, `#FFFFFF` en oscuro) o `AqColor.Emphasis`.
+  - Elevación: `AqElevation.Shadow200`.
+  - Radio: `AqRadius.Pill`.
+  - Animación: `AqMotion.DurationBase` (200 ms).
+- **Accesibilidad:** Anuncio accesible mediante TalkBack cuando el estado de refresco inicia ("Actualizando contenido...") y finaliza ("Actualización completada").
+- **Comportamiento Claro / Oscuro:** Se adapta dinámicamente al esquema activo manteniendo contraste y sombra visible.
+- **Notas de adaptación:** Ni Polaris ni Moon Design incluyen un componente móvil de pull-to-refresh en sus especificaciones. Se implementa siguiendo la convención nativa mobile (Nivel 3) empleando exclusivamente el spinner, sombras y fondos de tokens Polaris.

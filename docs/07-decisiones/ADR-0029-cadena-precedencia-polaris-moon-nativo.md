@@ -1,60 +1,35 @@
 # ADR-0029 — Cadena de precedencia Polaris → Moon → nativo para UI móvil
 
 **Estado:** ACEPTADO — 2026-11-20
-**Relaciona:** ADR-0025 (Polaris como autoridad visual), ADR-0026 (cierre de
-la migración), ADR-0027 (espacio por nivel atómico), ADR-0028 (Moon como
-referencia de patrones móviles), contrato normativo y matriz de gaps
-`05-design-system/14-matriz-gaps-mobile.md`.
+**Relaciona:** ADR-0025 (Polaris como autoridad visual), ADR-0026 (cierre de la migración), ADR-0027 (espacio por nivel atómico), ADR-0028 (Moon como referencia de patrones móviles), contrato normativo, `05-design-system/10-auditoria-fidelidad.md` y matriz de gaps `05-design-system/11-matriz-gaps-mobile.md`.
 
-## 1. Decisión
+## 1. Contexto y motivación
 
-Toda decisión de UI se resuelve en el siguiente orden y solo baja de nivel
-cuando el anterior no tiene respuesta:
+El sistema visual de AgendaQr tiene como objetivo ser un clon fiel de Shopify Polaris reimplementado en Compose. Sin embargo, Shopify Polaris está históricamente enfocado en aplicaciones web y de escritorio, dejando sin especificación oficial varios patrones de interacción críticos para dispositivos móviles (bottom navigation, bottom sheets, swipe actions, pull-to-refresh, pickers nativos, carruseles y acordeones táctiles).
 
-1. **Polaris** (instantánea 9.4.2 + documentación oficial). Siempre gana:
-   tokens, tipografía, componentes, patrones, copy y guía móvil si existe.
-   Si Polaris solo ofrece guía de escritorio para un componente, se anota
-   «Polaris sin guía mobile» y se adapta con sus tokens, densidad y
-   jerarquía.
-2. **Moon Design for Flutter** (`moon_design` 1.1.0, API en
-   pub.dev/documentation/moon_design). Solo si Polaris no define el
-   componente o patrón. Se toman anatomía, estados, tamaños y gestos; el
-   estilo se reemplaza al 100 % por tokens Polaris. **Prohibido** importar
-   paleta, sombras, squircle o tipografía de Moon, y prohibida cualquier
-   dependencia de Moon o de Flutter.
-3. **Convención nativa** Android (Material 3) / iOS (HIG). Solo si ni
-   Polaris ni Moon lo cubren; se estiliza igualmente con tokens Polaris.
+Para evitar decisiones arbitrarias o mezclas inconsistentes de sistemas de diseño, se requiere una cadena de precedencia normativa cerrada, determinista y auditable.
 
-No se puede asignar nivel 3 sin haber descartado por escrito los niveles 1
-y 2 en la matriz de gaps.
+## 2. Decisión
 
-Esta regla **complementa** a ADR-0025: la autoridad visual sigue siendo
-Polaris; lo que cambia es que la consulta de patrones ya no salta
-directamente a la convención nativa — primero Polaris, después Moon como
-referencia de interacción, y solo entonces lo nativo.
+Toda decisión de interfaz y experiencia de usuario móvil se resuelve en el siguiente orden y solo baja de nivel cuando el nivel anterior no ofrece respuesta:
 
-## 2. Alcance
+1. **Nivel 1 — Polaris (instantánea 9.4.2 + documentación oficial):** Convenciones, tokens, componentes, patrones, copy y guía mobile si existe. Siempre gana. Si Polaris solo tiene guía de escritorio para un componente, se anota como «Polaris sin guía mobile» y se adapta usando el criterio de Polaris (tokens, densidad, jerarquía).
+2. **Nivel 2 — Moon Design for Flutter (`moon_design` 1.1.0, API en pub.dev/documentation/moon_design):** SOLO si Polaris no define el componente o patrón. Se toma anatomía, estados, tamaños y gestos. El estilo se reemplaza al 100 % con tokens Polaris. **Prohibido** importar paleta, sombras, squircle o tipografía de Moon. No se agrega ninguna dependencia de Moon ni de Flutter.
+3. **Nivel 3 — Convención nativa Android (Material 3) / iOS (HIG):** SOLO si ni Polaris ni Moon lo cubren. Se estiliza igualmente con tokens Polaris.
 
-- Componentes de `core/ui` (API `Aq*`, sin lógica de negocio).
-- Patrones de pantalla del contrato UX/UI V1 congelado.
-- La navegación raíz sigue siendo nativa (barra inferior/gestos, D-03);
-   la diferencia es que ahora ese nivel 3 está **justificado por la cadena**,
-   no por omisión.
+No se puede asignar nivel 3 sin haber descartado por escrito los niveles 1 y 2 en la matriz de gaps.
 
-## 3. Componentes que no trae Moon (nivel 3 directo)
+Esta regla reemplaza cualquier convención previa y aclara que **la navegación también consulta primero Polaris**: Polaris no define barra de navegación móvil inferior, y Moon no trae bottom navigation; por tanto, la barra inferior y el riel se resuelven en el Nivel 3 (nativo), estilizados al 100 % con tokens Polaris.
 
-Bottom navigation, FAB, search bar, swipe actions, pull-to-refresh,
-pickers de fecha/hora, skeleton, empty state y list cell no existen en el
-catálogo de Moon; para ellos el nivel 2 se considera descartado y se pasa a
-nivel 3 (o se resuelven con Polaris si existe componente web equivalente,
-como es el caso de skeleton y search).
+Esta decisión **complementa** a ADR-0025: la autoridad visual y de diseño sigue siendo exclusivamente Polaris; lo que se formaliza es el orden de resolución para anatomía y patrones móviles que Polaris no cubre directamente.
+
+## 3. Componentes que no trae Moon (descenso a nivel 3)
+
+Moon no incluye: bottom navigation, FAB, search bar, swipe actions, pull-to-refresh, date/time picker, skeleton, empty state, list cell. Cuando Polaris no los cubre o los define sólo para web, se adoptan como nivel 3 nativo estilizados con tokens Polaris.
 
 ## 4. Consecuencias
 
-- `docs/05-design-system/14-matriz-gaps-mobile.md` registra el nivel y la
-  evidencia del descarte de cada patrón de las pantallas V1.
-- Los gaps abiertos (swipe actions, pull-to-refresh, menú anclado) quedan
-  documentados con nivel y recomendación; no se implementan sin caso de
-  producto.
-- La gobernanza del contrato (gate `verifyAgendaQrArchitecture`) no cambia:
-  los valores visuales siguen saliendo solo de tokens Polaris.
+- Se crea la matriz exhaustiva en `docs/05-design-system/11-matriz-gaps-mobile.md` y la auditoría en `docs/05-design-system/10-auditoria-fidelidad.md`.
+- Se implementan los componentes primitivos de soporte móvil faltantes en `core/ui`: `AqSwipeActions` (acciones al deslizar filas en listas) y `AqPullToRefresh` (indicador y contenedor de recarga vertical), ambos nivel 3 con tokens Polaris.
+- Cada componente nuevo cuenta con ficha de diseño documentada en `docs/05-design-system/componentes/<nombre>.md`.
+- La arquitectura sigue garantizando mediante gates que ningún valor visual se hardcodee fuera de tokens.
