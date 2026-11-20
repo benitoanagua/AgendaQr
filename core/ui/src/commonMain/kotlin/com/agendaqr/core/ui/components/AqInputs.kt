@@ -118,6 +118,9 @@ fun AqTextField(
     /** Marcador discreto de opcionalidad junto a la etiqueta
      *  (copy del llamador, p. ej. "Opcional"). */
     optionalLabel: String? = null,
+    /** Solicitante de foco opcional: lo usa [AqFormFocus] para llevar el
+     *  foco al primer campo con error al intentar enviar. */
+    focusRequester: FocusRequester? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
@@ -159,6 +162,7 @@ fun AqTextField(
                 modifier = Modifier
                     .weight(1f)
                     .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                    .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
                     .semantics {
                         contentDescription = label
                         if (isError && errorMessage != null) error(errorMessage)
@@ -258,6 +262,9 @@ fun AqMultilineTextField(
     /** Marcador discreto de opcionalidad junto a la etiqueta
      *  (copy del llamador, p. ej. "Opcional"). */
     optionalLabel: String? = null,
+    /** Solicitante de foco opcional: lo usa [AqFormFocus] para llevar el
+     *  foco al primer campo con error al intentar enviar. */
+    focusRequester: FocusRequester? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
@@ -299,6 +306,7 @@ fun AqMultilineTextField(
                 modifier = Modifier
                     .weight(1f)
                     .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                    .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
                     .semantics {
                         contentDescription = label
                         if (isError && errorMessage != null) error(errorMessage)
@@ -554,6 +562,9 @@ fun AqAmountField(
     /** Marcador discreto de opcionalidad junto a la etiqueta
      *  (copy del llamador, p. ej. "Opcional"). */
     optionalLabel: String? = null,
+    /** Solicitante de foco opcional: lo usa [AqFormFocus] para llevar el
+     *  foco al primer campo con error al intentar enviar. */
+    focusRequester: FocusRequester? = null,
 ) {
     if (onClear != null) require(clearLabel.isNotBlank()) {
         "AqAmountField: onClear necesita clearLabel (copy del llamador)"
@@ -589,6 +600,7 @@ fun AqAmountField(
                 modifier = Modifier
                     .weight(1f)
                     .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                    .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
                     .semantics { contentDescription = label },
                 enabled = state.enabled,
                 textStyle = AqTextStyles.Amount.copy(color = contentColor),

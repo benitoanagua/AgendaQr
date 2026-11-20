@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.agendaqr.core.ui.components.AqIconButton
+import com.agendaqr.core.ui.components.rememberAqFormFocus
 import com.agendaqr.core.ui.components.AqPrimaryButton
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqStatusBanner
@@ -89,7 +89,7 @@ internal fun AuthForm(
 ) {
     var submitted by rememberSaveable { mutableStateOf(false) }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
-    val focusRequester = remember { androidx.compose.ui.focus.FocusRequester() }
+    val formFocus = rememberAqFormFocus(FieldEmail, FieldPassword)
     // El banner de error de credenciales también marca los campos, para que
     // el estado del campo y el del banner no se contradigan (p. ej. correo
     // "invalid": el campo se pinta como error al mismo tiempo que el banner).
@@ -98,7 +98,13 @@ internal fun AuthForm(
 
     fun submit(target: () -> Unit) {
         submitted = true
-        if (isValidEmail(state.email) && state.password.length >= 6) target()
+        val errors = buildSet {
+            if (!isValidEmail(state.email)) add(FieldEmail)
+            if (state.password.length < 6) add(FieldPassword)
+        }
+        // Con errores no se envía: el foco va al primer campo inválido
+        // (orden visual) para corregirlo sin buscarlo.
+        if (errors.isEmpty()) target() else formFocus.focusFirstError(errors)
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Md)) {
@@ -131,6 +137,7 @@ internal fun AuthForm(
                 ),
                 isError = emailError,
                 errorMessage = if (submitted && !isValidEmail(state.email)) AppStrings.IngresaUnCorreoValido else null,
+                focusRequester = formFocus.requesterFor(FieldEmail),
             )
 
             AqTextField(
@@ -149,6 +156,7 @@ internal fun AuthForm(
                 },
                 isError = passwordError,
                 errorMessage = if (submitted && state.password.length < 6) AppStrings.Minimo6Caracteres else null,
+                focusRequester = formFocus.requesterFor(FieldPassword),
                 trailing = {
                     AqIconButton(
                         contentDescription = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
@@ -219,3 +227,6 @@ private fun isValidEmail(value: String): Boolean {
     val parts = trimmed.split("@")
     return parts.size == 2 && parts[0].isNotEmpty() && parts[1].contains(".") && parts[1].length >= 3
 }
+
+private const val FieldEmail = "email"
+private const val FieldPassword = "password"

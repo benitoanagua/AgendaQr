@@ -62,6 +62,7 @@ internal fun OperationEditorScreen(
     // Error en vivo tras la primera edición: sin afirmaciones
     // falsas de validación.
     var amountEdited by rememberSaveable(editorKey) { mutableStateOf(false) }
+    val formFocus = rememberAqFormFocus(FieldAmount)
     val initialCurrency = existing?.currency.orEmpty()
         .ifBlank { mostRecentCurrency(state.operations) }
     var currency by rememberSaveable(editorKey) { mutableStateOf(initialCurrency) }
@@ -161,6 +162,8 @@ internal fun OperationEditorScreen(
                     // vivo ya es visible (o aparece ahora).
                     if (!isValidAmount(amount)) {
                         amountEdited = true
+                        // Foco al primer (único) campo con error.
+                        formFocus.focusFirstError(setOf(FieldAmount))
                         return@AqBottomAction
                     }
                     val at = occurredAtMillis
@@ -202,6 +205,7 @@ internal fun OperationEditorScreen(
         AqAmountField(
             label = AppStrings.LabelMonto,
             optionalLabel = AppStrings.Opcional,
+            focusRequester = formFocus.requesterFor(FieldAmount),
             value = amount,
             onValueChange = {
                 amount = it
@@ -497,3 +501,4 @@ internal fun OperationEditorScreen(
     }
 }
 
+private const val FieldAmount = "amount"
