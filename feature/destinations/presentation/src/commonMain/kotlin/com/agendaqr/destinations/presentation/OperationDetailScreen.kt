@@ -68,6 +68,14 @@ internal fun OperationDetailScreen(
                         onClick = { viewModel.onAction(OperationAction.Edit(operation.id)) },
                     ),
                 ),
+                overflowActions = listOf(
+                    AqOverflowAction(
+                        label = AppStrings.EliminarOperacion,
+                        icon = AqIcons.Trash,
+                        onClick = { showDeleteConfirm = true },
+                    ),
+                ),
+                overflowLabel = AppStrings.Mas,
             )
         },
         snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
