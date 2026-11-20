@@ -24,7 +24,7 @@ y estado. Complementa `12-matriz-cobertura-polaris-moon-agendaqr.md`
 | Patrón | Polaris | Moon | Nivel | Implementación `Aq*` | Estado | Evidencia del descarte |
 |---|---|---|---|---|---|---|
 | Navegación inferior | Sin componente móvil (nav es web) | Moon no trae bottom navigation | **3 nativo** | `AqNavBar`, `AqNavRail` | COMPLETE | Polaris: sin guía mobile (D-03). Moon: ausente de su catálogo. → barra/riel nativos con tokens `nav-*`. |
-| Barra superior / app bar | `TopBar` web | `MoonTopAppBar` existe pero Polaris sí define el patrón | **1 Polaris** (adaptado, barra nivel 3) | `AqTopBar` | COMPLETE | Polaris define top bar; la anatomía móvil (back, overflow, 48 dp) se adapta con tokens. Título = `heading-lg` móvil (F-03). |
+| Barra superior / app bar | `TopBar` web | Ausente en catálogo Moon (Polaris define el patrón) | **1 Polaris** (adaptado, barra nivel 3) | `AqTopBar` | COMPLETE | Polaris define top bar; Moon 1.1.0 no incluye app bar en su catálogo. La anatomía móvil (back, overflow, 48 dp) se adapta con tokens. Título = `heading-lg` móvil (F-03). |
 | Bottom sheet | Sin sheet móvil | `MoonBottomSheet`, `showMoonModalBottomSheet` | **2 Moon** | `AqBottomSheet` | COMPLETE (primitivo; sin consumidor en V1 por D-07) | Polaris sin sheet táctil; Moon sí → anatomía de hoja modal con scrim, handle y gesto de descarte; estilo 100 % tokens Polaris. |
 | Modal / diálogo | `Modal` | `MoonModal` | **1 Polaris** | `AqDialog`, `AqDialogList` | COMPLETE | Polaris define modal; variantes destructive/confirm según contrato. |
 | Barra de búsqueda | `SearchField`/`IndexFilters` web | Sin buscador en catálogo Moon | **1 Polaris** | `AqSearchField`, `AqSearchTrigger` | COMPLETE | Polaris cubre búsqueda; la variante «trigger» móvil es adaptación documentada. |

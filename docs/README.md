@@ -84,6 +84,7 @@
 | [`07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md`](07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md) | ADR: propiedad del espacio por nivel atómico y densidad móvil |
 | [`07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md`](07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md) | ADR: Moon como referencia de patrones móviles; Polaris autoridad visual |
 | [`07-decisiones/ADR-0029-cadena-precedencia-polaris-moon-nativo.md`](07-decisiones/ADR-0029-cadena-precedencia-polaris-moon-nativo.md) | ADR: cadena de precedencia Polaris → Moon → nativo para patrones sin equivalente Polaris |
+| [`07-decisiones/ADR-0030-adopcion-primitivos-moviles-pantallas.md`](07-decisiones/ADR-0030-adopcion-primitivos-moviles-pantallas.md) | ADR: adopción de primitivos móviles en pantallas de producción |
 | [`PR-0028-moon-mobile-screens.md`](PR-0028-moon-mobile-screens.md) | PR: aplicación de patrones móviles a S00/S04/S07/S12 |
 
 ## Cómo se mantiene
