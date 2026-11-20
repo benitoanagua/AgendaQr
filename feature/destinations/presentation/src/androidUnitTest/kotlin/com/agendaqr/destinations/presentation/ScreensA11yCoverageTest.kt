@@ -10,7 +10,10 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.domain.Comprobante
@@ -245,7 +248,18 @@ class ScreensA11yCoverageTest {
         assert(favNodes.size == 1) { "S01: el favorito va solo en el carrusel" }
         val listNodes = compose.onAllNodesWithText("Verduleria El Sol").fetchSemanticsNodes()
         assert(listNodes.size == 1) { "S01: el no favorito va solo en la lista" }
-        compose.onNodeWithContentDescription("Marcar favorito").assertExists()
+        // El favorito de la fila se expone como customAction del contenedor de
+        // deslizamiento (alternativa no gestual al swipe), no como nodo separado
+        // por el mergeDescendants del contenedor.
+        val tieneMarcarFavorito = compose
+            .onAllNodes(SemanticsMatcher.keyIsDefined(SemanticsActions.CustomActions))
+            .fetchSemanticsNodes()
+            .any { nodo ->
+                val acciones: List<CustomAccessibilityAction> =
+                    nodo.config.getOrNull(SemanticsActions.CustomActions)!!
+                acciones.any { it.label == AppStrings.MarcarFavorito }
+            }
+        assertTrue(tieneMarcarFavorito, "la fila debe exponer customAction Marcar favorito")
         // V1.2: sin tiles — el botón de texto "Favorito" por fila desapareció
         // con el IconToggleButton de estrella (48 dp garantizado por M3).
         // El estado de sync ES texto cuando hay algo que informar.

@@ -21,6 +21,9 @@ import com.agendaqr.core.ui.components.AqBadge
 import com.agendaqr.core.ui.components.AqCarousel
 import com.agendaqr.core.ui.components.AqCarouselItem
 import com.agendaqr.core.ui.components.AqCompactAction
+import com.agendaqr.core.ui.components.AqPullToRefresh
+import com.agendaqr.core.ui.components.AqSwipeAction
+import com.agendaqr.core.ui.components.AqSwipeActions
 import com.agendaqr.core.ui.components.AqQuickAction
 import com.agendaqr.core.ui.components.AqDialog
 import com.agendaqr.core.ui.components.AqDialogList
@@ -80,6 +83,7 @@ fun DestinationsScreen(
     onCreateContext: (name: String, note: String?) -> Unit = { _, _ -> },
 ) {
     var showCreateContext by remember { mutableStateOf(false) }
+    var destinationToDelete by remember { mutableStateOf<Destination?>(null) }
     var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
     val paged = state.visibleDestinations.take(visibleCount)
     val favorites = state.favorites
@@ -248,14 +252,21 @@ fun DestinationsScreen(
                         onAction = { onAction(DestinationAction.Search("")) },
                     )
                     else -> {
-                        AqListBody {
-                            paged.forEachIndexed { index, destination ->
-                                DestinationRow(
-                                    destination,
-                                    onAction,
-                                    syncLookup,
-                                    showDivider = index < paged.lastIndex,
-                                )
+                        AqPullToRefresh(
+                            isRefreshing = state.isLoading,
+                            onRefresh = { onAction(DestinationAction.Search(state.query)) },
+                            refreshingLabel = AppStrings.Cargando,
+                        ) {
+                            AqListBody {
+                                paged.forEachIndexed { index, destination ->
+                                    DestinationRow(
+                                        destination,
+                                        onAction,
+                                        syncLookup,
+                                        showDivider = index < paged.lastIndex,
+                                        onRequestDelete = { destinationToDelete = it },
+                                    )
+                                }
                             }
                         }
                         if (paged.size < state.visibleDestinations.size) {
@@ -279,6 +290,21 @@ fun DestinationsScreen(
                 onCreateContext(name, note)
             },
             onDismiss = { showCreateContext = false },
+        )
+    }
+
+    destinationToDelete?.let { dest ->
+        AqDialog(
+            title = AppStrings.EliminarDestino,
+            message = AppStrings.irreversibleActionWarning,
+            confirmLabel = AppStrings.Eliminar,
+            destructive = true,
+            onConfirm = {
+                onAction(DestinationAction.Delete(dest.id))
+                destinationToDelete = null
+            },
+            dismissLabel = AppStrings.Cancelar,
+            onDismiss = { destinationToDelete = null },
         )
     }
 }
@@ -330,38 +356,65 @@ fun DestinationRow(
     onAction: (DestinationAction) -> Unit,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
     showDivider: Boolean = false,
+    onRequestDelete: ((Destination) -> Unit)? = null,
 ) {
     // Fila del destino: miniatura QR a la izquierda, título con
     // identidad, metadato de sincronización y favorito a la derecha.
-    AqListRow(
-        title = destination.name.ifBlank { AppStrings.SinNombre },
-        subtitle = destinationSubtitle(destination),
-        showDivider = showDivider,
-        onClick = { onAction(DestinationAction.Open(destination.id)) },
-        leading = {
-            AqIconBadge(icon = AqIcons.QrCode, tone = AqTone.Neutral)
-        },
-        meta = {
-            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
-                // U-12/D9: el contenido decodificado NO aparece en la lista
-                // (privacidad + no parece un enlace); vive en el Detalle.
-                ElementSyncBadge(
-                    syncLookup.status(SyncResource.DESTINATION, destination.id),
+    val rowContent = @Composable {
+        AqListRow(
+            title = destination.name.ifBlank { AppStrings.SinNombre },
+            subtitle = destinationSubtitle(destination),
+            showDivider = showDivider,
+            onClick = { onAction(DestinationAction.Open(destination.id)) },
+            leading = {
+                AqIconBadge(icon = AqIcons.QrCode, tone = AqTone.Neutral)
+            },
+            meta = {
+                Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
+                    // U-12/D9: el contenido decodificado NO aparece en la lista
+                    // (privacidad + no parece un enlace); vive en el Detalle.
+                    ElementSyncBadge(
+                        syncLookup.status(SyncResource.DESTINATION, destination.id),
+                    )
+                }
+            },
+            trailing = {
+                AqFavoriteToggle(
+                    favorite = destination.favorite,
+                    contentDescription = if (destination.favorite) {
+                        AppStrings.QuitarFavorito
+                    } else {
+                        AppStrings.MarcarFavorito
+                    },
+                    onCheckedChange = { onAction(DestinationAction.ToggleFavorite(destination)) },
                 )
-            }
-        },
-        trailing = {
-            AqFavoriteToggle(
-                favorite = destination.favorite,
-                contentDescription = if (destination.favorite) {
-                    AppStrings.QuitarFavorito
-                } else {
-                    AppStrings.MarcarFavorito
-                },
-                onCheckedChange = { onAction(DestinationAction.ToggleFavorite(destination)) },
-            )
-        },
-    )
+            },
+        )
+    }
+
+    if (onRequestDelete != null) {
+        val swipeActions = listOf(
+            AqSwipeAction(
+                label = if (destination.favorite) AppStrings.QuitarFavorito else AppStrings.MarcarFavorito,
+                icon = AqIcons.Favorite,
+                backgroundColor = AqColor.EmphasisFill,
+                contentColor = AqColor.InverseOnSurface,
+                onAction = { onAction(DestinationAction.ToggleFavorite(destination)) },
+            ),
+            AqSwipeAction(
+                label = AppStrings.Eliminar,
+                icon = AqIcons.Trash,
+                backgroundColor = AqColor.DangerFill,
+                contentColor = AqColor.InverseOnSurface,
+                onAction = { onRequestDelete(destination) },
+            ),
+        )
+        AqSwipeActions(actions = swipeActions) {
+            rowContent()
+        }
+    } else {
+        rowContent()
+    }
 }
 
 /**
