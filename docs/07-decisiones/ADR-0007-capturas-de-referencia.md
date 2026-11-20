@@ -67,14 +67,11 @@ una aserción determinista del riel a 720 dp y 200 % de fuente, sin imagen
 versionada. El resto de superficies adaptativas sigue sujeto a revisión
 manual (ver Consecuencias). Los overlays (S08 selector, S03 cámara) se
 capturan como su ventana de diálogo completa, al tamaño real del
-componente. Hallazgo registrado: el vacío de la bandeja de comprobantes sin
-asociar es byte-idéntico al vacío de Actividades (comparten composición),
-así que solo se conserva una captura; el copy propio del vacío queda como
-decisión de producto pendiente.
+componente.
 
 **Manifiesto (schema `agendaqr.captures/6`).** `build/captures/manifest.json`
 declara por entrada la pantalla de AgendaQr, el identificador de su
-pantalla de Stitch (campo histórico, sin ADR asociado; vacío para las superficies excluidas), estado,
+identificador de pantalla (sin ADR asociado; vacío para las superficies excluidas), estado,
 tema, ancho, densidad, dimensiones reales del bitmap, hash, si es
 obligatorio, el motivo de inclusión y el test de origen. No incluye el campo
 `fontScale` porque el esquema de nombres ya no codifica la escala. Cuando

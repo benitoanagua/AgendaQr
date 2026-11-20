@@ -5,7 +5,7 @@
 
 ## 1. Contexto y motivación
 
-El sistema visual de AgendaQr tiene como objetivo ser un clon fiel de Shopify Polaris reimplementado en Compose. Sin embargo, Shopify Polaris está históricamente enfocado en aplicaciones web y de escritorio, dejando sin especificación oficial varios patrones de interacción críticos para dispositivos móviles (bottom navigation, bottom sheets, swipe actions, pull-to-refresh, pickers nativos, carruseles y acordeones táctiles).
+El sistema visual de AgendaQr tiene como objetivo ser un clon fiel de Shopify Polaris reimplementado en Compose. Sin embargo, Shopify Polaris se enfoca en aplicaciones web y de escritorio, dejando sin especificación oficial varios patrones de interacción críticos para dispositivos móviles (bottom navigation, bottom sheets, swipe actions, pull-to-refresh, pickers nativos, carruseles y acordeones táctiles).
 
 Para evitar decisiones arbitrarias o mezclas inconsistentes de sistemas de diseño, se requiere una cadena de precedencia normativa cerrada, determinista y auditable.
 

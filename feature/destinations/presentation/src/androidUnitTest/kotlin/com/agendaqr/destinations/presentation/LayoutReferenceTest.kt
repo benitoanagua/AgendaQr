@@ -144,12 +144,7 @@ open class LayoutReferenceTest {
         "operation-detail" to ("operationdetail" to "content"),
         "operation-editor" to ("operationeditor" to "content"),
         "unassociated" to ("unassociated" to "content"),
-        // Hallazgo del gate: el estado vacío de la bandeja de comprobantes
-        // sin asociar es byte-idéntico al vacío de Actividades — ambas
-        // superficies comparten la misma composición de vacío, así que la
-        // segunda captura no aporta cobertura (el gate la rechaza como
-        // duplicada y el test sigue verificándola por aserciones). Pendiente
-        // de decisión de producto: copy propio para el vacío de la bandeja.
+        "unassociated-empty" to ("unassociated" to "empty"),
         "context-picker" to ("contextpicker" to "selection"),
         "import-batch-review" to ("importbatch" to "review"),
         "import-batch-error" to ("importbatch" to "error"),
