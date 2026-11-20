@@ -118,14 +118,27 @@ fun AqTextField(
     /** Marcador discreto de opcionalidad junto a la etiqueta
      *  (copy del llamador, p. ej. "Opcional"). */
     optionalLabel: String? = null,
+    /** Longitud máxima permitida. Cuando se informa, se muestra el contador
+     *  "n/max" accesible y el campo pasa a error al excederlo (ADR-0033). */
+    maxLength: Int? = null,
     /** Solicitante de foco opcional: lo usa [AqFormFocus] para llevar el
      *  foco al primer campo con error al intentar enviar. */
     focusRequester: FocusRequester? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
+    val currentLength = value.length
+    val lengthExceeded = maxLength != null && currentLength > maxLength
+    // El error propio del llamador tiene prioridad; si no hay uno, el
+    // exceso de longitud se informa como error.
+    val effectiveIsError = isError || lengthExceeded
+    val effectiveErrorMessage = when {
+        isError && errorMessage != null -> errorMessage
+        lengthExceeded -> "Se excedió el límite de $maxLength caracteres"
+        else -> null
+    }
     val borderColor = when {
-        isError -> AqColor.Danger
+        effectiveIsError -> AqColor.Danger
         focused -> AqColor.Focus
         else -> AqColor.FunctionalBorder
     }
@@ -150,7 +163,7 @@ fun AqTextField(
                     contentDescription = null,
                     size = AqMetrics.IconSizeCompact,
                     tint = when {
-                        isError -> AqColor.Danger
+                        effectiveIsError -> AqColor.Danger
                         focused -> AqColor.Focus
                         else -> AqColor.TextTertiary
                     },
@@ -165,7 +178,7 @@ fun AqTextField(
                     .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
                     .semantics {
                         contentDescription = label
-                        if (isError && errorMessage != null) error(errorMessage)
+                        if (effectiveIsError && effectiveErrorMessage != null) error(effectiveErrorMessage)
                     },
                 enabled = enabled,
                 readOnly = readOnly,
@@ -174,7 +187,7 @@ fun AqTextField(
                 textStyle = AqTextStyles.Body.copy(
                     color = when {
                         !enabled -> AqColor.OnDisabled
-                        isError -> AqColor.Danger
+                        effectiveIsError -> AqColor.Danger
                         else -> AqColor.TextPrimary
                     },
                 ),
@@ -182,7 +195,7 @@ fun AqTextField(
                 keyboardActions = keyboardActions,
                 visualTransformation = visualTransformation,
                 interactionSource = interactionSource,
-                cursorBrush = SolidColor(if (isError) AqColor.Danger else AqColor.Focus),
+                cursorBrush = SolidColor(if (effectiveIsError) AqColor.Danger else AqColor.Focus),
                 // El campo mide al menos ControlMinSize, pero BasicTextField
                 // ancla el texto arriba: se centra verticalmente dentro de
                 // esa altura mínima para que el texto no quede pegado arriba.
@@ -198,10 +211,26 @@ fun AqTextField(
             )
             trailing?.invoke()
         }
+        // Contador "n/max" accesible (se anuncia al acercarse al límite).
+        maxLength?.let { limit ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                Text(
+                    text = "$currentLength / $limit",
+                    modifier = Modifier.semantics {
+                        contentDescription = "Longitud $currentLength de $limit"
+                    },
+                    style = AqTextStyles.Support,
+                    color = if (lengthExceeded) AqColor.Danger else AqColor.TextTertiary,
+                )
+            }
+        }
         when {
             // El error informa con icono + texto, nunca solo por color;
             // liveRegion cortés — el lector lo anuncia al aparecer.
-            isError && errorMessage != null -> {
+            effectiveIsError && effectiveErrorMessage != null -> {
                 Row(
                     modifier = Modifier.testTag("aq-field-support"),
                     verticalAlignment = Alignment.CenterVertically,
@@ -213,7 +242,7 @@ fun AqTextField(
                         tint = AqColor.Danger,
                     )
                     Text(
-                        errorMessage,
+                        effectiveErrorMessage,
                         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                         style = AqTextStyles.Support,
                         color = AqColor.Danger,
@@ -262,14 +291,25 @@ fun AqMultilineTextField(
     /** Marcador discreto de opcionalidad junto a la etiqueta
      *  (copy del llamador, p. ej. "Opcional"). */
     optionalLabel: String? = null,
+    /** Longitud máxima permitida. Cuando se informa, se muestra el contador
+     *  "n/max" accesible y el campo pasa a error al excederlo (ADR-0033). */
+    maxLength: Int? = null,
     /** Solicitante de foco opcional: lo usa [AqFormFocus] para llevar el
      *  foco al primer campo con error al intentar enviar. */
     focusRequester: FocusRequester? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
+    val currentLength = value.length
+    val lengthExceeded = maxLength != null && currentLength > maxLength
+    val effectiveIsError = isError || lengthExceeded
+    val effectiveErrorMessage = when {
+        isError && errorMessage != null -> errorMessage
+        lengthExceeded -> "Se excedió el límite de $maxLength caracteres"
+        else -> null
+    }
     val borderColor = when {
-        isError -> AqColor.Danger
+        effectiveIsError -> AqColor.Danger
         focused -> AqColor.Focus
         else -> AqColor.FunctionalBorder
     }
@@ -294,7 +334,7 @@ fun AqMultilineTextField(
                     contentDescription = null,
                     size = AqMetrics.IconSizeCompact,
                     tint = when {
-                        isError -> AqColor.Danger
+                        effectiveIsError -> AqColor.Danger
                         focused -> AqColor.Focus
                         else -> AqColor.TextTertiary
                     },
@@ -309,7 +349,7 @@ fun AqMultilineTextField(
                     .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
                     .semantics {
                         contentDescription = label
-                        if (isError && errorMessage != null) error(errorMessage)
+                        if (effectiveIsError && effectiveErrorMessage != null) error(effectiveErrorMessage)
                     },
                 enabled = enabled,
                 readOnly = readOnly,
@@ -319,7 +359,7 @@ fun AqMultilineTextField(
                 textStyle = AqTextStyles.Body.copy(
                     color = when {
                         !enabled -> AqColor.OnDisabled
-                        isError -> AqColor.Danger
+                        effectiveIsError -> AqColor.Danger
                         else -> AqColor.TextPrimary
                     },
                 ),
@@ -327,7 +367,7 @@ fun AqMultilineTextField(
                 keyboardActions = keyboardActions,
                 visualTransformation = visualTransformation,
                 interactionSource = interactionSource,
-                cursorBrush = SolidColor(if (isError) AqColor.Danger else AqColor.Focus),
+                cursorBrush = SolidColor(if (effectiveIsError) AqColor.Danger else AqColor.Focus),
                 // El campo mide al menos ControlMinSize, pero BasicTextField
                 // ancla el texto arriba: se centra verticalmente dentro de
                 // esa altura mínima para que el texto no quede pegado arriba.
@@ -343,8 +383,26 @@ fun AqMultilineTextField(
             )
             trailing?.invoke()
         }
+        // Contador "n/max" accesible (se anuncia al acercarse al límite).
+        maxLength?.let { limit ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                Text(
+                    text = "$currentLength / $limit",
+                    modifier = Modifier.semantics {
+                        contentDescription = "Longitud $currentLength de $limit"
+                    },
+                    style = AqTextStyles.Support,
+                    color = if (lengthExceeded) AqColor.Danger else AqColor.TextTertiary,
+                )
+            }
+        }
         when {
-            isError && errorMessage != null -> {
+            // El error informa con icono + texto, nunca solo por color;
+            // liveRegion cortés — el lector lo anuncia al aparecer.
+            effectiveIsError && effectiveErrorMessage != null -> {
                 Row(
                     modifier = Modifier.testTag("aq-field-support"),
                     verticalAlignment = Alignment.CenterVertically,
@@ -356,7 +414,7 @@ fun AqMultilineTextField(
                         tint = AqColor.Danger,
                     )
                     Text(
-                        errorMessage,
+                        effectiveErrorMessage,
                         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                         style = AqTextStyles.Support,
                         color = AqColor.Danger,

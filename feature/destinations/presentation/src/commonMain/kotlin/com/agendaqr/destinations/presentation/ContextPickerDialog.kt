@@ -27,6 +27,7 @@ import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.accentFor
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.destinations.domain.Context
+import com.agendaqr.destinations.domain.FieldLimits
 
 /**
  * Semántica del selector de contexto (S08) — 
@@ -98,7 +99,8 @@ internal fun ContextPickerDialog(
             confirmLabel = AppStrings.Crear,
             onConfirm = {
                 submitted = true
-                if (name.isNotBlank()) {
+                // G2: límite de dominio del nombre del contexto.
+                if (name.isNotBlank() && name.length <= FieldLimits.Nombre) {
                     onCreateContext(name, note.takeIf { it.isNotBlank() })
                     // El paso vuelve a la lista al crear (ADR: vuelve a la
                     // lista con el nuevo elemento marcado).
@@ -115,6 +117,7 @@ internal fun ContextPickerDialog(
                         label = AppStrings.Nombre,
                         value = name,
                         onValueChange = { name = it },
+                        maxLength = FieldLimits.Nombre,
                         isError = submitted && name.isBlank(),
                         errorMessage = if (submitted && name.isBlank()) AppStrings.ElNombreEsObligatorio else null,
                     )
@@ -122,6 +125,7 @@ internal fun ContextPickerDialog(
                         label = AppStrings.Nota,
                         value = note,
                         onValueChange = { note = it },
+                        maxLength = FieldLimits.Nota,
                         singleLine = false,
                         minLines = 2,
                     )
@@ -216,7 +220,8 @@ internal fun ContextCreationDialog(
         confirmLabel = AppStrings.Crear,
         onConfirm = {
             submitted = true
-            if (name.isNotBlank()) onConfirmCreate(name, note.takeIf { it.isNotBlank() })
+            // G2: límite de dominio del nombre del contexto.
+            if (name.isNotBlank() && name.length <= FieldLimits.Nombre) onConfirmCreate(name, note.takeIf { it.isNotBlank() })
         },
         dismissLabel = AppStrings.Cancelar,
         onDismiss = onDismiss,
@@ -227,6 +232,7 @@ internal fun ContextCreationDialog(
                     label = AppStrings.Nombre,
                     value = name,
                     onValueChange = { name = it },
+                    maxLength = FieldLimits.Nombre,
                     isError = submitted && name.isBlank(),
                     errorMessage = if (submitted && name.isBlank()) AppStrings.ElNombreEsObligatorio else null,
                 )
@@ -234,6 +240,7 @@ internal fun ContextCreationDialog(
                     label = AppStrings.Nota,
                     value = note,
                     onValueChange = { note = it },
+                    maxLength = FieldLimits.Nota,
                     singleLine = false,
                     minLines = 2,
                 )

@@ -26,6 +26,7 @@ import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextAction
 import com.agendaqr.core.ui.components.AqTextField
 import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.destinations.domain.FieldLimits
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
@@ -138,6 +139,7 @@ internal fun AuthForm(
                 isError = emailError,
                 errorMessage = if (submitted && !isValidEmail(state.email)) AppStrings.IngresaUnCorreoValido else null,
                 focusRequester = formFocus.requesterFor(FieldEmail),
+                maxLength = FieldLimits.Correo,
             )
 
             AqTextField(
@@ -157,6 +159,7 @@ internal fun AuthForm(
                 isError = passwordError,
                 errorMessage = if (submitted && state.password.length < 6) AppStrings.Minimo6Caracteres else null,
                 focusRequester = formFocus.requesterFor(FieldPassword),
+                maxLength = FieldLimits.Contrasena,
                 trailing = {
                     AqIconButton(
                         contentDescription = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
