@@ -4,7 +4,7 @@
 **Relaciona:** ADR-0025 (adopción de Polaris), ADR-0026 (cierre de la
 migración), ADR-0007 (verificación de layout), ADR-0008 (guía de voz),
 contrato normativo de diseño v8.3 e informe
-[`11-auditoria-atomic-spacing.md`](../05-design-system/11-auditoria-atomic-spacing.md).
+[`11-auditoria-atomic-spacing.md`](../05-design-system/historico/11-auditoria-atomic-spacing.md).
 
 ## 1. Decisión
 
@@ -45,7 +45,7 @@ el contrato funcional, el dominio, la sincronización ni el copy. Las páginas
 solo componen; los valores siguen viviendo en la capa de tokens.
 
 La auditoría completa, el inventario por nivel y la tabla de hallazgos están
-en [`11-auditoria-atomic-spacing.md`](../05-design-system/11-auditoria-atomic-spacing.md).
+en [`11-auditoria-atomic-spacing.md`](../05-design-system/historico/11-auditoria-atomic-spacing.md).
 
 ## 3. Desviaciones aceptadas
 

@@ -13,3 +13,6 @@
 - **Accesibilidad:** Marcador de accesibilidad `contentDescription = "Cargando..."`, soporte de `ReducedMotion` (desactiva shimmer continuo y muestra bloque estático).
 - **Comportamiento Claro / Oscuro:** Se adapta según la luminancia del fondo para no deslumbrar en modo oscuro.
 - **Notas de adaptación:** Polaris tiene `SkeletonPage` y `SkeletonDisplayText` en web; Moon aporta `MoonLinearLoader` y referencias de loaders táctiles.
+- **Pantallas consumidoras:**
+  - `ComprobanteViewer` (detalle de comprobante): `AqSkeleton(lines = 3)` durante la carga inicial del comprobante.
+  - `ContextScreen` (S02): `AqSkeleton(lines = 3)` en la lista de contextos y `AqSkeleton(lines = 4)` en el detalle de contexto durante la carga inicial.

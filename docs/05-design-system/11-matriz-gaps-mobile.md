@@ -53,25 +53,65 @@ Moon NO incluye: bottom navigation, FAB, search bar, swipe actions, pull-to-refr
 
 ## 3. Priorización por flujos del núcleo de Agenda QR
 
-1. **Guardar (S07 / S02 / S10):**
-   - Inputs de texto, importe, fecha/hora, control segmentado, botones de acción primaria fija (`AqBottomAction`), diálogo de confirmación.
-   - Estado: **COMPLETO**.
-2. **Organizar (S01 / S06 / S08):**
-   - Tabs (`AqTabs`), chips de estado y categorías (`AqChipGroup`), tarjetas táctiles (`AqCard`, `AqTappableCard`), swipe actions (`AqSwipeActions`), pull-to-refresh (`AqPullToRefresh`), action sheet (`AqActionSheet`).
-   - Estado: **COMPLETO**.
-3. **Buscar (S04):**
-   - Barra de búsqueda (`AqSearchField`), trigger de búsqueda (`AqSearchTrigger`), chips de filtro de tipo, encabezados de sección.
-   - Estado: **COMPLETO**.
-4. **Mostrar (S03 / S09):**
-   - Visualización de QR (`AqQrPreview`), carrusel (`AqCarousel`), metadatos (`AqMetaRow`), badges de evidencia (`AqEvidenceBadge`).
-   - Estado: **COMPLETO**.
-5. **Compartir / Reutilizar:**
-   - Hojas de acción e invocación de intents nativos de plataforma (`expect/actual`).
-   - Estado: **COMPLETO**.
+| Flujo | Superficies | Patrones y componentes | Estado | Evidencia |
+|---|---|---|---|---|
+| **Guardar** | S07 / S02 / S10 | Inputs de texto, importe, fecha/hora, control segmentado (`AqSegmentedControl`), botón primaria fija (`AqBottomAction`), diálogo de confirmación (`AqDialog` destructive) | COMPLETO | uso en pantalla + pruebas (`UxEditorDiscardTest`, `ActionHierarchyTest`) + capturas |
+| **Organizar** | S01 / S06 / S08 | Tabs (`AqTabs`), chips (`AqChipGroup`), tarjetas (`AqCard`, `AqTappableCard`), swipe actions (`AqSwipeActions`), pull-to-refresh (`AqPullToRefresh`), action sheet (`AqActionSheet`) | IMPLEMENTADO EN PANTALLA | `AqSwipeActions` y `AqPullToRefresh` en S01 y S07-list; pruebas Robolectric adaptadas (`DestinationsScreenA11yTest`, `ScreensA11yCoverageTest`); capturas pendientes de regenerar en Fase de galería |
+| **Buscar** | S04 | Barra de búsqueda (`AqSearchField`), trigger (`AqSearchTrigger`), chips de filtro, encabezados de sección | COMPLETO | uso en pantalla + pruebas + capturas |
+| **Mostrar** | S03 / S09 | QR (`AqQrPreview`), carrusel (`AqCarousel`), metadatos (`AqMetaRow`), badges (`AqEvidenceBadge`) | COMPLETO | uso en pantalla + pruebas + capturas |
+| **Compartir / Reutilizar** | — | Hojas de acción e intents nativos (`expect/actual`) | COMPLETO | boundary de plataforma |
+
+Regla de aceptación para marcar **COMPLETO** (ADR-0031): uso verificado en pantalla + prueba que cubre el gesto/estado + captura clara/oscura a 360 dp. Mientras no exista la captura, el flujo se anota como IMPLEMENTADO EN PANTALLA y no como COMPLETO.
 
 ---
 
-## 4. Estado de gaps y roadmap
+## 4. Backlog de experiencia — candidatos evaluados
+
+| # | Problema observado | Pantalla | Mejora propuesta | Convención (nivel / referencia) | Impacto | Esfuerzo | Riesgo | Cumple (a–e) | Decisión |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | Filas de destino sin acciones al deslizar; favorito solo visible, no accesible por gesto | S01 | `AqSwipeActions` con favorito + eliminar; `customActions` como alternativa no gestual | Nivel 3 (nativo swipe) + tokens Polaris | 4 | 2 | 2 | Sí | **ADOPTAR** — S01 |
+| 2 | Sin gesto de recarga en listas; el usuario no sabe si hay datos frescos | S01, S07-list | `AqPullToRefresh` disparando el intent de búsqueda/sync existente | Nivel 3 (nativo pull-to-refresh) + spinner Polaris | 4 | 2 | 2 | Sí | **ADOPTAR** — S01, S07-list |
+| 3 | Acciones secundarias de detalle dispersas; sin hoja de inspección ligera | S03 destino, S09 operación | `AqBottomSheet` para detalle secundario; `AqActionSheet` para overflow | Nivel 2 Moon (`MoonBottomSheet`, `MoonMenuItem`) + tokens Polaris | 3 | 2 | 2 | Sí | **ADOPTAR** — S03 hoja, S09 eliminar |
+| 4 | Estados de carga con parpadeo o hueco en carga inicial | ComprobanteViewer, ContextScreen | `AqSkeleton` con líneas reales del contenido | Nivel 1 Polaris (`SkeletonPage`/`SkeletonDisplayText`) | 3 | 1 | 1 | Sí | **ADOPTAR** |
+| 5 | Progreso de guardado de lote sin indicador real | S12 ImportBatch | `AqProgressBlock` con fracción real (N de M) | Nivel 1 Polaris (`ProgressBar`) | 3 | 1 | 1 | Sí | **ADOPTAR** |
+| 6 | Progreso de revisión de QR sin indicador | S09 ImportReview | `AqProgressBar` durante el guardado | Nivel 1 Polaris | 2 | 1 | 1 | Sí | **ADOPTAR** |
+| 7 | Atributo favorito del destino oculto en el editor | S02/S08 editor | `AqSwitch` con estado binario real (favorito) | Nivel 1 Polaris (`Switch`) | 2 | 1 | 1 | Sí | **ADOPTAR** |
+| 8 | Copiado de contenido QR sin feedback ni alternativa accesible al icono | S03 detalle | `AqTooltip` sobre icono de copiado + evento de feedback honesto | Nivel 2 Moon (`MoonTooltip`) + tokens Polaris | 2 | 1 | 2 | Sí | **ADOPTAR** |
+| 9 | Selección múltiple no existente; cada acción un toque por elemento | S01, S07-list, bandeja | Modo de selección con barra de acciones masiva (favorito/asignar contexto/eliminar por lote con confirmación única) | Nivel 1 Polaris (`IndexTable`/`ResourceList` selección) — por verificar en snapshot 9.4.2 | 4 | 4 | 3 | Pendiente (verificar convención) | **DESCARTAR por ahora** — no hay referencia confirmada en Polaris 9.4.2 ni caso de producto que exceda los límites duros (eliminar por lote requiere confirmación por elemento o ADR de política) |
+| 10 | Deshacer tras acciones sin confirmación vigente (toggle favorito, descartar duplicado) | S01, S07-list, S12 | Toast con acción de deshacer; commit diferido en ViewModel | Nivel 1 Polaris (`Toast`) + posición/duración `MoonToast` | 4 | 3 | 2 | Sí | **ADOPTAR** — requiere intent de ViewModel que reutilice lo existente |
+| 11 | Badge de navegación sin conteo de pendientes | NavBar | Insignia con conteo de comprobantes sin asociar o pendientes de importación | Nivel 1 Polaris (`Badge`) — por verificar | 3 | 2 | 2 | Pendiente (verificar) | **DESCARTAR por ahora** — `AqNavBar`/`AqNavRail` no muestran conteos; UX V1 no declara notificaciones en navegación |
+| 12 | Validación en línea, ayuda y contador en campos | formularios | `InlineError` + ayuda + contador junto al campo; foco al primer error | Nivel 1 Polaris (`TextField` con error) / `MoonErrorMessage` | 3 | 3 | 2 | Sí | **ADOPTAR** — solo si existe punto de entrada de validación en el ViewModel; de lo contrario ADR propuesto |
+| 13 | Encabezados de sección fijos (sticky) en listas largas | S07-list actividades | Encabezados agrupados por mes con conteo | Nivel 3 (nativo) si Polaris/Moon no lo definen | 2 | 3 | 3 | Pendiente | **DESCARTAR por ahora** — UX V1 no declara sticky headers; gestos no son la única vía |
+
+Candidatos aceptados se justifican con la heurística que mejoran (visibilidad de estado, retroalimentación, alcance del pulgar, menos toques, consistencia, jerarquía) y la convención citada.
+
+---
+
+## 5. Decisión por los 13 primitivos de `core/ui` sin uso en producción
+
+| Primitivo | Decisión | Pantallas y acciones donde quedó visible | Prueba | Captura |
+|---|---|---|---|---|
+| `AqSwipeActions` | **ADOPTAR** | S01 filas (favorito, eliminar con confirmación); S07-list filas (editar, eliminar) | `DestinationsScreenA11yTest` (customAction), `ScreensA11yCoverageTest` | S01 con acciones reveladas; S07-list con acciones |
+| `AqPullToRefresh` | **ADOPTAR** | S01 (recarga/sync por arrastre); S07-list (recarga de actividades) | Robolectric de presentación (invoca intent de recarga) | S01 refrescando; S07-list refrescando |
+| `AqBottomSheet` | **ADOPTAR** | S03 detalle de destino (inspección sin abandonar flujo) | Robolectric de presentación | detalle con hoja de opciones |
+| `AqActionSheet` | **MANTENER** (ya en uso) | overflow de detalles (destino, operación) | `AqActionSheetTest` | detalle con overflow |
+| `AqTooltip` | **ADOPTAR** | S03 detalle (alternativa accesible al icono de copiado) | Robolectric de presentación | tooltip de copiado |
+| `AqSpinner` | **MANTENER** (en `AqLoading`) | estados de carga estandarizados | `AqAccessibilityContractTest` | carga con spinner |
+| `AqProgressBar` | **ADOPTAR** | S09 ImportReview (guardado) | Robolectric de presentación | progreso de importación |
+| `AqProgressBlock` | **ADOPTAR** | S12 ImportBatch (progreso real N de M) | Robolectric de presentación | importación con progreso real |
+| `AqSkeleton` | **ADOPTAR** | ComprobanteViewer, ContextScreen (carga inicial) | Robolectric de presentación | carga con skeleton |
+| `AqSwitch` | **ADOPTAR** | S02/S08 editor de destino (favorito) | Robolectric de presentación | editor con interruptor |
+| `AqSelect` | **MANTENER** | sin consumo en pantallas de producción, pero control de formulario base de Polaris (nivel 1) con pruebas dedicadas y uso en galería de previews | `AqSelectTest` | galería de previews |
+| `AqCheckbox` | **MANTENER** | sin consumo en pantallas de producción, pero control de formulario base de Polaris (nivel 1) con pruebas dedicadas y uso en galería de previews | pruebas de `core/ui` | galería de previews |
+| `AqRadioButton` | **MANTENER** | sin consumo en pantallas de producción, pero control de formulario base de Polaris (nivel 1) con pruebas dedicadas y uso en galería de previews | pruebas de `core/ui` | galería de previews |
+| `AqSelectAllCheckbox` | **MANTENER** | sin consumo en pantallas de producción, pero control de formulario base de Polaris (nivel 1) con pruebas dedicadas y uso en galería de previews | `AqSelectAllCheckboxTest` | galería de previews |
+
+Regla: un componente sin consumo real en pantalla se adopta o se retira. Los retirados se eliminan junto con su ficha, pruebas, entrada de galería y referencias en docs/contrato (criterio aplicado ya a `AqModalSheet`, `AqQrSheet`, `AqHeroHeader`, `AqDivider`, `AqVerticalDivider`).
+
+---
+
+## 6. Estado de gaps y roadmap
 
 - **Gaps cubiertos:** Se implementan en `core/ui` todos los patrones identificados en la matriz, incluyendo `AqSwipeActions` (Nivel 3 con tokens Polaris) y `AqPullToRefresh` (Nivel 3 con tokens Polaris), garantizando que las aplicaciones táctiles móviles cuenten con primitivos canónicos.
 - **Flujos congelados:** Las pantallas existentes en V1 no alteran su copy ni su lógica de negocio; los componentes nuevos se ofrecen como primitivos de diseño reutilizables.
+- **Gaps abiertos pendientes:** selección múltiple por lote (pende de referencia Polaris 9.4.2 y caso de producto), badge de navegación (UX V1 no lo declara), validación en línea con foco al primer error (pende de punto de entrada en ViewModel), encabezados sticky (UX V1 no los declara). Cada uno registrado como candidato sin implementar hasta que haya evidencia de convención y caso de producto.

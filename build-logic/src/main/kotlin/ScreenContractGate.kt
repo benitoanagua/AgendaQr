@@ -82,6 +82,7 @@ object ScreenContracts {
                 "AqScreenScaffold", "AqTopBar", "AqNavBar", "AqSearchTrigger", "AqQuickAction",
                 "AqSegmentedControl", "AqListRow", "AqListBody", "AqSectionHeader",
                 "AqEmptyState", "AqStatusBanner", "AqFavoriteToggle", "AqActionSheet",
+                "AqPullToRefresh", "AqSwipeActions",
             ),
             a11yTests = listOf("$A11Y/DestinationsScreenA11yTest.kt"),
             tests = listOf(
@@ -133,7 +134,7 @@ object ScreenContracts {
             captureStates = listOf("content"),
             components = listOf(
                 "AqScreenScaffold", "AqTopBar", "AqQrPreview", "AqCard",
-                "AqEmptyState", "AqBottomAction", "AqStatusBanner",
+                "AqEmptyState", "AqBottomAction", "AqStatusBanner", "AqProgressBar",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf("$A11Y/ScreensA11yCoverageTest.kt", "$A11Y/LayoutReferenceTest.kt"),
@@ -160,6 +161,7 @@ object ScreenContracts {
             components = listOf(
                 "AqScreenScaffold", "AqQrPreview", "AqListBody", "AqListRow",
                 "AqBottomAction", "AqPrimaryButton", "AqSecondaryButton", "AqActionSheet", "AqDialog",
+                "AqBottomSheet", "AqTooltip",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf("$A11Y/QrFullscreenTest.kt", "$A11Y/LayoutReferenceTest.kt"),
@@ -182,6 +184,7 @@ object ScreenContracts {
             captureStates = listOf("content"),
             components = listOf(
                 "AqScreenScaffold", "AqTextField", "AqPrimaryButton", "AqBottomAction", "AqDialogList",
+                "AqSwitch",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf("$A11Y/LayoutReferenceTest.kt"),
@@ -310,6 +313,7 @@ object ScreenContracts {
             components = listOf(
                 "AqScreenScaffold", "AqSegmentedControl", "AqExtendedFab", "AqListRow",
                 "AqListBody", "AqEmptyState", "AqDialogList", "AqNavBar",
+                "AqPullToRefresh", "AqSwipeActions",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -439,7 +443,7 @@ object ScreenContracts {
             captureStates = listOf("review", "error", "saved"),
             components = listOf(
                 "AqScreenScaffold", "AqStatusBanner", "AqListRow", "AqListBody",
-                "AqBottomAction", "AqEmptyState", "AqDialogList",
+                "AqBottomAction", "AqEmptyState", "AqDialogList", "AqProgressBlock",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(

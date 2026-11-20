@@ -2,7 +2,7 @@
 
 **Estado:** ACEPTADO — 2026-11-19  
 **Relaciona:** ADR-0025, ADR-0026, ADR-0027, contrato normativo de diseño,  
-[`12-matriz-cobertura-polaris-moon-agendaqr.md`](../05-design-system/12-matriz-cobertura-polaris-moon-agendaqr.md),  
+[`12-matriz-cobertura-polaris-moon-agendaqr.md`](../05-design-system/historico/12-matriz-cobertura-polaris-moon-agendaqr.md),  
 especificación UX/UI V1 congelada.
 
 ## 1. Decisión

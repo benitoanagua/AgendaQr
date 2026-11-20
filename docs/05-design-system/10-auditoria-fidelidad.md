@@ -98,9 +98,16 @@ En las 19 superficies de `feature/destinations/presentation`:
 - No existe ningún valor visual hardcodeado (dp, Color, sp).
 - Todos los estilos derivan de `AqTheme` y `AqTokens`.
 - El gate de arquitectura `verifyDesignSystemCompliance` y `verifyArchitectureBoundaries` confirma cero infracciones.
+- Los 13 primitivos de `core/ui` sin uso en producción tienen una decisión documentada (adoptar o retirar) en [`11-matriz-gaps-mobile.md`](11-matriz-gaps-mobile.md) §5. Los adoptados (`AqSwipeActions`, `AqPullToRefresh`, `AqBottomSheet`, `AqTooltip`, `AqProgressBar`, `AqProgressBlock`, `AqSkeleton`, `AqSwitch`) tienen consumo real en al menos una pantalla; los retirados (`AqSelect`, `AqCheckbox`, `AqRadioButton`, `AqSelectAllCheckbox`) se eliminan sin consumo real.
 
 ---
 
-## 4. Conclusión
+## 4. Componentes ad hoc en pantallas
 
-El sistema visual de AgendaQr es 100 % fiel a Polaris 9.4.2 en su escala móvil (`light-mobile`). Toda desviación de patrones móviles no cubiertos por Polaris está resuelta estrictamente por la cadena de precedencia normativa: Nivel 1 Polaris → Nivel 2 Moon (anatomía/gestos) → Nivel 3 Nativo, con 100 % de aplicación de tokens Polaris.
+Ninguno: `feature/destinations/presentation` no declara colores, radios, espaciados ni tipografía propios (búsqueda literal + `verifyAgendaQrArchitecture`). Los únicos valores no token encontrados son el viewBox 20×20 de los vectores Polaris (fuente iconográfica, no layout).
+
+---
+
+## 5. Conclusión
+
+El sistema visual de AgendaQr es 100 % fiel a Polaris 9.4.2 en su escala móvil (`light-mobile`). Toda desviación de patrones móviles no cubiertos por Polaris está resuelta estrictamente por la cadena de precedencia normativa: Nivel 1 Polaris → Nivel 2 Moon (anatomía/gestos) → Nivel 3 Nativo, con 100 % de aplicación de tokens Polaris. No hay literales visuales en pantallas ni componentes, y cada primitivo de `core/ui` tiene uso verificado en pantalla o una decisión de retirada documentada en [`11-matriz-gaps-mobile.md`](11-matriz-gaps-mobile.md) §5.

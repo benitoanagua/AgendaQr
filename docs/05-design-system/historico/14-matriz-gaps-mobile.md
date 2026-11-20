@@ -1,3 +1,9 @@
+> **HISTÓRICO — no normativo.** Este documento fue consolidado en [11-matriz-gaps-mobile.md](../11-matriz-gaps-mobile.md) y [10-auditoria-fidelidad.md](../10-auditoria-fidelidad.md). No es fuente normativa; se conserva solo como registro histórico. La autoridad vigente es el contrato normativo v9.0 y ADR-0029.
+
+
+> **HISTÓRICO — no normativo.** Este documento fue consolidado en [](../11-matriz-gaps-mobile.md) y [](../10-auditoria-fidelidad.md). No es fuente normativa; se conserva solo como registro histórico. La autoridad vigente es el contrato normativo v9.0 y ADR-0029.
+
+
 # Matriz de gaps de patrones móviles — cadena de precedencia
 
 **Estado:** Normativo — AUD-0029.
