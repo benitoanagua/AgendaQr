@@ -165,8 +165,10 @@ fun AqTopBar(
             Text(
                 text = title,
                 style = androidx.compose.ui.text.TextStyle(
-                    fontSize = AqType.TitleLarge,
-                    lineHeight = AqType.LineHeightTitleLarge,
+                    // Título de barra: rol `heading-lg` de `light-mobile`
+                    // (18 sp semibold); la barra en sí es patrón nativo (D-03).
+                    fontSize = AqType.HeadingLg,
+                    lineHeight = AqType.LineHeightHeadingLg,
                     fontWeight = AqWeight.SemiBold,
                     fontFamily = AqType.FamilyUi,
                 ),

@@ -598,7 +598,8 @@ object AqType {
     val Title = HeadingLg
     val TitleMedium = HeadingMd
     val TitleSmall = HeadingSm
-    val Amount: TextUnit = 30.sp
+    /** Héroe de importe: rol `heading-2xl` de `light-mobile` (`:512`). */
+    val Amount: TextUnit = 32.sp
     val AmountSymbol = HeadingSm
     val RowTitle = HeadingMd
     val SectionHeader = HeadingSm
@@ -606,7 +607,8 @@ object AqType {
     val Label = BodyMd
     val BodySmall = BodyXs
     val Caption = BodyXs
-    val CaptionSmall: TextUnit = 11.sp
+    /** Rol `body-xs` de `light-mobile` (`:524`); piso tipográfico publicado. */
+    val CaptionSmall: TextUnit = 12.sp
     val LineHeightLabel = LineHeightBodyMd
     val LineHeightDialog = LineHeightBodyLg
     val LineHeightBody = LineHeightBodySm

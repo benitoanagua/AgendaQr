@@ -33,6 +33,8 @@
 | [`05-design-system/10-auditoria-fidelidad-polaris.md`](05-design-system/10-auditoria-fidelidad-polaris.md) | Auditoría de fidelidad de `core/ui` contra la instantánea |
 | [`05-design-system/11-auditoria-atomic-spacing.md`](05-design-system/11-auditoria-atomic-spacing.md) | Auditoría de espaciado atómico y densidad de `core/ui` y las pantallas |
 | [`05-design-system/12-matriz-cobertura-polaris-moon-agendaqr.md`](05-design-system/12-matriz-cobertura-polaris-moon-agendaqr.md) | Matriz completa de cobertura Polaris / Moon / Agenda QR: clasificación, estado, carencias, riesgos y prioridades |
+| [`05-design-system/13-auditoria-fidelidad-mobile.md`](05-design-system/13-auditoria-fidelidad-mobile.md) | Auditoría de fidelidad móvil (`light-mobile`) token por token y componente a componente |
+| [`05-design-system/14-matriz-gaps-mobile.md`](05-design-system/14-matriz-gaps-mobile.md) | Matriz de gaps de patrones móviles con la cadena de precedencia Polaris → Moon → nativo |
 | [`05-design-system/02-implementacion-diseno.md`](05-design-system/02-implementacion-diseno.md) | Reglas de implementación (histórico; pendiente de alineación) |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros (pendiente de alineación) |
 | [`05-design-system/07-evaluacion-tipografia.md`](05-design-system/07-evaluacion-tipografia.md) | Evaluación histórica de MiSans Global (no adoptada) |
@@ -67,6 +69,7 @@
 | [`07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md`](07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md) | ADR: cierre de la migración de `core/ui` a Polaris |
 | [`07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md`](07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md) | ADR: propiedad del espacio por nivel atómico y densidad móvil |
 | [`07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md`](07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md) | ADR: Moon como referencia de patrones móviles; Polaris autoridad visual |
+| [`07-decisiones/ADR-0029-cadena-precedencia-polaris-moon-nativo.md`](07-decisiones/ADR-0029-cadena-precedencia-polaris-moon-nativo.md) | ADR: cadena de precedencia Polaris → Moon → nativo para patrones sin equivalente Polaris |
 | [`PR-0028-moon-mobile-screens.md`](PR-0028-moon-mobile-screens.md) | PR: aplicación de patrones móviles a S00/S04/S07/S12 |
 
 ## Cómo se mantiene

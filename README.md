@@ -14,7 +14,7 @@ La implementación sigue una jerarquía explícita de fuentes de verdad:
 
 1. **Agenda QR** — producto, dominio, requisitos, alcance, decisiones y reglas de negocio.
 2. **UX/UI V1 de Agenda QR** — contrato funcional de interacción congelado (`docs/04-ux/02-especificacion-ux-ui-v1.md`). Su dirección visual (§12) se descongela y se rige por el nivel 3.
-3. **Sistema visual Polaris (reimplementado en Kotlin)** — tokens, componentes y composición, según el contrato normativo vigente ([ADR-0025](docs/07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md), [`docs/05-design-system/00-contrato-normativo-diseno.md`](docs/05-design-system/00-contrato-normativo-diseno.md), [instantánea de valores](docs/05-design-system/09-instantanea-tokens-polaris-9.4.2.md)). La navegación sigue las convenciones nativas de Android e iOS.
+3. **Sistema visual Polaris (reimplementado en Kotlin)** — tokens, componentes y composición, según el contrato normativo vigente ([ADR-0025](docs/07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md), [`docs/05-design-system/00-contrato-normativo-diseno.md`](docs/05-design-system/00-contrato-normativo-diseno.md), [instantánea de valores](docs/05-design-system/09-instantanea-tokens-polaris-9.4.2.md)). Dentro de este nivel, los patrones que Polaris no cubre se resuelven por la cadena **Polaris → Moon (referencia de interacción, sin dependencia) → convención nativa** de [ADR-0029](docs/07-decisiones/ADR-0029-cadena-precedencia-polaris-moon-nativo.md); la navegación raíz sigue siendo nativa de Android e iOS.
 4. **WaraWerse** — referencia técnica para Kotlin Multiplatform, Compose, modularización, build y prácticas de testing.
 
 Si dos fuentes entran en conflicto, prevalece la de mayor autoridad. El nivel 2
