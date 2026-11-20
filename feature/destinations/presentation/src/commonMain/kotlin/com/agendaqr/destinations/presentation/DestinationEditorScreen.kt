@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqSnackbarHost
 import com.agendaqr.core.ui.components.AqBottomAction
 import com.agendaqr.core.ui.components.AqIconBadge
+import com.agendaqr.core.ui.components.AqFormSection
 import com.agendaqr.core.ui.components.AqListRow
 import com.agendaqr.core.ui.components.AqMultilineTextField
 import com.agendaqr.core.ui.components.AqScreenScaffold
@@ -149,27 +150,27 @@ private fun DestinationEditorContent(
                 dismiss = bannerDismiss,
             )
         }
-        // Formulario: cada campo dibuja su propia caja y borde (superficie
-        // de campo). No hay AqListBody envolviendo: evitaría una superficie
-        // duplicada sobre cada AqTextField. La separación etiqueta-campo (4
-        // dp) la gestiona AqTextField; la separación entre campos es 12 dp.
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(AqSpacing.MdPlus),
-        ) {
-            AqTextField(
-                label = AppStrings.Nombre,
-                value = name,
-                onValueChange = { name = it },
-                isError = nameError,
-                errorMessage = if (nameError) AppStrings.ElNombreEsObligatorio else null,
-            )
-            AqTextField(label = AppStrings.Categoria, value = category, onValueChange = { category = it })
-            AqMultilineTextField(
-                label = AppStrings.Nota,
-                value = note,
-                onValueChange = { note = it },
-            )
+        // Identidad del QR: nombre, categoría y nota bajo un encabezado
+        // de sección (jerarquía H2); cada campo dibuja su propia caja.
+        AqFormSection(AppStrings.Identidad) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.MdPlus),
+            ) {
+                AqTextField(
+                    label = AppStrings.Nombre,
+                    value = name,
+                    onValueChange = { name = it },
+                    isError = nameError,
+                    errorMessage = if (nameError) AppStrings.ElNombreEsObligatorio else null,
+                )
+                AqTextField(label = AppStrings.Categoria, value = category, onValueChange = { category = it })
+                AqMultilineTextField(
+                    label = AppStrings.Nota,
+                    value = note,
+                    onValueChange = { note = it },
+                )
+            }
         }
         // Selección de contexto: fila seleccionable con chevron, no botón.
         // El estado seleccionado (contextId != null) se refleja con fondo y
@@ -189,20 +190,24 @@ private fun DestinationEditorContent(
             showChevron = true,
             selected = selection.contextId != null,
         )
-        // Sección de imagen: entradas de importación del QR del destino
-        // (galería y cámara) y vista previa solo cuando hay contenido —
-        // sin rectángulo reservado en vacío (el error de envío cubre el
-        // QR faltante).
-        QrImportControls(onResult = { result ->
-            when {
-                result.assets.size > 1 -> onImportMany(result.assets)
-                result.assets.size == 1 -> qr = result.assets.first()
+        // Origen del código: entradas de importación del QR del destino
+        // (galería y cámara, secundarias) y vista previa solo cuando hay
+        // contenido — sin rectángulo reservado en vacío (el error de envío
+        // cubre el QR faltante). Guardar sigue siendo la única primaria.
+        AqFormSection(AppStrings.OrigenDelCodigo) {
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Md)) {
+                QrImportControls(onResult = { result ->
+                    when {
+                        result.assets.size > 1 -> onImportMany(result.assets)
+                        result.assets.size == 1 -> qr = result.assets.first()
+                    }
+                })
+                if (qr.encoded.isNotBlank()) {
+                    AqQrPreview(qr.encoded)
+                } else if (qrError) {
+                    AqText(AppStrings.FaltaElCodigoQrUsa, size = AqType.Caption, color = AqColor.Danger)
+                }
             }
-        })
-        if (qr.encoded.isNotBlank()) {
-            AqQrPreview(qr.encoded)
-        } else if (qrError) {
-            AqText(AppStrings.FaltaElCodigoQrUsa, size = AqType.Caption, color = AqColor.Danger)
         }
     }
     if (selection.pickerOpen) {

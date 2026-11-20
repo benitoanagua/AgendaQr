@@ -386,15 +386,18 @@ internal fun UnassociatedScreen(
                                     },
                                     titleMaxLines = 2,
                                 )
-                                AqTextAction(
+                                // CTA de fila con affordance real: píldora
+                                // tonal compacta con target de 48 dp (no un
+                                // enlace de texto sin superficie).
+                                AqCompactAction(
                                     label = AppStrings.createOperationFromThis,
+                                    icon = AqIcons.Add,
                                     onClick = {
                                         viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
                                     },
-                                    contentPadding = PaddingValues(
-                                        horizontal = AqSpacing.Lg,
-                                        vertical = AqSpacing.Sm,
-                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Sm),
                                 )
                             }
                         }

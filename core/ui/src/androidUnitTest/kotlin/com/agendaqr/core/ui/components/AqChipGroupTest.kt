@@ -77,6 +77,30 @@ class AqChipGroupTest {
     }
 
     @Test
+    fun chip_count_is_announced_as_separate_text_from_label() {
+        compose.setContent {
+            AqTheme {
+                AqChipGroup(
+                    options = listOf(AqChipOption("Todos", count = 2)),
+                    selectedIndex = -1,
+                    onSelect = {},
+                )
+            }
+        }
+
+        // El count viaja como texto semántico propio del chip fusionado:
+        // "Todos" y "2" se leen por separado, nunca como "Todos2".
+        val node = compose.onNodeWithText("Todos").fetchSemanticsNode()
+        val texts = node.config[SemanticsProperties.Text]
+            as? List<androidx.compose.ui.text.AnnotatedString>
+        val mergedText = texts.orEmpty().joinToString(" ") { it.text }
+        org.junit.Assert.assertTrue(
+            "chip semantics debe contener label y count separados: '$mergedText'",
+            mergedText.contains("Todos") && mergedText.contains("2"),
+        )
+    }
+
+    @Test
     fun chip_group_renders_node_without_throwing() {
         compose.setContent {
             AqTheme {

@@ -638,10 +638,18 @@ private fun AqChip(
                 color = textColor,
             )
             option.count?.let { count ->
+                // Count separado del label: aire explícito + caption en
+                // TextSecondary (cuando no está seleccionado); el activo
+                // hereda el color de texto para contraste sobre el fill.
                 AqText(
                     text = count.toString(),
                     size = AqType.Caption,
-                    color = textColor,
+                    color = when {
+                        !option.enabled -> AqColor.OnDisabled
+                        selected -> textColor
+                        else -> AqColor.TextSecondary
+                    },
+                    modifier = Modifier.padding(start = AqSpacing.Xs),
                 )
             }
         }
