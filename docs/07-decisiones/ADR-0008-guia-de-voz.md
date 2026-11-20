@@ -5,10 +5,10 @@
 
 ## Contexto
 
-El copy vivía en dos capas: AppStrings (feature) y defaults hardcodeados
-en `core/ui` (que además quedaban fuera del gate D2). Convivían dos
-registros: tuteo ("Inicia sesión", "Ingresa un correo válido") y usted
-("Toque para seleccionar un archivo", "Encuadre el código QR").
+El copy se declara en AppStrings (feature) y en defaults hardcodeados de
+`core/ui`, que quedan fuera del gate D2. Hay dos registros de tono: tuteo
+("Inicia sesión", "Ingresa un correo válido") y usted ("Toque para
+seleccionar un archivo", "Encuadre el código QR").
 
 ## Decisión
 
