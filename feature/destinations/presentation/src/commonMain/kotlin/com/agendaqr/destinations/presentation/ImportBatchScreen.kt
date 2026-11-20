@@ -33,6 +33,8 @@ import com.agendaqr.core.ui.components.AqStatusBanner
 import com.agendaqr.core.ui.components.AqStatusPill
 import com.agendaqr.core.ui.components.AqSuccessCheck
 import com.agendaqr.core.ui.components.AqCard
+import com.agendaqr.core.ui.components.AqChipGroup
+import com.agendaqr.core.ui.components.AqChipOption
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextAction
@@ -257,11 +259,35 @@ private fun BatchReviewContent(
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
 ) {
-    AqSectionHeader(text = AppStrings.ElementosQueNecesitanRevision + " (" + batch.pendingItems().size + ")")
+    val pending = batch.pendingItems()
+    // ADR-0028: con duplicados Y sin clasificar a la vez, chips de filtro
+    // (AqChipGroup); con un solo tipo de pendiente no hay filtro que ofrecer.
+    val hasDuplicates = batch.duplicates.isNotEmpty()
+    val hasUnknown = batch.unknown.isNotEmpty()
+    val showFilter = hasDuplicates && hasUnknown
+    var filterIndex by remember(batch) { mutableStateOf(0) }
+    val filtered = when {
+        !showFilter || filterIndex == 0 -> pending
+        filterIndex == 1 -> batch.duplicates
+        else -> batch.unknown
+    }
+    if (showFilter) {
+        AqChipGroup(
+            options = listOf(
+                AqChipOption(AppStrings.Todos, count = pending.size),
+                AqChipOption(AppStrings.PosiblesDuplicados, count = batch.duplicates.size),
+                AqChipOption(AppStrings.PendientesDeRevision, count = batch.unknown.size),
+            ),
+            selectedIndex = filterIndex,
+            onSelect = { filterIndex = it.coerceIn(0, 2) },
+            horizontalScroll = true,
+        )
+    }
+    AqSectionHeader(text = AppStrings.ElementosQueNecesitanRevision + " (" + filtered.size + ")")
     // Pendientes como tarjetas independientes (nivel 3 de superficies):
     // cada una con su contenido + acciones; separadas a 8 dp.
     Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-        batch.pendingItems().forEachIndexed { index, candidate ->
+        filtered.forEachIndexed { index, candidate ->
             PendingItemCard(candidate, batch, onAction, isSaving, index)
         }
     }

@@ -127,6 +127,7 @@ internal fun LocalOnboardingScreen(
             total = active.length
                 .coerceAtLeast(PinPolicy.MIN_LENGTH)
                 .coerceAtMost(PinPolicy.MAX_LENGTH),
+            error = errorText != null,
         )
         errorText?.let { message ->
             AqText(

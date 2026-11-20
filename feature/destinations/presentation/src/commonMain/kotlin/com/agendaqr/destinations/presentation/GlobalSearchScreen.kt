@@ -5,6 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.agendaqr.core.ui.components.AqSnackbarHost
@@ -80,17 +84,49 @@ fun GlobalSearchScreen(
                 actionLabel = AppStrings.Limpiar,
                 onAction = { onAction(GlobalSearchAction.Clear) },
             )
-            else -> LazyColumn(
-                modifier = Modifier.fillMaxWidth().weight(1f),
-                // Grupos funcionales (cada tipo con su encabezado + cuerpo)
-                // separados a 20 dp; dentro del grupo el encabezado vive
-                // pegado a su lista (8 dp).
-                verticalArrangement = Arrangement.spacedBy(AqSpacing.Xl),
-            ) {
+            else -> {
+                // ADR-0028 (patrón móvil Moon): con resultados de tipos
+                // mezclados, chips de filtro por tipo (AqChipGroup). Con
+                // un solo tipo no hay filtro que ofrecer.
+                val typeKeys = com.agendaqr.destinations.domain.AgendaSearchResultType.entries
+                    .filter { type -> state.results.any { it.type == type } }
+                val typeKeyToken = typeKeys.joinToString(",") { it.name }
+                var typeFilter by remember(state.query, typeKeyToken) {
+                    mutableStateOf<com.agendaqr.destinations.domain.AgendaSearchResultType?>(null)
+                }
+                val filteredResults = if (typeFilter == null) {
+                    state.results
+                } else {
+                    state.results.filter { it.type == typeFilter }
+                }
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    // Grupos funcionales (cada tipo con su encabezado + cuerpo)
+                    // separados a 20 dp; dentro del grupo el encabezado vive
+                    // pegado a su lista (8 dp).
+                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Xl),
+                ) {
+                if (typeKeys.size > 1) {
+                    item(key = "type-filter") {
+                        AqChipGroup(
+                            options = listOf(AqChipOption(AppStrings.Todos)) +
+                                typeKeys.map { AqChipOption(searchResultTypeLabel(it)) },
+                            selectedIndex = if (typeFilter == null) {
+                                0
+                            } else {
+                                typeKeys.indexOf(typeFilter) + 1
+                            },
+                            onSelect = { index ->
+                                typeFilter = if (index == 0) null else typeKeys[index - 1]
+                            },
+                            horizontalScroll = true,
+                        )
+                    }
+                }
                 // S04/S05 (M7): resultados heterogéneos agrupados por tipo,
                 // cada grupo con su encabezado de sección (§4: el tipo se
                 // expresa con texto/semántica) y su cuerpo de lista.
-                val groups = state.results.groupBy { it.type }
+                val groups = filteredResults.groupBy { it.type }
                 com.agendaqr.destinations.domain.AgendaSearchResultType.entries.forEach { type ->
                     val group = groups[type].orEmpty()
                     if (group.isNotEmpty()) {
@@ -127,6 +163,7 @@ fun GlobalSearchScreen(
                             }
                         }
                     }
+                }
                 }
             }
         }

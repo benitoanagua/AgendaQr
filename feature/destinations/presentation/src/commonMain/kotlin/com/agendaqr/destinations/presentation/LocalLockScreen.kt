@@ -77,6 +77,7 @@ internal fun LocalLockScreen(
             total = state.pin.length
                 .coerceAtLeast(PinPolicy.MIN_LENGTH)
                 .coerceAtMost(PinPolicy.MAX_LENGTH),
+            error = state.error.isPinFieldError(),
         )
         // §10/§11: el error y los intentos son texto, nunca solo color.
         state.error.pinFieldMessage()?.let { message ->
