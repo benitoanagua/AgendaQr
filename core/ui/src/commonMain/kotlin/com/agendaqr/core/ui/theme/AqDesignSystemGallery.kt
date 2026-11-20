@@ -61,10 +61,14 @@ import com.agendaqr.core.ui.components.AqNavBar
 import com.agendaqr.core.ui.components.AqNavDestination
 import com.agendaqr.core.ui.components.AqNavRail
 import com.agendaqr.core.ui.components.AqOutlineButton
+import com.agendaqr.core.ui.components.AqBottomSheet
 import com.agendaqr.core.ui.components.AqProgress
 import com.agendaqr.core.ui.components.AqProgressBar
-import com.agendaqr.core.ui.components.AqPrimaryButton
 import com.agendaqr.core.ui.components.AqProgressBlock
+import com.agendaqr.core.ui.components.AqPullToRefresh
+import com.agendaqr.core.ui.components.AqPrimaryButton
+import com.agendaqr.core.ui.components.AqSwipeAction
+import com.agendaqr.core.ui.components.AqSwipeActions
 import com.agendaqr.core.ui.components.AqQrPreview
 import com.agendaqr.core.ui.components.AqRadioButton
 import com.agendaqr.core.ui.components.AqSearchField
@@ -880,6 +884,17 @@ private fun AqFeedbackPreview() {
             contentDescription = "Progreso de importación",
         )
         AqText(
+            text = "Progress Block — guardado de lote, 60 %",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqProgressBlock(
+            progress = com.agendaqr.core.ui.components.AqProgress(0.6f),
+            label = "Guardando comprobantes",
+            contentDescription = "Guardando comprobantes, 60 % completados",
+            message = "6 de 10 comprobantes guardados",
+        )
+        AqText(
             text = "Status Pill — normal e inversa (Modo local)",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
@@ -1027,6 +1042,67 @@ private fun AqMobileInteractionsPreview() {
                 }
             },
         )
+        AqText(
+            text = "Pull to Refresh — contenedor de recarga por arrastre con spinner Polaris",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqPullToRefresh(
+            isRefreshing = false,
+            onRefresh = {},
+            refreshingLabel = "Actualizando",
+        ) {
+            AqText(text = "Contenido de la lista que se desplaza al tirar hacia abajo.")
+        }
+        AqText(
+            text = "Swipe Actions — acciones reveladas al deslizar la fila con customActions accesibles",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        val swipeActions = listOf(
+            AqSwipeAction(
+                label = "Marcar favorito",
+                icon = com.agendaqr.core.ui.components.AqIcons.Favorite,
+                backgroundColor = com.agendaqr.core.ui.theme.AqColor.EmphasisFill,
+                contentColor = com.agendaqr.core.ui.theme.AqColor.InverseOnSurface,
+                onAction = {},
+            ),
+            AqSwipeAction(
+                label = "Eliminar",
+                icon = com.agendaqr.core.ui.components.AqIcons.Trash,
+                backgroundColor = com.agendaqr.core.ui.theme.AqColor.DangerFill,
+                contentColor = com.agendaqr.core.ui.theme.AqColor.InverseOnSurface,
+                onAction = {},
+            ),
+        )
+        AqSwipeActions(actions = swipeActions) {
+            AqListRow(
+                title = "Fila con acciones al deslizar",
+                subtitle = "Desliza para revelar acciones",
+                showDivider = true,
+            )
+        }
+        AqText(
+            text = "Bottom Sheet — hoja inferior para inspeccionar sin abandonar el flujo",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        val showSheet = remember { mutableStateOf(true) }
+        if (showSheet.value) {
+            AqBottomSheet(
+                title = "Detalle",
+                onDismissRequest = { showSheet.value = false },
+                dismissDescription = "Cerrar",
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                    AqText(text = "Contenido de la hoja inferior.")
+                    AqText(
+                        text = "Se inspecciona sin abandonar el flujo de la pantalla de origen.",
+                        color = AqColor.TextSecondary,
+                    )
+                }
+            }
+        }
     }
 }
 
