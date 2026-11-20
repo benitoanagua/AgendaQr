@@ -1,6 +1,7 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -52,13 +53,13 @@ fun AqPullToRefresh(
     val offsetY = remember { Animatable(0f) }
     // Duración de las transiciones de arrastre; se anula con movimiento
     // reducido (contrato §7: eliminar la transición).
-    val pullSpec = if (reducedMotion) null else tween(
+    val pullSpec: TweenSpec<Float>? = if (reducedMotion) null else tween(
         durationMillis = AqMotion.DurationMediumMs,
         easing = AqMotion.Easings.Standard,
     )
     /** Desplaza el offset al target; con movimiento reducido es un snap
      *  inmediato en lugar de una animación interpolada. */
-    private suspend fun pullTo(target: Float) {
+    suspend fun pullTo(target: Float) {
         if (pullSpec == null) {
             offsetY.snapTo(target)
         } else {
