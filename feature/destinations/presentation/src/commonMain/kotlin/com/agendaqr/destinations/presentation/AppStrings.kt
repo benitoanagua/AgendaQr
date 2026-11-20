@@ -102,6 +102,7 @@ internal object AppStrings {
     val Elegir = "Elegir"
     /** Error en vivo del importe (U-07, D6): validación real. */
     val ImporteInvalido = "Usa solo números y un decimal"
+    val Identidad = "Identidad"
     /** Monedas del editor (U-05, D6): lista de presentación. */
     val MonedaBob = "BOB"
     val MonedaUsd = "USD"
@@ -154,6 +155,7 @@ internal object AppStrings {
     val Operaciones = "Actividades"
     val OperacionNoEncontrada = "Actividad no encontrada"
     val Origen = "Origen: "
+    val OrigenDelCodigo = "Origen del código"
     val Pago = "Pago"
     val PersonaOEntidad = "Persona o entidad: "
     // (PodrasAdjuntar retirado en U-06: el editor muestra solo lo

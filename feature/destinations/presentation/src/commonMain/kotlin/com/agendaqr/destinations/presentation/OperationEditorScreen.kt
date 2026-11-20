@@ -224,18 +224,19 @@ internal fun OperationEditorScreen(
             onSelect = { type = it },
         )
         AqFormField(label = AppStrings.LabelMoneda) {
-            // Chip "Otra…" muestra el código elegido (ARS, EUR…) en la
-            // propia etiqueta: el valor queda visible sin duplicar "Moneda".
+            // Elección única de moneda: control segmentado (patrón de
+            // enum de formulario); el chip "Otra…" muestra el código
+            // elegido (ARS, EUR…) en la propia etiqueta.
             val otherLabel = if (currencyCustomOpen && currency.isNotBlank()) {
                 currency.trim().uppercase()
             } else {
                 AppStrings.MonedaOtra
             }
-            AqChipGroup(
+            AqSegmentedControl(
                 options = listOf(
-                    AqChipOption(AppStrings.MonedaBob),
-                    AqChipOption(AppStrings.MonedaUsd),
-                    AqChipOption(otherLabel),
+                    AqSegmentedOption(AppStrings.MonedaBob),
+                    AqSegmentedOption(AppStrings.MonedaUsd),
+                    AqSegmentedOption(otherLabel),
                 ),
                 selectedIndex = when {
                     currency == AppStrings.MonedaBob -> 0
@@ -261,7 +262,6 @@ internal fun OperationEditorScreen(
                         }
                     }
                 },
-                horizontalScroll = true,
             )
             if (currencyCustomOpen) {
                 AqTextField(
@@ -289,17 +289,17 @@ internal fun OperationEditorScreen(
                 },
                 showChevron = true,
             )
-            // Atajos Hoy/Ayer acoplados al campo: el activo refleja el
-            // día civil elegido (check + relleno, no solo color).
+            // Atajos Hoy/Ayer acoplados al campo: control segmentado de
+            // elección única; -1 = fecha distinta (ningún segmento activo).
             val quickDay = when (relativeDayLabel(occurredAtMillis, nowMillis())) {
                 AppStrings.Hoy -> 0
                 AppStrings.Ayer -> 1
                 else -> -1
             }
-            AqChipGroup(
+            AqSegmentedControl(
                 options = listOf(
-                    AqChipOption(AppStrings.Hoy),
-                    AqChipOption(AppStrings.Ayer),
+                    AqSegmentedOption(AppStrings.Hoy),
+                    AqSegmentedOption(AppStrings.Ayer),
                 ),
                 selectedIndex = quickDay,
                 onSelect = { index ->

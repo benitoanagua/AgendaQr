@@ -600,7 +600,8 @@ fun AqSegmentedControl(
     enabled: Boolean = true,
 ) {
     require(options.isNotEmpty()) { "AqSegmentedControl necesita al menos una opción" }
-    require(selectedIndex in options.indices) { "AqSegmentedControl: índice fuera de rango" }
+    // -1 = ningún segmento activo (p. ej. atajos Hoy/Ayer con otra fecha).
+    require(selectedIndex in -1 until options.size) { "AqSegmentedControl: índice fuera de rango" }
     Row(
         modifier = modifier
             .fillMaxWidth()
