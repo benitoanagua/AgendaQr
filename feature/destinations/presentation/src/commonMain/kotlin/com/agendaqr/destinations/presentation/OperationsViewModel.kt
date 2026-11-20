@@ -38,11 +38,15 @@ class OperationsViewModel(
     private var associationReturnOperationId: String? = null
 
     init {
+        // Pantalla en frío: se declara carga hasta que llega la primera
+        // emisión de actividades (cambio respecto al vacío que parpadeaba
+        // antes de cumplir el contrato `loading` de S07-list).
+        _state.update { it.copy(isLoadingOperations = true) }
+        scope.launch { observeOperations().collect { operations ->
+            _state.update { it.copy(operations = operations.sortedByDescending { operation -> operation.occurredAt }, isLoadingOperations = false) }
+        } }
         scope.launch { observeContexts().collect { contexts ->
             _state.update { it.copy(contexts = contexts) }
-        } }
-        scope.launch { observeOperations().collect { operations ->
-            _state.update { it.copy(operations = operations.sortedByDescending { operation -> operation.occurredAt }) }
         } }
         scope.launch { observeUnassociated().collect { receipts ->
             val sorted = receipts.sortedByDescending { receipt -> receipt.createdAt }

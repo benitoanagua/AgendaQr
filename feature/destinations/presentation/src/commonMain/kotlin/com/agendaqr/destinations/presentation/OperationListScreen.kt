@@ -32,6 +32,8 @@ fun OperationsScreen(
     appHosts: AppHosts? = null,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
     onRetrySync: () -> Unit = {},
+    /** D8: resolución del nombre del destino QR vinculado a una actividad. */
+    destinationsViewModel: DestinationsViewModel? = null,
     /** U3/ADR-0003: crear contexto desde S08 sin perder el draft. */
     onCreateContext: (name: String, note: String?) -> Unit = { _, _ -> },
     justCreatedContextId: String? = null,
@@ -41,7 +43,10 @@ fun OperationsScreen(
         OperationRoute.Unassociated -> UnassociatedScreen(state, viewModel, appHosts, syncLookup)
         OperationRoute.New -> OperationEditorScreen(state, viewModel, existing = null, appHosts = appHosts, onCreateContext = onCreateContext, justCreatedContextId = justCreatedContextId)
         is OperationRoute.Edit -> OperationEditorScreen(state, viewModel, existing = viewModel.selectedOperation(), appHosts = appHosts, onCreateContext = onCreateContext, justCreatedContextId = justCreatedContextId)
-        is OperationRoute.Detail -> OperationDetailScreen(state, viewModel, appHosts, syncLookup, onRetrySync)
+        is OperationRoute.Detail -> OperationDetailScreen(
+            state, viewModel, appHosts, syncLookup, onRetrySync,
+            destinationsViewModel = destinationsViewModel,
+        )
     }
     state.pendingIncoming?.let { incoming ->
         val duplicate = state.pendingDuplicates.isNotEmpty()
@@ -228,7 +233,11 @@ internal fun OperationListScreen(
             )
         }
 
-        if (filtered.isEmpty()) {
+        if (state.isLoadingOperations) {
+            // Carga en frío de S07-list: esqueleto mientras llega la
+            // primera emisión (contrato `loading` de S07-list, N02).
+            AqSkeleton(lines = 6)
+        } else if (filtered.isEmpty()) {
             AqEmptyState(
                 icon = AqIcons.Register,
                 title = if (state.query.isBlank()) AppStrings.AunNoHayOperaciones else AppStrings.NoHayCoincidencias,
@@ -239,10 +248,8 @@ internal fun OperationListScreen(
                 onAction = if (state.query.isBlank()) null else ({ viewModel.onAction(OperationAction.Search("")) })
             )
         } else {
-            // Lista agrupada (Card mode / ListBody):
-            // AqListBody + AqListRow con separadores hairline.
-            // Cada fila: insignia direccional + título/concepto + importe
-            // coloreado con signo + metadato "ocurrido · Reg:" + tags.
+            // Lista agrupada (Card mode / ListBody), virtualizada con
+            // LazyColumn (N03): solo se componen las filas visible + búfer.
             AqPullToRefresh(
                 isRefreshing = isRefreshing,
                 onRefresh = { viewModel.onAction(OperationAction.Search(state.query)) },
@@ -252,8 +259,10 @@ internal fun OperationListScreen(
                 AqListBody(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Column {
-                        paged.forEachIndexed { index, operation ->
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        itemsIndexed(paged) { index, operation ->
                             val syncStatus = syncLookup.status(SyncResource.OPERATION, operation.id)
                             val amountText = operationAmountText(operation)
                             val amountColor = if (operation.type == OperationType.COBRO) {

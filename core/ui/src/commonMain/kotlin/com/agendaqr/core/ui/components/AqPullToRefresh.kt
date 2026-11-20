@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
+import com.agendaqr.core.ui.motion.LocalReducedMotion
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqElevation
 import com.agendaqr.core.ui.theme.AqMetrics
@@ -46,18 +47,30 @@ fun AqPullToRefresh(
 ) {
     val density = LocalDensity.current
     val coroutineScope = rememberCoroutineScope()
+    val reducedMotion = LocalReducedMotion.current
     val triggerDistancePx = with(density) { (AqMetrics.ControlMinSize + AqSpacing.Lg).toPx() }
     val offsetY = remember { Animatable(0f) }
+    // Duración de las transiciones de arrastre; se anula con movimiento
+    // reducido (contrato §7: eliminar la transición).
+    val pullSpec = if (reducedMotion) null else tween(
+        durationMillis = AqMotion.DurationMediumMs,
+        easing = AqMotion.Easings.Standard,
+    )
+    /** Desplaza el offset al target; con movimiento reducido es un snap
+     *  inmediato en lugar de una animación interpolada. */
+    private suspend fun pullTo(target: Float) {
+        if (pullSpec == null) {
+            offsetY.snapTo(target)
+        } else {
+            offsetY.animateTo(targetValue = target, animationSpec = pullSpec)
+        }
+    }
 
     LaunchedEffect(isRefreshing) {
         if (!isRefreshing && offsetY.value != 0f) {
-            offsetY.animateTo(
-                targetValue = 0f,
-                animationSpec = tween(
-                    durationMillis = AqMotion.DurationMediumMs,
-                    easing = AqMotion.Easings.Standard,
-                ),
-            )
+            coroutineScope.launch {
+                pullTo(0f)
+            }
         }
     }
 
@@ -76,24 +89,12 @@ fun AqPullToRefresh(
                 onDragStopped = {
                     if (offsetY.value >= triggerDistancePx) {
                         coroutineScope.launch {
-                            offsetY.animateTo(
-                                targetValue = triggerDistancePx,
-                                animationSpec = tween(
-                                    durationMillis = AqMotion.DurationMediumMs,
-                                    easing = AqMotion.Easings.Standard,
-                                ),
-                            )
+                            pullTo(triggerDistancePx)
                         }
                         onRefresh()
                     } else {
                         coroutineScope.launch {
-                            offsetY.animateTo(
-                                targetValue = 0f,
-                                animationSpec = tween(
-                                    durationMillis = AqMotion.DurationMediumMs,
-                                    easing = AqMotion.Easings.Standard,
-                                ),
-                            )
+                            pullTo(0f)
                         }
                     }
                 },

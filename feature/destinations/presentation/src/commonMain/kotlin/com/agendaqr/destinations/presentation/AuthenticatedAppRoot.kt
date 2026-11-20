@@ -375,6 +375,7 @@ internal fun AuthenticatedAppRoot(
                         appHosts = appHosts,
                         syncLookup = syncLookup,
                         onRetrySync = retrySync,
+                        destinationsViewModel = graph.destinationsViewModel,
                         // U3/ADR-0003: el selector S08 puede crear contexto; el draft
                         // del editor nunca sale de composición.
                         onCreateContext = { name, note ->

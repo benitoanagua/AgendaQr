@@ -387,28 +387,6 @@ fun AqSecondaryButton(
 }
 
 @Composable
-fun AqLightButton(
-    label: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    isLoading: Boolean = false,
-    icon: ImageVector? = null,
-    size: AqButtonSize = AqButtonSize.Medium,
-) {
-    AqButton(
-        label = label,
-        onClick = onClick,
-        modifier = modifier,
-        variant = AqButtonVariant.Light,
-        size = size,
-        enabled = enabled,
-        isLoading = isLoading,
-        icon = icon,
-    )
-}
-
-@Composable
 fun AqOutlineButton(
     label: String,
     onClick: () -> Unit,

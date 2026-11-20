@@ -119,7 +119,7 @@ primaria fija y dominante (`AqBottomAction`). Campos compuestos usan
 label del grupo.
 
 **Acciones.** Una acción primaria por pantalla. Jerarquía:
-`AqPrimaryButton` > `AqSecondaryButton`/`AqLightButton`/`AqOutlineButton` >
+`AqPrimaryButton` > `AqSecondaryButton`/`AqOutlineButton` >
 `AqTextAction` > destructiva (`AqDangerButton` o `AqTextActionVariant.Danger`)
 que exige `AqDialog(destructive = true)` cuando es irreversible. En la barra
 superior caben máximo 2 acciones visibles + overflow: visibles las

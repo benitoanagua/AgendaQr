@@ -87,6 +87,8 @@ internal object AppStrings {
     val EliminarComprobante = "Eliminar comprobante"
     val EliminarDestino = "Eliminar QR"
     val EliminarOperacion = "Eliminar actividad"
+    /** Etiqueta de la fila de meta que informa del QR de destino vinculado a la actividad. */
+    val DestinoVinculado = "Destino vinculado"
     val EncuadreElCodigoQr = "Encuadra el código QR" // ADR-0008: tuteo (antes "Encuadre")
     val irreversibleActionWarning = "Esta acción no se puede deshacer."
     val sensitiveChangeWarning = "Esta actividad tiene comprobantes; no se modificarán."

@@ -27,6 +27,7 @@ import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
+import com.agendaqr.core.ui.motion.LocalReducedMotion
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqMotion
@@ -65,9 +66,25 @@ fun AqSwipeActions(
 
     val density = LocalDensity.current
     val coroutineScope = rememberCoroutineScope()
+    val reducedMotion = LocalReducedMotion.current
     val actionWidthPx = with(density) { AqMetrics.ControlMinSize.toPx() }
     val maxSwipePx = actionWidthPx * actions.size
     val offsetX = remember { Animatable(0f) }
+    // Duración de las transiciones de deslizamiento; se anula con
+    // movimiento reducido (contrato §7: eliminar la transición).
+    val swipeSpec = if (reducedMotion) null else tween(
+        durationMillis = AqMotion.DurationMediumMs,
+        easing = AqMotion.Easings.Standard,
+    )
+    /** Desplaza el offset al target; con movimiento reducido es un snap
+     *  inmediato en lugar de una animación interpolada. */
+    private suspend fun swipeTo(target: Float) {
+        if (swipeSpec == null) {
+            offsetX.snapTo(target)
+        } else {
+            offsetX.animateTo(targetValue = target, animationSpec = swipeSpec)
+        }
+    }
 
     val accessibilityModifier = Modifier.semantics(mergeDescendants = true) {
         customActions = actions.map { action ->
@@ -106,13 +123,7 @@ fun AqSwipeActions(
                             .background(resolvedBg)
                             .clickable {
                                 coroutineScope.launch {
-                                    offsetX.animateTo(
-                                        targetValue = 0f,
-                                        animationSpec = tween(
-                                            durationMillis = AqMotion.DurationMediumMs,
-                                            easing = AqMotion.Easings.Standard,
-                                        ),
-                                    )
+                                    swipeTo(0f)
                                 }
                                 action.onAction()
                             },
@@ -148,13 +159,7 @@ fun AqSwipeActions(
                         val threshold = -maxSwipePx / 2f
                         val target = if (offsetX.value < threshold) -maxSwipePx else 0f
                         coroutineScope.launch {
-                            offsetX.animateTo(
-                                targetValue = target,
-                                animationSpec = tween(
-                                    durationMillis = AqMotion.DurationMediumMs,
-                                    easing = AqMotion.Easings.Standard,
-                                ),
-                            )
+                            swipeTo(target)
                         }
                     },
                 ),

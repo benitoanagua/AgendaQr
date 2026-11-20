@@ -79,11 +79,12 @@ No se declaran PASS. Requieren Xcode, dispositivo físico, red o backend reales.
 ## 4. Pendientes conocidos
 
 - **Decisiones de producto pendientes:** teclado propio para el importe (S07),
-  fila de filtros en S04, balance neto mensual y encabezados por día (lista de
-  Actividades), «Destino QR vinculado» en el detalle de actividad (el vínculo
+  balance neto mensual y encabezados por día (lista de Actividades),
+  «Destino QR vinculado» en el detalle de actividad (el vínculo
   `Operation.destinationId` existe; falta el estado en presentación), «Filtros»
-  en S12 y «Crear nuevo contexto» visible con lista llena (hoy lo impide
-  ADR-0003).
+  en S12 (mostrados solo cuando hay duplicados y sin clasificar a la vez; la
+  fila de filtros de S04 con chips de tipo y conteos ya está implementada) y
+  «Crear nuevo contexto» visible con lista llena (hoy lo impide ADR-0003).
 - **Share Extension de iOS:** no implementada; el bloque «Desde otra app» de S02
   no se muestra en iOS hasta que exista. Bloqueo: el proyecto Xcode no está
   versionado (política en `iosApp/README.md`) y crear el target exige Xcode y

@@ -97,9 +97,9 @@ Candidatos aceptados se justifican con la heurística que mejoran (visibilidad d
 | `AqActionSheet` | **MANTENER** (ya en uso) | overflow de detalles (destino, operación) | `AqActionSheetTest` | detalle con overflow |
 | `AqTooltip` | **ADOPTAR** | S03 detalle (alternativa accesible al icono de copiado) | Robolectric de presentación | tooltip de copiado |
 | `AqSpinner` | **MANTENER** (en `AqLoading`) | estados de carga estandarizados | `AqAccessibilityContractTest` | carga con spinner |
-| `AqProgressBar` | **ADOPTAR** | S09 ImportReview (guardado) | Robolectric de presentación | progreso de importación |
-| `AqProgressBlock` | **ADOPTAR** | S12 ImportBatch (progreso real N de M) | Robolectric de presentación | importación con progreso real |
-| `AqSkeleton` | **ADOPTAR** | ComprobanteViewer, ContextScreen (carga inicial) | Robolectric de presentación | carga con skeleton |
+| `AqProgressBar` | **ADOPTAR** | S09 ImportReview (guardado) | Uso en pantalla + capturas de galería (sin prueba dedicada) | progreso de importación |
+| `AqProgressBlock` | **ADOPTAR** | S12 ImportBatch (progreso real N de M) | Uso en pantalla + capturas de galería (sin prueba dedicada) | importación con progreso real |
+| `AqSkeleton` | **ADOPTAR** | ComprobanteViewer, ContextScreen (carga inicial) | Uso en pantalla + capturas de galería (sin prueba dedicada) | carga con skeleton |
 | `AqSwitch` | **ADOPTAR** | S02/S08 editor de destino (favorito) | Robolectric de presentación | editor con interruptor |
 | `AqSelect` | **MANTENER** | sin consumo en pantallas de producción, pero control de formulario base de Polaris (nivel 1) con pruebas dedicadas y uso en galería de previews | `AqSelectTest` | galería de previews |
 | `AqCheckbox` | **MANTENER** | sin consumo en pantallas de producción, pero control de formulario base de Polaris (nivel 1) con pruebas dedicadas y uso en galería de previews | pruebas de `core/ui` | galería de previews |

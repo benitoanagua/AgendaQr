@@ -48,6 +48,7 @@ val screenStateVocabulary: Set<String> = setOf(
 /** Vocabulario cerrado de gestos admitidos (los del sistema o ya existentes). */
 val gestureVocabulary: Set<String> = setOf(
     "system-back", "predictive-back", "horizontal-scroll", "vertical-scroll", "tap",
+    "swipe-actions", "pull-to-refresh",
 )
 
 /** Configuraciones que la galería de capturas debe cubrir cuando se genera. */
@@ -76,7 +77,7 @@ object ScreenContracts {
             primaryAction = null,
             primaryActionKey = null,
             states = listOf("loading", "empty", "content", "error", "offline"),
-            gestures = listOf("predictive-back", "horizontal-scroll"),
+            gestures = listOf("predictive-back", "horizontal-scroll", "swipe-actions", "pull-to-refresh"),
             captureStates = listOf("empty", "content", "error"),
             components = listOf(
                 "AqScreenScaffold", "AqTopBar", "AqNavBar", "AqSearchTrigger", "AqQuickAction",
@@ -308,7 +309,7 @@ object ScreenContracts {
             primaryAction = "Registrar",
             primaryActionKey = "RegistrarOperacion",
             states = listOf("loading", "empty", "content", "error"),
-            gestures = emptyList(),
+            gestures = listOf("swipe-actions", "pull-to-refresh"),
             captureStates = listOf("empty", "content"),
             components = listOf(
                 "AqScreenScaffold", "AqSegmentedControl", "AqExtendedFab", "AqListRow",

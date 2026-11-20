@@ -433,14 +433,6 @@ fun AqSelectAllCheckbox(
     }
 }
 
-/** Estado indeterminado derivado de una selección parcial (select-all). */
-fun AqTriState(checkedIds: Set<String>, options: List<AqChoiceOption>): ToggleableState =
-    when {
-        checkedIds.isEmpty() -> ToggleableState.Off
-        checkedIds.containsAll(options.map { it.id }) -> ToggleableState.On
-        else -> ToggleableState.Indeterminate
-    }
-
 // ---------------------------------------------------------------------------
 // Jerarquía de formulario: sección con encabezado único + campo con label
 // ---------------------------------------------------------------------------

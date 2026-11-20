@@ -32,6 +32,8 @@ data class OperationsUiState(
     val pendingDuplicates: List<Comprobante> = emptyList(),
     val isSavingReceipt: Boolean = false,
     val isSavingOperation: Boolean = false,
+    /** Primera carga de la lista de actividades (pantalla en frío). */
+    val isLoadingOperations: Boolean = false,
     val openedComprobante: Comprobante? = null,
     val openedComprobanteBytes: ByteArray? = null,
     val isLoadingComprobante: Boolean = false,

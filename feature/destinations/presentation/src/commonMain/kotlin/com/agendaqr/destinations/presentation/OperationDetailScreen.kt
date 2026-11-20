@@ -26,6 +26,8 @@ internal fun OperationDetailScreen(
     appHosts: AppHosts? = null,
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
     onRetrySync: () -> Unit = {},
+    /** D8: destino QR vinculado a la actividad (opcional). */
+    destinationsViewModel: DestinationsViewModel? = null,
 ) {
     val operation = viewModel.selectedOperation()
     if (operation == null) {
@@ -188,6 +190,14 @@ internal fun OperationDetailScreen(
             AqText(
                 text = AppStrings.TuInformacionEstaGuardadaEnElDispositivo,
                 color = AqColor.TextSecondary,
+            )
+        }
+        // D8: destino QR vinculado a la actividad, cuando existe.
+        operation.destinationId?.let { destinationId ->
+            val destinationName = destinationsViewModel?.destination(destinationId)?.name
+            AqMetaRow(
+                label = AppStrings.DestinoVinculado,
+                value = destinationName ?: destinationId,
             )
         }
 

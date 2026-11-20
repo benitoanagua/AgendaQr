@@ -27,7 +27,7 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - destinos válidos: `AppRoute.Search`, `DestinationRoute.Add`, `OperationRoute.New`, `DestinationRoute.ImportReview`, `AppRoute.Contexts`
 - acción primaria: —
 - estados: `loading`, `empty`, `content`, `error`, `offline`
-- gestos: `predictive-back`, `horizontal-scroll`
+- gestos: `predictive-back`, `horizontal-scroll`, `swipe-actions`, `pull-to-refresh`
 - capturas: `empty`, `content`, `error`
 - componentes: `AqScreenScaffold`, `AqTopBar`, `AqNavBar`, `AqSearchTrigger`, `AqQuickAction`, `AqSegmentedControl`, `AqListRow`, `AqListBody`, `AqSectionHeader`, `AqEmptyState`, `AqStatusBanner`, `AqFavoriteToggle`, `AqActionSheet`, `AqPullToRefresh`, `AqSwipeActions`
 - pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/DestinationsScreenA11yTest.kt`
@@ -189,7 +189,7 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - destinos válidos: `OperationRoute.Detail`, `OperationRoute.New`, `OperationRoute.Unassociated`
 - acción primaria: Registrar (`AppStrings.RegistrarOperacion`)
 - estados: `loading`, `empty`, `content`, `error`
-- gestos: —
+- gestos: `swipe-actions`, `pull-to-refresh`
 - capturas: `empty`, `content`
 - componentes: `AqScreenScaffold`, `AqSegmentedControl`, `AqExtendedFab`, `AqListRow`, `AqListBody`, `AqEmptyState`, `AqDialogList`, `AqNavBar`, `AqPullToRefresh`, `AqSwipeActions`
 - pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ScreensA11yCoverageTest.kt`
