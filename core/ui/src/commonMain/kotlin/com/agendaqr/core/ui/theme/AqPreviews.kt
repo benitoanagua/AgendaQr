@@ -21,10 +21,13 @@ import com.agendaqr.core.ui.components.AqLink
 import com.agendaqr.core.ui.components.AqProgressBar
 import com.agendaqr.core.ui.components.AqProgress
 import com.agendaqr.core.ui.components.AqPrimaryButton
+import com.agendaqr.core.ui.components.AqPullToRefresh
 import com.agendaqr.core.ui.components.AqSecondaryButton
 import com.agendaqr.core.ui.components.AqSelect
 import com.agendaqr.core.ui.components.AqSpinner
 import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqSwipeAction
+import com.agendaqr.core.ui.components.AqSwipeActions
 import com.agendaqr.core.ui.components.AqSwitch
 import com.agendaqr.core.ui.components.AqSyncIndicator
 import com.agendaqr.core.ui.components.AqSyncLabels
@@ -127,6 +130,30 @@ private fun AqComponentGallery(darkTheme: Boolean) {
                 ),
                 rows = listOf(AqTableRow("1", mapOf("name" to "Cobro", "amount" to "10,00"))),
             )
+            AqSwipeActions(
+                actions = listOf(
+                    AqSwipeAction(
+                        label = "Eliminar",
+                        icon = com.agendaqr.core.ui.components.AqIcons.Trash,
+                        onAction = {},
+                    ),
+                ),
+            ) {
+                com.agendaqr.core.ui.components.AqListRow(
+                    title = "Elemento deslizable",
+                    subtitle = "Acciones al deslizar",
+                )
+            }
+            AqPullToRefresh(
+                isRefreshing = false,
+                onRefresh = {},
+                refreshingLabel = "Actualizando",
+            ) {
+                com.agendaqr.core.ui.components.AqListRow(
+                    title = "Lista actualizable",
+                    subtitle = "Arrastre vertical",
+                )
+            }
         }
     }
 }
