@@ -30,15 +30,29 @@
 |---|---|
 | [`05-design-system/00-contrato-normativo-diseno.md`](05-design-system/00-contrato-normativo-diseno.md) | Contrato normativo único: fuente, tokens, extensiones y desviaciones |
 | [`05-design-system/09-instantanea-tokens-polaris-9.4.2.md`](05-design-system/09-instantanea-tokens-polaris-9.4.2.md) | Instantánea versionada de valores Polaris 9.4.2 |
-| [`05-design-system/10-auditoria-fidelidad-polaris.md`](05-design-system/10-auditoria-fidelidad-polaris.md) | Auditoría de fidelidad de `core/ui` contra la instantánea |
+| [`05-design-system/10-auditoria-fidelidad.md`](05-design-system/10-auditoria-fidelidad.md) | Auditoría de fidelidad exhaustiva de `core/ui` y pantallas contra Polaris 9.4.2 |
+| [`05-design-system/10-auditoria-fidelidad-polaris.md`](05-design-system/10-auditoria-fidelidad-polaris.md) | Auditoría de fidelidad de `core/ui` contra la instantánea (histórica) |
+| [`05-design-system/11-matriz-gaps-mobile.md`](05-design-system/11-matriz-gaps-mobile.md) | Matriz normativa de gaps mobile y cadena de precedencia Polaris → Moon → nativo |
 | [`05-design-system/11-auditoria-atomic-spacing.md`](05-design-system/11-auditoria-atomic-spacing.md) | Auditoría de espaciado atómico y densidad de `core/ui` y las pantallas |
 | [`05-design-system/12-matriz-cobertura-polaris-moon-agendaqr.md`](05-design-system/12-matriz-cobertura-polaris-moon-agendaqr.md) | Matriz completa de cobertura Polaris / Moon / Agenda QR: clasificación, estado, carencias, riesgos y prioridades |
 | [`05-design-system/13-auditoria-fidelidad-mobile.md`](05-design-system/13-auditoria-fidelidad-mobile.md) | Auditoría de fidelidad móvil (`light-mobile`) token por token y componente a componente |
-| [`05-design-system/14-matriz-gaps-mobile.md`](05-design-system/14-matriz-gaps-mobile.md) | Matriz de gaps de patrones móviles con la cadena de precedencia Polaris → Moon → nativo |
+| [`05-design-system/14-matriz-gaps-mobile.md`](05-design-system/14-matriz-gaps-mobile.md) | Matriz de gaps de patrones móviles con la cadena de precedencia Polaris → Moon → nativo (predecesora) |
 | [`05-design-system/02-implementacion-diseno.md`](05-design-system/02-implementacion-diseno.md) | Reglas de implementación (histórico; pendiente de alineación) |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros (pendiente de alineación) |
 | [`05-design-system/07-evaluacion-tipografia.md`](05-design-system/07-evaluacion-tipografia.md) | Evaluación histórica de MiSans Global (no adoptada) |
 | [`05-design-system/08-referencia-super-app.md`](05-design-system/08-referencia-super-app.md) | Referencia histórica Super-App (sin autoridad) |
+| [`05-design-system/componentes/bottom-sheet.md`](05-design-system/componentes/bottom-sheet.md) | Ficha de componente: Bottom Sheet (`AqBottomSheet`) |
+| [`05-design-system/componentes/segmented-control.md`](05-design-system/componentes/segmented-control.md) | Ficha de componente: Segmented Control (`AqSegmentedControl`) |
+| [`05-design-system/componentes/chips-filtros.md`](05-design-system/componentes/chips-filtros.md) | Ficha de componente: Chips y Filtros (`AqChipGroup`, `AqChipOption`) |
+| [`05-design-system/componentes/toast-snackbar.md`](05-design-system/componentes/toast-snackbar.md) | Ficha de componente: Toast / Snackbar (`AqSnackbarHost`, `AqFeedbackEvent`) |
+| [`05-design-system/componentes/search-bar.md`](05-design-system/componentes/search-bar.md) | Ficha de componente: Search Bar (`AqSearchField`, `AqSearchTrigger`) |
+| [`05-design-system/componentes/bottom-navigation.md`](05-design-system/componentes/bottom-navigation.md) | Ficha de componente: Bottom Navigation (`AqNavBar`, `AqNavRail`) |
+| [`05-design-system/componentes/list-cell.md`](05-design-system/componentes/list-cell.md) | Ficha de componente: List Cell (`AqListRow`, `AqListBody`) |
+| [`05-design-system/componentes/empty-state.md`](05-design-system/componentes/empty-state.md) | Ficha de componente: Empty State (`AqEmptyState`) |
+| [`05-design-system/componentes/skeleton.md`](05-design-system/componentes/skeleton.md) | Ficha de componente: Skeleton (`AqSkeleton`, `AqProgressBlock`) |
+| [`05-design-system/componentes/swipe-actions.md`](05-design-system/componentes/swipe-actions.md) | Ficha de componente: Swipe Actions (`AqSwipeActions`) |
+| [`05-design-system/componentes/pull-to-refresh.md`](05-design-system/componentes/pull-to-refresh.md) | Ficha de componente: Pull to Refresh (`AqPullToRefresh`) |
+| [`05-design-system/componentes/date-time-picker.md`](05-design-system/componentes/date-time-picker.md) | Ficha de componente: Pickers de Fecha/Hora (`AqDatePickerDialog`, `AqTimePickerDialog`) |
 
 ## Decisiones
 
