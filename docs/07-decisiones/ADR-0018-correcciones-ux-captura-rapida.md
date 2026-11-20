@@ -29,7 +29,7 @@ D7. **Comprobantes sin asociar**: la fila abre el flujo de asociación; "Crear a
 ## Consecuencias
 
 - Nuevas acciones de presentación (`SetFavoritesOnly`, `EditorDirtyChanged`, `DiscardEditor`, `DismissDiscardPrompt`); `ToggleFavorites` eliminado; lista de Todos sin favoritos del carrusel.
-- Pruebas por hallazgo (reproducción en rojo primero para U-01/U-03/U-08, rojo local para U-02).
+- Pruebas de reproducción (en rojo primero para U-01/U-03/U-08, rojo local para U-02).
 
 ## Riesgos y alternativas
 

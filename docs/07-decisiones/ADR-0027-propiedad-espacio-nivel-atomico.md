@@ -53,7 +53,7 @@ Desviaciones ya registradas que esta decisión no altera: D-01 (`1rem` =
 D-11 (contenedores tonales oscuros). Las extensiones X-01…X-07 y las
 preguntas PV-01…PV-08 siguen vigentes.
 
-Hallazgos aceptados con seguimiento (detalle en el informe, §6):
+Aspectos aceptados con seguimiento (§6):
 
 - El generador de QR de la capa de datos usa negro/blanco puros fuera de
   tokens porque el mapa de bits debe ser escaneable en cualquier tema (X-03).

@@ -6,7 +6,7 @@ import org.junit.runner.RunWith
 import kotlin.test.assertTrue
 
 /**
- * Preparación de TalkBack sin TalkBack real: auditoría del árbol de
+ * Preparación de TalkBack sin TalkBack real: revisión del árbol de
  * accesibilidad por pantalla. Falla si hay
  * clicables SIN nombre accesible, con área < 48dp (dp = px/(dpi/160)) o
  * con nombres duplicados dentro de una pantalla. En S01: un ÚNICO nodo
