@@ -19,3 +19,6 @@
 - **Accesibilidad:** Anuncio accesible mediante TalkBack cuando el estado de refresco inicia ("Actualizando contenido...") y finaliza ("Actualización completada").
 - **Comportamiento Claro / Oscuro:** Se adapta dinámicamente al esquema activo manteniendo contraste y sombra visible.
 - **Notas de adaptación:** Ni Polaris ni Moon Design incluyen un componente móvil de pull-to-refresh en sus especificaciones. Se implementa siguiendo la convención nativa mobile (Nivel 3) empleando exclusivamente el spinner, sombras y fondos de tokens Polaris.
+- **Pantallas consumidoras:**
+  - `DestinationsScreen` (S01): recarga/sincronización por arrastre desde el límite superior, disparando el intent de búsqueda existente.
+  - `OperationListScreen` (S07-list): recarga de actividades por arrastre, disparando el intent de búsqueda existente.

@@ -6,8 +6,6 @@
 
 | Documento | Contenido |
 |---|---|
-| [`AUDITORIA-INICIAL-UI.md`](AUDITORIA-INICIAL-UI.md) | Auditoría inicial de `core/ui`, documentación y valores visuales |
-| [`CLEANUP-SUMMARY.md`](CLEANUP-SUMMARY.md) | Instantánea histórica (no normativa) de la consolidación UI/UX del 2026-10-17 |
 | [`PRODUCT.md`](PRODUCT.md) | Producto, alcance, límites, requisitos, dominio y exclusiones de V1 |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Módulos, fuentes de verdad, local-first, identidad local, Supabase, sync y hosts |
 | [`QUALITY.md`](QUALITY.md) | Estrategia de pruebas, suite de estados/eventos, puertas y validación |
@@ -31,12 +29,7 @@
 | [`05-design-system/00-contrato-normativo-diseno.md`](05-design-system/00-contrato-normativo-diseno.md) | Contrato normativo único: fuente, tokens, extensiones y desviaciones |
 | [`05-design-system/09-instantanea-tokens-polaris-9.4.2.md`](05-design-system/09-instantanea-tokens-polaris-9.4.2.md) | Instantánea versionada de valores Polaris 9.4.2 |
 | [`05-design-system/10-auditoria-fidelidad.md`](05-design-system/10-auditoria-fidelidad.md) | Auditoría de fidelidad exhaustiva de `core/ui` y pantallas contra Polaris 9.4.2 |
-| [`05-design-system/10-auditoria-fidelidad-polaris.md`](05-design-system/10-auditoria-fidelidad-polaris.md) | Auditoría de fidelidad de `core/ui` contra la instantánea (histórica) |
 | [`05-design-system/11-matriz-gaps-mobile.md`](05-design-system/11-matriz-gaps-mobile.md) | Matriz normativa de gaps mobile y cadena de precedencia Polaris → Moon → nativo |
-| [`05-design-system/11-auditoria-atomic-spacing.md`](05-design-system/11-auditoria-atomic-spacing.md) | Auditoría de espaciado atómico y densidad de `core/ui` y las pantallas |
-| [`05-design-system/12-matriz-cobertura-polaris-moon-agendaqr.md`](05-design-system/12-matriz-cobertura-polaris-moon-agendaqr.md) | Matriz completa de cobertura Polaris / Moon / Agenda QR: clasificación, estado, carencias, riesgos y prioridades |
-| [`05-design-system/13-auditoria-fidelidad-mobile.md`](05-design-system/13-auditoria-fidelidad-mobile.md) | Auditoría de fidelidad móvil (`light-mobile`) token por token y componente a componente |
-| [`05-design-system/14-matriz-gaps-mobile.md`](05-design-system/14-matriz-gaps-mobile.md) | Matriz de gaps de patrones móviles con la cadena de precedencia Polaris → Moon → nativo (predecesora) |
 | [`05-design-system/02-implementacion-diseno.md`](05-design-system/02-implementacion-diseno.md) | Reglas de implementación (histórico; pendiente de alineación) |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros (pendiente de alineación) |
 | [`05-design-system/07-evaluacion-tipografia.md`](05-design-system/07-evaluacion-tipografia.md) | Evaluación histórica de MiSans Global (no adoptada) |
@@ -52,6 +45,10 @@
 | [`05-design-system/componentes/skeleton.md`](05-design-system/componentes/skeleton.md) | Ficha de componente: Skeleton (`AqSkeleton`, `AqProgressBlock`) |
 | [`05-design-system/componentes/swipe-actions.md`](05-design-system/componentes/swipe-actions.md) | Ficha de componente: Swipe Actions (`AqSwipeActions`) |
 | [`05-design-system/componentes/pull-to-refresh.md`](05-design-system/componentes/pull-to-refresh.md) | Ficha de componente: Pull to Refresh (`AqPullToRefresh`) |
+| [`05-design-system/componentes/action-sheet.md`](05-design-system/componentes/action-sheet.md) | Ficha de componente: Action Sheet (`AqActionSheet`) |
+| [`05-design-system/componentes/progreso.md`](05-design-system/componentes/progreso.md) | Ficha de componente: Progreso (`AqProgressBar`, `AqProgressBlock`, `AqSpinner`) |
+| [`05-design-system/componentes/switch.md`](05-design-system/componentes/switch.md) | Ficha de componente: Switch (`AqSwitch`) |
+| [`05-design-system/componentes/tooltip.md`](05-design-system/componentes/tooltip.md) | Ficha de componente: Tooltip (`AqTooltip`) |
 | [`05-design-system/componentes/date-time-picker.md`](05-design-system/componentes/date-time-picker.md) | Ficha de componente: Pickers de Fecha/Hora (`AqDatePickerDialog`, `AqTimePickerDialog`) |
 
 ## Decisiones
@@ -84,7 +81,23 @@
 | [`07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md`](07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md) | ADR: propiedad del espacio por nivel atómico y densidad móvil |
 | [`07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md`](07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md) | ADR: Moon como referencia de patrones móviles; Polaris autoridad visual |
 | [`07-decisiones/ADR-0029-cadena-precedencia-polaris-moon-nativo.md`](07-decisiones/ADR-0029-cadena-precedencia-polaris-moon-nativo.md) | ADR: cadena de precedencia Polaris → Moon → nativo para patrones sin equivalente Polaris |
-| [`PR-0028-moon-mobile-screens.md`](PR-0028-moon-mobile-screens.md) | PR: aplicación de patrones móviles a S00/S04/S07/S12 |
+| [`07-decisiones/ADR-0030-adopcion-primitivos-moviles-pantallas.md`](07-decisiones/ADR-0030-adopcion-primitivos-moviles-pantallas.md) | ADR: adopción de primitivos móviles en pantallas de producción |
+| [`07-decisiones/ADR-0031-adopcion-primitivos-componentes-sin-uso.md`](07-decisiones/ADR-0031-adopcion-primitivos-componentes-sin-uso.md) | ADR: política de adopción/retiro de componentes sin uso y criterio de componentes nuevos |
+
+## Histórico (no normativo)
+
+Conservado solo como registro; no es fuente de verdad y no debe citarse como autoridad vigente.
+
+| Documento | Contenido |
+|---|---|
+| [`05-design-system/historico/10-auditoria-fidelidad-polaris.md`](05-design-system/historico/10-auditoria-fidelidad-polaris.md) | Auditoría de fidelidad de `core/ui` contra la instantánea (superada por `10-auditoria-fidelidad.md`) |
+| [`05-design-system/historico/11-auditoria-atomic-spacing.md`](05-design-system/historico/11-auditoria-atomic-spacing.md) | Auditoría de espaciado atómico y densidad (superada por `10-auditoria-fidelidad.md` y `00-contrato-normativo-diseno.md`) |
+| [`05-design-system/historico/12-matriz-cobertura-polaris-moon-agendaqr.md`](05-design-system/historico/12-matriz-cobertura-polaris-moon-agendaqr.md) | Matriz de cobertura Polaris / Moon / Agenda QR (fusionada en `11-matriz-gaps-mobile.md`) |
+| [`05-design-system/historico/13-auditoria-fidelidad-mobile.md`](05-design-system/historico/13-auditoria-fidelidad-mobile.md) | Auditoría de fidelidad móvil `light-mobile` (fusionada en `10-auditoria-fidelidad.md`) |
+| [`05-design-system/historico/14-matriz-gaps-mobile.md`](05-design-system/historico/14-matriz-gaps-mobile.md) | Matriz de gaps mobile predecesora (fusionada en `11-matriz-gaps-mobile.md`) |
+| [`05-design-system/historico/AUDITORIA-INICIAL-UI.md`](05-design-system/historico/AUDITORIA-INICIAL-UI.md) | Auditoría inicial previa a ADR-0025/ADR-0026 |
+| [`05-design-system/historico/CLEANUP-SUMMARY.md`](05-design-system/historico/CLEANUP-SUMMARY.md) | Consolidación UI/UX del 2026-10-17 (instantánea transitoria) |
+| [`05-design-system/historico/PR-0028-moon-mobile-screens.md`](05-design-system/historico/PR-0028-moon-mobile-screens.md) | PR cuerpo de ADR-0028 (aplicación de patrones móviles a S00/S04/S07/S12) |
 
 ## Cómo se mantiene
 

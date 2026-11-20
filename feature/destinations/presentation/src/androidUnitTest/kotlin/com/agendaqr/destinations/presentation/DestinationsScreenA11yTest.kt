@@ -6,11 +6,15 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqTheme
+import kotlin.test.assertTrue
 import com.agendaqr.destinations.domain.Destination
 import com.agendaqr.destinations.domain.QrAsset
 import org.junit.Rule
@@ -60,13 +64,22 @@ class DestinationsScreenA11yTest {
     @Test
     fun grid_actions_and_row_actions_keep_48dp_targets() {
         setContent()
-        // Anexo A: rejilla "King Kong" con las 3 acciones rápidas; la acción
-        // de favorito de la fila es un IconToggleButton de 48 dp.
+        // Anexo A: rejilla "King Kong" con las 3 acciones rápidas.
         compose.onNodeWithText(AppStrings.TraerQr).assertExists()
         compose.onNodeWithText(AppStrings.RegistrarOperacion).assertExists()
         compose.onNodeWithText(AppStrings.CrearContexto).assertExists()
-        compose.onNodeWithContentDescription("Marcar favorito").assertExists()
-            .assertHeightIsAtLeast(48.dp)
+        // La acción de favorito de la fila se revela al deslizar y se expone
+        // como customAction (alternativa no gestual al gesto) con su etiqueta
+        // de estado, alcanzable desde TalkBack sin deslizar la fila.
+        val tieneMarcarFavorito = compose
+            .onAllNodes(SemanticsMatcher.keyIsDefined(SemanticsActions.CustomActions))
+            .fetchSemanticsNodes()
+            .any { nodo ->
+                val acciones: List<CustomAccessibilityAction> =
+                    nodo.config.getOrNull(SemanticsActions.CustomActions)!!
+                acciones.any { it.label == AppStrings.MarcarFavorito }
+            }
+        assertTrue(tieneMarcarFavorito, "la fila debe exponer customAction Marcar favorito")
     }
 
     @Test
@@ -185,10 +198,19 @@ class DestinationsScreenA11yTest {
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithContentDescription("Quitar favorito")
-            .assertExists()
-            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Checkbox))
-            .performClick()
-        assert(toggled == true) { "El toggle debe pedir quitar el favorito existente" }
+        // El favorito se invoca sin el gesto de deslizamiento mediante el
+        // customAction del contenedor (alternativa no gestual), que anuncia
+        // su etiqueta de estado ("Quitar favorito").
+        val accionesTodas: List<CustomAccessibilityAction> = compose
+            .onAllNodes(SemanticsMatcher.keyIsDefined(SemanticsActions.CustomActions))
+            .fetchSemanticsNodes()
+            .flatMap { nodo ->
+                val acciones = nodo.config.getOrNull(SemanticsActions.CustomActions)!!
+                acciones
+            }
+        val accionQuitar = accionesTodas.firstOrNull { accion -> accion.label == AppStrings.QuitarFavorito }
+        assertTrue(accionQuitar != null, "la fila debe exponer customAction Quitar favorito")
+        accionQuitar!!.action()
+        assert(toggled == true) { "Invocar el customAction debe pedir quitar el favorito existente" }
     }
 }

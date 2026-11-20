@@ -13,9 +13,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqSnackbarHost
+import com.agendaqr.core.ui.components.AqBottomSheet
 import com.agendaqr.core.ui.components.AqBottomActionDock
 import com.agendaqr.core.ui.components.AqFeedbackEvent
 import com.agendaqr.core.ui.components.AqScreenScaffold
+import com.agendaqr.core.ui.components.AqTooltip
 import com.agendaqr.core.ui.components.AqTopBar
 import com.agendaqr.core.ui.components.AqOverflowAction
 import com.agendaqr.core.ui.components.AqCompactAction
@@ -65,6 +67,8 @@ fun DestinationDetailScreen(
     onRetrySync: () -> Unit = {},
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
+    var showDetailsSheet by remember { mutableStateOf(false) }
+    var showCopyTooltip by remember { mutableStateOf(false) }
     // anuncio de eliminación confirmada (por evento) y copiado (por evento).
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
     var copiedEvent by remember { mutableStateOf<Any?>(null) }
@@ -91,6 +95,7 @@ fun DestinationDetailScreen(
                 onBack = onBack,
                 backLabel = AppStrings.Volver,
                 overflowActions = listOf(
+                    AqOverflowAction(AppStrings.Detalle, { showDetailsSheet = true }, AqIcons.Info),
                     AqOverflowAction(AppStrings.RegistrarOperacion, onRegisterOperation, AqIcons.Register),
                     AqOverflowAction(AppStrings.Editar, onEdit, AqIcons.Edit),
                     AqOverflowAction(AppStrings.Eliminar, { showDeleteConfirm = true }, AqIcons.Trash),
@@ -190,15 +195,21 @@ fun DestinationDetailScreen(
                                 horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                AqCompactAction(
+                                AqTooltip(
                                     label = AppStrings.Copiar,
-                                    onClick = {
-                                        copyToClipboard(content)
-                                        copiedEvent = Any()
-                                    },
-                                    icon = AqIcons.Copy,
-                                    prominent = true,
-                                )
+                                    isVisible = showCopyTooltip,
+                                    onLongClick = { showCopyTooltip = !showCopyTooltip },
+                                ) {
+                                    AqCompactAction(
+                                        label = AppStrings.Copiar,
+                                        onClick = {
+                                            copyToClipboard(content)
+                                            copiedEvent = Any()
+                                        },
+                                        icon = AqIcons.Copy,
+                                        prominent = true,
+                                    )
+                                }
                                 AqTextAction(
                                     label = if (contentExpanded) AppStrings.VerMenos else AppStrings.VerMas,
                                     onClick = { contentExpanded = !contentExpanded },
@@ -260,5 +271,35 @@ fun DestinationDetailScreen(
             dismissLabel = AppStrings.Cancelar,
             onDismiss = { showDeleteConfirm = false },
         )
+    }
+
+    if (showDetailsSheet) {
+        AqBottomSheet(
+            title = AppStrings.Detalle,
+            onDismissRequest = { showDetailsSheet = false },
+            dismissDescription = AppStrings.Cerrar,
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Md)) {
+                destination.category?.let { AqMetaRow(label = AppStrings.Categoria, value = it) }
+                AqMetaRow(
+                    label = AppStrings.FechaDeAlta,
+                    value = formatDate(destination.createdAt),
+                    icon = AqIcons.Calendar,
+                )
+                destination.qr.content?.takeIf { it.isNotBlank() }?.let { content ->
+                    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
+                        AqText(
+                            AppStrings.Contenido,
+                            color = AqColor.TextSecondary,
+                            size = AqType.BodySmall,
+                        )
+                        AqText(content)
+                    }
+                }
+                destination.note?.takeIf { it.isNotBlank() }?.let {
+                    AqText(it, color = AqColor.TextSecondary)
+                }
+            }
+        }
     }
 }

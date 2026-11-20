@@ -26,6 +26,8 @@ import com.agendaqr.core.ui.components.AqSectionHeader
 import com.agendaqr.core.ui.components.AqTextActionVariant
 import com.agendaqr.core.ui.components.AqBottomAction
 import com.agendaqr.core.ui.components.AqQrPreview
+import com.agendaqr.core.ui.components.AqProgress
+import com.agendaqr.core.ui.components.AqProgressBlock
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqTopBar
 import com.agendaqr.core.ui.components.AqSecondaryButton
@@ -210,6 +212,16 @@ private fun BatchResultContent(
 ) {
     // Tarjeta resumen como filas etiqueta-valor: cada estado del lote con
     // su conteo real alineado a la derecha (singular honesto por conteo).
+    if (isSaving) {
+        val total = (batch.uniqueRecognized.size + batch.duplicates.size + batch.unknown.size).coerceAtLeast(1)
+        val recognized = batch.uniqueRecognized.size
+        val fraction = (recognized.toFloat() / total.toFloat()).coerceIn(0f, 1f)
+        AqProgressBlock(
+            progress = AqProgress(fraction),
+            label = AppStrings.Guardando,
+            contentDescription = AppStrings.Guardando,
+        )
+    }
     AqCard {
         Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
             if (batch.uniqueRecognized.isNotEmpty()) {

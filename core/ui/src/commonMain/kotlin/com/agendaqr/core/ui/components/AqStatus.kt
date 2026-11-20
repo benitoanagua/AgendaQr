@@ -211,7 +211,7 @@ fun AqLoading(modifier: Modifier = Modifier, message: String? = null) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
     ) {
-        CircularProgressIndicator(color = AqColor.EmphasisFill)
+        AqSpinner(contentDescription = message.orEmpty())
         message?.let { Text(it, color = AqColor.TextSecondary, fontSize = AqType.Label) }
     }
 }

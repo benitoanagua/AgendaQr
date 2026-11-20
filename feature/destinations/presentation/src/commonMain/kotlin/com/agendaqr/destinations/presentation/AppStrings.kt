@@ -263,6 +263,7 @@ internal object AppStrings {
     val noMatchTitle = "No encontramos coincidencia"
     val QrImportado = "QR importado"
     val ComprobanteNoEncontrado = "Comprobante no encontrado"
+    val Favorito = "Favorito"
     val Favoritos = "Favoritos"
     /** S12: descripciones honestas de cada pendiente (guía de voz). */
     val elementoYaGuardado = "Parece que este elemento ya está guardado."

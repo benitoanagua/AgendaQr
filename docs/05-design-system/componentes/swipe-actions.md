@@ -23,3 +23,6 @@
   - Tamaño de botón de acción revelada: mínimo 48 dp de ancho y alto interactivo.
 - **Comportamiento Claro / Oscuro:** Los fondos de acción conservan el contraste reglamentario WCAG AA en ambos modos.
 - **Notas de adaptación:** Ni Polaris ni Moon Design definen un componente de swipe actions táctil. Se toma la convención nativa de Android (`SwipeToDismissBox`) e iOS y se reemplazan el 100 % de los valores visuales por tokens Polaris.
+- **Pantallas consumidoras:**
+  - `DestinationsScreen` (S01): filas de destino con acciones "Marcar favorito / Quitar favorito" y "Eliminar" (este último abre el diálogo de confirmación vigente).
+  - `OperationListScreen` (S07-list): filas de operación con acciones "Editar" y "Eliminar" (este último abre el diálogo de confirmación vigente).

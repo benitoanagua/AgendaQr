@@ -22,6 +22,7 @@ import com.agendaqr.core.ui.components.AqLoading
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqTopBar
 import com.agendaqr.core.ui.components.AqSecondaryButton
+import com.agendaqr.core.ui.components.AqSkeleton
 import com.agendaqr.core.ui.components.AqStatusBanner
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextAction
@@ -128,7 +129,7 @@ private fun ContextList(
             )
         }
         when {
-            state.isLoading -> AqLoading(message = AppStrings.CargandoContextos)
+            state.isLoading -> AqSkeleton(lines = 3)
             state.contexts.isEmpty() -> AqEmptyState(
                 icon = AqIcons.Context,
                 title = AppStrings.SinContextos,
@@ -307,6 +308,6 @@ private fun ContextDetail(
                     }
                 }
             }
-        } ?: AqLoading(message = AppStrings.CargandoContexto)
+        } ?: AqSkeleton(lines = 4)
     }
 }

@@ -100,6 +100,8 @@ internal fun OperationListScreen(
 ) {
     val operations = viewModel.visibleOperations()
     var visibleCount by remember(operations.size) { mutableStateOf(50) }
+    var operationToDelete by remember { mutableStateOf<Operation?>(null) }
+    var isRefreshing by remember { mutableStateOf(false) }
     // Pestañas cápsula: Todas · Pago · Cobro con
     // CONTEO real; "Comprobantes sueltos" es acción separada, no filtro.
     var typeFilter by androidx.compose.runtime.saveable.rememberSaveable { androidx.compose.runtime.mutableStateOf(0) }
@@ -241,79 +243,105 @@ internal fun OperationListScreen(
             // AqListBody + AqListRow con separadores hairline.
             // Cada fila: insignia direccional + título/concepto + importe
             // coloreado con signo + metadato "ocurrido · Reg:" + tags.
-            AqListBody(
+            AqPullToRefresh(
+                isRefreshing = isRefreshing,
+                onRefresh = { viewModel.onAction(OperationAction.Search(state.query)) },
+                refreshingLabel = AppStrings.Cargando,
                 modifier = Modifier.fillMaxWidth().weight(1f),
             ) {
-                Column {
-                    paged.forEachIndexed { index, operation ->
-                        val syncStatus = syncLookup.status(SyncResource.OPERATION, operation.id)
-                        val amountText = operationAmountText(operation)
-                        val amountColor = if (operation.type == OperationType.COBRO) {
-                            AqColor.Success
-                        } else {
-                            AqColor.Danger
-                        }
-                        val contextName = state.contexts.firstOrNull { it.id == operation.contextId }?.name
-                        val showContextOrSync = contextName != null || syncStatus != ElementSyncStatus.Synced
-                        val isLast = index == paged.lastIndex && paged.size >= filtered.size
+                AqListBody(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Column {
+                        paged.forEachIndexed { index, operation ->
+                            val syncStatus = syncLookup.status(SyncResource.OPERATION, operation.id)
+                            val amountText = operationAmountText(operation)
+                            val amountColor = if (operation.type == OperationType.COBRO) {
+                                AqColor.Success
+                            } else {
+                                AqColor.Danger
+                            }
+                            val contextName = state.contexts.firstOrNull { it.id == operation.contextId }?.name
+                            val showContextOrSync = contextName != null || syncStatus != ElementSyncStatus.Synced
+                            val isLast = index == paged.lastIndex && paged.size >= filtered.size
 
-                        AqListRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = operationTitle(operation),
-                            subtitle = operation.concept?.takeIf { it.isNotBlank() },
-                            // Fecha real del registro: metadato corto en la
-                            // línea del título (patrón de lista de facturas);
-                            // la hora de registro queda con el resto del meta.
-                            endMeta = formatDate(operation.occurredAt),
-                            leading = {
-                                AqIconBadge(
-                                    icon = operationTypeIcon(operation.type),
-                                    tone = operationTypeTone(operation.type),
-                                )
-                            },
-                            trailing = {
-                                amountText?.let {
-                                    AqText(
-                                        it,
-                                        size = AqType.SectionHeader,
-                                        fontWeight = AqWeight.SemiBold,
-                                        color = amountColor,
-                                    )
-                                }
-                            },
-                            meta = {
-                                Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
-                                    ) {
-                                        AqIcon(
-                                            imageVector = AqIcons.Clock,
-                                            contentDescription = null,
-                                            size = AqMetrics.IconSizeCompact,
-                                            tint = AqColor.TextTertiary,
+                            val swipeActions = listOf(
+                                AqSwipeAction(
+                                    label = AppStrings.Editar,
+                                    icon = AqIcons.Edit,
+                                    backgroundColor = AqColor.EmphasisFill,
+                                    contentColor = AqColor.InverseOnSurface,
+                                    onAction = { viewModel.onAction(OperationAction.Edit(operation.id)) },
+                                ),
+                                AqSwipeAction(
+                                    label = AppStrings.Eliminar,
+                                    icon = AqIcons.Trash,
+                                    backgroundColor = AqColor.DangerFill,
+                                    contentColor = AqColor.InverseOnSurface,
+                                    onAction = { operationToDelete = operation },
+                                ),
+                            )
+
+                            AqSwipeActions(actions = swipeActions) {
+                                AqListRow(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    title = operationTitle(operation),
+                                    subtitle = operation.concept?.takeIf { it.isNotBlank() },
+                                    // Fecha real del registro: metadato corto en la
+                                    // línea del título (patrón de lista de facturas);
+                                    // la hora de registro queda con el resto del meta.
+                                    endMeta = formatDate(operation.occurredAt),
+                                    leading = {
+                                        AqIconBadge(
+                                            icon = operationTypeIcon(operation.type),
+                                            tone = operationTypeTone(operation.type),
                                         )
-                                        AqText(
-                                            AppStrings.RegPrefijo + formatTime(operation.createdAt),
-                                            color = AqColor.TextTertiary,
-                                            size = AqType.Caption,
-                                        )
-                                    }
-                                    if (showContextOrSync) {
-                                        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
-                                            contextName?.let {
-                                                AqTonalTag(text = it, tone = AqTone.Neutral)
+                                    },
+                                    trailing = {
+                                        amountText?.let {
+                                            AqText(
+                                                it,
+                                                size = AqType.SectionHeader,
+                                                fontWeight = AqWeight.SemiBold,
+                                                color = amountColor,
+                                            )
+                                        }
+                                    },
+                                    meta = {
+                                        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+                                            ) {
+                                                AqIcon(
+                                                    imageVector = AqIcons.Clock,
+                                                    contentDescription = null,
+                                                    size = AqMetrics.IconSizeCompact,
+                                                    tint = AqColor.TextTertiary,
+                                                )
+                                                AqText(
+                                                    AppStrings.RegPrefijo + formatTime(operation.createdAt),
+                                                    color = AqColor.TextTertiary,
+                                                    size = AqType.Caption,
+                                                )
                                             }
-                                            if (syncStatus != ElementSyncStatus.Synced) {
-                                                AqTonalTag(text = syncStatus.label, tone = syncStatus.tone())
+                                            if (showContextOrSync) {
+                                                Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
+                                                    contextName?.let {
+                                                        AqTonalTag(text = it, tone = AqTone.Neutral)
+                                                    }
+                                                    if (syncStatus != ElementSyncStatus.Synced) {
+                                                        AqTonalTag(text = syncStatus.label, tone = syncStatus.tone())
+                                                    }
+                                                }
                                             }
                                         }
-                                    }
-                                }
-                            },
-                            onClick = { viewModel.onAction(OperationAction.Open(operation.id)) },
-                            showDivider = !isLast,
-                        )
+                                    },
+                                    onClick = { viewModel.onAction(OperationAction.Open(operation.id)) },
+                                    showDivider = !isLast,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -329,6 +357,21 @@ internal fun OperationListScreen(
                 )
             }
         }
+    }
+
+    operationToDelete?.let { op ->
+        AqDialog(
+            title = AppStrings.EliminarOperacion,
+            destructive = true,
+            message = AppStrings.irreversibleActionWarning,
+            confirmLabel = AppStrings.Eliminar,
+            onConfirm = {
+                viewModel.onAction(OperationAction.Delete(op.id))
+                operationToDelete = null
+            },
+            dismissLabel = AppStrings.Cancelar,
+            onDismiss = { operationToDelete = null },
+        )
     }
 }
 

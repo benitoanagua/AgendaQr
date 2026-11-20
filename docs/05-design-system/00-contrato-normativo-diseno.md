@@ -208,7 +208,7 @@ referencia de patrones de interacción móvil**: accordion en S07
 (`AqChipGroup`), feedback de error en `AqPinDots`. No hay dependencia
 Flutter ni `moon_design`, ni tokens Moon; la API pública es `Aq*`.
 La clasificación completa patrón a patrón vive en
-[`12-matriz-cobertura-polaris-moon-agendaqr.md`](12-matriz-cobertura-polaris-moon-agendaqr.md).
+[`11-matriz-gaps-mobile.md`](11-matriz-gaps-mobile.md).
 
 ### Cadena de precedencia para patrones sin equivalente Polaris (9.0, ADR-0029)
 
@@ -229,9 +229,9 @@ La navegación raíz es nativa por esta cadena (Polaris se consulta primero y no
 táctil móvil; Moon se consulta segundo y no trae bottom navigation/FAB/search/swipe/refresh/
 pickers/skeleton/empty state/list cell), nunca por omisión directa. La evidencia
 patrón a patrón está en
-[`11-matriz-gaps-mobile.md`](11-matriz-gaps-mobile.md) (y su predecesora [`14-matriz-gaps-mobile.md`](14-matriz-gaps-mobile.md)) y la fidelidad de la
+[`11-matriz-gaps-mobile.md`](11-matriz-gaps-mobile.md) y la fidelidad de la
 capa visual en
-[`10-auditoria-fidelidad.md`](10-auditoria-fidelidad.md) (y [`13-auditoria-fidelidad-mobile.md`](13-auditoria-fidelidad-mobile.md)).
+[`10-auditoria-fidelidad.md`](10-auditoria-fidelidad.md).
 
 ## 7. Registro de versiones
 
@@ -248,4 +248,4 @@ capa visual en
 
 La historia detallada de la revisión y el estado final, incluido lo que no se
 puede verificar en este entorno, está en
-[`10-auditoria-fidelidad-polaris.md`](10-auditoria-fidelidad-polaris.md).
+[`10-auditoria-fidelidad-polaris.md`](historico/10-auditoria-fidelidad-polaris.md).
