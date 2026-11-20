@@ -14,11 +14,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.core.ui.components.AqBadge
+import com.agendaqr.core.ui.components.AqBottomAction
 import com.agendaqr.core.ui.components.AqCarousel
+import com.agendaqr.core.ui.components.AqCheckbox
 import com.agendaqr.core.ui.components.AqCarouselItem
 import com.agendaqr.core.ui.components.AqCompactAction
 import com.agendaqr.core.ui.components.AqPullToRefresh
@@ -38,6 +41,7 @@ import com.agendaqr.core.ui.components.AqListBody
 import com.agendaqr.core.ui.components.AqNavChromeState
 import com.agendaqr.core.ui.components.AqOverflowAction
 import com.agendaqr.core.ui.components.AqScreenScaffold
+import com.agendaqr.core.ui.components.AqSelectionBar
 import com.agendaqr.core.ui.components.AqSectionHeader
 import com.agendaqr.core.ui.components.AqTappableCard
 import com.agendaqr.core.ui.components.AqSkeleton
@@ -87,18 +91,38 @@ fun DestinationsScreen(
     var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
     val paged = state.visibleDestinations.take(visibleCount)
     val favorites = state.favorites
+    // G3: modo selección por lote en destinos.
+    var selectedIds by rememberSaveable { mutableStateOf(setOf<String>()) }
+    var confirmarEliminarLote by remember { mutableStateOf(false) }
+    val selectionMode = selectedIds.isNotEmpty()
 
     AqScreenScaffold(
         scrollable = state.destinations.isNotEmpty(),
         topBar = {
-            AqTopBar(
-                title = AppStrings.Inicio,
-                overflowActions = listOf(
-                    AqOverflowAction(AppStrings.CuentaYRespaldo, onClick = onOpenAccount),
-                    AqOverflowAction(AppStrings.Bloquear, onClick = onLock),
-                ),
-                overflowLabel = AppStrings.Mas,
-            )
+            if (selectionMode) {
+                val selectAll = state.destinations.isNotEmpty() && selectedIds.size == state.destinations.size
+                AqSelectionBar(
+                    closeLabel = AppStrings.CerrarSeleccion,
+                    selectAllLabel = if (selectAll) AppStrings.SeleccionarNinguno else AppStrings.SeleccionarTodo,
+                    selectedCountLabel = "${selectedIds.size} ${AppStrings.Seleccionados}",
+                    selectedCount = selectedIds.size,
+                    totalCount = state.destinations.size,
+                    selectAllChecked = selectAll,
+                    onSelectAll = {
+                        selectedIds = if (selectAll) emptySet() else state.destinations.map { it.id }.toSet()
+                    },
+                    onClose = { selectedIds = emptySet() },
+                )
+            } else {
+                AqTopBar(
+                    title = AppStrings.Inicio,
+                    overflowActions = listOf(
+                        AqOverflowAction(AppStrings.CuentaYRespaldo, onClick = onOpenAccount),
+                        AqOverflowAction(AppStrings.Bloquear, onClick = onLock),
+                    ),
+                    overflowLabel = AppStrings.Mas,
+                )
+            }
         },
         navDestinations = navChrome?.destinations.orEmpty(),
         snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
@@ -107,6 +131,17 @@ fun DestinationsScreen(
         navSelectedId = navChrome?.selectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
         floatingActionButton = null,
+        bottomAction = if (selectionMode) {
+            {
+                AqBottomAction(
+                    label = AppStrings.EliminarDestino + " (${selectedIds.size})",
+                    onClick = { confirmarEliminarLote = true },
+                    enabled = selectedIds.isNotEmpty(),
+                )
+            }
+        } else {
+            null
+        },
         verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
     ) {
         AqSearchTrigger(
@@ -265,6 +300,15 @@ fun DestinationsScreen(
                                         syncLookup,
                                         showDivider = index < paged.lastIndex,
                                         onRequestDelete = { destinationToDelete = it },
+                                        selected = selectedIds.contains(destination.id),
+                                        onToggle = {
+                                            selectedIds = if (selectedIds.contains(destination.id)) {
+                                                selectedIds - destination.id
+                                            } else {
+                                                selectedIds + destination.id
+                                            }
+                                        },
+                                        swipeEnabled = !selectionMode,
                                     )
                                 }
                             }
@@ -305,6 +349,26 @@ fun DestinationsScreen(
             },
             dismissLabel = AppStrings.Cancelar,
             onDismiss = { destinationToDelete = null },
+        )
+    }
+
+    // G3: confirmación de eliminación por lote en destinos.
+    confirmarEliminarLote?.let {
+        val plural = if (selectedIds.size == 1) AppStrings.OperacionSingular else AppStrings.OperacionesPlural
+        AqDialog(
+            title = AppStrings.EliminarDestino,
+            destructive = true,
+            message = AppStrings.irreversibleActionWarning + "\n" + selectedIds.size + " " + plural,
+            confirmLabel = AppStrings.Eliminar,
+            onConfirm = {
+                selectedIds.toList().forEach { id ->
+                    onAction(DestinationAction.Delete(id))
+                }
+                selectedIds = emptySet()
+                confirmarEliminarLote = false
+            },
+            dismissLabel = AppStrings.Cancelar,
+            onDismiss = { confirmarEliminarLote = false },
         )
     }
 }
@@ -357,6 +421,12 @@ fun DestinationRow(
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
     showDivider: Boolean = false,
     onRequestDelete: ((Destination) -> Unit)? = null,
+    /** G3: fila seleccionada (modo selección por lote). */
+    selected: Boolean = false,
+    /** G3: alterna la selección en vez de navegar. */
+    onToggle: (() -> Unit)? = null,
+    /** G3: las acciones de deslizamiento se deshabilitan en modo selección. */
+    swipeEnabled: Boolean = true,
 ) {
     // Fila del destino: miniatura QR a la izquierda, título con
     // identidad, metadato de sincronización y favorito a la derecha.
@@ -365,9 +435,19 @@ fun DestinationRow(
             title = destination.name.ifBlank { AppStrings.SinNombre },
             subtitle = destinationSubtitle(destination),
             showDivider = showDivider,
-            onClick = { onAction(DestinationAction.Open(destination.id)) },
+            onClick = {
+                if (onToggle != null) onToggle() else onAction(DestinationAction.Open(destination.id))
+            },
             leading = {
-                AqIconBadge(icon = AqIcons.QrCode, tone = AqTone.Neutral)
+                if (selected) {
+                    AqCheckbox(
+                        label = "",
+                        checked = selected,
+                        onCheckedChange = { onToggle?.invoke() },
+                    )
+                } else {
+                    AqIconBadge(icon = AqIcons.QrCode, tone = AqTone.Neutral)
+                }
             },
             meta = {
                 Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
@@ -409,7 +489,7 @@ fun DestinationRow(
                 onAction = { onRequestDelete(destination) },
             ),
         )
-        AqSwipeActions(actions = swipeActions) {
+        AqSwipeActions(actions = swipeActions, enabled = swipeEnabled) {
             rowContent()
         }
     } else {
