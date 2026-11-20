@@ -1,10 +1,11 @@
 # Contrato normativo de diseño
 
-**Estado:** Normativo — versión 8.5
+**Estado:** Normativo — versión 9.0
 **Autoridad:** [ADR-0025](../07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md),
 [ADR-0026](../07-decisiones/ADR-0026-cierre-migracion-polaris-core-ui.md),
 [ADR-0027](../07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md),
-[ADR-0028](../07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md) y este
+[ADR-0028](../07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md),
+[ADR-0029](../07-decisiones/ADR-0029-cadena-precedencia-polaris-moon-nativo.md) y este
 documento. La especificación UX/UI V1 conserva el contrato funcional
 congelado; su dirección visual queda descongelada y se rige por aquí.
 
@@ -209,6 +210,29 @@ Flutter ni `moon_design`, ni tokens Moon; la API pública es `Aq*`.
 La clasificación completa patrón a patrón vive en
 [`12-matriz-cobertura-polaris-moon-agendaqr.md`](12-matriz-cobertura-polaris-moon-agendaqr.md).
 
+### Cadena de precedencia para patrones sin equivalente Polaris (9.0, ADR-0029)
+
+Polaris sigue siendo la única autoridad visual. Cuando un patrón móvil no
+tiene respuesta en Polaris, la decisión baja por esta cadena y solo un
+nivel si el anterior está descartado por escrito:
+
+1. **Polaris** — convenciones, tokens, componentes y patrones. Si solo hay
+   guía de escritorio, se anota «Polaris sin guía mobile» y se adapta con
+   sus tokens, densidad y jerarquía.
+2. **Moon Design** (`moon_design` 1.1.0) — solo como referencia de
+   anatomía, estados, tamaños y gestos. El estilo se reemplaza al 100 %
+   por tokens Polaris; no hay dependencia Flutter ni `moon_design`.
+3. **Nativo** Android (Material 3) / iOS (HIG) — solo si los niveles 1 y 2
+   están descartados; se estiliza con tokens Polaris.
+
+La navegación raíz es nativa por esta cadena (Polaris no define navegación
+táctil móvil; Moon no trae bottom navigation/FAB/search/swipe/refresh/
+pickers/skeleton/empty state/list cell), no por omisión. La evidencia
+patrón a patrón está en
+[`14-matriz-gaps-mobile.md`](14-matriz-gaps-mobile.md) y la fidelidad de la
+capa visual en
+[`13-auditoria-fidelidad-mobile.md`](13-auditoria-fidelidad-mobile.md).
+
 ## 7. Registro de versiones
 
 | Versión | Cambio |
@@ -220,6 +244,7 @@ La clasificación completa patrón a patrón vive en
 | 8.3 | Segunda pasada de fidelidad visual: radios publicados (`radius-200` en botones y etiquetas, `radius-100` en contadores de filtro, `radius-300` en tarjetas y cuerpos de lista, `radius-400` en diálogos), borde fino del botón secundario, borde hairline de `AqListBody`, paso por defecto de 16 dp entre organismos y contenido expandido limitado a `ContentMaxWidth` y centrado. |
 | 8.4 | Jerarquía unificada: `AqTabs` comparte pista/píldora/badge con `AqSegmentedControl` y gana `AqTab.count`, scroll y estado deshabilitado; `AqFilterChip` se sustituye por `AqChipGroup` (selección inequívoca: check + relleno + borde); `AqFormSection`/`AqFormField` y el marcador `optionalLabel` fijan la jerarquía de formulario; el banner separa icono de estado (`AqTone.iconVector`) del cierre (`AqIcons.Close`); `AqIcons.Erase` pasa a `BackspaceIcon` y se añaden `Close`, `Check` y `AlertCircle`. Se documenta la regla "un patrón = un componente" y los criterios de tabs vs segmentado, tipos de botón, formularios y alertas. |
 | 8.5 | Se registra la referencia móvil Moon (ADR-0028): Polaris sigue como autoridad visual; Moon solo informa patrones de interacción (accordion S07, chips de filtro S04/S12, error de PIN S00). `AqExpansionPanel` limita el toggle al encabezado y expone semántica `expanded` + tags; `AqPinDots` acepta `error` sin contenido accesible propio. |
+| 9.0 | Se formaliza la cadena de precedencia Polaris → Moon → nativo (ADR-0029) para patrones sin equivalente Polaris, con la matriz de gaps `14-matriz-gaps-mobile.md` y la auditoría de fidelidad móvil `13-auditoria-fidelidad-mobile.md`. Corrección tipográfica a la escala `light-mobile`: `Amount` 32 sp (`heading-2xl` móvil), `CaptionSmall`/`Tag` 12 sp (`body-xs` móvil) y título de `AqTopBar` 18 sp semibold (`heading-lg` móvil). |
 
 La historia detallada de la revisión y el estado final, incluido lo que no se
 puede verificar en este entorno, está en
