@@ -226,6 +226,7 @@ fun AqTappableCard(
             .aqElevation(AqElevation.Shadow1, shape)
             .background(if (pressed) AqColor.SurfaceActive else AqColor.Surface, shape)
             .border(AqMetrics.Border, AqColor.Border, shape)
+            .semantics(mergeDescendants = true) {}
             .clickable(
                 role = Role.Button,
                 interactionSource = interactionSource,
