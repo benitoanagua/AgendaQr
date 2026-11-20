@@ -17,6 +17,8 @@ import com.agendaqr.core.ui.components.AqEmptyState
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqBottomAction
+import com.agendaqr.core.ui.components.AqProgress
+import com.agendaqr.core.ui.components.AqProgressBar
 import com.agendaqr.core.ui.components.AqQrPreview
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqTopBar
@@ -81,6 +83,12 @@ fun ImportReviewScreen(
                 tone = AqTone.Danger,
                 action = bannerAction,
                 dismiss = bannerDismiss,
+            )
+        }
+        if (isSaving) {
+            AqProgressBar(
+                progress = AqProgress(1f),
+                contentDescription = AppStrings.Guardando,
             )
         }
         if (assets.isEmpty()) {

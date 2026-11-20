@@ -23,6 +23,7 @@ import com.agendaqr.core.ui.components.AqMultilineTextField
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqQrPreview
 import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqSwitch
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextField
 import com.agendaqr.core.ui.components.AqTopBar
@@ -80,6 +81,7 @@ private fun DestinationEditorContent(
     var name by rememberSaveable(existing.name) { mutableStateOf(existing.name) }
     var category by rememberSaveable(existing.category) { mutableStateOf(existing.category.orEmpty()) }
     var note by rememberSaveable(existing.note) { mutableStateOf(existing.note.orEmpty()) }
+    var favorite by rememberSaveable(existing.favorite) { mutableStateOf(existing.favorite) }
     var qr by remember(existing.qr) { mutableStateOf(existing.qr) }
     // S08: selección de contexto con semántica explícita — Cancelar no
     // toca la selección; Quitar contexto es la única vía de limpiarla.
@@ -126,6 +128,7 @@ private fun DestinationEditorContent(
                             name = name.trim(),
                             category = category.trim().ifBlank { null },
                             note = note.trim().ifBlank { null },
+                            favorite = favorite,
                             qr = qr,
                             contextId = selection.contextId,
                             updatedAt = now,
@@ -169,6 +172,11 @@ private fun DestinationEditorContent(
                     label = AppStrings.Nota,
                     value = note,
                     onValueChange = { note = it },
+                )
+                AqSwitch(
+                    label = AppStrings.Favorito,
+                    checked = favorite,
+                    onCheckedChange = { favorite = it },
                 )
             }
         }

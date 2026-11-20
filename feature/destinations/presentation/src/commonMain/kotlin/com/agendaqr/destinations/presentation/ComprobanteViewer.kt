@@ -60,7 +60,7 @@ internal fun ComprobanteViewerDialog(
                 // estado de sincronización del comprobante, con texto.
                 ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                 when {
-                    state.isLoadingComprobante -> AqLoading(message = AppStrings.AbriendoComprobante)
+                    state.isLoadingComprobante -> AqSkeleton(lines = 3)
                     bytes != null -> {
                         ComprobantePreview(bytes, receipt.mimeType)
                         AqSecondaryButton(
