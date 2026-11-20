@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.state.ToggleableState
 import com.agendaqr.core.ui.components.AqSnackbarHost
 import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.components.AqExtendedFab
@@ -107,6 +108,12 @@ internal fun OperationListScreen(
     var visibleCount by remember(operations.size) { mutableStateOf(50) }
     var operationToDelete by remember { mutableStateOf<Operation?>(null) }
     var isRefreshing by remember { mutableStateOf(false) }
+    // G3: modo selección por lote (pulsación larga entra en modo;
+    // rememberSaveable conserva la selección entre recreaciones).
+    var selectedIds by rememberSaveable { mutableStateOf(setOf<String>()) }
+    var confirmarEliminarLote by remember { mutableStateOf(false) }
+    val selectionMode = selectedIds.isNotEmpty()
+    val selectAll = operations.isNotEmpty() && selectedIds.size == operations.size
     // Pestañas cápsula: Todas · Pago · Cobro con
     // CONTEO real; "Comprobantes sueltos" es acción separada, no filtro.
     var typeFilter by androidx.compose.runtime.saveable.rememberSaveable { androidx.compose.runtime.mutableStateOf(0) }
@@ -121,7 +128,26 @@ internal fun OperationListScreen(
 
     AqScreenScaffold(
         topBar = {
-            AqTopBar(title = AppStrings.Operaciones)
+            if (selectionMode) {
+                AqSelectionBar(
+                    closeLabel = AppStrings.CerrarSeleccion,
+                    selectAllLabel = if (selectAll) AppStrings.SeleccionarNinguno else AppStrings.SeleccionarTodo,
+                    selectedCountLabel = "${selectedIds.size} ${AppStrings.Seleccionados}",
+                    selectedCount = selectedIds.size,
+                    totalCount = operations.size,
+                    selectAllChecked = operations.isNotEmpty() && selectedIds.size == operations.size,
+                    onSelectAll = {
+                        selectedIds = if (operations.isNotEmpty() && selectedIds.size == operations.size) {
+                            emptySet()
+                        } else {
+                            operations.map { it.id }.toSet()
+                        }
+                    },
+                    onClose = { selectedIds = emptySet() },
+                )
+            } else {
+                AqTopBar(title = AppStrings.Operaciones)
+            }
         },
         navDestinations = navChrome?.destinations.orEmpty(),
         navSelectedId = navChrome?.selectedId,
@@ -134,6 +160,17 @@ internal fun OperationListScreen(
                 icon = AqIcons.Add,
                 onClick = { viewModel.onAction(OperationAction.New) },
             )
+        },
+        bottomAction = if (selectionMode) {
+            {
+                AqBottomAction(
+                    label = AppStrings.EliminarOperacion + " (${selectedIds.size})",
+                    onClick = { confirmarEliminarLote = true },
+                    enabled = selectedIds.isNotEmpty(),
+                )
+            }
+        } else {
+            null
         },
     ) {
         // Grupo de entrada: búsqueda + control segmentado (8 dp).
@@ -252,6 +289,7 @@ internal fun OperationListScreen(
             // LazyColumn (N03): solo se componen las filas visible + búfer.
             AqPullToRefresh(
                 isRefreshing = isRefreshing,
+                enabled = !selectionMode,
                 onRefresh = { viewModel.onAction(OperationAction.Search(state.query)) },
                 refreshingLabel = AppStrings.Cargando,
                 modifier = Modifier.fillMaxWidth().weight(1f),
@@ -291,7 +329,7 @@ internal fun OperationListScreen(
                                 ),
                             )
 
-                            AqSwipeActions(actions = swipeActions) {
+                            AqSwipeActions(actions = swipeActions, enabled = !selectionMode) {
                                 AqListRow(
                                     modifier = Modifier.fillMaxWidth(),
                                     title = operationTitle(operation),
@@ -301,10 +339,24 @@ internal fun OperationListScreen(
                                     // la hora de registro queda con el resto del meta.
                                     endMeta = formatDate(operation.occurredAt),
                                     leading = {
-                                        AqIconBadge(
-                                            icon = operationTypeIcon(operation.type),
-                                            tone = operationTypeTone(operation.type),
-                                        )
+                                        if (selectionMode) {
+                                            AqCheckbox(
+                                                label = "",
+                                                checked = selectedIds.contains(operation.id),
+                                                onCheckedChange = { checked ->
+                                                    selectedIds = if (checked) {
+                                                        selectedIds + operation.id
+                                                    } else {
+                                                        selectedIds - operation.id
+                                                    }
+                                                },
+                                            )
+                                        } else {
+                                            AqIconBadge(
+                                                icon = operationTypeIcon(operation.type),
+                                                tone = operationTypeTone(operation.type),
+                                            )
+                                        }
                                     },
                                     trailing = {
                                         amountText?.let {
@@ -346,7 +398,17 @@ internal fun OperationListScreen(
                                             }
                                         }
                                     },
-                                    onClick = { viewModel.onAction(OperationAction.Open(operation.id)) },
+                                    onClick = {
+                                        if (selectionMode) {
+                                            selectedIds = if (selectedIds.contains(operation.id)) {
+                                                selectedIds - operation.id
+                                            } else {
+                                                selectedIds + operation.id
+                                            }
+                                        } else {
+                                            viewModel.onAction(OperationAction.Open(operation.id))
+                                        }
+                                    },
                                     showDivider = !isLast,
                                 )
                             }
@@ -380,6 +442,26 @@ internal fun OperationListScreen(
             },
             dismissLabel = AppStrings.Cancelar,
             onDismiss = { operationToDelete = null },
+        )
+    }
+
+    // G3: confirmación de eliminación por lote con el conteo.
+    confirmarEliminarLote?.let {
+        val plural = if (selectedIds.size == 1) AppStrings.OperacionSingular else AppStrings.OperacionesPlural
+        AqDialog(
+            title = AppStrings.EliminarOperacion,
+            destructive = true,
+            message = AppStrings.irreversibleActionWarning + "\n" + selectedIds.size + " " + plural,
+            confirmLabel = AppStrings.Eliminar,
+            onConfirm = {
+                selectedIds.toList().forEach { id ->
+                    viewModel.onAction(OperationAction.Delete(id))
+                }
+                selectedIds = emptySet()
+                confirmarEliminarLote = false
+            },
+            dismissLabel = AppStrings.Cancelar,
+            onDismiss = { confirmarEliminarLote = false },
         )
     }
 }

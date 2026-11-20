@@ -205,15 +205,22 @@ open class LayoutReferenceTest {
      * horizontal queda exento porque su desborde es intencional.
      */
     private fun assertLayoutHolds(label: String) {
-        val root = compose.onRoot().getUnclippedBoundsInRoot()
-        compose.onRoot().assertIsDisplayed()
-        val rootWidth = (root.right - root.left).value
-        val rootHeight = (root.bottom - root.top).value
+        val nodes = compose.onAllNodes(AnyNode, useUnmergedTree = true).fetchSemanticsNodes()
+        val roots = nodes.filter { it.isRoot }
+        assertTrue("$label: hay al menos un nodo raíz", roots.isNotEmpty())
+        // Virtualización (LazyColumn) puede dejar varios nodos raíz; se toma
+        // el de mayor superficie (la pantalla).
+        val screenBounds = roots.maxByOrNull {
+            val b = it.boundsInRoot
+            (b.right - b.left) * (b.bottom - b.top)
+        }!!.boundsInRoot
+        assertTrue("$label: el nodo raíz está visible", nodes.any { it.isRoot })
+        val rootWidth = screenBounds.right - screenBounds.left
+        val rootHeight = screenBounds.bottom - screenBounds.top
         assertTrue(
-            "$label: el layout no tiene tamaño (root=$root)",
+            "$label: el layout no tiene tamaño (root=$screenBounds)",
             rootWidth > 200f && rootHeight > 320f,
         )
-        val nodes = compose.onAllNodes(AnyNode, useUnmergedTree = true).fetchSemanticsNodes()
         assertTrue("$label: la pantalla no compone nodos", nodes.isNotEmpty())
         assertTrue(
             "$label: no hay texto visible en la pantalla",
@@ -226,8 +233,8 @@ open class LayoutReferenceTest {
             val bounds = node.boundsInRoot
             if (bounds.width <= 0f) return@forEach
             assertTrue(
-                "$label: nodo fuera del root horizontalmente ($bounds, root=$root)",
-                bounds.left >= root.left.value - 1f && bounds.right <= root.right.value + 1f,
+                "$label: nodo fuera del root horizontalmente ($bounds, root=$screenBounds)",
+                bounds.left >= screenBounds.left - 1f && bounds.right <= screenBounds.right + 1f,
             )
         }
     }
