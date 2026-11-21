@@ -1113,6 +1113,32 @@ tasks.register("verifyScreenContractFixtures") {
     }
 }
 
+tasks.register("verifyUxTransitionContracts") {
+    group = "verification"
+    description = "Validates explicit state graphs and product invariants for critical UX flows."
+    doLast {
+        val violations = uxTransitionContractViolations(UxTransitionContracts.all)
+        if (violations.isNotEmpty()) {
+            throw GradleException("UX transition contract violations (\u0024{violations.size}):\\n" +
+                violations.joinToString("\\n") { "  \u0024it" })
+        }
+        val flowIds = UxTransitionContracts.all.map { it.id }.toSet()
+        require(flowIds.containsAll(setOf("UX-SAVE", "UX-CANCEL", "UX-PERMISSION", "UX-IMPORT", "UX-DELETE"))) {
+            "faltan contratos de flujos UX críticos"
+        }
+        // Mutation fixtures: malformed edge and unknown invariant must be rejected.
+        val valid = UxTransitionContracts.all.first()
+        require(uxTransitionContractViolations(listOf(valid.copy(
+            transitions = valid.transitions + UxTransition("missing-state", "event", "saved")
+        ))).isNotEmpty()) { "una transición con estado inexistente debe fallar" }
+        require(uxTransitionContractViolations(listOf(valid.copy(
+            invariantIds = setOf("UXI-UNKNOWN")
+        ))).isNotEmpty()) { "un invariante desconocido debe fallar" }
+        logger.lifecycle("verifyUxTransitionContracts: PASS (\u0024{UxTransitionContracts.all.size} flujos; " +
+            "\u0024{UxTransitionContracts.invariantDescriptions.size} invariantes)")
+    }
+}
+
 tasks.register("verifyAgendaQrArchitecture") {
     group = "verification"
     dependsOn(
@@ -1123,7 +1149,7 @@ tasks.register("verifyAgendaQrArchitecture") {
         "verifyControlMinSize",
         "verifyDocs",
         "verifyScreenContract",
-        "verifyScreenContractFixtures",
+        "verifyScreenContractFixtures",\n        "verifyUxTransitionContracts",
     )
     description = "Runs the complete Agenda QR architecture and design-system gates."
 }
