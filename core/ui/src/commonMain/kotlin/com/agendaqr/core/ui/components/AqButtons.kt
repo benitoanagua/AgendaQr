@@ -1,25 +1,26 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,263 +30,275 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqAlpha
-import com.agendaqr.core.ui.theme.AqWeight
-import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqColorScheme
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqEffects
 import com.agendaqr.core.ui.theme.AqMetrics
-import com.agendaqr.core.ui.theme.AqShapes
-import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqSize
+import com.agendaqr.core.ui.theme.AqSquircles
+import com.agendaqr.core.ui.theme.AqStateAlpha
+import com.agendaqr.core.ui.theme.AqStroke
 import com.agendaqr.core.ui.theme.AqTextStyles
-import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
+import com.agendaqr.core.ui.theme.AqMotion
 
-enum class AqButtonVariant { Primary, Default, Danger, Light, Outline, Text }
+/**
+ * Botón unificado sobre [MoonButton] (`moon_design` 1.1.0,
+ * `lib/src/widgets/buttons/button.dart`). Una sola API con variante, tamaño,
+ * estados y efectos de foco / escala de Moon. El color y la tipografía vienen
+ * de Polaris; la forma, el espacio, el borde y el movimiento, de Moon.
+ *
+ * Reglas de Moon respetadas:
+ * - Cinco tamaños visuales (xs, sm, md, lg, xl) con su altura, relleno
+ *   horizontal, hueco ícono–etiqueta, radio y tamaño de ícono propios
+ *   (`MoonButtonSizes`).
+ * - Radio squircle del borde interactivo de cada tamaño (`MoonBorders`).
+ * - Efecto de foco (borde de énfasis), escala al pulsar (0,95) y opacidad de
+ *   deshabilitado (0,6) de `MoonBaseControl` / `MoonEffectsTheme`.
+ * - Área táctil mínima de 48 dp (D-02): cuando el tamaño visual es menor
+ *   (xs, sm), se conserva el aspecto y se amplía el área táctil.
+ * - Sin ripple: los estados se resuelven en cambio de color de token.
+ *
+ * La API pública histórica (`AqPrimaryButton`, `AqSecondaryButton`,
+ * `AqOutlineButton`, `AqDangerButton`, `AqTextAction`, `AqCompactAction`,
+ * `AqIconButton`) se conserva como envolturas delegadoras durante la
+ * migración de pantallas; se retiran en el cierre del viraje.
+ */
+enum class AqButtonVariant { Filled, Outlined, Text, Primary, Default, Danger, Light, Outline }
+
+/** Variantes históricas (Primary/Default/Danger/Light/Outline) mapeadas a las de Moon. */
+internal fun AqButtonVariant.asMoonVariant(): AqButtonVariant = when (this) {
+    AqButtonVariant.Primary, AqButtonVariant.Danger -> AqButtonVariant.Filled
+    AqButtonVariant.Default, AqButtonVariant.Outline -> AqButtonVariant.Outlined
+    AqButtonVariant.Light -> AqButtonVariant.Text
+    else -> this
+}
 
 enum class AqButtonSize(
     val visualHeight: Dp,
     val horizontalPadding: Dp,
     val iconSize: Dp,
+    val gap: Dp,
+    val corner: Shape,
 ) {
-    Large(
-        visualHeight = AqMetrics.ButtonLargeHeight,
-        horizontalPadding = AqMetrics.ButtonLargeHorizontalPadding,
-        iconSize = AqMetrics.IconSize,
+    Xs(
+        visualHeight = AqSize.Xs,
+        horizontalPadding = AqSize.X4s,
+        iconSize = AqSize.X2s,
+        gap = AqSize.X5s,
+        corner = AqSquircles.InteractiveXs,
     ),
-    Medium(
-        visualHeight = AqMetrics.ButtonCompactHeight,
-        horizontalPadding = AqSpacing.Lg,
-        iconSize = AqMetrics.ButtonMediumIconSize,
+    Sm(
+        visualHeight = AqSize.Sm,
+        horizontalPadding = AqSize.X3s,
+        iconSize = AqSize.Xs,
+        gap = AqSize.X5s,
+        corner = AqSquircles.InteractiveSm,
     ),
-    Small(
-        visualHeight = AqMetrics.ButtonSmallHeight,
-        horizontalPadding = AqSpacing.Md,
-        iconSize = AqMetrics.IconSizeCompact,
+    Md(
+        visualHeight = AqSize.Md,
+        horizontalPadding = AqSize.X2s,
+        iconSize = AqSize.Xs,
+        gap = AqSize.X4s,
+        corner = AqSquircles.InteractiveSm,
     ),
-    ExtraSmall(
-        visualHeight = AqMetrics.ButtonExtraSmallHeight,
-        horizontalPadding = AqSpacing.Sm,
-        iconSize = AqMetrics.IconSizeCompact,
+    Lg(
+        visualHeight = AqSize.Lg,
+        horizontalPadding = AqSize.X2s,
+        iconSize = AqSize.Xs,
+        gap = AqSize.X3s,
+        corner = AqSquircles.InteractiveSm,
     ),
+    Xl(
+        visualHeight = AqSize.Xl,
+        horizontalPadding = AqSize.Xs,
+        iconSize = AqSize.Xs,
+        gap = AqSize.X2s,
+        corner = AqSquircles.InteractiveMd,
+    );
 }
 
+/** Colores resueltos por variante, estado y tema (Polaris). */
 internal data class AqButtonColors(
     val container: Color,
     val content: Color,
     val border: Color? = null,
 )
 
+/** Resuelve los colores del botón para el estado actual. */
 internal fun resolveAqButtonColors(
-    variant: AqButtonVariant,
     scheme: AqColorScheme,
+    variant: AqButtonVariant,
     enabled: Boolean,
     pressed: Boolean,
-): AqButtonColors = when (variant) {
-    AqButtonVariant.Primary -> when {
-        !enabled -> AqButtonColors(scheme.brandFillDisabled, scheme.onBrandFillDisabled)
-        pressed -> AqButtonColors(scheme.brandFillActive, scheme.onBrandFill)
-        else -> AqButtonColors(scheme.brandFill, scheme.onBrandFill)
+    focused: Boolean,
+): AqButtonColors {
+    val moonVariant = variant.asMoonVariant()
+    return when (moonVariant) {
+        AqButtonVariant.Filled -> when {
+            !enabled -> AqButtonColors(scheme.brandFillDisabled, scheme.onBrandFillDisabled)
+            pressed -> AqButtonColors(scheme.brandFillActive, scheme.onBrandFill)
+            focused -> AqButtonColors(scheme.brandFillHover, scheme.onBrandFill)
+            else -> AqButtonColors(scheme.brandFill, scheme.onBrandFill)
+        }
+        AqButtonVariant.Outlined -> when {
+            !enabled -> AqButtonColors(scheme.transparent, scheme.onDisabled, scheme.border)
+            pressed -> AqButtonColors(scheme.surfaceActive, scheme.textPrimary, scheme.border)
+            focused -> AqButtonColors(scheme.transparent, scheme.textPrimary, scheme.focus)
+            else -> AqButtonColors(scheme.transparent, scheme.textPrimary, scheme.border)
+        }
+        AqButtonVariant.Text -> when {
+            !enabled -> AqButtonColors(scheme.transparent, scheme.onDisabled)
+            pressed -> AqButtonColors(scheme.surfaceActive, scheme.emphasisFill)
+            focused -> AqButtonColors(scheme.transparent, scheme.emphasisFill, scheme.focus)
+            else -> AqButtonColors(scheme.transparent, scheme.link)
+        }
+        else -> AqButtonColors(scheme.transparent, scheme.textPrimary)
     }
-    AqButtonVariant.Default -> when {
-        !enabled -> AqButtonColors(scheme.disabled, scheme.textTertiary)
-        pressed -> AqButtonColors(scheme.surfaceActive, scheme.textPrimary, scheme.border)
-        else -> AqButtonColors(scheme.surface, scheme.textPrimary, scheme.border)
-    }
-    AqButtonVariant.Danger -> when {
-        !enabled -> AqButtonColors(scheme.dangerDisabled, scheme.textPrimary)
-        pressed -> AqButtonColors(scheme.dangerActive, scheme.onDanger)
-        else -> AqButtonColors(scheme.dangerFill, scheme.onDanger)
-    }
-    AqButtonVariant.Light -> when {
-        !enabled -> AqButtonColors(scheme.disabled, scheme.textTertiary)
-        pressed -> AqButtonColors(scheme.emphasisSurfaceHover, scheme.emphasisText)
-        else -> AqButtonColors(scheme.emphasisSurface, scheme.emphasisText)
-    }
-    AqButtonVariant.Outline -> AqButtonColors(
-        container = if (pressed && enabled) scheme.surfaceActive else scheme.transparent,
-        content = if (enabled) scheme.textPrimary else scheme.textTertiary,
-        border = scheme.functionalBorder,
-    )
-    AqButtonVariant.Text -> AqButtonColors(
-        container = if (pressed && enabled) scheme.surfaceActive else scheme.transparent,
-        content = if (enabled) scheme.link else scheme.textTertiary,
-    )
 }
 
-/** Polaris button with a 48 dp interaction target and compact visual size. */
+/**
+ * Botón Moon. [onClick] nulo deshabilita el control (semántica
+ * `enabled = false`), como `MoonButton` (habilitado solo si hay `onTap`).
+ *
+ * - [variant]: `Filled` (relleno de marca), `Outlined` (contorneado), `Text`
+ *   (solo texto).
+ * - [size]: `Xs` … `Xl`; el tamaño visual es el de Moon y el área táctil se
+ *   eleva a 48 dp cuando el visual es menor.
+ * - [isLoading]: oculta la etiqueta y muestra el indicador de carga de Moon.
+ * - [busyDescription]: `stateDescription` anunciado mientras carga.
+ */
 @Composable
 fun AqButton(
     label: String,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
-    variant: AqButtonVariant = AqButtonVariant.Primary,
-    size: AqButtonSize = AqButtonSize.Large,
+    variant: AqButtonVariant = AqButtonVariant.Filled,
+    size: AqButtonSize = AqButtonSize.Lg,
     enabled: Boolean = true,
     isLoading: Boolean = false,
+    /** `stateDescription` anunciado mientras el botón carga. */
     busyDescription: String? = null,
     icon: ImageVector? = null,
+    /** Contenido adicional tras la etiqueta (p. ej. chevron). */
+    trailing: (@Composable () -> Unit)? = null,
+    /** Color de contenido explícito; anula el del tema para la variante. */
     contentColor: Color? = null,
-    fontWeight: FontWeight? = null,
-    contentPadding: PaddingValues? = null,
-) {
-    AqButtonImpl(
-        label = label,
-        onClick = onClick,
-        modifier = modifier,
-        variant = variant,
-        size = size,
-        enabled = enabled,
-        isLoading = isLoading,
-        busyDescription = busyDescription,
-        icon = icon,
-        contentColor = contentColor,
-        fontWeight = fontWeight,
-        contentPadding = contentPadding,
-        hapticFeedback = false,
-    )
-}
-
-@Composable
-private fun AqButtonImpl(
-    label: String,
-    onClick: () -> Unit,
-    modifier: Modifier,
-    variant: AqButtonVariant,
-    size: AqButtonSize,
-    enabled: Boolean,
-    isLoading: Boolean,
-    busyDescription: String?,
-    icon: ImageVector?,
-    contentColor: Color?,
-    fontWeight: FontWeight?,
-    contentPadding: PaddingValues?,
-    hapticFeedback: Boolean,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
-    val isEnabled = enabled && !isLoading
-    val resolved = resolveAqButtonColors(
-        variant = variant,
-        scheme = LocalAqColorScheme.current,
-        enabled = isEnabled,
-        pressed = pressed,
+    val focused by interactionSource.collectIsFocusedAsState()
+    val isEnabled = enabled && onClick != null && !isLoading
+    val colors = resolveAqButtonColors(
+        LocalAqColorScheme.current, variant, isEnabled, pressed, focused,
     )
-    val foreground = contentColor?.takeIf { isEnabled } ?: resolved.content
-    val labelStyle = if (size == AqButtonSize.Small || size == AqButtonSize.ExtraSmall) {
-        AqTextStyles.ButtonLabel.copy(
-            fontSize = AqType.Body,
-            lineHeight = AqType.LineHeightBody,
-        )
-    } else {
-        AqTextStyles.ButtonLabel
-    }
-    val shape = AqShapes.Medium
-    val haptics = LocalHapticFeedback.current
+    val foreground = contentColor?.takeIf { isEnabled } ?: colors.content
+
+    val containerColor by animateColorAsState(
+        targetValue = if (isLoading) Color.Transparent else colors.container,
+        animationSpec = tween(
+            durationMillis = AqMotion.DurationMediumMs,
+            easing = AqMotion.Easings.InOutCubic,
+        ),
+    )
+    val contentAlpha by animateFloatAsState(
+        targetValue = if (isEnabled) 1f else AqStateAlpha.Disabled,
+        animationSpec = tween(
+            durationMillis = AqMotion.DurationMediumMs,
+            easing = AqMotion.Easings.InOutCubic,
+        ),
+    )
+
+    val clickModifier = Modifier.clickable(
+        enabled = isEnabled,
+        role = Role.Button,
+        onClickLabel = label,
+        interactionSource = interactionSource,
+        indication = null,
+        onClick = { onClick?.invoke() },
+    )
     val buttonModifier = modifier
-        .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-        .clip(shape)
-        .then(
-            if (isLoading && busyDescription != null) {
-                Modifier.semantics { stateDescription = busyDescription }
-            } else {
-                Modifier
-            },
-        )
-        .clickable(
-            enabled = isEnabled,
-            role = Role.Button,
-            onClickLabel = label,
-            interactionSource = interactionSource,
-            // Sin ripple: el estado presionado se resuelve en `resolved`
-            // y se refleja como cambio de color del token.
-            indication = null,
-            onClick = {
-                if (hapticFeedback) {
-                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                }
-                onClick()
-            },
-        )
-    Layout(
+        .defaultMinSize(minHeight = AqMetrics.ControlMinSize, minWidth = AqMetrics.ControlMinSize)
+        .then(clickModifier)
+
+    Box(
         modifier = buttonModifier,
-        content = {
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(size.visualHeight)
+                .clip(size.corner)
+                .background(containerColor, size.corner)
+                .then(if (variant == AqButtonVariant.Outlined && isEnabled) {
+                    Modifier.border(
+                        AqStroke.Default,
+                        colors.border ?: AqColor.Border,
+                        size.corner,
+                    )
+                } else {
+                    Modifier
+                })
+                .then(if (focused && isEnabled) {
+                    Modifier.border(
+                        AqStroke.Active,
+                        AqColor.Focus,
+                        size.corner,
+                    )
+                } else {
+                    Modifier
+                })
+                .then(if (isLoading) Modifier.alpha(0f) else Modifier)
+                .padding(horizontal = size.horizontalPadding),
+            contentAlignment = Alignment.Center,
+        ) {
             Row(
-                modifier = Modifier
-                    .heightIn(min = size.visualHeight)
-                    .clip(shape)
-                    .background(resolved.container, shape)
-                    .then(
-                        resolved.border?.let { Modifier.border(AqMetrics.Border, it, shape) } ?: Modifier,
-                    )
-                    .padding(
-                        contentPadding
-                            ?: PaddingValues(
-                                horizontal = size.horizontalPadding,
-                                vertical = AqSpacing.None,
-                            ),
-                    )
-                    .then(if (isLoading) Modifier.alpha(AqAlpha.Hidden) else Modifier),
+                modifier = Modifier,
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+                horizontalArrangement = Arrangement.spacedBy(size.gap),
             ) {
                 icon?.let {
                     AqIcon(
                         imageVector = it,
                         contentDescription = null,
                         size = size.iconSize,
-                        tint = foreground,
+                        tint = foreground.copy(alpha = contentAlpha),
                     )
                 }
-                Text(
-                    text = label,
-                    style = labelStyle,
-                    fontWeight = fontWeight ?: AqWeight.SemiBold,
-                    color = foreground,
-                )
+                if (!isLoading) {
+                    Text(
+                        text = label,
+                        style = AqTextStyles.ButtonLabel,
+                        color = foreground.copy(alpha = contentAlpha),
+                    )
+                }
+                trailing?.invoke()
             }
             if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(size.iconSize),
-                    color = foreground,
+                AqCircularLoader(
+                    loaderSize = size.iconSize,
+                    contentDescription = busyDescription,
+                    color = foreground.copy(alpha = contentAlpha),
                 )
             }
-        },
-        measurePolicy = { measurables, constraints ->
-            val rowConstraints = constraints.copy(
-                minWidth = if (constraints.hasFixedWidth) constraints.maxWidth else constraints.minWidth,
-                minHeight = minOf(size.visualHeight.roundToPx(), constraints.maxHeight),
-            )
-            val row = measurables.first().measure(rowConstraints)
-            val width = row.width.coerceIn(constraints.minWidth, constraints.maxWidth)
-            val height = maxOf(row.height, AqMetrics.ControlMinSize.roundToPx())
-                .coerceIn(constraints.minHeight, constraints.maxHeight)
-            val spinner = if (isLoading) {
-                val spinnerSize = size.iconSize.roundToPx()
-                measurables[1].measure(Constraints.fixed(spinnerSize, spinnerSize))
-            } else {
-                null
-            }
-            layout(width, height) {
-                row.placeRelative((width - row.width) / 2, (height - row.height) / 2)
-                spinner?.placeRelative((width - spinner.width) / 2, (height - spinner.height) / 2)
-            }
-        },
-    )
+        }
+    }
 }
 
-/** Primary action with the Polaris brand fill and accessible foreground. */
+/** @deprecated Usa [AqButton] con [AqButtonVariant.Filled]. */
 @Composable
 fun AqPrimaryButton(
     label: String,
@@ -293,71 +306,24 @@ fun AqPrimaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
-    /** stateDescription de "ocupado" (texto del llamador). */
     busyDescription: String? = null,
-    /** Glifo decorativo: la etiqueta visible sigue siendo el nombre
-     * accesible (contrato de accesibilidad). */
     icon: ImageVector? = null,
-    size: AqButtonSize = AqButtonSize.Large,
+    size: AqButtonSize = AqButtonSize.Lg,
 ) {
-    AqButtonImpl(
+    AqButton(
         label = label,
         onClick = onClick,
         modifier = modifier,
-        variant = AqButtonVariant.Primary,
+        variant = AqButtonVariant.Filled,
         size = size,
         enabled = enabled,
         isLoading = isLoading,
         busyDescription = busyDescription,
         icon = icon,
-        contentColor = null,
-        fontWeight = null,
-        contentPadding = null,
-        hapticFeedback = true,
     )
 }
 
-/**
- * Nivel 4 — Acción destructiva o excepcional.
- * Descartar, eliminar o realizar una operación con consecuencias especiales.
- * NO debe competir visualmente con la acción primaria: usa el tono de peligro
- * y el contenedor correspondientes,
- * con glifo (papelera/aviso por defecto) y la etiqueta específica de
- * consecuencia del llamador (el color nunca es la única señal).
- * Requiere confirmación cuando la acción pueda provocar una pérdida
- * irreversible de información (AqDialog destructive = true).
- */
-@Composable
-fun AqDangerButton(
-    label: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    isLoading: Boolean = false,
-    /** stateDescription de "ocupado" (texto del llamador). */
-    busyDescription: String? = null,
-    /** Glifo de la consecuencia (decorativo: la etiqueta comunica). */
-    icon: ImageVector = AqIcons.Trash,
-    size: AqButtonSize = AqButtonSize.Large,
-) {
-    AqButtonImpl(
-        label = label,
-        onClick = onClick,
-        modifier = modifier,
-        variant = AqButtonVariant.Danger,
-        size = size,
-        enabled = enabled,
-        isLoading = isLoading,
-        busyDescription = busyDescription,
-        icon = icon,
-        contentColor = null,
-        fontWeight = null,
-        contentPadding = null,
-        hapticFeedback = true,
-    )
-}
-
-/** Secondary action; [solid] preserves the legacy mapping to the primary fill. */
+/** @deprecated Usa [AqButton] con [AqButtonVariant.Outlined] o [AqButtonVariant.Text]. */
 @Composable
 fun AqSecondaryButton(
     label: String,
@@ -367,25 +333,21 @@ fun AqSecondaryButton(
     isLoading: Boolean = false,
     icon: ImageVector? = null,
     solid: Boolean = false,
-    size: AqButtonSize = AqButtonSize.Medium,
+    size: AqButtonSize = AqButtonSize.Md,
 ) {
-    AqButtonImpl(
+    AqButton(
         label = label,
         onClick = onClick,
         modifier = modifier,
-        variant = if (solid) AqButtonVariant.Primary else AqButtonVariant.Default,
+        variant = if (solid) AqButtonVariant.Filled else AqButtonVariant.Text,
         size = size,
         enabled = enabled,
         isLoading = isLoading,
-        busyDescription = null,
         icon = icon,
-        contentColor = null,
-        fontWeight = null,
-        contentPadding = null,
-        hapticFeedback = false,
     )
 }
 
+/** @deprecated Usa [AqButton] con [AqButtonVariant.Outlined]. */
 @Composable
 fun AqOutlineButton(
     label: String,
@@ -394,13 +356,13 @@ fun AqOutlineButton(
     enabled: Boolean = true,
     isLoading: Boolean = false,
     icon: ImageVector? = null,
-    size: AqButtonSize = AqButtonSize.Medium,
+    size: AqButtonSize = AqButtonSize.Md,
 ) {
     AqButton(
         label = label,
         onClick = onClick,
         modifier = modifier,
-        variant = AqButtonVariant.Outline,
+        variant = AqButtonVariant.Outlined,
         size = size,
         enabled = enabled,
         isLoading = isLoading,
@@ -408,71 +370,35 @@ fun AqOutlineButton(
     )
 }
 
-/**
- * Acción compacta de fila/tarjeta (referencia historial: "Compartir",
- * "Ver QR"): píldora tonal de ~36 dp visuales con glifo y etiqueta 13,
- * sobre zona interactiva de 48 dp. [prominent] tiñe el texto de acento.
- */
+/** @deprecated Usa [AqButton] con [AqButtonVariant.Filled] (peligro por el llamador). */
 @Composable
-fun AqCompactAction(
+fun AqDangerButton(
     label: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    isLoading: Boolean = false,
+    busyDescription: String? = null,
     icon: ImageVector? = null,
-    /** Texto de acento (acción destacada de la tarjeta). */
-    prominent: Boolean = false,
-    /** Color explícito del texto (p. ej. heredado de un banner de tono). */
-    color: Color? = null,
-    /** Peso del texto (p. ej. SemiBold para la acción principal del banner). */
-    fontWeight: FontWeight? = null,
+    size: AqButtonSize = AqButtonSize.Lg,
 ) {
-    Box(
-        modifier = modifier
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-            .clickable(role = Role.Button, onClickLabel = label, onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .heightIn(min = AqMetrics.ChipCompactHeight + AqSpacing.Xs)
-                .background(AqColor.SurfaceContainerLow, AqShapes.Medium),
-        )
-        Row(
-            modifier = Modifier.padding(horizontal = AqSpacing.Sm, vertical = AqSpacing.Xs),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
-        ) {
-            icon?.let {
-                AqIcon(
-                    imageVector = it,
-                    contentDescription = null,
-                    size = AqMetrics.IconSizeCompact,
-                    tint = color ?: if (prominent) AqColor.Link else AqColor.TextSecondary,
-                )
-            }
-            Text(
-                label,
-                style = AqTextStyles.BodySmall,
-                fontWeight = fontWeight ?: AqWeight.Medium,
-                color = color ?: if (prominent) AqColor.Link else AqColor.TextSecondary,
-            )
-        }
-    }
+    AqButton(
+        label = label,
+        onClick = onClick,
+        modifier = modifier,
+        variant = AqButtonVariant.Filled,
+        size = size,
+        enabled = enabled,
+        isLoading = isLoading,
+        busyDescription = busyDescription,
+        icon = icon,
+    )
 }
 
-/**
- * Nivel 3 — Acción terciaria.
- * Alternativas contextuales, navegación auxiliar y acciones de menor prioridad.
- * Acción de texto con área táctil de 48 dp — la etiqueta
- * completa mantiene su target accesible sin peso visual de botón.
- * [color] lo anula el llamador cuando la acción vive sobre un fondo
- * donde el acento no cumple 4.5:1 (p. ej. dentro de un banner de tono,
- * que hereda el color de contenido del tono — par garantizado).
- */
 /** Variante visual de [AqTextAction]: acento (por defecto), neutra o destructiva. */
 enum class AqTextActionVariant { Default, Neutral, Danger }
 
+/** @deprecated Usa [AqButton] con [AqButtonVariant.Text]. */
 @Composable
 fun AqTextAction(
     label: String,
@@ -480,51 +406,56 @@ fun AqTextAction(
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
     enabled: Boolean = true,
-    /** Color explícito (p. ej. heredado de un banner de tono). Tiene
-     *  prioridad sobre [variant]. */
     color: Color? = null,
-    /** Variante: Default (acento) o Danger (destructiva). Prohíbe el uso de
-     *  grises (TextSecondary/TextTertiary) como color de acción. */
-    variant: AqTextActionVariant = AqTextActionVariant.Default,
-    /** Padding interno. Por defecto el canónico (16 dp
-     *  horizontal). Pásale `PaddingValues(AqSpacing.None)` para alinear el
-     *  texto al borde de la superficie contenedora. */
-    contentPadding: PaddingValues = PaddingValues(
-        horizontal = AqSpacing.Md,
-        vertical = AqSpacing.None,
+    fontWeight: androidx.compose.ui.text.font.FontWeight? = null,
+    contentPadding: androidx.compose.foundation.layout.PaddingValues = androidx.compose.foundation.layout.PaddingValues(
+        horizontal = com.agendaqr.core.ui.theme.AqSpacing.Md,
+        vertical = com.agendaqr.core.ui.theme.AqSpacing.None,
     ),
-    size: AqButtonSize = AqButtonSize.Large,
+    variant: AqTextActionVariant = AqTextActionVariant.Default,
+    size: AqButtonSize = AqButtonSize.Lg,
 ) {
     val actionColor = color ?: when (variant) {
         AqTextActionVariant.Default -> AqColor.Link
         AqTextActionVariant.Neutral -> AqColor.TextPrimary
         AqTextActionVariant.Danger -> AqColor.Danger
     }
-    val fontWeight = when (variant) {
-        AqTextActionVariant.Neutral -> AqWeight.SemiBold
-        else -> null
-    }
-    AqButtonImpl(
+    AqButton(
         label = label,
         onClick = onClick,
         modifier = modifier,
         variant = AqButtonVariant.Text,
         size = size,
         enabled = enabled,
-        isLoading = false,
-        busyDescription = null,
         icon = icon,
         contentColor = actionColor,
-        fontWeight = fontWeight,
-        contentPadding = contentPadding,
-        hapticFeedback = false,
     )
 }
 
-/**
- * Botón solo-icono: `IconButton` M3 con descripción accesible y área
- * táctil de 48 dp. El glifo lo aporta el llamador vía [content].
- */
+/** @deprecated Usa [AqButton] (tamaño visual Moon, área táctil 48 dp). */
+@Composable
+fun AqCompactAction(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    prominent: Boolean = false,
+    color: Color? = null,
+    fontWeight: androidx.compose.ui.text.font.FontWeight? = null,
+) {
+    AqButton(
+        label = label,
+        onClick = onClick,
+        modifier = modifier,
+        variant = AqButtonVariant.Text,
+        size = AqButtonSize.Sm,
+        enabled = true,
+        icon = icon,
+        contentColor = color,
+    )
+}
+
+/** @deprecated Usa [AqIconButton]. */
 @Composable
 fun AqIconButton(
     contentDescription: String,
@@ -533,11 +464,14 @@ fun AqIconButton(
     enabled: Boolean = true,
     content: @Composable () -> Unit,
 ) {
+    val description = contentDescription
     IconButton(
         onClick = onClick,
         modifier = modifier
             .size(AqMetrics.ControlMinSize)
-            .semantics { this.contentDescription = contentDescription },
+            .semantics {
+                this.contentDescription = description
+            },
         enabled = enabled,
     ) {
         content()
@@ -545,10 +479,8 @@ fun AqIconButton(
 }
 
 /**
- * Opción del control segmentado: etiqueta SIEMPRE (es la señal de texto),
- * glifo decorativo opcional, badge de conteo opcional y tono del estado
- * activo opcional (p. ej. cobro en success) — el tono activo comunica el
- * significado del segmento.
+ * Opción del control segmentado: etiqueta SIEMPRE (señal de texto), glifo
+ * decorativo opcional y badge de conteo opcional.
  */
 data class AqSegmentedOption(
     val label: String,
@@ -556,16 +488,16 @@ data class AqSegmentedOption(
     /** Badge de conteo pequeño (p. ej. "5"). */
     val count: Int? = null,
     /** Color de TEXTO de la opción activa; null = acento del sistema. */
-    val activeTone: AqTone? = null,
+    val activeTone: com.agendaqr.core.ui.components.AqTone? = null,
 )
 
 /**
- * Control segmentado (Segmented de la referencia): pista `SurfaceSecondary`
- * (fill-content) con la opción activa sobre píldora `Surface`, radios 2.
- * Mutuamente excluyente por semántica (`selectableGroup` + rol radio).
- * Cada opción conserva el objetivo táctil de 48 dp.
- * [enabled] controla si las opciones responden a la selección; cuando es
- * falso, el segmento se muestra deshabilitado y no emite onSelect.
+ * Control segmentado sobre [MoonSegmentedControl]
+ * (`moon_design` 1.1.0, `lib/src/widgets/segmented_control`). Pista
+ * `SurfaceSecondary` con la opción activa sobre píldora, radios interactivos
+ * y mutua exclusividad por semántica (`selectableGroup` + rol radio). Cada
+ * opción conserva el objetivo táctil de 48 dp. `[selectedIndex] = -1` indica
+ * ninguna opción activa (p. ej. atajos Hoy/Ayer con otra fecha).
  */
 @Composable
 fun AqSegmentedControl(
@@ -578,33 +510,26 @@ fun AqSegmentedControl(
     enabled: Boolean = true,
 ) {
     require(options.isNotEmpty()) { "AqSegmentedControl necesita al menos una opción" }
-    // -1 = ningún segmento activo (p. ej. atajos Hoy/Ayer con otra fecha).
     require(selectedIndex in -1 until options.size) { "AqSegmentedControl: índice fuera de rango" }
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(AqColor.SurfaceSecondary, AqShapes.Medium)
+            .background(AqColor.SurfaceSecondary, AqSquircles.InteractiveSm)
             .selectableGroup()
-            .padding(AqSpacing.Xs),
-        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+            .padding(AqSize.X5s),
+        horizontalArrangement = Arrangement.spacedBy(AqSize.X5s),
     ) {
         options.forEachIndexed { index, option ->
             val selected = index == selectedIndex
-            val activeColor = option.activeTone?.content() ?: AqColor.EmphasisText
             val optionEnabled = enabled
-            val textColor = when {
-                !optionEnabled -> AqColor.OnDisabled
-                selected -> activeColor
-                else -> AqColor.TextSecondary
-            }
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(AqShapes.Medium)
+                    .clip(AqSquircles.InteractiveSm)
                     .then(
                         if (selected && optionEnabled) {
-                            Modifier.background(AqColor.SelectionSurface, AqShapes.Medium)
-                                .border(AqMetrics.Border, AqColor.Border, AqShapes.Medium)
+                            Modifier.background(AqColor.SelectionSurface, AqSquircles.InteractiveSm)
+                                .border(AqStroke.Default, AqColor.Border, AqSquircles.InteractiveSm)
                         } else {
                             Modifier
                         },
@@ -618,9 +543,15 @@ fun AqSegmentedControl(
                     .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
                 contentAlignment = Alignment.Center,
             ) {
+                val activeColor = option.activeTone?.content() ?: AqColor.EmphasisText
+                val textColor = when {
+                    !optionEnabled -> AqColor.OnDisabled
+                    selected -> activeColor
+                    else -> AqColor.TextSecondary
+                }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+                    horizontalArrangement = Arrangement.spacedBy(AqSize.X5s),
                 ) {
                     option.icon?.let {
                         AqIcon(
@@ -640,10 +571,11 @@ fun AqSegmentedControl(
                         Box(
                             modifier = Modifier
                                 .background(
-                                    if (selected && optionEnabled) activeColor.copy(alpha = AqAlpha.SelectedOnTone) else AqColor.SurfaceContainerHighest,
-                                    AqShapes.Small,
+                                    if (selected && optionEnabled) activeColor.copy(alpha = AqAlpha.SelectedOnTone)
+                                    else AqColor.SurfaceContainerHighest,
+                                    AqSquircles.SurfaceSm,
                                 )
-                                .padding(horizontal = AqSpacing.Xs),
+                                .padding(horizontal = AqSize.Xs),
                         ) {
                             Text(
                                 it.toString(),
@@ -659,10 +591,9 @@ fun AqSegmentedControl(
 }
 
 /**
- * Conmutador de favorito: `IconToggleButton` con glifo de Polaris. El estado
- * seleccionado se expone en la semántica del control y
- * la descripción accesible la aporta el llamador (debe cambiar con el
- * estado). El color acompaña; nunca es la única señal.
+ * Conmutador de favorito: `IconButton` con glifo de Polaris. El estado
+ * seleccionado se expone en la semántica y la descripción accesible la
+ * aporta el llamador (debe cambiar con el estado).
  */
 @Composable
 fun AqFavoriteToggle(
@@ -672,15 +603,19 @@ fun AqFavoriteToggle(
     contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
-    IconToggleButton(
-        checked = favorite,
-        onCheckedChange = onCheckedChange,
+    val description = contentDescription
+    IconButton(
+        onClick = { onCheckedChange(!favorite) },
         modifier = modifier
             .size(AqMetrics.ControlMinSize)
-            .semantics { this.contentDescription = contentDescription },
+            .semantics {
+                this.contentDescription = description
+                stateDescription = if (favorite) "Quitar favorito" else "Marcar favorito"
+            },
+        enabled = true,
     ) {
         AqIcon(
-            imageVector = AqIcons.Favorite,
+            imageVector = com.agendaqr.core.ui.components.AqIcons.Favorite,
             contentDescription = null,
             tint = if (favorite) AqColor.SelectionIcon else AqColor.TextTertiary,
         )

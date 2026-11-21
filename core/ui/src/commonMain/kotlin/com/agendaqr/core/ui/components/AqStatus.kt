@@ -143,7 +143,7 @@ fun AqStatusBanner(
                     label = a.label,
                     onClick = a.onClick,
                     variant = AqButtonVariant.Default,
-                    size = AqButtonSize.Small,
+                    size = AqButtonSize.Sm,
                 )
             }
         }

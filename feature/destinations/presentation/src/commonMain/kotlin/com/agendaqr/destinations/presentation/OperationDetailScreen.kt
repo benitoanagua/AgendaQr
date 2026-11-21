@@ -255,7 +255,7 @@ internal fun OperationDetailScreen(
         AqDangerButton(
             label = AppStrings.EliminarOperacion,
             onClick = { showDeleteConfirm = true },
-            size = AqButtonSize.Medium,
+            size = AqButtonSize.Md,
         )
     }
     if (showDeleteConfirm) {
