@@ -208,7 +208,7 @@ fun AqButton(
     val foreground = contentColor?.takeIf { isEnabled } ?: colors.content
 
     val containerColor by animateColorAsState(
-        targetValue = if (isLoading) Color.Transparent else colors.container,
+        targetValue = if (isLoading) AqColor.Transparent else colors.container,
         animationSpec = tween(
             durationMillis = AqMotion.DurationMediumMs,
             easing = AqMotion.Easings.InOutCubic,
@@ -525,7 +525,6 @@ fun AqSegmentedControl(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(AqSquircles.InteractiveSm)
                     .then(
                         if (selected && optionEnabled) {
                             Modifier.background(AqColor.SelectionSurface, AqSquircles.InteractiveSm)
@@ -610,7 +609,7 @@ fun AqFavoriteToggle(
             .size(AqMetrics.ControlMinSize)
             .semantics {
                 this.contentDescription = description
-                stateDescription = if (favorite) "Quitar favorito" else "Marcar favorito"
+                stateDescription = description
             },
         enabled = true,
     ) {
