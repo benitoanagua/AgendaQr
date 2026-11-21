@@ -1,5 +1,6 @@
 package com.agendaqr.destinations.presentation
 
+import com.agendaqr.core.ui.components.ComprobanteThumbnail
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
@@ -9,9 +10,16 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Prueba de humo para [ComprobanteThumbnail]: debe componerse sin lanzar
+ * Pruebas de humo para [ComprobanteThumbnail]: debe componerse sin lanzar
  * incluso cuando el archivo no existe o no se puede decodificar (ruta de
  * fallback).
+ *
+ * Nota de entorno: bajo Robolectric, `BitmapFactory.decodeFile` devuelve un
+ * bitmap ficticio para rutas inexistentes, por lo que este módulo no puede
+ * forzar el estado `Failure` a través de un archivo ausente. La distinción
+ * determinista de estados (`Loading` esqueleto vs. `Failure` ícono QR /
+ * adjunto vs. `Success` imagen) se prueba en
+ * `core.ui.components.AqThumbnailTest` inyectando el estado directamente.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], qualifiers = "w360dp-h760dp")

@@ -79,7 +79,7 @@ fun AqQrPreview(
                 verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
             ) {
                 AqIcon(
-                    imageVector = AqIcons.ImageOff,
+                    imageVector = AqIcons.QrCode,
                     contentDescription = null,
                     tint = AqColor.TextTertiary,
                     size = AqMetrics.EmptyStateGlyphSize,

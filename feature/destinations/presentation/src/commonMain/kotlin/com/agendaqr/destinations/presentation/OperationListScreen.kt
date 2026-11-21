@@ -571,6 +571,11 @@ internal fun UnassociatedScreen(
                                             ComprobanteThumbnail(
                                                 file = receipt.file,
                                                 mimeType = receipt.mimeType,
+                                                contentDescription = if (receipt.mimeType?.contains("pdf", ignoreCase = true) == true) {
+                                                    AppStrings.PdfAdjuntoSinVistaPrevia
+                                                } else {
+                                                    AppStrings.VistaPreviaNoDisponible
+                                                },
                                             )
                                         }
                                     },
@@ -578,6 +583,7 @@ internal fun UnassociatedScreen(
                                         ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                                     },
                                     titleMaxLines = 2,
+                                    showChevron = true,
                                 )
                                 // CTA de fila con affordance real: píldora
                                 // tonal compacta con target de 48 dp (no un
