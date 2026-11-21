@@ -62,6 +62,8 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     // Borde de la caja de casilla de verificación y botón de radio
     // (MoonCheckbox / MoonRadio, grosor y radio de Moon).
     "E-10" to listOf("border:AqSelection.kt"),
+    // Borde opcional de la alerta persistente (MoonAlert).
+    "E-11" to listOf("border:AqFeedback.kt"),
     // `Modifier.shadow` se centraliza en la capa de tokens; solo los
     // archivos registrados pueden invocarlo (o elevarse vía `aqElevation`).
     // E-06 (elevación de botones) se retiró: los botones son planos y
