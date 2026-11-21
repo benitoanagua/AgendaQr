@@ -166,91 +166,37 @@ private fun DestinationEditorContent(
             )
         },
     ) {
-        error?.let { err ->
-            val (bannerAction, bannerDismiss) = err.bannerActions(
-                onRetry = onRetryError,
-                onClear = onClearError,
-            )
-            AqStatusBanner(
-                title = err.what,
-                message = err.dataStatus,
-                tone = AqTone.Danger,
-                action = bannerAction,
-                dismiss = bannerDismiss,
-            )
-        }
-        // Identidad del QR: nombre, categoría y nota bajo un encabezado
-        // de sección (jerarquía H2); cada campo dibuja su propia caja.
-        AqFormSection(AppStrings.Identidad) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(AqSpacing.MdPlus),
-            ) {
-                AqTextField(
-                    label = AppStrings.Nombre,
-                    value = name,
-                    onValueChange = { name = it },
-                    focusRequester = formFocus.requesterFor(FieldName),
-                    maxLength = FieldLimits.Nombre,
-                    isError = nameError || name.length > FieldLimits.Nombre,
-                    errorMessage = if (nameError) AppStrings.ElNombreEsObligatorio else null,
-                )
-                AqTextField(
-                    label = AppStrings.Categoria,
-                    value = category,
-                    onValueChange = { category = it },
-                    maxLength = FieldLimits.Categoria,
-                )
-                AqMultilineTextField(
-                    label = AppStrings.Nota,
-                    value = note,
-                    onValueChange = { note = it },
-                    maxLength = FieldLimits.Nota,
-                )
-                AqSwitch(
-                    label = AppStrings.Favorito,
-                    checked = favorite,
-                    onCheckedChange = { favorite = it },
-                )
-            }
-        }
-        // Selección de contexto: fila seleccionable con chevron, no botón.
-        // El estado seleccionado (contextId != null) se refleja con fondo y
-        // borde de selección, no solo con el color del texto.
-        AqListRow(
-            title = selection.contextId?.let { id ->
-                AppStrings.ParaContextoElegido + (contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico)
-            } ?: AppStrings.ParaElegirContexto,
-            subtitle = AppStrings.PuedesSinContexto,
-            onClick = { selection = selection.openPicker() },
-            leading = {
-                AqIconBadge(
-                    icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
-                    tone = AqTone.Info,
-                )
-            },
-            showChevron = true,
-            selected = selection.contextId != null,
+        // Mapa 1:1 de los bloques contractuales (docs/04-ux/02-especificacion-ux-ui-v1.md,
+        // 03-contrato-interaccion-pantallas.md):
+        //   ErrorBanner → IdentitySection → ContextRow → QrOriginSection
+        DestinationEditorErrorBanner(error = error, onRetryError = onRetryError, onClearError = onClearError)
+        DestinationEditorIdentitySection(
+            name = name,
+            onNameChange = { name = it },
+            category = category,
+            onCategoryChange = { category = it },
+            note = note,
+            onNoteChange = { note = it },
+            favorite = favorite,
+            onFavoriteChange = { favorite = it },
+            nameError = nameError,
+            formFocus = formFocus,
         )
-        // Origen del código: entradas de importación del QR del destino
-        // (galería y cámara, secundarias) y vista previa solo cuando hay
-        // contenido — sin rectángulo reservado en vacío (el error de envío
-        // cubre el QR faltante). Guardar sigue siendo la única primaria.
-        AqFormSection(AppStrings.OrigenDelCodigo) {
-            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Md)) {
-                QrImportControls(onResult = { result ->
-                    when {
-                        result.assets.size > 1 -> onImportMany(result.assets)
-                        result.assets.size == 1 -> qr = result.assets.first()
-                    }
-                })
-                if (qr.encoded.isNotBlank()) {
-                    AqQrPreview(qr.encoded)
-                } else if (qrError) {
-                    AqText(AppStrings.FaltaElCodigoQrUsa, size = AqType.Caption, color = AqColor.Danger)
+        DestinationEditorContextRow(
+            selection = selection,
+            contexts = contexts,
+            onSelectionChange = { selection = it },
+        )
+        DestinationEditorQrOriginSection(
+            qr = qr,
+            qrError = qrError,
+            onResult = { result ->
+                when {
+                    result.assets.size > 1 -> onImportMany(result.assets)
+                    result.assets.size == 1 -> qr = result.assets.first()
                 }
-            }
-        }
+            },
+        )
     }
     if (selection.pickerOpen) {
         ContextPickerDialog(
@@ -262,6 +208,124 @@ private fun DestinationEditorContent(
             onCreateContext = onCreateContext,
             justCreatedContextId = justCreatedContextId,
         )
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Secciones de composición — extraídas para mapear 1:1 el contrato UX
+// ---------------------------------------------------------------------------
+
+/** §10: error recuperable, visible sin scroll. */
+@Composable
+private fun DestinationEditorErrorBanner(
+    error: UserFacingError?,
+    onRetryError: () -> Unit,
+    onClearError: () -> Unit,
+) {
+    error?.let { err ->
+        val (bannerAction, bannerDismiss) = err.bannerActions(
+            onRetry = onRetryError,
+            onClear = onClearError,
+        )
+        AqStatusBanner(
+            title = err.what,
+            message = err.dataStatus,
+            tone = AqTone.Danger,
+            action = bannerAction,
+            dismiss = bannerDismiss,
+        )
+    }
+}
+
+/** Identidad del QR: nombre, categoría, nota y favorito. */
+@Composable
+private fun DestinationEditorIdentitySection(
+    name: String,
+    onNameChange: (String) -> Unit,
+    category: String,
+    onCategoryChange: (String) -> Unit,
+    note: String,
+    onNoteChange: (String) -> Unit,
+    favorite: Boolean,
+    onFavoriteChange: (Boolean) -> Unit,
+    nameError: Boolean,
+    formFocus: AqFormFocus,
+) {
+    AqFormSection(AppStrings.Identidad) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.MdPlus),
+        ) {
+            AqTextField(
+                label = AppStrings.Nombre,
+                value = name,
+                onValueChange = onNameChange,
+                focusRequester = formFocus.requesterFor(FieldName),
+                maxLength = FieldLimits.Nombre,
+                isError = nameError || name.length > FieldLimits.Nombre,
+                errorMessage = if (nameError) AppStrings.ElNombreEsObligatorio else null,
+            )
+            AqTextField(
+                label = AppStrings.Categoria,
+                value = category,
+                onValueChange = onCategoryChange,
+                maxLength = FieldLimits.Categoria,
+            )
+            AqMultilineTextField(
+                label = AppStrings.Nota,
+                value = note,
+                onValueChange = onNoteChange,
+                maxLength = FieldLimits.Nota,
+            )
+            AqSwitch(
+                label = AppStrings.Favorito,
+                checked = favorite,
+                onCheckedChange = onFavoriteChange,
+            )
+        }
+    }
+}
+
+/** Selección de contexto: fila con chevron, estado de selección por fondo. */
+@Composable
+private fun DestinationEditorContextRow(
+    selection: ContextSelection,
+    contexts: List<Context>,
+    onSelectionChange: (ContextSelection) -> Unit,
+) {
+    AqListRow(
+        title = selection.contextId?.let { id ->
+            AppStrings.ParaContextoElegido + (contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico)
+        } ?: AppStrings.ParaElegirContexto,
+        subtitle = AppStrings.PuedesSinContexto,
+        onClick = { onSelectionChange(selection.openPicker()) },
+        leading = {
+            AqIconBadge(
+                icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
+                tone = AqTone.Info,
+            )
+        },
+        showChevron = true,
+        selected = selection.contextId != null,
+    )
+}
+
+/** Origen del código: importación del QR y vista previa. */
+@Composable
+private fun DestinationEditorQrOriginSection(
+    qr: QrAsset,
+    qrError: Boolean,
+    onResult: (QrImportResult) -> Unit,
+) {
+    AqFormSection(AppStrings.OrigenDelCodigo) {
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Md)) {
+            QrImportControls(onResult = onResult)
+            if (qr.encoded.isNotBlank()) {
+                AqQrPreview(qr.encoded)
+            } else if (qrError) {
+                AqText(AppStrings.FaltaElCodigoQrUsa, size = AqType.Caption, color = AqColor.Danger)
+            }
+        }
     }
 }
 
