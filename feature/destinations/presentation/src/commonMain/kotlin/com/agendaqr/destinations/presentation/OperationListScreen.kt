@@ -126,6 +126,10 @@ internal fun OperationListScreen(
     }
     val paged = filtered.take(visibleCount)
 
+    // G4: agrupación por mes/día con encabezados de sección y balance neto
+    // mensual por moneda (domain.OperationGrouping, verificado con pruebas).
+    val monthlyGroups = groupOperationsByMonthAndDay(paged)
+
     AqScreenScaffold(
         topBar = {
             if (selectionMode) {
