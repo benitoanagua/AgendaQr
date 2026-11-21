@@ -30,7 +30,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqElevation
 import com.agendaqr.core.ui.theme.AqMetrics
-import com.agendaqr.core.ui.theme.AqShapes
+import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.aqElevation
 
@@ -81,8 +81,8 @@ fun AqBottomSheet(
             Column(
                 modifier = modifier
                     .fillMaxWidth()
-                    .aqElevation(AqElevation.Shadow3, AqShapes.BottomSheet)
-                    .background(AqColor.Surface, AqShapes.BottomSheet)
+                    .aqElevation(AqElevation.Shadow3, AqSquircles.SurfaceLg)
+                    .background(AqColor.Surface, AqSquircles.SurfaceLg)
                     .semantics { paneTitle = title }
                     .testTag("aq-bottom-sheet-pane")
                     .verticalScroll(rememberScrollState())
@@ -127,7 +127,7 @@ fun AqBottomSheet(
                             )
                             .testTag("aq-bottom-sheet-handle")
                             .width(AqSpacing.Xxxl)
-                            .background(AqColor.Divider, AqShapes.Pill),
+                            .background(AqColor.Divider, AqSquircles.SurfaceLg),
                     )
                 }
                 AqHeading(
