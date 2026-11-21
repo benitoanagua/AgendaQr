@@ -173,25 +173,34 @@ fun OperationListGrouped(
     ) {
         items(flatItems, key = {
             when (it) {
-                is ListItem.Mes -> "mes-${it.group.monthKey}"
-                is ListItem.Dia -> "dia-${it.group.dayKey}"
-                is ListItem.Op -> "op-${it.operation.id}"
+                is ListItem.Mes -> "mes-" + it.group.monthKey
+                is ListItem.Dia -> "dia-" + it.group.dayKey
+                is ListItem.Op -> "op-" + it.operation.id
             }
         }) { item ->
             when (item) {
                 is ListItem.Mes -> {
                     val balanceText = item.group.balanceByCurrency.map { (currency, value) ->
-                        "$currency ${formatBalance(value)}"
+                        currency + " " + formatBalance(value)
                     }.joinToString("  ")
-                    AqSectionHeader(
-                        text = item.group.monthLabel + if (balanceText.isNotBlank()) " · $balanceText" else "",
-                        inset = false,
+                    Row(
                         modifier = Modifier.fillMaxWidth(),
-                    )
+                        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        AqSectionHeader(
+                            text = item.group.monthLabel,
+                            inset = false,
+                            modifier = Modifier.weight(1f),
+                        )
+                        balanceText.takeIf { it.isNotBlank() }?.let { balance ->
+                            AqTonalTag(text = balance, tone = AqTone.Info)
+                        }
+                    }
                 }
                 is ListItem.Dia -> {
                     AqSectionHeader(
-                        text = item.group.dayLabel + " · ${item.group.operations.size} ${AppStrings.RegistrosLocales}",
+                        text = item.group.dayLabel,
                         inset = false,
                         modifier = Modifier.fillMaxWidth(),
                     )

@@ -114,4 +114,8 @@ Regla: un componente sin consumo real en pantalla se adopta o se retira. Los ret
 
 - **Gaps cubiertos:** Se implementan en `core/ui` todos los patrones identificados en la matriz, incluyendo `AqSwipeActions` (Nivel 3 con tokens Polaris) y `AqPullToRefresh` (Nivel 3 con tokens Polaris), garantizando que las aplicaciones táctiles móviles cuenten con primitivos canónicos.
 - **Flujos congelados:** Las pantallas existentes en V1 no alteran su copy ni su lógica de negocio; los componentes nuevos se ofrecen como primitivos de diseño reutilizables.
-- **Gaps abiertos pendientes:** selección múltiple por lote (pende de referencia Polaris 9.4.2 y caso de producto), badge de navegación (UX V1 no lo declara), validación en línea: el foco al primer error ya cubre Auth e importe de operación; faltan contador de caracteres y los editores de destino (ver §4, fila 12), encabezados sticky (UX V1 no los declara). Cada uno registrado como candidato sin implementar hasta que haya evidencia de convención y caso de producto.
+- **Gaps abiertos pendientes:** ninguno. Todos los gaps del cierre de gaps
+  están implementados y verificados, o descartados definitivamente con ADR
+  (selección múltiple ADR-0034, teclado propio ADR-0036, badge de navegación
+  ADR-0035, límites de campo ADR-0033, Share Extension ADR-0037).
+  Landscape/tablet se rigen por ADR-0006 (rotación libre).

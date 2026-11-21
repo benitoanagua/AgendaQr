@@ -273,6 +273,8 @@ fun AqNavBar(
     modifier: Modifier = Modifier,
     /** Conteo de pendientes del ítem activo (p. ej. comprobantes sin asociar). 0 = sin badge. */
     badgeCount: Int = 0,
+    /** Copy del conteo para la semántica de accesibilidad (provee el llamador). */
+    badgeContentDescription: String = "",
 ) {
     Column(
         modifier = modifier
@@ -325,7 +327,7 @@ fun AqNavBar(
                         color = if (selected) AqColor.EmphasisText else AqColor.TextSecondary,
                         maxLines = 1,
                         modifier = Modifier.semantics {
-                            contentDescription = destination.label + (if (selected && badgeCount > 0) " (" + badgeCount + ")" else "")
+                            this.contentDescription = if (badgeContentDescription.isNotEmpty()) badgeContentDescription else destination.label
                         },
                     )
                     if (selected && badgeCount > 0) {
@@ -352,6 +354,8 @@ fun AqNavRail(
     modifier: Modifier = Modifier,
     /** Conteo de pendientes del ítem activo. 0 = sin badge. */
     badgeCount: Int = 0,
+    /** Copy del conteo para la semántica de accesibilidad (provee el llamador). */
+    badgeContentDescription: String = "",
 ) {
     Column(
         modifier = modifier
@@ -397,7 +401,7 @@ fun AqNavRail(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.semantics {
-                        this.contentDescription = destination.label + (if (selected && badgeCount > 0) " (" + badgeCount + ")" else "")
+                        this.contentDescription = if (badgeContentDescription.isNotEmpty()) badgeContentDescription else destination.label
                     },
                 )
                 if (selected && badgeCount > 0) {

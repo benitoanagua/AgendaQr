@@ -31,6 +31,18 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Componentes móviles adoptados en pantallas reales: `AqSwipeActions`, `AqPullToRefresh`, `AqBottomSheet`, `AqTooltip`, `AqSwitch`, `AqProgressBar`, `AqProgressBlock`, `AqSkeleton` | pruebas de `core:ui` y de presentación + gate |
 | Contrato de interacción por pantalla (19 superficies) y galería estricta de capturas por superficie (360 dp, claro/oscuro) | `verifyScreenContract` + `verifyScreenContractFixtures` + `captureGallery` |
 | Documentación: enlaces vivos, alcanzabilidad desde el índice, ausencia de marcadores transitorios | `verifyDocs` |
+| Selección múltiple por lote en Actividades, destinos e inbox (G3 / ADR-0034) | pruebas de presentación + gate |
+| Estado `loading` de Actividades y esqueleto en frío (N02) | `:feature:destinations:presentation:testDebugUnitTest` + gate |
+| Lista de Actividades virtualizada con LazyColumn (N03) | pruebas de presentación + gate |
+| Encabezados sticky mes/día y balance neto mensual por moneda (G4 / ADR-0035) | pruebas de dominio (OperationGroupingTest) + presentación |
+| «Destino QR vinculado» en el detalle de actividad (D8) | pruebas de presentación + gate |
+| Errores de campo visibles y foco al primer error en editores (G1 / ADR-0033) | pruebas de presentación + `core:ui` (AqFormFocusTest) |
+| Límites de campo y contador «n/max» (G2 / ADR-0033) | pruebas de dominio + presentación |
+| Insignia de navegación con conteo (G5 / ADR-0035, componente) | `:core:ui:testDebugUnitTest` + gate |
+| Filtros S12 siempre que haya pendientes (G7) | pruebas de presentación |
+| «Crear contexto» siempre disponible en S08 (G7 / ADR-0033) | pruebas de presentación (ContextPickerDialogTest) |
+| Movimiento reducido en swipe/pull (N05 / ADR-0029 §7) | `:core:ui:testDebugUnitTest` |
+| Retiro de componentes sin respaldo AqBox/AqTriState/AqLightButton (N07) | `:core:ui:testDebugUnitTest` + gate |
 
 ## 2. Implementado pero NO VERIFICADO
 
@@ -78,17 +90,15 @@ No se declaran PASS. Requieren Xcode, dispositivo físico, red o backend reales.
 
 ## 4. Pendientes conocidos
 
-- **Decisiones de producto pendientes:** teclado propio para el importe (S07),
-  balance neto mensual y encabezados por día (lista de Actividades),
-  «Destino QR vinculado» en el detalle de actividad (el vínculo
-  `Operation.destinationId` existe; falta el estado en presentación), «Filtros»
-  en S12 (mostrados solo cuando hay duplicados y sin clasificar a la vez; la
-  fila de filtros de S04 con chips de tipo y conteos ya está implementada) y
-  «Crear nuevo contexto» visible con lista llena (hoy lo impide ADR-0003).
 - **Share Extension de iOS:** no implementada; el bloque «Desde otra app» de S02
-  no se muestra en iOS hasta que exista. Bloqueo: el proyecto Xcode no está
-  versionado (política en `iosApp/README.md`) y crear el target exige Xcode y
-  firma.
+  no se muestra en iOS hasta que exista (`supportsShareExtension = false`,
+  ADR-0037). Bloqueo: el proyecto Xcode no está versionado (política en
+  `iosApp/README.md`) y crear el target exige Xcode y firma.
+
+Los demás pendientes del cierre de gaps están implementados y verificados
+(ver §1) o descartados definitivamente con ADR (selección múltiple ADR-0034,
+teclado propio del importe ADR-0036, badge de navegación ADR-0035, límites de
+campo ADR-0033).
 
 ## 5. No implementado (alcance declarado, no defecto)
 
