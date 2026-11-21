@@ -874,10 +874,6 @@ object AqMotion {
     const val PredictiveBackShrink = 0.08f
     const val PredictiveBackFade = 0.5f
 
-    /** Duración del efecto de pulsación continua de Moon
-     *  (`MoonEffectsTheme.controlPulseEffect.effectDuration`, 1400 ms). */
-    const val DurationPulseMs = 1400
-
     object Easings {
         val Standard: Easing = CubicBezierEasing(
             EasingControlX1,
@@ -892,35 +888,6 @@ object AqMotion {
         /** Curva por defecto de transición de la capa UX (`Curves.easeInOutCubic`). */
         val InOutCubic: Easing = CubicBezierEasing(0.645f, 0.045f, 0.355f, 1f)
     }
-}
-
-/**
- * Efectos transversales de control de Moon (`MoonEffectsTheme`,
- * `MoonBaseControl`, `utils/touch_target_padding.dart`): foco, pulsación y
- * escala. Las duraciones, curvas, extents y el factor de escala son de Moon;
- * los colores se derivan de la paleta Polaris (Moon no aporta paleta).
- */
-object AqEffects {
-    /** Efecto de foco: color del anillo de foco (`MoonFocusEffect.effectColor`,
-     *  `bulma` al 25 % en Moon; derivado de énfasis Polaris), extensión,
-     *  duración y curva. */
-    val FocusEffectColor: Color @Composable get() =
-        LocalAqColorScheme.current.emphasisFill.copy(alpha = 0.25f)
-    const val FocusEffectExtentDp = 4f
-    const val FocusEffectDurationMs = AqMotion.DurationMediumMs
-    val FocusEffectCurve: Easing = AqMotion.Easings.InOutCubic
-
-    /** Efecto de pulsación continua (`MoonControlEffect` de pulso). */
-    val PulseEffectColor: Color @Composable get() =
-        LocalAqColorScheme.current.emphasisFill
-    const val PulseEffectDurationMs = AqMotion.DurationPulseMs
-    const val PulseEffectExtentDp = 24f
-    val PulseEffectCurve: Easing = AqMotion.Easings.InOutCubic
-
-    /** Efecto de escala al pulsar (`MoonControlEffect` de escala). */
-    const val ScaleEffectScalar = 0.95f
-    const val ScaleEffectDurationMs = AqMotion.DurationMediumMs
-    val ScaleEffectCurve: Easing = AqMotion.Easings.InOutCubic
 }
 
 /**

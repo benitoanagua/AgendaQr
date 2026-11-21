@@ -70,14 +70,6 @@ fun AqTabBar(
                     verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    tab.icon?.let {
-                        AqIcon(
-                            imageVector = it,
-                            contentDescription = null,
-                            size = AqMetrics.IconSizeCompact,
-                            tint = if (selected && enabled) AqColor.EmphasisText else AqColor.TextSecondary,
-                        )
-                    }
                     Text(
                         text = tab.label,
                         style = AqTextStyles.Label,
@@ -157,14 +149,6 @@ fun AqPillTab(
                         verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        tab.icon?.let {
-                            AqIcon(
-                                imageVector = it,
-                                contentDescription = null,
-                                size = AqMetrics.IconSizeCompact,
-                                tint = if (selected && enabled) AqColor.EmphasisText else AqColor.TextSecondary,
-                            )
-                        }
                         Text(
                             text = tab.label,
                             style = AqTextStyles.Label,

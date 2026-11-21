@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
@@ -456,21 +455,19 @@ class AqUiPolishContractTest {
     @Test
     fun default_button_uses_surface_fill_and_a_hairline_border() {
         val idle = resolveAqButtonColors(
-            LightAqColorScheme,
             variant = AqButtonVariant.Default,
+            scheme = LightAqColorScheme,
             enabled = true,
             pressed = false,
-            focused = false,
         )
-        assertEquals(Color.Transparent, idle.container, "relleno del secundario")
+        assertEquals(LightAqColorScheme.surface, idle.container, "relleno del secundario")
         assertEquals(LightAqColorScheme.border, idle.border, "borde fino del secundario")
 
         val pressed = resolveAqButtonColors(
-            LightAqColorScheme,
             variant = AqButtonVariant.Default,
+            scheme = LightAqColorScheme,
             enabled = true,
             pressed = true,
-            focused = false,
         )
         assertEquals(
             LightAqColorScheme.surfaceActive,

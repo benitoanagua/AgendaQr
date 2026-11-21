@@ -256,7 +256,7 @@ fun AqExtendedFab(
         onClick = onClick,
         modifier = modifier,
         variant = AqButtonVariant.Primary,
-        size = AqButtonSize.Lg,
+        size = AqButtonSize.Large,
         icon = icon,
     )
 }

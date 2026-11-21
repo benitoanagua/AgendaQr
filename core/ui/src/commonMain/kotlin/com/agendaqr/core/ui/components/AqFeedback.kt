@@ -1,22 +1,15 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,12 +26,6 @@ import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
-import com.agendaqr.core.ui.theme.AqCorner
-import com.agendaqr.core.ui.theme.AqSize
-import com.agendaqr.core.ui.theme.AqSquircles
-import com.agendaqr.core.ui.theme.AqStroke
-import com.agendaqr.core.ui.theme.AqTextStyles
-import com.agendaqr.core.ui.theme.LocalAqColorScheme
 
 /**
  * Feedback de proceso: skeleton, paginación, marco de
@@ -188,154 +175,3 @@ fun AqMediaFrame(
         content()
     }
 }
-
-/**
- * Alerta persistente sobre [MoonAlert] / [MoonAlert.filled] /
- * [MoonAlert.outlined] (`moon_design` 1.1.0, `lib/src/widgets/alert`).
- * Superficie con radio squircle, borde opcional, ícono leading, etiqueta y
- * contenido opcional. El tono nunca se comunica solo por color: siempre
- * acompaña a un ícono y a un texto.
- *
- * [show] controla la visibilidad. [tone] define el par content/container.
- * [dismiss] es la acción de cierre (≥ 48 dp, con descripción accesible).
- */
-@Composable
-fun AqAlert(
-    show: Boolean = true,
-    tone: com.agendaqr.core.ui.components.AqTone = com.agendaqr.core.ui.components.AqTone.Info,
-    /** copy del llamador. */
-    label: String,
-    /** Contenido opcional debajo de la etiqueta. */
-    content: (@Composable () -> Unit)? = null,
-    /** Acción de cierre; su descripción accesible la aporta el llamador. */
-    dismiss: (() -> Unit)? = null,
-    dismissLabel: String = "",
-    modifier: Modifier = Modifier,
-    showBorder: Boolean = false,
-) {
-    if (!show) return
-    val toneColors = LocalAqColorScheme.current.toneColors(tone)
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(AqSize.X2s)
-            .background(toneColors.container, AqSquircles.InteractiveSm)
-            .then(
-                if (showBorder) {
-                    Modifier.border(AqStroke.Default, toneColors.container, AqSquircles.InteractiveSm)
-                } else {
-                    Modifier
-                },
-            )
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AqSize.X3s),
-    ) {
-        tone.iconVector?.let {
-            AqIcon(
-                imageVector = it,
-                contentDescription = null,
-                size = AqMetrics.IconSizeCompact,
-                tint = toneColors.content,
-            )
-        }
-        Column(verticalArrangement = Arrangement.spacedBy(AqSize.X6s)) {
-            Text(
-                text = label,
-                style = AqTextStyles.Body,
-                color = toneColors.content,
-            )
-            content?.invoke()
-        }
-        Row(
-            modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            dismiss?.let {
-                AqTextAction(
-                    label = dismissLabel,
-                    onClick = dismiss,
-                    enabled = true,
-                )
-            }
-        }
-    }
-}
-
-/**
- * Indicador transitorio sobre [MoonToast] (`moon_design` 1.1.0,
- * `lib/src/widgets/toast`). Banner de recorrido corto. El host y la cola de
- * toasts se construyen sobre `AqFeedbackEvent` (flujo de eventos honestos);
- * este componente es la pieza visual.
- */
-@Composable
-fun AqToast(
-    visible: Boolean = true,
-    tone: com.agendaqr.core.ui.components.AqTone = com.agendaqr.core.ui.components.AqTone.Info,
-    /** copy del llamador. */
-    message: String,
-    modifier: Modifier = Modifier,
-) {
-    if (!visible) return
-    val toneColors = LocalAqColorScheme.current.toneColors(tone)
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(AqSize.X2s)
-            .background(toneColors.container, AqSquircles.InteractiveSm)
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AqSize.X3s),
-    ) {
-        tone.iconVector?.let {
-            AqIcon(
-                imageVector = it,
-                contentDescription = null,
-                size = AqMetrics.IconSizeCompact,
-                tint = toneColors.content,
-            )
-        }
-        Text(
-            text = message,
-            style = AqTextStyles.Body,
-            color = toneColors.content,
-        )
-    }
-}
-
-/**
- * Etiqueta flotante sobre [MoonTooltip] (`moon_design` 1.1.0,
- * `lib/src/widgets/tooltip`). Se muestra cuando [visible] es verdadero,
- * junto al objetivo [anchor]. El copy y la visibilidad los aporta el
- * llamador.
- */
-@Composable
-fun AqTooltip(
-    visible: Boolean = true,
-    /** copy del llamador. */
-    label: String,
-    /** Objetivo al que se ancla la etiqueta (proporciona el anclaje). */
-    anchor: (@Composable () -> Unit)? = null,
-    modifier: Modifier = Modifier,
-) {
-    if (!visible) return
-    val toneColors = LocalAqColorScheme.current.toneColors(com.agendaqr.core.ui.components.AqTone.Info)
-    Box(
-        modifier = modifier
-            .background(toneColors.container, AqSquircles.InteractiveSm)
-            .padding(AqSize.Xs),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = label,
-            style = AqTextStyles.Caption,
-            color = toneColors.content,
-        )
-    }
-    anchor?.invoke()
-}
-
-/** Tipo de mensaje de feedback (re-exportado para claridad en esta capa). */
-typealias AqFeedbackTone = com.agendaqr.core.ui.components.AqTone
-
