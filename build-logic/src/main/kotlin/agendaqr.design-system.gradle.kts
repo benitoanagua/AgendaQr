@@ -1120,7 +1120,7 @@ tasks.register("verifyUxTransitionContracts") {
         val violations = uxTransitionContractViolations(UxTransitionContracts.all)
         if (violations.isNotEmpty()) {
             throw GradleException("UX transition contract violations (${violations.size}):\n" +
-                violations.joinToString("\n") { "  \u0024it" })
+                violations.joinToString("\n") { "  ${it}" })
         }
         val flowIds = UxTransitionContracts.all.map { it.id }.toSet()
         require(flowIds.containsAll(setOf("UX-SAVE", "UX-CANCEL", "UX-PERMISSION", "UX-IMPORT", "UX-DELETE"))) {
