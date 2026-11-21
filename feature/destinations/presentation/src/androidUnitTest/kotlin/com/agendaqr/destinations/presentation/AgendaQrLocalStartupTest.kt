@@ -6,8 +6,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.test.core.app.ApplicationProvider
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.destinations.data.AgendaQrAndroidStorage
@@ -109,7 +109,17 @@ class AgendaQrLocalStartupTest {
             compose.onAllNodesWithText(AppStrings.ModoDemostracion, useUnmergedTree = true)
                 .fetchSemanticsNodes().isNotEmpty()
         }
-        val root = compose.onRoot().getBoundsInRoot()
+        // Virtualización (LazyColumn) puede dejar varios nodos raíz; se toma
+        // el de mayor superficie (la pantalla) y se lee su bounds con el
+        // mismo método que el banner (getBoundsInRoot) para comparar dp.
+        val rootNode = compose.onAllNodes(SemanticsMatcher("[any]") { true }, useUnmergedTree = true).fetchSemanticsNodes()
+            .filter { it.isRoot }
+            .maxByOrNull { b -> val r = b.boundsInRoot; (r.right - r.left) * (r.bottom - r.top) }
+            ?: error("no root node")
+        val rootBounds = rootNode.boundsInRoot
+        val root = compose.onNode(SemanticsMatcher("root screen") {
+            it.isRoot && it.boundsInRoot == rootBounds
+        }).getBoundsInRoot()
         val banner = compose.onNodeWithTag("am-status-banner").getBoundsInRoot()
         val margin = AqSpacing.ScreenMargin
         println("demo: root=$root banner=$banner")

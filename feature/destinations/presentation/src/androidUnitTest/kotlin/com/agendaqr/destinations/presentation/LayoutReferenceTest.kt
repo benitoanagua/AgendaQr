@@ -190,9 +190,25 @@ open class LayoutReferenceTest {
             )
             return
         }
-        val width = compose.onRoot().getUnclippedBoundsInRoot().let { it.right - it.left }.value
+        // Virtualización (LazyColumn) puede dejar varios nodos raíz; se toma
+        // el de mayor superficie (la pantalla).
+        val roots = compose.onAllNodes(AnyNode, useUnmergedTree = true).fetchSemanticsNodes()
+            .filter { it.isRoot }
+        val rootBounds = roots.maxByOrNull {
+            val b = it.boundsInRoot
+            (b.right - b.left) * (b.bottom - b.top)
+        }!!.boundsInRoot
+        val width = rootBounds.right - rootBounds.left
         if (Math.round(width) != 360) return
-        compose.onRoot().captureRoboImage(
+        compose.onNode(
+            SemanticsMatcher("root screen") {
+                it.isRoot &&
+                    it.boundsInRoot.left in (rootBounds.left - 1f .. rootBounds.left + 1f) &&
+                    it.boundsInRoot.top in (rootBounds.top - 1f .. rootBounds.top + 1f) &&
+                    it.boundsInRoot.right in (rootBounds.right - 1f .. rootBounds.right + 1f) &&
+                    it.boundsInRoot.bottom in (rootBounds.bottom - 1f .. rootBounds.bottom + 1f)
+            },
+        ).captureRoboImage(
             "build/captures/gallery/$surface--$state--$theme.png",
         )
     }
