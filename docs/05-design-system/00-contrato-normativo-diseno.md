@@ -195,35 +195,48 @@ en el archivo señalado con valores tomados de tokens semánticos.
 E-06 (elevación de botones) está retirada: los botones son planos y un
 registro sin uso se detecta como excepción zombie.
 
-## 6. Referencia de patrones móviles (Moon)
+## 6. Referencia de patrones móviles (Moon) — ADR-0038
 
-[ADR-0028](../07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md)
-fija que **Polaris es la única autoridad visual** de Agenda QR (tokens,
-tipografía, apariencia) y que Moon Design System se usa **solo como
-referencia de patrones de interacción móvil**: accordion en S07
-(`AqExpansionPanel`), chips de filtro por tipo en S04 y S12
-(`AqChipGroup`), feedback de error en `AqPinDots`. No hay dependencia
-Flutter ni `moon_design`, ni tokens Moon; la API pública es `Aq*`.
-La clasificación completa patrón a patrón vive en
+[ADR-0038](../07-decisiones/ADR-0038-moon-ux-polaris-ui.md)
+fija que la autoridad se divide **por dimensión**:
+
+- **UX / interacción** (anatomía del componente, estados, tamaños
+  táctiles, gestos, orden de acciones, feedback, vacíos, carga, error):
+  **Moon** es el nivel 1 para patrones móviles (`MoonAvatar` con fallback,
+  `MoonChip`/`MoonTag`, `MoonBottomSheet`, `MoonToast`, `MoonAccordion`,
+  `MoonAuthCode`, `MoonTextInput` con label flotante, `MoonButton` con
+  estados loading/disabled/pressed, `MoonCircularLoader`). El estilo se
+  reemplaza al 100 % por tokens Polaris.
+- **UI / apariencia** (color, tipografía Inter, radios, elevación,
+  iconografía, espaciado, tonos semánticos, modo oscuro): **Polaris
+  siempre** (100 % tokens Polaris). **Prohibido** importar paleta,
+  sombras, squircle o tipografía de Moon.
+- Lo que ni Moon ni Polaris cubren (bottom nav, FAB, swipe,
+  pull-to-refresh, date picker, skeleton, empty state, list cell):
+  **nativo** (M3 / HIG), estilizado con tokens Polaris.
+
+No hay dependencia Flutter ni `moon_design`, ni tokens Moon; la API
+pública es `Aq*`. La clasificación completa patrón a patrón vive en
 [`11-matriz-gaps-mobile.md`](11-matriz-gaps-mobile.md).
 
-### Cadena de precedencia para patrones sin equivalente Polaris (9.0, ADR-0029)
+### Cadena de precedencia para patrones sin equivalente Polaris (ADR-0029)
 
-Polaris sigue siendo la única autoridad visual. Cuando un patrón móvil no
-tiene respuesta en Polaris, la decisión baja por esta cadena y solo un
-nivel si el anterior está descartado por escrito:
+Cuando un patrón móvil no tiene respuesta en la autoridad de su dimensión
+(UI → Polaris; UX/interacción móvil → Moon), la decisión baja por esta
+cadena y solo un nivel si el anterior está descartado por escrito:
 
-1. **Polaris** — convenciones, tokens, componentes y patrones. Si solo hay
-   guía de escritorio, se anota «Polaris sin guía mobile» y se adapta con
-   sus tokens, densidad y jerarquía.
-2. **Moon Design** (`moon_design` 1.1.0) — solo como referencia de
-   anatomía, estados, tamaños y gestos. El estilo se reemplaza al 100 %
-   por tokens Polaris; no hay dependencia Flutter ni `moon_design`.
-3. **Nativo** Android (Material 3) / iOS (HIG) — solo si los niveles 1 y 2
-   están descartados; se estiliza con tokens Polaris.
+1. **Polaris** (UI / apariencia) o **Moon** (UX / interacción móvil) — según
+   la dimensión. Siempre gana la autoridad de la dimensión. Si Polaris solo
+   tiene guía de escritorio, se anota «Polaris sin guía mobile» y se adapta
+   con sus tokens, densidad y jerarquía.
+2. La otra dimensión no aplica: no se mezcla la autoridad visual de Polaris
+   con la anatomía de Moon en un mismo componente; cada cual conserva su
+   rol.
+3. **Nativo** Android (Material 3) / iOS (HIG) — solo si ni la autoridad de
+   UX ni la de UI dan respuesta; se estiliza con tokens Polaris.
 
-La navegación raíz es nativa por esta cadena (Polaris se consulta primero y no define navegación
-táctil móvil; Moon se consulta segundo y no trae bottom navigation/FAB/search/swipe/refresh/
-pickers/skeleton/empty state/list cell), nunca por omisión directa. La evidencia
-patrón a patrón está en
+La navegación raíz es nativa por esta cadena (Polaris no define navegación
+táctil móvil; Moon no trae bottom navigation/FAB/search/swipe/refresh/
+pickers/skeleton/empty state/list cell; nivel 3 nativo estilizado con
+tokens Polaris). La evidencia patrón a patrón está en
 [`11-matriz-gaps-mobile.md`](11-matriz-gaps-mobile.md).

@@ -152,7 +152,7 @@ fun DestinationDetailScreen(
             }
         } else {
             AqEmptyState(
-                icon = AqIcons.ImageOff,
+                icon = AqIcons.QrCode,
                 title = AppStrings.QrSinContenido,
                 subtitle = AppStrings.EditaElDestinoParaImportar,
                 actionLabel = AppStrings.Editar,
