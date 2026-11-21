@@ -1,6 +1,7 @@
 # Contrato normativo de diseño
 
 **Estado:** Normativo
+**Enmienda 2026-11-21 (ADR-0039/0040):** Moon Design rige todo el UI/UX; Polaris solo aporta colores, tipografía e iconos. Las secciones de este documento que asignan forma, espaciado, elevación o componentes a Polaris, o que definen niveles 1/2/3, están **pendientes de reescritura** (tarea del prompt de viraje) y no son normativas en lo que contradigan a ADR-0039.
 **Autoridad:** [ADR-0025](../07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md),
 [ADR-0027](../07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md),
 [ADR-0028](../07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md),

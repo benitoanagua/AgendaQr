@@ -1,5 +1,8 @@
 # ADR-0029 — Cadena de precedencia Polaris → Moon → nativo para UI móvil
 
+> **Enmienda 2026-11-21 (ADR-0039):** la cadena Polaris → Moon → nativo queda sustituida por «solo componentes Moon»; lo que Moon no trae se compone con piezas Moon y, en gestos, con mecánica Compose estilizada por Moon.
+
+
 **Estado:** ACEPTADO — 2026-11-20
 **Relaciona:** ADR-0025 (Polaris como autoridad visual), ADR-0027 (espacio por nivel atómico), ADR-0028 (Moon como referencia de patrones móviles), contrato normativo y matriz de gaps `05-design-system/11-matriz-gaps-mobile.md`.
 

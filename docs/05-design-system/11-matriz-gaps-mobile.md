@@ -1,6 +1,7 @@
 # Matriz de gaps de patrones móviles y cadena de precedencia
 
 **Estado:** Normativo — cadena de precedencia UI (ADR-0029).
+**Enmienda 2026-11-21 (ADR-0039/0040):** Moon Design rige todo el UI/UX; Polaris solo aporta colores, tipografía e iconos. Las secciones de este documento que asignan forma, espaciado, elevación o componentes a Polaris, o que definen niveles 1/2/3, están **pendientes de reescritura** (tarea del prompt de viraje) y no son normativas en lo que contradigan a ADR-0039.
 **Autoridad:** Agenda QR UX/UI V1 (`docs/04-ux/02-especificacion-ux-ui-v1.md`), Polaris 9.4.2 (`09-instantanea-tokens-polaris-9.4.2.md`), Moon Design Flutter 1.1.0 (solo referencia anatómica y gestual), Convenciones Nativas Android (M3) / iOS (HIG).
 
 ---

@@ -551,6 +551,54 @@ object AqShapes {
     val BottomSheet = RoundedCornerShape(AqRadius.ExtraLarge)
 }
 
+/**
+ * Escala de tamaños de la capa UX (ADR-0039). Transcripción de `MoonSizes.sizes`
+ * (`moon_design` 1.1.0, `lib/src/theme/tokens/sizes.dart`). Los componentes
+ * derivan alturas, huecos, iconos y rellenos de esta escala; el área táctil
+ * mínima de 48 dp (D-02) se garantiza aparte con [AqMetrics.ControlMinSize].
+ */
+object AqSize {
+    val X6s = 2.dp
+    val X5s = 4.dp
+    val X4s = 8.dp
+    val X3s = 12.dp
+    val X2s = 16.dp
+    val Xs = 24.dp
+    val Sm = 32.dp
+    val Md = 40.dp
+    val Lg = 48.dp
+    val Xl = 56.dp
+    val X2l = 64.dp
+}
+
+/** Grosores de borde (`MoonBorders.defaultBorderWidth` / `activeBorderWidth`). */
+object AqStroke {
+    val Default = 1.dp
+    val Active = 1.5.dp
+}
+
+/**
+ * Radios de esquina (`MoonBorders.borders`, `tokens/borders.dart`). `Interactive*`
+ * es para controles (botón, input, chip, tab); `Surface*` para contenedores
+ * (tarjeta, hoja, diálogo). [Smoothing] es el suavizado squircle por defecto
+ * (0,9: el valor 1,0 produce NaN en la implementación de origen).
+ */
+object AqCorner {
+    val InteractiveXs = 4.dp
+    val InteractiveSm = 8.dp
+    val InteractiveMd = 12.dp
+    val SurfaceXs = 4.dp
+    val SurfaceSm = 8.dp
+    val SurfaceMd = 12.dp
+    val SurfaceLg = 16.dp
+    const val Smoothing = 0.9f
+}
+
+/** Opacidades de estado (`MoonOpacities.opacities`). */
+object AqStateAlpha {
+    const val Disabled = 0.6f
+}
+
 /** Pesos `font-weight` publicados: la familia Inter estática cubre estos cortes. */
 object AqWeight {
     val Regular = FontWeight(450)
@@ -837,6 +885,8 @@ object AqMotion {
         val Out: Easing = CubicBezierEasing(0.19f, 0.91f, 0.38f, 1f)
         val InOut: Easing = CubicBezierEasing(0.42f, 0f, 0.58f, 1f)
         val Linear: Easing = CubicBezierEasing(0f, 0f, 1f, 1f)
+        /** Curva por defecto de transición de la capa UX (`Curves.easeInOutCubic`). */
+        val InOutCubic: Easing = CubicBezierEasing(0.645f, 0.045f, 0.355f, 1f)
     }
 }
 
@@ -880,6 +930,84 @@ fun Modifier.aqElevation(
         ambientColor = shadowColor,
         spotColor = shadowColor,
     )
+}
+
+/** Capa de una sombra: desenfoque, desplazamiento vertical, dispersión y alfa. */
+data class AqShadowLayer(
+    val blur: Dp,
+    val offsetY: Dp,
+    val spread: Dp,
+    val alpha: Float,
+)
+
+/**
+ * Sombras de la capa UX (`MoonShadows.light` / `MoonShadows.dark`,
+ * `tokens/shadows.dart`). La geometría (blur, offset, spread, alfa) es de la
+ * capa UX; el color de la sombra sale de la paleta (negro). `Modifier.shadow`
+ * de Compose no expone offset ni spread (D-10): [aqShadow] apila una sombra
+ * por capa usando el blur como elevación y conserva el resto como metadato.
+ */
+enum class AqShadow(val light: List<AqShadowLayer>, val dark: List<AqShadowLayer>) {
+    Sm(
+        light = listOf(
+            AqShadowLayer(1.dp, 0.dp, 0.dp, 0.4f),
+            AqShadowLayer(6.dp, 6.dp, (-6).dp, 0.157f),
+        ),
+        dark = listOf(
+            AqShadowLayer(1.dp, 0.dp, 0.dp, 0.557f),
+            AqShadowLayer(6.dp, 6.dp, (-6).dp, 0.639f),
+        ),
+    ),
+    Md(
+        light = listOf(
+            AqShadowLayer(1.dp, 0.dp, 0.dp, 0.4f),
+            AqShadowLayer(12.dp, 12.dp, 0.dp, 0.157f),
+        ),
+        dark = listOf(
+            AqShadowLayer(1.dp, 0.dp, 0.dp, 0.557f),
+            AqShadowLayer(12.dp, 12.dp, 0.dp, 0.639f),
+        ),
+    ),
+    Lg(
+        light = listOf(
+            AqShadowLayer(1.dp, 0.dp, 0.dp, 0.4f),
+            AqShadowLayer(24.dp, 8.dp, 0.dp, 0.157f),
+        ),
+        dark = listOf(
+            AqShadowLayer(1.dp, 0.dp, 0.dp, 0.557f),
+            AqShadowLayer(24.dp, 24.dp, 0.dp, 0.639f),
+        ),
+    ),
+    Xl(
+        light = listOf(
+            AqShadowLayer(1.dp, 0.dp, 0.dp, 0.2f),
+            AqShadowLayer(32.dp, 0.dp, 0.dp, 0.118f),
+            AqShadowLayer(32.dp, 32.dp, 0.dp, 0.078f),
+        ),
+        dark = listOf(
+            AqShadowLayer(1.dp, 0.dp, 0.dp, 0.718f),
+            AqShadowLayer(48.dp, 48.dp, 0.dp, 0.878f),
+        ),
+    ),
+}
+
+/** Aplica las capas de [level] según el tema activo (claro/oscuro). */
+@Composable
+fun Modifier.aqShadow(level: AqShadow, shape: Shape = RectangleShape): Modifier {
+    val dark = LocalAqColorScheme.current == DarkAqColorScheme
+    val layers = if (dark) level.dark else level.light
+    var result: Modifier = this
+    layers.forEach { layer ->
+        val color = AqPalette.black.copy(alpha = layer.alpha)
+        result = result.shadow(
+            elevation = layer.blur,
+            shape = shape,
+            clip = false,
+            ambientColor = color,
+            spotColor = color,
+        )
+    }
+    return result
 }
 
 /** Identidad de contexto X-06: pares fijos de la instantánea, validados a AA. */

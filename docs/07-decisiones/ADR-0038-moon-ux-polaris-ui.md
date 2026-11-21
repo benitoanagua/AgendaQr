@@ -1,5 +1,8 @@
 # ADR-0038 — Moon Design rige la UX móvil; Polaris rige la UI
 
+> **Enmienda 2026-11-21 (ADR-0039):** la autoridad dividida pasa de «UX = Moon / UI = Polaris» a «todo = Moon salvo color, tipografía e iconos = Polaris». Radios, espaciado, elevación y forma pasan a Moon.
+
+
 **Estado:** ACEPTADO — 2026-11-20
 **Relaciona:** ADR-0025 (Polaris como autoridad visual), ADR-0028 (Moon como referencia de patrones móviles), ADR-0029 (cadena de precedencia), contrato normativo de diseño (`05-design-system/00-contrato-normativo-diseno.md`) y matriz de gaps (`05-design-system/11-matriz-gaps-mobile.md`).
 

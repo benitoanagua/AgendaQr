@@ -1,5 +1,8 @@
 # ADR-0025 — Adopción del UI/UX de Polaris como sistema visual normativo
 
+> **Enmienda 2026-11-21 (ADR-0039):** Polaris deja de ser la autoridad de componentes, forma, espaciado y elevación. Solo conserva colores, tipografía e iconos; Moon Design rige el resto del UI/UX.
+
+
 **Estado:** ACEPTADO — 2026-11-17
 **Relaciona:** contrato normativo de diseño, instantánea de tokens,
 ADR-0007 (verificación de layout), ADR-0008 (voz), ADR-0016 (identidad local).
