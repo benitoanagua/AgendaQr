@@ -127,16 +127,19 @@ open class LayoutReferenceTest {
         "s01" to ("home" to "content"),
         "s01-empty" to ("home" to "empty"),
         "s01-error" to ("home" to "error"),
+        "s01-loading" to ("home" to "loading"),
         "s02-add" to ("add" to "content"),
         "s09-review" to ("importreview" to "content"),
         "destination-detail" to ("destinationdetail" to "content"),
         "destination-detail-error" to ("destinationdetail" to "error"),
         "edit-destination" to ("destinationedit" to "content"),
         "qr-fullscreen" to ("qrfullscreen" to "content"),
+        "qr-fullscreen-error" to ("qrfullscreen" to "error"),
         "s04-search" to ("search" to "content"),
         "s04-search-empty" to ("search" to "empty"),
         "s06-contexts" to ("contexts" to "content"),
         "s06-contexts-empty" to ("contexts" to "empty"),
+        "s06-contexts-loading" to ("contexts" to "loading"),
         "context-detail" to ("contextdetail" to "content"),
         "context-detail-empty" to ("contextdetail" to "empty"),
         "s07-list" to ("operations" to "content"),
@@ -146,6 +149,7 @@ open class LayoutReferenceTest {
         "unassociated" to ("unassociated" to "content"),
         "unassociated-empty" to ("unassociated" to "empty"),
         "context-picker" to ("contextpicker" to "selection"),
+        "context-picker-empty" to ("contextpicker" to "empty"),
         "import-batch-review" to ("importbatch" to "review"),
         "import-batch-error" to ("importbatch" to "error"),
         "import-batch-saved" to ("importbatch" to "saved"),
@@ -160,7 +164,7 @@ open class LayoutReferenceTest {
 
     /** Superficies de diálogo (Overlay): la captura es la ventana del
      * diálogo, completa y sin recortes, al tamaño real del componente. */
-    private val dialogScenarios = setOf("context-picker", "camera-capture")
+    private val dialogScenarios = setOf("context-picker", "context-picker-empty", "camera-capture")
 
     private val dialogRootMatcher = SemanticsMatcher("isDialog") {
         it.config.contains(SemanticsProperties.IsDialog)
@@ -1908,19 +1912,18 @@ open class LayoutReferenceTest {
                 navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
             )
         }
-        val bodies = compose.onAllNodesWithTag("aq-list-body")
-            .fetchSemanticsNodes()
-            .map { it.boundsInRoot }
-            .sortedBy { it.top }
-        assertTrue("unassociated-light: se esperaban 2 comprobantes", bodies.size >= 2)
-        bodies.zipWithNext().forEachIndexed { index, (previous, next) ->
-            assertEquals(
-                "unassociated-light: separación entre comprobantes (${index + 1})",
-                16f,
-                next.top - previous.bottom,
-                1f,
-            )
-        }
+        // Spec §12: las filas forman un único Cell-group, no una tarjeta
+        // por comprobante.
+        assertEquals(
+            "unassociated-light: un solo grupo de celdas",
+            1,
+            compose.onAllNodesWithTag("aq-list-body").fetchSemanticsNodes().size,
+        )
+        assertEquals(
+            "unassociated-light: una acción de texto por comprobante",
+            2,
+            compose.onAllNodesWithText(AppStrings.createOperationFromThis).fetchSemanticsNodes().size,
+        )
     }
 
     @Test fun unassociated_dark() = verifyLayout("unassociated-dark", dark = true) {
@@ -1981,6 +1984,185 @@ open class LayoutReferenceTest {
         compose.waitForIdle()
         compose.onNodeWithText(AppStrings.EncuadreElCodigoQr).assertIsDisplayed()
         captureStrict("camera-capture", dark = true)
+    }
+
+    // --- Estados críticos que la galería omitía (ADR-0007): la pantalla de
+    // inicio y contextos cargando, el QR a pantalla completa cuando no se
+    // puede decodificar (la pantalla que se enseña en caja: nunca un
+    // rectángulo en blanco) y el selector de contexto sin contextos.
+
+    @Test fun s01_loading_light() = verifyLayout("s01-loading-light", dark = false) {
+        DestinationsScreen(
+            state = DestinationsUiState(destinations = emptyList(), isLoading = true),
+            onAction = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Home)),
+        )
+    }
+
+    @Test fun s01_loading_dark() = verifyLayout("s01-loading-dark", dark = true) {
+        DestinationsScreen(
+            state = DestinationsUiState(destinations = emptyList(), isLoading = true),
+            onAction = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Home)),
+        )
+    }
+
+    @Test fun s06_contexts_loading_light() = verifyLayout("s06-contexts-loading-light", dark = false) {
+        ContextsScreen(
+            state = ContextsUiState(contexts = emptyList(), isLoading = true),
+            onAction = {},
+            onBack = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Contexts)),
+        )
+    }
+
+    @Test fun s06_contexts_loading_dark() = verifyLayout("s06-contexts-loading-dark", dark = true) {
+        ContextsScreen(
+            state = ContextsUiState(contexts = emptyList(), isLoading = true),
+            onAction = {},
+            onBack = {},
+            navChrome = rootChrome(appRouteNameOf(AppRoute.Contexts)),
+        )
+    }
+
+    @Test fun qr_fullscreen_error_light() = verifyLayout("qr-fullscreen-error-light", dark = false) {
+        QrFullscreenPattern(
+            encodedQr = "!!",
+            onBack = {},
+            destinationName = "Carniceria Don Bife",
+        )
+    }
+
+    @Test fun qr_fullscreen_error_dark() = verifyLayout("qr-fullscreen-error-dark", dark = true) {
+        QrFullscreenPattern(
+            encodedQr = "!!",
+            onBack = {},
+            destinationName = "Carniceria Don Bife",
+        )
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w400dp-h840dp")
+    fun context_picker_empty_light() {
+        compose.setContent {
+            AqTheme(darkTheme = false) {
+                ContextPickerDialog(
+                    contexts = emptyList(),
+                    selection = ContextSelection(),
+                    onSelect = {},
+                    onRemove = {},
+                    onCancel = {},
+                    onCreateContext = { _, _ -> },
+                )
+            }
+        }
+        compose.waitForIdle()
+        compose.onNodeWithText(AppStrings.SeleccionarContexto).assertIsDisplayed()
+        captureStrict("context-picker-empty", dark = false)
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w400dp-h840dp")
+    fun context_picker_empty_dark() {
+        compose.setContent {
+            AqTheme(darkTheme = true) {
+                ContextPickerDialog(
+                    contexts = emptyList(),
+                    selection = ContextSelection(),
+                    onSelect = {},
+                    onRemove = {},
+                    onCancel = {},
+                    onCreateContext = { _, _ -> },
+                )
+            }
+        }
+        compose.waitForIdle()
+        compose.onNodeWithText(AppStrings.SeleccionarContexto).assertIsDisplayed()
+        captureStrict("context-picker-empty", dark = true)
+    }
+
+    // Regresión: las confirmaciones destructivas por lote (Inicio, Actividades
+    // y Bandeja) solo existen tras activar el modo selección y pulsar
+    // «Eliminar». Una guarda mal escrita (`Boolean?.let`) las dejaba abiertas
+    // desde que se componía la pantalla; la galería no lo veía porque captura
+    // la raíz de la pantalla y el diálogo vive en su propia ventana.
+    private fun assertNoDestructiveDialog(label: String) {
+        assertEquals(
+            "$label: no debe haber diálogo de confirmación abierto por defecto",
+            0,
+            compose.onAllNodesWithText(AppStrings.irreversibleActionWarning, substring = true)
+                .fetchSemanticsNodes().size,
+        )
+    }
+
+    @Test fun home_has_no_destructive_dialog_by_default() {
+        compose.setContent {
+            AqTheme(darkTheme = false) {
+                DestinationsScreen(
+                    state = DestinationsUiState(
+                        destinations = listOf(detailFixture()),
+                        isLoading = false,
+                    ),
+                    onAction = {},
+                    navChrome = rootChrome(appRouteNameOf(AppRoute.Home)),
+                )
+            }
+        }
+        compose.waitForIdle()
+        assertNoDestructiveDialog("home")
+    }
+
+    @Test fun operations_list_has_no_destructive_dialog_by_default() {
+        val vm = operationsViewModel(operations = listOf(operationFixture("op-1")))
+        compose.setContent {
+            AqTheme(darkTheme = false) {
+                OperationListScreen(
+                    state = vm.state.value,
+                    viewModel = vm,
+                    navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
+                )
+            }
+        }
+        compose.waitForIdle()
+        assertNoDestructiveDialog("operations")
+    }
+
+    @Test fun unassociated_has_no_destructive_dialog_by_default() {
+        val vm = operationsViewModel(receipts = listOf(unassociatedReceiptFixture("r-1")))
+        vm.onAction(OperationAction.OpenUnassociated)
+        compose.setContent {
+            AqTheme(darkTheme = false) {
+                OperationsScreen(
+                    state = vm.state.value,
+                    viewModel = vm,
+                    navChrome = rootChrome(appRouteNameOf(AppRoute.Operations)),
+                )
+            }
+        }
+        compose.waitForIdle()
+        assertNoDestructiveDialog("unassociated")
+    }
+
+    // Spec S12: los pendientes forman un único Cell-group (no una tarjeta por
+    // elemento) con su Tag textual de estado.
+    @Test fun import_batch_review_pending_forms_single_cell_group() {
+        compose.setContent {
+            AqTheme(darkTheme = false) {
+                ImportBatchScreen(state = ImportBatchUiState.Review(importBatchFixture()), onAction = {})
+            }
+        }
+        compose.waitForIdle()
+        assertEquals(
+            "s12-review: un solo grupo de celdas",
+            1,
+            compose.onAllNodesWithTag("aq-list-body").fetchSemanticsNodes().size,
+        )
+        assertEquals(
+            "s12-review: sin tarjeta por elemento",
+            0,
+            compose.onAllNodesWithTag("aq-card").fetchSemanticsNodes().size,
+        )
+        compose.onNodeWithText(AppStrings.PosibleDuplicado).assertExists()
     }
 
 }

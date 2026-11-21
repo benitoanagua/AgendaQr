@@ -28,7 +28,7 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - acción primaria: —
 - estados: `loading`, `empty`, `content`, `error`, `offline`
 - gestos: `predictive-back`, `horizontal-scroll`, `swipe-actions`, `pull-to-refresh`
-- capturas: `empty`, `content`, `error`
+- capturas: `loading`, `empty`, `content`, `error`
 - componentes: `AqScreenScaffold`, `AqTopBar`, `AqNavBar`, `AqSearchTrigger`, `AqQuickAction`, `AqSegmentedControl`, `AqListRow`, `AqListBody`, `AqSectionHeader`, `AqEmptyState`, `AqStatusBanner`, `AqFavoriteToggle`, `AqActionSheet`, `AqPullToRefresh`, `AqSwipeActions`
 - pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/DestinationsScreenA11yTest.kt`
 - pruebas: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/DestinationsScreenA11yTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/UxHomeHubTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/UxHomeFavoritesTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/LayoutReferenceTest.kt`, `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/DestinationsSectionStateTest.kt`, `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/UxFilterReproductionTest.kt`
@@ -118,7 +118,7 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - acción primaria: —
 - estados: `content`, `error`
 - gestos: —
-- capturas: `content`
+- capturas: `content`, `error`
 - componentes: `AqQrPreview`, `AqTopBar`
 - pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ScreensA11yCoverageTest.kt`
 - pruebas: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/QrFullscreenTest.kt`
@@ -154,7 +154,7 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - acción primaria: —
 - estados: `loading`, `empty`, `content`, `error`
 - gestos: —
-- capturas: `empty`, `content`
+- capturas: `loading`, `empty`, `content`
 - componentes: `AqScreenScaffold`, `AqTopBar`, `AqListRow`, `AqListBody`, `AqTabs`, `AqContextBadge`, `AqEmptyState`, `AqLoading`, `AqStatusBanner`, `AqTextAction`, `AqNavBar`
 - pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ScreensA11yCoverageTest.kt`
 - pruebas: `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ContextsBackStateTest.kt`, `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ContextContentsRoutingTest.kt`, `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ContextCreationTest.kt`
@@ -261,7 +261,7 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - acción primaria: —
 - estados: `selection`, `empty`, `content`
 - gestos: —
-- capturas: `selection`
+- capturas: `selection`, `empty`
 - componentes: `AqDialog`, `AqDialogList`, `AqListRow`, `AqTextField`, `AqTextAction`
 - pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ScreensA11yCoverageTest.kt`
 - pruebas: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ContextPickerDialogTest.kt`, `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ContextSelectionTest.kt`, `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ContextCreationTest.kt`

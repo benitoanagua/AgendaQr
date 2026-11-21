@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqSnackbarHost
 import com.agendaqr.core.ui.components.AqDialog
 import com.agendaqr.core.ui.components.AqFeedbackEvent
+import com.agendaqr.core.ui.components.AqHairline
 import com.agendaqr.core.ui.components.AqListBody
 import com.agendaqr.core.ui.components.AqListRow
 import com.agendaqr.core.ui.components.AqMetaRow
@@ -296,28 +297,38 @@ private fun BatchReviewContent(
         )
     }
     AqSectionHeader(text = AppStrings.ElementosQueNecesitanRevision + " (" + filtered.size + ")")
-    // Pendientes como tarjetas independientes (nivel 3 de superficies):
-    // cada una con su contenido + acciones; separadas a 8 dp.
-    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+    // Spec S12: Cell-group de elementos con Tag textual de estado. Todos los
+    // pendientes forman un único grupo de celdas con divisores (no una
+    // tarjeta por elemento); cada celda lleva su contenido y sus acciones.
+    AqListBody {
         filtered.forEachIndexed { index, candidate ->
-            PendingItemCard(candidate, batch, onAction, isSaving, index)
+            PendingItemCell(
+                candidate = candidate,
+                batch = batch,
+                onAction = onAction,
+                isSaving = isSaving,
+                index = index,
+                showDivider = index < filtered.lastIndex,
+            )
         }
     }
 }
 
 /**
- * Tarjeta de pendiente con jerarquía de acciones:
+ * Celda de pendiente con jerarquía de acciones (acciones de texto dentro de
+ * la celda, sin botón por fila):
  * - Principal: "Reintentar clasificación" (para desconocidos) o "Ver existente" (para duplicados)
  * - Secundaria: "Guardar de todos modos" (solo duplicados)
  * - Terciaria: "Descartar"
  */
 @Composable
-private fun PendingItemCard(
+private fun PendingItemCell(
     candidate: ImportCandidate,
     batch: ImportBatch,
     onAction: (ImportBatchAction) -> Unit,
     isSaving: Boolean,
     index: Int = 0,
+    showDivider: Boolean = false,
 ) {
     val isDuplicate = batch.duplicates.any { it.id == candidate.id }
     // El descarte de un elemento SIN clasificar pierde su contenido
@@ -325,8 +336,13 @@ private fun PendingItemCard(
     // así que pide confirmación; el de un duplicado no pierde nada (el
     // original existe) y se ejecuta directo.
     var showDiscardConfirm by remember(candidate.id) { mutableStateOf(false) }
-    com.agendaqr.core.ui.components.AqCard {
-        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Md),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        ) {
             // Nombre útil, dato del archivo o motivo, y estado. El estado se
             // expresa con una insignia CON texto (el glifo y el tono solo
             // acompañan): la insignia va en su propia línea para no recortar
@@ -356,17 +372,17 @@ private fun PendingItemCard(
                     tone = if (isDuplicate) AqTone.Warning else AqTone.Info,
                 )
             }
-            // Acción principal de ancho completo (tonal).
+            // Acción principal de la celda (texto de acento, objetivo ≥ 48 dp).
             when {
-                isDuplicate -> AqSecondaryButton(
+                isDuplicate -> AqTextAction(
                     label = AppStrings.VerExistente,
                     onClick = { onAction(ImportBatchAction.ViewExisting(candidate.id)) },
-                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = AqSpacing.None, vertical = AqSpacing.None),
                 )
-                else -> AqSecondaryButton(
+                else -> AqTextAction(
                     label = AppStrings.ReintentarClasificacion,
                     onClick = { onAction(ImportBatchAction.RetryCandidate(candidate.id)) },
-                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = AqSpacing.None, vertical = AqSpacing.None),
                 )
             }
             // Acciones secundarias alineadas al final, mismo orden siempre:
@@ -401,6 +417,7 @@ private fun PendingItemCard(
                 )
             }
         }
+        if (showDivider) AqHairline()
     }
     if (showDiscardConfirm) {
         AqDialog(

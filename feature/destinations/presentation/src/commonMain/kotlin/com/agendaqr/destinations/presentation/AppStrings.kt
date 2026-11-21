@@ -96,6 +96,8 @@ internal object AppStrings {
     val Seleccionados = "seleccionados"
     val OperacionSingular = "actividad"
     val OperacionesPlural = "actividades"
+    val ComprobanteSingular = "comprobante"
+    val ComprobantesPlural = "comprobantes"
     val EncuadreElCodigoQr = "Encuadra el código QR" // ADR-0008: tuteo (antes "Encuadre")
     val irreversibleActionWarning = "Esta acción no se puede deshacer."
     val sensitiveChangeWarning = "Esta actividad tiene comprobantes; no se modificarán."

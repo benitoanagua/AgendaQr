@@ -353,7 +353,7 @@ fun DestinationsScreen(
     }
 
     // G3: confirmación de eliminación por lote en destinos.
-    confirmarEliminarLote?.let {
+    if (confirmarEliminarLote) {
         val plural = if (selectedIds.size == 1) AppStrings.OperacionSingular else AppStrings.OperacionesPlural
         AqDialog(
             title = AppStrings.EliminarDestino,

@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqBottomAction
 import com.agendaqr.core.ui.components.ComprobanteThumbnail
 import com.agendaqr.core.ui.components.AqCheckbox
-import com.agendaqr.core.ui.components.AqCompactAction
+import com.agendaqr.core.ui.components.AqHairline
 import com.agendaqr.core.ui.components.AqDialog
 import com.agendaqr.core.ui.components.AqDialogList
 import com.agendaqr.core.ui.components.AqEmptyState
@@ -43,7 +43,8 @@ import com.agendaqr.destinations.data.SyncResource
  * declarados, componentes `AqScreenScaffold`, `AqListRow`, `AqEmptyState`
  * y `AqDialogList`. La fila entera es tocable y abre el flujo de
  * asociación; «Crear nueva actividad con esto» es acción secundaria de
- * texto. El chevron añade la affordance de «fila tocable» sin alterar el
+ * texto dentro de la celda. Todas las filas forman un único Cell-group
+ * (spec §12). El chevron añade la affordance de «fila tocable» sin alterar el
  * contrato de navegación (no cambia ruta ni back stack).
  */
 @Composable
@@ -101,19 +102,15 @@ internal fun UnassociatedScreen(
         if (state.unassociated.isEmpty()) {
             AqEmptyState(icon = AqIcons.Inbox, title = AppStrings.noUnassociatedReceipts)
         } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth().weight(1f),
-                verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
-            ) {
-                items(state.unassociated, key = { it.id }) { receipt ->
-                    // Una sola primaria por pantalla — la fila
-                    // entera abre el flujo de asociación (diálogo con
-                    // candidatas); «Crear actividad desde esto» es
-                    // acción de texto. Sin botones primarios por fila.
-                    AqListBody {
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
+            // Un único Cell-group (spec §12: las tarjetas no envuelven cada
+            // fila). La fila entera abre la asociación; «Crear nueva
+            // actividad con esto» es la acción de texto de la celda, sin
+            // botón tonal por fila.
+            AqListBody(modifier = Modifier.fillMaxWidth().weight(1f)) {
+                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                    itemsIndexed(state.unassociated, key = { _, it -> it.id }) { index, receipt ->
+                        val isLast = index == state.unassociated.lastIndex
+                        Column(modifier = Modifier.fillMaxWidth()) {
                             AqListRow(
                                 title = receipt.file.takeIf { it.isNotBlank() } ?: AppStrings.ElementoImportado,
                                 subtitle = formatDate(receipt.createdAt),
@@ -142,8 +139,6 @@ internal fun UnassociatedScreen(
                                             },
                                         )
                                     } else {
-                                        // Miniatura real del comprobante (imagen) o
-                                        // representación de tipo (PDF / fallback).
                                         ComprobanteThumbnail(
                                             file = receipt.file,
                                             mimeType = receipt.mimeType,
@@ -160,22 +155,18 @@ internal fun UnassociatedScreen(
                                 },
                                 titleMaxLines = 2,
                                 showChevron = true,
+                                showDivider = selectionMode && !isLast,
                             )
-                            // CTA de fila con affordance real: píldora
-                            // tonal compacta con target de 48 dp (no un
-                            // enlace de texto sin superficie). Solo fuera
-                            // de modo selección.
                             if (!selectionMode) {
-                                AqCompactAction(
+                                AqTextAction(
                                     label = AppStrings.createOperationFromThis,
                                     icon = AqIcons.Add,
                                     onClick = {
                                         viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
                                     },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Sm),
+                                    modifier = Modifier.padding(start = AqSpacing.Sm, bottom = AqSpacing.Xs),
                                 )
+                                if (!isLast) AqHairline()
                             }
                         }
                     }
@@ -208,42 +199,22 @@ internal fun UnassociatedScreen(
                         suggestion == null -> AqText(AppStrings.analyzingReceipt, color = AqColor.TextSecondary)
                         suggestion.kind == ReceiptMatchKind.NONE ->
                             Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-                                AqText(
-                                    AppStrings.noAutomaticMatch,
-                                    color = AqColor.TextSecondary,
-                                )
+                                AqText(AppStrings.noAutomaticMatch, color = AqColor.TextSecondary)
                                 if (candidateOperations.isEmpty()) {
                                     AqText(AppStrings.noOperationsAvailable, color = AqColor.TextSecondary)
                                 } else {
-                                    candidateOperations.forEachIndexed { index, operation ->
-                                        AqListRow(
-                                            title = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
-                                            subtitle = operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
-                                            onClick = {
-                                                viewModel.onAction(OperationAction.Associate(receipt.id, operation.id))
-                                                selectedReceipt = null
-                                            },
-                                            showDivider = index < candidateOperations.lastIndex,
-                                        )
+                                    CandidateOperationRows(candidateOperations) { operationId ->
+                                        viewModel.onAction(OperationAction.Associate(receipt.id, operationId))
+                                        selectedReceipt = null
                                     }
                                 }
                             }
                         candidateOperations.isEmpty() ->
-                            AqText(
-                                AppStrings.LasOperacionesCandidatasYaNo,
-                                color = AqColor.TextSecondary,
-                            )
-                        else -> candidateOperations.forEachIndexed { index, operation ->
-                            AqListRow(
-                                title = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
-                                            subtitle = operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
-                                            onClick = {
-                                                viewModel.onAction(OperationAction.Associate(receipt.id, operation.id))
-                                                selectedReceipt = null
-                                            },
-                                            showDivider = index < candidateOperations.lastIndex,
-                                        )
-                                    }
+                            AqText(AppStrings.LasOperacionesCandidatasYaNo, color = AqColor.TextSecondary)
+                        else -> CandidateOperationRows(candidateOperations) { operationId ->
+                            viewModel.onAction(OperationAction.Associate(receipt.id, operationId))
+                            selectedReceipt = null
+                        }
                     }
                 }
             },
@@ -251,8 +222,8 @@ internal fun UnassociatedScreen(
     }
 
     // G3: confirmación de eliminación por lote en la bandeja.
-    confirmarEliminarRecibo?.let {
-        val plural = if (selectedReceiptIds.size == 1) AppStrings.OperacionSingular else AppStrings.OperacionesPlural
+    if (confirmarEliminarRecibo) {
+        val plural = if (selectedReceiptIds.size == 1) AppStrings.ComprobanteSingular else AppStrings.ComprobantesPlural
         AqDialog(
             title = AppStrings.EliminarComprobante,
             destructive = true,
@@ -267,6 +238,23 @@ internal fun UnassociatedScreen(
             },
             dismissLabel = AppStrings.Cancelar,
             onDismiss = { confirmarEliminarRecibo = false },
+        )
+    }
+}
+
+/** Filas de operaciones candidatas del selector de asociación (una sola
+ *  anatomía para el caso con y sin coincidencia automática). */
+@Composable
+private fun CandidateOperationRows(
+    operations: List<com.agendaqr.destinations.domain.Operation>,
+    onPick: (String) -> Unit,
+) {
+    operations.forEachIndexed { index, operation ->
+        AqListRow(
+            title = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
+            subtitle = operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
+            onClick = { onPick(operation.id) },
+            showDivider = index < operations.lastIndex,
         )
     }
 }

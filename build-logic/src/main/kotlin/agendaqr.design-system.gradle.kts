@@ -856,6 +856,18 @@ tasks.register("captureGallery") {
             "captureGallery: ${artifacts.size} capturas estrictas ($byWidth; $byTheme); " +
                 "manifiesto en $captureManifestPath",
         )
+        // La galería no puede degradarse en silencio: si falta algún estado
+        // declarado de alguna superficie (p. ej. un escenario omitido porque
+        // el viewport no medía 360 dp), el comando falla aquí mismo, no solo
+        // en verifyScreenContract.
+        val incomplete = captureViolations(artifacts, ScreenContracts.all)
+            .filter { it.startsWith("galeria-") || it.startsWith("captura-") }
+        if (incomplete.isNotEmpty()) {
+            throw GradleException(
+                "captureGallery: galería incompleta o inválida (${incomplete.size}):\n" +
+                    incomplete.take(40).joinToString("\n") { "  $it" },
+            )
+        }
     }
 }
 

@@ -128,3 +128,30 @@ queda bajo el dock de acciones ni el FAB), `ScreensA11yCoverageTest` y
   humana en dispositivo, que se declara como no verificada en el CI.
 - Compilar y pasar las pruebas de layout no sustituye la validación en
   hardware real, que sigue siendo una comprobación manual.
+
+## Enmienda 2026-11-21 — cobertura estricta y estados críticos
+
+**Problema.** `captureViolations` solo exigía que cada superficie tuviera
+*alguna* captura; un estado declarado (error, vacío, carga) podía faltar sin
+que ni `captureGallery` ni `verifyScreenContract` lo notaran, y
+`captureStrict` descarta en silencio los escenarios que no miden 360 dp. Además
+el contrato no declaraba como capturables estados críticos ya existentes.
+
+**Decisión.**
+
+- Cada estado declarado en `captureStates` debe existir en **todas** las
+  configuraciones requeridas (`light`, `dark`); si falta, el gate reporta
+  `galeria-incompleta: <id> (<superficie>) sin captura '<estado>' en <tema>`.
+- `captureGallery` aplica esa misma comprobación al terminar y **falla** si la
+  galería está incompleta o inválida, en vez de publicar una galería parcial.
+- Nuevos estados capturados: `home--loading`, `contexts--loading`,
+  `qrfullscreen--error` (QR no decodificable: nunca un cuadro en blanco al
+  mostrarlo en caja) y `contextpicker--empty`.
+- `-PallowDebugSigningForRc=true` solo afecta a la firma `release` de
+  `androidApp`; la galería se genera con `testDebugUnitTest` de
+  `feature:destinations:presentation` y no lo necesita.
+
+**Límite conocido.** La captura toma la raíz de la pantalla: los diálogos de
+confirmación (ventana propia) y las hojas no aparecen en la imagen de la
+pantalla que las abre. Se verifican por semántica (ver
+`*_has_no_destructive_dialog_by_default` en `LayoutReferenceTest`).

@@ -78,7 +78,7 @@ object ScreenContracts {
             primaryActionKey = null,
             states = listOf("loading", "empty", "content", "error", "offline"),
             gestures = listOf("predictive-back", "horizontal-scroll", "swipe-actions", "pull-to-refresh"),
-            captureStates = listOf("empty", "content", "error"),
+            captureStates = listOf("loading", "empty", "content", "error"),
             components = listOf(
                 "AqScreenScaffold", "AqTopBar", "AqNavBar", "AqSearchTrigger", "AqQuickAction",
                 "AqSegmentedControl", "AqListRow", "AqListBody", "AqSectionHeader",
@@ -205,7 +205,7 @@ object ScreenContracts {
             primaryActionKey = null,
             states = listOf("content", "error"),
             gestures = emptyList(),
-            captureStates = listOf("content"),
+            captureStates = listOf("content", "error"),
             components = listOf("AqQrPreview", "AqTopBar"),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf("$A11Y/QrFullscreenTest.kt"),
@@ -254,7 +254,7 @@ object ScreenContracts {
             primaryActionKey = null,
             states = listOf("loading", "empty", "content", "error"),
             gestures = emptyList(),
-            captureStates = listOf("empty", "content"),
+            captureStates = listOf("loading", "empty", "content"),
             components = listOf(
                 "AqScreenScaffold", "AqTopBar", "AqListRow", "AqListBody",
                 "AqTabs", "AqContextBadge", "AqEmptyState", "AqLoading",
@@ -414,7 +414,7 @@ object ScreenContracts {
             primaryActionKey = null,
             states = listOf("selection", "empty", "content"),
             gestures = emptyList(),
-            captureStates = listOf("selection"),
+            captureStates = listOf("selection", "empty"),
             components = listOf(
                 "AqDialog", "AqDialogList", "AqListRow", "AqTextField",
                 "AqTextAction",
@@ -854,9 +854,21 @@ fun captureViolations(
     }
 
     if (artifacts.isNotEmpty()) {
+        // Cobertura estricta: cada estado declarado de cada superficie debe
+        // existir en TODAS las configuraciones requeridas. Antes bastaba una
+        // sola captura por superficie, y una pantalla crítica podía perder
+        // estados (error, vacío, carga) sin que el gate lo notara.
+        val captured = artifacts.map { Triple(it.name.surface, it.name.state, it.name.theme) }.toSet()
         screens.filter { it.captureStates.isNotEmpty() }.forEach { screen ->
             if (artifacts.none { it.name.surface == screen.surface }) {
                 add("galeria-incompleta: ${screen.id} (${screen.surface}) no tiene ninguna captura")
+            }
+            screen.captureStates.forEach { state ->
+                requiredCaptureConfigs.forEach { theme ->
+                    if (Triple(screen.surface, state, theme) !in captured) {
+                        add("galeria-incompleta: ${screen.id} (${screen.surface}) sin captura '$state' en $theme")
+                    }
+                }
             }
         }
         val present = artifacts.map { it.name }

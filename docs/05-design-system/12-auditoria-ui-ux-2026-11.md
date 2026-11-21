@@ -131,3 +131,19 @@ Verificado con `grep -rn "AqIcons\." feature core --include=*.kt` (código de pr
 ---
 
 <sup>1</sup> Líneas aproximadas de archivo; verificadas por lectura del árbol fuente en esta sesión.
+
+---
+
+## 7. Actualización 2026-11-21 — fidelidad a la spec UX V1 (§12)
+
+Estado verificado en código: A-01…A-06 y A-12 (iconografía/miniaturas) ya están resueltos; A-08 (chevron de bandeja) también. Cambios de esta pasada:
+
+| Hallazgo | Archivo | Corrección |
+|---|---|---|
+| Bandeja: una tarjeta por comprobante y botón tonal por fila (la spec §12 prohíbe envolver cada fila en tarjeta y duplicar acciones) | `UnassociatedScreen.kt` | Un único Cell-group; «Crear nueva actividad con esto» como acción de texto de la celda |
+| S12: pendientes como tarjetas independientes con botón por elemento (la spec pide Cell-group con Tag textual) | `ImportBatchScreen.kt` | Un único Cell-group (`PendingItemCell`); acciones de texto en la celda; Tag textual conservado |
+| Diálogos de eliminación por lote abiertos al componer (`Boolean?.let`) en Inicio, Actividades y Bandeja | `DestinationsScreen.kt`, `OperationListContent.kt`, `UnassociatedScreen.kt` | `if (…)`; tests de regresión `*_has_no_destructive_dialog_by_default` |
+| Copy: eliminar comprobantes por lote decía «actividades» | `UnassociatedScreen.kt`, `AppStrings.kt` | `ComprobanteSingular` / `ComprobantesPlural` |
+| Galería sin cobertura estricta de estados declarados | `ScreenContractGate.kt`, `agendaqr.design-system.gradle.kts` | Ver ADR-0007 (enmienda 2026-11-21) |
+
+Pendiente sin cambio de contrato: A-09/A-10 (CTA en bandeja vacía y pulsación larga) requieren decisión de producto.
