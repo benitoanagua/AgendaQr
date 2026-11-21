@@ -28,25 +28,25 @@ Colores, tipografía e iconos de Moon **no** se importan (ADR-0039): los aporta 
 | `MoonAvatar` | `widgets/avatar` | xs, sm, md, lg, xl, x2l; insignia con alineación | `AqAvatar` | pendiente |
 | `MoonBottomSheet`, `MoonModalBottomSheetRoute` | `widgets/bottom_sheet` | modal y no modal; arrastre y expansión | `AqBottomSheet` | pendiente |
 | `MoonBreadcrumb`, `MoonBreadcrumbItem` | `widgets/breadcrumb` | — | `AqBreadcrumb` | pendiente |
-| `MoonButton`, `MoonFilledButton`, `MoonOutlinedButton`, `MoonTextButton` | `widgets/buttons` | xs, sm, md, lg, xl; estados loading, disabled, pressed | `AqButton` | pendiente |
+| `MoonButton`, `MoonFilledButton`, `MoonOutlinedButton`, `MoonTextButton` | `widgets/buttons` | xs, sm, md, lg, xl; estados loading, disabled, pressed | `AqButton` | disponible |
 | `MoonCarousel` (+ controlador y física) | `widgets/carousel` | — | `AqCarousel` | pendiente |
-| `MoonCheckbox` | `widgets/checkbox` | — | `AqCheckbox` | pendiente |
+| `MoonCheckbox` | `widgets/checkbox` | — | `AqCheckbox` | disponible |
 | `MoonChip` | `widgets/chip` | sm, md | `AqChip` | pendiente |
-| `MoonCircularLoader`, `MoonLinearLoader` | `widgets/loaders` | circular: x2s…lg · lineal: x6s…x2s | `AqCircularLoader`, `AqLinearLoader` | pendiente |
-| `MoonCircularProgress`, `MoonLinearProgress` | `widgets/progress` | circular: x2s…lg · lineal: x6s…x2s | `AqCircularProgress`, `AqLinearProgress` | pendiente |
+| `MoonCircularLoader`, `MoonLinearLoader` | `widgets/loaders` | circular: x2s…lg · lineal: x6s…x2s | `AqCircularLoader`, `AqLinearLoader` | disponible |
+| `MoonCircularProgress`, `MoonLinearProgress` | `widgets/progress` | circular: x2s…lg · lineal: x6s…x2s | `AqCircularProgress`, `AqLinearProgress` | disponible |
 | `MoonDotIndicator` | `widgets/dot_indicator` | — | `AqDotIndicator` | pendiente |
-| `MoonDrawer` | `widgets/drawer` | — | `AqDrawer` | pendiente |
+| `MoonDrawer` | `widgets/drawer` | — | `AqDrawer` | disponible |
 | `MoonDropdown` | `widgets/dropdown` | posición de anclaje | `AqDropdown` | pendiente |
 | `MoonErrorMessage(s)` | `widgets/common/error_message_widgets.dart` | — | `AqErrorMessage` | pendiente |
 | `MoonFormTextInput`, `MoonTextInput` | `widgets/text_input` | sm, md, lg, xl | `AqTextInput` | pendiente |
 | `MoonMenuItem` | `widgets/menu_item` | — | `AqMenuItem` | pendiente |
-| `MoonModal`, `MoonModalRoute` | `widgets/modal` | — | `AqModal` | pendiente |
-| `MoonPillTab`, `MoonTab`, `MoonTabBar` | `widgets/tab_bar` | variante indicator, pill, custom; tamaños sm, md | `AqTabBar`, `AqPillTab` | pendiente |
+| `MoonModal`, `MoonModalRoute` | `widgets/modal` | — | `AqModal` | disponible |
+| `MoonPillTab`, `MoonTab`, `MoonTabBar` | `widgets/tab_bar` | variante indicator, pill, custom; tamaños sm, md | `AqTabBar`, `AqPillTab` | disponible |
 | `MoonPopover` | `widgets/popover` | posición | `AqPopover` | pendiente |
-| `MoonProgressPin` | `widgets/progress_pin` | — | `AqProgressPin` | pendiente |
-| `MoonRadio` | `widgets/radio` | — | `AqRadio` | pendiente |
-| `MoonSegmentedControl` | `widgets/segmented_control` | sm, md | `AqSegmentedControl` | pendiente |
-| `MoonSwitch` | `widgets/switch` | x2s, xs, sm | `AqSwitch` | pendiente |
+| `MoonProgressPin` | `widgets/progress_pin` | — | `AqProgressPin` | disponible |
+| `MoonRadio` | `widgets/radio` | — | `AqRadio` | disponible |
+| `MoonSegmentedControl` | `widgets/segmented_control` | sm, md | `AqSegmentedControl` | disponible |
+| `MoonSwitch` | `widgets/switch` | x2s, xs, sm | `AqSwitch` | disponible |
 | `MoonTable` (+ columna, fila, cabecera, pie) | `widgets/table` | filas xs, sm, md, lg, xl, x2l | `AqTable` | pendiente |
 | `MoonTag` | `widgets/tag` | x2s, xs, sm | `AqTag` | pendiente |
 | `MoonTextArea` | `widgets/text_area` | — | `AqTextArea` | pendiente |

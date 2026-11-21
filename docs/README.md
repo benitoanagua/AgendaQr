@@ -31,6 +31,7 @@
 | [`05-design-system/11-matriz-gaps-mobile.md`](05-design-system/11-matriz-gaps-mobile.md) | Matriz normativa de gaps mobile y cadena de precedencia Polaris → Moon → nativo |
 | [`05-design-system/12-auditoria-ui-ux-2026-11.md`](05-design-system/12-auditoria-ui-ux-2026-11.md) | Auditoría UI/UX de pantallas y componentes `Aq*` (hallazgos y plan de ejecución) |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros |
+| [`05-design-system/13-catalogo-moon.md`](05-design-system/13-catalogo-moon.md) | Catálogo de componentes Moon Design (fuente de verdad del UI/UX) |
 | [`05-design-system/componentes/miniatura-comprobante.md`](05-design-system/componentes/miniatura-comprobante.md) | Ficha de componente: Miniatura de comprobante (`AqThumbnail`, `AqThumbnailFrame`) |
 | [`05-design-system/componentes/bottom-sheet.md`](05-design-system/componentes/bottom-sheet.md) | Ficha de componente: Bottom Sheet (`AqBottomSheet`) |
 | [`05-design-system/componentes/segmented-control.md`](05-design-system/componentes/segmented-control.md) | Ficha de componente: Segmented Control (`AqSegmentedControl`) |
@@ -48,6 +49,13 @@
 | [`05-design-system/componentes/switch.md`](05-design-system/componentes/switch.md) | Ficha de componente: Switch (`AqSwitch`) |
 | [`05-design-system/componentes/tooltip.md`](05-design-system/componentes/tooltip.md) | Ficha de componente: Tooltip (`AqTooltip`) |
 | [`05-design-system/componentes/date-time-picker.md`](05-design-system/componentes/date-time-picker.md) | Ficha de componente: Pickers de Fecha/Hora (`AqDatePickerDialog`, `AqTimePickerDialog`) |
+| [`05-design-system/componentes/boton.md`](05-design-system/componentes/boton.md) | Ficha de componente: Botón (`AqButton`, variantes Filled/Outlined/Text) |
+| [`05-design-system/componentes/campo-de-texto.md`](05-design-system/componentes/campo-de-texto.md) | Ficha de componente: Campo de texto (`AqTextInput`) |
+| [`05-design-system/componentes/casilla-de-verificacion.md`](05-design-system/componentes/casilla-de-verificacion.md) | Ficha de componente: Casilla de verificación (`AqCheckbox`) |
+| [`05-design-system/componentes/control-segmentado.md`](05-design-system/componentes/control-segmentado.md) | Ficha de componente: Control segmentado (`AqSegmentedControl`) |
+| [`05-design-system/componentes/interruptor.md`](05-design-system/componentes/interruptor.md) | Ficha de componente: Interruptor (`AqSwitch`) |
+| [`05-design-system/componentes/alerta.md`](05-design-system/componentes/alerta.md) | Ficha de componente: Alerta (`AqAlert`) |
+| [`05-design-system/componentes/circular-loader.md`](05-design-system/componentes/circular-loader.md) | Ficha de componente: Indicador de carga circular (`AqCircularLoader`) |
 
 ## Decisiones
 
@@ -76,6 +84,8 @@
 | [`07-decisiones/ADR-0036-descarte-teclado-propio-importe.md`](07-decisiones/ADR-0036-descarte-teclado-propio-importe.md) | ADR: descarte del teclado propio para el importe |
 | [`07-decisiones/ADR-0037-capacidad-share-extension.md`](07-decisiones/ADR-0037-capacidad-share-extension.md) | ADR: capacidad de plataforma para Share Extension |
 | [`07-decisiones/ADR-0038-moon-ux-polaris-ui.md`](07-decisiones/ADR-0038-moon-ux-polaris-ui.md) | ADR: autoridad dividida por dimensión (Moon UX móvil, Polaris UI) |
+| [`07-decisiones/ADR-0039-moon-rige-ui-ux-polaris-residual.md`](07-decisiones/ADR-0039-moon-rige-ui-ux-polaris-residual.md) | ADR: Moon rige todo el UI/UX; Polaris solo color, tipografía e iconos |
+| [`07-decisiones/ADR-0040-adopcion-integra-catalogo-moon.md`](07-decisiones/ADR-0040-adopcion-integra-catalogo-moon.md) | ADR: adopción íntegra del catálogo Moon |
 
 ## Cómo se mantiene
 
