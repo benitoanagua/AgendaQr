@@ -86,63 +86,6 @@ fun AqModal(
 }
 
 /**
- * Hoja inferior sobre [MoonBottomSheet] / [showMoonModalBottomSheet]
- * (`moon_design` 1.1.0, `lib/src/widgets/bottom_sheet`). Superficie que
- * asciende desde el fondo con scrim, radio grande superior y cierre al
- * pulsar el scrim.
- */
-@Composable
-fun AqBottomSheet(
-    show: Boolean = true,
-    title: String,
-    /** copy del llamador. */
-    dismissLabel: String,
-    onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    if (!show) return
-    val scheme = LocalAqColorScheme.current
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(scheme.scrim),
-        contentAlignment = Alignment.BottomCenter,
-    ) {
-        // Cierre al pulsar el scrim (fuera de la hoja).
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clickable(onClick = onDismissRequest),
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(scheme.surface, AqSquircles.InteractiveMd)
-                .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
-        ) {
-            Text(
-                text = title,
-                style = AqTextStyles.HeadingLg,
-                color = scheme.textPrimary,
-            )
-            content()
-            Row(
-                modifier = Modifier
-                    .padding(vertical = AqSize.Xs),
-                horizontalArrangement = Arrangement.End,
-            ) {
-                AqTextAction(
-                    label = dismissLabel,
-                    onClick = onDismissRequest,
-                    enabled = true,
-                )
-            }
-        }
-    }
-}
-
-/**
  * Cajón lateral sobre [MoonDrawer] (`moon_design` 1.1.0,
  * `lib/src/widgets/drawer`). Superficie lateral (izquierda por defecto) con
  * scrim y cierre al pulsar el scrim.

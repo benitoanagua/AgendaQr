@@ -28,8 +28,8 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Permisos de cámara (política de ajustes) | pruebas unitarias + compilación de instrumentados |
 | Accesibilidad (contraste, foco visible, háptica, anuncios, objetivos ≥ 48 dp) | pruebas de `core:ui` + Robolectric |
 | Sistema visual Polaris 9.4.2 en `core/ui`: tokens semánticos claro/oscuro, Inter 4.0 empaquetado, pares AA, iconografía convertida a vectores Compose, movimiento, previews a 200 % y avisos de licencia | `verifyAgendaQrArchitecture` + `:core:ui:testDebugUnitTest` + `:androidApp:assembleDebug` con `-PallowDebugSigningForRc=true` |
-| Viraje Moon Design (ADR-0039/0040): Moon rige UI/UX (anatomía, tamaños, radios squircle, bordes, sombras, opacidades, movimiento, efecto de foco); Polaris solo color, tipografía e iconos. Nuevos componentes Moon disponibles: `AqButton`, `AqSegmentedControl`, `AqCheckbox`, `AqRadio`, `AqSwitch`, `AqTabBar`, `AqPillTab`, AqModal, `AqBottomSheet`, `AqDrawer`, `AqAlert`, `AqToast`, `AqTooltip`, `AqCircularLoader`, `AqLinearLoader`, `AqCircularProgress`, `AqLinearProgress`, `AqProgressPin`, `AqTextInput`, `AqTextArea` | `:core:ui:testDebugUnitTest` + `verifyDesignSystemCompliance` + `verifyDesignSystemFixtures` |
-| Componentes móviles adoptados en pantallas reales: `AqSwipeActions`, `AqPullToRefresh`, `AqBottomSheet`, `AqTooltip`, `AqSwitch`, `AqProgressBar`, `AqProgressBlock`, `AqSkeleton` | pruebas de `core:ui` y de presentación + gate |
+| Viraje Moon Design (ADR-0039/0040): Moon rige UI/UX (anatomía, tamaños, radios squircle, bordes, sombras, opacidades, movimiento, efecto de foco); Polaris solo color, tipografía e iconos. **EN PROGRESO — gate `verifyDesignSystemCompliance` en ROJO** (ver § Backlog de migración Moon). Componentes Moon ya puerto como código: `AqButton`, `AqModal`, `AqBottomSheet` (duplicado: `AqOverlay.kt` y `AqSheets.kt`), `AqDrawer`, `AqTabBar`, `AqPillTab`, `AqCircularLoader`, `AqLinearLoader`, `AqCheckbox`, `AqSwitch`, `AqSegmentedControl`, `AqTooltip`. Faltan como código: `AqTextInput`, `AqTextArea`, `AqTextInputGroup`, `AqAlert`, `AqToast`, `AqChip`, `AqTag`, `AqAvatar`, `AqMenuItem`, `AqAccordion`, `AqDropdown`, `AqPopover`, `AqTable`, `AqAuthCode`, `AqDotIndicator`, `AqRadio`, `AqBreadcrumb`, `AqErrorMessage`, `AqCircularProgress`, `AqLinearProgress`, `AqProgressPin`. Las pantallas de `feature/` aún usan 0 componentes Moon; todo el legado Polaris sigue activo. | `:core:ui:testDebugUnitTest` verde; `verifyDesignSystemCompliance` ROJO (484 violaciones legacy + 1 duplicado + 23 incumplimientos de catálogo) |
+| Componentes móviles adoptados en pantallas reales: ninguno con componentes Moon. Las pantallas siguen usando el legado Polaris (`AqTopBar`, `AqScreenScaffold`, `AqDialog`, `AqListRow`, `AqTextField`, `AqSnackbarHost`, `AqPrimaryButton`…). La migración pantalla por pantalla es el backlog de § Backlog de migración Moon. | 0 archivos de `feature/` importan un `Aq*` de Moon |
 | Contrato de interacción por pantalla (19 superficies) y galería estricta de capturas por superficie (360 dp, claro/oscuro) | `verifyScreenContract` + `verifyScreenContractFixtures` + `captureGallery` |
 | Documentación: enlaces vivos, alcanzabilidad desde el índice, ausencia de marcadores transitorios | `verifyDocs` |
 | Selección múltiple por lote en Actividades, destinos e inbox (G3 / ADR-0034) | pruebas de presentación + gate |
@@ -100,6 +100,75 @@ Los demás pendientes del cierre de gaps están implementados y verificados
 (ver §1) o descartados definitivamente con ADR (selección múltiple ADR-0034,
 teclado propio del importe ADR-0036, badge de navegación ADR-0035, límites de
 campo ADR-0033).
+
+## 4.1 Backlog de migración Moon (gate `verifyDesignSystemCompliance` en ROJO)
+
+Este backlog es la salida real del gate con las reglas de la Fase A activas.
+El gate pasa a VERDE cuando: (a) no quede ningún símbolo legacy importado ni
+llamado en `feature/`, `androidApp`, `iosApp` ni `shared`; (b) no quede más de
+una declaración pública de un mismo `Aq*`; (c) el catálogo `13-catalogo-moon.md`
+no tenga componentes `pendiente` ni `revisar` y cada `disponible`/`adoptado`
+tenga su `Aq*` exportado; y (d) `core/ui/components` no use `AqShapes`.
+
+### 4.1.1 Símbolos legacy prohibidos en uso (484 violaciones en 32 archivos)
+
+Cada archivo de `feature/destinations/presentation` (commonMain, androidMain,
+iosMain) importa o llama al menos un símbolo del registro de legacy:
+`AqTopBar`, `AqScreenScaffold`, `AqSnackbarHost`, `AqDialog`, `AqDialogList`,
+`AqListRow`, `AqListBody`, `AqTextField`, `AqTextAction`, `AqPrimaryButton`,
+`AqSecondaryButton`, `AqDangerButton`, `AqBottomAction`, `AqCard`, `AqEmptyState`,
+`AqStatusBanner`, `AqLoading`, `AqSearchTrigger`, `AqDatePickerDialog`,
+`AqAmountField`, `AqFormField`, `AqChipGroup`, `AqExpansionPanel`, `AqBadge`,
+`AqIconBadge`, `AqCompactAction`, `AqTappableCard`, `AqSkeleton`,
+`AqLoadMoreFooter`, `AqOverflowAction`, `AqSelectionBar`, `AqSectionHeader`,
+`AqSearchField`, `AqFeedbackEvent` y `AqShapes`.
+
+Los archivos con más llamadas legacy (orden aproximado de prioridad de
+migración, §2 del mandato): `ContextScreen`, `OperationDetailScreen`,
+`OperationListContent`, `OperationEditorScreen`, `ImportBatchScreen`,
+`DestinationsScreen`, `UnassociatedScreen`, `ContextPickerDialog`,
+`DestinationDetailScreen`, `DestinationEditorScreen`, `GlobalSearchScreen`,
+`ImportReviewScreen`, `AuthScreen`, `AgendaQrPatterns`, `OperationListGrouped`,
+`LocalOnboardingScreen`, `LocalLockScreen`, `AccountScreen`,
+`ComprobanteViewer`, `AddDestinationScreen`, `AppStatusHost`,
+`OperationListScreen`. Además `androidApp`, `iosApp` y `shared` (p. ej.
+`CameraQrCapture.android.kt`, `QrImportControls.ios.kt`,
+`IosCameraQrCapture.ios.kt`).
+
+### 4.1.2 Declaración duplicada (1 símbolo)
+
+- `AqBottomSheet` declarado dos veces: `core/ui/.../components/AqOverlay.kt:95`
+  y `core/ui/.../components/AqSheets.kt:52`. Debe quedar una sola
+  implementación (el puerto fiel de Moon en `AqSheets.kt`; borrar la de
+  `AqOverlay.kt`).
+
+### 4.1.3 Catálogo Moon incompleto (23 incumplimientos)
+
+Componentes con estado `pendiente` (no portados como código):
+`AqAccordion`, `AqAlert`, `AqAuthCode`, `AqAvatar`, `AqBottomSheet`,
+`AqBreadcrumb`, `AqCarousel`, `AqChip`, `AqDotIndicator`, `AqDropdown`,
+`AqErrorMessage`, `AqTextInput`, `AqMenuItem`, `AqPopover`, `AqTable`,
+`AqTag`, `AqTextArea`, `AqTextInputGroup`, `AqToast`, `AqTooltip`.
+
+Componentes marcados `disponible` en el catálogo pero **sin declaración en
+`core/ui`**: `AqLinearProgress`, `AqProgressPin`, `AqRadio`.
+
+Cada uno requiere: puerto fiel a `moon_flutter` 1.1.0, ficha en
+`docs/05-design-system/componentes/<nombre>.md`, entrada en
+`AqDesignSystemGallery` (claro y oscuro), pruebas de contrato y
+accesibilidad.
+
+### 4.1.4 Cómo se cierra
+
+1. Fase B: implementar los componentes Moon faltantes en `core/ui` y unificar
+   `AqBottomSheet`.
+2. Fase C: migrar cada pantalla de `feature/` (y `androidApp`/`iosApp`/`shared`
+   si tocan UI) sustituyendo legado por Moon sin wrappers.
+3. Fase D: borrar el legado de `core/ui` (componentes, tests, previews,
+   entradas de galería y fichas de docs), `AqShapes` y los tests de contrato
+   obsoletos.
+4. El gate queda VERDE cuando `grep -rEn "<legacy>|AqShapes"` devuelve 0
+   resultados y `verifyDesignSystemCompliance` pasa.
 
 ## 5. No implementado (alcance declarado, no defecto)
 
