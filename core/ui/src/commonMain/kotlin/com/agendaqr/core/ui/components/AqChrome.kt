@@ -34,8 +34,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
+import com.agendaqr.core.ui.components.AqBadge
+import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
@@ -233,6 +236,8 @@ class AqNavChromeState(
     val destinations: List<AqNavDestination>,
     val selectedId: String?,
     val onSelect: (String) -> Unit,
+    /** Conteo de pendientes para mostrar como badge en el ítem activo (p. ej. comprobantes sin asociar en Actividades). 0 = sin badge. */
+    val badgeCount: Int = 0,
 )
 
 /**
@@ -266,6 +271,8 @@ fun AqNavBar(
     selectedId: String,
     onSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
+    /** Conteo de pendientes del ítem activo (p. ej. comprobantes sin asociar). 0 = sin badge. */
+    badgeCount: Int = 0,
 ) {
     Column(
         modifier = modifier
@@ -317,7 +324,16 @@ fun AqNavBar(
                         fontFamily = AqType.FamilyUi,
                         color = if (selected) AqColor.EmphasisText else AqColor.TextSecondary,
                         maxLines = 1,
+                        modifier = Modifier.semantics {
+                            contentDescription = destination.label + (if (selected && badgeCount > 0) " (" + badgeCount + ")" else "")
+                        },
                     )
+                    if (selected && badgeCount > 0) {
+                        AqBadge(
+                            text = if (badgeCount > 99) "99+" else badgeCount.toString(),
+                            tone = AqTone.Warning,
+                        )
+                    }
                 }
             }
         }
@@ -334,6 +350,8 @@ fun AqNavRail(
     selectedId: String,
     onSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
+    /** Conteo de pendientes del ítem activo. 0 = sin badge. */
+    badgeCount: Int = 0,
 ) {
     Column(
         modifier = modifier
@@ -378,7 +396,16 @@ fun AqNavRail(
                     color = if (selected) AqColor.EmphasisText else AqColor.TextSecondary,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.semantics {
+                        this.contentDescription = destination.label + (if (selected && badgeCount > 0) " (" + badgeCount + ")" else "")
+                    },
                 )
+                if (selected && badgeCount > 0) {
+                    AqBadge(
+                        text = if (badgeCount > 99) "99+" else badgeCount.toString(),
+                        tone = AqTone.Warning,
+                    )
+                }
             }
         }
     }
