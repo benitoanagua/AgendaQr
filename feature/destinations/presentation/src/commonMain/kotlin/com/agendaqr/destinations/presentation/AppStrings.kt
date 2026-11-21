@@ -89,6 +89,13 @@ internal object AppStrings {
     val EliminarOperacion = "Eliminar actividad"
     /** Etiqueta de la fila de meta que informa del QR de destino vinculado a la actividad. */
     val DestinoVinculado = "Destino vinculado"
+    /** Modo selección por lote (G3 / ADR-0034). */
+    val CerrarSeleccion = "Cerrar selección"
+    val SeleccionarTodo = "Seleccionar todo"
+    val SeleccionarNinguno = "Seleccionar ninguno"
+    val Seleccionados = "seleccionados"
+    val OperacionSingular = "actividad"
+    val OperacionesPlural = "actividades"
     val EncuadreElCodigoQr = "Encuadra el código QR" // ADR-0008: tuteo (antes "Encuadre")
     val irreversibleActionWarning = "Esta acción no se puede deshacer."
     val sensitiveChangeWarning = "Esta actividad tiene comprobantes; no se modificarán."

@@ -160,10 +160,17 @@ internal fun OperationEditorScreen(
                 onClick = {
                     // Sin importe válido no se guarda; el error en
                     // vivo ya es visible (o aparece ahora).
-                    if (!isValidAmount(amount)) {
+                    if (!isValidAmount(amount) || amount.length > FieldLimits.Importe) {
                         amountEdited = true
                         // Foco al primer (único) campo con error.
                         formFocus.focusFirstError(setOf(FieldAmount))
+                        return@AqBottomAction
+                    }
+                    // G2: límites de dominio — no se guarda si algún campo
+                    // excede su tope (el input ya muestra el error).
+                    if (person.length > FieldLimits.PersonaOEntidad
+                        || concept.length > FieldLimits.Concepto
+                        || note.length > FieldLimits.Nota) {
                         return@AqBottomAction
                     }
                     val at = occurredAtMillis
@@ -321,6 +328,7 @@ internal fun OperationEditorScreen(
                 optionalLabel = AppStrings.Opcional,
                 value = person,
                 onValueChange = { person = it },
+                maxLength = FieldLimits.PersonaOEntidad,
                 leadingIcon = com.agendaqr.core.ui.components.AqIcons.Store,
             )
             val counterparts = remember(state.operations) { recentCounterparts(state.operations) }
@@ -368,6 +376,7 @@ internal fun OperationEditorScreen(
                     optionalLabel = AppStrings.Opcional,
                     value = concept,
                     onValueChange = { concept = it },
+                    maxLength = FieldLimits.Concepto,
                     leadingIcon = com.agendaqr.core.ui.components.AqIcons.NoteEdit,
                 )
                 AqMultilineTextField(
@@ -375,6 +384,7 @@ internal fun OperationEditorScreen(
                     optionalLabel = AppStrings.Opcional,
                     value = note,
                     onValueChange = { note = it },
+                    maxLength = FieldLimits.Nota,
                 )
             }
         }

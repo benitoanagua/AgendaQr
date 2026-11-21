@@ -14,7 +14,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import com.agendaqr.core.ui.components.AqFormFocus
 import com.agendaqr.core.ui.components.AqSnackbarHost
+import com.agendaqr.core.ui.components.rememberAqFormFocus
+import com.agendaqr.destinations.domain.FieldLimits
 import com.agendaqr.core.ui.components.AqBottomAction
 import com.agendaqr.core.ui.components.AqIconBadge
 import com.agendaqr.core.ui.components.AqFormSection
@@ -94,10 +98,16 @@ private fun DestinationEditorContent(
     androidx.compose.runtime.LaunchedEffect(justCreatedContextId) {
         justCreatedContextId?.let { id -> selection = selection.select(id) }
     }
+    // G1: orden visual de foco al primer error (solo los campos obligatorios:
+    // nombre y código QR; categoría y nota son opcionales en el dominio).
+    val formFocus = rememberAqFormFocus(FieldName)
 
     val nameError = submitted && name.isBlank()
     val qrError = submitted && qr.encoded.isBlank()
-    val canSave = name.isNotBlank() && qr.encoded.isNotBlank() && !isSaving
+    // G1: Guardar siempre está habilitado salvo mientras guarda. La
+    // validación se explica (errores de campo + foco), no se esconde
+    // tras un botón deshabilitado (ADR-0032).
+    val canSave = !isSaving
 
     // V1.4 (§12): "Editar QR" en la barra superior con flecha atrás; Guardar
     // es el botón principal FIJO abajo (acción real de guardado), nunca
@@ -121,7 +131,23 @@ private fun DestinationEditorContent(
                 label = if (isSaving) AppStrings.Guardando else AppStrings.Guardar,
                 onClick = {
                     submitted = true
-                    if (name.isBlank() || qr.encoded.isBlank()) return@AqBottomAction
+                    if (name.isBlank() || qr.encoded.isBlank()) {
+                        // Foco al primer campo con error (orden visual: nombre).
+                        // Si solo falta el QR, no hay campo de texto al que
+                        // llevar el foco; el error de QR se muestra en el
+                        // bloque de origen del código.
+                        formFocus.focusFirstError(
+                            errors = if (name.isBlank()) setOf(FieldName) else emptySet(),
+                        )
+                        return@AqBottomAction
+                    }
+                    // G2: límites de dominio — no se guarda si algún campo
+                    // excede su tope (el input ya muestra el error).
+                    if (name.length > FieldLimits.Nombre
+                        || category.length > FieldLimits.Categoria
+                        || note.length > FieldLimits.Nota) {
+                        return@AqBottomAction
+                    }
                     val now = com.agendaqr.destinations.domain.nowMillis()
                     onSave(
                         existing.copy(
@@ -164,14 +190,22 @@ private fun DestinationEditorContent(
                     label = AppStrings.Nombre,
                     value = name,
                     onValueChange = { name = it },
-                    isError = nameError,
+                    focusRequester = formFocus.requesterFor(FieldName),
+                    maxLength = FieldLimits.Nombre,
+                    isError = nameError || name.length > FieldLimits.Nombre,
                     errorMessage = if (nameError) AppStrings.ElNombreEsObligatorio else null,
                 )
-                AqTextField(label = AppStrings.Categoria, value = category, onValueChange = { category = it })
+                AqTextField(
+                    label = AppStrings.Categoria,
+                    value = category,
+                    onValueChange = { category = it },
+                    maxLength = FieldLimits.Categoria,
+                )
                 AqMultilineTextField(
                     label = AppStrings.Nota,
                     value = note,
                     onValueChange = { note = it },
+                    maxLength = FieldLimits.Nota,
                 )
                 AqSwitch(
                     label = AppStrings.Favorito,
@@ -230,3 +264,6 @@ private fun DestinationEditorContent(
         )
     }
 }
+
+// G1: claves de foco al primer error (orden visual del formulario).
+private const val FieldName = "nombre"

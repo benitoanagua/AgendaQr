@@ -276,7 +276,7 @@ private fun BatchReviewContent(
     // (AqChipGroup); con un solo tipo de pendiente no hay filtro que ofrecer.
     val hasDuplicates = batch.duplicates.isNotEmpty()
     val hasUnknown = batch.unknown.isNotEmpty()
-    val showFilter = hasDuplicates && hasUnknown
+    val showFilter = hasDuplicates || hasUnknown
     var filterIndex by remember(batch) { mutableStateOf(0) }
     val filtered = when {
         !showFilter || filterIndex == 0 -> pending

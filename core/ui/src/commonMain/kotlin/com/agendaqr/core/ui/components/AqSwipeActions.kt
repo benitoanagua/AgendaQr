@@ -1,6 +1,7 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -72,13 +73,13 @@ fun AqSwipeActions(
     val offsetX = remember { Animatable(0f) }
     // Duración de las transiciones de deslizamiento; se anula con
     // movimiento reducido (contrato §7: eliminar la transición).
-    val swipeSpec = if (reducedMotion) null else tween(
+    val swipeSpec: TweenSpec<Float>? = if (reducedMotion) null else tween(
         durationMillis = AqMotion.DurationMediumMs,
         easing = AqMotion.Easings.Standard,
     )
     /** Desplaza el offset al target; con movimiento reducido es un snap
      *  inmediato en lugar de una animación interpolada. */
-    private suspend fun swipeTo(target: Float) {
+    suspend fun swipeTo(target: Float) {
         if (swipeSpec == null) {
             offsetX.snapTo(target)
         } else {
