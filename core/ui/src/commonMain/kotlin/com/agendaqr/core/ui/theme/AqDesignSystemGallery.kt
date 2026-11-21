@@ -132,6 +132,12 @@ fun AqDesignSystemGallery(darkTheme: Boolean) {
             AqTokenFoundationsPreview()
 
             // ------------------------------------------------------------------
+            // Moon Design (portado)
+            // ------------------------------------------------------------------
+            AqSectionHeader(text = "Moon Design (portado)")
+            AqMoonPreview()
+
+            // ------------------------------------------------------------------
             // Actions
             // ------------------------------------------------------------------
             AqSectionHeader(text = "Actions")
@@ -1156,6 +1162,75 @@ private fun AqMobileInteractionsPreview() {
             text = "Éxito: imagen decodada con ContentScale.Crop sobre AqShapes.Medium; sin ícono de fallback.",
             color = AqColor.TextSecondary,
             size = AqType.Caption,
+        )
+    }
+}
+
+@Composable
+private fun AqMoonPreview() {
+    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+        AqText(
+            text = "Botón Moon — variantes",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqButton(
+                label = "Primaria (Filled)",
+                onClick = {},
+                variant = AqButtonVariant.Filled,
+            )
+            AqButton(
+                label = "Secundaria (Outlined)",
+                onClick = {},
+                variant = AqButtonVariant.Outlined,
+            )
+            AqButton(
+                label = "Texto",
+                onClick = {},
+                variant = AqButtonVariant.Text,
+            )
+        }
+        AqText(
+            text = "Control segmentado",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqSegmentedControl(
+            options = listOf(
+                AqSegmentedOption(label = "Uno"),
+                AqSegmentedOption(label = "Dos", count = 3),
+                AqSegmentedOption(label = "Tres", enabled = false),
+            ),
+            selectedIndex = 1,
+            onSelect = {},
+        )
+        AqText(
+            text = "Casilla / Interruptor / Alerta",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqCheckbox(
+                checked = true,
+                onCheckedChange = {},
+                contentDescription = "Casilla",
+            )
+            AqSwitch(
+                checked = false,
+                onCheckedChange = {},
+                contentDescription = "Interruptor",
+            )
+        }
+        AqAlert(
+            message = "Operación guardada",
+            tone = AqTone.Success,
+        )
+        AqAlert(
+            message = "No se pudo sincronizar",
+            tone = AqTone.Danger,
+            dismissLabel = "Cerrar",
+            dismiss = {},
         )
     }
 }
