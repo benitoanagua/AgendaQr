@@ -72,6 +72,78 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-05" to listOf("shadow:AqLists.kt"),
 )
 
+/** Lista de símbolos legacy de la capa Polaris que NO deben importarse ni
+ * llamarse desde `feature/`, `androidApp`, `iosApp` ni `shared`. Cada uno
+ * tiene un equivalente Moon en el catálogo (§1 de la auditoría 2026-11-21)
+ * o se compone únicamente con piezas Moon (catálogo §4). Se borra su
+ * definición en `core/ui` en la Fase D.
+ */
+val legacySymbols = listOf(
+    "AqActionSheet",
+    "AqAmountField",
+    "AqBadge",
+    "AqBlockStack",
+    "AqBottomAction",
+    "AqBottomActionDock",
+    "AqButtonGroup",
+    "AqCard",
+    "AqCheckboxGroup",
+    "AqChipGroup",
+    "AqChoiceGroup",
+    "AqCompactAction",
+    "AqContextBadge",
+    "AqDangerButton",
+    "AqDatePickerDialog",
+    "AqDialog",
+    "AqDialogList",
+    "AqEmptyState",
+    "AqEvidenceBadge",
+    "AqExpansionPanel",
+    "AqExtendedFab",
+    "AqFeedbackEvent",
+    "AqFeedbackHost",
+    "AqFieldMessages",
+    "AqFormField",
+    "AqHeading",
+    "AqIconBadge",
+    "AqIconButton",
+    "AqIndexTable",
+    "AqInlineStack",
+    "AqLink",
+    "AqListBody",
+    "AqListRow",
+    "AqLoading",
+    "AqLoadMoreFooter",
+    "AqMetaRow",
+    "AqNavBar",
+    "AqNavRail",
+    "AqOutlineButton",
+    "AqOverflowAction",
+    "AqPrimaryButton",
+    "AqRadioButton",
+    "AqScreenScaffold",
+    "AqSearchField",
+    "AqSearchTrigger",
+    "AqSecondaryButton",
+    "AqSection",
+    "AqSectionHeader",
+    "AqSelect",
+    "AqSelectAllCheckbox",
+    "AqSelectionBar",
+    "AqShapes",
+    "AqSkeleton",
+    "AqSnackbarHost",
+    "AqSpinner",
+    "AqStatusBanner",
+    "AqStatusPill",
+    "AqTabs",
+    "AqTappableCard",
+    "AqTextAction",
+    "AqTextField",
+    "AqTonalTag",
+    "AqTopBar",
+)
+
 /** Archivos con `.border(`/`BorderStroke(` permitidos: ninguno. */
 val borderAllowedFiles: Set<String> =
     buildSet {
@@ -155,7 +227,14 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
         if (!isTokenLayer &&
             (line.contains("CircleShape") || line.contains("RectangleShape"))
         ) {
-            add("$location: production code must use AqShapes/token API (no CircleShape/RectangleShape): $line")
+            add("$location: forbidden radius API (use AqCorner + AqSquircleShape, no CircleShape/RectangleShape): $line")
+        }
+        // ADR-0039: AqShapes es el legado de forma de Polaris; ya no se usa
+        // en ningún componente de core/ui/components (solo AqCorner +
+        // AqSquircleShape). La capa de tokens sigue siendo la única fuente.
+        val isComponentSource = path.contains("/components/")
+        if (isComponentSource && Regex("\\bAqShapes\\b").containsMatchIn(line)) {
+            add("$location: AqShapes retirado; usar AqCorner / AqSquircleShape: $line")
         }
         // Colores nombrados de Compose fuera de la capa de tokens: todo
         // literal visual va al rol semántico (QrCanvas, TextPrimary…).
@@ -178,14 +257,25 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
         if (hasBorderCall && borderAllowedFiles.none { path.endsWith(it) }) {
             add("$location: .border(/BorderStroke( outside the canonical focus file (register an exception or remove the border): $line")
         }
-        // material3/colorScheme prohibido en feature/, shared/src y
-        // androidApp/src (solo core:ui puede adaptarlos).
-        val isAppSource = isFeatureSource || path.contains("/shared/src/") || path.contains("/androidApp/src/")
+        // material3/material prohibido en feature/, shared/src,
+        // androidApp/src e iosApp/src (solo core:ui puede adaptarlos).
+        val isAppSource = isFeatureSource || path.contains("/shared/src/") ||
+            path.contains("/androidApp/src/") || path.contains("/iosApp/src/")
         if (isAppSource && (bannedMaterialInFeature.any(line::contains) ||
                 line.contains("androidx.compose.material3.") ||
+                line.contains("androidx.compose.material.") ||
                 line.contains("MaterialTheme.colorScheme"))
         ) {
             add("$location: app/feature code must use core:ui tokens: $line")
+        }
+        // Símbolos legacy de Polaris prohibidos en feature/ y en las apps:
+        // cada uno tiene un equivalente Moon o se compone con piezas Moon.
+        if (isAppSource) {
+            legacySymbols.forEach { symbol ->
+                if (Regex("\\b$symbol\\b").containsMatchIn(line)) {
+                    add("$location: símbolo legacy prohibido '$symbol'; migrar al componente Moon equivalente: $line")
+                }
+            }
         }
         // Copy de UI en feature/ debe salir de AppStrings.
         if (isFeatureSource) {
@@ -285,6 +375,69 @@ fun checkViolations(): List<String> {
     val violations = mutableListOf<String>()
     visualSources().forEach { file ->
         violations += kotlinDesignViolations(file.path, file.readLines())
+    }
+    // No puede haber dos declaraciones públicas del mismo Aq* (p. ej.
+    // AqBottomSheet declarado en AqOverlay.kt y en AqSheets.kt).
+    violations += duplicateAqDeclarations()
+    // El catálogo Moon debe estar completo: sin estados "pendiente" y cada
+    // componente disponible/adoptado debe tener su símbolo Aq* exportado.
+    violations += catalogCompletenessViolations()
+    return violations
+}
+
+/** Todas las declaraciones públicas de nivel superior de un símbolo Aq* en
+ * los fuentes de producción, indexadas por nombre. */
+fun exportedAqSymbols(): Map<String, List<String>> {
+    val result = mutableMapOf<String, MutableList<String>>()
+    productionKotlinSources().forEach { file ->
+        file.readLines().forEachIndexed { index, line ->
+            val trimmed = line.trimStart()
+            // Solo cuentas declaraciones propias de un símbolo Aq*: se excluyen
+            // funciones/propiedades de extensión (`fun Receptor.metodo`) porque
+            // no declaran al receptor, y se requiere límite de palabra seguido
+            // de no-punto para evitar capturas parciales.
+            Regex("""^(?:@Composable\s+)?(?:fun|class|data class|enum class|object|sealed class|sealed interface|annotation class|interface|typealias|val|var)\s+(Aq[A-Za-z0-9_]+)\b(?!\.)""").find(trimmed)?.let { match ->
+                result.getOrPut(match.groupValues[1]) { mutableListOf() }.add("${file.path}:${index + 1}")
+            }
+        }
+    }
+    return result
+}
+
+/** Detecta declaraciones públicas duplicadas de un mismo Aq*. */
+fun duplicateAqDeclarations(): List<String> =
+    exportedAqSymbols()
+        .filter { it.value.size > 1 }
+        .flatMap { (name, locations) ->
+            locations.map { "declaracion-duplicada: '$name' declarado en $it (debe quedar una sola implementación)" }
+        }
+        .toList()
+
+/** Verifica que el catálogo Moon esté completo y que cada símbolo Aq* que
+ * declara esté realmente exportado desde core/ui. */
+fun catalogCompletenessViolations(): List<String> {
+    val catalogFile = file("docs/05-design-system/13-catalogo-moon.md")
+    if (!catalogFile.exists()) {
+        return listOf("catalogo: no se encuentra docs/05-design-system/13-catalogo-moon.md")
+    }
+    val content = catalogFile.readText()
+    val exported = exportedAqSymbols().keys.toSet()
+    val violations = mutableListOf<String>()
+    val catalogRow = Regex("""\|[^|]*\b(Aq[A-Za-z0-9_]+)\b[^|]*\|\s*(disponible|adoptado|pendiente|revisar)\s*\|""")
+    content.lines().forEach { line ->
+        catalogRow.find(line)?.let { match ->
+            val aqName = match.groupValues[1]
+            val estado = match.groupValues[2]
+            when (estado) {
+                "pendiente", "revisar" ->
+                    violations += "catalogo: '$aqName' sigue con estado '$estado'; completar el puerto Moon y actualizar la ficha"
+                else -> {
+                    if (aqName !in exported) {
+                        violations += "catalogo: '$aqName' marcado como '$estado' pero no se encuentra su declaración en core/ui"
+                    }
+                }
+            }
+        }
     }
     return violations
 }
@@ -731,6 +884,65 @@ tasks.register("verifyDesignSystemFixtures") {
         }
         require(falseD2Flags.isEmpty()) {
             "Technical defaults failed enforcement: ${falseD2Flags.joinToString()}"
+        }
+
+        // Símbolos legacy de Polaris prohibidos en feature/ y en las apps.
+        listOf("AqDialog(", "AqTextField(", "AqPrimaryButton(", "AqSnackbarHost(", "AqTopBar(", "AqShapes.Medium").forEach { legacyCall ->
+            require(kotlinDesignViolations(featurePath, listOf("val x = $legacyCall")).isNotEmpty()) {
+                "el símbolo legacy '$legacyCall' en feature/ debe fallar el gate"
+            }
+            require(kotlinDesignViolations("/repo/shared/src/commonMain/kotlin/Fixture.kt", listOf("val x = $legacyCall")).isNotEmpty()) {
+                "el símbolo legacy '$legacyCall' en shared/ debe fallar el gate"
+            }
+            require(kotlinDesignViolations("/repo/androidApp/src/main/kotlin/Fixture.kt", listOf("val x = $legacyCall")).isNotEmpty()) {
+                "el símbolo legacy '$legacyCall' en androidApp/ debe fallar el gate"
+            }
+            require(kotlinDesignViolations("/repo/iosApp/src/main/kotlin/Fixture.kt", listOf("val x = $legacyCall")).isNotEmpty()) {
+                "el símbolo legacy '$legacyCall' en iosApp/ debe fallar el gate"
+            }
+        }
+        // Los equivalentes Moon NO están prohibidos en feature/.
+        require(kotlinDesignViolations(featurePath, listOf("val x = AqButton(label = \"ctx-1\", onClick = {})")).isEmpty()) {
+            "AqButton (Moon) en feature/ debe pasar el gate"
+        }
+        require(kotlinDesignViolations(featurePath, listOf("val x = AqModal(show = true, title = \"ctx-1\", dismissLabel = \"ctx-2\", onDismissRequest = {})")).isEmpty()) {
+            "AqModal (Moon) en feature/ debe pasar el gate"
+        }
+        // AqShapes prohibido en core/ui/components (la capa de componentes
+        // debe usar AqCorner / AqSquircleShape).
+        require(kotlinDesignViolations(componentsPath, listOf("val s = AqShapes.Medium")).isNotEmpty()) {
+            "AqShapes en core/ui/components debe fallar el gate"
+        }
+        // AqTokens.kt es la definición de AqShapes (capa de tokens): se
+        // permite allí y solo allí.
+        require(kotlinDesignViolations(tokenShapePath, listOf("object AqShapes { val Dummy = 1 }")).isEmpty()) {
+            "la definición de AqShapes en el token layer debe pasar"
+        }
+        // Import material3/material prohibido en feature/.
+        require(kotlinDesignViolations(featurePath, listOf("import androidx.compose.material3.Text")).isNotEmpty()) {
+            "import material3 en feature/ debe fallar el gate"
+        }
+        require(kotlinDesignViolations(featurePath, listOf("import androidx.compose.material.Surface")).isNotEmpty()) {
+            "import material en feature/ debe fallar el gate"
+        }
+        require(kotlinDesignViolations(corePath, listOf("import androidx.compose.material3.Text")).isEmpty()) {
+            "import material3 en core:ui debe pasar el gate (adaptador del DS)"
+        }
+
+        // Declaración duplicada de un mismo Aq*: la función debe ser
+        // invocable y devolver solo violaciones de duplicado (el repo real
+        // tiene AqBottomSheet duplicado, se espera rojo hasta la Fase D).
+        val dups = duplicateAqDeclarations()
+        require(dups.all { it.startsWith("declaracion-duplicada:") }) {
+            "duplicateAqDeclarations debe devolver solo violaciones de duplicado: $dups"
+        }
+
+        // Catálogo Moon: ningún componente debe quedar con estado "pendiente"
+        // ni "revisar", y cada disponible/adoptado debe tener su Aq* exportado.
+        // Mientras haya puertos pendientes, este requisito falla (backlog).
+        val catalogViolations = catalogCompletenessViolations()
+        require(catalogViolations.all { it.startsWith("catalogo:") }) {
+            "catalogCompletenessViolations debe devolver solo violaciones de catálogo: $catalogViolations"
         }
     }
 }
