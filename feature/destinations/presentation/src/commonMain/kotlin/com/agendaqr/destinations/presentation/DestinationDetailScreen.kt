@@ -127,135 +127,28 @@ fun DestinationDetailScreen(
             }
         },
     ) {
-        // Tarjeta núcleo del QR: código real sobre lienzo claro
-        // PLANO (el marco de escáner queda para la cámara) + guía de uso.
-        // La tarjeta también es tocable con la misma acción de Mostrar
-        // (semántica de botón); el dock conserva la primaria visible.
-        if (destination.qr.encoded.isNotBlank()) {
-            AqTappableCard(onClick = onShowQr) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
-                ) {
-                    AqQrPreview(
-                        encodedQr = destination.qr.encoded,
-                        size = AqMetrics.QrPreviewSize,
-                        unavailableMessage = AppStrings.QrNoSePudoMostrar,
-                    )
-                    AqText(
-                        AppStrings.MuestraEsteCodigo,
-                        color = AqColor.TextSecondary,
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                    )
-                }
-            }
-        } else {
-            AqEmptyState(
-                icon = AqIcons.QrCode,
-                title = AppStrings.QrSinContenido,
-                subtitle = AppStrings.EditaElDestinoParaImportar,
-                actionLabel = AppStrings.Editar,
-                onAction = onEdit,
-            )
-        }
-
-        // Metadatos en filas compactas (patrón de detalle de comprobante): solo
-        // datos reales del dominio; el contenido decodificado se puede
-        // COPIAR (portapapeles del sistema, feedback por evento) y la
-        // fecha de alta es el createdAt real.
-        val hasMetadata = destination.category != null ||
-            destination.qr.content?.takeIf { it.isNotBlank() } != null ||
-            destination.note?.takeIf { it.isNotBlank() } != null
-        if (hasMetadata || destination.qr.encoded.isNotBlank()) {
-            AqCard {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-                ) {
-                    // Contenido decodificado: bloque de ancho
-                    // completo alineado a la izquierda, máx. 3 líneas con
-                    // "Ver más", seleccionable y copiable (no una fila de
-                    // valor alineada a la derecha).
-                    destination.qr.content?.takeIf { it.isNotBlank() }?.let { content ->
-                        var contentExpanded by remember { mutableStateOf(false) }
-                        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
-                            AqText(
-                                AppStrings.Contenido,
-                                color = AqColor.TextSecondary,
-                                size = AqType.BodySmall,
-                            )
-                            androidx.compose.foundation.text.selection.SelectionContainer {
-                                AqText(
-                                    content,
-                                    maxLines = if (contentExpanded) Int.MAX_VALUE else 3,
-                                )
-                            }
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                AqTooltip(
-                                    label = AppStrings.Copiar,
-                                    isVisible = showCopyTooltip,
-                                    onLongClick = { showCopyTooltip = !showCopyTooltip },
-                                ) {
-                                    AqCompactAction(
-                                        label = AppStrings.Copiar,
-                                        onClick = {
-                                            copyToClipboard(content)
-                                            copiedEvent = Any()
-                                        },
-                                        icon = AqIcons.Copy,
-                                        prominent = true,
-                                    )
-                                }
-                                AqTextAction(
-                                    label = if (contentExpanded) AppStrings.VerMenos else AppStrings.VerMas,
-                                    onClick = { contentExpanded = !contentExpanded },
-                                )
-                            }
-                        }
-                    }
-                    destination.category?.let { AqMetaRow(label = AppStrings.Categoria, value = it) }
-                    AqMetaRow(
-                        label = AppStrings.FechaDeAlta,
-                        value = formatDate(destination.createdAt),
-                        icon = AqIcons.Calendar,
-                    )
-                    destination.note?.takeIf { it.isNotBlank() }?.let {
-                        AqHairline()
-                        AqText(it, color = AqColor.TextSecondary)
-                    }
-                }
-            }
-        }
-
-        // Estado de sincronización del elemento (texto, no solo color).
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-        ) {
-            ElementSyncBadge(syncStatus, showWhenSynced = true)
-            if (syncStatus == ElementSyncStatus.Dead) {
-                AqText(
-                    text = AppStrings.TuInformacionEstaGuardadaEnElDispositivo,
-                    color = AqColor.TextSecondary,
-                )
-            }
-        }
-        if (syncStatus == ElementSyncStatus.ErrorRecoverable) {
-            // El dato está a salvo localmente: el usuario puede reintentar.
-            AqTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
-        }
-
-        // Reaseguro de integridad: cierto en el dominio
-        // — editar un destino no toca las operaciones históricas.
-        AqStatusPill(
-            text = AppStrings.IntegridadHistorica,
-            icon = AqIcons.ShieldCheck,
-            tone = AqTone.Success,
+        // Mapa 1:1 de los bloques contractuales (docs/04-ux/02-especificacion-ux-ui-v1.md,
+        // 03-contrato-interaccion-pantallas.md):
+        //   QrCard → MetadataSection → SyncStatus → IntegrityPill
+        DestinationDetailQrCard(
+            destination = destination,
+            onShowQr = onShowQr,
+            onEdit = onEdit,
         )
+        DestinationDetailMetadata(
+            destination = destination,
+            onCopy = { content ->
+                copyToClipboard(content)
+                copiedEvent = Any()
+            },
+            showCopyTooltip = showCopyTooltip,
+            onCopyTooltipToggle = { showCopyTooltip = !showCopyTooltip },
+        )
+        DestinationDetailSyncStatus(
+            syncStatus = syncStatus,
+            onRetrySync = onRetrySync,
+        )
+        DestinationDetailIntegrityPill()
     }
     if (showDeleteConfirm) {
         AqDialog(
@@ -279,27 +172,179 @@ fun DestinationDetailScreen(
             onDismissRequest = { showDetailsSheet = false },
             dismissDescription = AppStrings.Cerrar,
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Md)) {
-                destination.category?.let { AqMetaRow(label = AppStrings.Categoria, value = it) }
-                AqMetaRow(
-                    label = AppStrings.FechaDeAlta,
-                    value = formatDate(destination.createdAt),
-                    icon = AqIcons.Calendar,
+            DestinationDetailSheet(destination = destination)
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Secciones de composición S03/S09 — extraídas para mapear 1:1 el contrato UX
+// ---------------------------------------------------------------------------
+
+/** Tarjeta núcleo del QR: código real + guía de uso. */
+@Composable
+private fun DestinationDetailQrCard(
+    destination: Destination,
+    onShowQr: () -> Unit,
+    onEdit: () -> Unit,
+) {
+    if (destination.qr.encoded.isNotBlank()) {
+        AqTappableCard(onClick = onShowQr) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
+            ) {
+                AqQrPreview(
+                    encodedQr = destination.qr.encoded,
+                    size = AqMetrics.QrPreviewSize,
+                    unavailableMessage = AppStrings.QrNoSePudoMostrar,
                 )
+                AqText(
+                    AppStrings.MuestraEsteCodigo,
+                    color = AqColor.TextSecondary,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                )
+            }
+        }
+    } else {
+        AqEmptyState(
+            icon = AqIcons.QrCode,
+            title = AppStrings.QrSinContenido,
+            subtitle = AppStrings.EditaElDestinoParaImportar,
+            actionLabel = AppStrings.Editar,
+            onAction = onEdit,
+        )
+    }
+}
+
+/** Metadatos del destino: contenido, categoría, fecha de alta, nota. */
+@Composable
+private fun DestinationDetailMetadata(
+    destination: Destination,
+    onCopy: (String) -> Unit,
+    showCopyTooltip: Boolean,
+    onCopyTooltipToggle: () -> Unit,
+) {
+    val hasMetadata = destination.category != null ||
+        destination.qr.content?.takeIf { it.isNotBlank() } != null ||
+        destination.note?.takeIf { it.isNotBlank() } != null
+    if (hasMetadata || destination.qr.encoded.isNotBlank()) {
+        AqCard {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            ) {
+                // Contenido decodificado: bloque de ancho completo alineado a
+                // la izquierda, máx. 3 líneas con "Ver más", seleccionable y
+                // copiable.
                 destination.qr.content?.takeIf { it.isNotBlank() }?.let { content ->
+                    var contentExpanded by remember { mutableStateOf(false) }
                     Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
                         AqText(
                             AppStrings.Contenido,
                             color = AqColor.TextSecondary,
                             size = AqType.BodySmall,
                         )
-                        AqText(content)
+                        androidx.compose.foundation.text.selection.SelectionContainer {
+                            AqText(
+                                content,
+                                maxLines = if (contentExpanded) Int.MAX_VALUE else 3,
+                            )
+                        }
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            AqTooltip(
+                                label = AppStrings.Copiar,
+                                isVisible = showCopyTooltip,
+                                onLongClick = onCopyTooltipToggle,
+                            ) {
+                                AqCompactAction(
+                                    label = AppStrings.Copiar,
+                                    onClick = { onCopy(content) },
+                                    icon = AqIcons.Copy,
+                                    prominent = true,
+                                )
+                            }
+                            AqTextAction(
+                                label = if (contentExpanded) AppStrings.VerMenos else AppStrings.VerMas,
+                                onClick = { contentExpanded = !contentExpanded },
+                            )
+                        }
                     }
                 }
+                destination.category?.let { AqMetaRow(label = AppStrings.Categoria, value = it) }
+                AqMetaRow(
+                    label = AppStrings.FechaDeAlta,
+                    value = formatDate(destination.createdAt),
+                    icon = AqIcons.Calendar,
+                )
                 destination.note?.takeIf { it.isNotBlank() }?.let {
+                    AqHairline()
                     AqText(it, color = AqColor.TextSecondary)
                 }
             }
+        }
+    }
+}
+
+/** Estado de sincronización del elemento (texto, no solo color). */
+@Composable
+private fun DestinationDetailSyncStatus(
+    syncStatus: ElementSyncStatus,
+    onRetrySync: () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+    ) {
+        ElementSyncBadge(syncStatus, showWhenSynced = true)
+        if (syncStatus == ElementSyncStatus.Dead) {
+            AqText(
+                text = AppStrings.TuInformacionEstaGuardadaEnElDispositivo,
+                color = AqColor.TextSecondary,
+            )
+        }
+    }
+    if (syncStatus == ElementSyncStatus.ErrorRecoverable) {
+        AqTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
+    }
+}
+
+/** Reaseguro de integridad: editar un destino no toca las operaciones históricas. */
+@Composable
+private fun DestinationDetailIntegrityPill() {
+    AqStatusPill(
+        text = AppStrings.IntegridadHistorica,
+        icon = AqIcons.ShieldCheck,
+        tone = AqTone.Success,
+    )
+}
+
+/** Hoja inferior de detalle: categoría, fecha, contenido, nota. */
+@Composable
+private fun DestinationDetailSheet(destination: Destination) {
+    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Md)) {
+        destination.category?.let { AqMetaRow(label = AppStrings.Categoria, value = it) }
+        AqMetaRow(
+            label = AppStrings.FechaDeAlta,
+            value = formatDate(destination.createdAt),
+            icon = AqIcons.Calendar,
+        )
+        destination.qr.content?.takeIf { it.isNotBlank() }?.let { content ->
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
+                AqText(
+                    AppStrings.Contenido,
+                    color = AqColor.TextSecondary,
+                    size = AqType.BodySmall,
+                )
+                AqText(content)
+            }
+        }
+        destination.note?.takeIf { it.isNotBlank() }?.let {
+            AqText(it, color = AqColor.TextSecondary)
         }
     }
 }
