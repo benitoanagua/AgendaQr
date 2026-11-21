@@ -83,179 +83,31 @@ internal fun OperationDetailScreen(
         snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
     ) {
-        // Hero de la actividad (patrón de detalle de factura): píldora de
-        // TIPO con texto (pago = danger, cobro = success) + contexto,
-        // cifra grande NEUTRA con signo (la referencia no colorea el
-        // importe; el tipo lo comunica la píldora) y caja temporal.
-        val amountText = operationAmountText(operation)
-        val contextName = state.contexts.firstOrNull { it.id == operation.contextId }?.name
-        // superficie y padding de sección los aporta la tarjeta (organismo);
-        // la página solo compone contenido.
-        AqCard {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    AqTonalTag(
-                        text = operationTypeLabel(operation.type),
-                        tone = operationTypeTone(operation.type),
-                        uppercase = true,
-                    )
-                    contextName?.let {
-                        AqTonalTag(text = it, tone = AqTone.Neutral)
-                    }
-                }
-                Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
-                    amountText?.let {
-                        AqText(
-                            it,
-                            size = AqType.Amount,
-                            fontWeight = AqWeight.SemiBold,
-                        )
-                    }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
-                    ) {
-                        AqIcon(
-                            imageVector = AqIcons.Store,
-                            contentDescription = null,
-                            tint = AqColor.TextSecondary,
-                        )
-                        AqText(
-                            operationTitle(operation),
-                            size = AqType.SectionHeader,
-                            fontWeight = AqWeight.SemiBold,
-                        )
-                    }
-                }
-                // Caja temporal compacta (referencia): ocurrido vs
-                // registrado — datos reales del dominio.
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(AqColor.SurfaceContainerLow, AqShapes.Large)
-                        .padding(AqSpacing.Md),
-                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
-                ) {
-                    AqMetaRow(
-                        label = AppStrings.FechaDeOperacion,
-                        value = formatDate(operation.occurredAt),
-                        icon = AqIcons.Calendar,
-                    )
-                    AqMetaRow(
-                        label = AppStrings.RegistradoEnDispositivo,
-                        value = formatDate(operation.createdAt),
-                        icon = AqIcons.Clock,
-                    )
-                }
-            }
-        }
-        // Metadatos en filas compactas (patrón de detalle de factura): etiqueta a la
-        // izquierda, valor a la derecha; la nota larga va como texto.
-        val hasMetadata = operation.personOrEntity != null ||
-            operation.currency != null ||
-            operation.concept != null ||
-            operation.note != null
-        if (hasMetadata) {
-            AqCard {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-                ) {
-                    operation.personOrEntity?.let { AqMetaRow(label = AppStrings.LabelPersonaOEntidad, value = it) }
-                    operation.currency?.let { AqMetaRow(label = AppStrings.LabelMoneda, value = it) }
-                    operation.concept?.let { AqMetaRow(label = AppStrings.LabelConcepto, value = it) }
-                    operation.note?.let {
-                        AqText(it, color = AqColor.TextSecondary)
-                    }
-                }
-            }
-        }
-        // estado de sincronización del elemento (texto, no solo color).
-        val operationSyncStatus = syncLookup.status(SyncResource.OPERATION, operation.id)
-        ElementSyncBadge(operationSyncStatus)
-        if (operationSyncStatus == ElementSyncStatus.ErrorRecoverable) {
-            // El dato está a salvo localmente: el usuario puede reintentar.
-            AqTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
-        }
-        if (operationSyncStatus == ElementSyncStatus.Dead) {
-            // U4: el drain omite los errores permanentes; reintentar no
-            // puede recuperarlos. El dato está a salvo localmente.
-            AqText(
-                text = AppStrings.TuInformacionEstaGuardadaEnElDispositivo,
-                color = AqColor.TextSecondary,
-            )
-        }
-        // D8: destino QR vinculado a la actividad, cuando existe.
-        operation.destinationId?.let { destinationId ->
-            val destinationName = destinationsViewModel?.destination(destinationId)?.name
-            AqMetaRow(
-                label = AppStrings.DestinoVinculado,
-                value = destinationName ?: destinationId,
-            )
-        }
-
-        AqSection(AppStrings.SeccionComprobantes) {
-            if (state.operationComprobantes.isEmpty()) {
-                AqText(AppStrings.SinComprobanteAdjunto, color = AqColor.TextSecondary)
-                // Secundaria/tonal con icono, dentro de su sección: nunca
-                // un enlace del mismo peso que la acción destructiva.
-                AqSecondaryButton(
-                    label = AppStrings.attachReceiptNow,
-                    icon = AqIcons.Attachment,
-                    onClick = { viewModel.openUnassociatedForOperation(operation.id) },
-                )
-            } else {
-                // X-01: insignia de evidencia reutilizable (icono + texto).
-                // El texto afirma solo la recepción del comprobante; nunca
-                // dinero verificado ni pago.
-                AqEvidenceBadge(
-                    text = AppStrings.receiptReceivedTitle,
-                    icon = AqIcons.Attachment,
-                    tone = AqTone.Success,
-                )
-                AqListBody {
-                    for (receipt in state.operationComprobantes) {
-                        // §12 V1.4: comprobante como fila con identidad
-                        // (sujeta-papeles) y procedencia como etiqueta
-                        // tonal; "Desasociar" como acción de fila.
-                        AqListRow(
-                            title = AppStrings.Comprobante,
-                            subtitle = formatDate(receipt.createdAt),
-                            onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) },
-                            leading = {
-                                AqIconBadge(icon = AqIcons.Attachment, tone = AqTone.Neutral)
-                            },
-                            meta = {
-                                AqTonalTag(
-                                    text = receiptProvenanceLabel(receipt.provenance),
-                                    tone = provenanceTone(receipt.provenance),
-                                )
-                            },
-                            trailing = {
-                                AqTextAction(
-                                    label = AppStrings.Desasociar,
-                                    onClick = { viewModel.onAction(OperationAction.Disassociate(receipt.id)) },
-                                    variant = AqTextActionVariant.Danger,
-                                )
-                            },
-                        )
-                    }
-                }
-            }
-        }
-        // Destructiva al final, separada del contenido y con el diálogo
-        // estándar: una sola vía de eliminación (sin duplicar en el menú).
-        AqDangerButton(
-            label = AppStrings.EliminarOperacion,
-            onClick = { showDeleteConfirm = true },
-            size = AqButtonSize.Medium,
+        // Mapa 1:1 de los bloques contractuales (docs/04-ux/02-especificacion-ux-ui-v1.md,
+        // 03-contrato-interaccion-pantallas.md):
+        //   Hero → Metadata → SyncStatus → LinkedDestination → ComprobantesSection → DeleteButton
+        OperationDetailHero(
+            operation = operation,
+            contexts = state.contexts,
+        )
+        OperationDetailMetadata(operation = operation)
+        OperationDetailSyncStatus(
+            syncLookup = syncLookup,
+            operationId = operation.id,
+            onRetrySync = onRetrySync,
+        )
+        OperationDetailLinkedDestination(
+            operation = operation,
+            destinationsViewModel = destinationsViewModel,
+        )
+        OperationDetailComprobantesSection(
+            comprobantes = state.operationComprobantes,
+            onOpenComprobante = { viewModel.onAction(OperationAction.OpenComprobante(it)) },
+            onDisassociate = { viewModel.onAction(OperationAction.Disassociate(it)) },
+            openUnassociated = { viewModel.openUnassociatedForOperation(operation.id) },
+        )
+        OperationDetailDeleteButton(
+            onDelete = { showDeleteConfirm = true },
         )
     }
     if (showDeleteConfirm) {
@@ -273,5 +125,204 @@ internal fun OperationDetailScreen(
             onDismiss = { showDeleteConfirm = false },
         )
     }
+}
+
+// ---------------------------------------------------------------------------
+// Secciones de composición — extraídas para mapear 1:1 el contrato UX
+// ---------------------------------------------------------------------------
+
+/** Hero del detalle: tipo, importe, contexto y caja temporal. */
+@Composable
+private fun OperationDetailHero(
+    operation: Operation,
+    contexts: List<Context>,
+) {
+    val amountText = operationAmountText(operation)
+    val contextName = contexts.firstOrNull { it.id == operation.contextId }?.name
+    AqCard {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                AqTonalTag(
+                    text = operationTypeLabel(operation.type),
+                    tone = operationTypeTone(operation.type),
+                    uppercase = true,
+                )
+                contextName?.let {
+                    AqTonalTag(text = it, tone = AqTone.Neutral)
+                }
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
+                amountText?.let {
+                    AqText(
+                        it,
+                        size = AqType.Amount,
+                        fontWeight = AqWeight.SemiBold,
+                    )
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+                ) {
+                    AqIcon(
+                        imageVector = AqIcons.Store,
+                        contentDescription = null,
+                        tint = AqColor.TextSecondary,
+                    )
+                    AqText(
+                        operationTitle(operation),
+                        size = AqType.SectionHeader,
+                        fontWeight = AqWeight.SemiBold,
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(AqColor.SurfaceContainerLow, AqShapes.Large)
+                    .padding(AqSpacing.Md),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+            ) {
+                AqMetaRow(
+                    label = AppStrings.FechaDeOperacion,
+                    value = formatDate(operation.occurredAt),
+                    icon = AqIcons.Calendar,
+                )
+                AqMetaRow(
+                    label = AppStrings.RegistradoEnDispositivo,
+                    value = formatDate(operation.createdAt),
+                    icon = AqIcons.Clock,
+                )
+            }
+        }
+    }
+}
+
+/** Metadatos del detalle: persona/entidad, moneda, concepto, nota. */
+@Composable
+private fun OperationDetailMetadata(operation: Operation) {
+    val hasMetadata = operation.personOrEntity != null ||
+        operation.currency != null ||
+        operation.concept != null ||
+        operation.note != null
+    if (hasMetadata) {
+        AqCard {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            ) {
+                operation.personOrEntity?.let { AqMetaRow(label = AppStrings.LabelPersonaOEntidad, value = it) }
+                operation.currency?.let { AqMetaRow(label = AppStrings.LabelMoneda, value = it) }
+                operation.concept?.let { AqMetaRow(label = AppStrings.LabelConcepto, value = it) }
+                operation.note?.let {
+                    AqText(it, color = AqColor.TextSecondary)
+                }
+            }
+        }
+    }
+}
+
+/** Estado de sincronización del detalle (texto, no solo color). */
+@Composable
+private fun OperationDetailSyncStatus(
+    syncLookup: ElementSyncLookup,
+    operationId: String,
+    onRetrySync: () -> Unit,
+) {
+    val operationSyncStatus = syncLookup.status(SyncResource.OPERATION, operationId)
+    ElementSyncBadge(operationSyncStatus)
+    if (operationSyncStatus == ElementSyncStatus.ErrorRecoverable) {
+        AqTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
+    }
+    if (operationSyncStatus == ElementSyncStatus.Dead) {
+        AqText(
+            text = AppStrings.TuInformacionEstaGuardadaEnElDispositivo,
+            color = AqColor.TextSecondary,
+        )
+    }
+}
+
+/** Destino QR vinculado a la actividad, cuando existe. */
+@Composable
+private fun OperationDetailLinkedDestination(
+    operation: Operation,
+    destinationsViewModel: DestinationsViewModel?,
+) {
+    operation.destinationId?.let { destinationId ->
+        val destinationName = destinationsViewModel?.destination(destinationId)?.name
+        AqMetaRow(
+            label = AppStrings.DestinoVinculado,
+            value = destinationName ?: destinationId,
+        )
+    }
+}
+
+/** Sección de comprobantes del detalle de operación. */
+@Composable
+private fun OperationDetailComprobantesSection(
+    comprobantes: List<Comprobante>,
+    onOpenComprobante: (String) -> Unit,
+    onDisassociate: (String) -> Unit,
+    openUnassociated: () -> Unit,
+) {
+    AqSection(AppStrings.SeccionComprobantes) {
+        if (comprobantes.isEmpty()) {
+            AqText(AppStrings.SinComprobanteAdjunto, color = AqColor.TextSecondary)
+            AqSecondaryButton(
+                label = AppStrings.attachReceiptNow,
+                icon = AqIcons.Attachment,
+                onClick = openUnassociated,
+            )
+        } else {
+            AqEvidenceBadge(
+                text = AppStrings.receiptReceivedTitle,
+                icon = AqIcons.Attachment,
+                tone = AqTone.Success,
+            )
+            AqListBody {
+                for (receipt in comprobantes) {
+                    AqListRow(
+                        title = AppStrings.Comprobante,
+                        subtitle = formatDate(receipt.createdAt),
+                        onClick = { onOpenComprobante(receipt.id) },
+                        leading = {
+                            AqIconBadge(icon = AqIcons.Attachment, tone = AqTone.Neutral)
+                        },
+                        meta = {
+                            AqTonalTag(
+                                text = receiptProvenanceLabel(receipt.provenance),
+                                tone = provenanceTone(receipt.provenance),
+                            )
+                        },
+                        trailing = {
+                            AqTextAction(
+                                label = AppStrings.Desasociar,
+                                onClick = { onDisassociate(receipt.id) },
+                                variant = AqTextActionVariant.Danger,
+                            )
+                        },
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** Botón destructivo de eliminación, separado al final. */
+@Composable
+private fun OperationDetailDeleteButton(
+    onDelete: () -> Unit,
+) {
+    AqDangerButton(
+        label = AppStrings.EliminarOperacion,
+        onClick = onDelete,
+        size = AqButtonSize.Medium,
+    )
 }
 
