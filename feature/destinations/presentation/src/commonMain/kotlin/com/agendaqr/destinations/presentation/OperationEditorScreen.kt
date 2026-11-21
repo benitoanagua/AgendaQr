@@ -394,7 +394,7 @@ internal fun OperationEditorScreen(
             AqDangerButton(
                 label = AppStrings.EliminarOperacion,
                 onClick = { showDeleteConfirm = true },
-                size = AqButtonSize.Md,
+                size = AqButtonSize.Medium,
             )
         }
     }

@@ -49,6 +49,13 @@
 | [`05-design-system/componentes/switch.md`](05-design-system/componentes/switch.md) | Ficha de componente: Switch (`AqSwitch`) |
 | [`05-design-system/componentes/tooltip.md`](05-design-system/componentes/tooltip.md) | Ficha de componente: Tooltip (`AqTooltip`) |
 | [`05-design-system/componentes/date-time-picker.md`](05-design-system/componentes/date-time-picker.md) | Ficha de componente: Pickers de Fecha/Hora (`AqDatePickerDialog`, `AqTimePickerDialog`) |
+| [`05-design-system/componentes/boton.md`](05-design-system/componentes/boton.md) | Ficha de componente: Botón (`AqButton`, variantes Filled/Outlined/Text) |
+| [`05-design-system/componentes/campo-de-texto.md`](05-design-system/componentes/campo-de-texto.md) | Ficha de componente: Campo de texto (`AqTextInput`) |
+| [`05-design-system/componentes/casilla-de-verificacion.md`](05-design-system/componentes/casilla-de-verificacion.md) | Ficha de componente: Casilla de verificación (`AqCheckbox`) |
+| [`05-design-system/componentes/control-segmentado.md`](05-design-system/componentes/control-segmentado.md) | Ficha de componente: Control segmentado (`AqSegmentedControl`) |
+| [`05-design-system/componentes/interruptor.md`](05-design-system/componentes/interruptor.md) | Ficha de componente: Interruptor (`AqSwitch`) |
+| [`05-design-system/componentes/alerta.md`](05-design-system/componentes/alerta.md) | Ficha de componente: Alerta (`AqAlert`) |
+| [`05-design-system/componentes/circular-loader.md`](05-design-system/componentes/circular-loader.md) | Ficha de componente: Indicador de carga circular (`AqCircularLoader`) |
 
 ## Decisiones
 
