@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -91,6 +93,11 @@ import com.agendaqr.core.ui.components.AqTonalTag
 import com.agendaqr.core.ui.components.AqTooltip
 import com.agendaqr.core.ui.components.AqTopBar
 import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.components.AqThumbnail
+import com.agendaqr.core.ui.components.AqThumbnailFrame
+import com.agendaqr.core.ui.components.AqThumbnailSkeleton
+import com.agendaqr.core.ui.components.AqThumbnailFallback
+import com.agendaqr.core.ui.components.ThumbnailSize
 import com.agendaqr.core.ui.components.AqBannerAction
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -1103,6 +1110,53 @@ private fun AqMobileInteractionsPreview() {
                 }
             }
         }
+
+        AqText(
+            text = "Miniatura de comprobante (AqThumbnail) — carga, éxito y fallback",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
+                AqText(
+                    text = "Cargando",
+                    color = AqColor.TextSecondary,
+                    size = AqType.Caption,
+                )
+                AqThumbnailFrame(size = ThumbnailSize) {
+                    AqThumbnailSkeleton(modifier = Modifier.fillMaxSize())
+                }
+            }
+            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
+                AqText(
+                    text = "Sin vista previa (imagen → QR)",
+                    color = AqColor.TextSecondary,
+                    size = AqType.Caption,
+                )
+                AqThumbnailFrame(size = ThumbnailSize) {
+                    AqThumbnailFallback(isPdf = false, contentDescription = null)
+                }
+            }
+            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
+                AqText(
+                    text = "PDF / archivo (Attachment)",
+                    color = AqColor.TextSecondary,
+                    size = AqType.Caption,
+                )
+                AqThumbnailFrame(size = ThumbnailSize) {
+                    AqThumbnailFallback(isPdf = true, contentDescription = null)
+                }
+            }
+        }
+        AqText(
+            text = "Éxito: imagen decodada con ContentScale.Crop sobre AqShapes.Medium; sin ícono de fallback.",
+            color = AqColor.TextSecondary,
+            size = AqType.Caption,
+        )
     }
 }
 

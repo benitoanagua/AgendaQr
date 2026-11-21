@@ -5,15 +5,15 @@
 
 ---
 
-## 1. Cadena de precedencia normativa
+## 1. Cadena de precedencia normativa (ADR-0038)
 
-Toda decisión de interfaz y experiencia de usuario móvil se resuelve estrictamente en el siguiente orden:
+Toda decisión de interfaz y experiencia de usuario móvil se resuelve estrictamente por dimensión, en el siguiente orden:
 
-1. **Nivel 1 — Polaris:** convenciones, tokens, componentes, patrones, copy y guía mobile si existe. Siempre gana. Si Polaris solo tiene guía de escritorio para un componente, se anota como «Polaris sin guía mobile» y se adapta usando el criterio de Polaris (tokens, densidad, jerarquía).
-2. **Nivel 2 — Moon Design for Flutter:** SOLO si Polaris no define el componente o patrón. Se toman anatomía, estados, tamaños y gestos. El estilo se reemplaza al 100 % con tokens Polaris. Prohibido importar paleta, sombras, squircle o tipografía de Moon. No se agrega ninguna dependencia de Moon ni de Flutter.
-3. **Nivel 3 — Convención nativa Android (Material 3) / iOS (HIG):** SOLO si ni Polaris ni Moon lo cubren. Se estiliza igualmente con tokens Polaris.
+1. **Nivel 1 — UX / interacción (Moon):** anatomía del componente, estados, tamaños táctiles, gestos, orden de acciones, feedback, vacíos, carga y error. Moon Design for Flutter (`moon_design` 1.1.0) es la referencia de nivel 1 para patrones móviles. El estilo se reemplaza al 100 % por tokens Polaris. Prohibido importar paleta, sombras, squircle o tipografía de Moon. No se agrega ninguna dependencia de Moon ni de Flutter.
+2. **Nivel 1 — UI / apariencia (Polaris, siempre):** color, tipografía Inter, radios, elevación, iconografía, espaciado, tonos semánticos y modo oscuro. Polaris gana siempre; 100 % tokens Polaris.
+3. **Nivel 3 — Convención nativa Android (Material 3) / iOS (HIG):** SOLO lo que ni Moon (UX) ni Polaris (UI) cubren (bottom nav, FAB, swipe, pull-to-refresh, date picker, skeleton, empty state, list cell). Se estiliza igualmente con tokens Polaris.
 
-No se puede asignar nivel 3 sin haber descartado por escrito los niveles 1 y 2. Esta regla aplica también a la navegación: se consulta primero Polaris, luego Moon y finalmente nativo.
+No se puede asignar nivel 3 sin haber descartado por escrito que ni la autoridad de UX ni la de UI dan respuesta. Esta regla aplica también a la navegación: se consulta primero Polaris, luego Moon y finalmente nativo.
 
 Referencia de catálogo Moon: `MoonBottomSheet`, `MoonModal`, `MoonDrawer`, `MoonSegmentedControl`, `MoonPillTab`, `MoonTabBar`, `MoonChip`, `MoonTag`, `MoonToast`, `MoonAlert`, `MoonAccordion`, `MoonCarousel`, `MoonDotIndicator`, `MoonAuthCode`, `MoonTextInput`, `MoonTextInputGroup`, `MoonTextArea`, `MoonErrorMessage`, `MoonMenuItem`, `MoonPopover`, `MoonDropdown`, `MoonTooltip`, `MoonAvatar`, `MoonCircularLoader`, `MoonLinearLoader`, `MoonCircularProgress`, `MoonLinearProgress`, `MoonProgressPin`, `MoonSwitch`, `MoonRadio`, `MoonCheckbox`, `MoonButton`, `MoonBreadcrumb`, `MoonTable`.
 Moon NO incluye: bottom navigation, FAB, search bar, swipe actions, pull-to-refresh, date/time picker, skeleton, empty state, list cell; esos pasan a nivel 3 si Polaris tampoco los define.
