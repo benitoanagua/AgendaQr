@@ -192,209 +192,67 @@ internal fun OperationEditorScreen(
             )
         },
     ) {
-        // Error recuperable ARRIBA, visible sin scroll, junto al resto de
-        // estados de la pantalla (§10).
-        state.error?.let { err ->
-            val (bannerAction, bannerDismiss) = err.bannerActions(
-                onRetry = { viewModel.onAction(OperationAction.RetryFailed) },
-                onClear = { viewModel.onAction(OperationAction.ClearError) },
-            )
-            AqStatusBanner(
-                title = err.what,
-                message = err.dataStatus,
-                tone = AqTone.Danger,
-                action = bannerAction,
-                dismiss = bannerDismiss,
-            )
-        }
-        // 1) HERO — importe grande con su moneda; el tipo (segmentado) y
-        //    la moneda lo califican sin competir con Guardar.
-        AqAmountField(
-            label = AppStrings.LabelMonto,
-            optionalLabel = AppStrings.Opcional,
-            focusRequester = formFocus.requesterFor(FieldAmount),
-            value = amount,
-            onValueChange = {
-                amount = it
-                amountEdited = true
-            },
-            onClear = { amount = "" },
-            clearLabel = AppStrings.BorrarImporte,
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal,
-            ),
-            // La molécula del campo es dueña del mensaje de error
-            // y de su separación (4 dp), no la pantalla.
-            state = AqFieldState(
-                isError = amountInvalid,
-                errorMessage = if (amountInvalid) AppStrings.ImporteInvalido else null,
-            ),
-        )
-        OperationTypeSelector(
+        // Mapa 1:1 de los bloques contractuales (docs/04-ux/02-especificacion-ux-ui-v1.md,
+        // 03-contrato-interaccion-pantallas.md):
+        //   ErrorBanner → AmountSection → CurrencySection → DateTimeSection →
+        //   DetailsSection → MoreDetailsPanel → DeleteButton
+        OperationErrorBanner(state, viewModel)
+        OperationAmountSection(
             type = type,
-            onSelect = { type = it },
+            onTypeSelect = { type = it },
+            formFocus = formFocus,
+            amount = amount,
+            onAmountChange = { amount = it; amountEdited = true },
+            onAmountClear = { amount = "" },
+            amountInvalid = amountInvalid,
         )
-        AqFormField(label = AppStrings.LabelMoneda) {
-            // Elección única de moneda: control segmentado (patrón de
-            // enum de formulario); el chip "Otra…" muestra el código
-            // elegido (ARS, EUR…) en la propia etiqueta.
-            val otherLabel = if (currencyCustomOpen && currency.isNotBlank()) {
-                currency.trim().uppercase()
-            } else {
-                AppStrings.MonedaOtra
-            }
-            AqSegmentedControl(
-                options = listOf(
-                    AqSegmentedOption(AppStrings.MonedaBob),
-                    AqSegmentedOption(AppStrings.MonedaUsd),
-                    AqSegmentedOption(otherLabel),
-                ),
-                selectedIndex = when {
-                    currency == AppStrings.MonedaBob -> 0
-                    currency == AppStrings.MonedaUsd -> 1
-                    currencyCustomOpen -> 2
-                    else -> -1
-                },
-                onSelect = { index ->
-                    when (index) {
-                        0 -> {
-                            currency = AppStrings.MonedaBob
-                            currencyCustomOpen = false
-                        }
-                        1 -> {
-                            currency = AppStrings.MonedaUsd
-                            currencyCustomOpen = false
-                        }
-                        2 -> {
-                            if (currency == AppStrings.MonedaBob || currency == AppStrings.MonedaUsd) {
-                                currency = ""
-                            }
-                            currencyCustomOpen = true
-                        }
+        OperationCurrencySection(
+            currency = currency,
+            currencyCustomOpen = currencyCustomOpen,
+            onCurrencyCustomOpenChange = { currencyCustomOpen = it },
+            onCurrencyCodeChange = { currency = it },
+            onCurrencySelect = { index ->
+                when (index) {
+                    0 -> {
+                        currency = AppStrings.MonedaBob
+                        currencyCustomOpen = false
                     }
-                },
-            )
-            if (currencyCustomOpen) {
-                AqTextField(
-                    label = AppStrings.CodigoMoneda,
-                    value = currency,
-                    onValueChange = { currency = it },
-                    leadingIcon = com.agendaqr.core.ui.components.AqIcons.Wallet,
-                )
-            }
-        }
-        // 2) SECUNDARIOS — fecha con atajos acoplados; persona/entidad y
-        //    contexto bajo UN encabezado, cada campo con su label único.
-        AqFormSection(AppStrings.FechaYHora) {
-            val dateValue = (relativeDayLabel(occurredAtMillis, nowMillis())?.let { it + " · " } ?: "") +
-                formatDateTime(occurredAtMillis)
-            AqListRow(
-                title = dateValue,
-                subtitle = AppStrings.Fecha,
-                onClick = { showDatePicker = true },
-                leading = {
-                    AqIconBadge(
-                        icon = com.agendaqr.core.ui.components.AqIcons.Calendar,
-                        tone = AqTone.Info,
-                    )
-                },
-                showChevron = true,
-            )
-            // Atajos Hoy/Ayer acoplados al campo: control segmentado de
-            // elección única; -1 = fecha distinta (ningún segmento activo).
-            val quickDay = when (relativeDayLabel(occurredAtMillis, nowMillis())) {
-                AppStrings.Hoy -> 0
-                AppStrings.Ayer -> 1
-                else -> -1
-            }
-            AqSegmentedControl(
-                options = listOf(
-                    AqSegmentedOption(AppStrings.Hoy),
-                    AqSegmentedOption(AppStrings.Ayer),
-                ),
-                selectedIndex = quickDay,
-                onSelect = { index ->
-                    occurredAtMillis = when (index) {
-                        0 -> nowMillis()
-                        1 -> minusCivilDays(nowMillis(), 1)
-                        else -> occurredAtMillis
+                    1 -> {
+                        currency = AppStrings.MonedaUsd
+                        currencyCustomOpen = false
                     }
-                },
-            )
-        }
-        AqFormSection(AppStrings.DetallesDeLaActividad) {
-            AqTextField(
-                label = AppStrings.LabelPersonaOEntidad,
-                optionalLabel = AppStrings.Opcional,
-                value = person,
-                onValueChange = { person = it },
-                maxLength = FieldLimits.PersonaOEntidad,
-                leadingIcon = com.agendaqr.core.ui.components.AqIcons.Store,
-            )
-            val counterparts = remember(state.operations) { recentCounterparts(state.operations) }
-            if (counterparts.isNotEmpty()) {
-                // Sugerencias de contrapartes: la activa es la que ya
-                // coincide con el campo (selección inequívoca).
-                AqChipGroup(
-                    options = counterparts.map { AqChipOption(it) },
-                    selectedIndex = counterparts.indexOf(person.trim()).takeIf { it >= 0 } ?: -1,
-                    onSelect = { index -> person = counterparts[index] },
-                    horizontalScroll = true,
-                )
-            }
-            AqListBody {
-                AqListRow(
-                    title = contextSelection.contextId?.let { id ->
-                        AppStrings.ParaContextoElegido +
-                            (state.contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico)
-                    } ?: AppStrings.ParaElegirContexto,
-                    subtitle = AppStrings.PuedesSinContexto,
-                    onClick = { contextSelection = contextSelection.openPicker() },
-                    leading = {
-                        AqIconBadge(
-                            icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
-                            tone = AqTone.Info,
-                        )
-                    },
-                    showChevron = true,
-                )
-            }
-        }
-        // 3) Divulgación progresiva (ADR-0028): concepto y nota
-        //    plegados en un panel expandible; solo el encabezado alterna.
-        AqExpansionPanel(
-            title = AppStrings.MasDetalles,
+                    2 -> {
+                        if (currency == AppStrings.MonedaBob || currency == AppStrings.MonedaUsd) {
+                            currency = ""
+                        }
+                        currencyCustomOpen = true
+                    }
+                }
+            },
+        )
+        OperationDateTimeSection(
+            occurredAtMillis = occurredAtMillis,
+            onOccurredAtMillisChange = { occurredAtMillis = it },
+            onDatePickerOpen = { showDatePicker = true },
+        )
+        OperationDetailsSection(
+            state = state,
+            person = person,
+            onPersonChange = { person = it },
+            contextSelection = contextSelection,
+            onContextSelectionChange = { contextSelection = it },
+        )
+        OperationMoreDetailsPanel(
+            concept = concept,
+            onConceptChange = { concept = it },
+            note = note,
+            onNoteChange = { note = it },
             expanded = showDetails,
-            onToggle = { showDetails = !showDetails },
-        ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
-            ) {
-                AqTextField(
-                    label = AppStrings.LabelConcepto,
-                    optionalLabel = AppStrings.Opcional,
-                    value = concept,
-                    onValueChange = { concept = it },
-                    maxLength = FieldLimits.Concepto,
-                    leadingIcon = com.agendaqr.core.ui.components.AqIcons.NoteEdit,
-                )
-                AqMultilineTextField(
-                    label = AppStrings.Nota,
-                    optionalLabel = AppStrings.Opcional,
-                    value = note,
-                    onValueChange = { note = it },
-                    maxLength = FieldLimits.Nota,
-                )
-            }
-        }
-        // 4) Destructiva SOLO en edición, al final y separada del resto:
-        //    confirmación con el diálogo estándar antes de eliminar.
+            onExpandedChange = { showDetails = it },
+        )
         if (existing != null) {
-            AqDangerButton(
-                label = AppStrings.EliminarOperacion,
-                onClick = { showDeleteConfirm = true },
-                size = AqButtonSize.Medium,
+            OperationDeleteButton(
+                onDelete = { showDeleteConfirm = true },
             )
         }
     }
@@ -509,6 +367,255 @@ internal fun OperationEditorScreen(
             onDismiss = { showSensitiveConfirm = false },
         )
     }
+}
+
+// ---------------------------------------------------------------------------
+// Secciones de composición S07 — extraídas para mapear 1:1 el contrato UX
+// (docs/04-ux/02-especificacion-ux-ui-v1.md + 03-contrato-interaccion-pantallas.md)
+// ---------------------------------------------------------------------------
+
+/** §10: error recuperable, visible sin scroll. */
+@Composable
+private fun OperationErrorBanner(
+    state: OperationsUiState,
+    viewModel: OperationsViewModel,
+) {
+    state.error?.let { err ->
+        val (bannerAction, bannerDismiss) = err.bannerActions(
+            onRetry = { viewModel.onAction(OperationAction.RetryFailed) },
+            onClear = { viewModel.onAction(OperationAction.ClearError) },
+        )
+        AqStatusBanner(
+            title = err.what,
+            message = err.dataStatus,
+            tone = AqTone.Danger,
+            action = bannerAction,
+            dismiss = bannerDismiss,
+        )
+    }
+}
+
+/** §1: HERO — importe grande con moneda y tipo (segmentado). */
+@Composable
+private fun OperationAmountSection(
+    type: OperationType,
+    onTypeSelect: (OperationType) -> Unit,
+    formFocus: AqFormFocus,
+    amount: String,
+    onAmountChange: (String) -> Unit,
+    onAmountClear: () -> Unit,
+    amountInvalid: Boolean,
+) {
+    AqAmountField(
+        label = AppStrings.LabelMonto,
+        optionalLabel = AppStrings.Opcional,
+        focusRequester = formFocus.requesterFor(FieldAmount),
+        value = amount,
+        onValueChange = onAmountChange,
+        onClear = onAmountClear,
+        clearLabel = AppStrings.BorrarImporte,
+        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+            keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal,
+        ),
+        // La molécula del campo es dueña del mensaje de error y de su
+        // separación (4 dp), no la pantalla.
+        state = AqFieldState(
+            isError = amountInvalid,
+            errorMessage = if (amountInvalid) AppStrings.ImporteInvalido else null,
+        ),
+    )
+    OperationTypeSelector(
+        type = type,
+        onSelect = onTypeSelect,
+    )
+}
+
+/** §2: moneda (segmentado + chip "Otra…" con campo de código). */
+@Composable
+private fun OperationCurrencySection(
+    currency: String,
+    currencyCustomOpen: Boolean,
+    onCurrencyCustomOpenChange: (Boolean) -> Unit,
+    onCurrencyCodeChange: (String) -> Unit,
+    onCurrencySelect: (Int) -> Unit,
+) {
+    AqFormField(label = AppStrings.LabelMoneda) {
+        // Elección única de moneda: control segmentado (patrón de
+        // enum de formulario); el chip "Otra…" muestra el código
+        // elegido (ARS, EUR…) en la propia etiqueta.
+        val otherLabel = if (currencyCustomOpen && currency.isNotBlank()) {
+            currency.trim().uppercase()
+        } else {
+            AppStrings.MonedaOtra
+        }
+        AqSegmentedControl(
+            options = listOf(
+                AqSegmentedOption(AppStrings.MonedaBob),
+                AqSegmentedOption(AppStrings.MonedaUsd),
+                AqSegmentedOption(otherLabel),
+            ),
+            selectedIndex = when {
+                currency == AppStrings.MonedaBob -> 0
+                currency == AppStrings.MonedaUsd -> 1
+                currencyCustomOpen -> 2
+                else -> -1
+            },
+            onSelect = onCurrencySelect,
+        )
+        if (currencyCustomOpen) {
+            AqTextField(
+                label = AppStrings.CodigoMoneda,
+                value = currency,
+                onValueChange = onCurrencyCodeChange,
+                leadingIcon = com.agendaqr.core.ui.components.AqIcons.Wallet,
+            )
+        }
+    }
+}
+
+/** §2: fecha con atajos Hoy/Ayer acoplados. */
+@Composable
+private fun OperationDateTimeSection(
+    occurredAtMillis: Long,
+    onOccurredAtMillisChange: (Long) -> Unit,
+    onDatePickerOpen: () -> Unit,
+) {
+    AqFormSection(AppStrings.FechaYHora) {
+        val dateValue = (relativeDayLabel(occurredAtMillis, nowMillis())?.let { it + " · " } ?: "") +
+            formatDateTime(occurredAtMillis)
+        AqListRow(
+            title = dateValue,
+            subtitle = AppStrings.Fecha,
+            onClick = onDatePickerOpen,
+            leading = {
+                AqIconBadge(
+                    icon = com.agendaqr.core.ui.components.AqIcons.Calendar,
+                    tone = AqTone.Info,
+                )
+            },
+            showChevron = true,
+        )
+        // Atajos Hoy/Ayer acoplados al campo: control segmentado de
+        // elección única; -1 = fecha distinta (ningún segmento activo).
+        val quickDay = when (relativeDayLabel(occurredAtMillis, nowMillis())) {
+            AppStrings.Hoy -> 0
+            AppStrings.Ayer -> 1
+            else -> -1
+        }
+        AqSegmentedControl(
+            options = listOf(
+                AqSegmentedOption(AppStrings.Hoy),
+                AqSegmentedOption(AppStrings.Ayer),
+            ),
+            selectedIndex = quickDay,
+            onSelect = { index ->
+                onOccurredAtMillisChange(when (index) {
+                    0 -> nowMillis()
+                    1 -> minusCivilDays(nowMillis(), 1)
+                    else -> occurredAtMillis
+                })
+            },
+        )
+    }
+}
+
+/** §2: persona/entidad, sugerencias de contrapartes y contexto. */
+@Composable
+private fun OperationDetailsSection(
+    state: OperationsUiState,
+    person: String,
+    onPersonChange: (String) -> Unit,
+    contextSelection: ContextSelection,
+    onContextSelectionChange: (ContextSelection) -> Unit,
+) {
+    AqFormSection(AppStrings.DetallesDeLaActividad) {
+        AqTextField(
+            label = AppStrings.LabelPersonaOEntidad,
+            optionalLabel = AppStrings.Opcional,
+            value = person,
+            onValueChange = onPersonChange,
+            maxLength = FieldLimits.PersonaOEntidad,
+            leadingIcon = com.agendaqr.core.ui.components.AqIcons.Store,
+        )
+        val counterparts = remember(state.operations) { recentCounterparts(state.operations) }
+        if (counterparts.isNotEmpty()) {
+            // Sugerencias de contrapartes: la activa es la que ya
+            // coincide con el campo (selección inequívoca).
+            AqChipGroup(
+                options = counterparts.map { AqChipOption(it) },
+                selectedIndex = counterparts.indexOf(person.trim()).takeIf { it >= 0 } ?: -1,
+                onSelect = { index -> onPersonChange(counterparts[index]) },
+                horizontalScroll = true,
+            )
+        }
+        AqListBody {
+            AqListRow(
+                title = contextSelection.contextId?.let { id ->
+                    AppStrings.ParaContextoElegido +
+                        (state.contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico)
+                } ?: AppStrings.ParaElegirContexto,
+                subtitle = AppStrings.PuedesSinContexto,
+                onClick = { onContextSelectionChange(contextSelection.openPicker()) },
+                leading = {
+                    AqIconBadge(
+                        icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
+                        tone = AqTone.Info,
+                    )
+                },
+                showChevron = true,
+            )
+        }
+    }
+}
+
+/** §3: divulgación progresiva (ADR-0028): concepto y nota plegables. */
+@Composable
+private fun OperationMoreDetailsPanel(
+    concept: String,
+    onConceptChange: (String) -> Unit,
+    note: String,
+    onNoteChange: (String) -> Unit,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+) {
+    AqExpansionPanel(
+        title = AppStrings.MasDetalles,
+        expanded = expanded,
+        onToggle = { onExpandedChange(!expanded) },
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
+        ) {
+            AqTextField(
+                label = AppStrings.LabelConcepto,
+                optionalLabel = AppStrings.Opcional,
+                value = concept,
+                onValueChange = onConceptChange,
+                maxLength = FieldLimits.Concepto,
+                leadingIcon = com.agendaqr.core.ui.components.AqIcons.NoteEdit,
+            )
+            AqMultilineTextField(
+                label = AppStrings.Nota,
+                optionalLabel = AppStrings.Opcional,
+                value = note,
+                onValueChange = onNoteChange,
+                maxLength = FieldLimits.Nota,
+            )
+        }
+    }
+}
+
+/** §4: destructiva solo en edición, separada al final. */
+@Composable
+private fun OperationDeleteButton(
+    onDelete: () -> Unit,
+) {
+    AqDangerButton(
+        label = AppStrings.EliminarOperacion,
+        onClick = onDelete,
+        size = AqButtonSize.Medium,
+    )
 }
 
 private const val FieldAmount = "amount"
