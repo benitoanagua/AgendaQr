@@ -70,7 +70,7 @@ Verificado contra `AqIconMappingTest` y `PolarisIconVectors.kt`.
 | `Copy` | `DuplicateIcon` | Sí | — |
 | `Maximize` | `MaximizeIcon` | Sí | — |
 
-**Conclusión:** el único nombre cuyo glifo no corresponde a su semántica es `ImageOff` (dibuja "ALT"). No existe en la instantánea de iconos un glifo genérico "Document"/"Receipt" además de `Bill` (ya usado por `Register`) y `Attachment`; por Fase 1 no se inventa glifo nuevo: el placeholder de comprobante sin vista previa usa `QrCode` (decisión de producto) y PDF/archivo usa `Attachment` (ya existente).
+**Conclusión:** el único nombre cuyo glifo no corresponde a su semántica es `ImageOff` (dibuja "ALT"). No existe en la instantánea de iconos un glifo genérico "Document"/"Receipt" además de `Bill` (ya usado por `Register`) y `Attachment`; por Etapa 1 no se inventa glifo nuevo: el placeholder de comprobante sin vista previa usa `QrCode` (decisión de producto) y PDF/archivo usa `Attachment` (ya existente).
 
 ---
 
@@ -123,10 +123,10 @@ Verificado con `grep -rn "AqIcons\." feature core --include=*.kt` (código de pr
 
 ## 6. Correlación con el plan de ejecución
 
-- **Fase 1** corrige A-01, A-02, A-05, A-06, A-12 (iconografía semántica, placeholder QR, separación Loading/Failure, contenedor común `AqThumbnailFrame`).
-- **Fase 2** corrige A-03, A-04 (miniaturas reales en iOS con ImageIO; decodificación ARGB_8888 + caché Android).
-- **Fase 3** revisa A-08 (chevron en fila de bandeja, compatible con `onClick` existente); A-09 y A-10 requieren nuevo copy/gesto no contemplado en el contrato de inbox → se registran como propuestas en el reporte final, no se implementan sin decisión de producto.
-- **Fase 4** corrige A-07 y A-11 (extracción de archivos y secciones repetidas sin cambio de comportamiento).
+- **Etapa 1** corrige A-01, A-02, A-05, A-06, A-12 (iconografía semántica, placeholder QR, separación Loading/Failure, contenedor común `AqThumbnailFrame`).
+- **Etapa 2** corrige A-03, A-04 (miniaturas reales en iOS con ImageIO; decodificación ARGB_8888 + caché Android).
+- **Etapa 3** revisa A-08 (chevron en fila de bandeja, compatible con `onClick` existente); A-09 y A-10 requieren nuevo copy/gesto no contemplado en el contrato de inbox → se registran como propuestas en el reporte final, no se implementan sin decisión de producto.
+- **Etapa 4** corrige A-07 y A-11 (extracción de archivos y secciones repetidas sin cambio de comportamiento).
 
 ---
 

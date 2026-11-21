@@ -26,7 +26,7 @@ private const val MinTargetPx = 96
  *   para compilar el target `iosMain` ni ejecutar pruebas. El código sigue
  *   los bindings de Kotlin/Native y el mismo contrato de estados que
  *   Android ([Loading], [Success], [Failure]), pero la validación real
- *   queda pendiente de hardware (ver reporte final, Fase 2).
+ *   queda pendiente de hardware (ver reporte final, Etapa 2).
  */
 actual suspend fun decodeThumbnailBitmap(file: String): ImageBitmap? = withContext(Dispatchers.Default) {
     try {
