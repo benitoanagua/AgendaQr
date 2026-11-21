@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
@@ -48,6 +50,9 @@ import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqSize
+import com.agendaqr.core.ui.theme.AqSquircles
+import com.agendaqr.core.ui.theme.AqStroke
 
 /**
  * Etiqueta persistente del campo con el marcador de opcionalidad: UN solo
@@ -689,3 +694,439 @@ fun AqAmountField(
         AqFieldMessages(state)
     }
 }
+
+/**
+ * Entrada de texto sobre [MoonTextInput] / [MoonFormTextInput]
+ * (`moon_design` 1.1.0, `lib/src/widgets/text_input`).
+ *
+ * Etiqueta persistente sobre la caja, borde de 1 dp que pasa a color de
+ * foco o de error, radio squircle interactivo y slot para ícono leading y
+ * trailing. El error se expresa con ícono + texto (nunca solo color).
+ *
+ * Tamaños de Moon: sm (32 dp), md (40 dp), lg (48 dp), xl (56 dp), con su
+ * relleno horizontal y radio propios. El área táctil se garantiza en 48 dp
+ * (D-02) aunque el tamaño visual sea menor.
+ */
+@Composable
+fun AqTextInput(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    isError: Boolean = false,
+    errorMessage: String? = null,
+    helperMessage: String? = null,
+    size: AqTextInputSize = AqTextInputSize.Md,
+    leadingIcon: androidx.compose.ui.graphics.vector.ImageVector? = null,
+    trailing: (@Composable () -> Unit)? = null,
+    optionalLabel: String? = null,
+    maxLength: Int? = null,
+    focusRequester: androidx.compose.ui.focus.FocusRequester? = null,
+    keyboardOptions: androidx.compose.foundation.text.KeyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default,
+    keyboardActions: androidx.compose.foundation.text.KeyboardActions = androidx.compose.foundation.text.KeyboardActions.Default,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val focused by interactionSource.collectIsFocusedAsState()
+    val pressed by interactionSource.collectIsPressedAsState()
+    val currentLength = value.length
+    val lengthExceeded = maxLength != null && currentLength > maxLength
+    val effectiveIsError = isError || lengthExceeded
+    val effectiveErrorMessage = when {
+        isError && errorMessage != null -> errorMessage
+        lengthExceeded -> "Se excedió el límite de $maxLength caracteres"
+        else -> null
+    }
+    val borderColor = when {
+        effectiveIsError -> AqColor.Danger
+        focused -> AqColor.Focus
+        pressed -> AqColor.Focus
+        else -> AqColor.FunctionalBorder
+    }
+    val textColor = when {
+        !enabled -> AqColor.OnDisabled
+        effectiveIsError -> AqColor.Danger
+        else -> AqColor.TextPrimary
+    }
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
+    ) {
+        AqInputLabel(label, optionalLabel, enabled)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = size.touchTarget)
+                .background(AqColor.InputSurface, size.corner)
+                .border(AqStroke.Default, borderColor, size.corner)
+                .padding(horizontal = size.horizontalPadding, vertical = AqSpacing.None),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AqSize.Xs),
+        ) {
+            leadingIcon?.let { glyph ->
+                AqIcon(
+                    imageVector = glyph,
+                    contentDescription = null,
+                    size = AqMetrics.IconSizeCompact,
+                    tint = when {
+                        effectiveIsError -> AqColor.Danger
+                        focused -> AqColor.Focus
+                        else -> AqColor.TextTertiary
+                    },
+                )
+            }
+            androidx.compose.foundation.text.BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier
+                    .weight(1f)
+                    .defaultMinSize(minHeight = size.touchTarget)
+                    .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
+                    .semantics {
+                        contentDescription = label
+                        if (effectiveIsError && effectiveErrorMessage != null) error(effectiveErrorMessage)
+                    },
+                enabled = enabled,
+                readOnly = readOnly,
+                singleLine = true,
+                textStyle = AqTextStyles.Body.copy(color = textColor),
+                keyboardOptions = keyboardOptions,
+                keyboardActions = keyboardActions,
+                interactionSource = interactionSource,
+                cursorBrush = SolidColor(if (effectiveIsError) AqColor.Danger else AqColor.Focus),
+                decorationBox = { innerTextField ->
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = AqSize.Xs),
+                        contentAlignment = Alignment.CenterStart,
+                    ) { innerTextField() }
+                },
+            )
+            trailing?.invoke()
+        }
+        maxLength?.let { limit ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                Text(
+                    text = "$currentLength / $limit",
+                    modifier = Modifier.semantics { contentDescription = "Longitud $currentLength de $limit" },
+                    style = AqTextStyles.Support,
+                    color = if (lengthExceeded) AqColor.Danger else AqColor.TextTertiary,
+                )
+            }
+        }
+        when {
+            effectiveIsError && effectiveErrorMessage != null -> {
+                Row(
+                    modifier = Modifier.testTag("aq-field-support"),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AqSize.Xs),
+                ) {
+                    AqIcon(
+                        imageVector = com.agendaqr.core.ui.components.AqIcons.Cancel,
+                        contentDescription = null,
+                        tint = AqColor.Danger,
+                    )
+                    Text(
+                        effectiveErrorMessage,
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                        style = AqTextStyles.Support,
+                        color = AqColor.Danger,
+                    )
+                }
+            }
+            helperMessage != null -> {
+                Text(
+                    helperMessage,
+                    modifier = Modifier.testTag("aq-field-support"),
+                    style = AqTextStyles.Support,
+                    color = AqColor.TextSecondary,
+                )
+            }
+        }
+    }
+}
+
+/** Tamaños de la entrada de texto de Moon (`MoonTextInput`). */
+enum class AqTextInputSize(
+    val height: Dp,
+    val horizontalPadding: Dp,
+    val corner: androidx.compose.ui.graphics.Shape,
+    val touchTarget: Dp,
+) {
+    Sm(
+        height = AqSize.Sm,
+        horizontalPadding = AqSize.X4s,
+        corner = AqSquircles.InteractiveXs,
+        touchTarget = AqMetrics.ControlMinSize,
+    ),
+    Md(
+        height = AqSize.Md,
+        horizontalPadding = AqSize.X3s,
+        corner = AqSquircles.InteractiveSm,
+        touchTarget = AqMetrics.ControlMinSize,
+    ),
+    Lg(
+        height = AqSize.Lg,
+        horizontalPadding = AqSize.X3s,
+        corner = AqSquircles.InteractiveSm,
+        touchTarget = AqMetrics.ControlMinSize,
+    ),
+    Xl(
+        height = AqSize.Xl,
+        horizontalPadding = AqSize.Xs,
+        corner = AqSquircles.InteractiveMd,
+        touchTarget = AqMetrics.ControlMinSize,
+    );
+}
+
+/**
+ * Entrada de texto multilínea sobre [MoonTextArea]
+ * (`moon_design` 1.1.0, `lib/src/widgets/text_area`). La caja crece con el
+ * contenido y la escala de fuente; objetivo táctil de 48 dp.
+ */
+@Composable
+fun AqTextArea(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    isError: Boolean = false,
+    errorMessage: String? = null,
+    helperMessage: String? = null,
+    minLines: Int = 3,
+    maxLines: Int = Int.MAX_VALUE,
+    size: AqTextInputSize = AqTextInputSize.Md,
+    leadingIcon: androidx.compose.ui.graphics.vector.ImageVector? = null,
+    trailing: (@Composable () -> Unit)? = null,
+    optionalLabel: String? = null,
+    maxLength: Int? = null,
+    focusRequester: androidx.compose.ui.focus.FocusRequester? = null,
+    keyboardOptions: androidx.compose.foundation.text.KeyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default,
+    keyboardActions: androidx.compose.foundation.text.KeyboardActions = androidx.compose.foundation.text.KeyboardActions.Default,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val focused by interactionSource.collectIsFocusedAsState()
+    val currentLength = value.length
+    val lengthExceeded = maxLength != null && currentLength > maxLength
+    val effectiveIsError = isError || lengthExceeded
+    val effectiveErrorMessage = when {
+        isError && errorMessage != null -> errorMessage
+        lengthExceeded -> "Se excedió el límite de $maxLength caracteres"
+        else -> null
+    }
+    val borderColor = when {
+        effectiveIsError -> AqColor.Danger
+        focused -> AqColor.Focus
+        else -> AqColor.FunctionalBorder
+    }
+    val textColor = when {
+        !enabled -> AqColor.OnDisabled
+        effectiveIsError -> AqColor.Danger
+        else -> AqColor.TextPrimary
+    }
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
+    ) {
+        AqInputLabel(label, optionalLabel, enabled)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = size.touchTarget)
+                .background(AqColor.InputSurface, size.corner)
+                .border(AqStroke.Default, borderColor, size.corner)
+                .padding(horizontal = size.horizontalPadding, vertical = AqSpacing.None),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AqSize.Xs),
+        ) {
+            leadingIcon?.let { glyph ->
+                AqIcon(
+                    imageVector = glyph,
+                    contentDescription = null,
+                    size = AqMetrics.IconSizeCompact,
+                    tint = when {
+                        effectiveIsError -> AqColor.Danger
+                        focused -> AqColor.Focus
+                        else -> AqColor.TextTertiary
+                    },
+                )
+            }
+            androidx.compose.foundation.text.BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier
+                    .weight(1f)
+                    .defaultMinSize(minHeight = size.height)
+                    .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
+                    .semantics {
+                        contentDescription = label
+                        if (effectiveIsError && effectiveErrorMessage != null) error(effectiveErrorMessage)
+                    },
+                enabled = enabled,
+                readOnly = readOnly,
+                singleLine = false,
+                minLines = minLines,
+                maxLines = maxLines,
+                textStyle = AqTextStyles.Body.copy(color = textColor),
+                keyboardOptions = keyboardOptions,
+                keyboardActions = keyboardActions,
+                interactionSource = interactionSource,
+                cursorBrush = SolidColor(if (effectiveIsError) AqColor.Danger else AqColor.Focus),
+                decorationBox = { innerTextField ->
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = AqSize.Xs),
+                        contentAlignment = Alignment.CenterStart,
+                    ) { innerTextField() }
+                },
+            )
+            trailing?.invoke()
+        }
+        when {
+            effectiveIsError && effectiveErrorMessage != null -> {
+                Row(
+                    modifier = Modifier.testTag("aq-field-support"),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AqSize.Xs),
+                ) {
+                    AqIcon(
+                        imageVector = com.agendaqr.core.ui.components.AqIcons.Cancel,
+                        contentDescription = null,
+                        tint = AqColor.Danger,
+                    )
+                    Text(
+                        effectiveErrorMessage,
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                        style = AqTextStyles.Support,
+                        color = AqColor.Danger,
+                    )
+                }
+            }
+            helperMessage != null -> {
+                Text(
+                    helperMessage,
+                    modifier = Modifier.testTag("aq-field-support"),
+                    style = AqTextStyles.Support,
+                    color = AqColor.TextSecondary,
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Mensaje de error sobre [MoonErrorMessage]
+ * (`moon_design` 1.1.0, `lib/src/widgets/common/error_message_widgets.dart`).
+ * Ícono de tono + texto (el estado nunca se comunica solo por color).
+ */
+@Composable
+fun AqErrorMessage(
+    message: String,
+    tone: com.agendaqr.core.ui.components.AqTone = com.agendaqr.core.ui.components.AqTone.Danger,
+    visible: Boolean = true,
+) {
+    if (!visible || message.isBlank()) return
+    Row(
+        modifier = Modifier.testTag("aq-field-support"),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(AqSize.Xs),
+    ) {
+        tone.iconVector?.let {
+            AqIcon(
+                imageVector = it,
+                contentDescription = null,
+                tint = tone.content(),
+            )
+        }
+        Text(
+            message,
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            style = AqTextStyles.Support,
+            color = tone.content(),
+        )
+    }
+}
+
+/**
+ * Grupo de entradas de texto sobre [MoonTextInputGroup]
+ * (`moon_design` 1.1.0, `lib/src/widgets/text_input_group`). Orientación
+ * horizontal o vertical; cada campo conserva su caja, etiqueta y estado de
+ * error independiente.
+ */
+@Composable
+fun AqTextInputGroup(
+    fields: List<AqTextInputGroupField>,
+    orientation: AqTextInputGroupOrientation = AqTextInputGroupOrientation.Vertical,
+) {
+    when (orientation) {
+        AqTextInputGroupOrientation.Vertical -> {
+            Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(AqSize.Lg)) {
+                fields.forEach { field ->
+                    AqTextInput(
+                        label = field.label,
+                        value = field.value,
+                        onValueChange = field.onValueChange,
+                        enabled = field.enabled,
+                        isError = field.isError,
+                        errorMessage = field.errorMessage,
+                        helperMessage = field.helperMessage,
+                        size = field.size,
+                        leadingIcon = field.leadingIcon,
+                        trailing = field.trailing,
+                        optionalLabel = field.optionalLabel,
+                        maxLength = field.maxLength,
+                        focusRequester = field.focusRequester,
+                    )
+                }
+            }
+        }
+        AqTextInputGroupOrientation.Horizontal -> {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(AqSize.Lg),
+            ) {
+                fields.forEach { field ->
+                    AqTextInput(
+                        label = field.label,
+                        value = field.value,
+                        onValueChange = field.onValueChange,
+                        enabled = field.enabled,
+                        isError = field.isError,
+                        errorMessage = field.errorMessage,
+                        helperMessage = field.helperMessage,
+                        size = field.size,
+                        leadingIcon = field.leadingIcon,
+                        trailing = field.trailing,
+                        optionalLabel = field.optionalLabel,
+                        maxLength = field.maxLength,
+                        focusRequester = field.focusRequester,
+                    )
+                        .let { Box(modifier = Modifier.weight(1f)) { it } }
+                }
+            }
+        }
+    }
+}
+
+data class AqTextInputGroupField(
+    val label: String,
+    val value: String,
+    val onValueChange: (String) -> Unit,
+    val enabled: Boolean = true,
+    val isError: Boolean = false,
+    val errorMessage: String? = null,
+    val helperMessage: String? = null,
+    val size: AqTextInputSize = AqTextInputSize.Md,
+    val leadingIcon: androidx.compose.ui.graphics.vector.ImageVector? = null,
+    val trailing: (@Composable () -> Unit)? = null,
+    val optionalLabel: String? = null,
+    val maxLength: Int? = null,
+    val focusRequester: androidx.compose.ui.focus.FocusRequester? = null,
+)
+
+enum class AqTextInputGroupOrientation { Vertical, Horizontal }
