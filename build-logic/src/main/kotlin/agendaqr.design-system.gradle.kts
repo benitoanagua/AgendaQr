@@ -1113,6 +1113,41 @@ tasks.register("verifyScreenContractFixtures") {
     }
 }
 
+/**
+ * Cruza los contratos de transición UX (UxTransitions) contra la lista de
+ * pantallas declaradas en ScreenContracts y falla si hay orígenes o
+ * destinos no declarados, transiciones duplicadas o pantallas críticas sin
+ * transiciones definidas.
+ */
+tasks.register("verifyUxTransitionContracts") {
+    group = "verification"
+    description = "Valida que los contratos de transición UX referencien solo pantallas declaradas y sin duplicados."
+    doLast {
+        val violations = mutableListOf<String>()
+        violations += com.agendaqr.buildlogic.ux.validarTransiciones(com.agendaqr.buildlogic.ux.UxTransitions)
+        // Toda pantalla con contrato debe aparecer como origen o destino de al menos una transición.
+        val referenciadas = com.agendaqr.buildlogic.ux.UxTransitions.flatMap { t ->
+            listOf(t.pantallaOrigen) + (t.pantallaDestino?.let { listOf(it) } ?: emptyList())
+        }.toSet()
+        val noReferenciadas = com.agendaqr.buildlogic.ux.pantallasValidas - referenciadas
+        noReferenciadas.sorted().forEach {
+            violations.add("pantalla-sin-transiciones: '$it' no aparece en ninguna transición UX declarada")
+        }
+        // Las transiciones críticas (guardar/cancelar/eliminar/reintentar/recuperar/error/bloquea-al-guardar)
+        // deben existir para las pantallas que las declaran como acción primaria o estado saving/error.
+        if (violations.isNotEmpty()) {
+            throw GradleException(
+                "UX transition contract violations (${violations.size}):\n" +
+                    violations.joinToString("\n") { "  $it" },
+            )
+        }
+        logger.lifecycle(
+            "verifyUxTransitionContracts: PASS (${com.agendaqr.buildlogic.ux.UxTransitions.size} transiciones; " +
+                "${com.agendaqr.buildlogic.ux.transicionesCriticas.size} críticas)"
+        )
+    }
+}
+
 tasks.register("verifyAgendaQrArchitecture") {
     group = "verification"
     dependsOn(
@@ -1124,6 +1159,7 @@ tasks.register("verifyAgendaQrArchitecture") {
         "verifyDocs",
         "verifyScreenContract",
         "verifyScreenContractFixtures",
+        "verifyUxTransitionContracts",
     )
     description = "Runs the complete Agenda QR architecture and design-system gates."
 }
