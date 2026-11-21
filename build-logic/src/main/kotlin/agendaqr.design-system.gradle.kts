@@ -59,6 +59,9 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     // Píldora activa de AqTabs: mismo tratamiento de selección que el
     // control segmentado (pista + borde de la píldora).
     "E-09" to listOf("border:AqTabs.kt"),
+    // Borde de la caja de casilla de verificación y botón de radio
+    // (MoonCheckbox / MoonRadio, grosor y radio de Moon).
+    "E-10" to listOf("border:AqSelection.kt"),
     // `Modifier.shadow` se centraliza en la capa de tokens; solo los
     // archivos registrados pueden invocarlo (o elevarse vía `aqElevation`).
     // E-06 (elevación de botones) se retiró: los botones son planos y
