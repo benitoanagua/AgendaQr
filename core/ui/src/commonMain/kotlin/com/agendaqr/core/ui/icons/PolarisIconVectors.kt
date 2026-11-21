@@ -79,11 +79,6 @@ internal object PolarisIconVectors {
         fillPath(Paths.Archive.Slot)
         fillPath(Paths.Archive.Body, evenOdd = true)
     } }
-    val ImageAlt: ImageVector by lazy { icon("ImageAltIcon") {
-        fillPath(Paths.ImageAlt.A, evenOdd = true)
-        fillPath(Paths.ImageAlt.I)
-        fillPath(Paths.ImageAlt.T)
-    } }
     val Barcode: ImageVector by lazy { icon("BarcodeIcon") {
         fillPath(Paths.Barcode.TopLeft)
         fillPath(Paths.Barcode.BottomLeft)
@@ -249,11 +244,6 @@ internal object PolarisIconVectors {
             const val Body = "M5.25 3.5a1.75 1.75 0 0 0-1.75 1.75v2c0 .595.297 1.12.75 1.436v5.064a2.75 2.75 0 0 0 2.75 2.75h6a2.75 2.75 0 0 0 2.75-2.75v-5.064c.453-.316.75-.841.75-1.436v-2a1.75 1.75 0 0 0-1.75-1.75h-9.5Zm9 5.5h-8.5v4.75c0 .69.56 1.25 1.25 1.25h6c.69 0 1.25-.56 1.25-1.25v-4.75Zm-9.25-3.75a.25.25 0 0 1 .25-.25h9.5a.25.25 0 0 1 .25.25v2a.25.25 0 0 1-.25.25h-9.5a.25.25 0 0 1-.25-.25v-2Z"
         }
 
-        object ImageAlt {
-            const val A = "M6.678 6.929a.75.75 0 0 0-1.356 0l-2.25 4.75a.75.75 0 0 0 1.356.642l.389-.821h2.366l.39.821a.75.75 0 0 0 1.355-.642l-2.25-4.75Zm-.205 3.071-.473-.998-.473.998h.946Z"
-            const val I = "M10.25 6.75a.75.75 0 0 1 .75.75v3.75h1.5a.75.75 0 0 1 0 1.5h-2.25a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 1 .75-.75Z"
-            const val T = "M13 6.75a.75.75 0 0 0 0 1.5h1v3.75a.75.75 0 0 0 1.5 0v-3.75h1a.75.75 0 0 0 0-1.5h-3.5Z"
-        }
 
         object Barcode {
             const val TopLeft = "M4.5 6.25a.75.75 0 0 1 .75-.75h.487a.75.75 0 1 0 0-1.5h-.487a2.25 2.25 0 0 0-2.25 2.25v.5a.75.75 0 0 0 1.5 0v-.5Z"

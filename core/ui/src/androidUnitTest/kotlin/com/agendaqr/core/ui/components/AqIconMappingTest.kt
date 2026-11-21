@@ -29,7 +29,6 @@ class AqIconMappingTest {
             AqIcons.SearchX to "AlertCircleIcon",
             AqIcons.AlertCircle to "AlertCircleIcon",
             AqIcons.Inbox to "ArchiveIcon",
-            AqIcons.ImageOff to "ImageAltIcon",
             AqIcons.ScanLine to "BarcodeIcon",
             AqIcons.Income to "ArrowDownIcon",
             AqIcons.Expense to "ArrowUpIcon",
@@ -50,8 +49,8 @@ class AqIconMappingTest {
             AqIcons.Maximize to "MaximizeIcon",
         )
 
-        assertEquals(39, vectors.size)
-        assertEquals(37, vectors.map { it.first }.distinct().count())
+        assertEquals(38, vectors.size)
+        assertEquals(36, vectors.map { it.first }.distinct().count())
         assertTrue(vectors.all { (vector, expectedName) -> vector.name == expectedName })
         assertTrue(vectors.all { it.first.defaultWidth == it.first.defaultHeight })
     }

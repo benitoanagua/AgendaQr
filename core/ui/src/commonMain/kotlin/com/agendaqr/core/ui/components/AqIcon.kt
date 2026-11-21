@@ -62,7 +62,6 @@ object AqIcons {
     /** Signo de alerta en círculo: icono de severidad de errores. */
     val AlertCircle: ImageVector get() = PolarisIconVectors.AlertCircle
     val Inbox: ImageVector get() = PolarisIconVectors.Archive
-    val ImageOff: ImageVector get() = PolarisIconVectors.ImageAlt
     val ScanLine: ImageVector get() = PolarisIconVectors.Barcode
     val Income: ImageVector get() = PolarisIconVectors.ArrowDown
     val Expense: ImageVector get() = PolarisIconVectors.ArrowUp
