@@ -1119,8 +1119,8 @@ tasks.register("verifyUxTransitionContracts") {
     doLast {
         val violations = uxTransitionContractViolations(UxTransitionContracts.all)
         if (violations.isNotEmpty()) {
-            throw GradleException("UX transition contract violations (\u0024{violations.size}):\\n" +
-                violations.joinToString("\\n") { "  \u0024it" })
+            throw GradleException("UX transition contract violations (${violations.size}):\n" +
+                violations.joinToString("\n") { "  \u0024it" })
         }
         val flowIds = UxTransitionContracts.all.map { it.id }.toSet()
         require(flowIds.containsAll(setOf("UX-SAVE", "UX-CANCEL", "UX-PERMISSION", "UX-IMPORT", "UX-DELETE"))) {
@@ -1134,8 +1134,8 @@ tasks.register("verifyUxTransitionContracts") {
         require(uxTransitionContractViolations(listOf(valid.copy(
             invariantIds = setOf("UXI-UNKNOWN")
         ))).isNotEmpty()) { "un invariante desconocido debe fallar" }
-        logger.lifecycle("verifyUxTransitionContracts: PASS (\u0024{UxTransitionContracts.all.size} flujos; " +
-            "\u0024{UxTransitionContracts.invariantDescriptions.size} invariantes)")
+        logger.lifecycle("verifyUxTransitionContracts: PASS (${UxTransitionContracts.all.size} flujos; " +
+            "${UxTransitionContracts.invariantDescriptions.size} invariantes)")
     }
 }
 
@@ -1149,7 +1149,8 @@ tasks.register("verifyAgendaQrArchitecture") {
         "verifyControlMinSize",
         "verifyDocs",
         "verifyScreenContract",
-        "verifyScreenContractFixtures",\n        "verifyUxTransitionContracts",
+        "verifyScreenContractFixtures",
+        "verifyUxTransitionContracts",
     )
     description = "Runs the complete Agenda QR architecture and design-system gates."
 }
