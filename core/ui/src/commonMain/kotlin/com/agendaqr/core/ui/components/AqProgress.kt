@@ -2,7 +2,6 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -43,22 +42,6 @@ fun AqProgressBar(
                 )
                 liveRegion = LiveRegionMode.Polite
             },
-        color = AqColor.EmphasisFill,
-        trackColor = AqColor.SurfaceContainerHighest,
-    )
-}
-
-/** Indicador circular indeterminado con anuncio accesible (equivalente a `s-spinner`). */
-@Composable
-fun AqSpinner(
-    contentDescription: String,
-    modifier: Modifier = Modifier,
-) {
-    CircularProgressIndicator(
-        modifier = modifier.semantics {
-            this.contentDescription = contentDescription
-            liveRegion = LiveRegionMode.Polite
-        },
         color = AqColor.EmphasisFill,
         trackColor = AqColor.SurfaceContainerHighest,
     )

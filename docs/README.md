@@ -87,6 +87,7 @@
 | [`07-decisiones/ADR-0039-moon-rige-ui-ux-polaris-residual.md`](07-decisiones/ADR-0039-moon-rige-ui-ux-polaris-residual.md) | ADR: Moon rige todo el UI/UX; Polaris solo color, tipografía e iconos |
 | [`07-decisiones/ADR-0040-adopcion-integra-catalogo-moon.md`](07-decisiones/ADR-0040-adopcion-integra-catalogo-moon.md) | ADR: adopción íntegra del catálogo Moon |
 | [`07-decisiones/ADR-0041-cierre-migracion-moon-y-duracion-toast.md`](07-decisiones/ADR-0041-cierre-migracion-moon-y-duracion-toast.md) | ADR: cierre de la migración Moon y duración de `AqToast` |
+| [`07-decisiones/ADR-0042-nombres-componentes-retirados.md`](07-decisiones/ADR-0042-nombres-componentes-retirados.md) | ADR: nombres de componentes retirados y sus sustitutos Moon |
 
 ## Cómo se mantiene
 

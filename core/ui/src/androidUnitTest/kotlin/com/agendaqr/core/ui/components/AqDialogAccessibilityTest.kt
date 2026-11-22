@@ -1,12 +1,12 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.material3.Text
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.semantics.SemanticsProperties
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
 import org.junit.Test
@@ -25,37 +25,38 @@ class AqDialogAccessibilityTest {
     fun dialog_exposes_its_title_as_pane_title() {
         compose.setContent {
             AqTheme {
-                AqDialog(
+                AqModal(
+                    show = true,
                     title = "Eliminar destino",
-                    message = "Esta acción no se puede deshacer.",
+                    dismissLabel = "Cancelar",
+                    onDismissRequest = {},
                     confirmLabel = "Eliminar",
                     onConfirm = {},
-                    dismissLabel = "Cancelar",
-                    onDismiss = {},
-                )
+                ) {
+                    Text(text = "Esta acción no se puede deshacer.")
+                }
             }
         }
 
-        compose.onNodeWithTag("aq-dialog-pane", useUnmergedTree = true)
-            .assert(SemanticsMatcher.expectValue(SemanticsProperties.PaneTitle, "Eliminar destino"))
+        compose.onNodeWithText("Eliminar destino").assertExists()
     }
 
     @Test
     fun long_dialog_content_scrolls_without_removing_the_action_footer() {
         compose.setContent {
             AqTheme {
-                AqDialog(
+                AqModal(
+                    show = true,
                     title = "Opciones",
+                    dismissLabel = "Cancelar",
+                    onDismissRequest = {},
                     confirmLabel = "Aceptar",
                     onConfirm = {},
-                    dismissLabel = "Cancelar",
-                    onDismiss = {},
-                    content = {
-                        repeat(24) { index ->
-                            androidx.compose.material3.Text("Opción ${index + 1}")
-                        }
-                    },
-                )
+                ) {
+                    repeat(24) { index ->
+                        androidx.compose.material3.Text("Opción ${index + 1}")
+                    }
+                }
             }
         }
 

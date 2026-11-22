@@ -24,7 +24,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
-class AqChipGroupTest {
+class AqChipRowTest {
 
     @get:Rule
     val compose = createComposeRule()
@@ -33,7 +33,7 @@ class AqChipGroupTest {
     fun chip_group_renders_options_with_selection_and_count() {
         compose.setContent {
             AqTheme {
-                AqChipGroup(
+                AqChipRow(
                     options = listOf(
                         AqChipOption("Todos", count = 12),
                         AqChipOption("Favoritos", count = 3),
@@ -61,7 +61,7 @@ class AqChipGroupTest {
         var selected by mutableStateOf(-1)
         compose.setContent {
             AqTheme {
-                AqChipGroup(
+                AqChipRow(
                     options = listOf(AqChipOption("A"), AqChipOption("B")),
                     selectedIndex = selected,
                     onSelect = { selected = it },
@@ -80,7 +80,7 @@ class AqChipGroupTest {
     fun chip_count_is_announced_as_separate_text_from_label() {
         compose.setContent {
             AqTheme {
-                AqChipGroup(
+                AqChipRow(
                     options = listOf(AqChipOption("Todos", count = 2)),
                     selectedIndex = -1,
                     onSelect = {},
@@ -104,7 +104,7 @@ class AqChipGroupTest {
     fun chip_group_renders_node_without_throwing() {
         compose.setContent {
             AqTheme {
-                AqChipGroup(
+                AqChipRow(
                     options = listOf(AqChipOption("Chip")),
                     selectedIndex = -1,
                     onSelect = {},

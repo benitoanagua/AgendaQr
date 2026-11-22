@@ -29,7 +29,7 @@ class AqPhase3ContractTest {
     fun link_is_named_action_with_48dp_target() {
         var clicks = 0
         compose.setContent {
-            AqTheme { AqLink(label = "Ver detalle", onClick = { clicks++ }) }
+            AqTheme { AqNavLink(label = "Ver detalle", onClick = { clicks++ }) }
         }
         compose.onNodeWithText("Ver detalle")
             .assertHasClickAction()
@@ -81,7 +81,7 @@ class AqPhase3ContractTest {
     fun evidence_badge_uses_injected_copy_only() {
         compose.setContent {
             AqTheme {
-                AqEvidenceBadge(text = "Comprobante recibido", icon = AqIcons.Attachment)
+                AqEvidenceTag(text = "Comprobante recibido", icon = AqIcons.Attachment)
             }
         }
         compose.onNodeWithText("Comprobante recibido").assertExists()
@@ -110,7 +110,7 @@ class AqPhase3ContractTest {
     fun index_table_renders_headers_and_rows_with_injected_copy() {
         compose.setContent {
             AqTheme {
-                AqIndexTable(
+                AqTable(
                     columns = listOf(
                         AqTableColumn("concept", "Concepto"),
                         AqTableColumn("amount", "Importe"),

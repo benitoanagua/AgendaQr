@@ -15,9 +15,9 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
+import androidx.compose.material3.Text
 import com.agendaqr.core.ui.components.AqModal
 import com.agendaqr.core.ui.components.AqMenuItem
-import com.agendaqr.core.ui.components.AqTextField
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
 import org.junit.Test
@@ -100,13 +100,14 @@ class AccessibilityStatesFormsTest {
             AqTheme {
                 AqModal(
                     title = "Eliminar destino",
-                    message = "Esta acción no se puede deshacer.",
+                    dismissLabel = "Cancelar",
+                    onDismissRequest = { cancelled = true },
                     confirmLabel = "Eliminar",
                     onConfirm = { deleted = true },
-                    dismissLabel = "Cancelar",
-                    onDismiss = { cancelled = true },
                     destructive = true,
-                )
+                ) {
+                    Text(text = "Esta acción no se puede deshacer.")
+                }
             }
         }
         compose.waitForIdle()
@@ -122,7 +123,7 @@ class AccessibilityStatesFormsTest {
     fun text_input_exposes_its_label_and_announces_errors() {
         compose.setContent {
             AqTheme {
-                AqTextField(
+                AqTextInput(
                     label = AppStrings.Correo,
                     value = "no-correo",
                     onValueChange = { },
@@ -162,40 +163,10 @@ class AccessibilityStatesFormsTest {
         compose.onNodeWithText("Mercado Central").assertIsSelected()
     }
 
-    // --- Feedback de evento (háptica + anuncio) ---
+    // --- 2.7 ListRow: semántica de selección; sin marcador en fila neutra ---
 
     @Test
-    fun feedback_event_announces_only_when_the_event_fires() {
-        // Un setContent por test: el token es estado del test y se
-        // conmuta dentro de la MISMA composición (como en producción).
-        var event: Any? by mutableStateOf(null)
-        compose.setContent {
-            AqTheme {
-                com.agendaqr.core.ui.components.AqFeedbackEvent(
-                    event = event,
-                    message = "Código QR detectado",
-                )
-            }
-        }
-        compose.waitForIdle()
-        // Sin evento: no hay nada que anunciar (cero anuncios al entrar).
-        compose.onNodeWithContentDescription("Código QR detectado").assertDoesNotExist()
-        event = Any()
-        compose.waitForIdle()
-        // Con evento: nodo de anuncio con liveRegion cortés y el copy
-        // del llamador (§11). Disparo por EVENTO: recomponer con el mismo
-        // token no vuelve a anunciar (el contenido no cambia).
-        compose.onNodeWithContentDescription("Código QR detectado")
-            .assert(
-                SemanticsMatcher.expectValue(
-                    SemanticsProperties.LiveRegion,
-                    LiveRegionMode.Polite,
-                ),
-            )
-    }
-
-    @Test
-    fun camera_entry_shows_permission_context_before_asking() {
+    fun list_row_selected_is_exposed_to_accessibility() {
         compose.setContent {
             AqTheme {
                 // El entry real (androidMain, internal): el launcher se

@@ -128,7 +128,12 @@ class AqBottomSheetTest {
                         onValueChange = {},
                         modifier = Modifier.focusRequester(focusRequester).testTag("invoking-field"),
                     )
-                    AqTextAction(label = "Abrir hoja", onClick = { sheetVisible = true })
+                    AqButton(
+                        label = "Abrir hoja",
+                        onClick = { sheetVisible = true },
+                        variant = AqButtonVariant.Text,
+                        size = AqButtonSize.Small,
+                    )
                 }
                 LaunchedEffect(Unit) { focusRequester.requestFocus() }
                 if (sheetVisible) {

@@ -22,87 +22,81 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.state.ToggleableState
-import com.agendaqr.core.ui.components.AqBadge
-import com.agendaqr.core.ui.components.AqBottomAction
-import com.agendaqr.core.ui.components.AqBottomActionDock
+import com.agendaqr.core.ui.components.AqAccordion
+import com.agendaqr.core.ui.components.AqAlert
+import com.agendaqr.core.ui.components.AqAmountInput
+import com.agendaqr.core.ui.components.AqAppBar
+import com.agendaqr.core.ui.components.AqAppBarAction
+import com.agendaqr.core.ui.components.AqAvatar
+import com.agendaqr.core.ui.components.AqAvatarSize
+import com.agendaqr.core.ui.components.AqBannerAction
+import com.agendaqr.core.ui.components.AqBottomSheet
 import com.agendaqr.core.ui.components.AqButton
-import com.agendaqr.core.ui.components.AqButtonGroup
+import com.agendaqr.core.ui.components.AqButtonSize
 import com.agendaqr.core.ui.components.AqButtonVariant
-import com.agendaqr.core.ui.components.AqCard
 import com.agendaqr.core.ui.components.AqCarousel
 import com.agendaqr.core.ui.components.AqCarouselItem
 import com.agendaqr.core.ui.components.AqCheckbox
-import com.agendaqr.core.ui.components.AqCheckboxGroup
-import com.agendaqr.core.ui.components.AqSelectAllCheckbox
+import com.agendaqr.core.ui.components.AqChip
+import com.agendaqr.core.ui.components.AqChipSize
 import com.agendaqr.core.ui.components.AqChoiceOption
-import com.agendaqr.core.ui.components.AqChoiceGroup
-import com.agendaqr.core.ui.components.AqContextBadge
-import com.agendaqr.core.ui.components.AqDatePickerDialog
-import com.agendaqr.core.ui.components.AqDangerButton
-import com.agendaqr.core.ui.components.AqDialog
-import com.agendaqr.core.ui.components.AqEmptyState
-import com.agendaqr.core.ui.components.AqEvidenceBadge
-import com.agendaqr.core.ui.components.AqExpansionPanel
-import com.agendaqr.core.ui.components.AqFeedbackEvent
+import com.agendaqr.core.ui.components.AqCircularLoader
+import com.agendaqr.core.ui.components.AqCircularProgress
+import com.agendaqr.core.ui.components.AqDotIndicator
+import com.agendaqr.core.ui.components.AqEmptyPlaceholder
+import com.agendaqr.core.ui.components.AqErrorMessage
 import com.agendaqr.core.ui.components.AqFieldState
+import com.agendaqr.core.ui.components.AqFavoriteToggle
 import com.agendaqr.core.ui.components.AqGroupedAction
-import com.agendaqr.core.ui.components.AqHeading
 import com.agendaqr.core.ui.components.AqHairline
+import com.agendaqr.core.ui.components.AqHelperMessage
 import com.agendaqr.core.ui.components.AqIcon
-import com.agendaqr.core.ui.components.AqIconBadge
-import com.agendaqr.core.ui.components.AqIconButton
-import com.agendaqr.core.ui.components.AqIndexTable
-import com.agendaqr.core.ui.components.AqLink
-import com.agendaqr.core.ui.components.AqListBody
-import com.agendaqr.core.ui.components.AqListRow
-import com.agendaqr.core.ui.components.AqLoadMoreFooter
-import com.agendaqr.core.ui.components.AqLoading
-import com.agendaqr.core.ui.components.AqMetaRow
-import com.agendaqr.core.ui.components.AqMultilineTextField
-import com.agendaqr.core.ui.components.AqNavBar
-import com.agendaqr.core.ui.components.AqNavDestination
-import com.agendaqr.core.ui.components.AqNavRail
-import com.agendaqr.core.ui.components.AqOutlineButton
-import com.agendaqr.core.ui.components.AqBottomSheet
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqLinearProgress
+import com.agendaqr.core.ui.components.AqListSection
+import com.agendaqr.core.ui.components.AqLoadMore
+import com.agendaqr.core.ui.components.AqMenuItem
+import com.agendaqr.core.ui.components.AqModal
+import com.agendaqr.core.ui.components.AqPillTab
+import com.agendaqr.core.ui.components.AqPopover
 import com.agendaqr.core.ui.components.AqProgress
 import com.agendaqr.core.ui.components.AqProgressBar
 import com.agendaqr.core.ui.components.AqProgressBlock
 import com.agendaqr.core.ui.components.AqPullToRefresh
-import com.agendaqr.core.ui.components.AqPrimaryButton
-import com.agendaqr.core.ui.components.AqSwipeAction
-import com.agendaqr.core.ui.components.AqSwipeActions
 import com.agendaqr.core.ui.components.AqQrPreview
-import com.agendaqr.core.ui.components.AqRadioButton
-import com.agendaqr.core.ui.components.AqSearchField
+import com.agendaqr.core.ui.components.AqRadio
+import com.agendaqr.core.ui.components.AqSectionTitle
+import com.agendaqr.core.ui.components.AqSearchInput
 import com.agendaqr.core.ui.components.AqSegmentedControl
 import com.agendaqr.core.ui.components.AqSegmentedOption
-import com.agendaqr.core.ui.components.AqSelect
-import com.agendaqr.core.ui.components.AqSecondaryButton
-import com.agendaqr.core.ui.components.AqSection
-import com.agendaqr.core.ui.components.AqSectionHeader
-import com.agendaqr.core.ui.components.AqSpinner
-import com.agendaqr.core.ui.components.AqStatusBanner
-import com.agendaqr.core.ui.components.AqStatusPill
+import com.agendaqr.core.ui.components.AqSkeletonBlock
+import com.agendaqr.core.ui.components.AqSwipeAction
+import com.agendaqr.core.ui.components.AqSwipeActions
 import com.agendaqr.core.ui.components.AqSwitch
+import com.agendaqr.core.ui.components.AqTab
+import com.agendaqr.core.ui.components.AqTabBar
+import com.agendaqr.core.ui.components.AqTag
+import com.agendaqr.core.ui.components.AqTagSize
 import com.agendaqr.core.ui.components.AqText
-import com.agendaqr.core.ui.components.AqTextAction
-import com.agendaqr.core.ui.components.AqTextField
-import com.agendaqr.core.ui.components.AqTextActionVariant
-import com.agendaqr.core.ui.components.AqTimePickerDialog
-import com.agendaqr.core.ui.components.AqTonalTag
+import com.agendaqr.core.ui.components.AqTextArea
+import com.agendaqr.core.ui.components.AqTextInput
+import com.agendaqr.core.ui.components.AqToast
+import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.components.AqTooltip
-import com.agendaqr.core.ui.components.AqTopBar
 import com.agendaqr.core.ui.components.AqTone
-import com.agendaqr.core.ui.components.AqThumbnail
-import com.agendaqr.core.ui.components.AqThumbnailFrame
-import com.agendaqr.core.ui.components.AqThumbnailSkeleton
-import com.agendaqr.core.ui.components.AqThumbnailFallback
-import com.agendaqr.core.ui.components.ThumbnailSize
-import com.agendaqr.core.ui.components.AqBannerAction
+import com.agendaqr.core.ui.components.AqBreadcrumb as AqBreadcrumbComp
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqSize
+import com.agendaqr.core.ui.theme.AqSquircles
+import com.agendaqr.core.ui.theme.AqTextStyles
+import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqWeight
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
- * Galería del sistema de diseño Agenda QR (Polaris reimplementado en Kotlin/Compose).
+ * Galería del sistema de diseño Agenda QR (Moon Design).
  *
  * Solo para inspección interna y previews. No se importa en pantallas de
  * producción: no introduce dependencia arquitectónica en la app.
@@ -118,9 +112,14 @@ fun AqDesignSystemGallery(darkTheme: Boolean) {
             modifier = Modifier.fillMaxWidth().padding(AqSpacing.Lg),
             verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
         ) {
-            AqHeading(text = "Design System — Galería de componentes", size = AqType.HeadingLg)
             AqText(
-                text = "Tema ${if (darkTheme) "oscuro" else "claro"} · Polaris 9.4.2",
+                text = "Design System — Galería de componentes",
+                size = AqType.HeadingLg,
+                fontWeight = AqWeight.SemiBold,
+                color = AqColor.TextPrimary,
+            )
+            AqText(
+                text = "Tema ${if (darkTheme) "oscuro" else "claro"} · Moon Design",
                 color = AqColor.TextSecondary,
                 size = AqType.BodySm,
             )
@@ -128,61 +127,60 @@ fun AqDesignSystemGallery(darkTheme: Boolean) {
             // ------------------------------------------------------------------
             // Foundations
             // ------------------------------------------------------------------
-            AqSectionHeader(text = "Foundations")
+            AqSectionTitle(text = "Foundations")
             AqTokenFoundationsPreview()
 
             // ------------------------------------------------------------------
             // Actions
             // ------------------------------------------------------------------
-            AqSectionHeader(text = "Actions")
+            AqSectionTitle(text = "Actions")
             AqActionsPreview()
 
             // ------------------------------------------------------------------
             // Forms
             // ------------------------------------------------------------------
-            AqSectionHeader(text = "Forms")
+            AqSectionTitle(text = "Forms")
             AqFormsPreview()
-
             // ------------------------------------------------------------------
             // Navigation
             // ------------------------------------------------------------------
-            AqSectionHeader(text = "Navigation")
+            AqSectionTitle(text = "Navigation")
             AqNavigationPreview()
 
             // ------------------------------------------------------------------
             // Surfaces
             // ------------------------------------------------------------------
-            AqSectionHeader(text = "Surfaces")
+            AqSectionTitle(text = "Surfaces")
             AqSurfacesPreview()
 
             // ------------------------------------------------------------------
             // Data Display
             // ------------------------------------------------------------------
-            AqSectionHeader(text = "Data Display")
+            AqSectionTitle(text = "Data Display")
             AqDataDisplayPreview()
 
             // ------------------------------------------------------------------
             // Feedback
             // ------------------------------------------------------------------
-            AqSectionHeader(text = "Feedback")
+            AqSectionTitle(text = "Feedback")
             AqFeedbackPreview()
 
             // ------------------------------------------------------------------
             // Selection
             // ------------------------------------------------------------------
-            AqSectionHeader(text = "Selection")
+            AqSectionTitle(text = "Selection")
             AqSelectionPreview()
 
             // ------------------------------------------------------------------
             // Media
             // ------------------------------------------------------------------
-            AqSectionHeader(text = "Media")
+            AqSectionTitle(text = "Media")
             AqMediaPreview()
 
             // ------------------------------------------------------------------
             // Mobile Interactions
             // ------------------------------------------------------------------
-            AqSectionHeader(text = "Mobile Interactions")
+            AqSectionTitle(text = "Mobile Interactions")
             AqMobileInteractionsPreview()
         }
     }
@@ -213,9 +211,24 @@ private fun AqTokenFoundationsPreview() {
             size = AqType.BodyMd,
         )
         Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
-            AqHeading(text = "Heading 3Xl (36 sp)", size = AqType.Heading3Xl)
-            AqHeading(text = "Heading 2Xl (32 sp)", size = AqType.Heading2Xl)
-            AqHeading(text = "Heading Lg (18 sp)", size = AqType.HeadingLg)
+            AqText(
+                text = "Heading 3Xl (36 sp)",
+                size = AqType.Heading3Xl,
+                fontWeight = AqWeight.SemiBold,
+                color = AqColor.TextPrimary,
+            )
+            AqText(
+                text = "Heading 2Xl (32 sp)",
+                size = AqType.Heading2Xl,
+                fontWeight = AqWeight.SemiBold,
+                color = AqColor.TextPrimary,
+            )
+            AqText(
+                text = "Heading Lg (18 sp)",
+                size = AqType.HeadingLg,
+                fontWeight = AqWeight.SemiBold,
+                color = AqColor.TextPrimary,
+            )
             AqText(text = "Body Md (16 sp)", size = AqType.BodyMd)
             AqText(text = "Body Sm (14 sp)", size = AqType.BodySm, color = AqColor.TextPrimary)
             AqText(text = "Caption (12 sp)", size = AqType.BodyXs, color = AqColor.TextSecondary)
@@ -243,61 +256,79 @@ private fun AqActionsPreview() {
             size = AqType.BodyMd,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            AqPrimaryButton(label = "Primaria", onClick = {})
-            AqPrimaryButton(
+            AqButton(
+                label = "Primaria",
+                onClick = {},
+                variant = AqButtonVariant.Primary,
+                size = AqButtonSize.Large,
+            )
+            AqButton(
                 label = "Deshabilitada",
                 onClick = {},
                 enabled = false,
+                variant = AqButtonVariant.Primary,
+                size = AqButtonSize.Large,
             )
-            AqPrimaryButton(
+            AqButton(
                 label = "Cargando",
                 onClick = {},
                 isLoading = true,
                 busyDescription = "Guardando…",
+                variant = AqButtonVariant.Primary,
+                size = AqButtonSize.Large,
             )
         }
         AqText(
-            text = "Botones secundarios — normal, deshabilitado, contorneada",
+            text = "Botones secundarios, contorneados y de texto",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            AqSecondaryButton(label = "Secundaria", onClick = {})
-            AqSecondaryButton(label = "Deshabilitada", onClick = {}, enabled = false)
-            com.agendaqr.core.ui.components.AqOutlineButton(
+            AqButton(
+                label = "Secundaria",
+                onClick = {},
+                variant = AqButtonVariant.Default,
+                size = AqButtonSize.Medium,
+            )
+            AqButton(
                 label = "Contorneada",
                 onClick = {},
+                variant = AqButtonVariant.Outline,
+                size = AqButtonSize.Medium,
+            )
+            AqButton(
+                label = "Texto",
+                onClick = {},
+                variant = AqButtonVariant.Text,
+                size = AqButtonSize.Medium,
             )
         }
         AqText(
-            text = "Botón destructivo y acciones de texto",
+            text = "Botón destructivo, solo-icono y FAB extendida",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            AqDangerButton(label = "Destructiva", onClick = {})
-            AqTextAction(label = "Texto", onClick = {}, variant = AqTextActionVariant.Default)
-            AqTextAction(label = "Peligro", onClick = {}, variant = AqTextActionVariant.Danger)
-        }
-        AqText(
-            text = "Botón solo-icono y FAB extendida",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            AqIconButton(
-                contentDescription = "Más",
+            AqButton(
+                label = "Destructiva",
                 onClick = {},
-            ) {
-                AqIcon(
-                    imageVector = com.agendaqr.core.ui.components.AqIcons.More,
-                    contentDescription = null,
-                )
-            }
-            com.agendaqr.core.ui.components.AqExtendedFab(
+                variant = AqButtonVariant.Danger,
+                size = AqButtonSize.Large,
+            )
+            AqButton(
+                label = "Más",
+                onClick = {},
+                variant = AqButtonVariant.Text,
+                size = AqButtonSize.Small,
+                icon = AqIcons.More,
+                iconOnly = true,
+            )
+            AqButton(
                 label = "Guardar",
-                icon = com.agendaqr.core.ui.components.AqIcons.Add,
+                icon = AqIcons.Add,
                 onClick = {},
+                variant = AqButtonVariant.Primary,
+                size = AqButtonSize.Large,
             )
         }
         AqText(
@@ -305,12 +336,20 @@ private fun AqActionsPreview() {
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
-        AqButtonGroup(
-            actions = listOf(
-                com.agendaqr.core.ui.components.AqGroupedAction("cancel", "Cancelar", onClick = {}),
-                com.agendaqr.core.ui.components.AqGroupedAction("save", "Guardar", onClick = {}, emphasized = true),
-            ),
-        )
+        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqButton(
+                label = "Cancelar",
+                onClick = {},
+                variant = AqButtonVariant.Default,
+                size = AqButtonSize.Small,
+            )
+            AqButton(
+                label = "Guardar",
+                onClick = {},
+                variant = AqButtonVariant.Primary,
+                size = AqButtonSize.Small,
+            )
+        }
     }
 }
 
@@ -319,20 +358,20 @@ private fun AqActionsPreview() {
 private fun AqFormsPreview() {
     Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
         AqText(
-            text = "Text Field — normal, deshabilitado, error",
+            text = "Text Input — normal, deshabilitado, error",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
             Column {
-                AqTextField(
+                AqTextInput(
                     label = "Campo de texto",
                     value = "Valor corto",
                     onValueChange = {},
                 )
             }
             Column {
-                AqTextField(
+                AqTextInput(
                     label = "Deshabilitado",
                     value = "No editable",
                     onValueChange = {},
@@ -340,7 +379,7 @@ private fun AqFormsPreview() {
                 )
             }
             Column {
-                AqTextField(
+                AqTextInput(
                     label = "Error",
                     value = "abc",
                     onValueChange = {},
@@ -350,27 +389,27 @@ private fun AqFormsPreview() {
             }
         }
         AqText(
-            text = "Text Field — contenido largo (se ajusta al ancho)",
+            text = "Text Input — contenido largo (se ajusta al ancho)",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
-        AqTextField(
+        AqTextInput(
             label = "Texto largo",
             value = "Este es un valor de texto bastante largo que se extiende más allá de lo habitual para verificar el desbordamiento y el ajuste al ancho del campo en pantallas compactas.",
             onValueChange = {},
         )
         AqText(
-            text = "Multiline Text Field — normal, error, contenido largo",
+            text = "Text Area — normal, error, contenido largo",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
         Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            AqMultilineTextField(
+            AqTextArea(
                 label = "Nota multilínea",
                 value = "Nota corta.",
                 onValueChange = {},
             )
-            AqMultilineTextField(
+            AqTextArea(
                 label = "Nota con error",
                 value = "Nota inválida",
                 onValueChange = {},
@@ -378,7 +417,7 @@ private fun AqFormsPreview() {
                 errorMessage = "La nota supera el límite permitido.",
             )
         }
-        AqMultilineTextField(
+        AqTextArea(
             label = "Nota larga",
             value = "Esta es una nota de varias líneas que simula contenido largo del usuario. "
                 + "Se compone con minLines y crece en altura según el contenido y la escala de fuente, "
@@ -387,28 +426,26 @@ private fun AqFormsPreview() {
             minLines = 3,
         )
         AqText(
-            text = "Search Field — normal, con limpieza, deshabilitado",
+            text = "Search Input — normal, con limpieza, deshabilitado",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
         Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            AqSearchField(
+            AqSearchInput(
                 value = "",
                 onValueChange = {},
                 label = "Buscar",
                 placeholder = "Buscar en Agenda QR",
-                onClear = {},
                 clearLabel = "Limpiar búsqueda",
             )
-            AqSearchField(
+            AqSearchInput(
                 value = "término de búsqueda",
                 onValueChange = {},
                 label = "Buscar",
                 placeholder = "Buscar en Agenda QR",
-                onClear = {},
                 clearLabel = "Limpiar búsqueda",
             )
-            AqSearchField(
+            AqSearchInput(
                 value = "",
                 onValueChange = {},
                 label = "Buscar",
@@ -423,12 +460,6 @@ private fun AqFormsPreview() {
         Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
             Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
                 AqCheckbox(label = "Casilla", checked = true, onCheckedChange = {})
-            AqSelectAllCheckbox(
-                label = "Seleccionar todas las opciones",
-                description = "Selección parcial",
-                checkedState = ToggleableState.Indeterminate,
-                onClick = {},
-            )
                 AqCheckbox(
                     label = "Deshabilitada",
                     checked = true,
@@ -443,117 +474,61 @@ private fun AqFormsPreview() {
                     state = AqFieldState(enabled = false),
                 )
             }
-            AqChoiceGroup(
-                label = "Tipo (ChoiceGroup)",
-                options = listOf(
-                    AqChoiceOption("pago", "Pago"),
-                    AqChoiceOption("cobro", "Cobro"),
-                ),
-                selectedId = "pago",
-                onSelected = {},
-            )
-            AqSelect(
-                options = listOf(
-                    AqChoiceOption("bob", "BOB"),
-                    AqChoiceOption("usd", "USD"),
-                    AqChoiceOption("otra", "Otra"),
-                ),
-                selectedId = "bob",
-                onSelected = {},
-                label = "Moneda",
-                dialogTitle = "Selecciona moneda",
-                confirmLabel = "Aceptar",
-                dismissLabel = "Cancelar",
-            )
+            Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                AqRadio(selected = true, contentDescription = "Pago")
+                AqText(text = "Pago")
+                AqRadio(selected = false, contentDescription = "Cobro")
+                AqText(text = "Cobro")
+            }
         }
         AqText(
-            text = "Jerarquía de formulario — AmountField hero, FormSection, FormField con opcional, ChipGroup",
+            text = "Amount Input — importe con moneda",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
-        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg)) {
-            com.agendaqr.core.ui.components.AqAmountField(
-                label = "Monto",
-                optionalLabel = "Opcional",
-                value = "125.50",
-                onValueChange = {},
-                currencySymbol = "$",
-                onClear = {},
-                clearLabel = "Borrar importe",
-            )
-            com.agendaqr.core.ui.components.AqFormField(label = "Moneda") {
-                com.agendaqr.core.ui.components.AqChipGroup(
-                    options = listOf(
-                        com.agendaqr.core.ui.components.AqChipOption("BOB"),
-                        com.agendaqr.core.ui.components.AqChipOption("USD"),
-                        com.agendaqr.core.ui.components.AqChipOption("ARS"),
-                    ),
-                    selectedIndex = 2,
-                    onSelect = {},
-                    horizontalScroll = true,
-                )
-            }
-            com.agendaqr.core.ui.components.AqFormSection("Fecha y hora") {
-                AqTextField(
-                    label = "Fecha",
-                    value = "Hoy · 14:30",
-                    onValueChange = {},
-                    enabled = false,
-                )
-                com.agendaqr.core.ui.components.AqChipGroup(
-                    options = listOf(
-                        com.agendaqr.core.ui.components.AqChipOption("Hoy"),
-                        com.agendaqr.core.ui.components.AqChipOption("Ayer"),
-                    ),
-                    selectedIndex = 0,
-                    onSelect = {},
-                )
-            }
-            com.agendaqr.core.ui.components.AqFormSection("Detalles de la actividad") {
-                AqTextField(
-                    label = "Persona o entidad",
-                    optionalLabel = "Opcional",
-                    value = "",
-                    onValueChange = {},
-                )
-                com.agendaqr.core.ui.components.AqFormField(
-                    label = "Contexto",
-                    optionalLabel = "Opcional",
-                ) {
-                    AqText("Para: elegir contexto", color = AqColor.TextSecondary)
-                }
-            }
-        }
+        AqAmountInput(
+            label = "Monto",
+            value = "125.50",
+            onValueChange = {},
+            currencySymbol = "$",
+        )
+        AqText(
+            text = "Error y mensajes de ayuda",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqErrorMessage(message = "Valor inválido")
+        AqHelperMessage(message = "La ayuda llega del llamador.")
     }
 }
 
-/** Previews de navegación: estados de selección, activo y deshabilitado. */
+/** Previews de navegación: barra superior, pestañas inferiores, riel, segmentado. */
 @Composable
 private fun AqNavigationPreview() {
     Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
         AqText(
-            text = "Top Bar — con flecha atrás, acciones y overflow",
+            text = "App Bar — con flecha atrás, acciones y overflow",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
-        AqTopBar(
+        AqAppBar(
             title = "Título de pantalla",
             onBack = {},
             backLabel = "Atrás",
             actions = listOf(
-                com.agendaqr.core.ui.components.AqTopBarAction(
+                AqAppBarAction(
                     label = "Compartir",
-                    icon = com.agendaqr.core.ui.components.AqIcons.Share,
+                    icon = AqIcons.Share,
                     onClick = {},
                 ),
-                com.agendaqr.core.ui.components.AqTopBarAction(
+                AqAppBarAction(
                     label = "Buscar",
-                    icon = com.agendaqr.core.ui.components.AqIcons.Search,
+                    icon = AqIcons.Search,
                     onClick = {},
                 ),
             ),
             overflowActions = listOf(
-                com.agendaqr.core.ui.components.AqOverflowAction(
+                AqAppBarAction(
                     label = "Más acciones",
                     onClick = {},
                 ),
@@ -561,37 +536,51 @@ private fun AqNavigationPreview() {
             overflowLabel = "Más",
         )
         AqText(
+            text = "Tab Bar — pestañas inferiores con badge de conteo",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqTabBar(
+            tabs = listOf(
+                AqTab("QR", count = 0),
+                AqTab("Actividades", count = 12),
+                AqTab("Comprobantes", count = 4),
+                AqTab("Ajustes"),
+            ),
+            selectedIndex = 1,
+            onSelect = {},
+        )
+        AqText(
+            text = "Pill Tab — pestañas sobre píldora",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqPillTab(
+            tabs = listOf(
+                AqTab("Hoy"),
+                AqTab("Ayer", count = 3),
+                AqTab("Semana"),
+            ),
+            selectedIndex = 0,
+            onSelect = {},
+        )
+        AqText(
             text = "Navigation Rail — variante expanded / tablet",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
         Row(modifier = Modifier.fillMaxWidth().height(AqMetrics.NavBarHeight * 4)) {
-            AqNavRail(
-                destinations = listOf(
-                    AqNavDestination("home", "Inicio", com.agendaqr.core.ui.components.AqIcons.Home),
-                    AqNavDestination("search", "Buscar", com.agendaqr.core.ui.components.AqIcons.Search),
-                    AqNavDestination("operations", "Operaciones", com.agendaqr.core.ui.components.AqIcons.Register),
-                    AqNavDestination("contexts", "Contextos", com.agendaqr.core.ui.components.AqIcons.Context),
+            AqTabBar(
+                tabs = listOf(
+                    AqTab("Inicio", icon = AqIcons.Home),
+                    AqTab("Buscar", icon = AqIcons.Search),
+                    AqTab("Operaciones", icon = AqIcons.Register),
+                    AqTab("Contextos", icon = AqIcons.Context),
                 ),
-                selectedId = "operations",
+                selectedIndex = 1,
                 onSelect = {},
             )
         }
-        AqText(
-            text = "Navigation Bar — cuatro destinos",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        AqNavBar(
-            destinations = listOf(
-                AqNavDestination("home", "Inicio", com.agendaqr.core.ui.components.AqIcons.Home),
-                AqNavDestination("search", "Buscar", com.agendaqr.core.ui.components.AqIcons.Search),
-                AqNavDestination("operations", "Operaciones", com.agendaqr.core.ui.components.AqIcons.Register),
-                AqNavDestination("contexts", "Contextos", com.agendaqr.core.ui.components.AqIcons.Context),
-            ),
-            selectedId = "home",
-            onSelect = {},
-        )
         AqText(
             text = "Segmented Control (filtros) — seleccionado, no seleccionado, conteo",
             color = AqColor.TextPrimary,
@@ -602,33 +591,17 @@ private fun AqNavigationPreview() {
                 AqSegmentedOption(label = "Todos", count = 12),
                 AqSegmentedOption(
                     label = "Favoritos",
-                    icon = com.agendaqr.core.ui.components.AqIcons.Favorite,
+                    icon = AqIcons.Favorite,
                     count = 3,
                 ),
             ),
             selectedIndex = 0,
             onSelect = {},
         )
-        AqText(
-            text = "Tabs — pista y píldora compartidas con el segmentado, badge de conteo",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        com.agendaqr.core.ui.components.AqTabs(
-            tabs = listOf(
-                com.agendaqr.core.ui.components.AqTab("QR", count = 0),
-                com.agendaqr.core.ui.components.AqTab("Actividades", count = 12),
-                com.agendaqr.core.ui.components.AqTab("Comprobantes", count = 4),
-                com.agendaqr.core.ui.components.AqTab("Ajustes"),
-            ),
-            selectedIndex = 1,
-            onSelect = {},
-            content = { index -> AqText(text = "Contenido pestaña $index") },
-        )
     }
 }
 
-/** Previews de superficies: normal, seleccionado, deshabilitado, error, expandido. */
+/** Previews de superficies: tarjeta, acciones inferiores, hoja inferior, modal. */
 @Composable
 private fun AqSurfacesPreview() {
     Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
@@ -637,457 +610,34 @@ private fun AqSurfacesPreview() {
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
-        AqCard {
+        AqCardPreview {
             AqText(text = "Contenido de tarjeta", color = AqColor.TextPrimary)
         }
-        AqCard {
+        AqCardPreview {
             Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
                 AqText(
-                    text = "Contenido largo que ocupa el ancho completo de la tarjeta para verificar el relleno interno de 16 dp y que el texto no toque el borde, incluso con fuente al 150 % o 200 %.",
+                    text = "Contenido largo que ocupa el ancho completo de la tarjeta para verificar el relleno interno y que el texto no toque el borde, incluso con fuente al 150 % o 200 %.",
                     color = AqColor.TextPrimary,
                 )
             }
         }
         AqText(
-            text = "Date Picker y Time Picker — calendario Polaris y entrada numérica",
+            text = "Modal — diálogo centrado con foco atrapado y scrim clicable",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
-        val showDatePicker = remember { mutableStateOf(false) }
-        val showTimePicker = remember { mutableStateOf(false) }
-        AqSecondaryButton("Abrir calendario", onClick = { showDatePicker.value = true })
-        AqSecondaryButton("Abrir selector de hora", onClick = { showTimePicker.value = true })
-        if (showDatePicker.value) {
-            AqDatePickerDialog(
-                selectedDateUtc = null,
-                title = "Fecha",
-                onConfirm = { showDatePicker.value = false },
-                onDismiss = { showDatePicker.value = false },
-                confirmLabel = "Elegir",
+        val showModal = remember { mutableStateOf(true) }
+        if (showModal.value) {
+            AqModal(
+                show = true,
+                title = "Confirmar acción",
                 dismissLabel = "Cancelar",
-                monthNames = listOf("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"),
-                weekdays = listOf("domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"),
-                previousMonthLabel = "Mes anterior",
-                nextMonthLabel = "Mes siguiente",
-            )
-        }
-        if (showTimePicker.value) {
-            AqTimePickerDialog(
-                initialHour = 14,
-                initialMinute = 30,
-                title = "Hora",
-                onConfirm = { _, _ -> showTimePicker.value = false },
-                onDismiss = { showTimePicker.value = false },
-                confirmLabel = "Elegir",
-                dismissLabel = "Cancelar",
-                hourLabel = "Hora",
-                minuteLabel = "Minutos",
-                invalidTimeMessage = "Introduce una hora entre 00:00 y 23:59",
-            )
-        }
-        AqText(
-            text = "Expansion Panel — colapsado y expandido",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        val expanded = remember { mutableStateOf(false) }
-        AqExpansionPanel(
-            title = "Más detalles",
-            expanded = expanded.value,
-            onToggle = { expanded.value = !expanded.value },
-        ) {
-            AqText(text = "Contenido expandido del panel revelado al pulsar el título.")
-        }
-        AqText(
-            text = "List Body + List Row — normal, seleccionado, deshabilitado, con chevron y divider",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        AqListBody {
-            AqListRow(
-                title = "Destino ejemplo",
-                subtitle = "Comprobante recibido",
-                showChevron = true,
-                onClick = {},
-            )
-            AqListRow(
-                title = "Fila seleccionada",
-                subtitle = "Estado activo",
-                showChevron = true,
-                onClick = {},
-                selected = true,
-            )
-            AqListRow(
-                title = "Fila sin acción",
-                subtitle = "Sin interacción (onClick nulo)",
-                showChevron = true,
-                onClick = null,
-            )
-        }
-    }
-}
-
-/** Previews de visualización de datos: filas seleccionadas, badges, tags, meta, tabla. */
-@Composable
-private fun AqDataDisplayPreview() {
-    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-        AqText(
-            text = "List Row — normal, seleccionado, deshabilitado",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        AqListBody {
-            AqListRow(
-                title = "Destino QR",
-                subtitle = "Comercio ejemplo",
-                leading = {
-                    AqIconBadge(
-                        icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
-                        tone = com.agendaqr.core.ui.components.AqTone.Info,
-                    )
-                },
-                trailing = {
-                    com.agendaqr.core.ui.components.AqFavoriteToggle(
-                        favorite = false,
-                        contentDescription = "Marcar favorito",
-                        onCheckedChange = {},
-                    )
-                },
-                showDivider = true,
-            )
-            AqListRow(
-                title = "Destino seleccionado",
-                subtitle = "Estado activo",
-                selected = true,
-                showDivider = true,
-                trailing = {
-                    com.agendaqr.core.ui.components.AqFavoriteToggle(
-                        favorite = true,
-                        contentDescription = "Quitar favorito",
-                        onCheckedChange = {},
-                    )
-                },
-            )
-            AqListRow(
-                title = "Destino sin acción",
-                subtitle = "Sin interacción (onClick nulo)",
-                showDivider = true,
-                onClick = null,
-            )
-        }
-        AqText(
-            text = "Badge / Tonal Tag — todos los tonos, outline y relleno",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            AqBadge(text = "Activo", tone = com.agendaqr.core.ui.components.AqTone.Success)
-            AqBadge(text = "Pendiente", tone = com.agendaqr.core.ui.components.AqTone.Warning)
-            AqBadge(text = "Error", tone = com.agendaqr.core.ui.components.AqTone.Danger)
-            AqBadge(text = "Neutral", tone = com.agendaqr.core.ui.components.AqTone.Neutral)
-            AqTonalTag(text = "PAGO", tone = com.agendaqr.core.ui.components.AqTone.Success)
-            AqTonalTag(text = "COBRO", tone = com.agendaqr.core.ui.components.AqTone.Info)
-        }
-        AqText(
-            text = "Meta Row — label + valor + acción de copia",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        AqMetaRow(
-            label = "Sincronizado",
-            value = "14:30",
-            trailing = {
-                AqIcon(imageVector = com.agendaqr.core.ui.components.AqIcons.Copy, contentDescription = null)
-            },
-        )
-        AqText(
-            text = "Index Table — cabecera y filas",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        com.agendaqr.core.ui.components.AqIndexTable(
-            columns = listOf(
-                com.agendaqr.core.ui.components.AqTableColumn("concepto", "Concepto"),
-                com.agendaqr.core.ui.components.AqTableColumn("importe", "Importe"),
-            ),
-            rows = listOf(
-                com.agendaqr.core.ui.components.AqTableRow("1", mapOf("concepto" to "Cobro", "importe" to "10,00")),
-                com.agendaqr.core.ui.components.AqTableRow("2", mapOf("concepto" to "Pago", "importe" to "25,50")),
-            ),
-        )
-        AqText(
-            text = "Section Header",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        AqSectionHeader(text = "Grupo de operaciones")
-    }
-}
-
-/** Previews de feedback y estados: todos los tonos, vacío, carga, progreso. */
-@Composable
-private fun AqFeedbackPreview() {
-    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-        AqText(
-            text = "Status Banner por tono — Success, Danger, Warning, Info, Neutral",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            AqStatusBanner(message = "Operación guardada", tone = com.agendaqr.core.ui.components.AqTone.Success)
-            AqStatusBanner(
-                message = "No se pudo sincronizar",
-                tone = com.agendaqr.core.ui.components.AqTone.Danger,
-                action = AqBannerAction("Reintentar", {}),
-            )
-            AqStatusBanner(
-                message = "Revisa tu conexión a internet",
-                tone = com.agendaqr.core.ui.components.AqTone.Warning,
-            )
-            AqStatusBanner(message = "Modo local activado", tone = com.agendaqr.core.ui.components.AqTone.Info)
-            AqStatusBanner(message = "Aviso general", tone = com.agendaqr.core.ui.components.AqTone.Neutral)
-        }
-        AqText(
-            text = "Empty State — con acción, con título largo, sin acción",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        AqEmptyState(
-            title = "Sin destinos",
-            subtitle = "Trae tu primer QR para comenzar.",
-            icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
-            actionLabel = "Traer un QR",
-            onAction = {},
-        )
-        AqEmptyState(
-            title = "Este es un título de estado vacío bastante largo para verificar que el contenido no se desborde ni se solape con el subtítulo ni con la acción primaria en pantallas estrechas",
-            subtitle = "Subtítulo que acompaña al título largo y describe la acción recomendada para salir de este estado vacío.",
-            icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
-            actionLabel = "Acción primaria",
-            onAction = {},
-        )
-        AqEmptyState(
-            title = "Sin resultados",
-            subtitle = "Ajusta los filtros o prueba con otra búsqueda.",
-            icon = com.agendaqr.core.ui.components.AqIcons.SearchX,
-        )
-        AqText(
-            text = "Loading / Spinner / Skeleton",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            AqLoading(message = "Cargando…")
-            AqSpinner(contentDescription = "Cargando")
-            com.agendaqr.core.ui.components.AqSkeleton(lines = 3)
-        }
-        AqText(
-            text = "Progress Bar — 60 %, determinista",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        AqProgressBar(
-            progress = com.agendaqr.core.ui.components.AqProgress(0.6f),
-            contentDescription = "Progreso de importación",
-        )
-        AqText(
-            text = "Progress Block — guardado de lote, 60 %",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        AqProgressBlock(
-            progress = com.agendaqr.core.ui.components.AqProgress(0.6f),
-            label = "Guardando comprobantes",
-            contentDescription = "Guardando comprobantes, 60 % completados",
-            message = "6 de 10 comprobantes guardados",
-        )
-        AqText(
-            text = "Status Pill — normal e inversa (Modo local)",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            AqStatusPill(text = "Al día", tone = com.agendaqr.core.ui.components.AqTone.Success)
-            AqStatusPill(text = "Modo local", inverse = true, tone = com.agendaqr.core.ui.components.AqTone.Success)
-        }
-    }
-}
-
-/** Previews de selección: chips seleccionados/no, deshabilitados, conteo, badges. */
-@Composable
-private fun AqSelectionPreview() {
-    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-        AqText(
-            text = "ChipGroup — selección inequívoca (check + relleno + borde), conteo y deshabilitado",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        com.agendaqr.core.ui.components.AqChipGroup(
-            options = listOf(
-                com.agendaqr.core.ui.components.AqChipOption("Todos", count = 12),
-                com.agendaqr.core.ui.components.AqChipOption("Favoritos", count = 3),
-                com.agendaqr.core.ui.components.AqChipOption("Pago", count = 5),
-                com.agendaqr.core.ui.components.AqChipOption("Deshabilitado", enabled = false),
-            ),
-            selectedIndex = 0,
-            onSelect = {},
-        )
-        AqText(
-            text = "Context Badge — identidad de contexto por color",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            AqContextBadge(contextId = "ctx-1")
-            AqContextBadge(contextId = "ctx-2")
-            AqContextBadge(contextId = "ctx-3")
-        }
-        AqText(
-            text = "Evidence Badge — X-01: icono + texto (nunca «Verificado» ni «Pagado»)",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        com.agendaqr.core.ui.components.AqEvidenceBadge(
-            text = "Comprobante recibido",
-            icon = com.agendaqr.core.ui.components.AqIcons.Attachment,
-        )
-    }
-}
-
-/** Previews de medios: QR Preview (sin imagen / no decodificable) y Carousel. */
-@Composable
-private fun AqMediaPreview() {
-    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-        AqText(
-            text = "QR Preview — sin vista previa y no decodificable",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            com.agendaqr.core.ui.components.AqQrPreview(
-                encodedQr = "",
-                unavailableMessage = "Sin vista previa de QR",
-            )
-            com.agendaqr.core.ui.components.AqQrPreview(
-                encodedQr = "esto-no-es-base64-valido!!",
-                unavailableMessage = "No se pudo decodificar el QR",
-            )
-        }
-        AqText(
-            text = "Carousel — siguiente tarjeta asoma como indicio",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        AqCarousel(
-            items = listOf(
-                AqCarouselItem("card-1", "Tarjeta 1"),
-                AqCarouselItem("card-2", "Tarjeta 2"),
-                AqCarouselItem("card-3", "Tarjeta 3"),
-                AqCarouselItem("card-4", "Tarjeta 4"),
-            ),
-        ) { item ->
-            com.agendaqr.core.ui.components.AqTappableCard(
-                onClick = {},
-                modifier = Modifier.size(AqMetrics.FavCardWidth),
+                onDismissRequest = { showModal.value = false },
+                confirmLabel = "Aceptar",
+                onConfirm = { showModal.value = false },
             ) {
-                AqText(text = item.label ?: "", color = AqColor.TextPrimary)
+                AqText(text = "¿Desea continuar con esta operación?")
             }
-        }
-    }
-}
-
-/** Previews de interacciones móviles: Bottom Action Dock (acción alcanzable) y Expansion Panel. */
-@Composable
-private fun AqMobileInteractionsPreview() {
-    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-        AqText(
-            text = "Bottom Action Dock — acción primaria alcanzable (una mano) con IME",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        AqBottomActionDock {
-            AqBottomAction(label = "Guardar", onClick = {})
-        }
-        AqText(
-            text = "Expansion Panel — colapsado y expandido con contenido largo",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        val expanded = remember { mutableStateOf(false) }
-        AqExpansionPanel(
-            title = "Más detalles",
-            expanded = expanded.value,
-            onToggle = { expanded.value = !expanded.value },
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-                AqText(
-                    text = "Contenido revelado al expandir, con varias líneas para verificar que la expansión no recorta el texto y respeta la escala de fuente del sistema.",
-                )
-                AqText(
-                    text = "Línea adicional de contenido para comprobar la altura dinámica del panel expandido.",
-                    color = AqColor.TextSecondary,
-                )
-            }
-        }
-        AqText(
-            text = "Tooltip — etiqueta flotante tonal en estado visible",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        AqTooltip(
-            label = "Actualizar lista",
-            isVisible = true,
-            content = {
-                AqIconButton(
-                    contentDescription = "Actualizar lista",
-                    onClick = {},
-                ) {
-                    AqIcon(
-                    imageVector = com.agendaqr.core.ui.components.AqIcons.Search,
-                        contentDescription = null,
-                    )
-                }
-            },
-        )
-        AqText(
-            text = "Pull to Refresh — contenedor de recarga por arrastre con spinner Polaris",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        AqPullToRefresh(
-            isRefreshing = false,
-            onRefresh = {},
-            refreshingLabel = "Actualizando",
-        ) {
-            AqText(text = "Contenido de la lista que se desplaza al tirar hacia abajo.")
-        }
-        AqText(
-            text = "Swipe Actions — acciones reveladas al deslizar la fila con customActions accesibles",
-            color = AqColor.TextPrimary,
-            size = AqType.BodyMd,
-        )
-        val swipeActions = listOf(
-            AqSwipeAction(
-                label = "Marcar favorito",
-                icon = com.agendaqr.core.ui.components.AqIcons.Favorite,
-                backgroundColor = com.agendaqr.core.ui.theme.AqColor.EmphasisFill,
-                contentColor = com.agendaqr.core.ui.theme.AqColor.InverseOnSurface,
-                onAction = {},
-            ),
-            AqSwipeAction(
-                label = "Eliminar",
-                icon = com.agendaqr.core.ui.components.AqIcons.Trash,
-                backgroundColor = com.agendaqr.core.ui.theme.AqColor.DangerFill,
-                contentColor = com.agendaqr.core.ui.theme.AqColor.InverseOnSurface,
-                onAction = {},
-            ),
-        )
-        AqSwipeActions(actions = swipeActions) {
-            AqListRow(
-                title = "Fila con acciones al deslizar",
-                subtitle = "Desliza para revelar acciones",
-                showDivider = true,
-            )
         }
         AqText(
             text = "Bottom Sheet — hoja inferior para inspeccionar sin abandonar el flujo",
@@ -1110,53 +660,408 @@ private fun AqMobileInteractionsPreview() {
                 }
             }
         }
-
         AqText(
-            text = "Miniatura de comprobante (AqThumbnail) — carga, éxito y fallback",
+            text = "Acción fija inferior (FAB extendida) en zona de acción",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
-                AqText(
-                    text = "Cargando",
-                    color = AqColor.TextSecondary,
-                    size = AqType.Caption,
+        AqButton(
+            label = "Guardar",
+            icon = AqIcons.Add,
+            onClick = {},
+            variant = AqButtonVariant.Primary,
+            size = AqButtonSize.Large,
+        )
+        AqText(
+            text = "Popover — menú flotante anclado",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqPopover(
+            open = false,
+            trigger = {
+                AqButton(label = "Más", onClick = {}, variant = AqButtonVariant.Text, size = AqButtonSize.Small)
+            },
+            content = {},
+        )
+    }
+}
+
+/** Previews de visualización de datos: filas, badges, tags, meta, tabla, breadcrumb. */
+@Composable
+private fun AqDataDisplayPreview() {
+    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+        AqText(
+            text = "List Row — normal, seleccionado, deshabilitado",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqListSection(title = "Destinos") {
+            AqMenuItem(
+                title = "Destino QR",
+                subtitle = "Comercio ejemplo",
+                trailing = {
+                    AqTag(
+                        text = "Activo",
+                        tone = AqTone.Success,
+                        size = AqTagSize.Xs,
+                    )
+                },
+                onClick = {},
+            )
+            AqMenuItem(
+                title = "Destino seleccionado",
+                subtitle = "Estado activo",
+                selected = true,
+                trailing = {
+                    AqTag(
+                        text = "Favorito",
+                        tone = AqTone.Info,
+                        size = AqTagSize.Xs,
+                    )
+                },
+            )
+            AqMenuItem(
+                title = "Destino sin acción",
+                subtitle = "Sin interacción",
+                onClick = null,
+            )
+        }
+        AqText(
+            text = "Tag / Avatar / Dot Indicator — todos los tonos y tamaños",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqTag(text = "Activo", tone = AqTone.Success, size = AqTagSize.Xs)
+            AqTag(text = "Pendiente", tone = AqTone.Warning, size = AqTagSize.Xs)
+            AqTag(text = "Error", tone = AqTone.Danger, size = AqTagSize.Xs)
+            AqTag(text = "Neutral", tone = AqTone.Neutral, size = AqTagSize.Xs)
+            AqAvatar(
+                size = AqAvatarSize.Sm,
+                imageVector = null,
+                initials = "JD",
+                contentDescription = "Avatar",
+            )
+            AqDotIndicator(total = 3, selected = 1)
+        }
+        AqText(
+            text = "Meta Row — label + valor + acción de copia",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqMenuItem(
+            title = "Sincronizado",
+            subtitle = "14:30",
+            trailing = {
+                AqIcon(
+                    imageVector = AqIcons.Copy,
+                    contentDescription = null,
                 )
-                AqThumbnailFrame(size = ThumbnailSize) {
-                    AqThumbnailSkeleton(modifier = Modifier.fillMaxSize())
-                }
+            },
+        )
+        AqText(
+            text = "Breadcrumb — ruta de navegación",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqBreadcrumbComp(items = listOf("Inicio", "Destinos", "Detalle"))
+    }
+}
+
+/** Previews de feedback y estados: alerta, toast, vacío, carga, progreso, esqueleto. */
+@Composable
+private fun AqFeedbackPreview() {
+    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+        AqText(
+            text = "Alerta por tono — Success, Danger, Warning, Info, Neutral",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqAlert(tone = AqTone.Success, message = "Operación guardada")
+            AqAlert(
+                tone = AqTone.Danger,
+                message = "No se pudo sincronizar",
+                dismissLabel = "Descartar",
+                onDismiss = {},
+            )
+            AqAlert(tone = AqTone.Warning, message = "Revisa tu conexión a internet")
+            AqAlert(tone = AqTone.Info, message = "Modo local activado")
+            AqAlert(tone = AqTone.Neutral, message = "Aviso general")
+        }
+        AqText(
+            text = "Toast — notificación efímera en la parte inferior",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqToast(
+            show = true,
+            message = "Operación guardada",
+            actionLabel = "Deshacer",
+            onAction = {},
+            onDismissRequest = {},
+        )
+        AqText(
+            text = "Empty Placeholder — con acción, con título largo, sin acción",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqEmptyPlaceholder(
+            title = "Sin destinos",
+            subtitle = "Trae tu primer QR para comenzar.",
+            icon = AqIcons.QrCode,
+            actionLabel = "Traer un QR",
+            onAction = {},
+        )
+        AqEmptyPlaceholder(
+            title = "Este es un título de estado vacío bastante largo para verificar que el contenido no se desborde ni se solape con el subtítulo ni con la acción primaria en pantallas estrechas",
+            subtitle = "Subtítulo que acompaña al título largo y describe la acción recomendada para salir de este estado vacío.",
+            icon = AqIcons.QrCode,
+            actionLabel = "Acción primaria",
+            onAction = {},
+        )
+        AqEmptyPlaceholder(
+            title = "Sin resultados",
+            subtitle = "Ajusta los filtros o prueba con otra búsqueda.",
+            icon = AqIcons.SearchX,
+        )
+        AqText(
+            text = "Loading / Spinner / Skeleton",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqCircularLoader(loaderSize = AqMetrics.IconSize, contentDescription = "Cargando")
+            AqSkeletonBlock(lines = 3)
+            AqCircularProgress(
+                progress = 0.5f,
+                size = AqMetrics.IconSize,
+            )
+        }
+        AqText(
+            text = "Progress Bar — 60 %, determinista",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqProgressBar(
+            progress = AqProgress(0.6f),
+            contentDescription = "Progreso de importación",
+        )
+        AqText(
+            text = "Progress Block — guardado de lote, 60 %",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqProgressBlock(
+            progress = AqProgress(0.6f),
+            label = "Guardando comprobantes",
+            contentDescription = "Guardando comprobantes, 60 % completados",
+            message = "6 de 10 comprobantes guardados",
+        )
+        AqText(
+            text = "Chip (píldora de estado) — normal e inversa (Modo local)",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqChip(
+                text = "Al día",
+                selected = true,
+                onClick = {},
+                size = AqChipSize.Sm,
+            )
+            AqChip(
+                text = "Modo local",
+                selected = false,
+                onClick = {},
+                size = AqChipSize.Sm,
+            )
+        }
+    }
+}
+
+/** Previews de selección: chips, toggle, radio, switch, selección múltiple. */
+@Composable
+private fun AqSelectionPreview() {
+    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+        AqText(
+            text = "ChipGroup — selección inequívoca (check + relleno + borde), conteo y deshabilitado",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqChip(
+                text = "Todos",
+                selected = true,
+                onClick = {},
+                size = AqChipSize.Md,
+            )
+            AqChip(
+                text = "Favoritos",
+                selected = false,
+                onClick = {},
+                size = AqChipSize.Md,
+            )
+            AqChip(
+                text = "Pago",
+                selected = false,
+                onClick = {},
+                enabled = false,
+                size = AqChipSize.Md,
+            )
+        }
+        AqText(
+            text = "Favorito toggle — con glifo y estado",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqFavoriteToggle(
+            favorite = true,
+            onCheckedChange = {},
+            contentDescription = "Marcar como favorito",
+        )
+        AqText(
+            text = "Radio — opciones mutuamente excluyentes",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                AqRadio(selected = true, contentDescription = "Pago")
+                AqText(text = "Pago")
             }
-            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
-                AqText(
-                    text = "Sin vista previa (imagen → QR)",
-                    color = AqColor.TextSecondary,
-                    size = AqType.Caption,
-                )
-                AqThumbnailFrame(size = ThumbnailSize) {
-                    AqThumbnailFallback(isPdf = false, contentDescription = null)
-                }
-            }
-            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
-                AqText(
-                    text = "PDF / archivo (Attachment)",
-                    color = AqColor.TextSecondary,
-                    size = AqType.Caption,
-                )
-                AqThumbnailFrame(size = ThumbnailSize) {
-                    AqThumbnailFallback(isPdf = true, contentDescription = null)
-                }
+            Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                AqRadio(selected = false, contentDescription = "Cobro")
+                AqText(text = "Cobro")
             }
         }
         AqText(
-            text = "Éxito: imagen decodada con ContentScale.Crop sobre AqShapes.Medium; sin ícono de fallback.",
-            color = AqColor.TextSecondary,
-            size = AqType.Caption,
+            text = "Switch — activar/desactivar sincronización",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
         )
+        AqSwitch(label = "Sincronización activa", checked = true, onCheckedChange = {})
+    }
+}
+
+/** Previews de medios: QR Preview y Carousel. */
+@Composable
+private fun AqMediaPreview() {
+    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+        AqText(
+            text = "QR Preview — sin vista previa y no decodificable",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqQrPreview(
+                encodedQr = "",
+                unavailableMessage = "Sin vista previa de QR",
+            )
+            AqQrPreview(
+                encodedQr = "esto-no-es-base64-valido!!",
+                unavailableMessage = "No se pudo decodificar el QR",
+            )
+        }
+        AqText(
+            text = "Carousel — siguiente tarjeta asoma como indicio",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqCarousel(
+            items = listOf(
+                AqCarouselItem("card-1", "Tarjeta 1"),
+                AqCarouselItem("card-2", "Tarjeta 2"),
+                AqCarouselItem("card-3", "Tarjeta 3"),
+                AqCarouselItem("card-4", "Tarjeta 4"),
+            ),
+        ) { item ->
+            AqMenuItem(
+                title = item.label ?: "",
+                onClick = {},
+            )
+        }
+    }
+}
+
+/** Previews de interacciones móviles: pull-to-refresh, swipe actions, bottom action dock. */
+@Composable
+private fun AqMobileInteractionsPreview() {
+    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+        AqText(
+            text = "Pull to Refresh — contenedor de recarga por arrastre con loader circular",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqPullToRefresh(
+            isRefreshing = false,
+            onRefresh = {},
+            refreshingLabel = "Actualizando",
+        ) {
+            AqText(text = "Contenido de la lista que se desplaza al tirar hacia abajo.")
+        }
+        AqText(
+            text = "Swipe Actions — acciones reveladas al deslizar la fila",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        val swipeActions = listOf(
+            AqSwipeAction(
+                label = "Marcar favorito",
+                icon = AqIcons.Favorite,
+                backgroundColor = AqColor.EmphasisFill,
+                contentColor = AqColor.InverseOnSurface,
+                onAction = {},
+            ),
+            AqSwipeAction(
+                label = "Eliminar",
+                icon = AqIcons.Trash,
+                backgroundColor = AqColor.DangerFill,
+                contentColor = AqColor.InverseOnSurface,
+                onAction = {},
+            ),
+        )
+        AqSwipeActions(actions = swipeActions) {
+            AqMenuItem(
+                title = "Fila con acciones al deslizar",
+                subtitle = "Desliza para revelar acciones",
+            )
+        }
+        AqText(
+            text = "Bottom Action Dock — acción primaria alcanzable (una mano) con IME",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqButton(
+            label = "Guardar",
+            onClick = {},
+            variant = AqButtonVariant.Primary,
+            size = AqButtonSize.Large,
+        )
+        AqText(
+            text = "Text Input — campo con acciones adjuntas",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqTextInput(
+            label = "Etiqueta",
+            value = "",
+            onValueChange = {},
+        )
+    }
+}
+
+/** Tarjeta de preview Moon-only: superficie + radio squircle + relleno canónico. */
+@Composable
+private fun AqCardPreview(content: @Composable () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(AqColor.Surface, AqSquircles.InteractiveSm)
+            .padding(AqSpacing.Lg),
+    ) {
+        content()
     }
 }
 

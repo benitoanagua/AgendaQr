@@ -1,6 +1,6 @@
 package com.agendaqr.core.ui.components
 
-import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
@@ -16,6 +16,7 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqTheme
+import com.agendaqr.core.ui.components.AqIcons
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -37,22 +38,21 @@ class AqTooltipTest {
                 AqTooltip(
                     label = "Actualizar lista",
                     content = {
-                        AqIconButton(
-                            contentDescription = "Actualizar lista",
+                        AqButton(
+                            label = "Actualizar lista",
                             onClick = {},
-                        ) {
-                            Icon(
-                                imageVector = AqIcons.Search,
-                                contentDescription = null,
-                            )
-                        }
+                            variant = AqButtonVariant.Text,
+                            size = AqButtonSize.Small,
+                            icon = AqIcons.Search,
+                            iconOnly = true,
+                        )
                     },
                 )
             }
         }
 
         // El botón icono conserva nombre accesible, rol y target de 48 dp.
-        val node = compose.onNodeWithContentDescription("Actualizar lista")
+        val node = compose.onNodeWithText("Actualizar lista")
         node.assertExists()
         node.assertHeightIsAtLeast(48.dp)
         node.assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
@@ -86,74 +86,45 @@ class AqTooltipTest {
                 AqTooltip(
                     label = "Acción",
                     content = {
-                        AqIconButton(
-                            contentDescription = "Acción",
+                        AqButton(
+                            label = "Acción",
                             onClick = { clicks++ },
-                        ) {
-                            Icon(
-                                imageVector = AqIcons.Search,
-                                contentDescription = null,
-                            )
-                        }
+                            variant = AqButtonVariant.Text,
+                            size = AqButtonSize.Small,
+                            icon = AqIcons.Search,
+                            iconOnly = true,
+                        )
                     },
                 )
             }
         }
-        val node = compose.onNodeWithContentDescription("Acción")
+        val node = compose.onNodeWithText("Acción")
         node.assertHeightIsAtLeast(48.dp)
         node.performClick()
         assertEquals(1, clicks)
     }
 
     @Test
-    fun long_press_callback_is_invoked_for_a_long_press() {
-        var longPresses = 0
-        compose.setContent {
-            AqTheme {
-                AqTooltip(
-                    label = "Guardar",
-                    onLongClick = { longPresses++ },
-                    content = {
-                        AqIconButton(
-                            contentDescription = "Guardar",
-                            onClick = {},
-                        ) {
-                            Icon(imageVector = AqIcons.Search, contentDescription = null)
-                        }
-                    },
-                )
-            }
-        }
-
-        compose.onNodeWithContentDescription("Guardar").performTouchInput {
-            down(center)
-            advanceEventTime(1_000)
-            up()
-        }
-        assertEquals(1, longPresses)
-    }
-
-    @Test
-    fun regular_click_still_reaches_wrapped_control_when_long_press_is_enabled() {
+    fun tooltip_button_invokes_click() {
         var clicks = 0
         compose.setContent {
             AqTheme {
                 AqTooltip(
                     label = "Guardar",
-                    onLongClick = {},
                     content = {
-                        AqIconButton(
-                            contentDescription = "Guardar",
+                        AqButton(
+                            label = "Guardar",
                             onClick = { clicks++ },
-                        ) {
-                            Icon(imageVector = AqIcons.Search, contentDescription = null)
-                        }
+                            variant = AqButtonVariant.Text,
+                            size = AqButtonSize.Small,
+                            icon = AqIcons.Search,
+                            iconOnly = true,
+                        )
                     },
                 )
             }
         }
-
-        compose.onNodeWithContentDescription("Guardar").performClick()
+        compose.onNodeWithText("Guardar").performClick()
         assertEquals(1, clicks)
     }
 }

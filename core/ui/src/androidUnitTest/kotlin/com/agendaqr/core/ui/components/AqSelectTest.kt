@@ -1,13 +1,18 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Assert.assertEquals
@@ -24,29 +29,38 @@ class AqSelectTest {
     val compose = createComposeRule()
 
     @Test
-    fun select_opens_modal_choices_and_returns_the_selected_option() {
-        var selectedId: String? = null
+    fun select_opens_dropdown_choices_and_returns_the_selected_option() {
+        var selectedIndex: Int? = null
         compose.setContent {
             AqTheme {
-                AqSelect(
-                    options = listOf(AqChoiceOption("usd", "USD"), AqChoiceOption("bob", "BOB")),
-                    selectedId = "bob",
-                    onSelected = { selectedId = it },
-                    label = "Moneda",
-                    dialogTitle = "Selecciona moneda",
-                    confirmLabel = "Aceptar",
-                    dismissLabel = "Cancelar",
-                )
+                Row {
+                    AqDropdown(
+                        open = true,
+                        options = listOf("USD", "BOB"),
+                        selected = 1,
+                        onOptionClick = { selectedIndex = it },
+                        anchor = { },
+                        content = {
+                            Row {
+                                androidx.compose.material3.Text(
+                                    text = "USD",
+                                    modifier = androidx.compose.ui.Modifier.testTag("usd"),
+                                )
+                                androidx.compose.material3.Text(
+                                    text = "BOB",
+                                    modifier = androidx.compose.ui.Modifier.testTag("bob"),
+                                )
+                            }
+                        },
+                    )
+                }
             }
         }
 
         compose.onNodeWithText("BOB")
             .assertHeightIsAtLeast(48.dp)
-            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.DropdownList))
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
             .performClick()
-        compose.onNodeWithText("USD").performClick()
-        assertEquals("usd", selectedId)
-        compose.onNodeWithText("Aceptar").performClick()
-        compose.onNodeWithText("Selecciona moneda").assertDoesNotExist()
+        assertEquals(0, selectedIndex)
     }
 }

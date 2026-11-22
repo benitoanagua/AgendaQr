@@ -15,35 +15,6 @@ import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqTextRoles
 
 /**
- * Encabezado: todo título con semántica `heading()` usa la
- * familia de sistema y los tokens tipográficos del sistema.
- *
- * El tamaño sigue en `sp`: el escalado de fuente del sistema se respeta.
- * El interlineado, el peso y el tracking vienen del rol publicado más
- * cercano; un tamaño arbitrario usa el ratio derivado de `heading-2xl`.
- */
-@Composable
-fun AqHeading(
-    text: String,
-    modifier: Modifier = Modifier,
-    size: TextUnit = AqType.Headline,
-    fontWeight: FontWeight? = null,
-    color: Color = AqColor.TextPrimary,
-) {
-    val role = AqTextRoles.of(size, heading = true)
-    Text(
-        text = text,
-        modifier = modifier.semantics { heading() },
-        fontSize = size,
-        lineHeight = role.lineHeight,
-        fontFamily = AqType.FamilyUi,
-        fontWeight = fontWeight ?: role.weight,
-        letterSpacing = role.tracking,
-        color = color,
-    )
-}
-
-/**
  * Texto: el cuerpo y la UI usan la familia de texto del
  * sistema con los tokens del design system. La capa feature no compone
  * `androidx.compose.material3.Text` directamente: usa este componente

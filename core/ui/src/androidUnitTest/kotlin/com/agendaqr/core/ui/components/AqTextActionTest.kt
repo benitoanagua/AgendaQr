@@ -30,11 +30,11 @@ class AqTextActionTest {
         var clicks = 0
         compose.setContent {
             AqTheme {
-                AqTextAction(label = "Más información", onClick = { clicks++ })
-                AqTextAction(
+                AqButton(label = "Más información", onClick = { clicks++ }, variant = AqButtonVariant.Text)
+                AqButton(
                     label = "Cancelar",
                     onClick = { clicks++ },
-                    variant = AqTextActionVariant.Neutral,
+                    variant = AqButtonVariant.Text,
                 )
             }
         }
@@ -53,7 +53,7 @@ class AqTextActionTest {
         var clicks = 0
         compose.setContent {
             AqTheme {
-                AqTextAction(label = "No disponible", onClick = { clicks++ }, enabled = false)
+                AqButton(label = "No disponible", onClick = { clicks++ }, enabled = false, variant = AqButtonVariant.Text)
             }
         }
 

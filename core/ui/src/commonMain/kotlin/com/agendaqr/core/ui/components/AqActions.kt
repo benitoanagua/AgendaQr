@@ -10,21 +10,23 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.agendaqr.core.ui.theme.AqSpacing
 
 /**
- * Acción de navegación textual equivalente a `s-link`: usa la semántica
- * y el área táctil de [AqTextAction] sin inventar un nuevo estilo visual.
+ * Acción de navegación textual equivalente a `s-link`: usa [AqButton] con
+ * variante Text sin inventar un nuevo estilo visual.
  */
 @Composable
-fun AqLink(
+fun AqNavLink(
     label: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
     enabled: Boolean = true,
 ) {
-    AqTextAction(
+    AqButton(
         label = label,
         onClick = onClick,
         modifier = modifier,
+        variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
+        size = com.agendaqr.core.ui.components.AqButtonSize.Medium,
         icon = icon,
         enabled = enabled,
     )
@@ -46,13 +48,13 @@ data class AqGroupedAction(
  * (un único primario) desde el modelo, nunca desde colores locales.
  */
 @Composable
-fun AqButtonGroup(
+fun AqActionGroup(
     actions: List<AqGroupedAction>,
     modifier: Modifier = Modifier,
     fillMaxWidth: Boolean = false,
 ) {
     require(actions.count { it.emphasized } <= 1) {
-        "AqButtonGroup admite como máximo una acción enfatizada"
+        "AqActionGroup admite como máximo una acción enfatizada"
     }
     Row(
         modifier = if (fillMaxWidth) modifier.fillMaxWidth() else modifier,
@@ -62,20 +64,24 @@ fun AqButtonGroup(
         actions.forEach { action ->
             val actionModifier = if (fillMaxWidth) Modifier.weight(1f) else Modifier
             if (action.emphasized) {
-                AqPrimaryButton(
+                AqButton(
                     label = action.label,
                     onClick = action.onClick,
                     enabled = action.enabled,
                     icon = action.icon,
                     modifier = actionModifier,
+                    variant = com.agendaqr.core.ui.components.AqButtonVariant.Primary,
+                    size = com.agendaqr.core.ui.components.AqButtonSize.Large,
                 )
             } else {
-                AqSecondaryButton(
+                AqButton(
                     label = action.label,
                     onClick = action.onClick,
                     enabled = action.enabled,
                     icon = action.icon,
                     modifier = actionModifier,
+                    variant = com.agendaqr.core.ui.components.AqButtonVariant.Default,
+                    size = com.agendaqr.core.ui.components.AqButtonSize.Medium,
                 )
             }
         }

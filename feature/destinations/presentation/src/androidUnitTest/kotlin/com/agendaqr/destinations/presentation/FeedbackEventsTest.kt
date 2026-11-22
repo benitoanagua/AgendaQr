@@ -59,7 +59,7 @@ class FeedbackEventsTest {
     fun text_input_trailing_slot_renders_inside_the_field() {
         compose.setContent {
             AqTheme {
-                com.agendaqr.core.ui.components.AqTextField(
+                com.agendaqr.core.ui.components.AqTextInput(
                     label = "Contraseña",
                     value = "secreto",
                     onValueChange = {},

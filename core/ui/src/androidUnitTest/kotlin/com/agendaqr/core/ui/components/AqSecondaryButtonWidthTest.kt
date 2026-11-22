@@ -33,7 +33,13 @@ class AqSecondaryButtonWidthTest {
             CompositionLocalProvider(LocalDensity provides Density(1f, 1f)) {
                 AqTheme {
                     Column(Modifier.fillMaxWidth()) {
-                        AqSecondaryButton("Guardar", onClick = {}, modifier = Modifier.fillMaxWidth())
+                        AqButton(
+                            label = "Guardar",
+                            onClick = {},
+                            modifier = Modifier.fillMaxWidth(),
+                            variant = com.agendaqr.core.ui.components.AqButtonVariant.Default,
+                            size = com.agendaqr.core.ui.components.AqButtonSize.Medium,
+                        )
                     }
                 }
             }

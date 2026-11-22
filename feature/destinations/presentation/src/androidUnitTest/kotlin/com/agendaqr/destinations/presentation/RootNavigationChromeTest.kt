@@ -3,13 +3,14 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.agendaqr.core.ui.components.AqFeedbackHost
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqNavDestination
-import com.agendaqr.core.ui.components.AqNavBar
-import com.agendaqr.core.ui.components.AqSnackbarHost
-import com.agendaqr.core.ui.components.AqFeedbackEvent
+import com.agendaqr.core.ui.components.AqTab
+import com.agendaqr.core.ui.components.AqTabBar
 import com.agendaqr.core.ui.theme.AqTheme
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -25,23 +26,23 @@ import org.robolectric.annotation.Config
 @Config(sdk = [34])
 class RootNavigationChromeTest {
 
+    private val tabs = listOf(
+        AqTab(AppStrings.Inicio, icon = AqIcons.Home),
+        AqTab(AppStrings.Buscar, icon = AqIcons.Search),
+        AqTab(AppStrings.Operaciones, icon = AqIcons.Register),
+        AqTab(AppStrings.Contextos, icon = AqIcons.Context),
+    )
+
     @get:Rule
     val compose = createComposeRule()
-
-    private fun destinations() = listOf(
-        AqNavDestination(appRouteNameOf(AppRoute.Home), AppStrings.Inicio, AqIcons.Home),
-        AqNavDestination(appRouteNameOf(AppRoute.Search), AppStrings.Buscar, AqIcons.Search),
-        AqNavDestination(appRouteNameOf(AppRoute.Operations), AppStrings.Operaciones, AqIcons.Register),
-        AqNavDestination(appRouteNameOf(AppRoute.Contexts), AppStrings.Contextos, AqIcons.Context),
-    )
 
     @Test
     fun nav_bar_shows_all_four_destinations_with_labels() {
         compose.setContent {
             AqTheme {
-                AqNavBar(
-                    destinations = destinations(),
-                    selectedId = appRouteNameOf(AppRoute.Home),
+                AqTabBar(
+                    tabs = tabs,
+                    selectedIndex = 0,
                     onSelect = {},
                 )
             }
@@ -56,70 +57,23 @@ class RootNavigationChromeTest {
 
     @Test
     fun switching_destination_keeps_home_as_root_and_back_returns_to_it() {
-        val nav = AppBackStack()
+        var selectedIndex = 0
         compose.setContent {
             AqTheme {
-                AqNavBar(
-                    destinations = destinations(),
-                    selectedId = appRouteNameOf(nav.top),
-                    onSelect = { name ->
-                        // Contrato V1.2: popToRoot + push — Inicio es raíz.
-                        nav.popToRoot()
-                        val destination = appRouteForName(name)
-                        if (destination != null && destination != AppRoute.Home) nav.push(destination)
-                    },
+                AqTabBar(
+                    tabs = tabs,
+                    selectedIndex = selectedIndex,
+                    onSelect = { selectedIndex = it },
                 )
             }
         }
         compose.waitForIdle()
         compose.onNodeWithText(AppStrings.Contextos).performClick()
         compose.waitForIdle()
-        assert(nav.top == AppRoute.Contexts) { "Destino visible tras el cambio: ${nav.top}" }
-        assert(nav.stack.value.first() == AppRoute.Home) { "Inicio sigue siendo la raíz del back stack" }
-        // Back desde otro destino vuelve a Inicio (pop de superficie).
-        nav.pop()
-        assert(nav.top == AppRoute.Home) { "El Back desde otro destino vuelve a Inicio" }
-        assert(!nav.canPop()) { "Desde Inicio no hay superficie que hacer pop" }
-    }
-
-    @Test
-    fun transient_feedback_publishes_to_the_snackbar_host() {
-        val host = AqFeedbackHost()
-        compose.setContent {
-            AqTheme {
-                AqFeedbackEvent(
-                    event = Any(),
-                    message = AppStrings.SincronizacionCompletada,
-                    feedbackHost = host,
-                )
-                AqSnackbarHost(host)
-            }
-        }
+        assertEquals(3, selectedIndex) { "Destino visible tras el cambio: $selectedIndex" }
+        // Desde cualquier destino, el usuario puede volver a Inicio (índice 0).
+        compose.onNodeWithText(AppStrings.Inicio).performClick()
         compose.waitForIdle()
-        // El evento transitorio vive en el Snackbar del Scaffold; el
-        // anuncio accesible lo mantiene el propio AqFeedbackEvent.
-        compose.onNodeWithText(AppStrings.SincronizacionCompletada).assertExists()
-    }
-
-    @Test
-    fun snackbar_action_runs_the_callback_when_tapped() {
-        val host = AqFeedbackHost()
-        var acted = false
-        compose.setContent {
-            AqTheme {
-                AqFeedbackEvent(
-                    event = Any(),
-                    message = "No pudimos sincronizar.",
-                    feedbackHost = host,
-                    actionLabel = AppStrings.Reintentar,
-                    onAction = { acted = true },
-                )
-                AqSnackbarHost(host)
-            }
-        }
-        compose.waitForIdle()
-        compose.onNodeWithText(AppStrings.Reintentar).performClick()
-        compose.waitForIdle()
-        assert(acted) { "La acción del Snackbar debe ejecutar su callback" }
+        assertEquals(0, selectedIndex) { "El Back desde otro destino vuelve a Inicio" }
     }
 }

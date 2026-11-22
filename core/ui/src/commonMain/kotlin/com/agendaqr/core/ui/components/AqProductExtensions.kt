@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,18 +20,27 @@ import com.agendaqr.core.ui.theme.AqType
  * verificado ni pago; el dominio decide el copy (p. ej. "Comprobante recibido").
  */
 @Composable
-fun AqEvidenceBadge(
+fun AqEvidenceTag(
     text: String,
     icon: ImageVector,
     modifier: Modifier = Modifier,
     tone: AqTone = AqTone.Success,
 ) {
-    AqInlineStack(
+    Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        AqIconBadge(icon = icon, tone = tone)
-        AqTonalTag(text = text, tone = tone)
+        AqIcon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = tone.content(),
+        )
+        AqTag(
+            text = text,
+            tone = tone,
+            size = AqTagSize.Xs,
+        )
     }
 }
 
@@ -73,7 +82,7 @@ private fun AqSyncState.tone(): AqTone = when (this) {
     AqSyncState.Dead -> AqTone.Neutral
 }
 
-/** X-02: indicador de sincronización reutilizable sobre [AqBadge]. */
+/** X-02: indicador de sincronización reutilizable sobre [AqTag]. */
 @Composable
 fun AqSyncIndicator(
     state: AqSyncState,
@@ -83,16 +92,17 @@ fun AqSyncIndicator(
 ) {
     if (state is AqSyncState.Synced && !showWhenSynced) return
     Column(modifier = modifier, horizontalAlignment = Alignment.End) {
-        AqBadge(
+        AqTag(
             text = state.label(labels),
             tone = state.tone(),
-            round = true,
+            size = com.agendaqr.core.ui.components.AqTagSize.Xs,
         )
         if (state is AqSyncState.ErrorRecoverable) {
-            AqTextAction(
+            AqButton(
                 label = state.retryLabel,
                 onClick = state.onRetry,
-                variant = AqTextActionVariant.Danger,
+                variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
+                size = com.agendaqr.core.ui.components.AqButtonSize.Small,
             )
         }
     }

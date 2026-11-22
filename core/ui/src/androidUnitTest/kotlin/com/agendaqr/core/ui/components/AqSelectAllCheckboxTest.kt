@@ -31,7 +31,7 @@ class AqSelectAllCheckboxTest {
         var clicks = 0
         compose.setContent {
             AqTheme {
-                AqSelectAllCheckbox(
+                AqSelectAll(
                     label = "Seleccionar todos",
                     description = "Hay opciones seleccionadas parcialmente",
                     checkedState = ToggleableState.Indeterminate,
@@ -60,7 +60,7 @@ class AqSelectAllCheckboxTest {
         var clicks = 0
         compose.setContent {
             AqTheme {
-                AqSelectAllCheckbox(
+                AqSelectAll(
                     label = "Seleccionar todos",
                     checkedState = ToggleableState.Off,
                     onClick = { clicks++ },

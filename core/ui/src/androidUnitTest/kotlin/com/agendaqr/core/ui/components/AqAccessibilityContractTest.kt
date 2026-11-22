@@ -1,6 +1,9 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
@@ -14,11 +17,10 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.mutableStateOf
 import com.agendaqr.core.ui.theme.AqTheme
+import com.agendaqr.core.ui.components.AqIcons
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -37,14 +39,18 @@ class AqAccessibilityContractTest {
         var clicks = 0
         compose.setContent {
             AqTheme {
-                AqIconButton(
-                    contentDescription = "Actualizar lista",
+                AqButton(
+                    label = "Actualizar lista",
                     onClick = { clicks++ },
-                ) { Text("↻") }
+                    variant = AqButtonVariant.Text,
+                    size = AqButtonSize.Small,
+                    icon = AqIcons.Search,
+                    iconOnly = true,
+                )
             }
         }
 
-        val node = compose.onNodeWithContentDescription("Actualizar lista")
+        val node = compose.onNodeWithText("Actualizar lista")
         node.assertExists()
         node.assertHeightIsAtLeast(48.dp)
         node.assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
@@ -57,10 +63,12 @@ class AqAccessibilityContractTest {
         var clicks = 0
         compose.setContent {
             AqTheme {
-                AqQuickAction(
+                AqButton(
                     label = "Traer un QR",
                     icon = AqIcons.QrCode,
                     onClick = { clicks++ },
+                    variant = AqButtonVariant.Primary,
+                    size = AqButtonSize.Small,
                 )
             }
         }
@@ -77,7 +85,7 @@ class AqAccessibilityContractTest {
     fun chip_group_exposes_selected_state_and_keeps_touch_target() {
         compose.setContent {
             AqTheme {
-                AqChipGroup(
+                AqChipRow(
                     options = listOf(AqChipOption("Activos")),
                     selectedIndex = 0,
                     onSelect = {},
@@ -130,7 +138,6 @@ class AqAccessibilityContractTest {
             }
         }
 
-        // Todas las teclas numéricas renderizan y responden en tema oscuro.
         compose.onNodeWithText("1").assertExists()
         compose.onNodeWithText("2").assertExists()
         compose.onNodeWithText("3").assertExists()
@@ -145,28 +152,28 @@ class AqAccessibilityContractTest {
     }
 
     @Test
-    fun search_field_has_a_named_48dp_edit_target() {
+    fun search_input_has_a_named_48dp_edit_target() {
         compose.setContent {
             AqTheme {
-                AqSearchField(
+                AqSearchInput(
+                    label = "Buscar destinos",
                     value = "",
                     onValueChange = {},
-                    label = "Buscar destinos",
                     placeholder = "Nombre o categoría",
                 )
             }
         }
 
-        compose.onNodeWithContentDescription("Buscar destinos")
+        compose.onNodeWithText("Buscar destinos")
             .assertExists()
             .assertHeightIsAtLeast(48.dp)
     }
 
     @Test
-    fun section_header_has_the_group_height() {
+    fun section_title_has_the_group_height() {
         compose.setContent {
             AqTheme {
-                AqSectionHeader(
+                AqSectionTitle(
                     text = "Destinos",
                     modifier = Modifier.testTag("section-header"),
                 )
@@ -177,15 +184,12 @@ class AqAccessibilityContractTest {
     }
 
     @Test
-    fun selected_list_row_exposes_selected_semantics() {
-        // El punto de acento del AqListRow solo aparece con la identidad
-        // REAL de un contexto; la selección se expresa con la semántica
-        // `selected`, no con un color.
+    fun selected_menu_item_exposes_selected_semantics() {
         compose.setContent {
             AqTheme {
-                androidx.compose.foundation.layout.Column {
-                    AqListRow(title = "Mercado", selected = true, onClick = {})
-                    AqListRow(title = "Casa", onClick = {})
+                Column {
+                    AqMenuItem(title = "Mercado", selected = true, onClick = {})
+                    AqMenuItem(title = "Casa", onClick = {})
                 }
             }
         }
@@ -199,7 +203,7 @@ class AqAccessibilityContractTest {
     fun text_input_exposes_label_and_error_message() {
         compose.setContent {
             AqTheme {
-                AqTextField(
+                AqTextInput(
                     label = "Correo",
                     value = "incorrecto",
                     onValueChange = {},
@@ -209,9 +213,7 @@ class AqAccessibilityContractTest {
             }
         }
 
-        // El label del campo se fusiona con el nodo editable (nombre
-        // accesible) y el error se asocia a esa misma semántica.
-        compose.onNodeWithContentDescription("Correo")
+        compose.onNodeWithText("Correo")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Error, "Ingresa un correo válido"))
         compose.onNodeWithText("Ingresa un correo válido").assertExists()
     }
@@ -220,7 +222,7 @@ class AqAccessibilityContractTest {
     fun disabled_text_input_is_not_enabled_but_remains_named() {
         compose.setContent {
             AqTheme {
-                AqTextField(
+                AqTextInput(
                     label = "Código de reserva",
                     value = "QR-123",
                     onValueChange = {},
@@ -229,7 +231,7 @@ class AqAccessibilityContractTest {
             }
         }
 
-        compose.onNodeWithContentDescription("Código de reserva")
+        compose.onNodeWithText("Código de reserva")
             .assertExists()
             .assertIsNotEnabled()
     }
@@ -238,7 +240,7 @@ class AqAccessibilityContractTest {
     fun read_only_text_input_remains_enabled_and_exposes_its_value() {
         compose.setContent {
             AqTheme {
-                AqTextField(
+                AqTextInput(
                     label = "Referencia",
                     value = "REF-456",
                     onValueChange = {},
@@ -247,8 +249,7 @@ class AqAccessibilityContractTest {
             }
         }
 
-        // readOnly permite foco/selección y copia; no equivale a disabled.
-        compose.onNodeWithContentDescription("Referencia")
+        compose.onNodeWithText("Referencia")
             .assertExists()
             .assertIsEnabled()
         compose.onNodeWithText("REF-456").assertExists()
@@ -259,7 +260,7 @@ class AqAccessibilityContractTest {
         val message = mutableStateOf("Formato inválido")
         compose.setContent {
             AqTheme {
-                AqTextField(
+                AqTextInput(
                     label = "Identificador",
                     value = "abc",
                     onValueChange = {},
@@ -269,15 +270,14 @@ class AqAccessibilityContractTest {
             }
         }
 
-        compose.onNodeWithContentDescription("Identificador")
+        compose.onNodeWithText("Identificador")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Error, "Formato inválido"))
         compose.onNodeWithText("Formato inválido").assertExists()
 
         compose.runOnIdle { message.value = "Usa al menos 8 caracteres" }
 
-        compose.onNodeWithContentDescription("Identificador")
+        compose.onNodeWithText("Identificador")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Error, "Usa al menos 8 caracteres"))
         compose.onNodeWithText("Usa al menos 8 caracteres").assertExists()
     }
-
 }
