@@ -20,7 +20,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
-import com.agendaqr.core.ui.theme.AqShapes
+import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqSquircles
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -62,7 +63,7 @@ expect suspend fun decodeThumbnailBitmap(file: String): ImageBitmap?
 /**
  * Marco de miniatura compartido por Android, iOS, vistas de detalle y
  * previsualizaciones: superficie [AqColor.SurfaceContainerHighest], radio
- * [AqShapes.Medium], contenido centrado. Los valores visuales son 100 %
+ * [AqSquircles.SurfaceMd], contenido centrado. Los valores visuales son 100 %
  * tokens Polaris; sin valores propios.
  */
 @Composable
@@ -72,7 +73,7 @@ fun AqThumbnailFrame(
     content: @Composable () -> Unit,
 ) {
     Box(
-        modifier = modifier.size(size).background(AqColor.SurfaceContainerHighest, AqShapes.Medium),
+        modifier = modifier.size(size).background(AqColor.SurfaceContainerHighest, AqSquircles.SurfaceMd),
         contentAlignment = Alignment.Center,
     ) {
         content()
@@ -118,7 +119,7 @@ fun AqThumbnailFallback(
 @Composable
 fun AqThumbnailSkeleton(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier.fillMaxSize().background(AqColor.Surface, AqShapes.Medium),
+        modifier = modifier.fillMaxSize().background(AqColor.Surface, AqSquircles.SurfaceMd),
     )
 }
 
@@ -147,7 +148,7 @@ fun AqThumbnail(
                         bitmap = bitmap,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize().clip(AqShapes.Medium),
+                        modifier = Modifier.fillMaxSize().clip(AqSquircles.SurfaceMd),
                     )
                 }
             }

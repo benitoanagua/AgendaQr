@@ -44,8 +44,8 @@ import com.agendaqr.core.ui.components.AqSegmentedControl
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTonalTag
 import com.agendaqr.core.ui.components.AqTappableCard
-import com.agendaqr.core.ui.components.AqScreenScaffold
-import com.agendaqr.core.ui.components.AqTopBar
+import com.agendaqr.core.ui.components.AqMoonScaffold
+import com.agendaqr.core.ui.components.AqMoonTopBar
 import com.agendaqr.core.ui.components.AqExtendedFab
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqSearchField
@@ -579,7 +579,7 @@ open class LayoutReferenceTest {
     }
 
     // Patrón visual de la pantalla de operaciones (referencia de layout UX/UI):
-    // Usa la estructura real de OperationListScreen: AqScreenScaffold con
+    // Usa la estructura real de OperationListScreen: AqMoonScaffold con
     // márgenes, búsqueda, filtros, AqListBody con AqListRow.
     // OperationsScreen completo requiere OperationsViewModel (S10: no en Robolectric);
     // se compone el patrón visual con estado y callbacks explícitos.
@@ -606,8 +606,8 @@ open class LayoutReferenceTest {
         val pagosCount = operations.count { it.type == OperationType.PAGO }
         val cobrosCount = operations.count { it.type == OperationType.COBRO }
 
-        AqScreenScaffold(
-            topBar = { AqTopBar(title = AppStrings.Operaciones) },
+        AqMoonScaffold(
+            topBar = { AqMoonTopBar(title = AppStrings.Operaciones) },
             navDestinations = listOf(
                 com.agendaqr.core.ui.components.AqNavDestination("home", AppStrings.Inicio, AqIcons.Home),
                 com.agendaqr.core.ui.components.AqNavDestination("search", AppStrings.Buscar, AqIcons.Search),

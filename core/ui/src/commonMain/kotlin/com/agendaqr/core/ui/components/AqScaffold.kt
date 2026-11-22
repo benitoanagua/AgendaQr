@@ -106,14 +106,14 @@ fun AqBottomAction(
  * `contentWindowInsets` (nada manual de statusBars/navigationBars), IME
  * consumido para pantallas con campos, chrome estándar y adaptación de
  * ancho por `WindowSizeClass` (medium/expanded centra el contenido con
- * `ContentMaxWidth` y usa `AqNavRail`).
+ * `ContentMaxWidth` y usa `AqTabBar`).
  *
  * - [topBar]: normalmente [AqTopBar] (título + flecha atrás + acciones).
  * - [navDestinations]: la navegación raíz (Inicio · Buscar · Actividades
  *   · Contextos). Solo las superficies raíz la declaran, y su pantalla
  *   decide cuándo está en su lista raíz (no en detalle/edición/import).
- *   Compacto la pinta como [AqNavBar] abajo; expandido como
- *   [AqNavRail] lateral.
+ *   Compacto la pinta como [AqTabBar] abajo; expandido como
+ *   [AqTabBar] lateral.
  * - [bottomAction]: botón principal FIJO abajo solo cuando existe una
  *   acción real de guardado. Vive en el slot bottomBar, fuera de los
  *   insets de contenido: la acción aplica `navigationBarsPadding()` +
@@ -125,7 +125,7 @@ fun AqBottomAction(
  *   la barra superior, dentro del Scaffold.
  */
 @Composable
-fun AqScreenScaffold(
+fun AqMoonScaffold(
     modifier: Modifier = Modifier,
     topBar: (@Composable () -> Unit)? = null,
     navDestinations: List<AqNavDestination> = emptyList(),

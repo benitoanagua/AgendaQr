@@ -23,9 +23,10 @@ import androidx.compose.ui.platform.LocalDensity
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqComposition
 import com.agendaqr.core.ui.theme.AqMetrics
-import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
  * Feedback de proceso: skeleton, paginación, marco de
@@ -48,14 +49,14 @@ fun AqSkeleton(
             modifier = Modifier
                 .fillMaxWidth(fraction = AqComposition.SkeletonTitleWidthFraction)
                 .heightIn(min = AqSpacing.Xl)
-                .background(AqColor.Surface, AqShapes.Small),
+                .background(AqColor.Surface, AqSquircles.InteractiveXs),
         )
         repeat(lines.coerceAtLeast(1)) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = AqSpacing.Sm)
-                    .background(AqColor.Surface, AqShapes.Small),
+                    .background(AqColor.Surface, AqSquircles.InteractiveXs),
             )
         }
     }
@@ -169,7 +170,7 @@ fun AqMediaFrame(
     content: @Composable () -> Unit,
 ) {
     Box(
-        modifier = modifier.background(AqColor.Surface, AqShapes.Large),
+        modifier = modifier.background(AqColor.Surface, AqSquircles.SurfaceMd),
         contentAlignment = Alignment.Center,
     ) {
         content()

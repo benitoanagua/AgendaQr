@@ -22,37 +22,37 @@ Colores, tipografía e iconos de Moon **no** se importan (ADR-0039): los aporta 
 
 | Widget Moon | Fuente | Variantes / tamaños | `Aq*` destino | Estado |
 |---|---|---|---|---|
-| `MoonAccordion<T>` | `widgets/accordion` | tamaños sm, md, lg, xl | `AqAccordion` | pendiente |
+| `MoonAccordion<T>` | `widgets/accordion` | tamaños sm, md, lg, xl | `AqAccordion` | disponible |
 | `MoonAlert` | `widgets/alert` | — | `AqAlert` | disponible |
-| `MoonAuthCode` | `widgets/auth_code` | forma de campo (`AuthFieldShape`), animación de error | `AqAuthCode` | pendiente |
+| `MoonAuthCode` | `widgets/auth_code` | forma de campo (`AuthFieldShape`), animación de error | `AqAuthCode` | disponible |
 | `MoonAvatar` | `widgets/avatar` | xs, sm, md, lg, xl, x2l; insignia con alineación | `AqAvatar` | disponible |
 | `MoonBottomSheet`, `MoonModalBottomSheetRoute` | `widgets/bottom_sheet` | modal y no modal; arrastre y expansión | `AqBottomSheet` | disponible |
-| `MoonBreadcrumb`, `MoonBreadcrumbItem` | `widgets/breadcrumb` | — | `AqBreadcrumb` | pendiente |
+| `MoonBreadcrumb`, `MoonBreadcrumbItem` | `widgets/breadcrumb` | — | `AqBreadcrumb` | disponible |
 | `MoonButton`, `MoonFilledButton`, `MoonOutlinedButton`, `MoonTextButton` | `widgets/buttons` | xs, sm, md, lg, xl; estados loading, disabled, pressed | `AqButton` | disponible |
-| `MoonCarousel` (+ controlador y física) | `widgets/carousel` | — | `AqCarousel` | pendiente |
+| `MoonCarousel` (+ controlador y física) | `widgets/carousel` | — | `AqCarousel` | disponible |
 | `MoonCheckbox` | `widgets/checkbox` | — | `AqCheckbox` | disponible |
 | `MoonChip` | `widgets/chip` | sm, md | `AqChip` | disponible |
 | `MoonCircularLoader`, `MoonLinearLoader` | `widgets/loaders` | circular: x2s…lg · lineal: x6s…x2s | `AqCircularLoader`, `AqLinearLoader` | disponible |
 | `MoonCircularProgress`, `MoonLinearProgress` | `widgets/progress` | circular: x2s…lg · lineal: x6s…x2s | `AqCircularProgress`, `AqLinearProgress` | disponible |
-| `MoonDotIndicator` | `widgets/dot_indicator` | — | `AqDotIndicator` | pendiente |
+| `MoonDotIndicator` | `widgets/dot_indicator` | — | `AqDotIndicator` | disponible |
 | `MoonDrawer` | `widgets/drawer` | — | `AqDrawer` | disponible |
-| `MoonDropdown` | `widgets/dropdown` | posición de anclaje | `AqDropdown` | pendiente |
+| `MoonDropdown` | `widgets/dropdown` | posición de anclaje | `AqDropdown` | disponible |
 | `MoonErrorMessage(s)` | `widgets/common/error_message_widgets.dart` | — | `AqErrorMessage` | disponible |
 | `MoonFormTextInput`, `MoonTextInput` | `widgets/text_input` | sm, md, lg, xl | `AqTextInput` | disponible |
 | `MoonMenuItem` | `widgets/menu_item` | — | `AqMenuItem` | disponible |
 | `MoonModal`, `MoonModalRoute` | `widgets/modal` | — | `AqModal` | disponible |
 | `MoonPillTab`, `MoonTab`, `MoonTabBar` | `widgets/tab_bar` | variante indicator, pill, custom; tamaños sm, md | `AqTabBar`, `AqPillTab` | disponible |
-| `MoonPopover` | `widgets/popover` | posición | `AqPopover` | pendiente |
+| `MoonPopover` | `widgets/popover` | posición | `AqPopover` | disponible |
 | `MoonProgressPin` | `widgets/progress_pin` | — | `AqProgressPin` | disponible |
 | `MoonRadio` | `widgets/radio` | — | `AqRadio` | disponible |
 | `MoonSegmentedControl` | `widgets/segmented_control` | sm, md | `AqSegmentedControl` | disponible |
 | `MoonSwitch` | `widgets/switch` | x2s, xs, sm | `AqSwitch` | disponible |
-| `MoonTable` (+ columna, fila, cabecera, pie) | `widgets/table` | filas xs, sm, md, lg, xl, x2l | `AqTable` | pendiente |
+| `MoonTable` (+ columna, fila, cabecera, pie) | `widgets/table` | filas xs, sm, md, lg, xl, x2l | `AqTable` | disponible |
 | `MoonTag` | `widgets/tag` | x2s, xs, sm | `AqTag` | disponible |
 | `MoonTextArea` | `widgets/text_area` | — | `AqTextArea` | disponible |
-| `MoonTextInputGroup` | `widgets/text_input_group` | orientación horizontal/vertical | `AqTextInputGroup` | pendiente |
+| `MoonTextInputGroup` | `widgets/text_input_group` | orientación horizontal/vertical | `AqTextInputGroup` | disponible |
 | `MoonToast` | `widgets/toast` | original, inverted; recorrido 64 dp; 200 ms entre toasts | `AqToast` | disponible |
-| `MoonTooltip` | `widgets/tooltip` | posición | `AqTooltip` | pendiente |
+| `MoonTooltip` | `widgets/tooltip` | posición | `AqTooltip` | disponible |
 
 Transversales: `MoonBaseControl` (foco, hover, pressed, long-press; efectos pulse, scale y foco), `MoonFocusEffect`, `MoonEffectsTheme`, `utils/touch_target_padding.dart` (ampliación del área táctil).
 

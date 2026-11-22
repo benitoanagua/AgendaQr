@@ -32,8 +32,9 @@ import androidx.compose.ui.text.style.TextAlign
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSpacing
-import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqTextStyles
+import com.agendaqr.core.ui.theme.AqRadius
+import com.agendaqr.core.ui.theme.AqSquircles
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -137,7 +138,7 @@ fun AqDatePickerDialog(
                                             .size(AqMetrics.ControlMinSize)
                                             .background(
                                                 if (isSelected) AqColor.EmphasisFill else AqColor.Transparent,
-                                                AqShapes.Pill,
+                                                AqSquircles.Circle,
                                             )
                                             .clickable(role = Role.RadioButton, onClickLabel = description) { chosenDate = date }
                                             .semantics {

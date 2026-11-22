@@ -27,10 +27,12 @@ import com.agendaqr.core.ui.theme.AqComposition
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
-import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqRadius
+import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
  * Estados: banner de estado (alerta tonal redondeada),
@@ -71,7 +73,7 @@ fun AqStatusBanner(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(background, AqShapes.Medium)
+            .background(background, AqSquircles.InteractiveSm)
             .testTag("am-status-banner")
             .semantics { liveRegion = LiveRegionMode.Polite }
             .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Lg),
@@ -173,7 +175,7 @@ fun AqStatusPill(
     val content = if (inverse) AqColor.InverseOnSurface else tone.content()
     Row(
         modifier = modifier
-            .background(container, AqShapes.Pill)
+            .background(container, AqSquircles.Circle)
             .padding(horizontal = AqSpacing.Sm, vertical = AqSpacing.Xs),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
@@ -183,7 +185,7 @@ fun AqStatusPill(
             Box(
                 modifier = Modifier
                     .size(AqSpacing.Xs)
-                    .background(AqColor.SuccessContainer, AqShapes.Pill),
+                    .background(AqColor.SuccessContainer, AqSquircles.Circle),
             )
         } else {
             icon?.let {
@@ -242,7 +244,7 @@ fun AqEmptyState(
             // ambos temas), sin bordes decorativos (gate E-01/E-02).
             Box(
                 modifier = Modifier.size(AqMetrics.EmptyStateGlyphSize)
-                    .background(AqColor.Surface, AqShapes.Pill),
+                    .background(AqColor.Surface, AqSquircles.Circle),
                 contentAlignment = Alignment.Center,
             ) {
                 AqIcon(
@@ -302,7 +304,7 @@ fun AqSuccessCheck(
         Box(
             modifier = Modifier
                 .size(size)
-                .background(AqColor.SuccessContainer, AqShapes.Pill),
+                .background(AqColor.SuccessContainer, AqSquircles.Circle),
             contentAlignment = Alignment.Center,
         ) {
             AqIcon(

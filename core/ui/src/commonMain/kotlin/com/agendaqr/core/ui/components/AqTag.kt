@@ -17,10 +17,11 @@ import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
-import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
+import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
  * Etiqueta sobre [MoonTag] (`moon_design` 1.1.0, `widgets/tag`).

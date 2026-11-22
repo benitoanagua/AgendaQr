@@ -24,11 +24,12 @@ import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
-import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqMotion
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
+import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqSquircles
 import kotlinx.coroutines.delay
 
 /**
@@ -76,7 +77,6 @@ fun AqToast(
             modifier = Modifier
                 .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
                 .background(AqColor.Surface, AqSquircles.SurfaceLg)
-                .border(AqMetrics.Border, AqColor.Border, AqSquircles.SurfaceLg)
                 .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Md),
             contentAlignment = Alignment.Center,
         ) {

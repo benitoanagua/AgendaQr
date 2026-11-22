@@ -8,13 +8,11 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
@@ -62,15 +60,14 @@ fun AqRadio(
     val fillColor = when {
         !enabled -> scheme.onDisabled
         selected -> scheme.emphasisFill
-        else -> Color.Transparent
+        else -> AqColor.Transparent
     }
-    val shape: Shape = CircleShape
+    val shape: Shape = AqSquircles.Circle
     Box(
         modifier = modifier
             .size(size)
             .defaultMinSize(minWidth = AqMetrics.ControlMinSize, minHeight = AqMetrics.ControlMinSize)
             .border(AqStroke.Default, outerColor, shape)
-            .clip(shape)
             .clickable(
                 role = Role.RadioButton,
                 onClickLabel = contentDescription ?: "radio",

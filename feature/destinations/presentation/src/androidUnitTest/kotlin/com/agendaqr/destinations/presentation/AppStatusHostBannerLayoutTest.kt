@@ -6,7 +6,7 @@ import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
-import com.agendaqr.core.ui.components.AqScreenScaffold
+import com.agendaqr.core.ui.components.AqMoonScaffold
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTheme
@@ -20,7 +20,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
 /**
- * AppStatusHost vive en el slot `statusContent` de [AqScreenScaffold]: a
+ * AppStatusHost vive en el slot `statusContent` de [AqMoonScaffold]: a
  * ancho completo bajo la barra superior, FUERA del margen del contenido
  * (edge-to-edge). El host aplica `AqSpacing.ScreenMargin` a sus banners para
  * quedar al ancho útil con un solo margen — la misma geometría que los
@@ -44,7 +44,7 @@ class AppStatusHostBannerLayoutTest {
     private fun composeImportErrorHost(dark: Boolean = false) {
         compose.setContent {
             AqTheme(darkTheme = dark) {
-                AqScreenScaffold(
+                AqMoonScaffold(
                     statusContent = {
                         AppStatusHost(
                             importError = "No se pudo leer el archivo seleccionado",

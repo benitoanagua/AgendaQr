@@ -44,10 +44,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
-import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqRadius
+import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
  * Etiqueta persistente del campo con el marcador de opcionalidad: UN solo
@@ -151,8 +153,8 @@ fun AqTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                .background(AqColor.InputSurface, AqShapes.Medium)
-                .border(AqMetrics.Border, borderColor, AqShapes.Medium)
+                .background(AqColor.InputSurface, AqSquircles.InteractiveSm)
+                .border(AqMetrics.Border, borderColor, AqSquircles.InteractiveSm)
                 .padding(horizontal = AqSpacing.MdPlus),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
@@ -322,8 +324,8 @@ fun AqMultilineTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                .background(AqColor.InputSurface, AqShapes.Medium)
-                .border(AqMetrics.Border, borderColor, AqShapes.Medium)
+                .background(AqColor.InputSurface, AqSquircles.InteractiveSm)
+                .border(AqMetrics.Border, borderColor, AqSquircles.InteractiveSm)
                 .padding(horizontal = AqSpacing.MdPlus),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
@@ -505,11 +507,11 @@ fun AqSearchField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = AqMetrics.FieldCompactHeight)
-                        .background(AqColor.SurfaceSecondary, AqShapes.Pill)
+                        .background(AqColor.SurfaceSecondary, AqSquircles.Circle)
                         .border(
                             AqMetrics.Border,
                             borderColor,
-                            AqShapes.Pill,
+                            AqSquircles.Circle,
                         )
                         .padding(horizontal = AqSpacing.MdPlus),
                     verticalAlignment = Alignment.CenterVertically,

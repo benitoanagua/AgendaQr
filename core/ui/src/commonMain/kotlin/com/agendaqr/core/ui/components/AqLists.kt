@@ -42,12 +42,14 @@ import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqElevation
 import com.agendaqr.core.ui.theme.AqMetrics
-import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.accentFor
 import com.agendaqr.core.ui.theme.aqElevation
+import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqRadius
+import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
  * Celdas y etiquetas (referencia: List/Item + Tag): la celda (`AqListRow`)
@@ -70,7 +72,7 @@ fun AqBadge(
     round: Boolean = false,
 ) {
     val toneColor = if (tone == AqTone.Neutral) AqColor.TextSecondary else tone.content()
-    val shape = if (round) AqShapes.Pill else AqShapes.Medium
+    val shape = if (round) AqSquircles.Circle else AqSquircles.InteractiveSm
     Box(
         modifier = modifier
             .border(
@@ -109,7 +111,7 @@ fun AqTonalTag(
     val label = if (uppercase) text.uppercase() else text
     Box(
         modifier = modifier
-            .background(tone.container(), if (round) AqShapes.Pill else AqShapes.Medium)
+            .background(tone.container(), if (round) AqSquircles.Circle else AqSquircles.InteractiveSm)
             .padding(horizontal = AqSpacing.Sm, vertical = AqSpacing.Xs),
         contentAlignment = Alignment.Center,
     ) {
@@ -136,7 +138,7 @@ fun AqIconBadge(
 ) {
     Box(
         modifier = modifier
-            .background(tone.container(), AqShapes.Large)
+            .background(tone.container(), AqSquircles.SurfaceMd)
             .padding(AqSpacing.Sm),
         contentAlignment = Alignment.Center,
     ) {
@@ -162,7 +164,7 @@ fun AqContextBadge(
     Box(
         modifier = modifier
             .size(AqMetrics.ContextBadgeSize)
-            .background(color, AqShapes.Pill),
+            .background(color, AqSquircles.Circle),
         contentAlignment = Alignment.Center,
     ) {}
 }
@@ -214,7 +216,7 @@ fun AqTappableCard(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    val shape = AqShapes.Large
+    val shape = AqSquircles.SurfaceMd
     // TDCell usa `GestureDetector` con color activo en `onTapDown`: la
     // pulsación se resuelve con el token activo, sin ripple Material.
     val interactionSource = remember { MutableInteractionSource() }
@@ -263,7 +265,7 @@ fun AqQuickAction(
             Box(
                 modifier = Modifier
                     .size(AqMetrics.GridIconContainerSize)
-                    .background(AqColor.InfoContainer, AqShapes.GridIcon),
+                    .background(AqColor.InfoContainer, AqSquircles.InteractiveSm),
                 contentAlignment = Alignment.Center,
             ) {
                 AqIcon(
@@ -316,7 +318,7 @@ fun AqListBody(
     contentPadding: PaddingValues = PaddingValues(AqSpacing.None),
     content: @Composable () -> Unit,
 ) {
-    val shape = AqShapes.Large
+    val shape = AqSquircles.SurfaceMd
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -347,7 +349,7 @@ fun AqCard(
     contentPadding: PaddingValues = PaddingValues(AqSpacing.Lg),
     content: @Composable () -> Unit,
 ) {
-    val shape = AqShapes.Large
+    val shape = AqSquircles.SurfaceMd
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -441,15 +443,14 @@ fun AqListRow(
                 .fillMaxWidth()
                 .then(
                     if (selected) {
-                        Modifier.background(AqColor.SelectionSurface, AqShapes.Large)
-                            .border(AqMetrics.Border, AqColor.Border, AqShapes.Large)
+                        Modifier.background(AqColor.SelectionSurface, AqSquircles.SurfaceMd)
+                            .border(AqMetrics.Border, AqColor.Border, AqSquircles.SurfaceMd)
                     } else if (pressed && onClick != null) {
                         Modifier.background(AqColor.SurfaceActive)
                     } else {
                         Modifier.background(AqColor.Transparent)
                     },
                 )
-                .clip(AqShapes.Large)
                 .semantics(mergeDescendants = true) {}
                 .then(
                     if (onClick != null) {
@@ -478,7 +479,7 @@ fun AqListRow(
                         modifier = Modifier
                             .padding(end = AqSpacing.Lg)
                             .size(AqSpacing.Md)
-                            .background(color, AqShapes.Pill),
+                            .background(color, AqSquircles.Circle),
                     )
                 }
                 Column(modifier = Modifier.weight(1f)) {
@@ -605,7 +606,7 @@ fun AqExpansionPanel(
     leading: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    val shape = AqShapes.Large
+    val shape = AqSquircles.SurfaceMd
     val chevronIcon = if (expanded) AqIcons.ArrowUp else AqIcons.ChevronRight
     Column(
         modifier = modifier

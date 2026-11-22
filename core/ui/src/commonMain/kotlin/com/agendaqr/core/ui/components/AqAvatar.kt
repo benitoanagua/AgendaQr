@@ -1,7 +1,6 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,10 +19,12 @@ import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
-import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
+import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqRadius
+import com.agendaqr.core.ui.theme.AqSquircles
 import androidx.compose.material3.Text
 
 /**
@@ -49,7 +50,7 @@ fun AqAvatar(
     modifier: Modifier = Modifier,
 ) {
     val circle = size == AqAvatarSize.Xs || size == AqAvatarSize.Sm
-    val shape: Shape = if (circle) CircleShape else AqSquircles.SurfaceSm
+    val shape: Shape = if (circle) AqSquircles.Circle else AqSquircles.SurfaceSm
     Box(
         modifier = modifier
             .size(size.dpValue)

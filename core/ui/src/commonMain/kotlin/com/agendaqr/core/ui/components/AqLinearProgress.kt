@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
+import com.agendaqr.core.ui.theme.AqCorner
 import com.agendaqr.core.ui.theme.AqSquircles
 
 /**

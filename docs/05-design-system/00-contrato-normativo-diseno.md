@@ -194,6 +194,10 @@ en el archivo señalado con valores tomados de tokens semánticos.
 | E-09 | `border` | `AqTabs.kt` | Borde de la píldora activa (mismo lenguaje que el segmentado) |
 | E-10 | `border` | `AqSelection.kt` | Borde de la caja de casilla de verificación y botón de radio (Moon) |
 | E-11 | `border` | `AqFeedback.kt` | Borde opcional de la alerta persistente (MoonAlert) |
+| E-12 | `border` | `AqTextInput.kt` | Borde de reposo, foco y error de campo de texto (MoonTextInput) |
+| E-13 | `border` | `AqTextArea.kt` | Borde de reposo, foco y error de área de texto (MoonTextArea) |
+| E-14 | `border` | `AqRadio.kt` | Borde de anillo de selección de botón de radio (MoonRadio) |
+| E-15 | `border` | `AqAuthCode.kt` | Borde de reposo y error de campos del código de auth (MoonAuthCode) |
 
 E-06 (elevación de botones) está retirada: los botones son planos y un
 registro sin uso se detecta como excepción zombie.

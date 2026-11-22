@@ -4,6 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
+import android.graphics.Path.Direction
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
@@ -156,6 +157,12 @@ class AqSquircleShape(
         val height = size.height
         if (width <= 0f || height <= 0f) return Outline.Rectangle(size.toRect())
         val radiusPx = with(density) { cornerRadius.toPx() }
+        // Cuando el radio cubre la mitad del tamaño o más, la forma es un
+        // círculo/ovalo completo (evita que la geometría squircle degeneré
+        // y anule el área táctil al recortar).
+        if (radiusPx >= min(width, height) / 2f) {
+            return Outline.Generic(Path().apply { addArc(size.toRect(), 0f, 360f) })
+        }
         val g = aqSquircleGeometry(radiusPx, smoothing, width, height)
         val path = Path().apply {
             addSquircleCorner(Offset(width, 0f), Offset(-1f, 0f), Offset(0f, 1f), g, width, height, first = true)
@@ -182,4 +189,9 @@ object AqSquircles {
     val SurfaceSm: Shape = AqSquircleShape(AqCorner.SurfaceSm)
     val SurfaceMd: Shape = AqSquircleShape(AqCorner.SurfaceMd)
     val SurfaceLg: Shape = AqSquircleShape(AqCorner.SurfaceLg)
+    /** Círculo/ovalo completo: radio `AqRadius.ExtraLarge` (16dp) se clampa
+     *  al máximo del componente, produciendo una forma redonda en controles
+     *  pequeños (botón de radio, insignia, punto) sin degenerar la
+     *  geometría squircle. */
+    val Circle: Shape = AqSquircleShape(AqRadius.ExtraLarge)
 }

@@ -24,10 +24,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
-import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
  * Tooltip móvil: etiqueta flotante tonal que se muestra cuando [isVisible] es
@@ -119,8 +120,7 @@ private fun TooltipBubble(
 ) {
     Box(
         modifier = modifier
-            .clip(AqShapes.Medium)
-            .background(AqColor.SurfaceContainerHigh, AqShapes.Medium)
+            .background(AqColor.SurfaceContainerHigh, AqSquircles.InteractiveSm)
             .widthIn(max = maxWidth),
         contentAlignment = Alignment.Center,
     ) {

@@ -18,8 +18,9 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import com.agendaqr.core.ui.theme.AqColor
-import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
  * Host de feedback transitorio: un [SnackbarHostState] que las
@@ -47,7 +48,7 @@ fun AqSnackbarHost(host: AqFeedbackHost) {
             data,
             containerColor = AqColor.InverseSurface,
             contentColor = AqColor.InverseOnSurface,
-            shape = AqShapes.Large,
+            shape = AqSquircles.SurfaceMd,
         )
     }
 }

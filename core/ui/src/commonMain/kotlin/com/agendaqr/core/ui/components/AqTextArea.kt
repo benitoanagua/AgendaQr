@@ -39,9 +39,9 @@ import com.agendaqr.core.ui.theme.AqCorner
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
-import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
  * Entrada de texto multilínea sobre [MoonTextArea]

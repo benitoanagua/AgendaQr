@@ -26,12 +26,12 @@ import com.agendaqr.core.ui.theme.AqCorner
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
-import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
 import com.agendaqr.core.ui.theme.aqShadow
 import com.agendaqr.core.ui.theme.AqShadow
+import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
  * Alerta persistente sobre [MoonAlert] (`moon_design` 1.1.0,
@@ -66,7 +66,6 @@ fun AqAlert(
             .fillMaxWidth()
             .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
             .background(colors.container, AqSquircles.SurfaceSm)
-            .border(AqMetrics.Border, colors.content, AqSquircles.SurfaceSm)
             .aqShadow(AqShadow.Sm, AqSquircles.SurfaceSm)
             .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Md),
         verticalAlignment = Alignment.CenterVertically,
