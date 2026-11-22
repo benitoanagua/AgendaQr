@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -55,6 +56,10 @@ import com.agendaqr.core.ui.theme.AqSquircles
 fun AqAlert(
     tone: AqTone,
     message: String,
+    /** Etiqueta destacada sobre [message] (anatomía MoonAlert: etiqueta +
+     *  contenido). Se expone como nodo de texto propio para lectores de
+     *  pantalla y pruebas de semántica. */
+    title: String? = null,
     /** Acción de descarte (secundaria). */
     dismissLabel: String? = null,
     onDismiss: (() -> Unit)? = null,
@@ -95,12 +100,23 @@ fun AqAlert(
                 tint = colors.content,
             )
         }
-        Text(
-            text = message,
-            style = AqTextStyles.Body,
-            color = colors.content,
+        Column(
             modifier = Modifier.weight(1f, fill = false),
-        )
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+        ) {
+            title?.let {
+                Text(
+                    text = it,
+                    style = AqTextStyles.Label,
+                    color = colors.content,
+                )
+            }
+            Text(
+                text = message,
+                style = AqTextStyles.Body,
+                color = colors.content,
+            )
+        }
         Row(
             modifier = Modifier,
             horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),

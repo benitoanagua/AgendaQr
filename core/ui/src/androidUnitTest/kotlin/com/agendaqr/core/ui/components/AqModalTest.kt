@@ -1,5 +1,6 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,11 +9,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -94,5 +97,27 @@ class AqModalTest {
             }
         }
         compose.onNodeWithTag("aq-modal-pane", useUnmergedTree = true).assertDoesNotExist()
+    }
+
+    @Test
+    fun modal_with_tall_content_keeps_actions_visible_at_48dp() {
+        compose.setContent {
+            AqTheme {
+                AqModal(
+                    show = true,
+                    title = "Selector",
+                    dismissLabel = "Cancelar",
+                    onDismissRequest = { },
+                ) {
+                    Column {
+                        repeat(80) { index ->
+                            androidx.compose.material3.Text("Fila $index")
+                        }
+                    }
+                }
+            }
+        }
+        compose.onNodeWithText("Fila 0").assertExists()
+        compose.onNodeWithText("Cancelar").assertHeightIsAtLeast(48.dp)
     }
 }

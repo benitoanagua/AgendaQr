@@ -2,10 +2,11 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -86,7 +88,7 @@ fun AqModal(
         onDismissRequest = dismissRequest,
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
-        Box(
+        BoxWithConstraints(
             modifier = modifier
                 .fillMaxSize()
                 .background(LocalAqColorScheme.current.scrim)
@@ -94,9 +96,13 @@ fun AqModal(
                 .testTag("aq-modal-scrim"),
             contentAlignment = Alignment.Center,
         ) {
+            // D-02: el panel no puede superar el alto disponible; el contenido
+            // hace scroll y las acciones quedan siempre visibles abajo.
+            val paneMaxHeight = maxHeight * 0.9f
             Column(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
+                    .heightIn(max = paneMaxHeight)
                     .padding(AqSize.Lg)
                     .background(LocalAqColorScheme.current.surface, AqSquircles.SurfaceLg)
                     .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
@@ -108,7 +114,13 @@ fun AqModal(
                     color = LocalAqColorScheme.current.textPrimary,
                     modifier = Modifier,
                 )
-                content()
+                Column(
+                    modifier = Modifier
+                        .weight(1f, fill = false)
+                        .verticalScroll(rememberScrollState()),
+                ) {
+                    content()
+                }
                 Row(
                     modifier = Modifier
                         .padding(vertical = AqSize.Xs),

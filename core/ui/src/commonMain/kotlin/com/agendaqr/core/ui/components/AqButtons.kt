@@ -286,8 +286,11 @@ private fun AqButtonImpl(
             )
             val row = measurables.first().measure(rowConstraints)
             val width = row.width.coerceIn(constraints.minWidth, constraints.maxWidth)
+            // D-02: el objetivo táctil nunca baja de ControlMinSize (48 dp) aunque
+            // el Row padre apriete las restricciones verticales (coerceIn al
+            // maxHeight podría comprimir el botón por debajo del umbral).
             val height = maxOf(row.height, AqMetrics.ControlMinSize.roundToPx())
-                .coerceIn(constraints.minHeight, constraints.maxHeight)
+                .coerceIn(0, constraints.maxHeight)
             val spinner = if (isLoading) {
                 val spinnerSize = size.iconSize.roundToPx()
                 measurables[1].measure(Constraints.fixed(spinnerSize, spinnerSize))
