@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqMotion
+import com.agendaqr.core.ui.theme.AqSpacing
 
 /**
  * Entrada de una notificación efímera en la cola del host.
