@@ -21,7 +21,7 @@ import com.agendaqr.core.ui.components.AqIconButton
 import com.agendaqr.core.ui.components.rememberAqFormFocus
 import com.agendaqr.core.ui.components.AqPrimaryButton
 import com.agendaqr.core.ui.components.AqScreenScaffold
-import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqMoonStatusBanner
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextAction
 import com.agendaqr.core.ui.components.AqTextField
@@ -181,13 +181,13 @@ internal fun AuthForm(
         state.errorMessage?.let { err ->
             val isAuthError = state.errorFlow == ErrorFlow.SignIn || state.errorFlow == ErrorFlow.SignUp
             if (isAuthError) {
-                AqStatusBanner(message = err.what, tone = AqTone.Danger)
+                AqMoonStatusBanner(message = err.what)
             } else {
                 val (action, dismiss) = err.bannerActions(
                     onRetry = onClearError,
                     onClear = onClearError,
                 )
-                AqStatusBanner(
+                AqMoonStatusBanner(
                     title = err.what,
                     message = err.dataStatus,
                     tone = AqTone.Danger,
@@ -199,7 +199,7 @@ internal fun AuthForm(
 
         // Confirmación (registro exitoso).
         state.confirmationMessage?.let {
-            AqStatusBanner(it, tone = AqTone.Info)
+            AqMoonStatusBanner(it)
         }
 
         // Acciones: primaria full-width + secundaria centrada.

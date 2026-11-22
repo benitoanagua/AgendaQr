@@ -125,7 +125,7 @@ fun AqBottomAction(
  *   la barra superior, dentro del Scaffold.
  */
 @Composable
-fun AqMoonScaffold(
+fun AqScreenScaffold(
     modifier: Modifier = Modifier,
     topBar: (@Composable () -> Unit)? = null,
     navDestinations: List<AqNavDestination> = emptyList(),
@@ -255,3 +255,4 @@ fun AqMoonScaffold(
         }
     }
 }
+

@@ -17,19 +17,19 @@ import com.agendaqr.core.ui.components.AqBottomAction
 import com.agendaqr.core.ui.components.ComprobanteThumbnail
 import com.agendaqr.core.ui.components.AqCheckbox
 import com.agendaqr.core.ui.components.AqHairline
-import com.agendaqr.core.ui.components.AqDialog
+import com.agendaqr.core.ui.components.AqMoonDialog
 import com.agendaqr.core.ui.components.AqDialogList
 import com.agendaqr.core.ui.components.AqEmptyState
 import com.agendaqr.core.ui.components.AqIcons
-import com.agendaqr.core.ui.components.AqListBody
-import com.agendaqr.core.ui.components.AqListRow
-import com.agendaqr.core.ui.components.AqSelectionBar
+import com.agendaqr.core.ui.components.AqMoonListBody
+import com.agendaqr.core.ui.components.AqMoonListRow
+import com.agendaqr.core.ui.components.AqMoonSelectionBar
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqSnackbarHost
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextAction
 import com.agendaqr.core.ui.components.AqTopBar
-import com.agendaqr.core.ui.components.AqTonalTag
+import com.agendaqr.core.ui.components.AqMoonTonalTag
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.destinations.domain.Comprobante
@@ -40,7 +40,7 @@ import com.agendaqr.destinations.data.SyncResource
  * S07 — Bandeja de comprobantes sin asociar (`OperationRoute.Unassociated`).
  *
  * Contrato congelado (docs/04-ux, inbox): acción primaria `—`, sin gestos
- * declarados, componentes `AqScreenScaffold`, `AqListRow`, `AqEmptyState`
+ * declarados, componentes `AqScreenScaffold`, `AqMoonListRow`, `AqEmptyState`
  * y `AqDialogList`. La fila entera es tocable y abre el flujo de
  * asociación; «Crear nueva actividad con esto» es acción secundaria de
  * texto dentro de la celda. Todas las filas forman un único Cell-group
@@ -65,7 +65,7 @@ internal fun UnassociatedScreen(
         topBar = {
             if (selectionMode) {
                 val selectAll = state.unassociated.isNotEmpty() && selectedReceiptIds.size == state.unassociated.size
-                AqSelectionBar(
+                AqMoonSelectionBar(
                     closeLabel = AppStrings.CerrarSeleccion,
                     selectAllLabel = if (selectAll) AppStrings.SeleccionarNinguno else AppStrings.SeleccionarTodo,
                     selectedCountLabel = "${selectedReceiptIds.size} ${AppStrings.Seleccionados}",
@@ -106,12 +106,12 @@ internal fun UnassociatedScreen(
             // fila). La fila entera abre la asociación; «Crear nueva
             // actividad con esto» es la acción de texto de la celda, sin
             // botón tonal por fila.
-            AqListBody(modifier = Modifier.fillMaxWidth().weight(1f)) {
+            AqMoonListBody(modifier = Modifier.fillMaxWidth().weight(1f)) {
                 LazyColumn(modifier = Modifier.fillMaxWidth()) {
                     itemsIndexed(state.unassociated, key = { _, it -> it.id }) { index, receipt ->
                         val isLast = index == state.unassociated.lastIndex
                         Column(modifier = Modifier.fillMaxWidth()) {
-                            AqListRow(
+                            AqMoonListRow(
                                 title = receipt.file.takeIf { it.isNotBlank() } ?: AppStrings.ElementoImportado,
                                 subtitle = formatDate(receipt.createdAt),
                                 onClick = {
@@ -181,7 +181,7 @@ internal fun UnassociatedScreen(
         val candidateOperations = suggestedOperations.ifEmpty { state.operations }
         // Selector de operación: elige de la lista en el propio diálogo
         // (la acción principal es elegir; Cancelar y Back son salidas).
-        AqDialog(
+        AqMoonDialog(
             title = when (suggestion?.kind) {
                 ReceiptMatchKind.SINGLE -> AppStrings.singleMatchTitle
                 ReceiptMatchKind.MULTIPLE -> AppStrings.ACualCorresponde
@@ -224,7 +224,7 @@ internal fun UnassociatedScreen(
     // G3: confirmación de eliminación por lote en la bandeja.
     if (confirmarEliminarRecibo) {
         val plural = if (selectedReceiptIds.size == 1) AppStrings.ComprobanteSingular else AppStrings.ComprobantesPlural
-        AqDialog(
+        AqMoonDialog(
             title = AppStrings.EliminarComprobante,
             destructive = true,
             message = AppStrings.irreversibleActionWarning + "\n" + selectedReceiptIds.size + " " + plural,
@@ -250,7 +250,7 @@ private fun CandidateOperationRows(
     onPick: (String) -> Unit,
 ) {
     operations.forEachIndexed { index, operation ->
-        AqListRow(
+        AqMoonListRow(
             title = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
             subtitle = operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
             onClick = { onPick(operation.id) },

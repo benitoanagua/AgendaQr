@@ -20,7 +20,7 @@ import org.robolectric.annotation.Config
  * ADR-0028 — patrones móviles (Moon como referencia, Polaris autoridad):
  *
  * - S04: con resultados de tipos mezclados, chips de filtro por tipo
- *   (AqChipGroup); con un solo tipo no se ofrece filtro.
+ *   (AqMoonChipGroup); con un solo tipo no se ofrece filtro.
  * - S12 revisión: con duplicados Y sin clasificar a la vez, chips
  *   Todos / Posibles duplicados / Pendientes de revisión que filtran la
  *   lista y el conteo del encabezado.

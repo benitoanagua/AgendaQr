@@ -11,7 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqBottomAction
-import com.agendaqr.core.ui.components.AqIconBadge
+import com.agendaqr.core.ui.components.AqMoonIconBadge
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqKeypad
 import com.agendaqr.core.ui.components.AqPinDots
@@ -104,7 +104,7 @@ internal fun LocalOnboardingScreen(
             }
         },
     ) {
-        AqIconBadge(icon = AqIcons.Lock, tone = AqTone.Info)
+        AqMoonIconBadge(icon = AqIcons.Lock)
         Column(
             verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
             horizontalAlignment = Alignment.CenterHorizontally,

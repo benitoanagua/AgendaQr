@@ -9,8 +9,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.agendaqr.core.ui.components.AqIcons
-import com.agendaqr.core.ui.components.AqIconBadge
-import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqMoonIconBadge
+import com.agendaqr.core.ui.components.AqMoonListRow
 import com.agendaqr.core.ui.components.AqPrimaryButton
 import com.agendaqr.core.ui.components.AqSecondaryButton
 import com.agendaqr.core.ui.components.AqTone
@@ -54,11 +54,11 @@ actual fun QrGalleryControls(
     LaunchedEffect(Unit) {
         AgendaQrAndroidImportLauncher.results.collect(onResult)
     }
-    AqListRow(
+    AqMoonListRow(
         title = AppStrings.ElegirDeLaGaleria,
         titleMaxLines = Int.MAX_VALUE,
         onClick = AgendaQrAndroidImportLauncher::gallery,
-        leading = { AqIconBadge(icon = AqIcons.Gallery, tone = AqTone.Info) },
+        leading = { AqMoonIconBadge(icon = AqIcons.Gallery) },
         showChevron = true,
         showDivider = true,
     )
@@ -79,11 +79,11 @@ actual fun QrCameraEntryControl(
 /** Android: PDF vía OpenDocument por el canal de comprobantes entrantes. */
 @Composable
 actual fun QrPdfPickerControl(showDivider: Boolean) {
-    AqListRow(
+    AqMoonListRow(
         title = AppStrings.ElegirArchivoPdf,
         titleMaxLines = Int.MAX_VALUE,
         onClick = AgendaQrAndroidImportLauncher::pdf,
-        leading = { AqIconBadge(icon = AqIcons.Attachment, tone = AqTone.Info) },
+        leading = { AqMoonIconBadge(icon = AqIcons.Attachment) },
         showChevron = true,
         showDivider = showDivider,
     )

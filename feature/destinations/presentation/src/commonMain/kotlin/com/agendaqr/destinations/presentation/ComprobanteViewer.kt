@@ -28,7 +28,7 @@ internal fun ComprobanteViewerDialog(
         feedbackHost = appHosts?.feedback,
     )
     if (showDeleteConfirm) {
-        AqDialog(
+        AqMoonDialog(
             title = AppStrings.EliminarComprobante,
             destructive = true,
             message = AppStrings.operationKeptOnReceiptDelete,
@@ -44,7 +44,7 @@ internal fun ComprobanteViewerDialog(
         return
     }
     val bytes = state.openedComprobanteBytes
-    AqDialog(
+    AqMoonDialog(
         title = AppStrings.Comprobante,
         confirmLabel = AppStrings.Cerrar,
         onConfirm = { viewModel.onAction(OperationAction.CloseComprobante) },

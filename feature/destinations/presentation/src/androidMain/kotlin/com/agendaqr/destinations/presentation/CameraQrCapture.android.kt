@@ -41,10 +41,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
-import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqMoonStatusBanner
 import com.agendaqr.core.ui.components.AqFeedbackEvent
-import com.agendaqr.core.ui.components.AqIconBadge
-import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqMoonIconBadge
+import com.agendaqr.core.ui.components.AqMoonListRow
 import com.agendaqr.core.ui.components.AqScannerFrame
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqSecondaryButton
@@ -322,7 +322,7 @@ internal fun CameraQrEntry(
                     permissionLauncher.launch(Manifest.permission.CAMERA)
                 }
             }
-            AqStatusBanner(
+            AqMoonStatusBanner(
                 title = error.what,
                 message = error.dataStatus,
                 tone = com.agendaqr.core.ui.components.AqTone.Danger,
@@ -338,13 +338,13 @@ internal fun CameraQrEntry(
             if (granted) onOpen() else permissionLauncher.launch(Manifest.permission.CAMERA)
         }
         if (cellPresentation) {
-            AqListRow(
+            AqMoonListRow(
                 title = AppStrings.Camara,
                 subtitle = AppStrings.PermisoCamaraContexto,
                 subtitleMaxLines = Int.MAX_VALUE,
                 onClick = requestCamera,
                 leading = {
-                    AqIconBadge(
+                    AqMoonIconBadge(
                         icon = com.agendaqr.core.ui.components.AqIcons.Camera,
                         tone = com.agendaqr.core.ui.components.AqTone.Info,
                     )

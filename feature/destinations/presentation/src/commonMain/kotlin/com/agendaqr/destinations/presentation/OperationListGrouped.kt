@@ -66,7 +66,7 @@ private fun OperationRow(
     )
 
     AqSwipeActions(actions = swipeActions, enabled = !selectionMode) {
-        AqListRow(
+        AqMoonListRow(
             modifier = Modifier.fillMaxWidth(),
             title = operationTitle(operation),
             subtitle = operation.concept?.takeIf { it.isNotBlank() },
@@ -81,7 +81,7 @@ private fun OperationRow(
                         },
                     )
                 } else {
-                    AqIconBadge(
+                    AqMoonIconBadge(
                         icon = operationTypeIcon(operation.type),
                         tone = operationTypeTone(operation.type),
                     )
@@ -118,10 +118,10 @@ private fun OperationRow(
                     if (showContextOrSync) {
                         Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
                             contextName?.let {
-                                AqTonalTag(text = it, tone = AqTone.Neutral)
+                                AqMoonTonalTag(text = it)
                             }
                             if (syncStatus != ElementSyncStatus.Synced) {
-                                AqTonalTag(text = syncStatus.label, tone = syncStatus.tone())
+                                AqMoonTonalTag(text = syncStatus.label))
                             }
                         }
                     }
@@ -145,7 +145,7 @@ private fun OperationRow(
  *
  * Renderiza su propio `LazyColumn`; el llamador la coloca dentro del
  * contenedor de scroll de la pantalla (p. ej. `AqPullToRefresh` +
- * `AqListBody`).
+ * `AqMoonListBody`).
  */
 @Composable
 fun OperationListGrouped(
@@ -194,7 +194,7 @@ fun OperationListGrouped(
                             modifier = Modifier.weight(1f),
                         )
                         balanceText.takeIf { it.isNotBlank() }?.let { balance ->
-                            AqTonalTag(text = balance, tone = AqTone.Info)
+                            AqMoonTonalTag(text = balance)
                         }
                     }
                 }

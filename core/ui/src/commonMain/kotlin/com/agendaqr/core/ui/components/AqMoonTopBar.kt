@@ -44,6 +44,9 @@ import com.agendaqr.core.ui.theme.AqCorner
  * — esta barra los aplica por sí misma (`statusBarsPadding`) para que el
  * título nunca quede tras la barra de estado, y el contenido siga fluyendo
  * debajo.
+ *
+ * [overflowActions] acciones adicionales que se muestran en el menú "…"
+ * (máx. 4). Requiere [overflowLabel].
  */
 @Composable
 fun AqMoonTopBar(
@@ -53,9 +56,15 @@ fun AqMoonTopBar(
     /** copy accesible de la flecha atrás (copy del llamador). */
     backLabel: String = "",
     actions: List<AqTopBarAction> = emptyList(),
+    /** copy accesible del botón "…" (requerido con overflowActions). */
+    overflowLabel: String = "",
+    overflowActions: List<AqOverflowAction> = emptyList(),
 ) {
     require(actions.size <= 2) {
         "AqMoonTopBar: máximo 2 acciones visibles"
+    }
+    require(overflowActions.size <= 4) {
+        "AqMoonTopBar: máximo 4 acciones de overflow"
     }
     AqTopBar(
         title = title,
@@ -67,5 +76,7 @@ fun AqMoonTopBar(
         onBack = onBack,
         backLabel = backLabel,
         actions = actions,
+        overflowActions = overflowActions,
+        overflowLabel = overflowLabel,
     )
 }

@@ -17,7 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.agendaqr.core.ui.components.AqBannerAction
-import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqMoonStatusBanner
 import com.agendaqr.core.ui.components.AqLoading
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqSpacing
@@ -161,7 +161,7 @@ fun AgendaQrApp() {
             demoShowing -> Column {
                 // Demo edge-to-edge: el HOST aplica el margen de pantalla;
                 // el banner solo pinta superficie y relleno interno.
-                AqStatusBanner(
+                AqMoonStatusBanner(
                     message = AppStrings.DemostracionAislada,
                     title = AppStrings.ModoDemostracion,
                     tone = AqTone.Info,

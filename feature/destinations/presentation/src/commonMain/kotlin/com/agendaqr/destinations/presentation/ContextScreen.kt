@@ -15,19 +15,19 @@ import com.agendaqr.core.ui.components.AqNavChromeState
 import com.agendaqr.core.ui.components.AqEmptyState
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqTab
-import com.agendaqr.core.ui.components.AqTabs
-import com.agendaqr.core.ui.components.AqListBody
-import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqMoonTabs
+import com.agendaqr.core.ui.components.AqMoonListBody
+import com.agendaqr.core.ui.components.AqMoonListRow
 import com.agendaqr.core.ui.components.AqLoading
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqTopBar
 import com.agendaqr.core.ui.components.AqSecondaryButton
 import com.agendaqr.core.ui.components.AqSkeleton
-import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqMoonStatusBanner
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextAction
 import com.agendaqr.core.ui.components.AqTone
-import com.agendaqr.core.ui.components.AqContextBadge
+import com.agendaqr.core.ui.components.AqMoonContextBadge
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.accentFor
 import com.agendaqr.core.ui.theme.AqSpacing
@@ -120,7 +120,7 @@ private fun ContextList(
                 onRetry = { onAction(ContextAction.RetryFailed) },
                 onClear = { onAction(ContextAction.ClearError) },
             )
-            AqStatusBanner(
+            AqMoonStatusBanner(
                 title = err.what,
                 message = err.dataStatus,
                 tone = AqTone.Danger,
@@ -141,22 +141,22 @@ private fun ContextList(
             )
             else -> {
                 // Lista agrupada (patrón de lista de chats y contactos):
-                // AqListBody con AqListRow y hairlines — superficie de tarjeta
+                // AqMoonListBody con AqMoonListRow y hairlines — superficie de tarjeta
                 // que agrupa las filas y se separa del fondo de página.
-                AqListBody(
+                AqMoonListBody(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                 ) {
                     state.contexts.forEachIndexed { index, context ->
                         // Identidad visual del contexto: bloque de acento derivado
                         // del id + nombre + descripción opcional.
-                        AqListRow(
+                        AqMoonListRow(
                             title = context.name,
                             subtitle = context.note?.takeIf { it.isNotBlank() },
                             onClick = { onAction(ContextAction.Open(context.id)) },
                             leading = {
                                 // Bloque de identidad del contexto (M4): círculo
                                 // de 40 dp con el color del contexto.
-                                AqContextBadge(context.id)
+                                AqMoonContextBadge(context.id)
                             },
                             showDivider = index < state.contexts.lastIndex,
                         )
@@ -200,7 +200,7 @@ private fun ContextDetail(
                 onRetry = { onAction(ContextAction.RetryFailed) },
                 onClear = { onAction(ContextAction.ClearError) },
             )
-            AqStatusBanner(
+            AqMoonStatusBanner(
                 title = err.what,
                 message = err.dataStatus,
                 tone = AqTone.Danger,
@@ -220,7 +220,7 @@ private fun ContextDetail(
             var pivotSection by remember { mutableStateOf(0) }
             // El conteo vive en el badge de la pestaña (AqTab.count);
             // las secciones vacías usan el empty state estándar.
-            AqTabs(
+            AqMoonTabs(
                 tabs = listOf(
                     AqTab(AppStrings.Qr, count = data.destinations.size),
                     AqTab(AppStrings.Operaciones, count = data.operations.size),
@@ -239,9 +239,9 @@ private fun ContextDetail(
                                     title = AppStrings.AunNoHayDestinos,
                                 )
                             } else {
-                                AqListBody {
+                                AqMoonListBody {
                                     data.destinations.forEachIndexed { index, destination ->
-                                        AqListRow(
+                                        AqMoonListRow(
                                             title = destination.name.ifBlank { AppStrings.QrSinNombre },
                                             onClick = { onOpenDestination(destination.id) },
                                             showDivider = index < data.destinations.lastIndex,
@@ -258,9 +258,9 @@ private fun ContextDetail(
                                 )
                             } else {
                                 val shownOperations = data.operations.take(RECENT_ACTIVITIES_SHOWN)
-                                AqListBody {
+                                AqMoonListBody {
                                     shownOperations.forEachIndexed { index, operation ->
-                                        AqListRow(
+                                        AqMoonListRow(
                                             title = listOfNotNull(
                                                 when (operation.type) {
                                                     com.agendaqr.destinations.domain.OperationType.PAGO -> AppStrings.Pago
@@ -293,9 +293,9 @@ private fun ContextDetail(
                                     title = AppStrings.AunNoHayComprobantes,
                                 )
                             } else {
-                                AqListBody {
+                                AqMoonListBody {
                                     data.comprobantes.forEachIndexed { index, receipt ->
-                                        AqListRow(
+                                        AqMoonListRow(
                                             title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
                                             subtitle = receipt.file.takeIf { it.isNotBlank() },
                                             onClick = { onOpenComprobante(receipt.id) },
