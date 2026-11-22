@@ -18,9 +18,9 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import com.agendaqr.core.ui.components.AqMoonBadge
+import com.agendaqr.core.ui.components.AqTag
 import com.agendaqr.core.ui.components.AqFavoriteToggle
-import com.agendaqr.core.ui.components.AqMoonListRow
+import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqPrimaryButton
 import com.agendaqr.core.ui.components.AqTextField
 import com.agendaqr.core.ui.components.AqTone
@@ -119,11 +119,11 @@ class AqResponsiveLayoutContractTest {
         composeAtScales(
             {
                 Column {
-                    AqMoonListRow(
+                    AqMenuItem(
                         title = tileLabel,
                         subtitle = wideLabel,
                         onClick = {},
-                        meta = { AqMoonBadge(text = "Pendiente") },
+                        meta = { AqTag(text = "Pendiente") },
                         trailing = {
                             AqFavoriteToggle(
                                 favorite = false,
@@ -132,7 +132,7 @@ class AqResponsiveLayoutContractTest {
                             )
                         },
                     )
-                    AqMoonListRow(title = "Favoritos", onClick = {})
+                    AqMenuItem(title = "Favoritos", onClick = {})
                 }
             },
         ) { scale ->

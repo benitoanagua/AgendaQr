@@ -108,11 +108,11 @@ fun AqTheme(
         MaterialTheme(
             typography = AqMaterialTypography.withAqFontFamily(AqType.FamilyUi),
             shapes = Shapes(
-                extraSmall = AqShapes.ExtraSmall,
-                small = AqShapes.Small,
-                medium = AqShapes.Medium,
-                large = AqShapes.Large,
-                extraLarge = AqShapes.ExtraLarge,
+                extraSmall = AqThemeShapes.ExtraSmall,
+                small = AqThemeShapes.Small,
+                medium = AqThemeShapes.Medium,
+                large = AqThemeShapes.Large,
+                extraLarge = AqThemeShapes.ExtraLarge,
             ),
             colorScheme = scheme.asMaterialColorScheme(darkTheme),
         ) {

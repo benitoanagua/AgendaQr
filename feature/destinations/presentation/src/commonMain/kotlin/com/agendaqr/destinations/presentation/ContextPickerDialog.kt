@@ -7,39 +7,30 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AqMoonDialog
-import com.agendaqr.core.ui.components.AqDialogList
+import com.agendaqr.core.ui.components.AqAlert
+import com.agendaqr.core.ui.components.AqButton
+import com.agendaqr.core.ui.components.AqButtonVariant
+import com.agendaqr.core.ui.components.AqCheckbox
+import com.agendaqr.core.ui.components.AqEmptyPlaceholder
+import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
-import com.agendaqr.core.ui.components.AqMoonListRow
-import com.agendaqr.core.ui.components.AqSecondaryButton
+import com.agendaqr.core.ui.components.AqMenuItem
+import com.agendaqr.core.ui.components.AqModal
+import com.agendaqr.core.ui.components.AqScreen
 import com.agendaqr.core.ui.components.AqText
-import com.agendaqr.core.ui.components.AqTextField
-import com.agendaqr.core.ui.components.AqTextAction
-import com.agendaqr.core.ui.components.AqTextActionVariant
-import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.components.AqTextInput
+import com.agendaqr.core.ui.components.AqTextInputSize
+import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.theme.AqColor
-import com.agendaqr.core.ui.theme.accentFor
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.destinations.domain.Context
 import com.agendaqr.destinations.domain.FieldLimits
 
-/**
- * Semántica del selector de contexto (S08) — 
- * - **Elegir** un elemento confirma y cierra: [ContextSelection.select].
- * - **Cancelar** cierra SIN tocar la selección previa.
- * - **Quitar contexto** es la única vía de limpiar la selección.
- *
- * U3/ADR-0003 (opción C): el selector ofrece **crear contexto** sin salir
- * del draft: el paso de creación (Nombre obligatorio + Nota) vive en el
- * mismo diálogo y al crear vuelve a la lista con el nuevo elemento
- * seleccionado — el flujo padre nunca sale de composición.
- */
 internal data class ContextSelection(
     val contextId: String? = null,
     val pickerOpen: Boolean = false,
@@ -52,28 +43,24 @@ internal data class ContextSelection(
 }
 
 internal val ContextSelectionSaver: Saver<ContextSelection, Any> = listSaver(
-    save = { selection -> saveContextSelection(selection) },
-    restore = { values -> restoreContextSelection(values) },
+    save = { selection -> listOf(selection.contextId, selection.pickerOpen) },
+    restore = { values ->
+        ContextSelection(
+            contextId = values.getOrNull(0) as? String,
+            pickerOpen = values.getOrNull(1) as? Boolean == true,
+        )
+    },
 )
 
-/** Serializa la selección para el bundle (lista de primitivos). */
 internal fun saveContextSelection(selection: ContextSelection): List<Any> =
-    listOf(selection.pickerOpen, selection.contextId.orEmpty())
+    listOf(selection.contextId, selection.pickerOpen)
 
-/** Inversa de [saveContextSelection]. */
-internal fun restoreContextSelection(values: List<Any>): ContextSelection {
-    val open = values[0] as Boolean
-    val id = values[1] as String
-    return ContextSelection(contextId = id.takeIf(String::isNotEmpty), pickerOpen = open)
-}
+internal fun restoreContextSelection(values: List<Any>): ContextSelection =
+    ContextSelection(
+        contextId = values.getOrNull(0) as? String,
+        pickerOpen = values.getOrNull(1) as? Boolean == true,
+    )
 
-/** Estado del paso de creación dentro del selector (S08 → crear → volver). */
-internal enum class ContextPickerStep { List, Create }
-
-/**
- * Selector compartido (S08). [onCreateContext] persiste (VM) y reporta el
- * id nuevo; el selector lo selecciona y vuelve a la lista.
- */
 @Composable
 internal fun ContextPickerDialog(
     contexts: List<Context>,
@@ -84,165 +71,52 @@ internal fun ContextPickerDialog(
     onCreateContext: (name: String, note: String?) -> Unit,
     justCreatedContextId: String? = null,
 ) {
-    var step by rememberSaveable { mutableStateOf(ContextPickerStep.List) }
-    var name by rememberSaveable { mutableStateOf("") }
-    var note by rememberSaveable { mutableStateOf("") }
-    // sobrevive a recreación.
-    var submitted by rememberSaveable { mutableStateOf(false) }
-
-    // El contexto recién creado queda seleccionado y marcado en la lista.
-    val selectedId = justCreatedContextId ?: selection.contextId
-
-    when (step) {
-        ContextPickerStep.Create -> AqMoonDialog(
-            title = AppStrings.CrearContexto,
-            confirmLabel = AppStrings.Crear,
-            onConfirm = {
-                submitted = true
-                // G2: límite de dominio del nombre del contexto.
-                if (name.isNotBlank() && name.length <= FieldLimits.Nombre) {
-                    onCreateContext(name, note.takeIf { it.isNotBlank() })
-                    // El paso vuelve a la lista al crear (ADR: vuelve a la
-                    // lista con el nuevo elemento marcado).
-                    step = ContextPickerStep.List
-                }
-            },
-            dismissLabel = AppStrings.Cancelar,
-            onDismiss = { step = ContextPickerStep.List },
-            // Back/fuera vuelve a la lista: nunca destruye el draft.
-            onDismissRequest = { step = ContextPickerStep.List },
-            content = {
-                Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-                    AqTextField(
-                        label = AppStrings.Nombre,
-                        value = name,
-                        onValueChange = { name = it },
-                        maxLength = FieldLimits.Nombre,
-                        isError = submitted && name.isBlank(),
-                        errorMessage = if (submitted && name.isBlank()) AppStrings.ElNombreEsObligatorio else null,
-                    )
-                    AqTextField(
-                        label = AppStrings.Nota,
-                        value = note,
-                        onValueChange = { note = it },
-                        maxLength = FieldLimits.Nota,
-                        singleLine = false,
-                        minLines = 2,
-                    )
-                }
-            },
-        )
-
-        ContextPickerStep.List -> AqMoonDialog(
-            title = AppStrings.SeleccionarContexto,
-            confirmLabel = AppStrings.Cancelar,
-            // La acción principal es elegir de la lista; Cancelar es la
-            // única salida del diálogo (texto, salida segura). Sin botón
-            // de descarte en la barra: "Quitar contexto" vive como acción
-            // destructiva dentro del contenido.
-            confirmAsText = true,
-            onConfirm = onCancel,
-            onDismiss = onCancel,
-            // Back del sistema / toque fuera: cancelar, nunca quitar la
-            // selección por accidente.
-            onDismissRequest = onCancel,
-            content = {
-                AqDialogList {
-                    // Crear sin salir del draft, arriba de la lista: el
-                    // slot de texto del diálogo recorta el fondo en
-                    // pantallas bajas.
-                    AqTextAction(
-                        label = AppStrings.CrearContexto,
-                        onClick = {
-                            submitted = false
-                            name = ""
-                            note = ""
-                            step = ContextPickerStep.Create
-                        },
-                    )
-                    if (contexts.isEmpty()) {
-                        AqText(
-                            text = AppStrings.SinContextosDisponibles,
-                            color = AqColor.TextSecondary,
-                        )
-                    } else {
-                        contexts.forEachIndexed { index, context ->
-                            AqMoonListRow(
-                                title = context.name,
-                                subtitle = context.note?.takeIf { it.isNotBlank() },
-                                // El acento derivado identifica el contexto;
-                                // Cancelar/Quitar/Back intactos.
-                                accent = accentFor(context.id).background,
-                                // La selección se expresa con la semántica
-                                // `selected` (no con un tono de estado).
-                                selected = context.id == selectedId,
-                                onClick = { onSelect(context.id) },
-                                showDivider = index < contexts.lastIndex,
-                            )
-                        }
-                    }
-                    // Nivel 4 — acción destructiva del diálogo: quitar la
-                    // selección. Vive en el CONTENIDO (no en el slot de
-                    // salida del diálogo) para no competir con "Cancelar"
-                    // y diferenciarse semánticamente: glifo de advertencia
-                    // + texto en tono peligro (el color nunca es la única
-                    // señal). Solo cuando hay selección que quitar.
-                    if (selection.canRemove) {
-                        AqTextAction(
-                            label = AppStrings.QuitarContexto,
-                            onClick = onRemove,
-                            variant = AqTextActionVariant.Danger,
-                            icon = AqIcons.Erase,
-                        )
-                    }
-                }
-            },
-        )
-    }
-}
-
-/**
- * Formulario de creación para S06 vacío (opción B/C del ADR): mismo paso
- * mínimo, mismas acciones. Con ≥1 contexto S06 NO ofrece creación (no se
- * inventa jerarquía en S06 lleno).
- */
-@Composable
-internal fun ContextCreationDialog(
-    onConfirmCreate: (name: String, note: String?) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    var name by rememberSaveable { mutableStateOf("") }
-    var note by rememberSaveable { mutableStateOf("") }
-    // sobrevive a recreación.
-    var submitted by rememberSaveable { mutableStateOf(false) }
-    AqMoonDialog(
-        title = AppStrings.CrearContexto,
-        confirmLabel = AppStrings.Crear,
-        onConfirm = {
-            submitted = true
-            // G2: límite de dominio del nombre del contexto.
-            if (name.isNotBlank() && name.length <= FieldLimits.Nombre) onConfirmCreate(name, note.takeIf { it.isNotBlank() })
-        },
+    val toastHost: com.agendaqr.core.ui.components.AqToastHostState? = null
+    var name by remember { mutableStateOf("") }
+    var note by remember { mutableStateOf("") }
+    var showCreateFields by remember { mutableStateOf(false) }
+    AqModal(
+        title = AppStrings.ElegirContexto,
         dismissLabel = AppStrings.Cancelar,
-        onDismiss = onDismiss,
-        onDismissRequest = onDismiss,
+        onDismissRequest = onCancel,
         content = {
-            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-                AqTextField(
-                    label = AppStrings.Nombre,
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            ) {
+                if (contexts.isNotEmpty()) {
+                    AqSectionTitle(text = AppStrings.ContextosExistentes)
+                    contexts.forEach { ctx ->
+                        AqMenuItem(
+                            title = ctx.name,
+                            subtitle = ctx.note.orEmpty(),
+                            selected = selection.contextId == ctx.id,
+                            onClick = { onSelect(ctx.id) },
+                            leading = {
+                                AqTag(text = ctx.id.take(1).uppercase())
+                            },
+                        )
+                    }
+                }
+                AqSectionTitle(text = AppStrings.CrearContexto)
+                AqTextInput(
+                    label = AppStrings.LabelNombre,
                     value = name,
                     onValueChange = { name = it },
-                    maxLength = FieldLimits.Nombre,
-                    isError = submitted && name.isBlank(),
-                    errorMessage = if (submitted && name.isBlank()) AppStrings.ElNombreEsObligatorio else null,
+                    size = AqTextInputSize.Md,
                 )
-                AqTextField(
-                    label = AppStrings.Nota,
+                AqTextInput(
+                    label = AppStrings.LabelNota,
                     value = note,
                     onValueChange = { note = it },
-                    maxLength = FieldLimits.Nota,
-                    singleLine = false,
-                    minLines = 2,
+                    size = AqTextInputSize.Md,
+                )
+                AqButton(
+                    label = AppStrings.Crear,
+                    onClick = {
+                        onCreateContext(name, note)
+                    },
+                    variant = AqButtonVariant.Primary,
                 )
             }
         },

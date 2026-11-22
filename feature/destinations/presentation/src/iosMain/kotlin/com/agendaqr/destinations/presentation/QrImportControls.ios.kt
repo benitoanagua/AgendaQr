@@ -8,13 +8,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import com.agendaqr.core.ui.components.AqFeedbackEvent
-import com.agendaqr.core.ui.components.AqMoonIconBadge
+import com.agendaqr.core.ui.components.AqToast
+import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
-import com.agendaqr.core.ui.components.AqMoonListRow
-import com.agendaqr.core.ui.components.AqSecondaryButton
+import com.agendaqr.core.ui.components.AqMenuItem
+import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqBannerAction
-import com.agendaqr.core.ui.components.AqMoonStatusBanner
+import com.agendaqr.core.ui.components.AqAlert
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqSpacing
 import platform.Foundation.NSURL
@@ -35,7 +35,7 @@ actual fun QrImportControls(
         // En el editor la acción primaria ES Guardar (botón fijo abajo):
         // las fuentes de imagen son alternativas y no compiten por el
         // peso visual (jerarquía de botones, §7).
-        AqSecondaryButton(
+        AqButton(
             label = AppStrings.ElegirDeLaGaleria,
             icon = com.agendaqr.core.ui.components.AqIcons.Gallery,
             onClick = { IosQrImportController.openMultiple(onResult = onResult) },
@@ -54,11 +54,11 @@ actual fun QrImportControls(
 actual fun QrGalleryControls(
     onResult: (QrImportResult) -> Unit,
 ) {
-    AqMoonListRow(
+    AqMenuItem(
         title = AppStrings.ElegirDeLaGaleria,
         titleMaxLines = Int.MAX_VALUE,
         onClick = { IosQrImportController.openMultiple(onResult = onResult) },
-        leading = { AqMoonIconBadge(icon = AqIcons.Gallery) },
+        leading = { AqIcon(icon = AqIcons.Gallery) },
         showChevron = true,
         showDivider = true,
     )
@@ -75,7 +75,7 @@ actual fun QrCameraEntryControl(
     var permissionError by rememberSaveable { mutableStateOf<UserFacingError?>(null) }
     // feedback de lectura exitosa por EVENTO.
     var detectionToken by remember { mutableStateOf<Any?>(null) }
-    AqFeedbackEvent(event = detectionToken, message = AppStrings.CodigoQrDetectado)
+    AqToast(event = detectionToken, message = AppStrings.CodigoQrDetectado)
     Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
         permissionError?.let { error ->
             val (bannerAction, bannerDismiss) = error.bannerActions(
@@ -88,7 +88,7 @@ actual fun QrCameraEntryControl(
             // La acción del error (CameraPermission → Retry) se reemplaza por
             // "Abrir ajustes": no es reintentar, es abrir el selector del SO.
             val action = AqBannerAction(AppStrings.AbrirAjustes, bannerAction?.onClick ?: { permissionError = null })
-            AqMoonStatusBanner(
+            AqAlert(
                 title = error.what,
                 message = error.dataStatus,
                 tone = AqTone.Danger,
@@ -96,7 +96,7 @@ actual fun QrCameraEntryControl(
                 dismiss = bannerDismiss,
             )
         }
-        AqMoonListRow(
+        AqMenuItem(
             title = AppStrings.Camara,
             subtitle = AppStrings.PermisoCamaraContexto,
             subtitleMaxLines = Int.MAX_VALUE,
@@ -117,7 +117,7 @@ actual fun QrCameraEntryControl(
                     },
                 ).present()
             },
-            leading = { AqMoonIconBadge(icon = AqIcons.Camera) },
+            leading = { AqIcon(icon = AqIcons.Camera) },
             showChevron = true,
             showDivider = showDivider,
         )
@@ -139,11 +139,11 @@ actual fun sharedImportsSupported(): Boolean = false
  */
 @Composable
 actual fun QrPdfPickerControl(showDivider: Boolean) {
-    AqMoonListRow(
+    AqMenuItem(
         title = AppStrings.ElegirArchivoPdf,
         titleMaxLines = Int.MAX_VALUE,
         onClick = { IosPdfPicker.present() },
-        leading = { AqMoonIconBadge(icon = AqIcons.Attachment) },
+        leading = { AqIcon(icon = AqIcons.Attachment) },
         showChevron = true,
         showDivider = showDivider,
     )

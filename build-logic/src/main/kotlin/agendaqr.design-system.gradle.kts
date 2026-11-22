@@ -152,6 +152,15 @@ val legacySymbols = listOf(
     "AqTopBar",
 )
 
+/** Símbolos prohibidos en TODO el repo (declaración y uso): los de
+ *  `legacySymbols` más `AqShapes`. Ningún archivo de producción puede
+ *  declararlos ni llamarlos; además no puede resurgir ningún `AqMoon*`.
+ */
+val prohibitedSymbols = legacySymbols + listOf("AqShapes")
+
+/** Prefijo prohibido en cualquier parte del repo (fuentes, tests, docs). */
+val forbiddenAqMoonPrefix = "AqMoon"
+
 /** Archivos con `.border(`/`BorderStroke(` permitidos: ninguno. */
 val borderAllowedFiles: Set<String> =
     buildSet {
@@ -390,6 +399,11 @@ fun checkViolations(): List<String> {
     // El catálogo Moon debe estar completo: sin estados "pendiente" y cada
     // componente disponible/adoptado debe tener su símbolo Aq* exportado.
     violations += catalogCompletenessViolations()
+    // En TODO el repo no puede haber identificadores AqMoon* (wrappers
+    // legacy prohibidos), ni declaraciones/usos de símbolos prohibidos
+    // (legacySymbols + AqShapes) en capa de producción.
+    violations += forbiddenAqMoonAnywhere()
+    violations += prohibitedSymbolsAnywhere()
     return violations
 }
 
@@ -443,6 +457,35 @@ fun catalogCompletenessViolations(): List<String> {
                     if (aqName !in exported) {
                         violations += "catalogo: '$aqName' marcado como '$estado' pero no se encuentra su declaración en core/ui"
                     }
+                }
+            }
+        }
+    }
+    return violations
+}
+
+/** Ningún identificador AqMoon* en ningún fuente Kotlin del repo. */
+fun forbiddenAqMoonAnywhere(): List<String> {
+    val violations = mutableListOf<String>()
+    file(".").walkTopDown().filter { it.isFile && it.extension == "kt" && !it.path.contains("/build/") }.forEach { file ->
+        file.readLines().forEachIndexed { index, line ->
+            Regex("\\bAqMoon[A-Za-z0-9_]*").find(line)?.let { match ->
+                violations.add("${file.path}:${index + 1}: identificador AqMoon* prohibido: ${match.value}")
+            }
+        }
+    }
+    return violations
+}
+
+/** Ningún símbolo prohibido (legacySymbols + AqShapes) declarado ni llamado
+ *  en capas de feature/shared/androidApp/iosApp. */
+fun prohibitedSymbolsAnywhere(): List<String> {
+    val violations = mutableListOf<String>()
+    productionKotlinSources().filter { it.path.contains("/feature/") || it.path.contains("/shared/src/") || it.path.contains("/androidApp/src/") || it.path.contains("/iosApp/src/") }.forEach { file ->
+        file.readLines().forEachIndexed { index, line ->
+            prohibitedSymbols.forEach { symbol ->
+                if (Regex("\\b$symbol\\b").containsMatchIn(line)) {
+                    violations.add("${file.path}:${index + 1}: símbolo prohibido '${symbol}' en producción: $line")
                 }
             }
         }

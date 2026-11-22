@@ -9,7 +9,7 @@ import kotlin.test.assertTrue
  * Transcripción de los tokens de la capa UX (ADR-0039) desde `moon_design`
  * 1.1.0 / `tokens/{sizes,borders,opacities,shadows,transitions}.dart`.
  */
-class AqMoonTokensTest {
+class AqTokenTest {
 
     @Test
     fun sizes_follow_the_published_scale() {

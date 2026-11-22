@@ -94,7 +94,7 @@ internal class IosQrCameraPresenter(
         emitted = true
         val value = code.stringValue ?: return
         // el feedback de lectura exitosa vive en la
-        // entrada componible (AqFeedbackEvent) — háptica/anuncio
+        // entrada componible (AqToast) — háptica/anuncio
         // multiplataforma sin depender de bindings de UIKit.
         // El QR detectado se entrega como asset por el mismo canal; el
         // contenido llega a S09 igual que en Android (el flujo revisa lo

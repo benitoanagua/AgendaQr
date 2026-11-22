@@ -25,7 +25,7 @@ data class UserFacingError(
 }
 
 /**
- * Acciones de banner derivadas del error, para usar con [AqMoonStatusBanner].
+ * Acciones de banner derivadas del error, para usar con [AqAlert].
  *
  * - [ErrorAction.Retry]: dos acciones: reintentar ([onRetry]) y descartar
  *   ([onClear]) con [AppStrings.Descartar].

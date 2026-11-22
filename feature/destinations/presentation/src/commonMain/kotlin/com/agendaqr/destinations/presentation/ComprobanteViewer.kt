@@ -1,13 +1,31 @@
-/**
- * Visor de comprobante (diálogo): contenido, compartir y eliminación con
- * confirmación. Estado de sincronización por elemento .
- */
 package com.agendaqr.destinations.presentation
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
-import com.agendaqr.core.ui.components.*
-import com.agendaqr.core.ui.theme.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import com.agendaqr.core.ui.components.AqAlert
+import com.agendaqr.core.ui.components.AqButton
+import com.agendaqr.core.ui.components.AqButtonVariant
+import com.agendaqr.core.ui.components.AqCircularLoader
+import com.agendaqr.core.ui.components.AqEmptyPlaceholder
+import com.agendaqr.core.ui.components.AqIcon
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqMenuItem
+import com.agendaqr.core.ui.components.AqModal
+import com.agendaqr.core.ui.components.AqScreen
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.components.AqToastHost
+import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.destinations.domain.*
 
@@ -20,57 +38,68 @@ internal fun ComprobanteViewerDialog(
     syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
-    // anuncio de eliminación confirmada (por evento).
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
-    AqFeedbackEvent(
-        event = deleteDoneEvent,
-        message = AppStrings.Eliminado,
-        feedbackHost = appHosts?.feedback,
-    )
+    val toastHost = appHosts?.toastHost
+    androidx.compose.runtime.LaunchedEffect(deleteDoneEvent) {
+        if (deleteDoneEvent != null) {
+            toastHost?.show(AppStrings.Eliminado)
+        }
+    }
     if (showDeleteConfirm) {
-        AqMoonDialog(
+        AqModal(
             title = AppStrings.EliminarComprobante,
-            destructive = true,
-            message = AppStrings.operationKeptOnReceiptDelete,
+            dismissLabel = AppStrings.Cancelar,
             confirmLabel = AppStrings.Eliminar,
+            destructive = true,
             onConfirm = {
                 showDeleteConfirm = false
                 deleteDoneEvent = Any()
                 viewModel.onAction(OperationAction.DeleteComprobante(receipt.id))
             },
-            dismissLabel = AppStrings.Cancelar,
-            onDismiss = { showDeleteConfirm = false },
+            onDismissRequest = { showDeleteConfirm = false },
         )
         return
     }
     val bytes = state.openedComprobanteBytes
-    AqMoonDialog(
+    AqModal(
         title = AppStrings.Comprobante,
+        dismissLabel = AppStrings.Cerrar,
         confirmLabel = AppStrings.Cerrar,
         onConfirm = { viewModel.onAction(OperationAction.CloseComprobante) },
-        dismissLabel = AppStrings.Eliminar,
-        onDismiss = { showDeleteConfirm = true },
-        // R1: Back del sistema / toque fuera CIERRA el visor; "Eliminar"
-        // solo se alcanza por su botón explícito (§3: Back ≠ destructivo).
         onDismissRequest = { viewModel.onAction(OperationAction.CloseComprobante) },
         content = {
             Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
                 AqText(formatDate(receipt.createdAt), size = AqType.Label, color = AqColor.TextSecondary)
                 AqText(AppStrings.Origen + receiptProvenanceLabel(receipt.provenance), size = AqType.Label, color = AqColor.TextSecondary)
-                // estado de sincronización del comprobante, con texto.
                 ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
                 when {
-                    state.isLoadingComprobante -> AqSkeleton(lines = 3)
+                    state.isLoadingComprobante -> {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+                        ) {
+                            CqCircularLoaderPlaceholder()
+                        }
+                    }
                     bytes != null -> {
                         ComprobantePreview(bytes, receipt.mimeType)
-                        AqSecondaryButton(
+                        AqButton(
                             label = AppStrings.Compartir,
-                            onClick = { shareComprobante(bytes, receipt.extension ?: "bin", receipt.mimeType) },
+                            onClick = { shareComprobante(bytes, receipt.extension.orEmpty("bin"), receipt.mimeType) },
+                            variant = AqButtonVariant.Text,
                         )
                     }
-                    else -> AqText(AppStrings.NoSePudoAbrirEl, size = AqType.Label, color = AqColor.TextSecondary)
                 }
             }
         },
+    )
+}
+
+@Composable
+private fun CqCircularLoaderPlaceholder() {
+    com.agendaqr.core.ui.components.AqCircularLoader(
+        loaderSize = com.agendaqr.core.ui.theme.AqSize.Md,
+        contentDescription = null,
     )
 }

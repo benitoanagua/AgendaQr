@@ -1,36 +1,38 @@
 package com.agendaqr.destinations.presentation
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AqBottomAction
-import com.agendaqr.core.ui.components.ComprobanteThumbnail
+import com.agendaqr.core.ui.components.AqButton
+import com.agendaqr.core.ui.components.AqButtonSize
+import com.agendaqr.core.ui.components.AqButtonVariant
 import com.agendaqr.core.ui.components.AqCheckbox
+import com.agendaqr.core.ui.components.ComprobanteThumbnail
+import com.agendaqr.core.ui.components.AqEmptyPlaceholder
 import com.agendaqr.core.ui.components.AqHairline
-import com.agendaqr.core.ui.components.AqMoonDialog
-import com.agendaqr.core.ui.components.AqDialogList
-import com.agendaqr.core.ui.components.AqEmptyState
+import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
-import com.agendaqr.core.ui.components.AqMoonListBody
-import com.agendaqr.core.ui.components.AqMoonListRow
-import com.agendaqr.core.ui.components.AqMoonSelectionBar
-import com.agendaqr.core.ui.components.AqScreenScaffold
-import com.agendaqr.core.ui.components.AqSnackbarHost
+import com.agendaqr.core.ui.components.AqMenuItem
+import com.agendaqr.core.ui.components.AqModal
+import com.agendaqr.core.ui.components.AqScreen
+import com.agendaqr.core.ui.components.AqSelectionToolbar
 import com.agendaqr.core.ui.components.AqText
-import com.agendaqr.core.ui.components.AqTextAction
-import com.agendaqr.core.ui.components.AqTopBar
-import com.agendaqr.core.ui.components.AqMoonTonalTag
+import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.destinations.domain.Comprobante
 import com.agendaqr.destinations.domain.ReceiptMatchKind
@@ -40,12 +42,11 @@ import com.agendaqr.destinations.data.SyncResource
  * S07 — Bandeja de comprobantes sin asociar (`OperationRoute.Unassociated`).
  *
  * Contrato congelado (docs/04-ux, inbox): acción primaria `—`, sin gestos
- * declarados, componentes `AqScreenScaffold`, `AqMoonListRow`, `AqEmptyState`
- * y `AqDialogList`. La fila entera es tocable y abre el flujo de
- * asociación; «Crear nueva actividad con esto» es acción secundaria de
- * texto dentro de la celda. Todas las filas forman un único Cell-group
- * (spec §12). El chevron añade la affordance de «fila tocable» sin alterar el
- * contrato de navegación (no cambia ruta ni back stack).
+ * declarados. Ahora construido exclusivamente con componentes Moon:
+ * [AqScreen] (scaffold), [AqAppBar] (vía título/atrás de [AqScreen]),
+ * [AqSelectionToolbar] (modo selección G3), [AqMenuItem] (filas),
+ * [AqEmptyPlaceholder] (vacío), [AqToastHost] (toasts), [AqModal] (diálogos)
+ * y [AqButton] (acciones). Sin símbolos legacy ni wrappers `Aq*`.
  */
 @Composable
 internal fun UnassociatedScreen(
@@ -59,13 +60,18 @@ internal fun UnassociatedScreen(
     var selectedReceiptIds by rememberSaveable { mutableStateOf(setOf<String>()) }
     var confirmarEliminarRecibo by remember { mutableStateOf(false) }
     val selectionMode = selectedReceiptIds.isNotEmpty()
+    val toastHost = appHosts?.toastHost
+
     // V1.4 (§12): bandeja con título y flecha atrás en la barra superior
     // (no es destino raíz: no lleva navegación inferior).
-    AqScreenScaffold(
-        topBar = {
-            if (selectionMode) {
+    AqScreen(
+        title = AppStrings.ComprobantesSinAsociar,
+        onBack = { viewModel.onAction(OperationAction.Back) },
+        backLabel = AppStrings.Volver,
+        topBar = if (selectionMode) {
+            {
                 val selectAll = state.unassociated.isNotEmpty() && selectedReceiptIds.size == state.unassociated.size
-                AqMoonSelectionBar(
+                AqSelectionToolbar(
                     closeLabel = AppStrings.CerrarSeleccion,
                     selectAllLabel = if (selectAll) AppStrings.SeleccionarNinguno else AppStrings.SeleccionarTodo,
                     selectedCountLabel = "${selectedReceiptIds.size} ${AppStrings.Seleccionados}",
@@ -77,103 +83,118 @@ internal fun UnassociatedScreen(
                     },
                     onClose = { selectedReceiptIds = emptySet() },
                 )
-            } else {
-                AqTopBar(
-                    title = AppStrings.ComprobantesSinAsociar,
-                    onBack = { viewModel.onAction(OperationAction.Back) },
-                    backLabel = AppStrings.Volver,
-                )
             }
+        } else {
+            null
         },
-        snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
-        statusContent = appHosts?.status,
+        // Acción principal fija inferior (dock): respeta navigationBars + IME.
         bottomAction = if (selectionMode) {
             {
-                AqBottomAction(
-                    label = AppStrings.EliminarComprobante + " (${selectedReceiptIds.size})",
+                AqButton(
+                    label = AppStrings.EliminarComprobante + " (" + selectedReceiptIds.size + ")",
                     onClick = { confirmarEliminarRecibo = true },
                     enabled = selectedReceiptIds.isNotEmpty(),
+                    variant = AqButtonVariant.Danger,
+                    size = AqButtonSize.Large,
                 )
             }
         } else {
             null
         },
+        statusContent = appHosts?.status,
+        toastHost = toastHost?.let { host -> { AqToastHost(host) } },
     ) {
         if (state.unassociated.isEmpty()) {
-            AqEmptyState(icon = AqIcons.Inbox, title = AppStrings.noUnassociatedReceipts)
+            AqEmptyPlaceholder(
+                icon = AqIcons.Inbox,
+                title = AppStrings.noUnassociatedReceipts,
+            )
         } else {
             // Un único Cell-group (spec §12: las tarjetas no envuelven cada
             // fila). La fila entera abre la asociación; «Crear nueva
-            // actividad con esto» es la acción de texto de la celda, sin
-            // botón tonal por fila.
-            AqMoonListBody(modifier = Modifier.fillMaxWidth().weight(1f)) {
-                LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                    itemsIndexed(state.unassociated, key = { _, it -> it.id }) { index, receipt ->
-                        val isLast = index == state.unassociated.lastIndex
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            AqMoonListRow(
-                                title = receipt.file.takeIf { it.isNotBlank() } ?: AppStrings.ElementoImportado,
-                                subtitle = formatDate(receipt.createdAt),
-                                onClick = {
-                                    if (selectionMode) {
-                                        selectedReceiptIds = if (selectedReceiptIds.contains(receipt.id)) {
-                                            selectedReceiptIds - receipt.id
-                                        } else {
-                                            selectedReceiptIds + receipt.id
-                                        }
+            // actividad con esto» es la acción de texto de la celda.
+            LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
+                itemsIndexed(state.unassociated, key = { _, it -> it.id }) { index, receipt ->
+                    val isLast = index == state.unassociated.lastIndex
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        AqMenuItem(
+                            title = receipt.file.takeIf { it.isNotBlank() } ?: AppStrings.ElementoImportado,
+                            subtitle = formatDate(receipt.createdAt),
+                            onClick = {
+                                if (selectionMode) {
+                                    selectedReceiptIds = if (selectedReceiptIds.contains(receipt.id)) {
+                                        selectedReceiptIds - receipt.id
                                     } else {
-                                        selectedReceipt = receipt
+                                        selectedReceiptIds + receipt.id
                                     }
-                                },
-                                leading = {
-                                    if (selectionMode) {
-                                        AqCheckbox(
-                                            label = "",
-                                            checked = selectedReceiptIds.contains(receipt.id),
-                                            onCheckedChange = { checked ->
-                                                selectedReceiptIds = if (checked) {
-                                                    selectedReceiptIds + receipt.id
-                                                } else {
-                                                    selectedReceiptIds - receipt.id
-                                                }
-                                            },
-                                        )
-                                    } else {
-                                        ComprobanteThumbnail(
-                                            file = receipt.file,
-                                            mimeType = receipt.mimeType,
-                                            contentDescription = if (receipt.mimeType?.contains("pdf", ignoreCase = true) == true) {
-                                                AppStrings.PdfAdjuntoSinVistaPrevia
+                                } else {
+                                    selectedReceipt = receipt
+                                }
+                            },
+                            leading = {
+                                if (selectionMode) {
+                                    AqCheckbox(
+                                        label = "",
+                                        checked = selectedReceiptIds.contains(receipt.id),
+                                        onCheckedChange = { checked ->
+                                            selectedReceiptIds = if (checked) {
+                                                selectedReceiptIds + receipt.id
                                             } else {
-                                                AppStrings.VistaPreviaNoDisponible
-                                            },
+                                                selectedReceiptIds - receipt.id
+                                            }
+                                        },
+                                    )
+                                } else {
+                                    ComprobanteThumbnail(
+                                        file = receipt.file,
+                                        mimeType = receipt.mimeType,
+                                        contentDescription = if (receipt.mimeType?.contains("pdf", ignoreCase = true) == true) {
+                                            AppStrings.PdfAdjuntoSinVistaPrevia
+                                        } else {
+                                            AppStrings.VistaPreviaNoDisponible
+                                        },
+                                    )
+                                }
+                            },
+                            trailing = {
+                                Row(
+                                    modifier = Modifier,
+                                    horizontalArrangement = Arrangement.spacedBy(AqSize.Xs),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    if (!selectionMode) {
+                                        AqIcon(
+                                            imageVector = AqIcons.ChevronRight,
+                                            contentDescription = null,
+                                            size = AqMetrics.IconSizeCompact,
+                                            tint = AqColor.TextTertiary,
                                         )
                                     }
-                                },
-                                meta = {
                                     ElementSyncBadge(syncLookup.status(SyncResource.COMPROBANTE, receipt.id))
+                                }
+                            },
+                            titleMaxLines = 2,
+                            showDivider = selectionMode && !isLast,
+                        )
+                        if (!selectionMode) {
+                            AqButton(
+                                label = AppStrings.createOperationFromThis,
+                                onClick = {
+                                    viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
                                 },
-                                titleMaxLines = 2,
-                                showChevron = true,
-                                showDivider = selectionMode && !isLast,
+                                variant = AqButtonVariant.Text,
+                                icon = AqIcons.Add,
+                                size = AqButtonSize.Small,
+                                modifier = Modifier.padding(start = AqSpacing.Sm, bottom = AqSpacing.Xs),
                             )
-                            if (!selectionMode) {
-                                AqTextAction(
-                                    label = AppStrings.createOperationFromThis,
-                                    icon = AqIcons.Add,
-                                    onClick = {
-                                        viewModel.onAction(OperationAction.CreateOperationFromReceipt(receipt.id))
-                                    },
-                                    modifier = Modifier.padding(start = AqSpacing.Sm, bottom = AqSpacing.Xs),
-                                )
-                                if (!isLast) AqHairline()
-                            }
+                            if (!isLast) AqHairline()
                         }
                     }
                 }
             }
         }
     }
+
     selectedReceipt?.let { receipt ->
         val suggestion = viewModel.receiptSuggestion(receipt.id)
         val suggestedOperations = suggestion?.operationIds.orEmpty()
@@ -181,20 +202,22 @@ internal fun UnassociatedScreen(
         val candidateOperations = suggestedOperations.ifEmpty { state.operations }
         // Selector de operación: elige de la lista en el propio diálogo
         // (la acción principal es elegir; Cancelar y Back son salidas).
-        AqMoonDialog(
+        AqModal(
+            show = true,
             title = when (suggestion?.kind) {
                 ReceiptMatchKind.SINGLE -> AppStrings.singleMatchTitle
                 ReceiptMatchKind.MULTIPLE -> AppStrings.ACualCorresponde
                 ReceiptMatchKind.NONE, null -> AppStrings.noMatchTitle
             },
-            confirmLabel = AppStrings.Cancelar,
-            confirmAsText = true,
-            onConfirm = { selectedReceipt = null },
-            onDismiss = { selectedReceipt = null },
+            dismissLabel = AppStrings.Cancelar,
+            onDismissRequest = { selectedReceipt = null },
             content = {
                 // Con muchas operaciones candidatas la lista queda
                 // alcanzable por scroll (accesibilidad).
-                AqDialogList {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+                ) {
                     when {
                         suggestion == null -> AqText(AppStrings.analyzingReceipt, color = AqColor.TextSecondary)
                         suggestion.kind == ReceiptMatchKind.NONE ->
@@ -224,10 +247,10 @@ internal fun UnassociatedScreen(
     // G3: confirmación de eliminación por lote en la bandeja.
     if (confirmarEliminarRecibo) {
         val plural = if (selectedReceiptIds.size == 1) AppStrings.ComprobanteSingular else AppStrings.ComprobantesPlural
-        AqMoonDialog(
+        AqModal(
+            show = true,
             title = AppStrings.EliminarComprobante,
-            destructive = true,
-            message = AppStrings.irreversibleActionWarning + "\n" + selectedReceiptIds.size + " " + plural,
+            dismissLabel = AppStrings.Cancelar,
             confirmLabel = AppStrings.Eliminar,
             onConfirm = {
                 selectedReceiptIds.toList().forEach { id ->
@@ -236,8 +259,14 @@ internal fun UnassociatedScreen(
                 selectedReceiptIds = emptySet()
                 confirmarEliminarRecibo = false
             },
-            dismissLabel = AppStrings.Cancelar,
-            onDismiss = { confirmarEliminarRecibo = false },
+            destructive = true,
+            onDismissRequest = { confirmarEliminarRecibo = false },
+            content = {
+                AqText(
+                    text = AppStrings.irreversibleActionWarning + "\n" + selectedReceiptIds.size + " " + plural,
+                    color = AqColor.TextSecondary,
+                )
+            },
         )
     }
 }
@@ -250,7 +279,7 @@ private fun CandidateOperationRows(
     onPick: (String) -> Unit,
 ) {
     operations.forEachIndexed { index, operation ->
-        AqMoonListRow(
+        AqMenuItem(
             title = operationTypeLabel(operation.type) + " · " + formatDate(operation.occurredAt),
             subtitle = operation.amount.orEmpty().ifBlank { AppStrings.SinMontoCorto },
             onClick = { onPick(operation.id) },

@@ -141,6 +141,10 @@ fun AqButton(
     contentColor: Color? = null,
     fontWeight: FontWeight? = null,
     contentPadding: PaddingValues? = null,
+    /** Cuando es verdadero y hay [icon], solo se pinta el glifo (centrado)
+     *  y se oculta el texto; la etiqueta sigue siendo la señal accesible.
+     *  Útil para acciones de barra superior solo-icono (atrás, "…"). */
+    iconOnly: Boolean = false,
 ) {
     AqButtonImpl(
         label = label,
@@ -156,6 +160,7 @@ fun AqButton(
         fontWeight = fontWeight,
         contentPadding = contentPadding,
         hapticFeedback = false,
+        iconOnly = iconOnly,
     )
 }
 
@@ -174,6 +179,7 @@ private fun AqButtonImpl(
     fontWeight: FontWeight?,
     contentPadding: PaddingValues?,
     hapticFeedback: Boolean,
+    iconOnly: Boolean = false,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
@@ -248,12 +254,14 @@ private fun AqButtonImpl(
                         tint = foreground,
                     )
                 }
-                Text(
-                    text = label,
-                    style = labelStyle,
-                    fontWeight = fontWeight ?: AqWeight.SemiBold,
-                    color = foreground,
-                )
+                if (!iconOnly) {
+                    Text(
+                        text = label,
+                        style = labelStyle,
+                        fontWeight = fontWeight ?: AqWeight.SemiBold,
+                        color = foreground,
+                    )
+                }
             }
             if (isLoading) {
                 CircularProgressIndicator(

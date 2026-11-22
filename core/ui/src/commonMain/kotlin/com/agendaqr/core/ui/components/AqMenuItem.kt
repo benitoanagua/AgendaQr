@@ -56,6 +56,8 @@ fun AqMenuItem(
     selected: Boolean = false,
     enabled: Boolean = true,
     showDivider: Boolean = false,
+    /** Líneas máximas del título (por defecto 1). */
+    titleMaxLines: Int = 1,
     modifier: Modifier = Modifier,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -109,7 +111,7 @@ fun AqMenuItem(
                     style = AqTextStyles.RowTitle,
                     color = contentColor,
                     modifier = Modifier.weight(1f, fill = false),
-                    maxLines = 1,
+                    maxLines = titleMaxLines,
                 )
                 subtitle?.let {
                     Text(

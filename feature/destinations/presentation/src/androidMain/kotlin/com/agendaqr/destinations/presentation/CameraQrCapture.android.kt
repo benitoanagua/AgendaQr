@@ -41,13 +41,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
-import com.agendaqr.core.ui.components.AqMoonStatusBanner
-import com.agendaqr.core.ui.components.AqFeedbackEvent
-import com.agendaqr.core.ui.components.AqMoonIconBadge
-import com.agendaqr.core.ui.components.AqMoonListRow
+import com.agendaqr.core.ui.components.AqAlert
+import com.agendaqr.core.ui.components.AqToast
+import com.agendaqr.core.ui.components.AqIcon
+import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqScannerFrame
 import com.agendaqr.core.ui.components.AqText
-import com.agendaqr.core.ui.components.AqSecondaryButton
+import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
@@ -82,7 +82,7 @@ internal fun CameraQrCaptureOverlay(
     // feedback de lectura exitosa — token por EVENTO
     // (una lectura = un anuncio; sin repetición en recomposiciones).
     var detectionToken by remember { mutableStateOf<Any?>(null) }
-    AqFeedbackEvent(event = detectionToken, message = AppStrings.CodigoQrDetectado)
+    AqToast(event = detectionToken, message = AppStrings.CodigoQrDetectado)
 
     DisposableEffect(Unit) {
         onDispose { analysisExecutor.shutdown() }
@@ -155,7 +155,7 @@ internal fun CameraQrCaptureOverlay(
                         .padding(AqSpacing.Lg),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    AqSecondaryButton(label = AppStrings.Volver, onClick = onDismiss)
+                    AqButton(label = AppStrings.Volver, onClick = onDismiss)
                 }
             }
         }
@@ -322,7 +322,7 @@ internal fun CameraQrEntry(
                     permissionLauncher.launch(Manifest.permission.CAMERA)
                 }
             }
-            AqMoonStatusBanner(
+            AqAlert(
                 title = error.what,
                 message = error.dataStatus,
                 tone = com.agendaqr.core.ui.components.AqTone.Danger,
@@ -338,13 +338,13 @@ internal fun CameraQrEntry(
             if (granted) onOpen() else permissionLauncher.launch(Manifest.permission.CAMERA)
         }
         if (cellPresentation) {
-            AqMoonListRow(
+            AqMenuItem(
                 title = AppStrings.Camara,
                 subtitle = AppStrings.PermisoCamaraContexto,
                 subtitleMaxLines = Int.MAX_VALUE,
                 onClick = requestCamera,
                 leading = {
-                    AqMoonIconBadge(
+                    AqIcon(
                         icon = com.agendaqr.core.ui.components.AqIcons.Camera,
                         tone = com.agendaqr.core.ui.components.AqTone.Info,
                     )
@@ -358,7 +358,7 @@ internal fun CameraQrEntry(
                 size = AqType.Caption,
                 color = AqColor.TextSecondary,
             )
-            AqSecondaryButton(
+            AqButton(
                 label = AppStrings.Camara,
                 icon = com.agendaqr.core.ui.components.AqIcons.Camera,
                 onClick = requestCamera,

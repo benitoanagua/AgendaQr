@@ -1,223 +1,172 @@
 package com.agendaqr.destinations.presentation
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
-import com.agendaqr.core.ui.components.*
-import com.agendaqr.core.ui.theme.*
+import com.agendaqr.core.ui.components.AqButton
+import com.agendaqr.core.ui.components.AqButtonVariant
+import com.agendaqr.core.ui.components.AqCheckbox
+import com.agendaqr.core.ui.components.AqEmptyPlaceholder
+import com.agendaqr.core.ui.components.AqIcon
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqMenuItem
+import com.agendaqr.core.ui.components.AqScreen
+import com.agendaqr.core.ui.components.AqSelectionToolbar
+import com.agendaqr.core.ui.components.AqSkeletonBlock
+import com.agendaqr.core.ui.components.AqTag
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.components.AqToastHost
+import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.destinations.domain.*
 
-/**
- * G4: nodo de la lista agrupada (mes / día / operación).
- * Permite iterar con `items()` sobre una única lista plana y renderizar
- * encabezados de mes y día como secciones, conservando la agrupación
- * visual (mes → día → operaciones).
- */
 private sealed class ListItem {
     data class Mes(val group: MonthlyGroup) : ListItem()
     data class Dia(val group: DailyGroup) : ListItem()
     data class Op(val operation: Operation) : ListItem()
 }
 
-/**
- * Fila de actividad dentro de la lista agrupada (G4). Función separada
- * para evitar anidación excesiva de lambdas.
- */
 @Composable
-private fun OperationRow(
-    operation: Operation,
+internal fun OperationListGrouped(
     state: OperationsUiState,
     viewModel: OperationsViewModel,
-    syncLookup: ElementSyncLookup,
-    selectedIds: Set<String>,
-    selectionMode: Boolean,
-    onToggleSelection: (String) -> Unit,
-    onDelete: (Operation) -> Unit,
+    appHosts: AppHosts? = null,
+    syncLookup: ElementSyncLookup = ElementSyncLookup.Empty,
+    onRetrySync: () -> Unit = {},
 ) {
-    val syncStatus = syncLookup.status(SyncResource.OPERATION, operation.id)
-    val amountText = operationAmountText(operation)
-    val amountColor = if (operation.type == OperationType.COBRO) {
-        AqColor.Success
-    } else {
-        AqColor.Danger
-    }
-    val contextName = state.contexts.firstOrNull { it.id == operation.contextId }?.name
-    val showContextOrSync = contextName != null || syncStatus != ElementSyncStatus.Synced
+    val operations = viewModel.visibleOperations()
+    var visibleCount by remember(operations.size) { mutableStateOf(50) }
+    var selectedIds by rememberSaveable { mutableStateOf(setOf<String>()) }
+    var confirmarEliminarLote by remember { mutableStateOf(false) }
+    val selectionMode = selectedIds.isNotEmpty()
+    val toastHost = appHosts?.toastHost
 
-    val swipeActions = listOf(
-        AqSwipeAction(
-            label = AppStrings.Editar,
-            icon = AqIcons.Edit,
-            backgroundColor = AqColor.EmphasisFill,
-            contentColor = AqColor.InverseOnSurface,
-            onAction = { viewModel.onAction(OperationAction.Edit(operation.id)) },
-        ),
-        AqSwipeAction(
-            label = AppStrings.Eliminar,
-            icon = AqIcons.Trash,
-            backgroundColor = AqColor.DangerFill,
-            contentColor = AqColor.InverseOnSurface,
-            onAction = { onDelete(operation) },
-        ),
-    )
-
-    AqSwipeActions(actions = swipeActions, enabled = !selectionMode) {
-        AqMoonListRow(
-            modifier = Modifier.fillMaxWidth(),
-            title = operationTitle(operation),
-            subtitle = operation.concept?.takeIf { it.isNotBlank() },
-            endMeta = formatDate(operation.occurredAt),
-            leading = {
-                if (selectionMode) {
-                    AqCheckbox(
-                        label = "",
-                        checked = selectedIds.contains(operation.id),
-                        onCheckedChange = { checked ->
-                            onToggleSelection(operation.id)
+    AqScreen(
+        title = AppStrings.Operaciones,
+        topBar = if (selectionMode) {
+            {
+                val selectAll = operations.isNotEmpty() && selectedIds.size == operations.size
+                AqSelectionToolbar(
+                    closeLabel = AppStrings.CerrarSeleccion,
+                    selectAllLabel = if (selectAll) AppStrings.SeleccionarNinguno else AppStrings.SeleccionarTodo,
+                    selectedCountLabel = "${selectedIds.size} ${AppStrings.Seleccionados}",
+                    selectedCount = selectedIds.size,
+                    totalCount = operations.size,
+                    selectAllChecked = selectAll,
+                    onSelectAll = {
+                        selectedIds = if (selectAll) emptySet() else operations.map { it.id }.toSet()
+                    },
+                    onClose = { selectedIds = emptySet() },
+                )
+            }
+        } else {
+            null
+        },
+        bottomAction = if (selectionMode) {
+            {
+                AqButton(
+                    label = AppStrings.EliminarOperacion + " (${selectedIds.size})",
+                    onClick = { confirmarEliminarLote = true },
+                    enabled = selectedIds.isNotEmpty(),
+                    variant = AqButtonVariant.Danger,
+                )
+            }
+        } else {
+            null
+        },
+        statusContent = appHosts?.status,
+        toastHost = toastHost?.let { host -> { AqToastHost(host) } },
+    ) {
+        if (state.isLoading) {
+            AqSkeletonBlock(lines = 4)
+        } else if (operations.isEmpty()) {
+            AqEmptyPlaceholder(
+                icon = AqIcons.Register,
+                title = AppStrings.AunNoHayOperaciones,
+            )
+        } else {
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                operations.take(visibleCount).forEachIndexed { index, operation ->
+                    AqMenuItem(
+                        title = listOfNotNull(
+                            when (operation.type) {
+                                OperationType.PAGO -> AppStrings.Pago
+                                OperationType.COBRO -> AppStrings.Cobro
+                            },
+                            operation.amount,
+                            operation.currency,
+                            operation.personOrEntity,
+                        ).joinToString(" · "),
+                        subtitle = formatDate(operation.occurredAt),
+                        onClick = { viewModel.onAction(OperationAction.Open(operation.id)) },
+                        leading = {
+                            AqCheckbox(
+                                label = "",
+                                checked = selectedIds.contains(operation.id),
+                                onCheckedChange = { checked ->
+                                    selectedIds = if (checked) selectedIds + operation.id else selectedIds - operation.id
+                                },
+                            )
                         },
+                        trailing = {
+                            AqIcon(
+                                imageVector = AqIcons.Attachment,
+                                contentDescription = null,
+                                tint = AqColor.TextSecondary,
+                            )
+                        },
+                        showDivider = index < operations.take(visibleCount).lastIndex,
                     )
-                } else {
-                    AqMoonIconBadge(
-                        icon = operationTypeIcon(operation.type),
-                        tone = operationTypeTone(operation.type),
-                    )
-                }
-            },
-            trailing = {
-                amountText?.let {
-                    AqText(
-                        it,
-                        size = AqType.SectionHeader,
-                        fontWeight = AqWeight.SemiBold,
-                        color = amountColor,
-                    )
-                }
-            },
-            meta = {
-                Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
-                    ) {
-                        AqIcon(
-                            imageVector = AqIcons.Clock,
-                            contentDescription = null,
-                            size = AqMetrics.IconSizeCompact,
-                            tint = AqColor.TextTertiary,
-                        )
-                        AqText(
-                            AppStrings.RegPrefijo + formatTime(operation.createdAt),
-                            color = AqColor.TextTertiary,
-                            size = AqType.Caption,
-                        )
-                    }
-                    if (showContextOrSync) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
-                            contextName?.let {
-                                AqMoonTonalTag(text = it)
-                            }
-                            if (syncStatus != ElementSyncStatus.Synced) {
-                                AqMoonTonalTag(text = syncStatus.label))
-                            }
-                        }
+                    if (index < operations.take(visibleCount).lastIndex) {
+                        AqHairline()
                     }
                 }
-            },
-            onClick = {
-                if (selectionMode) {
-                    onToggleSelection(operation.id)
-                } else {
-                    viewModel.onAction(OperationAction.Open(operation.id))
+            }
+        }
+    }
+
+    if (confirmarEliminarLote) {
+        val plural = if (selectedIds.size == 1) AppStrings.OperacionSingular else AppStrings.OperacionesPlural
+        AqModal(
+            title = AppStrings.EliminarOperacion,
+            dismissLabel = AppStrings.Cancelar,
+            confirmLabel = AppStrings.Eliminar,
+            destructive = true,
+            onConfirm = {
+                selectedIds.toList().forEach { id ->
+                    viewModel.onAction(OperationAction.Delete(id))
                 }
+                selectedIds = emptySet()
+                confirmarEliminarLote = false
             },
-            showDivider = true,
+            onDismissRequest = { confirmarEliminarLote = false },
+            content = {
+                AqText(
+                    text = AppStrings.irreversibleActionWarning + "\n" + selectedIds.size + " " + plural,
+                    color = AqColor.TextSecondary,
+                )
+            },
         )
     }
 }
 
-/**
- * G4: lista agrupada por mes → día con encabezados de sección y balance
- * neto mensual por moneda, virtualizada con LazyColumn (N03).
- *
- * Renderiza su propio `LazyColumn`; el llamador la coloca dentro del
- * contenedor de scroll de la pantalla (p. ej. `AqPullToRefresh` +
- * `AqMoonListBody`).
- */
 @Composable
-fun OperationListGrouped(
-    monthlyGroups: List<MonthlyGroup>,
+internal fun OperationListScreen(
     state: OperationsUiState,
     viewModel: OperationsViewModel,
-    syncLookup: ElementSyncLookup,
-    selectedIds: Set<String>,
-    selectionMode: Boolean,
-    onToggleSelection: (String) -> Unit,
-    onDelete: (Operation) -> Unit,
+    navChrome: AqNavChromeState? = null,
+    appHosts: AppHosts? = null,
 ) {
-    val flatItems: List<ListItem> = buildList {
-        monthlyGroups.forEach { monthGroup ->
-            add(ListItem.Mes(monthGroup))
-            monthGroup.days.forEach { dayGroup ->
-                add(ListItem.Dia(dayGroup))
-                dayGroup.operations.forEach { operation -> add(ListItem.Op(operation)) }
-            }
-        }
-    }
-
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        items(flatItems, key = {
-            when (it) {
-                is ListItem.Mes -> "mes-" + it.group.monthKey
-                is ListItem.Dia -> "dia-" + it.group.dayKey
-                is ListItem.Op -> "op-" + it.operation.id
-            }
-        }) { item ->
-            when (item) {
-                is ListItem.Mes -> {
-                    val balanceText = item.group.balanceByCurrency.map { (currency, value) ->
-                        currency + " " + formatBalance(value)
-                    }.joinToString("  ")
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        AqSectionHeader(
-                            text = item.group.monthLabel,
-                            inset = false,
-                            modifier = Modifier.weight(1f),
-                        )
-                        balanceText.takeIf { it.isNotBlank() }?.let { balance ->
-                            AqMoonTonalTag(text = balance)
-                        }
-                    }
-                }
-                is ListItem.Dia -> {
-                    AqSectionHeader(
-                        text = item.group.dayLabel,
-                        inset = false,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-                is ListItem.Op -> {
-                    OperationRow(
-                        operation = item.operation,
-                        state = state,
-                        viewModel = viewModel,
-                        syncLookup = syncLookup,
-                        selectedIds = selectedIds,
-                        selectionMode = selectionMode,
-                        onToggleSelection = onToggleSelection,
-                        onDelete = onDelete,
-                    )
-                }
-            }
-        }
-    }
+    OperationListGrouped(state = state, viewModel = viewModel, appHosts = appHosts)
 }
