@@ -2,7 +2,6 @@ package com.agendaqr.core.ui.theme
 
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Easing
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
@@ -539,18 +538,6 @@ object AqRadius {
     val Round = 9999.dp
 }
 
-object AqShapes {
-    val ExtraSmall = RoundedCornerShape(AqRadius.ExtraSmall)
-    val Small = RoundedCornerShape(AqRadius.Small)
-    val Medium = RoundedCornerShape(AqRadius.Medium)
-    val Large = RoundedCornerShape(AqRadius.Large)
-    val ExtraLarge = RoundedCornerShape(AqRadius.ExtraLarge)
-    val GridIcon = RoundedCornerShape(AqRadius.GridIcon)
-    val Pill = RoundedCornerShape(AqRadius.Round)
-    /** D-04: hoja inferior modular con el radio publicado ExtraLarge (16 dp). */
-    val BottomSheet = RoundedCornerShape(AqRadius.ExtraLarge)
-}
-
 /**
  * Escala de tamaños de la capa UX (ADR-0039). Transcripción de `MoonSizes.sizes`
  * (`moon_design` 1.1.0, `lib/src/theme/tokens/sizes.dart`). Los componentes
@@ -862,6 +849,18 @@ object AqMotion {
     const val DurationShortMs = 150
     const val DurationMediumMs = 200
     const val DurationLongMs = 250
+    /**
+     * Duración por defecto de [AqToast].
+     *
+     * Moon (`moon_design` 1.1.0, `widgets/toast`) solo especifica el
+     * recorrido entre toasts (64 dp) y el gap de 200 ms entre apariciones;
+     * no define una duración de vida. El valor de 4 000 ms es una decisión
+     * de producto (registro en ADR-0041 / catálogo §2), NO una transcripción
+     * de Moon. El valor anterior (`DurationMediumMs * 1000` = 200 000 ms,
+     * ≈ 3,3 min) era un defecto: un toast no debe permanecer visible tanto
+     * tiempo.
+     */
+    const val ToastDurationMs = 4000L
     const val EasingControlX1 = 0.25f
     const val EasingControlY1 = 0.1f
     const val EasingControlX2 = 0.25f

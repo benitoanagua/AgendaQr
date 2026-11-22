@@ -18,6 +18,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
@@ -27,11 +32,14 @@ import com.agendaqr.core.ui.theme.LocalAqColorScheme
 
 /**
  * Modal sobre [MoonModal] (`moon_design` 1.1.0,
- * `lib/src/widgets/modal`). Superficie centrada con scrim, radio squircle
- * grande y cierre al pulsar el scrim o el botón de cierre.
+ * `lib/src/widgets/modal`). Implementado sobre el diálogo de plataforma
+ * (`androidx.compose.ui.window.Dialog`) para garantizar: z-order por encima
+ * de las barras del sistema, cierre con back / predictive back mediante
+ * [onDismissRequest], semántica de diálogo (`paneTitle`) y scrim clicable.
  *
- * [title] y [content] los aporta el llamador (copy). [onDismissRequest] se
- * invoca al cerrar.
+ * El foco se atrapa dentro del modal: al mostrarse se solicita el foco en
+ * su superficie de contenido y el scrim bloquea la interacción con lo que
+ * queda detrás. Todo el copy llega del llamador.
  */
 @Composable
 fun AqModal(
@@ -44,42 +52,47 @@ fun AqModal(
     content: @Composable () -> Unit,
 ) {
     if (!show) return
-    val scheme = LocalAqColorScheme.current
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(scheme.scrim),
-        contentAlignment = Alignment.Center,
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
-        // Cierre al pulsar el scrim (fuera de la superficie modal).
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
-                .clickable(onClick = onDismissRequest),
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .padding(AqSize.Lg)
-                .background(scheme.surface, AqSquircles.SurfaceLg)
-                .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
+                .background(LocalAqColorScheme.current.scrim)
+                .clickable(onClick = onDismissRequest)
+                .testTag("aq-modal-scrim"),
+            contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = title,
-                style = AqTextStyles.HeadingLg,
-                color = scheme.textPrimary,
-            )
-            content()
-            Row(
+            // Cierre al pulsar el scrim (fuera de la superficie modal).
+            Column(
                 modifier = Modifier
-                    .padding(vertical = AqSize.Xs),
-                horizontalArrangement = Arrangement.End,
+                    .fillMaxWidth(0.9f)
+                    .padding(AqSize.Lg)
+                    .background(LocalAqColorScheme.current.surface, AqSquircles.SurfaceLg)
+                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                    .testTag("aq-modal-pane")
+                    .semantics { paneTitle = title },
             ) {
-                AqTextAction(
-                    label = dismissLabel,
-                    onClick = onDismissRequest,
-                    enabled = true,
+                Text(
+                    text = title,
+                    style = AqTextStyles.HeadingLg,
+                    color = LocalAqColorScheme.current.textPrimary,
                 )
+                content()
+                Row(
+                    modifier = Modifier
+                        .padding(vertical = AqSize.Xs)
+                        .semantics { paneTitle = title },
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    AqButton(
+                        label = dismissLabel,
+                        onClick = onDismissRequest,
+                        variant = AqButtonVariant.Text,
+                        size = AqButtonSize.Small,
+                    )
+                }
             }
         }
     }
@@ -88,7 +101,8 @@ fun AqModal(
 /**
  * Cajón lateral sobre [MoonDrawer] (`moon_design` 1.1.0,
  * `lib/src/widgets/drawer`). Superficie lateral (izquierda por defecto) con
- * scrim y cierre al pulsar el scrim.
+ * scrim y cierre al pulsar el scrim. Expone semántica de panel
+ * (`paneTitle`) y descarte al tocar el scrim.
  */
 @Composable
 fun AqDrawer(
@@ -101,11 +115,10 @@ fun AqDrawer(
     content: @Composable () -> Unit,
 ) {
     if (!show) return
-    val scheme = LocalAqColorScheme.current
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(scheme.scrim),
+            .background(LocalAqColorScheme.current.scrim),
         contentAlignment = Alignment.CenterStart,
     ) {
         // Cierre al pulsar el scrim (fuera del cajón).
@@ -118,23 +131,29 @@ fun AqDrawer(
             modifier = Modifier
                 .width(AqMetrics.NavRailWidth)
                 .fillMaxHeight()
-                .background(scheme.surface, AqSquircles.InteractiveMd),
+                .background(LocalAqColorScheme.current.surface, AqSquircles.InteractiveMd)
+                .semantics { paneTitle = title },
         ) {
             Text(
                 text = title,
                 style = AqTextStyles.HeadingLg,
-                color = scheme.textPrimary,
+                color = LocalAqColorScheme.current.textPrimary,
             )
             content()
             Row(
                 modifier = Modifier
-                    .padding(vertical = AqSize.Lg),
+                    .padding(vertical = AqSize.Lg)
+                    .semantics { paneTitle = title },
                 horizontalArrangement = Arrangement.End,
             ) {
-                AqTextAction(
+                AqButton(
                     label = dismissLabel,
                     onClick = onDismissRequest,
-                    enabled = true,
+                    variant = AqButtonVariant.Text,
+                    size = AqButtonSize.Small,
+                    modifier = Modifier
+                        .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                        .testTag("aq-modal-dismiss"),
                 )
             }
         }

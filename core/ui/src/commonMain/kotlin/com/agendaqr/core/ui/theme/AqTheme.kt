@@ -2,6 +2,7 @@ package com.agendaqr.core.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
@@ -108,11 +109,11 @@ fun AqTheme(
         MaterialTheme(
             typography = AqMaterialTypography.withAqFontFamily(AqType.FamilyUi),
             shapes = Shapes(
-                extraSmall = AqShapes.ExtraSmall,
-                small = AqShapes.Small,
-                medium = AqShapes.Medium,
-                large = AqShapes.Large,
-                extraLarge = AqShapes.ExtraLarge,
+                extraSmall = RoundedCornerShape(AqRadius.ExtraSmall),
+                small = RoundedCornerShape(AqRadius.Small),
+                medium = RoundedCornerShape(AqRadius.Medium),
+                large = RoundedCornerShape(AqRadius.Large),
+                extraLarge = RoundedCornerShape(AqRadius.ExtraLarge),
             ),
             colorScheme = scheme.asMaterialColorScheme(darkTheme),
         ) {

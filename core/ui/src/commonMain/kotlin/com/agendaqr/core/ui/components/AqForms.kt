@@ -35,7 +35,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.state.ToggleableState
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
-import com.agendaqr.core.ui.theme.AqShapes
+import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
@@ -114,8 +114,8 @@ fun AqSelect(
             modifier = Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                .background(AqColor.InputSurface, AqShapes.Medium)
-                .border(AqMetrics.Border, borderColor, AqShapes.Medium)
+                .background(AqColor.InputSurface, AqSquircles.InteractiveSm)
+                .border(AqMetrics.Border, borderColor, AqSquircles.InteractiveSm)
                 .selectable(
                     selected = false,
                     enabled = state.enabled,
@@ -597,9 +597,9 @@ private fun AqChip(
     }
     androidx.compose.foundation.layout.Box(
         modifier = Modifier
-            .clip(AqShapes.Medium)
-            .background(containerColor, AqShapes.Medium)
-            .border(AqMetrics.Border, borderColor, AqShapes.Medium)
+            .clip(AqSquircles.InteractiveSm)
+            .background(containerColor, AqSquircles.InteractiveSm)
+            .border(AqMetrics.Border, borderColor, AqSquircles.InteractiveSm)
             .selectable(
                 selected = selected,
                 enabled = option.enabled,

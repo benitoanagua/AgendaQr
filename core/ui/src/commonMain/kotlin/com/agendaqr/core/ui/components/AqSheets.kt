@@ -130,7 +130,7 @@ fun AqBottomSheet(
                             .background(AqColor.Divider, AqSquircles.SurfaceLg),
                     )
                 }
-                AqHeading(
+                AqText(
                     text = title,
                     size = com.agendaqr.core.ui.theme.AqType.Title,
                     modifier = Modifier.padding(horizontal = AqSpacing.Lg),
@@ -140,9 +140,10 @@ fun AqBottomSheet(
                     Box(modifier = Modifier.padding(horizontal = AqSpacing.Lg)) { content() }
                     Spacer(Modifier.height(AqSpacing.Lg))
                 }
-                AqTextAction(
+                AqButton(
                     label = dismissDescription,
                     onClick = onDismissRequest,
+                    variant = AqButtonVariant.Text,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = AqSpacing.Lg)

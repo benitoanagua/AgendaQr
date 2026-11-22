@@ -56,7 +56,7 @@ fun AqToast(
     onAction: (() -> Unit)? = null,
     onDismissRequest: (() -> Unit)? = null,
     icon: ImageVector? = null,
-    durationMs: Long = AqMotion.DurationMediumMs.toLong() * 1000,
+    durationMs: Long = AqMotion.ToastDurationMs.toLong(),
     modifier: Modifier = Modifier,
 ) {
     if (!show) return
