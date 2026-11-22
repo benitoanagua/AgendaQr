@@ -41,14 +41,12 @@ class AqSelectTest {
                         onOptionClick = { selectedIndex = it },
                         anchor = { },
                         content = {
+                            // El componente ya renderiza `options` como filas clickeables;
+                            // el slot `content` es adicional, no debe duplicar opciones.
                             Row {
                                 androidx.compose.material3.Text(
                                     text = "USD",
                                     modifier = androidx.compose.ui.Modifier.testTag("usd"),
-                                )
-                                androidx.compose.material3.Text(
-                                    text = "BOB",
-                                    modifier = androidx.compose.ui.Modifier.testTag("bob"),
                                 )
                             }
                         },
@@ -61,6 +59,6 @@ class AqSelectTest {
             .assertHeightIsAtLeast(48.dp)
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
             .performClick()
-        assertEquals(0, selectedIndex)
+        assertEquals(1, selectedIndex)
     }
 }

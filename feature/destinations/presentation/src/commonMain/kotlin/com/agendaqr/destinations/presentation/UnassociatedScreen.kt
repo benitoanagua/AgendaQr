@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -113,8 +111,8 @@ internal fun UnassociatedScreen(
             // Un único Cell-group (spec §12: las tarjetas no envuelven cada
             // fila). La fila entera abre la asociación; «Crear nueva
             // actividad con esto» es la acción de texto de la celda.
-            LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
-                itemsIndexed(state.unassociated, key = { _, it -> it.id }) { index, receipt ->
+            Column(modifier = Modifier.fillMaxWidth()) {
+                state.unassociated.forEachIndexed { index, receipt ->
                     val isLast = index == state.unassociated.lastIndex
                     Column(modifier = Modifier.fillMaxWidth()) {
                         AqMenuItem(

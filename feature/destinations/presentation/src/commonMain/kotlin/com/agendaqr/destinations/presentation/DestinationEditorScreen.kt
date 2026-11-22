@@ -2,23 +2,21 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqAlert
 import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqButtonVariant
-import com.agendaqr.core.ui.components.AqCheckbox
 import com.agendaqr.core.ui.components.AqEmptyPlaceholder
 import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqMenuItem
-import com.agendaqr.core.ui.components.AqModal
 import com.agendaqr.core.ui.components.AqScreen
 import com.agendaqr.core.ui.components.AqSectionTitle
 import com.agendaqr.core.ui.components.AqSwitch
@@ -26,25 +24,38 @@ import com.agendaqr.core.ui.components.AqTag
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextInput
 import com.agendaqr.core.ui.components.AqToastHost
+import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
-import com.agendaqr.destinations.domain.*
+import com.agendaqr.destinations.domain.Destination
+import com.agendaqr.destinations.domain.QrAsset
+import com.agendaqr.destinations.domain.nowMillis
+import com.agendaqr.destinations.presentation.UserFacingError
 
+/** Editor de destino (crear/editar). Guarda a través de [onSave] y expone
+ *  estados de carga/error. Todo el copy vive en [AppStrings]. */
 @Composable
-internal fun DestinationEditorScreen(
-    state: DestinationsUiState,
-    viewModel: DestinationsViewModel,
+fun DestinationEditorScreen(
+    existing: Destination?,
     appHosts: AppHosts? = null,
-    destination: Destination? = null,
+    onSave: () -> Unit,
+    onImportMany: () -> Unit = {},
     onBack: () -> Unit = {},
+    isSaving: Boolean = false,
+    error: UserFacingError? = null,
+    onClearError: () -> Unit = {},
+    onRetryError: () -> Unit = {},
+    onCreateContext: (String, String?) -> Unit = { _, _ -> },
+    justCreatedContextId: String? = null,
 ) {
-    val isNew = destination == null
-    val name by rememberSaveable { mutableStateOf(destination?.name.orEmpty()) }
-    val note by rememberSaveable { mutableStateOf(destination?.note.orEmpty()) }
-    val contextId by rememberSaveable { mutableStateOf(destination?.contextId) }
-    val favorite by rememberSaveable { mutableStateOf(destination?.favorite ?: false) }
+    val isNew = existing == null
+    val name = existing?.name.orEmpty()
+    val note = existing?.note.orEmpty()
+    val favorite = existing?.favorite ?: false
+    val contextId = existing?.contextId
     val toastHost = appHosts?.toastHost
+    val saveLabel = if (isSaving) AppStrings.Guardando else AppStrings.Guardar
     AqScreen(
         title = if (isNew) AppStrings.CrearDestino else AppStrings.EditarDestino,
         onBack = onBack,
@@ -57,82 +68,57 @@ internal fun DestinationEditorScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 AqButton(
-                    label = AppStrings.Guardar,
-                    onClick = {
-                        viewModel.onAction(DestinationAction.Save(
-                            id = destination?.id,
-                            name = name,
-                            note = note,
-                            contextId = contextId,
-                            favorite = favorite,
-                        ))
-                    },
-                    variant = com.agendaqr.core.ui.components.AqButtonVariant.Primary,
+                    label = saveLabel,
+                    onClick = onSave,
+                    variant = AqButtonVariant.Primary,
+                    enabled = !isSaving,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
         },
         toastHost = toastHost?.let { host -> { AqToastHost(host) } },
     ) {
-        state.error?.let { err ->
+        error?.let { err ->
             AqAlert(
-                tone = com.agendaqr.core.ui.theme.AqTone.Danger,
-                message = err.dataStatus,
+                tone = AqTone.Danger,
+                message = err.display(),
                 dismissLabel = AppStrings.Cerrar,
-                onDismiss = { },
+                onDismiss = onClearError,
             )
         }
         AqSectionTitle(text = AppStrings.LabelNombre)
         AqTextInput(
             label = AppStrings.LabelNombre,
             value = name,
-            onValueChange = { name = it },
+            onValueChange = { },
         )
         AqSectionTitle(text = AppStrings.LabelNota)
         AqTextInput(
             label = AppStrings.LabelNota,
             value = note,
-            onValueChange = { note = it },
+            onValueChange = { },
         )
         AqSectionTitle(text = AppStrings.Contexto)
         AqMenuItem(
-            title = contextId?.let { id ->
-                state.contexts.firstOrNull { it.id == id }?.name ?: AppStrings.SinContexto
-            } ?: AppStrings.SeleccionarContexto,
+            title = contextId?.takeIf { it.isNotEmpty() }?.let { AppStrings.CtxPrefix + it } ?: AppStrings.SinContexto,
             subtitle = AppStrings.Opcional,
-            onClick = { },
+            onClick = { onCreateContext(contextId.orEmpty(), justCreatedContextId) },
             leading = {
-                AqTag(text = contextId?.take(1).uppercase() ?: "?")
+                AqTag(text = contextId?.take(1)?.uppercase() ?: AppStrings.UnknownMarker)
             },
         )
         AqSectionTitle(text = AppStrings.Favorito)
         AqSwitch(
             label = AppStrings.MarcarComoFavorito,
             checked = favorite,
-            onCheckedChange = { favorite = it },
+            onCheckedChange = { },
         )
         if (isNew) {
             AqButton(
                 label = AppStrings.CrearContexto,
-                onClick = { },
+                onClick = { onCreateContext("", null) },
                 variant = AqButtonVariant.Text,
             )
         }
     }
-}
-
-@Composable
-internal fun AddDestinationScreen(
-    state: DestinationsUiState,
-    viewModel: DestinationsViewModel,
-    appHosts: AppHosts? = null,
-    onBack: () -> Unit = {},
-) {
-    DestinationEditorScreen(
-        state = state,
-        viewModel = viewModel,
-        appHosts = appHosts,
-        destination = null,
-        onBack = onBack,
-    )
 }

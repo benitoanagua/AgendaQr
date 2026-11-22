@@ -117,11 +117,6 @@ fun AqScreen(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         androidx.compose.foundation.layout.Spacer(modifier = Modifier.weight(1f))
-                        androidx.compose.material3.HorizontalDivider(
-                            modifier = Modifier.weight(0f),
-                            color = AqColor.Divider,
-                            thickness = AqMetrics.DividerHeight,
-                        )
                     }
                     it()
                 }

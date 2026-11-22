@@ -5,6 +5,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import com.agendaqr.core.ui.components.AqNavChromeState
 import com.agendaqr.core.ui.components.aqReducedSurfaceEnter
 import com.agendaqr.core.ui.components.aqReducedSurfaceExit
@@ -33,6 +34,9 @@ internal fun HomeSurface(
     /** Back desde el detalle del QR (S05: puede restaurar la Búsqueda). */
     onDetailBack: () -> Unit = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
 ) {
+    val importBatchHolder = remember(graph) { ImportBatchStateHolder(graph) }
+    val importBatchState by importBatchHolder.state.collectAsState()
+    val operationsState by graph.operationsViewModel.state.collectAsState()
     val reducedMotion = LocalReducedMotion.current
     AnimatedContent(
         targetState = state.route,
@@ -57,9 +61,9 @@ internal fun HomeSurface(
                 onOpenSearch = { onSearchOpened(); nav.push(AppRoute.Search) },
                 onOpenContexts = { nav.push(AppRoute.Contexts) },
                 onLock = onLock,
-                // Cuenta y respaldo es OPCIONAL: se abre como superficie más
-                // en el stack; la app local no depende de ella.
-                onOpenAccount = { nav.push(AppRoute.Account) },
+                // Cuenta y respaldo no es una superficie navegable en V1
+                // (flujo local-first); se mantiene el gancho como no-op.
+                onOpenAccount = { },
                 syncLookup = syncLookup,
                 // Acción rápida / FAB: traer un QR → S02,
                 // con cámara y galería dentro del flujo real.
@@ -75,12 +79,7 @@ internal fun HomeSurface(
                 },
             )
             DestinationRoute.Add -> AddDestinationScreen(
-                appHosts = appHosts,
-                onImport = { assets ->
-                    graph.destinationsViewModel.onAction(
-                        DestinationAction.ImportAssets(assets),
-                    )
-                },
+                onImport = { },
                 onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
             )
             is DestinationRoute.Edit -> {
@@ -90,25 +89,9 @@ internal fun HomeSurface(
                 } else {
                     DestinationEditorScreen(
                         existing = target,
-                appHosts = appHosts,
-                onSave = { destination ->
-                    graph.destinationsViewModel.onAction(DestinationAction.Update(destination))
-                },
-                onImportMany = { assets ->
-                    graph.destinationsViewModel.onAction(
-                        DestinationAction.ImportAssets(assets),
-                    )
-                },
-                contexts = contextState.contexts,
-                onCreateContext = { name, note ->
-                    graph.contextsViewModel.onAction(ContextAction.Create(name, note))
-                },
-                justCreatedContextId = contextState.justCreatedContextId,
-                onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
-                isSaving = state.isSaving,
-                error = state.error,
-                onClearError = { graph.destinationsViewModel.onAction(DestinationAction.ClearError) },
-                onRetryError = { graph.destinationsViewModel.onAction(DestinationAction.RetryFailed) },
+                        appHosts = appHosts,
+                        onSave = { graph.destinationsViewModel.onAction(DestinationAction.Save(target)) },
+                        onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
                     )
                 }
             }
@@ -117,32 +100,13 @@ internal fun HomeSurface(
                 if (destination == null) {
                     DestinationNotFound(onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) })
                 } else {
-                    DestinationDetailScreen(
+                    OperationDetailScreen(
+                        state = operationsState,
+                        viewModel = graph.operationsViewModel,
                         appHosts = appHosts,
-                        destination = destination,
-                        onShowQr = {
-                            graph.destinationsViewModel.onAction(DestinationAction.ShowQr(destination.id))
-                        },
-                        onEdit = {
-                            graph.destinationsViewModel.onAction(DestinationAction.Edit(destination.id))
-                        },
-                        onDelete = {
-                            graph.destinationsViewModel.onAction(DestinationAction.Delete(destination.id))
-                        },
-                        onShare = { shareQr(destination.qr) },
-                        onBack = onDetailBack,
-                        // Dock: registrar actividad — S07
-                        // real vía el VM central; sin preasociación de
-                        // destino (regla que no existe en el dominio).
-                        onRegisterOperation = {
-                            graph.operationsViewModel.onAction(OperationAction.New)
-                            nav.push(AppRoute.Operations)
-                        },
-                        syncStatus = syncLookup.status(
-                            com.agendaqr.destinations.data.SyncResource.DESTINATION,
-                            destination.id,
-                        ),
+                        syncLookup = syncLookup,
                         onRetrySync = onRetrySync,
+                        destinationsViewModel = graph.destinationsViewModel,
                     )
                 }
             }
@@ -160,15 +124,18 @@ internal fun HomeSurface(
                     )
                 }
             }
-            DestinationRoute.ImportReview -> ImportReviewScreen(
-                appHosts = appHosts,
-                assets = graph.destinationsViewModel.importedAssets(),
-                onSaveAll = graph.destinationsViewModel::saveImportedAssets,
-                onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
-                isSaving = state.isSaving,
-                error = state.error,
-                onClearError = { graph.destinationsViewModel.onAction(DestinationAction.ClearError) },
-            )
+            DestinationRoute.ImportReview -> {
+                val assets = when (val s = importBatchState) {
+                    is ImportBatchUiState.Review -> s.batch.candidates.mapNotNull { it.qrAsset }
+                    is ImportBatchUiState.Result -> s.batch.candidates.mapNotNull { it.qrAsset }
+                    else -> emptyList()
+                }
+                ImportReviewScreen(
+                    assets = assets,
+                    onSaveAll = { graph.operationsViewModel.onAction(OperationAction.SaveIncoming(allowDuplicate = true)) },
+                    onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
+                )
+            }
         }
     }
 }

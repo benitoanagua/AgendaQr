@@ -8,9 +8,9 @@ import com.agendaqr.core.ui.components.AqNavDestination
 import com.agendaqr.core.ui.components.AqTab
 import com.agendaqr.core.ui.components.AqTabBar
 import com.agendaqr.core.ui.theme.AqTheme
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -70,10 +70,10 @@ class RootNavigationChromeTest {
         compose.waitForIdle()
         compose.onNodeWithText(AppStrings.Contextos).performClick()
         compose.waitForIdle()
-        assertEquals(3, selectedIndex) { "Destino visible tras el cambio: $selectedIndex" }
+        assertEquals(3, selectedIndex, "Destino visible tras el cambio: $selectedIndex")
         // Desde cualquier destino, el usuario puede volver a Inicio (índice 0).
         compose.onNodeWithText(AppStrings.Inicio).performClick()
         compose.waitForIdle()
-        assertEquals(0, selectedIndex) { "El Back desde otro destino vuelve a Inicio" }
+        assertEquals(0, selectedIndex, "El Back desde otro destino vuelve a Inicio")
     }
 }

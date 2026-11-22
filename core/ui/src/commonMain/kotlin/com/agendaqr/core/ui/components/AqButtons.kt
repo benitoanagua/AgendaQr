@@ -19,7 +19,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconToggleButton
-import androidx.compose.material3.Text
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -35,8 +35,11 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -211,7 +214,6 @@ private fun AqButtonImpl(
         .clickable(
             enabled = isEnabled,
             role = Role.Button,
-            onClickLabel = label,
             interactionSource = interactionSource,
             indication = null,
             onClick = {
@@ -221,6 +223,10 @@ private fun AqButtonImpl(
                 onClick()
             },
         )
+        .semantics {
+            contentDescription = label
+            text = AnnotatedString(label)
+        }
     Layout(
         modifier = buttonModifier,
         content = {
@@ -251,11 +257,18 @@ private fun AqButtonImpl(
                     )
                 }
                 if (!iconOnly) {
-                    Text(
+                    BasicText(
                         text = label,
-                        style = labelStyle,
-                        fontWeight = fontWeight ?: AqWeight.SemiBold,
-                        color = foreground,
+                        style = labelStyle.copy(
+                            fontWeight = fontWeight ?: AqWeight.SemiBold,
+                            color = foreground,
+                        ),
+                        modifier = Modifier.clearAndSetSemantics {
+                            // El texto visible no expone texto accesible propio:
+                            // el nodo accesible del botón (target de 48 dp)
+                            // declara [text] y [role]. (T-02)
+                            text = AnnotatedString("")
+                        },
                     )
                 }
             }
@@ -362,11 +375,9 @@ fun AqSegmentedControl(
                             tint = if (selected && optionEnabled) activeColor else AqColor.OnDisabled,
                         )
                     }
-                    Text(
-                        option.label,
-                        style = AqTextStyles.Label,
-                        color = textColor,
-                        maxLines = 1,
+                    BasicText(
+                        text = option.label,
+                        style = AqTextStyles.Label.copy(color = textColor),
                     )
                     option.count?.let {
                         Box(
@@ -377,10 +388,9 @@ fun AqSegmentedControl(
                                 )
                                 .padding(horizontal = AqSpacing.Xs),
                         ) {
-                            Text(
-                                it.toString(),
-                                style = AqTextStyles.Tag,
-                                color = textColor,
+                            BasicText(
+                                text = it.toString(),
+                                style = AqTextStyles.Tag.copy(color = textColor),
                             )
                         }
                     }

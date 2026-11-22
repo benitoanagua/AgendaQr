@@ -12,7 +12,6 @@ import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqButton
-import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.destinations.domain.QrAsset
 
@@ -58,12 +57,14 @@ actual fun QrGalleryControls(
         title = AppStrings.ElegirDeLaGaleria,
         titleMaxLines = Int.MAX_VALUE,
         onClick = AgendaQrAndroidImportLauncher::gallery,
-        leading = { AqIcon(icon = AqIcons.Gallery) },
-        showChevron = true,
+        leading = { AqIcon(imageVector = AqIcons.Gallery, contentDescription = null) },
         showDivider = true,
     )
 }
 
+/**
+ * "Elegir de la cámara" (S03): entrada de cámara.
+ */
 @Composable
 actual fun QrCameraEntryControl(
     onResult: (QrImportResult) -> Unit,
@@ -83,8 +84,7 @@ actual fun QrPdfPickerControl(showDivider: Boolean) {
         title = AppStrings.ElegirArchivoPdf,
         titleMaxLines = Int.MAX_VALUE,
         onClick = AgendaQrAndroidImportLauncher::pdf,
-        leading = { AqIcon(icon = AqIcons.Attachment) },
-        showChevron = true,
+        leading = { AqIcon(imageVector = AqIcons.Attachment, contentDescription = null) },
         showDivider = showDivider,
     )
 }

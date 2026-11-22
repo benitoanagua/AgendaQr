@@ -37,6 +37,7 @@ fun AqSearchInput(
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
+            placeholder = placeholder,
             leadingIcon = AqIcons.Search,
             trailing = {
                 if (value.isNotBlank() && onClear != null && clearLabel != null) {

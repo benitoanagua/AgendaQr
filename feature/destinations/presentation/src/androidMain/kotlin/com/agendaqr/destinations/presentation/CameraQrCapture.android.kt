@@ -32,7 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -41,13 +41,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.agendaqr.core.ui.components.AqAlert
-import com.agendaqr.core.ui.components.AqToast
+import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqScannerFrame
 import com.agendaqr.core.ui.components.AqText
-import com.agendaqr.core.ui.components.AqButton
+import com.agendaqr.core.ui.components.AqToast
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
@@ -82,7 +83,10 @@ internal fun CameraQrCaptureOverlay(
     // feedback de lectura exitosa — token por EVENTO
     // (una lectura = un anuncio; sin repetición en recomposiciones).
     var detectionToken by remember { mutableStateOf<Any?>(null) }
-    AqToast(event = detectionToken, message = AppStrings.CodigoQrDetectado)
+    AqToast(
+        show = detectionToken != null,
+        message = AppStrings.CodigoQrDetectado,
+    )
 
     DisposableEffect(Unit) {
         onDispose { analysisExecutor.shutdown() }
@@ -323,11 +327,10 @@ internal fun CameraQrEntry(
                 }
             }
             AqAlert(
-                title = error.what,
-                message = error.dataStatus,
                 tone = com.agendaqr.core.ui.components.AqTone.Danger,
-                action = com.agendaqr.core.ui.components.AqBannerAction(actionLabel, onAction),
-                dismiss = com.agendaqr.core.ui.components.AqBannerAction(AppStrings.Descartar) { permissionError = null },
+                message = error.what + "\n" + error.dataStatus,
+                dismissLabel = actionLabel,
+                onDismiss = onAction,
             )
         }
         val requestCamera = {
@@ -341,15 +344,14 @@ internal fun CameraQrEntry(
             AqMenuItem(
                 title = AppStrings.Camara,
                 subtitle = AppStrings.PermisoCamaraContexto,
-                subtitleMaxLines = Int.MAX_VALUE,
                 onClick = requestCamera,
                 leading = {
                     AqIcon(
-                        icon = com.agendaqr.core.ui.components.AqIcons.Camera,
-                        tone = com.agendaqr.core.ui.components.AqTone.Info,
+                        imageVector = com.agendaqr.core.ui.components.AqIcons.Camera,
+                        contentDescription = null,
+                        tint = com.agendaqr.core.ui.theme.AqColor.TextSecondary,
                     )
                 },
-                showChevron = true,
                 showDivider = showDivider,
             )
         } else {
@@ -371,7 +373,7 @@ internal fun CameraQrEntry(
  * Copia el plano de luminancia del frame (sin extensiones de CameraX) y
  * quita el padding de fin de fila cuando el sensor entrega
  * `rowStride > width`: copiar el buffer crudo cizalla la imagen y en
- * físicos eso rompía TODA la decodificación ([QrFrameAnalyzer.stripStride]).
+ * físicos eso rompió TODA la decodificación ([QrFrameAnalyzer.stripStride]).
  * Con `rowStride == width` (típico en emulador) el buffer pasa igual.
  */
 private fun planeY(proxy: ImageProxy): ByteArray {

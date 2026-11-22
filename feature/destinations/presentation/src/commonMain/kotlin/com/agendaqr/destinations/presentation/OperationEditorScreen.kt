@@ -9,7 +9,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqAccordion
 import com.agendaqr.core.ui.components.AqAlert
@@ -18,7 +20,9 @@ import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqButtonSize
 import com.agendaqr.core.ui.components.AqButtonVariant
 import com.agendaqr.core.ui.components.AqCheckbox
+import com.agendaqr.core.ui.components.AqChip
 import com.agendaqr.core.ui.components.AqEmptyPlaceholder
+import com.agendaqr.core.ui.components.AqFieldState
 import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqMenuItem
@@ -34,6 +38,7 @@ import com.agendaqr.core.ui.components.AqTextArea
 import com.agendaqr.core.ui.components.AqTextInput
 import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.components.rememberAqFormFocus
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqShadow
@@ -41,8 +46,6 @@ import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
-import com.agendaqr.core.ui.theme.rememberAqFormFocus
-import com.agendaqr.core.ui.theme.AqFieldState
 import com.agendaqr.destinations.domain.*
 import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
@@ -85,7 +88,7 @@ internal fun OperationEditorScreen(
     var type by rememberSaveable(editorKey) { mutableStateOf(existing?.type ?: OperationType.PAGO) }
     var amount by rememberSaveable(editorKey) { mutableStateOf(existing?.amount.orEmpty()) }
     var amountEdited by rememberSaveable(editorKey) { mutableStateOf(false) }
-    val formFocus = rememberAqFormFocus(FieldAmount)
+    val formFocus = rememberAqFormFocus("amount")
     val initialCurrency = existing?.currency.orEmpty()
         .ifBlank { mostRecentCurrency(state.operations) }
     var currency by rememberSaveable(editorKey) { mutableStateOf(initialCurrency) }
@@ -98,7 +101,7 @@ internal fun OperationEditorScreen(
     var showDetails by rememberSaveable(editorKey) {
         mutableStateOf(existing?.concept?.isNotBlank() == true || existing?.note?.isNotBlank() == true)
     }
-    val initialOccurredAtMillis = rememberSaveable(editorKey) { existing?.occurredAt ?: nowMillis() }
+    val initialOccurredAtMillis = rememberSaveable(editorKey) { existing?.occurredAt ?: com.agendaqr.destinations.domain.nowMillis() }
     var occurredAtMillis by rememberSaveable(editorKey, initialOccurredAtMillis) {
         mutableStateOf(initialOccurredAtMillis)
     }
@@ -129,11 +132,11 @@ internal fun OperationEditorScreen(
     }
 
     fun buildCandidate(at: Long): Operation = Operation(
-        id = existing?.id ?: newEntityId("operation"),
+        id = existing?.id ?: com.agendaqr.destinations.domain.newEntityId("operation"),
         type = type,
         occurredAt = at,
-        createdAt = existing?.createdAt ?: nowMillis(),
-        updatedAt = existing?.updatedAt ?: nowMillis(),
+        createdAt = existing?.createdAt ?: com.agendaqr.destinations.domain.nowMillis(),
+        updatedAt = existing?.updatedAt ?: com.agendaqr.destinations.domain.nowMillis(),
         amount = canonizeAmount(amount).trim().takeIf(String::isNotBlank),
         currency = currency.trim().takeIf(String::isNotBlank),
         personOrEntity = person.trim().takeIf(String::isNotBlank),
@@ -158,28 +161,27 @@ internal fun OperationEditorScreen(
                 AqButton(
                     label = if (saving) AppStrings.Guardando else if (existing == null) AppStrings.Guardar else AppStrings.GuardarCambios,
                     onClick = {
-                        if (!isValidAmount(amount) || amount.length > FieldLimits.Importe) {
-                            amountEdited = true
-                            formFocus.focusFirstError(setOf(FieldAmount))
-                            return@Column
-                        }
-                        if (person.length > FieldLimits.PersonaOEntidad
-                            || concept.length > FieldLimits.Concepto
-                            || note.length > FieldLimits.Nota) {
-                            return@Column
-                        }
-                        val at = occurredAtMillis
-                        val candidate = buildCandidate(at)
-                        if (existing == null) {
-                            viewModel.onAction(
-                                OperationAction.SaveNew(
-                                    type, at, canonizeAmount(amount), currency, person, null, concept, note, contextSelection.contextId, candidate.id,
-                                ),
-                            )
-                        } else if (candidate.hasSensitiveChangesComparedTo(existing) && state.operationComprobantes.isNotEmpty()) {
-                            showSensitiveConfirm = true
+                        if (isValidAmount(amount) && amount.length <= FieldLimits.Importe
+                            && person.length <= FieldLimits.PersonaOEntidad
+                            && concept.length <= FieldLimits.Concepto
+                            && note.length <= FieldLimits.Nota) {
+                            amountEdited = false
+                            val at = occurredAtMillis
+                            val candidate = buildCandidate(at)
+                            if (existing == null) {
+                                viewModel.onAction(
+                                    OperationAction.SaveNew(
+                                        type, at, canonizeAmount(amount), currency, person, null, concept, note, contextSelection.contextId, candidate.id,
+                                    ),
+                                )
+                            } else if (candidate.hasSensitiveChangesComparedTo(existing) && state.operationComprobantes.isNotEmpty()) {
+                                showSensitiveConfirm = true
+                            } else {
+                                viewModel.onAction(OperationAction.Update(candidate))
+                            }
                         } else {
-                            viewModel.onAction(OperationAction.Update(candidate))
+                            amountEdited = true
+                            formFocus.focusFirstError(setOf("amount"))
                         }
                     },
                     enabled = !saving,
@@ -197,8 +199,8 @@ internal fun OperationEditorScreen(
             AqAlert(
                 tone = AqTone.Danger,
                 message = err.dataStatus,
-                dismissLabel = bannerDismiss.label,
-                onDismiss = bannerDismiss.onClick,
+                dismissLabel = bannerDismiss?.label ?: AppStrings.Cerrar,
+                onDismiss = bannerDismiss?.onClick ?: { },
             )
         }
         AqAmountInput(
@@ -259,7 +261,7 @@ internal fun OperationEditorScreen(
             verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
         ) {
             AqMenuItem(
-                title = (relativeDayLabel(occurredAtMillis, nowMillis())?.let { it + " · " } ?: "") + formatDateTime(occurredAtMillis),
+                title = (relativeDayLabel(occurredAtMillis, com.agendaqr.destinations.domain.nowMillis())?.let { it + " · " } ?: "") + formatDateTime(occurredAtMillis),
                 subtitle = AppStrings.Fecha,
                 onClick = { showDatePicker = true },
                 leading = {
@@ -269,9 +271,8 @@ internal fun OperationEditorScreen(
                         tint = AqColor.TextSecondary,
                     )
                 },
-                showChevron = true,
             )
-            val quickDay = when (relativeDayLabel(occurredAtMillis, nowMillis())) {
+            val quickDay = when (relativeDayLabel(occurredAtMillis, com.agendaqr.destinations.domain.nowMillis())) {
                 AppStrings.Hoy -> 0
                 AppStrings.Ayer -> 1
                 else -> -1
@@ -284,8 +285,8 @@ internal fun OperationEditorScreen(
                 selectedIndex = quickDay,
                 onSelect = { index ->
                     occurredAtMillis = when (index) {
-                        0 -> nowMillis()
-                        1 -> minusCivilDays(nowMillis(), 1)
+                        0 -> com.agendaqr.destinations.domain.nowMillis()
+                        1 -> minusCivilDays(com.agendaqr.destinations.domain.nowMillis(), 1)
                         else -> occurredAtMillis
                     }
                 },
@@ -331,7 +332,6 @@ internal fun OperationEditorScreen(
                         tint = AqColor.TextSecondary,
                     )
                 },
-                showChevron = true,
             )
         }
         if (showDetails) {
@@ -339,26 +339,27 @@ internal fun OperationEditorScreen(
                 title = AppStrings.MasDetalles,
                 expanded = showDetails,
                 onToggle = { showDetails = !showDetails },
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
-                ) {
-                    AqTextInput(
-                        label = AppStrings.LabelConcepto,
-                        value = concept,
-                        onValueChange = { concept = it },
-                        maxLength = FieldLimits.Concepto,
-                        leadingIcon = com.agendaqr.core.ui.components.AqIcons.NoteEdit,
-                    )
-                    AqTextArea(
-                        label = AppStrings.Nota,
-                        value = note,
-                        onValueChange = { note = it },
-                        maxLength = FieldLimits.Nota,
-                    )
-                }
-            }
+                content = {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
+                    ) {
+                        AqTextInput(
+                            label = AppStrings.LabelConcepto,
+                            value = concept,
+                            onValueChange = { concept = it },
+                            maxLength = FieldLimits.Concepto,
+                            leadingIcon = com.agendaqr.core.ui.components.AqIcons.NoteEdit,
+                        )
+                        AqTextArea(
+                            label = AppStrings.Nota,
+                            value = note,
+                            onValueChange = { note = it },
+                            maxLength = FieldLimits.Nota,
+                        )
+                    }
+                },
+            )
         }
         if (existing != null) {
             AqButton(
@@ -378,6 +379,7 @@ internal fun OperationEditorScreen(
             destructive = true,
             onConfirm = { viewModel.onAction(OperationAction.DiscardEditor) },
             onDismissRequest = { viewModel.onAction(OperationAction.DismissDiscardPrompt) },
+            content = { },
         )
     }
 
@@ -455,6 +457,7 @@ internal fun OperationEditorScreen(
                 viewModel.onAction(OperationAction.Delete(existing.id))
             },
             onDismissRequest = { showDeleteConfirm = false },
+            content = { },
         )
     }
 
@@ -473,6 +476,7 @@ internal fun OperationEditorScreen(
                 )
             },
             onDismissRequest = { showSensitiveConfirm = false },
+            content = { },
         )
     }
 }

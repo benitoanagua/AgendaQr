@@ -17,9 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqCorner
@@ -52,9 +55,18 @@ import com.agendaqr.core.ui.theme.AqSquircles
 fun AqAlert(
     tone: AqTone,
     message: String,
+    /** Acción de descarte (secundaria). */
     dismissLabel: String? = null,
     onDismiss: (() -> Unit)? = null,
+    /** Acción primaria opcional (p. ej. "Reintentar ahora"). */
+    confirmLabel: String? = null,
+    onConfirm: (() -> Unit)? = null,
+    /** Descripción accesible del banner (para anuncios de estado como "Guardado"). */
+    contentDescription: String? = null,
     icon: ImageVector? = null,
+    /** Relleno horizontal del banner (Lg por defecto; None cuando el host
+     *  ya aplica el margen de pantalla, p. ej. [AppStatusHost]). */
+    horizontalPadding: Dp = AqSpacing.Lg,
     modifier: Modifier = Modifier,
 ) {
     val scheme = LocalAqColorScheme.current
@@ -67,7 +79,11 @@ fun AqAlert(
             .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
             .background(colors.container, AqSquircles.SurfaceSm)
             .aqShadow(AqShadow.Sm, AqSquircles.SurfaceSm)
-            .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Md),
+            .padding(horizontal = horizontalPadding, vertical = AqSpacing.Md)
+            .semantics {
+                liveRegion = LiveRegionMode.Polite
+                contentDescription?.let { this.contentDescription = it }
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(AqSize.Sm),
     ) {
@@ -85,25 +101,29 @@ fun AqAlert(
             color = colors.content,
             modifier = Modifier.weight(1f, fill = false),
         )
-        dismissLabel?.let { label ->
-            val dismissEnabled = onDismiss != null
-            Box(
-                modifier = Modifier
-                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                    .clickable(
-                        role = Role.Button,
-                        onClickLabel = label,
-                        interactionSource = interactionSource,
-                        indication = null,
-                        enabled = dismissEnabled,
-                        onClick = { onDismiss?.invoke() },
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = label,
-                    style = AqTextStyles.Label.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold),
-                    color = if (pressed && dismissEnabled) colors.content.copy(alpha = 0.8f) else colors.content,
+        Row(
+            modifier = Modifier,
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            confirmLabel?.let { label ->
+                val confirmEnabled = onConfirm != null
+                AqButton(
+                    label = label,
+                    onClick = { onConfirm?.invoke() },
+                    variant = AqButtonVariant.Primary,
+                    size = AqButtonSize.Small,
+                    enabled = confirmEnabled,
+                )
+            }
+            dismissLabel?.let { label ->
+                val dismissEnabled = onDismiss != null
+                AqButton(
+                    label = label,
+                    onClick = { onDismiss?.invoke() },
+                    variant = AqButtonVariant.Text,
+                    size = AqButtonSize.Small,
+                    enabled = dismissEnabled,
                 )
             }
         }

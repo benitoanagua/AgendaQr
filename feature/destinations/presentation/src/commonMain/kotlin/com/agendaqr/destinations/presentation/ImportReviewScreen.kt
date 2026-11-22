@@ -1,13 +1,8 @@
 package com.agendaqr.destinations.presentation
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqAlert
 import com.agendaqr.core.ui.components.AqButton
@@ -19,55 +14,60 @@ import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqScreen
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqToastHost
-import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
-import com.agendaqr.destinations.domain.*
+import com.agendaqr.destinations.domain.QrAsset
 
+/** S09/S12 — revisar lote de QR. Sin errores muestra los assets y la acción
+ *  "Guardar"; con error muestra "Reintentar" (guarda de nuevo) y "Cerrar". */
 @Composable
-internal fun ImportReviewScreen(
-    state: ImportBatchUiState,
-    viewModel: OperationsViewModel,
-    appHosts: AppHosts? = null,
+fun ImportReviewScreen(
+    assets: List<QrAsset>,
+    onSaveAll: () -> Unit = {},
     onBack: () -> Unit = {},
+    error: UserFacingError? = null,
+    onClearError: () -> Unit = {},
+    onRetryError: () -> Unit = {},
 ) {
-    val toastHost = appHosts?.toastHost
+    val toastHost = null
     AqScreen(
         title = AppStrings.RevisarImportacion,
         onBack = onBack,
         backLabel = AppStrings.Volver,
-        statusContent = appHosts?.status,
-        toastHost = toastHost?.let { host -> { AqToastHost(host) } },
+        statusContent = null,
+        toastHost = null,
     ) {
-        state.error?.let { err ->
+        if (error != null) {
             AqAlert(
-                tone = com.agendaqr.core.ui.theme.AqTone.Danger,
-                message = err.dataStatus,
+                tone = AqTone.Danger,
+                message = error.display(),
+                confirmLabel = AppStrings.ErrorReintentar,
+                onConfirm = onSaveAll,
                 dismissLabel = AppStrings.Cerrar,
-                onDismiss = { },
+                onDismiss = onClearError,
             )
-        }
-        val batch = when (state) {
-            is ImportBatchUiState.Review -> state.batch
-            else -> null
-        }
-        if (batch == null) {
+        } else if (assets.isEmpty()) {
             AqEmptyPlaceholder(
                 icon = AqIcons.Search,
                 title = AppStrings.SinElementosParaRevisar,
             )
         } else {
             Column(modifier = Modifier.fillMaxWidth()) {
-                AqSectionTitle(text = AppStrings.ElementosARevisar + " (" + batch.pendingItems().size + ")")
-                androidx.compose.foundation.lazy.LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                    batch.pendingItems().forEachIndexed { index, candidate ->
-                        AqMenuItem(
-                            title = candidate.displayName ?: AppStrings.ElementoImportado,
-                            subtitle = candidate.extension.orEmpty(),
-                            onClick = { viewModel.onAction(ImportBatchAction.ViewExisting(candidate.id)) },
-                        )
-                    }
+                AqMenuItem(
+                    title = AppStrings.ElementosARevisar + " (" + assets.size + ")",
+                )
+                assets.forEachIndexed { index, asset ->
+                    AqMenuItem(
+                        title = asset.content.orEmpty(),
+                    )
                 }
+                AqButton(
+                    label = AppStrings.Guardar,
+                    onClick = onSaveAll,
+                    variant = AqButtonVariant.Primary,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
         }
     }

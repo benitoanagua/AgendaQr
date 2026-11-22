@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqCorner
@@ -58,10 +59,13 @@ fun AqMenuItem(
     showDivider: Boolean = false,
     /** Líneas máximas del título (por defecto 1). */
     titleMaxLines: Int = 1,
+    /** Etiqueta/metadato secundario opcional (p. ej. estado de una fila). */
+    meta: (@Composable () -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val pressed = interactionSource.collectIsPressedAsState().value
+    val isSelected = selected
     val container = when {
         !enabled -> AqColor.Disabled
         selected -> AqColor.SelectionSurface
@@ -90,9 +94,10 @@ fun AqMenuItem(
                 enabled = enabled && onClick != null,
                 onClick = { onClick?.invoke() },
             )
-            .semantics {
-                contentDescription = title + (subtitle?.let { " - $it" } ?: "")
-            },
+            .menuItemSemantics(
+                desc = title + (subtitle?.let { " - $it" } ?: ""),
+                isSelected = isSelected,
+            ),
     ) {
         Row(
             modifier = Modifier
@@ -121,6 +126,9 @@ fun AqMenuItem(
                         maxLines = 1,
                     )
                 }
+                meta?.let { slot ->
+                    slot()
+                }
             }
             Spacer(Modifier.weight(1f, fill = false))
             trailing?.invoke()
@@ -139,3 +147,10 @@ fun AqMenuItem(
         }
     }
 }
+
+/** Semántica de una celda de menú: nombre accesible + estado seleccionado. */
+private fun Modifier.menuItemSemantics(desc: String, isSelected: Boolean): Modifier =
+    semantics {
+        contentDescription = desc
+        selected = isSelected
+    }

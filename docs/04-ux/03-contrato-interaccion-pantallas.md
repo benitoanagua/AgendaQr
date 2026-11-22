@@ -284,24 +284,6 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ScreensA11yCoverageTest.kt`
 - pruebas: `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchReducerTest.kt`, `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchCoordinatorTest.kt`, `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchPendingItemsTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ActionHierarchyTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchBannerLayoutTest.kt`
 
-### account — Cuenta y respaldo
-
-- superficie: `account`
-- tipo: `Root`
-- ruta: `AppRoute.Account`
-- representa: `AppRoute.Account`
-- fuente: `feature/destinations/presentation/src/commonMain/kotlin/com/agendaqr/destinations/presentation/AccountScreen.kt`
-- entradas: `home-overflow`
-- salidas: `AppRoute.Home`
-- destinos válidos: `AppRoute.Home`
-- acción primaria: —
-- estados: `loading`, `content`, `error`, `saving`
-- gestos: —
-- capturas: `content`, `error`
-- componentes: `AqScreen`, `AqListSection`, `AqMenuItem`, `AqAlert`, `AqCircularLoader`
-- pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/AccessibilityStatesFormsTest.kt`
-- pruebas: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/AccessibilityStatesFormsTest.kt`
-
 ### auth — Cuenta: autenticación
 
 - superficie: `authform`
@@ -309,8 +291,8 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - ruta: —
 - fuente: `feature/destinations/presentation/src/commonMain/kotlin/com/agendaqr/destinations/presentation/AuthScreen.kt`
 - entradas: `account`
-- salidas: `AppRoute.Account`
-- destinos válidos: `AppRoute.Account`
+- salidas: `AppRoute.Home`
+- destinos válidos: `AppRoute.Home`
 - acción primaria: Iniciar sesión (`AppStrings.IniciarSesion`)
 - estados: `content`, `loading`, `error`, `saving`
 - gestos: —
@@ -324,7 +306,7 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - superficie: `localaccess`
 - tipo: `Platform`
 - ruta: —
-- fuente: `feature/destinations/presentation/src/commonMain/kotlin/com/agendaqr/destinations/presentation/LocalLockScreen.kt`
+- fuente: `feature/destinations/presentation/src/commonMain/kotlin/com/agendaqr/destinations/presentation/LocalOnboardingScreen.kt`
 - entradas: `cold-start`, `resume-after-lock`
 - salidas: `system-exit`
 - destinos válidos: `system-exit`

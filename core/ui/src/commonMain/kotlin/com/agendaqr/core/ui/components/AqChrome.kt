@@ -42,6 +42,21 @@ data class AqNavDestination(
     val icon: ImageVector,
 )
 
+/**
+ * Estado del chrome de navegación raíz (barra inferior tipo píldora / rail).
+ * Lo mantiene la superficie que lo usa; [AqScreen] lo consume vía
+ * [navDestinations]/[navSelectedId]/[onNavSelect].
+ *
+ * - [destinations]: destinos raíz (Inicio, Buscar, Operaciones, Contextos…).
+ * - [selectedId]: id del destino actualmente seleccionado.
+ * - [onSelect]: invocada al tocar un destino.
+ */
+data class AqNavChromeState(
+    val destinations: List<AqNavDestination> = emptyList(),
+    val selectedId: String? = null,
+    val onSelect: (String) -> Unit = {},
+)
+
 fun <S> androidx.compose.animation.AnimatedContentTransitionScope<S>.aqSurfaceEnter(reverse: Boolean = false): androidx.compose.animation.EnterTransition =
     slideInHorizontally(
         animationSpec = tween(AqMotion.DurationShortMs, easing = AqMotion.Easings.Standard),

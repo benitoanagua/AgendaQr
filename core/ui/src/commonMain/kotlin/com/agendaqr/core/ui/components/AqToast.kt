@@ -17,8 +17,10 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
@@ -97,7 +99,12 @@ fun AqToast(
                     text = message,
                     style = AqTextStyles.Body,
                     color = AqColor.TextPrimary,
-                    modifier = Modifier.weight(1f, fill = false),
+                    modifier = Modifier
+                        .weight(1f, fill = false)
+                        .semantics {
+                            contentDescription = message
+                            liveRegion = LiveRegionMode.Polite
+                        },
                 )
                 actionLabel?.let { label ->
                     Text(

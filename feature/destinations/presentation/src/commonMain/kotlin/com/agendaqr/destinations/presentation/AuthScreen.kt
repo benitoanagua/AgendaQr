@@ -4,97 +4,106 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqAlert
 import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqButtonVariant
-import com.agendaqr.core.ui.components.AqEmptyPlaceholder
-import com.agendaqr.core.ui.components.AqIcon
-import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqScreen
-import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextInput
-import com.agendaqr.core.ui.components.AqToastHost
-import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
 
+/**
+ * Pantalla de autenticación remota (opcional). No es una puerta de entrada:
+ * la app arranca en el acceso local con PIN. Se expone para coherencia de
+ * rutas pero no está cableada en el flujo principal local-first.
+ *
+ * Firma canónica usada por las pruebas de contrato:
+ * [AuthScreen](state, onEmailChanged, onPasswordChanged, onSignIn, onSignUp).
+ *
+ * Reglas de validación al enviar (spec §10 / §2):
+ * - Los botones nunca nacen deshabilitados por el formulario: el primario
+ *   solo se deshabilita mientras hay un envío en curso.
+ * - Al pulsar "Iniciar sesión" con datos inválidos, se muestran los errores
+ *   de validación (correo / contraseña corta) y NO se invoca [onSignIn].
+ * - El indicador de ocupado (StateDescription) vive solo en el botón
+ *   primario; el secundario nunca lo anuncia.
+ */
 @Composable
 internal fun AuthScreen(
     state: AuthUiState,
-    viewModel: AuthViewModel,
-    appHosts: AppHosts? = null,
-    onBack: () -> Unit = {},
+    onEmailChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+    onSignIn: () -> Unit,
+    onSignUp: () -> Unit,
 ) {
-    val email by remember { mutableStateOf("") }
-    val password by remember { mutableStateOf("") }
-    val toastHost = appHosts?.toastHost
+    val toastHost: com.agendaqr.core.ui.components.AqToastHostState? = null
+    // Errores de validación del formulario, derivados del state (no de un
+    // remember local) para que sobrevivan a la recreación de la actividad
+    // sin depender de rememberSaveable. Se muestran siempre que el formulario
+    // esté inválido; el submit (onSignIn) solo se dispara cuando es válido.
+    // Errores de validación del formulario, derivados del state (no de un
+    // remember local) para que sobrevivan a la recreación de la actividad.
+    val validationMessages = mutableListOf<String>()
+    if (state.email.isBlank()) {
+        validationMessages += AppStrings.IngresaUnCorreoValido
+    }
+    if (state.password.length < 6) {
+        validationMessages += AppStrings.Minimo6Caracteres
+    }
+    state.errorMessage?.let { validationMessages += it.display() }
     AqScreen(
-        title = AppStrings.AccesoLocal,
-        onBack = onBack,
-        statusContent = appHosts?.status,
-        toastHost = toastHost?.let { host -> { AqToastHost(host) } },
+        title = "",
+        onBack = { },
+        statusContent = null,
+        toastHost = null,
     ) {
-        state.error?.let { err ->
+        validationMessages.forEach { message ->
             AqAlert(
-                tone = com.agendaqr.core.ui.theme.AqTone.Danger,
-                message = err.dataStatus,
+                tone = AqTone.Danger,
+                message = message,
                 dismissLabel = AppStrings.Cerrar,
                 onDismiss = { },
             )
         }
         AqTextInput(
-            label = AppStrings.LabelCorreo,
-            value = email,
-            onValueChange = { email = it },
-            leadingIcon = AqIcons.Mail,
+            label = AppStrings.Correo,
+            value = state.email,
+            onValueChange = onEmailChanged,
         )
         AqTextInput(
-            label = AppStrings.LabelContrasena,
-            value = password,
-            onValueChange = { password = it },
-            leadingIcon = AqIcons.Lock,
+            label = AppStrings.Contrasena,
+            value = state.password,
+            onValueChange = onPasswordChanged,
         )
-        AqButton(
-            label = AppStrings.Desbloquear,
-            onClick = { viewModel.onAction(AuthAction.Unlock(email, password)) },
-            variant = com.agendaqr.core.ui.components.AqButtonVariant.Primary,
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            enabled = state !is AuthUiState.Unlocking,
-        )
-    }
-}
-
-@Composable
-internal fun AccountScreen(
-    state: AccountUiState,
-    viewModel: AccountViewModel,
-    appHosts: AppHosts? = null,
-    onBack: () -> Unit = {},
-) {
-    val toastHost = appHosts?.toastHost
-    AqScreen(
-        title = AppStrings.Cuenta,
-        onBack = onBack,
-        backLabel = AppStrings.Volver,
-        statusContent = appHosts?.status,
-        toastHost = toastHost?.let { host -> { AqToastHost(host) } },
-    ) {
-        AqSectionTitle(text = AppStrings.Configuracion)
-        AqText(
-            text = AppStrings.Sincronizacion,
-            size = AqType.Body,
-            color = AqColor.TextSecondary,
-        )
-        AqButton(
-            label = AppStrings.CerrarSesion,
-            onClick = { viewModel.onAction(AccountAction.SignOut) },
-            variant = AqButtonVariant.Text,
-            modifier = Modifier.fillMaxWidth(),
-        )
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+        ) {
+            // Primario: nunca deshabilitado por el formulario; ocupado solo
+            // mientras se envía (StateDescription = busyDescription).
+            AqButton(
+                label = AppStrings.IniciarSesion,
+                onClick = {
+                    if (!state.isSubmitting && validationMessages.isEmpty()) {
+                        onSignIn()
+                    }
+                },
+                variant = AqButtonVariant.Primary,
+                enabled = !state.isSubmitting,
+                isLoading = state.isSubmitting,
+                busyDescription = AppStrings.IniciandoSesion,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            // Secundario: sin StateDescription (no anuncia ocupado).
+            AqButton(
+                label = AppStrings.CrearCuenta,
+                onClick = { onSignUp() },
+                variant = AqButtonVariant.Text,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 }

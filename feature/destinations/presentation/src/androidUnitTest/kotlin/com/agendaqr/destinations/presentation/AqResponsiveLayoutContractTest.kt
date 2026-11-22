@@ -18,9 +18,11 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import com.agendaqr.core.ui.components.AqTag
+import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqFavoriteToggle
 import com.agendaqr.core.ui.components.AqMenuItem
+import com.agendaqr.core.ui.components.AqTag
+import com.agendaqr.core.ui.components.AqTextInput
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Assert.assertTrue

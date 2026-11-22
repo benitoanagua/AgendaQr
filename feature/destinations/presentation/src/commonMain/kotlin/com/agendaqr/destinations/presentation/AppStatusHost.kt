@@ -6,7 +6,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqAlert
+import com.agendaqr.core.ui.components.AqBannerAction
+import com.agendaqr.core.ui.components.AqButton
+import com.agendaqr.core.ui.components.AqButtonVariant
 import com.agendaqr.core.ui.components.AqTag
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTone
@@ -27,29 +32,46 @@ internal fun AppStatusHost(
     onDismissImportError: () -> Unit,
     onRetryNow: () -> Unit,
 ) {
-    Column {
+    Column(
+        modifier = Modifier.padding(
+            start = AqSpacing.ScreenMargin,
+            end = AqSpacing.ScreenMargin,
+            top = AqSpacing.Sm,
+        ),
+    ) {
         val error = importError?.let { importReadError(it) }
         if (error != null) {
+            // §12: el banner de error de importación gana sobre todo lo demás;
+            // sus acciones (reintentar / elegir otra imagen / cerrar) viajan
+            // listas para mostrar vía [bannerActions], sin duplicar botones.
+            val (confirmAction, dismissAction) = error.bannerActions(
+                onRetry = onRetryNow,
+                onClear = onDismissImportError,
+            )
             AqAlert(
-                title = error.what,
-                message = error.dataStatus,
-                tone = com.agendaqr.core.ui.theme.AqTone.Danger,
-                action = com.agendaqr.core.ui.components.AqBannerAction(AppStrings.ReintentarAhora, onRetryNow),
-                dismiss = com.agendaqr.core.ui.components.AqBannerAction(AppStrings.Cerrar, onDismissImportError),
+                tone = AqTone.Danger,
+                message = error.display(),
+                confirmLabel = confirmAction?.label,
+                onConfirm = confirmAction?.onClick,
+                dismissLabel = dismissAction?.label,
+                onDismiss = dismissAction?.onClick,
+                horizontalPadding = AqSpacing.None,
             )
         } else if (hasFailed && pendingCount > 0) {
+            // Mutación fallida con pendientes: banner completo con "Reintentar
+            // ahora" (re-muta) y "Cerrar".
             AqAlert(
+                tone = AqTone.Danger,
                 message = syncPendingLabel(pendingCount, retrying = true),
-                tone = com.agendaqr.core.ui.theme.AqTone.Danger,
-                action = com.agendaqr.core.ui.components.AqBannerAction(AppStrings.ReintentarAhora, onRetryNow),
+                confirmLabel = AppStrings.ReintentarAhora,
+                onConfirm = onRetryNow,
+                dismissLabel = AppStrings.Cerrar,
+                onDismiss = { },
+                horizontalPadding = AqSpacing.None,
             )
         } else if (isOffline || pendingCount > 0) {
             Row(
-                modifier = Modifier.padding(
-                    start = AqSpacing.ScreenMargin,
-                    end = AqSpacing.ScreenMargin,
-                    top = AqSpacing.Sm,
-                ),
+                modifier = Modifier,
                 horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm, Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -59,7 +81,7 @@ internal fun AppStatusHost(
                 if (pendingCount > 0) {
                     AqTag(
                         text = syncPendingLabel(pendingCount, retrying = false),
-                        tone = com.agendaqr.core.ui.theme.AqTone.Info,
+                        tone = AqTone.Info,
                     )
                 }
             }

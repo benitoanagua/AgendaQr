@@ -57,6 +57,7 @@ internal fun ComprobanteViewerDialog(
                 viewModel.onAction(OperationAction.DeleteComprobante(receipt.id))
             },
             onDismissRequest = { showDeleteConfirm = false },
+            content = { },
         )
         return
     }
@@ -86,7 +87,7 @@ internal fun ComprobanteViewerDialog(
                         ComprobantePreview(bytes, receipt.mimeType)
                         AqButton(
                             label = AppStrings.Compartir,
-                            onClick = { shareComprobante(bytes, receipt.extension.orEmpty("bin"), receipt.mimeType) },
+                            onClick = { shareComprobante(bytes, receipt.extension.orEmpty(), receipt.mimeType) },
                             variant = AqButtonVariant.Text,
                         )
                     }

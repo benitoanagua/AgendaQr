@@ -12,6 +12,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
@@ -102,6 +104,7 @@ fun AqAppBar(
             color = AqColor.TextPrimary,
             modifier = Modifier.weight(1f, fill = false),
             maxLines = 1,
+            semanticHeading = true,
         )
         actions.forEach { action ->
             AqButton(

@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
@@ -34,7 +36,8 @@ fun AqSectionTitle(
             text = text,
             size = AqType.HeadingSm,
             fontWeight = com.agendaqr.core.ui.theme.AqWeight.SemiBold,
-            color = com.agendaqr.core.ui.theme.AqColor.TextPrimary,
+            color = com.agendaqr.core.ui.theme.AqColor.TextSecondary,
+            semanticHeading = true,
         )
         trailing?.invoke()
     }

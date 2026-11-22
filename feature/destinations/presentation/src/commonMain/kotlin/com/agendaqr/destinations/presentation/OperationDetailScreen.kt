@@ -1,9 +1,11 @@
 package com.agendaqr.destinations.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,6 +20,7 @@ import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqButtonSize
 import com.agendaqr.core.ui.components.AqButtonVariant
 import com.agendaqr.core.ui.components.AqEmptyPlaceholder
+import com.agendaqr.core.ui.components.AqHairline
 import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqMenuItem
@@ -35,6 +38,7 @@ import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
+import com.agendaqr.core.ui.theme.aqShadow
 import com.agendaqr.destinations.data.SyncResource
 import com.agendaqr.destinations.domain.*
 
@@ -57,9 +61,7 @@ internal fun OperationDetailScreen(
 ) {
     val operation = viewModel.selectedOperation()
     if (operation == null) {
-        AqScreen(
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+        AqScreen() {
             AqEmptyPlaceholder(
                 title = AppStrings.OperacionNoEncontrada,
                 subtitle = AppStrings.PudoHaberSidoEliminada,
@@ -122,6 +124,7 @@ internal fun OperationDetailScreen(
                     )
                 }
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
                 ) {
@@ -221,14 +224,6 @@ internal fun OperationDetailScreen(
                                 tone = provenanceTone(receipt.provenance),
                             )
                         },
-                        trailing2 = {
-                            AqButton(
-                                label = AppStrings.Desasociar,
-                                onClick = { viewModel.onAction(OperationAction.Disassociate(receipt.id)) },
-                                variant = AqButtonVariant.Danger,
-                                size = AqButtonSize.Small,
-                            )
-                        },
                     )
                 }
             }
@@ -253,13 +248,14 @@ internal fun OperationDetailScreen(
                 viewModel.onAction(OperationAction.Delete(operation.id))
             },
             onDismissRequest = { showDeleteConfirm = false },
+            content = { },
         )
     }
 }
 
 /** Fila de metadato (etiqueta + valor) construida con piezas Moon. */
 @Composable
-private fun AqMetaLine(
+internal fun AqMetaLine(
     label: String,
     value: String,
     leadingIcon: androidx.compose.ui.graphics.vector.ImageVector? = null,
@@ -269,14 +265,18 @@ private fun AqMetaLine(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
     ) {
-        leadingIcon?.let {
-            AqIcon(imageVector = it, contentDescription = null, size = com.agendaqr.core.ui.theme.AqMetrics.IconSizeCompact)
+        leadingIcon?.let { icon ->
+            AqIcon(
+                imageVector = icon,
+                contentDescription = null,
+                size = com.agendaqr.core.ui.theme.AqMetrics.IconSizeCompact,
+            )
         }
         AqText(
             text = label,
             size = AqType.Body,
             color = com.agendaqr.core.ui.theme.AqColor.TextSecondary,
-            modifier = Modifier.weight(0f, fill = false),
+            modifier = Modifier,
         )
         AqText(
             text = value,

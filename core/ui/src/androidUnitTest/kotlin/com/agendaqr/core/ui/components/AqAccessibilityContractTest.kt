@@ -196,7 +196,7 @@ class AqAccessibilityContractTest {
         compose.onNodeWithText("Mercado")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, true))
         compose.onNodeWithText("Casa")
-            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, false).not())
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, false))
     }
 
     @Test
@@ -231,7 +231,7 @@ class AqAccessibilityContractTest {
             }
         }
 
-        compose.onNodeWithText("Código de reserva")
+        compose.onNodeWithContentDescription("Código de reserva")
             .assertExists()
             .assertIsNotEnabled()
     }

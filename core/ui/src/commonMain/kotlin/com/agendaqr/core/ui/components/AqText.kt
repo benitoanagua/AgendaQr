@@ -4,7 +4,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -19,6 +19,10 @@ import com.agendaqr.core.ui.theme.AqTextRoles
  * sistema con los tokens del design system. La capa feature no compone
  * `androidx.compose.material3.Text` directamente: usa este componente
  * (o [AqHeading] para títulos).
+ *
+ * - [semanticHeading]: declara el nodo como encabezado semántico
+ *   (T-03: los encabezados de pantalla y de sección lo declaran
+ *   explícitamente; el cuerpo nunca lo declara).
  */
 @Composable
 fun AqText(
@@ -30,11 +34,14 @@ fun AqText(
     textAlign: TextAlign? = null,
     /** Límite de líneas con elipsis (p. ej. contenido largo plegado). */
     maxLines: Int = Int.MAX_VALUE,
+    /** Declara el nodo como encabezado semántico (solo encabezados reales). */
+    semanticHeading: Boolean = false,
 ) {
-    val role = AqTextRoles.of(size, heading = false)
+    val role = AqTextRoles.of(size, heading = semanticHeading)
+    val baseModifier = if (semanticHeading) Modifier.semantics { this[SemanticsProperties.Heading] = Unit } else Modifier
     Text(
         text = text,
-        modifier = modifier,
+        modifier = baseModifier.then(modifier),
         fontSize = size,
         lineHeight = role.lineHeight,
         fontFamily = AqType.FamilyUi,

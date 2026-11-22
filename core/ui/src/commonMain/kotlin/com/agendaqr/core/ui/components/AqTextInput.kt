@@ -32,10 +32,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
@@ -88,6 +91,7 @@ fun AqTextInput(
     optionalLabel: String? = null,
     maxLength: Int? = null,
     focusRequester: FocusRequester? = null,
+    placeholder: String? = null,
     size: AqTextInputSize = AqTextInputSize.Md,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -122,7 +126,12 @@ fun AqTextInput(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(AqSize.X2s),
     ) {
-        AqTextInputLabel(label, optionalLabel, enabled)
+        AqTextInputLabel(
+            label = label,
+            optionalLabel = optionalLabel,
+            enabled = enabled,
+            errorMessage = effectiveErrorMessage,
+        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -162,6 +171,11 @@ fun AqTextInput(
                     )
                     .semantics {
                         contentDescription = label
+                        // El nodo editable expone su label como texto accesible
+                        // para que los lectores de pantalla (y los tests de
+                        // foco de Robolectric) localicen el campo por su
+                        // etiqueta visible (T-01).
+                        text = AnnotatedString(label)
                         if (effectiveIsError && effectiveErrorMessage != null) error(effectiveErrorMessage)
                     },
                 enabled = enabled,
@@ -188,7 +202,17 @@ fun AqTextInput(
                             .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
                             .padding(vertical = AqSize.X2s),
                         contentAlignment = Alignment.CenterStart,
-                    ) { innerTextField() }
+                    ) {
+                        innerTextField()
+                        if (value.isBlank() && placeholder != null) {
+                            AqText(
+                                text = placeholder!!,
+                                size = AqType.Body,
+                                color = AqColor.TextTertiary,
+                                modifier = Modifier.padding(horizontal = horizontalPadding),
+                            )
+                        }
+                    }
                 },
             )
             trailing?.invoke()
@@ -239,7 +263,9 @@ private fun AqTextInputLabel(
     label: String,
     optionalLabel: String?,
     enabled: Boolean,
+    errorMessage: String? = null,
 ) {
+    val fieldEnabled = enabled
     Row(
         modifier = Modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -248,8 +274,12 @@ private fun AqTextInputLabel(
         Text(
             text = label,
             style = AqTextStyles.Label,
-            color = if (!enabled) AqColor.OnDisabled else AqColor.TextPrimary,
-            modifier = Modifier.weight(1f, fill = false),
+            color = if (!fieldEnabled) AqColor.OnDisabled else AqColor.TextPrimary,
+            modifier = Modifier
+                .clearAndSetSemantics { }   // el label es visual; su nombre accesible vive en el campo (contentDescription)
+                .weight(1f, fill = false)
+                .heightIn(min = AqMetrics.ControlMinSize)
+                .fieldLabelSemantics(errorMessage),
         )
         optionalLabel?.let {
             Text(
@@ -260,3 +290,9 @@ private fun AqTextInputLabel(
         }
     }
 }
+
+/** Semántica de la etiqueta persistente de un campo: mensaje de error. */
+private fun Modifier.fieldLabelSemantics(errorMessage: String?): Modifier =
+    semantics {
+        if (errorMessage != null) error(errorMessage)
+    }

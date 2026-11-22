@@ -10,17 +10,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqButtonVariant
 import com.agendaqr.core.ui.components.AqCheckbox
 import com.agendaqr.core.ui.components.AqEmptyPlaceholder
+import com.agendaqr.core.ui.components.AqHairline
 import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqMenuItem
+import com.agendaqr.core.ui.components.AqModal
+import com.agendaqr.core.ui.components.AqNavChromeState
 import com.agendaqr.core.ui.components.AqScreen
 import com.agendaqr.core.ui.components.AqSelectionToolbar
 import com.agendaqr.core.ui.components.AqSkeletonBlock
@@ -93,7 +96,7 @@ internal fun OperationListGrouped(
         statusContent = appHosts?.status,
         toastHost = toastHost?.let { host -> { AqToastHost(host) } },
     ) {
-        if (state.isLoading) {
+        if (state.isLoadingOperations) {
             AqSkeletonBlock(lines = 4)
         } else if (operations.isEmpty()) {
             AqEmptyPlaceholder(
@@ -101,7 +104,7 @@ internal fun OperationListGrouped(
                 title = AppStrings.AunNoHayOperaciones,
             )
         } else {
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.fillMaxWidth()) {
                 operations.take(visibleCount).forEachIndexed { index, operation ->
                     AqMenuItem(
                         title = listOfNotNull(
@@ -164,14 +167,4 @@ internal fun OperationListGrouped(
             },
         )
     }
-}
-
-@Composable
-internal fun OperationListScreen(
-    state: OperationsUiState,
-    viewModel: OperationsViewModel,
-    navChrome: AqNavChromeState? = null,
-    appHosts: AppHosts? = null,
-) {
-    OperationListGrouped(state = state, viewModel = viewModel, appHosts = appHosts)
 }

@@ -47,12 +47,6 @@ sealed interface AppRoute {
 
     /** S12 — Resultado de importación masiva (derivada de Añadir). */
     data object ImportBatch : AppRoute
-
-    /**
-     * Ajustes → Cuenta y respaldo. Superficie OPCIONAL para conectar o
-     * desconectar la cuenta remota; no es una puerta de entrada.
-     */
-    data object Account : AppRoute
 }
 
 /**
@@ -68,7 +62,6 @@ fun appRouteForName(name: String): AppRoute? = when (name) {
     "Contexts" -> AppRoute.Contexts
     "Operations" -> AppRoute.Operations
     "ImportBatch" -> AppRoute.ImportBatch
-    "Account" -> AppRoute.Account
     else -> null
 }
 
@@ -78,7 +71,6 @@ fun appRouteNameOf(route: AppRoute): String = when (route) {
     AppRoute.Contexts -> "Contexts"
     AppRoute.Operations -> "Operations"
     AppRoute.ImportBatch -> "ImportBatch"
-    AppRoute.Account -> "Account"
 }
 
 fun saveBackStack(stack: AppBackStack): List<String> = stack.stack.value.map(::appRouteNameOf)

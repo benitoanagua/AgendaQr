@@ -1,19 +1,70 @@
 package com.agendaqr.destinations.presentation
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.agendaqr.core.ui.components.AqButton
+import com.agendaqr.core.ui.components.AqButtonVariant
+import com.agendaqr.core.ui.components.AqIcon
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqScreen
+import com.agendaqr.core.ui.components.AqText
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqType
 
+/** S02 — Añadir destino: título con heading y acciones de importación
+ *  (galería, cámara, PDF). La ayuda de compartir desde otra app queda al
+ *  pie, tras las acciones (jerarquía declarada en el contrato S02).
+ */
 @Composable
-internal fun AddDestinationScreen(
-    state: DestinationsUiState,
-    viewModel: DestinationsViewModel,
-    appHosts: AppHosts? = null,
-    onBack: () -> Unit = {},
+fun AddDestinationScreen(
+    onImport: () -> Unit,
+    onBack: () -> Unit,
 ) {
-    DestinationEditorScreen(
-        state = state,
-        viewModel = viewModel,
-        appHosts = appHosts,
-        destination = null,
+    AqScreen(
+        title = AppStrings.AnadirDestino,
         onBack = onBack,
-    )
+        backLabel = AppStrings.Volver,
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        ) {
+            AqButton(
+                label = AppStrings.ElegirDeLaGaleria,
+                onClick = onImport,
+                variant = AqButtonVariant.Primary,
+                icon = AqIcons.Gallery,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            AqButton(
+                label = AppStrings.Camara,
+                onClick = onImport,
+                variant = AqButtonVariant.Primary,
+                icon = AqIcons.Camera,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            AqText(
+                text = AppStrings.PermisoCamaraContexto,
+                size = AqType.BodyXs,
+                color = AqColor.TextSecondary,
+            )
+            AqButton(
+                label = AppStrings.ElegirArchivoPdf,
+                onClick = onImport,
+                variant = AqButtonVariant.Text,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            if (sharedImportsSupported()) {
+                AqText(
+                    text = AppStrings.shareFromAnotherAppHint,
+                    size = AqType.BodySm,
+                    color = AqColor.TextSecondary,
+                )
+            }
+        }
+    }
 }

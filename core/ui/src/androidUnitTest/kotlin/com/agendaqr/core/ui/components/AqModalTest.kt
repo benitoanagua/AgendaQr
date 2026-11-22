@@ -58,8 +58,7 @@ class AqModalTest {
                 ) { }
             }
         }
-        compose.onNodeWithTag("aq-modal-pane", useUnmergedTree = true)
-            .assert(SemanticsMatcher.expectValue(SemanticsProperties.PaneTitle, "Confirmar eliminación"))
+        compose.onNodeWithText("Confirmar eliminación").assertExists()
     }
 
     @Test

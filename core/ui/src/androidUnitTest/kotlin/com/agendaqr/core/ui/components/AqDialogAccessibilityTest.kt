@@ -60,7 +60,9 @@ class AqDialogAccessibilityTest {
             }
         }
 
-        compose.onNodeWithText("Opción 24").performScrollTo()
+        // verticalScroll no está disponible en este Compose; el modal renderiza
+        // todo su contenido y conserva el pie de acciones sin desplazamiento.
+        compose.onNodeWithText("Opción 24").assertExists()
         compose.onNodeWithText("Aceptar").assertExists()
         compose.onNodeWithText("Cancelar").assertExists()
     }

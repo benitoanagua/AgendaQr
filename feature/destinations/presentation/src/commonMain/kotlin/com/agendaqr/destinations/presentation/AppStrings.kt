@@ -26,6 +26,7 @@ internal object AppStrings {
     val AbriendoComprobante = "Abriendo comprobante…"
     val attachReceiptNow = "Adjuntar comprobante"
     val AgendaQr = "Agenda QR"
+    val Patrones = "Patrones"
     // S01: sección de entradas recientes y tile vivo.
     val Recientes = "Recientes"
     val emptyDestinationsHint = "Agrega tu primer QR para empezar."
@@ -76,6 +77,8 @@ internal object AppStrings {
     val NoHayMasElementos = "No hay más elementos"
     val Cargando = "Cargando…"
     val DestinoNoEncontrado = "QR no encontrado"
+    val CrearDestino = "Crear destino"
+    val EditarDestino = "Editar destino"
     val Inicio = "Inicio"
     val Detalle = "Detalle"
     val EditaElDestinoParaImportar = "Edita el QR para importar un código válido."
@@ -178,6 +181,9 @@ internal object AppStrings {
     val ReintentarAhora = "Reintentar ahora"
     val ReintentarClasificacion = "Reintentar clasificación"
     val ResultadoDeImportacion = "Resultado de importación"
+    val RevisarImportacion = "Revisar importación"
+    val SinElementosParaRevisar = "Sin elementos para revisar"
+    val ElementosARevisar = "Elementos a revisar"
     val RevisarQr = "Revisar QR"
     val SeleccionarContexto = "Seleccionar contexto"
     val SinComprobanteAdjunto = "Sin comprobante adjunto"
@@ -186,6 +192,7 @@ internal object AppStrings {
     val SinContextos = "Sin contextos"
     val SinContextosDisponibles = "Sin contextos disponibles."
     val SinResultados = "Sin resultados"
+    val NoSeEncontraronResultados = "No se encontraron resultados"
     val TraeAAgendaQrAlgo = "Trae a Agenda QR algo que ya tienes."
     val TraeVariosElementosAAgenda = "Trae varios elementos a Agenda QR."
     val VerBandejaDeRespaldos = "Ver bandeja de respaldos"
@@ -226,6 +233,17 @@ internal object AppStrings {
     val Crear = "Crear"
     val QuitarContexto = "Quitar contexto"
     val ElNombreEsObligatorio = "El nombre es obligatorio"
+    /** Selector de contexto: titular y sección de existentes. */
+    val ElegirContexto = "Elegir contexto"
+    val ContextosExistentes = "Contextos existentes"
+    /** Etiquetas de campo del formulario de contexto/destino. */
+    val LabelNombre = "Nombre"
+    val LabelNota = "Nota"
+    val Contexto = "Contexto"
+    /** Destino sin contexto asociado. */
+    val SinContexto = "Sin contexto"
+    /** Acción de marcar como favorito. */
+    val MarcarComoFavorito = "Marcar como favorito"
     val TuInformacionEstaGuardadaEnElDispositivo = "Tu información está guardada en el dispositivo."
     val ComprobanteDuplicado = "Comprobante duplicado"
     val duplicateReceiptWarningPrefix = "Parece que este comprobante ya está guardado.\nArchivo: "
@@ -277,6 +295,10 @@ internal object AppStrings {
     val QuitarFavorito = "Quitar favorito"
     val MarcarFavorito = "Marcar favorito"
     val SeccionComprobantes = "Comprobantes"
+    val SectionCountOpen = " ("
+    val SectionCountClose = ")"
+    val CtxPrefix = "Ctx "
+    val UnknownMarker = "?"
     val checkMark = "✓ "
     val dupMark = "! "
     val pendingMark = "? "
@@ -375,6 +397,14 @@ internal object AppStrings {
     // ------------------------------------------------------------------
     val ConfiguraTuPin = "Configura tu PIN"
     val ConfiguraTuPinDescripcion = "Protege el acceso aquí; no es el PIN del teléfono."
+    /** Etiqueta del campo de PIN nuevo al crear el código (onboarding). */
+    val LabelNuevoPin = "Nuevo PIN"
+    /** Etiqueta del campo de confirmación de PIN al crear el código. */
+    val LabelConfirmarPin = "Confirma el PIN"
+    /** Etiqueta del campo de PIN al desbloquear. */
+    val LabelPin = "PIN"
+    /** Estado vacío cuando aún no hay PIN configurado. */
+    val SinPinConfigurado = "Aún no tienes PIN configurado"
     /** Acción del paso "crear el código" del onboarding (S00, V1.16). */
     val Continuar = "Continuar"
     val ConfirmaElPin = "Confirma el PIN"

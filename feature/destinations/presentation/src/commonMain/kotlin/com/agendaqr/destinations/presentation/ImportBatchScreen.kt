@@ -1,12 +1,18 @@
 package com.agendaqr.destinations.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -15,12 +21,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.components.AqAlert
 import com.agendaqr.core.ui.components.AqAppBarAction
 import com.agendaqr.core.ui.components.AqBottomSheet
 import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqButtonSize
 import com.agendaqr.core.ui.components.AqButtonVariant
+import com.agendaqr.core.ui.components.AqChip
 import com.agendaqr.core.ui.components.AqEmptyPlaceholder
 import com.agendaqr.core.ui.components.AqHairline
 import com.agendaqr.core.ui.components.AqIcon
@@ -31,6 +42,7 @@ import com.agendaqr.core.ui.components.AqQrPreview
 import com.agendaqr.core.ui.components.AqScreen
 import com.agendaqr.core.ui.components.AqSectionTitle
 import com.agendaqr.core.ui.components.AqSkeletonBlock
+import com.agendaqr.core.ui.components.AqSuccessCheck
 import com.agendaqr.core.ui.components.AqTag
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqToastHost
@@ -38,10 +50,12 @@ import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqShadow
+import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
+import com.agendaqr.core.ui.theme.aqShadow
 import com.agendaqr.destinations.domain.ImportBatch
 import com.agendaqr.destinations.domain.ImportCandidate
 import com.agendaqr.destinations.domain.ImportKind
@@ -67,7 +81,7 @@ fun ImportBatchScreen(
 ) {
     var savedEvent by remember { mutableStateOf<Any?>(null) }
     var wasSaving by remember { mutableStateOf(false) }
-    androidx.compose.runtime.LaunchedEffect(state) {
+    LaunchedEffect(state) {
         val savingNow = state is ImportBatchUiState.Saving
         if (wasSaving && state is ImportBatchUiState.Saved) {
             savedEvent = Any()
@@ -75,7 +89,7 @@ fun ImportBatchScreen(
         wasSaving = state is ImportBatchUiState.Saving || state is ImportBatchUiState.Saved
     }
     val toastHost = appHosts?.toastHost
-    androidx.compose.runtime.LaunchedEffect(savedEvent) {
+    LaunchedEffect(savedEvent) {
         if (savedEvent != null) {
             toastHost?.show(AppStrings.GuardadoOk)
         }
@@ -88,9 +102,14 @@ fun ImportBatchScreen(
         is ImportBatchUiState.Error -> state.batch
         else -> null
     }
+    val onBack: (() -> Unit)? = if (state is ImportBatchUiState.Saving) {
+        null
+    } else {
+        { onAction(ImportBatchAction.Back) }
+    }
     AqScreen(
         title = AppStrings.ResultadoDeImportacion,
-        onBack = if (state is ImportBatchUiState.Saving) null else { onAction(ImportBatchAction.Back) },
+        onBack = onBack,
         backLabel = if (state is ImportBatchUiState.Review) AppStrings.VolverAResultado else AppStrings.Volver,
         statusContent = appHosts?.status,
         bottomAction = if (currentBatch?.canSaveRecognized() == true) {
@@ -125,15 +144,22 @@ fun ImportBatchScreen(
             is ImportBatchUiState.Saved -> {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
                 ) {
                     com.agendaqr.core.ui.components.AqSuccessCheck(size = AqMetrics.ResultGlyphSize)
                     AqAlert(
                         tone = AqTone.Success,
-                        message = AppStrings.batchSavedKeepReviewNotice,
+                        message = AppStrings.GuardadoOk,
                         dismissLabel = AppStrings.Cerrar,
                         onDismiss = {},
+                        contentDescription = AppStrings.GuardadoOk,
+                        horizontalPadding = AqSpacing.None,
+                    )
+                    AqText(
+                        text = AppStrings.batchSavedKeepReviewNotice,
+                        size = AqType.BodySm,
+                        color = AqColor.TextSecondary,
                     )
                     state.batch.let { batch ->
                         if (batch.pendingItems().isNotEmpty()) {
@@ -148,12 +174,42 @@ fun ImportBatchScreen(
                 }
             }
             is ImportBatchUiState.Error -> {
-                AqAlert(
-                    tone = AqTone.Danger,
-                    message = state.error.dataStatus,
-                    dismissLabel = AppStrings.Cerrar,
-                    onDismiss = {},
-                )
+                // §10: el bloque de error muestra título (what) y descripción
+                // (dataStatus) como texto, precedidos por un icono de alerta,
+                // con semántica de encabezado en el título y liveRegion en el
+                // contenedor para anuncios de accesibilidad. Un solo margen
+                // de pantalla (el de AqScreen), sin padding duplicado.
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .semantics { liveRegion = LiveRegionMode.Polite },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Spacer(modifier = Modifier.width(AqSpacing.Lg))
+                    AqIcon(
+                        imageVector = com.agendaqr.core.ui.components.AqIcons.Warning,
+                        contentDescription = null,
+                        size = AqMetrics.IconSizeCompact,
+                        tint = AqColor.Danger,
+                    )
+                    Spacer(modifier = Modifier.width(AqSpacing.Sm))
+                    Column(verticalArrangement = Arrangement.spacedBy(AqSize.Sm)) {
+                        AqText(
+                            text = state.error.what,
+                            size = AqType.HeadingMd,
+                            fontWeight = AqWeight.SemiBold,
+                            color = AqColor.Danger,
+                            semanticHeading = true,
+                        )
+                        if (state.error.dataStatus.isNotBlank()) {
+                            AqText(
+                                text = state.error.dataStatus,
+                                size = AqType.BodySm,
+                                color = AqColor.TextSecondary,
+                            )
+                        }
+                    }
+                }
                 state.batch?.let { BatchResultContent(it, onAction, isSaving = false) }
             }
         }
@@ -264,7 +320,7 @@ private fun BatchReviewContent(
         }
     }
     AqSectionTitle(text = AppStrings.ElementosQueNecesitanRevision + " (" + filtered.size + ")")
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         filtered.forEachIndexed { index, candidate ->
             PendingItemCell(
                 candidate = candidate,
@@ -325,11 +381,13 @@ private fun PendingItemCell(
                     label = AppStrings.VerExistente,
                     onClick = { onAction(ImportBatchAction.ViewExisting(candidate.id)) },
                     variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
+                    modifier = Modifier.heightIn(min = AqMetrics.ControlMinSize),
                 )
                 else -> AqButton(
                     label = AppStrings.ReintentarClasificacion,
                     onClick = { onAction(ImportBatchAction.RetryCandidate(candidate.id)) },
                     variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
+                    modifier = Modifier.heightIn(min = AqMetrics.ControlMinSize),
                 )
             }
             Row(
@@ -337,11 +395,20 @@ private fun PendingItemCell(
                 horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm, alignment = Alignment.End),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                // Forza que la fila mida al menos un objetivo táctil (48 dp) para
+                // que los botones de texto de las acciones puedan medir 48 dp
+                // (D-02) aunque el Row envuelva su contenido.
+                Spacer(
+                    modifier = Modifier
+                        .height(AqMetrics.ControlMinSize)
+                        .width(AqSpacing.None),
+                )
                 if (isDuplicate) {
                     AqButton(
                         label = AppStrings.GuardarDeTodosModos,
                         onClick = { onAction(ImportBatchAction.SaveDuplicateAnyway(candidate.id)) },
-                        variant = com.agendaqr.core.ui.components.AqButtonVariant.Neutral,
+                        variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
+                        modifier = Modifier.heightIn(min = AqMetrics.ControlMinSize),
                     )
                 }
                 AqButton(
@@ -354,6 +421,7 @@ private fun PendingItemCell(
                         }
                     },
                     variant = com.agendaqr.core.ui.components.AqButtonVariant.Danger,
+                    modifier = Modifier.heightIn(min = AqMetrics.ControlMinSize),
                 )
             }
         }
@@ -382,7 +450,7 @@ private fun PendingItemCell(
 private fun AqMetaLine(
     label: String,
     value: String,
-    leadingIcon: com.agendaqr.core.ui.components.AqIcons.() -> Unit? = null,
+    leadingIcon: (() -> Unit)? = null,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -394,7 +462,7 @@ private fun AqMetaLine(
             text = label,
             size = AqType.Body,
             color = com.agendaqr.core.ui.theme.AqColor.TextSecondary,
-            modifier = Modifier.weight(0f, fill = false),
+            modifier = Modifier,
         )
         AqText(
             text = value,

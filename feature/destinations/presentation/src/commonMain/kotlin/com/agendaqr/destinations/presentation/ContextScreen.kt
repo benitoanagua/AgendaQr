@@ -2,6 +2,7 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -14,8 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqAlert
 import com.agendaqr.core.ui.components.AqAppBarAction
+import com.agendaqr.core.ui.components.AqButton
+import com.agendaqr.core.ui.components.AqButtonVariant
 import com.agendaqr.core.ui.components.AqEmptyPlaceholder
 import com.agendaqr.core.ui.components.AqMenuItem
+import com.agendaqr.core.ui.components.AqNavChromeState
+import com.agendaqr.core.ui.components.AqNavDestination
 import com.agendaqr.core.ui.components.AqPillTab
 import com.agendaqr.core.ui.components.AqScreen
 import com.agendaqr.core.ui.components.AqSectionTitle
@@ -96,12 +101,14 @@ private fun ContextList(
     // V1.4 (§12): Contextos es destino raíz — barra superior con título y
     // navegación inferior; sin flecha atrás.
     val toastHost = appHosts?.toastHost
+    val navDestinations = navChrome?.destinations.orEmpty()
+    val navSelectedId = navChrome?.selectedId
     AqScreen(
         title = AppStrings.Contextos,
         onBack = null,
-        navDestinations = navChrome?.destinations.orEmpty(),
-        navSelectedId = navChrome?.selectedId,
-        onNavSelect = { navChrome?.onSelect?.invoke(it) },
+        navDestinations = navDestinations,
+        navSelectedId = navSelectedId,
+        onNavSelect = { name -> navChrome?.onSelect?.invoke(name); Unit },
         statusContent = appHosts?.status,
         toastHost = toastHost?.let { host -> { AqToastHost(host) } },
     ) {
@@ -113,8 +120,8 @@ private fun ContextList(
             AqAlert(
                 tone = AqTone.Danger,
                 message = err.dataStatus,
-                dismissLabel = bannerDismiss.label,
-                onDismiss = bannerDismiss.onClick,
+                dismissLabel = bannerDismiss?.label ?: AppStrings.Cerrar,
+                onDismiss = bannerDismiss?.onClick ?: { },
             )
         }
         when {
@@ -127,7 +134,7 @@ private fun ContextList(
                 onAction = onCreateContext,
             )
             else -> {
-                LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     state.contexts.forEachIndexed { index, context ->
                         AqMenuItem(
                             title = context.name,
@@ -138,6 +145,9 @@ private fun ContextList(
                             },
                             showDivider = index < state.contexts.lastIndex,
                         )
+                        if (index < state.contexts.lastIndex) {
+                            com.agendaqr.core.ui.components.AqHairline()
+                        }
                     }
                 }
             }
@@ -172,8 +182,8 @@ private fun ContextDetail(
             AqAlert(
                 tone = AqTone.Danger,
                 message = err.dataStatus,
-                dismissLabel = bannerDismiss.label,
-                onDismiss = bannerDismiss.onClick,
+                dismissLabel = bannerDismiss?.label ?: AppStrings.Cerrar,
+                onDismiss = bannerDismiss?.onClick ?: { },
             )
         }
         contents?.let { data ->
@@ -189,79 +199,84 @@ private fun ContextDetail(
                     com.agendaqr.core.ui.components.AqTab(AppStrings.Comprobantes, count = data.comprobantes.size),
                 ),
                 selectedIndex = pivotSection,
-                onSelect = { pivotSection = it },
-            ) { section ->
-                Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-                    when (section) {
-                        0 -> {
-                            if (data.destinations.isEmpty()) {
-                                AqEmptyPlaceholder(
-                                    icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
-                                    title = AppStrings.AunNoHayDestinos,
-                                )
-                            } else {
-                                LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                                    data.destinations.forEachIndexed { index, destination ->
-                                        AqMenuItem(
-                                            title = destination.name.ifBlank { AppStrings.QrSinNombre },
-                                            onClick = { onOpenDestination(destination.id) },
-                                            showDivider = index < data.destinations.lastIndex,
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        1 -> {
-                            if (data.operations.isEmpty()) {
-                                AqEmptyPlaceholder(
-                                    icon = com.agendaqr.core.ui.components.AqIcons.Register,
-                                    title = AppStrings.AunNoHayOperaciones,
-                                )
-                            } else {
-                                val shownOperations = data.operations.take(RECENT_ACTIVITIES_SHOWN)
-                                LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                                    shownOperations.forEachIndexed { index, operation ->
-                                        AqMenuItem(
-                                            title = listOfNotNull(
-                                                when (operation.type) {
-                                                    OperationType.PAGO -> AppStrings.Pago
-                                                    OperationType.COBRO -> AppStrings.Cobro
-                                                },
-                                                operation.amount,
-                                                operation.currency,
-                                                operation.personOrEntity,
-                                            ).joinToString(" · "),
-                                            endMetaReplacement = formatDate(operation.occurredAt),
-                                            onClick = { onOpenOperation(operation.id) },
-                                            showDivider = index < shownOperations.lastIndex,
-                                        )
-                                    }
-                                }
-                                if (data.operations.size > RECENT_ACTIVITIES_SHOWN) {
-                                    AqButton(
-                                        label = AppStrings.VerMas,
-                                        onClick = onOpenOperations,
-                                        variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
+                onSelect = { section: Int -> pivotSection = section },
+            )
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                when (pivotSection) {
+                    0 -> {
+                        if (data.destinations.isEmpty()) {
+                            AqEmptyPlaceholder(
+                                icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
+                                title = AppStrings.AunNoHayDestinos,
+                            )
+                        } else {
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                data.destinations.forEachIndexed { index, destination ->
+                                    AqMenuItem(
+                                        title = destination.name.ifBlank { AppStrings.QrSinNombre },
+                                        onClick = { onOpenDestination(destination.id) },
+                                        showDivider = index < data.destinations.lastIndex,
                                     )
                                 }
                             }
                         }
-                        else -> {
-                            if (data.comprobantes.isEmpty()) {
-                                AqEmptyPlaceholder(
-                                    icon = com.agendaqr.core.ui.components.AqIcons.Attachment,
-                                    title = AppStrings.AunNoHayComprobantes,
+                    }
+                    1 -> {
+                        if (data.operations.isEmpty()) {
+                            AqEmptyPlaceholder(
+                                icon = com.agendaqr.core.ui.components.AqIcons.Register,
+                                title = AppStrings.AunNoHayOperaciones,
+                            )
+                        } else {
+                            val shownOperations = data.operations.take(RECENT_ACTIVITIES_SHOWN)
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                shownOperations.forEachIndexed { index, operation ->
+                                    AqMenuItem(
+                                        title = listOfNotNull(
+                                            when (operation.type) {
+                                                OperationType.PAGO -> AppStrings.Pago
+                                                OperationType.COBRO -> AppStrings.Cobro
+                                            },
+                                            operation.amount,
+                                            operation.currency,
+                                            operation.personOrEntity,
+                                        ).joinToString(" · "),
+                                        trailing = {
+                                            AqText(
+                                                text = formatDate(operation.occurredAt),
+                                                size = AqType.Label,
+                                                color = AqColor.TextSecondary,
+                                            )
+                                        },
+                                        onClick = { onOpenOperation(operation.id) },
+                                        showDivider = index < shownOperations.lastIndex,
+                                    )
+                                }
+                            }
+                            if (data.operations.size > RECENT_ACTIVITIES_SHOWN) {
+                                AqButton(
+                                    label = AppStrings.VerMas,
+                                    onClick = onOpenOperations,
+                                    variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
                                 )
-                            } else {
-                                LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                                    data.comprobantes.forEachIndexed { index, receipt ->
-                                        AqMenuItem(
-                                            title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
-                                            subtitle = receipt.file.takeIf { it.isNotBlank() },
-                                            onClick = { onOpenComprobante(receipt.id) },
-                                            showDivider = index < data.comprobantes.lastIndex,
-                                        )
-                                    }
+                            }
+                        }
+                    }
+                    else -> {
+                        if (data.comprobantes.isEmpty()) {
+                            AqEmptyPlaceholder(
+                                icon = com.agendaqr.core.ui.components.AqIcons.Attachment,
+                                title = AppStrings.AunNoHayComprobantes,
+                            )
+                        } else {
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                data.comprobantes.forEachIndexed { index, receipt ->
+                                    AqMenuItem(
+                                        title = AppStrings.Comprobante2 + receiptProvenanceLabel(receipt.provenance),
+                                        subtitle = receipt.file.takeIf { it.isNotBlank() },
+                                        onClick = { onOpenComprobante(receipt.id) },
+                                        showDivider = index < data.comprobantes.lastIndex,
+                                    )
                                 }
                             }
                         }
@@ -274,7 +289,7 @@ private fun ContextDetail(
 
 /** Fila de metadato (etiqueta + valor) construida con piezas Moon. */
 @Composable
-private fun AqMetaLine(label: String, value: String, leadingIcon: com.agendaqr.core.ui.components.AqIcons.() -> Unit? = null) {
+private fun AqMetaLine(label: String, value: String, leadingIcon: (() -> Unit)? = null) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -285,7 +300,7 @@ private fun AqMetaLine(label: String, value: String, leadingIcon: com.agendaqr.c
             text = label,
             size = AqType.Body,
             color = com.agendaqr.core.ui.theme.AqColor.TextSecondary,
-            modifier = Modifier.weight(0f, fill = false),
+            modifier = Modifier,
         )
         AqText(
             text = value,

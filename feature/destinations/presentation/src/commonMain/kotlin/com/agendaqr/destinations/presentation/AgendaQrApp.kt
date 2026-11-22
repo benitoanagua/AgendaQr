@@ -12,6 +12,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -127,11 +128,11 @@ fun AgendaQrApp() {
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     AqAlert(
-                        title = AppStrings.ModoDemostracion,
-                        message = AppStrings.DemostracionAislada,
-                        tone = com.agendaqr.core.ui.theme.AqTone.Info,
+                        tone = AqTone.Info,
+                        message = AppStrings.ModoDemostracion + "\n" + AppStrings.DemostracionAislada,
                         dismissLabel = AppStrings.SalirDeDemostracion,
                         onDismiss = ::exitDemo,
+                        modifier = Modifier.testTag("am-status-banner"),
                     )
                     AgendaQrLocalApp(
                         profileId = DEMO_PROFILE_ID,
@@ -141,16 +142,21 @@ fun AgendaQrApp() {
             }
             accessState.mode == LocalAccessMode.Onboarding -> LocalOnboardingScreen(
                 state = accessState,
-                viewModel = LocalAccessViewModel(profile, protection),
+                viewModel = accessViewModel,
                 appHosts = null,
-                onSubmit = { },
+                onPinChanged = accessViewModel::onPinChanged,
+                onConfirmationChanged = accessViewModel::onConfirmationChanged,
+                onSubmit = { accessViewModel.submitOnboarding() },
+                onExploreDemo = { demoActive = true },
             )
             accessState.mode == LocalAccessMode.Locked -> LocalLockScreen(
                 state = accessState,
-                viewModel = LocalAccessViewModel(profile, protection),
+                viewModel = accessViewModel,
                 appHosts = null,
-                onSubmit = { },
-                onCancel = { },
+                onPinChanged = accessViewModel::onPinChanged,
+                onSubmit = { accessViewModel.submitUnlock() },
+                onCancel = { accessViewModel.lock() },
+                onExploreDemo = { demoActive = true },
             )
             else -> AgendaQrLocalApp(
                 profileId = profile.id,

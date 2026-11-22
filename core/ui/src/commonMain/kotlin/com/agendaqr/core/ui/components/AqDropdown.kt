@@ -1,6 +1,7 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
@@ -69,7 +71,6 @@ fun AqDropdown(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
                             .padding(horizontal = AqSize.Xs, vertical = AqSize.X2s)
                             .background(
                                 if (selected == index) scheme.selectionSurface else AqColor.Transparent,
@@ -81,7 +82,14 @@ fun AqDropdown(
                             text = label,
                             style = AqTextStyles.Body,
                             color = if (selected == index) AqColor.EmphasisFill else AqColor.TextPrimary,
-                            modifier = Modifier.weight(1f, fill = false),
+                            modifier = Modifier
+                                .weight(1f, fill = false)
+                                .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                                .clickable(
+                                    enabled = onOptionClick != null,
+                                    role = Role.Button,
+                                    onClick = { onOptionClick?.invoke(index) },
+                                ),
                         )
                     }
                     if (index < options.size - 1) {

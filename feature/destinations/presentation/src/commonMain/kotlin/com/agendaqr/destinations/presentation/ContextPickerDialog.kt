@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.listSaver
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqAlert
 import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqButtonVariant
+import com.agendaqr.core.ui.components.AqSectionTitle
 import com.agendaqr.core.ui.components.AqCheckbox
 import com.agendaqr.core.ui.components.AqEmptyPlaceholder
 import com.agendaqr.core.ui.components.AqIcon
@@ -22,6 +24,7 @@ import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqModal
 import com.agendaqr.core.ui.components.AqScreen
+import com.agendaqr.core.ui.components.AqTag
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextInput
 import com.agendaqr.core.ui.components.AqTextInputSize
@@ -43,21 +46,21 @@ internal data class ContextSelection(
 }
 
 internal val ContextSelectionSaver: Saver<ContextSelection, Any> = listSaver(
-    save = { selection -> listOf(selection.contextId, selection.pickerOpen) },
+    save = { selection -> listOf<Any>(selection.contextId.orEmpty(), selection.pickerOpen) },
     restore = { values ->
         ContextSelection(
-            contextId = values.getOrNull(0) as? String,
+            contextId = (values.getOrNull(0) as? String)?.takeIf { it.isNotEmpty() },
             pickerOpen = values.getOrNull(1) as? Boolean == true,
         )
     },
 )
 
 internal fun saveContextSelection(selection: ContextSelection): List<Any> =
-    listOf(selection.contextId, selection.pickerOpen)
+    listOf(selection.contextId.orEmpty(), selection.pickerOpen)
 
 internal fun restoreContextSelection(values: List<Any>): ContextSelection =
     ContextSelection(
-        contextId = values.getOrNull(0) as? String,
+        contextId = (values.getOrNull(0) as? String)?.takeIf { it.isNotEmpty() },
         pickerOpen = values.getOrNull(1) as? Boolean == true,
     )
 
@@ -76,7 +79,7 @@ internal fun ContextPickerDialog(
     var note by remember { mutableStateOf("") }
     var showCreateFields by remember { mutableStateOf(false) }
     AqModal(
-        title = AppStrings.ElegirContexto,
+        title = AppStrings.SeleccionarContexto,
         dismissLabel = AppStrings.Cancelar,
         onDismissRequest = onCancel,
         content = {
@@ -98,18 +101,24 @@ internal fun ContextPickerDialog(
                         )
                     }
                 }
+                if (selection.canRemove) {
+                    AqButton(
+                        label = AppStrings.QuitarContexto,
+                        onClick = { onRemove() },
+                        variant = AqButtonVariant.Text,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
                 AqSectionTitle(text = AppStrings.CrearContexto)
                 AqTextInput(
                     label = AppStrings.LabelNombre,
                     value = name,
                     onValueChange = { name = it },
-                    size = AqTextInputSize.Md,
                 )
                 AqTextInput(
                     label = AppStrings.LabelNota,
                     value = note,
                     onValueChange = { note = it },
-                    size = AqTextInputSize.Md,
                 )
                 AqButton(
                     label = AppStrings.Crear,

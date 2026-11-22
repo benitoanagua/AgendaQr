@@ -19,9 +19,9 @@ import com.agendaqr.core.ui.components.AqAlert
 import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqButtonSize
 import com.agendaqr.core.ui.components.AqButtonVariant
-import com.agendaqr.core.ui.components.AqCheckbox
 import com.agendaqr.core.ui.components.AqCarousel
 import com.agendaqr.core.ui.components.AqCarouselItem
+import com.agendaqr.core.ui.components.AqCheckbox
 import com.agendaqr.core.ui.components.AqEmptyPlaceholder
 import com.agendaqr.core.ui.components.AqFavoriteToggle
 import com.agendaqr.core.ui.components.AqHairline
@@ -29,6 +29,8 @@ import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqLoadMore
 import com.agendaqr.core.ui.components.AqMenuItem
+import com.agendaqr.core.ui.components.AqModal
+import com.agendaqr.core.ui.components.AqNavChromeState
 import com.agendaqr.core.ui.components.AqPullToRefresh
 import com.agendaqr.core.ui.components.AqScreen
 import com.agendaqr.core.ui.components.AqSectionTitle
@@ -86,7 +88,7 @@ fun DestinationsScreen(
     var selectedIds by rememberSaveable { mutableStateOf(setOf<String>()) }
     var confirmarEliminarLote by remember { mutableStateOf(false) }
     val selectionMode = selectedIds.isNotEmpty()
-    val visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
+    var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
     val paged = state.visibleDestinations.take(visibleCount)
     val favorites = state.favorites
     val toastHost = appHosts?.toastHost
@@ -114,7 +116,7 @@ fun DestinationsScreen(
         },
         navDestinations = navDestinations,
         navSelectedId = navSelectedId,
-        onNavSelect = { navChrome?.onSelect?.invoke(it) },
+        onNavSelect = { name -> navChrome?.onSelect?.invoke(name); Unit },
         statusContent = appHosts?.status,
         bottomAction = if (selectionMode && navDestinations.isEmpty()) {
             {
@@ -131,12 +133,10 @@ fun DestinationsScreen(
         toastHost = toastHost?.let { host -> { AqToastHost(host) } },
     ) {
         // Trigger de búsqueda global (botón que abre el flujo de búsqueda).
-        AqButton(
+        AqQuickAction(
             label = AppStrings.BuscarEnAgendaQr,
+            icon = com.agendaqr.core.ui.components.AqIcons.Search,
             onClick = onOpenSearch,
-            variant = AqButtonVariant.Text,
-            icon = AqIcons.Search,
-            size = AqButtonSize.Small,
         )
 
         // §10: errores recuperables y contextuales, visibles sin scroll.
@@ -147,9 +147,11 @@ fun DestinationsScreen(
             )
             AqAlert(
                 tone = AqTone.Danger,
-                message = error.dataStatus,
-                dismissLabel = bannerDismiss.label,
-                onDismiss = bannerDismiss.onClick,
+                message = error.display(),
+                confirmLabel = bannerAction?.label,
+                onConfirm = bannerAction?.onClick,
+                dismissLabel = bannerDismiss?.label,
+                onDismiss = bannerDismiss?.onClick ?: { },
             )
         }
 
@@ -160,21 +162,18 @@ fun DestinationsScreen(
         ) {
             AqQuickAction(
                 label = AppStrings.TraerQr,
-                icon = AqIcons.QrCode,
+                icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
                 onClick = onScanQr,
-                modifier = Modifier.weight(1f),
             )
             AqQuickAction(
                 label = AppStrings.RegistrarOperacion,
-                icon = AqIcons.Register,
+                icon = com.agendaqr.core.ui.components.AqIcons.Register,
                 onClick = onRegisterOperation,
-                modifier = Modifier.weight(1f),
             )
             AqQuickAction(
                 label = AppStrings.CrearContexto,
-                icon = AqIcons.Context,
+                icon = com.agendaqr.core.ui.components.AqIcons.Context,
                 onClick = { showCreateContext = true },
-                modifier = Modifier.weight(1f),
             )
         }
 
@@ -187,7 +186,7 @@ fun DestinationsScreen(
                 ),
                 AqSegmentedOption(
                     label = AppStrings.Favoritos,
-                    icon = AqIcons.Favorite,
+                    icon = com.agendaqr.core.ui.components.AqIcons.Favorite,
                     count = favorites.size,
                 ),
             ),
@@ -203,9 +202,9 @@ fun DestinationsScreen(
                     horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
                 ) {
                     AqIcon(
-                        imageVector = AqIcons.Favorite,
+                        imageVector = com.agendaqr.core.ui.components.AqIcons.Favorite,
                         contentDescription = null,
-                        size = AqMetrics.IconSizeCompact,
+                        size = com.agendaqr.core.ui.theme.AqMetrics.IconSizeCompact,
                         tint = AqColor.SelectionIcon,
                     )
                     AqSectionTitle(text = AppStrings.Favoritos)
@@ -214,7 +213,7 @@ fun DestinationsScreen(
                     items = favorites.map {
                         AqCarouselItem(it.id, it.name.ifBlank { AppStrings.SinNombre })
                     },
-                    itemWidth = AqMetrics.FavCardWidth,
+                    itemWidth = com.agendaqr.core.ui.theme.AqMetrics.FavCardWidth,
                     itemSpacing = AqSpacing.Md,
                 ) { item ->
                     val destination = favorites.find { it.id == item.id }!!
@@ -243,19 +242,19 @@ fun DestinationsScreen(
                 when {
                     state.isLoading -> AqSkeletonBlock(lines = 4)
                     state.destinations.isEmpty() -> AqEmptyPlaceholder(
-                        icon = AqIcons.QrCode,
+                        icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
                         title = AppStrings.AunNoHayDestinos,
                         subtitle = AppStrings.emptyDestinationsHint,
                     )
                     state.favoriteOnly && state.visibleDestinations.isEmpty() && state.query.isBlank() -> AqEmptyPlaceholder(
-                        icon = AqIcons.Favorite,
+                        icon = com.agendaqr.core.ui.components.AqIcons.Favorite,
                         title = AppStrings.AunNoHayFavoritos,
                         subtitle = AppStrings.MarcaUnDestinoConEstrella,
                         actionLabel = AppStrings.VerTodos,
                         onAction = { onAction(DestinationAction.SetFavoritesOnly(false)) },
                     )
                     state.visibleDestinations.isEmpty() -> AqEmptyPlaceholder(
-                        icon = AqIcons.QrCode,
+                        icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
                         title = AppStrings.NoSeEncontraronDestinos,
                         subtitle = AppStrings.PruebaConOtraBusquedaOLimpia,
                         actionLabel = AppStrings.LimpiarBusqueda,
@@ -322,6 +321,7 @@ fun DestinationsScreen(
                 destinationToDelete = null
             },
             onDismissRequest = { destinationToDelete = null },
+            content = { },
         )
     }
 
@@ -366,7 +366,7 @@ private fun FavoriteDestinationCard(
         title = destination.name.ifBlank { AppStrings.SinNombre },
         leading = {
             AqIcon(
-                imageVector = AqIcons.QrCode,
+                imageVector = com.agendaqr.core.ui.components.AqIcons.QrCode,
                 contentDescription = null,
                 size = com.agendaqr.core.ui.theme.AqMetrics.IconSizeCompact,
             )
@@ -417,7 +417,7 @@ fun DestinationRow(
                     )
                 } else {
                     AqIcon(
-                        imageVector = AqIcons.QrCode,
+                        imageVector = com.agendaqr.core.ui.components.AqIcons.QrCode,
                         contentDescription = null,
                         size = com.agendaqr.core.ui.theme.AqMetrics.IconSizeCompact,
                     )
@@ -450,14 +450,14 @@ fun DestinationRow(
         val swipeActions = listOf(
             AqSwipeAction(
                 label = if (destination.favorite) AppStrings.QuitarFavorito else AppStrings.MarcarFavorito,
-                icon = AqIcons.Favorite,
+                icon = com.agendaqr.core.ui.components.AqIcons.Favorite,
                 backgroundColor = AqColor.EmphasisFill,
                 contentColor = AqColor.InverseOnSurface,
                 onAction = { onAction(DestinationAction.ToggleFavorite(destination)) },
             ),
             AqSwipeAction(
                 label = AppStrings.Eliminar,
-                icon = AqIcons.Trash,
+                icon = com.agendaqr.core.ui.components.AqIcons.Trash,
                 backgroundColor = AqColor.DangerFill,
                 contentColor = AqColor.InverseOnSurface,
                 onAction = { onRequestDelete(destination) },

@@ -34,6 +34,7 @@ class AqDialogProminenceTest {
                     confirmAsText = true,
                     onConfirm = { confirmed = true },
                     dismissLabel = "Quitar contexto",
+                    onDismissRequest = {},
                     onDismiss = {},
                 )
             }

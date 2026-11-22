@@ -26,6 +26,10 @@ import com.agendaqr.core.ui.components.AqHairline
 import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqMenuItem
+import com.agendaqr.core.ui.components.AqModal
+import com.agendaqr.core.ui.components.AqNavChromeState
+import com.agendaqr.core.ui.components.AqNavDestination
+import com.agendaqr.core.ui.components.AqSectionTitle
 import com.agendaqr.core.ui.components.AqScreen
 import com.agendaqr.core.ui.components.AqSelectionToolbar
 import com.agendaqr.core.ui.components.AqSegmentedControl
@@ -99,7 +103,7 @@ internal fun OperationListScreen(
         },
         navDestinations = navChrome?.destinations.orEmpty(),
         navSelectedId = navChrome?.selectedId,
-        onNavSelect = { navChrome?.onSelect?.invoke(it) },
+        onNavSelect = { name -> navChrome?.onSelect?.invoke(name); Unit },
         statusContent = appHosts?.status,
         bottomAction = if (selectionMode) {
             {
@@ -120,9 +124,6 @@ internal fun OperationListScreen(
                 label = AppStrings.Buscar,
                 value = state.query,
                 onValueChange = { viewModel.onAction(OperationAction.Search(it)) },
-                placeholder = AppStrings.BuscarOperaciones,
-                onClear = { viewModel.onAction(OperationAction.Search("")) },
-                clearLabel = AppStrings.Limpiar,
             )
             AqSegmentedControl(
                 options = listOf(
@@ -148,7 +149,7 @@ internal fun OperationListScreen(
                 )
             }
             AqSectionTitle(text = AppStrings.Operaciones)
-            if (state.isLoading) {
+            if (state.isLoadingOperations) {
                 AqSkeletonBlock(lines = 4)
             } else if (filtered.isEmpty()) {
                 AqEmptyPlaceholder(
@@ -156,7 +157,7 @@ internal fun OperationListScreen(
                     title = AppStrings.AunNoHayOperaciones,
                 )
             } else {
-                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     paged.forEachIndexed { index, operation ->
                         AqMenuItem(
                             title = listOfNotNull(
@@ -217,6 +218,7 @@ internal fun OperationListScreen(
                 viewModel.onAction(OperationAction.Delete(op.id))
             },
             onDismissRequest = { operationToDelete = null },
+            content = { },
         )
     }
 

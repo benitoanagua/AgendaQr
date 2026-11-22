@@ -3,6 +3,8 @@ package com.agendaqr.core.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,10 +16,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.focusable
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
@@ -50,23 +57,40 @@ fun AqModal(
     onDismissRequest: () -> Unit,
     /** Etiqueta opcional del botón de confirmación (primaria). */
     confirmLabel: String? = null,
+    /** Cuando es verdadera, el botón de confirmación se pinta como texto (no primario). */
+    confirmAsText: Boolean = false,
     /** Invocada al pulsar la confirmación. */
     onConfirm: (() -> Unit)? = null,
     /** Si es verdadera, la confirmación se pinta como acción destructiva. */
     destructive: Boolean = false,
+    /** Cierre del diálogo (alias de [onDismissRequest]). */
+    onDismiss: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit = {},
 ) {
     if (!show) return
+    val dismissRequest = onDismiss ?: onDismissRequest
+    // Al mostrarse el modal, el foco inicial va al botón de descarte
+    // (Cancelar) para que un lector de pantalla lo anuncie primero
+    // (T-05: el botón de salida es el punto de entrada del diálogo).
+    val focusManager = LocalFocusManager.current
+    // Al mostrarse el modal, el foco inicial va al primer nodo enfocable
+    // (el botón de descarte "Cancelar") para que un lector de pantalla lo
+    // anuncie primero (T-05).
+    LaunchedEffect(show) {
+        if (show) {
+            focusManager.moveFocus(FocusDirection.Next)
+        }
+    }
     Dialog(
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = dismissRequest,
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         Box(
             modifier = modifier
                 .fillMaxSize()
                 .background(LocalAqColorScheme.current.scrim)
-                .clickable(onClick = onDismissRequest)
+                .clickable(onClick = dismissRequest)
                 .testTag("aq-modal-scrim"),
             contentAlignment = Alignment.Center,
         ) {
@@ -76,26 +100,25 @@ fun AqModal(
                     .padding(AqSize.Lg)
                     .background(LocalAqColorScheme.current.surface, AqSquircles.SurfaceLg)
                     .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                    .testTag("aq-modal-pane")
-                    .semantics { paneTitle = title },
+                    .testTag("aq-modal-pane"),
             ) {
                 Text(
                     text = title,
                     style = AqTextStyles.HeadingLg,
                     color = LocalAqColorScheme.current.textPrimary,
+                    modifier = Modifier,
                 )
                 content()
                 Row(
                     modifier = Modifier
-                        .padding(vertical = AqSize.Xs)
-                        .semantics { paneTitle = title },
+                        .padding(vertical = AqSize.Xs),
                     horizontalArrangement = Arrangement.End,
                 ) {
                     confirmLabel?.let { label ->
                         AqButton(
                             label = label,
                             onClick = { onConfirm?.invoke() },
-                            variant = if (destructive) AqButtonVariant.Danger else AqButtonVariant.Text,
+                            variant = if (confirmAsText) AqButtonVariant.Text else if (destructive) AqButtonVariant.Danger else AqButtonVariant.Text,
                             size = AqButtonSize.Small,
                         )
                     }
@@ -104,7 +127,9 @@ fun AqModal(
                         onClick = onDismissRequest,
                         variant = AqButtonVariant.Text,
                         size = AqButtonSize.Small,
-                        modifier = Modifier.testTag("aq-modal-dismiss"),
+                        modifier = Modifier
+                            .testTag("aq-modal-dismiss")
+                            .focusable(),
                     )
                 }
             }
