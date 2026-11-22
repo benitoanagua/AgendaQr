@@ -56,12 +56,21 @@ internal fun LocalOnboardingScreen(
     val readyToContinue = pin.length >= PinPolicy.MIN_LENGTH
     val readyToSave = confirmation.isNotEmpty() && confirmation == pin
     val activeValue = if (creating.value) pin else confirmation
+    // El teclado propio emite dígitos sueltos pero el estado guarda el PIN
+    // completo: hay que componer el valor nuevo antes de notificarlo.
+    // Con ViewModel se delega en él; sin él la pantalla es controlada y
+    // notifica por los callbacks.
+    val updatePin: (String) -> Unit = { value ->
+        if (viewModel != null) viewModel.onPinChanged(value) else onPinChanged(value)
+    }
+    val updateConfirmation: (String) -> Unit = { value ->
+        if (viewModel != null) viewModel.onConfirmationChanged(value) else onConfirmationChanged(value)
+    }
     val onDigit = { digit: Char ->
-        if (creating.value) viewModel?.onPinChanged(digit.toString()) else viewModel?.onConfirmationChanged(digit.toString()); Unit
+        if (creating.value) updatePin(pin + digit) else updateConfirmation(confirmation + digit)
     }
     val onBackspace = {
-        if (creating.value) viewModel?.onPinChanged(pin.dropLast(1))
-        else viewModel?.onConfirmationChanged(confirmation.dropLast(1)); Unit
+        if (creating.value) updatePin(pin.dropLast(1)) else updateConfirmation(confirmation.dropLast(1))
     }
     // Al confirmar el primer código se pasa al paso de confirmación sin
     // invocar aún al ViewModel (solo guarda cuando ambos pasos coinciden).
@@ -87,18 +96,14 @@ internal fun LocalOnboardingScreen(
                 } else {
                     AqButton(
                         label = AppStrings.GuardarPin,
-                        onClick = { onSubmit(pin) },
+                        onClick = {
+                            if (viewModel != null) viewModel.submitOnboarding() else onSubmit(pin)
+                        },
                         variant = AqButtonVariant.Primary,
                         enabled = readyToSave,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
-                AqButton(
-                    label = AppStrings.ExplorarDemostracion,
-                    onClick = onExploreDemo,
-                    variant = AqButtonVariant.Text,
-                    modifier = Modifier.fillMaxWidth(),
-                )
             }
         },
         toastHost = toastHost?.let { host -> { AqToastHost(host) } },
@@ -130,6 +135,14 @@ internal fun LocalOnboardingScreen(
             onBackspace = onBackspace,
             backspaceDescription = AppStrings.BorrarDigito,
         )
+        // Acciones secundarias dentro del área scrollable: el dock inferior
+        // reserva solo la acción principal del paso (S00, V1.16).
+        AqButton(
+            label = AppStrings.ExplorarDemostracion,
+            onClick = onExploreDemo,
+            variant = AqButtonVariant.Text,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -159,6 +172,11 @@ internal fun LocalLockScreen(
     val readyToUnlock = pin.isNotEmpty()
     val showBiometric = state.biometricAvailability == BiometricAvailability.Available
     val toastHost = appHosts?.toastHost
+    // Misma regla que el onboarding: el teclado compone el valor completo
+    // y la pantalla delega en el ViewModel o notifica por callbacks.
+    val updatePin: (String) -> Unit = { value ->
+        if (viewModel != null) viewModel.onPinChanged(value) else onPinChanged(value)
+    }
 
     // La biometría se solicita una sola vez por bloqueo (cambio de
     // lockSequence). Con el mismo bloqueo no se relanza al recomponerse.
@@ -178,35 +196,15 @@ internal fun LocalLockScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
             ) {
-                if (showBiometric) {
-                    AqButton(
-                        label = AppStrings.UsarBiometria,
-                        onClick = onBiometric,
-                        variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
                 AqButton(
                     label = AppStrings.Desbloquear,
-                    onClick = { onSubmit(pin) },
+                    onClick = {
+                        if (viewModel != null) viewModel.submitUnlock() else onSubmit(pin)
+                    },
                     variant = com.agendaqr.core.ui.components.AqButtonVariant.Primary,
                     enabled = readyToUnlock,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                AqButton(
-                    label = AppStrings.Cancelar,
-                    onClick = onCancel,
-                    variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                if (!showBiometric) {
-                    AqButton(
-                        label = AppStrings.ExplorarDemostracion,
-                        onClick = onExploreDemo,
-                        variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
             }
         },
         toastHost = toastHost?.let { host -> { AqToastHost(host) } },
@@ -223,7 +221,7 @@ internal fun LocalLockScreen(
         AqTextInput(
             label = AppStrings.LabelPin,
             value = pin,
-            onValueChange = { viewModel?.onPinChanged(it) },
+            onValueChange = updatePin,
         )
         AqPinDots(
             filled = pin.length,
@@ -231,9 +229,35 @@ internal fun LocalLockScreen(
             error = state.error != null,
         )
         AqKeypad(
-            onDigit = { digit -> viewModel?.onPinChanged(digit.toString()) },
-            onBackspace = { viewModel?.onPinChanged(pin.dropLast(1)) },
+            onDigit = { digit -> updatePin(pin + digit) },
+            onBackspace = { updatePin(pin.dropLast(1)) },
             backspaceDescription = AppStrings.BorrarDigito,
+        )
+        // Acciones secundarias dentro del área scrollable: el dock inferior
+        // reserva solo la acción principal (Desbloquear, S00 V1.16).
+        if (showBiometric) {
+            AqButton(
+                label = AppStrings.UsarBiometria,
+                onClick = onBiometric,
+                variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        if (!showBiometric) {
+            AqButton(
+                label = AppStrings.ExplorarDemostracion,
+                onClick = onExploreDemo,
+                variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        AqButton(
+            label = AppStrings.Cancelar,
+            onClick = {
+                if (viewModel != null) viewModel.lock() else onCancel()
+            },
+            variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

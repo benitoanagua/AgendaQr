@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -130,6 +132,7 @@ fun ImportBatchScreen(
             null
         },
         toastHost = toastHost?.let { host -> { AqToastHost(host) } },
+        scrollable = true,
     ) {
         when (state) {
             ImportBatchUiState.Idle -> {
@@ -298,9 +301,14 @@ private fun BatchReviewContent(
         else -> batch.unknown
     }
     if (showFilter) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        // Fila única con scroll horizontal: tres chips apilados consumen
+        // ~160 dp y dejan las acciones de la primera tarjeta bajo el
+        // pliegue en viewports cortos (D-02 exige targets visibles).
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
         ) {
             AqChip(
                 text = AppStrings.Todos,
