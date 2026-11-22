@@ -35,7 +35,7 @@ data class AqAppBarAction(
 
 /**
  * Barra superior de la app sobre piezas Moon ([AqButton] + [AqText]).
- * Sustituye a [AqTopBar] y [AqMoonTopBar].
+ * Sustituye a [AqTopBar] y [AqAppBar].
  *
  * - [title]: título centrado (18 sp, semibold, semántica `heading` vía el
  *   rol de [AqText]).

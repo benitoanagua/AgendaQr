@@ -210,7 +210,7 @@ internal fun operationTypeLabel(type: OperationType): String = when (type) {
 /**
  * Título de la fila de actividad: la contraparte es
  * el contenido principal; el tipo queda como texto del subtítulo (la
- * forma de la flecha del [com.agendaqr.core.ui.components.AqMoonIconBadge]
+ * forma de la flecha del [com.agendaqr.core.ui.components.AqIcon]
  * acompaña, nunca sustituye). Sin contraparte ni concepto, el propio tipo.
  */
 internal fun operationTitle(operation: Operation): String =

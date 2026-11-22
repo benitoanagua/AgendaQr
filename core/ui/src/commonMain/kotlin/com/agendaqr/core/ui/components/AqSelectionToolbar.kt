@@ -17,7 +17,7 @@ import com.agendaqr.core.ui.theme.AqWeight
 
 /**
  * Barra de selección por lote sobre piezas Moon.
- * Sustituye a [AqSelectionBar] y [AqMoonSelectionBar] (el nombre natural
+ * Sustituye a [AqSelectionBar] y [AqSelectionToolbar] (el nombre natural
  * colisiona con el símbolo legacy prohibido, por tanto se usa este nombre).
  *
  * - [closeLabel] / [onClose]: cierra el modo selección.

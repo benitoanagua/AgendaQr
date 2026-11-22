@@ -100,4 +100,4 @@ fun AqToastHost(
 }
 
 /** Gap entre toasts según Moon (200 ms, transcrito como distancia vertical). */
-private val AqToastHostGap: Dp = 8.dp
+private val AqToastHostGap: androidx.compose.ui.unit.Dp = AqSpacing.Sm

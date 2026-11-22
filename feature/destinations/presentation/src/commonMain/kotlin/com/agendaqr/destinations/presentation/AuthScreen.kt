@@ -3,233 +3,98 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import com.agendaqr.core.ui.components.AqIconButton
-import com.agendaqr.core.ui.components.rememberAqFormFocus
-import com.agendaqr.core.ui.components.AqPrimaryButton
-import com.agendaqr.core.ui.components.AqScreenScaffold
-import com.agendaqr.core.ui.components.AqMoonStatusBanner
+import com.agendaqr.core.ui.components.AqAlert
+import com.agendaqr.core.ui.components.AqButton
+import com.agendaqr.core.ui.components.AqButtonVariant
+import com.agendaqr.core.ui.components.AqEmptyPlaceholder
+import com.agendaqr.core.ui.components.AqIcon
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqScreen
 import com.agendaqr.core.ui.components.AqText
-import com.agendaqr.core.ui.components.AqTextAction
-import com.agendaqr.core.ui.components.AqTextField
-import com.agendaqr.core.ui.components.AqTone
-import com.agendaqr.destinations.domain.FieldLimits
+import com.agendaqr.core.ui.components.AqTextInput
+import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
-import com.agendaqr.core.ui.theme.AqWeight
 
-/**
- * Autenticación remota OPCIONAL. Ya no es la puerta de entrada de la app: la
- * app local se abre sin cuenta. Esta superficie sigue existiendo para
- * conectar una cuenta desde Ajustes (respaldo/sincronización) y se compone
- * con [AuthForm] dentro de [AccountScreen].
- */
 @Composable
-fun AuthScreen(
+internal fun AuthScreen(
     state: AuthUiState,
-    onEmailChanged: (String) -> Unit,
-    onPasswordChanged: (String) -> Unit,
-    onSignIn: () -> Unit,
-    onSignUp: () -> Unit,
-    onClearError: () -> Unit = {},
+    viewModel: AuthViewModel,
+    appHosts: AppHosts? = null,
+    onBack: () -> Unit = {},
 ) {
-    // V1.4 (§12): la autenticación no es un destino raíz ni tiene a dónde
-    // volver: sin barra; su acción principal es el `Button` del cuerpo.
-    AqScreenScaffold(
-        scrollable = true,
-        verticalArrangement = Arrangement.spacedBy(AqSpacing.Xl),
-        horizontalAlignment = Alignment.Start,
+    val email by remember { mutableStateOf("") }
+    val password by remember { mutableStateOf("") }
+    val toastHost = appHosts?.toastHost
+    AqScreen(
+        title = AppStrings.AccesoLocal,
+        onBack = onBack,
+        statusContent = appHosts?.status,
+        toastHost = toastHost?.let { host -> { AqToastHost(host) } },
     ) {
-        AuthForm(
-            heading = AppStrings.AgendaQr,
-            description = AppStrings.IniciaSesionParaAccederA,
-            state = state,
-            onEmailChanged = onEmailChanged,
-            onPasswordChanged = onPasswordChanged,
-            onSignIn = onSignIn,
-            onSignUp = onSignUp,
-            onClearError = onClearError,
+        state.error?.let { err ->
+            AqAlert(
+                tone = com.agendaqr.core.ui.theme.AqTone.Danger,
+                message = err.dataStatus,
+                dismissLabel = AppStrings.Cerrar,
+                onDismiss = { },
+            )
+        }
+        AqTextInput(
+            label = AppStrings.LabelCorreo,
+            value = email,
+            onValueChange = { email = it },
+            leadingIcon = AqIcons.Mail,
+        )
+        AqTextInput(
+            label = AppStrings.LabelContrasena,
+            value = password,
+            onValueChange = { password = it },
+            leadingIcon = AqIcons.Lock,
+        )
+        AqButton(
+            label = AppStrings.Desbloquear,
+            onClick = { viewModel.onAction(AuthAction.Unlock(email, password)) },
+            variant = com.agendaqr.core.ui.components.AqButtonVariant.Primary,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = state !is AuthUiState.Unlocking,
         )
     }
 }
 
-/**
- * Cuerpo de credenciales reutilizable (AuthScreen y AccountScreen).
- *
- * Jerarquía visual (patrón de formulario de acceso de apps de consumo — S10/Login):
- * 1. Cabecera: título (SectionHeader) + descripción (Body secondary)
- * 2. Formulario: etiqueta + campo + ayuda/validación agrupados
- * 3. Error: banner con tono danger + acción de recuperación
- * 4. Acciones: primaria (full-width) + secundaria (texto centrado)
- */
 @Composable
-internal fun AuthForm(
-    heading: String?,
-    description: String?,
-    descriptionDetail: String? = null,
-    state: AuthUiState,
-    onEmailChanged: (String) -> Unit,
-    onPasswordChanged: (String) -> Unit,
-    onSignIn: () -> Unit,
-    onSignUp: () -> Unit,
-    onClearError: () -> Unit = {},
+internal fun AccountScreen(
+    state: AccountUiState,
+    viewModel: AccountViewModel,
+    appHosts: AppHosts? = null,
+    onBack: () -> Unit = {},
 ) {
-    var submitted by rememberSaveable { mutableStateOf(false) }
-    var passwordVisible by rememberSaveable { mutableStateOf(false) }
-    val formFocus = rememberAqFormFocus(FieldEmail, FieldPassword)
-    // El banner de error de credenciales también marca los campos, para que
-    // el estado del campo y el del banner no se contradigan (p. ej. correo
-    // "invalid": el campo se pinta como error al mismo tiempo que el banner).
-    val emailError = submitted && !isValidEmail(state.email)
-    val passwordError = submitted && state.password.length < 6
-
-    fun submit(target: () -> Unit) {
-        submitted = true
-        val errors = buildSet {
-            if (!isValidEmail(state.email)) add(FieldEmail)
-            if (state.password.length < 6) add(FieldPassword)
-        }
-        // Con errores no se envía: el foco va al primer campo inválido
-        // (orden visual) para corregirlo sin buscarlo.
-        if (errors.isEmpty()) target() else formFocus.focusFirstError(errors)
-    }
-
-    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Md)) {
-        // Cabecera: título y descripción con jerarquía estrecha (4 dp).
-        if (heading != null || description != null || descriptionDetail != null) {
-            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
-                heading?.let {
-                    AqText(it, size = AqType.Headline, fontWeight = AqWeight.SemiBold)
-                }
-                description?.let {
-                    AqText(it, size = AqType.Body, color = AqColor.TextSecondary)
-                }
-                descriptionDetail?.let {
-                    AqText(it, size = AqType.Body, color = AqColor.TextSecondary)
-                }
-            }
-        }
-
-        // Campos: grupo funcional con etiqueta + campo + ayuda/error.
-        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            AqTextField(
-                label = AppStrings.Correo,
-                value = state.email,
-                onValueChange = onEmailChanged,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next,
-                    capitalization = KeyboardCapitalization.None,
-                    autoCorrectEnabled = false,
-                ),
-                isError = emailError,
-                errorMessage = if (submitted && !isValidEmail(state.email)) AppStrings.IngresaUnCorreoValido else null,
-                focusRequester = formFocus.requesterFor(FieldEmail),
-                maxLength = FieldLimits.Correo,
-            )
-
-            AqTextField(
-                label = AppStrings.Contrasena,
-                value = state.password,
-                onValueChange = onPasswordChanged,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(onDone = { submit(onSignIn) }),
-                visualTransformation = if (passwordVisible) {
-                    VisualTransformation.None
-                } else {
-                    PasswordVisualTransformation()
-                },
-                isError = passwordError,
-                errorMessage = if (submitted && state.password.length < 6) AppStrings.Minimo6Caracteres else null,
-                focusRequester = formFocus.requesterFor(FieldPassword),
-                maxLength = FieldLimits.Contrasena,
-                trailing = {
-                    AqIconButton(
-                        contentDescription = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
-                        onClick = { passwordVisible = !passwordVisible },
-                    ) {
-                        AqText(
-                            text = if (passwordVisible) AppStrings.Ocultar else AppStrings.Mostrar,
-                            size = AqType.Caption,
-                            fontWeight = AqWeight.Medium,
-                            color = AqColor.Link,
-                        )
-                    }
-                },
-            )
-        }
-
-        // Error: banner. Los errores de credenciales son una sola línea y sin
-        // acción: editar cualquier campo ya limpia el error.
-        state.errorMessage?.let { err ->
-            val isAuthError = state.errorFlow == ErrorFlow.SignIn || state.errorFlow == ErrorFlow.SignUp
-            if (isAuthError) {
-                AqMoonStatusBanner(message = err.what)
-            } else {
-                val (action, dismiss) = err.bannerActions(
-                    onRetry = onClearError,
-                    onClear = onClearError,
-                )
-                AqMoonStatusBanner(
-                    title = err.what,
-                    message = err.dataStatus,
-                    tone = AqTone.Danger,
-                    action = action,
-                    dismiss = dismiss,
-                )
-            }
-        }
-
-        // Confirmación (registro exitoso).
-        state.confirmationMessage?.let {
-            AqMoonStatusBanner(it)
-        }
-
-        // Acciones: primaria full-width + secundaria centrada.
-        Column(
-            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            AqPrimaryButton(
-                AppStrings.IniciarSesion,
-                onClick = { submit(onSignIn) },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !state.isSubmitting,
-                isLoading = state.isSubmitting,
-                busyDescription = AppStrings.IniciandoSesion,
-            )
-            AqTextAction(
-                label = AppStrings.CrearCuenta,
-                onClick = { submit(onSignUp) },
-                enabled = !state.isSubmitting,
-            )
-        }
+    val toastHost = appHosts?.toastHost
+    AqScreen(
+        title = AppStrings.Cuenta,
+        onBack = onBack,
+        backLabel = AppStrings.Volver,
+        statusContent = appHosts?.status,
+        toastHost = toastHost?.let { host -> { AqToastHost(host) } },
+    ) {
+        AqSectionTitle(text = AppStrings.Configuracion)
+        AqText(
+            text = AppStrings.Sincronizacion,
+            size = AqType.Body,
+            color = AqColor.TextSecondary,
+        )
+        AqButton(
+            label = AppStrings.CerrarSesion,
+            onClick = { viewModel.onAction(AccountAction.SignOut) },
+            variant = AqButtonVariant.Text,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
-
-private fun isValidEmail(value: String): Boolean {
-    val trimmed = value.trim()
-    if (trimmed.isEmpty() || trimmed.contains(" ")) return false
-    val parts = trimmed.split("@")
-    return parts.size == 2 && parts[0].isNotEmpty() && parts[1].contains(".") && parts[1].length >= 3
-}
-
-private const val FieldEmail = "email"
-private const val FieldPassword = "password"

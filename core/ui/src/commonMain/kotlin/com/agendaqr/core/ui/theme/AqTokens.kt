@@ -2,6 +2,7 @@ package com.agendaqr.core.ui.theme
 
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Easing
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
@@ -525,6 +526,17 @@ object AqComposition {
 
     /** Tamaño del glifo dentro del círculo de confirmación de resultado. */
     const val SuccessCheckIconFraction = 0.55f
+}
+
+/** Formas de esquina (`CornerBasedShape`) para la capa de tema (MaterialTheme).
+ *  Definidas aquí (capa de tokens) para que `AqTheme.kt` solo las référence.
+ */
+object AqThemeShapes {
+    val ExtraSmall = RoundedCornerShape(AqRadius.ExtraSmall)
+    val Small = RoundedCornerShape(AqRadius.Small)
+    val Medium = RoundedCornerShape(AqRadius.Medium)
+    val Large = RoundedCornerShape(AqRadius.Large)
+    val ExtraLarge = RoundedCornerShape(AqRadius.ExtraLarge)
 }
 
 /** Escala `border-radius` publicada. */

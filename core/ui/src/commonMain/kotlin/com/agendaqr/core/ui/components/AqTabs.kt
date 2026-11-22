@@ -76,6 +76,8 @@ fun AqSectionHeader(
  */
 data class AqTab(
     val label: String,
+    /** Glifo opcional (p. ej. navegación raíz con icono + etiqueta). */
+    val icon: androidx.compose.ui.graphics.vector.ImageVector? = null,
     /** Conteo real junto a la etiqueta; null = sin badge. */
     val count: Int? = null,
 )

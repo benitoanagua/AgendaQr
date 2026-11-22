@@ -2,7 +2,7 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import com.agendaqr.core.ui.components.AqPrimaryButton
+import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.destinations.domain.ImportBatch
 
 /**
@@ -13,7 +13,7 @@ import com.agendaqr.destinations.domain.ImportBatch
 actual fun ImportBatchPickerButton(
     label: String,
 ) {
-    AqPrimaryButton(
+    AqButton(
         label = label,
         onClick = { IosQrImportController.openForBatch() },
     )

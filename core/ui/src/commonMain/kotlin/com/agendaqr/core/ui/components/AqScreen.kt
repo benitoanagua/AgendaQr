@@ -49,6 +49,11 @@ fun AqScreen(
     /** Barra superior personalizada (p. ej. barra de selección por lote).
      *  Cuando se proporciona, se usa en lugar de [AqAppBar]. */
     topBar: (@Composable () -> Unit)? = null,
+    /** Destinos de navegación raíz (pestañas inferiores). Cuando no está
+     *  vacía, se renderiza una [AqPillTab] inferior. */
+    navDestinations: List<AqNavDestination> = emptyList(),
+    navSelectedId: String? = null,
+    onNavSelect: ((String) -> Unit)? = null,
     bottomAction: (@Composable () -> Unit)? = null,
     statusContent: (@Composable () -> Unit)? = null,
     toastHost: (@Composable () -> Unit)? = null,
@@ -120,6 +125,15 @@ fun AqScreen(
                     }
                     it()
                 }
+            }
+            // Navegación raíz inferior (pestañas tipo píldora con icono).
+            if (navDestinations.isNotEmpty()) {
+                AqPillTab(
+                    tabs = navDestinations.map { d -> AqTab(d.label, d.icon) },
+                    selectedIndex = navDestinations.indexOfFirst { it.id == navSelectedId }
+                        .takeIf { it >= 0 } ?: 0,
+                    onSelect = { index -> onNavSelect?.invoke(navDestinations[index].id) },
+                )
             }
         }
         // Toasts superpuestos sobre el contenido (último hijo del Box).

@@ -1,47 +1,51 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AqSnackbarHost
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.agendaqr.destinations.data.SyncResource
+import com.agendaqr.core.ui.components.AqAlert
 import com.agendaqr.core.ui.components.AqBottomSheet
-import com.agendaqr.core.ui.components.AqBottomActionDock
-import com.agendaqr.core.ui.components.AqFeedbackEvent
-import com.agendaqr.core.ui.components.AqScreenScaffold
-import com.agendaqr.core.ui.components.AqTooltip
-import com.agendaqr.core.ui.components.AqTopBar
-import com.agendaqr.core.ui.components.AqOverflowAction
-import com.agendaqr.core.ui.components.AqCompactAction
-import com.agendaqr.core.ui.components.AqMoonDialog
-import com.agendaqr.core.ui.components.AqEmptyState
-import com.agendaqr.core.ui.components.AqHairline
+import com.agendaqr.core.ui.components.AqButton
+import com.agendaqr.core.ui.components.AqButtonSize
+import com.agendaqr.core.ui.components.AqButtonVariant
+import com.agendaqr.core.ui.components.AqEmptyPlaceholder
 import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
-import com.agendaqr.core.ui.components.AqCard
-import com.agendaqr.core.ui.components.AqMoonListBody
-import com.agendaqr.core.ui.components.AqMoonMetaRow
+import com.agendaqr.core.ui.components.AqMenuItem
+import com.agendaqr.core.ui.components.AqModal
 import com.agendaqr.core.ui.components.AqQrPreview
-import com.agendaqr.core.ui.components.AqSecondaryButton
-import com.agendaqr.core.ui.components.AqTappableCard
-import com.agendaqr.core.ui.components.AqMoonStatusPill
+import com.agendaqr.core.ui.components.AqScreen
+import com.agendaqr.core.ui.components.AqSectionTitle
+import com.agendaqr.core.ui.components.AqSkeletonBlock
+import com.agendaqr.core.ui.components.AqTag
 import com.agendaqr.core.ui.components.AqText
-import com.agendaqr.core.ui.components.AqTextAction
+import com.agendaqr.core.ui.components.AqTextInput
+import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.components.AqTone
-import com.agendaqr.core.ui.components.AqPrimaryButton
 import com.agendaqr.core.ui.components.rememberAqClipboard
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqShadow
 import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.destinations.domain.Destination
 
 /**
@@ -49,8 +53,11 @@ import com.agendaqr.destinations.domain.Destination
  * (decodificado del dominio, nunca imagen estática), esquinas de
  * encuadre, guía de uso, botón de pantalla completa (RF-05 real),
  * metadatos en filas compactas con copiar del contenido y dock de
- * acciones reales. El banner "Local" del diseño vive en el host de
- * estado de la app (no por pantalla).
+ * acciones reales.
+ *
+ * Construido exclusivamente con componentes Moon: [AqScreen], [AqModal],
+ * [AqBottomSheet], [AqToastHost], [AqButton], [AqTag], [AqText], etc.
+ * Sin símbolos legacy ni wrappers `Aq*`.
  */
 @Composable
 fun DestinationDetailScreen(
@@ -69,89 +76,88 @@ fun DestinationDetailScreen(
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var showDetailsSheet by remember { mutableStateOf(false) }
     var showCopyTooltip by remember { mutableStateOf(false) }
-    // anuncio de eliminación confirmada (por evento) y copiado (por evento).
+    var contentExpanded by remember { mutableStateOf(false) }
+    // anuncio de eliminación confirmada y copiado (por evento) -> toasts.
     var deleteDoneEvent by remember { mutableStateOf<Any?>(null) }
     var copiedEvent by remember { mutableStateOf<Any?>(null) }
-    val copyToClipboard = com.agendaqr.core.ui.components.rememberAqClipboard()
-    AqFeedbackEvent(
-        event = deleteDoneEvent,
-        message = AppStrings.Eliminado,
-        feedbackHost = appHosts?.feedback,
-    )
-    AqFeedbackEvent(
-        event = copiedEvent,
-        message = AppStrings.Copiado,
-        feedbackHost = appHosts?.feedback,
-    )
-    // La tarea central es MOSTRAR el QR (primaria); Compartir
-    // es secundaria. Registrar, Editar y Eliminar viven en "…" (la
-    // eliminación mantiene su diálogo destructivo). "Registrar actividad"
-    // abre un formulario vacío: no promete asociación al destino.
-    AqScreenScaffold(
-        scrollable = true,
-        topBar = {
-            AqTopBar(
-                title = destination.name.ifBlank { AppStrings.SinNombre },
-                onBack = onBack,
-                backLabel = AppStrings.Volver,
-                overflowActions = listOf(
-                    AqOverflowAction(AppStrings.Detalle, { showDetailsSheet = true }, AqIcons.Info),
-                    AqOverflowAction(AppStrings.RegistrarOperacion, onRegisterOperation, AqIcons.Register),
-                    AqOverflowAction(AppStrings.Editar, onEdit, AqIcons.Edit),
-                    AqOverflowAction(AppStrings.Eliminar, { showDeleteConfirm = true }, AqIcons.Trash),
-                ),
-                overflowLabel = AppStrings.Mas,
-            )
-        },
-        snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
+    val toastHost = appHosts?.toastHost
+    val copyToClipboard = rememberAqClipboard()
+
+    LaunchedEffect(deleteDoneEvent) {
+        if (deleteDoneEvent != null) {
+            toastHost?.show(AppStrings.Eliminado)
+        }
+    }
+    LaunchedEffect(copiedEvent) {
+        if (copiedEvent != null) {
+            toastHost?.show(AppStrings.Copiado)
+        }
+    }
+
+    AqScreen(
+        title = destination.name.ifBlank { AppStrings.SinNombre },
+        onBack = onBack,
+        backLabel = AppStrings.Volver,
+        overflowActions = listOf(
+            com.agendaqr.core.ui.components.AqAppBarAction(
+                AppStrings.Detalle, AqIcons.Info, { showDetailsSheet = true }),
+            com.agendaqr.core.ui.components.AqAppBarAction(
+                AppStrings.RegistrarOperacion, AqIcons.Register, onRegisterOperation),
+            com.agendaqr.core.ui.components.AqAppBarAction(
+                AppStrings.Editar, AqIcons.Edit, onEdit),
+            com.agendaqr.core.ui.components.AqAppBarAction(
+                AppStrings.Eliminar, AqIcons.Trash, { showDeleteConfirm = true }),
+        ),
+        overflowLabel = AppStrings.Mas,
         statusContent = appHosts?.status,
-        verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
         bottomAction = {
-            // Dock: exactamente una acción primaria — Mostrar
-            // QR a pantalla completa — más Compartir secundaria. El dock
-            // del DS respeta insets de navegación/IME y el margen de
-            // pantalla; la pantalla solo declara las acciones.
-            AqBottomActionDock {
-                AqPrimaryButton(
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                AqButton(
                     label = AppStrings.MostrarQr,
                     onClick = onShowQr,
+                    variant = AqButtonVariant.Primary,
                     icon = AqIcons.Maximize,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                AqSecondaryButton(
+                AqButton(
                     label = AppStrings.Compartir,
                     onClick = onShare,
+                    variant = AqButtonVariant.Text,
                     icon = AqIcons.Share,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
         },
+        toastHost = toastHost?.let { host -> { AqToastHost(host) } },
     ) {
-        // Tarjeta núcleo del QR: código real sobre lienzo claro
-        // PLANO (el marco de escáner queda para la cámara) + guía de uso.
-        // La tarjeta también es tocable con la misma acción de Mostrar
-        // (semántica de botón); el dock conserva la primaria visible.
+        // Tarjeta núcleo del QR: código real sobre lienzo claro PLANO.
         if (destination.qr.encoded.isNotBlank()) {
-            AqTappableCard(onClick = onShowQr) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
-                ) {
-                    AqQrPreview(
-                        encodedQr = destination.qr.encoded,
-                        size = AqMetrics.QrPreviewSize,
-                        unavailableMessage = AppStrings.QrNoSePudoMostrar,
-                    )
-                    AqText(
-                        AppStrings.MuestraEsteCodigo,
-                        color = AqColor.TextSecondary,
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                    )
-                }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(AqColor.Surface, AqSquircles.SurfaceLg)
+                    .aqShadow(AqShadow.Sm, AqSquircles.SurfaceLg)
+                    .padding(AqSpacing.Lg),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
+            ) {
+                AqQrPreview(
+                    encodedQr = destination.qr.encoded,
+                    size = AqMetrics.QrPreviewSize,
+                    unavailableMessage = AppStrings.QrNoSePudoMostrar,
+                )
+                AqText(
+                    AppStrings.MuestraEsteCodigo,
+                    color = AqColor.TextSecondary,
+                    textAlign = TextAlign.Center,
+                )
             }
         } else {
-            AqEmptyState(
+            AqEmptyPlaceholder(
                 icon = AqIcons.QrCode,
                 title = AppStrings.QrSinContenido,
                 subtitle = AppStrings.EditaElDestinoParaImportar,
@@ -160,73 +166,67 @@ fun DestinationDetailScreen(
             )
         }
 
-        // Metadatos en filas compactas (patrón de detalle de comprobante): solo
-        // datos reales del dominio; el contenido decodificado se puede
-        // COPIAR (portapapeles del sistema, feedback por evento) y la
-        // fecha de alta es el createdAt real.
+        // Metadatos en filas compactas: solo datos reales del dominio.
         val hasMetadata = destination.category != null ||
             destination.qr.content?.takeIf { it.isNotBlank() } != null ||
             destination.note?.takeIf { it.isNotBlank() } != null
         if (hasMetadata || destination.qr.encoded.isNotBlank()) {
-            AqCard {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-                ) {
-                    // Contenido decodificado: bloque de ancho
-                    // completo alineado a la izquierda, máx. 3 líneas con
-                    // "Ver más", seleccionable y copiable (no una fila de
-                    // valor alineada a la derecha).
-                    destination.qr.content?.takeIf { it.isNotBlank() }?.let { content ->
-                        var contentExpanded by remember { mutableStateOf(false) }
-                        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(AqColor.Surface, AqSquircles.SurfaceLg)
+                    .aqShadow(AqShadow.Sm, AqSquircles.SurfaceLg)
+                    .padding(AqSpacing.Lg),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            ) {
+                // Contenido decodificado: seleccionable y copiable.
+                destination.qr.content?.takeIf { it.isNotBlank() }?.let { content ->
+                    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
+                        AqText(
+                            AppStrings.Contenido,
+                            color = AqColor.TextSecondary,
+                            size = AqType.BodySmall,
+                        )
+                        androidx.compose.foundation.text.selection.SelectionContainer {
                             AqText(
-                                AppStrings.Contenido,
-                                color = AqColor.TextSecondary,
-                                size = AqType.BodySmall,
+                                content,
+                                maxLines = if (contentExpanded) Int.MAX_VALUE else 3,
                             )
-                            androidx.compose.foundation.text.selection.SelectionContainer {
-                                AqText(
-                                    content,
-                                    maxLines = if (contentExpanded) Int.MAX_VALUE else 3,
-                                )
-                            }
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                AqTooltip(
-                                    label = AppStrings.Copiar,
-                                    isVisible = showCopyTooltip,
-                                    onLongClick = { showCopyTooltip = !showCopyTooltip },
-                                ) {
-                                    AqCompactAction(
-                                        label = AppStrings.Copiar,
-                                        onClick = {
-                                            copyToClipboard(content)
-                                            copiedEvent = Any()
-                                        },
-                                        icon = AqIcons.Copy,
-                                        prominent = true,
-                                    )
-                                }
-                                AqTextAction(
-                                    label = if (contentExpanded) AppStrings.VerMenos else AppStrings.VerMas,
-                                    onClick = { contentExpanded = !contentExpanded },
-                                )
-                            }
+                        }
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            AqButton(
+                                label = AppStrings.Copiar,
+                                onClick = {
+                                    copyToClipboard(content)
+                                    copiedEvent = Any()
+                                },
+                                variant = AqButtonVariant.Text,
+                                icon = AqIcons.Copy,
+                                size = AqButtonSize.Small,
+                            )
+                            AqButton(
+                                label = if (contentExpanded) AppStrings.VerMenos else AppStrings.VerMas,
+                                onClick = { contentExpanded = !contentExpanded },
+                                variant = AqButtonVariant.Text,
+                                size = AqButtonSize.Small,
+                            )
                         }
                     }
-                    destination.category?.let { AqMoonMetaRow(label = AppStrings.Categoria, value = it) }
-                    AqMoonMetaRow(
-                        label = AppStrings.FechaDeAlta,
-                        value = formatDate(destination.createdAt),
-                        icon = AqIcons.Calendar,
-                    )
-                    destination.note?.takeIf { it.isNotBlank() }?.let {
-                        AqHairline()
-                        AqText(it, color = AqColor.TextSecondary)
-                    }
+                }
+                destination.category?.let {
+                    AqMetaLine(label = AppStrings.Categoria, value = it)
+                }
+                AqMetaLine(
+                    label = AppStrings.FechaDeAlta,
+                    value = formatDate(destination.createdAt),
+                    leadingIcon = AqIcons.Calendar,
+                )
+                destination.note?.takeIf { it.isNotBlank() }?.let {
+                    AqHairline()
+                    AqText(it, color = AqColor.TextSecondary)
                 }
             }
         }
@@ -246,21 +246,24 @@ fun DestinationDetailScreen(
         }
         if (syncStatus == ElementSyncStatus.ErrorRecoverable) {
             // El dato está a salvo localmente: el usuario puede reintentar.
-            AqTextAction(label = AppStrings.Reintentar, onClick = onRetrySync)
+            AqButton(
+                label = AppStrings.Reintentar,
+                onClick = onRetrySync,
+                variant = AqButtonVariant.Text,
+            )
         }
 
-        // Reaseguro de integridad: cierto en el dominio
-        // — editar un destino no toca las operaciones históricas.
-        AqMoonStatusPill(
+        // Reaseguro de integridad: cierto en el dominio.
+        AqTag(
             text = AppStrings.IntegridadHistorica,
-            icon = AqIcons.ShieldCheck,
             tone = AqTone.Success,
         )
     }
+
     if (showDeleteConfirm) {
-        AqMoonDialog(
+        AqModal(
             title = AppStrings.EliminarDestino,
-            message = AppStrings.irreversibleActionWarning,
+            dismissLabel = AppStrings.Cancelar,
             confirmLabel = AppStrings.Eliminar,
             destructive = true,
             onConfirm = {
@@ -268,8 +271,7 @@ fun DestinationDetailScreen(
                 deleteDoneEvent = Any()
                 onDelete()
             },
-            dismissLabel = AppStrings.Cancelar,
-            onDismiss = { showDeleteConfirm = false },
+            onDismissRequest = { showDeleteConfirm = false },
         )
     }
 
@@ -280,11 +282,13 @@ fun DestinationDetailScreen(
             dismissDescription = AppStrings.Cerrar,
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Md)) {
-                destination.category?.let { AqMoonMetaRow(label = AppStrings.Categoria, value = it) }
-                AqMoonMetaRow(
+                destination.category?.let {
+                    AqMetaLine(label = AppStrings.Categoria, value = it)
+                }
+                AqMetaLine(
                     label = AppStrings.FechaDeAlta,
                     value = formatDate(destination.createdAt),
-                    icon = AqIcons.Calendar,
+                    leadingIcon = AqIcons.Calendar,
                 )
                 destination.qr.content?.takeIf { it.isNotBlank() }?.let { content ->
                     Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
@@ -301,5 +305,33 @@ fun DestinationDetailScreen(
                 }
             }
         }
+    }
+}
+
+/** Fila de metadato (etiqueta + valor) construida con piezas Moon. */
+@Composable
+private fun AqMetaLine(
+    label: String,
+    value: String,
+    leadingIcon: com.agendaqr.core.ui.components.AqIcons.() -> Unit? = null,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+    ) {
+        leadingIcon?.invoke()
+        AqText(
+            text = label,
+            size = AqType.Body,
+            color = com.agendaqr.core.ui.theme.AqColor.TextSecondary,
+            modifier = Modifier.weight(0f, fill = false),
+        )
+        AqText(
+            text = value,
+            size = AqType.Body,
+            color = com.agendaqr.core.ui.theme.AqColor.TextPrimary,
+            modifier = Modifier.weight(1f, fill = false),
+        )
     }
 }

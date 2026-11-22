@@ -9,10 +9,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.agendaqr.core.ui.components.AqIcons
-import com.agendaqr.core.ui.components.AqMoonIconBadge
-import com.agendaqr.core.ui.components.AqMoonListRow
-import com.agendaqr.core.ui.components.AqPrimaryButton
-import com.agendaqr.core.ui.components.AqSecondaryButton
+import com.agendaqr.core.ui.components.AqIcon
+import com.agendaqr.core.ui.components.AqMenuItem
+import com.agendaqr.core.ui.components.AqButton
+import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.destinations.domain.QrAsset
 
@@ -33,7 +33,7 @@ actual fun QrImportControls(
         // En el editor la acción primaria ES Guardar (botón fijo abajo):
         // las fuentes de imagen son alternativas y no compiten por el
         // peso visual (jerarquía de botones, §7).
-        AqSecondaryButton(
+        AqButton(
             label = AppStrings.ElegirDeLaGaleria,
             onClick = AgendaQrAndroidImportLauncher::gallery,
             icon = com.agendaqr.core.ui.components.AqIcons.Gallery,
@@ -54,11 +54,11 @@ actual fun QrGalleryControls(
     LaunchedEffect(Unit) {
         AgendaQrAndroidImportLauncher.results.collect(onResult)
     }
-    AqMoonListRow(
+    AqMenuItem(
         title = AppStrings.ElegirDeLaGaleria,
         titleMaxLines = Int.MAX_VALUE,
         onClick = AgendaQrAndroidImportLauncher::gallery,
-        leading = { AqMoonIconBadge(icon = AqIcons.Gallery) },
+        leading = { AqIcon(icon = AqIcons.Gallery) },
         showChevron = true,
         showDivider = true,
     )
@@ -79,11 +79,11 @@ actual fun QrCameraEntryControl(
 /** Android: PDF vía OpenDocument por el canal de comprobantes entrantes. */
 @Composable
 actual fun QrPdfPickerControl(showDivider: Boolean) {
-    AqMoonListRow(
+    AqMenuItem(
         title = AppStrings.ElegirArchivoPdf,
         titleMaxLines = Int.MAX_VALUE,
         onClick = AgendaQrAndroidImportLauncher::pdf,
-        leading = { AqMoonIconBadge(icon = AqIcons.Attachment) },
+        leading = { AqIcon(icon = AqIcons.Attachment) },
         showChevron = true,
         showDivider = showDivider,
     )

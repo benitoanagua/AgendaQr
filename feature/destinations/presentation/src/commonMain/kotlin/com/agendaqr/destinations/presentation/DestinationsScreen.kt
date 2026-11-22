@@ -1,72 +1,64 @@
 package com.agendaqr.destinations.presentation
 
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.destinations.data.SyncResource
-import com.agendaqr.core.ui.components.AqMoonBadge
-import com.agendaqr.core.ui.components.AqBottomAction
-import com.agendaqr.core.ui.components.AqCarousel
+import com.agendaqr.core.ui.components.AqAlert
+import com.agendaqr.core.ui.components.AqButton
+import com.agendaqr.core.ui.components.AqButtonSize
+import com.agendaqr.core.ui.components.AqButtonVariant
 import com.agendaqr.core.ui.components.AqCheckbox
+import com.agendaqr.core.ui.components.AqCarousel
 import com.agendaqr.core.ui.components.AqCarouselItem
-import com.agendaqr.core.ui.components.AqCompactAction
-import com.agendaqr.core.ui.components.AqPullToRefresh
-import com.agendaqr.core.ui.components.AqSwipeAction
-import com.agendaqr.core.ui.components.AqSwipeActions
-import com.agendaqr.core.ui.components.AqQuickAction
-import com.agendaqr.core.ui.components.AqMoonDialog
-import com.agendaqr.core.ui.components.AqDialogList
+import com.agendaqr.core.ui.components.AqEmptyPlaceholder
 import com.agendaqr.core.ui.components.AqFavoriteToggle
+import com.agendaqr.core.ui.components.AqHairline
+import com.agendaqr.core.ui.components.AqIcon
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqLoadMore
+import com.agendaqr.core.ui.components.AqMenuItem
+import com.agendaqr.core.ui.components.AqPullToRefresh
+import com.agendaqr.core.ui.components.AqScreen
+import com.agendaqr.core.ui.components.AqSectionTitle
 import com.agendaqr.core.ui.components.AqSegmentedControl
 import com.agendaqr.core.ui.components.AqSegmentedOption
-import com.agendaqr.core.ui.components.AqIcon
-import com.agendaqr.core.ui.components.AqMoonIconBadge
-import com.agendaqr.core.ui.components.AqIcons
-import com.agendaqr.core.ui.components.AqMoonListRow
-import com.agendaqr.core.ui.components.AqMoonListBody
-import com.agendaqr.core.ui.components.AqNavChromeState
-import com.agendaqr.core.ui.components.AqOverflowAction
-import com.agendaqr.core.ui.components.AqScreenScaffold
-import com.agendaqr.core.ui.components.AqMoonSelectionBar
-import com.agendaqr.core.ui.components.AqSectionHeader
-import com.agendaqr.core.ui.components.AqTappableCard
-import com.agendaqr.core.ui.components.AqSkeleton
-import com.agendaqr.core.ui.components.AqSnackbarHost
-import com.agendaqr.core.ui.components.AqSearchTrigger
+import com.agendaqr.core.ui.components.AqSelectionToolbar
+import com.agendaqr.core.ui.components.AqSkeletonBlock
+import com.agendaqr.core.ui.components.AqSwipeAction
+import com.agendaqr.core.ui.components.AqSwipeActions
+import com.agendaqr.core.ui.components.AqTag
 import com.agendaqr.core.ui.components.AqText
-import com.agendaqr.core.ui.components.AqTopBar
+import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.components.AqTone
-import com.agendaqr.core.ui.components.AqMoonStatusBanner
-import com.agendaqr.core.ui.components.AqEmptyState
-import com.agendaqr.core.ui.components.AqLoadMoreFooter
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.destinations.domain.Destination
+import com.agendaqr.core.ui.components.AqQuickAction
 
 /**
  * S01 — Inicio: acciones rápidas, control segmentado con conteo real,
- * carrusel de favoritos y lista agrupada con "Ver QR" por fila. Composición
- * alineada con la especificación UX/UI vigente: navbar con el nombre de la superficie y filtros
- * Todos/Favoritos como segmentado mutuamente excluyente. Todas las
- * acciones son reales: S02 (traer QR), pantalla completa del código
- * (RF-05) y favoritos del dominio.
+ * carrusel de favoritos y lista agrupada con "Ver QR" por fila.
+ *
+ * Construido exclusivamente con componentes Moon: [AqScreen] (scaffold con
+ * nav [AqPillTab]), [AqAppBar] (vía título/atrás/overflow), [AqSelectionToolbar]
+ * (modo selección G3), [AqMenuItem] (filas), [AqEmptyPlaceholder] (vacío),
+ * [AqToastHost] (toasts), [AqModal] (diálogos), [AqButton] y [AqTag]
+ * (acciones/etiquetas). Sin símbolos legacy ni wrappers `Aq*`.
  */
 @Composable
 fun DestinationsScreen(
@@ -88,20 +80,23 @@ fun DestinationsScreen(
 ) {
     var showCreateContext by remember { mutableStateOf(false) }
     var destinationToDelete by remember { mutableStateOf<Destination?>(null) }
-    var visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
-    val paged = state.visibleDestinations.take(visibleCount)
-    val favorites = state.favorites
+    val navDestinations = navChrome?.destinations.orEmpty()
+    val navSelectedId = navChrome?.selectedId
     // G3: modo selección por lote en destinos.
     var selectedIds by rememberSaveable { mutableStateOf(setOf<String>()) }
     var confirmarEliminarLote by remember { mutableStateOf(false) }
     val selectionMode = selectedIds.isNotEmpty()
+    val visibleCount by remember(state.visibleDestinations.size) { mutableStateOf(50) }
+    val paged = state.visibleDestinations.take(visibleCount)
+    val favorites = state.favorites
+    val toastHost = appHosts?.toastHost
 
-    AqScreenScaffold(
-        scrollable = state.destinations.isNotEmpty(),
-        topBar = {
-            if (selectionMode) {
+    AqScreen(
+        title = AppStrings.Inicio,
+        topBar = if (selectionMode) {
+            {
                 val selectAll = state.destinations.isNotEmpty() && selectedIds.size == state.destinations.size
-                AqMoonSelectionBar(
+                AqSelectionToolbar(
                     closeLabel = AppStrings.CerrarSeleccion,
                     selectAllLabel = if (selectAll) AppStrings.SeleccionarNinguno else AppStrings.SeleccionarTodo,
                     selectedCountLabel = "${selectedIds.size} ${AppStrings.Seleccionados}",
@@ -113,41 +108,35 @@ fun DestinationsScreen(
                     },
                     onClose = { selectedIds = emptySet() },
                 )
-            } else {
-                AqTopBar(
-                    title = AppStrings.Inicio,
-                    overflowActions = listOf(
-                        AqOverflowAction(AppStrings.CuentaYRespaldo, onClick = onOpenAccount),
-                        AqOverflowAction(AppStrings.Bloquear, onClick = onLock),
-                    ),
-                    overflowLabel = AppStrings.Mas,
-                )
             }
+        } else {
+            null
         },
-        navDestinations = navChrome?.destinations.orEmpty(),
-        snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
-        statusContent = appHosts?.status,
-
-        navSelectedId = navChrome?.selectedId,
+        navDestinations = navDestinations,
+        navSelectedId = navSelectedId,
         onNavSelect = { navChrome?.onSelect?.invoke(it) },
-        floatingActionButton = null,
-        bottomAction = if (selectionMode) {
+        statusContent = appHosts?.status,
+        bottomAction = if (selectionMode && navDestinations.isEmpty()) {
             {
-                AqBottomAction(
+                AqButton(
                     label = AppStrings.EliminarDestino + " (${selectedIds.size})",
                     onClick = { confirmarEliminarLote = true },
                     enabled = selectedIds.isNotEmpty(),
+                    variant = AqButtonVariant.Danger,
                 )
             }
         } else {
             null
         },
-        verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
+        toastHost = toastHost?.let { host -> { AqToastHost(host) } },
     ) {
-        AqSearchTrigger(
+        // Trigger de búsqueda global (botón que abre el flujo de búsqueda).
+        AqButton(
             label = AppStrings.BuscarEnAgendaQr,
-            placeholder = AppStrings.searchPlaceholder,
             onClick = onOpenSearch,
+            variant = AqButtonVariant.Text,
+            icon = AqIcons.Search,
+            size = AqButtonSize.Small,
         )
 
         // §10: errores recuperables y contextuales, visibles sin scroll.
@@ -156,16 +145,15 @@ fun DestinationsScreen(
                 onRetry = { onAction(DestinationAction.RetryFailed) },
                 onClear = { onAction(DestinationAction.ClearError) },
             )
-            AqMoonStatusBanner(
-                title = error.what,
-                message = error.dataStatus,
+            AqAlert(
                 tone = AqTone.Danger,
-                action = bannerAction,
-                dismiss = bannerDismiss,
+                message = error.dataStatus,
+                dismissLabel = bannerDismiss.label,
+                onDismiss = bannerDismiss.onClick,
             )
         }
 
-        // Rejilla "King Kong" de acciones rápidas existentes — mismas tres acciones del hub anterior, sin duplicar.
+        // Rejilla "King Kong" de acciones rápidas existentes.
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
@@ -190,10 +178,7 @@ fun DestinationsScreen(
             )
         }
 
-        // Segmentado Todos/Favoritos (S01; la spec
-        // admite "Tabs o Segmented"): filtros reales mutuamente
-        // excluyentes con conteo. La selección vive en la semántica
-        // (`selectableGroup` + rol radio), nunca solo en el color.
+        // Segmentado Todos/Favoritos (S01): filtros reales mutuamente excluyentes.
         AqSegmentedControl(
             options = listOf(
                 AqSegmentedOption(
@@ -210,9 +195,7 @@ fun DestinationsScreen(
             onSelect = { index -> onAction(DestinationAction.SetFavoritesOnly(index == 1)) },
         )
 
-        // Favoritos (es lo que son, no "frecuentes"): carrusel
-        // horizontal; la siguiente tarjeta asoma como indicio (sin
-        // instrucción de deslizamiento).
+        // Favoritos: carrusel horizontal.
         if (state.showsFavoritesCarousel) {
             Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
                 Row(
@@ -225,7 +208,7 @@ fun DestinationsScreen(
                         size = AqMetrics.IconSizeCompact,
                         tint = AqColor.SelectionIcon,
                     )
-                    AqSectionHeader(text = AppStrings.Favoritos)
+                    AqSectionTitle(text = AppStrings.Favoritos)
                 }
                 AqCarousel(
                     items = favorites.map {
@@ -243,11 +226,7 @@ fun DestinationsScreen(
             }
         }
 
-        // Sección inferior: los favoritos ya viven en el carrusel, así que el
-        // encabezado es "Otros destinos" solo en ese caso; "Todos los destinos"
-        // cuando no hay carrusel. Cuando el carrusel muestra TODO el contenido
-        // (todos son favoritos) la sección no se renderiza: un estado vacío
-        // aquí sería un mensaje falso.
+        // Sección inferior.
         val showsFavoritesCarousel = state.showsFavoritesCarousel
         val showsLowerSection = state.isLoading ||
             state.destinations.isEmpty() ||
@@ -257,29 +236,25 @@ fun DestinationsScreen(
         if (showsLowerSection) {
             Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
                 if (!state.destinations.isEmpty()) {
-                    AqSectionHeader(
+                    AqSectionTitle(
                         text = if (showsFavoritesCarousel) AppStrings.OtrosDestinos else AppStrings.TodosLosDestinos,
                     )
                 }
                 when {
-                    // la carga inicial se anuncia con el skeleton del DS.
-                    state.isLoading -> AqSkeleton(lines = 4)
-                    state.destinations.isEmpty() -> AqEmptyState(
+                    state.isLoading -> AqSkeletonBlock(lines = 4)
+                    state.destinations.isEmpty() -> AqEmptyPlaceholder(
                         icon = AqIcons.QrCode,
                         title = AppStrings.AunNoHayDestinos,
                         subtitle = AppStrings.emptyDestinationsHint,
                     )
-                    // Filtro Favoritos sin favoritos: mensaje propio y salida
-                    // real al filtro Todos (antes "Limpiar búsqueda" no
-                    // cambiaba el filtro).
-                    state.favoriteOnly && state.visibleDestinations.isEmpty() && state.query.isBlank() -> AqEmptyState(
+                    state.favoriteOnly && state.visibleDestinations.isEmpty() && state.query.isBlank() -> AqEmptyPlaceholder(
                         icon = AqIcons.Favorite,
                         title = AppStrings.AunNoHayFavoritos,
                         subtitle = AppStrings.MarcaUnDestinoConEstrella,
                         actionLabel = AppStrings.VerTodos,
                         onAction = { onAction(DestinationAction.SetFavoritesOnly(false)) },
                     )
-                    state.visibleDestinations.isEmpty() -> AqEmptyState(
+                    state.visibleDestinations.isEmpty() -> AqEmptyPlaceholder(
                         icon = AqIcons.QrCode,
                         title = AppStrings.NoSeEncontraronDestinos,
                         subtitle = AppStrings.PruebaConOtraBusquedaOLimpia,
@@ -292,29 +267,28 @@ fun DestinationsScreen(
                             onRefresh = { onAction(DestinationAction.Search(state.query)) },
                             refreshingLabel = AppStrings.Cargando,
                         ) {
-                            AqMoonListBody {
-                                paged.forEachIndexed { index, destination ->
-                                    DestinationRow(
-                                        destination,
-                                        onAction,
-                                        syncLookup,
-                                        showDivider = index < paged.lastIndex,
-                                        onRequestDelete = { destinationToDelete = it },
-                                        selected = selectedIds.contains(destination.id),
-                                        onToggle = {
-                                            selectedIds = if (selectedIds.contains(destination.id)) {
-                                                selectedIds - destination.id
-                                            } else {
-                                                selectedIds + destination.id
-                                            }
-                                        },
-                                        swipeEnabled = !selectionMode,
-                                    )
-                                }
+                            paged.forEachIndexed { index, destination ->
+                                DestinationRow(
+                                    destination,
+                                    onAction,
+                                    syncLookup,
+                                    showDivider = index < paged.lastIndex,
+                                    onRequestDelete = { destinationToDelete = it },
+                                    selected = selectedIds.contains(destination.id),
+                                    onToggle = {
+                                        selectedIds = if (selectedIds.contains(destination.id)) {
+                                            selectedIds - destination.id
+                                        } else {
+                                            selectedIds + destination.id
+                                        }
+                                    },
+                                    swipeEnabled = !selectionMode,
+                                )
+                                if (index < paged.lastIndex) AqHairline()
                             }
                         }
                         if (paged.size < state.visibleDestinations.size) {
-                            AqLoadMoreFooter(
+                            AqLoadMore(
                                 onLoadMore = { visibleCount = (visibleCount + 50).coerceAtMost(state.visibleDestinations.size) },
                                 loadMoreLabel = AppStrings.CargarMas,
                                 loadingLabel = AppStrings.Cargando,
@@ -338,28 +312,27 @@ fun DestinationsScreen(
     }
 
     destinationToDelete?.let { dest ->
-        AqMoonDialog(
+        AqModal(
             title = AppStrings.EliminarDestino,
-            message = AppStrings.irreversibleActionWarning,
+            dismissLabel = AppStrings.Cancelar,
             confirmLabel = AppStrings.Eliminar,
             destructive = true,
             onConfirm = {
                 onAction(DestinationAction.Delete(dest.id))
                 destinationToDelete = null
             },
-            dismissLabel = AppStrings.Cancelar,
-            onDismiss = { destinationToDelete = null },
+            onDismissRequest = { destinationToDelete = null },
         )
     }
 
     // G3: confirmación de eliminación por lote en destinos.
     if (confirmarEliminarLote) {
         val plural = if (selectedIds.size == 1) AppStrings.OperacionSingular else AppStrings.OperacionesPlural
-        AqMoonDialog(
+        AqModal(
             title = AppStrings.EliminarDestino,
-            destructive = true,
-            message = AppStrings.irreversibleActionWarning + "\n" + selectedIds.size + " " + plural,
+            dismissLabel = AppStrings.Cancelar,
             confirmLabel = AppStrings.Eliminar,
+            destructive = true,
             onConfirm = {
                 selectedIds.toList().forEach { id ->
                     onAction(DestinationAction.Delete(id))
@@ -367,16 +340,20 @@ fun DestinationsScreen(
                 selectedIds = emptySet()
                 confirmarEliminarLote = false
             },
-            dismissLabel = AppStrings.Cancelar,
-            onDismiss = { confirmarEliminarLote = false },
+            onDismissRequest = { confirmarEliminarLote = false },
+            content = {
+                AqText(
+                    text = AppStrings.irreversibleActionWarning + "\n" + selectedIds.size + " " + plural,
+                    color = AqColor.TextSecondary,
+                )
+            },
         )
     }
 }
 
 /**
  * Mini-tarjeta del carrusel de favoritos: tile de identidad, nombre,
- * metadato y categoría real. Toda la interacción vive en la tarjeta; el
- * toque abre el detalle.
+ * metadato y categoría real.
  */
 @Composable
 private fun FavoriteDestinationCard(
@@ -384,36 +361,29 @@ private fun FavoriteDestinationCard(
     onClick: () -> Unit,
 ) {
     // La superficie presionable vive en el DS (feature/ sin clickable
-    // crudo): tarjeta compacta de ancho de token.
-    com.agendaqr.core.ui.components.AqTappableCard(
+    // crudo): [AqMenuItem] con miniatura QR y nombre.
+    AqMenuItem(
+        title = destination.name.ifBlank { AppStrings.SinNombre },
+        leading = {
+            AqIcon(
+                imageVector = AqIcons.QrCode,
+                contentDescription = null,
+                size = com.agendaqr.core.ui.theme.AqMetrics.IconSizeCompact,
+            )
+        },
+        trailing = {
+            destination.category?.let {
+                AqTag(text = it)
+            }
+        },
         onClick = onClick,
-        modifier = Modifier.width(AqMetrics.FavCardWidth),
-    ) {
-        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                AqMoonIconBadge(icon = AqIcons.QrCode)
-                destination.category?.let {
-                    AqMoonBadge(text = it)
-                }
-            }
-            Column {
-                AqText(
-                    destination.name.ifBlank { AppStrings.SinNombre },
-                    size = AqType.RowTitle,
-                    fontWeight = AqWeight.SemiBold,
-                )
-                AqText(
-                    destinationSubtitle(destination) ?: "",
-                    color = AqColor.TextSecondary,
-                )
-            }
-        }
-    }
+    )
 }
 
+/**
+ * Fila del destino: miniatura QR a la izquierda, título con identidad,
+ * metadato de sincronización y favorito a la derecha.
+ */
 @Composable
 fun DestinationRow(
     destination: Destination,
@@ -428,10 +398,10 @@ fun DestinationRow(
     /** G3: las acciones de deslizamiento se deshabilitan en modo selección. */
     swipeEnabled: Boolean = true,
 ) {
-    // Fila del destino: miniatura QR a la izquierda, título con
-    // identidad, metadato de sincronización y favorito a la derecha.
+    // Fila del destino: ícono QR a la izquierda, título con identidad,
+    // metadato de sincronización y favorito a la derecha.
     val rowContent = @Composable {
-        AqMoonListRow(
+        AqMenuItem(
             title = destination.name.ifBlank { AppStrings.SinNombre },
             subtitle = destinationSubtitle(destination),
             showDivider = showDivider,
@@ -446,28 +416,32 @@ fun DestinationRow(
                         onCheckedChange = { onToggle?.invoke() },
                     )
                 } else {
-                    AqMoonIconBadge(icon = AqIcons.QrCode)
-                }
-            },
-            meta = {
-                Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
-                    // El contenido decodificado NO aparece en la lista
-                    // (privacidad + no parece un enlace); vive en el Detalle.
-                    ElementSyncBadge(
-                        syncLookup.status(SyncResource.DESTINATION, destination.id),
+                    AqIcon(
+                        imageVector = AqIcons.QrCode,
+                        contentDescription = null,
+                        size = com.agendaqr.core.ui.theme.AqMetrics.IconSizeCompact,
                     )
                 }
             },
             trailing = {
-                AqFavoriteToggle(
-                    favorite = destination.favorite,
-                    contentDescription = if (destination.favorite) {
-                        AppStrings.QuitarFavorito
-                    } else {
-                        AppStrings.MarcarFavorito
-                    },
-                    onCheckedChange = { onAction(DestinationAction.ToggleFavorite(destination)) },
-                )
+                Row(
+                    modifier = Modifier,
+                    horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    ElementSyncBadge(
+                        syncLookup.status(SyncResource.DESTINATION, destination.id),
+                    )
+                    AqFavoriteToggle(
+                        favorite = destination.favorite,
+                        contentDescription = if (destination.favorite) {
+                            AppStrings.QuitarFavorito
+                        } else {
+                            AppStrings.MarcarFavorito
+                        },
+                        onCheckedChange = { onAction(DestinationAction.ToggleFavorite(destination)) },
+                    )
+                }
             },
         )
     }
@@ -498,10 +472,7 @@ fun DestinationRow(
 }
 
 /**
- * Subtítulo de la fila del destino: nota/categoría si existen; si el
- * nombre es genérico ("Sin nombre" o "QR importado"), ORIGEN + FECHA —
- * dos destinos con nombre genérico quedaban indistinguibles en la lista
- * (decisión de implementación, no de spec).
+ * Subtítulo de la fila del destino.
  */
 internal fun destinationSubtitle(destination: Destination): String? {
     val generic = destination.name.isBlank() ||

@@ -15,8 +15,8 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
-import com.agendaqr.core.ui.components.AqMoonDialog
-import com.agendaqr.core.ui.components.AqMoonListRow
+import com.agendaqr.core.ui.components.AqModal
+import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqTextField
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
@@ -90,7 +90,7 @@ class AccessibilityStatesFormsTest {
             .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.StateDescription))
     }
 
-    // --- 2.4 AqMoonDialog destructivo: botón de peligro + foco en Cancelar ---
+    // --- 2.4 AqModal destructivo: botón de peligro + foco en Cancelar ---
 
     @Test
     fun destructive_dialog_focuses_cancel_and_keeps_both_actions() {
@@ -98,7 +98,7 @@ class AccessibilityStatesFormsTest {
         var cancelled = false
         compose.setContent {
             AqTheme {
-                AqMoonDialog(
+                AqModal(
                     title = "Eliminar destino",
                     message = "Esta acción no se puede deshacer.",
                     confirmLabel = "Eliminar",
@@ -151,7 +151,7 @@ class AccessibilityStatesFormsTest {
     fun list_row_selected_is_exposed_to_accessibility() {
         compose.setContent {
             AqTheme {
-                AqMoonListRow(
+                AqMenuItem(
                     title = "Mercado Central",
                     onClick = { },
                     selected = true,

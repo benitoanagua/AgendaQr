@@ -46,7 +46,7 @@ import com.agendaqr.destinations.data.SyncResource
  * [AqScreen] (scaffold), [AqAppBar] (vía título/atrás de [AqScreen]),
  * [AqSelectionToolbar] (modo selección G3), [AqMenuItem] (filas),
  * [AqEmptyPlaceholder] (vacío), [AqToastHost] (toasts), [AqModal] (diálogos)
- * y [AqButton] (acciones). Sin símbolos legacy ni wrappers `AqMoon*`.
+ * y [AqButton] (acciones). Sin símbolos legacy ni wrappers `Aq*`.
  */
 @Composable
 internal fun UnassociatedScreen(
@@ -91,7 +91,7 @@ internal fun UnassociatedScreen(
         bottomAction = if (selectionMode) {
             {
                 AqButton(
-                    label = "${AppStrings.EliminarComprobante} (${selectedReceiptIds.size})",
+                    label = AppStrings.EliminarComprobante + " (" + selectedReceiptIds.size + ")",
                     onClick = { confirmarEliminarRecibo = true },
                     enabled = selectedReceiptIds.isNotEmpty(),
                     variant = AqButtonVariant.Danger,

@@ -3,7 +3,7 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.agendaqr.core.ui.components.AqMoonDialog
+import com.agendaqr.core.ui.components.AqModal
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
 import org.junit.Test
@@ -28,7 +28,7 @@ class AqDialogProminenceTest {
         var confirmed = false
         compose.setContent {
             AqTheme {
-                AqMoonDialog(
+                AqModal(
                     title = "Seleccionar contexto",
                     confirmLabel = "Cancelar",
                     confirmAsText = true,
