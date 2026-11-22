@@ -64,6 +64,7 @@ fun GlobalSearchScreen(
             label = AppStrings.BuscarEnAgendaQr,
             value = state.query,
             onValueChange = { onAction(GlobalSearchAction.QueryChanged(it)) },
+            placeholder = AppStrings.Buscar,
             focusRequester = focusRequester,
         )
         val results = state.results

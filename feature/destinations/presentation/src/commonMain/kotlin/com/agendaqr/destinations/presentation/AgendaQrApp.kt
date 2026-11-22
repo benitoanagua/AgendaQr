@@ -2,6 +2,7 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -127,13 +128,24 @@ fun AgendaQrApp() {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    AqAlert(
-                        tone = AqTone.Info,
-                        message = AppStrings.ModoDemostracion + "\n" + AppStrings.DemostracionAislada,
-                        dismissLabel = AppStrings.SalirDeDemostracion,
-                        onDismiss = ::exitDemo,
-                        modifier = Modifier.testTag("am-status-banner"),
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = AqSpacing.ScreenMargin,
+                                vertical = AqSpacing.Sm,
+                            ),
+                    ) {
+                        AqAlert(
+                            tone = AqTone.Info,
+                            title = AppStrings.ModoDemostracion,
+                            message = AppStrings.DemostracionAislada,
+                            dismissLabel = AppStrings.SalirDeDemostracion,
+                            onDismiss = ::exitDemo,
+                            horizontalPadding = AqSpacing.None,
+                            modifier = Modifier.testTag("am-status-banner"),
+                        )
+                    }
                     AgendaQrLocalApp(
                         profileId = DEMO_PROFILE_ID,
                         onLock = ::exitDemo,
@@ -156,6 +168,7 @@ fun AgendaQrApp() {
                 onPinChanged = accessViewModel::onPinChanged,
                 onSubmit = { accessViewModel.submitUnlock() },
                 onCancel = { accessViewModel.lock() },
+                onBiometric = ::requestBiometric,
                 onExploreDemo = { demoActive = true },
             )
             else -> AgendaQrLocalApp(
