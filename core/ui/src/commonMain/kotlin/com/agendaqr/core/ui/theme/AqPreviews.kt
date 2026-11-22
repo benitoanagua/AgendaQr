@@ -4,39 +4,49 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
-import com.agendaqr.core.ui.components.AqBlockStack
-import com.agendaqr.core.ui.components.AqButtonGroup
+import com.agendaqr.core.ui.components.AqAlert
+import com.agendaqr.core.ui.components.AqButton
+import com.agendaqr.core.ui.components.AqButtonSize
+import com.agendaqr.core.ui.components.AqButtonVariant
 import com.agendaqr.core.ui.components.AqCheckbox
 import com.agendaqr.core.ui.components.AqChoiceOption
-import com.agendaqr.core.ui.components.AqEvidenceBadge
-import com.agendaqr.core.ui.components.AqGroupedAction
-import com.agendaqr.core.ui.components.AqHeading
-import com.agendaqr.core.ui.components.AqIndexTable
-import com.agendaqr.core.ui.components.AqLink
-import com.agendaqr.core.ui.components.AqProgressBar
+import com.agendaqr.core.ui.components.AqCircularLoader
+import com.agendaqr.core.ui.components.AqDropdown
+import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqProgress
-import com.agendaqr.core.ui.components.AqPrimaryButton
+import com.agendaqr.core.ui.components.AqProgressBar
 import com.agendaqr.core.ui.components.AqPullToRefresh
-import com.agendaqr.core.ui.components.AqSecondaryButton
-import com.agendaqr.core.ui.components.AqSelect
-import com.agendaqr.core.ui.components.AqSpinner
-import com.agendaqr.core.ui.components.AqStatusBanner
 import com.agendaqr.core.ui.components.AqSwipeAction
 import com.agendaqr.core.ui.components.AqSwipeActions
 import com.agendaqr.core.ui.components.AqSwitch
-import com.agendaqr.core.ui.components.AqSyncIndicator
-import com.agendaqr.core.ui.components.AqSyncLabels
-import com.agendaqr.core.ui.components.AqSyncState
-import com.agendaqr.core.ui.components.AqTableColumn
-import com.agendaqr.core.ui.components.AqTableRow
+import com.agendaqr.core.ui.components.AqTab
+import com.agendaqr.core.ui.components.AqTabBar
+import com.agendaqr.core.ui.components.AqTag
+import com.agendaqr.core.ui.components.AqTagSize
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqTable
+import com.agendaqr.core.ui.components.AqTableColumn
+import com.agendaqr.core.ui.components.AqTableRow
+import com.agendaqr.core.ui.components.AqSyncIndicator
+import com.agendaqr.core.ui.components.AqSyncLabels
+import com.agendaqr.core.ui.components.AqSyncState
+import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqSize
+import com.agendaqr.core.ui.theme.AqSquircles
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /** Galería mínima para revisar los roles semánticos en los tres estados. */
@@ -49,17 +59,24 @@ private fun AqTokenGallery(darkTheme: Boolean) {
                 .padding(AqSpacing.Lg),
             verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
         ) {
-            AqHeading("Sistema visual")
-            AqText(
-                text = "Comprobante recibido",
-                color = AqColor.TextSecondary,
-            )
-            AqStatusBanner(
-                message = "Comprobante recibido",
+            AqText(text = "Sistema visual", color = AqColor.TextPrimary)
+            AqText(text = "Comprobante recibido", color = AqColor.TextSecondary)
+            AqAlert(
                 tone = AqTone.Info,
+                message = "Comprobante recibido",
             )
-            AqPrimaryButton(label = "Continuar", onClick = {})
-            AqSecondaryButton(label = "Cancelar", onClick = {})
+            AqButton(
+                label = "Continuar",
+                onClick = {},
+                variant = AqButtonVariant.Primary,
+                size = AqButtonSize.Large,
+            )
+            AqButton(
+                label = "Cancelar",
+                onClick = {},
+                variant = AqButtonVariant.Default,
+                size = AqButtonSize.Medium,
+            )
         }
     }
 }
@@ -92,38 +109,61 @@ private fun AqComponentGallery(darkTheme: Boolean) {
         AqChoiceOption("b", "Opción B", "Descripción B"),
     )
     AqTheme(darkTheme = darkTheme) {
-        AqBlockStack(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(AqSpacing.Lg),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
         ) {
-            AqHeading("Componentes")
-            AqLink(label = "Abrir detalle", onClick = {})
-            AqButtonGroup(
-                actions = listOf(
-                    AqGroupedAction("cancel", "Cancelar", onClick = {}),
-                    AqGroupedAction("save", "Guardar", onClick = {}, emphasized = true),
-                ),
+            AqText(text = "Componentes", color = AqColor.TextPrimary)
+            AqButton(
+                label = "Abrir detalle",
+                onClick = {},
+                variant = AqButtonVariant.Text,
+                size = AqButtonSize.Small,
             )
-            AqSelect(
-                options = options,
-                selectedId = "a",
-                onSelected = {},
-                label = "Selecciona",
-                dialogTitle = "Opciones",
-                confirmLabel = "Aceptar",
-                dismissLabel = "Cerrar",
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            ) {
+                AqButton(
+                    label = "Cancelar",
+                    onClick = {},
+                    variant = AqButtonVariant.Default,
+                    size = AqButtonSize.Small,
+                )
+                AqButton(
+                    label = "Guardar",
+                    onClick = {},
+                    variant = AqButtonVariant.Primary,
+                    size = AqButtonSize.Small,
+                )
+            }
+            AqDropdown(
+                open = false,
+                options = listOf("Opción A", "Opción B"),
+                selected = 0,
+                onOptionClick = {},
+                anchor = {
+                    AqButton(
+                        label = "Selecciona",
+                        onClick = {},
+                        variant = AqButtonVariant.Outline,
+                        size = AqButtonSize.Medium,
+                    )
+                },
+                content = {},
             )
             AqCheckbox(label = "Adjuntar comprobante", checked = true, onCheckedChange = {})
             AqSwitch(label = "Sincronización activa", checked = true, onCheckedChange = {})
             AqProgressBar(progress = AqProgress(0.6f), contentDescription = "Progreso")
-            AqSpinner(contentDescription = "Cargando")
-            AqEvidenceBadge(text = "Comprobante recibido", icon = AqIcons.Attachment)
+            AqCircularLoader(loaderSize = AqSize.Md, contentDescription = "Cargando")
+            AqTag(text = "Comprobante recibido", tone = AqTone.Success, size = AqTagSize.Sm)
             AqSyncIndicator(
                 state = AqSyncState.Pending,
                 labels = AqSyncLabels("Sincronizado", "Pendiente", "Sincronizando", "Error", "Sin servicio"),
             )
-            AqIndexTable(
+            AqTable(
                 columns = listOf(
                     AqTableColumn("name", "Concepto"),
                     AqTableColumn("amount", "Importe"),
@@ -134,12 +174,12 @@ private fun AqComponentGallery(darkTheme: Boolean) {
                 actions = listOf(
                     AqSwipeAction(
                         label = "Eliminar",
-                        icon = com.agendaqr.core.ui.components.AqIcons.Trash,
+                        icon = AqIcons.Trash,
                         onAction = {},
                     ),
                 ),
             ) {
-                com.agendaqr.core.ui.components.AqListRow(
+                AqMenuItem(
                     title = "Elemento deslizable",
                     subtitle = "Acciones al deslizar",
                 )
@@ -148,12 +188,13 @@ private fun AqComponentGallery(darkTheme: Boolean) {
                 isRefreshing = false,
                 onRefresh = {},
                 refreshingLabel = "Actualizando",
-            ) {
-                com.agendaqr.core.ui.components.AqListRow(
-                    title = "Lista actualizable",
-                    subtitle = "Arrastre vertical",
-                )
-            }
+                content = {
+                    AqMenuItem(
+                        title = "Lista actualizable",
+                        subtitle = "Arrastre vertical",
+                    )
+                },
+            )
         }
     }
 }
