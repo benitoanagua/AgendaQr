@@ -21,18 +21,18 @@ import com.agendaqr.core.ui.components.AqTooltip
 import com.agendaqr.core.ui.components.AqTopBar
 import com.agendaqr.core.ui.components.AqOverflowAction
 import com.agendaqr.core.ui.components.AqCompactAction
-import com.agendaqr.core.ui.components.AqDialog
+import com.agendaqr.core.ui.components.AqMoonDialog
 import com.agendaqr.core.ui.components.AqEmptyState
 import com.agendaqr.core.ui.components.AqHairline
 import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqCard
-import com.agendaqr.core.ui.components.AqListBody
-import com.agendaqr.core.ui.components.AqMetaRow
+import com.agendaqr.core.ui.components.AqMoonListBody
+import com.agendaqr.core.ui.components.AqMoonMetaRow
 import com.agendaqr.core.ui.components.AqQrPreview
 import com.agendaqr.core.ui.components.AqSecondaryButton
 import com.agendaqr.core.ui.components.AqTappableCard
-import com.agendaqr.core.ui.components.AqStatusPill
+import com.agendaqr.core.ui.components.AqMoonStatusPill
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextAction
 import com.agendaqr.core.ui.components.AqTone
@@ -217,8 +217,8 @@ fun DestinationDetailScreen(
                             }
                         }
                     }
-                    destination.category?.let { AqMetaRow(label = AppStrings.Categoria, value = it) }
-                    AqMetaRow(
+                    destination.category?.let { AqMoonMetaRow(label = AppStrings.Categoria, value = it) }
+                    AqMoonMetaRow(
                         label = AppStrings.FechaDeAlta,
                         value = formatDate(destination.createdAt),
                         icon = AqIcons.Calendar,
@@ -251,14 +251,14 @@ fun DestinationDetailScreen(
 
         // Reaseguro de integridad: cierto en el dominio
         // — editar un destino no toca las operaciones históricas.
-        AqStatusPill(
+        AqMoonStatusPill(
             text = AppStrings.IntegridadHistorica,
             icon = AqIcons.ShieldCheck,
             tone = AqTone.Success,
         )
     }
     if (showDeleteConfirm) {
-        AqDialog(
+        AqMoonDialog(
             title = AppStrings.EliminarDestino,
             message = AppStrings.irreversibleActionWarning,
             confirmLabel = AppStrings.Eliminar,
@@ -280,8 +280,8 @@ fun DestinationDetailScreen(
             dismissDescription = AppStrings.Cerrar,
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Md)) {
-                destination.category?.let { AqMetaRow(label = AppStrings.Categoria, value = it) }
-                AqMetaRow(
+                destination.category?.let { AqMoonMetaRow(label = AppStrings.Categoria, value = it) }
+                AqMoonMetaRow(
                     label = AppStrings.FechaDeAlta,
                     value = formatDate(destination.createdAt),
                     icon = AqIcons.Calendar,

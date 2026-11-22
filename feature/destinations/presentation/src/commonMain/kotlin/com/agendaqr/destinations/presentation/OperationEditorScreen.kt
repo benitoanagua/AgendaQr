@@ -199,7 +199,7 @@ internal fun OperationEditorScreen(
                 onRetry = { viewModel.onAction(OperationAction.RetryFailed) },
                 onClear = { viewModel.onAction(OperationAction.ClearError) },
             )
-            AqStatusBanner(
+            AqMoonStatusBanner(
                 title = err.what,
                 message = err.dataStatus,
                 tone = AqTone.Danger,
@@ -209,7 +209,7 @@ internal fun OperationEditorScreen(
         }
         // 1) HERO — importe grande con su moneda; el tipo (segmentado) y
         //    la moneda lo califican sin competir con Guardar.
-        AqAmountField(
+        AqMoonAmountField(
             label = AppStrings.LabelMonto,
             optionalLabel = AppStrings.Opcional,
             focusRequester = formFocus.requesterFor(FieldAmount),
@@ -288,12 +288,12 @@ internal fun OperationEditorScreen(
         AqFormSection(AppStrings.FechaYHora) {
             val dateValue = (relativeDayLabel(occurredAtMillis, nowMillis())?.let { it + " · " } ?: "") +
                 formatDateTime(occurredAtMillis)
-            AqListRow(
+            AqMoonListRow(
                 title = dateValue,
                 subtitle = AppStrings.Fecha,
                 onClick = { showDatePicker = true },
                 leading = {
-                    AqIconBadge(
+                    AqMoonIconBadge(
                         icon = com.agendaqr.core.ui.components.AqIcons.Calendar,
                         tone = AqTone.Info,
                     )
@@ -335,15 +335,15 @@ internal fun OperationEditorScreen(
             if (counterparts.isNotEmpty()) {
                 // Sugerencias de contrapartes: la activa es la que ya
                 // coincide con el campo (selección inequívoca).
-                AqChipGroup(
+                AqMoonChipGroup(
                     options = counterparts.map { AqChipOption(it) },
                     selectedIndex = counterparts.indexOf(person.trim()).takeIf { it >= 0 } ?: -1,
                     onSelect = { index -> person = counterparts[index] },
                     horizontalScroll = true,
                 )
             }
-            AqListBody {
-                AqListRow(
+            AqMoonListBody {
+                AqMoonListRow(
                     title = contextSelection.contextId?.let { id ->
                         AppStrings.ParaContextoElegido +
                             (state.contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico)
@@ -351,7 +351,7 @@ internal fun OperationEditorScreen(
                     subtitle = AppStrings.PuedesSinContexto,
                     onClick = { contextSelection = contextSelection.openPicker() },
                     leading = {
-                        AqIconBadge(
+                        AqMoonIconBadge(
                             icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
                             tone = AqTone.Info,
                         )
@@ -402,7 +402,7 @@ internal fun OperationEditorScreen(
     if (state.discardPrompt) {
         // Salir con cambios pide confirmación; el foco inicial
         // cae en la opción conservadora (destructivo).
-        AqDialog(
+        AqMoonDialog(
             title = AppStrings.DescartarCambios,
             message = AppStrings.DescartarCambiosMensaje,
             confirmLabel = AppStrings.Descartar,
@@ -428,7 +428,7 @@ internal fun OperationEditorScreen(
     // Selectores de fecha y hora: la fecha elegida abre la
     // hora; cancelar en cualquiera conserva el valor anterior.
     if (showDatePicker) {
-        AqDatePickerDialog(
+        AqMoonDatePickerDialog(
             selectedDateUtc = utcDayMillis(occurredAtMillis),
             onConfirm = { utc ->
                 pendingDateUtc = utc
@@ -477,7 +477,7 @@ internal fun OperationEditorScreen(
         // Eliminación desde el editor (solo edición): mismo diálogo
         // destructivo estándar que el detalle; el VM navega atrás al
         // confirmar con éxito.
-        AqDialog(
+        AqMoonDialog(
             title = AppStrings.EliminarOperacion,
             destructive = true,
             message = AppStrings.irreversibleActionWarning,
@@ -492,7 +492,7 @@ internal fun OperationEditorScreen(
     }
 
     if (showSensitiveConfirm) {
-        AqDialog(
+        AqMoonDialog(
             title = AppStrings.changeOperationWithReceipts,
             message = AppStrings.sensitiveChangeWarning,
             confirmLabel = AppStrings.GuardarCambio,

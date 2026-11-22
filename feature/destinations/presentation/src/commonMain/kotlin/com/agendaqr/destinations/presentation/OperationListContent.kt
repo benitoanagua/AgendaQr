@@ -19,27 +19,27 @@ import com.agendaqr.core.ui.components.*
 import com.agendaqr.core.ui.components.AqBottomAction
 import com.agendaqr.core.ui.components.AqCard
 import com.agendaqr.core.ui.components.AqCheckbox
-import com.agendaqr.core.ui.components.AqExtendedFab
+import com.agendaqr.core.ui.components.AqMoonExtendedFab
 import com.agendaqr.core.ui.components.AqIcon
-import com.agendaqr.core.ui.components.AqIconBadge
+import com.agendaqr.core.ui.components.AqMoonIconBadge
 import com.agendaqr.core.ui.components.AqIcons
-import com.agendaqr.core.ui.components.AqListBody
-import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqMoonListBody
+import com.agendaqr.core.ui.components.AqMoonListRow
 import com.agendaqr.core.ui.components.AqLoadMoreFooter
 import com.agendaqr.core.ui.components.AqNavChromeState
 import com.agendaqr.core.ui.components.AqSearchField
 import com.agendaqr.core.ui.components.AqSecondaryButton
 import com.agendaqr.core.ui.components.AqSegmentedControl
 import com.agendaqr.core.ui.components.AqSegmentedOption
-import com.agendaqr.core.ui.components.AqSelectionBar
+import com.agendaqr.core.ui.components.AqMoonSelectionBar
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqSkeleton
 import com.agendaqr.core.ui.components.AqSnackbarHost
-import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqMoonStatusBanner
 import com.agendaqr.core.ui.components.AqSwipeAction
 import com.agendaqr.core.ui.components.AqSwipeActions
 import com.agendaqr.core.ui.components.AqText
-import com.agendaqr.core.ui.components.AqTonalTag
+import com.agendaqr.core.ui.components.AqMoonTonalTag
 import com.agendaqr.core.ui.components.AqTopBar
 import com.agendaqr.core.ui.theme.*
 import com.agendaqr.destinations.data.SyncResource
@@ -89,7 +89,7 @@ internal fun OperationListScreen(
     AqScreenScaffold(
         topBar = {
             if (selectionMode) {
-                AqSelectionBar(
+                AqMoonSelectionBar(
                     closeLabel = AppStrings.CerrarSeleccion,
                     selectAllLabel = if (selectAll) AppStrings.SeleccionarNinguno else AppStrings.SeleccionarTodo,
                     selectedCountLabel = "${selectedIds.size} ${AppStrings.Seleccionados}",
@@ -115,7 +115,7 @@ internal fun OperationListScreen(
         snackbarHost = appHosts?.feedback?.let { host -> { AqSnackbarHost(host) } },
         statusContent = appHosts?.status,
         floatingActionButton = {
-            AqExtendedFab(
+            AqMoonExtendedFab(
                 label = AppStrings.RegistrarOperacion,
                 icon = AqIcons.Add,
                 onClick = { viewModel.onAction(OperationAction.New) },
@@ -221,7 +221,7 @@ internal fun OperationListScreen(
                 onRetry = { viewModel.onAction(OperationAction.RetryFailed) },
                 onClear = { viewModel.onAction(OperationAction.ClearError) },
             )
-            AqStatusBanner(
+            AqMoonStatusBanner(
                 title = err.what,
                 message = err.dataStatus,
                 tone = AqTone.Danger,
@@ -254,7 +254,7 @@ internal fun OperationListScreen(
                 refreshingLabel = AppStrings.Cargando,
                 modifier = Modifier.fillMaxWidth().weight(1f),
             ) {
-                AqListBody(
+                AqMoonListBody(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     LazyColumn(
@@ -290,7 +290,7 @@ internal fun OperationListScreen(
                             )
 
                             AqSwipeActions(actions = swipeActions, enabled = !selectionMode) {
-                                AqListRow(
+                                AqMoonListRow(
                                     modifier = Modifier.fillMaxWidth(),
                                     title = operationTitle(operation),
                                     subtitle = operation.concept?.takeIf { it.isNotBlank() },
@@ -312,7 +312,7 @@ internal fun OperationListScreen(
                                                 },
                                             )
                                         } else {
-                                            AqIconBadge(
+                                            AqMoonIconBadge(
                                                 icon = operationTypeIcon(operation.type),
                                                 tone = operationTypeTone(operation.type),
                                             )
@@ -349,10 +349,10 @@ internal fun OperationListScreen(
                                             if (showContextOrSync) {
                                                 Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
                                                     contextName?.let {
-                                                        AqTonalTag(text = it, tone = AqTone.Neutral)
+                                                        AqMoonTonalTag(text = it)
                                                     }
                                                     if (syncStatus != ElementSyncStatus.Synced) {
-                                                        AqTonalTag(text = syncStatus.label, tone = syncStatus.tone())
+                                                        AqMoonTonalTag(text = syncStatus.label))
                                                     }
                                                 }
                                             }
@@ -377,7 +377,7 @@ internal fun OperationListScreen(
                 }
             }
 
-            // Cargar más (fuera del AqListBody para no tener separador extra).
+            // Cargar más (fuera del AqMoonListBody para no tener separador extra).
             if (paged.size < filtered.size) {
                 AqLoadMoreFooter(
                     modifier = Modifier.fillMaxWidth(),
@@ -391,7 +391,7 @@ internal fun OperationListScreen(
     }
 
     operationToDelete?.let { op ->
-        AqDialog(
+        AqMoonDialog(
             title = AppStrings.EliminarOperacion,
             destructive = true,
             message = AppStrings.irreversibleActionWarning,
@@ -408,7 +408,7 @@ internal fun OperationListScreen(
     // G3: confirmación de eliminación por lote con el conteo.
     if (confirmarEliminarLote) {
         val plural = if (selectedIds.size == 1) AppStrings.OperacionSingular else AppStrings.OperacionesPlural
-        AqDialog(
+        AqMoonDialog(
             title = AppStrings.EliminarOperacion,
             destructive = true,
             message = AppStrings.irreversibleActionWarning + "\n" + selectedIds.size + " " + plural,

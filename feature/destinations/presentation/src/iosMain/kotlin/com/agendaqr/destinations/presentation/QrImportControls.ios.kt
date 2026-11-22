@@ -9,12 +9,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.agendaqr.core.ui.components.AqFeedbackEvent
-import com.agendaqr.core.ui.components.AqIconBadge
+import com.agendaqr.core.ui.components.AqMoonIconBadge
 import com.agendaqr.core.ui.components.AqIcons
-import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqMoonListRow
 import com.agendaqr.core.ui.components.AqSecondaryButton
 import com.agendaqr.core.ui.components.AqBannerAction
-import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqMoonStatusBanner
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqSpacing
 import platform.Foundation.NSURL
@@ -54,11 +54,11 @@ actual fun QrImportControls(
 actual fun QrGalleryControls(
     onResult: (QrImportResult) -> Unit,
 ) {
-    AqListRow(
+    AqMoonListRow(
         title = AppStrings.ElegirDeLaGaleria,
         titleMaxLines = Int.MAX_VALUE,
         onClick = { IosQrImportController.openMultiple(onResult = onResult) },
-        leading = { AqIconBadge(icon = AqIcons.Gallery, tone = AqTone.Info) },
+        leading = { AqMoonIconBadge(icon = AqIcons.Gallery) },
         showChevron = true,
         showDivider = true,
     )
@@ -88,7 +88,7 @@ actual fun QrCameraEntryControl(
             // La acción del error (CameraPermission → Retry) se reemplaza por
             // "Abrir ajustes": no es reintentar, es abrir el selector del SO.
             val action = AqBannerAction(AppStrings.AbrirAjustes, bannerAction?.onClick ?: { permissionError = null })
-            AqStatusBanner(
+            AqMoonStatusBanner(
                 title = error.what,
                 message = error.dataStatus,
                 tone = AqTone.Danger,
@@ -96,7 +96,7 @@ actual fun QrCameraEntryControl(
                 dismiss = bannerDismiss,
             )
         }
-        AqListRow(
+        AqMoonListRow(
             title = AppStrings.Camara,
             subtitle = AppStrings.PermisoCamaraContexto,
             subtitleMaxLines = Int.MAX_VALUE,
@@ -117,7 +117,7 @@ actual fun QrCameraEntryControl(
                     },
                 ).present()
             },
-            leading = { AqIconBadge(icon = AqIcons.Camera, tone = AqTone.Info) },
+            leading = { AqMoonIconBadge(icon = AqIcons.Camera) },
             showChevron = true,
             showDivider = showDivider,
         )
@@ -139,11 +139,11 @@ actual fun sharedImportsSupported(): Boolean = false
  */
 @Composable
 actual fun QrPdfPickerControl(showDivider: Boolean) {
-    AqListRow(
+    AqMoonListRow(
         title = AppStrings.ElegirArchivoPdf,
         titleMaxLines = Int.MAX_VALUE,
         onClick = { IosPdfPicker.present() },
-        leading = { AqIconBadge(icon = AqIcons.Attachment, tone = AqTone.Info) },
+        leading = { AqMoonIconBadge(icon = AqIcons.Attachment) },
         showChevron = true,
         showDivider = showDivider,
     )

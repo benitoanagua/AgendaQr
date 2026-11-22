@@ -14,7 +14,7 @@ import com.agendaqr.core.ui.components.AqNavChromeState
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqSecondaryButton
 import com.agendaqr.core.ui.components.AqSnackbarHost
-import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqMoonStatusBanner
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.components.AqTopBar
@@ -97,7 +97,7 @@ internal fun AccountScreen(
                 session.user.email?.let { email ->
                     AqText(email, size = AqType.Body, color = AqColor.TextSecondary)
                 }
-                AqStatusBanner(
+                AqMoonStatusBanner(
                     message = AppStrings.DatosLocalesSeConservan,
                     tone = AqTone.Info,
                 )

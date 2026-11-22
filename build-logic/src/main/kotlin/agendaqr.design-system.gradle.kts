@@ -64,6 +64,14 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-10" to listOf("border:AqSelection.kt"),
     // Borde opcional de la alerta persistente (MoonAlert).
     "E-11" to listOf("border:AqFeedback.kt"),
+    // Borde de los campos de entrada Moon (AqTextInput / AqTextArea).
+    "E-12" to listOf("border:AqTextInput.kt"),
+    "E-13" to listOf("border:AqTextArea.kt"),
+    // Borde de los campos del código de autenticación (AqAuthCode).
+    "E-15" to listOf("border:AqAuthCode.kt"),
+    // Borde del anillo de selección de MoonRadio (E-10 cubre AqSelection.kt;
+    // AqRadio.kt es su propio archivo).
+    "E-14" to listOf("border:AqRadio.kt"),
     // `Modifier.shadow` se centraliza en la capa de tokens; solo los
     // archivos registrados pueden invocarlo (o elevarse vía `aqElevation`).
     // E-06 (elevación de botones) se retiró: los botones son planos y

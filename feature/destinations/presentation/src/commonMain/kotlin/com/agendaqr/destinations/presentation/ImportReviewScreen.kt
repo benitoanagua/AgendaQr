@@ -22,7 +22,7 @@ import com.agendaqr.core.ui.components.AqProgressBar
 import com.agendaqr.core.ui.components.AqQrPreview
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqTopBar
-import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqMoonStatusBanner
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
@@ -77,7 +77,7 @@ fun ImportReviewScreen(
                 onRetry = onSaveAll,
                 onClear = onClearError,
             )
-            AqStatusBanner(
+            AqMoonStatusBanner(
                 title = err.what,
                 message = err.dataStatus,
                 tone = AqTone.Danger,

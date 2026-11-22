@@ -22,9 +22,11 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
-import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqRadius
+import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
  * Indicador enmascarado de puntos del PIN (S00): indicador enmascarado de la
@@ -62,12 +64,12 @@ fun AqPinDots(
                     .then(
                         if (error && !isFilled) {
                             Modifier
-                                .border(AqMetrics.Border, AqColor.Danger, AqShapes.Pill)
-                                .background(AqColor.Surface, AqShapes.Pill)
+                                .border(AqMetrics.Border, AqColor.Danger, AqSquircles.Circle)
+                                .background(AqColor.Surface, AqSquircles.Circle)
                         } else {
                             Modifier.background(
                                 if (isFilled) filledColor else AqColor.SurfaceContainerHighest,
-                                AqShapes.Pill,
+                                AqSquircles.Circle,
                             )
                         },
                     ),
@@ -170,12 +172,11 @@ private fun KeypadKey(
     Box(
         modifier = modifier
             .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-            .clip(AqShapes.Medium)
             .background(
                 if (pressed) AqColor.SurfaceActive else AqColor.SurfaceContainerHighest,
-                AqShapes.Medium,
+                AqSquircles.InteractiveSm,
             )
-            .border(AqMetrics.Border, AqColor.Border, AqShapes.Medium)
+            .border(AqMetrics.Border, AqColor.Border, AqSquircles.InteractiveSm)
             .clickable(
                 role = Role.Button,
                 interactionSource = interactionSource,

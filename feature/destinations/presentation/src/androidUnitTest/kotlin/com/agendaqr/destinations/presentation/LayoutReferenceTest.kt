@@ -38,20 +38,20 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import kotlin.math.abs
 import com.agendaqr.core.ui.components.AqIcon
-import com.agendaqr.core.ui.components.AqIconBadge
-import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqMoonIconBadge
+import com.agendaqr.core.ui.components.AqMoonListRow
 import com.agendaqr.core.ui.components.AqSegmentedControl
 import com.agendaqr.core.ui.components.AqText
-import com.agendaqr.core.ui.components.AqTonalTag
+import com.agendaqr.core.ui.components.AqMoonTonalTag
 import com.agendaqr.core.ui.components.AqTappableCard
-import com.agendaqr.core.ui.components.AqScreenScaffold
-import com.agendaqr.core.ui.components.AqTopBar
-import com.agendaqr.core.ui.components.AqExtendedFab
+import com.agendaqr.core.ui.components.AqMoonScaffold
+import com.agendaqr.core.ui.components.AqMoonTopBar
+import com.agendaqr.core.ui.components.AqMoonExtendedFab
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqSearchField
-import com.agendaqr.core.ui.components.AqListBody
-import com.agendaqr.core.ui.components.AqStatusPill
-import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqMoonListBody
+import com.agendaqr.core.ui.components.AqMoonStatusPill
+import com.agendaqr.core.ui.components.AqMoonStatusBanner
 import com.agendaqr.core.ui.components.AqEmptyState
 import com.agendaqr.core.ui.components.AqLoadMoreFooter
 import com.agendaqr.core.ui.components.AqSecondaryButton
@@ -185,7 +185,7 @@ open class LayoutReferenceTest {
             // Overlay: se mide y captura la VENTANA del diálogo completa
             // (su raíz semántica), no la raíz de la pantalla que queda
             // detrás. El test fija la ventana del host para que el diálogo
-            // mide el viewport declarado (AqDialog: 0.9 × 400 = 360 dp).
+            // mide el viewport declarado (AqMoonDialog: 0.9 × 400 = 360 dp).
             val dialog = compose.onNode(dialogRootMatcher)
             val bounds = dialog.getUnclippedBoundsInRoot()
             if (Math.round((bounds.right - bounds.left).value) != 360) return
@@ -579,8 +579,8 @@ open class LayoutReferenceTest {
     }
 
     // Patrón visual de la pantalla de operaciones (referencia de layout UX/UI):
-    // Usa la estructura real de OperationListScreen: AqScreenScaffold con
-    // márgenes, búsqueda, filtros, AqListBody con AqListRow.
+    // Usa la estructura real de OperationListScreen: AqMoonScaffold con
+    // márgenes, búsqueda, filtros, AqMoonListBody con AqMoonListRow.
     // OperationsScreen completo requiere OperationsViewModel (S10: no en Robolectric);
     // se compone el patrón visual con estado y callbacks explícitos.
     @androidx.compose.runtime.Composable
@@ -606,8 +606,8 @@ open class LayoutReferenceTest {
         val pagosCount = operations.count { it.type == OperationType.PAGO }
         val cobrosCount = operations.count { it.type == OperationType.COBRO }
 
-        AqScreenScaffold(
-            topBar = { AqTopBar(title = AppStrings.Operaciones) },
+        AqMoonScaffold(
+            topBar = { AqMoonTopBar(title = AppStrings.Operaciones) },
             navDestinations = listOf(
                 com.agendaqr.core.ui.components.AqNavDestination("home", AppStrings.Inicio, AqIcons.Home),
                 com.agendaqr.core.ui.components.AqNavDestination("search", AppStrings.Buscar, AqIcons.Search),
@@ -617,7 +617,7 @@ open class LayoutReferenceTest {
             navSelectedId = "operations",
             onNavSelect = {},
             floatingActionButton = {
-                AqExtendedFab(
+                AqMoonExtendedFab(
                     label = AppStrings.RegistrarOperacion,
                     icon = AqIcons.Add,
                     onClick = {},
@@ -658,7 +658,7 @@ open class LayoutReferenceTest {
             }
 
             if (filtered.isNotEmpty()) {
-                AqListBody {
+                AqMoonListBody {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -702,7 +702,7 @@ open class LayoutReferenceTest {
                     onAction = {},
                 )
             } else {
-                AqListBody(
+                AqMoonListBody(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                 ) {
                     Column {
@@ -715,13 +715,13 @@ open class LayoutReferenceTest {
                             }
                             val isLast = index == filtered.lastIndex
 
-                            AqListRow(
+                            AqMoonListRow(
                                 modifier = Modifier.fillMaxWidth(),
                                 title = operationTitle(operation),
                                 subtitle = operation.concept?.takeIf { it.isNotBlank() },
                                 endMeta = formatDate(operation.occurredAt),
                                 leading = {
-                                    AqIconBadge(
+                                    AqMoonIconBadge(
                                         icon = operationTypeIcon(operation.type),
                                         tone = operationTypeTone(operation.type),
                                     )

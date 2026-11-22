@@ -322,7 +322,7 @@ class ScreensA11yCoverageTest {
     // Defectos registrados en docs/STATE.md,
     // resueltos por V1.1 (verificación explícita): "Volver" ya no se parte
     // en dos líneas y el primario nunca queda recortado al final del
-    // scroll: ambos viven en la AqScreenScaffold anclado a los insets.
+    // scroll: ambos viven en la AqMoonScaffold anclado a los insets.
     @Test
     fun t07_actions_live_in_the_top_bar_and_save_stays_reachable() {
         var saved = false

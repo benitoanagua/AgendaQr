@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AqBadge
+import com.agendaqr.core.ui.components.AqMoonBadge
 import com.agendaqr.core.ui.components.AqFeedbackHost
 import com.agendaqr.core.ui.components.AqBannerAction
-import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqMoonStatusBanner
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqSpacing
 
@@ -58,7 +58,7 @@ internal fun AppStatusHost(
             // Host edge-to-edge (slot statusContent, sin margen del
             // contenido): el HOST aplica el margen de pantalla; el banner
             // (organismo) solo pinta su superficie y su relleno interno.
-            AqStatusBanner(
+            AqMoonStatusBanner(
                 title = error.what,
                 message = error.dataStatus,
                 tone = AqTone.Danger,
@@ -69,7 +69,7 @@ internal fun AppStatusHost(
         } else if (hasFailed && pendingCount > 0) {
             // Banner completo SOLO con mutaciones FAILED: el usuario debe
             // poder reintentar AHORA (los datos están a salvo localmente).
-            AqStatusBanner(
+            AqMoonStatusBanner(
                 message = syncPendingLabel(pendingCount, retrying = true),
                 tone = AqTone.Danger,
                 action = AqBannerAction(AppStrings.ReintentarAhora, onRetryNow),
@@ -88,10 +88,10 @@ internal fun AppStatusHost(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (isOffline) {
-                    AqBadge(text = AppStrings.SinConexion, tone = AqTone.Warning, round = true)
+                    AqMoonBadge(text = AppStrings.SinConexion)
                 }
                 if (pendingCount > 0) {
-                    AqBadge(
+                    AqMoonBadge(
                         text = syncPendingLabel(pendingCount, retrying = false),
                         tone = AqTone.Info,
                         round = true,

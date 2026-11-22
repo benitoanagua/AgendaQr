@@ -63,7 +63,7 @@ internal fun OperationDetailScreen(
                 onBack = { viewModel.onAction(OperationAction.Back) },
                 backLabel = AppStrings.Volver,
                 actions = listOf(
-                    AqTopBarAction(label = AppStrings.Compartir, icon = AqIcons.Share, onClick = { shareOperation(operation) }),
+                    AqTopBarAction(label = AppStrings.CompartironClick = { shareOperation(operation) }),
                     AqTopBarAction(
                         label = AppStrings.Editar,
                         icon = AqIcons.Edit,
@@ -101,13 +101,13 @@ internal fun OperationDetailScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    AqTonalTag(
+                    AqMoonTonalTag(
                         text = operationTypeLabel(operation.type),
                         tone = operationTypeTone(operation.type),
                         uppercase = true,
                     )
                     contextName?.let {
-                        AqTonalTag(text = it, tone = AqTone.Neutral)
+                        AqMoonTonalTag(text = it)
                     }
                 }
                 Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
@@ -143,12 +143,12 @@ internal fun OperationDetailScreen(
                         .padding(AqSpacing.Md),
                     verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
                 ) {
-                    AqMetaRow(
+                    AqMoonMetaRow(
                         label = AppStrings.FechaDeOperacion,
                         value = formatDate(operation.occurredAt),
                         icon = AqIcons.Calendar,
                     )
-                    AqMetaRow(
+                    AqMoonMetaRow(
                         label = AppStrings.RegistradoEnDispositivo,
                         value = formatDate(operation.createdAt),
                         icon = AqIcons.Clock,
@@ -168,9 +168,9 @@ internal fun OperationDetailScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                 ) {
-                    operation.personOrEntity?.let { AqMetaRow(label = AppStrings.LabelPersonaOEntidad, value = it) }
-                    operation.currency?.let { AqMetaRow(label = AppStrings.LabelMoneda, value = it) }
-                    operation.concept?.let { AqMetaRow(label = AppStrings.LabelConcepto, value = it) }
+                    operation.personOrEntity?.let { AqMoonMetaRow(label = AppStrings.LabelPersonaOEntidad, value = it) }
+                    operation.currency?.let { AqMoonMetaRow(label = AppStrings.LabelMoneda, value = it) }
+                    operation.concept?.let { AqMoonMetaRow(label = AppStrings.LabelConcepto, value = it) }
                     operation.note?.let {
                         AqText(it, color = AqColor.TextSecondary)
                     }
@@ -195,13 +195,13 @@ internal fun OperationDetailScreen(
         // D8: destino QR vinculado a la actividad, cuando existe.
         operation.destinationId?.let { destinationId ->
             val destinationName = destinationsViewModel?.destination(destinationId)?.name
-            AqMetaRow(
+            AqMoonMetaRow(
                 label = AppStrings.DestinoVinculado,
                 value = destinationName ?: destinationId,
             )
         }
 
-        AqSection(AppStrings.SeccionComprobantes) {
+        AqMoonSection(AppStrings.SeccionComprobantes) {
             if (state.operationComprobantes.isEmpty()) {
                 AqText(AppStrings.SinComprobanteAdjunto, color = AqColor.TextSecondary)
                 // Secundaria/tonal con icono, dentro de su sección: nunca
@@ -215,25 +215,25 @@ internal fun OperationDetailScreen(
                 // X-01: insignia de evidencia reutilizable (icono + texto).
                 // El texto afirma solo la recepción del comprobante; nunca
                 // dinero verificado ni pago.
-                AqEvidenceBadge(
+                AqMoonEvidenceBadge(
                     text = AppStrings.receiptReceivedTitle,
                     icon = AqIcons.Attachment,
                     tone = AqTone.Success,
                 )
-                AqListBody {
+                AqMoonListBody {
                     for (receipt in state.operationComprobantes) {
                         // §12 V1.4: comprobante como fila con identidad
                         // (sujeta-papeles) y procedencia como etiqueta
                         // tonal; "Desasociar" como acción de fila.
-                        AqListRow(
+                        AqMoonListRow(
                             title = AppStrings.Comprobante,
                             subtitle = formatDate(receipt.createdAt),
                             onClick = { viewModel.onAction(OperationAction.OpenComprobante(receipt.id)) },
                             leading = {
-                                AqIconBadge(icon = AqIcons.Attachment, tone = AqTone.Neutral)
+                                AqMoonIconBadge(icon = AqIcons.Attachment)
                             },
                             meta = {
-                                AqTonalTag(
+                                AqMoonTonalTag(
                                     text = receiptProvenanceLabel(receipt.provenance),
                                     tone = provenanceTone(receipt.provenance),
                                 )
@@ -259,7 +259,7 @@ internal fun OperationDetailScreen(
         )
     }
     if (showDeleteConfirm) {
-        AqDialog(
+        AqMoonDialog(
             title = AppStrings.EliminarOperacion,
             destructive = true,
             message = AppStrings.irreversibleActionWarning,

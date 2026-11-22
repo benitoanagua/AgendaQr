@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AqIconBadge
+import com.agendaqr.core.ui.components.AqMoonIconBadge
 import com.agendaqr.core.ui.components.AqIcons
-import com.agendaqr.core.ui.components.AqListBody
+import com.agendaqr.core.ui.components.AqMoonListBody
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqSnackbarHost
 import com.agendaqr.core.ui.components.AqText
@@ -58,7 +58,7 @@ fun AddDestinationScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
         ) {
-            AqIconBadge(icon = AqIcons.QrCode, tone = AqTone.Info)
+            AqMoonIconBadge(icon = AqIcons.QrCode)
             AqText(
                 AppStrings.TraeAAgendaQrAlgo,
                 color = AqColor.TextSecondary,
@@ -68,7 +68,7 @@ fun AddDestinationScreen(
         // Grupo único de métodos (S02, V1.17): el orden sigue la
         // jerarquía declarada por la spec (Galería → Cámara) y el PDF queda
         // al pie del grupo. Divisores entre filas, ninguno tras la última.
-        AqListBody {
+        AqMoonListBody {
             QrGalleryControls(
                 onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
             )

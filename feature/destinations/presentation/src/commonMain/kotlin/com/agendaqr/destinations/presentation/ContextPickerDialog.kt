@@ -13,10 +13,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AqDialog
+import com.agendaqr.core.ui.components.AqMoonDialog
 import com.agendaqr.core.ui.components.AqDialogList
 import com.agendaqr.core.ui.components.AqIcons
-import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqMoonListRow
 import com.agendaqr.core.ui.components.AqSecondaryButton
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextField
@@ -94,7 +94,7 @@ internal fun ContextPickerDialog(
     val selectedId = justCreatedContextId ?: selection.contextId
 
     when (step) {
-        ContextPickerStep.Create -> AqDialog(
+        ContextPickerStep.Create -> AqMoonDialog(
             title = AppStrings.CrearContexto,
             confirmLabel = AppStrings.Crear,
             onConfirm = {
@@ -133,7 +133,7 @@ internal fun ContextPickerDialog(
             },
         )
 
-        ContextPickerStep.List -> AqDialog(
+        ContextPickerStep.List -> AqMoonDialog(
             title = AppStrings.SeleccionarContexto,
             confirmLabel = AppStrings.Cancelar,
             // La acción principal es elegir de la lista; Cancelar es la
@@ -167,7 +167,7 @@ internal fun ContextPickerDialog(
                         )
                     } else {
                         contexts.forEachIndexed { index, context ->
-                            AqListRow(
+                            AqMoonListRow(
                                 title = context.name,
                                 subtitle = context.note?.takeIf { it.isNotBlank() },
                                 // El acento derivado identifica el contexto;
@@ -215,7 +215,7 @@ internal fun ContextCreationDialog(
     var note by rememberSaveable { mutableStateOf("") }
     // sobrevive a recreación.
     var submitted by rememberSaveable { mutableStateOf(false) }
-    AqDialog(
+    AqMoonDialog(
         title = AppStrings.CrearContexto,
         confirmLabel = AppStrings.Crear,
         onConfirm = {

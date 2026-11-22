@@ -44,9 +44,10 @@ import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
-import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
+import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqSquircles
 
 /** Dialogs confirm decisions and host bounded choices in a scrollable list. */
 
@@ -91,7 +92,7 @@ private fun AqDialogAction(
             .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
             .background(
                 if (pressed) AqColor.SurfaceActive else AqColor.Transparent,
-                AqShapes.Small,
+                AqSquircles.InteractiveXs,
             )
             .clickable(
                 role = Role.Button,
@@ -189,7 +190,7 @@ fun AqDialog(
                     .width(dialogWidth)
                     .semantics { paneTitle = title }
                     .testTag("aq-dialog-pane"),
-                shape = AqShapes.ExtraLarge,
+                shape = AqSquircles.SurfaceLg,
                 color = AqColor.Surface,
             ) {
                 Column(

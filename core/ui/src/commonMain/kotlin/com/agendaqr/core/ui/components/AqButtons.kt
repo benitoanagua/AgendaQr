@@ -41,16 +41,18 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqAlpha
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqColorScheme
 import com.agendaqr.core.ui.theme.AqMetrics
-import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
+import com.agendaqr.core.ui.theme.AqCorner
 
 enum class AqButtonVariant { Primary, Default, Danger, Light, Outline, Text }
 
@@ -191,11 +193,10 @@ private fun AqButtonImpl(
     } else {
         AqTextStyles.ButtonLabel
     }
-    val shape = AqShapes.Medium
+    val shape = AqSquircles.InteractiveSm
     val haptics = LocalHapticFeedback.current
     val buttonModifier = modifier
         .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-        .clip(shape)
         .then(
             if (isLoading && busyDescription != null) {
                 Modifier.semantics { stateDescription = busyDescription }
@@ -224,7 +225,6 @@ private fun AqButtonImpl(
             Row(
                 modifier = Modifier
                     .heightIn(min = size.visualHeight)
-                    .clip(shape)
                     .background(resolved.container, shape)
                     .then(
                         resolved.border?.let { Modifier.border(AqMetrics.Border, it, shape) } ?: Modifier,
@@ -436,7 +436,7 @@ fun AqCompactAction(
             modifier = Modifier
                 .matchParentSize()
                 .heightIn(min = AqMetrics.ChipCompactHeight + AqSpacing.Xs)
-                .background(AqColor.SurfaceContainerLow, AqShapes.Medium),
+                .background(AqColor.SurfaceContainerLow, AqSquircles.InteractiveSm),
         )
         Row(
             modifier = Modifier.padding(horizontal = AqSpacing.Sm, vertical = AqSpacing.Xs),
@@ -583,7 +583,7 @@ fun AqSegmentedControl(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(AqColor.SurfaceSecondary, AqShapes.Medium)
+            .background(AqColor.SurfaceSecondary, AqSquircles.InteractiveSm)
             .selectableGroup()
             .padding(AqSpacing.Xs),
         horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
@@ -600,11 +600,13 @@ fun AqSegmentedControl(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(AqShapes.Medium)
+                    .background(
+                        if (selected && optionEnabled) AqColor.SelectionSurface else AqColor.SurfaceContainerHigh,
+                        AqSquircles.InteractiveSm,
+                    )
                     .then(
                         if (selected && optionEnabled) {
-                            Modifier.background(AqColor.SelectionSurface, AqShapes.Medium)
-                                .border(AqMetrics.Border, AqColor.Border, AqShapes.Medium)
+                            Modifier.border(AqMetrics.Border, AqColor.Border, AqSquircles.InteractiveSm)
                         } else {
                             Modifier
                         },
@@ -641,7 +643,7 @@ fun AqSegmentedControl(
                             modifier = Modifier
                                 .background(
                                     if (selected && optionEnabled) activeColor.copy(alpha = AqAlpha.SelectedOnTone) else AqColor.SurfaceContainerHighest,
-                                    AqShapes.Small,
+                                    AqSquircles.InteractiveXs,
                                 )
                                 .padding(horizontal = AqSpacing.Xs),
                         ) {

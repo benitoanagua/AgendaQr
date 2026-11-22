@@ -26,9 +26,10 @@ import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqElevation
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqMotion
-import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.aqElevation
+import com.agendaqr.core.ui.theme.AqRadius
+import com.agendaqr.core.ui.theme.AqSquircles
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -123,8 +124,7 @@ fun AqPullToRefresh(
                         }
                         IntOffset(0, (indicatorOffset - with(density) { AqMetrics.ControlMinSize.toPx() }).roundToInt())
                     }
-                    .aqElevation(AqElevation.Shadow2, AqShapes.Pill)
-                    .clip(AqShapes.Pill)
+                    .aqElevation(AqElevation.Shadow2, AqSquircles.Circle)
                     .background(AqColor.Surface)
                     .padding(AqSpacing.Md),
                 contentAlignment = Alignment.Center,

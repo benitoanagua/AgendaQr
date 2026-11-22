@@ -24,10 +24,11 @@ import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.theme.AqAlpha
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
-import com.agendaqr.core.ui.theme.AqShapes
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.asTextOn
+import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
  * Piezas de presentación de página y sección. El título
@@ -114,7 +115,7 @@ fun AqTabs(
         modifier = modifier
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState())
-            .background(AqColor.SurfaceSecondary, AqShapes.Medium)
+            .background(AqColor.SurfaceSecondary, AqSquircles.InteractiveSm)
             .selectableGroup()
             .padding(AqSpacing.Xs),
         horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
@@ -128,11 +129,10 @@ fun AqTabs(
             }
             Box(
                 modifier = Modifier
-                    .clip(AqShapes.Medium)
                     .then(
                         if (selected && enabled) {
-                            Modifier.background(AqColor.SelectionSurface, AqShapes.Medium)
-                                .border(AqMetrics.Border, AqColor.Border, AqShapes.Medium)
+                            Modifier.background(AqColor.SelectionSurface, AqSquircles.InteractiveSm)
+                                .border(AqMetrics.Border, AqColor.Border, AqSquircles.InteractiveSm)
                         } else {
                             Modifier
                         },
@@ -166,7 +166,7 @@ fun AqTabs(
                                     } else {
                                         AqColor.SurfaceContainerHighest
                                     },
-                                    AqShapes.Small,
+                                    AqSquircles.InteractiveXs,
                                 )
                                 .padding(horizontal = AqSpacing.Xs),
                         ) {

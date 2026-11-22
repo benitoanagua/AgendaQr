@@ -44,7 +44,7 @@ fun OperationsScreen(
     state.pendingIncoming?.let { incoming ->
         val duplicate = state.pendingDuplicates.isNotEmpty()
         val saving = state.isSavingReceipt
-        AqDialog(
+        AqMoonDialog(
             title = if (duplicate)  AppStrings.ComprobanteDuplicado else AppStrings.receiptReceivedTitle,
             message = if (duplicate) {
                 AppStrings.duplicateReceiptWarningPrefix + incoming.extension

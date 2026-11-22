@@ -17,12 +17,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqSnackbarHost
-import com.agendaqr.core.ui.components.AqDialog
+import com.agendaqr.core.ui.components.AqMoonDialog
 import com.agendaqr.core.ui.components.AqFeedbackEvent
 import com.agendaqr.core.ui.components.AqHairline
-import com.agendaqr.core.ui.components.AqListBody
-import com.agendaqr.core.ui.components.AqListRow
-import com.agendaqr.core.ui.components.AqMetaRow
+import com.agendaqr.core.ui.components.AqMoonListBody
+import com.agendaqr.core.ui.components.AqMoonListRow
+import com.agendaqr.core.ui.components.AqMoonMetaRow
 import com.agendaqr.core.ui.components.AqSectionHeader
 import com.agendaqr.core.ui.components.AqTextActionVariant
 import com.agendaqr.core.ui.components.AqBottomAction
@@ -32,11 +32,11 @@ import com.agendaqr.core.ui.components.AqProgressBlock
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqTopBar
 import com.agendaqr.core.ui.components.AqSecondaryButton
-import com.agendaqr.core.ui.components.AqStatusBanner
-import com.agendaqr.core.ui.components.AqStatusPill
+import com.agendaqr.core.ui.components.AqMoonStatusBanner
+import com.agendaqr.core.ui.components.AqMoonStatusPill
 import com.agendaqr.core.ui.components.AqSuccessCheck
 import com.agendaqr.core.ui.components.AqCard
-import com.agendaqr.core.ui.components.AqChipGroup
+import com.agendaqr.core.ui.components.AqMoonChipGroup
 import com.agendaqr.core.ui.components.AqChipOption
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqText
@@ -149,7 +149,7 @@ fun ImportBatchScreen(
                 ) {
                     AqSuccessCheck(size = AqMetrics.ResultGlyphSize)
                 }
-                AqStatusBanner(
+                AqMoonStatusBanner(
                     title = AppStrings.GuardadoOk,
                     message = AppStrings.batchSavedKeepReviewNotice,
                     tone = AqTone.Success,
@@ -169,7 +169,7 @@ fun ImportBatchScreen(
                 // "Reintentar guardado" es la única fuente de la acción.
                 // El margen de pantalla lo aplica una sola vez el contenido
                 // del scaffold; el banner no suma el suyo por defecto.
-                AqStatusBanner(
+                AqMoonStatusBanner(
                     title = state.error.what,
                     message = state.error.dataStatus,
                     tone = AqTone.Danger,
@@ -180,7 +180,7 @@ fun ImportBatchScreen(
     }
 
     existing?.let { preview ->
-        AqDialog(
+        AqMoonDialog(
             title = AppStrings.ElementoExistente,
             confirmLabel = AppStrings.Cerrar,
             onConfirm = { onAction(ImportBatchAction.CloseExisting) },
@@ -226,21 +226,21 @@ private fun BatchResultContent(
     AqCard {
         Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
             if (batch.uniqueRecognized.isNotEmpty()) {
-                AqMetaRow(
+                AqMoonMetaRow(
                     label = AppStrings.Reconocidos,
                     value = batch.uniqueRecognized.size.toString(),
                     icon = AqIcons.CircleCheck,
                 )
             }
             if (batch.duplicates.isNotEmpty()) {
-                AqMetaRow(
+                AqMoonMetaRow(
                     label = AppStrings.PosiblesDuplicados,
                     value = batch.duplicates.size.toString(),
                     icon = AqIcons.Warning,
                 )
             }
             if (batch.unknown.isNotEmpty()) {
-                AqMetaRow(
+                AqMoonMetaRow(
                     label = AppStrings.PendientesDeRevision,
                     value = batch.unknown.size.toString(),
                     icon = AqIcons.Info,
@@ -274,7 +274,7 @@ private fun BatchReviewContent(
 ) {
     val pending = batch.pendingItems()
     // ADR-0028: con duplicados Y sin clasificar a la vez, chips de filtro
-    // (AqChipGroup); con un solo tipo de pendiente no hay filtro que ofrecer.
+    // (AqMoonChipGroup); con un solo tipo de pendiente no hay filtro que ofrecer.
     val hasDuplicates = batch.duplicates.isNotEmpty()
     val hasUnknown = batch.unknown.isNotEmpty()
     val showFilter = hasDuplicates || hasUnknown
@@ -285,7 +285,7 @@ private fun BatchReviewContent(
         else -> batch.unknown
     }
     if (showFilter) {
-        AqChipGroup(
+        AqMoonChipGroup(
             options = listOf(
                 AqChipOption(AppStrings.Todos, count = pending.size),
                 AqChipOption(AppStrings.PosiblesDuplicados, count = batch.duplicates.size),
@@ -300,7 +300,7 @@ private fun BatchReviewContent(
     // Spec S12: Cell-group de elementos con Tag textual de estado. Todos los
     // pendientes forman un único grupo de celdas con divisores (no una
     // tarjeta por elemento); cada celda lleva su contenido y sus acciones.
-    AqListBody {
+    AqMoonListBody {
         filtered.forEachIndexed { index, candidate ->
             PendingItemCell(
                 candidate = candidate,
@@ -366,7 +366,7 @@ private fun PendingItemCell(
                     size = AqType.BodySmall,
                     color = AqColor.TextSecondary,
                 )
-                AqStatusPill(
+                AqMoonStatusPill(
                     text = if (isDuplicate) AppStrings.PosibleDuplicado else AppStrings.PendienteDeRevision,
                     icon = if (isDuplicate) AqIcons.Warning else AqIcons.Info,
                     tone = if (isDuplicate) AqTone.Warning else AqTone.Info,
@@ -420,7 +420,7 @@ private fun PendingItemCell(
         if (showDivider) AqHairline()
     }
     if (showDiscardConfirm) {
-        AqDialog(
+        AqMoonDialog(
             title = AppStrings.Descartar,
             message = AppStrings.descartarElementoWarning,
             // Etiqueta específica (no "Descartar" genérico): nombra la

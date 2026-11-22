@@ -20,13 +20,13 @@ import com.agendaqr.core.ui.components.AqSnackbarHost
 import com.agendaqr.core.ui.components.rememberAqFormFocus
 import com.agendaqr.destinations.domain.FieldLimits
 import com.agendaqr.core.ui.components.AqBottomAction
-import com.agendaqr.core.ui.components.AqIconBadge
+import com.agendaqr.core.ui.components.AqMoonIconBadge
 import com.agendaqr.core.ui.components.AqFormSection
-import com.agendaqr.core.ui.components.AqListRow
+import com.agendaqr.core.ui.components.AqMoonListRow
 import com.agendaqr.core.ui.components.AqMultilineTextField
 import com.agendaqr.core.ui.components.AqScreenScaffold
 import com.agendaqr.core.ui.components.AqQrPreview
-import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqMoonStatusBanner
 import com.agendaqr.core.ui.components.AqSwitch
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextField
@@ -171,7 +171,7 @@ private fun DestinationEditorContent(
                 onRetry = onRetryError,
                 onClear = onClearError,
             )
-            AqStatusBanner(
+            AqMoonStatusBanner(
                 title = err.what,
                 message = err.dataStatus,
                 tone = AqTone.Danger,
@@ -217,14 +217,14 @@ private fun DestinationEditorContent(
         // Selección de contexto: fila seleccionable con chevron, no botón.
         // El estado seleccionado (contextId != null) se refleja con fondo y
         // borde de selección, no solo con el color del texto.
-        AqListRow(
+        AqMoonListRow(
             title = selection.contextId?.let { id ->
                 AppStrings.ParaContextoElegido + (contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico)
             } ?: AppStrings.ParaElegirContexto,
             subtitle = AppStrings.PuedesSinContexto,
             onClick = { selection = selection.openPicker() },
             leading = {
-                AqIconBadge(
+                AqMoonIconBadge(
                     icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
                     tone = AqTone.Info,
                 )

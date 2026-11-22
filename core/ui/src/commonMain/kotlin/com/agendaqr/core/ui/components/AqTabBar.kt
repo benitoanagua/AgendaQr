@@ -55,7 +55,6 @@ fun AqTabBar(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(AqSquircles.InteractiveSm)
                     .selectable(
                         selected = selected,
                         role = Role.Tab,
@@ -127,7 +126,6 @@ fun AqPillTab(
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .clip(AqSquircles.InteractiveSm)
                         .then(
                             if (selected && enabled) {
                                 Modifier.background(AqColor.SelectionSurface, AqSquircles.InteractiveSm)

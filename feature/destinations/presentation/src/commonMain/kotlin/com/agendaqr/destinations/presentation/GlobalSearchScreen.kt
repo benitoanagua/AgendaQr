@@ -63,7 +63,7 @@ fun GlobalSearchScreen(
                 onRetry = { onAction(GlobalSearchAction.QueryChanged(state.query)) },
                 onClear = { onAction(GlobalSearchAction.ClearError) },
             )
-            AqStatusBanner(
+            AqMoonStatusBanner(
                 title = err.what,
                 message = err.dataStatus,
                 tone = AqTone.Danger,
@@ -86,7 +86,7 @@ fun GlobalSearchScreen(
             )
             else -> {
                 // ADR-0028 (patrón móvil Moon): con resultados de tipos
-                // mezclados, chips de filtro por tipo (AqChipGroup). Con
+                // mezclados, chips de filtro por tipo (AqMoonChipGroup). Con
                 // un solo tipo no hay filtro que ofrecer.
                 val typeKeys = com.agendaqr.destinations.domain.AgendaSearchResultType.entries
                     .filter { type -> state.results.any { it.type == type } }
@@ -108,7 +108,7 @@ fun GlobalSearchScreen(
                 ) {
                 if (typeKeys.size > 1) {
                     item(key = "type-filter") {
-                        AqChipGroup(
+                        AqMoonChipGroup(
                             options = listOf(AqChipOption(AppStrings.Todos)) +
                                 typeKeys.map { AqChipOption(searchResultTypeLabel(it)) },
                             selectedIndex = if (typeFilter == null) {
@@ -137,9 +137,9 @@ fun GlobalSearchScreen(
                                     // conteo real del grupo.
                                     text = searchResultTypeLabel(type) + " (" + group.size + ")",
                                 )
-                                AqListBody {
+                                AqMoonListBody {
                                     group.forEachIndexed { index, result ->
-                                        AqListRow(
+                                        AqMoonListRow(
                                             title = searchResultTitle(result),
                                             subtitle = searchResultSubtitle(result),
                                             // Fecha como metadato final (solo los
@@ -153,7 +153,7 @@ fun GlobalSearchScreen(
                                             // siendo el encabezado de sección
                                             // (nunca color/glifo solos).
                                             leading = {
-                                                AqIconBadge(icon = searchResultTypeIcon(type))
+                                                AqMoonIconBadge(icon = searchResultTypeIcon(type))
                                             },
                                             onClick = { onSelect(result) },
                                             showDivider = index < group.lastIndex,

@@ -18,7 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.agendaqr.destinations.data.SyncResource
-import com.agendaqr.core.ui.components.AqBadge
+import com.agendaqr.core.ui.components.AqMoonBadge
 import com.agendaqr.core.ui.components.AqBottomAction
 import com.agendaqr.core.ui.components.AqCarousel
 import com.agendaqr.core.ui.components.AqCheckbox
@@ -28,20 +28,20 @@ import com.agendaqr.core.ui.components.AqPullToRefresh
 import com.agendaqr.core.ui.components.AqSwipeAction
 import com.agendaqr.core.ui.components.AqSwipeActions
 import com.agendaqr.core.ui.components.AqQuickAction
-import com.agendaqr.core.ui.components.AqDialog
+import com.agendaqr.core.ui.components.AqMoonDialog
 import com.agendaqr.core.ui.components.AqDialogList
 import com.agendaqr.core.ui.components.AqFavoriteToggle
 import com.agendaqr.core.ui.components.AqSegmentedControl
 import com.agendaqr.core.ui.components.AqSegmentedOption
 import com.agendaqr.core.ui.components.AqIcon
-import com.agendaqr.core.ui.components.AqIconBadge
+import com.agendaqr.core.ui.components.AqMoonIconBadge
 import com.agendaqr.core.ui.components.AqIcons
-import com.agendaqr.core.ui.components.AqListRow
-import com.agendaqr.core.ui.components.AqListBody
+import com.agendaqr.core.ui.components.AqMoonListRow
+import com.agendaqr.core.ui.components.AqMoonListBody
 import com.agendaqr.core.ui.components.AqNavChromeState
 import com.agendaqr.core.ui.components.AqOverflowAction
 import com.agendaqr.core.ui.components.AqScreenScaffold
-import com.agendaqr.core.ui.components.AqSelectionBar
+import com.agendaqr.core.ui.components.AqMoonSelectionBar
 import com.agendaqr.core.ui.components.AqSectionHeader
 import com.agendaqr.core.ui.components.AqTappableCard
 import com.agendaqr.core.ui.components.AqSkeleton
@@ -50,7 +50,7 @@ import com.agendaqr.core.ui.components.AqSearchTrigger
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTopBar
 import com.agendaqr.core.ui.components.AqTone
-import com.agendaqr.core.ui.components.AqStatusBanner
+import com.agendaqr.core.ui.components.AqMoonStatusBanner
 import com.agendaqr.core.ui.components.AqEmptyState
 import com.agendaqr.core.ui.components.AqLoadMoreFooter
 import com.agendaqr.core.ui.theme.AqColor
@@ -101,7 +101,7 @@ fun DestinationsScreen(
         topBar = {
             if (selectionMode) {
                 val selectAll = state.destinations.isNotEmpty() && selectedIds.size == state.destinations.size
-                AqSelectionBar(
+                AqMoonSelectionBar(
                     closeLabel = AppStrings.CerrarSeleccion,
                     selectAllLabel = if (selectAll) AppStrings.SeleccionarNinguno else AppStrings.SeleccionarTodo,
                     selectedCountLabel = "${selectedIds.size} ${AppStrings.Seleccionados}",
@@ -156,7 +156,7 @@ fun DestinationsScreen(
                 onRetry = { onAction(DestinationAction.RetryFailed) },
                 onClear = { onAction(DestinationAction.ClearError) },
             )
-            AqStatusBanner(
+            AqMoonStatusBanner(
                 title = error.what,
                 message = error.dataStatus,
                 tone = AqTone.Danger,
@@ -292,7 +292,7 @@ fun DestinationsScreen(
                             onRefresh = { onAction(DestinationAction.Search(state.query)) },
                             refreshingLabel = AppStrings.Cargando,
                         ) {
-                            AqListBody {
+                            AqMoonListBody {
                                 paged.forEachIndexed { index, destination ->
                                     DestinationRow(
                                         destination,
@@ -338,7 +338,7 @@ fun DestinationsScreen(
     }
 
     destinationToDelete?.let { dest ->
-        AqDialog(
+        AqMoonDialog(
             title = AppStrings.EliminarDestino,
             message = AppStrings.irreversibleActionWarning,
             confirmLabel = AppStrings.Eliminar,
@@ -355,7 +355,7 @@ fun DestinationsScreen(
     // G3: confirmación de eliminación por lote en destinos.
     if (confirmarEliminarLote) {
         val plural = if (selectedIds.size == 1) AppStrings.OperacionSingular else AppStrings.OperacionesPlural
-        AqDialog(
+        AqMoonDialog(
             title = AppStrings.EliminarDestino,
             destructive = true,
             message = AppStrings.irreversibleActionWarning + "\n" + selectedIds.size + " " + plural,
@@ -394,9 +394,9 @@ private fun FavoriteDestinationCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                AqIconBadge(icon = AqIcons.QrCode, tone = AqTone.Info)
+                AqMoonIconBadge(icon = AqIcons.QrCode)
                 destination.category?.let {
-                    AqBadge(text = it, tone = AqTone.Neutral)
+                    AqMoonBadge(text = it)
                 }
             }
             Column {
@@ -431,7 +431,7 @@ fun DestinationRow(
     // Fila del destino: miniatura QR a la izquierda, título con
     // identidad, metadato de sincronización y favorito a la derecha.
     val rowContent = @Composable {
-        AqListRow(
+        AqMoonListRow(
             title = destination.name.ifBlank { AppStrings.SinNombre },
             subtitle = destinationSubtitle(destination),
             showDivider = showDivider,
@@ -446,7 +446,7 @@ fun DestinationRow(
                         onCheckedChange = { onToggle?.invoke() },
                     )
                 } else {
-                    AqIconBadge(icon = AqIcons.QrCode, tone = AqTone.Neutral)
+                    AqMoonIconBadge(icon = AqIcons.QrCode)
                 }
             },
             meta = {
