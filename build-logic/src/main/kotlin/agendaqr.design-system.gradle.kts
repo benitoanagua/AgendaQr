@@ -1416,6 +1416,40 @@ tasks.register("verifyUxTransitionContracts") {
     }
 }
 
+/**
+ * Mide el legado de Polaris que queda en TODO el repo (core/ui y tests
+ * incluidos). No forma parte de `verifyAgendaQrArchitecture` hasta que el
+ * conteo sea cero; entonces se cablea ahí (ADR-0041).
+ */
+tasks.register("verifyNoLegacyAnywhere") {
+    group = "verification"
+    description = "Fails if any legacySymbols entry is declared or used anywhere in Kotlin sources."
+    doLast {
+        val violations = mutableListOf<String>()
+        val symbolRegexes = (legacySymbols + "AqShapes").distinct().map { it to Regex("\\b$it\\b") }
+        sequenceOf("androidApp", "core", "feature", "shared", "iosApp").forEach { root ->
+            val directory = file(root)
+            if (!directory.exists()) return@forEach
+            directory.walkTopDown()
+                .filter { it.isFile && it.extension == "kt" && !it.path.contains("/build/") }
+                .forEach { source ->
+                    source.readLines().forEachIndexed { index, line ->
+                        val trimmed = line.trim()
+                        if (trimmed.startsWith("*") || trimmed.startsWith("//") || trimmed.startsWith("/*")) return@forEachIndexed
+                        symbolRegexes.forEach { (symbol, regex) ->
+                            if (regex.containsMatchIn(line)) {
+                                violations.add("${source.relativeTo(rootDir).path}:${index + 1}: legacy '$symbol'")
+                            }
+                        }
+                    }
+                }
+        }
+        require(violations.isEmpty()) {
+            "Legacy residual (${violations.size} referencias):\n" + violations.take(200).joinToString("\n")
+        }
+    }
+}
+
 tasks.register("verifyAgendaQrArchitecture") {
     group = "verification"
     dependsOn(
