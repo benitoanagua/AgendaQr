@@ -30,16 +30,16 @@ class AqSearchFieldTest {
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                 ) {
-                    AqSearchField(
+                    AqSearchInput(
+                        label = "Buscar",
                         value = "",
                         onValueChange = {},
-                        label = "Buscar",
                         placeholder = "Buscar en Agenda QR",
                     )
-                    AqSearchField(
+                    AqSearchInput(
+                        label = "Buscar con texto",
                         value = "",
                         onValueChange = {},
-                        label = "Buscar con texto",
                         placeholder = "Buscar en Agenda QR",
                         onClear = {},
                         clearLabel = "Limpiar búsqueda",
@@ -55,10 +55,10 @@ class AqSearchFieldTest {
     fun search_field_renders_without_throwing() {
         compose.setContent {
             AqTheme {
-                AqSearchField(
+                AqSearchInput(
+                    label = "Buscar",
                     value = "",
                     onValueChange = {},
-                    label = "Buscar",
                     placeholder = "Buscar en Agenda QR",
                     onClear = {},
                     clearLabel = "Limpiar búsqueda",

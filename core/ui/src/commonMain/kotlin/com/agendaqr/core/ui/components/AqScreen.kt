@@ -140,3 +140,26 @@ fun AqScreen(
         toastHost?.invoke()
     }
 }
+
+/** Acción principal fija inferior (dock de acción): usa [AqButton] variante
+ *  primaria, ancho completo, respeto de navigationBars e IME. */
+@Composable
+fun AqDockAction(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    isLoading: Boolean = false,
+    busyDescription: String? = null,
+) {
+    AqButton(
+        label = label,
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        enabled = enabled,
+        isLoading = isLoading,
+        busyDescription = busyDescription,
+        variant = AqButtonVariant.Primary,
+        size = AqButtonSize.Large,
+    )
+}

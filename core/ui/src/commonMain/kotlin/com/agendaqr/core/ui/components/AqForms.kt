@@ -3,6 +3,7 @@ package com.agendaqr.core.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -14,10 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.triStateToggleable
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Switch
-import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,105 +60,13 @@ internal fun Modifier.fieldSemantics(state: AqFieldState): Modifier =
     }
 
 @Composable
-internal fun AqFieldMessages(state: AqFieldState) {
+internal fun AqFieldHelp(state: AqFieldState) {
     val message = if (state.isError) state.errorMessage else state.helperMessage
     if (!message.isNullOrBlank()) {
         AqText(
             text = message,
             size = AqType.Caption,
             color = if (state.isError) AqColor.Danger else AqColor.TextSecondary,
-        )
-    }
-}
-
-/**
- * Select de una opción equivalente a `s-select`: la fila con valor
- * seleccionado abre un diálogo de opciones con [AqDialogList], reutilizando
- * el modal canónico y la semántica radio existente.
- */
-@Composable
-fun AqSelect(
-    options: List<AqChoiceOption>,
-    selectedId: String?,
-    onSelected: (String) -> Unit,
-    label: String,
-    dialogTitle: String,
-    confirmLabel: String,
-    dismissLabel: String,
-    modifier: Modifier = Modifier,
-    placeholder: String = "",
-    state: AqFieldState = AqFieldState(),
-) {
-    require(options.isNotEmpty()) { "AqSelect requiere al menos una opción" }
-    var expanded by remember { mutableStateOf(false) }
-    val selected = options.firstOrNull { it.id == selectedId }
-    val borderColor = when {
-        state.isError -> AqColor.Danger
-        !state.enabled -> AqColor.Disabled
-        else -> AqColor.FunctionalBorder
-    }
-    Column(
-        modifier = modifier.fillMaxWidth().fieldSemantics(state),
-        verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-    ) {
-        AqText(
-            text = label,
-            size = AqType.Label,
-            fontWeight = AqWeight.Medium,
-            color = if (state.enabled) AqColor.TextPrimary else AqColor.OnDisabled,
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                .background(AqColor.InputSurface, AqSquircles.InteractiveSm)
-                .border(AqMetrics.Border, borderColor, AqSquircles.InteractiveSm)
-                .selectable(
-                    selected = false,
-                    enabled = state.enabled,
-                    role = Role.DropdownList,
-                    onClick = { expanded = true },
-                )
-                .padding(horizontal = AqSpacing.MdPlus, vertical = AqSpacing.Md),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            AqText(
-                text = selected?.label ?: placeholder,
-                size = AqType.Body,
-                color = when {
-                    !state.enabled -> AqColor.OnDisabled
-                    selected == null -> AqColor.TextPlaceholder
-                    else -> AqColor.TextPrimary
-                },
-                modifier = Modifier.weight(1f),
-            )
-            AqIcon(
-                imageVector = AqIcons.ChevronRight,
-                contentDescription = null,
-                tint = if (state.enabled) AqColor.TextSecondary else AqColor.OnDisabled,
-            )
-        }
-        AqFieldMessages(state)
-    }
-    if (expanded) {
-        AqDialog(
-            title = dialogTitle,
-            confirmLabel = confirmLabel,
-            onConfirm = { expanded = false },
-            dismissLabel = dismissLabel,
-            onDismiss = { expanded = false },
-            content = {
-                AqDialogList {
-                    options.forEach { option ->
-                        AqRadioButton(
-                            label = option.label,
-                            description = option.description,
-                            selected = option.id == selectedId,
-                            onSelected = { onSelected(option.id) },
-                        )
-                    }
-                }
-            },
         )
     }
 }
@@ -189,7 +94,7 @@ fun AqCheckbox(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Checkbox(
+        androidx.compose.material3.Checkbox(
             checked = checked,
             onCheckedChange = null,
             enabled = state.enabled,
@@ -209,55 +114,7 @@ fun AqCheckbox(
                     color = if (state.enabled) AqColor.TextSecondary else AqColor.OnDisabled,
                 )
             }
-            AqFieldMessages(state)
-        }
-    }
-}
-
-/** Opción radio equivalente a `s-choice-list` en modo selección única. */
-@Composable
-fun AqRadioButton(
-    label: String,
-    selected: Boolean,
-    onSelected: () -> Unit,
-    modifier: Modifier = Modifier,
-    state: AqFieldState = AqFieldState(),
-    description: String? = null,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-            .fieldSemantics(state)
-            .selectable(
-                selected = selected,
-                enabled = state.enabled,
-                role = Role.RadioButton,
-                onClick = onSelected,
-            ),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        RadioButton(
-            selected = selected,
-            onClick = null,
-            enabled = state.enabled,
-            modifier = Modifier.clearAndSetSemantics { }.size(AqMetrics.ControlMinSize),
-        )
-        Column(modifier = Modifier.padding(start = AqSpacing.Md).weight(1f)) {
-            AqText(
-                text = label,
-                size = AqType.Body,
-                fontWeight = AqWeight.Medium,
-                color = if (state.enabled) AqColor.TextPrimary else AqColor.OnDisabled,
-            )
-            if (description != null) {
-                AqText(
-                    text = description,
-                    size = AqType.Caption,
-                    color = if (state.enabled) AqColor.TextSecondary else AqColor.OnDisabled,
-                )
-            }
-            AqFieldMessages(state)
+            AqFieldHelp(state)
         }
     }
 }
@@ -299,9 +156,9 @@ fun AqSwitch(
                     color = if (state.enabled) AqColor.TextSecondary else AqColor.OnDisabled,
                 )
             }
-            AqFieldMessages(state)
+            AqFieldHelp(state)
         }
-        Switch(
+        androidx.compose.material3.Switch(
             checked = checked,
             onCheckedChange = null,
             enabled = state.enabled,
@@ -310,9 +167,9 @@ fun AqSwitch(
     }
 }
 
-/** Grupo de opciones con semántica de selección mutuamente excluyente. */
+/** Grupo de opciones con semántica de selección mutuamente excluyente (usa [AqRadio]). */
 @Composable
-fun AqChoiceGroup(
+fun AqChoiceSet(
     label: String,
     options: List<AqChoiceOption>,
     selectedId: String?,
@@ -330,25 +187,22 @@ fun AqChoiceGroup(
             fontWeight = AqWeight.Medium,
             color = if (state.enabled) AqColor.TextPrimary else AqColor.OnDisabled,
         )
-        // Los hijos solo heredan habilitación/error de borde; el mensaje lo
-        // pinta UNA vez el grupo, no cada opción.
         val childState = state.copy(isError = false, errorMessage = null, helperMessage = null)
         options.forEach { option ->
-            AqRadioButton(
-                label = option.label,
-                description = option.description,
+            AqRadio(
                 selected = option.id == selectedId,
-                onSelected = { onSelected(option.id) },
-                state = childState,
+                onClick = { onSelected(option.id) },
+                contentDescription = option.label,
+                enabled = state.enabled,
             )
         }
-        AqFieldMessages(state)
+        AqFieldHelp(state)
     }
 }
 
 /** Grupo de casillas con estado derivado, sin estado interno. */
 @Composable
-fun AqCheckboxGroup(
+fun AqCheckboxSet(
     label: String,
     options: List<AqChoiceOption>,
     checkedIds: Set<String>,
@@ -376,18 +230,18 @@ fun AqCheckboxGroup(
                 state = childState,
             )
         }
-        AqFieldMessages(state)
+        AqFieldHelp(state)
     }
 }
 
 /**
  * Casilla de selección total con estado mixto derivado por el consumidor.
- * Se usa junto a [AqCheckboxGroup] cuando una lista permite seleccionar
+ * Se usa junto a [AqCheckboxSet] cuando una lista permite seleccionar
  * todos sus elementos. El llamador decide si al pulsar un estado mixto
  * selecciona o limpia el conjunto.
  */
 @Composable
-fun AqSelectAllCheckbox(
+fun AqSelectAll(
     label: String,
     checkedState: ToggleableState,
     onClick: () -> Unit,
@@ -408,7 +262,7 @@ fun AqSelectAllCheckbox(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        TriStateCheckbox(
+        androidx.compose.material3.TriStateCheckbox(
             state = checkedState,
             onClick = null,
             enabled = state.enabled,
@@ -428,7 +282,7 @@ fun AqSelectAllCheckbox(
                     color = if (state.enabled) AqColor.TextSecondary else AqColor.OnDisabled,
                 )
             }
-            AqFieldMessages(state)
+            AqFieldHelp(state)
         }
     }
 }
@@ -438,7 +292,7 @@ fun AqSelectAllCheckbox(
 // ---------------------------------------------------------------------------
 
 /**
- * Sección de formulario con UN encabezado tipográfico ([AqSectionHeader],
+ * Sección de formulario con UN encabezado tipográfico ([AqSectionTitle],
  * semántica `heading`). El título nombra el GRUPO ("Detalles",
  * "Comprobante"), nunca repite el label de un campo hijo — la regla de
  * jerarquía del DS es "encabezado de sección ≠ etiqueta de campo".
@@ -456,7 +310,7 @@ fun AqFormSection(
         verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
     ) {
         // En formulario el encabezado va al borde, sin la sangría de lista.
-        AqSectionHeader(text = title, inset = false)
+        AqSectionTitle(text = title)
         Column(
             verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
             content = content,
@@ -467,11 +321,11 @@ fun AqFormSection(
 /**
  * Campo de formulario con etiqueta persistente, marcador de opcionalidad
  * discreto ([optionalLabel], un solo patrón) y mensajes de ayuda/error
- * ([AqFieldMessages]). Para contenido compuesto (chips, fechas, filas);
+ * ([AqFieldHelp]). Para contenido compuesto (chips, fechas, filas);
  * los campos hoja usan su propio label + [optionalLabel].
  */
 @Composable
-fun AqFormField(
+fun AqFormEntry(
     label: String,
     modifier: Modifier = Modifier,
     optionalLabel: String? = null,
@@ -502,7 +356,7 @@ fun AqFormField(
             }
         }
         Column(content = content)
-        AqFieldMessages(state)
+        AqFieldHelp(state)
     }
 }
 
@@ -510,7 +364,7 @@ fun AqFormField(
 // ChipGroup — selección inequívoca de opciones en formulario o filtro
 // ---------------------------------------------------------------------------
 
-/** Una opción seleccionable de [AqChipGroup]. */
+/** Una opción seleccionable de [AqChipRow]. */
 data class AqChipOption(
     val label: String,
     /** Conteo junto a la etiqueta; null = sin conteo. */
@@ -531,7 +385,7 @@ data class AqChipOption(
  */
 @OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
-fun AqChipGroup(
+fun AqChipRow(
     options: List<AqChipOption>,
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
@@ -539,7 +393,7 @@ fun AqChipGroup(
     horizontalScroll: Boolean = false,
     allowDeselect: Boolean = false,
 ) {
-    require(options.isNotEmpty()) { "AqChipGroup requiere al menos una opción" }
+    require(options.isNotEmpty()) { "AqChipRow requiere al menos una opción" }
     val onChipClick: (Int) -> Unit = { index ->
         onSelect(if (allowDeselect && index == selectedIndex) -1 else index)
     }
@@ -547,7 +401,7 @@ fun AqChipGroup(
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .horizontalScroll(androidx.compose.foundation.rememberScrollState()),
+                .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
         ) {
             options.forEachIndexed { index, option ->

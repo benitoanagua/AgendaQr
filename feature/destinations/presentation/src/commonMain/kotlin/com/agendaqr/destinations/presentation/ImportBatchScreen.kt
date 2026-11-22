@@ -48,7 +48,6 @@ import com.agendaqr.destinations.domain.ImportKind
 import com.agendaqr.core.ui.components.AqTag as AqTagComponent
 import com.agendaqr.core.ui.components.AqProgress as AqProgressComp
 import com.agendaqr.core.ui.components.AqProgressBlock as AqProgressBlockComp
-import com.agendaqr.core.ui.components.AqProgress as AqProgressComp2
 
 /**
  * Vista previa del elemento existente con el que coincide un duplicado.

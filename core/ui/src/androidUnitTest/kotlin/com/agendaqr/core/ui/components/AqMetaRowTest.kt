@@ -19,7 +19,10 @@ class AqMetaRowTest {
     fun description_row_exposes_term_and_value() {
         compose.setContent {
             AqTheme {
-                AqMetaRow(label = "Moneda", value = "BOB")
+                AqMenuItem(
+                    title = "Moneda",
+                    subtitle = "BOB",
+                )
             }
         }
 

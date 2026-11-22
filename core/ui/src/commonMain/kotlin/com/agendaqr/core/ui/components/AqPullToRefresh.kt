@@ -129,9 +129,9 @@ fun AqPullToRefresh(
                     .padding(AqSpacing.Md),
                 contentAlignment = Alignment.Center,
             ) {
-                AqSpinner(
+                AqCircularLoader(
+                    loaderSize = AqMetrics.IconSize,
                     contentDescription = refreshingLabel,
-                    modifier = Modifier.size(AqMetrics.IconSize),
                 )
             }
         }

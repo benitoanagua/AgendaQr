@@ -34,8 +34,8 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Reimplementación de `AqModal` sobre `androidx.compose.ui.window.Dialog` (focus trap, back/predictive back, `paneTitle`, scrim clicable) | `:core:ui:testDebugUnitTest` |
 | Migración pantalla por pantalla a componentes Moon reales (sin wrappers `AqMoon*`): UnassociatedScreen (piloto), DestinationsScreen, DestinationDetailScreen, ContextScreen, ImportBatchScreen, OperationDetailScreen, OperationEditorScreen, OperationListContent/Grouped/Screen, ContextPickerDialog, GlobalSearchScreen, DestinationEditorScreen, AddDestinationScreen, ImportReviewScreen, AuthScreen, AccountScreen, LocalOnboardingScreen, LocalLockScreen, ComprobanteViewer, AppStatusHost, AgendaQrPatterns, AgendaQrApp + AuthenticatedAppRoot | `:feature:destinations:presentation:testDebugUnitTest` + `verifyDesignSystemCompliance` + commits por pantalla |
 | Pantallas de plataforma (CameraQrCapture, QrImportControls, ImportBatchControls, IosCameraQrCapture, etc.) sin Material ni legacy | compilación de los módulos de plataforma |
-| Eliminación total del legacy de `core/ui` (AqMoonComponents.kt, AqMoonTopBar.kt, definiciones legacy, AqShapes, tests obsoletos, previews y fichas obsoletas) | `verifyDesignSystemCompliance` VERDE |
-| Gate endurecido: prohíbe `AqMoon*` en todo el repo, prohíbe símbolos legacy en `core/ui/components`, exige componente Moon real por archivo de feature con UI, prohíbe `AqShapes` repo-wide, fixtures negativos y positivos | `verifyDesignSystemCompliance` VERDE |
+| Eliminación del legacy en la capa de producción de `feature/`, `shared/` y las apps (cero símbolos legacy, cero `AqMoon*`, cero Material) | `verifyDesignSystemCompliance` |
+| Gate: prohíbe `AqMoon*` y símbolos legacy en `feature/`, `shared/` y las apps, exige componente Moon real por archivo de feature con UI, prohíbe `AqShapes` repo-wide, fixtures negativos y positivos | `verifyDesignSystemCompliance` + `verifyDesignSystemFixtures` |
 | Contrato de interacción por pantalla (19 superficies) y galería estricta de capturas por superficie (360 dp, claro/oscuro) | `verifyScreenContract` + `verifyScreenContractFixtures` + `captureGallery` |
 | Documentación: enlaces vivos, alcanzabilidad desde el índice, ausencia de marcadores transitorios | `verifyDocs` |
 | Selección múltiple por lote (G3 / ADR-0034) | pruebas de presentación + gate |
@@ -84,6 +84,8 @@ No se declaran PASS. Requieren Xcode, dispositivo físico, red o backend reales.
 
 ## 4. Pendientes conocidos
 
+- **Legacy aún declarado en `core/ui`:** siguen existiendo los símbolos de la lista `legacySymbols` del gate (`AqLists`, `AqForms`, `AqButtons`, `AqInputs`, `AqChrome`, `AqScaffold`, `AqStatus`, `AqDialogs`, `AqDateTime`, `AqFeedback`, `AqProductExtensions`, `AqLayout`, `AqText`, `AqTabs`, `AqSelection`, `AqDataTable`, `AqFeedbackEvent`, `AqDesignSystemGallery`, `AqPreviews`), y parte de los tests de `core/ui` y de `feature/destinations/presentation` los ejercitan. El gate actual no escanea `core/ui` ni los tests; la tarea `verifyNoLegacyAnywhere` mide ese resto y debe quedar en verde antes de declarar cerrada la migración.
+- **Compilación de tests de presentación:** `LayoutReferenceTest` usa API inexistente (`AqColumnPlaceholder`, `components.content`, `AqIcon(icon=, tone=)`, `AqMenuItem(endMeta=, meta=)`); mientras no se reescriba, `:feature:destinations:presentation:compileDebugUnitTestKotlinAndroid` falla y arrastra `testDebugUnitTest`, `verifyScreenContract` y `captureGallery`.
 - **Share Extension de iOS:** no implementada; el bloque «Desde otra app» de S02 no se muestra en iOS hasta que exista (`supportsShareExtension = false`, ADR-0037). Bloqueo: el proyecto Xcode no está versionado (política en `iosApp/README.md`) y crear el target exige Xcode y firma.
 
 ## 5. No implementado (alcance declarado, no defecto)

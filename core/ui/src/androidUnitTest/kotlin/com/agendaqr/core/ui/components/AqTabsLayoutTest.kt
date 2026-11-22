@@ -42,11 +42,11 @@ class AqTabsLayoutTest {
                 CompositionLocalProvider(
                     LocalDensity provides Density(density = 1f, fontScale = fontScale),
                 ) {
-                    AqTabs(
+                    AqTabBar(
                         tabs = listOf(AqTab("QR"), AqTab("Actividades"), AqTab("Comprobantes")),
                         selectedIndex = selected,
                         onSelect = { selected = it },
-                    ) { }
+                    )
                 }
             }
         }

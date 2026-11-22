@@ -3,6 +3,8 @@ package com.agendaqr.core.ui.components
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.assertIsDisplayed
@@ -12,6 +14,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqTheme
+import com.agendaqr.core.ui.components.AqIcons
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -27,19 +30,19 @@ class AqNavRailLayoutTest {
 
     @Test
     fun tablet_rail_keeps_all_destinations_visible_at_200_percent_font_scale() {
-        var selected = "home"
+        var selected = 1
         compose.setContent {
             CompositionLocalProvider(LocalDensity provides Density(density = 1f, fontScale = 2f)) {
                 AqTheme {
                     Row(Modifier.size(width = 720.dp, height = 800.dp)) {
-                        AqNavRail(
-                            destinations = listOf(
-                                AqNavDestination("home", "Inicio", AqIcons.Home),
-                                AqNavDestination("search", "Buscar", AqIcons.Search),
-                                AqNavDestination("operations", "Operaciones", AqIcons.Register),
-                                AqNavDestination("contexts", "Contextos", AqIcons.Context),
+                        AqTabBar(
+                            tabs = listOf(
+                                AqTab("Inicio", icon = AqIcons.Home),
+                                AqTab("Buscar", icon = AqIcons.Search),
+                                AqTab("Operaciones", icon = AqIcons.Register),
+                                AqTab("Contextos", icon = AqIcons.Context),
                             ),
-                            selectedId = selected,
+                            selectedIndex = selected,
                             onSelect = { selected = it },
                         )
                     }
@@ -51,6 +54,6 @@ class AqNavRailLayoutTest {
             compose.onNodeWithText(label).assertIsDisplayed()
         }
         compose.onNodeWithText("Operaciones").performClick()
-        assertEquals("operations", selected)
+        assertEquals(2, selected)
     }
 }

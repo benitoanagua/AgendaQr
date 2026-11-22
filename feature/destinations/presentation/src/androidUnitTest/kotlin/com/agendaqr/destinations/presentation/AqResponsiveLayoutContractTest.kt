@@ -21,8 +21,6 @@ import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.components.AqTag
 import com.agendaqr.core.ui.components.AqFavoriteToggle
 import com.agendaqr.core.ui.components.AqMenuItem
-import com.agendaqr.core.ui.components.AqPrimaryButton
-import com.agendaqr.core.ui.components.AqTextField
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Assert.assertTrue
@@ -95,8 +93,13 @@ class AqResponsiveLayoutContractTest {
     fun controls_keep_labels_and_error_inside_360dp_at_100_and_150_percent() {
         composeAtScales(
             {
-                AqPrimaryButton(label = "Guardar cambios de la actividad", onClick = {})
-                AqTextField(
+                AqButton(
+                    label = "Guardar cambios de la actividad",
+                    onClick = {},
+                    variant = com.agendaqr.core.ui.components.AqButtonVariant.Primary,
+                    size = com.agendaqr.core.ui.components.AqButtonSize.Large,
+                )
+                AqTextInput(
                     label = inputLabel,
                     value = "",
                     onValueChange = {},

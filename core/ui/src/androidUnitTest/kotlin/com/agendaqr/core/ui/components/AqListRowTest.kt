@@ -30,23 +30,20 @@ class AqListRowTest {
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
                 ) {
-                    AqListRow(
+                    AqMenuItem(
                         title = "Destino ejemplo",
                         subtitle = "Comprobante recibido",
-                        showChevron = true,
                         onClick = {},
                     )
-                    AqListRow(
+                    AqMenuItem(
                         title = "Fila seleccionada",
                         subtitle = "Estado activo",
                         selected = true,
-                        showChevron = true,
                         onClick = {},
                     )
-                    AqListRow(
+                    AqMenuItem(
                         title = "Fila sin acción",
                         subtitle = "Sin interacción",
-                        showChevron = true,
                         onClick = null,
                     )
                 }
@@ -68,7 +65,7 @@ class AqListRowTest {
                 "cuando no cabe en el ancho disponible de la pantalla compacta"
         compose.setContent {
             AqTheme {
-                AqListRow(
+                AqMenuItem(
                     title = longTitle,
                     subtitle = "Subtítulo",
                     onClick = {},

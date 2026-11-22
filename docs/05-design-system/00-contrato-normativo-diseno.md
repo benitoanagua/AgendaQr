@@ -185,15 +185,9 @@ en el archivo señalado con valores tomados de tokens semánticos.
 | ID | API permitida | Archivo | Motivo |
 |---|---|---|---|
 | E-01 | `border` | `AqButtons.kt` | Borde de foco y variante contorneada |
-| E-02 | `border` | `AqLists.kt` | Borde de tarjetas y filas |
-| E-03 | `border` | `AqLists.kt` | Separador interno de tarjetas |
 | E-04 | `border` | `AqInputs.kt` | Foco y estado de error de campos |
-| E-05 | `shadow` | `AqLists.kt` | Elevación de tarjetas mediante `aqElevation` |
 | E-07 | `border` | `AqForms.kt` | Caja del campo select (reposo, foco y error) |
 | E-08 | `border` | `AqPinEntry.kt` | Borde de tecla del teclado PIN (contraste en tema oscuro) |
-| E-09 | `border` | `AqTabs.kt` | Borde de la píldora activa (mismo lenguaje que el segmentado) |
-| E-10 | `border` | `AqSelection.kt` | Borde de la caja de casilla de verificación y botón de radio (Moon) |
-| E-11 | `border` | `AqFeedback.kt` | Borde opcional de la alerta persistente (MoonAlert) |
 | E-12 | `border` | `AqTextInput.kt` | Borde de reposo, foco y error de campo de texto (MoonTextInput) |
 | E-13 | `border` | `AqTextArea.kt` | Borde de reposo, foco y error de área de texto (MoonTextArea) |
 | E-14 | `border` | `AqRadio.kt` | Borde de anillo de selección de botón de radio (MoonRadio) |
