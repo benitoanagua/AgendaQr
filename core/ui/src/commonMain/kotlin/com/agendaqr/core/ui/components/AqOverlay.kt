@@ -48,6 +48,12 @@ fun AqModal(
     /** copy del llamador. */
     dismissLabel: String,
     onDismissRequest: () -> Unit,
+    /** Etiqueta opcional del botón de confirmación (primaria). */
+    confirmLabel: String? = null,
+    /** Invocada al pulsar la confirmación. */
+    onConfirm: (() -> Unit)? = null,
+    /** Si es verdadera, la confirmación se pinta como acción destructiva. */
+    destructive: Boolean = false,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
@@ -64,7 +70,6 @@ fun AqModal(
                 .testTag("aq-modal-scrim"),
             contentAlignment = Alignment.Center,
         ) {
-            // Cierre al pulsar el scrim (fuera de la superficie modal).
             Column(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
@@ -86,11 +91,20 @@ fun AqModal(
                         .semantics { paneTitle = title },
                     horizontalArrangement = Arrangement.End,
                 ) {
+                    confirmLabel?.let { label ->
+                        AqButton(
+                            label = label,
+                            onClick = { onConfirm?.invoke() },
+                            variant = if (destructive) AqButtonVariant.Danger else AqButtonVariant.Text,
+                            size = AqButtonSize.Small,
+                        )
+                    }
                     AqButton(
                         label = dismissLabel,
                         onClick = onDismissRequest,
                         variant = AqButtonVariant.Text,
                         size = AqButtonSize.Small,
+                        modifier = Modifier.testTag("aq-modal-dismiss"),
                     )
                 }
             }

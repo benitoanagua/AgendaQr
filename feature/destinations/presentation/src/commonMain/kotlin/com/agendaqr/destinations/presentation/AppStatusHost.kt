@@ -11,6 +11,7 @@ import com.agendaqr.core.ui.components.AqMoonBadge
 import com.agendaqr.core.ui.components.AqFeedbackHost
 import com.agendaqr.core.ui.components.AqBannerAction
 import com.agendaqr.core.ui.components.AqMoonStatusBanner
+import com.agendaqr.core.ui.components.AqToastHostState
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqSpacing
 
@@ -25,6 +26,8 @@ class AppHosts(
     val status: (@Composable () -> Unit)? = null,
     /** Host del Snackbar para eventos transitorios. */
     val feedback: AqFeedbackHost? = null,
+    /** Host de toasts (sustituto Moon-only del Snackbar). */
+    val toastHost: AqToastHostState? = null,
 )
 
 /**

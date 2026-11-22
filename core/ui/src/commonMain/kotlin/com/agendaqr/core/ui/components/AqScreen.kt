@@ -46,11 +46,11 @@ fun AqScreen(
     actions: List<AqAppBarAction> = emptyList(),
     overflowActions: List<AqAppBarAction> = emptyList(),
     overflowLabel: String = "",
-    /** Acción principal fija inferior (p. ej. "Guardar"). */
+    /** Barra superior personalizada (p. ej. barra de selección por lote).
+     *  Cuando se proporciona, se usa en lugar de [AqAppBar]. */
+    topBar: (@Composable () -> Unit)? = null,
     bottomAction: (@Composable () -> Unit)? = null,
-    /** Estado/banner persistente a ancho completo bajo la barra. */
     statusContent: (@Composable () -> Unit)? = null,
-    /** Host de notificaciones efímeras (p. ej. [AqToastHost]). */
     toastHost: (@Composable () -> Unit)? = null,
     scrollable: Boolean = false,
     content: @Composable ColumnScope.() -> Unit,
@@ -61,8 +61,10 @@ fun AqScreen(
         Column(
             modifier = Modifier.fillMaxSize(),
         ) {
-            // Barra superior solo cuando hay algo que mostrar.
-            if (title.isNotBlank() || onBack != null || actions.isNotEmpty() || overflowActions.isNotEmpty()) {
+            // Barra superior: la personalizada tiene prioridad sobre la app bar.
+            if (topBar != null) {
+                topBar()
+            } else if (title.isNotBlank() || onBack != null || actions.isNotEmpty() || overflowActions.isNotEmpty()) {
                 AqAppBar(
                     title = title,
                     onBack = onBack,

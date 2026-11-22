@@ -101,6 +101,8 @@ internal fun AuthenticatedAppRoot(
     // solo cambia en la transición). V1.2: se publica como Snackbar
     // transitorio (con háptico y anuncio accesible por evento).
     val feedbackHost = remember { com.agendaqr.core.ui.components.AqFeedbackHost() }
+    // Host de toasts Moon-only para mensajes transitorios de las pantallas.
+    val toastHost = remember { com.agendaqr.core.ui.components.AqToastHostState() }
     var syncDoneEvent by remember { mutableStateOf<Any?>(null) }
     var previousPendingCount by remember { mutableStateOf(0) }
     LaunchedEffect(pendingCount, showSyncUi) {
@@ -175,6 +177,7 @@ internal fun AuthenticatedAppRoot(
             )
         },
         feedback = feedbackHost,
+        toastHost = toastHost,
     )
 
     // ------------------------------------------------------------------
