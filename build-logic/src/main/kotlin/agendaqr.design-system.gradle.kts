@@ -50,34 +50,22 @@ fun isUiLiteralAllowed(text: String): Boolean =
  */
 val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-01" to listOf("border:AqButtons.kt"),
-    "E-02" to listOf("border:AqLists.kt"),
-    "E-03" to listOf("border:AqLists.kt"),
     "E-04" to listOf("border:AqInputs.kt"),
     "E-07" to listOf("border:AqForms.kt"),
     // Bordes de teclas del teclado PIN (contraste en tema oscuro).
     "E-08" to listOf("border:AqPinEntry.kt"),
-    // Píldora activa de AqTabs: mismo tratamiento de selección que el
-    // control segmentado (pista + borde de la píldora).
-    "E-09" to listOf("border:AqTabs.kt"),
-    // Borde de la caja de casilla de verificación y botón de radio
-    // (MoonCheckbox / MoonRadio, grosor y radio de Moon).
-    "E-10" to listOf("border:AqSelection.kt"),
-    // Borde opcional de la alerta persistente (MoonAlert).
-    "E-11" to listOf("border:AqFeedback.kt"),
     // Borde de los campos de entrada Moon (AqTextInput / AqTextArea).
     "E-12" to listOf("border:AqTextInput.kt"),
     "E-13" to listOf("border:AqTextArea.kt"),
     // Borde de los campos del código de autenticación (AqAuthCode).
     "E-15" to listOf("border:AqAuthCode.kt"),
-    // Borde del anillo de selección de MoonRadio (E-10 cubre AqSelection.kt;
-    // AqRadio.kt es su propio archivo).
+    // Borde del anillo de selección de MoonRadio (AqRadio.kt es su propio archivo).
     "E-14" to listOf("border:AqRadio.kt"),
     // `Modifier.shadow` se centraliza en la capa de tokens; solo los
     // archivos registrados pueden invocarlo (o elevarse vía `aqElevation`).
     // E-06 (elevación de botones) se retiró: los botones son planos y
     // `AqButtons.kt` no eleva nada; un registro sin uso lo detecta
     // `verifyScreenContract`.
-    "E-05" to listOf("shadow:AqLists.kt"),
 )
 
 /** Lista de símbolos legacy de la capa Polaris que NO deben importarse ni
@@ -969,6 +957,32 @@ tasks.register("verifyDesignSystemFixtures") {
         require(kotlinDesignViolations(tokenShapePath, listOf("object AqShapes { val Dummy = 1 }")).isEmpty()) {
             "la definición de AqShapes en el token layer debe pasar"
         }
+
+        // Fixtures negativos de verifyNoLegacyAnywhere: declaración legacy
+        // en core/ui/components, uso legacy en un androidUnitTest, y
+        // AqShapes.Medium deben ser detectadas como legacy.
+        val legacySymbolRegexes = (legacySymbols + "AqShapes").distinct().map { it to Regex("\\b$it\\b") }
+        val legacyInCoreUi = "fun AqSpinner() = Unit"
+        require(legacySymbolRegexes.any { (_, r) -> r.containsMatchIn(legacyInCoreUi) }) {
+            "debe detectar símbolo legacy declarado en core/ui/components"
+        }
+        val legacyInAndroidUnitTest = "val x = AqSpinner()"
+        require(legacySymbolRegexes.any { (_, r) -> r.containsMatchIn(legacyInAndroidUnitTest) }) {
+            "debe detectar símbolo legacy usado en un androidUnitTest"
+        }
+        require(legacySymbolRegexes.any { (_, r) -> r.containsMatchIn("val s = AqShapes.Medium") }) {
+            "debe detectar AqShapes.Medium prohibido en TODO el repo"
+        }
+        // Fixtures positivos: uso Moon correcto no debe ser detectado como legacy.
+        require(legacySymbolRegexes.none { (_, r) -> r.containsMatchIn("val x = AqButton(label = \"ctx-1\", onClick = {})") }) {
+            "AqButton (Moon) no debe ser detectado como legacy"
+        }
+        require(legacySymbolRegexes.none { (_, r) -> r.containsMatchIn("val x = AqModal(show = true)") }) {
+            "AqModal (Moon) no debe ser detectado como legacy"
+        }
+        require(legacySymbolRegexes.none { (_, r) -> r.containsMatchIn("val x = AqCircularLoader()") }) {
+            "AqCircularLoader (Moon) no debe ser detectado como legacy"
+        }
         // Import material3/material prohibido en feature/.
         require(kotlinDesignViolations(featurePath, listOf("import androidx.compose.material3.Text")).isNotEmpty()) {
             "import material3 en feature/ debe fallar el gate"
@@ -1418,8 +1432,8 @@ tasks.register("verifyUxTransitionContracts") {
 
 /**
  * Mide el legado de Polaris que queda en TODO el repo (core/ui y tests
- * incluidos). No forma parte de `verifyAgendaQrArchitecture` hasta que el
- * conteo sea cero; entonces se cablea ahí (ADR-0041).
+ * incluidos). Ahora que el conteo es cero, forma parte de
+ * `verifyAgendaQrArchitecture` (ADR-0041).
  */
 tasks.register("verifyNoLegacyAnywhere") {
     group = "verification"
@@ -1462,6 +1476,7 @@ tasks.register("verifyAgendaQrArchitecture") {
         "verifyScreenContract",
         "verifyScreenContractFixtures",
         "verifyUxTransitionContracts",
+        "verifyNoLegacyAnywhere",
     )
     description = "Runs the complete Agenda QR architecture and design-system gates."
 }

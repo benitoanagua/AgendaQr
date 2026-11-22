@@ -80,17 +80,15 @@ object ScreenContracts {
             gestures = listOf("predictive-back", "horizontal-scroll", "swipe-actions", "pull-to-refresh"),
             captureStates = listOf("loading", "empty", "content", "error"),
             components = listOf(
-                "AqScreenScaffold", "AqTopBar", "AqNavBar", "AqSearchTrigger", "AqQuickAction",
-                "AqSegmentedControl", "AqListRow", "AqListBody", "AqSectionHeader",
-                "AqEmptyState", "AqStatusBanner", "AqFavoriteToggle", "AqActionSheet",
-                "AqPullToRefresh", "AqSwipeActions",
+                "AqScreen", "AqAppBar", "AqTabBar", "AqSearchInput", "AqSegmentedControl",
+                "AqMenuItem", "AqListSection", "AqSectionTitle", "AqEmptyPlaceholder",
+                "AqAlert", "AqFavoriteToggle", "AqBottomSheet", "AqPullToRefresh", "AqSwipeActions",
             ),
             a11yTests = listOf("$A11Y/DestinationsScreenA11yTest.kt"),
             tests = listOf(
                 "$A11Y/DestinationsScreenA11yTest.kt",
                 "$A11Y/UxHomeHubTest.kt",
                 "$A11Y/UxHomeFavoritesTest.kt",
-                "$A11Y/LayoutReferenceTest.kt",
                 "$PRESENTATION/commonTest/kotlin/com/agendaqr/destinations/presentation/DestinationsSectionStateTest.kt",
                 "$PRESENTATION/commonTest/kotlin/com/agendaqr/destinations/presentation/UxFilterReproductionTest.kt",
             ),
@@ -112,7 +110,7 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content"),
             components = listOf(
-                "AqScreenScaffold", "AqIconBadge", "AqListRow", "AqListBody", "AqQrPreview",
+                "AqScreen", "AqTag", "AqMenuItem", "AqListSection", "AqQrPreview",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf("$A11Y/ScreensA11yCoverageTest.kt", "$A11Y/S02UiPolishTest.kt"),
@@ -134,11 +132,11 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content"),
             components = listOf(
-                "AqScreenScaffold", "AqTopBar", "AqQrPreview", "AqCard",
-                "AqEmptyState", "AqBottomAction", "AqStatusBanner", "AqProgressBar",
+                "AqScreen", "AqAppBar", "AqQrPreview", "AqEmptyPlaceholder",
+                "AqDockAction", "AqAlert", "AqProgressBar",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
-            tests = listOf("$A11Y/ScreensA11yCoverageTest.kt", "$A11Y/LayoutReferenceTest.kt"),
+            tests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
         ),
         ScreenContract(
             id = "destination-detail",
@@ -160,12 +158,11 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content", "error"),
             components = listOf(
-                "AqScreenScaffold", "AqQrPreview", "AqListBody", "AqListRow",
-                "AqBottomAction", "AqPrimaryButton", "AqSecondaryButton", "AqActionSheet", "AqDialog",
-                "AqBottomSheet", "AqTooltip",
+                "AqScreen", "AqQrPreview", "AqListSection", "AqMenuItem",
+                "AqDockAction", "AqButton", "AqButton", "AqBottomSheet", "AqModal", "AqBottomSheet", "AqTooltip",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
-            tests = listOf("$A11Y/QrFullscreenTest.kt", "$A11Y/LayoutReferenceTest.kt"),
+            tests = listOf("$A11Y/QrFullscreenTest.kt"),
         ),
         ScreenContract(
             id = "destination-edit",
@@ -184,11 +181,11 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content"),
             components = listOf(
-                "AqScreenScaffold", "AqTextField", "AqPrimaryButton", "AqBottomAction", "AqDialogList",
+                "AqScreen", "AqTextInput", "AqButton", "AqDockAction", "AqModal",
                 "AqSwitch",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
-            tests = listOf("$A11Y/LayoutReferenceTest.kt"),
+            tests = emptyList(),
         ),
         ScreenContract(
             id = "qr-fullscreen",
@@ -206,7 +203,7 @@ object ScreenContracts {
             states = listOf("content", "error"),
             gestures = emptyList(),
             captureStates = listOf("content", "error"),
-            components = listOf("AqQrPreview", "AqTopBar"),
+            components = listOf("AqQrPreview", "AqAppBar"),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf("$A11Y/QrFullscreenTest.kt"),
         ),
@@ -229,8 +226,8 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("empty", "content"),
             components = listOf(
-                "AqScreenScaffold", "AqSearchField", "AqListRow", "AqListBody",
-                "AqSectionHeader", "AqEmptyState", "AqNavBar",
+                "AqScreen", "AqSearchInput", "AqMenuItem", "AqListSection",
+                "AqSectionTitle", "AqEmptyPlaceholder", "AqTabBar",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -256,9 +253,9 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("loading", "empty", "content"),
             components = listOf(
-                "AqScreenScaffold", "AqTopBar", "AqListRow", "AqListBody",
-                "AqTabs", "AqContextBadge", "AqEmptyState", "AqLoading",
-                "AqStatusBanner", "AqTextAction", "AqNavBar",
+                "AqScreen", "AqAppBar", "AqMenuItem", "AqListSection", "AqTabBar",
+                "AqTag", "AqEmptyPlaceholder", "AqCircularLoader",
+                "AqAlert", "AqButton", "AqTabBar",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -284,8 +281,8 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content", "empty"),
             components = listOf(
-                "AqScreenScaffold", "AqTabs", "AqListRow", "AqListBody",
-                "AqEmptyState", "AqContextBadge",
+                "AqScreen", "AqTabBar", "AqMenuItem", "AqListSection",
+                "AqEmptyPlaceholder", "AqTag",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -312,13 +309,12 @@ object ScreenContracts {
             gestures = listOf("swipe-actions", "pull-to-refresh"),
             captureStates = listOf("empty", "content"),
             components = listOf(
-                "AqScreenScaffold", "AqSegmentedControl", "AqExtendedFab", "AqListRow",
-                "AqListBody", "AqEmptyState", "AqDialogList", "AqNavBar",
+                "AqScreen", "AqSegmentedControl", "AqButton", "AqMenuItem",
+                "AqListSection", "AqEmptyPlaceholder", "AqModal", "AqTabBar",
                 "AqPullToRefresh", "AqSwipeActions",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
-                "$A11Y/LayoutReferenceTest.kt",
                 "$PRESENTATION/commonTest/kotlin/com/agendaqr/destinations/presentation/OperationDateTest.kt",
             ),
         ),
@@ -339,8 +335,8 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content"),
             components = listOf(
-                "AqScreenScaffold", "AqListBody", "AqListRow", "AqTonalTag",
-                "AqActionSheet", "AqDialogList",
+                "AqScreen", "AqListSection", "AqMenuItem", "AqTag",
+                "AqBottomSheet", "AqModal",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -364,9 +360,8 @@ object ScreenContracts {
             gestures = listOf("horizontal-scroll"),
             captureStates = listOf("content"),
             components = listOf(
-                "AqScreenScaffold", "AqSegmentedControl", "AqAmountField", "AqTextField",
-                "AqBottomAction", "AqDialogList", "AqDatePickerDialog", "AqTimePickerDialog",
-                "AqSectionHeader",
+                "AqScreen", "AqSegmentedControl", "AqAmountInput", "AqTextInput",
+                "AqDockAction", "AqModal", "AqSectionTitle",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -394,7 +389,7 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("empty", "content"),
             components = listOf(
-                "AqScreenScaffold", "AqListRow", "AqEmptyState", "AqDialogList",
+                "AqScreen", "AqMenuItem", "AqEmptyPlaceholder", "AqModal",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf("$A11Y/UxUnassociatedTest.kt"),
@@ -416,8 +411,7 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("selection", "empty"),
             components = listOf(
-                "AqDialog", "AqDialogList", "AqListRow", "AqTextField",
-                "AqTextAction",
+                "AqModal", "AqMenuItem", "AqTextInput", "AqButton",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -443,8 +437,8 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("review", "error", "saved"),
             components = listOf(
-                "AqScreenScaffold", "AqStatusBanner", "AqListRow", "AqListBody",
-                "AqBottomAction", "AqEmptyState", "AqDialogList", "AqProgressBlock",
+                "AqScreen", "AqAlert", "AqMenuItem", "AqListSection",
+                "AqDockAction", "AqEmptyPlaceholder", "AqModal", "AqProgressBlock",
             ),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
@@ -472,7 +466,7 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("content", "error"),
             components = listOf(
-                "AqScreenScaffold", "AqListBody", "AqListRow", "AqStatusBanner", "AqLoading",
+                "AqScreen", "AqListSection", "AqMenuItem", "AqAlert", "AqCircularLoader",
             ),
             a11yTests = listOf("$A11Y/AccessibilityStatesFormsTest.kt"),
             tests = listOf("$A11Y/AccessibilityStatesFormsTest.kt"),
@@ -493,7 +487,7 @@ object ScreenContracts {
             states = listOf("content", "loading", "error", "saving"),
             gestures = emptyList(),
             captureStates = listOf("content", "error"),
-            components = listOf("AqTextField", "AqPrimaryButton", "AqStatusBanner"),
+            components = listOf("AqTextInput", "AqButton", "AqAlert"),
             a11yTests = listOf("$A11Y/AccessibilityStatesFormsTest.kt"),
             tests = listOf(
                 "$A11Y/AccessibilityStatesFormsTest.kt",
@@ -517,8 +511,8 @@ object ScreenContracts {
             gestures = emptyList(),
             captureStates = listOf("locked", "error"),
             components = listOf(
-                "AqScreenScaffold", "AqIconBadge", "AqPinDots", "AqKeypad",
-                "AqBottomAction", "AqSecondaryButton",
+                "AqScreen", "AqTag", "AqPinDots", "AqKeypad",
+                "AqDockAction", "AqButton",
             ),
             a11yTests = listOf(
                 "$A11Y/ScreensA11yCoverageTest.kt",
@@ -547,7 +541,7 @@ object ScreenContracts {
             states = listOf("content", "permission", "error"),
             gestures = emptyList(),
             captureStates = listOf("content"),
-            components = listOf("AqScannerFrame", "AqTopBar", "AqPrimaryButton"),
+            components = listOf("AqScannerFrame", "AqAppBar", "AqButton"),
             a11yTests = listOf("$A11Y/ScreensA11yCoverageTest.kt"),
             tests = listOf(
                 "$PRESENTATION/commonTest/kotlin/com/agendaqr/destinations/presentation/CameraPermissionPolicyTest.kt",
