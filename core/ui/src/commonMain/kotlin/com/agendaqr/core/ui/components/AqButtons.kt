@@ -50,6 +50,7 @@ import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqColorScheme
+import com.agendaqr.core.ui.theme.AqControlParams
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
