@@ -212,128 +212,25 @@ internal fun OperationEditorScreen(
             errorMessage = if (amountInvalid) AppStrings.ImporteInvalido else null,
         )
         OperationTypeSelector(type = type, onSelect = { type = it })
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-        ) {
-            AqText(
-                text = AppStrings.LabelMoneda,
-                size = AqType.Label,
-                color = AqColor.TextPrimary,
-            )
-            AqSegmentedControl(
-                options = listOf(
-                    com.agendaqr.core.ui.components.AqSegmentedOption(AppStrings.MonedaBob),
-                    com.agendaqr.core.ui.components.AqSegmentedOption(AppStrings.MonedaUsd),
-                    com.agendaqr.core.ui.components.AqSegmentedOption(
-                        label = if (currencyCustomOpen && currency.isNotBlank()) currency.trim().uppercase() else AppStrings.MonedaOtra,
-                    ),
-                ),
-                selectedIndex = when {
-                    currency == AppStrings.MonedaBob -> 0
-                    currency == AppStrings.MonedaUsd -> 1
-                    currencyCustomOpen -> 2
-                    else -> -1
-                },
-                onSelect = { index ->
-                    when (index) {
-                        0 -> { currency = AppStrings.MonedaBob; currencyCustomOpen = false }
-                        1 -> { currency = AppStrings.MonedaUsd; currencyCustomOpen = false }
-                        2 -> {
-                            if (currency == AppStrings.MonedaBob || currency == AppStrings.MonedaUsd) { currency = "" }
-                            currencyCustomOpen = true
-                        }
-                    }
-                },
-            )
-            if (currencyCustomOpen) {
-                AqTextInput(
-                    label = AppStrings.CodigoMoneda,
-                    value = currency,
-                    onValueChange = { currency = it },
-                    leadingIcon = com.agendaqr.core.ui.components.AqIcons.Wallet,
-                )
-            }
-        }
-        AqSectionTitle(text = AppStrings.FechaYHora)
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
-        ) {
-            AqMenuItem(
-                title = (relativeDayLabel(occurredAtMillis, com.agendaqr.destinations.domain.nowMillis())?.let { it + " · " } ?: "") + formatDateTime(occurredAtMillis),
-                subtitle = AppStrings.Fecha,
-                onClick = { showDatePicker = true },
-                leading = {
-                    AqIcon(
-                        imageVector = com.agendaqr.core.ui.components.AqIcons.Calendar,
-                        contentDescription = null,
-                        tint = AqColor.TextSecondary,
-                    )
-                },
-            )
-            val quickDay = when (relativeDayLabel(occurredAtMillis, com.agendaqr.destinations.domain.nowMillis())) {
-                AppStrings.Hoy -> 0
-                AppStrings.Ayer -> 1
-                else -> -1
-            }
-            AqSegmentedControl(
-                options = listOf(
-                    com.agendaqr.core.ui.components.AqSegmentedOption(AppStrings.Hoy),
-                    com.agendaqr.core.ui.components.AqSegmentedOption(AppStrings.Ayer),
-                ),
-                selectedIndex = quickDay,
-                onSelect = { index ->
-                    occurredAtMillis = when (index) {
-                        0 -> com.agendaqr.destinations.domain.nowMillis()
-                        1 -> minusCivilDays(com.agendaqr.destinations.domain.nowMillis(), 1)
-                        else -> occurredAtMillis
-                    }
-                },
-            )
-        }
-        AqSectionTitle(text = AppStrings.DetallesDeLaActividad)
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-        ) {
-            AqTextInput(
-                label = AppStrings.LabelPersonaOEntidad,
-                value = person,
-                onValueChange = { person = it },
-                maxLength = FieldLimits.PersonaOEntidad,
-                leadingIcon = com.agendaqr.core.ui.components.AqIcons.Store,
-            )
-            val counterparts = remember(state.operations) { recentCounterparts(state.operations) }
-            if (counterparts.isNotEmpty()) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-                ) {
-                    counterparts.forEachIndexed { index, c ->
-                        AqChip(
-                            text = c,
-                            selected = index == counterparts.indexOf(person.trim()).takeIf { it >= 0 } ?: -1,
-                            onClick = { person = c },
-                        )
-                    }
-                }
-            }
-            AqMenuItem(
-                title = contextSelection.contextId?.let { id ->
-                    AppStrings.ParaContextoElegido + (state.contexts.firstOrNull { it.id == id }?.name ?: AppStrings.ContextoGenerico)
-                } ?: AppStrings.ParaElegirContexto,
-                subtitle = AppStrings.PuedesSinContexto,
-                onClick = { contextSelection = contextSelection.openPicker() },
-                leading = {
-                    AqIcon(
-                        imageVector = com.agendaqr.core.ui.components.AqIcons.QrCode,
-                        contentDescription = null,
-                        tint = AqColor.TextSecondary,
-                    )
-                },
-            )
-        }
+        OperationCurrencySelector(
+            currency = currency,
+            customOpen = currencyCustomOpen,
+            onCurrencyChange = { currency = it },
+            onCustomOpenChange = { currencyCustomOpen = it },
+        )
+        OperationDateTimeSection(
+            occurredAtMillis = occurredAtMillis,
+            onPickDate = { showDatePicker = true },
+            onChange = { occurredAtMillis = it },
+        )
+        OperationDetailsSection(
+            person = person,
+            onPersonChange = { person = it },
+            operations = state.operations,
+            contexts = state.contexts,
+            contextSelection = contextSelection,
+            onOpenContextPicker = { contextSelection = contextSelection.openPicker() },
+        )
         if (showDetails) {
             AqAccordion(
                 title = AppStrings.MasDetalles,

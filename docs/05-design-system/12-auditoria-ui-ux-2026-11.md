@@ -169,3 +169,9 @@ Corrección de causas raíz en `core/ui` (commit `bbabcc9`) y composición de pa
 
 Decisiones de producto aplicadas (D1–D7): véase `ADR-0043`.
 
+
+## Cierre A-07 / A-11 (extracción sin cambio de comportamiento)
+
+- A-07: la bandeja vive en `UnassociatedScreen.kt`; `OperationListScreen.kt` es un envoltorio de 20 líneas.
+- A-11: `DestinationsScreen.kt` (499→365; tarjeta y fila en `DestinationRow.kt`), `ImportBatchScreen.kt` (483→241; secciones en `ImportBatchSections.kt`), `OperationEditorScreen.kt` (484→381; `OperationCurrencySelector`, `OperationDateTimeSection` y `OperationDetailsSection` en `OperationEditorSections.kt`, sin estado propio).
+- Pendiente (requiere emulador): regenerar capturas de la galería (`AqDesignSystemGallery`), por el cambio de icono de «sin resultados» y el copy de la bandeja vacía.
