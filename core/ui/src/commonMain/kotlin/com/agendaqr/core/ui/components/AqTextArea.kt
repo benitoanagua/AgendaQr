@@ -106,14 +106,12 @@ fun AqTextArea(
         else -> AqSquircles.InteractiveSm
     }
     val verticalPadding = when (size) {
-        AqTextInputSize.Xs -> AqLayout.InputPaddingVerticalXs
         AqTextInputSize.Sm -> AqLayout.InputPaddingVerticalSm
         AqTextInputSize.Md -> AqLayout.InputPaddingVerticalMd
         AqTextInputSize.Lg -> AqLayout.InputPaddingVerticalLg
         AqTextInputSize.Xl -> AqLayout.InputPaddingVerticalXl
     }
     val horizontalPadding = when (size) {
-        AqTextInputSize.Xs -> AqLayout.InputPaddingHorizontalXs
         AqTextInputSize.Sm -> AqLayout.InputPaddingHorizontalSm
         AqTextInputSize.Md -> AqLayout.InputPaddingHorizontalMd
         AqTextInputSize.Lg -> AqLayout.InputPaddingHorizontalLg

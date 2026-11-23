@@ -61,12 +61,12 @@ import com.agendaqr.core.ui.theme.AqSquircles
  * texto ([AqErrorMessage]) y se asocia a la semántica del campo.
  *
  * Geometría Moon (§ TextInput):
- * - Altura visual por tamaño: xs 24 / sm 32 / md 40 / lg 48 / xl 56 dp
+ * - Altura visual por tamaño: sm 32 / md 40 / lg 48 / xl 56 dp
  *   ([AqSize]); el área táctil es ≥ 48 dp ([AqMetrics.ControlMinSize])
  *   mediante un wrapper de toque invisible centrado alrededor de la caja.
- * - Relleno vertical de la caja: xs 2 / sm 2 / md 4 / lg 6 / xl 9 dp
- *   ([AqLayout.InputPaddingVertical*]); relleno horizontal: xs 8 / sm 8 /
- *   md 12 / lg 12 / xl 16 dp ([AqLayout.InputPaddingHorizontal*]).
+ * - Relleno vertical de la caja: sm 2 / md 4 / lg 6 / xl 9 dp
+ *   ([AqLayout.InputPaddingVertical*]); relleno horizontal: sm 8 / md 12 /
+ *   lg 12 / xl 16 dp ([AqLayout.InputPaddingHorizontal*]).
  * - Hueco etiqueta-caja: 8 dp ([AqLayout.LabelToField]); hueco
  *   etiqueta-optionalLabel: 8 dp ([AqSize.X4s]); hueco interno
  *   icono-texto: 8 dp (xl 16 dp).
@@ -115,19 +115,16 @@ fun AqTextInput(
         else -> AqColor.OnDisabled.copy(alpha = 0.3f)
     }
     val shape: androidx.compose.ui.graphics.Shape = when (size) {
-        AqTextInputSize.Xs -> AqSquircles.InteractiveXs
         AqTextInputSize.Xl -> AqSquircles.InteractiveMd
         else -> AqSquircles.InteractiveSm
     }
     val verticalPadding = when (size) {
-        AqTextInputSize.Xs -> AqLayout.InputPaddingVerticalXs
         AqTextInputSize.Sm -> AqLayout.InputPaddingVerticalSm
         AqTextInputSize.Md -> AqLayout.InputPaddingVerticalMd
         AqTextInputSize.Lg -> AqLayout.InputPaddingVerticalLg
         AqTextInputSize.Xl -> AqLayout.InputPaddingVerticalXl
     }
     val horizontalPadding = when (size) {
-        AqTextInputSize.Xs -> AqLayout.InputPaddingHorizontalXs
         AqTextInputSize.Sm -> AqLayout.InputPaddingHorizontalSm
         AqTextInputSize.Md -> AqLayout.InputPaddingHorizontalMd
         AqTextInputSize.Lg -> AqLayout.InputPaddingHorizontalLg
@@ -277,7 +274,6 @@ fun AqTextInput(
 enum class AqTextInputSize(
     val height: Dp,
 ) {
-    Xs(height = AqSize.Xs),
     Sm(height = AqSize.Sm),
     Md(height = AqSize.Md),
     Lg(height = AqSize.Lg),

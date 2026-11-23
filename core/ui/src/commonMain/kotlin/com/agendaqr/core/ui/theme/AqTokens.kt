@@ -461,11 +461,10 @@ object AqLayout {
 
     /**
      * Relleno vertical interno de [AqTextInput] / [AqTextArea] por tamaño
-     * (Moon §3 TextInput: sm 2, md 4, lg 6, xl 9; xs usa el de sm). Los
-     * valores 6 y 9 no pertenecen a la escala [AqSize] y se declaran aquí
-     * como tokens del sistema, nunca como literales en los componentes.
+     * (Moon §3 TextInput: sm 2, md 4, lg 6, xl 9). Los valores 6 y 9 no
+     * pertenecen a la escala [AqSize] y se declaran aquí como tokens del
+     * sistema, nunca como literales en los componentes.
      */
-    val InputPaddingVerticalXs: Dp = 2.dp
     val InputPaddingVerticalSm: Dp = 2.dp
     val InputPaddingVerticalMd: Dp = 4.dp
     val InputPaddingVerticalLg: Dp = 6.dp
@@ -473,9 +472,8 @@ object AqLayout {
 
     /**
      * Relleno horizontal interno de [AqTextInput] / [AqTextArea] por tamaño
-     * (Moon §3 TextInput: xs 8, sm 8, md 12, lg 12, xl 16).
+     * (Moon §3 TextInput: sm 8, md 12, lg 12, xl 16).
      */
-    val InputPaddingHorizontalXs: Dp = 8.dp
     val InputPaddingHorizontalSm: Dp = 8.dp
     val InputPaddingHorizontalMd: Dp = 12.dp
     val InputPaddingHorizontalLg: Dp = 12.dp
