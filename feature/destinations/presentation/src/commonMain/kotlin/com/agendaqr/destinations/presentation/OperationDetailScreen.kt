@@ -94,6 +94,10 @@ internal fun OperationDetailScreen(
     ) {
         val amountText = operationAmountText(operation)
         val contextName = state.contexts.firstOrNull { it.id == operation.contextId }?.name
+        val hasMetadata = operation.personOrEntity != null ||
+            operation.currency != null ||
+            operation.concept != null ||
+            operation.note != null
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -140,36 +144,18 @@ internal fun OperationDetailScreen(
                     )
                 }
             }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(AqColor.SurfaceContainerLow, AqSquircles.SurfaceLg)
-                    .padding(AqSpacing.Md),
-                verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
-            ) {
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs)) {
                 AqMetaLine(label = AppStrings.FechaDeOperacion, value = formatDate(operation.occurredAt), leadingIcon = AqIcons.Calendar)
                 AqMetaLine(label = AppStrings.RegistradoEnDispositivo, value = formatDate(operation.createdAt), leadingIcon = AqIcons.Clock)
             }
-        }
-
-        val hasMetadata = operation.personOrEntity != null ||
-            operation.currency != null ||
-            operation.concept != null ||
-            operation.note != null
-        if (hasMetadata) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(AqColor.Surface, AqSquircles.SurfaceLg)
-                    .aqShadow(AqShadow.Sm, AqSquircles.SurfaceLg)
-                    .padding(AqSpacing.Lg),
-                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
-            ) {
-                operation.personOrEntity?.let { AqMetaLine(label = AppStrings.LabelPersonaOEntidad, value = it) }
-                operation.currency?.let { AqMetaLine(label = AppStrings.LabelMoneda, value = it) }
-                operation.concept?.let { AqMetaLine(label = AppStrings.LabelConcepto, value = it) }
-                operation.note?.let {
-                    AqText(it, color = AqColor.TextSecondary)
+            if (hasMetadata) {
+                Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                    operation.personOrEntity?.let { AqMetaLine(label = AppStrings.LabelPersonaOEntidad, value = it) }
+                    operation.currency?.let { AqMetaLine(label = AppStrings.LabelMoneda, value = it) }
+                    operation.concept?.let { AqMetaLine(label = AppStrings.LabelConcepto, value = it) }
+                    operation.note?.let {
+                        AqText(it, color = AqColor.TextSecondary)
+                    }
                 }
             }
         }

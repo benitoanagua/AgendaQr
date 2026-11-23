@@ -39,30 +39,23 @@ internal fun AuthScreen(
     onSignUp: () -> Unit,
 ) {
     val toastHost: com.agendaqr.core.ui.components.AqToastHostState? = null
-    // Errores de validación del formulario, derivados del state (no de un
-    // remember local) para que sobrevivan a la recreación de la actividad
-    // sin depender de rememberSaveable. Se muestran siempre que el formulario
-    // esté inválido; el submit (onSignIn) solo se dispara cuando es válido.
-    // Errores de validación del formulario, derivados del state (no de un
-    // remember local) para que sobrevivan a la recreación de la actividad.
-    val validationMessages = mutableListOf<String>()
-    if (state.email.isBlank()) {
-        validationMessages += AppStrings.IngresaUnCorreoValido
-    }
-    if (state.password.length < 6) {
-        validationMessages += AppStrings.Minimo6Caracteres
-    }
-    state.errorMessage?.let { validationMessages += it.display() }
+    // Errores de validación de campo, derivados del state para que
+    // sobrevivan a la recreación. Se muestran en cada campo mediante
+    // AqTextInput(isError, errorMessage); las AqAlert apiladas se
+    // eliminan (D5).
+    val emailInvalid = state.email.isBlank()
+    val passwordInvalid = state.password.length < 6
     AqScreen(
         title = "",
         onBack = { },
         statusContent = null,
         toastHost = null,
     ) {
-        validationMessages.forEach { message ->
+        // Error remoto de autenticación (no apilado: un solo banner).
+        state.errorMessage?.let {
             AqAlert(
                 tone = AqTone.Danger,
-                message = message,
+                message = it.display(),
                 dismissLabel = AppStrings.Cerrar,
                 onDismiss = { },
             )
@@ -71,11 +64,15 @@ internal fun AuthScreen(
             label = AppStrings.Correo,
             value = state.email,
             onValueChange = onEmailChanged,
+            isError = emailInvalid,
+            errorMessage = if (emailInvalid) AppStrings.IngresaUnCorreoValido else null,
         )
         AqTextInput(
             label = AppStrings.Contrasena,
             value = state.password,
             onValueChange = onPasswordChanged,
+            isError = passwordInvalid,
+            errorMessage = if (passwordInvalid) AppStrings.Minimo6Caracteres else null,
         )
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -87,7 +84,7 @@ internal fun AuthScreen(
             AqButton(
                 label = AppStrings.IniciarSesion,
                 onClick = {
-                    if (!state.isSubmitting && validationMessages.isEmpty()) {
+                    if (!state.isSubmitting && !emailInvalid && !passwordInvalid) {
                         onSignIn()
                     }
                 },

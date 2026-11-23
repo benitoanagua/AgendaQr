@@ -141,5 +141,5 @@ private fun typeDisplayName(type: AgendaSearchResultType): String = when (type) 
     AgendaSearchResultType.QR -> AppStrings.TipoQr
     AgendaSearchResultType.ACTIVITY -> AppStrings.TipoActividad
     AgendaSearchResultType.COMPROBANTE -> AppStrings.TipoComprobante
-    else -> type.name
+    AgendaSearchResultType.CONTEXT -> AppStrings.TipoContexto
 }

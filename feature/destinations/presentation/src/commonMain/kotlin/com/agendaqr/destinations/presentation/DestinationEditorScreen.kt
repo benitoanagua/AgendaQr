@@ -18,7 +18,6 @@ import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqScreen
-import com.agendaqr.core.ui.components.AqSectionTitle
 import com.agendaqr.core.ui.components.AqSwitch
 import com.agendaqr.core.ui.components.AqTag
 import com.agendaqr.core.ui.components.AqText
@@ -86,19 +85,16 @@ fun DestinationEditorScreen(
                 onDismiss = onClearError,
             )
         }
-        AqSectionTitle(text = AppStrings.LabelNombre)
         AqTextInput(
             label = AppStrings.LabelNombre,
             value = name,
             onValueChange = { },
         )
-        AqSectionTitle(text = AppStrings.LabelNota)
         AqTextInput(
             label = AppStrings.LabelNota,
             value = note,
             onValueChange = { },
         )
-        AqSectionTitle(text = AppStrings.Contexto)
         AqMenuItem(
             title = contextId?.takeIf { it.isNotEmpty() }?.let { AppStrings.CtxPrefix + it } ?: AppStrings.SinContexto,
             subtitle = AppStrings.Opcional,
@@ -107,7 +103,6 @@ fun DestinationEditorScreen(
                 AqTag(text = contextId?.take(1)?.uppercase() ?: AppStrings.UnknownMarker)
             },
         )
-        AqSectionTitle(text = AppStrings.Favorito)
         AqSwitch(
             label = AppStrings.MarcarComoFavorito,
             checked = favorite,

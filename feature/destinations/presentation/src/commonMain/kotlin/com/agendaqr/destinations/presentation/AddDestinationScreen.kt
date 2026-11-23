@@ -40,10 +40,12 @@ fun AddDestinationScreen(
                 icon = AqIcons.Gallery,
                 modifier = Modifier.fillMaxWidth(),
             )
+            // D1: la segunda acción primaria del documento pasa a Outlined
+            // para no competir con la primera (Elegir de la galería).
             AqButton(
                 label = AppStrings.Camara,
                 onClick = onImport,
-                variant = AqButtonVariant.Primary,
+                variant = AqButtonVariant.Outline,
                 icon = AqIcons.Camera,
                 modifier = Modifier.fillMaxWidth(),
             )
