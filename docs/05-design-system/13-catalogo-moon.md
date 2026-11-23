@@ -54,7 +54,7 @@ Color, tipografía, iconografía, geometría y movimiento se portan desde Moon; 
 | `MoonToast` | `widgets/toast` | original, inverted; recorrido 64 dp; 200 ms entre toasts | `AqToast` | disponible |
 | `MoonTooltip` | `widgets/tooltip` | posición | `AqTooltip` | disponible |
 
-Transversales: `MoonBaseControl` (foco, hover, pressed, long-press; efectos pulse, scale y foco), `MoonFocusEffect`, `MoonEffectsTheme`, `utils/touch_target_padding.dart` (ampliación del área táctil).
+Transversales: `MoonBaseControl` (foco, hover, pressed, long-press; efectos pulse, scale y foco), `MoonFocusEffect`, `MoonEffectsTheme`, `utils/touch_target_padding.dart` (ampliación del área táctil). `AqButton` aplica el scale pressed de Moon (0,96) al contenido visual, preserva el hit target y lo desactiva con reducción de movimiento. El pressed no cambia el relleno ni el color del texto: PV-01 prohíbe usar `brandFillActive`, `dangerActive` o `surfaceActive` como estados inventados de botón.
 
 ## 3. Medidas de referencia Moon (`theme/*/*_sizes.dart`)
 
