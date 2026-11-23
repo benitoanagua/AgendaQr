@@ -2,7 +2,7 @@
 
 **Estado:** Disponible — portado de Moon Design.
 **Fuente:** `moon_design` 1.1.0, `lib/src/widgets/text_input`.
-**Implementación:** `core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/AqInputs.kt`.
+**Implementación:** `core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/AqTextInput.kt`.
 
 ## Origen
 Puerto de `MoonTextInput` / `MoonFormTextInput`. Etiqueta persistente sobre la caja, borde de 1 dp que pasa a color de foco o error, radio squircle interactivo, slots para ícono leading y contenido trailing.
@@ -32,4 +32,4 @@ Objetivo táctil mínimo de 48 dp (D-02).
 Rol de campo editable, `contentDescription` con la etiqueta, `error` semántica con el mensaje, `liveRegion` cortés para errores.
 
 ## Uso en pantalla
-Disponible; las pantallas aún usan `AqTextField` (wrapper de compatibilidad) y no han migrado a `AqTextInput`.
+Disponible; las pantallas ya componen con `AqTextInput` (etiqueta persistente, hueco etiqueta-caja `LabelToField` = 8 dp, relleno vertical por tamaño y área táctil de 48 dp mediante wrapper de toque invisible).

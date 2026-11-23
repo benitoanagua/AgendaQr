@@ -147,3 +147,25 @@ Estado verificado en código: A-01…A-06 y A-12 (iconografía/miniaturas) ya es
 | Galería sin cobertura estricta de estados declarados | `ScreenContractGate.kt`, `agendaqr.design-system.gradle.kts` | Ver ADR-0007 (enmienda 2026-11-21) |
 
 Pendiente sin cambio de contrato: A-09/A-10 (CTA en bandeja vacía y pulsación larga) requieren decisión de producto.
+
+---
+
+## 8. Actualización 2026-11-22 — corrección de geometría Moon (Síntomas S1–S10)
+
+Corrección de causas raíz en `core/ui` (commit `bbabcc9`) y composición de pantallas en `feature/` (commit `921f0b6`). Todas las puertas de su respectiva suite están en verde salvo lo anotado como NO VERIFICADO.
+
+| Síntoma | Causa confirmada | Archivo | Commit | Puerta de cobertura | Estado |
+|---|---|---|---|---|---|
+| S1 | Etiquetas de acciones rápidas y disparador de búsqueda, una letra por línea | `AqQuickAction.kt` (ancho fijo 48 dp) | `bbabcc9` | `AqLayoutGeometryTest` (quick_action_label_width_and_touch_target) | Corregido |
+| S2 | Filtros y pestañas truncados; `weight(1f)` dentro de `horizontalScroll` | `AqTabBar.kt`, `AqPillTab.kt` | `bbabcc9` | `AqLayoutGeometryTest` (tab_bar / pill_tab_long_label_width) | Corregido |
+| S3 | Bloques apilados a 0 dp; Column de contenido sin `verticalArrangement` | `AqScreen.kt` | `bbabcc9` | `AqLayoutGeometryTest` (screen_children_do_not_collapse_to_zero) | Corregido |
+| S4 | Etiqueta lejos de su caja; `heightIn(48)` en la etiqueta | `AqTextInput.kt` | `bbabcc9` | `AqLayoutGeometryTest` (text_input_label_and_touch_target) | Corregido |
+| S5 | Filas sin texto (ancho de título colapsado) | `AqMenuItem.kt` (Spacer de peso) | `bbabcc9` | `AqListRowTest` (menu_item_title_has_positive_width) | Corregido |
+| S6 | Alerta con mensaje en columna estrecha (botones comparten la fila) | `AqAlert.kt` | `bbabcc9` | `AqLayoutGeometryTest` (alert_message_and_two_actions) | Corregido |
+| S7 | Títulos de pantallas raíz pegados a x = 0 | `AqAppBar.kt` (sin `ScreenMargin`) | `bbabcc9` | `AqLayoutGeometryTest` (root_app_bar_title_exists) | Corregido |
+| S8 | Puntos del PIN tapados por la primera fila del teclado | `AqPinEntry.kt` / `AqKeypad.kt` (sin separación) | `bbabcc9` | `AqLayoutGeometryTest` (pin_dots_and_keypad_compose_without_overlap) | Corregido |
+| S9 | Subtítulo de «Muéstralo» = cabecera base64 de PNG | Causa de producción: mapeo del modelo de destino QR en `QrDisplayEffects` / detalle de destino; no se inventó texto | `921f0b6` | `AqLayoutGeometryTest` (no aplica a este síntoma de contenido) | Documentado (D6) |
+| S10 | Dos botones primarios apilados (Añadir destino); título de sección repetido como label del campo (Editar destino); filtro CONTEXT en mayúsculas (Buscar) | `AddDestinationScreen.kt`, `DestinationEditorScreen.kt`, `GlobalSearchScreen.kt` | `921f0b6` | `feature/destinations/presentation:testDebugUnitTest` + `LayoutReferenceTest` | Corregido (D1, D4, D7) |
+
+Decisiones de producto aplicadas (D1–D7): véase `ADR-0043`.
+

@@ -14,8 +14,8 @@ Contenedor con radio squircle (borde interactivo de Moon), relleno, etiqueta cen
 | Tamaño | Alto | Relleno horiz. | Hueco ícono-etiqueta | Radio | Ícono |
 |--------|------|----------------|----------------------|-------|-------|
 | Xs | 24 dp | 8 dp | 4 dp | InteractiveXs (4 dp) | 16 dp |
-| Sm | 32 dp | 12 dp | 4 dp | InteractiveSm (8 dp) | 24 dp |
-| Md | 40 dp | 16 dp | 8 dp | InteractiveSm (8 dp) | 24 dp |
+| Sm | 32 dp | 12 dp | 4 dp | InteractiveSm (8 dp) | 20 dp |
+| Md | 40 dp | 16 dp | 8 dp | InteractiveSm (8 dp) | 20 dp |
 | Lg | 48 dp | 16 dp | 12 dp | InteractiveSm (8 dp) | 24 dp |
 | Xl | 56 dp | 24 dp | 16 dp | InteractiveMd (12 dp) | 24 dp |
 

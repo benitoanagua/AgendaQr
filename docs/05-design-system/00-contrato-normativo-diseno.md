@@ -62,6 +62,13 @@ Se fija `@shopify/polaris-tokens@9.4.2` por ser la versión publicada verificabl
 8. **Sin marca Shopify.** Ni nombre, logo ni marca de Shopify en app, UI o
    documentación de producto. Las referencias técnicas solo aparecen en
    documentación de ingeniería.
+9. **Espaciado único (AqLayout).** Todo hueco, relleno y separación entre
+   componentes se declara con la escala `AqLayout` de `AqTokens.kt`
+   (`BetweenOrganisms`, `InGroup`, `CellPadding`, `CardPadding`,
+   `LabelToField`, `DockVertical`), cuyos valores son los números de la tabla
+   Moon expresados con sus tokens (`AqSpacing` / `AqSize`). Nunca se usa
+   `AqSize` como escala genérica de huecos ni literales visuales sueltos fuera
+   de la capa de tokens.
 
 ### Roles semánticos de partida (valores verificados)
 
@@ -161,7 +168,7 @@ Construidas solo con tokens y componentes de Polaris; no son valores propios.
 | D-08 | Proporciones internas de composición | Alfas de selección y fracciones de ancho/glifo/desplazamiento no son escalas publicadas; se concentran en `AqTokens.kt` y se conservan para no alterar el layout verificado. |
 | D-10 | Modelo de sombras de Compose | `Modifier.shadow` expone elevación y color, pero no `offsetY` ni `spread`. `AqElevation` conserva la geometría publicada (`:363-368`) como metadato y aplica el radio de desenfoque; `shadow-100` se anula en `light-mobile` (`:497`). |
 | D-11 | Contenedores tonales del tema oscuro | `dark-experimental` no publica contenedores de estado. Se derivan mezclando cada `*Fill` publicado al 16 % sobre `gray800` (la superficie oscura publicada), de modo que el bloque tonal se distinga de `surface` y conserve el par de contenido en AA. |
-| D-12 | Ritmo de 16 dp entre tarjetas de página | `light-mobile` publica `space-card-gap` de 8 dp (`:511`). Con 16 dp de relleno interno, un hueco de 8 dp entre tarjetas lee como un solo bloque; se usa 16 dp para conservar la separación de secciones a 360 dp. `AqScreenScaffold` aplica ese mismo paso de 16 dp por defecto entre organismos. |
+| D-12 | Ritmo de 16 dp entre tarjetas de página | `light-mobile` publica `space-card-gap` de 8 dp (`:511`). Con 16 dp de relleno interno, un hueco de 8 dp entre tarjetas lee como un solo bloque; se usa 16 dp para conservar la separación de secciones a 360 dp. `AqScreen` aplica ese paso por defecto mediante `contentSpacing = AqLayout.BetweenOrganisms` (16 dp = `AqSpacing.Lg`) en su Column de contenido, y `AqLayout.DockVertical` (12 dp = `AqSize.X3s`) en el dock inferior. |
 
 ## 5. Gobernanza
 

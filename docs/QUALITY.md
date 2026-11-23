@@ -308,8 +308,9 @@ evalúa en configuración).
 
 | Puerta | Comando | Qué verifica |
 |---|---|---|
-| Arquitectura + design system + no-scripts | `./gradlew verifyAgendaQrArchitecture` | `verifyDocs`, `verifyNoScripts`, `verifyDesignSystemCompliance`, `verifyDesignSystemFixtures`, `verifyControlMinSize`, `verifyArchitectureBoundaries`, `verifyScreenContract`, `verifyScreenContractFixtures` |
+| Arquitectura + design system + no-scripts | `./gradlew verifyAgendaQrArchitecture` | `verifyDocs`, `verifyNoScripts`, `verifyDesignSystemCompliance`, `verifyDesignSystemFixtures`, `verifyControlMinSize`, `verifyLayoutGeometry`, `verifyArchitectureBoundaries`, `verifyScreenContract`, `verifyScreenContractFixtures` |
 | Área táctil mínima | `verifyControlMinSize` | `AqMetrics.ControlMinSize == 48.dp` |
+| Geometría de layout (Moon) | `verifyLayoutGeometry` | Suite `AqLayoutGeometryTest` (360 dp, claro/oscuro, fuente 100 %/150 %) + fixtures de `AqQuickAction` sin ancho fijo y `AqTabBar` sin `weight` dentro de `horizontalScroll` |
 | Contrato de diseño | `verifyDesignSystemCompliance` + `verifyDesignSystemFixtures` | literales visuales fuera de tokens, imports prohibidos, copy, bordes, interacción cruda, tabla de excepciones |
 | Contrato de interacción por pantalla | `verifyScreenContract` + `verifyScreenContractFixtures` | superficie real sin contrato o contrato obsoleto, destino inexistente, prueba ausente o sin señal a11y, componente inventado, clave de copy ausente, excepción registrada sin uso, capturas con viewport falso, duplicadas o con cobertura incompleta, desalineación entre superficie, contrato, código, pruebas y documentación generada |
 | Documentación | `verifyDocs` | enlaces vivos, todo `.md` alcanzable desde `docs/README.md`, sin marcadores transitorios, ADR citadas existentes |

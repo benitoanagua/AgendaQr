@@ -1,16 +1,27 @@
-# Ficha de componente: Chips y Filtros (`AqChipGroup`, `AqChipOption`)
+# Ficha de componente: Chip (`AqChip`)
 
-- **Nombre:** Chips y Filtros (`AqChipGroup`, `AqChipOption`)
-- **Nivel de origen:** `polaris` (Nivel 1) con confirmación de patrón `moon-pattern` (`MoonChip`, `MoonTag`)
-- **Anatomía:** Píldora individual con borde sutil, icono check de selección opcional a la izquierda, etiqueta de texto (`CaptionSmall` a 12 sp) y contador numérico en badge secundario a la derecha (`radius-100`).
-- **Variantes y tamaños:** Selección única o selección múltiple dentro de `AqChipGroup`. Altura de 32 dp con área táctil mínima de 48 dp.
-- **Estados:** Default (deseleccionado con fondo transparente/secundario y borde `BorderSubdued`), Selected (fondo `BgSurface`, borde reforzado, check visible), Pressed, Disabled.
-- **Tokens Polaris:**
-  - Fondo deseleccionado: `AqColor.BgSurfaceSecondary` (`#F7F7F7` / `#262626`).
-  - Fondo seleccionado: `AqColor.BrandFill` suave o `BgSurface` con borde de selección.
-  - Texto e icono: `AqColor.Text` / `AqColor.TextSubdued`.
-  - Radio: `AqRadius.Radius200` (8 dp) o `Pill`.
-  - Contador: `AqColor.BorderSubdued` de fondo con texto `CaptionSmall` (12 sp).
-- **Accesibilidad:** `Role.Checkbox` en selección múltiple o `Role.RadioButton` en única, anuncio de estado "seleccionado" en TalkBack, target táctil 48 dp.
-- **Comportamiento Claro / Oscuro:** Se adaptan superficies y bordes manteniendo contraste 4.5:1.
-- **Notas de adaptación:** Polaris usa chips en sus vistas de índice (`IndexFilters`); Moon valida el formato compacto táctil.
+**Estado:** Disponible — portado de Moon Design.
+**Fuente:** `moon_design` 1.1.0, `lib/src/widgets/chip`.
+**Implementación:** `core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/AqChip.kt`.
+**Nota:** `AqChipGroup` y `AqChipOption` están retirados (símbolos legacy); usar `AqChip`.
+
+## Origen
+Puerto de `MoonChip`. Píldora individual con radio squircle interactivo, etiqueta de texto y ícono opcional leading.
+
+## Anatomía
+Contenedor con fondo de superficie/selección, borde opcional, etiqueta centrada y ícono decorativo opcional a la izquierda.
+
+## Tamaños (MoonChip)
+| Tamaño | Alto | Relleno horiz. | Hueco ícono-etiqueta | Radio | Ícono |
+|--------|------|----------------|----------------------|-------|-------|
+| Sm | 32 dp | 8 dp | 8 dp | InteractiveXs (4 dp) | 20 dp |
+| Md | 40 dp | 16 dp | 8 dp | InteractiveXs (4 dp) | 20 dp |
+
+## Estados
+Default, Selected (fondo `SelectionSurface`), Pressed, Disabled.
+
+## Accesibilidad
+Rol `Role.Button`, `contentDescription` con la etiqueta, target táctil 48 dp (D-02).
+
+## Uso en pantalla
+Disponible; usado en filtros de importación y selecciones de contexto.

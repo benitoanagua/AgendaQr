@@ -55,6 +55,9 @@
 | [`05-design-system/componentes/control-segmentado.md`](05-design-system/componentes/control-segmentado.md) | Ficha de componente: Control segmentado (`AqSegmentedControl`) |
 | [`05-design-system/componentes/interruptor.md`](05-design-system/componentes/interruptor.md) | Ficha de componente: Interruptor (`AqSwitch`) |
 | [`05-design-system/componentes/alerta.md`](05-design-system/componentes/alerta.md) | Ficha de componente: Alerta (`AqAlert`) |
+| [`05-design-system/componentes/menu-item.md`](05-design-system/componentes/menu-item.md) | Ficha de componente: Celda de lista (`AqMenuItem`) |
+| [`05-design-system/componentes/quick-action.md`](05-design-system/componentes/quick-action.md) | Ficha de componente: Acción rápida (`AqQuickAction`) |
+| [`05-design-system/componentes/tab-bar.md`](05-design-system/componentes/tab-bar.md) | Ficha de componente: Barra de pestañas (`AqTabBar`, `AqPillTab`) |
 | [`05-design-system/componentes/circular-loader.md`](05-design-system/componentes/circular-loader.md) | Ficha de componente: Indicador de carga circular (`AqCircularLoader`) |
 
 ## Decisiones
@@ -88,6 +91,7 @@
 | [`07-decisiones/ADR-0040-adopcion-integra-catalogo-moon.md`](07-decisiones/ADR-0040-adopcion-integra-catalogo-moon.md) | ADR: adopción íntegra del catálogo Moon |
 | [`07-decisiones/ADR-0041-cierre-migracion-moon-y-duracion-toast.md`](07-decisiones/ADR-0041-cierre-migracion-moon-y-duracion-toast.md) | ADR: cierre de la migración Moon y duración de `AqToast` |
 | [`07-decisiones/ADR-0042-nombres-componentes-retirados.md`](07-decisiones/ADR-0042-nombres-componentes-retirados.md) | ADR: nombres de componentes retirados y sus sustitutos Moon |
+| [`07-decisiones/ADR-0043-escala-espaciado-y-gate-de-geometria.md`](07-decisiones/ADR-0043-escala-espaciado-y-gate-de-geometria.md) | ADR: escala de espaciado, gate de geometría y corrección de la geometría Moon |
 
 ## Cómo se mantiene
 
