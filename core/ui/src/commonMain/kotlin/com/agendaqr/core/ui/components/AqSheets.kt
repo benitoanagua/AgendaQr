@@ -28,11 +28,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.agendaqr.core.ui.theme.AqColor
-import com.agendaqr.core.ui.theme.AqElevation
+import com.agendaqr.core.ui.theme.AqShadow
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqSpacing
-import com.agendaqr.core.ui.theme.aqElevation
+import com.agendaqr.core.ui.theme.aqShadow
 
 /**
  * Hoja inferior modal equivalente a un bottom sheet nativo (D-04).
@@ -81,7 +81,7 @@ fun AqBottomSheet(
             Column(
                 modifier = modifier
                     .fillMaxWidth()
-                    .aqElevation(AqElevation.Shadow3, AqSquircles.SurfaceLg)
+                    .aqShadow(AqShadow.Lg, AqSquircles.SurfaceLg)
                     .background(AqColor.Surface, AqSquircles.SurfaceLg)
                     .semantics { paneTitle = title }
                     .testTag("aq-bottom-sheet-pane")

@@ -16,7 +16,7 @@
 | `MoonShadows.light/dark` | `AqShadow` + `Modifier.aqShadow` | sm, md, lg, xl; capas con blur/offset/spread/alfa por tema; color de paleta |
 | `utils/squircle/*` | `AqSquircleShape`, `AqSquircles` | esquina Figma (Bézier + arco central) |
 
-Colores, tipografía e iconos de Moon **no** se importan (ADR-0039): los aporta Polaris.
+Colores, tipografía e iconos de Moon **no** se importan (ADR-0039): los aporta Moon.
 
 ## 2. Componentes
 

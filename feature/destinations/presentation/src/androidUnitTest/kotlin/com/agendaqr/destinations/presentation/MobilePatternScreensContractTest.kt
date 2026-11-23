@@ -17,7 +17,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * ADR-0028 — patrones móviles (Moon como referencia, Polaris autoridad):
+ * ADR-0028 — patrones móviles (Moon como autoridad):
  *
  * - S04: con resultados de tipos mezclados, chips de filtro por tipo
  *   (AqChipGroup); con un solo tipo no se ofrece filtro.

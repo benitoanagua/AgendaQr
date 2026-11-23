@@ -20,7 +20,7 @@ Etiqueta persistente (arriba), caja con fondo `InputSurface` y borde, ícono lea
 
 ## Estados
 - Reposo: borde `FunctionalBorder`.
-- Enfocado: borde `Focus` (énfasis de Polaris).
+- Enfocado: borde `Focus` (énfasis de Moon).
 - Pulsado: borde `Focus`.
 - Error: borde `Danger`, mensaje de error con icono `Cancel` y tono `Danger`.
 - Deshabilitado: opacidad y color `OnDisabled`.

@@ -48,7 +48,7 @@ data class AqSwipeAction(
 
 /**
  * Contenedor de fila con acciones contextuales al deslizar (swipe actions).
- * Nivel 3 (patrón nativo móvil estilizado con tokens Polaris).
+ * Nivel 3 (patrón nativo móvil estilizado con tokens Moon).
  * Expone automáticamente `customActions` en semántica para accesibilidad TalkBack.
  */
 @Composable

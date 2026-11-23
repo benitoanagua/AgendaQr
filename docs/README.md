@@ -22,13 +22,13 @@
 | [`04-ux/04-capacidades-y-comportamientos.md`](04-ux/04-capacidades-y-comportamientos.md) | Capacidades y comportamientos |
 | [`04-ux/05-guia-de-voz.md`](04-ux/05-guia-de-voz.md) | Guía de voz (tuteo) |
 
-## Sistema de diseño (Polaris reimplementado en Kotlin)
+## Sistema de diseño (Moon reimplementado en Kotlin)
 
 | Documento | Contenido |
 |---|---|
 | [`05-design-system/00-contrato-normativo-diseno.md`](05-design-system/00-contrato-normativo-diseno.md) | Contrato normativo único: fuente, tokens, extensiones y desviaciones |
-| [`05-design-system/09-instantanea-tokens-polaris-9.4.2.md`](05-design-system/09-instantanea-tokens-polaris-9.4.2.md) | Instantánea versionada de valores Polaris 9.4.2 |
-| [`05-design-system/11-matriz-gaps-mobile.md`](05-design-system/11-matriz-gaps-mobile.md) | Matriz normativa de gaps mobile y cadena de precedencia Polaris → Moon → nativo |
+| [`05-design-system/09-tokens-moon.md`](05-design-system/09-tokens-moon.md) | Valores de color, tipografía e iconos de Moon (versionado) |
+| [`05-design-system/11-matriz-gaps-mobile.md`](05-design-system/11-matriz-gaps-mobile.md) | Matriz normativa de gaps mobile y cadena de precedencia Moon → nativo |
 | [`05-design-system/12-auditoria-ui-ux-2026-11.md`](05-design-system/12-auditoria-ui-ux-2026-11.md) | Auditoría UI/UX de pantallas y componentes `Aq*` (hallazgos y plan de ejecución) |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros |
 | [`05-design-system/13-catalogo-moon.md`](05-design-system/13-catalogo-moon.md) | Catálogo de componentes Moon Design (fuente de verdad del UI/UX) |
@@ -75,10 +75,10 @@
 | [`07-decisiones/ADR-0016-identidad-local-sin-cuenta.md`](07-decisiones/ADR-0016-identidad-local-sin-cuenta.md) | ADR: identidad local sin cuenta, login no obligatorio, namespace por perfil, PIN, migración y limitaciones |
 | [`07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md`](07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md) | ADR: correcciones UX de captura rápida (enmienda ADR-0016 y la congelación UX en su alcance) |
 | [`07-decisiones/ADR-0019-enmienda-v1-9-inicio-vacio.md`](07-decisiones/ADR-0019-enmienda-v1-9-inicio-vacio.md) | ADR: enmienda V1.9 inicio vacío y separadores oscuros |
-| [`07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md`](07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md) | ADR: adopción del UI/UX de Polaris (autoridad visual) |
+| [`07-decisiones/ADR-0025-adopcion-ui-ux-sistema-anterior.md`](07-decisiones/ADR-0025-adopcion-ui-ux-sistema-anterior.md) | ADR: adopción de un sistema visual externo (reemplazado por ADR-0044) |
 | [`07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md`](07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md) | ADR: propiedad del espacio por nivel atómico y densidad móvil |
-| [`07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md`](07-decisiones/ADR-0028-moon-patrones-moviles-polaris-primario.md) | ADR: Moon como referencia de patrones móviles; Polaris autoridad visual |
-| [`07-decisiones/ADR-0029-cadena-precedencia-polaris-moon-nativo.md`](07-decisiones/ADR-0029-cadena-precedencia-polaris-moon-nativo.md) | ADR: cadena de precedencia Polaris → Moon → nativo para patrones sin equivalente Polaris |
+| [`07-decisiones/ADR-0028-moon-patrones-moviles-autoridad-visual-previa.md`](07-decisiones/ADR-0028-moon-patrones-moviles-autoridad-visual-previa.md) | ADR: patrones móviles y autoridad visual previa (reemplazado por ADR-0044) |
+| [`07-decisiones/ADR-0029-cadena-precedencia-moon-nativo.md`](07-decisiones/ADR-0029-cadena-precedencia-moon-nativo.md) | ADR: cadena de precedencia (reemplazado por ADR-0044) |
 | [`07-decisiones/ADR-0030-adopcion-primitivos-moviles-pantallas.md`](07-decisiones/ADR-0030-adopcion-primitivos-moviles-pantallas.md) | ADR: adopción de primitivos móviles en pantallas de producción |
 | [`07-decisiones/ADR-0031-adopcion-primitivos-componentes-sin-uso.md`](07-decisiones/ADR-0031-adopcion-primitivos-componentes-sin-uso.md) | ADR: política de adopción/retiro de componentes sin uso y criterio de componentes nuevos |
 | [`07-decisiones/ADR-0033-limites-de-campo-y-contador.md`](07-decisiones/ADR-0033-limites-de-campo-y-contador.md) | ADR: límites de campo y contador de caracteres |
@@ -86,12 +86,13 @@
 | [`07-decisiones/ADR-0035-insignia-navegacion-badge.md`](07-decisiones/ADR-0035-insignia-navegacion-badge.md) | ADR: insignia de navegación (badge de comprobantes sin asociar) |
 | [`07-decisiones/ADR-0036-descarte-teclado-propio-importe.md`](07-decisiones/ADR-0036-descarte-teclado-propio-importe.md) | ADR: descarte del teclado propio para el importe |
 | [`07-decisiones/ADR-0037-capacidad-share-extension.md`](07-decisiones/ADR-0037-capacidad-share-extension.md) | ADR: capacidad de plataforma para Share Extension |
-| [`07-decisiones/ADR-0038-moon-ux-polaris-ui.md`](07-decisiones/ADR-0038-moon-ux-polaris-ui.md) | ADR: autoridad dividida por dimensión (Moon UX móvil, Polaris UI) |
-| [`07-decisiones/ADR-0039-moon-rige-ui-ux-polaris-residual.md`](07-decisiones/ADR-0039-moon-rige-ui-ux-polaris-residual.md) | ADR: Moon rige todo el UI/UX; Polaris solo color, tipografía e iconos |
+| [`07-decisiones/ADR-0038-moon-ux-autoridad-dividida.md`](07-decisiones/ADR-0038-moon-ux-autoridad-dividida.md) | ADR: autoridad dividida por dimensión (reemplazado por ADR-0044) |
+| [`07-decisiones/ADR-0039-moon-rige-ui-ux.md`](07-decisiones/ADR-0039-moon-rige-ui-ux.md) | ADR: Moon rige todo el UI/UX (enmendado por ADR-0044) |
 | [`07-decisiones/ADR-0040-adopcion-integra-catalogo-moon.md`](07-decisiones/ADR-0040-adopcion-integra-catalogo-moon.md) | ADR: adopción íntegra del catálogo Moon |
 | [`07-decisiones/ADR-0041-cierre-migracion-moon-y-duracion-toast.md`](07-decisiones/ADR-0041-cierre-migracion-moon-y-duracion-toast.md) | ADR: cierre de la migración Moon y duración de `AqToast` |
 | [`07-decisiones/ADR-0042-nombres-componentes-retirados.md`](07-decisiones/ADR-0042-nombres-componentes-retirados.md) | ADR: nombres de componentes retirados y sus sustitutos Moon |
 | [`07-decisiones/ADR-0043-escala-espaciado-y-gate-de-geometria.md`](07-decisiones/ADR-0043-escala-espaciado-y-gate-de-geometria.md) | ADR: escala de espaciado, gate de geometría y corrección de la geometría Moon |
+| [`07-decisiones/ADR-0044-moon-unico-sistema-de-diseno.md`](07-decisiones/ADR-0044-moon-unico-sistema-de-diseno.md) | ADR: Moon como único sistema de diseño |
 
 ## Cómo se mantiene
 

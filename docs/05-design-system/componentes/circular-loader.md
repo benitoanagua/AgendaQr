@@ -17,7 +17,7 @@ Puerto de `MoonCircularLoader`. Indicador circular indeterminado con tamaño y t
 | lg | 48 dp | 4 dp |
 
 ## Color
-Color de Polaris (`EmphasisFill` por defecto).
+Color de Moon (`EmphasisFill` por defecto).
 
 ## Uso en pantalla
 Disponible; las pantallas aún usan `AqSpinner` (disponible).

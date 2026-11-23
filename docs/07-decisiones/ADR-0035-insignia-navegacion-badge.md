@@ -11,7 +11,7 @@ D3 del cierre de gaps: la navegación no muestra conteo de pendientes. Hay un ca
 
 ## Decisión
 
-1. `AqNavBar` y `AqNavRail` aceptan un parámetro opcional `badgeCount: Int = 0`. Cuando > 0, se muestra un `AqBadge` (tono de atención Polaris) sobre el ítem correspondiente, con tope «99+», y oculto con 0.
+1. `AqNavBar` y `AqNavRail` aceptan un parámetro opcional `badgeCount: Int = 0`. Cuando > 0, se muestra un `AqBadge` (tono de atención el sistema visual anterior) sobre el ítem correspondiente, con tope «99+», y oculto con 0.
 2. El `contentDescription` del ítem incluye el conteo («Actividades, 3 sin asociar») para TalkBack.
 3. `AqNavChromeState` gana un campo `badgeCount: Int = 0` que se lee para la pestaña activa.
 4. El ítem badgede es el de Actividades (`AppRoute.Operations`). El conteo proviene de comprobantes sin asociar (`operationState.unassociated.size`).

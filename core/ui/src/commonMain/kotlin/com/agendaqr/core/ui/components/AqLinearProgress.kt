@@ -27,7 +27,7 @@ import com.agendaqr.core.ui.theme.AqSquircles
  * - [progress]: fracción 0..1 del avance.
  * - Altura: [height] (por defecto x4s / 8 dp, [AqSize]).
  * - Radio: SurfaceXs ([AqCorner]) vía [AqSquircles].
- * - Color de relleno y pista desde Polaris.
+ * - Color de relleno y pista desde Moon.
  * - Semántica de barra de progreso con [RangeInfo].
  * - Todo el copy llega del llamador.
  */

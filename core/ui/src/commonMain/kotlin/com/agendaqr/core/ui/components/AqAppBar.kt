@@ -26,7 +26,7 @@ import com.agendaqr.core.ui.theme.AqWeight
  * Acción de la barra superior de la app.
  *
  * - [label]: etiqueta SIEMPRE visible (es la descripción accesible).
- * - [icon]: glifo opcional del mapeo de Polaris; si se omite, se pinta como
+ * - [icon]: glifo opcional del mapeo de Moon; si se omite, se pinta como
  *   acción de texto. Cuando hay icon y el label está en blanco, se renderiza
  *   solo-icono (área táctil 48 dp).
  */

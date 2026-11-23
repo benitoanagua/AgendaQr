@@ -25,7 +25,7 @@ fun visualSources(): List<File> = productionKotlinSources().toList()
 /** Capa de tokens: el único archivo con literales visuales. */
 private val TokenLayerFile = "AqTokens.kt"
 private val ThemeLayerFile = "AqTheme.kt"
-private val IconVectorFile = "PolarisIconVectors.kt"
+private val IconVectorFile = "MoonIconVectors.kt"
 
 /**
  * Allowlist de literales de UI permitidos en feature/: solo identificadores
@@ -62,13 +62,13 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     // Borde del anillo de selección de MoonRadio (AqRadio.kt es su propio archivo).
     "E-14" to listOf("border:AqRadio.kt"),
     // `Modifier.shadow` se centraliza en la capa de tokens; solo los
-    // archivos registrados pueden invocarlo (o elevarse vía `aqElevation`).
+    // archivos registrados pueden invocarlo (o elevarse vía `aqShadow`).
     // E-06 (elevación de botones) se retiró: los botones son planos y
     // `AqButtons.kt` no eleva nada; un registro sin uso lo detecta
     // `verifyScreenContract`.
 )
 
-/** Lista de símbolos legacy de la capa Polaris que NO deben importarse ni
+/** Lista de símbolos legacy de la capa legacy previa a Moon que NO deben importarse ni
  * llamarse desde `feature/`, `androidApp`, `iosApp` ni `shared`. Cada uno
  * tiene un equivalente Moon en el catálogo (§1 de la auditoría 2026-11-21)
  * o se compone únicamente con piezas Moon (catálogo §4). Se borra su
@@ -166,7 +166,7 @@ val shadowAllowedFiles: Set<String> =
     }
 
 fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = buildList {
-    // Solo los vectores Polaris vía AqIcon; los APIs de iconos de Material
+    // Solo los vectores Moon vía AqIcon; los APIs de iconos de Material
     // están prohibidos en producción.
     val bannedImports = listOf(
         "androidx.compose.material.icons",
@@ -234,7 +234,7 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
         ) {
             add("$location: forbidden radius API (use AqCorner + AqSquircleShape, no CircleShape/RectangleShape): $line")
         }
-        // ADR-0039: AqShapes es el legado de forma de Polaris; ya no se usa
+        // ADR-0039: AqShapes es el legado de forma previo a Moon; ya no se usa
         // en ningún componente de core/ui/components (solo AqCorner +
         // AqSquircleShape). La capa de tokens sigue siendo la única fuente.
         val isComponentSource = path.contains("/components/")
@@ -279,7 +279,7 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
         ) {
             add("$location: app/feature code must use core:ui tokens: $line")
         }
-        // Símbolos legacy de Polaris prohibidos en feature/ y en las apps:
+        // Símbolos legacy previos a Moon prohibidos en feature/ y en las apps:
         // cada uno tiene un equivalente Moon o se compone con piezas Moon.
         if (isAppSource) {
             legacySymbols.forEach { symbol ->
@@ -912,7 +912,7 @@ tasks.register("verifyDesignSystemFixtures") {
             }
         }
         // Iconos: los presets de Material están prohibidos en producción;
-        // Polaris va por AqIcons.
+        // Los iconos Moon van por AqIcons.
         listOf("Icons.Default", "Icons.AutoMirrored", "Icons.Sharp", "Icons.TwoTone").forEach { preset ->
             require(kotlinDesignViolations(componentsPath, listOf("val i = ${preset}.Add")).isNotEmpty()) {
                 "$preset must fail (material icons are banned)"
@@ -945,7 +945,7 @@ tasks.register("verifyDesignSystemFixtures") {
             "Technical defaults failed enforcement: ${falseD2Flags.joinToString()}"
         }
 
-        // Símbolos legacy de Polaris prohibidos en feature/ y en las apps.
+        // Símbolos legacy previos a Moon prohibidos en feature/ y en las apps.
         listOf("AqDialog(", "AqTextField(", "AqPrimaryButton(", "AqSnackbarHost(", "AqTopBar(", "AqShapes.Medium").forEach { legacyCall ->
             require(kotlinDesignViolations(featurePath, listOf("val x = $legacyCall")).isNotEmpty()) {
                 "el símbolo legacy '$legacyCall' en feature/ debe fallar el gate"
@@ -1494,7 +1494,7 @@ tasks.register("verifyUxTransitionContracts") {
 }
 
 /**
- * Mide el legado de Polaris que queda en TODO el repo (core/ui y tests
+ * Mide el legado previo a Moon que queda en TODO el repo (core/ui y tests
  * incluidos). Ahora que el conteo es cero, forma parte de
  * `verifyAgendaQrArchitecture` (ADR-0041).
  */
@@ -1527,6 +1527,38 @@ tasks.register("verifyNoLegacyAnywhere") {
     }
 }
 
+/**
+ * Moon es el único sistema de diseño del repo. Falla si cualquier archivo de
+ * texto versionado (código, docs, avisos de licencia, CI) conserva rastro del
+ * sistema anterior. El nombre se arma por partes para que este archivo no se
+ * detecte a sí mismo.
+ */
+tasks.register("verifyNoPreviousDesignSystem") {
+    group = "verification"
+    description = "Fails if any text file mentions the design system replaced by Moon."
+    doLast {
+        val needle = Regex("po" + "laris", RegexOption.IGNORE_CASE)
+        val textExtensions = setOf("kt", "kts", "md", "txt", "xml", "json", "yml", "yaml", "properties", "toml", "html", "sql", "swift")
+        val violations = mutableListOf<String>()
+        rootDir.walkTopDown()
+            .onEnter { dir -> dir.name != ".git" && dir.name != "build" && dir.name != ".gradle" && dir.name != "node_modules" }
+            .filter { it.isFile && it.extension in textExtensions }
+            .forEach { source ->
+                if (needle.containsMatchIn(source.name)) {
+                    violations.add("${source.relativeTo(rootDir).path}: el nombre del archivo")
+                }
+                source.readLines().forEachIndexed { index, line ->
+                    if (needle.containsMatchIn(line)) {
+                        violations.add("${source.relativeTo(rootDir).path}:${index + 1}")
+                    }
+                }
+            }
+        require(violations.isEmpty()) {
+            "Rastro del sistema de diseño anterior (${violations.size}):\n" + violations.take(200).joinToString("\n")
+        }
+    }
+}
+
 tasks.register("verifyAgendaQrArchitecture") {
     group = "verification"
     dependsOn(
@@ -1541,6 +1573,7 @@ tasks.register("verifyAgendaQrArchitecture") {
         "verifyScreenContractFixtures",
         "verifyUxTransitionContracts",
         "verifyNoLegacyAnywhere",
+        "verifyNoPreviousDesignSystem",
     )
     description = "Runs the complete Agenda QR architecture and design-system gates."
 }

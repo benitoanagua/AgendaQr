@@ -1,7 +1,7 @@
 # Ficha de componente: Action Sheet (`AqActionSheet`)
 
 - **Nombre:** Action Sheet / Menú de opciones (`AqActionSheet`)
-- **Nivel de origen:** Nivel 2 Moon (anatomía de `MoonMenuItem`, `MoonPopover`, `MoonDropdown`) sobre estilo Polaris; en móvil el contrato V1 usa action-sheet de lista táctil accesible en lugar de popover anclado.
+- **Nivel de origen:** Nivel 2 Moon (anatomía de `MoonMenuItem`, `MoonPopover`, `MoonDropdown`) sobre estilo Moon; en móvil el contrato V1 usa action-sheet de lista táctil accesible en lugar de popover anclado.
 - **Anatomía:** Diálogo modal de lista de acciones con título opcional, acciones como filas táctiles (etiqueta + icono opcional), acción de cierre/dismiss y semántica de panel (`paneTitle`). Se presenta mediante el controlador `LocalAqActionSheetController` desde `AqTopBar.overflowActions` o directamente.
 - **Variantes y tamaños:**
   - Overflow de barra superior: acciones contextuales y destructivas poco frecuentes.
@@ -11,7 +11,7 @@
   - `Cerrado`: no renderizado.
   - `Abierto`: lista de acciones visible, foco en la primera acción.
   - `Seleccionada`: acción ejecutada y hoja cerrada.
-- **Tokens Polaris:**
+- **Tokens Moon:**
   - Fondo: `AqColor.Surface`.
   - Texto acción: `AqColor.TextPrimary`.
   - Texto acción destructiva: `AqColor.TextDanger` / fondo `AqColor.BgFillDanger` cuando aplica.
@@ -24,4 +24,4 @@
 - **Pantallas consumidoras:**
   - `DestinationDetailScreen` (S03): overflow con "Detalle", "Registrar operación", "Editar", "Eliminar".
   - `OperationDetailScreen` (S09): overflow con "Eliminar actividad".
-- **Notas de adaptación:** Polaris web usa popover anclado; en móvil no hay equivalente táctil. Se toma la anatomía de lista de Moon (`MoonMenuItem`/`MoonPopover`) y se reemplaza el estilo al 100 % por tokens Polaris. No hay dependencia de Flutter ni `moon_design`. Las acciones destructivas exigen `AqDialog(destructive = true)` y la confirmación vigente.
+- **Notas de adaptación:** Moon usa popover anclado; en móvil se adapta a lista táctil. Se toma la anatomía de lista de Moon (`MoonMenuItem`/`MoonPopover`) y se reemplaza el estilo al 100 % por tokens Moon. No hay dependencia de Flutter ni `moon_design`. Las acciones destructivas exigen `AqDialog(destructive = true)` y la confirmación vigente.

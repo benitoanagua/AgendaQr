@@ -723,7 +723,7 @@ fun exceptionUsageViolations(
             val used = when (kind) {
                 "border" -> source.contains(".border(") || Regex("\\bBorderStroke\\s*\\(").containsMatchIn(source)
                 "shadow" -> source.contains("shadow(") || source.contains(".shadow(") ||
-                    source.contains("aqElevation(")
+                    source.contains("aqShadow(")
                 else -> true
             }
             if (!used) {

@@ -5,7 +5,7 @@
 **Implementación:** `core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/AqButtons.kt`
 
 ## Origen
-Puerto de `MoonButton` / `MoonFilledButton` / `MoonOutlinedButton` / `MoonTextButton`. Un único componente `AqButton` con variante, tamaño, estados y efectos de Moon. El color y la tipografía vienen de Polaris; la forma, el espacio, el borde y el movimiento de Moon.
+Puerto de `MoonButton` / `MoonFilledButton` / `MoonOutlinedButton` / `MoonTextButton`. Un único componente `AqButton` con variante, tamaño, estados y efectos de Moon. El color y la tipografía vienen de Moon; la forma, el espacio, el borde y el movimiento de Moon.
 
 ## Anatomía
 Contenedor con radio squircle (borde interactivo de Moon), relleno, etiqueta centrada, ícono opcional leading y contenido opcional trailing. Carga representada por `AqCircularLoader` centrado.
@@ -19,7 +19,7 @@ Contenedor con radio squircle (borde interactivo de Moon), relleno, etiqueta cen
 | Lg | 48 dp | 16 dp | 12 dp | InteractiveSm (8 dp) | 24 dp |
 | Xl | 56 dp | 24 dp | 16 dp | InteractiveMd (12 dp) | 24 dp |
 
-## Variantes (Polaris)
+## Variantes (Moon)
 - `Filled`: relleno de marca (`BrandFill`), contenido `OnBrandFill`.
 - `Outlined`: transparente, borde funcional, contenido `TextPrimary`.
 - `Text`: sin relleno ni borde, contenido `Link` (acento).
@@ -31,7 +31,7 @@ Contenedor con radio squircle (borde interactivo de Moon), relleno, etiqueta cen
 Cuando el tamaño visual es menor a 48 dp (Xs, Sm), se conserva el aspecto y se amplía el área táctil a 48 dp (D-02, `touch_target_padding.dart` de Moon).
 
 ## Efectos (MoonEffectsTheme)
-- Foco: borde de énfasis (25 % de énfasis de Polaris), extensión 4 dp, duración 200 ms, curva InOutCubic.
+- Foco: borde de énfasis (25 % de énfasis de Moon), extensión 4 dp, duración 200 ms, curva InOutCubic.
 - Pulsación: escala 0,95, duración 200 ms, curva InOutCubic.
 
 ## Accesibilidad

@@ -1,7 +1,7 @@
 # Ficha de componente: Switch (`AqSwitch`)
 
 - **Nombre:** Interruptor (`AqSwitch`)
-- **Nivel de origen:** Nivel 1 Polaris (`Switch`) / referencia de nivel 2 Moon (`MoonSwitch`); estilo 100 % tokens Polaris.
+- **Nivel de origen:** Nivel 1 Moon (`MoonSwitch`); estilo 100 % tokens Moon.
 - **Anatomía:** Control de alternancia binaria con etiqueta (`label`) y estado `checked`. Efecto inmediato según UX V1 (no requiere botón de guardar separado para el cambio del interruptor).
 - **Variantes y tamaños:**
   - Activado / desactivado.
@@ -11,7 +11,7 @@
   - `checked = true`: interruptor activado, color de acento.
   - `checked = false`: interruptor desactivado, color de superficie.
   - `deshabilitado`: no responde al toque, tono desactivado.
-- **Tokens Polaris:**
+- **Tokens Moon:**
   - Pulgar y pista: `AqColor.Surface` / `AqColor.SelectionFill` / `AqColor.EmphasisFill` según estado y tema.
   - Etiqueta: `AqType.BodyBase`, `AqColor.TextPrimary`.
   - Deshabilitado: `AqColor.TextSecondary` / `AqColor.SurfaceContainerHighest`.
@@ -22,4 +22,4 @@
 - **Comportamiento Claro / Oscuro:** Tokens semánticos; contraste AA en ambos temas.
 - **Pantallas consumidoras:**
   - `DestinationEditorScreen` (S02/S08): controla el atributo `favorito` del destino directamente desde el formulario (estado binario real, sin cambiar su semántica ni su fail-closed).
-- **Notas de adaptación:** Polaris define el switch; Moon confirma la anatomía táctil. El estilo se reemplaza al 100 % por tokens Polaris. No se usa para cambiar reglas de seguridad (biometría, PIN, fail-closed).
+- **Notas de adaptación:** Moon define el switch y su anatomía táctil. El estilo se reemplaza al 100 % por tokens Moon. No se usa para cambiar reglas de seguridad (biometría, PIN, fail-closed).

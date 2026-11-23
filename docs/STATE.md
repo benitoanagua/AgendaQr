@@ -27,8 +27,8 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Registro de actividad (S07) y detalles | Robolectric |
 | Permisos de cámara (política de ajustes) | pruebas unitarias + compilación de instrumentados |
 | Accesibilidad (contraste, foco visible, háptica, anuncios, objetivos ≥ 48 dp) | pruebas de `core:ui` + Robolectric |
-| Sistema visual Polaris 9.4.2 en `core/ui`: tokens semánticos claro/oscuro, Inter 4.0 empaquetado, pares AA, iconografía convertida a vectores Compose, movimiento, previews a 200 % y avisos de licencia | `verifyAgendaQrArchitecture` + `:core:ui:testDebugUnitTest` + `:androidApp:assembleDebug` con `-PallowDebugSigningForRc=true` |
-| **Viraje Moon Design completo (ADR-0039/0040/0041): Moon rige UI/UX (anatomía, tamaños, radios squircle, bordes, sombras, opacidades, movimiento, efecto de foco); Polaris solo color, tipografía e iconos. Cero símbolos legacy en producción, cero wrappers `AqMoon*`, cero Material en feature/apps/shared.** | `:core:ui:testDebugUnitTest` verde; `verifyDesignSystemCompliance` VERDE; `verifyDesignSystemFixtures` VERDE; `verifyControlMinSize` VERDE; `verifyLayoutGeometry` VERDE; `verifyNoScripts` VERDE; `verifyDocs` VERDE |
+| Sistema visual Moon (`moon_tokens` 0.0.6, `moon-icons` 10.7.4) en `core/ui`: tokens semánticos claro/oscuro, Inter 4.0 empaquetado, pares AA, iconografía convertida a vectores Compose, movimiento, previews a 200 % y avisos de licencia | `verifyAgendaQrArchitecture` + `:core:ui:testDebugUnitTest` + `:androidApp:assembleDebug` con `-PallowDebugSigningForRc=true` |
+| **Viraje Moon Design completo (ADR-0039/0040/0041): Moon rige todo el UI/UX (anatomía, tamaños, radios squircle, bordes, sombras, opacidades, movimiento, efecto de foco, color, iconos y escala tipográfica; ADR-0044). Cero símbolos legacy en producción, cero wrappers `AqMoon*`, cero Material en feature/apps/shared.** | `:core:ui:testDebugUnitTest` verde; `verifyDesignSystemCompliance` VERDE; `verifyDesignSystemFixtures` VERDE; `verifyControlMinSize` VERDE; `verifyLayoutGeometry` VERDE; `verifyNoScripts` VERDE; `verifyDocs` VERDE |
 | Compuerta `AqCircularProgress` portada (widgets/progress), ficha y galería claro/oscuro | `:core:ui:testDebugUnitTest` + gate |
 | Corrección de duración de `AqToast` (de 200 000 ms a 4 000 ms, decisión de producto ADR-0041) | prueba que falla con el valor anterior |
 | Reimplementación de `AqModal` sobre `androidx.compose.ui.window.Dialog` (focus trap, back/predictive back, `paneTitle`, scrim clicable) | `:core:ui:testDebugUnitTest` |
@@ -80,7 +80,7 @@ No se declaran PASS. Requieren Xcode, dispositivo físico, red o backend reales.
 - Glifos «Editar», «Compartir» y «Mostrar QR» sin icono asignado: esas acciones de barra superior van como acción de texto con su descripción accesible.
 - El contraste NO textual de algunos acentos de contexto contra el fondo del tema es < 3:1 (contrato §4.2): se aceptan como identidad de dato, siempre con texto legible.
 - Autofill de credenciales: `KeyboardOptions.contentType` no existe en Compose 1.8.2; el autofill funciona por `keyboardType` Email/Password.
-- Riesgo legal de la reimplementación visual: los recursos de diseño de Polaris tienen licencia restrictiva. El propietario aceptó el riesgo documentado; solo se reimplementan tokens y patrones en Kotlin/Compose, sin runtime, nombre, logo ni marca en la app, la UI ni la documentación de producto.
+- Licencia: Moon se distribuye bajo MIT (Yolo Group); el aviso va en `androidApp/third-party-notices/`. La familia Inter se mantiene porque Averta Std (fuente de Moon) es comercial.
 
 ## 4. Pendientes conocidos
 
@@ -99,6 +99,6 @@ No se declaran PASS. Requieren Xcode, dispositivo físico, red o backend reales.
 
 ## 7. Decisiones registradas (ADR-0041)
 
-- Cierre de la migración Moon: eliminación de wrappers `AqMoon*` y de todo el legado Polaris de `core/ui`.
+- Cierre de la migración Moon: eliminación de wrappers `AqMoon*` y de todo el legado Moon de `core/ui`.
 - Decisión de duración de `AqToast`: 4 000 ms (`AqMotion.ToastDurationMs`), decisión de producto, NO transcripción de Moon (Moon solo especifica recorrido 64 dp y gap de 200 ms entre toasts).
 - Naming de composiciones Moon-only: nombres propios sin prefijo `AqMoon` y sin colisionar con símbolos legacy (p. ej. `AqSelectionToolbar` en lugar de `AqSelectionBar`, `AqEmptyPlaceholder` en lugar de `AqEmptyState`, `AqScreen` en lugar de `AqScreenScaffold`, `AqAppBar` en lugar de `AqTopBar`).

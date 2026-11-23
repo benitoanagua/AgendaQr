@@ -10,7 +10,7 @@ Puerto de `MoonAlert`. Superficie con radio squircle, borde opcional, ícono lea
 ## Tamaño
 Altura mínima 56 dp (Moon § Alert), relleno 16 dp en los cuatro lados, hueco horizontal 12 dp y hueco vertical 8 dp. Con más de una acción, los botones van en una fila debajo del mensaje alineados al final; con una sola, puede ir a la derecha. Cierre con `AqIcons.Close`.
 
-## Tonos (Polaris)
+## Tonos (Moon)
 Neutral, Success, Danger, Warning, Info — par content/container de `AqTone`.
 
 ## Estados

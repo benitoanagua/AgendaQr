@@ -8,9 +8,8 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /**
- * Pares de estado y acento de `@shopify/polaris-tokens@9.4.2`, más la
- * paleta de identidad de contextos validada en X-06. Violet e Indigo usan
- * `magicOnFill` (`:204`); Magenta aplica PV-07 sobre `avatarOneFill` (`:255`).
+ * Pares de estado y acento de Moon (`MoonColors`), más la paleta de
+ * identidad de contextos validada en X-06.
  */
 class AqContrastPairsTest {
 
@@ -85,7 +84,7 @@ class AqContrastPairsTest {
         }
     }
 
-    /** D-11: los contenedores tonales oscuros derivados conservan AA. */
+    /** D-02: los contenedores tonales derivados conservan AA. */
     @Test
     fun tone_content_meets_aa_on_derived_containers_in_both_themes() {
         listOf(

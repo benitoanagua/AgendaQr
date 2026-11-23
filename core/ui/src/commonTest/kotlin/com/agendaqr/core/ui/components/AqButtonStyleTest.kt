@@ -24,18 +24,18 @@ class AqButtonStyleTest {
         val light = resolveAqButtonColors(
             AqButtonVariant.Primary, LightAqColorScheme, enabled = true, pressed = false,
         )
-        assertEquals("FF303030", argb(light.container), "primario claro")
+        assertEquals("FF5C33CF", argb(light.container), "primario claro")
         assertEquals("FFFFFFFF", argb(light.content), "contenido primario claro")
 
         val dark = resolveAqButtonColors(
             AqButtonVariant.Primary, DarkAqColorScheme, enabled = true, pressed = false,
         )
-        assertEquals("FFFFFFFF", argb(dark.container), "primario oscuro")
-        assertEquals("FF303030", argb(dark.content), "contenido primario oscuro")
+        assertEquals("FF5C33CF", argb(dark.container), "primario oscuro")
+        assertEquals("FFFFFFFF", argb(dark.content), "contenido primario oscuro")
     }
 
     @Test
-    fun sizes_match_polaris_visual_heights_and_preserve_touch_target() {
+    fun sizes_match_moon_visual_heights_and_preserve_touch_target() {
         assertEquals(48.dp, AqButtonSize.Large.visualHeight)
         assertEquals(40.dp, AqButtonSize.Medium.visualHeight)
         assertEquals(32.dp, AqButtonSize.Small.visualHeight)

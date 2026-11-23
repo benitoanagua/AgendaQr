@@ -45,7 +45,7 @@ import com.agendaqr.core.ui.theme.AqSquircles
  * el usuario la descarta o el flujo la retira.
  *
  * - [tone]: semántica del mensaje (success / danger / warning / info /
- *   neutral), resuelta desde los tonos de Polaris.
+ *   neutral), resuelta desde los tonos de Moon.
  * - [dismissLabel] y [onDismiss]: acción de descarte; cuando es nula, la
  *   alerta no es descartable por el usuario. El descarte usa [AqIcons.Close].
  * - [icon]: glifo decorativo del tono (aportado por el llamador).

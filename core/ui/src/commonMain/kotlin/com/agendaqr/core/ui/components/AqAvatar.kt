@@ -30,7 +30,7 @@ import androidx.compose.material3.Text
 /**
  * Avatar sobre [MoonAvatar] (`moon_design` 1.1.0, `widgets/avatar`).
  *
- * Círculo o cuadrado suavizado que muestra un glifo de Polaris, unas
+ * Círculo o cuadrado suavizado que muestra un glifo de Moon, unas
  * iniciales o queda vacío para que el llamador pinte su imagen. Admite una
  * insignia opcional ([badge]) alineada en la esquina inferior derecha para
  * estados como el contexto activo.

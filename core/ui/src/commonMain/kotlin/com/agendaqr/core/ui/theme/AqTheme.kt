@@ -94,7 +94,7 @@ internal fun AqColorScheme.asMaterialColorScheme(darkTheme: Boolean): ColorSchem
     }
 }
 
-/** Material 3 adapts types only; the semantic Polaris tokens remain authoritative. */
+/** Material 3 adapts types only; the semantic Moon tokens remain authoritative. */
 @Composable
 fun AqTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

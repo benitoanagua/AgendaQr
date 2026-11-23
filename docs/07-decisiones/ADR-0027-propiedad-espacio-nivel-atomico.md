@@ -1,7 +1,7 @@
 # ADR-0027 — Propiedad del espacio por nivel atómico
 
 **Estado:** ACEPTADO — 2026-11-18
-**Relaciona:** ADR-0025 (adopción de Polaris), ADR-0007 (verificación de layout), ADR-0008 (guía de voz),
+**Relaciona:** ADR-0025 (adopción del sistema visual anterior), ADR-0007 (verificación de layout), ADR-0008 (guía de voz),
 y contrato normativo de diseño.
 
 ## 1. Decisión

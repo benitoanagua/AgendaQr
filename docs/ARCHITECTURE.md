@@ -44,13 +44,12 @@ ejecución real con Xcode.
 1. **Agenda QR — autoridad de producto.** Única fuente para producto,
    requisitos, dominio, alcance, decisiones y reglas de negocio. Cubre también
    el comportamiento funcional UX (contrato UX/UI V1 congelado).
-2. **Sistema visual Polaris reimplementado en Kotlin.** Define paleta,
+2. **Sistema visual Moon reimplementado en Kotlin.** Define paleta,
    superficies, texto, estados, radios, densidad, controles, iconografía y
-   feedback a partir de `@shopify/polaris-tokens@9.4.2` y la documentación
-   oficial. Android e iOS definen las convenciones de navegación y
+   feedback a partir de los tokens y la documentación de Moon Design. Android e iOS definen las convenciones de navegación y
    comportamiento. El contrato normativo es
    `docs/05-design-system/00-contrato-normativo-diseno.md`;
-   [ADR-0025](07-decisiones/ADR-0025-adopcion-ui-ux-polaris.md) es la autoridad
+   [ADR-0044](07-decisiones/ADR-0044-moon-unico-sistema-de-diseno.md) es la autoridad
    visual vigente.
 3. **WaraWerse — referencia técnica.** Solo para Kotlin Multiplatform, Compose,
    modularización, Gradle/build logic y prácticas de testing. No introduce

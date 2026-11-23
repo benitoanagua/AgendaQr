@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Duraciones y curvas de `@shopify/polaris-tokens@9.4.2`. Los roles de
+ * Duraciones y curvas de Moon (`MoonTransitions`). Los roles de
  * producto son derivaciones documentadas (X-04).
  */
 class AqSurfaceMotionTest {

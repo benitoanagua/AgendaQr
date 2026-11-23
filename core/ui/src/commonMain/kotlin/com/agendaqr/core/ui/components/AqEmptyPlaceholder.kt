@@ -20,7 +20,7 @@ import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
 
 /**
- * Estado vacío sobre piezas Moon ([AqAvatar] / glifo Polaris + [AqText] +
+ * Estado vacío sobre piezas Moon ([AqAvatar] / glifo Moon + [AqText] +
  * [AqButton]). Sustituye a [AqEmptyState].
  *
  * - [title]: título del estado vacío (copy del llamador).

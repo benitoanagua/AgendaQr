@@ -6,7 +6,7 @@ Aprobado (normativo para la integración UI/UX en Agenda QR).
 
 ## Contexto
 
-La capa `core/ui` cuenta con la reimplementación de Polaris y una suite de componentes y patrones móviles resultantes de la cadena de precedencia (ADR-0029: Polaris → Moon → nativo). Varios componentes implementados permanecían únicamente en pruebas, galería o previews sin uso visible en las pantallas de producción:
+La capa `core/ui` cuenta con la reimplementación del sistema visual anterior y una suite de componentes y patrones móviles resultantes de la cadena de precedencia (ADR-0029: Moon → nativo). Varios componentes implementados permanecían únicamente en pruebas, galería o previews sin uso visible en las pantallas de producción:
 
 `AqSwipeActions`, `AqPullToRefresh`, `AqBottomSheet`, `AqActionSheet`, `AqTooltip`, `AqSpinner`, `AqProgressBar`, `AqProgressBlock`, `AqSkeleton`, `AqSelect`, `AqCheckbox`, `AqRadioButton`, `AqSwitch`, `AqSelectAllCheckbox`.
 
@@ -35,21 +35,21 @@ Un componente definido en `core/ui` con cero uso en pantallas de producción (ex
 | `AqProgressBlock` | **ADOPTAR** | S12 ImportBatch (progreso real N de M) | Robolectric de presentación | importación con progreso real |
 | `AqSkeleton` | **ADOPTAR** | ComprobanteViewer, ContextScreen (carga inicial) | Robolectric de presentación | carga con skeleton |
 | `AqSwitch` | **ADOPTAR** | S02/S08 editor de destino (favorito como estado binario real) | Robolectric de presentación | editor con interruptor |
-| `AqSelect` | **MANTENER** | sin consumo en pantallas de producción, pero es control de formulario base de Polaris (nivel 1) con pruebas dedicadas (`AqSelectTest`) y uso en la galería de previews; se conserva como parte del conjunto de formularios | `AqSelectTest` | galería de previews |
-| `AqCheckbox` | **MANTENER** | sin consumo en pantallas de producción, pero es control de formulario base de Polaris (nivel 1) con pruebas dedicadas y uso en la galería de previews | pruebas de `core/ui` | galería de previews |
-| `AqRadioButton` | **MANTENER** | sin consumo en pantallas de producción, pero es control de formulario base de Polaris (nivel 1) con pruebas dedicadas y uso en la galería de previews | pruebas de `core/ui` | galería de previews |
-| `AqSelectAllCheckbox` | **MANTENER** | sin consumo en pantallas de producción, pero es control de formulario base de Polaris (nivel 1) con pruebas dedicadas (`AqSelectAllCheckboxTest`) y uso en la galería de previews | `AqSelectAllCheckboxTest` | galería de previews |
+| `AqSelect` | **MANTENER** | sin consumo en pantallas de producción, pero es control de formulario base del sistema visual anterior (nivel 1) con pruebas dedicadas (`AqSelectTest`) y uso en la galería de previews; se conserva como parte del conjunto de formularios | `AqSelectTest` | galería de previews |
+| `AqCheckbox` | **MANTENER** | sin consumo en pantallas de producción, pero es control de formulario base del sistema visual anterior (nivel 1) con pruebas dedicadas y uso en la galería de previews | pruebas de `core/ui` | galería de previews |
+| `AqRadioButton` | **MANTENER** | sin consumo en pantallas de producción, pero es control de formulario base del sistema visual anterior (nivel 1) con pruebas dedicadas y uso en la galería de previews | pruebas de `core/ui` | galería de previews |
+| `AqSelectAllCheckbox` | **MANTENER** | sin consumo en pantallas de producción, pero es control de formulario base del sistema visual anterior (nivel 1) con pruebas dedicadas (`AqSelectAllCheckboxTest`) y uso en la galería de previews | `AqSelectAllCheckboxTest` | galería de previews |
 
 Los retirados se eliminan junto con su ficha, pruebas, entrada de galería y referencias en docs/contrato (criterio ya aplicado a `AqModalSheet`, `AqQrSheet`, `AqHeroHeader`, `AqDivider`, `AqVerticalDivider`).
 
-**Justificación de los controles de formulario mantenidos sin consumo en pantalla:** `AqSelect`, `AqCheckbox`, `AqRadioButton` y `AqSelectAllCheckbox` son controles de formulario base del sistema Polaris (nivel 1), no primitivos móviles de interacción. Tienen pruebas dedicadas en `core/ui` y se usan en la galería de previews (`AqDesignSystemGallery`). Retirarlos rompería la compilación de la galería y de sus tests sin aportar beneficio de producto. Se conservan como parte del conjunto de formularios y se documentan como "sin consumo en pantallas de producción" para no afirmar uso que no existe.
+**Justificación de los controles de formulario mantenidos sin consumo en pantalla:** `AqSelect`, `AqCheckbox`, `AqRadioButton` y `AqSelectAllCheckbox` son controles de formulario base del sistema el sistema visual anterior (nivel 1), no primitivos móviles de interacción. Tienen pruebas dedicadas en `core/ui` y se usan en la galería de previews (`AqDesignSystemGallery`). Retirarlos rompería la compilación de la galería y de sus tests sin aportar beneficio de producto. Se conservan como parte del conjunto de formularios y se documentan como "sin consumo en pantallas de producción" para no afirmar uso que no existe.
 
 ### 3. Criterio de aceptación de componentes o patrones nuevos
 
 Un componente o patrón nuevo se implementa solo si cumple TODO:
 
 - **(a) Mejora UX demostrable:** nombra la heurística que mejora (visibilidad de estado, retroalimentación inmediata, prevención de errores, reconocer vs recordar, alcance del pulgar, menos toques, consistencia, jerarquía) y cómo se comprobará en código, pruebas o capturas.
-- **(b) Convención:** sigue Polaris (nivel 1, con referencia a su componente o patrón en la instantánea 9.4.2 o documentación pública) o, si Polaris no lo define, Moon (nivel 2, citando la clase real del catálogo verificado de `moon_design` 1.1.0), o es un patrón estándar nativo de los que ni Polaris ni Moon cubren (nivel 3, con descarte escrito de 1 y 2 con evidencia verificable).
+- **(b) Convención:** sigue el sistema visual anterior (nivel 1, con referencia a su componente o patrón en la instantánea 9.4.2 o documentación pública) o, si el sistema visual anterior no lo define, Moon (nivel 2, citando la clase real del catálogo verificado de `moon_design` 1.1.0), o es un patrón estándar nativo de los que ni el sistema visual anterior ni Moon cubren (nivel 3, con descarte escrito de 1 y 2 con evidencia verificable).
 - **(c) Consumo real:** tiene uso en al menos una pantalla de producción.
 - **(d) Límites duros:** respeta todos los límites duros (no nuevos datos persistidos, red, permisos, telemetría; no toca modelo de seguridad; solo invoca casos de uso/intents existentes).
 - **(e) Artefactos:** trae ficha, pruebas, galería, capturas y entrada en el contrato de pantallas.
@@ -89,4 +89,4 @@ Si una mejora exigiera un caso de uso nuevo, un cambio de dominio, un cambio de 
 - Los componentes móviles de `core/ui` pasan a estar activos y visibles en la experiencia diaria del usuario.
 - No se introducen dependencias externas ni se alteran contratos de dominio, persistencia ni flujos funcionales.
 - Se mantienen todas las políticas de confirmación para acciones destructivas.
-- Los nombres «Polaris» y «Moon» no aparecen en la UI, en strings de producto ni en documentación de producto; solo en documentación de ingeniería.
+- Los nombres «el sistema visual anterior» y «Moon» no aparecen en la UI, en strings de producto ni en documentación de producto; solo en documentación de ingeniería.

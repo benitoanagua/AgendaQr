@@ -1,7 +1,7 @@
 # Ficha de componente: Progreso (`AqProgress`, `AqProgressBar`, `AqProgressBlock`, `AqSpinner`)
 
 - **Nombre:** Progreso y carga (`AqProgressBar`, `AqProgressBlock`, `AqSpinner`, estado `AqProgress`)
-- **Nivel de origen:** Nivel 1 Polaris (`ProgressBar`, `Skeleton`/`Loading`) + referencia de nivel 2 Moon (`MoonLinearProgress`, `MoonCircularProgress`, `MoonLinearLoader`, `MoonCircularLoader`) para anatomía de loaders móviles; estilo 100 % tokens Polaris.
+- **Nivel de origen:** Nivel 1 Moon (`MoonLinearProgress`, `MoonCircularProgress`, `MoonLinearLoader`, `MoonCircularLoader`) para anatomía de loaders móviles; estilo 100 % tokens Moon.
 - **Anatomía:**
   - `AqProgressBar`: barra lineal determinada, fracción 0..1, con `contentDescription` y `progressBarRangeInfo` para anuncios accesibles del porcentaje. Color de relleno `AqColor.EmphasisFill`, pista `AqColor.SurfaceContainerHighest`.
   - `AqProgressBlock`: bloque con etiqueta (`AqType.Label`), barra de progreso y mensaje opcional (`AqType.Caption`). Todos los textos inyectados por el llamador.
@@ -15,7 +15,7 @@
   - `Determinado`: fracción real de elementos procesados (ej. importación N de M).
   - `Indeterminado`: carga en curso sin porcentaje (spinner).
   - `Completado`: se retira el indicador y se muestra feedback transitorio (`AqFeedbackEvent`).
-- **Tokens Polaris:**
+- **Tokens Moon:**
   - Relleno progreso: `AqColor.EmphasisFill`.
   - Pista: `AqColor.SurfaceContainerHighest`.
   - Etiqueta: `AqType.Label`, `AqColor.TextPrimary`.
@@ -30,4 +30,4 @@
 - **Pantallas consumidoras:**
   - `ImportReviewScreen` (S09): `AqProgressBar` durante el guardado de la revisión de candidatos.
   - `ImportBatchScreen` (S12): `AqProgressBlock` con progreso real de guardado (N de M) en estado `saving`.
-- **Notas de adaptación:** Polaris define barra de progreso web; Moon aporta la referencia de loaders circulares/lineales táctiles móviles. El estilo se reemplaza al 100 % por tokens Polaris. El progreso siempre refleja estado real del dominio; nunca determinista falso.
+- **Notas de adaptación:** Moon aporta la referencia de loaders circulares/lineales táctiles móviles. El estilo se reemplaza al 100 % por tokens Moon. El progreso siempre refleja estado real del dominio; nunca determinista falso.

@@ -1,7 +1,7 @@
 # Ficha de componente: Tooltip (`AqTooltip`)
 
 - **Nombre:** Tooltip / etiqueta flotante (`AqTooltip`)
-- **Nivel de origen:** Nivel 2 Moon (referencia de `MoonTooltip` para posición y comportamiento táctil); estilo 100 % tokens Polaris.
+- **Nivel de origen:** Nivel 2 Moon (referencia de `MoonTooltip` para posición y comportamiento táctil); estilo 100 % tokens Moon.
 - **Anatomía:** Etiqueta flotante tonal que aparece sobre un control al activarse (pulsación larga o estado controlado por el consumidor). Muestra texto corto con el significado del control. El llamador controla la visibilidad (`isVisible`) y puede enlazarla a un callback de pulsación larga.
 - **Variantes y tamaños:**
   - Visible / oculto.
@@ -9,7 +9,7 @@
 - **Estados:**
   - `Oculto`: no renderizado.
   - `Visible`: etiqueta flotante sobre el control.
-- **Tokens Polaris:**
+- **Tokens Moon:**
   - Fondo: `AqColor.Surface` o tono inverso según contexto.
   - Texto: `AqType.CaptionSmall`, `AqColor.TextOnSurface` / `AqColor.TextPrimary`.
 - **Accesibilidad:**
@@ -19,4 +19,4 @@
 - **Comportamiento Claro / Oscuro:** Tokens semánticos; contraste AA en ambos temas.
 - **Pantallas consumidoras:**
   - `DestinationDetailScreen` (S03): alternativa accesible al icono de copiado del contenido QR (etiqueta "Copiar").
-- **Notas de adaptación:** Moon define el tooltip como referencia de posición y comportamiento táctil. El estilo se reemplaza al 100 % por tokens Polaris. No se importa paleta, sombras, squircle ni tipografía de Moon. No hay dependencia de Flutter ni `moon_design`.
+- **Notas de adaptación:** Moon define el tooltip como referencia de posición y comportamiento táctil. El estilo se reemplaza al 100 % por tokens Moon. No se importa paleta, sombras, squircle ni tipografía de Moon. No hay dependencia de Flutter ni `moon_design`.

@@ -1,7 +1,7 @@
 # Ficha de componente: Miniatura de comprobante (`AqThumbnail`, `AqThumbnailFrame`)
 
 - **Nombre:** Miniatura de comprobante (`AqThumbnail`, `AqThumbnailFrame`, `AqThumbnailFallback`, `AqThumbnailSkeleton`)
-- **Nivel de origen:** `polaris` (Nivel 1 para tokens y apariencia) con referencia `moon-pattern` (Nivel 2 para anatomía de avatar/fallback y estados de carga)
+- **Nivel de origen:** `moon` (Nivel 1 para tokens y apariencia) con referencia `moon-pattern` (Nivel 2 para anatomía de avatar/fallback y estados de carga)
 - **Paquete:** `com.agendaqr.core.ui.components` (archivo `AqThumbnail.kt`; decodificación por plataforma en `AqThumbnail.android.kt` y `AqThumbnail.ios.kt`)
 
 ## Anatomía
@@ -24,7 +24,7 @@ Marco cuadrado de [AqMetrics.ReceiptThumbnailSize] (56 dp) con:
 
 La descripción de accesibilidad del fallback solo se anuncia cuando el ícono es el único indicio de estado; el llamador de `feature/` la inyecta según el `mimeType`.
 
-## Tokens Polaris
+## Tokens Moon
 
 - Superficie del marco: `AqColor.SurfaceContainerHighest`
 - Radio: `AqShapes.Medium`
@@ -46,7 +46,7 @@ Idéntico en ambos temas; los tokens semánticos se adaptan al tema activo.
 
 - La decodificación del archivo es por plataforma (`expect decodeThumbnailBitmap`): Android usa `BitmapFactory` con `inSampleSize` contra el tamaño real en px (densidad), `ARGB_8888` y caché en memoria acotada ([LruCache]); iOS usa `ImageIO` downsampling (`CGImageSourceCreateThumbnailAtIndex` con `kCGImageSourceThumbnailMaxPixelSize` y `kCGImageSourceCreateThumbnailFromImageAlways`). La decodificación corre fuera del hilo principal y se cancela al salir de la composición (`LaunchedEffect` por `file`).
 - iOS no está validado en este entorno (sin macOS/Xcode): se registra como no verificado (ADR-0025).
-- No se usa `Material3 Icons` ni glifos propios: todo proviene de `@shopify/polaris-icons@9.3.1` reimplementados en `PolarisIconVectors`.
+- No se usa `Material3 Icons` ni glifos propios: todo proviene de los iconos del sistema visual anterior reimplementados en `MoonIconVectors`.
 
 ## Pantallas consumidoras
 

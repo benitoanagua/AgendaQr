@@ -11,7 +11,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -30,138 +29,97 @@ import kotlin.math.pow
 
 /**
  * Capa de tokens del sistema visual. Los valores primitivos son una
- * transcripción de `docs/05-design-system/09-instantanea-tokens-polaris-9.4.2.md`
- * (tarball `@shopify/polaris-tokens@9.4.2`, capturado el 2026-11-17).
+ * transcripción de Moon Design: `moon_tokens` 0.0.6 (`MoonColors.light` y
+ * `MoonColors.dark`) para color y `moon_design` 1.1.0 para geometría y
+ * movimiento (`docs/05-design-system/13-catalogo-moon.md`).
  *
  * Reglas de esta capa:
  * - Es el ÚNICO archivo de producción autorizado a contener literales
  *   visuales (hex, dp, sp, pesos, radios, duraciones, alfas).
  * - Las primitivas son internas; los consumidores usan [AqColorScheme],
- *   [AqColor], [AqSpacing], [AqMetrics], [AqType], [AqMotion] y [AqElevation].
- * - Las derivaciones necesarias para móvil,tema oscuro y accesibilidad están
- *   gobernadas por D-01, D-02, D-07, X-05 y X-06 del contrato normativo.
- * - No se usa ningún nombre, logotipo ni marca del sistema de origen en el
- *   producto; las referencias son solo de ingeniería.
+ *   [AqColor], [AqSpacing], [AqMetrics], [AqType], [AqMotion] y [AqShadow].
+ * - Los valores marcados «derivado» no existen en Moon: se calculan
+ *   mezclando colores Moon para cumplir AA (D-02) o para estados que Moon
+ *   resuelve con efectos de escala/pulso en lugar de color.
  */
 internal object AqPalette {
-    // Escalas publicadas por el paquete de tokens (valores rgba de la instantánea).
-    val white = Color(0xFFFFFFFF)
-    val black = Color(0xFF000000)
-    val gray50 = Color(0xFFF1F1F1)
-    val gray100 = Color(0xFFEBEBEB)
-    val gray200 = Color(0xFFE3E3E3)
-    val gray300 = Color(0xFFD4D4D4)
-    val gray400 = Color(0xFFB5B5B5)
-    val gray500 = Color(0xFF8A8A8A)
-    val gray600 = Color(0xFF616161)
-    val gray700 = Color(0xFF4A4A4A)
-    val gray800 = Color(0xFF303030)
-    val gray900 = Color(0xFF1A1A1A)
-    /** `--p-color-text` claro y `--p-color-text` de `dark-experimental`. */
-    val lightText = gray800
-    val darkText = Color(0xFFE3E3E3)
+    // MoonColors (nombres de Moon). Valores idénticos en claro y oscuro.
+    val piccolo = Color(0xFF5C33CF)
+    val hit = Color(0xFF1BD29A)
+    val goten = Color(0xFFFFFFFF)
+    val popo = Color(0xFF000000)
+    val krillin = Color(0xFFFFB319)
+    val chichi = Color(0xFFFF4E64)
+    val roshi = Color(0xFF49B356)
+    val dodoria = Color(0xFFD33030)
+    val cell = Color(0xFF95F1D5)
+    val raditz = Color(0xFFB3804A)
+    val whis = Color(0xFF3448F0)
+    val nappa = Color(0xFF725550)
+    /** Derivados para acentos: roshi y raditz oscurecidos hasta AA con texto blanco. */
+    val accentGreen = Color(0xFF2C6B34)
+    val accentBronze = Color(0xFF745330)
+    val zeno = Color(0x8F000000)
 
-    /** `--p-color-bg-fill-emphasis`, `text-emphasis`, `border-emphasis`,
-     * `icon-emphasis` y `text-link` (`:142,162,196,213,221,245`). */
-    val emphasis = Color(0xFF005BD3)
-    val emphasisHover = Color(0xFF004299)
-    val emphasisActive = Color(0xFF002E6A)
-    val emphasisSurface = Color(0xFFF0F2FF)
-    val emphasisSurfaceHover = Color(0xFFEAEDFF)
-    val emphasisSurfaceActive = Color(0xFFE2E7FF)
-    val emphasisOnFill = Color(0xFFFCFDFF)
-    val emphasisOnFillHover = Color(0xFFE2E7FF)
-    val emphasisOnFillActive = Color(0xFFD5DCFF)
+    // MoonColors.light
+    val lightBeerus = Color(0xFFDCDEE3)
+    val lightGoku = Color(0xFFFFFFFF)
+    val lightGohan = Color(0xFFF6F7F9)
+    val lightBulma = Color(0xFF000000)
+    val lightTrunks = Color(0xFF687083)
+    val lightHeles = Color(0x0A000000)
 
-    /** `--p-color-text-magic*` y su texto sobre relleno (`:202-204`). */
-    val textMagic = Color(0xFF5700D1)
-    val textMagicSecondary = Color(0xFF7126FF)
-    val magicOnFill = Color(0xFFFDFDFF)
+    // MoonColors.dark
+    val darkBeerus = Color(0xFF292929)
+    val darkGoku = Color(0xFF000000)
+    val darkGohan = Color(0xFF1F1F1F)
+    val darkBulma = Color(0xFFFFFFFF)
+    val darkTrunks = Color(0xFF94989E)
+    val darkHeles = Color(0x14FFFFFF)
 
-    /** `--p-color-bg-fill-caution` (`:133`). */
-    val cautionFill = Color(0xFFFFE600)
+    /** Moon resuelve disabled con opacidad 0,6 (`MoonOpacities`). */
+    val piccoloDisabled = Color(0x995C33CF)
+    val lightTrunksDisabled = Color(0x99687083)
+    val darkTrunksDisabled = Color(0x9994989E)
 
-    /** `--p-color-avatar-one-*` (`:255-256`). El texto publicado no llega a AA: PV-07. */
-    val avatarOneFill = Color(0xFFC530C5)
-    val avatarOneOnFill = Color(0xFFFDEFFD)
+    // Derivados claro (piccolo/dodoria hacia negro; rellenos tonales 8-20 %).
+    val lightBrandHover = Color(0xFF512DB6)
+    val lightBrandActive = Color(0xFF46279D)
+    val lightEmphasisSurface = Color(0xFFEBE7F9)
+    val lightEmphasisSurfaceHover = Color(0xFFDED6F5)
+    val lightSelectionFill = Color(0xFFDED6F5)
+    val lightSurfaceHigh = Color(0xFFECEDEF)
+    val lightDanger = Color(0xFFBA2A2A)
+    val lightDangerActive = Color(0xFFA02424)
+    val lightDangerContainer = Color(0xFFFBEEEE)
+    val lightDangerDisabled = Color(0xFFEDACAC)
+    val lightSuccess = Color(0xFF2C6B34)
+    val lightSuccessFill = Color(0xFF337D3C)
+    val lightSuccessContainer = Color(0xFFEDF7EE)
+    val lightWarning = Color(0xFF805A0C)
+    val lightWarningContainer = Color(0xFFFFF6E3)
+    val lightInfoContainer = Color(0xFFEFF0FE)
 
-    val info = Color(0xFF003A5A)
-    val infoFill = Color(0xFF91D0FF)
-    val infoSurface = Color(0xFFEAF4FF)
-
-    val success = Color(0xFF014B40)
-    val successFill = Color(0xFF047B5D)
-    val successHover = Color(0xFF035E4C)
-    val successSurface = Color(0xFFCDFED4)
-    val successOnFill = Color(0xFFFAFFFB)
-
-    val warning = Color(0xFF5E4200)
-    val warningFill = Color(0xFFFFB800)
-    val warningSurface = Color(0xFFFFF1E3)
-    val warningOnFill = Color(0xFF251A00)
-
-    val critical = Color(0xFF8E0B21)
-    val criticalFill = Color(0xFFC70A24)
-    val criticalHover = Color(0xFFA30A24)
-    val criticalSurface = Color(0xFFFEE8EB)
-    val criticalBorder = Color(0xFFFEC1C7)
-    val criticalOnFill = Color(0xFFFFFAFB)
-
-    /** `--p-color-bg-surface-secondary` / `--p-color-bg-surface-tertiary`. */
-    val lightSurfaceSecondary = Color(0xFFF7F7F7)
-    val lightSurfaceTertiary = Color(0xFFF3F3F3)
-    val lightSurfaceActive = Color(0xFFF3F3F3)
-    /** `--p-color-input-bg-surface` (`:270`); hover/active no se usan aún. */
-    val lightInputSurface = Color(0xFFFDFDFD)
-    val lightInputBorder = Color(0xFF8A8A8A)
-    val lightDisabledFill = Color(0x0D000000)
-    val lightScrim = Color(0xB5000000)
-
-    /** `--p-color-bg-fill-brand*` del tema claro (`:116-120`). */
-    val brandFill = gray800
-    val brandFillHover = gray900
-    val brandFillActive = gray900
-    val brandFillSelected = gray800
-    val brandFillDisabled = Color(0x2B000000)
-
-    /** `--p-color-bg-fill-selected` y `bg-surface-selected` (`:68,107`). */
-    val selectionFill = Color(0xFFCCCCCC)
-    val selectionSurface = gray50
-
-    /** Derivaciones X-05 del tema oscuro: valores del propio tema publicado. */
-    val darkSurfaceSecondary = gray800
-    val darkSurfaceHover = Color(0xFF4A4A4A)
-    val darkSurfaceSelected = Color(0xFF616161)
-    val darkInputBorder = gray500
-    val darkDisabledFill = Color(0x1CFFFFFF)
-    val darkDisabledText = gray500
-    val darkTextOnBrandFill = gray800
-    val darkTextOnBrandFillDisabled = gray500
-    /** `--p-color-bg-fill-brand*` de `dark-experimental` (`:550,555,559,563,573`). */
-    val darkBrandFill = white
-    val darkBrandFillHover = Color(0xFFF3F3F3)
-    val darkBrandFillActive = Color(0xFFF7F7F7)
-    val darkBrandFillSelected = Color(0xFFD4D4D4)
-    val darkBrandFillDisabled = Color(0x38FFFFFF)
-    val darkTextCritical = Color(0xFFFED1D7)
-    val darkTextSuccess = successSurface
-    val darkTextWarning = warningFill
-    val darkTextInfo = infoFill
-
-    /**
-     * D-11: `dark-experimental` no publica contenedores tonales. Se derivan
-     * mezclando el relleno semántico al 16 % sobre `gray800`, la superficie
-     * oscura publicada, de modo que el contenedor se distinga de `surface`
-     * y conserve el par de contenido en AA.
-     */
-    private const val darkToneContainerAlpha = 0.16f
-    val darkDangerContainer = criticalFill.copy(alpha = darkToneContainerAlpha).compositeOver(gray800)
-    val darkSuccessContainer = successFill.copy(alpha = darkToneContainerAlpha).compositeOver(gray800)
-    val darkWarningContainer = warningFill.copy(alpha = darkToneContainerAlpha).compositeOver(gray800)
-    val darkInfoContainer = infoFill.copy(alpha = darkToneContainerAlpha).compositeOver(gray800)
+    // Derivados oscuro (piccolo/whis/chichi hacia blanco; tonos sobre gohan).
+    val darkBrandHover = Color(0xFF6943D3)
+    val darkBrandActive = Color(0xFF7654D7)
+    val darkPiccoloText = Color(0xFFA58FE5)
+    val darkEmphasisSurface = Color(0xFF2B2342)
+    val darkEmphasisSurfaceHover = Color(0xFF332557)
+    val darkSelectionFill = Color(0xFF372765)
+    val darkSelectionSurface = Color(0xFF302550)
+    val darkSurfaceHighest = Color(0xFF3A3A3A)
+    val darkDanger = Color(0xFFFF7A8B)
+    val darkDangerActive = Color(0xFFBA2A2A)
+    val darkDangerContainer = Color(0xFF43272A)
+    val darkDangerDisabled = Color(0xFF6A1818)
+    val darkSuccessContainer = Color(0xFF263728)
+    val darkWarningContainer = Color(0xFF43371E)
+    val darkInfo = Color(0xFF8F9AF7)
+    val darkInfoContainer = Color(0xFF232749)
 
     /** X-03: el QR siempre negro sobre blanco, con independencia del tema. */
-    val qrCanvas = white
+    val qrCanvas = Color(0xFFFFFFFF)
     val transparent = Color.Transparent
 }
 
@@ -230,132 +188,131 @@ data class AqColorScheme(
 )
 
 val LightAqColorScheme = AqColorScheme(
-    background = AqPalette.gray50,
-    surface = AqPalette.white,
-    surfaceSecondary = AqPalette.lightSurfaceSecondary,
-    inputSurface = AqPalette.lightInputSurface,
-    border = AqPalette.gray200,
-    functionalBorder = AqPalette.lightInputBorder,
-    divider = AqPalette.gray200,
-    textPrimary = AqPalette.gray800,
-    textSecondary = AqPalette.gray600,
-    // D-02: el placeholder publicado no llega a AA; se usa el rol secundario.
-    textPlaceholder = AqPalette.gray600,
-    textTertiary = AqPalette.gray600,
-    brandFill = AqPalette.brandFill,
-    brandFillHover = AqPalette.brandFillHover,
-    brandFillActive = AqPalette.brandFillActive,
-    brandFillSelected = AqPalette.brandFillSelected,
-    brandFillDisabled = AqPalette.brandFillDisabled,
-    onBrandFill = AqPalette.white,
-    onBrandFillDisabled = AqPalette.white,
-    emphasisFill = AqPalette.emphasis,
-    emphasisBorder = AqPalette.emphasis,
-    emphasisText = AqPalette.emphasis,
-    emphasisIcon = AqPalette.emphasis,
-    emphasisSurface = AqPalette.emphasisSurface,
-    emphasisSurfaceHover = AqPalette.emphasisSurfaceHover,
-    emphasisOnFill = AqPalette.emphasisOnFill,
-    link = AqPalette.emphasis,
-    selectionFill = AqPalette.selectionFill,
-    selectionSurface = AqPalette.selectionSurface,
-    selectionBorder = AqPalette.emphasis,
-    selectionIcon = AqPalette.emphasis,
-    danger = AqPalette.critical,
-    dangerFill = AqPalette.criticalFill,
-    onDanger = AqPalette.criticalOnFill,
-    dangerContainer = AqPalette.criticalSurface,
-    success = AqPalette.success,
-    successFill = AqPalette.successFill,
-    onSuccessFill = AqPalette.successOnFill,
-    successContainer = AqPalette.successSurface,
-    warning = AqPalette.warning,
-    warningFill = AqPalette.warningFill,
-    onWarningFill = AqPalette.warningOnFill,
-    warningContainer = AqPalette.warningSurface,
-    info = AqPalette.info,
-    infoContainer = AqPalette.infoSurface,
-    focus = AqPalette.emphasis,
-    disabled = AqPalette.lightDisabledFill,
-    onDisabled = AqPalette.gray400,
-    inverseSurface = AqPalette.gray800,
-    inverseOnSurface = AqPalette.darkText,
-    scrim = AqPalette.lightScrim,
+    background = AqPalette.lightGoku,
+    surface = AqPalette.lightGohan,
+    surfaceSecondary = AqPalette.lightGohan,
+    inputSurface = AqPalette.lightGohan,
+    border = AqPalette.lightBeerus,
+    // D-02: beerus (1,3:1) no sirve como límite funcional; se usa trunks (>= 3:1).
+    functionalBorder = AqPalette.lightTrunks,
+    divider = AqPalette.lightBeerus,
+    textPrimary = AqPalette.lightBulma,
+    textSecondary = AqPalette.lightTrunks,
+    textPlaceholder = AqPalette.lightTrunks,
+    textTertiary = AqPalette.lightTrunks,
+    brandFill = AqPalette.piccolo,
+    brandFillHover = AqPalette.lightBrandHover,
+    brandFillActive = AqPalette.lightBrandActive,
+    brandFillSelected = AqPalette.piccolo,
+    brandFillDisabled = AqPalette.piccoloDisabled,
+    onBrandFill = AqPalette.goten,
+    onBrandFillDisabled = AqPalette.goten,
+    emphasisFill = AqPalette.piccolo,
+    emphasisBorder = AqPalette.piccolo,
+    emphasisText = AqPalette.piccolo,
+    emphasisIcon = AqPalette.piccolo,
+    emphasisSurface = AqPalette.lightEmphasisSurface,
+    emphasisSurfaceHover = AqPalette.lightEmphasisSurfaceHover,
+    emphasisOnFill = AqPalette.goten,
+    link = AqPalette.piccolo,
+    selectionFill = AqPalette.lightSelectionFill,
+    selectionSurface = AqPalette.lightEmphasisSurface,
+    selectionBorder = AqPalette.piccolo,
+    selectionIcon = AqPalette.piccolo,
+    danger = AqPalette.lightDanger,
+    dangerFill = AqPalette.dodoria,
+    onDanger = AqPalette.goten,
+    dangerContainer = AqPalette.lightDangerContainer,
+    success = AqPalette.lightSuccess,
+    successFill = AqPalette.lightSuccessFill,
+    onSuccessFill = AqPalette.goten,
+    successContainer = AqPalette.lightSuccessContainer,
+    warning = AqPalette.lightWarning,
+    warningFill = AqPalette.krillin,
+    onWarningFill = AqPalette.popo,
+    warningContainer = AqPalette.lightWarningContainer,
+    info = AqPalette.whis,
+    infoContainer = AqPalette.lightInfoContainer,
+    focus = AqPalette.piccolo,
+    disabled = AqPalette.lightHeles,
+    onDisabled = AqPalette.lightTrunksDisabled,
+    inverseSurface = AqPalette.lightBulma,
+    inverseOnSurface = AqPalette.lightGoku,
+    scrim = AqPalette.zeno,
     qrCanvas = AqPalette.qrCanvas,
-    surfaceContainerLow = AqPalette.white,
-    surfaceContainer = AqPalette.lightSurfaceSecondary,
-    surfaceContainerHigh = AqPalette.gray50,
-    surfaceContainerHighest = AqPalette.gray100,
-    surfaceActive = AqPalette.lightSurfaceActive,
-    componentActive = AqPalette.lightSurfaceSecondary,
-    dangerActive = AqPalette.criticalHover,
-    dangerDisabled = AqPalette.criticalBorder,
+    surfaceContainerLow = AqPalette.lightGoku,
+    surfaceContainer = AqPalette.lightGohan,
+    surfaceContainerHigh = AqPalette.lightSurfaceHigh,
+    surfaceContainerHighest = AqPalette.lightBeerus,
+    surfaceActive = AqPalette.lightSurfaceHigh,
+    componentActive = AqPalette.lightGohan,
+    dangerActive = AqPalette.lightDangerActive,
+    dangerDisabled = AqPalette.lightDangerDisabled,
     transparent = AqPalette.transparent,
 )
 
 val DarkAqColorScheme = AqColorScheme(
-    background = AqPalette.gray900,
-    surface = AqPalette.gray800,
-    surfaceSecondary = AqPalette.darkSurfaceSecondary,
-    inputSurface = AqPalette.gray800,
-    border = AqPalette.darkSurfaceHover,
-    functionalBorder = AqPalette.darkInputBorder,
-    divider = AqPalette.darkSurfaceHover,
-    textPrimary = AqPalette.darkText,
-    textSecondary = AqPalette.gray400,
-    textPlaceholder = AqPalette.gray400,
-    textTertiary = AqPalette.gray400,
-    brandFill = AqPalette.darkBrandFill,
-    brandFillHover = AqPalette.darkBrandFillHover,
-    brandFillActive = AqPalette.darkBrandFillActive,
-    brandFillSelected = AqPalette.darkBrandFillSelected,
-    brandFillDisabled = AqPalette.darkBrandFillDisabled,
-    onBrandFill = AqPalette.darkTextOnBrandFill,
-    onBrandFillDisabled = AqPalette.darkTextOnBrandFillDisabled,
-    // X-05/PV-06: el tema oscuro no publica emphasis/link; se usan los
-    // valores publicados más cercanos que cumplen AA sobre las superficies.
-    emphasisFill = AqPalette.infoFill,
-    emphasisBorder = AqPalette.infoFill,
-    emphasisText = AqPalette.infoFill,
-    emphasisIcon = AqPalette.infoFill,
-    emphasisSurface = AqPalette.gray800,
-    emphasisSurfaceHover = AqPalette.darkSurfaceHover,
-    emphasisOnFill = AqPalette.gray900,
-    link = AqPalette.infoFill,
-    selectionFill = AqPalette.darkSurfaceSelected,
-    selectionSurface = AqPalette.darkSurfaceSelected,
-    selectionBorder = AqPalette.infoFill,
-    selectionIcon = AqPalette.infoFill,
-    danger = AqPalette.darkTextCritical,
-    dangerFill = AqPalette.criticalFill,
-    onDanger = AqPalette.criticalOnFill,
+    background = AqPalette.darkGoku,
+    surface = AqPalette.darkGohan,
+    surfaceSecondary = AqPalette.darkGohan,
+    inputSurface = AqPalette.darkGohan,
+    border = AqPalette.darkBeerus,
+    functionalBorder = AqPalette.darkTrunks,
+    divider = AqPalette.darkBeerus,
+    textPrimary = AqPalette.darkBulma,
+    textSecondary = AqPalette.darkTrunks,
+    textPlaceholder = AqPalette.darkTrunks,
+    textTertiary = AqPalette.darkTrunks,
+    brandFill = AqPalette.piccolo,
+    brandFillHover = AqPalette.darkBrandHover,
+    brandFillActive = AqPalette.darkBrandActive,
+    brandFillSelected = AqPalette.piccolo,
+    brandFillDisabled = AqPalette.piccoloDisabled,
+    onBrandFill = AqPalette.goten,
+    onBrandFillDisabled = AqPalette.goten,
+    // D-02: piccolo sobre negro da 2,8:1; texto, icono, borde y foco usan su
+    // versión aclarada (derivado) para llegar a AA.
+    emphasisFill = AqPalette.piccolo,
+    emphasisBorder = AqPalette.darkPiccoloText,
+    emphasisText = AqPalette.darkPiccoloText,
+    emphasisIcon = AqPalette.darkPiccoloText,
+    emphasisSurface = AqPalette.darkEmphasisSurface,
+    emphasisSurfaceHover = AqPalette.darkEmphasisSurfaceHover,
+    emphasisOnFill = AqPalette.goten,
+    link = AqPalette.darkPiccoloText,
+    selectionFill = AqPalette.darkSelectionFill,
+    selectionSurface = AqPalette.darkSelectionSurface,
+    selectionBorder = AqPalette.darkPiccoloText,
+    selectionIcon = AqPalette.darkPiccoloText,
+    danger = AqPalette.darkDanger,
+    dangerFill = AqPalette.dodoria,
+    onDanger = AqPalette.goten,
     dangerContainer = AqPalette.darkDangerContainer,
-    success = AqPalette.darkTextSuccess,
-    successFill = AqPalette.successFill,
-    onSuccessFill = AqPalette.successOnFill,
+    success = AqPalette.roshi,
+    successFill = AqPalette.lightSuccessFill,
+    onSuccessFill = AqPalette.goten,
     successContainer = AqPalette.darkSuccessContainer,
-    warning = AqPalette.darkTextWarning,
-    warningFill = AqPalette.warningFill,
-    onWarningFill = AqPalette.warningOnFill,
+    warning = AqPalette.krillin,
+    warningFill = AqPalette.krillin,
+    onWarningFill = AqPalette.popo,
     warningContainer = AqPalette.darkWarningContainer,
-    info = AqPalette.darkTextInfo,
+    info = AqPalette.darkInfo,
     infoContainer = AqPalette.darkInfoContainer,
-    focus = AqPalette.darkTextInfo,
-    disabled = AqPalette.darkDisabledFill,
-    onDisabled = AqPalette.darkDisabledText,
-    inverseSurface = AqPalette.gray50,
-    inverseOnSurface = AqPalette.gray900,
-    scrim = AqPalette.lightScrim,
+    focus = AqPalette.darkPiccoloText,
+    disabled = AqPalette.darkHeles,
+    onDisabled = AqPalette.darkTrunksDisabled,
+    inverseSurface = AqPalette.darkBulma,
+    inverseOnSurface = AqPalette.darkGoku,
+    scrim = AqPalette.zeno,
     qrCanvas = AqPalette.qrCanvas,
-    surfaceContainerLow = AqPalette.gray900,
-    surfaceContainer = AqPalette.gray800,
-    surfaceContainerHigh = AqPalette.darkSurfaceHover,
-    surfaceContainerHighest = AqPalette.darkSurfaceSelected,
-    // D-02: #616161 deja el énfasis por debajo de AA; se usa el hover publicado.
-    surfaceActive = AqPalette.darkSurfaceHover,
-    componentActive = AqPalette.gray800,
-    dangerActive = AqPalette.criticalHover,
-    dangerDisabled = AqPalette.critical,
+    surfaceContainerLow = AqPalette.darkGoku,
+    surfaceContainer = AqPalette.darkGohan,
+    surfaceContainerHigh = AqPalette.darkBeerus,
+    surfaceContainerHighest = AqPalette.darkSurfaceHighest,
+    surfaceActive = AqPalette.darkBeerus,
+    componentActive = AqPalette.darkGohan,
+    dangerActive = AqPalette.darkDangerActive,
+    dangerDisabled = AqPalette.darkDangerDisabled,
     transparent = AqPalette.transparent,
 )
 
@@ -368,7 +325,8 @@ val LocalAqFontFamily = compositionLocalOf<FontFamily> { FontFamily.Default }
 
 /**
  * Carga los TTF estáticos de Inter (SIL OFL 1.1) distribuidos como recursos
- * multiplataforma. Las cuatro fuentes son las que publica la release 4.0.
+ * multiplataforma. Moon no empaqueta fuente propia (Averta Std es comercial),
+ * así que el producto fija Inter como familia de la interfaz.
  */
 @Composable
 internal fun rememberAqInterFontFamily(): FontFamily = FontFamily(
@@ -379,9 +337,8 @@ internal fun rememberAqInterFontFamily(): FontFamily = FontFamily(
 )
 
 /**
- * Alfas semánticos. Los valores de selección son los publicados en la
- * instantánea para los estados pressed/selected (`rgba(…, 0.25)` y
- * `rgba(…, 0.20)`); [Hidden] significa «sin pintura», no un color nuevo.
+ * Alfas semánticos para los estados pressed/selected (0,25 y 0,20);
+ * [Hidden] significa «sin pintura», no un color nuevo.
  */
 object AqAlpha {
     const val Hidden = 0f
@@ -453,7 +410,7 @@ object AqColor {
     val Transparent: Color = Color.Transparent
 }
 
-/** Escala `space` publicada, interpretada como dp (D-01: 1rem = 16dp). */
+/** Escala de espaciado del producto, en dp. */
 object AqSpacing {
     val None = 0.dp
     val Xs = 2.dp
@@ -476,7 +433,7 @@ object AqSpacing {
  * (D-12: decisión de producto vigente; origen: tabla de espaciado Moon y
  * derivada de los tokens de tamaño existentes).
  *
- * Cada valor se expresa con el token numérico equivalente ya publicado en
+ * Cada valor se expresa con el token numérico equivalente ya definido en
  * [AqSpacing] o [AqSize]; ningún valor se duplica como literal. Un hueco
  * entre hermanos usa siempre el valor numérico Moon de la tabla expresado
  * con su token (p. ej. hueco de input 8 dp = [AqSize.X4s]), nunca [AqSize]
@@ -569,10 +526,9 @@ object AqMetrics {
 }
 
 /**
- * Proporciones internas de composición (D-08). No son escalas publicadas:
+ * Proporciones internas de composición (D-08). No son escalas de Moon:
  * se conservan de la implementación auditada y se concentran aquí para que
- * ningún componente defina geometría propia. No alteran los valores de la
- * instantánea ni los tamaños táctiles.
+ * ningún componente defina geometría propia. No alteran los tamaños táctiles.
  */
 object AqComposition {
     /** Ancho de la línea de título del skeleton respecto al ancho disponible. */
@@ -593,7 +549,7 @@ object AqThemeShapes {
     val ExtraLarge = RoundedCornerShape(AqRadius.ExtraLarge)
 }
 
-/** Escala `border-radius` publicada. */
+/** Escala de radios de producto (controles y contenedores usan [AqCorner]). */
 object AqRadius {
     val ExtraSmall = 2.dp
     val Small = 4.dp
@@ -652,23 +608,23 @@ object AqStateAlpha {
     const val Disabled = 0.6f
 }
 
-/** Pesos `font-weight` publicados: la familia Inter estática cubre estos cortes. */
+/** Pesos de Moon (`MoonTextStyles`: cuerpo regular 400, encabezado semibold 600); Inter estática cubre estos cortes. */
 object AqWeight {
-    val Regular = FontWeight(450)
-    val Medium = FontWeight(550)
-    val SemiBold = FontWeight(650)
+    val Regular = FontWeight(400)
+    val Medium = FontWeight(500)
+    val SemiBold = FontWeight(600)
     val Bold = FontWeight(700)
 }
 
-/** Tamaños e interlineados de los roles `text-*` de la instantánea. */
+/** Tamaños de la escala de texto de Moon (`MoonTextStyles`: 12, 14, 16, 18, 20, 24, 32, 40) con interlineados del producto. */
 object AqType {
-    /** Roles `heading-*` de `light-mobile` (`:412-441,512-517`). */
-    val Heading3Xl: TextUnit = 36.sp
+    /** Roles de encabezado (peso semibold de Moon). */
+    val Heading3Xl: TextUnit = 40.sp
     val LineHeightHeading3Xl: TextUnit = 48.sp
     val Heading2Xl: TextUnit = 32.sp
     val LineHeightHeading2Xl: TextUnit = 40.sp
-    val HeadingXl: TextUnit = 22.sp
-    val LineHeightHeadingXl: TextUnit = 28.sp
+    val HeadingXl: TextUnit = 24.sp
+    val LineHeightHeadingXl: TextUnit = 32.sp
     val HeadingLg: TextUnit = 18.sp
     val LineHeightHeadingLg: TextUnit = 24.sp
     val HeadingMd: TextUnit = 16.sp
@@ -678,7 +634,7 @@ object AqType {
     val HeadingXs: TextUnit = 12.sp
     val LineHeightHeadingXs: TextUnit = 16.sp
 
-    /** Roles `body-*` de `light-mobile` (`:442-461,518-525`). */
+    /** Roles de cuerpo (peso regular de Moon). */
     val BodyLg: TextUnit = 18.sp
     val LineHeightBodyLg: TextUnit = 28.sp
     val BodyMd: TextUnit = 16.sp
@@ -693,13 +649,12 @@ object AqType {
     val DisplayMedium: TextUnit = 40.sp
     val HeadlineLarge = Heading3Xl
     val Headline = Heading2Xl
-    /** 24/32 no tiene equivalente móvil publicado: se mantiene como extensión. */
     val HeadlineSmall: TextUnit = 24.sp
     val TitleLarge: TextUnit = 20.sp
     val Title = HeadingLg
     val TitleMedium = HeadingMd
     val TitleSmall = HeadingSm
-    /** Héroe de importe: rol `heading-2xl` de `light-mobile` (`:512`). */
+    /** Héroe de importe: rol `heading-2xl`. */
     val Amount: TextUnit = 32.sp
     val AmountSymbol = HeadingSm
     val RowTitle = HeadingMd
@@ -708,7 +663,7 @@ object AqType {
     val Label = BodyMd
     val BodySmall = BodyXs
     val Caption = BodyXs
-    /** Rol `body-xs` de `light-mobile` (`:524`); piso tipográfico publicado. */
+    /** Rol `body-xs`; piso tipográfico del producto. */
     val CaptionSmall: TextUnit = 12.sp
     val LineHeightLabel = LineHeightBodyMd
     val LineHeightDialog = LineHeightBodyLg
@@ -728,9 +683,9 @@ object AqType {
     val LineHeightLabelSmall = LineHeightBodyXs
 
     /**
-     * Ratios derivados de los pares publicados `heading-2xl` (40/32) y
-     * `body-md` (24/16). Se aplican solo a tamaños arbitrarios (PV-08);
-     * los roles canónicos conservan su `lineHeight` publicado.
+     * Ratios derivados de los pares `heading-2xl` (40/32) y `body-md` (24/16).
+     * Se aplican solo a tamaños arbitrarios (PV-08); los roles canónicos
+     * conservan su `lineHeight`.
      */
     const val HeadingLineHeightRatio = 1.25f
     const val BodyLineHeightRatio = 1.5f
@@ -739,11 +694,8 @@ object AqType {
     val FamilyUi: FontFamily @Composable get() = LocalAqFontFamily.current
 }
 
-/** `font-letter-spacing` publicado, en sp. */
+/** Espaciado de letras: Moon no define tracking, todo es 0 sp. */
 object AqTracking {
-    val Densest: TextUnit = (-0.54).sp
-    val Denser: TextUnit = (-0.3).sp
-    val Dense: TextUnit = (-0.2).sp
     val Normal: TextUnit = 0.sp
     val TitleMedium: TextUnit = Normal
     val TitleSmall: TextUnit = Normal
@@ -756,7 +708,7 @@ object AqTracking {
     val ButtonLabel: TextUnit = Normal
 }
 
-/** Geometría completa de un rol tipográfico publicado. */
+/** Geometría completa de un rol tipográfico. */
 internal data class AqTextRole(
     val size: TextUnit,
     val lineHeight: TextUnit,
@@ -767,13 +719,13 @@ internal data class AqTextRole(
 /** Resolución de tamaños canónicos y de tamaños arbitrarios (PV-08). */
 internal object AqTextRoles {
     val Heading3Xl = AqTextRole(
-        AqType.Heading3Xl, AqType.LineHeightHeading3Xl, AqWeight.Bold, AqTracking.Densest,
+        AqType.Heading3Xl, AqType.LineHeightHeading3Xl, AqWeight.SemiBold, AqTracking.Normal,
     )
     val Heading2Xl = AqTextRole(
-        AqType.Heading2Xl, AqType.LineHeightHeading2Xl, AqWeight.Bold, AqTracking.Denser,
+        AqType.Heading2Xl, AqType.LineHeightHeading2Xl, AqWeight.SemiBold, AqTracking.Normal,
     )
     val HeadingXl = AqTextRole(
-        AqType.HeadingXl, AqType.LineHeightHeadingXl, AqWeight.Bold, AqTracking.Dense,
+        AqType.HeadingXl, AqType.LineHeightHeadingXl, AqWeight.SemiBold, AqTracking.Normal,
     )
     val HeadingLg = AqTextRole(
         AqType.HeadingLg, AqType.LineHeightHeadingLg, AqWeight.SemiBold, AqTracking.Dense,
@@ -803,7 +755,6 @@ internal object AqTextRoles {
     fun of(size: TextUnit, heading: Boolean): AqTextRole = when (size.value) {
         AqType.Heading3Xl.value -> Heading3Xl
         AqType.Heading2Xl.value -> Heading2Xl
-        AqType.HeadlineSmall.value -> HeadingXl.copy(size = size)
         AqType.HeadingXl.value -> HeadingXl
         AqType.HeadingLg.value -> if (heading) HeadingLg else BodyLg
         AqType.HeadingMd.value -> if (heading) HeadingMd else BodyMd
@@ -818,8 +769,8 @@ internal object AqTextRoles {
             size.value * if (heading) AqType.HeadingLineHeightRatio else AqType.BodyLineHeightRatio,
             TextUnitType.Sp,
         ),
-        weight = if (heading) AqWeight.Bold else AqWeight.Regular,
-        tracking = if (heading) AqTracking.Dense else AqTracking.Normal,
+        weight = if (heading) AqWeight.SemiBold else AqWeight.Regular,
+        tracking = AqTracking.Normal,
     )
 }
 
@@ -909,7 +860,7 @@ object AqTextStyles {
     val Title = HeadingLg
 }
 
-/** Duraciones y curvas publicadas; los roles de producto son X-04. */
+/** Duraciones y curvas de Moon; los roles de producto son X-04. */
 object AqMotion {
     const val DurationReducedMs = 0
     const val DurationShortMs = 150
@@ -953,48 +904,6 @@ object AqMotion {
         /** Curva por defecto de transición de la capa UX (`Curves.easeInOutCubic`). */
         val InOutCubic: Easing = CubicBezierEasing(0.645f, 0.045f, 0.355f, 1f)
     }
-}
-
-/**
- * Sombras publicadas (`:363-368`). `elevation` es el radio de desenfoque;
- * `offsetY` y `spread` se conservan como metadato porque el `Modifier.shadow`
- * de Compose no expone spread (D-10). `shadow-100` se anula en
- * `light-mobile` (`:497`).
- */
-enum class AqElevation(
-    val elevation: Dp,
-    val offsetY: Dp,
-    val spread: Dp,
-    val lightAlpha: Float,
-    val darkAlpha: Float,
-    val suppressedInLightMobile: Boolean = false,
-) {
-    None(0.dp, 0.dp, 0.dp, 0f, 0f),
-    Shadow1(1.dp, 1.dp, 0.dp, 0.07f, 0.07f, true),
-    Shadow2(1.dp, 3.dp, (-1).dp, 0.07f, 0.07f),
-    Shadow3(6.dp, 4.dp, (-2).dp, 0.20f, 0.20f),
-    Shadow4(16.dp, 8.dp, (-4).dp, 0.22f, 0.22f),
-    Shadow5(20.dp, 12.dp, (-8).dp, 0.24f, 0.24f),
-    Shadow6(20.dp, 20.dp, (-8).dp, 0.28f, 0.28f),
-}
-
-@Composable
-fun Modifier.aqElevation(
-    level: AqElevation,
-    shape: Shape = RectangleShape,
-    clip: Boolean = false,
-): Modifier {
-    val dark = LocalAqColorScheme.current == DarkAqColorScheme
-    if (level == AqElevation.None || (!dark && level.suppressedInLightMobile)) return this
-    val alpha = if (dark) level.darkAlpha else level.lightAlpha
-    val shadowColor = AqPalette.gray900.copy(alpha = alpha)
-    return shadow(
-        elevation = level.elevation,
-        shape = shape,
-        clip = clip,
-        ambientColor = shadowColor,
-        spotColor = shadowColor,
-    )
 }
 
 /** Capa de una sombra: desenfoque, desplazamiento vertical, dispersión y alfa. */
@@ -1063,7 +972,7 @@ fun Modifier.aqShadow(level: AqShadow, shape: Shape = RectangleShape): Modifier 
     val layers = if (dark) level.dark else level.light
     var result: Modifier = this
     layers.forEach { layer ->
-        val color = AqPalette.black.copy(alpha = layer.alpha)
+        val color = AqPalette.popo.copy(alpha = layer.alpha)
         result = result.shadow(
             elevation = layer.blur,
             shape = shape,
@@ -1075,29 +984,26 @@ fun Modifier.aqShadow(level: AqShadow, shape: Shape = RectangleShape): Modifier 
     return result
 }
 
-/** Identidad de contexto X-06: pares fijos de la instantánea, validados a AA. */
+/** Identidad de contexto X-06: pares fijos de colores Moon, validados a AA. */
 data class AqAccent(val id: String, val background: Color, val onAccent: Color)
 
 object AqAccents {
-    val System = AqAccent("system", AqPalette.emphasis, AqPalette.white)
+    val System = AqAccent("system", AqPalette.piccolo, AqPalette.goten)
 
-    private val Blue = AqAccent("blue", AqPalette.emphasisHover, AqPalette.white)
-    private val Ink = AqAccent("ink", AqPalette.info, AqPalette.white)
-    private val Emerald = AqAccent("emerald", AqPalette.successFill, AqPalette.white)
-    private val Forest = AqAccent("forest", AqPalette.successHover, AqPalette.white)
-    private val Red = AqAccent("red", AqPalette.criticalFill, AqPalette.white)
-    private val Wine = AqAccent("wine", AqPalette.critical, AqPalette.white)
-    private val Violet = AqAccent("violet", AqPalette.textMagic, AqPalette.magicOnFill)
-    private val Indigo = AqAccent("indigo", AqPalette.textMagicSecondary, AqPalette.magicOnFill)
-    // PV-07: el texto publicado `avatarOneOnFill` no alcanza 4.5:1 sobre este relleno.
-    private val Magenta = AqAccent("magenta", AqPalette.avatarOneFill, AqPalette.white)
-    private val Sky = AqAccent("sky", AqPalette.infoFill, AqPalette.gray900)
-    private val Amber = AqAccent("amber", AqPalette.warningFill, AqPalette.gray900)
-    private val Lemon = AqAccent("lemon", AqPalette.cautionFill, AqPalette.gray900)
+    private val Blue = AqAccent("blue", AqPalette.whis, AqPalette.goten)
+    private val Green = AqAccent("green", AqPalette.accentGreen, AqPalette.goten)
+    private val Red = AqAccent("red", AqPalette.dodoria, AqPalette.goten)
+    private val Brown = AqAccent("brown", AqPalette.nappa, AqPalette.goten)
+    private val Bronze = AqAccent("bronze", AqPalette.accentBronze, AqPalette.goten)
+    private val Slate = AqAccent("slate", AqPalette.lightTrunks, AqPalette.goten)
+    private val Ink = AqAccent("ink", AqPalette.lightBulma, AqPalette.goten)
+    private val Mint = AqAccent("mint", AqPalette.hit, AqPalette.popo)
+    private val Aqua = AqAccent("aqua", AqPalette.cell, AqPalette.popo)
+    private val Amber = AqAccent("amber", AqPalette.krillin, AqPalette.popo)
+    private val Coral = AqAccent("coral", AqPalette.chichi, AqPalette.popo)
 
     val Admitted: List<AqAccent> = listOf(
-        Blue, Ink, Emerald, Forest, Red, Wine,
-        Violet, Indigo, Magenta, Sky, Amber, Lemon,
+        Blue, Green, Red, Brown, Bronze, Slate, Ink, Mint, Aqua, Amber, Coral,
     )
 }
 

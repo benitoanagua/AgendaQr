@@ -416,7 +416,7 @@ fun AqSegmentedControl(
     }
 }
 
-/** Conmutador de favorito: IconToggleButton con glifo de Polaris. */
+/** Conmutador de favorito: IconToggleButton con glifo de Moon. */
 @Composable
 fun AqFavoriteToggle(
     favorite: Boolean,

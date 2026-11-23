@@ -30,7 +30,7 @@ import com.agendaqr.core.ui.theme.AqType
  * - [message]: texto del error. Cuando es nulo o vacío, el componente no
  *   pinta nada (se oculta sin dejar hueco de layout).
  * - [icon]: glifo decorativo del error (por defecto el glifo de cancelar
- *   de Polaris, aportado por el llamador cuando lo desea).
+ *   de Moon, aportado por el llamador cuando lo desea).
  * - Objetivo táctil ≥ 48 dp (defaultMinSize).
  */
 @Composable

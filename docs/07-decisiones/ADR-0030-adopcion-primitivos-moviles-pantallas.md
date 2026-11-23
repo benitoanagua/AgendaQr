@@ -4,7 +4,7 @@
 Aprobado (normativo para la integración UI/UX en Agenda QR).
 
 ## Contexto
-La capa `core/ui` cuenta con la reimplementación de Polaris y una suite de componentes y patrones móviles resultantes de la cadena de precedencia (ADR-0029: Polaris → Moon → nativo). Sin embargo, existían componentes implementados que permanecían únicamente en pruebas o galería sin uso visible en las pantallas de producción (`AqSwipeActions`, `AqPullToRefresh`, `AqBottomSheet`, `AqActionSheet`, `AqTooltip`, `AqSpinner`, `AqProgressBar`, `AqProgressBlock`, `AqSwitch`, etc.).
+La capa `core/ui` cuenta con la reimplementación del sistema visual anterior y una suite de componentes y patrones móviles resultantes de la cadena de precedencia (ADR-0029: Moon → nativo). Sin embargo, existían componentes implementados que permanecían únicamente en pruebas o galería sin uso visible en las pantallas de producción (`AqSwipeActions`, `AqPullToRefresh`, `AqBottomSheet`, `AqActionSheet`, `AqTooltip`, `AqSpinner`, `AqProgressBar`, `AqProgressBlock`, `AqSwitch`, etc.).
 
 Asimismo, es necesario que los contenedores clicables (`AqTappableCard`, `AqQuickAction`) unifiquen su semántica mediante `mergeDescendants = true` para garantizar nombres accesibles inequívocos en TalkBack.
 
@@ -14,7 +14,7 @@ Asimismo, es necesario que los contenedores clicables (`AqTappableCard`, `AqQuic
    - Incorporar `AqSwipeActions` en las filas de operaciones (S07-list / S08, `OperationListScreen`) para editar y solicitar eliminación (preservando el diálogo destructivo existente).
    - Mantener siempre la alternativa accesible `customActions` en la semántica de Compose, de modo que TalkBack ofrezca las acciones sin requerir el gesto táctil.
 2. **Refresco táctil:**
-   - Integrar `AqPullToRefresh` en S01 y S07/S08 para permitir al usuario solicitar recarga o sincronización mediante arrastre vertical, mostrando el indicador visual de Polaris.
+   - Integrar `AqPullToRefresh` en S01 y S07/S08 para permitir al usuario solicitar recarga o sincronización mediante arrastre vertical, mostrando el indicador visual del sistema visual anterior.
 3. **Hojas y menús de acciones:**
    - Conectar las acciones de desbordamiento de las pantallas de detalle (S03 `DestinationDetailScreen` y S09 `OperationDetailScreen`) con `AqActionSheet` a través del controlador de `AqScreenScaffold`.
    - Ofrecer `AqBottomSheet` para detalles secundarios o contextuales cuando el usuario requiera inspección sin abandonar el flujo.

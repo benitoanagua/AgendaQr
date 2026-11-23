@@ -13,7 +13,7 @@ import androidx.compose.ui.focus.FocusRequester
  * probarse sin Compose; [AqFormFocus] solo asocia claves con
  * [FocusRequester].
  *
- * Nivel de convención (ADR-0029): Nivel 1 Polaris (`TextField` con error) y
+ * Nivel de convención (ADR-0029): Nivel 1 Moon (`TextField` con error) y
  * Nivel 2 `MoonErrorMessage` para el mensaje; el foco automático al primer
  * error es convención nativa (Nivel 3), estilizada sin cambios visuales.
  */

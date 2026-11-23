@@ -3,7 +3,7 @@ package com.agendaqr.core.ui.theme
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/** Semantic Polaris tokens are mapped to every Material 3 color slot. */
+/** Semantic Moon tokens are mapped to every Material 3 color slot. */
 class AqThemeColorSchemeTest {
 
     @Test

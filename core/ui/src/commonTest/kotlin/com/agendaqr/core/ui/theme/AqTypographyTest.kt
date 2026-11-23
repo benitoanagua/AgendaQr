@@ -7,8 +7,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Roles `text-*` y escalas `font-size`/`font-weight`/`font-line-height`
- * de `@shopify/polaris-tokens@9.4.2`, con `1rem = 16dp` (D-01).
+ * Roles de texto sobre la escala de Moon (`MoonTextStyles`: cuerpo regular 400,
+ * encabezado semibold 600; tamaños 12, 14, 16, 18, 20, 24, 32, 40).
  * La familia Inter se inyecta en composición desde `AqTheme`; la tabla
  * estática de `AqMaterialTypography` conserva el valor por defecto y se
  * reescribe con `withAqFontFamily` antes de llegar a la pantalla.
@@ -16,13 +16,13 @@ import kotlin.test.assertTrue
 class AqTypographyTest {
 
     @Test
-    fun canonical_sizes_and_line_heights_match_polaris() {
-        assertEquals(36.sp, AqType.Heading3Xl)
+    fun canonical_sizes_and_line_heights_follow_the_moon_text_scale() {
+        assertEquals(40.sp, AqType.Heading3Xl)
         assertEquals(48.sp, AqType.LineHeightHeading3Xl)
         assertEquals(32.sp, AqType.Heading2Xl)
         assertEquals(40.sp, AqType.LineHeightHeading2Xl)
-        assertEquals(22.sp, AqType.HeadingXl)
-        assertEquals(28.sp, AqType.LineHeightHeadingXl)
+        assertEquals(24.sp, AqType.HeadingXl)
+        assertEquals(32.sp, AqType.LineHeightHeadingXl)
         assertEquals(18.sp, AqType.HeadingLg)
         assertEquals(24.sp, AqType.LineHeightHeadingLg)
         assertEquals(16.sp, AqType.HeadingMd)
@@ -39,9 +39,9 @@ class AqTypographyTest {
         assertEquals(20.sp, AqType.LineHeightBodySm)
         assertEquals(12.sp, AqType.BodyXs)
         assertEquals(16.sp, AqType.LineHeightBodyXs)
-        assertEquals(36.sp, AqType.Display)
+        assertEquals(40.sp, AqType.Display)
         assertEquals(40.sp, AqType.DisplayMedium)
-        assertEquals(36.sp, AqType.HeadlineLarge)
+        assertEquals(40.sp, AqType.HeadlineLarge)
         assertEquals(32.sp, AqType.Headline)
         assertEquals(24.sp, AqType.HeadlineSmall)
         assertEquals(20.sp, AqType.TitleLarge)
@@ -96,18 +96,18 @@ class AqTypographyTest {
     }
 
     @Test
-    fun material_roles_have_explicit_polaris_sizes_and_line_heights() {
-        assertEquals(36.sp, AqMaterialTypography.headlineLarge.fontSize)
+    fun material_roles_have_explicit_sizes_and_line_heights() {
+        assertEquals(40.sp, AqMaterialTypography.headlineLarge.fontSize)
         assertEquals(48.sp, AqMaterialTypography.headlineLarge.lineHeight)
-        assertEquals(AqWeight.Bold, AqMaterialTypography.headlineLarge.fontWeight)
+        assertEquals(AqWeight.SemiBold, AqMaterialTypography.headlineLarge.fontWeight)
 
         assertEquals(32.sp, AqMaterialTypography.headlineMedium.fontSize)
         assertEquals(40.sp, AqMaterialTypography.headlineMedium.lineHeight)
-        assertEquals(AqWeight.Bold, AqMaterialTypography.headlineMedium.fontWeight)
+        assertEquals(AqWeight.SemiBold, AqMaterialTypography.headlineMedium.fontWeight)
 
-        assertEquals(22.sp, AqMaterialTypography.headlineSmall.fontSize)
-        assertEquals(28.sp, AqMaterialTypography.headlineSmall.lineHeight)
-        assertEquals(AqWeight.Bold, AqMaterialTypography.headlineSmall.fontWeight)
+        assertEquals(24.sp, AqMaterialTypography.headlineSmall.fontSize)
+        assertEquals(32.sp, AqMaterialTypography.headlineSmall.lineHeight)
+        assertEquals(AqWeight.SemiBold, AqMaterialTypography.headlineSmall.fontWeight)
 
         assertEquals(18.sp, AqMaterialTypography.titleLarge.fontSize)
         assertEquals(24.sp, AqMaterialTypography.titleLarge.lineHeight)
@@ -135,7 +135,7 @@ class AqTypographyTest {
     }
 
     @Test
-    fun primary_action_and_amount_styles_use_the_polaris_weights() {
+    fun primary_action_and_amount_styles_use_the_moon_weights() {
         assertEquals(16.sp, AqTextStyles.ButtonLabel.fontSize)
         assertEquals(AqWeight.SemiBold, AqTextStyles.ButtonLabel.fontWeight)
         assertEquals(32.sp, AqTextStyles.Amount.fontSize)
@@ -155,11 +155,11 @@ class AqTypographyTest {
     }
 
     @Test
-    fun mobile_text_roles_carry_their_published_geometry() {
+    fun mobile_text_roles_carry_their_geometry() {
         val roles = listOf(
-            AqTextStyles.Heading3Xl to Triple(36f, 48f, AqWeight.Bold),
-            AqTextStyles.Heading2Xl to Triple(32f, 40f, AqWeight.Bold),
-            AqTextStyles.HeadingXl to Triple(22f, 28f, AqWeight.Bold),
+            AqTextStyles.Heading3Xl to Triple(40f, 48f, AqWeight.SemiBold),
+            AqTextStyles.Heading2Xl to Triple(32f, 40f, AqWeight.SemiBold),
+            AqTextStyles.HeadingXl to Triple(24f, 32f, AqWeight.SemiBold),
             AqTextStyles.HeadingLg to Triple(18f, 24f, AqWeight.SemiBold),
             AqTextStyles.HeadingMd to Triple(16f, 20f, AqWeight.SemiBold),
             AqTextStyles.HeadingSm to Triple(14f, 20f, AqWeight.SemiBold),
@@ -177,10 +177,10 @@ class AqTypographyTest {
     }
 
     @Test
-    fun weights_come_only_from_the_published_weight_scale() {
-        assertEquals(450, AqWeight.Regular.weight)
-        assertEquals(550, AqWeight.Medium.weight)
-        assertEquals(650, AqWeight.SemiBold.weight)
+    fun weights_follow_moon_regular_body_and_semibold_heading() {
+        assertEquals(400, AqWeight.Regular.weight)
+        assertEquals(500, AqWeight.Medium.weight)
+        assertEquals(600, AqWeight.SemiBold.weight)
         assertEquals(700, AqWeight.Bold.weight)
     }
 

@@ -24,7 +24,7 @@ import com.agendaqr.core.ui.theme.AqSquircles
  * (`moon_design` 1.1.0, `lib/src/widgets/loaders/circular_loader.dart`).
  *
  * Tamaños de Moon: x2s (16 dp, trazo 2 dp), xs (24 dp, 2 dp), sm (32 dp,
- * 2 dp), md (40 dp, 4 dp) y lg (48 dp, 4 dp). El color se toma de Polaris;
+ * 2 dp), md (40 dp, 4 dp) y lg (48 dp, 4 dp). El color se toma de Moon;
  * la geometría, de Moon. Es indeterminado (giro continuo).
  */
 @Composable
@@ -60,7 +60,7 @@ fun AqCircularLoader(
  * (`moon_design` 1.1.0, `lib/src/widgets/loaders/linear_loader.dart`).
  *
  * Tamaños de Moon: x6s (2 dp, radio 4), x5s (4 dp, 4 dp), x4s (8 dp, 8 dp),
- * x3s (12 dp, 12 dp), x2s (16 dp, 16 dp). El color de Polaris; la geometría,
+ * x3s (12 dp, 12 dp), x2s (16 dp, 16 dp). El color de Moon; la geometría,
  * de Moon. [progress] en 0..1; usa 1f para indeterminado visual (línea
  * completa) o el valor real de avance.
  */

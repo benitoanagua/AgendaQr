@@ -25,7 +25,7 @@ D1 del cierre de gaps: no existe selección múltiple; cada acción requiere un 
 
 **Política destructiva (eliminar por lote):** una única confirmación con el conteo («¿Eliminar 5 actividades?»), `AqDialog(destructive = true)`, foco inicial en la acción conservativa. Tras ejecutar, se ofrece «Deshacer» en el snackbar (commit diferido en el ViewModel). Favorito masivo y asignar contexto no piden confirmación y ofrecen Deshacer.
 
-**Nivel de precedencia:** Nivel 1 Polaris (`IndexTable` con acciones masivas), adaptado a móvil con tokens Polaris y patrón nativo de selección por pulsación larga.
+**Nivel de precedencia:** Nivel 1 el sistema visual anterior (`IndexTable` con acciones masivas), adaptado a móvil con tokens el sistema visual anterior y patrón nativo de selección por pulsación larga.
 
 **Contrato:** se añade el gesto `long-press-select` y el estado `selection` a S01, S07-list e inbox en `ScreenContractGate.kt` y en el documento generado `03-contrato-interaccion-pantallas.md`.
 

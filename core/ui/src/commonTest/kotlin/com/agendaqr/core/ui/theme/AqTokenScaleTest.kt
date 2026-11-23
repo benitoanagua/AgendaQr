@@ -6,15 +6,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Geometría transcrita de `@shopify/polaris-tokens@9.4.2`
- * (`docs/05-design-system/09-instantanea-tokens-polaris-9.4.2.md`).
- * `1rem = 16dp` (D-01) y la escala táctil de 48dp (D-02) son las únicas
- * adaptaciones móviles documentadas.
+ * Geometría de producto sobre la escala de Moon (`moon_design` 1.1.0,
+ * `docs/05-design-system/13-catalogo-moon.md`). La escala táctil de 48dp
+ * (D-02) es la única adaptación móvil documentada.
  */
 class AqTokenScaleTest {
 
     @Test
-    fun spacing_uses_the_published_space_scale() {
+    fun spacing_uses_the_product_space_scale() {
         assertEquals(0.dp, AqSpacing.None)
         assertEquals(2.dp, AqSpacing.Xs)
         assertEquals(4.dp, AqSpacing.Sm)
@@ -30,7 +29,7 @@ class AqTokenScaleTest {
     }
 
     @Test
-    fun radius_scale_matches_the_published_border_radius_scale() {
+    fun radius_scale_is_pinned() {
         assertEquals(2.dp, AqRadius.ExtraSmall)
         assertEquals(4.dp, AqRadius.Small)
         assertEquals(8.dp, AqRadius.Medium)
@@ -41,7 +40,7 @@ class AqTokenScaleTest {
     }
 
     @Test
-    fun component_dimensions_pin_the_polaris_reference_sizes() {
+    fun component_dimensions_are_pinned() {
         assertEquals(48.dp, AqMetrics.ControlMinSize)
         assertEquals(1.dp, AqMetrics.Border)
         assertEquals(1.dp, AqMetrics.DividerHeight)
@@ -65,33 +64,16 @@ class AqTokenScaleTest {
     }
 
     @Test
-    fun elevation_keeps_the_published_shadow_geometry() {
-        assertEquals(0.dp, AqElevation.None.elevation)
-        assertEquals(0f, AqElevation.None.lightAlpha)
-        assertEquals(1.dp, AqElevation.Shadow1.elevation)
-        assertEquals(1.dp, AqElevation.Shadow1.offsetY)
-        assertEquals(0.07f, AqElevation.Shadow1.lightAlpha)
-        assertTrue(AqElevation.Shadow1.suppressedInLightMobile)
-        assertEquals(1.dp, AqElevation.Shadow2.elevation)
-        assertEquals(3.dp, AqElevation.Shadow2.offsetY)
-        assertEquals((-1).dp, AqElevation.Shadow2.spread)
-        assertEquals(0.07f, AqElevation.Shadow2.lightAlpha)
-        assertEquals(6.dp, AqElevation.Shadow3.elevation)
-        assertEquals(4.dp, AqElevation.Shadow3.offsetY)
-        assertEquals((-2).dp, AqElevation.Shadow3.spread)
-        assertEquals(0.20f, AqElevation.Shadow3.lightAlpha)
-        assertEquals(16.dp, AqElevation.Shadow4.elevation)
-        assertEquals(8.dp, AqElevation.Shadow4.offsetY)
-        assertEquals((-4).dp, AqElevation.Shadow4.spread)
-        assertEquals(0.22f, AqElevation.Shadow4.lightAlpha)
-        assertEquals(20.dp, AqElevation.Shadow5.elevation)
-        assertEquals(12.dp, AqElevation.Shadow5.offsetY)
-        assertEquals((-8).dp, AqElevation.Shadow5.spread)
-        assertEquals(0.24f, AqElevation.Shadow5.lightAlpha)
-        assertEquals(20.dp, AqElevation.Shadow6.elevation)
-        assertEquals(20.dp, AqElevation.Shadow6.offsetY)
-        assertEquals((-8).dp, AqElevation.Shadow6.spread)
-        assertEquals(0.28f, AqElevation.Shadow6.lightAlpha)
+    fun shadows_keep_the_moon_layer_geometry() {
+        assertEquals(listOf(AqShadow.Sm, AqShadow.Md, AqShadow.Lg, AqShadow.Xl), AqShadow.entries)
+        assertEquals(listOf(1.dp, 6.dp), AqShadow.Sm.light.map { it.blur })
+        assertEquals((-6).dp, AqShadow.Sm.light[1].spread)
+        assertEquals(0.4f, AqShadow.Sm.light[0].alpha)
+        assertEquals(12.dp, AqShadow.Md.light[1].offsetY)
+        assertEquals(24.dp, AqShadow.Lg.light[1].blur)
+        assertEquals(3, AqShadow.Xl.light.size)
+        assertEquals(2, AqShadow.Xl.dark.size)
+        assertEquals(0.639f, AqShadow.Md.dark[1].alpha)
     }
 
     @Test

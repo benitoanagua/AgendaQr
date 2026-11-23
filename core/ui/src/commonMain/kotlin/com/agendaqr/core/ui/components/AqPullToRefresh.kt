@@ -23,11 +23,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import com.agendaqr.core.ui.motion.LocalReducedMotion
 import com.agendaqr.core.ui.theme.AqColor
-import com.agendaqr.core.ui.theme.AqElevation
+import com.agendaqr.core.ui.theme.AqShadow
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqMotion
 import com.agendaqr.core.ui.theme.AqSpacing
-import com.agendaqr.core.ui.theme.aqElevation
+import com.agendaqr.core.ui.theme.aqShadow
 import com.agendaqr.core.ui.theme.AqRadius
 import com.agendaqr.core.ui.theme.AqSquircles
 import kotlinx.coroutines.launch
@@ -35,8 +35,8 @@ import kotlin.math.roundToInt
 
 /**
  * Contenedor de recarga vertical por arrastre (Pull to refresh).
- * Nivel 3 (patrón nativo móvil estilizado con tokens Polaris).
- * Muestra el spinner canónico de Polaris cuando el usuario tira hacia abajo.
+ * Nivel 3 (patrón nativo móvil estilizado con tokens Moon).
+ * Muestra el spinner canónico de Moon cuando el usuario tira hacia abajo.
  */
 @Composable
 fun AqPullToRefresh(
@@ -124,7 +124,7 @@ fun AqPullToRefresh(
                         }
                         IntOffset(0, (indicatorOffset - with(density) { AqMetrics.ControlMinSize.toPx() }).roundToInt())
                     }
-                    .aqElevation(AqElevation.Shadow2, AqSquircles.Circle)
+                    .aqShadow(AqShadow.Sm, AqSquircles.Circle)
                     .background(AqColor.Surface)
                     .padding(AqSpacing.Md),
                 contentAlignment = Alignment.Center,

@@ -2,7 +2,7 @@
 
 **Estado:** Informativo (hallazgos verificados en código, 2026-11-20).
 **Alcance:** `core/ui` y `feature/destinations/presentation`. No se audita `shared`, `domain`, `data` ni `supabase`.
-**Referencia:** `ADR-0038` (Moon = UX/interacción; Polaris = UI/apariencia; nativo = lo que ninguno cubre). Cadena de precedencia: `00-contrato-normativo-diseno.md` §6 y `11-matriz-gaps-mobile.md`.
+**Referencia:** `ADR-0038` (Moon = UX/interacción; el sistema visual anterior = UI/apariencia; nativo = lo que ninguno cubre). Cadena de precedencia: `00-contrato-normativo-diseno.md` §6 y `11-matriz-gaps-mobile.md`.
 
 ---
 
@@ -10,7 +10,7 @@
 
 | ID | Hallazgo | Archivo | Severidad | Fase |
 |---|---|---|---|---|
-| A-01 | Glifo "ALT" como placeholder de imagen: `AqIcons.ImageOff` apunta a `PolarisIconVectors.ImageAlt` (letras ALT, no imagen rota) | `core/ui/.../components/AqIcon.kt:65` | Crítica (UX) | 1 |
+| A-01 | Glifo "ALT" como placeholder de imagen: `AqIcons.ImageOff` apunta a `MoonIconVectors.ImageAlt` (letras ALT, no imagen rota) | `core/ui/.../components/AqIcon.kt:65` | Crítica (UX) | 1 |
 | A-02 | `Loading` y `Failure` de la miniatura muestran el mismo icono (ALT); el usuario no distingue "cargando" de "sin vista previa" | `ComprobanteThumbnail.android.kt:122-151` | Alta (UX) | 1 |
 | A-03 | iOS nunca decodifica miniaturas: siempre placeholder (decodificación diferida sin fecha de hardware) | `ComprobanteThumbnail.ios.kt:24-42` | Alta (paridad) | 2 |
 | A-04 | Decodificación Android en `RGB_565` (pérdida de calidad), `inSampleSize` sin densidad real, sin caché de memoria | `ComprobanteThumbnail.android.kt:48-81` | Media (rendimiento/calidad) | 2 |
@@ -25,11 +25,11 @@
 
 ---
 
-## 2. Iconografía de producto (`AqIcons`) vs. glifo real de Polaris Icons 9.3.1
+## 2. Iconografía de producto (`AqIcons`) vs. glifo real del sistema visual anterior Icons 9.3.1
 
-Verificado contra `AqIconMappingTest` y `PolarisIconVectors.kt`.
+Verificado contra `AqIconMappingTest` y `MoonIconVectors.kt`.
 
-| `AqIcons.*` | Glifo Polaris real | ¿Nombre semántico correcto? | Nota |
+| `AqIcons.*` | Glifo el sistema visual anterior real | ¿Nombre semántico correcto? | Nota |
 |---|---|---|---|
 | `Search` | `SearchIcon` (lupa) | Sí | — |
 | `Add` | `PlusIcon` (+) | Sí | — |

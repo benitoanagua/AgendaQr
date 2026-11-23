@@ -21,4 +21,4 @@ Puerto de `MoonCheckbox`. Caja de 16 dp con radio squircle interactivo (4 dp), m
 Rol `Role.Checkbox`, `selected` según estado, `contentDescription` del llamador.
 
 ## Uso en pantalla
-Disponible; las pantallas aún no han migrado de los controles Polaris originales.
+Disponible; las pantallas aún no han migrado de los controles Moon originales.

@@ -64,7 +64,7 @@ expect suspend fun decodeThumbnailBitmap(file: String): ImageBitmap?
  * Marco de miniatura compartido por Android, iOS, vistas de detalle y
  * previsualizaciones: superficie [AqColor.SurfaceContainerHighest], radio
  * [AqSquircles.SurfaceMd], contenido centrado. Los valores visuales son 100 %
- * tokens Polaris; sin valores propios.
+ * tokens Moon; sin valores propios.
  */
 @Composable
 fun AqThumbnailFrame(

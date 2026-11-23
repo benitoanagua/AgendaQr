@@ -5,7 +5,7 @@
 **Implementación:** `core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/AqSelection.kt`.
 
 ## Origen
-Puerto de `MoonSwitch`. Pista con pulgar deslizable, tamaños x2s/xs/sm, relleno activo e inactivo de Polaris.
+Puerto de `MoonSwitch`. Pista con pulgar deslizable, tamaños x2s/xs/sm, relleno activo e inactivo de Moon.
 
 ## Tamaños (MoonSwitchSize)
 | Tamaño | Pista | Pulgar | Radio |
@@ -27,4 +27,4 @@ Ancho mínimo de 48 dp (D-02).
 Rol `Role.Switch`, `selected` según estado, `contentDescription` del llamador.
 
 ## Uso en pantalla
-Disponible; las pantallas aún usan controles Polaris originales.
+Disponible; las pantallas aún usan controles Moon originales.

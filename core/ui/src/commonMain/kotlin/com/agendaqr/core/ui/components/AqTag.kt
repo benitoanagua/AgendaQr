@@ -32,7 +32,7 @@ import com.agendaqr.core.ui.theme.AqSquircles
  *
  * - Tamaños: x2s 16 / xs 24 / sm 32 dp ([AqSize]).
  * - Radio: Xs / Xs / Sm ([AqCorner]) vía [AqSquircles].
- * - [tone] resuelve relleno y contenido desde los tonos de Polaris.
+ * - [tone] resuelve relleno y contenido desde los tonos de Moon.
  * - Todo el copy llega del llamador.
  */
 @Composable
