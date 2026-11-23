@@ -62,15 +62,15 @@ Alturas y radios usan los tokens de §1; `px` = horizontal del relleno.
 
 | Componente | Tamaño | Alto | Radio | Relleno horiz. | Hueco |
 |---|---|---|---|---|---|
-| Botón | xs / sm / md / lg / xl | 24 / 32 / 40 / 48 / 56 | InteractiveXs / Sm / Sm / Sm / Md | 8 / 12 / 16 / 16 / 24 | 4 / 4 / 8 / 12 / 16 *(ver fuente: md–xl)* |
+| Botón | xs / sm / md / lg / xl | 24 / 32 / 40 / 48 / 56 | InteractiveXs / Sm / Sm / Sm / Md | 8 / 12 / 16 / 16 / 24 | 4 / 4 / 8 / 12 / 16 |
 | Input de texto | sm / md / lg / xl | 32 / 40 / 48 / 56 | Xs / Sm / Sm / Sm | 8 / 12 / 12 / 16 | 8 |
 | Chip | sm / md | 32 / 40 | InteractiveXs / Sm | 12 / 16 | 8 |
-| Tag | x2s / xs / sm | 16 / 24 / 32 | Xs / Xs / Sm | 8 / 8 / *ver fuente* | 2 / 2 / 8 |
+| Tag | x2s / xs / sm | 16 / 24 / 32 | Xs / Xs / Sm | 8 / 8 / 8 | 2 / 2 / 8 |
 | Avatar | xs / sm / md / lg / xl / x2l | 24 / 32 / 40 / 48 / 56 / 64 | Xs / Sm / Sm / Sm / Md / Md | — | — |
 | Control segmentado | sm / md | 40 / 48 | InteractiveSm | 12 / 16 | 4 / 8 |
 | Tab bar | sm / md | 32 / 40 (indicador 2) | Xs / Sm | 12 / 16 | 4 / 8 |
 | Acordeón (cabecera) | sm / md | 32 / 40 | InteractiveSm | 8 / 12 | — |
-| Switch | x2s / xs / sm | 16 / 24 / 32 (ancho 32 / 44 / 60; pulgar 12 / 16 / *ver fuente*) | píldora | — | — |
+| Switch | x2s / xs / sm | 16 / 24 / 32 (ancho 32 / 44 / 60; pulgar 12 / 16 / 20) | píldora | — | — |
 
 **Regla de área táctil (ADR-0039 §4.4):** todo control con alto visual < 48 dp conserva ese alto y amplía el área táctil a 48 dp (como `touch_target_padding.dart` en la fuente), sin cambiar su aspecto.
 
