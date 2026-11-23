@@ -154,12 +154,14 @@ fun AqTextInput(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                .heightIn(min = AqMetrics.ControlMinSize)
+                .testTag("aq-field-touch-target")
                 .padding(vertical = touchVerticalPadding),
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
                     .heightIn(min = size.height)
                     .background(AqColor.InputSurface, shape)
                     .border(AqMetrics.Border, borderColor, shape)
@@ -185,6 +187,7 @@ fun AqTextInput(
                     onValueChange = onValueChange,
                     modifier = Modifier
                         .weight(1f)
+                        .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
                         .then(
                             if (focusRequester != null) {
                                 Modifier.focusRequester(focusRequester)

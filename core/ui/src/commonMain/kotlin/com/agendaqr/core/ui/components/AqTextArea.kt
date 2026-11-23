@@ -31,6 +31,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -129,8 +131,14 @@ fun AqTextArea(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                .padding(vertical = touchVerticalPadding),
+                .heightIn(min = AqMetrics.ControlMinSize)
+                .testTag("aq-field-touch-target")
+                .padding(vertical = touchVerticalPadding)
+                .semantics {
+                    contentDescription = label
+                    text = AnnotatedString(label)
+                    if (effectiveIsError && effectiveErrorMessage != null) error(effectiveErrorMessage)
+                },
         ) {
             Row(
                 modifier = Modifier
@@ -168,8 +176,9 @@ fun AqTextArea(
                         },
                     )
                     .semantics {
-                        contentDescription = label
-                        if (effectiveIsError && effectiveErrorMessage != null) error(effectiveErrorMessage)
+                        // El valor editado se anuncia como texto; el nombre
+                        // accesible del campo vive en el wrapper de 48 dp.
+                        text = AnnotatedString(value)
                     },
                 enabled = enabled,
                 readOnly = readOnly,

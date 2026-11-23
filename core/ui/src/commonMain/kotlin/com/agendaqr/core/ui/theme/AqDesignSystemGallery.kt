@@ -64,6 +64,7 @@ import com.agendaqr.core.ui.components.AqProgressBar
 import com.agendaqr.core.ui.components.AqProgressBlock
 import com.agendaqr.core.ui.components.AqPullToRefresh
 import com.agendaqr.core.ui.components.AqQrPreview
+import com.agendaqr.core.ui.components.AqQuickAction
 import com.agendaqr.core.ui.components.AqRadio
 import com.agendaqr.core.ui.components.AqSectionTitle
 import com.agendaqr.core.ui.components.AqSearchInput
@@ -348,6 +349,31 @@ private fun AqActionsPreview() {
                 onClick = {},
                 variant = AqButtonVariant.Primary,
                 size = AqButtonSize.Small,
+            )
+        }
+        AqText(
+            text = "Acciones rápidas (glifo + etiqueta, celda a ancho del padre)",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqQuickAction(
+                label = "Traer un QR",
+                icon = AqIcons.QrCode,
+                onClick = {},
+                modifier = Modifier.weight(1f),
+            )
+            AqQuickAction(
+                label = "Registrar actividad",
+                icon = AqIcons.Register,
+                onClick = {},
+                modifier = Modifier.weight(1f),
+            )
+            AqQuickAction(
+                label = "Crear contexto",
+                icon = AqIcons.Context,
+                onClick = {},
+                modifier = Modifier.weight(1f),
             )
         }
     }

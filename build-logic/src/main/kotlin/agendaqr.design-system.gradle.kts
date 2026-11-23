@@ -262,6 +262,12 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
         if (hasBorderCall && borderAllowedFiles.none { path.endsWith(it) }) {
             add("$location: .border(/BorderStroke( outside the canonical focus file (register an exception or remove the border): $line")
         }
+        // PatrÃ³n prohibido: AqQuickAction con ancho fijo
+        // (AqMetrics.GridIconContainerSize = 48 dp). La celda debe aceptar el
+        // ancho del padre (el llamador pasa weight(1f)); sÃ­ntoma S1.
+        if (line.contains(".width(AqMetrics.GridIconContainerSize)")) {
+            add("$location: AqQuickAction con ancho fijo prohibido; quitar .width(AqMetrics.GridIconContainerSize): $line")
+        }
         // material3/material prohibido en feature/, shared/src,
         // androidApp/src e iosApp/src (solo core:ui puede adaptarlos).
         val isAppSource = isFeatureSource || path.contains("/shared/src/") ||
@@ -645,6 +651,7 @@ tasks.register("verifyDocs") {
 tasks.register("verifyDesignSystemCompliance") {
     group = "verification"
     description = "Enforces design-system invariants in production Kotlin sources."
+    dependsOn("verifyLayoutGeometry")
     doLast {
         val violations = checkViolations().toMutableList()
         if (file("design-tokens.json").exists()) {
@@ -810,6 +817,19 @@ tasks.register("verifyDesignSystemFixtures") {
         }
         require(falseSpacingFlags.isEmpty()) {
             "Valid token spacing failed enforcement: ${falseSpacingFlags.joinToString()}"
+        }
+
+        // verifyLayoutGeometry: AqQuickAction con ancho fijo (S1) debe ser
+        // rechazado; el uso correcto con weight(1f) debe pasar.
+        val quickActionFixedWidth =
+            "AqQuickAction(label = \"ctx-1\", icon = icon, onClick = {}, modifier = Modifier.width(AqMetrics.GridIconContainerSize))"
+        require(kotlinDesignViolations(featurePath, listOf(quickActionFixedWidth)).isNotEmpty()) {
+            "AqQuickAction con width fija debe fallar verifyLayoutGeometry"
+        }
+        require(kotlinDesignViolations(featurePath, listOf(
+            "AqQuickAction(label = \"ctx-1\", icon = icon, onClick = {}, modifier = Modifier.weight(1f))"
+        )).isEmpty()) {
+            "AqQuickAction con weight(1f) debe pasar verifyLayoutGeometry"
         }
 
         // Formas fuera del design system: en feature/, shared/ y
@@ -1008,6 +1028,49 @@ tasks.register("verifyDesignSystemFixtures") {
         val catalogViolations = catalogCompletenessViolations()
         require(catalogViolations.all { it.startsWith("catalogo:") }) {
             "catalogCompletenessViolations debe devolver solo violaciones de catálogo: $catalogViolations"
+        }
+    }
+}
+
+/** Gate de geometría de layout (Fase 5). Ejecuta la suite AqLayoutGeometryTest
+ *  (360 dp, claro/oscuro, fuente 100 % y 150 %) y rechaza los patrones
+ *  prohibidos detectados en kotlinDesignViolations (AqQuickAction con ancho
+ *  fijo). La suite recorre las geometrías crÃ­ticas de los componentes Moon.
+ */
+tasks.register("verifyLayoutGeometry") {
+    group = "verification"
+    description = "Verifica la geometría Moon mediante AqLayoutGeometryTest y patrones prohibidos."
+    dependsOn(":core:ui:testDebugUnitTest")
+    doLast {
+        val violations = mutableListOf<String>()
+        // Detecta patrones prohibidos en componentes de core/ui.
+        val componentsDir = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components")
+        if (componentsDir.exists()) {
+            componentsDir.walkTopDown()
+                .filter { it.isFile && it.extension == "kt" }
+                .forEach { source ->
+                    violations += kotlinDesignViolations(
+                        source.path,
+                        source.readLines()
+                    )
+                }
+        }
+        // Resultados de la suite AqLayoutGeometryTest.
+        val resultFile = file(
+            "core/ui/build/test-results/testDebugUnitTest/" +
+                "TEST-com.agendaqr.core.ui.components.AqLayoutGeometryTest.xml"
+        )
+        if (!resultFile.exists()) {
+            violations += "verifyLayoutGeometry: no se encontrÃ³ el resultado de AqLayoutGeometryTest"
+        } else {
+            val content = resultFile.readText()
+            Regex("failures=\"(\\d+)\"").find(content)?.groupValues?.get(1)?.toIntOrNull()?.takeIf { it > 0 }?.let {
+                violations += "verifyLayoutGeometry: AqLayoutGeometryTest tiene $it fallas"
+            }
+        }
+        require(violations.isEmpty()) {
+            "Layout geometry violations (${violations.size}):\n" +
+                violations.take(40).joinToString("\n") { "  $it" }
         }
     }
 }
@@ -1468,6 +1531,7 @@ tasks.register("verifyAgendaQrArchitecture") {
     group = "verification"
     dependsOn(
         "verifyDesignSystemCompliance",
+        "verifyLayoutGeometry",
         "verifyArchitectureBoundaries",
         "verifyDesignSystemFixtures",
         "verifyNoScripts",

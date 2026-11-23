@@ -63,11 +63,16 @@ class AqTabsLayoutTest {
     private fun lastTabIsReachableAndSelectable(setFontScale: (Float) -> Unit, scale: Float) {
         setFontScale(scale)
         // La última pestaña se alcanza aunque desborde el ancho: el pivot
-        // desplaza en horizontal (performScrollTo falla sin scrollable).
-        compose.onNodeWithText("Comprobantes")
-            .performScrollTo()
-            .assertIsDisplayed()
-            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab))
+        // desplaza en horizontal. Cuando las pestañas caben (weight) ya está
+        // visible; cuando desbordan, hace scroll para alcanzarla.
+        val last = compose.onNodeWithText("Comprobantes")
+        last.assertIsDisplayed()
+        try {
+            last.performScrollTo()
+        } catch (e: AssertionError) {
+            // Sin scroll disponible: la pestaña ya es visible y seleccionable.
+        }
+        last.assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab))
             .performClick()
         compose.onNodeWithText("Comprobantes")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, true))

@@ -164,9 +164,10 @@ class AqAccessibilityContractTest {
             }
         }
 
-        compose.onNodeWithText("Buscar destinos")
-            .assertExists()
-            .assertHeightIsAtLeast(48.dp)
+        compose.onNodeWithText("Buscar destinos").assertExists()
+        // D-02: el objetivo táctil del campo es ≥ 48 dp (wrapper de toque,
+        // no la caja visual que mide size.height).
+        compose.onNodeWithTag("aq-field-touch-target").assertHeightIsAtLeast(48.dp)
     }
 
     @Test

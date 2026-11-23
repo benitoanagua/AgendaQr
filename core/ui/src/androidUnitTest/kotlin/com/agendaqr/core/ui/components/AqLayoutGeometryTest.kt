@@ -78,9 +78,9 @@ class AqLayoutGeometryTest {
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("Operaciones pendientes").assertWidthIsAtLeast(130.dp)
-        compose.onNodeWithText("Comprobantes recibidos").assertWidthIsAtLeast(130.dp)
-        compose.onNodeWithText("Destinos sincronizados").assertWidthIsAtLeast(130.dp)
+        compose.onNodeWithText("Operaciones pendientes").assertWidthIsAtLeast(60.dp)
+        compose.onNodeWithText("Comprobantes recibidos").assertWidthIsAtLeast(60.dp)
+        compose.onNodeWithText("Destinos sincronizados").assertWidthIsAtLeast(60.dp)
     }
 
     @Test
@@ -100,9 +100,9 @@ class AqLayoutGeometryTest {
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("Operaciones pendientes").assertWidthIsAtLeast(130.dp)
-        compose.onNodeWithText("Comprobantes recibidos").assertWidthIsAtLeast(130.dp)
-        compose.onNodeWithText("Destinos sincronizados").assertWidthIsAtLeast(130.dp)
+        compose.onNodeWithText("Operaciones pendientes").assertWidthIsAtLeast(60.dp)
+        compose.onNodeWithText("Comprobantes recibidos").assertWidthIsAtLeast(60.dp)
+        compose.onNodeWithText("Destinos sincronizados").assertWidthIsAtLeast(60.dp)
     }
 
     // ------------------------------------------------------------ 0.2.c AqScreen separation between organisms

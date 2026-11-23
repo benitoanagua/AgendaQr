@@ -65,29 +65,35 @@ enum class AqButtonSize(
     /** Hueco entre ícono y etiqueta (Moon § Botón: xs/sm 4, md 8, lg 12, xl 16). */
     val iconTextGap: Dp,
 ) {
+    ExtraSmall(
+        visualHeight = AqSize.Xs,
+        horizontalPadding = AqSize.X4s,
+        iconSize = AqMetrics.IconSizeCompact,
+        iconTextGap = AqSize.X5s,
+    ),
+    Small(
+        visualHeight = AqSize.Sm,
+        horizontalPadding = AqSize.X3s,
+        iconSize = AqMetrics.ButtonMediumIconSize,
+        iconTextGap = AqSize.X5s,
+    ),
+    Medium(
+        visualHeight = AqSize.Md,
+        horizontalPadding = AqSize.X2s,
+        iconSize = AqMetrics.ButtonMediumIconSize,
+        iconTextGap = AqSize.X4s,
+    ),
     Large(
-        visualHeight = AqMetrics.ButtonLargeHeight,
+        visualHeight = AqSize.Lg,
         horizontalPadding = AqSize.X2s,
         iconSize = AqMetrics.IconSize,
         iconTextGap = AqSize.X3s,
     ),
-    Medium(
-        visualHeight = AqMetrics.ButtonCompactHeight,
-        horizontalPadding = AqSize.X3s,
-        iconSize = AqMetrics.ButtonMediumIconSize,
-        iconTextGap = AqSize.X4s,
-    ),
-    Small(
-        visualHeight = AqMetrics.ButtonSmallHeight,
-        horizontalPadding = AqSize.X4s,
-        iconSize = AqMetrics.IconSizeCompact,
-        iconTextGap = AqSize.X5s,
-    ),
-    ExtraSmall(
-        visualHeight = AqMetrics.ButtonExtraSmallHeight,
-        horizontalPadding = AqSize.X4s,
-        iconSize = AqMetrics.IconSizeCompact,
-        iconTextGap = AqSize.X5s,
+    ExtraLarge(
+        visualHeight = AqSize.Xl,
+        horizontalPadding = AqSize.Xs,
+        iconSize = AqMetrics.IconSize,
+        iconTextGap = AqSize.X2s,
     ),
 }
 
