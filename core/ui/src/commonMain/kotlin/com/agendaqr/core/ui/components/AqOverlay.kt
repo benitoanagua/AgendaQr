@@ -103,10 +103,10 @@ fun AqModal(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
                     .heightIn(max = paneMaxHeight)
+                    .testTag("aq-modal-pane")
                     .padding(AqSize.Lg)
                     .background(LocalAqColorScheme.current.surface, AqSquircles.SurfaceLg)
-                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                    .testTag("aq-modal-pane"),
+                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
             ) {
                 Text(
                     text = title,
