@@ -1,11 +1,11 @@
 package com.agendaqr.core.ui.components
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.theme.AqMetrics
 
 /**
  * Entrada de búsqueda sobre [AqTextInput] con lupa y borrado.
@@ -28,29 +28,25 @@ fun AqSearchInput(
     onClear: (() -> Unit)? = null,
     enabled: Boolean = true,
 ) {
-    Column(
+    AqTextInput(
+        label = label,
+        value = value,
+        onValueChange = onValueChange,
         modifier = modifier.fillMaxWidth(),
-    ) {
-        AqTextInput(
-            label = label,
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = enabled,
-            placeholder = placeholder,
-            leadingIcon = AqIcons.Search,
-            trailing = {
-                if (value.isNotBlank() && onClear != null && clearLabel != null) {
-                    AqButton(
-                        label = clearLabel!!,
-                        onClick = onClear,
-                        variant = AqButtonVariant.Text,
-                        size = AqButtonSize.Small,
-                        icon = AqIcons.Erase,
-                        modifier = Modifier.defaultMinSize(minHeight = com.agendaqr.core.ui.theme.AqMetrics.ControlMinSize),
-                    )
-                }
-            },
-        )
-    }
+        enabled = enabled,
+        placeholder = placeholder,
+        leadingIcon = AqIcons.Search,
+        trailing = {
+            if (value.isNotBlank() && onClear != null && clearLabel != null) {
+                AqButton(
+                    label = clearLabel!!,
+                    onClick = onClear,
+                    variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
+                    size = com.agendaqr.core.ui.components.AqButtonSize.Small,
+                    icon = AqIcons.Erase,
+                    modifier = Modifier.defaultMinSize(minHeight = AqMetrics.ControlMinSize),
+                )
+            }
+        },
+    )
 }

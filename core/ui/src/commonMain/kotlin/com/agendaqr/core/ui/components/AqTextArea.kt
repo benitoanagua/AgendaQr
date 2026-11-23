@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -34,13 +33,17 @@ import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
-import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqWeight
+import com.agendaqr.core.ui.theme.LocalAqColorScheme
 import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
@@ -100,29 +103,45 @@ fun AqTextArea(
         AqTextInputSize.Xl -> AqSquircles.InteractiveMd
         else -> AqSquircles.InteractiveSm
     }
-    val horizontalPadding = when (size) {
-        AqTextInputSize.Xs -> AqSpacing.Xs
-        AqTextInputSize.Sm -> AqSpacing.Md
-        AqTextInputSize.Md -> AqSpacing.MdPlus
-        AqTextInputSize.Lg -> AqSpacing.MdPlus
-        AqTextInputSize.Xl -> AqSpacing.Lg
+    val verticalPadding = when (size) {
+        AqTextInputSize.Xs -> AqLayout.InputPaddingVerticalXs
+        AqTextInputSize.Sm -> AqLayout.InputPaddingVerticalSm
+        AqTextInputSize.Md -> AqLayout.InputPaddingVerticalMd
+        AqTextInputSize.Lg -> AqLayout.InputPaddingVerticalLg
+        AqTextInputSize.Xl -> AqLayout.InputPaddingVerticalXl
     }
+    val horizontalPadding = when (size) {
+        AqTextInputSize.Xs -> AqLayout.InputPaddingHorizontalXs
+        AqTextInputSize.Sm -> AqLayout.InputPaddingHorizontalSm
+        AqTextInputSize.Md -> AqLayout.InputPaddingHorizontalMd
+        AqTextInputSize.Lg -> AqLayout.InputPaddingHorizontalLg
+        AqTextInputSize.Xl -> AqLayout.InputPaddingHorizontalXl
+    }
+    // Hueco interno entre el ícono de apoyo y el texto (Moon §3: 8 dp, xl 16).
+    val innerGap = if (size == AqTextInputSize.Xl) AqSize.X2s else AqSize.X4s
+    // Wrapper de toque invisible para que el área táctil sea ≥ 48 dp.
+    val touchVerticalPadding = ((AqMetrics.ControlMinSize - size.height) / 2).coerceAtLeast(AqLayout.Zero)
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(AqSize.X2s),
+        verticalArrangement = Arrangement.spacedBy(AqLayout.LabelToField),
     ) {
         AqTextInputLabel(label, optionalLabel, enabled)
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                .heightIn(min = size.height)
-                .background(AqColor.InputSurface, shape)
-                .border(AqMetrics.Border, borderColor, shape)
-                .padding(horizontal = horizontalPadding),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AqSize.X2s),
+                .padding(vertical = touchVerticalPadding),
         ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = size.height)
+                    .background(AqColor.InputSurface, shape)
+                    .border(AqMetrics.Border, borderColor, shape)
+                    .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(innerGap),
+            ) {
             leadingIcon?.let { glyph ->
                 AqIcon(
                     imageVector = glyph,
@@ -141,7 +160,6 @@ fun AqTextArea(
                 onValueChange = onValueChange,
                 modifier = Modifier
                     .weight(1f)
-                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
                     .then(
                         if (focusRequester != null) {
                             Modifier.focusRequester(focusRequester)
@@ -174,25 +192,27 @@ fun AqTextArea(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                            .padding(vertical = AqSize.X2s),
+                            .padding(vertical = verticalPadding),
                         contentAlignment = Alignment.CenterStart,
                     ) { innerTextField() }
                 },
             )
             trailing?.invoke()
         }
+        }
         maxLength?.let { limit ->
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = AqSize.X3s, vertical = AqSize.X5s),
                 horizontalArrangement = Arrangement.End,
             ) {
-                Text(
+                AqText(
                     text = "$currentLength / $limit",
                     modifier = Modifier.semantics {
                         contentDescription = "Longitud $currentLength de $limit"
                     },
-                    style = AqTextStyles.Support,
+                    size = AqType.BodySmall,
                     color = if (lengthExceeded) AqColor.Danger else AqColor.TextTertiary,
                 )
             }
@@ -201,11 +221,18 @@ fun AqTextArea(
             effectiveIsError && effectiveErrorMessage != null -> {
                 AqErrorMessage(
                     message = effectiveErrorMessage,
-                    modifier = Modifier.testTag("aq-field-support"),
+                    modifier = Modifier
+                        .padding(horizontal = AqSize.X3s, vertical = AqSize.X5s)
+                        .testTag("aq-field-support"),
                 )
             }
             helperMessage != null -> {
-                AqHelperMessage(message = helperMessage, modifier = Modifier.testTag("aq-field-support"))
+                AqHelperMessage(
+                    message = helperMessage,
+                    modifier = Modifier
+                        .padding(horizontal = AqSize.X3s, vertical = AqSize.X5s)
+                        .testTag("aq-field-support"),
+                )
             }
         }
     }
@@ -221,18 +248,19 @@ private fun AqTextInputLabel(
     Row(
         modifier = Modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AqSize.X2s),
+        horizontalArrangement = Arrangement.spacedBy(AqSize.X4s),
     ) {
-        Text(
+        AqText(
             text = label,
-            style = AqTextStyles.Label,
+            size = AqType.Label,
+            fontWeight = AqWeight.SemiBold,
             color = if (!enabled) AqColor.OnDisabled else AqColor.TextPrimary,
-            modifier = Modifier.weight(1f, fill = false),
+            modifier = Modifier.clearAndSetSemantics { },
         )
         optionalLabel?.let {
-            Text(
+            AqText(
                 text = it,
-                style = AqTextStyles.Caption,
+                size = AqType.CaptionSmall,
                 color = AqColor.TextTertiary,
             )
         }

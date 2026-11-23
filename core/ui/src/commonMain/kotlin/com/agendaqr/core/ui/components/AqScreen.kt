@@ -16,7 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSpacing
 
@@ -58,6 +60,10 @@ fun AqScreen(
     statusContent: (@Composable () -> Unit)? = null,
     toastHost: (@Composable () -> Unit)? = null,
     scrollable: Boolean = false,
+    /** Hueco entre organismos consecutivos del contenido (D-12: 16 dp =
+     *  [AqLayout.BetweenOrganisms]). Se aplica con
+     *  [Arrangement.spacedBy] al Column de contenido. */
+    contentSpacing: Dp = AqLayout.BetweenOrganisms,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Box(
@@ -95,6 +101,7 @@ fun AqScreen(
                         horizontal = AqSpacing.ScreenMargin,
                         vertical = AqSpacing.ScreenMargin,
                     ),
+                verticalArrangement = Arrangement.spacedBy(contentSpacing),
             ) {
                 content()
             }
@@ -108,16 +115,11 @@ fun AqScreen(
                         .imePadding()
                         .padding(
                             horizontal = AqSpacing.ScreenMargin,
-                            vertical = AqSpacing.Sm,
+                            vertical = AqLayout.DockVertical,
                         ),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+                    verticalArrangement = Arrangement.spacedBy(AqLayout.InGroup),
                 ) {
-                    androidx.compose.foundation.layout.Row(
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        androidx.compose.foundation.layout.Spacer(modifier = Modifier.weight(1f))
-                    }
                     it()
                 }
             }

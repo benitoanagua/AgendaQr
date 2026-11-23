@@ -45,6 +45,7 @@ import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
@@ -136,11 +137,16 @@ fun DestinationsScreen(
         scrollable = true,
         toastHost = toastHost?.let { host -> { AqToastHost(host) } },
     ) {
-        // Trigger de búsqueda global (botón que abre el flujo de búsqueda).
-        AqQuickAction(
+        // Trigger de búsqueda global: ancho completo, variante Outlined para no
+        // competir con las acciones rápidas primarias. Mismo copy que el
+        // disparador previo (AppStrings.BuscarEnAgendaQr).
+        AqButton(
             label = AppStrings.BuscarEnAgendaQr,
             icon = com.agendaqr.core.ui.components.AqIcons.Search,
             onClick = onOpenSearch,
+            variant = AqButtonVariant.Outline,
+            size = AqButtonSize.Large,
+            modifier = Modifier.fillMaxWidth(),
         )
 
         // §10: errores recuperables y contextuales, visibles sin scroll.
@@ -162,22 +168,25 @@ fun DestinationsScreen(
         // Rejilla "King Kong" de acciones rápidas existentes.
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            horizontalArrangement = Arrangement.spacedBy(AqLayout.InGroup),
         ) {
             AqQuickAction(
                 label = AppStrings.TraerQr,
                 icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
                 onClick = onScanQr,
+                modifier = Modifier.weight(1f),
             )
             AqQuickAction(
                 label = AppStrings.RegistrarOperacion,
                 icon = com.agendaqr.core.ui.components.AqIcons.Register,
                 onClick = onRegisterOperation,
+                modifier = Modifier.weight(1f),
             )
             AqQuickAction(
                 label = AppStrings.CrearContexto,
                 icon = com.agendaqr.core.ui.components.AqIcons.Context,
                 onClick = { showCreateContext = true },
+                modifier = Modifier.weight(1f),
             )
         }
 

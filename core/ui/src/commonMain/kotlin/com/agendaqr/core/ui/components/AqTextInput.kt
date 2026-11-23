@@ -9,17 +9,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -41,13 +38,15 @@ import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
-import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
 import com.agendaqr.core.ui.theme.AqSquircles
 
@@ -61,13 +60,18 @@ import com.agendaqr.core.ui.theme.AqSquircles
  * mostrar/ocultar contraseña). El error se informa debajo con ícono +
  * texto ([AqErrorMessage]) y se asocia a la semántica del campo.
  *
- * - Alturas por tamaño: sm 32 / md 40 / lg 48 / xl 56 dp ([AqSize]).
- * - Radios: InteractiveXs / InteractiveSm / InteractiveSm / InteractiveSm
- *   ([AqCorner]), recortados con [AqSquircles].
- * - Relleno horizontal: 8 / 12 / 12 / 16 dp ([AqSpacing]).
- * - El área táctil es ≥ 48 dp aunque el alto visual sea menor (D-02).
- * - Todo el copy llega del llamador; [AqTextStyles] y los roles de color
- *   de Polaris son la única fuente de apariencia.
+ * Geometría Moon (§ TextInput):
+ * - Altura visual por tamaño: xs 24 / sm 32 / md 40 / lg 48 / xl 56 dp
+ *   ([AqSize]); el área táctil es ≥ 48 dp ([AqMetrics.ControlMinSize])
+ *   mediante un wrapper de toque invisible alrededor de la caja.
+ * - Relleno vertical de la caja: xs 2 / sm 2 / md 4 / lg 6 / xl 9 dp
+ *   ([AqLayout.InputPaddingVertical*]); relleno horizontal: xs 8 / sm 8 /
+ *   md 12 / lg 12 / xl 16 dp ([AqLayout.InputPaddingHorizontal*]).
+ * - Hueco etiqueta-caja: 8 dp ([AqLayout.LabelToField]); hueco
+ *   etiqueta-optionalLabel: 8 dp ([AqSize.X4s]); hueco interno
+ *   icono-texto: 8 dp (xl 16 dp).
+ * - Helper/error y contador: padding start/end 12 dp y arriba 8 dp.
+ * - Todo el copy llega del llamador; [AqText] en lugar de Material Text.
  */
 @Composable
 fun AqTextInput(
@@ -115,16 +119,29 @@ fun AqTextInput(
         AqTextInputSize.Xl -> AqSquircles.InteractiveMd
         else -> AqSquircles.InteractiveSm
     }
-    val horizontalPadding = when (size) {
-        AqTextInputSize.Xs -> AqSpacing.Xs
-        AqTextInputSize.Sm -> AqSpacing.Md
-        AqTextInputSize.Md -> AqSpacing.MdPlus
-        AqTextInputSize.Lg -> AqSpacing.MdPlus
-        AqTextInputSize.Xl -> AqSpacing.Lg
+    val verticalPadding = when (size) {
+        AqTextInputSize.Xs -> AqLayout.InputPaddingVerticalXs
+        AqTextInputSize.Sm -> AqLayout.InputPaddingVerticalSm
+        AqTextInputSize.Md -> AqLayout.InputPaddingVerticalMd
+        AqTextInputSize.Lg -> AqLayout.InputPaddingVerticalLg
+        AqTextInputSize.Xl -> AqLayout.InputPaddingVerticalXl
     }
+    val horizontalPadding = when (size) {
+        AqTextInputSize.Xs -> AqLayout.InputPaddingHorizontalXs
+        AqTextInputSize.Sm -> AqLayout.InputPaddingHorizontalSm
+        AqTextInputSize.Md -> AqLayout.InputPaddingHorizontalMd
+        AqTextInputSize.Lg -> AqLayout.InputPaddingHorizontalLg
+        AqTextInputSize.Xl -> AqLayout.InputPaddingHorizontalXl
+    }
+    // Hueco interno entre el ícono de apoyo y el texto (Moon §3: 8 dp, xl 16).
+    val innerGap = if (size == AqTextInputSize.Xl) AqSize.X2s else AqSize.X4s
+    // Wrapper de toque invisible para que el área táctil sea ≥ 48 dp aunque
+    // la caja visual mida menos (touch_target_padding de Moon).
+    val touchVerticalPadding = ((AqMetrics.ControlMinSize - size.height) / 2).coerceAtLeast(AqLayout.Zero)
+
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(AqSize.X2s),
+        verticalArrangement = Arrangement.spacedBy(AqLayout.LabelToField),
     ) {
         AqTextInputLabel(
             label = label,
@@ -132,102 +149,106 @@ fun AqTextInput(
             enabled = enabled,
             errorMessage = effectiveErrorMessage,
         )
-        Row(
+        // Área táctil ≥ 48 dp (wrapper invisible). La caja visual conserva
+        // size.height; el padding vertical del wrapper es solo táctil.
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                .heightIn(min = size.height)
-                .background(AqColor.InputSurface, shape)
-                .border(AqMetrics.Border, borderColor, shape)
-                .padding(horizontal = horizontalPadding),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AqSize.X2s),
+                .padding(vertical = touchVerticalPadding),
         ) {
-            leadingIcon?.let { glyph ->
-                AqIcon(
-                    imageVector = glyph,
-                    contentDescription = null,
-                    size = AqMetrics.IconSizeCompact,
-                    tint = when {
-                        effectiveIsError -> AqColor.Danger
-                        focused -> AqColor.Focus
-                        enabled -> AqColor.TextTertiary
-                        else -> AqColor.OnDisabled
-                    },
-                )
-            }
-            BasicTextField(
-                value = value,
-                onValueChange = onValueChange,
+            Row(
                 modifier = Modifier
-                    .weight(1f)
-                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                    .then(
-                        if (focusRequester != null) {
-                            Modifier.focusRequester(focusRequester)
-                        } else {
-                            Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = size.height)
+                    .background(AqColor.InputSurface, shape)
+                    .border(AqMetrics.Border, borderColor, shape)
+                    .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(innerGap),
+            ) {
+                leadingIcon?.let { glyph ->
+                    AqIcon(
+                        imageVector = glyph,
+                        contentDescription = null,
+                        size = AqMetrics.IconSizeCompact,
+                        tint = when {
+                            effectiveIsError -> AqColor.Danger
+                            focused -> AqColor.Focus
+                            enabled -> AqColor.TextTertiary
+                            else -> AqColor.OnDisabled
                         },
                     )
-                    .semantics {
-                        contentDescription = label
-                        // El nodo editable expone su label como texto accesible
-                        // para que los lectores de pantalla (y los tests de
-                        // foco de Robolectric) localicen el campo por su
-                        // etiqueta visible (T-01).
-                        text = AnnotatedString(label)
-                        if (effectiveIsError && effectiveErrorMessage != null) error(effectiveErrorMessage)
-                    },
-                enabled = enabled,
-                readOnly = readOnly,
-                singleLine = singleLine,
-                minLines = minLines,
-                maxLines = maxLines,
-                textStyle = AqTextStyles.Body.copy(
-                    color = when {
-                        !enabled -> AqColor.OnDisabled
-                        effectiveIsError -> AqColor.Danger
-                        else -> AqColor.TextPrimary
-                    },
-                ),
-                keyboardOptions = keyboardOptions,
-                keyboardActions = keyboardActions,
-                visualTransformation = visualTransformation,
-                interactionSource = interactionSource,
-                cursorBrush = SolidColor(if (effectiveIsError) AqColor.Danger else AqColor.Focus),
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                            .padding(vertical = AqSize.X2s),
-                        contentAlignment = Alignment.CenterStart,
-                    ) {
-                        innerTextField()
-                        if (value.isBlank() && placeholder != null) {
-                            AqText(
-                                text = placeholder!!,
-                                size = AqType.Body,
-                                color = AqColor.TextTertiary,
-                                modifier = Modifier.padding(horizontal = horizontalPadding),
-                            )
+                }
+                BasicTextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    modifier = Modifier
+                        .weight(1f)
+                        .then(
+                            if (focusRequester != null) {
+                                Modifier.focusRequester(focusRequester)
+                            } else {
+                                Modifier
+                            },
+                        )
+                        .semantics {
+                            contentDescription = label
+                            text = AnnotatedString(label)
+                            if (effectiveIsError && effectiveErrorMessage != null) error(effectiveErrorMessage)
+                        },
+                    enabled = enabled,
+                    readOnly = readOnly,
+                    singleLine = singleLine,
+                    minLines = minLines,
+                    maxLines = maxLines,
+                    textStyle = AqTextStyles.Body.copy(
+                        color = when {
+                            !enabled -> AqColor.OnDisabled
+                            effectiveIsError -> AqColor.Danger
+                            else -> AqColor.TextPrimary
+                        },
+                    ),
+                    keyboardOptions = keyboardOptions,
+                    keyboardActions = keyboardActions,
+                    visualTransformation = visualTransformation,
+                    interactionSource = interactionSource,
+                    cursorBrush = SolidColor(if (effectiveIsError) AqColor.Danger else AqColor.Focus),
+                    decorationBox = { innerTextField ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = verticalPadding),
+                            contentAlignment = Alignment.CenterStart,
+                        ) {
+                            innerTextField()
+                            if (value.isBlank() && placeholder != null) {
+                                AqText(
+                                    text = placeholder!!,
+                                    size = AqType.Body,
+                                    color = AqColor.TextTertiary,
+                                    modifier = Modifier.padding(horizontal = horizontalPadding),
+                                )
+                            }
                         }
-                    }
-                },
-            )
-            trailing?.invoke()
+                    },
+                )
+                trailing?.invoke()
+            }
         }
         maxLength?.let { limit ->
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = AqSize.X3s, vertical = AqSize.X5s),
                 horizontalArrangement = Arrangement.End,
             ) {
-                Text(
+                AqText(
                     text = "$currentLength / $limit",
                     modifier = Modifier.semantics {
                         contentDescription = "Longitud $currentLength de $limit"
                     },
-                    style = AqTextStyles.Support,
+                    size = AqType.BodySmall,
                     color = if (lengthExceeded) AqColor.Danger else AqColor.TextTertiary,
                 )
             }
@@ -236,11 +257,18 @@ fun AqTextInput(
             effectiveIsError && effectiveErrorMessage != null -> {
                 AqErrorMessage(
                     message = effectiveErrorMessage,
-                    modifier = Modifier.testTag("aq-field-support"),
+                    modifier = Modifier
+                        .padding(horizontal = AqSize.X3s, vertical = AqSize.X5s)
+                        .testTag("aq-field-support"),
                 )
             }
             helperMessage != null -> {
-                AqHelperMessage(message = helperMessage, modifier = Modifier.testTag("aq-field-support"))
+                AqHelperMessage(
+                    message = helperMessage,
+                    modifier = Modifier
+                        .padding(horizontal = AqSize.X3s, vertical = AqSize.X5s)
+                        .testTag("aq-field-support"),
+                )
             }
         }
     }
@@ -269,22 +297,21 @@ private fun AqTextInputLabel(
     Row(
         modifier = Modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AqSize.X2s),
+        horizontalArrangement = Arrangement.spacedBy(AqSize.X4s),
     ) {
-        Text(
+        AqText(
             text = label,
-            style = AqTextStyles.Label,
+            size = AqType.Label,
+            fontWeight = AqWeight.SemiBold,
             color = if (!fieldEnabled) AqColor.OnDisabled else AqColor.TextPrimary,
             modifier = Modifier
                 .clearAndSetSemantics { }   // el label es visual; su nombre accesible vive en el campo (contentDescription)
-                .weight(1f, fill = false)
-                .heightIn(min = AqMetrics.ControlMinSize)
                 .fieldLabelSemantics(errorMessage),
         )
         optionalLabel?.let {
-            Text(
+            AqText(
                 text = it,
-                style = AqTextStyles.Caption,
+                size = AqType.CaptionSmall,
                 color = AqColor.TextTertiary,
             )
         }

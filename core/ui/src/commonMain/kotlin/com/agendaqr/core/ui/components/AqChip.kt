@@ -81,7 +81,7 @@ fun AqChip(
                 contentDescription = if (selected) "$text, seleccionado" else text
             },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AqSize.X2s),
+        horizontalArrangement = Arrangement.spacedBy(AqSize.X4s),
     ) {
         icon?.let {
             AqIcon(
@@ -107,6 +107,6 @@ enum class AqChipSize(
     val iconSize: Dp,
     val textSize: androidx.compose.ui.unit.TextUnit,
 ) {
-    Sm(AqSize.Sm, AqSpacing.Md, AqMetrics.IconSizeCompact, com.agendaqr.core.ui.theme.AqType.BodySm),
-    Md(AqSize.Md, AqSpacing.Lg, AqMetrics.IconSizeCompact, com.agendaqr.core.ui.theme.AqType.BodyMd),
+    Sm(AqSize.Sm, AqSize.X3s, AqMetrics.IconSizeCompact, com.agendaqr.core.ui.theme.AqType.BodySm),
+    Md(AqSize.Md, AqSize.X2s, AqMetrics.IconSizeCompact, com.agendaqr.core.ui.theme.AqType.BodyMd),
 }

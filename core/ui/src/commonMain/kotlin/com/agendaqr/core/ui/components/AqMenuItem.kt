@@ -7,7 +7,6 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,9 +24,9 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
-import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqSquircles
@@ -46,6 +45,14 @@ import com.agendaqr.core.ui.theme.AqSquircles
  * - [showDivider]: divisor de 1 dp al final.
  * - Área táctil ≥ 48 dp (D-02); semántica de botón con rol.
  * - Todo el copy llega del llamador.
+ *
+ * Geometría Moon (§ MenuItem):
+ * - Relleno: 12 dp en los 4 lados ([AqLayout.CellPadding]).
+ * - Hueco entre bloques (leading / texto / trailing): 8 dp ([AqLayout.InGroup]).
+ * - Hueco título-subtítulo: 4 dp ([AqSize.X5s]).
+ * - Alto mínimo visual 40 dp; objetivo táctil 48 dp ([AqMetrics.ControlMinSize]).
+ * - El bloque de texto se expande (weight(1f), fill = true); el trailing
+ *   queda con wrapContentWidth (no Spacer con weight).
  */
 @Composable
 fun AqMenuItem(
@@ -102,20 +109,19 @@ fun AqMenuItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = AqSpacing.Lg, vertical = AqSize.X2s),
+                .padding(AqLayout.CellPadding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AqSize.Sm),
+            horizontalArrangement = Arrangement.spacedBy(AqLayout.InGroup),
         ) {
             leading?.invoke()
             Column(
-                modifier = Modifier.weight(1f, fill = false),
+                modifier = Modifier.weight(1f, fill = true),
                 verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
             ) {
                 Text(
                     text = title,
                     style = AqTextStyles.RowTitle,
                     color = contentColor,
-                    modifier = Modifier.weight(1f, fill = false),
                     maxLines = titleMaxLines,
                 )
                 subtitle?.let {
@@ -130,15 +136,14 @@ fun AqMenuItem(
                     slot()
                 }
             }
-            Spacer(Modifier.weight(1f, fill = false))
             trailing?.invoke()
         }
         if (showDivider) {
             androidx.compose.foundation.layout.Row(
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Spacer(modifier = Modifier.width(AqMetrics.ListDividerInset))
-                androidx.compose.material3.HorizontalDivider(
+                androidx.compose.foundation.layout.Spacer(modifier = Modifier.width(AqMetrics.ListDividerInset))
+                HorizontalDivider(
                     modifier = Modifier.fillMaxWidth(),
                     color = AqColor.Divider,
                     thickness = AqMetrics.DividerHeight,

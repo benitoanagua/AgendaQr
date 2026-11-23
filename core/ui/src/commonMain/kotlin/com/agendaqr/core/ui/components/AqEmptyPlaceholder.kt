@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,8 +68,8 @@ fun AqEmptyPlaceholder(
                 label = label,
                 onClick = { onAction?.invoke() },
                 modifier = Modifier
-                    .width(AqMetrics.ButtonCompactHeight + AqSpacing.Lg + AqSpacing.Lg)
-                    .defaultMinSize(minWidth = AqMetrics.ControlMinSize),
+                    .fillMaxWidth()
+                    .widthIn(max = AqMetrics.ButtonLargeHeight + AqSpacing.Xxl),
             )
         }
     }

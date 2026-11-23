@@ -48,6 +48,7 @@ import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqColorScheme
 import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqTextStyles
@@ -61,26 +62,32 @@ enum class AqButtonSize(
     val visualHeight: Dp,
     val horizontalPadding: Dp,
     val iconSize: Dp,
+    /** Hueco entre ícono y etiqueta (Moon § Botón: xs/sm 4, md 8, lg 12, xl 16). */
+    val iconTextGap: Dp,
 ) {
     Large(
         visualHeight = AqMetrics.ButtonLargeHeight,
-        horizontalPadding = AqMetrics.ButtonLargeHorizontalPadding,
+        horizontalPadding = AqSize.X2s,
         iconSize = AqMetrics.IconSize,
+        iconTextGap = AqSize.X3s,
     ),
     Medium(
         visualHeight = AqMetrics.ButtonCompactHeight,
-        horizontalPadding = AqSpacing.Lg,
+        horizontalPadding = AqSize.X3s,
         iconSize = AqMetrics.ButtonMediumIconSize,
+        iconTextGap = AqSize.X4s,
     ),
     Small(
         visualHeight = AqMetrics.ButtonSmallHeight,
-        horizontalPadding = AqSpacing.Md,
+        horizontalPadding = AqSize.X4s,
         iconSize = AqMetrics.IconSizeCompact,
+        iconTextGap = AqSize.X5s,
     ),
     ExtraSmall(
         visualHeight = AqMetrics.ButtonExtraSmallHeight,
-        horizontalPadding = AqSpacing.Sm,
+        horizontalPadding = AqSize.X4s,
         iconSize = AqMetrics.IconSizeCompact,
+        iconTextGap = AqSize.X5s,
     ),
 }
 
@@ -246,7 +253,7 @@ private fun AqButtonImpl(
                     )
                     .then(if (isLoading) Modifier.alpha(AqAlpha.Hidden) else Modifier),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+                horizontalArrangement = Arrangement.spacedBy(size.iconTextGap),
             ) {
                 icon?.let {
                     AqIcon(
