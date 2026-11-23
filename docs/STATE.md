@@ -84,8 +84,6 @@ No se declaran PASS. Requieren Xcode, dispositivo físico, red o backend reales.
 
 ## 4. Pendientes conocidos
 
-- **Legacy aún declarado en `core/ui`:** siguen existiendo los símbolos de la lista `legacySymbols` del gate (`AqLists`, `AqForms`, `AqButtons`, `AqInputs`, `AqChrome`, `AqScaffold`, `AqStatus`, `AqDialogs`, `AqDateTime`, `AqFeedback`, `AqProductExtensions`, `AqLayout`, `AqText`, `AqTabs`, `AqSelection`, `AqDataTable`, `AqFeedbackEvent`, `AqDesignSystemGallery`, `AqPreviews`), y parte de los tests de `core/ui` y de `feature/destinations/presentation` los ejercitan. El gate actual no escanea `core/ui` ni los tests; la tarea `verifyNoLegacyAnywhere` mide ese resto y debe quedar en verde antes de declarar cerrada la migración.
-- **Compilación de tests de presentación:** `LayoutReferenceTest` usa API inexistente (`AqColumnPlaceholder`, `components.content`, `AqIcon(icon=, tone=)`, `AqMenuItem(endMeta=, meta=)`); mientras no se reescriba, `:feature:destinations:presentation:compileDebugUnitTestKotlinAndroid` falla y arrastra `testDebugUnitTest`, `verifyScreenContract` y `captureGallery`.
 - **Share Extension de iOS:** no implementada; el bloque «Desde otra app» de S02 no se muestra en iOS hasta que exista (`supportsShareExtension = false`, ADR-0037). Bloqueo: el proyecto Xcode no está versionado (política en `iosApp/README.md`) y crear el target exige Xcode y firma.
 
 ## 5. No implementado (alcance declarado, no defecto)
