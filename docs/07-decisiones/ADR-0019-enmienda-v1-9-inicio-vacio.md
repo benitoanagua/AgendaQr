@@ -11,9 +11,7 @@ y se retira el encabezado "Todos los destinos" sobre el vacío.
 
 ## Decisión
 - Registrar la enmienda como V1.9 de la especificación UX/UI.
-- Separadores oscuros: se mantiene `#2B2B2B` (no se cambia a `#3A3A3A`)
-  porque las capturas de T10 no mostraron imperceptibilidad; la decisión queda
-  registrada aquí y no se modifica `AqSchemeTest`.
+- Separadores y bordes: usan el rol semántico Moon `divider`/`border` del tema; esta decisión de producto no fija colores hex ni reemplaza los tokens Moon.
 
 ## Consecuencias
 - `DestinationsScreen` actualizado: `scrollable` condicional, acción en el vacío,

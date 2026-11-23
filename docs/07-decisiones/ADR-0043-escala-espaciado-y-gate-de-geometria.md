@@ -3,6 +3,8 @@
 **Estado:** ACEPTADO — 2026-11-22  
 **Relacionado:** ADR-0044, D-12.
 
+Este ADR consolida la propiedad del espaciado y la geometría móvil en la escala `AqLayout`; sus valores actuales prevalecen sobre reglas de composición anteriores.
+
 ## Decisión
 
 1. **Nueva escala de espaciado única `AqLayout`** en `AqTokens.kt`, que concentra los huecos y rellenos de composición expresados exclusivamente con tokens numéricos existentes (`AqSpacing` / `AqSize`), sin literales propios salvo `AqLayout.Zero` (para inicializar operaciones de `Dp`) y los dos valores de relleno vertical de campo que no pertenecen a la escala `AqSize` (`InputPaddingVerticalLg` 6 dp y `InputPaddingVerticalXl` 9 dp, declarados como tokens del sistema). Los valores son:
