@@ -135,9 +135,6 @@ fun AqTextInput(
     }
     // Hueco interno entre el ícono de apoyo y el texto (Moon §3: 8 dp, xl 16).
     val innerGap = if (size == AqTextInputSize.Xl) AqSize.X2s else AqSize.X4s
-    // Wrapper de toque invisible para que el área táctil sea ≥ 48 dp aunque
-    // la caja visual mida menos (touch_target_padding de Moon).
-    val touchVerticalPadding = ((AqMetrics.ControlMinSize - size.height) / 2).coerceAtLeast(AqLayout.Zero)
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -149,14 +146,14 @@ fun AqTextInput(
             enabled = enabled,
             errorMessage = effectiveErrorMessage,
         )
-        // Área táctil ≥ 48 dp (wrapper invisible). La caja visual conserva
-        // size.height; el padding vertical del wrapper es solo táctil.
+        // Área táctil ≥ 48 dp: el Row interno declara defaultMinSize(48 dp),
+        // por lo que la caja visual conserva su alto (size.height) sin añadir
+        // padding táctil que aleje el mensaje de soporte del borde visible.
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = AqMetrics.ControlMinSize)
-                .testTag("aq-field-touch-target")
-                .padding(vertical = touchVerticalPadding),
+                .testTag("aq-field-touch-target"),
         ) {
             Row(
                 modifier = Modifier
@@ -261,7 +258,7 @@ fun AqTextInput(
                 AqErrorMessage(
                     message = effectiveErrorMessage,
                     modifier = Modifier
-                        .padding(horizontal = AqSize.X3s, vertical = AqSize.X5s)
+                        .padding(horizontal = AqSize.X3s, vertical = AqSize.X4s)
                         .testTag("aq-field-support"),
                 )
             }
@@ -269,7 +266,7 @@ fun AqTextInput(
                 AqHelperMessage(
                     message = helperMessage,
                     modifier = Modifier
-                        .padding(horizontal = AqSize.X3s, vertical = AqSize.X5s)
+                        .padding(horizontal = AqSize.X3s, vertical = AqSize.X4s)
                         .testTag("aq-field-support"),
                 )
             }

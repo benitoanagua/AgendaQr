@@ -94,12 +94,12 @@ internal fun AuthScreen(
                 busyDescription = AppStrings.IniciandoSesion,
                 modifier = Modifier.fillMaxWidth(),
             )
-            // Secundario: sin StateDescription (no anuncia ocupado).
+            // Secundario: ancho intrínseco centrado bajo el primario (sin
+            // fillMaxWidth). No anuncia ocupado.
             AqButton(
                 label = AppStrings.CrearCuenta,
                 onClick = { onSignUp() },
                 variant = AqButtonVariant.Text,
-                modifier = Modifier.fillMaxWidth(),
             )
         }
     }

@@ -34,8 +34,6 @@ import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
-import com.agendaqr.core.ui.theme.aqShadow
-import com.agendaqr.core.ui.theme.AqShadow
 import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
@@ -89,7 +87,6 @@ fun AqAlert(
             .fillMaxWidth()
             .defaultMinSize(minHeight = AqSize.Xl)
             .background(colors.container, AqSquircles.SurfaceSm)
-            .aqShadow(AqShadow.Sm, AqSquircles.SurfaceSm)
             .padding(horizontal = horizontalPadding, vertical = AqSize.X2s)
             .semantics {
                 liveRegion = LiveRegionMode.Polite
