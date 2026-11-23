@@ -37,6 +37,7 @@ fun AqAmountInput(
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
+            size = AqTextInputSize.Md,
             isError = isError,
             errorMessage = errorMessage,
             touchTargetTestTag = "aq-amount-input-touch-target",

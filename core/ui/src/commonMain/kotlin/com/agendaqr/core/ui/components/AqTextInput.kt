@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -154,17 +155,21 @@ fun AqTextInput(
                 .testTag(touchTargetTestTag),
             contentAlignment = Alignment.Center,
         ) {
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = size.height)
+                    .height(size.height)
                     .background(AqColor.InputSurface, shape)
                     .border(AqMetrics.Border, borderColor, shape)
-                    .padding(horizontal = horizontalPadding, vertical = verticalPadding)
                     .testTag(visualTestTag),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(innerGap),
             ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(innerGap),
+                ) {
                 leadingIcon?.let { glyph ->
                     AqIcon(
                         imageVector = glyph,
@@ -233,6 +238,7 @@ fun AqTextInput(
                 )
                 trailing?.invoke()
             }
+        }
         }
         maxLength?.let { limit ->
             Row(
