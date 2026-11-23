@@ -15,16 +15,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqTouchTarget
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
 import com.agendaqr.core.ui.theme.AqCorner
 import com.agendaqr.core.ui.theme.AqSquircles
@@ -63,40 +66,48 @@ fun AqChip(
     }
     val interactionSource = remember { MutableInteractionSource() }
     val pressed = interactionSource.collectIsPressedAsState().value
-    Row(
-        modifier = modifier
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-            .heightIn(min = size.height)
-            .background(if (pressed && enabled) scheme.surfaceActive else container, AqSquircles.InteractiveSm)
-            .clickable(
-                role = Role.Button,
-                onClickLabel = text,
-                interactionSource = interactionSource,
-                indication = null,
-                enabled = enabled && onClick != null,
-                onClick = { onClick?.invoke() },
-            )
-            .padding(horizontal = size.horizontalPadding, vertical = AqSpacing.None)
-            .semantics {
-                contentDescription = if (selected) "$text, seleccionado" else text
-            },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AqSize.X4s),
+    // El alto visual se conserva (32/40 dp); el área táctil se amplía a 48 dp
+    // sin deformar el chip ([AqTouchTarget], ADR-0039 §4.4).
+    AqTouchTarget(
+        minTouchSize = AqMetrics.ControlMinSize,
+        text = text,
+        modifier = modifier,
     ) {
-        icon?.let {
-            AqIcon(
-                imageVector = it,
-                contentDescription = null,
-                size = size.iconSize,
-                tint = content,
+        Row(
+            modifier = Modifier
+                .defaultMinSize(minHeight = size.height)
+                .heightIn(min = size.height)
+                .background(if (pressed && enabled) scheme.surfaceActive else container, AqSquircles.InteractiveSm)
+                .clickable(
+                    role = Role.Button,
+                    onClickLabel = text,
+                    interactionSource = interactionSource,
+                    indication = null,
+                    enabled = enabled && onClick != null,
+                    onClick = { onClick?.invoke() },
+                )
+                .padding(horizontal = size.horizontalPadding, vertical = AqSpacing.None)
+                .semantics {
+                    contentDescription = if (selected) "$text, seleccionado" else text
+                },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AqSize.X4s),
+        ) {
+            icon?.let {
+                AqIcon(
+                    imageVector = it,
+                    contentDescription = null,
+                    size = size.iconSize,
+                    tint = content,
+                )
+            }
+            Text(
+                text = text,
+                style = AqTextStyles.Label.copy(fontSize = size.textSize),
+                color = content,
+                modifier = Modifier.weight(1f, fill = false).clearAndSetSemantics { },
             )
         }
-        Text(
-            text = text,
-            style = AqTextStyles.Label.copy(fontSize = size.textSize),
-            color = content,
-            modifier = Modifier.weight(1f, fill = false),
-        )
     }
 }
 

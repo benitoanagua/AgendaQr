@@ -31,6 +31,7 @@ import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqTouchTarget
 import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
@@ -94,82 +95,87 @@ fun AqMenuItem(
         !enabled -> AqColor.OnDisabled
         else -> AqColor.TextSecondary
     }
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-            .background(container, AqSquircles.InteractiveSm)
-            .then(
-                if (onLongClick != null) {
-                    @OptIn(ExperimentalFoundationApi::class)
-                    Modifier.combinedClickable(
-                        role = Role.Button,
-                        onClickLabel = title,
-                        interactionSource = interactionSource,
-                        indication = null,
-                        enabled = enabled && onClick != null,
-                        onLongClickLabel = onLongClickLabel,
-                        onLongClick = onLongClick,
-                        onClick = { onClick?.invoke() },
-                    )
-                } else {
-                    Modifier.clickable(
-                        role = Role.Button,
-                        onClickLabel = title,
-                        interactionSource = interactionSource,
-                        indication = null,
-                        enabled = enabled && onClick != null,
-                        onClick = { onClick?.invoke() },
-                    )
-                },
-            )
-            .menuItemSemantics(
-                desc = title + (subtitle?.let { " - $it" } ?: ""),
-                isSelected = isSelected,
-            ),
+    // Alto visual mínimo 40 dp; el área táctil se amplía a 48 dp sin deformar
+    // la celda ([AqTouchTarget], ADR-0039 §4.4).
+    AqTouchTarget(
+        minTouchSize = AqMetrics.ControlMinSize,
+        modifier = modifier.fillMaxWidth(),
     ) {
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(AqLayout.CellPadding),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AqLayout.InGroup),
-        ) {
-            leading?.invoke()
-            Column(
-                modifier = Modifier.weight(1f, fill = true),
-                verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
-            ) {
-                Text(
-                    text = title,
-                    style = AqTextStyles.RowTitle,
-                    color = contentColor,
-                    maxLines = titleMaxLines,
+                .background(container, AqSquircles.InteractiveSm)
+                .then(
+                    if (onLongClick != null) {
+                        @OptIn(ExperimentalFoundationApi::class)
+                        Modifier.combinedClickable(
+                            role = Role.Button,
+                            onClickLabel = title,
+                            interactionSource = interactionSource,
+                            indication = null,
+                            enabled = enabled && onClick != null,
+                            onLongClickLabel = onLongClickLabel,
+                            onLongClick = onLongClick,
+                            onClick = { onClick?.invoke() },
+                        )
+                    } else {
+                        Modifier.clickable(
+                            role = Role.Button,
+                            onClickLabel = title,
+                            interactionSource = interactionSource,
+                            indication = null,
+                            enabled = enabled && onClick != null,
+                            onClick = { onClick?.invoke() },
+                        )
+                    },
                 )
-                subtitle?.let {
+                .menuItemSemantics(
+                    desc = title + (subtitle?.let { " - $it" } ?: ""),
+                    isSelected = isSelected,
+                ),
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(AqLayout.CellPadding),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AqLayout.InGroup),
+            ) {
+                leading?.invoke()
+                Column(
+                    modifier = Modifier.weight(1f, fill = true),
+                    verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
+                ) {
                     Text(
-                        text = it,
-                        style = AqTextStyles.BodySmall,
-                        color = subtitleColor,
-                        maxLines = 1,
+                        text = title,
+                        style = AqTextStyles.RowTitle,
+                        color = contentColor,
+                        maxLines = titleMaxLines,
+                    )
+                    subtitle?.let {
+                        Text(
+                            text = it,
+                            style = AqTextStyles.BodySmall,
+                            color = subtitleColor,
+                            maxLines = 1,
+                        )
+                    }
+                    meta?.let { slot ->
+                        slot()
+                    }
+                }
+                trailing?.invoke()
+            }
+            if (showDivider) {
+                androidx.compose.foundation.layout.Row(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.width(AqMetrics.ListDividerInset))
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = AqColor.Divider,
+                        thickness = AqMetrics.DividerHeight,
                     )
                 }
-                meta?.let { slot ->
-                    slot()
-                }
-            }
-            trailing?.invoke()
-        }
-        if (showDivider) {
-            androidx.compose.foundation.layout.Row(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                androidx.compose.foundation.layout.Spacer(modifier = Modifier.width(AqMetrics.ListDividerInset))
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = AqColor.Divider,
-                    thickness = AqMetrics.DividerHeight,
-                )
             }
         }
     }
