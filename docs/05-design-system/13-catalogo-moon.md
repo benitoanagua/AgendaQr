@@ -72,7 +72,7 @@ Valores transcritos de la versión indicada; `px` = padding horizontal. No son u
 | Acordeón (cabecera) | sm / md | 32 / 40 | InteractiveSm | 8 / 12 | — |
 | Switch | x2s / xs / sm | 16 / 24 / 32 (ancho 32 / 44 / 60; pulgar 12 / 16 / 20) | píldora | — | — |
 
-**Regla de área táctil (ADR-0039 §4.4):** todo control con alto visual < 48 dp conserva ese alto y amplía el área táctil a 48 dp (como `touch_target_padding.dart` en la fuente), sin cambiar su aspecto.
+**Regla de área táctil (ADR-0044 §4.4):** todo control con alto visual < 48 dp conserva ese alto y amplía el área táctil a 48 dp (como `touch_target_padding.dart` en la fuente), sin cambiar su aspecto.
 
 ## 4. Composiciones de Agenda QR
 

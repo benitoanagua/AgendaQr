@@ -1,6 +1,5 @@
 # Contrato normativo de diseño
 
-**Estado:** Normativo
 **Estado:** Normativo — vigente.
 **Autoridad:** ADR-0044 y este contrato. UX/UI V1 conserva el contrato funcional; su dirección visual se rige exclusivamente por Moon.
 

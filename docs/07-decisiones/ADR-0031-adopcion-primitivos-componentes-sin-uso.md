@@ -1,92 +1,43 @@
-# ADR-0031 — Adopción de primitivos móviles, componentes de experiencia nuevos y política de componentes sin uso
+# ADR-0031 — Política de adopción y retiro de componentes Moon
 
 ## Estado
 
-Aprobado (normativo para la integración UI/UX en Agenda QR).
+Aprobado — vigente para la integración de componentes en Agenda QR.
 
 ## Contexto
 
-La capa `core/ui` implementa Moon Design. Los componentes se adoptan solo cuando tienen un uso real o un rol transversal justificado; la referencia visual es el catálogo Moon vigente. Componentes sin consumo visible no deben permanecer únicamente en previews o pruebas:
-
-`AqSwipeActions`, `AqPullToRefresh`, `AqBottomSheet`, `AqActionSheet`, `AqTooltip`, `AqSpinner`, `AqProgressBar`, `AqProgressBlock`, `AqSkeleton`, `AqSelect`, `AqCheckbox`, `AqRadioButton`, `AqSwitch`, `AqSelectAllCheckbox`.
-
-Además, se identificaron oportunidades de mejora de experiencia en flujos reales que requieren componentes o patrones nuevos. Había que decidir, componente por componente, si se adopta en pantallas reales o se retira, y establecer el criterio para crear componentes nuevos sin violar los límites duros.
+`core/ui` contiene componentes Moon portados y composiciones de producto. Para evitar una biblioteca visual paralela, componentes sin consumo real no deben acumularse por conveniencia, y cada componente exportado debe tener un estado explícito en el catálogo y en la galería.
 
 ## Decisión
 
-### 1. Regla de componentes sin uso
+### 1. Componentes sin uso
 
-Un componente definido en `core/ui` con cero uso en pantallas de producción (excluyendo tests, galería y previews) se adopta o se retira. Nunca se mantiene como "disponible por si acaso".
+Un componente de `core/ui` sin uso en pantallas de producción se adopta o se retira.
 
-- **ADOPTAR** si mejora la experiencia en algún flujo real, aunque requiera estado de presentación nuevo (modo de selección, buffer de deshacer…), respetando los límites duros.
-- **RETIRAR** (componente + ficha + pruebas + entrada de galería + referencias en docs/contrato) solo si no aporta mejora medible o exigiría romper un límite duro.
+- **ADOPTAR** si mejora un flujo real o cumple una función base transversal necesaria (por ejemplo, control de formulario, accesibilidad o composición interna).
+- **RETIRAR** si no aporta valor verificable y no tiene dependientes necesarios.
+- No mantener componentes únicamente como «disponibles por si acaso».
+- Los componentes base sin uso directo en pantallas deben identificarse como primitivos de soporte, contar con pruebas y permanecer representados en la galería.
 
-### 2. Decisión por los 13 primitivos sin uso
+### 2. Criterios para componentes nuevos
 
-| Primitivo | Decisión | Pantallas y acciones donde quedó visible | Prueba | Captura |
-|---|---|---|---|---|
-| `AqSwipeActions` | **ADOPTAR** | S01 filas (favorito, eliminar con confirmación vigente); S07-list filas (editar, eliminar) | `DestinationsScreenA11yTest` (customAction), `ScreensA11yCoverageTest` | S01 con acciones reveladas; S07-list con acciones |
-| `AqPullToRefresh` | **ADOPTAR** | S01 (recarga/sync por arrastre); S07-list (recarga de actividades) | Robolectric de presentación (invoca el intent de recarga/sync existente) | S01 refrescando; S07-list refrescando |
-| `AqBottomSheet` | **ADOPTAR** | S03 detalle de destino (inspección sin abandonar el flujo) | Robolectric de presentación | detalle con hoja de opciones |
-| `AqActionSheet` | **MANTENER** (ya en uso) | overflow de detalles (destino, operación) | `AqActionSheetTest` | detalle con overflow |
-| `AqTooltip` | **ADOPTAR** | S03 detalle (alternativa accesible al icono de copiado sin texto) | Robolectric de presentación | tooltip de copiado |
-| `AqSpinner` | **MANTENER** (en `AqLoading`) | estados de carga estandarizados | `AqAccessibilityContractTest` | carga con spinner |
-| `AqProgressBar` | **ADOPTAR** | S09 ImportReview (guardado) | Robolectric de presentación | progreso de importación |
-| `AqProgressBlock` | **ADOPTAR** | S12 ImportBatch (progreso real N de M) | Robolectric de presentación | importación con progreso real |
-| `AqSkeleton` | **ADOPTAR** | ComprobanteViewer, ContextScreen (carga inicial) | Robolectric de presentación | carga con skeleton |
-| `AqSwitch` | **ADOPTAR** | S02/S08 editor de destino (favorito como estado binario real) | Robolectric de presentación | editor con interruptor |
-| `AqSelect` | **MANTENER** | sin consumo en pantallas de producción, pero es control de formulario base del sistema visual anterior (nivel 1) con pruebas dedicadas (`AqSelectTest`) y uso en la galería de previews; se conserva como parte del conjunto de formularios | `AqSelectTest` | galería de previews |
-| `AqCheckbox` | **MANTENER** | sin consumo en pantallas de producción, pero es control de formulario base del sistema visual anterior (nivel 1) con pruebas dedicadas y uso en la galería de previews | pruebas de `core/ui` | galería de previews |
-| `AqRadioButton` | **MANTENER** | sin consumo en pantallas de producción, pero es control de formulario base del sistema visual anterior (nivel 1) con pruebas dedicadas y uso en la galería de previews | pruebas de `core/ui` | galería de previews |
-| `AqSelectAllCheckbox` | **MANTENER** | sin consumo en pantallas de producción, pero es control de formulario base del sistema visual anterior (nivel 1) con pruebas dedicadas (`AqSelectAllCheckboxTest`) y uso en la galería de previews | `AqSelectAllCheckboxTest` | galería de previews |
+Todo componente nuevo debe:
 
-Los retirados se eliminan junto con su ficha, pruebas, entrada de galería y referencias en docs/contrato (criterio ya aplicado a `AqModalSheet`, `AqQrSheet`, `AqHeroHeader`, `AqDivider`, `AqVerticalDivider`).
+1. Tener un equivalente Moon en el catálogo o una justificación explícita de composición de producto cuando Moon no ofrece el patrón.
+2. Implementarse en `core/ui` y consumir tokens semánticos.
+3. Respetar anatomía, variantes, tamaños, estados, movimiento y accesibilidad de Moon.
+4. Añadirse al catálogo `docs/05-design-system/13-catalogo-moon.md` y a `AqDesignSystemGallery`.
+5. Incluir pruebas de contrato, geometría, estados y accesibilidad aplicables.
+6. No introducir valores visuales locales, wrappers `AqMoon*`, componentes Material ni un sistema de tokens paralelo.
 
-**Justificación de los controles de formulario mantenidos sin consumo en pantalla:** `AqSelect`, `AqCheckbox`, `AqRadioButton` y `AqSelectAllCheckbox` son controles de formulario base del sistema el sistema visual anterior (nivel 1), no primitivos móviles de interacción. Tienen pruebas dedicadas en `core/ui` y se usan en la galería de previews (`AqDesignSystemGallery`). Retirarlos rompería la compilación de la galería y de sus tests sin aportar beneficio de producto. Se conservan como parte del conjunto de formularios y se documentan como "sin consumo en pantallas de producción" para no afirmar uso que no existe.
+### 3. Patrones móviles
 
-### 3. Criterio de aceptación de componentes o patrones nuevos
+Cuando Moon proporciona un componente o patrón, se porta fielmente. Cuando no lo proporciona, se compone con piezas Moon y la mecánica mínima de Compose o de plataforma. La mecánica nativa no puede introducir una apariencia alternativa.
 
-Un componente o patrón nuevo se implementa solo si cumple TODO:
+### 4. Límites
 
-- **(a) Mejora UX demostrable:** nombra la heurística que mejora (visibilidad de estado, retroalimentación inmediata, prevención de errores, reconocer vs recordar, alcance del pulgar, menos toques, consistencia, jerarquía) y cómo se comprobará en código, pruebas o capturas.
-- **(b) Convención:** reproduce un componente o patrón Moon documentado en `13-catalogo-moon.md`; si Moon no ofrece un componente de producto, se compone con piezas Moon y mecanismos Compose/plataforma, sin introducir una apariencia alternativa.
-- **(c) Consumo real:** tiene uso en al menos una pantalla de producción.
-- **(d) Límites duros:** respeta todos los límites duros (no nuevos datos persistidos, red, permisos, telemetría; no toca modelo de seguridad; solo invoca casos de uso/intents existentes).
-- **(e) Artefactos:** trae ficha, pruebas, galería, capturas y entrada en el contrato de pantallas.
-
-Lo que no cumpla se descarta; no se mantiene un backlog visual dentro de documentación normativa. Un componente sin consumo real nunca se crea.
-
-### 4. Política de gestos
-
-- Toda acción por gesto (swipe, pull, pulsación larga, arrastre) expone `customActions` en semántica de Compose como alternativa no gestual (TalkBack/VoiceOver).
-- Toda acción por gesto tiene una alternativa no gestual en detalle u hoja (menú, botón, acción de texto).
-- Respetar movimiento reducido: sin animaciones decorativas ni bucles de animación.
-- Predictive back (Android 14+): el swipe horizontal de filas no debe iniciarse en la zona de borde reservada al gesto de sistema. Documentar el umbral y probarlo en lo posible con Robolectric.
-
-### 5. Reglas de Deshacer y de acciones por lote
-
-- Un patrón «Deshacer» solo reemplaza una confirmación donde hoy NO hay confirmación; nunca donde la política vigente exige confirmar.
-- Un swipe o una acción por lote nunca ejecuta una destrucción sin la confirmación vigente.
-- Eliminar por lote: aplica la confirmación vigente como confirmación única para el lote; si la política exige confirmar por elemento, no se admite eliminación por lote sin ADR de política.
-- Descarte de pendientes sin clasificar: con confirmación. Duplicados: sin confirmación (el original existe). «Quitar contexto»: acción destructiva explícita.
-- Feedback honesto: el feedback dice lo que realmente ocurrió (no mostrar «sincronizado» si solo se recargó localmente).
-
-### 6. «COMPLETO» en la matriz de gaps
-
-Cada flujo y patrón se marca COMPLETO solo con:
-1. uso en pantalla (consumo real en al menos una superficie del contrato),
-2. prueba que cubre el gesto/estado (Robolectric o común),
-3. captura clara/oscura a 360 dp (`<superficie>--<estado>--<tema>.png`).
-
-Mientras no exista la captura, el flujo se anota como IMPLEMENTADO EN PANTALLA y no como COMPLETO.
-
-### 7. Mejoras que exceden los límites duros
-
-Si una mejora exigiera un caso de uso nuevo, un cambio de dominio, un cambio de política de confirmación, categorías nuevas de datos persistidos, llamadas de red, permisos de sistema o telemetría, NO se implementa. Se registra como ADR en estado «propuesto» con problema, mejora esperada y coste, y se sigue con la siguiente.
+No añadir datos persistidos, red, permisos, telemetría ni cambios de seguridad como parte de un componente visual. El componente solo invoca contratos e intents existentes.
 
 ## Consecuencias
 
-- Los componentes móviles de `core/ui` pasan a estar activos y visibles en la experiencia diaria del usuario.
-- No se introducen dependencias externas ni se alteran contratos de dominio, persistencia ni flujos funcionales.
-- Se mantienen todas las políticas de confirmación para acciones destructivas.
-- Los nombres «el sistema visual anterior» y «Moon» no aparecen en la UI, en strings de producto ni en documentación de producto; solo en documentación de ingeniería.
+El catálogo Moon y `AqDesignSystemGallery` son el inventario normativo de componentes. Las pruebas y el gate de completitud impiden símbolos exportados sin documentación/estado. No se mantienen fichas de componente independientes.
