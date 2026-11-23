@@ -54,7 +54,7 @@ botón xs, tag x2s, interruptor x2s y chip sm (`AqLayoutGeometryTest`).
   cubiertos por prueba.
 - `parcial`: componente presente y funcionante, pero falta verificar alguna
   medida o efecto contra la fuente (excepción documentada; se completa en
-  Fase 3).
+  una fase posterior).
 
 ## Patrones que Moon no trae (composición con piezas Moon, ADR-0039 §3)
 

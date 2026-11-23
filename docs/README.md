@@ -32,6 +32,7 @@
 | [`05-design-system/12-auditoria-ui-ux-2026-11.md`](05-design-system/12-auditoria-ui-ux-2026-11.md) | Auditoría UI/UX de pantallas y componentes `Aq*` (hallazgos y plan de ejecución) |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros |
 | [`05-design-system/13-catalogo-moon.md`](05-design-system/13-catalogo-moon.md) | Catálogo de componentes Moon Design (fuente de verdad del UI/UX) |
+| [`05-design-system/14-matriz-fidelidad-moon.md`](05-design-system/14-matriz-fidelidad-moon.md) | Matriz de fidelidad Moon → Compose por widget (estado, medidas y veredicto) |
 | [`05-design-system/componentes/miniatura-comprobante.md`](05-design-system/componentes/miniatura-comprobante.md) | Ficha de componente: Miniatura de comprobante (`AqThumbnail`, `AqThumbnailFrame`) |
 | [`05-design-system/componentes/bottom-sheet.md`](05-design-system/componentes/bottom-sheet.md) | Ficha de componente: Bottom Sheet (`AqBottomSheet`) |
 | [`05-design-system/componentes/segmented-control.md`](05-design-system/componentes/segmented-control.md) | Ficha de componente: Segmented Control (`AqSegmentedControl`) |
@@ -94,6 +95,7 @@
 | [`07-decisiones/ADR-0043-escala-espaciado-y-gate-de-geometria.md`](07-decisiones/ADR-0043-escala-espaciado-y-gate-de-geometria.md) | ADR: escala de espaciado, gate de geometría y corrección de la geometría Moon |
 | [`07-decisiones/ADR-0044-moon-unico-sistema-de-diseno.md`](07-decisiones/ADR-0044-moon-unico-sistema-de-diseno.md) | ADR: Moon como único sistema de diseño |
 | [`07-decisiones/ADR-0045-bandeja-sin-asociar-vacio-y-seleccion.md`](07-decisiones/ADR-0045-bandeja-sin-asociar-vacio-y-seleccion.md) | ADR: bandeja sin asociar — copy de vacío y pulsación larga |
+| [`07-decisiones/ADR-0046-puerto-moon-base-control-y-area-tactil.md`](07-decisiones/ADR-0046-puerto-moon-base-control-y-area-tactil.md) | ADR: puerto de MoonBaseControl y área táctil de 48 dp (AqBaseControl / AqTouchTarget) |
 
 ## Cómo se mantiene
 
