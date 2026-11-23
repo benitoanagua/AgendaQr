@@ -240,4 +240,74 @@ class AqLayoutGeometryTest {
         compose.onNodeWithText("Inicio").assertExists()
         compose.onRoot().getBoundsInRoot()
     }
+
+    // ------------------------------------------------------------ 0.2.i Botón xs: alto visual 24 dp, área táctil ≥ 48 dp
+    @Test
+    @Config(sdk = [34], qualifiers = "w360dp-h800dp")
+    fun button_extra_small_visual_height_preserves_48dp_touch_target() {
+        compose.setContent {
+            AqTheme {
+                com.agendaqr.core.ui.components.AqButton(
+                    label = "Acción",
+                    onClick = { },
+                    size = com.agendaqr.core.ui.components.AqButtonSize.ExtraSmall,
+                )
+            }
+        }
+        compose.waitForIdle()
+        // El nodo accesible del botón (texto + rol) mide al menos 48 dp aunque
+        // el relleno visual sea solo 24 dp (ADR-0039 §4.4).
+        compose.onNodeWithText("Acción")
+            .assertHeightIsAtLeast(48.dp)
+    }
+
+    // ------------------------------------------------------------ 0.2.j Tag x2s: alto visual 16 dp, área táctil ≥ 48 dp
+    @Test
+    @Config(sdk = [34], qualifiers = "w360dp-h800dp")
+    fun tag_x2s_visual_height_preserves_48dp_touch_target() {
+        compose.setContent {
+            AqTheme {
+                com.agendaqr.core.ui.components.AqTag(
+                    text = "Activo",
+                    size = com.agendaqr.core.ui.components.AqTagSize.X2s,
+                )
+            }
+        }
+        compose.waitForIdle()
+        compose.onNodeWithText("Activo").assertHeightIsAtLeast(48.dp)
+    }
+
+    // ------------------------------------------------------------ 0.2.k Switch x2s: alto visual 16 dp, área táctil ≥ 48 dp
+    @Test
+    @Config(sdk = [34], qualifiers = "w360dp-h800dp")
+    fun switch_x2s_visual_height_preserves_48dp_touch_target() {
+        compose.setContent {
+            AqTheme {
+                com.agendaqr.core.ui.components.AqSwitch(
+                    label = "Sincronización",
+                    checked = false,
+                    onCheckedChange = { },
+                    size = com.agendaqr.core.ui.components.AqSwitchSize.X2s,
+                )
+            }
+        }
+        compose.waitForIdle()
+        compose.onNodeWithText("Sincronización").assertHeightIsAtLeast(48.dp)
+    }
+
+    // ------------------------------------------------------------ 0.2.l Chip sm: alto visual 32 dp, área táctil ≥ 48 dp
+    @Test
+    @Config(sdk = [34], qualifiers = "w360dp-h800dp")
+    fun chip_sm_visual_height_preserves_48dp_touch_target() {
+        compose.setContent {
+            AqTheme {
+                com.agendaqr.core.ui.components.AqChip(
+                    text = "Chip",
+                    size = com.agendaqr.core.ui.components.AqChipSize.Sm,
+                )
+            }
+        }
+        compose.waitForIdle()
+        compose.onNodeWithText("Chip").assertHeightIsAtLeast(48.dp)
+    }
 }

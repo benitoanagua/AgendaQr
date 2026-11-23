@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqAlpha
+import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqColorScheme
@@ -66,34 +67,34 @@ enum class AqButtonSize(
     val iconTextGap: Dp,
 ) {
     ExtraSmall(
-        visualHeight = AqSize.Xs,
-        horizontalPadding = AqSize.X4s,
+        visualHeight = AqLayout.ButtonHeightXs,
+        horizontalPadding = AqLayout.ButtonPaddingHorizontalXs,
         iconSize = AqMetrics.IconSizeCompact,
-        iconTextGap = AqSize.X5s,
+        iconTextGap = AqLayout.ButtonGapXs,
     ),
     Small(
-        visualHeight = AqSize.Sm,
-        horizontalPadding = AqSize.X3s,
+        visualHeight = AqLayout.ButtonHeightSm,
+        horizontalPadding = AqLayout.ButtonPaddingHorizontalSm,
         iconSize = AqMetrics.ButtonMediumIconSize,
-        iconTextGap = AqSize.X5s,
+        iconTextGap = AqLayout.ButtonGapSm,
     ),
     Medium(
-        visualHeight = AqSize.Md,
-        horizontalPadding = AqSize.X2s,
+        visualHeight = AqLayout.ButtonHeightMd,
+        horizontalPadding = AqLayout.ButtonPaddingHorizontalMd,
         iconSize = AqMetrics.ButtonMediumIconSize,
-        iconTextGap = AqSize.X4s,
+        iconTextGap = AqLayout.ButtonGapMd,
     ),
     Large(
-        visualHeight = AqSize.Lg,
-        horizontalPadding = AqSize.X2s,
+        visualHeight = AqLayout.ButtonHeightLg,
+        horizontalPadding = AqLayout.ButtonPaddingHorizontalLg,
         iconSize = AqMetrics.IconSize,
-        iconTextGap = AqSize.X3s,
+        iconTextGap = AqLayout.ButtonGapLg,
     ),
     ExtraLarge(
-        visualHeight = AqSize.Xl,
-        horizontalPadding = AqSize.Xs,
+        visualHeight = AqLayout.ButtonHeightXl,
+        horizontalPadding = AqLayout.ButtonPaddingHorizontalXl,
         iconSize = AqMetrics.IconSize,
-        iconTextGap = AqSize.X2s,
+        iconTextGap = AqLayout.ButtonGapXl,
     ),
 }
 
@@ -216,6 +217,8 @@ private fun AqButtonImpl(
     val shape = AqSquircles.InteractiveSm
     val haptics = LocalHapticFeedback.current
     val buttonModifier = modifier
+        // El nodo del botón es el objetivo táctil (48 dp); el relleno visual
+        // conserva la altura del tamaño (24/32/40/48/56 dp) centrada.
         .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
         .then(
             if (isLoading && busyDescription != null) {
@@ -299,9 +302,7 @@ private fun AqButtonImpl(
             )
             val row = measurables.first().measure(rowConstraints)
             val width = row.width.coerceIn(constraints.minWidth, constraints.maxWidth)
-            // D-02: el objetivo táctil nunca baja de ControlMinSize (48 dp) aunque
-            // el Row padre apriete las restricciones verticales (coerceIn al
-            // maxHeight podría comprimir el botón por debajo del umbral).
+            // D-02: el objetivo táctil nunca baja de ControlMinSize (48 dp).
             val height = maxOf(row.height, AqMetrics.ControlMinSize.roundToPx())
                 .coerceIn(0, constraints.maxHeight)
             val spinner = if (isLoading) {

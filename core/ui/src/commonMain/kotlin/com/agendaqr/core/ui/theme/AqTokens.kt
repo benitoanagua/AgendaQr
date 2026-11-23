@@ -480,6 +480,69 @@ object AqLayout {
     val InputPaddingHorizontalMd: Dp = 12.dp
     val InputPaddingHorizontalLg: Dp = 12.dp
     val InputPaddingHorizontalXl: Dp = 16.dp
+
+    // -------------------------------------------------------------------------
+    // Geometría de componentes transcrita de moon_design 1.1.0 (§ tabla de
+    // medidas). Estos valores son la autoridad numérica; ningún componente
+    // define medidas propias.
+    // -------------------------------------------------------------------------
+
+    /** Altura visual de [AqButton] por tamaño (Moon § Botón: xs 24 / sm 32 /
+     *  md 40 / lg 48 / xl 56 dp). Ya expresada con [AqSize]; se declara aquí
+     *  para que [AqButtonSize] no duplique medidas. */
+    val ButtonHeightXs: Dp = AqSize.Xs
+    val ButtonHeightSm: Dp = AqSize.Sm
+    val ButtonHeightMd: Dp = AqSize.Md
+    val ButtonHeightLg: Dp = AqSize.Lg
+    val ButtonHeightXl: Dp = AqSize.Xl
+
+    /** Relleno horizontal de [AqButton] por tamaño (Moon § Botón: xs 8 / sm
+     *  12 / md 16 / lg 16 / xl 24 dp). */
+    val ButtonPaddingHorizontalXs: Dp = AqSize.X4s
+    val ButtonPaddingHorizontalSm: Dp = AqSize.X3s
+    val ButtonPaddingHorizontalMd: Dp = AqSize.X2s
+    val ButtonPaddingHorizontalLg: Dp = AqSize.X2s
+    val ButtonPaddingHorizontalXl: Dp = AqSize.Xs
+
+    /** Hueco entre ícono y etiqueta de [AqButton] por tamaño (Moon § Botón:
+     *  xs 4 / sm 4 / md 8 / lg 12 / xl 16 dp). md-xl estaban *ver fuente* en
+     *  el catálogo §3 y se transcriben aquí desde moon_design 1.1.0. */
+    val ButtonGapXs: Dp = AqSize.X5s
+    val ButtonGapSm: Dp = AqSize.X5s
+    val ButtonGapMd: Dp = AqSize.X4s
+    val ButtonGapLg: Dp = AqSize.X3s
+    val ButtonGapXl: Dp = AqSize.X2s
+
+    /** Altura visual de [AqTag] por tamaño (Moon § Tag: x2s 16 / xs 24 / sm
+     *  32 dp). */
+    val TagHeightX2s: Dp = AqSize.X2s
+    val TagHeightXs: Dp = AqSize.Xs
+    val TagHeightSm: Dp = AqSize.Sm
+
+    /** Relleno horizontal de [AqTag] por tamaño (Moon § Tag: x2s 8 / xs 8 /
+     *  sm 8 dp). sm estaba *ver fuente* en el catálogo §3. */
+    val TagPaddingHorizontalX2s: Dp = AqSize.X4s
+    val TagPaddingHorizontalXs: Dp = AqSize.X4s
+    val TagPaddingHorizontalSm: Dp = AqSize.X4s
+
+    /** Altura visual de [AqSwitch] por tamaño (Moon § Switch: x2s 16 / xs 24
+     *  / sm 32 dp). */
+    val SwitchHeightX2s: Dp = AqSize.X2s
+    val SwitchHeightXs: Dp = AqSize.Xs
+    val SwitchHeightSm: Dp = AqSize.Sm
+
+    /** Ancho de la pista de [AqSwitch] por tamaño (Moon § Switch: x2s 32 /
+     *  xs 44 / sm 60 dp). Valores fuera de la escala [AqSize]: se declaran
+     *  aquí como tokens del sistema, nunca como literales en el componente. */
+    val SwitchTrackWidthX2s: Dp = 32.dp
+    val SwitchTrackWidthXs: Dp = 44.dp
+    val SwitchTrackWidthSm: Dp = 60.dp
+
+    /** Diámetro del pulgar de [AqSwitch] por tamaño (Moon § Switch: x2s 12 /
+     *  xs 16 / sm 20 dp). sm estaba *ver fuente* en el catálogo §3. */
+    val SwitchThumbX2s: Dp = 12.dp
+    val SwitchThumbXs: Dp = 16.dp
+    val SwitchThumbSm: Dp = 20.dp
 }
 
 /** Métricas de interacción y composición (D-02 para la escala táctil). */
@@ -728,7 +791,7 @@ internal object AqTextRoles {
         AqType.HeadingXl, AqType.LineHeightHeadingXl, AqWeight.SemiBold, AqTracking.Normal,
     )
     val HeadingLg = AqTextRole(
-        AqType.HeadingLg, AqType.LineHeightHeadingLg, AqWeight.SemiBold, AqTracking.Dense,
+        AqType.HeadingLg, AqType.LineHeightHeadingLg, AqWeight.SemiBold, AqTracking.Normal,
     )
     val HeadingMd = AqTextRole(
         AqType.HeadingMd, AqType.LineHeightHeadingMd, AqWeight.SemiBold, AqTracking.Normal,

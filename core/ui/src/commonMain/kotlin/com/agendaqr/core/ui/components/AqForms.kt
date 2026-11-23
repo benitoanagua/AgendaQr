@@ -119,54 +119,6 @@ fun AqCheckbox(
     }
 }
 
-/** Interruptor equivalente a `s-switch` para ajustes de efecto inmediato. */
-@Composable
-fun AqSwitch(
-    label: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    state: AqFieldState = AqFieldState(),
-    description: String? = null,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-            .fieldSemantics(state)
-            .selectable(
-                selected = checked,
-                enabled = state.enabled,
-                role = Role.Switch,
-                onClick = { onCheckedChange(!checked) },
-            ),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            AqText(
-                text = label,
-                size = AqType.Body,
-                fontWeight = AqWeight.Medium,
-                color = if (state.enabled) AqColor.TextPrimary else AqColor.OnDisabled,
-            )
-            if (description != null) {
-                AqText(
-                    text = description,
-                    size = AqType.Caption,
-                    color = if (state.enabled) AqColor.TextSecondary else AqColor.OnDisabled,
-                )
-            }
-            AqFieldHelp(state)
-        }
-        androidx.compose.material3.Switch(
-            checked = checked,
-            onCheckedChange = null,
-            enabled = state.enabled,
-            modifier = Modifier.clearAndSetSemantics { }.size(AqMetrics.ControlMinSize),
-        )
-    }
-}
-
 /** Grupo de opciones con semántica de selección mutuamente excluyente (usa [AqRadio]). */
 @Composable
 fun AqChoiceSet(
