@@ -49,7 +49,9 @@ class AqIconMappingTest {
         )
 
         assertEquals(37, vectors.size)
-        assertEquals(34, vectors.map { it.first }.distinct().count())
+        // 37 conceptos, con dos alias intencionados sobre el mismo vector Moon:
+        // Warning/AlertCircle (NotificationsAlert) y NoteEdit/Edit (GenericEdit).
+        assertEquals(35, vectors.map { it.first }.distinct().count())
         assertTrue(vectors.all { (vector, expectedName) -> vector.name == expectedName })
         assertTrue(vectors.all { it.first.defaultWidth == it.first.defaultHeight })
     }
