@@ -54,7 +54,7 @@ val ThumbnailSize: Dp = AqMetrics.ReceiptThumbnailSize
  * principal. Implementación por plataforma:
  * - Android: `BitmapFactory` con `inSampleSize` contra el tamaño real en px
  *   (densidad), `ARGB_8888` y caché en memoria acotada ([LruCache]).
- * - iOS: `ImageIO` downsampling (`CGImageSourceCreateThumbnailAtIndex`).
+ * - iOS: `NSData` + Skia (`Image.makeFromEncoded`) con reescalado a 96 px.
  * Devuelve `null` cuando el archivo no existe o no es una imagen
  * decodificable.
  */

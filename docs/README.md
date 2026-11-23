@@ -93,6 +93,7 @@
 | [`07-decisiones/ADR-0042-nombres-componentes-retirados.md`](07-decisiones/ADR-0042-nombres-componentes-retirados.md) | ADR: nombres de componentes retirados y sus sustitutos Moon |
 | [`07-decisiones/ADR-0043-escala-espaciado-y-gate-de-geometria.md`](07-decisiones/ADR-0043-escala-espaciado-y-gate-de-geometria.md) | ADR: escala de espaciado, gate de geometría y corrección de la geometría Moon |
 | [`07-decisiones/ADR-0044-moon-unico-sistema-de-diseno.md`](07-decisiones/ADR-0044-moon-unico-sistema-de-diseno.md) | ADR: Moon como único sistema de diseño |
+| [`07-decisiones/ADR-0045-bandeja-sin-asociar-vacio-y-seleccion.md`](07-decisiones/ADR-0045-bandeja-sin-asociar-vacio-y-seleccion.md) | ADR: bandeja sin asociar — copy de vacío y pulsación larga |
 
 ## Cómo se mantiene
 

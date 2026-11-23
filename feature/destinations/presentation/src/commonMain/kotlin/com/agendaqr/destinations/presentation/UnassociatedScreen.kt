@@ -40,8 +40,8 @@ import com.agendaqr.destinations.data.SyncResource
 /**
  * S07 — Bandeja de comprobantes sin asociar (`OperationRoute.Unassociated`).
  *
- * Contrato congelado (docs/04-ux, inbox): acción primaria `—`, sin gestos
- * declarados. Ahora construido exclusivamente con componentes Moon:
+ * Contrato (docs/04-ux, inbox; ADR-0045): acción primaria `—`; gesto
+ * `long-press` en la fila para entrar al modo selección. Ahora construido exclusivamente con componentes Moon:
  * [AqScreen] (scaffold), [AqAppBar] (vía título/atrás de [AqScreen]),
  * [AqSelectionToolbar] (modo selección G3), [AqMenuItem] (filas),
  * [AqEmptyPlaceholder] (vacío), [AqToastHost] (toasts), [AqModal] (diálogos)
@@ -107,6 +107,7 @@ internal fun UnassociatedScreen(
             AqEmptyPlaceholder(
                 icon = AqIcons.Inbox,
                 title = AppStrings.noUnassociatedReceipts,
+                subtitle = AppStrings.shareFromAnotherAppHint,
             )
         } else {
             // Un único Cell-group (spec §12: las tarjetas no envuelven cada
@@ -130,6 +131,13 @@ internal fun UnassociatedScreen(
                                     selectedReceipt = receipt
                                 }
                             },
+                            // A-10: pulsación larga entra al modo selección
+                            // por lote (ADR-0045). En modo selección el toque
+                            // alterna; no se necesita pulsación larga.
+                            onLongClick = if (selectionMode) null else {
+                                { selectedReceiptIds = setOf(receipt.id) }
+                            },
+                            onLongClickLabel = AppStrings.SeleccionarComprobante,
                             leading = {
                                 if (selectionMode) {
                                     AqCheckbox(

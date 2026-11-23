@@ -58,7 +58,6 @@ object AqIcons {
     /** Check simple: indicador de selección en chips y opciones. */
     val Check: ImageVector get() = MoonIconVectors.Check
     val QrCode: ImageVector get() = MoonIconVectors.QrCode
-    val SearchX: ImageVector get() = MoonIconVectors.Alert
     /** Signo de alerta en círculo: icono de severidad de errores. */
     val AlertCircle: ImageVector get() = MoonIconVectors.Alert
     val Inbox: ImageVector get() = MoonIconVectors.Box

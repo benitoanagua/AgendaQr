@@ -850,7 +850,7 @@ private fun AqFeedbackPreview() {
         AqEmptyPlaceholder(
             title = "Sin resultados",
             subtitle = "Ajusta los filtros o prueba con otra búsqueda.",
-            icon = AqIcons.SearchX,
+            icon = AqIcons.Search,
         )
         AqText(
             text = "Loading / Spinner / Skeleton",

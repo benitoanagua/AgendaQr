@@ -26,7 +26,6 @@ class AqIconMappingTest {
             AqIcons.CircleCheck to "GenericCheckRounded",
             AqIcons.Check to "GenericCheckAlternative",
             AqIcons.QrCode to "SecurityQrCode",
-            AqIcons.SearchX to "NotificationsAlert",
             AqIcons.AlertCircle to "NotificationsAlert",
             AqIcons.Inbox to "MailBox",
             AqIcons.ScanLine to "FilesScan",
@@ -49,8 +48,8 @@ class AqIconMappingTest {
             AqIcons.Maximize to "ControlsFullScreen",
         )
 
-        assertEquals(38, vectors.size)
-        assertEquals(35, vectors.map { it.first }.distinct().count())
+        assertEquals(37, vectors.size)
+        assertEquals(34, vectors.map { it.first }.distinct().count())
         assertTrue(vectors.all { (vector, expectedName) -> vector.name == expectedName })
         assertTrue(vectors.all { it.first.defaultWidth == it.first.defaultHeight })
     }

@@ -237,13 +237,13 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - tipo: `Inner`
 - ruta: `OperationRoute.Unassociated`
 - representa: `OperationRoute.Unassociated`
-- fuente: `feature/destinations/presentation/src/commonMain/kotlin/com/agendaqr/destinations/presentation/OperationListScreen.kt`
+- fuente: `feature/destinations/presentation/src/commonMain/kotlin/com/agendaqr/destinations/presentation/UnassociatedScreen.kt`
 - entradas: `operations-secondary`
 - salidas: `OperationRoute.List`
 - destinos válidos: `OperationRoute.List`, `OperationRoute.Detail`
 - acción primaria: —
-- estados: `empty`, `content`, `error`
-- gestos: —
+- estados: `empty`, `content`, `selection`, `error`
+- gestos: `long-press`
 - capturas: `empty`, `content`
 - componentes: `AqScreen`, `AqMenuItem`, `AqEmptyPlaceholder`, `AqModal`
 - pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ScreensA11yCoverageTest.kt`

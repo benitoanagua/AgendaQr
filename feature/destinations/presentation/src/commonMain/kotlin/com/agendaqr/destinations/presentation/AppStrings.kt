@@ -95,6 +95,7 @@ internal object AppStrings {
     /** Modo selección por lote (G3 / ADR-0034). */
     val CerrarSeleccion = "Cerrar selección"
     val SeleccionarTodo = "Seleccionar todo"
+    val SeleccionarComprobante = "Seleccionar comprobante"
     val SeleccionarNinguno = "Seleccionar ninguno"
     val Seleccionados = "seleccionados"
     val OperacionSingular = "actividad"

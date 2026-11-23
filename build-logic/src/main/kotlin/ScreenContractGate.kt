@@ -48,7 +48,7 @@ val screenStateVocabulary: Set<String> = setOf(
 /** Vocabulario cerrado de gestos admitidos (los del sistema o ya existentes). */
 val gestureVocabulary: Set<String> = setOf(
     "system-back", "predictive-back", "horizontal-scroll", "vertical-scroll", "tap",
-    "swipe-actions", "pull-to-refresh",
+    "swipe-actions", "pull-to-refresh", "long-press",
 )
 
 /** Configuraciones que la galería de capturas debe cubrir cuando se genera. */
@@ -379,14 +379,14 @@ object ScreenContracts {
             kind = SurfaceKind.Inner,
             route = "OperationRoute.Unassociated",
             covers = listOf("OperationRoute.Unassociated"),
-            source = "$PRESENTATION/commonMain/kotlin/com/agendaqr/destinations/presentation/OperationListScreen.kt",
+            source = "$PRESENTATION/commonMain/kotlin/com/agendaqr/destinations/presentation/UnassociatedScreen.kt",
             entryPoints = listOf("operations-secondary"),
             exits = listOf("OperationRoute.List"),
             destinations = listOf("OperationRoute.List", "OperationRoute.Detail"),
             primaryAction = null,
             primaryActionKey = null,
-            states = listOf("empty", "content", "error"),
-            gestures = emptyList(),
+            states = listOf("empty", "content", "selection", "error"),
+            gestures = listOf("long-press"),
             captureStates = listOf("empty", "content"),
             components = listOf(
                 "AqScreen", "AqMenuItem", "AqEmptyPlaceholder", "AqModal",

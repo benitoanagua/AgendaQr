@@ -4,7 +4,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTouchInput
 import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.domain.AssociateComprobanteToOperationUseCase
 import com.agendaqr.destinations.domain.Comprobante
@@ -111,17 +113,40 @@ class UxUnassociatedTest {
         compose.onNodeWithText(AppStrings.createOperationFromThis).assertExists()
     }
 
-    private fun viewModel(): OperationsViewModel {
+    @Test
+    fun empty_tray_explains_how_receipts_arrive() {
+        val vm = viewModel(withReceipt = false)
+        render(vm)
+        compose.onNodeWithText(AppStrings.noUnassociatedReceipts).assertExists()
+        compose.onNodeWithText(AppStrings.shareFromAnotherAppHint).assertExists()
+    }
+
+    @Test
+    fun long_press_on_row_enters_selection_mode() {
+        val vm = viewModel()
+        render(vm)
+        compose.onNodeWithText("recibo_ketal.jpg").performTouchInput { longClick() }
+        compose.waitForIdle()
+        compose.onNodeWithText("1 ${AppStrings.Seleccionados}").assertExists()
+        // En modo selección desaparece la acción por fila.
+        compose.onNodeWithText(AppStrings.createOperationFromThis).assertDoesNotExist()
+    }
+
+    private fun viewModel(withReceipt: Boolean = true): OperationsViewModel {
         val operations = FakeOperations()
         val receipts = FakeReceipts(
-            listOf(
-                Comprobante(
-                    id = "r-1",
-                    file = "recibo_ketal.jpg",
-                    createdAt = 1_000,
-                    updatedAt = 1_000,
-                ),
-            ),
+            if (withReceipt) {
+                listOf(
+                    Comprobante(
+                        id = "r-1",
+                        file = "recibo_ketal.jpg",
+                        createdAt = 1_000,
+                        updatedAt = 1_000,
+                    ),
+                )
+            } else {
+                emptyList()
+            },
         )
         val contexts = FakeContexts()
         val files = NoopFiles()

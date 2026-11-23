@@ -146,7 +146,7 @@ Estado verificado en código: A-01…A-06 y A-12 (iconografía/miniaturas) ya es
 | Copy: eliminar comprobantes por lote decía «actividades» | `UnassociatedScreen.kt`, `AppStrings.kt` | `ComprobanteSingular` / `ComprobantesPlural` |
 | Galería sin cobertura estricta de estados declarados | `ScreenContractGate.kt`, `agendaqr.design-system.gradle.kts` | Ver ADR-0007 (enmienda 2026-11-21) |
 
-Pendiente sin cambio de contrato: A-09/A-10 (CTA en bandeja vacía y pulsación larga) requieren decisión de producto.
+A-09/A-10 cerrados por ADR-0045 (copy de vacío + pulsación larga).
 
 ---
 

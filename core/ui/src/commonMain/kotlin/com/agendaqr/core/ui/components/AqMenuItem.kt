@@ -1,7 +1,9 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -61,6 +63,10 @@ fun AqMenuItem(
     leading: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
     onClick: (() -> Unit)? = null,
+    /** Pulsación larga opcional (p. ej. entrar al modo selección). */
+    onLongClick: (() -> Unit)? = null,
+    /** Etiqueta accesible de la acción de pulsación larga. */
+    onLongClickLabel: String? = null,
     selected: Boolean = false,
     enabled: Boolean = true,
     showDivider: Boolean = false,
@@ -93,13 +99,29 @@ fun AqMenuItem(
             .fillMaxWidth()
             .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
             .background(container, AqSquircles.InteractiveSm)
-            .clickable(
-                role = Role.Button,
-                onClickLabel = title,
-                interactionSource = interactionSource,
-                indication = null,
-                enabled = enabled && onClick != null,
-                onClick = { onClick?.invoke() },
+            .then(
+                if (onLongClick != null) {
+                    @OptIn(ExperimentalFoundationApi::class)
+                    Modifier.combinedClickable(
+                        role = Role.Button,
+                        onClickLabel = title,
+                        interactionSource = interactionSource,
+                        indication = null,
+                        enabled = enabled && onClick != null,
+                        onLongClickLabel = onLongClickLabel,
+                        onLongClick = onLongClick,
+                        onClick = { onClick?.invoke() },
+                    )
+                } else {
+                    Modifier.clickable(
+                        role = Role.Button,
+                        onClickLabel = title,
+                        interactionSource = interactionSource,
+                        indication = null,
+                        enabled = enabled && onClick != null,
+                        onClick = { onClick?.invoke() },
+                    )
+                },
             )
             .menuItemSemantics(
                 desc = title + (subtitle?.let { " - $it" } ?: ""),
