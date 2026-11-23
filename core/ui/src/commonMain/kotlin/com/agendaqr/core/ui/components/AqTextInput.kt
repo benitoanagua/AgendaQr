@@ -97,6 +97,8 @@ fun AqTextInput(
     focusRequester: FocusRequester? = null,
     placeholder: String? = null,
     size: AqTextInputSize = AqTextInputSize.Md,
+    touchTargetTestTag: String = "aq-field-touch-target",
+    visualTestTag: String = "aq-text-input-visual",
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused = interactionSource.collectIsFocusedAsState().value
@@ -149,7 +151,7 @@ fun AqTextInput(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = AqMetrics.ControlMinSize)
-                .testTag("aq-field-touch-target"),
+                .testTag(touchTargetTestTag),
             contentAlignment = Alignment.Center,
         ) {
             Row(
@@ -159,7 +161,7 @@ fun AqTextInput(
                     .background(AqColor.InputSurface, shape)
                     .border(AqMetrics.Border, borderColor, shape)
                     .padding(horizontal = horizontalPadding, vertical = verticalPadding)
-                    .testTag("aq-text-input-visual"),
+                    .testTag(visualTestTag),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(innerGap),
             ) {
