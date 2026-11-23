@@ -1766,15 +1766,25 @@ open class LayoutReferenceTest {
             "$label: «Detalles de la actividad» debe ir tras «Fecha y hora»",
             detalles.top.value > fechaYHora.bottom.value,
         )
-        // El campo de importe conserva su propia caja con objetivo táctil
-        // de 48 dp, sin tarjeta de contenedor duplicada. El BasicTextField
-        // lleva el label como contentDescription.
-        val amountField = compose
-            .onNodeWithContentDescription(AppStrings.LabelMonto, useUnmergedTree = true)
+        // El contentDescription pertenece al BasicTextField interior y
+        // mide solo el área semántica del texto, no el hit target completo.
+        // Comprueba por separado el wrapper táctil (≥48 dp) y la caja visual
+        // Moon md (40 dp), evitando confundir sus geometrías.
+        val amountTouchTarget = compose
+            .onNodeWithTag("aq-field-touch-target", useUnmergedTree = true)
             .getUnclippedBoundsInRoot()
         assertTrue(
             "$label: campo de importe con objetivo táctil ≥ 48 dp",
-            (amountField.bottom.value - amountField.top.value) >= 47f,
+            (amountTouchTarget.bottom.value - amountTouchTarget.top.value) >= 47f,
+        )
+        val amountVisual = compose
+            .onNodeWithTag("aq-text-input-visual", useUnmergedTree = true)
+            .getUnclippedBoundsInRoot()
+        assertEquals(
+            "$label: caja visual del importe debe conservar 40 dp",
+            40f,
+            amountVisual.bottom.value - amountVisual.top.value,
+            1f,
         )
         // Sin superficie de tarjeta duplicada sobre el campo de importe:
         // se verificó estáticamente que OperationEditorScreen no usa AqCard.
