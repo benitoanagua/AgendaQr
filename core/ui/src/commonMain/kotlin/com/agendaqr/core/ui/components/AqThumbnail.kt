@@ -24,6 +24,7 @@ import com.agendaqr.core.ui.theme.AqCorner
 import com.agendaqr.core.ui.theme.AqSquircles
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.math.roundToInt
 
 /**
  * Resultado de la decodificación diferida de una miniatura de comprobante.
@@ -59,6 +60,21 @@ val ThumbnailSize: Dp = AqMetrics.ReceiptThumbnailSize
  * decodificable.
  */
 expect suspend fun decodeThumbnailBitmap(file: String): ImageBitmap?
+
+/**
+ * Tamaño reescalado que conserva la proporción con lado mayor ≤ [maxPx].
+ * Nunca amplía (si la imagen ya cabe, devuelve su tamaño) y nunca devuelve
+ * un lado < 1. Lógica pura compartida por las plataformas y probada en
+ * `commonTest` porque la ruta iOS no se puede ejecutar en CI.
+ */
+internal fun thumbnailScaledSize(width: Int, height: Int, maxPx: Int): Pair<Int, Int> {
+    if (width <= 0 || height <= 0 || maxPx <= 0) return 1 to 1
+    val largest = maxOf(width, height)
+    if (largest <= maxPx) return width to height
+    val ratio = maxPx.toDouble() / largest
+    return maxOf(1, (width * ratio).roundToInt().coerceAtMost(maxPx)) to
+        maxOf(1, (height * ratio).roundToInt().coerceAtMost(maxPx))
+}
 
 /**
  * Marco de miniatura compartido por Android, iOS, vistas de detalle y

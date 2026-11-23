@@ -16,8 +16,6 @@ import org.jetbrains.skia.Surface
 import platform.Foundation.NSData
 import platform.Foundation.dataWithContentsOfFile
 import platform.posix.memcpy
-import kotlin.math.max
-import kotlin.math.roundToInt
 
 private const val MinTargetPx = 96
 
@@ -59,13 +57,9 @@ actual suspend fun decodeThumbnailBitmap(file: String): ImageBitmap? = withConte
         bytes.usePinned { pinned -> memcpy(pinned.addressOf(0), data.bytes, data.length) }
 
         val source = Image.makeFromEncoded(bytes)
-        val largest = max(source.width, source.height)
-        if (largest <= 0) return@withContext null
-        if (largest <= MinTargetPx) return@withContext source.toComposeImageBitmap()
-
-        val ratio = MinTargetPx.toFloat() / largest
-        val w = max(1, (source.width * ratio).roundToInt())
-        val h = max(1, (source.height * ratio).roundToInt())
+        if (source.width <= 0 || source.height <= 0) return@withContext null
+        val (w, h) = thumbnailScaledSize(source.width, source.height, MinTargetPx)
+        if (w == source.width && h == source.height) return@withContext source.toComposeImageBitmap()
         val surface = Surface.makeRasterN32Premul(w, h)
         surface.canvas.drawImageRect(
             source,

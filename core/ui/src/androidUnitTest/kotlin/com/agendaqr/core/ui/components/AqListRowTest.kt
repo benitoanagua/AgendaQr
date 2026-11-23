@@ -5,7 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTouchInput
 import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.core.ui.theme.AqSpacing
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -75,5 +79,27 @@ class AqListRowTest {
 
         compose.onAllNodesWithText(longTitle).assertCountEquals(1)
         compose.onAllNodesWithText("Subtítulo").assertCountEquals(1)
+    }
+
+    @Test
+    fun long_click_fires_only_long_click_and_tap_fires_only_click() {
+        var taps = 0
+        var longs = 0
+        compose.setContent {
+            AqTheme {
+                AqMenuItem(
+                    title = "Fila con pulsación larga",
+                    onClick = { taps++ },
+                    onLongClick = { longs++ },
+                    onLongClickLabel = "Seleccionar",
+                )
+            }
+        }
+        compose.onNodeWithText("Fila con pulsación larga").performTouchInput { longClick() }
+        compose.waitForIdle()
+        kotlin.test.assertEquals(1 to 0, longs to taps)
+        compose.onNodeWithText("Fila con pulsación larga").performClick()
+        compose.waitForIdle()
+        kotlin.test.assertEquals(1 to 1, longs to taps)
     }
 }
