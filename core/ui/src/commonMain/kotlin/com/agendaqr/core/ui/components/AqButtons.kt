@@ -105,41 +105,48 @@ internal data class AqButtonColors(
     val border: Color? = null,
 )
 
+@Suppress("UNUSED_PARAMETER")
 internal fun resolveAqButtonColors(
     variant: AqButtonVariant,
     scheme: AqColorScheme,
     enabled: Boolean,
     pressed: Boolean,
-): AqButtonColors = when (variant) {
-    AqButtonVariant.Primary -> when {
-        !enabled -> AqButtonColors(scheme.brandFillDisabled, scheme.onBrandFillDisabled)
-        pressed -> AqButtonColors(scheme.brandFillActive, scheme.onBrandFill)
-        else -> AqButtonColors(scheme.brandFill, scheme.onBrandFill)
+): AqButtonColors {
+    // MoonBaseControl define el estado pressed mediante su efecto de escala,
+    // no mediante un cambio de relleno. PV-01 prohíbe inventar una paleta
+    // pressed/active para AqButton.
+    if (!enabled) {
+        return when (variant) {
+            AqButtonVariant.Primary -> AqButtonColors(scheme.brandFillDisabled, scheme.onBrandFillDisabled)
+            AqButtonVariant.Default -> AqButtonColors(scheme.disabled, scheme.textTertiary)
+            AqButtonVariant.Danger -> AqButtonColors(scheme.dangerDisabled, scheme.textPrimary)
+            AqButtonVariant.Light -> AqButtonColors(scheme.disabled, scheme.textTertiary)
+            AqButtonVariant.Outline -> AqButtonColors(
+                container = scheme.transparent,
+                content = scheme.textTertiary,
+                border = scheme.functionalBorder,
+            )
+            AqButtonVariant.Text -> AqButtonColors(
+                container = scheme.transparent,
+                content = scheme.textTertiary,
+            )
+        }
     }
-    AqButtonVariant.Default -> when {
-        !enabled -> AqButtonColors(scheme.disabled, scheme.textTertiary)
-        pressed -> AqButtonColors(scheme.surfaceActive, scheme.textPrimary, scheme.border)
-        else -> AqButtonColors(scheme.surface, scheme.textPrimary, scheme.border)
+    return when (variant) {
+        AqButtonVariant.Primary -> AqButtonColors(scheme.brandFill, scheme.onBrandFill)
+        AqButtonVariant.Default -> AqButtonColors(scheme.surface, scheme.textPrimary, scheme.border)
+        AqButtonVariant.Danger -> AqButtonColors(scheme.dangerFill, scheme.onDanger)
+        AqButtonVariant.Light -> AqButtonColors(scheme.emphasisSurface, scheme.emphasisText)
+        AqButtonVariant.Outline -> AqButtonColors(
+            container = scheme.transparent,
+            content = scheme.textPrimary,
+            border = scheme.functionalBorder,
+        )
+        AqButtonVariant.Text -> AqButtonColors(
+            container = scheme.transparent,
+            content = scheme.link,
+        )
     }
-    AqButtonVariant.Danger -> when {
-        !enabled -> AqButtonColors(scheme.dangerDisabled, scheme.textPrimary)
-        pressed -> AqButtonColors(scheme.dangerActive, scheme.onDanger)
-        else -> AqButtonColors(scheme.dangerFill, scheme.onDanger)
-    }
-    AqButtonVariant.Light -> when {
-        !enabled -> AqButtonColors(scheme.disabled, scheme.textTertiary)
-        pressed -> AqButtonColors(scheme.emphasisSurfaceHover, scheme.emphasisText)
-        else -> AqButtonColors(scheme.emphasisSurface, scheme.emphasisText)
-    }
-    AqButtonVariant.Outline -> AqButtonColors(
-        container = if (pressed && enabled) scheme.surfaceActive else scheme.transparent,
-        content = if (enabled) scheme.textPrimary else scheme.textTertiary,
-        border = scheme.functionalBorder,
-    )
-    AqButtonVariant.Text -> AqButtonColors(
-        container = if (pressed && enabled) scheme.surfaceActive else scheme.transparent,
-        content = if (enabled) scheme.link else scheme.textTertiary,
-    )
 }
 
 /** Botón con variante/tamaño Moon. Sustituto único de AqPrimaryButton,
