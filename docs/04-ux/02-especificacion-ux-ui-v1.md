@@ -1,9 +1,9 @@
 # Agenda QR — Especificación UX/UI V1 congelada
 
-**Estado:** FROZEN — contrato funcional; dirección visual vigente en ADR-0025
+**Estado:** FROZEN — contrato funcional; dirección visual vigente en Moon Design (ADR-0044)
 **Alcance:** contrato UX/UI conceptual; no es implementación Compose.
 
-**Alcance:** la composición de pantallas y la dirección visual se rigen por el contrato normativo vigente (ADR-0025). La intención, el modelo mental (§2), las reglas (§3), las reglas de negocio, el orden de los flujos, la navegación conceptual y su back stack, el contrato local-first, el copy funcional, la guía de voz (ADR-0008) y la accesibilidad (§11) permanecen congelados.
+**Alcance:** la composición de pantallas y la dirección visual se rigen por el contrato normativo Moon vigente (ADR-0044). La intención, el modelo mental (§2), las reglas (§3), las reglas de negocio, el orden de los flujos, la navegación conceptual y su back stack, el contrato local-first, el copy funcional, la guía de voz (ADR-0008) y la accesibilidad (§11) permanecen congelados.
 
 ## 1. Contrato principal
 
@@ -290,89 +290,12 @@ Reglas vigentes:
   automática; el soporte hasta 200 % se conserva y se revisa manualmente
   (ADR-0007).
 
-## 12. Contrato visual — ADR-0025
+## 12. Contrato visual — Moon Design (ADR-0044)
 
-> **Precedencia:** la intención, los flujos, el orden de navegación y el copy funcional permanecen congelados en esta especificación. La dirección visual, los tokens, los componentes, los estados, el contraste, la accesibilidad visual, las pruebas y la gobernanza se rigen por `docs/05-design-system/00-contrato-normativo-diseno.md` (ADR-0025). Esta sección no define valores visuales propios.
+> La intención, los flujos, el orden de navegación, el copy funcional y la recuperación permanecen congelados en esta especificación. Esta sección no define tokens ni anatomía visual.
 
-La dirección visual vigente es la del sistema adoptado en ADR-0025, reimplementado en Kotlin/Compose. Su fuente verificable es la instantánea versionada citada en el contrato normativo; `core/ui` es la implementación canónica y las pantallas componen sus componentes y tokens semánticos. Los valores no verificables se marcan en el contrato como pendientes y se resuelven con el valor verificable más cercano de la misma versión, nunca con un valor inventado.
+La dirección visual completa se rige por [Moon Design System](../05-design-system/README.md). Sus fuentes normativas son el contrato, la instantánea de tokens y el catálogo de componentes. `core/ui` es la implementación canónica; las pantallas componen sus componentes y tokens semánticos. No se permiten estilos locales, componentes Material ni valores visuales inventados.
 
-### Composición e interacción
+La navegación, el back stack, las acciones y la intención por pantalla permanecen invariantes. Los cambios funcionales requieren una decisión UX explícita y actualización coordinada del contrato, el código y las pruebas.
 
-La composición por pantalla se especifica en §4 y conserva la intención y el modelo mental existentes. No se añaden gestos, acciones ni estados que AgendaQr no tuviera. La navegación raíz, sus cuatro destinos, el back stack y el orden de los flujos permanecen invariantes. Las decisiones explícitas del propietario (ADR-0016, ADR-0018 y ADR-0025) son el único mecanismo para modificarlos.
-
-### Principios
-
-1. Una intención y una acción primaria por pantalla; las acciones existentes conservan su semántica y jerarquía.
-2. Las superficies y los estados se componen solo con tokens semánticos de `core/ui`, sin gradientes, brillo decorativo ni colores locales.
-3. El QR conserva su lienzo blanco y su zona de silencio en cualquier tema (X-03).
-4. Accesibilidad, funcionamiento offline y consistencia de intención entre Android/iOS son invariantes.
-
-### Navegación y chrome
-
-- La barra superior conserva título centrado, atrás a la izquierda y acciones a la derecha; el overflow abre una hoja de acciones. La navegación inferior conserva sus cuatro destinos y etiquetas siempre visibles.
-- La navegación raíz continúa siendo Inicio, Buscar, Actividades y Contextos; los detalles, editores e importaciones no duplican esa barra.
-- La navegación usa las convenciones nativas de Android e iOS (D-03); su estado activo, divisores e indicadores se resuelven con tokens semánticos.
-- Tabs mantiene sus secciones y su indicador; sus medidas y colores se toman del contrato normativo.
-- Tablet/plegables mantienen la adaptación por `WindowSizeClass` y el límite de ancho de contenido.
-- No se cambia la navegación funcional como parte de la reforma visual.
-
-### Composición, listas y tarjetas
-
-- Cell-group sigue siendo la composición de listas y ajustes: fila con icono opcional, título, descripción, nota derecha y chevron cuando navega. El divisor y el encabezado de grupo se resuelven con tokens semánticos.
-- Las tarjetas se reservan para contenido agrupado; no se envuelve cada fila en una tarjeta independiente.
-- La barra fija inferior `AqBottomAction` contiene como máximo una primaria, respeta safe-area e IME y se separa del contenido por divisor.
-- Empty usa icono, descripción y acción útil; no repite una acción ya disponible. Skeleton y Loading no introducen movimiento decorativo.
-- Result usa icono, título y descripción secundaria.
-- Los errores comunican qué ocurrió, qué pasó con los datos y cómo recuperarse; el color no es la única señal.
-- Toast se presenta mediante `AqSnackbarHost`/`AqFeedbackEvent` y es efímero; Message es una tarjeta elevada para avisos de operación; Notice-bar reserva avisos persistentes como modo local/sin conexión.
-- Tag comunica el estado con texto y semántica, no solo con color.
-
-### Campos y formularios
-
-- Input mantiene etiqueta, contenido, ayuda y error contextual asociados; el error incluye icono, texto y semántica `error()`.
-- Search conserva foco visible y acción de cancelar cuando corresponda.
-- La obligatoriedad, los errores y los estados de guardado se comunican con texto/semántica, no solo con color.
-- Las acciones fijas respetan las barras del sistema y el teclado (IME); no ocultan el contenido editable.
-- Los flujos de importación conservan selección, revisión y confirmación con jerarquía visual consistente.
-
-### Botones y acciones
-
-- Los botones conservan su jerarquía semántica: primaria, secundaria, terciaria, destructiva y acciones de texto. Sus tamaños, radios y estados se toman del contrato normativo; el área interactiva siempre es ≥48 dp (D-02).
-- La destructiva requiere confirmación con etiqueta específica de consecuencia.
-- Acciones frecuentes visibles donde ahorren pasos; no duplicar la misma acción en varias zonas de una pantalla.
-- El estado presionado usa tokens semánticos; se conservan foco por teclado/D-pad, háptica de plataforma y estado deshabilitado accesible. No hay escala de pulsación ni spring.
-- Dialog permite apilar botones cuando sus etiquetas no caben; sus medidas y estados se toman del contrato normativo.
-
-### Tipografía e iconografía
-
-- La tipografía es Inter (SIL OFL 1.1), empaquetada como recurso multiplataforma (D-05); sus roles, tamaños e interlíneas se toman del contrato normativo y de la instantánea versionada.
-- Los importes conservan cifras tabulares. Se mantiene el escalado del sistema hasta 200 % (D-06); la validación automática cubre 100 %/150 % a 360 dp y el 200 % queda como revisión manual (ADR-0007).
-- La iconografía se expone a través de `AqIcon`/`AqIcons` desde un único set vectorial; no se mezclan familias ni se añade una dependencia visual de runtime.
-
-### Color y tema oscuro
-
-- Claro y oscuro usan los roles semánticos del contrato normativo para acciones, estados, neutros, texto, superficies y bordes. No se admiten gradientes ni roles promo/fintech.
-- El contraste se verifica según AA para texto y elementos no textuales. Ningún color se define fuera de la capa de tokens.
-- El lienzo del QR permanece blanco en ambos temas para preservar su zona de silencio escaneable (X-03).
-- El tema oscuro se construye desde los roles publicados y las derivaciones registradas como X-05; no es una inversión mecánica del claro.
-
-### Movimiento
-
-- Las transiciones usan las duraciones y curvas de la instantánea versionada; los roles derivados están registrados como X-04. No se usa spring ni escala de pulsación.
-- Movimiento reducido elimina la transición; no se añade confeti, shimmer ni otro movimiento que no tenga función existente.
-
-### Excepciones documentadas
-
-- Los acentos de contexto conservan su asignación determinista por dominio (X-06); sus pares se seleccionan entre los colores verificados de la instantánea y se validan a AA.
-- `AqNavRail` se conserva en tablet/plegables donde el sistema visual de referencia no define un equivalente; se rige por el contrato normativo. ADR-0007 retiró su verificación de layout automática; requiere revisión manual en dispositivo.
-- Los componentes mantienen targets interactivos ≥48 dp aunque el tamaño visual de referencia sea menor (D-02).
-- La sombra CSS de varias capas se representa en Compose con la capa dominante o `drawBehind`; la diferencia queda declarada en el contrato normativo.
-- Los menús de opciones y selectores usan `AqDialog` con listas; la alternativa permite verificar de forma estable sus acciones bajo Robolectric sin cambiar el flujo.
-
-## 13. Fuera de esta congelación
-
-Fuera del alcance de esta especificación conceptual: detalles internos de Kotlin/Compose, implementación de ViewModels y state holders, persistencia concreta y resultados de pruebas por plataforma. Esos detalles y su estado de verificación se documentan en `docs/STATE.md`.
-
-## 14. Estado
-
-**UX/UI V1: FROZEN** (ADR-0019, ADR-0025). La dirección visual (§12) está descongelada y se rige por ADR-0025 y el contrato normativo; las invariantes funcionales listadas al inicio permanecen congeladas.
+**UX/UI V1: FROZEN** para el contrato funcional. La autoridad visual es Moon Design y puede perfeccionarse sin alterar intención, navegación ni reglas de producto.

@@ -6,7 +6,7 @@ Aprobado (normativo para la integración UI/UX en Agenda QR).
 
 ## Contexto
 
-La capa `core/ui` cuenta con la reimplementación del sistema visual anterior y una suite de componentes y patrones móviles resultantes de la cadena de precedencia (ADR-0029: Moon → nativo). Varios componentes implementados permanecían únicamente en pruebas, galería o previews sin uso visible en las pantallas de producción:
+La capa `core/ui` implementa Moon Design. Los componentes se adoptan solo cuando tienen un uso real o un rol transversal justificado; la referencia visual es el catálogo Moon vigente. Componentes sin consumo visible no deben permanecer únicamente en previews o pruebas:
 
 `AqSwipeActions`, `AqPullToRefresh`, `AqBottomSheet`, `AqActionSheet`, `AqTooltip`, `AqSpinner`, `AqProgressBar`, `AqProgressBlock`, `AqSkeleton`, `AqSelect`, `AqCheckbox`, `AqRadioButton`, `AqSwitch`, `AqSelectAllCheckbox`.
 
@@ -49,12 +49,12 @@ Los retirados se eliminan junto con su ficha, pruebas, entrada de galería y ref
 Un componente o patrón nuevo se implementa solo si cumple TODO:
 
 - **(a) Mejora UX demostrable:** nombra la heurística que mejora (visibilidad de estado, retroalimentación inmediata, prevención de errores, reconocer vs recordar, alcance del pulgar, menos toques, consistencia, jerarquía) y cómo se comprobará en código, pruebas o capturas.
-- **(b) Convención:** sigue el sistema visual anterior (nivel 1, con referencia a su componente o patrón en la instantánea 9.4.2 o documentación pública) o, si el sistema visual anterior no lo define, Moon (nivel 2, citando la clase real del catálogo verificado de `moon_design` 1.1.0), o es un patrón estándar nativo de los que ni el sistema visual anterior ni Moon cubren (nivel 3, con descarte escrito de 1 y 2 con evidencia verificable).
+- **(b) Convención:** reproduce un componente o patrón Moon documentado en `13-catalogo-moon.md`; si Moon no ofrece un componente de producto, se compone con piezas Moon y mecanismos Compose/plataforma, sin introducir una apariencia alternativa.
 - **(c) Consumo real:** tiene uso en al menos una pantalla de producción.
 - **(d) Límites duros:** respeta todos los límites duros (no nuevos datos persistidos, red, permisos, telemetría; no toca modelo de seguridad; solo invoca casos de uso/intents existentes).
 - **(e) Artefactos:** trae ficha, pruebas, galería, capturas y entrada en el contrato de pantallas.
 
-Lo que no cumpla se descarta con el motivo en el backlog (`11-matriz-gaps-mobile.md` §4). Un componente sin consumo real nunca se crea.
+Lo que no cumpla se descarta; no se mantiene un backlog visual dentro de documentación normativa. Un componente sin consumo real nunca se crea.
 
 ### 4. Política de gestos
 

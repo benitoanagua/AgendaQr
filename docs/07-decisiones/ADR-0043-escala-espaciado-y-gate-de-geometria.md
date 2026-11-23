@@ -1,7 +1,7 @@
 # ADR-0043 — Escala de espaciado, gate de geometría y corrección de la geometría Moon
 
 **Estado:** ACEPTADO — 2026-11-22  
-**Relaciona:** ADR-0039, ADR-0040, ADR-0041, D-12.
+**Relacionado:** ADR-0044, D-12.
 
 ## Decisión
 

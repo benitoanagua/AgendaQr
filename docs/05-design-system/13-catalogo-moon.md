@@ -1,10 +1,10 @@
-# Catálogo Moon Design (contrato de componentes)
+# Catálogo Moon Design — componentes y geometría
 
-**Estado:** Normativo — ADR-0039 / ADR-0040.
-**Fuente:** `moon_design` 1.1.0 (`github.com/coingaming/moon_flutter`, commit `177adb7`, MIT © Yolo Group) y `moon_tokens` 0.0.6. Ruta de código citada relativa a `lib/src/`.
-**Alcance de este documento:** inventario y medidas verificadas contra la fuente. Las columnas «Estado» se actualizan al portar cada componente. Lo marcado *ver fuente* no se transcribió todavía y se completa al portar.
+**Estado:** Normativo — catálogo único de componentes (ADR-0044).
+**Fuente:** `moon_design` 1.1.0 (Yolo Group, MIT), `moon_tokens` 0.0.6 y `@heathmont/moon-icons` 10.7.4. Fuente Kotlin: `core/ui`.
+**Regla:** las equivalencias `Aq*` implementan la anatomía, variantes, tamaños, estados y comportamiento de Moon. Los valores exactos de color, roles, tipografía e iconos están en [09-tokens-moon.md](09-tokens-moon.md). Esta tabla es el inventario único consumido por el gate de completitud.
 
-## 1. Tokens transcritos (hecho en `AqTokens.kt`)
+## 1. Tokens Moon portados a Aq
 
 | Token Moon (`theme/tokens/*.dart`) | Token Aq | Valores |
 |---|---|---|
@@ -16,7 +16,7 @@
 | `MoonShadows.light/dark` | `AqShadow` + `Modifier.aqShadow` | sm, md, lg, xl; capas con blur/offset/spread/alfa por tema; color de paleta |
 | `utils/squircle/*` | `AqSquircleShape`, `AqSquircles` | esquina Figma (Bézier + arco central) |
 
-Colores, tipografía e iconos de Moon **no** se importan (ADR-0039): los aporta Moon.
+Color, tipografía, iconografía, geometría y movimiento se portan desde Moon; los valores de color/tipo/iconos están en 09-tokens-moon.md. Inter es la única sustitución de familia tipográfica por licencia.
 
 ## 2. Componentes
 
@@ -56,9 +56,9 @@ Colores, tipografía e iconos de Moon **no** se importan (ADR-0039): los aporta 
 
 Transversales: `MoonBaseControl` (foco, hover, pressed, long-press; efectos pulse, scale y foco), `MoonFocusEffect`, `MoonEffectsTheme`, `utils/touch_target_padding.dart` (ampliación del área táctil).
 
-## 3. Medidas verificadas (`theme/*/*_sizes.dart`)
+## 3. Medidas de referencia Moon (`theme/*/*_sizes.dart`)
 
-Alturas y radios usan los tokens de §1; `px` = horizontal del relleno.
+Valores transcritos de la versión indicada; `px` = padding horizontal. No son una matriz de auditoría ni un estado de fidelidad por pantalla
 
 | Componente | Tamaño | Alto | Radio | Relleno horiz. | Hueco |
 |---|---|---|---|---|---|
@@ -74,16 +74,28 @@ Alturas y radios usan los tokens de §1; `px` = horizontal del relleno.
 
 **Regla de área táctil (ADR-0039 §4.4):** todo control con alto visual < 48 dp conserva ese alto y amplía el área táctil a 48 dp (como `touch_target_padding.dart` en la fuente), sin cambiar su aspecto.
 
-## 4. Patrones que Moon no trae (composición, ADR-0039 §3)
+## 4. Composiciones de Agenda QR
 
-| Patrón | Composición con piezas Moon | Mecánica de gesto |
-|---|---|---|
-| Bottom navigation / riel | `AqTabBar` / `AqPillTab` | — |
-| FAB y acción fija inferior | `AqButton` (xl/lg, `AqShadow.Md`) | — |
-| Search bar | `AqTextInput` con icono y borrado | — |
-| Celda de lista | `AqMenuItem` + `AqAvatar` / `AqTag` | — |
-| Empty state | `AqAvatar`/icono + texto + `AqButton` | — |
-| Skeleton | `AqLinearLoader` y formas Moon | animación Moon |
-| Date/time picker | `AqModal` (D-07) con controles Moon | — |
-| Swipe actions | `AqButton` revelados | deslizar (Compose) |
-| Pull-to-refresh | `AqCircularLoader` | arrastrar (Compose) |
+Moon no define algunos patrones de producto como componentes independientes. Se componen con componentes Moon y mecánica de plataforma, sin crear un segundo sistema visual.
+
+| Patrón de producto | Composición permitida |
+|---|---|
+| Navegación inferior / riel | `AqTabBar` / `AqPillTab` + navegación Compose |
+| Acción fija / FAB | `AqButton` (tamaño Moon) + token `AqShadow` cuando la referencia Moon lo requiere |
+| Search bar | `AqTextInput` + iconos Moon |
+| Celda de lista | `AqMenuItem` + `AqAvatar` / `AqTag` |
+| Empty state | icono Moon + texto Moon + `AqButton` |
+| Skeleton | `AqLinearLoader` y formas Moon |
+| Date/time picker | `AqModal` + controles Moon; selector nativo solo cuando el contrato de plataforma lo exige |
+| Swipe actions | `AqButton` revelado por gesto Compose |
+| Pull-to-refresh | `AqCircularLoader` + gesto Compose |
+
+## 5. Reglas de implementación
+
+- `core/ui` es la única capa que define tokens y componentes visuales.
+- Cada pantalla consume componentes Moon existentes; no crea estilos locales.
+- Los tamaños visuales Moon se conservan. El objetivo táctil se amplía a 48 dp mediante `AqTouchTarget`, sin deformar el control.
+- Los estados, efectos de foco/pulsación y movimiento se centralizan en `AqBaseControl` y `AqMotion`.
+- El catálogo enumera cada símbolo `Aq*` exportado y debe mantenerse sincronizado con `AqDesignSystemGallery`, pruebas y gate de completitud.
+- La duración de toast de Agenda QR es 4 000 ms (decisión de producto); no debe confundirse con la animación Moon de 200 ms y separación/recorrido de toasts.
+- No se mantienen fichas de componente separadas: este catálogo, los tokens y el código/test de `core/ui` son la fuente activa.

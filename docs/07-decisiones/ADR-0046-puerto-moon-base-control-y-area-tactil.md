@@ -1,7 +1,7 @@
 # ADR-0046 — Puerto de MoonBaseControl y área táctil de 48 dp
 
 **Estado:** ACEPTADO — 2026-11-23  
-**Relacionado:** ADR-0039 §4.4, ADR-0044, D-02.
+**Relacionado:** ADR-0044, contrato Moon §4, D-02.
 
 ## 1. Contexto
 

@@ -70,7 +70,7 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
 
 /** Lista de símbolos legacy de la capa legacy previa a Moon que NO deben importarse ni
  * llamarse desde `feature/`, `androidApp`, `iosApp` ni `shared`. Cada uno
- * tiene un equivalente Moon en el catálogo (§1 de la auditoría 2026-11-21)
+ * tiene un equivalente Moon en el catálogo normativo
  * o se compone únicamente con piezas Moon (catálogo §4). Se borra su
  * definición en `core/ui` en la Fase D.
  */
@@ -1496,7 +1496,7 @@ tasks.register("verifyUxTransitionContracts") {
 /**
  * Mide el legado previo a Moon que queda en TODO el repo (core/ui y tests
  * incluidos). Ahora que el conteo es cero, forma parte de
- * `verifyAgendaQrArchitecture` (ADR-0041).
+ * `verifyAgendaQrArchitecture` (ADR-0044).
  */
 tasks.register("verifyNoLegacyAnywhere") {
     group = "verification"

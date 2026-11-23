@@ -86,6 +86,6 @@ La implementación debe adaptarse al contrato UX/UI; un fallo de implementación
 
 La especificación UX/UI vigente define las composiciones autorizadas. Cualquier cambio de intención, navegación, jerarquía de acciones, back stack o gestos requiere una decisión de producto documentada y actualización coordinada del contrato, el código y las pruebas.
 
-## D-18 — Sistema visual (ADR-0025)
+## D-18 — Moon Design como sistema visual único
 
-El sistema visual normativo es el adoptado en ADR-0025 y se gobierna por el contrato normativo y su instantánea versionada. Es la autoridad de tokens, componentes, medidas, estados y accesibilidad, preservando el contrato funcional congelado de la especificación UX/UI. El riesgo legal de la licencia de la fuente de valores está aceptado y documentado en ADR-0025.
+Moon Design es la única autoridad de tokens, componentes, anatomía, geometría, estados, movimiento, iconografía y accesibilidad visual. La implementación es un puerto Kotlin/Compose en `core/ui`; Inter es la única sustitución por licencia. Las fuentes activas son `docs/05-design-system/README.md`, `00-contrato-normativo-diseno.md`, `09-tokens-moon.md` y `13-catalogo-moon.md`. No se mantienen especificaciones visuales paralelas.

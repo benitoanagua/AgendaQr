@@ -22,44 +22,15 @@
 | [`04-ux/04-capacidades-y-comportamientos.md`](04-ux/04-capacidades-y-comportamientos.md) | Capacidades y comportamientos |
 | [`04-ux/05-guia-de-voz.md`](04-ux/05-guia-de-voz.md) | Guía de voz (tuteo) |
 
-## Sistema de diseño (Moon reimplementado en Kotlin)
+## Sistema de diseño — Moon
 
-| Documento | Contenido |
+| Documento | Autoridad |
 |---|---|
-| [`05-design-system/00-contrato-normativo-diseno.md`](05-design-system/00-contrato-normativo-diseno.md) | Contrato normativo único: fuente, tokens, extensiones y desviaciones |
-| [`05-design-system/09-tokens-moon.md`](05-design-system/09-tokens-moon.md) | Valores de color, tipografía e iconos de Moon (versionado) |
-| [`05-design-system/11-matriz-gaps-mobile.md`](05-design-system/11-matriz-gaps-mobile.md) | Matriz normativa de gaps mobile y cadena de precedencia Moon → nativo |
-| [`05-design-system/12-auditoria-ui-ux-2026-11.md`](05-design-system/12-auditoria-ui-ux-2026-11.md) | Auditoría UI/UX de pantallas y componentes `Aq*` (hallazgos y plan de ejecución) |
-| [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias de terceros |
-| [`05-design-system/13-catalogo-moon.md`](05-design-system/13-catalogo-moon.md) | Catálogo de componentes Moon Design (fuente de verdad del UI/UX) |
-| [`05-design-system/14-matriz-fidelidad-moon.md`](05-design-system/14-matriz-fidelidad-moon.md) | Matriz de fidelidad Moon → Compose por widget (estado, medidas y veredicto) |
-| [`05-design-system/componentes/miniatura-comprobante.md`](05-design-system/componentes/miniatura-comprobante.md) | Ficha de componente: Miniatura de comprobante (`AqThumbnail`, `AqThumbnailFrame`) |
-| [`05-design-system/componentes/bottom-sheet.md`](05-design-system/componentes/bottom-sheet.md) | Ficha de componente: Bottom Sheet (`AqBottomSheet`) |
-| [`05-design-system/componentes/segmented-control.md`](05-design-system/componentes/segmented-control.md) | Ficha de componente: Segmented Control (`AqSegmentedControl`) |
-| [`05-design-system/componentes/chips-filtros.md`](05-design-system/componentes/chips-filtros.md) | Ficha de componente: Chips y Filtros (`AqChipGroup`, `AqChipOption`) |
-| [`05-design-system/componentes/toast-snackbar.md`](05-design-system/componentes/toast-snackbar.md) | Ficha de componente: Toast / Snackbar (`AqSnackbarHost`, `AqFeedbackEvent`) |
-| [`05-design-system/componentes/search-bar.md`](05-design-system/componentes/search-bar.md) | Ficha de componente: Search Bar (`AqSearchField`, `AqSearchTrigger`) |
-| [`05-design-system/componentes/bottom-navigation.md`](05-design-system/componentes/bottom-navigation.md) | Ficha de componente: Bottom Navigation (`AqNavBar`, `AqNavRail`) |
-| [`05-design-system/componentes/list-cell.md`](05-design-system/componentes/list-cell.md) | Ficha de componente: List Cell (`AqListRow`, `AqListBody`) |
-| [`05-design-system/componentes/empty-state.md`](05-design-system/componentes/empty-state.md) | Ficha de componente: Empty State (`AqEmptyState`) |
-| [`05-design-system/componentes/skeleton.md`](05-design-system/componentes/skeleton.md) | Ficha de componente: Skeleton (`AqSkeleton`, `AqProgressBlock`) |
-| [`05-design-system/componentes/swipe-actions.md`](05-design-system/componentes/swipe-actions.md) | Ficha de componente: Swipe Actions (`AqSwipeActions`) |
-| [`05-design-system/componentes/pull-to-refresh.md`](05-design-system/componentes/pull-to-refresh.md) | Ficha de componente: Pull to Refresh (`AqPullToRefresh`) |
-| [`05-design-system/componentes/action-sheet.md`](05-design-system/componentes/action-sheet.md) | Ficha de componente: Action Sheet (`AqActionSheet`) |
-| [`05-design-system/componentes/progreso.md`](05-design-system/componentes/progreso.md) | Ficha de componente: Progreso (`AqProgressBar`, `AqProgressBlock`, `AqSpinner`) |
-| [`05-design-system/componentes/switch.md`](05-design-system/componentes/switch.md) | Ficha de componente: Switch (`AqSwitch`) |
-| [`05-design-system/componentes/tooltip.md`](05-design-system/componentes/tooltip.md) | Ficha de componente: Tooltip (`AqTooltip`) |
-| [`05-design-system/componentes/date-time-picker.md`](05-design-system/componentes/date-time-picker.md) | Ficha de componente: Pickers de Fecha/Hora (`AqDatePickerDialog`, `AqTimePickerDialog`) |
-| [`05-design-system/componentes/boton.md`](05-design-system/componentes/boton.md) | Ficha de componente: Botón (`AqButton`, variantes Filled/Outlined/Text) |
-| [`05-design-system/componentes/campo-de-texto.md`](05-design-system/componentes/campo-de-texto.md) | Ficha de componente: Campo de texto (`AqTextInput`) |
-| [`05-design-system/componentes/casilla-de-verificacion.md`](05-design-system/componentes/casilla-de-verificacion.md) | Ficha de componente: Casilla de verificación (`AqCheckbox`) |
-| [`05-design-system/componentes/control-segmentado.md`](05-design-system/componentes/control-segmentado.md) | Ficha de componente: Control segmentado (`AqSegmentedControl`) |
-| [`05-design-system/componentes/interruptor.md`](05-design-system/componentes/interruptor.md) | Ficha de componente: Interruptor (`AqSwitch`) |
-| [`05-design-system/componentes/alerta.md`](05-design-system/componentes/alerta.md) | Ficha de componente: Alerta (`AqAlert`) |
-| [`05-design-system/componentes/menu-item.md`](05-design-system/componentes/menu-item.md) | Ficha de componente: Celda de lista (`AqMenuItem`) |
-| [`05-design-system/componentes/quick-action.md`](05-design-system/componentes/quick-action.md) | Ficha de componente: Acción rápida (`AqQuickAction`) |
-| [`05-design-system/componentes/tab-bar.md`](05-design-system/componentes/tab-bar.md) | Ficha de componente: Barra de pestañas (`AqTabBar`, `AqPillTab`) |
-| [`05-design-system/componentes/circular-loader.md`](05-design-system/componentes/circular-loader.md) | Ficha de componente: Indicador de carga circular (`AqCircularLoader`) |
+| [`05-design-system/README.md`](05-design-system/README.md) | Entrada única: reglas de fidelidad, precedencia, gobernanza y validación |
+| [`05-design-system/00-contrato-normativo-diseno.md`](05-design-system/00-contrato-normativo-diseno.md) | Contrato normativo: autoridad Moon, adaptaciones móviles y excepciones del gate |
+| [`05-design-system/09-tokens-moon.md`](05-design-system/09-tokens-moon.md) | Valores de color, roles semánticos, tipografía e iconos |
+| [`05-design-system/13-catalogo-moon.md`](05-design-system/13-catalogo-moon.md) | Catálogo único de componentes, equivalencias, tamaños y composiciones |
+| [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias y avisos de recursos redistribuidos |
 
 ## Decisiones
 
@@ -76,10 +47,7 @@
 | [`07-decisiones/ADR-0016-identidad-local-sin-cuenta.md`](07-decisiones/ADR-0016-identidad-local-sin-cuenta.md) | ADR: identidad local sin cuenta, login no obligatorio, namespace por perfil, PIN, migración y limitaciones |
 | [`07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md`](07-decisiones/ADR-0018-correcciones-ux-captura-rapida.md) | ADR: correcciones UX de captura rápida (enmienda ADR-0016 y la congelación UX en su alcance) |
 | [`07-decisiones/ADR-0019-enmienda-v1-9-inicio-vacio.md`](07-decisiones/ADR-0019-enmienda-v1-9-inicio-vacio.md) | ADR: enmienda V1.9 inicio vacío y separadores oscuros |
-| [`07-decisiones/ADR-0025-adopcion-ui-ux-sistema-anterior.md`](07-decisiones/ADR-0025-adopcion-ui-ux-sistema-anterior.md) | ADR: adopción de un sistema visual externo (reemplazado por ADR-0044) |
 | [`07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md`](07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md) | ADR: propiedad del espacio por nivel atómico y densidad móvil |
-| [`07-decisiones/ADR-0028-moon-patrones-moviles-autoridad-visual-previa.md`](07-decisiones/ADR-0028-moon-patrones-moviles-autoridad-visual-previa.md) | ADR: patrones móviles y autoridad visual previa (reemplazado por ADR-0044) |
-| [`07-decisiones/ADR-0029-cadena-precedencia-moon-nativo.md`](07-decisiones/ADR-0029-cadena-precedencia-moon-nativo.md) | ADR: cadena de precedencia (reemplazado por ADR-0044) |
 | [`07-decisiones/ADR-0030-adopcion-primitivos-moviles-pantallas.md`](07-decisiones/ADR-0030-adopcion-primitivos-moviles-pantallas.md) | ADR: adopción de primitivos móviles en pantallas de producción |
 | [`07-decisiones/ADR-0031-adopcion-primitivos-componentes-sin-uso.md`](07-decisiones/ADR-0031-adopcion-primitivos-componentes-sin-uso.md) | ADR: política de adopción/retiro de componentes sin uso y criterio de componentes nuevos |
 | [`07-decisiones/ADR-0033-limites-de-campo-y-contador.md`](07-decisiones/ADR-0033-limites-de-campo-y-contador.md) | ADR: límites de campo y contador de caracteres |
@@ -87,11 +55,6 @@
 | [`07-decisiones/ADR-0035-insignia-navegacion-badge.md`](07-decisiones/ADR-0035-insignia-navegacion-badge.md) | ADR: insignia de navegación (badge de comprobantes sin asociar) |
 | [`07-decisiones/ADR-0036-descarte-teclado-propio-importe.md`](07-decisiones/ADR-0036-descarte-teclado-propio-importe.md) | ADR: descarte del teclado propio para el importe |
 | [`07-decisiones/ADR-0037-capacidad-share-extension.md`](07-decisiones/ADR-0037-capacidad-share-extension.md) | ADR: capacidad de plataforma para Share Extension |
-| [`07-decisiones/ADR-0038-moon-ux-autoridad-dividida.md`](07-decisiones/ADR-0038-moon-ux-autoridad-dividida.md) | ADR: autoridad dividida por dimensión (reemplazado por ADR-0044) |
-| [`07-decisiones/ADR-0039-moon-rige-ui-ux.md`](07-decisiones/ADR-0039-moon-rige-ui-ux.md) | ADR: Moon rige todo el UI/UX (enmendado por ADR-0044) |
-| [`07-decisiones/ADR-0040-adopcion-integra-catalogo-moon.md`](07-decisiones/ADR-0040-adopcion-integra-catalogo-moon.md) | ADR: adopción íntegra del catálogo Moon |
-| [`07-decisiones/ADR-0041-cierre-migracion-moon-y-duracion-toast.md`](07-decisiones/ADR-0041-cierre-migracion-moon-y-duracion-toast.md) | ADR: cierre de la migración Moon y duración de `AqToast` |
-| [`07-decisiones/ADR-0042-nombres-componentes-retirados.md`](07-decisiones/ADR-0042-nombres-componentes-retirados.md) | ADR: nombres de componentes retirados y sus sustitutos Moon |
 | [`07-decisiones/ADR-0043-escala-espaciado-y-gate-de-geometria.md`](07-decisiones/ADR-0043-escala-espaciado-y-gate-de-geometria.md) | ADR: escala de espaciado, gate de geometría y corrección de la geometría Moon |
 | [`07-decisiones/ADR-0044-moon-unico-sistema-de-diseno.md`](07-decisiones/ADR-0044-moon-unico-sistema-de-diseno.md) | ADR: Moon como único sistema de diseño |
 | [`07-decisiones/ADR-0045-bandeja-sin-asociar-vacio-y-seleccion.md`](07-decisiones/ADR-0045-bandeja-sin-asociar-vacio-y-seleccion.md) | ADR: bandeja sin asociar — copy de vacío y pulsación larga |

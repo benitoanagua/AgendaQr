@@ -28,9 +28,9 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Permisos de cámara (política de ajustes) | pruebas unitarias + compilación de instrumentados |
 | Accesibilidad (contraste, foco visible, háptica, anuncios, objetivos ≥ 48 dp) | pruebas de `core:ui` + Robolectric |
 | Sistema visual Moon (`moon_tokens` 0.0.6, `moon-icons` 10.7.4) en `core/ui`: tokens semánticos claro/oscuro, Inter 4.0 empaquetado, pares AA, iconografía convertida a vectores Compose, movimiento, previews a 200 % y avisos de licencia | `verifyAgendaQrArchitecture` + `:core:ui:testDebugUnitTest` + `:androidApp:assembleDebug` con `-PallowDebugSigningForRc=true` |
-| **Viraje Moon Design completo (ADR-0039/0040/0041): Moon rige todo el UI/UX (anatomía, tamaños, radios squircle, bordes, sombras, opacidades, movimiento, efecto de foco, color, iconos y escala tipográfica; ADR-0044). Cero símbolos legacy en producción, cero wrappers `AqMoon*`, cero Material en feature/apps/shared.** | `:core:ui:testDebugUnitTest` verde; `verifyDesignSystemCompliance` VERDE; `verifyDesignSystemFixtures` VERDE; `verifyControlMinSize` VERDE; `verifyLayoutGeometry` VERDE; `verifyNoScripts` VERDE; `verifyDocs` VERDE |
+| **Moon Design como único sistema visual (ADR-0044): Moon rige todo el UI/UX (anatomía, tamaños, radios squircle, bordes, sombras, opacidades, movimiento, efecto de foco, color, iconos y escala tipográfica; ADR-0044). Cero símbolos legacy en producción, cero wrappers `AqMoon*`, cero Material en feature/apps/shared.** | `:core:ui:testDebugUnitTest` verde; `verifyDesignSystemCompliance` VERDE; `verifyDesignSystemFixtures` VERDE; `verifyControlMinSize` VERDE; `verifyLayoutGeometry` VERDE; `verifyNoScripts` VERDE; `verifyDocs` VERDE |
 | Compuerta `AqCircularProgress` portada (widgets/progress), ficha y galería claro/oscuro | `:core:ui:testDebugUnitTest` + gate |
-| Corrección de duración de `AqToast` (de 200 000 ms a 4 000 ms, decisión de producto ADR-0041) | prueba que falla con el valor anterior |
+| Duración de `AqToast` de Agenda QR: 4 000 ms (decisión de producto; animación y separación siguen a Moon) | prueba que falla con el valor anterior |
 | Reimplementación de `AqModal` sobre `androidx.compose.ui.window.Dialog` (focus trap, back/predictive back, `paneTitle`, scrim clicable) | `:core:ui:testDebugUnitTest` |
 | Migración pantalla por pantalla a componentes Moon reales (sin wrappers `AqMoon*`): UnassociatedScreen (piloto), DestinationsScreen, DestinationDetailScreen, ContextScreen, ImportBatchScreen, OperationDetailScreen, OperationEditorScreen, OperationListContent/Grouped/Screen, ContextPickerDialog, GlobalSearchScreen, DestinationEditorScreen, AddDestinationScreen, ImportReviewScreen, AuthScreen, AccountScreen, LocalOnboardingScreen, LocalLockScreen, ComprobanteViewer, AppStatusHost, AgendaQrPatterns, AgendaQrApp + AuthenticatedAppRoot | `:feature:destinations:presentation:testDebugUnitTest` + `verifyDesignSystemCompliance` + commits por pantalla |
 | Pantallas de plataforma (CameraQrCapture, QrImportControls, ImportBatchControls, IosCameraQrCapture, etc.) sin Material ni legacy | compilación de los módulos de plataforma |
@@ -48,7 +48,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Insignia de navegación con conteo (G5 / ADR-0035, componente) | `:core:ui:testDebugUnitTest` + gate |
 | Filtros S12 siempre que haya pendientes (G7) | pruebas de presentación |
 | «Crear contexto» siempre disponible en S08 (G7 / ADR-0033) | pruebas de presentación (ContextPickerDialogTest) |
-| Movimiento reducido en swipe/pull (N05 / ADR-0029 §7) | `:core:ui:testDebugUnitTest` |
+| Movimiento reducido en swipe/pull (política Moon del contrato normativo) | `:core:ui:testDebugUnitTest` |
 | Retiro de componentes sin respaldo AqBox/AqTriState/AqLightButton (N07) | `:core:ui:testDebugUnitTest` + gate |
 
 ## 2. Implementado pero NO VERIFICADO
@@ -97,8 +97,9 @@ No se declaran PASS. Requieren Xcode, dispositivo físico, red o backend reales.
 - **Producción Android:** la firma de release requiere keystore y variables `ANDROID_KEYSTORE_*`; sin ellas el build de release falla en configuración (ver [OPERATIONS.md](OPERATIONS.md)). El ensamblado de release del gate es un candidato con firma de debug (`-PallowDebugSigningForRc=true`), no una firma de producción.
 - **Google Play:** la publicación requiere icono, capturas, descripciones, política de privacidad y formulario Data Safety (ver [OPERATIONS.md](OPERATIONS.md)).
 
-## 7. Decisiones registradas (ADR-0041)
+## 7. Convenciones Moon vigentes
 
-- Cierre de la migración Moon: eliminación de wrappers `AqMoon*` y de todo el legado Moon de `core/ui`.
-- Decisión de duración de `AqToast`: 4 000 ms (`AqMotion.ToastDurationMs`), decisión de producto, NO transcripción de Moon (Moon solo especifica recorrido 64 dp y gap de 200 ms entre toasts).
-- Naming de composiciones Moon-only: nombres propios sin prefijo `AqMoon` y sin colisionar con símbolos legacy (p. ej. `AqSelectionToolbar` en lugar de `AqSelectionBar`, `AqEmptyPlaceholder` en lugar de `AqEmptyState`, `AqScreen` en lugar de `AqScreenScaffold`, `AqAppBar` en lugar de `AqTopBar`).
+- No se crean wrappers `AqMoon*` ni se reintroducen símbolos visuales legacy.
+- `AqToast` dura 4 000 ms por decisión de producto; Moon aporta el comportamiento de animación y separación.
+- Las composiciones Moon-only usan nombres propios de Agenda QR y componentes de `core/ui`.
+- La fuente normativa actual es `docs/05-design-system/README.md`; el historial de decisiones anteriores se conserva en Git.

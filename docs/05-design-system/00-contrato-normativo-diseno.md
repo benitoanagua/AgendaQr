@@ -1,17 +1,10 @@
 # Contrato normativo de diseño
 
 **Estado:** Normativo
-**Autoridad:** [ADR-0039](../07-decisiones/ADR-0039-moon-rige-ui-ux.md),
-[ADR-0040](../07-decisiones/ADR-0040-adopcion-integra-catalogo-moon.md),
-[ADR-0044](../07-decisiones/ADR-0044-moon-unico-sistema-de-diseno.md),
-[ADR-0027](../07-decisiones/ADR-0027-propiedad-espacio-nivel-atomico.md) y este
-documento. La especificación UX/UI V1 conserva el contrato funcional
-congelado; su dirección visual queda descongelada y se rige por aquí.
+**Estado:** Normativo — vigente.
+**Autoridad:** ADR-0044 y este contrato. UX/UI V1 conserva el contrato funcional; su dirección visual se rige exclusivamente por Moon.
 
-Moon Design es el **único** sistema de diseño del producto: aporta forma,
-tamaños, espaciado, elevación, movimiento, color, iconos y la anatomía de cada
-componente. La única pieza ajena es la familia tipográfica Inter (SIL OFL 1.1),
-porque la fuente de Moon (Averta Std) es comercial y no se puede redistribuir.
+Moon Design es el único sistema visual de Agenda QR. Color, anatomía, geometría, espaciado, elevación, opacidades, tipografía (salvo la sustitución de licencia), iconos, estados, movimiento y accesibilidad visual corresponden a Moon. Las composiciones específicas de Agenda QR se construyen con componentes Moon; los mecanismos de plataforma no crean una apariencia alternativa.
 
 ## 1. Fuente de valores y versión
 
@@ -47,9 +40,7 @@ porque la fuente de Moon (Averta Std) es comercial y no se puede redistribuir.
    capa semántica expone roles: `surface`, `text`, `border`, `action` y tonos
    `info`, `success`, `warning`, `critical`. Ningún componente referencia un
    token primitivo.
-3. **Sin valores propios.** Si un valor no es verificable, se usa el más
-   cercano de la misma versión, se registra en la tabla anterior y continúa.
-   No se estima ni se inventa.
+3. **Sin aproximaciones inventadas.** Cada valor visual debe estar respaldado por la fuente Moon versionada o por una adaptación explícita en este contrato. Si falta la fuente, no se inventa ni se elige un valor «parecido»: se registra la limitación y se resuelve antes de declarar fidelidad.
 4. **Puente interno.** `MaterialTheme` solo adapta tipos; no aporta ningún
    valor visual. Está prohibido fuera del adaptador.
 5. **Inter se empaqueta** como recurso multiplataforma con su aviso de
@@ -160,11 +151,11 @@ Construidas solo con tokens y componentes de Moon; no son valores propios.
 |---|---|---|
 | D-01 | Unidades en `dp`/`sp` | Moon (Flutter) usa px lógicos; en Compose se transcriben 1:1 a dp. |
 | D-02 | Targets táctiles ≥ 48dp | Accesibilidad de Android/iOS; Moon amplía el área táctil sin cambiar el aspecto (`touch_target_padding`). |
-| D-03 | Barra inferior y gestos nativos | Navegación del sistema; Moon no trae bottom navigation. |
+| D-03 | Navegación y gestos de plataforma | Moon no define algunos mecanismos de navegación móvil; se componen con piezas Moon y APIs de plataforma, conservando tokens y apariencia Moon. |
 | D-04 | Bottom sheet con arrastre y expansión | Anatomía de `MoonBottomSheet` adaptada al back predictivo. |
 | D-05 | Inter empaquetado | Averta Std (fuente de Moon) es comercial; la app necesita una familia redistribuible, multiplataforma y consistente. |
 | D-06 | Escalado de fuente del sistema hasta 200 % | Requisito de accesibilidad móvil. La capacidad se conserva en producción; la verificación automática cubre 100 %/150 % y el 200 % queda como revisión manual (ADR-0007). |
-| D-07 | Derivación del tema oscuro | Moon define el tema oscuro pero no todos los roles semánticos del producto (PV-02). |
+| D-07 | Roles semánticos derivados | Solo los roles no definidos directamente por Moon se derivan y registran en PV-01…PV-05; nunca se crea una paleta paralela. |
 | D-08 | Proporciones internas de composición | Alfas de selección y fracciones de ancho/glifo/desplazamiento no son escalas de Moon; se concentran en `AqTokens.kt` y se conservan para no alterar el layout verificado. |
 | D-10 | Modelo de sombras de Compose | `Modifier.shadow` no expone `offsetY` ni `spread`; `AqShadow` conserva las capas de `MoonShadows` (blur, offset, spread, alfa) y `Modifier.aqShadow` apila una sombra por capa. |
 | D-11 | Contenedores tonales del tema oscuro | Se derivan mezclando el color Moon de cada estado al 16-20 % sobre `gohan` oscuro, de modo que el bloque tonal se distinga de `surface` y conserve el par de contenido en AA. |
@@ -180,8 +171,7 @@ Construidas solo con tokens y componentes de Moon; no son valores propios.
   y 150 %, contraste AA, tamaño táctil y semántica de accesibilidad. El
   escalado al 200 % se conserva en producción, pero no tiene verificación
   automática (ADR-0007).
-- Los valores y su procedencia se consolidan en [`09-tokens-moon.md`](09-tokens-moon.md); la historia
-  de decisiones vive en los ADR.
+- Los valores y su procedencia se consolidan en [`09-tokens-moon.md`](09-tokens-moon.md); el catálogo único está en [`13-catalogo-moon.md`](13-catalogo-moon.md). Los ADR vigentes registran decisiones puntuales, no constituyen especificaciones visuales paralelas.
 
 ### Registro de excepciones del gate
 
@@ -204,28 +194,19 @@ E-06 (elevación de botones) está retirada: los botones son planos y un
 registro sin uso se detecta como excepción zombie.
 
 
-## 6. Autoridad única (ADR-0044)
+## 6. Autoridad normativa única
 
-Moon rige **todas** las dimensiones:
+Moon rige todas las dimensiones visuales y de interacción cubiertas por su sistema: anatomía, variantes, tamaños, color, tipografía, iconografía, radios, squircle, bordes, sombras, opacidades, estados, feedback, movimiento y accesibilidad.
 
-- **UX / interacción**: anatomía, estados, tamaños táctiles, gestos, orden de
-  acciones, feedback, vacíos, carga y error siguen a Moon (`MoonAvatar`,
-  `MoonChip`/`MoonTag`, `MoonBottomSheet`, `MoonToast`, `MoonAccordion`,
-  `MoonAuthCode`, `MoonTextInput`, `MoonButton`, `MoonCircularLoader`…).
-- **UI / apariencia**: color (`MoonColors`), radios y squircle (`MoonBorders`),
-  sombras (`MoonShadows`), opacidades, transiciones e iconos (`moon-icons`)
-  vienen de Moon. Única excepción: la familia tipográfica Inter (D-05), con los
-  tamaños y pesos de `MoonTextStyles`.
-- **Patrones que Moon no trae** (bottom navigation, FAB, swipe,
-  pull-to-refresh, date picker, skeleton, empty state, list cell): se componen
-  con piezas Moon (catálogo §4) y solo si no es posible se recurre al patrón
-  **nativo** (Material 3 / HIG), estilizado con tokens Moon.
+La implementación es un puerto Kotlin/Compose en `core/ui`; no se incorpora runtime Flutter ni paquete Moon de ejecución. Los componentes `Aq*` son la API de Agenda QR que reproduce los componentes Moon. Las pantallas de `feature/*/presentation` componen esa API y no redefinen tokens ni anatomía.
 
-No hay dependencia Flutter ni `moon_design`; la API pública es `Aq*`. La
-clasificación completa patrón a patrón vive en
-[`11-matriz-gaps-mobile.md`](11-matriz-gaps-mobile.md).
+Los patrones de producto que Moon no ofrece como componente se construyen con piezas Moon y mecanismos de plataforma mínimos. No se utilizan componentes Material 2/3 como autoridad visual ni como sustitutos estilísticos. `MaterialTheme` solo puede existir en el adaptador interno de tipos, sin aportar valores visuales.
 
-La cadena de precedencia es, por tanto, **Moon → nativo estilizado con tokens
-Moon**. La navegación raíz es nativa por esta cadena, porque Moon no trae
-bottom navigation, FAB, search, swipe, refresh, pickers, skeleton, empty state
-ni list cell.
+Fuentes normativas activas:
+
+- Este contrato: reglas y adaptaciones permitidas.
+- [Tokens Moon](09-tokens-moon.md): valores exactos y roles semánticos.
+- [Catálogo Moon](13-catalogo-moon.md): componentes, equivalencias y geometría.
+- [Licencias](06-licencias-terceros.md): atribución y distribución.
+
+No existen matrices de auditoría, fichas duplicadas ni documentos históricos como fuentes normativas. La historia de decisiones permanece en Git; cualquier cambio futuro se realiza en estas fuentes activas y en código, pruebas y gates correspondientes.

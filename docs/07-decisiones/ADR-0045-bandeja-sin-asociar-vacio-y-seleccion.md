@@ -1,7 +1,7 @@
 # ADR-0045 — Bandeja «sin asociar»: explicación de vacío y entrada al modo selección
 
 **Estado:** ACEPTADO — 2026-11-23 (decisión delegada: opción más convencional)
-**Cierra:** A-09 y A-10 de `docs/05-design-system/12-auditoria-ui-ux-2026-11.md`.
+**Decisión de producto:** explica el estado vacío y permite entrar al modo selección por pulsación larga.
 **Relacionado:** ADR-0034 (selección múltiple por lote), ADR-0044.
 
 ## 1. Contexto

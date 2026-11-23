@@ -1,6 +1,6 @@
 # Tokens Moon (valores)
 
-**Estado:** Normativo — ADR-0044.
+**Estado:** Normativo — fuente única de tokens (ADR-0044).
 **Fuentes:** `moon_tokens` 0.0.6 (`MoonColors.light` / `MoonColors.dark`),
 `moon_design` 1.1.0 (tamaños, bordes, opacidades, transiciones, sombras) y
 `@heathmont/moon-icons` 10.7.4. Licencia MIT © Yolo Group.

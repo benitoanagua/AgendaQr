@@ -8,19 +8,14 @@ Funciona **local-first**: los datos viven en el dispositivo bajo un perfil local
 que se crea sin cuenta y sin red. Conectar una cuenta es opcional y solo habilita
 respaldo y sincronización ([ADR-0016](docs/07-decisiones/ADR-0016-identidad-local-sin-cuenta.md)).
 
-## 1. Regla de precedencia
+## 1. Fuentes de verdad
 
-La implementación sigue una jerarquía explícita de fuentes de verdad:
+1. **Agenda QR** define producto, dominio, requisitos, alcance y reglas de negocio.
+2. **UX/UI V1** (`docs/04-ux/02-especificacion-ux-ui-v1.md`) conserva el contrato funcional: intención, flujos, navegación conceptual, copy y recuperación.
+3. **Moon Design** es la única autoridad visual y de componentes. La especificación vigente está en [`docs/05-design-system/README.md`](docs/05-design-system/README.md); contrato, tokens y catálogo son sus fuentes normativas.
+4. **WaraWerse** es referencia técnica exclusivamente para Kotlin Multiplatform, Compose, modularización, build y testing.
 
-1. **Agenda QR** — producto, dominio, requisitos, alcance, decisiones y reglas de negocio.
-2. **UX/UI V1 de Agenda QR** — contrato funcional de interacción congelado (`docs/04-ux/02-especificacion-ux-ui-v1.md`). Su dirección visual (§12) se descongela y se rige por el nivel 3.
-3. **Sistema visual Moon (reimplementado en Kotlin)** — tokens, componentes y composición, según el contrato normativo vigente ([ADR-0025](docs/07-decisiones/ADR-0025-adopcion-ui-ux-sistema-anterior.md), [`docs/05-design-system/00-contrato-normativo-diseno.md`](docs/05-design-system/00-contrato-normativo-diseno.md), [instantánea de valores](docs/05-design-system/09-tokens-moon.md)). Dentro de este nivel, las decisiones de UI y los patrones mobile que Moon no cubre se resuelven por la cadena de precedencia **Nivel 1 Moon → Nivel 2 Moon (referencia anatómica y gestual, sin dependencia) → Nivel 3 Convención nativa** de [ADR-0029](docs/07-decisiones/ADR-0029-cadena-precedencia-moon-nativo.md), donde la navegación también consulta primero a Moon antes de descender a la convención nativa.
-4. **WaraWerse** — referencia técnica para Kotlin Multiplatform, Compose, modularización, build y prácticas de testing.
-
-Si dos fuentes entran en conflicto, prevalece la de mayor autoridad. El nivel 2
-manda en flujos, reglas de negocio, copy y navegación conceptual; el nivel 3
-manda en valores visuales, tokens, componentes y accesibilidad visual.
-WaraWerse nunca introduce lógica de negocio.
+Si hay conflicto, producto y UX/UI V1 gobiernan el comportamiento; Moon gobierna toda la apariencia, anatomía, geometría, estados, movimiento, iconografía y accesibilidad visual. La plataforma aporta únicamente mecanismos nativos que Moon no implementa, siempre compuestos y estilizados con tokens Moon. No existe una segunda autoridad visual.
 
 ## 2. Alcance y límites
 
@@ -84,6 +79,5 @@ validación de plataforma: Android e iOS se verifican por separado.
 ## 7. Documentación
 
 La documentación comienza en [`docs/README.md`](docs/README.md). Estado actual de
-implementación y límites: [`docs/STATE.md`](docs/STATE.md). El contrato visual
-vigente está en
-[`docs/05-design-system/00-contrato-normativo-diseno.md`](docs/05-design-system/00-contrato-normativo-diseno.md).
+implementación y límites: [`docs/STATE.md`](docs/STATE.md). El sistema visual vigente y sus fuentes normativas están en
+[`docs/05-design-system/README.md`](docs/05-design-system/README.md).

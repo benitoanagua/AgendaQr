@@ -1,41 +1,27 @@
 # ADR-0044 — Moon como único sistema de diseño
 
 **Estado:** ACEPTADO — 2026-11-23
-**Reemplaza:** [ADR-0025](ADR-0025-adopcion-ui-ux-sistema-anterior.md),
-[ADR-0028](ADR-0028-moon-patrones-moviles-autoridad-visual-previa.md),
-[ADR-0029](ADR-0029-cadena-precedencia-moon-nativo.md),
-[ADR-0038](ADR-0038-moon-ux-autoridad-dividida.md) y la excepción de color,
-tipografía e iconos de [ADR-0039](ADR-0039-moon-rige-ui-ux.md).
+**Autoridad de implementación:** [Moon Design System — Agenda QR](../05-design-system/README.md).
 
-## 1. Contexto
+## Contexto
 
-ADR-0039 dejó a Moon rigiendo el UI/UX, pero conservó el sistema visual
-anterior para color, tipografía e iconos. Convivir con dos sistemas generaba
-confusión: la documentación y el código nombraban autoridades distintas según
-la dimensión, y el sistema anterior imponía una condición de uso restrictiva
-sobre sus iconos.
+La documentación acumulaba contratos y decisiones visuales sucesivas que asignaban autoridad distinta a colores, tipografía, iconos, anatomía y patrones móviles. Esa fragmentación permitía que una decisión ya superada siguiera apareciendo como norma.
 
-## 2. Decisión
+## Decisión
 
-Moon Design es el único sistema de diseño.
+Moon Design es el único sistema visual y de componentes de Agenda QR.
 
-- **Color:** `MoonColors.light` / `MoonColors.dark` (`moon_tokens` 0.0.6). Los
-  valores derivados para AA se documentan en el contrato (PV-01…PV-05).
-- **Iconos:** `@heathmont/moon-icons` 10.7.4, 35 glifos en `MoonIconVectors.kt`.
-- **Sombras:** `AqShadow` (`MoonShadows`); se elimina `AqElevation`.
-- **Tipografía:** escala y pesos de `MoonTextStyles` (cuerpo regular, encabezado
-  semibold, sin tracking). La familia sigue siendo Inter, porque Averta Std es
-  comercial y no redistribuible.
-- **Precedencia:** Moon → nativo estilizado con tokens Moon.
-- **Gate:** `verifyNoPreviousDesignSystem` falla si cualquier archivo de texto
-  del repo nombra el sistema anterior.
+- Colores: `moon_tokens` 0.0.6 (`MoonColors.light/dark`).
+- Componentes, anatomía, tamaños, estados, geometría, opacidades, sombras y movimiento: `moon_design` 1.1.0, commit `177adb7`.
+- Iconografía: `@heathmont/moon-icons` 10.7.4, portados a `MoonIconVectors.kt`.
+- Tipografía: escala y pesos Moon; Inter 4.0 es la única sustitución de familia por licencia de Averta Std.
+- Implementación: port Kotlin/Compose en `core/ui`; no hay runtime Flutter/Web ni dependencia Moon de ejecución.
+- Adaptaciones de plataforma: mecanismos nativos únicamente cuando Moon no ofrece el patrón, compuestos con piezas Moon y tokens semánticos.
+- Los componentes Material no se utilizan como autoridad visual ni como sustitutos.
+- `AqTokens.kt`, el catálogo Moon y los gates son las fuentes técnicas de la implementación.
 
-## 3. Consecuencias
+## Consecuencias
 
-- El primario pasa de gris neutro a `piccolo` (#5C33CF); en oscuro, texto,
-  icono, foco y borde de énfasis usan `piccolo` aclarado (#A58FE5).
-- Los títulos grandes pasan de 36/22 sp a 40/24 sp; los pesos pasan a 400/600.
-- Los iconos son de trazo fino (1 sobre 32); Moon no trae todos los conceptos
-  (ver X-07 del contrato).
-- Hay que regenerar la galería de capturas y revisar el contraste a ojo.
-- La licencia MIT de Moon sustituye el aviso restrictivo anterior.
+Las especificaciones visuales activas se consolidan en cuatro documentos: README Moon, contrato, tokens y catálogo; licencias permanecen en su registro. Las auditorías y matrices de migración/fidelidad dejan de ser documentos normativos. Las decisiones visuales previas supersedidas se retiran del árbol activo; su historial permanece en Git.
+
+Todo cambio visual debe actualizar, cuando corresponda, la especificación activa, `core/ui`, la galería, las pruebas y los gates. El build por sí solo no demuestra fidelidad.
