@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.Layout
@@ -57,6 +58,7 @@ import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
 import com.agendaqr.core.ui.theme.AqCorner
+import com.agendaqr.core.ui.motion.LocalReducedMotion
 
 enum class AqButtonVariant { Primary, Default, Danger, Light, Outline, Text }
 
@@ -210,6 +212,8 @@ private fun AqButtonImpl(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
+    val reducedMotion = LocalReducedMotion.current
+    val pressScale = if (pressed && enabled && !isLoading && !reducedMotion) AqControlParams().pressEffect else 1f
     val isEnabled = enabled && !isLoading
     val resolved = resolveAqButtonColors(
         variant = variant,
@@ -262,6 +266,7 @@ private fun AqButtonImpl(
         content = {
             Row(
                 modifier = Modifier
+                    .graphicsLayer { scaleX = pressScale; scaleY = pressScale }
                     .heightIn(min = size.visualHeight)
                     .background(resolved.container, shape)
                     .then(
@@ -305,7 +310,9 @@ private fun AqButtonImpl(
             }
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(size.iconSize),
+                    modifier = Modifier
+                        .size(size.iconSize)
+                        .graphicsLayer { scaleX = pressScale; scaleY = pressScale },
                     color = foreground,
                 )
             }
