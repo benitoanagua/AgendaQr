@@ -159,17 +159,22 @@ fun AqBaseControl(
             ),
         contentAlignment = Alignment.Center,
     ) {
-        Box(
-            modifier = Modifier.graphicsLayer { scaleX = scale; scaleY = scale },
-            contentAlignment = Alignment.Center,
-        ) {
-            if (params.visualHeight < AqMetrics.ControlMinSize) {
+        if (params.visualHeight < AqMetrics.ControlMinSize) {
             AqTouchTarget(AqMetrics.ControlMinSize) {
-                // El contenido se mide a su tamaño natural; AqTouchTarget
-                // centra y expone el área táctil de 48 dp.
-                contenido()
+                Box(
+                    modifier = Modifier.graphicsLayer { scaleX = scale; scaleY = scale },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    // Solo se escala el contenido visual; el hit target de 48 dp
+                    // permanece sin transformación.
+                    contenido()
+                }
             }
         } else {
+            Box(
+                modifier = Modifier.graphicsLayer { scaleX = scale; scaleY = scale },
+                contentAlignment = Alignment.Center,
+            ) {
                 contenido()
             }
         }
