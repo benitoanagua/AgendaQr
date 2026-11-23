@@ -1771,14 +1771,14 @@ open class LayoutReferenceTest {
         // Comprueba por separado el wrapper táctil (≥48 dp) y la caja visual
         // Moon md (40 dp), evitando confundir sus geometrías.
         val amountTouchTarget = compose
-            .onNodeWithTag("aq-field-touch-target", useUnmergedTree = true)
+            .onNodeWithTag("aq-amount-input-touch-target", useUnmergedTree = true)
             .getUnclippedBoundsInRoot()
         assertTrue(
             "$label: campo de importe con objetivo táctil ≥ 48 dp",
             (amountTouchTarget.bottom.value - amountTouchTarget.top.value) >= 47f,
         )
         val amountVisual = compose
-            .onNodeWithTag("aq-text-input-visual", useUnmergedTree = true)
+            .onNodeWithTag("aq-amount-input-visual", useUnmergedTree = true)
             .getUnclippedBoundsInRoot()
         assertEquals(
             "$label: caja visual del importe debe conservar 40 dp",
