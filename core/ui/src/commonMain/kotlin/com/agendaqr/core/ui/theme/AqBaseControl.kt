@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
@@ -158,14 +159,19 @@ fun AqBaseControl(
             ),
         contentAlignment = Alignment.Center,
     ) {
-        if (params.visualHeight < AqMetrics.ControlMinSize) {
+        Box(
+            modifier = Modifier.graphicsLayer { scaleX = scale; scaleY = scale },
+            contentAlignment = Alignment.Center,
+        ) {
+            if (params.visualHeight < AqMetrics.ControlMinSize) {
             AqTouchTarget(AqMetrics.ControlMinSize) {
                 // El contenido se mide a su tamaño natural; AqTouchTarget
                 // centra y expone el área táctil de 48 dp.
                 contenido()
             }
         } else {
-            contenido()
+                contenido()
+            }
         }
     }
 }
