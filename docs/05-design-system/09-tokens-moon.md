@@ -5,7 +5,7 @@
 `moon_design` 1.1.0 (tamaños, bordes, opacidades, transiciones, sombras) y
 `@heathmont/moon-icons` 10.7.4. Licencia MIT © Yolo Group.
 
-Este documento lista los valores que `core/ui/.../theme/AqTokens.kt` transcribe.
+Este documento lista los valores que `core/ui/.../theme/AqTokens.kt` transcribe. Los tokens de estado derivados se identifican como adaptaciones semánticas de Agenda QR: no sustituyen efectos ni estados visuales que Moon ya define para un componente (en particular, hover/pressed de botones).
 La geometría (`AqSize`, `AqCorner`, `AqStroke`, `AqStateAlpha`, `AqMotion`,
 `AqShadow`) está en [`13-catalogo-moon.md`](13-catalogo-moon.md) §1.
 

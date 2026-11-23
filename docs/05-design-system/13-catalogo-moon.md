@@ -72,6 +72,16 @@ Valores transcritos de la versión indicada; `px` = padding horizontal. No son u
 | Acordeón (cabecera) | sm / md | 32 / 40 | InteractiveSm | 8 / 12 | — |
 | Switch | x2s / xs / sm | 16 / 24 / 32 (ancho 32 / 44 / 60; pulgar 12 / 16 / 20) | píldora | — | — |
 
+### 3.1 Contrato de ancho, altura y adaptación al contenido
+
+Estas reglas son normativas para `Aq*` y para la galería de componentes; preservan la geometría de Moon y no son estilos alternativos:
+
+- **Botón `fullWidth`:** `AqButton` debe exponer una opción equivalente a `MoonButton.isFullWidth`. Cuando está activa, el botón ocupa todo el ancho disponible de su contenedor padre (no el ancho de pantalla ni un ancho fijo); cuando está inactiva, conserva el ancho intrínseco determinado por contenido y padding Moon. El alto visual sigue siendo el tamaño Moon seleccionado.
+- **Text input y select:** el ancho se adapta al espacio disponible del padre. En tamaños equivalentes, `AqTextInput` y `AqSelect` comparten la altura visual del control; `md` corresponde a 40 dp según la tabla Moon. No se añade un mínimo visual de 48 dp ni se estira el campo por el área táctil.
+- **Área táctil separada:** el contenedor interactivo amplía el hit target a 48 dp sin modificar el tamaño, borde, radio, padding o posición del componente visible.
+- **States / Variants en la galería:** los ejemplos se organizan en contenedores flexibles que se ajustan al contenido y al ancho disponible (wrap cuando corresponda). No se fijan anchos de panel ni se recortan labels, estados, variantes o controles; no se usa un ancho fijo para hacer coincidir columnas.
+- **Sin restricciones artificiales:** no introducir `width`/`height` fijos, `fillMaxHeight` o `weight` que deformen controles o recorten contenido, salvo que la anatomía Moon de ese componente lo requiera y esté documentado en esta tabla.
+
 **Regla de área táctil (ADR-0044 §4.4):** todo control con alto visual < 48 dp conserva ese alto y amplía el área táctil a 48 dp (como `touch_target_padding.dart` en la fuente), sin cambiar su aspecto.
 
 ## 4. Composiciones de Agenda QR

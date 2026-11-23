@@ -21,7 +21,7 @@ Moon Design es el único sistema visual de Agenda QR. Color, anatomía, geometr�
 
 | ID | Tema | Decisión |
 |---|---|---|
-| PV-01 | Estados hover/pressed | Moon los resuelve con efectos de escala, pulso y foco, no con colores. `brandFillHover` y `brandFillActive` son mezclas de `piccolo` con negro (claro) o blanco (oscuro). |
+| PV-01 | Estados hover/pressed | Se portan los efectos definidos por `MoonBaseControl`/`MoonEffectsTheme` (foco, escala y pulso) con sus parámetros de Moon. No se reemplazan por cambios inventados de relleno. Los tokens `brandFillHover` y `brandFillActive` son derivaciones semánticas del producto y no se aplican como estado de `AqButton` salvo que la fuente Moon del componente indique expresamente ese cambio. |
 | PV-02 | Contraste del tema oscuro | `piccolo` sobre negro da 2,8:1. Texto, icono, borde y foco de énfasis usan `piccolo` aclarado al 45 % (`#A58FE5`, ≥ 5:1 sobre las superficies oscuras). Rellenos de botón conservan `piccolo`. |
 | PV-03 | Bordes funcionales | `beerus` (1,3:1) no sirve como límite de control; el borde funcional usa `trunks` (≥ 3:1) y `beerus` queda para divisores y bordes decorativos. |
 | PV-04 | Texto de estado | `roshi`, `krillin` y `dodoria` no alcanzan 4,5:1 como texto sobre claro. El texto de estado usa versiones oscurecidas (`success` `#2C6B34`, `warning` `#805A0C`, `danger` `#BA2A2A`); los rellenos conservan el color Moon. |
@@ -31,10 +31,13 @@ Moon Design es el único sistema visual de Agenda QR. Color, anatomía, geometr�
 ## 2. Reglas de uso
 
 
-1. **Un solo origen.** Todo color, alfa, espaciado, radio, tipografía,
-   proporción de composición, elevación y duración se declara en la capa de
-   tokens de `core/ui`. Los componentes consumen **únicamente tokens
-   semánticos**.
+1. **Un solo origen por nivel.** La anatomía, dimensiones, variantes,
+   estados y métricas internas de cada componente se transcriben de Moon
+   versionado y se exponen mediante tokens semánticos de `core/ui`. Los
+   espacios de composición de Agenda QR que Moon no especifica como patrón
+   o componente se declaran por separado como tokens de layout de producto;
+   nunca se presentan como medidas propias de Moon ni alteran la geometría
+   interna de sus componentes.
 2. **Capas.** La capa primitiva reproduce las escalas de Moon. La
    capa semántica expone roles: `surface`, `text`, `border`, `action` y tonos
    `info`, `success`, `warning`, `critical`. Ningún componente referencia un
@@ -52,13 +55,13 @@ Moon Design es el único sistema visual de Agenda QR. Color, anatomía, geometr�
 8. **Atribución.** Moon se distribuye bajo MIT; el aviso de licencia va en
    los avisos de terceros del paquete. El producto no usa nombre ni logo
    de Moon en su UI.
-9. **Espaciado único (AqLayout).** Todo hueco, relleno y separación entre
-   componentes se declara con la escala `AqLayout` de `AqTokens.kt`
-   (`BetweenOrganisms`, `InGroup`, `CellPadding`, `CardPadding`,
-   `LabelToField`, `DockVertical`), cuyos valores son los números de la tabla
-   Moon expresados con sus tokens (`AqSpacing` / `AqSize`). Nunca se usa
-   `AqSize` como escala genérica de huecos ni literales visuales sueltos fuera
-   de la capa de tokens.
+9. **Espaciado y geometría.** Las separaciones, rellenos y gaps propios de un
+   componente Moon reproducen sus medidas de origen. `AqLayout` centraliza
+   la composición de producto (`BetweenOrganisms`, `InGroup`, `CellPadding`,
+   `CardPadding`, `LabelToField`, `DockVertical`) y declara cada valor como
+   token; una separación de pantalla no se etiqueta como token Moon si Moon
+   no define ese patrón. Nunca se usa `AqSize` como escala genérica de huecos
+   ni se escriben literales visuales en componentes.
 
 
 ### Roles semánticos de partida (tema claro / oscuro)
@@ -158,7 +161,7 @@ Construidas solo con tokens y componentes de Moon; no son valores propios.
 | D-08 | Proporciones internas de composición | Alfas de selección y fracciones de ancho/glifo/desplazamiento no son escalas de Moon; se concentran en `AqTokens.kt` y se conservan para no alterar el layout verificado. |
 | D-10 | Modelo de sombras de Compose | `Modifier.shadow` no expone `offsetY` ni `spread`; `AqShadow` conserva las capas de `MoonShadows` (blur, offset, spread, alfa) y `Modifier.aqShadow` apila una sombra por capa. |
 | D-11 | Contenedores tonales del tema oscuro | Se derivan mezclando el color Moon de cada estado al 16-20 % sobre `gohan` oscuro, de modo que el bloque tonal se distinga de `surface` y conserve el par de contenido en AA. |
-| D-12 | Ritmo de 16 dp entre tarjetas de página | Con 16 dp de relleno interno, un hueco de 8 dp entre tarjetas lee como un solo bloque; se usa 16 dp para conservar la separación de secciones a 360 dp. `AqScreen` aplica ese paso por defecto mediante `contentSpacing = AqLayout.BetweenOrganisms` (16 dp = `AqSpacing.Lg`) en su Column de contenido, y `AqLayout.DockVertical` (12 dp = `AqSize.X3s`) en el dock inferior. |
+| D-12 | Composición de página | `AqLayout.BetweenOrganisms` (16 dp) y `DockVertical` (12 dp) son tokens de composición de Agenda QR, no medidas de anatomía Moon. Solo se aplican en el nivel de pantalla; no alteran el padding, gap, tamaño, radio o altura interna de componentes Moon. Si Moon define un patrón equivalente en la versión adoptada, prevalece la medida de Moon. |
 
 ## 5. Gobernanza
 
