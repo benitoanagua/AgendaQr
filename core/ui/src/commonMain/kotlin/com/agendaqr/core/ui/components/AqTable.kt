@@ -75,7 +75,7 @@ fun AqTable(
             ) {
                 columns.forEach { column ->
                     Text(
-                        text = row.cells.getOrDefault(column.id, ""),
+                        text = row.cells[column.id] ?: "",
                         style = AqTextStyles.Body,
                         color = scheme.textPrimary,
                         modifier = Modifier.weight(1f, fill = false),
