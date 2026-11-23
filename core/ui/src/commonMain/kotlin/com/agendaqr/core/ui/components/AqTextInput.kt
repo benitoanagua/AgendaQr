@@ -63,7 +63,7 @@ import com.agendaqr.core.ui.theme.AqSquircles
  * Geometría Moon (§ TextInput):
  * - Altura visual por tamaño: xs 24 / sm 32 / md 40 / lg 48 / xl 56 dp
  *   ([AqSize]); el área táctil es ≥ 48 dp ([AqMetrics.ControlMinSize])
- *   mediante un wrapper de toque invisible alrededor de la caja.
+ *   mediante un wrapper de toque invisible centrado alrededor de la caja.
  * - Relleno vertical de la caja: xs 2 / sm 2 / md 4 / lg 6 / xl 9 dp
  *   ([AqLayout.InputPaddingVertical*]); relleno horizontal: xs 8 / sm 8 /
  *   md 12 / lg 12 / xl 16 dp ([AqLayout.InputPaddingHorizontal*]).
@@ -146,23 +146,23 @@ fun AqTextInput(
             enabled = enabled,
             errorMessage = effectiveErrorMessage,
         )
-        // Área táctil ≥ 48 dp: el Row interno declara defaultMinSize(48 dp),
-        // por lo que la caja visual conserva su alto (size.height) sin añadir
-        // padding táctil que aleje el mensaje de soporte del borde visible.
+        // El hit target mide al menos 48 dp; la caja visual conserva la
+        // altura Moon seleccionada y se centra dentro del área táctil.
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = AqMetrics.ControlMinSize)
                 .testTag("aq-field-touch-target"),
+            contentAlignment = Alignment.Center,
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
                     .heightIn(min = size.height)
                     .background(AqColor.InputSurface, shape)
                     .border(AqMetrics.Border, borderColor, shape)
-                    .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+                    .padding(horizontal = horizontalPadding, vertical = verticalPadding)
+                    .testTag("aq-text-input-visual"),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(innerGap),
             ) {
@@ -184,7 +184,6 @@ fun AqTextInput(
                     onValueChange = onValueChange,
                     modifier = Modifier
                         .weight(1f)
-                        .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
                         .then(
                             if (focusRequester != null) {
                                 Modifier.focusRequester(focusRequester)

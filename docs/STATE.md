@@ -99,6 +99,9 @@ No se declaran PASS. Requieren Xcode, dispositivo físico, red o backend reales.
 
 ## 7. Convenciones Moon vigentes
 
+- `AqButton(fullWidth = true)` llena el ancho disponible del padre; el alto visual sigue el tamaño Moon y el target táctil se mantiene separado.
+- `AqTextInput` md conserva 40 dp de caja visual; el wrapper de toque alcanza 48 dp sin expandir el borde visible.
+- `AqDropdown` es un menú anclado, no un campo select. Para selección cerrada se usa `AqTextInput(readOnly = true)` como ancla; no se declara una API `AqSelect` inexistente.
 - No se crean wrappers `AqMoon*` ni se reintroducen símbolos visuales legacy.
 - `AqToast` dura 4 000 ms por decisión de producto; Moon aporta el comportamiento de animación y separación.
 - Las composiciones Moon-only usan nombres propios de Agenda QR y componentes de `core/ui`.

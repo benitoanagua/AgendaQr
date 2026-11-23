@@ -152,7 +152,7 @@ Construidas solo con tokens y componentes de Moon; no son valores propios.
 | ID | Desviación | Justificación |
 |---|---|---|
 | D-01 | Unidades en `dp`/`sp` | Moon (Flutter) usa px lógicos; en Compose se transcriben 1:1 a dp. |
-| D-02 | Targets táctiles ≥ 48dp | Accesibilidad de Android/iOS; Moon amplía el área táctil sin cambiar el aspecto (`touch_target_padding`). |
+| D-02 | Targets táctiles ≥ 48dp | Accesibilidad Android/iOS. `AqTouchTarget` amplía el hit target sin cambiar la caja visual; altura, padding y forma visibles siguen el tamaño Moon. No usar `defaultMinSize(48.dp)` dentro de la superficie visual de un control Moon de menor altura. |
 | D-03 | Navegación y gestos de plataforma | Moon no define algunos mecanismos de navegación móvil; se componen con piezas Moon y APIs de plataforma, conservando tokens y apariencia Moon. |
 | D-04 | Bottom sheet con arrastre y expansión | Anatomía de `MoonBottomSheet` adaptada al back predictivo. |
 | D-05 | Inter empaquetado | Averta Std (fuente de Moon) es comercial; la app necesita una familia redistribuible, multiplataforma y consistente. |

@@ -36,7 +36,7 @@ Color, tipografía, iconografía, geometría y movimiento se portan desde Moon; 
 | `MoonCircularProgress`, `MoonLinearProgress` | `widgets/progress` | circular: x2s…lg · lineal: x6s…x2s | `AqCircularProgress`, `AqLinearProgress` | disponible |
 | `MoonDotIndicator` | `widgets/dot_indicator` | — | `AqDotIndicator` | disponible |
 | `MoonDrawer` | `widgets/drawer` | — | `AqDrawer` | disponible |
-| `MoonDropdown` | `widgets/dropdown` | posición de anclaje | `AqDropdown` | disponible |
+| `MoonDropdown` | `widgets/dropdown` | menú de opciones anclado; no es un campo select cerrado | `AqDropdown` | disponible |
 | `MoonErrorMessage(s)` | `widgets/common/error_message_widgets.dart` | — | `AqErrorMessage` | disponible |
 | `MoonFormTextInput`, `MoonTextInput` | `widgets/text_input` | sm, md, lg, xl | `AqTextInput` | disponible |
 | `MoonMenuItem` | `widgets/menu_item` | — | `AqMenuItem` | disponible |
@@ -76,8 +76,8 @@ Valores transcritos de la versión indicada; `px` = padding horizontal. No son u
 
 Estas reglas son normativas para `Aq*` y para la galería de componentes; preservan la geometría de Moon y no son estilos alternativos:
 
-- **Botón `fullWidth`:** `AqButton` debe exponer una opción equivalente a `MoonButton.isFullWidth`. Cuando está activa, el botón ocupa todo el ancho disponible de su contenedor padre (no el ancho de pantalla ni un ancho fijo); cuando está inactiva, conserva el ancho intrínseco determinado por contenido y padding Moon. El alto visual sigue siendo el tamaño Moon seleccionado.
-- **Text input y select:** el ancho se adapta al espacio disponible del padre. En tamaños equivalentes, `AqTextInput` y `AqSelect` comparten la altura visual del control; `md` corresponde a 40 dp según la tabla Moon. No se añade un mínimo visual de 48 dp ni se estira el campo por el área táctil.
+- **Botón `fullWidth`:** `AqButton(fullWidth = true)` implementa `MoonButton.isFullWidth`: llena el ancho disponible del contenedor padre; sin la opción conserva el ancho intrínseco determinado por contenido y padding Moon. El alto visual sigue siendo el tamaño Moon seleccionado.
+- **Campo de selección:** no existe una API `AqSelect` independiente. `AqDropdown` es el menú de opciones Moon; cuando UX requiere un campo de selección cerrado, se ancla a un `AqTextInput(readOnly = true)` con trailing affordance. El campo conserva el ancho disponible y la altura visual Moon del tamaño elegido (md = 40 dp); las opciones del menú mantienen su target táctil de 48 dp. No se debe describir `AqDropdown` como un campo select ni inventar una altura de campo separada.
 - **Área táctil separada:** el contenedor interactivo amplía el hit target a 48 dp sin modificar el tamaño, borde, radio, padding o posición del componente visible.
 - **States / Variants en la galería:** los ejemplos se organizan en contenedores flexibles que se ajustan al contenido y al ancho disponible (wrap cuando corresponda). No se fijan anchos de panel ni se recortan labels, estados, variantes o controles; no se usa un ancho fijo para hacer coincidir columnas.
 - **Sin restricciones artificiales:** no introducir `width`/`height` fijos, `fillMaxHeight` o `weight` que deformen controles o recorten contenido, salvo que la anatomía Moon de ese componente lo requiera y esté documentado en esta tabla.

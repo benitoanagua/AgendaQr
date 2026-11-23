@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -248,6 +250,7 @@ private fun colorChip(label: String, color: Color) {
 }
 
 /** Previews de acciones y botones: variantes, estados y temas. */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AqActionsPreview() {
     Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
@@ -256,7 +259,10 @@ private fun AqActionsPreview() {
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        ) {
             AqButton(
                 label = "Primaria",
                 onClick = {},
@@ -284,7 +290,10 @@ private fun AqActionsPreview() {
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        ) {
             AqButton(
                 label = "Secundaria",
                 onClick = {},
@@ -309,7 +318,10 @@ private fun AqActionsPreview() {
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        ) {
             AqButton(
                 label = "Destructiva",
                 onClick = {},
@@ -337,7 +349,10 @@ private fun AqActionsPreview() {
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        ) {
             AqButton(
                 label = "Cancelar",
                 onClick = {},
@@ -356,30 +371,34 @@ private fun AqActionsPreview() {
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        ) {
             AqQuickAction(
                 label = "Traer un QR",
                 icon = AqIcons.QrCode,
                 onClick = {},
-                modifier = Modifier.weight(1f),
+                modifier = Modifier,
             )
             AqQuickAction(
                 label = "Registrar actividad",
                 icon = AqIcons.Register,
                 onClick = {},
-                modifier = Modifier.weight(1f),
+                modifier = Modifier,
             )
             AqQuickAction(
                 label = "Crear contexto",
                 icon = AqIcons.Context,
                 onClick = {},
-                modifier = Modifier.weight(1f),
+                modifier = Modifier,
             )
         }
     }
 }
 
 /** Previews de formularios: normal, deshabilitado, error, carga, contenido corto y largo. */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AqFormsPreview() {
     Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
@@ -388,31 +407,10 @@ private fun AqFormsPreview() {
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            Column {
-                AqTextInput(
-                    label = "Campo de texto",
-                    value = "Valor corto",
-                    onValueChange = {},
-                )
-            }
-            Column {
-                AqTextInput(
-                    label = "Deshabilitado",
-                    value = "No editable",
-                    onValueChange = {},
-                    enabled = false,
-                )
-            }
-            Column {
-                AqTextInput(
-                    label = "Error",
-                    value = "abc",
-                    onValueChange = {},
-                    isError = true,
-                    errorMessage = "Valor inválido",
-                )
-            }
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqTextInput(label = "Campo de texto", value = "Valor corto", onValueChange = {})
+            AqTextInput(label = "Deshabilitado", value = "No editable", onValueChange = {}, enabled = false)
+            AqTextInput(label = "Error", value = "abc", onValueChange = {}, isError = true, errorMessage = "Valor inválido")
         }
         AqText(
             text = "Text Input — contenido largo (se ajusta al ancho)",
@@ -484,7 +482,10 @@ private fun AqFormsPreview() {
             size = AqType.BodyMd,
         )
         Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            ) {
                 AqCheckbox(label = "Casilla", checked = true, onCheckedChange = {})
                 AqCheckbox(
                     label = "Deshabilitada",
@@ -500,7 +501,10 @@ private fun AqFormsPreview() {
                     state = AqFieldState(enabled = false),
                 )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            ) {
                 AqRadio(selected = true, contentDescription = "Pago")
                 AqText(text = "Pago")
                 AqRadio(selected = false, contentDescription = "Cobro")

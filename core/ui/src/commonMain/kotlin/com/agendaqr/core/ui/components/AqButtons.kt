@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
@@ -160,6 +161,8 @@ fun AqButton(
     /** Cuando es verdadero y hay [icon], solo se pinta el glifo (centrado)
      *  y se oculta el texto. */
     iconOnly: Boolean = false,
+    /** Ocupa el ancho disponible del contenedor padre, sin fijar ancho de pantalla. */
+    fullWidth: Boolean = false,
 ) {
     AqButtonImpl(
         label = label,
@@ -176,6 +179,7 @@ fun AqButton(
         contentPadding = contentPadding,
         hapticFeedback = false,
         iconOnly = iconOnly,
+        fullWidth = fullWidth,
     )
 }
 
@@ -195,6 +199,7 @@ private fun AqButtonImpl(
     contentPadding: PaddingValues?,
     hapticFeedback: Boolean,
     iconOnly: Boolean = false,
+    fullWidth: Boolean = false,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
@@ -217,6 +222,7 @@ private fun AqButtonImpl(
     val shape = AqSquircles.InteractiveSm
     val haptics = LocalHapticFeedback.current
     val buttonModifier = modifier
+        .then(if (fullWidth) Modifier.fillMaxWidth() else Modifier)
         // El nodo del botón es el objetivo táctil (48 dp); el relleno visual
         // conserva la altura del tamaño (24/32/40/48/56 dp) centrada.
         .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
@@ -243,6 +249,7 @@ private fun AqButtonImpl(
             contentDescription = label
             text = AnnotatedString(label)
         }
+        .testTag("aq-button-touch-target")
     Layout(
         modifier = buttonModifier,
         content = {
@@ -260,7 +267,8 @@ private fun AqButtonImpl(
                                 vertical = AqSpacing.None,
                             ),
                     )
-                    .then(if (isLoading) Modifier.alpha(AqAlpha.Hidden) else Modifier),
+                    .then(if (isLoading) Modifier.alpha(AqAlpha.Hidden) else Modifier)
+                    .testTag("aq-button-visual"),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(size.iconTextGap),
             ) {
