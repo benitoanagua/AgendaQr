@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.liveRegion
@@ -328,7 +329,7 @@ private fun BatchReviewContent(
         }
     }
     AqSectionTitle(text = AppStrings.ElementosQueNecesitanRevision + " (" + filtered.size + ")")
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth().testTag("aq-list-body")) {
         filtered.forEachIndexed { index, candidate ->
             PendingItemCell(
                 candidate = candidate,

@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqButtonSize
 import com.agendaqr.core.ui.components.AqButtonVariant
@@ -111,7 +112,7 @@ internal fun UnassociatedScreen(
             // Un único Cell-group (spec §12: las tarjetas no envuelven cada
             // fila). La fila entera abre la asociación; «Crear nueva
             // actividad con esto» es la acción de texto de la celda.
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.fillMaxWidth().testTag("aq-list-body")) {
                 state.unassociated.forEachIndexed { index, receipt ->
                     val isLast = index == state.unassociated.lastIndex
                     Column(modifier = Modifier.fillMaxWidth()) {
