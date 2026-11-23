@@ -130,6 +130,10 @@ fun DestinationsScreen(
         } else {
             null
         },
+        // D-02: el contenido puede exceder el viewport (acciones rápidas +
+        // segmentado + secciones); sin scroll los hijos que desbordan miden
+        // 0×0 y quedan inalcanzables.
+        scrollable = true,
         toastHost = toastHost?.let { host -> { AqToastHost(host) } },
     ) {
         // Trigger de búsqueda global (botón que abre el flujo de búsqueda).

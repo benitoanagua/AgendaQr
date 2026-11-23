@@ -174,11 +174,19 @@ open class LayoutReferenceTest {
         val (surface, state) = strictScenarioMap[base] ?: return
         val theme = if (dark) "dark" else "light"
         if (base in dialogScenarios) {
-            // Overlay: se mide y captura la VENTANA del diálogo completa
-            // (su raíz semántica), no la raíz de la pantalla que queda
-            // detrás. El test fija la ventana del host para que el diálogo
-            // mide el viewport declarado (AqModal: 0.9 × 400 = 360 dp).
-            val dialog = compose.onNode(dialogRootMatcher)
+            // Overlay: se mide y captura la superficie del diálogo completa.
+            // AqModal expone el panel como `aq-modal-pane` (el IsDialog cubre
+            // toda la ventana con scrim); el overlay de cámara no usa AqModal
+            // y se captura por su raíz IsDialog. El test fija la ventana del
+            // host para que el panel mida el viewport declarado (360 dp).
+            val hasPane = compose
+                .onAllNodesWithTag("aq-modal-pane", useUnmergedTree = true)
+                .fetchSemanticsNodes().isNotEmpty()
+            val dialog = if (hasPane) {
+                compose.onNodeWithTag("aq-modal-pane", useUnmergedTree = true)
+            } else {
+                compose.onNode(dialogRootMatcher)
+            }
             val bounds = dialog.getUnclippedBoundsInRoot()
             if (Math.round((bounds.right - bounds.left).value) != 360) return
             dialog.captureRoboImage(
@@ -271,7 +279,9 @@ open class LayoutReferenceTest {
         val TEST_QR_BASE64: String = QrTestFixture.base64Png
     }
 
-    @Test fun s01_light() = verifyLayout("s01-light", dark = false) {
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w360dp-h1100dp")
+    fun s01_light() = verifyLayout("s01-light", dark = false) {
         DestinationsScreen(
             state = DestinationsUiState(
                 destinations = listOf(
@@ -311,7 +321,9 @@ open class LayoutReferenceTest {
         )
     }
 
-    @Test fun s01_dark() = verifyLayout("s01-dark", dark = true) {
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w360dp-h1100dp")
+    fun s01_dark() = verifyLayout("s01-dark", dark = true) {
         DestinationsScreen(
             state = DestinationsUiState(
                 destinations = listOf(
@@ -849,7 +861,9 @@ open class LayoutReferenceTest {
     }
 
     // S01 vacío y con error recuperable (estados reales, no solo poblado).
-    @Test fun s01_empty_light() = verifyLayout("s01-empty-light", dark = false) {
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w360dp-h1100dp")
+    fun s01_empty_light() = verifyLayout("s01-empty-light", dark = false) {
         DestinationsScreen(
             state = DestinationsUiState(destinations = emptyList(), isLoading = false),
             onAction = {},
@@ -857,7 +871,9 @@ open class LayoutReferenceTest {
         )
     }
 
-    @Test fun s01_empty_dark() = verifyLayout("s01-empty-dark", dark = true) {
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w360dp-h1100dp")
+    fun s01_empty_dark() = verifyLayout("s01-empty-dark", dark = true) {
         DestinationsScreen(
             state = DestinationsUiState(destinations = emptyList(), isLoading = false),
             onAction = {},
@@ -865,7 +881,9 @@ open class LayoutReferenceTest {
         )
     }
 
-    @Test fun s01_error_light() = verifyLayout("s01-error-light", dark = false) {
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w360dp-h1100dp")
+    fun s01_error_light() = verifyLayout("s01-error-light", dark = false) {
         DestinationsScreen(
             state = DestinationsUiState(
                 destinations = emptyList(),
@@ -877,7 +895,9 @@ open class LayoutReferenceTest {
         )
     }
 
-    @Test fun s01_error_dark() = verifyLayout("s01-error-dark", dark = true) {
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w360dp-h1100dp")
+    fun s01_error_dark() = verifyLayout("s01-error-dark", dark = true) {
         DestinationsScreen(
             state = DestinationsUiState(
                 destinations = emptyList(),
@@ -1850,7 +1870,9 @@ open class LayoutReferenceTest {
     // puede decodificar (la pantalla que se enseña en caja: nunca un
     // rectángulo en blanco) y el selector de contexto sin contextos.
 
-    @Test fun s01_loading_light() = verifyLayout("s01-loading-light", dark = false) {
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w360dp-h1100dp")
+    fun s01_loading_light() = verifyLayout("s01-loading-light", dark = false) {
         DestinationsScreen(
             state = DestinationsUiState(destinations = emptyList(), isLoading = true),
             onAction = {},
@@ -1858,7 +1880,9 @@ open class LayoutReferenceTest {
         )
     }
 
-    @Test fun s01_loading_dark() = verifyLayout("s01-loading-dark", dark = true) {
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "w360dp-h1100dp")
+    fun s01_loading_dark() = verifyLayout("s01-loading-dark", dark = true) {
         DestinationsScreen(
             state = DestinationsUiState(destinations = emptyList(), isLoading = true),
             onAction = {},
