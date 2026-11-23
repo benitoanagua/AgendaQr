@@ -358,9 +358,13 @@ fun AqChipRow(
         ) {
             options.forEachIndexed { index, option ->
                 AqChip(
-                    option = option,
+                    text = option.label,
                     selected = index == selectedIndex,
+                    enabled = option.enabled,
                     onClick = { onChipClick(index) },
+                    icon = if (index == selectedIndex) AqIcons.Check else null,
+                    count = option.count,
+                    size = AqChipSize.Md,
                 )
             }
         }
@@ -372,82 +376,13 @@ fun AqChipRow(
         ) {
             options.forEachIndexed { index, option ->
                 AqChip(
-                    option = option,
+                    text = option.label,
                     selected = index == selectedIndex,
+                    enabled = option.enabled,
                     onClick = { onChipClick(index) },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun AqChip(
-    option: AqChipOption,
-    selected: Boolean,
-    onClick: () -> Unit,
-) {
-    val textColor = when {
-        !option.enabled -> AqColor.OnDisabled
-        selected -> AqColor.OnEmphasisFill
-        else -> AqColor.TextPrimary
-    }
-    val containerColor = when {
-        !option.enabled -> AqColor.SurfaceSecondary
-        selected -> AqColor.EmphasisFill
-        else -> AqColor.Surface
-    }
-    val borderColor = when {
-        selected && option.enabled -> AqColor.EmphasisBorder
-        else -> AqColor.Border
-    }
-    androidx.compose.foundation.layout.Box(
-        modifier = Modifier
-            .clip(AqSquircles.InteractiveSm)
-            .background(containerColor, AqSquircles.InteractiveSm)
-            .border(AqMetrics.Border, borderColor, AqSquircles.InteractiveSm)
-            .selectable(
-                selected = selected,
-                enabled = option.enabled,
-                role = Role.Button,
-                onClick = onClick,
-            )
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-            .semantics { this.selected = selected }
-            .padding(horizontal = AqSpacing.Lg),
-        contentAlignment = Alignment.Center,
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
-        ) {
-            if (selected) {
-                // Indicador no-color: check + relleno + borde juntos.
-                AqIcon(
-                    imageVector = AqIcons.Check,
-                    contentDescription = null,
-                    size = AqMetrics.IconSizeCompact,
-                    tint = textColor,
-                )
-            }
-            AqText(
-                text = option.label,
-                size = AqType.Label,
-                color = textColor,
-            )
-            option.count?.let { count ->
-                // Count separado del label: aire explícito + caption en
-                // TextSecondary (cuando no está seleccionado); el activo
-                // hereda el color de texto para contraste sobre el fill.
-                AqText(
-                    text = count.toString(),
-                    size = AqType.Caption,
-                    color = when {
-                        !option.enabled -> AqColor.OnDisabled
-                        selected -> textColor
-                        else -> AqColor.TextSecondary
-                    },
-                    modifier = Modifier.padding(start = AqSpacing.Xs),
+                    icon = if (index == selectedIndex) AqIcons.Check else null,
+                    count = option.count,
+                    size = AqChipSize.Md,
                 )
             }
         }

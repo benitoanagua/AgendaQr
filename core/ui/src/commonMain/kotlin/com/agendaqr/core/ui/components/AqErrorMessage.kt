@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqColor
@@ -55,14 +56,14 @@ fun AqErrorMessage(
             )
             Spacer(modifier = Modifier.width(AqSize.X2s))
         }
-        androidx.compose.material3.Text(
+        AqText(
             text = message,
             modifier = Modifier
                 .semantics {
                     contentDescription = message
-                    liveRegion = androidx.compose.ui.semantics.LiveRegionMode.Polite
+                    liveRegion = LiveRegionMode.Polite
                 },
-            style = AqTextStyles.Support,
+            size = AqType.BodySmall,
             color = AqColor.Danger,
         )
     }
@@ -75,10 +76,10 @@ fun AqHelperMessage(
     modifier: Modifier = Modifier,
 ) {
     if (message.isNullOrBlank()) return
-    androidx.compose.material3.Text(
+    AqText(
         text = message,
         modifier = modifier.semantics { contentDescription = message },
-        style = AqTextStyles.Support,
+        size = AqType.BodySmall,
         color = AqColor.TextSecondary,
     )
 }

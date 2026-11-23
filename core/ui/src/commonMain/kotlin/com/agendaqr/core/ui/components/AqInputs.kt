@@ -16,9 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,7 +38,7 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSpacing
@@ -67,16 +64,16 @@ private fun AqInputLabel(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
     ) {
-        Text(
-            label,
-            style = AqTextStyles.Label,
+        AqText(
+            text = label,
+            size = AqType.Label,
             color = if (!enabled) AqColor.OnDisabled else labelColor,
             modifier = Modifier.weight(1f, fill = false),
         )
         optionalLabel?.let {
-            Text(
-                it,
-                style = AqTextStyles.Caption,
+            AqText(
+                text = it,
+                size = AqType.CaptionSmall,
                 color = AqColor.TextTertiary,
             )
         }
@@ -201,12 +198,12 @@ fun AqMultilineTextField(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
             ) {
-                Text(
+                AqText(
                     text = "$currentLength / $limit",
                     modifier = Modifier.semantics {
                         contentDescription = "Longitud $currentLength de $limit"
                     },
-                    style = AqTextStyles.Support,
+                    size = AqType.BodySmall,
                     color = if (lengthExceeded) AqColor.Danger else AqColor.TextTertiary,
                 )
             }
@@ -223,19 +220,19 @@ fun AqMultilineTextField(
                         contentDescription = null,
                         tint = AqColor.Danger,
                     )
-                    Text(
-                        effectiveErrorMessage,
+                    AqText(
+                        text = effectiveErrorMessage,
                         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                        style = AqTextStyles.Support,
+                        size = AqType.BodySmall,
                         color = AqColor.Danger,
                     )
                 }
             }
             helperMessage != null -> {
-                Text(
-                    helperMessage,
+                AqText(
+                    text = helperMessage,
                     modifier = Modifier.testTag("aq-field-support"),
-                    style = AqTextStyles.Support,
+                    size = AqType.BodySmall,
                     color = AqColor.TextSecondary,
                 )
             }

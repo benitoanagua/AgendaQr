@@ -13,6 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
@@ -57,6 +59,12 @@ data class AqControlState(
  * @param text texto accesible que se expone en el nodo táctil de 48 dp, para
  *   que consultas como `onNodeWithText` resuelvan al nodo táctil y no al nodo
  *   visual interno (que puede ser más pequeño).
+ * @param selected estado de selección expuesto en el nodo táctil de 48 dp.
+ * @param role rol de accesibilidad expuesto en el nodo táctil de 48 dp.
+ * @param mergeDescendants si las semánticas de los descendientes se fusionan
+ *   en el nodo táctil. Cuando es falso, el nodo táctil expone solo sus propias
+ *   semánticas (útil para evitar que el texto de un descendiente reemplace el
+ *   texto del nodo táctil).
  * Úsalo en controles cuyo alto visual es inferior a 48 dp (tag x2s/xs/sm,
  * interruptor x2s/xs/sm, chip sm…) para cumplir el objetivo táctil sin
  * deformar el componente.
@@ -65,6 +73,9 @@ data class AqControlState(
 fun AqTouchTarget(
     minTouchSize: Dp = AqMetrics.ControlMinSize,
     text: String? = null,
+    selected: Boolean = false,
+    role: Role? = null,
+    mergeDescendants: Boolean = true,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
@@ -74,8 +85,10 @@ fun AqTouchTarget(
                 minWidth = minTouchSize,
                 minHeight = minTouchSize,
             )
-            .semantics(mergeDescendants = true) {
-                text?.let { this.text = AnnotatedString(it) }
+            .semantics(mergeDescendants = mergeDescendants) {
+                text?.let { this[SemanticsProperties.Text] = listOf(AnnotatedString(it)) }
+                this[SemanticsProperties.Selected] = selected
+                role?.let { this[SemanticsProperties.Role] = it }
             },
         contentAlignment = Alignment.Center,
     ) {

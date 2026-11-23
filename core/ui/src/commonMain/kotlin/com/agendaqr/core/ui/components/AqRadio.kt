@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.size
@@ -50,11 +49,12 @@ fun AqRadio(
 ) {
     val scheme = LocalAqColorScheme.current
     val interactionSource = remember { MutableInteractionSource() }
-    val pressed = interactionSource.collectIsPressedAsState().value
+    // PV-01: el estado pressed no cambia el color del borde del radio; el
+    // efecto es el scale de Moon. El borde funcional usa `functionalBorder`
+    // (PV-03) y no se tiñe al pulsar.
     val outerColor = when {
         !enabled -> scheme.onDisabled
         selected -> scheme.emphasisFill
-        pressed && enabled -> scheme.surfaceActive
         else -> scheme.border
     }
     val fillColor = when {

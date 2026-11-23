@@ -5,16 +5,16 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -30,8 +30,9 @@ import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqTextStyles
-import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqTouchTarget
+import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
@@ -78,12 +79,12 @@ fun AqMenuItem(
     modifier: Modifier = Modifier,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val pressed = interactionSource.collectIsPressedAsState().value
     val isSelected = selected
+    // PV-01: el estado pressed no cambia el relleno de la celda; el efecto es
+    // el scale de Moon aplicado por el contenidor táctil.
     val container = when {
         !enabled -> AqColor.Disabled
         selected -> AqColor.SelectionSurface
-        pressed && enabled -> AqColor.SurfaceActive
         else -> AqColor.Surface
     }
     val contentColor = when {
@@ -145,16 +146,17 @@ fun AqMenuItem(
                     modifier = Modifier.weight(1f, fill = true),
                     verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
                 ) {
-                    Text(
+                    AqText(
                         text = title,
-                        style = AqTextStyles.RowTitle,
+                        size = AqType.RowTitle,
+                        fontWeight = AqWeight.SemiBold,
                         color = contentColor,
                         maxLines = titleMaxLines,
                     )
                     subtitle?.let {
-                        Text(
+                        AqText(
                             text = it,
-                            style = AqTextStyles.BodySmall,
+                            size = AqType.BodySmall,
                             color = subtitleColor,
                             maxLines = 1,
                         )
@@ -166,14 +168,15 @@ fun AqMenuItem(
                 trailing?.invoke()
             }
             if (showDivider) {
-                androidx.compose.foundation.layout.Row(
+                Row(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.width(AqMetrics.ListDividerInset))
-                    HorizontalDivider(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = AqColor.Divider,
-                        thickness = AqMetrics.DividerHeight,
+                    Spacer(modifier = Modifier.width(AqMetrics.ListDividerInset))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(AqMetrics.DividerHeight)
+                            .background(AqColor.Divider),
                     )
                 }
             }

@@ -1,8 +1,10 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.platform.testTag
+import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSpacing
 
@@ -85,13 +88,14 @@ fun AqHairline(
     modifier: Modifier = Modifier,
     insetStart: Dp = AqSpacing.None,
 ) {
-    androidx.compose.material3.HorizontalDivider(
+    Box(
         modifier = if (insetStart > AqSpacing.None) {
             Modifier.padding(start = insetStart)
         } else {
             Modifier
-        }.then(modifier),
-        thickness = AqMetrics.DividerHeight,
-        color = com.agendaqr.core.ui.theme.AqColor.Divider,
+        }.then(modifier)
+            .fillMaxWidth()
+            .height(AqMetrics.DividerHeight)
+            .background(AqColor.Divider),
     )
 }

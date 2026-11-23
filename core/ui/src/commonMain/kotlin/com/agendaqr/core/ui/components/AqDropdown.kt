@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +19,7 @@ import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqSquircles
-import com.agendaqr.core.ui.theme.AqTextStyles
+import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
 
 /**
@@ -78,9 +77,9 @@ fun AqDropdown(
                             ),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(
+                        AqText(
                             text = label,
-                            style = AqTextStyles.Body,
+                            size = AqType.Body,
                             color = if (selected == index) AqColor.EmphasisFill else AqColor.TextPrimary,
                             modifier = Modifier
                                 .weight(1f, fill = false)

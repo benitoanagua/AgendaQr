@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberUpdatedState
@@ -27,6 +26,7 @@ import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
+import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqMotion
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
@@ -95,9 +95,9 @@ fun AqToast(
                         tint = AqColor.TextSecondary,
                     )
                 }
-                Text(
+                AqText(
                     text = message,
-                    style = AqTextStyles.Body,
+                    size = AqType.Body,
                     color = AqColor.TextPrimary,
                     modifier = Modifier
                         .weight(1f, fill = false)
@@ -107,9 +107,10 @@ fun AqToast(
                         },
                 )
                 actionLabel?.let { label ->
-                    Text(
+                    AqText(
                         text = label,
-                        style = AqTextStyles.Label.copy(fontWeight = AqWeight.SemiBold),
+                        size = AqType.Label,
+                        fontWeight = AqWeight.SemiBold,
                         color = AqColor.Link,
                         modifier = Modifier
                             .defaultMinSize(minHeight = AqMetrics.ControlMinSize)

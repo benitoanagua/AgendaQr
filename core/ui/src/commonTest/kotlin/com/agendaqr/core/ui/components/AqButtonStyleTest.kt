@@ -44,14 +44,17 @@ class AqButtonStyleTest {
     }
 
     @Test
-    fun variants_resolve_normal_pressed_and_disabled_colors_in_both_themes() {
+    fun variants_resolve_normal_and_disabled_colors_in_both_themes() {
         listOf(LightAqColorScheme, DarkAqColorScheme).forEach { scheme ->
+            // PV-01: el estado pressed no cambia el relleno ni el color del
+            // texto; el efecto es el scale de Moon (0,96) sobre el contenido
+            // visual, no una paleta pressed/active inventada.
             assertEquals(
                 AqButtonColors(scheme.brandFill, scheme.onBrandFill),
                 resolveAqButtonColors(AqButtonVariant.Primary, scheme, enabled = true, pressed = false),
             )
             assertEquals(
-                AqButtonColors(scheme.brandFillActive, scheme.onBrandFill),
+                AqButtonColors(scheme.brandFill, scheme.onBrandFill),
                 resolveAqButtonColors(AqButtonVariant.Primary, scheme, enabled = true, pressed = true),
             )
             assertEquals(
@@ -63,7 +66,7 @@ class AqButtonStyleTest {
                 resolveAqButtonColors(AqButtonVariant.Default, scheme, enabled = true, pressed = false),
             )
             assertEquals(
-                AqButtonColors(scheme.surfaceActive, scheme.textPrimary, scheme.border),
+                AqButtonColors(scheme.surface, scheme.textPrimary, scheme.border),
                 resolveAqButtonColors(AqButtonVariant.Default, scheme, enabled = true, pressed = true),
             )
             assertEquals(
@@ -71,7 +74,7 @@ class AqButtonStyleTest {
                 resolveAqButtonColors(AqButtonVariant.Danger, scheme, enabled = true, pressed = false),
             )
             assertEquals(
-                AqButtonColors(scheme.dangerActive, scheme.onDanger),
+                AqButtonColors(scheme.dangerFill, scheme.onDanger),
                 resolveAqButtonColors(AqButtonVariant.Danger, scheme, enabled = true, pressed = true),
             )
             assertEquals(
@@ -83,7 +86,7 @@ class AqButtonStyleTest {
                 resolveAqButtonColors(AqButtonVariant.Light, scheme, enabled = true, pressed = false),
             )
             assertEquals(
-                AqButtonColors(scheme.emphasisSurfaceHover, scheme.emphasisText),
+                AqButtonColors(scheme.emphasisSurface, scheme.emphasisText),
                 resolveAqButtonColors(AqButtonVariant.Light, scheme, enabled = true, pressed = true),
             )
             assertEquals(
@@ -95,7 +98,7 @@ class AqButtonStyleTest {
                 resolveAqButtonColors(AqButtonVariant.Outline, scheme, enabled = true, pressed = false),
             )
             assertEquals(
-                AqButtonColors(scheme.surfaceActive, scheme.textPrimary, scheme.functionalBorder),
+                AqButtonColors(Color.Transparent, scheme.textPrimary, scheme.functionalBorder),
                 resolveAqButtonColors(AqButtonVariant.Outline, scheme, enabled = true, pressed = true),
             )
             assertEquals(
@@ -103,7 +106,7 @@ class AqButtonStyleTest {
                 resolveAqButtonColors(AqButtonVariant.Text, scheme, enabled = true, pressed = false),
             )
             assertEquals(
-                AqButtonColors(scheme.surfaceActive, scheme.link),
+                AqButtonColors(Color.Transparent, scheme.link),
                 resolveAqButtonColors(AqButtonVariant.Text, scheme, enabled = true, pressed = true),
             )
             assertEquals(

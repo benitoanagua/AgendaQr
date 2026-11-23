@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.focusable
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -37,6 +36,7 @@ import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqTextStyles
+import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
 
 /**
@@ -108,11 +108,12 @@ fun AqModal(
                     .background(LocalAqColorScheme.current.surface, AqSquircles.SurfaceLg)
                     .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
             ) {
-                Text(
+                AqText(
                     text = title,
-                    style = AqTextStyles.HeadingLg,
+                    size = AqType.Title,
                     color = LocalAqColorScheme.current.textPrimary,
                     modifier = Modifier,
+                    semanticHeading = true,
                 )
                 Column(
                     modifier = Modifier
@@ -185,10 +186,11 @@ fun AqDrawer(
                 .background(LocalAqColorScheme.current.surface, AqSquircles.InteractiveMd)
                 .semantics { paneTitle = title },
         ) {
-            Text(
+            AqText(
                 text = title,
-                style = AqTextStyles.HeadingLg,
+                size = AqType.Title,
                 color = LocalAqColorScheme.current.textPrimary,
+                semanticHeading = true,
             )
             content()
             Row(
