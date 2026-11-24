@@ -214,6 +214,7 @@ fun AqBottomNavigation(
         "AqBottomNavigation requiere ids únicos"
     }
     val selectedIndex = destinations.indexOfFirst { it.id == selectedId }
+        .takeIf { it >= 0 } ?: 0
     Column(
         modifier = modifier
             .fillMaxWidth()
