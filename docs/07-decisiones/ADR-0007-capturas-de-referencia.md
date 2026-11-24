@@ -1,7 +1,7 @@
 # ADR-0007 — Verificación de layout sin capturas versionadas
 
 **Estado:** APROBADA (técnica) — actualizada
-**Relaciona:** ADR-0025 (fuente normativa de diseño), ADR-0010 (instrumentados).
+**Relaciona:** ADR-0044 (Moon como único sistema de diseño), ADR-0010 (instrumentados).
 
 ## Contexto
 
