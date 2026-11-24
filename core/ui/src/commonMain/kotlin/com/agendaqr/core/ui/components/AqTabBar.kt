@@ -121,6 +121,79 @@ fun AqPillTab(
     }
 }
 
+/** Contenido de una pestaña: ícono opcional (20-24 dp) + etiqueta (una
+ *  línea, sin ellipsis a 0). Área táctil ≥ 48 dp. */
+@Composable
+private fun AqTabContent(
+    tab: AqTab,
+    selected: Boolean,
+    enabled: Boolean,
+    onClick: () -> Unit,
+    size: AqTabSize,
+    modifier: Modifier = Modifier,
+) {
+    val selectedAndEnabled = selected && enabled
+    Box(
+        modifier = modifier
+            .selectable(
+                selected = selected,
+                role = Role.Tab,
+                enabled = enabled,
+                onClick = onClick,
+            )
+            .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier.height(size.height),
+            verticalArrangement = Arrangement.spacedBy(size.gap),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            tab.icon?.let {
+                AqIcon(
+                    imageVector = it,
+                    contentDescription = null,
+                    size = AqMetrics.IconSizeCompact,
+                    tint = if (selectedAndEnabled) AqColor.EmphasisFill else AqColor.TextSecondary,
+                )
+            }
+            AqText(
+                text = tab.label,
+                size = AqType.Label,
+                fontWeight = AqWeight.SemiBold,
+                color = if (selectedAndEnabled) AqColor.EmphasisFill else AqColor.TextSecondary,
+                maxLines = 1,
+            )
+            tab.count?.let {
+                Box(
+                    modifier = Modifier
+                        .background(
+                            if (selectedAndEnabled) AqColor.EmphasisFill else AqColor.SurfaceContainerHighest,
+                            AqSquircles.SurfaceSm,
+                        )
+                        .padding(horizontal = AqSize.Xs),
+                ) {
+                    AqText(
+                        text = it.toString(),
+                        size = AqType.CaptionSmall,
+                        color = if (selectedAndEnabled) AqColor.OnEmphasisFill else AqColor.TextSecondary,
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** Tamaños de [AqTabBar] y [AqPillTab] (tabla Moon § TabBar). */
+enum class AqTabSize(
+    val height: Dp,
+    val padding: Dp,
+    val gap: Dp,
+) {
+    Sm(AqSize.Sm, AqSize.X3s, AqSize.X5s),
+    Md(AqSize.Md, AqSize.X2s, AqSize.X4s),
+}
+
 /**
  * Navegación primaria inferior de la aplicación. No reutiliza la píldora de
  * selección de Moon: es un patrón de chrome de producto, construido con
@@ -201,4 +274,3 @@ fun AqBottomNavigation(
         }
     }
 }
-
