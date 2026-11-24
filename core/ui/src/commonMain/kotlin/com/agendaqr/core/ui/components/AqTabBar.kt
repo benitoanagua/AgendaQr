@@ -2,7 +2,6 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,11 +10,15 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
@@ -122,62 +125,73 @@ fun AqPillTab(
     }
 }
 
-/** Contenido de una pestaña: ícono opcional (20-24 dp) + etiqueta (una
- *  línea, sin ellipsis a 0). Área táctil ≥ 48 dp. */
+/**
+ * Navegación primaria inferior de la aplicación. No reutiliza la píldora de
+ * selección de Moon: es un patrón de chrome de producto, construido con
+ * roles semánticos, targets accesibles y separación estructural.
+ *
+ * Con hasta cinco destinos se distribuye el ancho disponible; cuando hay
+ * más, permite desplazamiento horizontal en lugar de comprimir etiquetas.
+ */
 @Composable
-private fun AqTabContent(
-    tab: AqTab,
-    selected: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
-    size: AqTabSize,
+fun AqBottomNavigation(
+    destinations: List<AqNavDestination>,
+    selectedId: String?,
+    onSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val selectedAndEnabled = selected && enabled
-    Box(
+    require(destinations.isNotEmpty()) { "AqBottomNavigation necesita destinos" }
+    require(destinations.map { it.id }.distinct().size == destinations.size) {
+        "AqBottomNavigation requiere ids únicos"
+    }
+    val selectedIndex = destinations.indexOfFirst { it.id == selectedId }
+    Column(
         modifier = modifier
-            .selectable(
-                selected = selected,
-                role = Role.Tab,
-                enabled = enabled,
-                onClick = onClick,
-            )
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
-        contentAlignment = Alignment.Center,
+            .fillMaxWidth()
+            .background(AqColor.Surface),
     ) {
-        Column(
-            modifier = Modifier.height(size.height),
-            verticalArrangement = Arrangement.spacedBy(size.gap),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            tab.icon?.let {
-                AqIcon(
-                    imageVector = it,
-                    contentDescription = null,
-                    size = AqMetrics.IconSizeCompact,
-                    tint = if (selectedAndEnabled) AqColor.EmphasisFill else AqColor.TextSecondary,
+        androidx.compose.material3.HorizontalDivider(color = AqColor.Divider)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .selectableGroup()
+                .then(
+                    if (destinations.size > 5) Modifier.horizontalScroll(rememberScrollState())
+                    else Modifier,
                 )
-            }
-            AqText(
-                text = tab.label,
-                size = AqType.Label,
-                fontWeight = AqWeight.SemiBold,
-                color = if (selectedAndEnabled) AqColor.EmphasisFill else AqColor.TextSecondary,
-                maxLines = 1,
-            )
-            tab.count?.let {
-                Box(
+                .padding(horizontal = AqSize.X2s, vertical = AqSize.X3s),
+            horizontalArrangement = Arrangement.spacedBy(AqSize.X4s),
+        ) {
+            destinations.forEachIndexed { index, destination ->
+                val selected = index == selectedIndex
+                Column(
                     modifier = Modifier
-                        .background(
-                            if (selectedAndEnabled) AqColor.EmphasisFill else AqColor.SurfaceContainerHighest,
-                            AqSquircles.SurfaceSm,
+                        .then(if (destinations.size <= 5) Modifier.weight(1f) else Modifier)
+                        .heightIn(min = AqMetrics.ControlMinSize)
+                        .clip(AqSquircles.InteractiveSm)
+                        .background(if (selected) AqColor.SelectionSurface else AqColor.Transparent)
+                        .selectable(
+                            selected = selected,
+                            role = Role.Tab,
+                            onClick = { onSelect(destination.id) },
                         )
-                        .padding(horizontal = AqSize.Xs),
+                        .padding(horizontal = AqSize.X2s, vertical = AqSize.X3s),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
                 ) {
+                    AqIcon(
+                        imageVector = destination.icon,
+                        contentDescription = null,
+                        size = AqMetrics.IconSize,
+                        tint = if (selected) AqColor.EmphasisIcon else AqColor.TextSecondary,
+                    )
                     AqText(
-                        text = it.toString(),
-                        size = AqType.CaptionSmall,
-                        color = if (selectedAndEnabled) AqColor.OnEmphasisFill else AqColor.TextSecondary,
+                        text = destination.label,
+                        size = AqType.BodyXs,
+                        fontWeight = if (selected) AqWeight.SemiBold else AqWeight.Medium,
+                        color = if (selected) AqColor.EmphasisText else AqColor.TextSecondary,
+                        maxLines = 1,
                     )
                 }
             }
@@ -185,12 +199,6 @@ private fun AqTabContent(
     }
 }
 
-/** Tamaños de [AqTabBar] y [AqPillTab] (tabla Moon § TabBar). */
-enum class AqTabSize(
-    val height: Dp,
-    val padding: Dp,
-    val gap: Dp,
-) {
-    Sm(AqSize.Sm, AqSize.X3s, AqSize.X5s),
-    Md(AqSize.Md, AqSize.X2s, AqSize.X4s),
-}
+/** Contenido de una pestaña: ícono opcional (20-24 dp) + etiqueta (una
+ *  línea, sin ellipsis a 0). Área táctil ≥ 48 dp. */
+private const val AqTabPlaceholder = ""
