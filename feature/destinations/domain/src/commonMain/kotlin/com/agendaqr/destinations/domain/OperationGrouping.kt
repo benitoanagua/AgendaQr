@@ -5,8 +5,6 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 /**
  * Grupo de un día civil dentro de un mes.
@@ -49,17 +47,40 @@ private val signOf: (OperationType) -> Int = { if (it == OperationType.COBRO) +1
  * El resultado usa 2 decimales y separador decimal punto (canonico).
  */
 fun balanceByCurrency(operations: List<Operation>): Map<String, String> {
-    val totals = mutableMapOf<String, BigDecimal>()
+    val totals = mutableMapOf<String, Long>()
     operations.forEach { op ->
         val amount = op.amount?.takeIf { it.isNotBlank() } ?: return@forEach
         val currency = op.currency ?: return@forEach
-        val value = runCatching {
-            BigDecimal(amount.replace(',', '.'))
-        }.getOrNull() ?: return@forEach
-        val current = totals[currency] ?: BigDecimal.ZERO
-        totals[currency] = current.add(value.multiply(BigDecimal.valueOf(signOf(op.type).toLong())))
+        val cents = amount.toCentsHalfUp() ?: return@forEach
+        val signedCents = if (op.type == OperationType.COBRO) cents else -cents
+        totals[currency] = (totals[currency] ?: 0L) + signedCents
     }
-    return totals.mapValues { it.value.setScale(2, RoundingMode.HALF_UP).toString() }
+    return totals.mapValues { (_, cents) -> cents.toMoneyString() }
+}
+
+/** Parse a decimal amount into minor units using HALF_UP rounding. */
+private fun String.toCentsHalfUp(): Long? {
+    val normalized = trim().replace(',', '.')
+    if (normalized.isEmpty()) return null
+    val negative = normalized.startsWith('-')
+    val unsigned = normalized.removePrefix("-").removePrefix("+")
+    val parts = unsigned.split('.', limit = 2)
+    if (parts.size > 2 || parts[0].isEmpty() || parts[0].any { !it.isDigit() }) return null
+    val fraction = parts.getOrElse(1) { "" }
+    if (fraction.any { !it.isDigit() }) return null
+    val whole = parts[0].toLongOrNull() ?: return null
+    val firstTwo = (fraction + "00").take(2).toLongOrNull() ?: return null
+    val roundUp = fraction.getOrNull(2)?.let { it >= '5' } ?: false
+    val magnitude = whole * 100L + firstTwo + if (roundUp) 1L else 0L
+    return if (negative) -magnitude else magnitude
+}
+
+private fun Long.toMoneyString(): String {
+    val negative = this < 0
+    val magnitude = if (negative) -this else this
+    val whole = magnitude / 100L
+    val fraction = (magnitude % 100L).toString().padStart(2, '0')
+    return (if (negative) "-" else "") + whole.toString() + "." + fraction
 }
 
 /**
