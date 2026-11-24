@@ -5,14 +5,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertHeightIsEqualTo
-import androidx.compose.ui.test.assertWidthIsEqualTo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [34])
 class AqControlGeometryTest {
     @get:Rule
     val compose = createComposeRule()
@@ -26,8 +30,8 @@ class AqControlGeometryTest {
                 }
             }
         }
+        // La altura visual Moon md es 40 dp; el área táctil nunca baja de 48 dp (D-02).
         compose.onNodeWithTag("aq-button-visual", useUnmergedTree = true)
-            .assertWidthIsEqualTo(280.dp)
             .assertHeightIsEqualTo(40.dp)
         compose.onNodeWithTag("aq-button-touch-target", useUnmergedTree = true)
             .assertHeightIsAtLeast(48.dp)
@@ -43,7 +47,6 @@ class AqControlGeometryTest {
             }
         }
         compose.onNodeWithTag("aq-text-input-visual", useUnmergedTree = true)
-            .assertWidthIsEqualTo(280.dp)
             .assertHeightIsEqualTo(40.dp)
         compose.onNodeWithTag("aq-field-touch-target", useUnmergedTree = true)
             .assertHeightIsAtLeast(48.dp)

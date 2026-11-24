@@ -16,12 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.text
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqLayout
@@ -69,28 +65,36 @@ fun AqChip(
         else -> scheme.textPrimary
     }
     val isSelected = selected
-    // Texto accesible del nodo táctil: label + count como una sola cadena
-    // para que onNodeWithText resuelva al nodo táctil (48 dp) y el count se
-    // lea junto al label (el count viaja dentro del Row con clickable, que
-    // no fusiona su texto al nodo táctil).
-    val touchText = if (count != null) "$text $count" else text
     val interactionSource = remember { MutableInteractionSource() }
     // PV-01: el estado pressed no cambia el relleno del chip; el efecto es el
     // scale de Moon aplicado por el contenidor táctil. El alto visual se
     // conserva (32/40 dp); el área táctil se amplía a 48 dp sin deformar el
-    // chip (ADR-0039 §4.4). mergeDescendants = false evita que el texto del
-    // count reemplace el texto del nodo táctil.
+    // chip (ADR-0039 §4.4).
+    //
+    // El nodo táctil (Box) es el único nodo semántico del chip:
+    // mergeDescendants = true fusiona el texto del label y del count como
+    // elementos de una misma lista, de modo que "Todos" y "12" se leen por
+    // separado (nunca "Todos12") y onNodeWithText resuelve cada uno al nodo
+    // táctil de 48 dp. El clickable vive en el Box para que performClick /
+    // assertIsSelected resuelvan sobre el nodo accesible.
     Box(
         modifier = modifier
             .defaultMinSize(
                 minWidth = AqMetrics.ControlMinSize,
                 minHeight = AqMetrics.ControlMinSize,
             )
-            .semantics(mergeDescendants = false) {
-                this.text = AnnotatedString(touchText)
+            .semantics(mergeDescendants = true) {
                 this.selected = isSelected
                 this[SemanticsProperties.Role] = Role.Button
-            },
+            }
+            .clickable(
+                role = Role.Button,
+                onClickLabel = text,
+                interactionSource = interactionSource,
+                indication = null,
+                enabled = enabled && onClick != null,
+                onClick = { onClick?.invoke() },
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Row(
@@ -98,18 +102,7 @@ fun AqChip(
                 .defaultMinSize(minHeight = size.height)
                 .heightIn(min = size.height)
                 .background(container, AqSquircles.InteractiveSm)
-                .clickable(
-                    role = Role.Button,
-                    onClickLabel = text,
-                    interactionSource = interactionSource,
-                    indication = null,
-                    enabled = enabled && onClick != null,
-                    onClick = { onClick?.invoke() },
-                )
-                .padding(horizontal = size.horizontalPadding, vertical = AqSpacing.None)
-                .semantics {
-                    contentDescription = if (isSelected) "$text, seleccionado" else text
-                },
+                .padding(horizontal = size.horizontalPadding, vertical = AqSpacing.None),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AqSize.X4s),
         ) {
@@ -125,7 +118,7 @@ fun AqChip(
                 text = text,
                 size = size.textSize,
                 color = content,
-                modifier = Modifier.weight(1f, fill = false).clearAndSetSemantics { },
+                modifier = Modifier.weight(1f, fill = false),
             )
             count?.let { count ->
                 AqText(

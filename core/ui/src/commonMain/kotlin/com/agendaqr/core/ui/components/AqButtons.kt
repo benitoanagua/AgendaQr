@@ -108,12 +108,10 @@ internal data class AqButtonColors(
     val border: Color? = null,
 )
 
-@Suppress("UNUSED_PARAMETER")
 internal fun resolveAqButtonColors(
     variant: AqButtonVariant,
     scheme: AqColorScheme,
     enabled: Boolean,
-    pressed: Boolean,
 ): AqButtonColors {
     // MoonBaseControl define el estado pressed mediante su efecto de escala,
     // no mediante un cambio de relleno. PV-01 prohíbe inventar una paleta
@@ -220,7 +218,6 @@ private fun AqButtonImpl(
         variant = variant,
         scheme = LocalAqColorScheme.current,
         enabled = isEnabled,
-        pressed = pressed,
     )
     val foreground = contentColor?.takeIf { isEnabled } ?: resolved.content
     val labelStyle = if (size == AqButtonSize.Small || size == AqButtonSize.ExtraSmall) {
