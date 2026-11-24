@@ -5,6 +5,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
+import kotlin.math.abs
 
 /**
  * Grupo de un día civil dentro de un mes.
@@ -44,43 +45,64 @@ private val signOf: (OperationType) -> Int = { if (it == OperationType.COBRO) +1
 /**
  * Saldo neto por moneda: los cobros suman y los pagos restan (regla de
  * signo ya usada en la lista). Las actividades sin importe no suman.
- * El resultado usa 2 decimales y separador decimal punto (canonico).
+ * El importe es una cadena decimal de unidades mayores (p. ej. "100,00" o
+ * "100.50"). Se convierte a unidades menores (centavos) como `Long` para
+ * evitar `Double` y las APIs `java.math.*` (no disponibles en
+ * Kotlin/Native). La suma por moneda es entera y determinista; el
+ * resultado usa 2 decimales y separador decimal punto (canonico).
  */
 fun balanceByCurrency(operations: List<Operation>): Map<String, String> {
     val totals = mutableMapOf<String, Long>()
     operations.forEach { op ->
         val amount = op.amount?.takeIf { it.isNotBlank() } ?: return@forEach
         val currency = op.currency ?: return@forEach
-        val cents = amount.toCentsHalfUp() ?: return@forEach
-        val signedCents = if (op.type == OperationType.COBRO) cents else -cents
-        totals[currency] = (totals[currency] ?: 0L) + signedCents
+        val minorUnits = parseMinorUnits(amount) ?: return@forEach
+        val signed = minorUnits * signOf(op.type).toLong()
+        totals[currency] = (totals[currency] ?: 0L) + signed
     }
-    return totals.mapValues { (_, cents) -> cents.toMoneyString() }
+    return totals.mapValues { formatMinorUnits(it.value) }
 }
 
-/** Parse a decimal amount into minor units using HALF_UP rounding. */
-private fun String.toCentsHalfUp(): Long? {
-    val normalized = trim().replace(',', '.')
-    if (normalized.isEmpty()) return null
-    val negative = normalized.startsWith('-')
-    val unsigned = normalized.removePrefix("-").removePrefix("+")
-    val parts = unsigned.split('.', limit = 2)
-    if (parts.size > 2 || parts[0].isEmpty() || parts[0].any { !it.isDigit() }) return null
-    val fraction = parts.getOrElse(1) { "" }
-    if (fraction.any { !it.isDigit() }) return null
-    val whole = parts[0].toLongOrNull() ?: return null
-    val firstTwo = (fraction + "00").take(2).toLongOrNull() ?: return null
-    val roundUp = fraction.getOrNull(2)?.let { it >= '5' } ?: false
-    val magnitude = whole * 100L + firstTwo + if (roundUp) 1L else 0L
-    return if (negative) -magnitude else magnitude
+/** Convierte una cadena decimal de unidades mayores ("100,00", "100.5",
+ *  "-30", "0,5") a unidades menores (centavos) como `Long`. Redondea
+ *  fracciones con más de 2 decimales (HALF_UP). Devuelve null si la
+ *  cadena no es un importe válido. */
+private fun parseMinorUnits(text: String): Long? {
+    val trimmed = text.trim()
+    if (trimmed.isEmpty()) return null
+    var s = trimmed.replace(',', '.')
+    var sign = 1L
+    if (s.startsWith("-")) { sign = -1L; s = s.removePrefix("-") }
+    else if (s.startsWith("+")) { s = s.removePrefix("+") }
+    // Solo dígitos y a lo más un punto decimal.
+    if (s.count { it == '.' } > 1 || s.any { !it.isDigit() && it != '.' }) return null
+    val parts = s.split(".", limit = 2)
+    val intPart = parts[0].takeIf { it.isNotEmpty() } ?: "0"
+    val intValue = intPart.toLongOrNull() ?: return null
+    var minor = intValue * 100
+    if (parts.size == 2) {
+        val frac = parts[1]
+        val frac2 = if (frac.length >= 2) frac.substring(0, 2) else frac.padEnd(2, '0')
+        var fracValue = frac2.toLongOrNull() ?: return null
+        if (frac.length > 2 && frac[2].isDigit() && frac[2].digitToInt() >= 5) {
+            fracValue += 1
+            if (fracValue > 99) {
+                fracValue = 0
+                minor += 100 // carry a la parte entera
+            }
+        }
+        minor += fracValue
+    }
+    return sign * minor
 }
 
-private fun Long.toMoneyString(): String {
-    val negative = this < 0
-    val magnitude = if (negative) -this else this
-    val whole = magnitude / 100L
-    val fraction = (magnitude % 100L).toString().padStart(2, '0')
-    return (if (negative) "-" else "") + whole.toString() + "." + fraction
+/** Formatea unidades menores (centavos) a cadena decimal con 2 decimales y
+ *  separador punto ("100.00", "-30.00", "0.00"). */
+private fun formatMinorUnits(minorUnits: Long): String {
+    val abs = if (minorUnits == Long.MIN_VALUE) Long.MAX_VALUE else abs(minorUnits)
+    val major = abs / 100
+    val minor = abs % 100
+    return "${if (minorUnits < 0) "-" else ""}$major.${minor.toString().padStart(2, '0')}"
 }
 
 /**

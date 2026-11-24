@@ -185,7 +185,6 @@ en el archivo señalado con valores tomados de tokens semánticos.
 |---|---|---|---|
 | E-01 | `border` | `AqButtons.kt` | Borde de foco y variante contorneada |
 | E-04 | `border` | `AqInputs.kt` | Foco y estado de error de campos |
-| E-07 | `border` | `AqForms.kt` | Caja del campo select (reposo, foco y error) |
 | E-08 | `border` | `AqPinEntry.kt` | Borde de tecla del teclado PIN (contraste en tema oscuro) |
 | E-12 | `border` | `AqTextInput.kt` | Borde de reposo, foco y error de campo de texto (MoonTextInput) |
 | E-13 | `border` | `AqTextArea.kt` | Borde de reposo, foco y error de área de texto (MoonTextArea) |

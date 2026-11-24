@@ -3,20 +3,22 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import com.agendaqr.core.ui.components.AqToast
+import kotlinx.coroutines.delay
+import com.agendaqr.core.ui.components.AqAlert
+import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqMenuItem
-import com.agendaqr.core.ui.components.AqButton
-import com.agendaqr.core.ui.components.AqBannerAction
-import com.agendaqr.core.ui.components.AqAlert
-import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.components.AqToast
+import com.agendaqr.core.ui.theme.AqMotion
 import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.components.AqTone
 import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
 import platform.UIKit.UIApplicationOpenSettingsURLString
@@ -58,8 +60,9 @@ actual fun QrGalleryControls(
         title = AppStrings.ElegirDeLaGaleria,
         titleMaxLines = Int.MAX_VALUE,
         onClick = { IosQrImportController.openMultiple(onResult = onResult) },
-        leading = { AqIcon(icon = AqIcons.Gallery) },
-        showChevron = true,
+        leading = { AqIcon(imageVector = AqIcons.Gallery, contentDescription = null) },
+        // AqMenuItem no tiene showChevron: el chevron vive en el slot trailing.
+        trailing = { AqIcon(imageVector = AqIcons.ChevronRight, contentDescription = null) },
         showDivider = true,
     )
 }
@@ -75,7 +78,17 @@ actual fun QrCameraEntryControl(
     var permissionError by rememberSaveable { mutableStateOf<UserFacingError?>(null) }
     // feedback de lectura exitosa por EVENTO.
     var detectionToken by remember { mutableStateOf<Any?>(null) }
-    AqToast(event = detectionToken, message = AppStrings.CodigoQrDetectado)
+    // El toast se muestra cuando hay un evento de detección pendiente y se
+    // descarta solo tras el duration del toast (auto-clear), sin bloquear
+    // la composición (AqToast no expone token de evento; show se deriva del
+    // token y LaunchedEffect lo limpia).
+    LaunchedEffect(detectionToken) {
+        if (detectionToken != null) {
+            delay(AqMotion.ToastDurationMs.toLong())
+            detectionToken = null
+        }
+    }
+    AqToast(show = detectionToken != null, message = AppStrings.CodigoQrDetectado)
     Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
         permissionError?.let { error ->
             val (bannerAction, bannerDismiss) = error.bannerActions(
@@ -85,21 +98,22 @@ actual fun QrCameraEntryControl(
                 },
                 onClear = { permissionError = null },
             )
-            // La acción del error (CameraPermission → Retry) se reemplaza por
-            // "Abrir ajustes": no es reintentar, es abrir el selector del SO.
-            val action = AqBannerAction(AppStrings.AbrirAjustes, bannerAction?.onClick ?: { permissionError = null })
+            // AqAlert no tiene action/dismiss: usa confirmLabel/onConfirm y
+            // dismissLabel/onDismiss (contrato de bannerActions, como en
+            // ContextScreen/DestinationsScreen/OperationEditorScreen).
             AqAlert(
-                title = error.what,
-                message = error.dataStatus,
                 tone = AqTone.Danger,
-                action = action,
-                dismiss = bannerDismiss,
+                message = error.dataStatus,
+                title = error.what,
+                confirmLabel = bannerAction?.label,
+                onConfirm = bannerAction?.onClick,
+                dismissLabel = bannerDismiss?.label ?: AppStrings.Cerrar,
+                onDismiss = bannerDismiss?.onClick ?: { },
             )
         }
         AqMenuItem(
             title = AppStrings.Camara,
             subtitle = AppStrings.PermisoCamaraContexto,
-            subtitleMaxLines = Int.MAX_VALUE,
             onClick = {
                 IosQrCameraPresenter(
                     onQr = { result ->
@@ -117,8 +131,8 @@ actual fun QrCameraEntryControl(
                     },
                 ).present()
             },
-            leading = { AqIcon(icon = AqIcons.Camera) },
-            showChevron = true,
+            leading = { AqIcon(imageVector = AqIcons.Camera, contentDescription = null) },
+            trailing = { AqIcon(imageVector = AqIcons.ChevronRight, contentDescription = null) },
             showDivider = showDivider,
         )
     }
@@ -143,8 +157,8 @@ actual fun QrPdfPickerControl(showDivider: Boolean) {
         title = AppStrings.ElegirArchivoPdf,
         titleMaxLines = Int.MAX_VALUE,
         onClick = { IosPdfPicker.present() },
-        leading = { AqIcon(icon = AqIcons.Attachment) },
-        showChevron = true,
+        leading = { AqIcon(imageVector = AqIcons.Attachment, contentDescription = null) },
+        trailing = { AqIcon(imageVector = AqIcons.ChevronRight, contentDescription = null) },
         showDivider = showDivider,
     )
 }

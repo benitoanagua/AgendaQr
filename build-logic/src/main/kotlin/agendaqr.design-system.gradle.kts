@@ -51,7 +51,6 @@ fun isUiLiteralAllowed(text: String): Boolean =
 val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-01" to listOf("border:AqButtons.kt"),
     "E-04" to listOf("border:AqInputs.kt"),
-    "E-07" to listOf("border:AqForms.kt"),
     // Bordes de teclas del teclado PIN (contraste en tema oscuro).
     "E-08" to listOf("border:AqPinEntry.kt"),
     // Borde de los campos de entrada Moon (AqTextInput / AqTextArea).
