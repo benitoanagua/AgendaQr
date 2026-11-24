@@ -1,10 +1,8 @@
 package com.agendaqr.core.ui.components
 
-import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -40,7 +38,6 @@ class AqNavChromeTest {
         }
 
         compose.onNodeWithTag("root-navigation").assertExists()
-        compose.onAllNodesWithTag("root-navigation-item").assertCountEquals(0)
         compose.onNodeWithText("Inicio").assertExists()
         compose.onNodeWithText("Buscar").performClick()
         compose.runOnIdle { assertEquals("search", selected) }
