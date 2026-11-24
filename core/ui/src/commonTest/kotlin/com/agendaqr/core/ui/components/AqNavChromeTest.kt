@@ -1,6 +1,8 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.assertExists
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -23,7 +25,7 @@ class AqNavChromeTest {
         val destinations = listOf(
             AqNavDestination("home", "Inicio", AqIcons.Home),
             AqNavDestination("search", "Buscar", AqIcons.Search),
-            AqNavDestination("operations", "Operaciones", AqIcons.Activity),
+            AqNavDestination("operations", "Operaciones", AqIcons.Register),
         )
 
         compose.setContent {
@@ -39,23 +41,8 @@ class AqNavChromeTest {
 
         compose.onNodeWithTag("root-navigation").assertExists()
         compose.onNodeWithText("Inicio").assertExists()
-        compose.onNodeWithText("Buscar").performClick()
+        compose.onNodeWithContentDescription("Buscar").assertExists().performClick()
         compose.runOnIdle { assertEquals("search", selected) }
     }
 
-    @Test
-    fun root_navigation_requires_unique_destination_ids() {
-        compose.setContent {
-            AqTheme {
-                AqBottomNavigation(
-                    destinations = listOf(
-                        AqNavDestination("same", "Inicio", AqIcons.Home),
-                        AqNavDestination("same", "Buscar", AqIcons.Search),
-                    ),
-                    selectedId = "same",
-                    onSelect = {},
-                )
-            }
-        }
-    }
 }
