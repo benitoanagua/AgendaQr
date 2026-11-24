@@ -52,7 +52,7 @@ fun AqScreen(
      *  Cuando se proporciona, se usa en lugar de [AqAppBar]. */
     topBar: (@Composable () -> Unit)? = null,
     /** Destinos de navegación raíz (pestañas inferiores). Cuando no está
-     *  vacía, se renderiza una [AqPillTab] inferior. */
+     *  vacía, se renderiza una [AqBottomNavigation] inferior. */
     navDestinations: List<AqNavDestination> = emptyList(),
     navSelectedId: String? = null,
     onNavSelect: ((String) -> Unit)? = null,
@@ -123,13 +123,12 @@ fun AqScreen(
                     it()
                 }
             }
-            // Navegación raíz inferior (pestañas tipo píldora con icono).
+            // Navegación raíz inferior (chrome dedicado, no selección segmentada).
             if (navDestinations.isNotEmpty()) {
-                AqPillTab(
-                    tabs = navDestinations.map { d -> AqTab(d.label, d.icon) },
-                    selectedIndex = navDestinations.indexOfFirst { it.id == navSelectedId }
-                        .takeIf { it >= 0 } ?: 0,
-                    onSelect = { index -> onNavSelect?.invoke(navDestinations[index].id) },
+                AqBottomNavigation(
+                    destinations = navDestinations,
+                    selectedId = navSelectedId,
+                    onSelect = { id -> onNavSelect?.invoke(id) },
                 )
             }
         }

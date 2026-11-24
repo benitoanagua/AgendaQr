@@ -559,6 +559,8 @@ object AqMetrics {
     val FieldCompactHeight = 40.dp
     val TopBarHeight = 48.dp
     val NavBarHeight = 64.dp
+    val NavItemWidth = 88.dp
+    val NavIndicatorWidth = 24.dp
     val NavRailWidth = 80.dp
     val ContentMaxWidth = 720.dp
     val QrPreviewSize = 240.dp

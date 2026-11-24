@@ -29,6 +29,17 @@ class AqTokenScaleTest {
     }
 
     @Test
+    fun product_layout_tokens_are_pinned() {
+        assertEquals(16.dp, AqLayout.ScreenMargin)
+        assertEquals(16.dp, AqLayout.BetweenOrganisms)
+        assertEquals(8.dp, AqLayout.InGroup)
+        assertEquals(12.dp, AqLayout.CellPadding)
+        assertEquals(16.dp, AqLayout.CardPadding)
+        assertEquals(8.dp, AqLayout.LabelToField)
+        assertEquals(12.dp, AqLayout.DockVertical)
+    }
+
+    @Test
     fun radius_scale_is_pinned() {
         assertEquals(2.dp, AqRadius.ExtraSmall)
         assertEquals(4.dp, AqRadius.Small)
@@ -48,6 +59,8 @@ class AqTokenScaleTest {
         assertEquals(48.dp, AqMetrics.TopBarHeight)
         assertEquals(64.dp, AqMetrics.NavBarHeight)
         assertEquals(80.dp, AqMetrics.NavRailWidth)
+        assertEquals(88.dp, AqMetrics.NavItemWidth)
+        assertEquals(24.dp, AqMetrics.NavIndicatorWidth)
         assertEquals(48.dp, AqMetrics.ButtonLargeHeight)
         assertEquals(40.dp, AqMetrics.ButtonCompactHeight)
         assertEquals(32.dp, AqMetrics.ButtonSmallHeight)

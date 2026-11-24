@@ -2,7 +2,6 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,25 +9,25 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
-import com.agendaqr.core.ui.theme.AqCorner
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSquircles
-import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
 
@@ -193,4 +192,85 @@ enum class AqTabSize(
 ) {
     Sm(AqSize.Sm, AqSize.X3s, AqSize.X5s),
     Md(AqSize.Md, AqSize.X2s, AqSize.X4s),
+}
+
+/**
+ * Navegación primaria inferior de la aplicación. No reutiliza la píldora de
+ * selección de Moon: es un patrón de chrome de producto, construido con
+ * roles semánticos, targets accesibles y separación estructural.
+ *
+ * Con hasta cinco destinos se distribuye el ancho disponible; cuando hay
+ * más, permite desplazamiento horizontal en lugar de comprimir etiquetas.
+ */
+@Composable
+fun AqBottomNavigation(
+    destinations: List<AqNavDestination>,
+    selectedId: String?,
+    onSelect: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    require(destinations.isNotEmpty()) { "AqBottomNavigation necesita destinos" }
+    require(destinations.map { it.id }.distinct().size == destinations.size) {
+        "AqBottomNavigation requiere ids únicos"
+    }
+    val selectedIndex = destinations.indexOfFirst { it.id == selectedId }
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(AqColor.Surface),
+    ) {
+        androidx.compose.material3.HorizontalDivider(color = AqColor.Divider)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .selectableGroup()
+                .then(
+                    if (destinations.size > 5) Modifier.horizontalScroll(rememberScrollState())
+                    else Modifier,
+                )
+                .padding(horizontal = AqSize.X2s, vertical = AqSize.X3s),
+            horizontalArrangement = Arrangement.spacedBy(AqSize.X4s),
+        ) {
+            destinations.forEachIndexed { index, destination ->
+                val selected = index == selectedIndex
+                Column(
+                    modifier = Modifier
+                        .then(if (destinations.size <= 5) Modifier.weight(1f) else Modifier.width(AqMetrics.NavItemWidth))
+                        .heightIn(min = AqMetrics.ControlMinSize)
+                        .clip(AqSquircles.InteractiveSm)
+                        .selectable(
+                            selected = selected,
+                            role = Role.Tab,
+                            onClick = { onSelect(destination.id) },
+                        )
+                        .semantics { contentDescription = destination.label }
+                        .padding(horizontal = AqSize.X2s, vertical = AqSize.X3s),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(AqMetrics.NavIndicatorWidth)
+                            .height(AqSize.X5s)
+                            .clip(AqSquircles.InteractiveXs)
+                            .background(if (selected) AqColor.BrandFill else AqColor.Transparent),
+                    )
+                    AqIcon(
+                        imageVector = destination.icon,
+                        contentDescription = null,
+                        size = AqMetrics.IconSize,
+                        tint = if (selected) AqColor.EmphasisIcon else AqColor.TextSecondary,
+                    )
+                    AqText(
+                        text = destination.label,
+                        size = AqType.BodyXs,
+                        fontWeight = if (selected) AqWeight.SemiBold else AqWeight.Medium,
+                        color = if (selected) AqColor.EmphasisText else AqColor.TextSecondary,
+                        maxLines = 1,
+                    )
+                }
+            }
+        }
+    }
 }
