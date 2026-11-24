@@ -80,9 +80,14 @@ fun AqCheckbox(
     state: AqFieldState = AqFieldState(),
     description: String? = null,
 ) {
+    // Sin etiqueta (casilla suelta dentro de una celda) el control mide solo
+    // su área táctil: antes fillMaxWidth() le quitaba todo el ancho al título
+    // de la fila contigua.
+    val hasText = label.isNotBlank() || description != null || state.helperMessage != null ||
+        (state.isError && state.errorMessage != null)
     Row(
         modifier = modifier
-            .fillMaxWidth()
+            .then(if (hasText) Modifier.fillMaxWidth() else Modifier)
             .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
             .fieldSemantics(state)
             .selectable(
@@ -99,7 +104,7 @@ fun AqCheckbox(
             enabled = state.enabled,
             modifier = Modifier.clearAndSetSemantics { }.size(AqMetrics.ControlMinSize),
         )
-        Column(modifier = Modifier.padding(start = AqSpacing.Md).weight(1f)) {
+        if (hasText) Column(modifier = Modifier.padding(start = AqSpacing.Md).weight(1f)) {
             AqText(
                 text = label,
                 size = AqType.Body,
@@ -140,12 +145,43 @@ fun AqChoiceSet(
         )
         val childState = state.copy(isError = false, errorMessage = null, helperMessage = null)
         options.forEach { option ->
-            AqRadio(
-                selected = option.id == selectedId,
-                onClick = { onSelected(option.id) },
-                contentDescription = option.label,
-                enabled = state.enabled,
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                    .selectable(
+                        selected = option.id == selectedId,
+                        enabled = state.enabled,
+                        role = Role.RadioButton,
+                        onClick = { onSelected(option.id) },
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AqSpacing.Md),
+            ) {
+                // La fila completa es la superficie seleccionable; el radio es
+                // solo el indicador (sin segundo clickable anidado).
+                AqRadio(
+                    selected = option.id == selectedId,
+                    onClick = null,
+                    modifier = Modifier.clearAndSetSemantics { },
+                    enabled = state.enabled,
+                )
+                Column(modifier = Modifier.weight(1f)) {
+                    AqText(
+                        text = option.label,
+                        size = AqType.Body,
+                        fontWeight = AqWeight.Medium,
+                        color = if (state.enabled) AqColor.TextPrimary else AqColor.OnDisabled,
+                    )
+                    option.description?.let {
+                        AqText(
+                            text = it,
+                            size = AqType.Caption,
+                            color = if (state.enabled) AqColor.TextSecondary else AqColor.OnDisabled,
+                        )
+                    }
+                }
+            }
         }
         AqFieldHelp(state)
     }

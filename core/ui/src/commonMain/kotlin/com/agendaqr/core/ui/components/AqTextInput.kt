@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -165,7 +166,7 @@ fun AqTextInput(
             ) {
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxSize()
                         .padding(horizontal = horizontalPadding, vertical = verticalPadding),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(innerGap),
@@ -218,19 +219,19 @@ fun AqTextInput(
                     interactionSource = interactionSource,
                     cursorBrush = SolidColor(if (effectiveIsError) AqColor.Danger else AqColor.Focus),
                     decorationBox = { innerTextField ->
+                        // La fila padre ya aplica el relleno Moon: aquí solo se
+                        // centra el texto en el alto disponible (sin relleno doble).
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = verticalPadding),
+                            modifier = Modifier.fillMaxWidth(),
                             contentAlignment = Alignment.CenterStart,
                         ) {
                             innerTextField()
                             if (value.isBlank() && placeholder != null) {
                                 AqText(
-                                    text = placeholder!!,
+                                    text = placeholder,
                                     size = AqType.Body,
                                     color = AqColor.TextTertiary,
-                                    modifier = Modifier.padding(horizontal = horizontalPadding),
+                                    maxLines = 1,
                                 )
                             }
                         }
@@ -262,7 +263,7 @@ fun AqTextInput(
                 AqErrorMessage(
                     message = effectiveErrorMessage,
                     modifier = Modifier
-                        .padding(horizontal = AqSize.X3s, vertical = AqSize.X4s)
+                        .padding(horizontal = AqSize.X3s)
                         .testTag("aq-field-support"),
                 )
             }
@@ -270,7 +271,7 @@ fun AqTextInput(
                 AqHelperMessage(
                     message = helperMessage,
                     modifier = Modifier
-                        .padding(horizontal = AqSize.X3s, vertical = AqSize.X4s)
+                        .padding(horizontal = AqSize.X3s)
                         .testTag("aq-field-support"),
                 )
             }

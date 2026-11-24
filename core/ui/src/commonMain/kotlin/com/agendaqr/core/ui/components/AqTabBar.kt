@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -55,23 +57,31 @@ fun AqTabBar(
 ) {
     require(tabs.isNotEmpty()) { "AqTabBar necesita al menos una pestaña" }
     require(selectedIndex in tabs.indices) { "AqTabBar: índice fuera de rango" }
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
-            .selectableGroup()
-            .padding(horizontal = size.padding),
-        horizontalArrangement = Arrangement.spacedBy(size.gap),
-    ) {
-        tabs.forEachIndexed { index, tab ->
-            AqTabContent(
-                tab = tab,
-                selected = index == selectedIndex,
-                enabled = enabled,
-                onClick = { if (enabled) onSelect(index) },
-                size = size,
-                modifier = Modifier.weight(1f),
-            )
+    // `weight` no es válido dentro de `horizontalScroll` (ancho infinito):
+    // las pestañas colapsaban a ancho mínimo y la etiqueta se partía letra a
+    // letra. Cada pestaña recibe como mínimo su parte equitativa del ancho
+    // disponible y crece según su contenido; si no caben, la fila desplaza.
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+        val share = (maxWidth - size.padding * 2 - size.gap * (tabs.size - 1)) / tabs.size
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .selectableGroup()
+                .padding(horizontal = size.padding),
+            horizontalArrangement = Arrangement.spacedBy(size.gap),
+        ) {
+            tabs.forEachIndexed { index, tab ->
+                AqTabContent(
+                    tab = tab,
+                    selected = index == selectedIndex,
+                    enabled = enabled,
+                    onClick = { if (enabled) onSelect(index) },
+                    size = size,
+                    showIndicator = true,
+                    modifier = Modifier.widthIn(min = share),
+                )
+            }
         }
     }
 }
@@ -94,11 +104,13 @@ fun AqPillTab(
         modifier = modifier
             .fillMaxWidth()
             .background(AqColor.SurfaceSecondary, AqSquircles.InteractiveSm)
-            .padding(horizontal = size.padding),
+            .padding(AqSize.X5s),
     ) {
         Row(
-            modifier = Modifier.selectableGroup(),
-            horizontalArrangement = Arrangement.spacedBy(size.gap),
+            modifier = Modifier
+                .fillMaxWidth()
+                .selectableGroup(),
+            horizontalArrangement = Arrangement.spacedBy(AqSize.X5s),
         ) {
             tabs.forEachIndexed { index, tab ->
                 AqTabContent(
@@ -121,8 +133,9 @@ fun AqPillTab(
     }
 }
 
-/** Contenido de una pestaña: ícono opcional (20-24 dp) + etiqueta (una
- *  línea, sin ellipsis a 0). Área táctil ≥ 48 dp. */
+/** Contenido de una pestaña: ícono opcional (20 dp) + etiqueta (una línea)
+ *  + conteo opcional, alineados en UNA fila y centrados. Área táctil ≥ 48 dp.
+ *  Con [showIndicator] la pestaña activa dibuja la barra inferior. */
 @Composable
 private fun AqTabContent(
     tab: AqTab,
@@ -131,9 +144,11 @@ private fun AqTabContent(
     onClick: () -> Unit,
     size: AqTabSize,
     modifier: Modifier = Modifier,
+    showIndicator: Boolean = false,
 ) {
     val selectedAndEnabled = selected && enabled
-    Box(
+    val contentColor = if (selectedAndEnabled) AqColor.EmphasisFill else AqColor.TextSecondary
+    Column(
         modifier = modifier
             .selectable(
                 selected = selected,
@@ -142,44 +157,58 @@ private fun AqTabContent(
                 onClick = onClick,
             )
             .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
-        contentAlignment = Alignment.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column(
-            modifier = Modifier.height(size.height),
-            verticalArrangement = Arrangement.spacedBy(size.gap),
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .heightIn(min = size.height)
+                .padding(horizontal = size.gap),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(size.gap, Alignment.CenterHorizontally),
         ) {
             tab.icon?.let {
                 AqIcon(
                     imageVector = it,
                     contentDescription = null,
                     size = AqMetrics.IconSizeCompact,
-                    tint = if (selectedAndEnabled) AqColor.EmphasisFill else AqColor.TextSecondary,
+                    tint = contentColor,
                 )
             }
             AqText(
                 text = tab.label,
                 size = AqType.Label,
                 fontWeight = AqWeight.SemiBold,
-                color = if (selectedAndEnabled) AqColor.EmphasisFill else AqColor.TextSecondary,
+                color = contentColor,
                 maxLines = 1,
             )
             tab.count?.let {
                 Box(
                     modifier = Modifier
+                        .defaultMinSize(minWidth = AqSize.X2s, minHeight = AqSize.X2s)
                         .background(
                             if (selectedAndEnabled) AqColor.EmphasisFill else AqColor.SurfaceContainerHighest,
                             AqSquircles.SurfaceSm,
                         )
-                        .padding(horizontal = AqSize.Xs),
+                        .padding(horizontal = AqSize.X5s),
+                    contentAlignment = Alignment.Center,
                 ) {
                     AqText(
                         text = it.toString(),
                         size = AqType.CaptionSmall,
                         color = if (selectedAndEnabled) AqColor.OnEmphasisFill else AqColor.TextSecondary,
+                        maxLines = 1,
                     )
                 }
             }
+        }
+        if (showIndicator) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(AqSize.X6s)
+                    .background(if (selectedAndEnabled) AqColor.EmphasisFill else AqColor.Transparent),
+            )
         }
     }
 }
@@ -230,8 +259,8 @@ fun AqBottomNavigation(
                     if (destinations.size > 5) Modifier.horizontalScroll(rememberScrollState())
                     else Modifier,
                 )
-                .padding(horizontal = AqSize.X2s, vertical = AqSize.X3s),
-            horizontalArrangement = Arrangement.spacedBy(AqSize.X4s),
+                .padding(horizontal = AqSize.X4s, vertical = AqSize.X4s),
+            horizontalArrangement = Arrangement.spacedBy(AqSize.X5s),
         ) {
             destinations.forEachIndexed { index, destination ->
                 val selected = index == selectedIndex
@@ -246,7 +275,7 @@ fun AqBottomNavigation(
                             onClick = { onSelect(destination.id) },
                         )
                         .semantics { contentDescription = destination.label }
-                        .padding(horizontal = AqSize.X2s, vertical = AqSize.X3s),
+                        .padding(horizontal = AqSize.X5s, vertical = AqSize.X4s),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
                 ) {

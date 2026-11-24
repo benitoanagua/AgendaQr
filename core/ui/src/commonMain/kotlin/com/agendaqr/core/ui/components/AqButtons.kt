@@ -380,8 +380,9 @@ fun AqSegmentedControl(
             Box(
                 modifier = Modifier
                     .weight(1f)
+                    .clip(AqSquircles.InteractiveSm)
                     .background(
-                        if (selected && optionEnabled) AqColor.SelectionSurface else AqColor.SurfaceContainerHigh,
+                        if (selected && optionEnabled) AqColor.SelectionSurface else AqColor.Transparent,
                         AqSquircles.InteractiveSm,
                     )
                     .then(
@@ -423,11 +424,14 @@ fun AqSegmentedControl(
                                     if (selected && optionEnabled) activeColor.copy(alpha = AqAlpha.SelectedOnTone) else AqColor.SurfaceContainerHighest,
                                     AqSquircles.InteractiveXs,
                                 )
-                                .padding(horizontal = AqSpacing.Xs),
+                                .defaultMinSize(minWidth = AqSize.X2s)
+                                .padding(horizontal = AqSpacing.Sm, vertical = AqSpacing.Xs),
+                            contentAlignment = Alignment.Center,
                         ) {
                             BasicText(
                                 text = it.toString(),
                                 style = AqTextStyles.Tag.copy(color = textColor),
+                                maxLines = 1,
                             )
                         }
                     }

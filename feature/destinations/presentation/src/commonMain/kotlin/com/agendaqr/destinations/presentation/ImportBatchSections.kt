@@ -86,8 +86,8 @@ internal fun BatchResultContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(AqColor.Surface, AqSquircles.SurfaceLg)
             .aqShadow(AqShadow.Sm, AqSquircles.SurfaceLg)
+            .background(AqColor.Surface, AqSquircles.SurfaceLg)
             .padding(AqSpacing.Lg),
         verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
     ) {

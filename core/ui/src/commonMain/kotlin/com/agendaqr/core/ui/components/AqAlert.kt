@@ -108,7 +108,7 @@ fun AqAlert(
                 )
             }
             Column(
-                modifier = Modifier.weight(1f, fill = false),
+                modifier = Modifier.weight(1f, fill = true),
                 verticalArrangement = Arrangement.spacedBy(AqSize.X4s),
             ) {
                 title?.let {

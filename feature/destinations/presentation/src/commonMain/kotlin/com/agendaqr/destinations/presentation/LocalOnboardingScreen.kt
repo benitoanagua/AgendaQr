@@ -18,7 +18,6 @@ import com.agendaqr.core.ui.components.AqKeypad
 import com.agendaqr.core.ui.components.AqPinDots
 import com.agendaqr.core.ui.components.AqScreen
 import com.agendaqr.core.ui.components.AqText
-import com.agendaqr.core.ui.components.AqTextInput
 import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqColor
@@ -127,7 +126,7 @@ internal fun LocalOnboardingScreen(
         }
         AqPinDots(
             filled = activeValue.length,
-            total = PinPolicy.MAX_LENGTH,
+            total = maxOf(PinPolicy.MIN_LENGTH, activeValue.length),
             error = state.error != null,
         )
         AqKeypad(
@@ -218,14 +217,11 @@ internal fun LocalLockScreen(
                 onDismiss = { },
             )
         }
-        AqTextInput(
-            label = AppStrings.LabelPin,
-            value = pin,
-            onValueChange = updatePin,
-        )
+        // El PIN nunca se muestra en un campo de texto libre (ver KDoc de la
+        // pantalla): solo puntos enmascarados + teclado propio.
         AqPinDots(
             filled = pin.length,
-            total = PinPolicy.MAX_LENGTH,
+            total = maxOf(PinPolicy.MIN_LENGTH, pin.length),
             error = state.error != null,
         )
         AqKeypad(

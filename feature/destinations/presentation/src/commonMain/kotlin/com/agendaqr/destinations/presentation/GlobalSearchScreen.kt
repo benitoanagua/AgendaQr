@@ -3,7 +3,6 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.ui.focus.FocusRequester
@@ -15,9 +14,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqAlert
-import com.agendaqr.core.ui.components.AqButton
-import com.agendaqr.core.ui.components.AqButtonSize
-import com.agendaqr.core.ui.components.AqButtonVariant
+import com.agendaqr.core.ui.components.AqChipOption
+import com.agendaqr.core.ui.components.AqChipRow
 import com.agendaqr.core.ui.components.AqEmptyPlaceholder
 import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
@@ -82,35 +80,32 @@ fun GlobalSearchScreen(
             )
         } else {
             val types = results.map { it.type }.distinct()
+            // Filtro por tipo (S04): antes eran botones sin acción y sin
+            // estado seleccionado; ahora es un grupo de chips funcional.
+            var selectedFilter by remember { mutableStateOf<AgendaSearchResultType?>(null) }
+            val activeFilter = selectedFilter?.takeIf { it in types }
+            val visibleResults = if (activeFilter == null) results else results.filter { it.type == activeFilter }
             if (types.size > 1) {
-                // Chips de filtro por tipo cuando hay resultados de varios tipos (S04).
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
-                ) {
-                    AqButton(
-                        label = AppStrings.Todos,
-                        onClick = {},
-                        variant = AqButtonVariant.Text,
-                        size = AqButtonSize.Small,
-                    )
-                    types.forEach { type ->
-                        AqButton(
-                            label = typeDisplayName(type),
-                            onClick = {},
-                            variant = AqButtonVariant.Text,
-                            size = AqButtonSize.Small,
-                        )
-                    }
-                }
+                val filterTypes: List<AgendaSearchResultType?> = listOf<AgendaSearchResultType?>(null) + types
+                AqChipRow(
+                    options = filterTypes.map { type ->
+                        AqChipOption(label = if (type == null) AppStrings.Todos else typeDisplayName(type))
+                    },
+                    selectedIndex = filterTypes.indexOf(activeFilter),
+                    onSelect = { index -> selectedFilter = filterTypes.getOrNull(index) },
+                    horizontalScroll = true,
+                )
             } else if (types.size == 1) {
                 // Encabezado del grupo único con conteo (S04).
                 AqSectionTitle(
                     text = typeDisplayName(types.first()) + AppStrings.SectionCountOpen + results.size + AppStrings.SectionCountClose
                 )
             }
-            Column(modifier = Modifier.fillMaxWidth()) {
-                results.forEachIndexed { index, result ->
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            ) {
+                visibleResults.forEachIndexed { index, result ->
                     AqMenuItem(
                         title = result.title,
                         subtitle = result.subtitle.orEmpty(),

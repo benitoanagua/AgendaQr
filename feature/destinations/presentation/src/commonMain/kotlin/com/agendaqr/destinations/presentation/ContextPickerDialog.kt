@@ -126,6 +126,7 @@ internal fun ContextPickerDialog(
                         onCreateContext(name, note)
                     },
                     variant = AqButtonVariant.Primary,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         },

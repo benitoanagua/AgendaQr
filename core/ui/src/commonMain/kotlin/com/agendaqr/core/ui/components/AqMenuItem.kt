@@ -130,7 +130,7 @@ fun AqMenuItem(
                     },
                 )
                 .menuItemSemantics(
-                    desc = title + (subtitle?.let { " - $it" } ?: ""),
+                    desc = title + (subtitle?.takeIf { it.isNotBlank() }?.let { " - $it" } ?: ""),
                     isSelected = isSelected,
                 ),
         ) {
@@ -153,7 +153,7 @@ fun AqMenuItem(
                         color = contentColor,
                         maxLines = titleMaxLines,
                     )
-                    subtitle?.let {
+                    subtitle?.takeIf { it.isNotBlank() }?.let {
                         AqText(
                             text = it,
                             size = AqType.BodySmall,

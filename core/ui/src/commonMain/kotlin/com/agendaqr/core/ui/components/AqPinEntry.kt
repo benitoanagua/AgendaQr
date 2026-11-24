@@ -53,8 +53,8 @@ fun AqPinDots(
     // En error, el hueco vacío usa borde Danger sobre superficie; el lleno
     // usa relleno Danger. Nunca se elimina el mensaje textual de la pantalla.
     Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Md),
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Md, Alignment.CenterHorizontally),
     ) {
         repeat(total) { index ->
             val isFilled = index < filled
@@ -99,7 +99,7 @@ fun AqKeypad(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+        verticalArrangement = Arrangement.spacedBy(AqSpacing.Md),
     ) {
         listOf(
             listOf('1', '2', '3'),
@@ -108,7 +108,7 @@ fun AqKeypad(
         ).forEach { row ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+                horizontalArrangement = Arrangement.spacedBy(AqSpacing.Md),
             ) {
                 row.forEach { digit ->
                     KeypadKey(
@@ -125,7 +125,7 @@ fun AqKeypad(
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Md),
         ) {
             // Hueco clásico del teclado telefónico: conserva la retícula
             // sin inventar una función que el producto no tiene.
@@ -171,7 +171,8 @@ private fun KeypadKey(
     val pressed = interactionSource.collectIsPressedAsState().value
     Box(
         modifier = modifier
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+            
+            .defaultMinSize(minHeight = AqMetrics.ControlMinSize + AqSpacing.Md)
             .background(
                 if (pressed) AqColor.SurfaceActive else AqColor.SurfaceContainerHighest,
                 AqSquircles.InteractiveSm,

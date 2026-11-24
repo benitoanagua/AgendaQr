@@ -87,7 +87,7 @@ fun AqAppBar(
             .background(AqColor.Surface)
             .padding(horizontal = AqSpacing.ScreenMargin),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AqSize.Xs),
+        horizontalArrangement = Arrangement.spacedBy(AqSize.X4s),
     ) {
         if (onBack != null) {
             AqButton(
@@ -105,8 +105,8 @@ fun AqAppBar(
             size = AqType.HeadingLg,
             fontWeight = AqWeight.SemiBold,
             color = AqColor.TextPrimary,
-            modifier = Modifier.weight(1f, fill = false),
-            maxLines = 1,
+            modifier = Modifier.weight(1f, fill = true),
+            maxLines = 2,
             semanticHeading = true,
         )
         actions.forEach { action ->
