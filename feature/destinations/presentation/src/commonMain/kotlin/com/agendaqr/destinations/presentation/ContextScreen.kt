@@ -21,9 +21,11 @@ import com.agendaqr.core.ui.components.AqEmptyPlaceholder
 import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqNavChromeState
 import com.agendaqr.core.ui.components.AqNavDestination
+import com.agendaqr.core.ui.components.AqPillTab
 import com.agendaqr.core.ui.components.AqScreen
 import com.agendaqr.core.ui.components.AqSectionTitle
 import com.agendaqr.core.ui.components.AqSkeletonBlock
+import com.agendaqr.core.ui.components.AqTab
 import com.agendaqr.core.ui.components.AqTag
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqToastHost
@@ -33,7 +35,6 @@ import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.accentFor
 import com.agendaqr.destinations.domain.OperationType
-import com.agendaqr.core.ui.components.AqTab
 
 /**
  * S06 — Contexto. `onBack` cierra la superficie según el punto de entrada.
@@ -193,9 +194,9 @@ private fun ContextDetail(
             var pivotSection by remember { mutableStateOf(0) }
             AqPillTab(
                 tabs = listOf(
-                    com.agendaqr.core.ui.components.AqTab(AppStrings.Qr, count = data.destinations.size),
-                    com.agendaqr.core.ui.components.AqTab(AppStrings.Operaciones, count = data.operations.size),
-                    com.agendaqr.core.ui.components.AqTab(AppStrings.Comprobantes, count = data.comprobantes.size),
+                    AqTab(AppStrings.Qr, count = data.destinations.size),
+                    AqTab(AppStrings.Operaciones, count = data.operations.size),
+                    AqTab(AppStrings.Comprobantes, count = data.comprobantes.size),
                 ),
                 selectedIndex = pivotSection,
                 onSelect = { section: Int -> pivotSection = section },

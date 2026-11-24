@@ -159,23 +159,19 @@ fun AqAlert(
                 horizontalArrangement = Arrangement.End,
             ) {
                 confirmLabel?.let { label ->
-                    val confirmEnabled = onConfirm != null
                     AqButton(
                         label = label,
                         onClick = { onConfirm?.invoke() },
                         variant = AqButtonVariant.Primary,
                         size = AqButtonSize.Small,
-                        enabled = confirmEnabled,
                     )
                 }
                 dismissLabel?.let { label ->
-                    val dismissEnabled = onDismiss != null
                     AqButton(
                         label = label,
                         onClick = { onDismiss?.invoke() },
                         variant = AqButtonVariant.Text,
                         size = AqButtonSize.Small,
-                        enabled = dismissEnabled,
                         icon = AqIcons.Close,
                         iconOnly = true,
                     )

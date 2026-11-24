@@ -87,7 +87,7 @@ fun AqLinearLoader(
     ) {
         LinearProgressIndicator(
             modifier = Modifier.fillMaxWidth().height(loaderHeight).clip(shape),
-            progress = progress,
+            progress = { progress },
             color = color,
         )
     }
