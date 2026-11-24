@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.rememberScrollState
@@ -160,10 +161,9 @@ fun AqBottomNavigation(
                 val selected = index == selectedIndex
                 Column(
                     modifier = Modifier
-                        .then(if (destinations.size <= 5) Modifier.weight(1f) else Modifier)
+                        .then(if (destinations.size <= 5) Modifier.weight(1f) else Modifier.width(AqMetrics.NavItemWidth))
                         .heightIn(min = AqMetrics.ControlMinSize)
                         .clip(AqSquircles.InteractiveSm)
-                        .background(if (selected) AqColor.SelectionSurface else AqColor.Transparent)
                         .selectable(
                             selected = selected,
                             role = Role.Tab,
@@ -173,6 +173,13 @@ fun AqBottomNavigation(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
                 ) {
+                    Box(
+                        modifier = Modifier
+                            .width(AqMetrics.NavIndicatorWidth)
+                            .height(AqSize.X5s)
+                            .clip(AqSquircles.InteractiveXs)
+                            .background(if (selected) AqColor.BrandFill else AqColor.Transparent),
+                    )
                     AqIcon(
                         imageVector = destination.icon,
                         contentDescription = null,
