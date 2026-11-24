@@ -21,7 +21,6 @@ import com.agendaqr.core.ui.components.AqEmptyPlaceholder
 import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqNavChromeState
 import com.agendaqr.core.ui.components.AqNavDestination
-import com.agendaqr.core.ui.components.AqPillTab
 import com.agendaqr.core.ui.components.AqScreen
 import com.agendaqr.core.ui.components.AqSectionTitle
 import com.agendaqr.core.ui.components.AqSkeletonBlock
@@ -40,7 +39,7 @@ import com.agendaqr.core.ui.components.AqTab
  * S06 — Contexto. `onBack` cierra la superficie según el punto de entrada.
  *
  * Construido exclusivamente con componentes Moon: [AqScreen] (scaffold con
- * nav [AqPillTab]), [AqMenuItem] (filas), [AqEmptyPlaceholder] (vacío),
+ * navegación raíz dedicada), [AqMenuItem] (filas), [AqEmptyPlaceholder] (vacío),
  * [AqToastHost] (toasts), [AqAlert] (banners), [AqTag] (etiquetas).
  * Sin símbolos legacy ni wrappers `Aq*`.
  */
