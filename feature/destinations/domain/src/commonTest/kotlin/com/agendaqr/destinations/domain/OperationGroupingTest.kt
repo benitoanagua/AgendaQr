@@ -75,6 +75,19 @@ class OperationGroupingTest {
     }
 
     @Test
+    fun balance_redondea_importes_a_dos_decimales_half_up() {
+        val now = Instant.fromEpochMilliseconds(0).toEpochMilliseconds()
+        val balance = balanceByCurrency(
+            listOf(
+                op("a", OperationType.COBRO, now, "1.005"),
+                op("b", OperationType.COBRO, now, "2,004"),
+                op("c", OperationType.PAGO, now, "0.01"),
+            ),
+        )
+        assertEquals(mapOf("USD" to "3.00"), balance)
+    }
+
+    @Test
     fun formato_balance_signo_direccional() {
         assertEquals("+100,00", formatBalance("100.00"))
         assertEquals("−30,00", formatBalance("-30.00"))
