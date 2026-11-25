@@ -1,41 +1,51 @@
 package com.agendaqr.core.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.ui.draw.clip
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
-import com.agendaqr.core.ui.theme.AqSize
-import com.agendaqr.core.ui.theme.AqSquircles
+import com.agendaqr.core.ui.theme.AqMotion
+import com.agendaqr.core.ui.theme.AqStateAlpha
 import com.agendaqr.core.ui.theme.AqStroke
-import com.agendaqr.core.ui.theme.LocalAqColorScheme
 
 /**
  * Botón de radio sobre [MoonRadio] (`moon_design` 1.1.0, `widgets/radio`).
  *
- * Círculo exterior con un punto interior relleno cuando está seleccionado.
- * Mutuamente excluyente dentro de un grupo (el llamador gestiona el estado
- * de selección de cada opción).
+ * Geometría de `radio_painter.dart`: caja de 16×16 dp, círculo exterior de
+ * radio 8 con trazo de 1 dp y punto interior de radio 4 que crece con la
+ * fracción de animación. Colores (`radio_theme.dart`): activo `piccolo`→
+ * [AqColor.BrandFill], inactivo `trunks`→[AqColor.TextSecondary]; el trazo y
+ * el punto comparten el color interpolado.
  *
- * - [selected]: estado de selección.
- * - [onClick]: invocada al pulsar (solo si [enabled]).
- * - [enabled]: desactiva la interacción y aplica estilo deshabilitado.
- * - Área táctil ≥ 48 dp (D-02).
+ * - Mutuamente excluyente dentro de un grupo (el llamador gestiona el estado
+ *   de selección de cada opción). Moon lo implementa como `Toggleable` con
+ *   `toggleable = false` por defecto: pulsar el seleccionado no lo desmarca.
+ * - [onClick]: `null` cuando la fila contenedora ya es la superficie
+ *   seleccionable (el indicador queda inerte).
+ * - Deshabilitado: opacidad 0.6 sobre el glifo (MoonOpacities.disabled).
+ * - Área táctil ≥ 48 dp (D-02; Moon usa 40, la regla de producto exige 48).
  * - [contentDescription]: nombre accesible del control.
  */
 @Composable
@@ -45,29 +55,32 @@ fun AqRadio(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     contentDescription: String? = null,
-    size: Dp = AqSize.Md,
 ) {
-    val scheme = LocalAqColorScheme.current
     val interactionSource = remember { MutableInteractionSource() }
-    // PV-01: el estado pressed no cambia el color del borde del radio; el
-    // efecto es el scale de Moon. El borde funcional usa `functionalBorder`
-    // (PV-03) y no se tiñe al pulsar.
-    val outerColor = when {
-        !enabled -> scheme.onDisabled
-        selected -> scheme.emphasisFill
-        else -> scheme.border
-    }
-    val fillColor = when {
-        !enabled -> scheme.onDisabled
-        selected -> scheme.emphasisFill
-        else -> AqColor.Transparent
-    }
-    val shape: Shape = AqSquircles.Circle
+    val position by animateFloatAsState(
+        targetValue = if (selected) 1f else 0f,
+        animationSpec = tween(
+            durationMillis = AqMotion.DurationMediumMs,
+            easing = AqMotion.Easings.InOutCubic,
+        ),
+        label = "aqRadio",
+    )
+    val dotSize by animateDpAsState(
+        targetValue = AqLayout.RadioInnerRadius * 2 * position,
+        animationSpec = tween(
+            durationMillis = AqMotion.DurationMediumMs,
+            easing = AqMotion.Easings.InOutCubic,
+        ),
+        label = "aqRadioDot",
+    )
+    val glyphColor = lerpRadioColor(AqColor.TextSecondary, AqColor.BrandFill, position)
+
     Box(
         modifier = modifier
-            .size(size)
-            .defaultMinSize(minWidth = AqMetrics.ControlMinSize, minHeight = AqMetrics.ControlMinSize)
-            .border(AqStroke.Default, outerColor, shape)
+            .defaultMinSize(
+                minWidth = AqMetrics.ControlMinSize,
+                minHeight = AqMetrics.ControlMinSize,
+            )
             .clickable(
                 role = Role.RadioButton,
                 onClickLabel = contentDescription ?: "radio",
@@ -82,13 +95,31 @@ fun AqRadio(
             },
         contentAlignment = Alignment.Center,
     ) {
-        if (selected || !enabled) {
-            Box(
-                modifier = Modifier
-                    .size(size * 0.5f)
-                    .background(fillColor, shape)
-                    .clip(shape),
+        Canvas(
+            modifier = Modifier
+                .size(AqLayout.CheckboxGlyphSize)
+                .alpha(if (enabled) 1f else AqStateAlpha.Disabled),
+        ) {
+            val center = Offset(size.width / 2f, size.height / 2f)
+            // Círculo exterior: trazo de 1 dp, color interpolado por `position`.
+            drawCircle(
+                color = glyphColor,
+                radius = size.minDimension / 2f - AqStroke.Default.toPx() / 2f,
+                center = center,
+                style = Stroke(width = AqStroke.Default.toPx()),
             )
+            // Punto interior: radio 4 dp × position (0 = oculto).
+            if (dotSize > com.agendaqr.core.ui.theme.AqLayout.Zero) {
+                drawCircle(
+                    color = glyphColor,
+                    radius = dotSize.toPx() / 2f,
+                    center = center,
+                )
+            }
         }
     }
 }
+
+@Composable
+private fun lerpRadioColor(from: Color, to: Color, fraction: Float): Color =
+    androidx.compose.ui.graphics.lerp(from, to, fraction.coerceIn(0f, 1f))

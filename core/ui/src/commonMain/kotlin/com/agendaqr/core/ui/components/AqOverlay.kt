@@ -32,6 +32,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqShadow
+import com.agendaqr.core.ui.theme.aqShadow
+import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSquircles
@@ -107,7 +110,7 @@ fun AqModal(
                     // Primero el fondo y después el relleno interno: antes el
                     // padding iba delante y actuaba como margen externo, así el
                     // contenido quedaba pegado al borde del panel.
-                    .background(LocalAqColorScheme.current.surface, AqSquircles.SurfaceLg)
+                    .background(LocalAqColorScheme.current.background, AqSquircles.SurfaceSm)
                     .padding(AqSize.X2s)
                     .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
                 verticalArrangement = Arrangement.spacedBy(AqSize.X3s),
@@ -184,9 +187,11 @@ fun AqDrawer(
         )
         Column(
             modifier = Modifier
-                .width(AqMetrics.NavRailWidth)
+                .width(AqLayout.DrawerWidth)
                 .fillMaxHeight()
-                .background(LocalAqColorScheme.current.surface, AqSquircles.InteractiveMd)
+                // Moon `drawer_theme.dart`: `borderRadius.zero` + sombra `lg`.
+                .aqShadow(AqShadow.Lg)
+                .background(LocalAqColorScheme.current.background)
                 .semantics { paneTitle = title },
         ) {
             AqText(

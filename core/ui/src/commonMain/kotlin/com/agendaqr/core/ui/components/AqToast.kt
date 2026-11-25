@@ -29,9 +29,11 @@ import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqMotion
+import com.agendaqr.core.ui.theme.AqShadow
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
 import com.agendaqr.core.ui.theme.AqCorner
 import com.agendaqr.core.ui.theme.AqSquircles
+import com.agendaqr.core.ui.theme.aqShadow
 import kotlinx.coroutines.delay
 
 /**
@@ -46,7 +48,8 @@ import kotlinx.coroutines.delay
  * - [durationMs]: tiempo de vida en ms; 0 lo mantiene visible hasta que el
  *   llamador cambie [show] a falso.
  * - [onDismissRequest]: se invoca al expirar [durationMs] o al descartar.
- * - Superficie con relleno y radio SurfaceLg, borde funcional.
+ * - Superficie `goku`→[AqColor.Background], radio `surfaceSm`, sombra
+ *   `shadows.lg`, padding `x2s`, gaps `x2s`/`x3s` (Moon `toast_theme`).
  * - Objetivo táctil ≥ 48 dp en la acción (D-02).
  * - Todo el copy llega del llamador.
  */
@@ -78,21 +81,22 @@ fun AqToast(
         Box(
             modifier = Modifier
                 .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                .background(AqColor.Surface, AqSquircles.SurfaceLg)
-                .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Md),
+                .aqShadow(AqShadow.Lg, AqSquircles.SurfaceSm)
+                .background(AqColor.Background, AqSquircles.SurfaceSm)
+                .padding(AqSize.X2s),
             contentAlignment = Alignment.Center,
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AqSize.Sm),
+                horizontalArrangement = Arrangement.spacedBy(AqSize.X2s),
             ) {
                 icon?.let {
                     AqIcon(
                         imageVector = it,
                         contentDescription = null,
                         size = AqMetrics.IconSizeCompact,
-                        tint = AqColor.TextSecondary,
+                        tint = AqColor.TextPrimary,
                     )
                 }
                 AqText(

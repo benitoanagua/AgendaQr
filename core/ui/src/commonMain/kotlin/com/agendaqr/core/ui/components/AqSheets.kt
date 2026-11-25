@@ -28,6 +28,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqShadow
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSquircles
@@ -81,8 +82,8 @@ fun AqBottomSheet(
             Column(
                 modifier = modifier
                     .fillMaxWidth()
-                    .aqShadow(AqShadow.Lg, AqSquircles.SurfaceLg)
-                    .background(AqColor.Surface, AqSquircles.SurfaceLg)
+                    .aqShadow(AqShadow.Lg, AqSquircles.SurfaceTopLg)
+                    .background(AqColor.Background, AqSquircles.SurfaceTopLg)
                     .semantics { paneTitle = title }
                     .testTag("aq-bottom-sheet-pane")
                     .verticalScroll(rememberScrollState())
@@ -92,13 +93,15 @@ fun AqBottomSheet(
                         onClick = {},
                     ),
                 ) {
+                // Handle visual de arrastre: píldora angosta centrada
+                // (Moon no define handle; es affordance móvil convencional).
                 Box(
                     modifier = Modifier
                         .padding(vertical = AqSpacing.Md)
                         .fillMaxWidth(),
                     contentAlignment = Alignment.Center,
                 ) {
-                    // Handle visual de arrastre (indica que la hoja es manejable).
+                    // Área táctil ≥ 48 dp; la píldora visual es angosta.
                     Box(
                         modifier = Modifier
                             .defaultMinSize(minWidth = AqMetrics.ControlMinSize, minHeight = AqMetrics.ControlMinSize)
@@ -125,10 +128,16 @@ fun AqBottomSheet(
                                     Modifier
                                 },
                             )
-                            .testTag("aq-bottom-sheet-handle")
-                            .width(AqSpacing.Xxxl)
-                            .background(AqColor.Divider, AqSquircles.SurfaceLg),
-                    )
+                            .testTag("aq-bottom-sheet-handle"),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .width(AqLayout.BottomSheetHandleWidth)
+                                .height(AqLayout.BottomSheetHandleHeight)
+                                .background(AqColor.Divider, AqSquircles.Circle),
+                        )
+                    }
                 }
                 AqText(
                     text = title,

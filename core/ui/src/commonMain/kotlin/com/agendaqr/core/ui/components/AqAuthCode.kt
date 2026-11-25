@@ -1,43 +1,45 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqMotion
 import com.agendaqr.core.ui.theme.AqSize
-import com.agendaqr.core.ui.theme.AqSpacing
-import com.agendaqr.core.ui.theme.AqSquircles
-import com.agendaqr.core.ui.theme.AqStroke
 import com.agendaqr.core.ui.theme.AqType
-import com.agendaqr.core.ui.theme.LocalAqColorScheme
+import com.agendaqr.core.ui.theme.AqWeight
+import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
  * Código de autenticación sobre [MoonAuthCode] (`moon_design` 1.1.0,
- * `widgets/auth_code`). Campos individuales por dígito, con animación de
- * error opcional. Todo el copy llega del llamador.
+ * `widgets/auth_code` + `auth_code_theme.dart`).
  *
- * - [length]: número de dígitos.
- * - [value]: valor actual (un carácter por campo).
- * - [onValueChange]: invocada con el valor completo al cambiar.
- * - [isError]: activa el estado de error (borde de peligro).
- * - Cada campo tiene área táctil ≥ 48 dp (D-02).
+ * - Celda: 48 × 56 dp (`sizes.lg` × `sizes.xl`), radio `interactiveSm`,
+ *   fondo `goku`→[AqColor.Background] en todos los estados.
+ * - Borde: `beerus`→[AqColor.Border] inactivo, `piccolo`→[AqColor.Focus]
+ *   en la celda seleccionada ([selectedIndex], por defecto la posición del
+ *   cursor = dígitos escritos), `chichi`→[AqColor.Danger] en error.
+ * - Texto `body.text24` (24 regular) en `textPrimary`; error
+ *   `body.text12` — Moon muestra el mensaje de error bajo las celdas.
+ * - Hueco entre celdas `x4s` (8 dp); transición de color de
+ *   `defaultTransitionDuration` `easeInOutCubic` (200 ms).
+ * - [errorMessage]: texto de error opcional bajo las celdas.
+ * - Todo el copy llega del llamador.
  */
 @Composable
 fun AqAuthCode(
@@ -46,45 +48,64 @@ fun AqAuthCode(
     onValueChange: (String) -> Unit,
     isError: Boolean = false,
     modifier: Modifier = Modifier,
+    /** Índice de la celda seleccionada; por defecto el cursor
+     *  (`value.length`, acotado a la última celda). */
+    selectedIndex: Int? = null,
+    /** Mensaje de error bajo las celdas (`body.text12`, `chichi`). */
+    errorMessage: String? = null,
 ) {
     require(length > 0) { "AqAuthCode.length debe ser mayor que 0" }
-    val scheme = LocalAqColorScheme.current
-    Row(
+    val shape = AqSquircles.InteractiveSm
+    val cursor = selectedIndex ?: value.length.coerceAtMost(length - 1)
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
             .semantics {
                 this.contentDescription = "Código de autenticación, $length dígitos"
             },
-        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(AqSize.X2s),
-        verticalAlignment = Alignment.CenterVertically,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
     ) {
-        repeat(length) { index ->
-            val char = value.take(index + 1).lastOrNull()
-            val borderColor = when {
-                isError -> AqColor.Danger
-                else -> scheme.border
-            }
-            Box(
-                modifier = Modifier
-                    .size(AqSize.Sm)
-                    .heightIn(min = AqSize.Sm)
-                    .background(
-                        if (isError) AqColor.DangerContainer else AqColor.InputSurface,
-                        AqSquircles.InteractiveXs,
-                    )
-                    .border(AqStroke.Default, borderColor, AqSquircles.InteractiveXs)
-                    .padding(horizontal = AqSize.X2s),
-                contentAlignment = Alignment.Center,
-            ) {
-                if (char != null) {
-                    AqText(
-                        text = char.toString(),
-                        size = AqType.Body,
-                        color = AqColor.TextPrimary,
-                    )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(AqSize.X4s),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            repeat(length) { index ->
+                val char = value.getOrNull(index)
+                val isSelected = index == cursor
+                val borderColor by animateColorAsState(
+                    targetValue = when {
+                        isError -> AqColor.Danger
+                        isSelected -> AqColor.Focus
+                        else -> AqColor.Border
+                    },
+                    animationSpec = tween(
+                        durationMillis = AqMotion.DurationMediumMs,
+                        easing = AqMotion.Easings.InOutCubic,
+                    ),
+                    label = "aqAuthCodeBorder$index",
+                )
+                Box(
+                    modifier = Modifier
+                        .width(AqSize.Lg)
+                        .height(AqSize.Xl)
+                        .background(AqColor.Background, shape)
+                        .border(AqMetrics.Border, borderColor, shape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (char != null) {
+                        AqText(
+                            text = char.toString(),
+                            size = AqType.HeadingXl,
+                            fontWeight = AqWeight.Regular,
+                            color = AqColor.TextPrimary,
+                        )
+                    }
                 }
             }
+        }
+        if (isError && !errorMessage.isNullOrBlank()) {
+            AqErrorMessage(message = errorMessage)
         }
     }
 }

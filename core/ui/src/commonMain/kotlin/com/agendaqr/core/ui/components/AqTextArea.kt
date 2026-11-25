@@ -2,17 +2,15 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,45 +20,43 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import com.agendaqr.core.ui.theme.AqColor
-import com.agendaqr.core.ui.theme.AqCorner
 import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
+import com.agendaqr.core.ui.theme.AqStateAlpha
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
-import com.agendaqr.core.ui.theme.LocalAqColorScheme
 import com.agendaqr.core.ui.theme.AqSquircles
+import androidx.compose.ui.draw.alpha
 
 /**
- * Entrada de texto multilínea sobre [MoonTextArea]
- * (`moon_design` 1.1.0, `widgets/text_area`).
+ * Área de texto multilínea sobre [MoonTextArea] (`moon_design` 1.1.0,
+ * `widgets/text_area` + `text_area_theme.dart`).
  *
- * La caja crece en altura con el contenido y la escala de fuente (mínimo
- * 48 dp de objetivo táctil, sin altura fija que recorte). La etiqueta es
- * persistente y el error se expresa con ícono + texto bajo el campo
- * ([AqErrorMessage]), nunca solo color.
- *
- * - Altura por tamaño: sm 32 / md 40 / lg 48 / xl 56 dp ([AqSize]).
- * - Radios: InteractiveXs / InteractiveSm ([AqCorner]), recortados con
- *   [AqSquircles].
- * - Todo el copy llega del llamador.
+ * Moon define una única configuración (sin tamaños):
+ * - Caja: fondo `goku`→[AqColor.Background], borde `beerus`→[AqColor.Border]
+ *   inactivo / `piccolo`→[AqColor.Focus] activo / `chichi`→[AqColor.Danger]
+ *   en error, radio `interactiveSm`, relleno `x2s` (16 dp) en los cuatro
+ *   lados, texto `body.text16` (16 regular).
+ * - Helper/error debajo: padding superior `x4s` (8 dp), laterales `x3s`
+ *   (12 dp), `body.text12` en `trunks`→[AqColor.TextSecondary] o color de
+ *   error. El error se expresa con ícono + texto ([AqErrorMessage]).
+ * - La caja crece con el contenido (`minLines`/`maxLines`); el área táctil
+ *   se garantiza con un wrapper de 48 dp ([AqMetrics.ControlMinSize]).
+ * - [borderless]: dentro de [AqTextInputGroup] la caja no dibuja fondo ni
+ *   borde (los pinta el grupo, como `MoonFormTextInput` anidado).
+ * - Deshabilitado = opacidad 0.6. Todo el copy llega del llamador.
  */
 @Composable
 fun AqTextArea(
@@ -83,7 +79,7 @@ fun AqTextArea(
     optionalLabel: String? = null,
     maxLength: Int? = null,
     focusRequester: FocusRequester? = null,
-    size: AqTextInputSize = AqTextInputSize.Md,
+    borderless: Boolean = false,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused = interactionSource.collectIsFocusedAsState().value
@@ -95,123 +91,115 @@ fun AqTextArea(
         lengthExceeded -> "Se excedió el límite de $maxLength caracteres"
         else -> null
     }
+    // Moon text_area: inactivo `beerus`, activo `piccolo`, error `chichi`.
     val borderColor = when {
         effectiveIsError -> AqColor.Danger
         focused -> AqColor.Focus
-        enabled -> AqColor.FunctionalBorder
-        else -> AqColor.OnDisabled.copy(alpha = 0.3f)
+        else -> AqColor.Border
     }
-    val shape = when (size) {
-        AqTextInputSize.Xl -> AqSquircles.InteractiveMd
-        else -> AqSquircles.InteractiveSm
-    }
-    val verticalPadding = when (size) {
-        AqTextInputSize.Sm -> AqLayout.InputPaddingVerticalSm
-        AqTextInputSize.Md -> AqLayout.InputPaddingVerticalMd
-        AqTextInputSize.Lg -> AqLayout.InputPaddingVerticalLg
-        AqTextInputSize.Xl -> AqLayout.InputPaddingVerticalXl
-    }
-    val horizontalPadding = when (size) {
-        AqTextInputSize.Sm -> AqLayout.InputPaddingHorizontalSm
-        AqTextInputSize.Md -> AqLayout.InputPaddingHorizontalMd
-        AqTextInputSize.Lg -> AqLayout.InputPaddingHorizontalLg
-        AqTextInputSize.Xl -> AqLayout.InputPaddingHorizontalXl
-    }
-    // Hueco interno entre el ícono de apoyo y el texto (Moon §3: 8 dp, xl 16).
-    val innerGap = if (size == AqTextInputSize.Xl) AqSize.X2s else AqSize.X4s
-    // Wrapper de toque invisible para que el área táctil sea ≥ 48 dp.
-    val touchVerticalPadding = ((AqMetrics.ControlMinSize - size.height) / 2).coerceAtLeast(AqLayout.Zero)
+    val shape = AqSquircles.InteractiveSm
+    // `textPadding` de Moon: EdgeInsets.all(x2s).
+    val contentPadding = AqSize.X2s
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(AqLayout.LabelToField),
+        verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
     ) {
-        AqTextInputLabel(label, optionalLabel, enabled)
+        AqTextAreaLabel(label, optionalLabel, enabled)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = AqMetrics.ControlMinSize)
+                .alpha(if (enabled) 1f else AqStateAlpha.Disabled)
                 .testTag("aq-field-touch-target")
-                .padding(vertical = touchVerticalPadding)
                 .semantics {
                     contentDescription = label
-                    text = AnnotatedString(label)
                     if (effectiveIsError && effectiveErrorMessage != null) error(effectiveErrorMessage)
                 },
+            contentAlignment = Alignment.Center,
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = size.height)
-                    .background(AqColor.InputSurface, shape)
-                    .border(AqMetrics.Border, borderColor, shape)
-                    .padding(horizontal = horizontalPadding, vertical = verticalPadding),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(innerGap),
-            ) {
-            leadingIcon?.let { glyph ->
-                AqIcon(
-                    imageVector = glyph,
-                    contentDescription = null,
-                    size = AqMetrics.IconSizeCompact,
-                    tint = when {
-                        effectiveIsError -> AqColor.Danger
-                        focused -> AqColor.Focus
-                        enabled -> AqColor.TextTertiary
-                        else -> AqColor.OnDisabled
-                    },
-                )
-            }
-            BasicTextField(
-                value = value,
-                onValueChange = onValueChange,
-                modifier = Modifier
-                    .weight(1f)
                     .then(
-                        if (focusRequester != null) {
-                            Modifier.focusRequester(focusRequester)
+                        if (borderless) {
+                            Modifier
                         } else {
                             Modifier
+                                .background(AqColor.Background, shape)
+                                .border(AqMetrics.Border, borderColor, shape)
                         },
                     )
-                    .semantics {
-                        // El valor editado se anuncia como texto; el nombre
-                        // accesible del campo vive en el wrapper de 48 dp.
-                        text = AnnotatedString(value)
+                    .padding(contentPadding),
+                verticalAlignment = Alignment.Top,
+            ) {
+                leadingIcon?.let { glyph ->
+                    com.agendaqr.core.ui.components.AqIcon(
+                        imageVector = glyph,
+                        contentDescription = null,
+                        size = AqSize.Xs,
+                        tint = when {
+                            effectiveIsError -> AqColor.Danger
+                            focused -> AqColor.Focus
+                            enabled -> AqColor.TextSecondary
+                            else -> AqColor.OnDisabled
+                        },
+                        modifier = Modifier.padding(top = AqSize.X5s),
+                    )
+                }
+                BasicTextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = if (leadingIcon != null) AqSize.X4s else AqLayout.Zero)
+                        .then(
+                            if (focusRequester != null) {
+                                Modifier.focusRequester(focusRequester)
+                            } else {
+                                Modifier
+                            },
+                        )
+                        .semantics {
+                            // El valor editado se anuncia como texto; el nombre
+                            // accesible del campo vive en el wrapper.
+                            text = AnnotatedString(value)
+                        },
+                    enabled = enabled,
+                    readOnly = readOnly,
+                    singleLine = false,
+                    minLines = minLines,
+                    maxLines = maxLines,
+                    textStyle = AqTextStyles.BodyMd.copy(
+                        color = when {
+                            !enabled -> AqColor.OnDisabled
+                            effectiveIsError -> AqColor.Danger
+                            else -> AqColor.TextPrimary
+                        },
+                    ),
+                    keyboardOptions = keyboardOptions,
+                    keyboardActions = keyboardActions,
+                    visualTransformation = visualTransformation,
+                    interactionSource = interactionSource,
+                    cursorBrush = SolidColor(if (effectiveIsError) AqColor.Danger else AqColor.Focus),
+                    decorationBox = { innerTextField ->
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.TopStart,
+                        ) {
+                            innerTextField()
+                        }
                     },
-                enabled = enabled,
-                readOnly = readOnly,
-                singleLine = false,
-                minLines = minLines,
-                maxLines = maxLines,
-                textStyle = AqTextStyles.Body.copy(
-                    color = when {
-                        !enabled -> AqColor.OnDisabled
-                        effectiveIsError -> AqColor.Danger
-                        else -> AqColor.TextPrimary
-                    },
-                ),
-                keyboardOptions = keyboardOptions,
-                keyboardActions = keyboardActions,
-                visualTransformation = visualTransformation,
-                interactionSource = interactionSource,
-                cursorBrush = SolidColor(if (effectiveIsError) AqColor.Danger else AqColor.Focus),
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = verticalPadding),
-                        contentAlignment = Alignment.CenterStart,
-                    ) { innerTextField() }
-                },
-            )
-            trailing?.invoke()
-        }
+                )
+                trailing?.let {
+                    it()
+                }
+            }
         }
         maxLength?.let { limit ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = AqSize.X3s, vertical = AqSize.X5s),
+                    .padding(horizontal = AqSize.X3s),
                 horizontalArrangement = Arrangement.End,
             ) {
                 AqText(
@@ -219,26 +207,38 @@ fun AqTextArea(
                     modifier = Modifier.semantics {
                         contentDescription = "Longitud $currentLength de $limit"
                     },
-                    size = AqType.BodySmall,
-                    color = if (lengthExceeded) AqColor.Danger else AqColor.TextTertiary,
+                    size = AqType.BodyXs,
+                    color = if (lengthExceeded) AqColor.Danger else AqColor.TextSecondary,
                 )
             }
         }
+        // `helperPadding` de Moon: top x4s, laterales x3s.
         when {
             effectiveIsError && effectiveErrorMessage != null -> {
                 AqErrorMessage(
                     message = effectiveErrorMessage,
                     modifier = Modifier
-                        .padding(horizontal = AqSize.X3s, vertical = AqSize.X5s)
+                        .padding(
+                            start = AqSize.X3s,
+                            end = AqSize.X3s,
+                            top = AqSize.X5s,
+                        )
                         .testTag("aq-field-support"),
                 )
             }
             helperMessage != null -> {
-                AqHelperMessage(
-                    message = helperMessage,
+                AqText(
+                    text = helperMessage,
                     modifier = Modifier
-                        .padding(horizontal = AqSize.X3s, vertical = AqSize.X5s)
+                        .padding(
+                            start = AqSize.X3s,
+                            end = AqSize.X3s,
+                            top = AqSize.X5s,
+                        )
+                        .semantics { contentDescription = helperMessage }
                         .testTag("aq-field-support"),
+                    size = AqType.BodyXs,
+                    color = AqColor.TextSecondary,
                 )
             }
         }
@@ -247,7 +247,7 @@ fun AqTextArea(
 
 /** Etiqueta persistente del área de texto con el marcador de opcionalidad. */
 @Composable
-private fun AqTextInputLabel(
+private fun AqTextAreaLabel(
     label: String,
     optionalLabel: String?,
     enabled: Boolean,
@@ -262,13 +262,13 @@ private fun AqTextInputLabel(
             size = AqType.Label,
             fontWeight = AqWeight.SemiBold,
             color = if (!enabled) AqColor.OnDisabled else AqColor.TextPrimary,
-            modifier = Modifier.clearAndSetSemantics { },
+            modifier = Modifier.semantics { },
         )
         optionalLabel?.let {
             AqText(
                 text = it,
                 size = AqType.CaptionSmall,
-                color = AqColor.TextTertiary,
+                color = AqColor.TextSecondary,
             )
         }
     }

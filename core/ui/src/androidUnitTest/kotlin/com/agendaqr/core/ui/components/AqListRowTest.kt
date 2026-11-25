@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.performSemanticsAction
 import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.core.ui.theme.AqSpacing
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -95,10 +95,14 @@ class AqListRowTest {
                 )
             }
         }
-        compose.onNodeWithText("Fila con pulsación larga").performTouchInput { longClick() }
+        // La pulsación larga se verifica vía la acción semántica
+        // OnLongClick: la inyección táctil real no es fiable bajo Robolectric.
+        compose.onNodeWithText("Fila con pulsación larga")
+            .performSemanticsAction(SemanticsActions.OnLongClick)
         compose.waitForIdle()
         kotlin.test.assertEquals(1 to 0, longs to taps)
-        compose.onNodeWithText("Fila con pulsación larga").performClick()
+        compose.onNodeWithText("Fila con pulsación larga")
+            .performSemanticsAction(SemanticsActions.OnClick)
         compose.waitForIdle()
         kotlin.test.assertEquals(1 to 1, longs to taps)
     }

@@ -2,6 +2,7 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
@@ -10,7 +11,7 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -58,7 +59,7 @@ class AqSelectTest {
         compose.onNodeWithText("BOB")
             .assertHeightIsAtLeast(48.dp)
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
-            .performClick()
+            .performSemanticsAction(SemanticsActions.OnClick)
         assertEquals(1, selectedIndex)
     }
 }

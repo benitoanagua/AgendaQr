@@ -1,7 +1,11 @@
 package com.agendaqr.destinations.presentation
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assert
@@ -33,8 +37,9 @@ import org.robolectric.annotation.Config
  * D3 — accesibilidad verificable ampliada: S02, S04, S06, S09, S10, S12,
  * selector S08 y editor de operación sobre Robolectric (gate de CI).
  *
- * Los tests geometricos de S02 van en NATIVE+w360 (ver esos metodos): en
- * LEGACY los avances son degenerados y sin qualifiers NATIVE no mide.
+ * Los tests geometricos de S02/S07 van en NATIVE+w360 (ver esos metodos): en
+ * LEGACY los avances son degenerados, sin qualifiers NATIVE no mide, y el
+ * hit-test del segmented control no dispara onClick.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
@@ -303,9 +308,13 @@ class ScreensA11yCoverageTest {
     }
 
     // S07 — tipo con semántica de selección: un chip marcado, 48dp.
+    // NATIVE+w360: en LEGACY defaultMinSize reporta 48dp pero el click no
+    // llega al selectable (hit-test degenerado).
     @Test
+    @Config(sdk = [34], qualifiers = "w360dp-h800dp")
+    @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
     fun s07_type_selector_shows_single_selection() {
-        var selected = OperationType.PAGO
+        var selected by mutableStateOf(OperationType.PAGO)
         compose.setContent {
             AqTheme {
                 OperationTypeSelector(
@@ -315,12 +324,13 @@ class ScreensA11yCoverageTest {
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("Pago").assertHeightIsAtLeast(48.dp)
+        compose.onNodeWithText("Pago").assertHeightIsAtLeast(48.dp).assertIsSelected()
         compose.onNodeWithText("Cobro").assertHeightIsAtLeast(48.dp)
         // Cambiar el tipo mueve la selección (semántica, no dos primarios).
         compose.onNodeWithText("Cobro").performClick()
         compose.waitForIdle()
         assertTrue(selected == OperationType.COBRO)
+        compose.onNodeWithText("Cobro").assertIsSelected()
     }
 
     // Defectos registrados en docs/STATE.md,

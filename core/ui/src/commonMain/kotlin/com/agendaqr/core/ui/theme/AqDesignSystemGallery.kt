@@ -28,6 +28,7 @@ import com.agendaqr.core.ui.components.AqAccordion
 import com.agendaqr.core.ui.components.AqAlert
 import com.agendaqr.core.ui.components.AqAmountInput
 import com.agendaqr.core.ui.components.AqAppBar
+import com.agendaqr.core.ui.components.AqAuthCode
 import com.agendaqr.core.ui.components.AqAppBarAction
 import com.agendaqr.core.ui.components.AqAvatar
 import com.agendaqr.core.ui.components.AqAvatarSize
@@ -45,6 +46,8 @@ import com.agendaqr.core.ui.components.AqChoiceOption
 import com.agendaqr.core.ui.components.AqCircularLoader
 import com.agendaqr.core.ui.components.AqCircularProgress
 import com.agendaqr.core.ui.components.AqDotIndicator
+import com.agendaqr.core.ui.components.AqDrawer
+import com.agendaqr.core.ui.components.AqDropdown
 import com.agendaqr.core.ui.components.AqEmptyPlaceholder
 import com.agendaqr.core.ui.components.AqErrorMessage
 import com.agendaqr.core.ui.components.AqFieldState
@@ -54,6 +57,7 @@ import com.agendaqr.core.ui.components.AqHairline
 import com.agendaqr.core.ui.components.AqHelperMessage
 import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.components.AqLinearLoader
 import com.agendaqr.core.ui.components.AqLinearProgress
 import com.agendaqr.core.ui.components.AqListSection
 import com.agendaqr.core.ui.components.AqLoadMore
@@ -63,6 +67,7 @@ import com.agendaqr.core.ui.components.AqPillTab
 import com.agendaqr.core.ui.components.AqPopover
 import com.agendaqr.core.ui.components.AqProgress
 import com.agendaqr.core.ui.components.AqProgressBar
+import com.agendaqr.core.ui.components.AqProgressPin
 import com.agendaqr.core.ui.components.AqProgressBlock
 import com.agendaqr.core.ui.components.AqPullToRefresh
 import com.agendaqr.core.ui.components.AqQrPreview
@@ -78,11 +83,17 @@ import com.agendaqr.core.ui.components.AqSwipeActions
 import com.agendaqr.core.ui.components.AqSwitch
 import com.agendaqr.core.ui.components.AqTab
 import com.agendaqr.core.ui.components.AqTabBar
+import com.agendaqr.core.ui.components.AqTable
+import com.agendaqr.core.ui.components.AqTableColumn
+import com.agendaqr.core.ui.components.AqTableRow
+import com.agendaqr.core.ui.components.AqTableRowSize
 import com.agendaqr.core.ui.components.AqTag
 import com.agendaqr.core.ui.components.AqTagSize
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextArea
 import com.agendaqr.core.ui.components.AqTextInput
+import com.agendaqr.core.ui.components.AqTextInputGroup
+import com.agendaqr.core.ui.components.AqTextInputGroupOrientation
 import com.agendaqr.core.ui.components.AqToast
 import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.components.AqTooltip
@@ -450,6 +461,27 @@ private fun AqFormsPreview() {
             minLines = 3,
         )
         AqText(
+            text = "Auth Code — celdas de código de verificación",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqAuthCode(value = "123", onValueChange = {})
+            AqAuthCode(value = "", onValueChange = {}, isError = true, errorMessage = "Código inválido")
+        }
+        AqText(
+            text = "Text Input Group — campos agrupados con divisores y helper",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqTextInputGroup(
+            children = listOf(
+                { AqTextInput(label = "Usuario", value = "ana", onValueChange = {}, borderless = true) },
+                { AqTextInput(label = "Contraseña", value = "••••", onValueChange = {}, borderless = true) },
+            ),
+            helper = "Los campos se agrupan con divisores de 1 dp.",
+        )
+        AqText(
             text = "Search Input — normal, con limpieza, deshabilitado",
             color = AqColor.TextPrimary,
             size = AqType.BodyMd,
@@ -714,6 +746,49 @@ private fun AqSurfacesPreview() {
             },
             content = {},
         )
+        AqText(
+            text = "Dropdown — menú desplegable anclado con opciones",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqDropdown(
+            open = true,
+            options = listOf("Todas las categorías", "Pago", "Cobro"),
+            selected = 0,
+            onOptionClick = {},
+            anchor = {
+                AqButton(label = "Filtrar", onClick = {}, variant = AqButtonVariant.Default)
+            },
+            content = {},
+        )
+        AqText(
+            text = "Drawer — cajón lateral sobre scrim",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqDrawer(
+            show = true,
+            title = "Menú",
+            dismissLabel = "Cerrar",
+            onDismissRequest = {},
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                AqText(text = "Opción 1", color = AqColor.TextPrimary)
+                AqText(text = "Opción 2", color = AqColor.TextPrimary)
+            }
+        }
+        AqText(
+            text = "Tooltip — etiqueta flotante sobre el contenido",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqTooltip(
+            label = "Consejo",
+            isVisible = true,
+            content = {
+                AqText(text = "Contenido anclado", color = AqColor.TextPrimary)
+            },
+        )
     }
 }
 
@@ -796,6 +871,41 @@ private fun AqDataDisplayPreview() {
             size = AqType.BodyMd,
         )
         AqBreadcrumbComp(items = listOf("Inicio", "Destinos", "Detalle"))
+        AqText(
+            text = "Tabla — cabecera y filas con tamaños de fila",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqTable(
+                columns = listOf(
+                    AqTableColumn(id = "destino", label = "Destino", weight = 2f),
+                    AqTableColumn(id = "estado", label = "Estado", weight = 1f),
+                ),
+                rows = listOf(
+                    AqTableRow(id = "1", cells = mapOf("destino" to "Café Central", "estado" to "Activo")),
+                    AqTableRow(id = "2", cells = mapOf("destino" to "Tienda Norte", "estado" to "Pendiente")),
+                ),
+                rowSize = AqTableRowSize.Sm,
+            )
+        }
+        AqText(
+            text = "Accordion — sección expandible con divisor",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        val accordionExpanded = remember { mutableStateOf(true) }
+        AqAccordion(
+            title = "Detalles del destino",
+            expanded = accordionExpanded.value,
+            onToggle = { accordionExpanded.value = !accordionExpanded.value },
+            content = {
+                AqText(
+                    text = "Contenido expandible de la sección.",
+                    color = AqColor.TextSecondary,
+                )
+            },
+        )
     }
 }
 
@@ -868,7 +978,41 @@ private fun AqFeedbackPreview() {
                 progress = 0.5f,
                 size = AqMetrics.IconSize,
             )
+            AqLinearLoader(contentDescription = "Cargando")
         }
+        AqText(
+            text = "Linear Progress — 60 %, con pin de progreso",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+            AqLinearProgress(
+                progress = 0.6f,
+                contentDescription = "Progreso de importación",
+            )
+            AqLinearProgress(
+                progress = 0.4f,
+                contentDescription = "Progreso con pin",
+                showPin = true,
+            )
+        }
+        AqText(
+            text = "Progress Pin — clavo de progreso sobre la barra",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqProgressPin(
+            progress = 0.65f,
+            pinText = "65%",
+            content = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(AqSize.X4s)
+                        .background(AqColor.Border, AqSquircles.SurfaceSm),
+                )
+            },
+        )
         AqText(
             text = "Progress Bar — 60 %, determinista",
             color = AqColor.TextPrimary,

@@ -12,4 +12,6 @@ data class AqTab(
     val icon: ImageVector? = null,
     /** Conteo real junto a la etiqueta; null = sin badge. */
     val count: Int? = null,
+    /** Pestaña deshabilitada (`MoonTab.disabled`/`MoonPillTab.disabled`). */
+    val disabled: Boolean = false,
 )

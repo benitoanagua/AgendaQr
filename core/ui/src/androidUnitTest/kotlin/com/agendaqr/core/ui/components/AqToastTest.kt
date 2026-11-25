@@ -45,8 +45,8 @@ class AqToastTest {
     fun toast_duration_default_no_es_el_valor_defectuoso_de_200_segundos() {
         // Antes de la corrección, durationMs = DurationMediumMs * 1000 =
         // 200 000 ms (≈ 3,3 min). Tras la corrección es ToastDurationMs =
-        // 4 000 ms (decisión de producto, ADR-0041).
-        assertEquals(4000L, AqMotion.ToastDurationMs)
+        // 3 000 ms (Moon `toast_theme` displayDuration por defecto).
+        assertEquals(3000L, AqMotion.ToastDurationMs)
         assertTrue(AqMotion.ToastDurationMs < AqMotion.DurationMediumMs * 1000)
     }
 

@@ -56,6 +56,8 @@ internal object AqPalette {
     val raditz = Color(0xFFB3804A)
     val whis = Color(0xFF3448F0)
     val nappa = Color(0xFF725550)
+    /** `jiren` de MoonColors: piccolo al 12 %; idéntico en ambos temas. */
+    val jiren = Color(0x1F5C33CF)
     /** Derivados para acentos: roshi y raditz oscurecidos hasta AA con texto blanco. */
     val accentGreen = Color(0xFF2C6B34)
     val accentBronze = Color(0xFF745330)
@@ -407,6 +409,15 @@ object AqColor {
     val OnDisabled: Color @Composable get() = LocalAqColorScheme.current.onDisabled
     val QrCanvas: Color @Composable get() = LocalAqColorScheme.current.qrCanvas
     val Scrim: Color @Composable get() = LocalAqColorScheme.current.scrim
+    /** `jiren` de MoonColors: piccolo al 12 %; idéntico en ambos temas
+     *  (fondo activo de chips/controles de hover secundarios de Moon). */
+    val Jiren: Color get() = AqPalette.jiren
+    /** `popo` de MoonColors (negro puro en ambos temas): contenido sobre
+     *  superficies claras invertidas como el pulgar del switch. */
+    val Popo: Color get() = AqPalette.popo
+    /** `roshi` de MoonColors (verde de estado, idéntico en ambos temas):
+     *  color de la insignia de [AqAvatar] (`avatar_theme.dart`). */
+    val Roshi: Color get() = AqPalette.roshi
     val Transparent: Color = Color.Transparent
 }
 
@@ -448,6 +459,12 @@ object AqLayout {
     val InGroup: Dp = AqSize.X4s
     /** Relleno interno de celda en los 4 lados (12 dp = [AqSize.X3s]). */
     val CellPadding: Dp = AqSize.X3s
+    /** Hueco horizontal leading↔label↔trailing de [AqMenuItem] (Moon
+     *  `menu_item`: el gap equivale al padding `x3s` del contenedor). */
+    val MenuItemGap: Dp = AqSize.X3s
+    /** Hueco entre pestañas de [AqTabBar]/[AqPillTab] (`tab_bar`
+     *  `properties.gap` = `sizes.x5s`). */
+    val TabBarGap: Dp = AqSize.X5s
     /** Relleno interno de tarjeta en los 4 lados (16 dp = [AqSize.X2s]). */
     val CardPadding: Dp = AqSize.X2s
     /** Hueco entre etiqueta persistente y su caja de entrada (8 dp = [AqSize.X4s]). */
@@ -517,11 +534,23 @@ object AqLayout {
     val TagHeightXs: Dp = AqSize.Xs
     val TagHeightSm: Dp = AqSize.Sm
 
-    /** Relleno horizontal de [AqTag] por tamaño (Moon § Tag: x2s 8 / xs 8 /
-     *  sm 8 dp). sm estaba *ver fuente* en el catálogo §3. */
+    /** Relleno horizontal de [AqTag] por tamaño (Moon `tag_sizes.dart`:
+     *  x2s/xs `sizes.x4s`, sm `sizes.x2s`). */
     val TagPaddingHorizontalX2s: Dp = AqSize.X4s
     val TagPaddingHorizontalXs: Dp = AqSize.X4s
-    val TagPaddingHorizontalSm: Dp = AqSize.X4s
+    val TagPaddingHorizontalSm: Dp = AqSize.X2s
+
+    /** Hueco interno de [AqTag] por tamaño (Moon `tag_sizes.dart`: x2s/xs
+     *  `sizes.x6s`, sm `sizes.x4s`). */
+    val TagGapX2s: Dp = AqSize.X6s
+    val TagGapXs: Dp = AqSize.X6s
+    val TagGapSm: Dp = AqSize.X4s
+
+    /** Tamaño del glifo de [AqTag] por tamaño (Moon `tag_sizes.dart`: x2s
+     *  `sizes.x3s`, xs/sm `sizes.x2s`). */
+    val TagIconSizeX2s: Dp = AqSize.X3s
+    val TagIconSizeXs: Dp = AqSize.X2s
+    val TagIconSizeSm: Dp = AqSize.X2s
 
     /** Altura visual de [AqSwitch] por tamaño (Moon § Switch: x2s 16 / xs 24
      *  / sm 32 dp). */
@@ -536,11 +565,127 @@ object AqLayout {
     val SwitchTrackWidthXs: Dp = 44.dp
     val SwitchTrackWidthSm: Dp = 60.dp
 
-    /** Diámetro del pulgar de [AqSwitch] por tamaño (Moon § Switch: x2s 12 /
-     *  xs 16 / sm 20 dp). sm estaba *ver fuente* en el catálogo §3. */
+    /** Diámetro del pulgar de [AqSwitch] por tamaño (Moon
+     *  `switch_sizes.dart`: x2s 12 / xs 16 / sm 24 dp — el pulgar sm usa
+     *  `sizes.xs`, no un valor intermedio). */
     val SwitchThumbX2s: Dp = 12.dp
     val SwitchThumbXs: Dp = 16.dp
-    val SwitchThumbSm: Dp = 20.dp
+    val SwitchThumbSm: Dp = AqSize.Xs
+
+    /** Relleno interior de la pista de [AqSwitch] por tamaño (Moon
+     *  `switch_sizes.dart`: x2s `sizes.x6s`, xs/sm `sizes.x5s`). */
+    val SwitchTrackPaddingX2s: Dp = AqSize.X6s
+    val SwitchTrackPaddingXs: Dp = AqSize.X5s
+    val SwitchTrackPaddingSm: Dp = AqSize.X5s
+
+    /** Lado del glifo de [AqCheckbox] y [AqRadio] (Moon
+     *  `checkbox.dart`/`radio.dart`: `Size(16, 16)` = `sizes.x2s`). */
+    val CheckboxGlyphSize: Dp = AqSize.X2s
+    /** Ancho del trazo del check/dash y del borde de la casilla (Moon
+     *  `checkbox_painter.dart` `_kStrokeWidth` = 1, `BorderSide` por defecto). */
+    val CheckboxStrokeWidth: Dp = AqStroke.Default
+    /** Radio exterior del glifo de radio (Moon `radio_painter.dart`
+     *  `_kOuterRadius` = 8 sobre caja de 16 → círculo completo). */
+    val RadioOuterRadius: Dp = 8.dp
+    /** Radio del punto interior del radio (Moon `_kInnerRadius` = 4). */
+    val RadioInnerRadius: Dp = 4.dp
+
+    /** Hueco entre opciones de [AqSegmentedControl] (Moon
+     *  `segmented_control_sizes.dart`: sm `sizes.x5s`, md `sizes.x4s`). */
+    val SegmentedControlGapSm: Dp = AqSize.X5s
+    val SegmentedControlGapMd: Dp = AqSize.X4s
+
+    /** Relleno horizontal de cada segmento de [AqSegmentedControl] (Moon:
+     *  sm `sizes.x3s`, md `sizes.x2s`). */
+    val SegmentedControlPaddingHorizontalSm: Dp = AqSize.X3s
+    val SegmentedControlPaddingHorizontalMd: Dp = AqSize.X2s
+
+    /** Relleno exterior de [AqSegmentedControl] (Moon
+     *  `segmented_control_theme.dart`: `EdgeInsets.all(sizes.x5s)`). */
+    val SegmentedControlPadding: Dp = AqSize.X5s
+    /** Altura total del control segmentado por tamaño (Moon
+     *  `segmented_control_sizes.dart`: sm `sizes.md`, md `sizes.lg`). */
+    val SegmentedControlHeightSm: Dp = AqSize.Md
+    val SegmentedControlHeightMd: Dp = AqSize.Lg
+    /** Tamaño del icono de segmento (Moon `iconSizeValue = sizes.xs`). */
+    val SegmentedControlIconSize: Dp = AqSize.Xs
+    /** Hueco exterior entre segmentos (Moon
+     *  `segmented_control_theme.dart`: `gap = sizes.x5s`). */
+    val SegmentedControlOuterGap: Dp = AqSize.X5s
+
+    /** Hueco interno de [AqChip] entre leading/label/trailing (Moon
+     *  `chip_sizes.dart`: `gap = sizes.x4s` en sm y md). */
+    val ChipGap: Dp = AqSize.X4s
+    /** Tamaño del icono de [AqChip] (Moon `iconSizeValue = sizes.xs`). */
+    val ChipIconSize: Dp = AqSize.Xs
+
+    /** Hueco alrededor del separador de [AqBreadcrumb] (Moon
+     *  `breadcrumb_theme.dart`: `gap = sizes.x4s`). */
+    val BreadcrumbGap: Dp = AqSize.X4s
+    /** Hueco interno de un ítem de [AqBreadcrumb] entre leading/label/
+     *  trailing (Moon `itemGap = sizes.x6s`). */
+    val BreadcrumbItemGap: Dp = AqSize.X6s
+
+    /** Ancho de [AqDrawer] (Moon `drawer_theme.dart`: 448 dp). */
+    val DrawerWidth: Dp = 448.dp
+
+    /** Tamaño del punto de [AqDotIndicator] (Moon
+     *  `dot_indicator_theme.dart`: `sizes.x4s`). */
+    val DotIndicatorSize: Dp = AqSize.X4s
+    /** Hueco entre puntos de [AqDotIndicator] (Moon: `sizes.x4s`). */
+    val DotIndicatorGap: Dp = AqSize.X4s
+
+    /** Geometría del clavo de [AqProgressPin] (Moon
+     *  `progress_pin_theme.dart`: pinWidth 36, arrowHeight 6,
+     *  arrowWidth `sizes.x4s`, pinDistance `sizes.x5s`,
+     *  pinBorderWidth `sizes.x6s`, shadowElevation 6). */
+    val ProgressPinWidth: Dp = 36.dp
+    val ProgressPinArrowHeight: Dp = 6.dp
+    val ProgressPinArrowWidth: Dp = AqSize.X4s
+    val ProgressPinDistance: Dp = AqSize.X5s
+    val ProgressPinBorderWidth: Dp = AqSize.X6s
+    val ProgressPinShadowElevation: Dp = 6.dp
+
+    /** Hueco vertical entre las etiquetas y la barra de
+     *  [AqLinearProgress] (`linear_progress_sizes.dart` `verticalGap`:
+     *  x6s/x5s `sizes.x4s`, x2s `sizes.x5s`; x4s/x3s usan el literal 6 de
+     *  Moon, token propio porque no pertenece a la escala [AqSize]). */
+    val ProgressLabelGap: Dp = AqSize.X4s
+    val ProgressLabelGapSmall: Dp = 6.dp
+
+    /** Handle de arrastre de [AqBottomSheet] (Moon no define handle; se
+     *  declara aquí como token del sistema, nunca literal en el
+     *  componente). */
+    val BottomSheetHandleWidth: Dp = 36.dp
+    val BottomSheetHandleHeight: Dp = AqSize.X5s
+
+    /** Geometría de overlays anclados (Moon `popover`/`dropdown`/`tooltip`):
+     *  distancia al objetivo `sizes.x4s`; padding de contenido popover
+     *  `sizes.x3s`, dropdown `sizes.x5s`; margen del dropdown `sizes.x4s`;
+     *  flecha del tooltip base `sizes.x2s`, largo y distancia
+     *  `sizes.x4s`; padding del tooltip `sizes.x3s`. */
+    val OverlayDistanceToTarget: Dp = AqSize.X4s
+    val PopoverContentPadding: Dp = AqSize.X3s
+    val DropdownContentPadding: Dp = AqSize.X5s
+    val DropdownMargin: Dp = AqSize.X4s
+    val TooltipArrowBaseWidth: Dp = AqSize.X2s
+    val TooltipArrowLength: Dp = AqSize.X4s
+    val TooltipArrowTipDistance: Dp = AqSize.X4s
+    val TooltipContentPadding: Dp = AqSize.X3s
+
+    /** Hueco entre tarjetas de [AqCarousel] (Moon
+     *  `carousel_theme.dart`: `sizes.x2s`). */
+    val CarouselGap: Dp = AqSize.X2s
+
+    /** Geometría de [AqTable] por tamaño de fila (Moon
+     *  `table_sizes.dart`): alturas xs..x2l, hueco `sizes.x5s`, icono de
+     *  orden `sizes.x2s`, hueco icono-orden `sizes.x5s`, relleno
+     *  horizontal xs `sizes.x4s` y sm..x2l `sizes.x3s`. */
+    val TableRowGap: Dp = AqSize.X5s
+    val TableSortIconSize: Dp = AqSize.X2s
+    val TableSortIconGap: Dp = AqSize.X5s
+    val TableCellPaddingHorizontalXs: Dp = AqSize.X4s
+    val TableCellPaddingHorizontal: Dp = AqSize.X3s
 }
 
 /** Métricas de interacción y composición (D-02 para la escala táctil). */
@@ -567,6 +712,8 @@ object AqMetrics {
     val QrReviewSize = 320.dp
     val IconSize = 24.dp
     val IconSizeCompact = 20.dp
+    /** Icono del mensaje de error (`generic_info_16` de Moon, `x2s`). */
+    val ErrorMessageIconSize: Dp = AqSize.X2s
     val FavCardWidth = 184.dp
     val PinDotSize = 12.dp
     val ListDividerInset = 16.dp
@@ -599,6 +746,14 @@ object AqComposition {
 
     /** Tamaño del glifo dentro del círculo de confirmación de resultado. */
     const val SuccessCheckIconFraction = 0.55f
+
+    /** Fracción del tamaño del avatar para la insignia (Moon
+     *  `avatar_sizes.dart`: `badgeSizeValue = avatarSize * sizes.x3s /
+     *  sizes.x2l` = tamaño × 12/64). */
+    const val AvatarBadgeSizeFraction = 0.1875f
+    /** Fracción del tamaño del avatar para el margen de la insignia (Moon:
+     *  `badgeMarginValue = avatarSize * sizes.x5s / sizes.x2l` = × 4/64). */
+    const val AvatarBadgeMarginFraction = 0.0625f
 }
 
 /** Formas de esquina (`CornerBasedShape`) para la capa de tema (MaterialTheme).
@@ -728,6 +883,17 @@ object AqType {
     val Caption = BodyXs
     /** Rol `body-xs`; piso tipográfico del producto. */
     val CaptionSmall: TextUnit = 12.sp
+    /** `body.text9` de Moon (`text_styles.dart`): microtexto de tags x2s. */
+    val Body9: TextUnit = 9.sp
+    /** `body.text10`/`heading.text10` de Moon: etiquetas de progreso y
+     *  avatares xs. */
+    val Body10: TextUnit = 10.sp
+    /** `body.text8` de Moon: texto de pista del switch tamaño xs. */
+    val Body8: TextUnit = 8.sp
+    /** `body.text6` de Moon: texto de pista del switch tamaño x2s. */
+    val Body6: TextUnit = 6.sp
+    /** `body.text20`/`heading.text20` de Moon: iniciales del avatar x2l. */
+    val Body20: TextUnit = 20.sp
     val LineHeightLabel = LineHeightBodyMd
     val LineHeightDialog = LineHeightBodyLg
     val LineHeightBody = LineHeightBodySm
@@ -932,15 +1098,21 @@ object AqMotion {
     /**
      * Duración por defecto de [AqToast].
      *
-     * Moon (`moon_design` 1.1.0, `widgets/toast`) solo especifica el
-     * recorrido entre toasts (64 dp) y el gap de 200 ms entre apariciones;
-     * no define una duración de vida. El valor de 4 000 ms es una decisión
-     * de producto (registro en ADR-0041 / catálogo §2), NO una transcripción
-     * de Moon. El valor anterior (`DurationMediumMs * 1000` = 200 000 ms,
-     * ≈ 3,3 min) era un defecto: un toast no debe permanecer visible tanto
-     * tiempo.
+     * Moon (`moon_design` 1.1.0, `widgets/toast` + `toast_theme.dart`):
+     * `displayDuration` = 3 s, `transitionDuration` =
+     * `defaultTransitionDuration` (200 ms) con `defaultTransitionCurve`.
      */
-    const val ToastDurationMs = 4000L
+    const val ToastDurationMs = 3000L
+    /**
+     * `autoPlayDelay` por defecto de [AqCarousel] (Moon
+     * `carousel_theme.dart`: `Duration(seconds: 3)`).
+     */
+    const val CarouselAutoPlayDelayMs = 3000L
+    /**
+     * `transitionDuration` del autoplay de [AqCarousel] (Moon
+     * `carousel_theme.dart`: 800 ms `fastOutSlowIn`).
+     */
+    const val CarouselTransitionDurationMs = 800
     const val EasingControlX1 = 0.25f
     const val EasingControlY1 = 0.1f
     const val EasingControlX2 = 0.25f
@@ -966,6 +1138,8 @@ object AqMotion {
         val Linear: Easing = CubicBezierEasing(0f, 0f, 1f, 1f)
         /** Curva por defecto de transición de la capa UX (`Curves.easeInOutCubic`). */
         val InOutCubic: Easing = CubicBezierEasing(0.645f, 0.045f, 0.355f, 1f)
+        /** `Curves.fastOutSlowIn` de Flutter: transición del autoplay de [AqCarousel]. */
+        val FastOutSlowIn: Easing = CubicBezierEasing(0.4f, 0f, 0.2f, 1f)
     }
 }
 

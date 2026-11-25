@@ -99,6 +99,10 @@ fun AqTextInput(
     focusRequester: FocusRequester? = null,
     placeholder: String? = null,
     size: AqTextInputSize = AqTextInputSize.Md,
+    /** `true` dentro de [AqTextInputGroup]: la caja no dibuja fondo ni borde
+     *  (Moon `MoonFormTextInput` recibe `inactiveBorderColor` transparente y
+     *  `backgroundColor` transparente; el borde lo pinta el grupo). */
+    borderless: Boolean = false,
     touchTargetTestTag: String = "aq-field-touch-target",
     visualTestTag: String = "aq-text-input-visual",
 ) {
@@ -112,14 +116,15 @@ fun AqTextInput(
         lengthExceeded -> "Se excedió el límite de $maxLength caracteres"
         else -> null
     }
+    // Moon text_input: inactivo `beerus`, activo/enfocado `piccolo`,
+    // error `chichi` (chichi→AqColor.Danger).
     val borderColor = when {
         effectiveIsError -> AqColor.Danger
         focused -> AqColor.Focus
-        enabled -> AqColor.FunctionalBorder
-        else -> AqColor.OnDisabled.copy(alpha = 0.3f)
+        else -> AqColor.Border
     }
     val shape: androidx.compose.ui.graphics.Shape = when (size) {
-        AqTextInputSize.Xl -> AqSquircles.InteractiveMd
+        AqTextInputSize.Sm -> AqSquircles.InteractiveXs
         else -> AqSquircles.InteractiveSm
     }
     val verticalPadding = when (size) {
@@ -160,8 +165,15 @@ fun AqTextInput(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(size.height)
-                    .background(AqColor.InputSurface, shape)
-                    .border(AqMetrics.Border, borderColor, shape)
+                    .then(
+                        if (borderless) {
+                            Modifier
+                        } else {
+                            Modifier
+                                .background(AqColor.Background, shape)
+                                .border(AqMetrics.Border, borderColor, shape)
+                        },
+                    )
                     .testTag(visualTestTag),
             ) {
                 Row(
@@ -175,7 +187,7 @@ fun AqTextInput(
                     AqIcon(
                         imageVector = glyph,
                         contentDescription = null,
-                        size = AqMetrics.IconSizeCompact,
+                        size = AqSize.Xs,
                         tint = when {
                             effectiveIsError -> AqColor.Danger
                             focused -> AqColor.Focus
@@ -206,7 +218,11 @@ fun AqTextInput(
                     singleLine = singleLine,
                     minLines = minLines,
                     maxLines = maxLines,
-                    textStyle = AqTextStyles.Body.copy(
+                    textStyle = (if (size == AqTextInputSize.Lg || size == AqTextInputSize.Xl) {
+                        AqTextStyles.BodyMd
+                    } else {
+                        AqTextStyles.Body
+                    }).copy(
                         color = when {
                             !enabled -> AqColor.OnDisabled
                             effectiveIsError -> AqColor.Danger
@@ -229,7 +245,11 @@ fun AqTextInput(
                             if (value.isBlank() && placeholder != null) {
                                 AqText(
                                     text = placeholder,
-                                    size = AqType.Body,
+                                    size = if (size == AqTextInputSize.Lg || size == AqTextInputSize.Xl) {
+                                        AqType.BodyMd
+                                    } else {
+                                        AqType.BodySm
+                                    },
                                     color = AqColor.TextTertiary,
                                     maxLines = 1,
                                 )

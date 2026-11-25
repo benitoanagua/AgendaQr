@@ -1,7 +1,6 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -32,7 +31,6 @@ import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqType
-import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
 import com.agendaqr.core.ui.theme.AqSquircles
 
@@ -86,7 +84,7 @@ fun AqAlert(
         modifier = modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = AqSize.Xl)
-            .background(colors.container, AqSquircles.SurfaceSm)
+            .background(colors.container, AqSquircles.InteractiveSm)
             .padding(horizontal = horizontalPadding, vertical = AqSize.X2s)
             .semantics {
                 liveRegion = LiveRegionMode.Polite
@@ -114,14 +112,13 @@ fun AqAlert(
                 title?.let {
                     AqText(
                         text = it,
-                        size = AqType.Label,
-                        fontWeight = AqWeight.SemiBold,
+                        size = AqType.HeadingSm,
                         color = colors.content,
                     )
                 }
                 AqText(
                     text = message,
-                    size = AqType.Body,
+                    size = AqType.BodySm,
                     color = colors.content,
                 )
             }

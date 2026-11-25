@@ -1,31 +1,31 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.window.Popup
 import com.agendaqr.core.ui.theme.AqColor
-import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqSize
-import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqSquircles
-import com.agendaqr.core.ui.theme.AqType
-import com.agendaqr.core.ui.theme.LocalAqColorScheme
+import com.agendaqr.core.ui.theme.AqShadow
+import com.agendaqr.core.ui.theme.aqShadow
 
 /**
  * Menú desplegable anclado sobre [MoonDropdown] (`moon_design` 1.1.0,
- * `widgets/dropdown`). Lista de opciones que se despliega desde un
- * anclaje.
+ * `widgets/dropdown` + `dropdown_theme.dart`).
+ *
+ * Superficie flotante en [Popup] bajo el [anchor]: fondo `goku`→
+ * [AqColor.Background], radio `interactiveMd`, padding `x5s` (4 dp),
+ * margen `dropdownMargin` = `x4s` (8 dp), sombra `shadows.sm`, sin
+ * transición (`transitionDuration: Duration.zero` en Moon). El contenido
+ * típico son [AqMenuItem] (anatomía de Moon para opciones de menú).
  *
  * - [open]: controla la visibilidad.
  * - [options]: etiquetas de las opciones.
@@ -45,57 +45,31 @@ fun AqDropdown(
     content: @Composable () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (!open) {
+    Box(modifier = modifier) {
         anchor()
-        return
-    }
-    val scheme = LocalAqColorScheme.current
-    Column(
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        anchor()
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(AqColor.Surface, AqSquircles.SurfaceMd)
-                .padding(vertical = AqSize.Xs),
-            contentAlignment = Alignment.TopStart,
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = AqSpacing.Sm),
+        if (open) {
+            Popup(
+                alignment = Alignment.TopStart,
+                offset = IntOffset(0, with(androidx.compose.ui.platform.LocalDensity.current) {
+                    (AqSize.X4s * 2).roundToPx()
+                }),
             ) {
-                options.forEachIndexed { index, label ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = AqSize.Xs, vertical = AqSize.X2s)
-                            .background(
-                                if (selected == index) scheme.selectionSurface else AqColor.Transparent,
-                                AqSquircles.InteractiveXs,
-                            ),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        AqText(
-                            text = label,
-                            size = AqType.Body,
-                            color = if (selected == index) AqColor.EmphasisFill else AqColor.TextPrimary,
-                            modifier = Modifier
-                                .weight(1f, fill = false)
-                                .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                                .clickable(
-                                    enabled = onOptionClick != null,
-                                    role = Role.Button,
-                                    onClick = { onOptionClick?.invoke(index) },
-                                ),
+                Column(
+                    modifier = Modifier
+                        .aqShadow(AqShadow.Sm, AqSquircles.InteractiveMd)
+                        .background(AqColor.Background, AqSquircles.InteractiveMd)
+                        .padding(AqLayout.DropdownContentPadding),
+                ) {
+                    options.forEachIndexed { index, label ->
+                        AqMenuItem(
+                            title = label,
+                            selected = selected == index,
+                            enabled = onOptionClick != null,
+                            onClick = { onOptionClick?.invoke(index) },
                         )
                     }
-                    if (index < options.size - 1) {
-                        Spacer(modifier = Modifier.height(AqSize.X5s))
-                    }
+                    content()
                 }
-                content()
             }
         }
     }

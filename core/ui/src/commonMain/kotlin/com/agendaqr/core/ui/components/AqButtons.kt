@@ -1,5 +1,7 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,13 +14,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.IconToggleButton
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,6 +39,8 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -47,6 +49,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqAlpha
 import com.agendaqr.core.ui.theme.AqLayout
+import com.agendaqr.core.ui.theme.AqMotion
+import com.agendaqr.core.ui.theme.AqStateAlpha
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqColorScheme
@@ -307,11 +311,12 @@ private fun AqButtonImpl(
                 }
             }
             if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(size.iconSize)
-                        .graphicsLayer { scaleX = pressScale; scaleY = pressScale },
+                AqCircularLoader(
+                    loaderSize = size.iconSize,
                     color = foreground,
+                    backgroundColor = AqColor.Transparent,
+                    contentDescription = null,
+                    modifier = Modifier.graphicsLayer { scaleX = pressScale; scaleY = pressScale },
                 )
             }
         },
@@ -348,8 +353,25 @@ data class AqSegmentedOption(
     val activeTone: AqTone? = null,
 )
 
-/** Control segmentado (Segmented de la referencia): pista SurfaceSecondary con
- *  la opción activa sobre píldora Surface. Mutuamente excluyente. */
+/** Tamaños de [AqSegmentedControl] (Moon `segmented_control_sizes.dart`:
+ *  sm altura `sizes.md` / md `sizes.lg`; padding horizontal `x3s`/`x2s`;
+ *  hueco interno `x5s`/`x4s`). */
+enum class AqSegmentedControlSize(
+    val height: Dp,
+    val paddingHorizontal: Dp,
+    val segmentGap: Dp,
+) {
+    Sm(AqLayout.SegmentedControlHeightSm, AqLayout.SegmentedControlPaddingHorizontalSm, AqLayout.SegmentedControlGapSm),
+    Md(AqLayout.SegmentedControlHeightMd, AqLayout.SegmentedControlPaddingHorizontalMd, AqLayout.SegmentedControlGapMd),
+}
+
+/** Control segmentado sobre [MoonSegmentedControl] (`moon_design` 1.1.0,
+ *  `widgets/segmented_control`). Pista `gohan`→[AqColor.Surface] con radio
+ *  `interactiveMd`, relleno `x5s` y hueco `x5s` entre segmentos; el segmento
+ *  seleccionado se eleva a `goku`→[AqColor.Background] con squircle
+ *  `interactiveSm`, transición de 200 ms `easeInOutCubic`. Texto
+ *  `heading.textDefault` (14 sp semibold) en `textPrimary` en ambos
+ *  estados. Mutuamente excluyente. */
 @Composable
 fun AqSegmentedControl(
     options: List<AqSegmentedOption>,
@@ -357,71 +379,84 @@ fun AqSegmentedControl(
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    size: AqSegmentedControlSize = AqSegmentedControlSize.Sm,
 ) {
     require(options.isNotEmpty()) { "AqSegmentedControl necesita al menos una opción" }
     require(selectedIndex in -1 until options.size) { "AqSegmentedControl: índice fuera de rango" }
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(AqColor.SurfaceSecondary, AqSquircles.InteractiveSm)
+            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+            .heightIn(min = size.height)
+            .background(AqColor.Surface, AqSquircles.InteractiveMd)
             .selectableGroup()
-            .padding(AqSpacing.Xs),
-        horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+            .padding(AqLayout.SegmentedControlPadding)
+            .alpha(if (enabled) 1f else AqStateAlpha.Disabled),
+        horizontalArrangement = Arrangement.spacedBy(AqLayout.SegmentedControlOuterGap),
     ) {
         options.forEachIndexed { index, option ->
             val selected = index == selectedIndex
-            val activeColor = option.activeTone?.content() ?: AqColor.EmphasisText
             val optionEnabled = enabled
-            val textColor = when {
-                !optionEnabled -> AqColor.OnDisabled
-                selected -> activeColor
-                else -> AqColor.TextSecondary
-            }
+            val segmentColor by animateColorAsState(
+                targetValue = when {
+                    selected && optionEnabled -> AqColor.Background
+                    else -> AqColor.Transparent
+                },
+                animationSpec = tween(
+                    durationMillis = AqMotion.DurationMediumMs,
+                    easing = AqMotion.Easings.InOutCubic,
+                ),
+                label = "aqSegmented$index",
+            )
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(AqSquircles.InteractiveSm)
-                    .background(
-                        if (selected && optionEnabled) AqColor.SelectionSurface else AqColor.Transparent,
-                        AqSquircles.InteractiveSm,
-                    )
-                    .then(
-                        if (selected && optionEnabled) {
-                            Modifier.border(AqMetrics.Border, AqColor.Border, AqSquircles.InteractiveSm)
-                        } else {
-                            Modifier
-                        },
-                    )
-                    .selectable(
-                        selected = selected,
-                        role = Role.RadioButton,
+                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                    .semantics(mergeDescendants = true) {
+                        this.selected = selected
+                    }
+                    .clickable(
                         enabled = optionEnabled,
+                        role = Role.RadioButton,
                         onClick = { if (optionEnabled) onSelect(index) },
-                    )
-                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
+                    ),
                 contentAlignment = Alignment.Center,
             ) {
+                // Alto visual Moon (`sizes.md`/`sizes.lg`); el objetivo táctil
+                // de 48 dp lo da el Box exterior sin deformar el segmento.
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(size.height)
+                        .clip(AqSquircles.InteractiveSm)
+                        .background(segmentColor, AqSquircles.InteractiveSm),
+                    contentAlignment = Alignment.Center,
+                ) {
                 Row(
+                    modifier = Modifier.padding(horizontal = size.paddingHorizontal),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+                    horizontalArrangement = Arrangement.spacedBy(size.segmentGap),
                 ) {
                     option.icon?.let {
                         AqIcon(
                             imageVector = it,
                             contentDescription = null,
-                            size = AqMetrics.IconSizeCompact,
-                            tint = if (selected && optionEnabled) activeColor else AqColor.OnDisabled,
+                            size = AqLayout.SegmentedControlIconSize,
+                            tint = option.activeTone?.content() ?: AqColor.TextPrimary,
                         )
                     }
                     BasicText(
                         text = option.label,
-                        style = AqTextStyles.Label.copy(color = textColor),
+                        style = AqTextStyles.HeadingSm.copy(
+                            color = option.activeTone?.content() ?: AqColor.TextPrimary,
+                        ),
+                        maxLines = 1,
                     )
                     option.count?.let {
                         Box(
                             modifier = Modifier
                                 .background(
-                                    if (selected && optionEnabled) activeColor.copy(alpha = AqAlpha.SelectedOnTone) else AqColor.SurfaceContainerHighest,
+                                    AqColor.SurfaceContainerHigh,
                                     AqSquircles.InteractiveXs,
                                 )
                                 .defaultMinSize(minWidth = AqSize.X2s)
@@ -430,18 +465,20 @@ fun AqSegmentedControl(
                         ) {
                             BasicText(
                                 text = it.toString(),
-                                style = AqTextStyles.Tag.copy(color = textColor),
+                                style = AqTextStyles.Tag.copy(color = AqColor.TextPrimary),
                                 maxLines = 1,
                             )
                         }
                     }
+                }
                 }
             }
         }
     }
 }
 
-/** Conmutador de favorito: IconToggleButton con glifo de Moon. */
+/** Conmutador de favorito: táctil de 48 dp con glifo de Moon y rol
+ *  [Role.Checkbox] (sin Material3). */
 @Composable
 fun AqFavoriteToggle(
     favorite: Boolean,
@@ -449,12 +486,21 @@ fun AqFavoriteToggle(
     contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
-    IconToggleButton(
-        checked = favorite,
-        onCheckedChange = onCheckedChange,
+    val interactionSource = remember { MutableInteractionSource() }
+    Box(
         modifier = modifier
             .size(AqMetrics.ControlMinSize)
-            .semantics { this.contentDescription = contentDescription },
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                role = Role.Checkbox,
+                onClick = { onCheckedChange(!favorite) },
+            )
+            .semantics {
+                this.contentDescription = contentDescription
+                toggleableState = if (favorite) ToggleableState.On else ToggleableState.Off
+            },
+        contentAlignment = Alignment.Center,
     ) {
         AqIcon(
             imageVector = AqIcons.Favorite,

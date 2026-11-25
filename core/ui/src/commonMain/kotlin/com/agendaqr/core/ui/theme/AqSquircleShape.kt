@@ -145,6 +145,9 @@ private fun Path.addSquircleCorner(
 class AqSquircleShape(
     private val cornerRadius: Dp,
     private val smoothing: Float = AqCorner.Smoothing,
+    /** `true` redondea solo las dos esquinas superiores (bottom sheet de
+     *  Moon: `MoonSquircleBorderRadius.only(topLeft, topRight)`). */
+    private val topCornersOnly: Boolean = false,
 ) : Shape {
 
     override fun createOutline(
@@ -159,14 +162,21 @@ class AqSquircleShape(
         // Cuando el radio cubre la mitad del tamaño o más, la forma es un
         // círculo/ovalo completo (evita que la geometría squircle degeneré
         // y anule el área táctil al recortar).
-        if (radiusPx >= min(width, height) / 2f) {
+        if (!topCornersOnly && radiusPx >= min(width, height) / 2f) {
             return Outline.Generic(Path().apply { addArc(size.toRect(), 0f, 360f) })
         }
         val g = aqSquircleGeometry(radiusPx, smoothing, width, height)
         val path = Path().apply {
+            // TR (superior derecha) y TL (superior izquierda) siempre
+            // squircle; BR/BL squircle o escuadra según [topCornersOnly].
             addSquircleCorner(Offset(width, 0f), Offset(-1f, 0f), Offset(0f, 1f), g, width, height, first = true)
-            addSquircleCorner(Offset(width, height), Offset(0f, -1f), Offset(-1f, 0f), g, height, width, first = false)
-            addSquircleCorner(Offset(0f, height), Offset(1f, 0f), Offset(0f, -1f), g, width, height, first = false)
+            if (topCornersOnly) {
+                addSharpCorner(Offset(width, height), Offset(0f, -1f), Offset(-1f, 0f), g, height, width, first = false)
+                addSharpCorner(Offset(0f, height), Offset(1f, 0f), Offset(0f, -1f), g, width, height, first = false)
+            } else {
+                addSquircleCorner(Offset(width, height), Offset(0f, -1f), Offset(-1f, 0f), g, height, width, first = false)
+                addSquircleCorner(Offset(0f, height), Offset(1f, 0f), Offset(0f, -1f), g, width, height, first = false)
+            }
             addSquircleCorner(Offset(0f, 0f), Offset(0f, 1f), Offset(1f, 0f), g, height, width, first = false)
             close()
         }
@@ -174,9 +184,34 @@ class AqSquircleShape(
     }
 
     override fun equals(other: Any?): Boolean =
-        other is AqSquircleShape && other.cornerRadius == cornerRadius && other.smoothing == smoothing
+        other is AqSquircleShape && other.cornerRadius == cornerRadius &&
+            other.smoothing == smoothing && other.topCornersOnly == topCornersOnly
 
-    override fun hashCode(): Int = 31 * cornerRadius.hashCode() + smoothing.hashCode()
+    override fun hashCode(): Int =
+        31 * (31 * cornerRadius.hashCode() + smoothing.hashCode()) + topCornersOnly.hashCode()
+}
+
+/** Esquina recta (radio 0) que mantiene el encaje de aristas de la forma:
+ *  entra por el punto simétrico al de salida de la esquina anterior, pasa
+ *  por el vértice y sale por el punto simétrico de la siguiente. */
+private fun Path.addSharpCorner(
+    vertex: Offset,
+    e1: Offset,
+    e2: Offset,
+    g: AqSquircleGeometry,
+    e1Length: Float,
+    e2Length: Float,
+    first: Boolean,
+) {
+    fun pt(s: Float, t: Float) = Offset(
+        vertex.x + s * e1.x + t * e2.x,
+        vertex.y + s * e1.y + t * e2.y,
+    )
+
+    val start = pt(min(g.p, e1Length / 2f), 0f)
+    if (first) moveTo(start.x, start.y) else lineTo(start.x, start.y)
+    lineTo(vertex.x, vertex.y)
+    lineTo(pt(0f, min(g.p, e2Length / 2f)).x, pt(0f, min(g.p, e2Length / 2f)).y)
 }
 
 /** Formas squircle nombradas según la escala de [AqCorner]. */
@@ -188,6 +223,10 @@ object AqSquircles {
     val SurfaceSm: Shape = AqSquircleShape(AqCorner.SurfaceSm)
     val SurfaceMd: Shape = AqSquircleShape(AqCorner.SurfaceMd)
     val SurfaceLg: Shape = AqSquircleShape(AqCorner.SurfaceLg)
+    /** `surfaceLg` solo en las esquinas superiores (bottom sheet de Moon:
+     *  `bottom_sheet_theme.dart` `borderRadius.surfaceLg` aplicado con
+     *  `MoonSquircleBorderRadius.only(topLeft, topRight)`). */
+    val SurfaceTopLg: Shape = AqSquircleShape(AqCorner.SurfaceLg, topCornersOnly = true)
     /** Círculo/ovalo completo: radio `AqRadius.ExtraLarge` (16dp) se clampa
      *  al máximo del componente, produciendo una forma redonda en controles
      *  pequeños (botón de radio, insignia, punto) sin degenerar la

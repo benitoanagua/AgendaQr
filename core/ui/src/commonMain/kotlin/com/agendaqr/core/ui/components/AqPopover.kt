@@ -4,25 +4,31 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.window.Popup
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
-import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqSquircles
-import com.agendaqr.core.ui.theme.LocalAqColorScheme
+import com.agendaqr.core.ui.theme.AqShadow
+import com.agendaqr.core.ui.theme.aqShadow
 
 /**
  * Popover sobre [MoonPopover] (`moon_design` 1.1.0,
- * `widgets/popover`). Superficie flotante con contenido auxiliar,
- * anclada a un elemento disparador.
+ * `widgets/popover` + `popover_theme.dart`).
+ *
+ * Superficie flotante anclada al [trigger]: fondo `goku`→
+ * [AqColor.Background], radio `interactiveMd`, padding `x3s` (12 dp) en
+ * los cuatro lados, sombra `shadows.sm`, separación al ancla
+ * `distanceToTarget` = `x4s` (8 dp). Se muestra en un [Popup] sobre el
+ * resto de la UI; el cierre lo gestiona el llamador vía [open].
  *
  * - [open]: controla la visibilidad.
- * - [trigger]: contenido que activa el popover.
+ * - [trigger]: contenido que ancla el popover.
  * - [content]: contenido del popover.
  * - Todo el copy llega del llamador.
  */
@@ -33,28 +39,28 @@ fun AqPopover(
     content: @Composable () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (!open) {
+    Box(modifier = modifier) {
         trigger()
-        return
-    }
-    val scheme = LocalAqColorScheme.current
-    Column(
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        trigger()
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(AqColor.Surface, AqSquircles.SurfaceMd)
-                .padding(horizontal = AqSpacing.Sm, vertical = AqSize.Xs),
-            contentAlignment = Alignment.TopStart,
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
+        if (open) {
+            Popup(
+                alignment = Alignment.TopStart,
+                offset = IntOffset(0, with(androidx.compose.ui.platform.LocalDensity.current) {
+                    AqSize.X4s.roundToPx()
+                }),
             ) {
-                content()
+                Column(
+                    modifier = Modifier
+                        .aqShadow(AqShadow.Sm, AqSquircles.InteractiveMd)
+                        .background(AqColor.Background, AqSquircles.InteractiveMd)
+                        .padding(AqSize.X3s),
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
+                    ) {
+                        content()
+                    }
+                }
             }
         }
     }

@@ -1,12 +1,16 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -14,6 +18,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.PointerEventPass
@@ -22,8 +27,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.agendaqr.core.ui.theme.AqShadow
+import com.agendaqr.core.ui.theme.aqShadow
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
@@ -118,15 +126,18 @@ private fun TooltipBubble(
     modifier: Modifier = Modifier,
     maxWidth: Dp,
 ) {
-    Box(
-        modifier = modifier
-            .background(AqColor.SurfaceContainerHigh, AqSquircles.InteractiveSm)
-            .widthIn(max = maxWidth),
-        contentAlignment = Alignment.Center,
-    ) {
+    Column(modifier = modifier) {
+        Box(
+            modifier = Modifier
+                .aqShadow(AqShadow.Sm, AqSquircles.InteractiveXs)
+                .background(AqColor.Background, AqSquircles.InteractiveXs)
+                .padding(AqSize.X3s)
+                .widthIn(max = maxWidth),
+            contentAlignment = Alignment.Center,
+        ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+            horizontalArrangement = Arrangement.spacedBy(AqSize.X5s),
         ) {
             icon?.let {
                 AqIcon(
@@ -138,9 +149,31 @@ private fun TooltipBubble(
             }
             AqText(
                 text = label,
-                size = AqType.CaptionSmall,
+                size = AqType.BodyXs,
                 color = AqColor.TextPrimary,
                 maxLines = 2,
+            )
+        }
+        }
+        // Flecha de Moon (`arrowBaseWidth` x2s, `arrowLength` x4s):
+        // triángulo bajo la burbuja apuntando al objetivo.
+        val arrowColor = AqColor.Background
+        Canvas(
+            modifier = Modifier
+                .padding(top = AqSize.X5s)
+                .width(AqSize.X2s)
+                .height(AqSize.X4s),
+        ) {
+            val w = size.width
+            val h = size.height
+            drawPath(
+                path = Path().apply {
+                    moveTo(0f, 0f)
+                    lineTo(w, 0f)
+                    lineTo(w / 2f, h)
+                    close()
+                },
+                color = arrowColor,
             )
         }
     }

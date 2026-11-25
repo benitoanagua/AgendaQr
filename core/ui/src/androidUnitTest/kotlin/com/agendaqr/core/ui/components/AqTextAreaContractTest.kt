@@ -12,7 +12,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Contrato de [AqMultilineTextField]: campo multilínea para notas de
+ * Contrato de [AqTextArea]: campo multilínea para notas de
  * producto (S02/S07 edición de destino, S07 registro de operación).
  *
  * - Renderiza etiqueta y valor.
@@ -22,7 +22,7 @@ import org.robolectric.annotation.Config
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], qualifiers = "w360dp-h760dp")
-class AqMultilineTextFieldTest {
+class AqTextAreaContractTest {
 
     @get:Rule
     val compose = createComposeRule()
@@ -35,7 +35,7 @@ class AqMultilineTextFieldTest {
     ) {
         compose.setContent {
             AqTheme(darkTheme = false) {
-                AqMultilineTextField(
+                AqTextArea(
                     label = "Nota",
                     value = "Valor de prueba",
                     onValueChange = {},

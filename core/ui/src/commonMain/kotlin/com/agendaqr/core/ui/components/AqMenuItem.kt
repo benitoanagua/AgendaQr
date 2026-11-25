@@ -1,10 +1,13 @@
 package com.agendaqr.core.ui.components
 
-import androidx.compose.foundation.background
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,47 +19,44 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.theme.AqColor
-import com.agendaqr.core.ui.theme.AqCorner
 import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqMotion
 import com.agendaqr.core.ui.theme.AqSize
-import com.agendaqr.core.ui.theme.AqTextStyles
+import com.agendaqr.core.ui.theme.AqStateAlpha
 import com.agendaqr.core.ui.theme.AqTouchTarget
 import com.agendaqr.core.ui.theme.AqType
-import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
  * Celda de lista sobre [MoonMenuItem] (`moon_design` 1.1.0,
- * `widgets/menu_item`). Patrón de composición del catálogo §4:
- * `AqMenuItem` + `AqAvatar` / `AqTag`.
+ * `widgets/menu_item` + `menu_item_theme.dart`).
  *
- * - [leading]: avatar o glifo a la izquierda.
- * - [title]: título (una línea).
- * - [subtitle]: segunda línea opcional (texto secundario).
- * - [trailing]: glifo, chevron o slot personalizado a la derecha.
- * - [selected]: estado de selección (fondo de selección).
- * - [enabled]: controla la interacción; cuando es falso no emite onClick.
- * - [showDivider]: divisor de 1 dp al final.
- * - Área táctil ≥ 48 dp (D-02); semántica de botón con rol.
+ * - Contenedor: squircle `interactiveSm`, fondo transparente que funde
+ *   `heles` (velo translúcido) en hover/focus durante 200 ms
+ *   `easeInOutCubic`; padding `x3s` (12 dp) en los cuatro lados; alto
+ *   mínimo `sizes.md` (40 dp) y hueco horizontal `x3s` entre
+ *   leading/label/trailing (Moon usa el padding como gap).
+ * - Label: `body.textDefault` (14 regular) en `textPrimary`; content:
+ *   `body.text12` (12 regular) en `textSecondary`, a `x5s` (4 dp) bajo el
+ *   label.
+ * - [leading]/[trailing]: slots de Moon (avatar, glifo, chevron…).
+ * - [selected] (contrato de producto): superficie de selección del tema.
+ * - [showDivider]: divisor `beerus` de 1 dp con inset de lista.
+ * - Deshabilitado = opacidad 0.6; objetivo táctil ≥ 48 dp
+ *   ([AqTouchTarget], ADR-0039 §4.4).
  * - Todo el copy llega del llamador.
- *
- * Geometría Moon (§ MenuItem):
- * - Relleno: 12 dp en los 4 lados ([AqLayout.CellPadding]).
- * - Hueco entre bloques (leading / texto / trailing): 8 dp ([AqLayout.InGroup]).
- * - Hueco título-subtítulo: 4 dp ([AqSize.X5s]).
- * - Alto mínimo visual 40 dp; objetivo táctil 48 dp ([AqMetrics.ControlMinSize]).
- * - El bloque de texto se expande (weight(1f), fill = true); el trailing
- *   queda con wrapContentWidth (no Spacer con weight).
  */
 @Composable
 fun AqMenuItem(
@@ -79,32 +79,33 @@ fun AqMenuItem(
     modifier: Modifier = Modifier,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val isSelected = selected
-    // PV-01: el estado pressed no cambia el relleno de la celda; el efecto es
-    // el scale de Moon aplicado por el contenidor táctil.
-    val container = when {
-        !enabled -> AqColor.Disabled
-        selected -> AqColor.SelectionSurface
-        else -> AqColor.Surface
-    }
-    val contentColor = when {
-        !enabled -> AqColor.OnDisabled
-        selected -> AqColor.SelectionIcon
-        else -> AqColor.TextPrimary
-    }
-    val subtitleColor = when {
-        !enabled -> AqColor.OnDisabled
-        else -> AqColor.TextSecondary
-    }
-    // Alto visual mínimo 40 dp; el área táctil se amplía a 48 dp sin deformar
-    // la celda ([AqTouchTarget], ADR-0039 §4.4).
+    val hovered by interactionSource.collectIsHoveredAsState()
+    val hoverAlpha by animateFloatAsState(
+        targetValue = if (hovered && enabled && !selected) 1f else 0f,
+        animationSpec = tween(
+            durationMillis = AqMotion.DurationMediumMs,
+            easing = AqMotion.Easings.InOutCubic,
+        ),
+        label = "aqMenuItemHover",
+    )
+    val shape = AqSquircles.InteractiveSm
     AqTouchTarget(
         minTouchSize = AqMetrics.ControlMinSize,
         modifier = modifier.fillMaxWidth(),
+        selected = selected,
+        role = Role.Button,
     ) {
         Column(
             modifier = Modifier
-                .background(container, AqSquircles.InteractiveSm)
+                .fillMaxWidth()
+                .clip(shape)
+                .then(
+                    if (selected) {
+                        Modifier.background(AqColor.SelectionSurface, shape)
+                    } else {
+                        Modifier
+                    },
+                )
                 .then(
                     if (onLongClick != null) {
                         @OptIn(ExperimentalFoundationApi::class)
@@ -131,41 +132,56 @@ fun AqMenuItem(
                 )
                 .menuItemSemantics(
                     desc = title + (subtitle?.takeIf { it.isNotBlank() }?.let { " - $it" } ?: ""),
-                    isSelected = isSelected,
-                ),
+                    isSelected = selected,
+                )
+                .alpha(if (enabled) 1f else AqStateAlpha.Disabled),
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(AqLayout.CellPadding),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AqLayout.InGroup),
-            ) {
-                leading?.invoke()
-                Column(
-                    modifier = Modifier.weight(1f, fill = true),
-                    verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = AqSize.Md)
+                        .padding(AqLayout.CellPadding),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    AqText(
-                        text = title,
-                        size = AqType.RowTitle,
-                        fontWeight = AqWeight.SemiBold,
-                        color = contentColor,
-                        maxLines = titleMaxLines,
-                    )
-                    subtitle?.takeIf { it.isNotBlank() }?.let {
-                        AqText(
-                            text = it,
-                            size = AqType.BodySmall,
-                            color = subtitleColor,
-                            maxLines = 1,
-                        )
+                    leading?.let {
+                        Box(modifier = Modifier.padding(end = AqLayout.MenuItemGap)) { it() }
                     }
-                    meta?.let { slot ->
-                        slot()
+                    Column(
+                        modifier = Modifier
+                            .weight(1f, fill = true)
+                            .padding(
+                                end = if (trailing != null) AqLayout.MenuItemGap else AqLayout.Zero,
+                            ),
+                        verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
+                    ) {
+                        AqText(
+                            text = title,
+                            size = AqType.BodySm,
+                            color = AqColor.TextPrimary,
+                            maxLines = titleMaxLines,
+                        )
+                        subtitle?.takeIf { it.isNotBlank() }?.let {
+                            AqText(
+                                text = it,
+                                size = AqType.BodyXs,
+                                color = AqColor.TextSecondary,
+                                maxLines = 1,
+                            )
+                        }
+                        meta?.let { slot -> slot() }
+                    }
+                    trailing?.let {
+                        Box { it() }
                     }
                 }
-                trailing?.invoke()
+                // Velo de hover de Moon (`primaryHoverColor` = heles).
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .alpha(hoverAlpha)
+                        .background(AqColor.Disabled, shape),
+                )
             }
             if (showDivider) {
                 Row(
@@ -176,7 +192,7 @@ fun AqMenuItem(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(AqMetrics.DividerHeight)
-                            .background(AqColor.Divider),
+                            .background(AqColor.Border),
                     )
                 }
             }

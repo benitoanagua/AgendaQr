@@ -4,91 +4,98 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqCorner
 import com.agendaqr.core.ui.theme.AqSize
-import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
- * Indicador de carga circular sobre [MoonCircularLoader]
- * (`moon_design` 1.1.0, `lib/src/widgets/loaders/circular_loader.dart`).
+ * Indicador de carga circular indeterminado sobre [MoonCircularLoader]
+ * (`moon_design` 1.1.0, `widgets/loaders/circular_loader` +
+ * `circular_loader_theme.dart`/`_sizes.dart`).
  *
- * Tamaños de Moon: x2s (16 dp, trazo 2 dp), xs (24 dp, 2 dp), sm (32 dp,
- * 2 dp), md (40 dp, 4 dp) y lg (48 dp, 4 dp). El color se toma de Moon;
- * la geometría, de Moon. Es indeterminado (giro continuo).
+ * - Tamaños Moon x2s/xs/sm/md/lg (16/24/32/40/48 dp); trazo `x6s` (2 dp)
+ *   hasta sm y `x5s` (4 dp) en md/lg; `StrokeCap.round`.
+ * - Color `piccolo`→[AqColor.EmphasisFill]; pista `backgroundColor`
+ *   (transparente por defecto, como en Moon).
+ * - Giro indeterminado del painter de Moon (arco de 270° rotando).
  */
 @Composable
 fun AqCircularLoader(
     loaderSize: Dp = AqSize.Md,
     strokeWidth: Dp? = null,
     color: Color = AqColor.EmphasisFill,
+    backgroundColor: Color = AqColor.Transparent,
     contentDescription: String? = null,
+    modifier: Modifier = Modifier,
 ) {
-    val effectiveStrokeWidth = strokeWidth ?: when {
-        loaderSize <= AqSize.Sm -> AqSize.X6s
-        else -> AqSize.X5s
-    }
-    val description = contentDescription
+    val effectiveStrokeWidth = strokeWidth ?: if (loaderSize <= AqSize.Sm) AqSize.X6s else AqSize.X5s
     Box(
-        modifier = Modifier
-            .size(width = loaderSize, height = loaderSize)
+        modifier = modifier
+            .size(loaderSize)
             .semantics {
-                this.contentDescription = description ?: ""
+                this.contentDescription = contentDescription ?: ""
             },
         contentAlignment = Alignment.Center,
     ) {
-        CircularProgressIndicator(
-            modifier = Modifier.size(width = loaderSize, height = loaderSize),
-            color = color,
+        AqCircularArc(
+            progress = null,
+            size = loaderSize,
             strokeWidth = effectiveStrokeWidth,
+            color = color,
+            trackColor = backgroundColor,
         )
     }
 }
 
 /**
- * Indicador de carga lineal sobre [MoonLinearLoader]
- * (`moon_design` 1.1.0, `lib/src/widgets/loaders/linear_loader.dart`).
+ * Indicador de carga lineal indeterminado sobre [MoonLinearLoader]
+ * (`moon_design` 1.1.0, `widgets/loaders/linear_loader` +
+ * `linear_loader_theme.dart`/`_sizes.dart`).
  *
- * Tamaños de Moon: x6s (2 dp, radio 4), x5s (4 dp, 4 dp), x4s (8 dp, 8 dp),
- * x3s (12 dp, 12 dp), x2s (16 dp, 16 dp). El color de Moon; la geometría,
- * de Moon. [progress] en 0..1; usa 1f para indeterminado visual (línea
- * completa) o el valor real de avance.
+ * - Alturas Moon x6s/x5s/x4s/x3s/x2s (2/4/8/12/16 dp) con radios
+ *   `surfaceXs`/`surfaceSm`/`surfaceMd`/`surfaceLg` ([AqCorner]).
+ * - Color `piccolo`→[AqColor.EmphasisFill]; `backgroundColor`
+ *   transparente por defecto (Moon `linear_loader_colors.dart`).
+ * - [progress]: `null` = indeterminado (Moon); un valor 0..1 dibuja la
+ *   barra determinada (extensión usada por el esqueleto).
  */
 @Composable
 fun AqLinearLoader(
     loaderHeight: Dp = AqSize.X4s,
-    progress: Float = 1f,
+    progress: Float? = null,
     color: Color = AqColor.EmphasisFill,
+    backgroundColor: Color = AqColor.Transparent,
     contentDescription: String? = null,
 ) {
-    val shape: Shape = when {
-        loaderHeight <= AqSize.X4s -> AqSquircles.SurfaceXs
-        loaderHeight <= AqSize.X3s -> AqSquircles.SurfaceMd
-        else -> AqSquircles.SurfaceLg
+    val radius = when {
+        loaderHeight <= AqSize.X5s -> AqCorner.SurfaceXs
+        loaderHeight <= AqSize.X4s -> AqCorner.SurfaceSm
+        loaderHeight <= AqSize.X3s -> AqCorner.SurfaceMd
+        else -> AqCorner.SurfaceLg
     }
-    val description = contentDescription
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(loaderHeight)
             .semantics {
-                this.contentDescription = description ?: ""
+                this.contentDescription = contentDescription ?: ""
             },
     ) {
-        LinearProgressIndicator(
-            modifier = Modifier.fillMaxWidth().height(loaderHeight).clip(shape),
-            progress = { progress },
+        AqLinearTrack(
+            progress = progress,
+            height = loaderHeight,
+            cornerRadius = radius,
             color = color,
+            trackColor = backgroundColor,
         )
     }
 }

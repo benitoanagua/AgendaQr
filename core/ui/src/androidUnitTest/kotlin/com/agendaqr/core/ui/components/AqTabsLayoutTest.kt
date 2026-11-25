@@ -6,13 +6,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.Density
 import com.agendaqr.core.ui.theme.AqTheme
@@ -73,7 +74,7 @@ class AqTabsLayoutTest {
             // Sin scroll disponible: la pestaña ya es visible y seleccionable.
         }
         last.assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab))
-            .performClick()
+            .performSemanticsAction(SemanticsActions.OnClick)
         compose.onNodeWithText("Comprobantes")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, true))
     }

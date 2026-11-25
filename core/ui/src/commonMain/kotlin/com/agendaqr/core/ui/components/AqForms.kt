@@ -1,9 +1,12 @@
 package com.agendaqr.core.ui.components
 
-import androidx.compose.foundation.background
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -16,12 +19,13 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.triStateToggleable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -30,9 +34,12 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.state.ToggleableState
 import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
+import com.agendaqr.core.ui.theme.AqMotion
 import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqStateAlpha
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
 
@@ -98,12 +105,14 @@ fun AqCheckbox(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        androidx.compose.material3.Checkbox(
-            checked = checked,
-            onCheckedChange = null,
-            enabled = state.enabled,
-            modifier = Modifier.clearAndSetSemantics { }.size(AqMetrics.ControlMinSize),
-        )
+        Box(
+            modifier = Modifier
+                .clearAndSetSemantics { }
+                .size(AqMetrics.ControlMinSize),
+            contentAlignment = Alignment.Center,
+        ) {
+            AqCheckboxGlyph(checked = checked, enabled = state.enabled)
+        }
         if (hasText) Column(modifier = Modifier.padding(start = AqSpacing.Md).weight(1f)) {
             AqText(
                 text = label,
@@ -249,12 +258,21 @@ fun AqSelectAll(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        androidx.compose.material3.TriStateCheckbox(
-            state = checkedState,
-            onClick = null,
-            enabled = state.enabled,
-            modifier = Modifier.clearAndSetSemantics { }.size(AqMetrics.ControlMinSize),
-        )
+        Box(
+            modifier = Modifier
+                .clearAndSetSemantics { }
+                .size(AqMetrics.ControlMinSize),
+            contentAlignment = Alignment.Center,
+        ) {
+            AqCheckboxGlyph(
+                checked = when (checkedState) {
+                    ToggleableState.On -> true
+                    ToggleableState.Indeterminate -> null
+                    ToggleableState.Off -> false
+                },
+                enabled = state.enabled,
+            )
+        }
         Column(modifier = Modifier.padding(start = AqSpacing.Md).weight(1f)) {
             AqText(
                 text = label,
@@ -419,6 +437,111 @@ fun AqChipRow(
                     count = option.count,
                     size = AqChipSize.Md,
                 )
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Glifo de casilla Moon (`checkbox.dart` + `checkbox_painter.dart`)
+// ---------------------------------------------------------------------------
+
+/**
+ * Glifo de 16×16 dp de [MoonCheckbox]: squircle `interactiveXs` (radio 4),
+ * relleno `piccolo` al activarse, borde `trunks` de 1 dp en reposo y marca
+ * check/dash en `goten`. `checked == null` = estado mixto (trazo horizontal).
+ * La animación de 200 ms `easeInOutCubic` reproduce el `ToggleablePainter`
+ * de Flutter (el check se dibuja en dos segmentos y el dash crece desde el
+ * centro). Deshabilitado = opacidad 0.6.
+ */
+@Composable
+private fun AqCheckboxGlyph(
+    checked: Boolean?,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val progress by animateFloatAsState(
+        targetValue = if (checked == false) 0f else 1f,
+        animationSpec = tween(
+            durationMillis = AqMotion.DurationMediumMs,
+            easing = AqMotion.Easings.InOutCubic,
+        ),
+        label = "aqCheckbox",
+    )
+    val fillColor = AqColor.BrandFill
+    val borderColor = AqColor.TextSecondary
+    val markColor = AqColor.OnBrandFill
+    val strokeWidth = AqLayout.CheckboxStrokeWidth
+    Canvas(
+        modifier = modifier
+            .size(AqLayout.CheckboxGlyphSize)
+            .alpha(if (enabled) 1f else AqStateAlpha.Disabled),
+    ) {
+        val outline = AqSquircles.InteractiveXs.createOutline(size, layoutDirection, this)
+        val boxPath = (outline as? Outline.Generic)?.path
+        if (boxPath == null) return@Canvas
+        // Relleno activo: aparece durante la primera mitad de la transición.
+        if (progress > 0f) {
+            drawPath(
+                path = boxPath,
+                color = fillColor.copy(alpha = fillColor.alpha * progress),
+            )
+        }
+        // Borde inactivo: desaparece al seleccionar (Moon resuelve `side` a
+        // null cuando `MaterialState.selected`).
+        val borderAlpha = 1f - progress
+        if (borderAlpha > 0f) {
+            drawPath(
+                path = boxPath,
+                color = borderColor.copy(alpha = borderColor.alpha * borderAlpha),
+                style = Stroke(width = strokeWidth.toPx()),
+            )
+        }
+        // Marca: check en dos segmentos o dash horizontal (estado mixto).
+        if (progress > 0f) {
+            val s = size.width
+            val markPaint = Stroke(width = strokeWidth.toPx())
+            if (checked == null) {
+                val startX = s * 0.2f
+                val midX = s * 0.5f
+                val endX = s * 0.8f
+                val y = s * 0.5f
+                drawLine(
+                    color = markColor,
+                    start = Offset(
+                        androidx.compose.ui.util.lerp(startX, midX, 1f - progress),
+                        y,
+                    ),
+                    end = Offset(
+                        androidx.compose.ui.util.lerp(midX, endX, progress),
+                        y,
+                    ),
+                    strokeWidth = strokeWidth.toPx(),
+                )
+            } else {
+                val start = Offset(s * 0.15f, s * 0.45f)
+                val mid = Offset(s * 0.4f, s * 0.7f)
+                val end = Offset(s * 0.85f, s * 0.25f)
+                // Primer segmento (start→mid) en la primera mitad de la
+                // animación; segundo segmento (mid→end) en la segunda.
+                val path = Path().apply {
+                    moveTo(start.x, start.y)
+                    if (progress <= 0.5f) {
+                        val t = progress * 2f
+                        lineTo(
+                            androidx.compose.ui.util.lerp(start.x, mid.x, t),
+                            androidx.compose.ui.util.lerp(start.y, mid.y, t),
+                        )
+                    } else {
+                        lineTo(mid.x, mid.y)
+                        val t = (progress - 0.5f) * 2f
+                        lineTo(
+                            androidx.compose.ui.util.lerp(mid.x, end.x, t),
+                            androidx.compose.ui.util.lerp(mid.y, end.y, t),
+                        )
+                    }
+                }
+                drawPath(path = path, color = markColor, style = markPaint)
             }
         }
     }
