@@ -1,8 +1,9 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqNavDestination
 import com.agendaqr.core.ui.components.AqTab
@@ -68,11 +69,13 @@ class RootNavigationChromeTest {
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText(AppStrings.Contextos).performClick()
+        compose.onNodeWithText(AppStrings.Contextos)
+            .performSemanticsAction(SemanticsActions.OnClick)
         compose.waitForIdle()
         assertEquals(3, selectedIndex, "Destino visible tras el cambio: $selectedIndex")
         // Desde cualquier destino, el usuario puede volver a Inicio (índice 0).
-        compose.onNodeWithText(AppStrings.Inicio).performClick()
+        compose.onNodeWithText(AppStrings.Inicio)
+            .performSemanticsAction(SemanticsActions.OnClick)
         compose.waitForIdle()
         assertEquals(0, selectedIndex, "El Back desde otro destino vuelve a Inicio")
     }

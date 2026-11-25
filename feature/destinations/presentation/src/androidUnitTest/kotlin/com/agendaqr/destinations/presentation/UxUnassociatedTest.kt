@@ -3,10 +3,9 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.longClick
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.performSemanticsAction
 import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.domain.AssociateComprobanteToOperationUseCase
 import com.agendaqr.destinations.domain.Comprobante
@@ -99,7 +98,8 @@ class UxUnassociatedTest {
         // "Crear actividad desde esto" como acción de texto.
         compose.onNodeWithText(AppStrings.createOperationFromThis).assertExists()
         // La fila abre el flujo de asociación (diálogo con candidatas).
-        compose.onNodeWithText("recibo_ketal.jpg").performClick()
+        compose.onNodeWithText("recibo_ketal.jpg")
+            .performSemanticsAction(SemanticsActions.OnClick)
         compose.waitForIdle()
         compose.onNodeWithText(AppStrings.noAutomaticMatch).assertExists()
     }
@@ -108,7 +108,8 @@ class UxUnassociatedTest {
     fun association_dialog_creates_operation_as_text_action() {
         val vm = viewModel()
         render(vm)
-        compose.onNodeWithText("recibo_ketal.jpg").performClick()
+        compose.onNodeWithText("recibo_ketal.jpg")
+            .performSemanticsAction(SemanticsActions.OnClick)
         compose.waitForIdle()
         compose.onNodeWithText(AppStrings.createOperationFromThis).assertExists()
     }
@@ -125,7 +126,10 @@ class UxUnassociatedTest {
     fun long_press_on_row_enters_selection_mode() {
         val vm = viewModel()
         render(vm)
-        compose.onNodeWithText("recibo_ketal.jpg").performTouchInput { longClick() }
+        // La pulsación larga se verifica vía la acción semántica
+        // OnLongClick: la inyección táctil real no es fiable bajo Robolectric.
+        compose.onNodeWithText("recibo_ketal.jpg")
+            .performSemanticsAction(SemanticsActions.OnLongClick)
         compose.waitForIdle()
         compose.onNodeWithText("1 ${AppStrings.Seleccionados}").assertExists()
         // En modo selección desaparece la acción por fila.

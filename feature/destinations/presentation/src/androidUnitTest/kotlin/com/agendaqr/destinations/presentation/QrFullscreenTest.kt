@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
@@ -15,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.destinations.domain.Destination
 import com.agendaqr.destinations.domain.QrAsset
@@ -86,7 +88,8 @@ class QrFullscreenTest {
         var shown = 0
         renderDetail(onShowQr = { shown++ })
         // La tarjeta del QR es tocable con la misma acción de Mostrar.
-        compose.onNodeWithText(AppStrings.MuestraEsteCodigo).performClick()
+        compose.onNodeWithText(AppStrings.MuestraEsteCodigo)
+            .performSemanticsAction(SemanticsActions.OnClick)
         assertEquals(1, shown)
     }
 

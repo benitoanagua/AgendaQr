@@ -19,8 +19,6 @@ import com.agendaqr.core.ui.components.AqAlert
 import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqButtonSize
 import com.agendaqr.core.ui.components.AqButtonVariant
-import com.agendaqr.core.ui.components.AqCarousel
-import com.agendaqr.core.ui.components.AqCarouselItem
 import com.agendaqr.core.ui.components.AqCheckbox
 import com.agendaqr.core.ui.components.AqEmptyPlaceholder
 import com.agendaqr.core.ui.components.AqFavoriteToggle

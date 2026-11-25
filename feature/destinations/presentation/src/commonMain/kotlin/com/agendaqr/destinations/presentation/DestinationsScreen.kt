@@ -226,8 +226,8 @@ fun DestinationsScreen(
                     items = favorites.map {
                         AqCarouselItem(it.id, it.name.ifBlank { AppStrings.SinNombre })
                     },
-                    itemWidth = com.agendaqr.core.ui.theme.AqMetrics.FavCardWidth,
-                    itemSpacing = AqSpacing.Md,
+                    itemExtent = com.agendaqr.core.ui.theme.AqMetrics.FavCardWidth,
+                    gap = AqSpacing.Md,
                 ) { item ->
                     val destination = favorites.find { it.id == item.id }!!
                     FavoriteDestinationCard(

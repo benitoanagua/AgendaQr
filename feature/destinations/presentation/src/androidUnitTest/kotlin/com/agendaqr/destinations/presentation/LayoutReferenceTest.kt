@@ -1,5 +1,8 @@
+@file:SuppressLint("StateFlowValueCalledInComposition")
+
 package com.agendaqr.destinations.presentation
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
