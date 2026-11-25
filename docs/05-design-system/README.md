@@ -11,9 +11,11 @@ Agenda QR adopta Moon Design como **única autoridad visual**. Moon define los t
 | [00-contrato-normativo-diseno.md](00-contrato-normativo-diseno.md) | Reglas obligatorias, adaptaciones móviles, gobernanza y excepciones del gate |
 | [09-tokens-moon.md](09-tokens-moon.md) | Valores exactos de color, roles semánticos, tipografía e iconos |
 | [13-catalogo-moon.md](13-catalogo-moon.md) | Componentes Moon, equivalencias `Aq*`, variantes y medidas |
+| [moon-catalogo-referencia.md](moon-catalogo-referencia.md) | Referencia Moon por widget (API, variantes, tamaños, estados); consulta, no norma |
+| [auditoria-fidelidad-moon.md](auditoria-fidelidad-moon.md) | Matriz de cumplimiento del ciclo de fidelidad (registro fechado, no fuente de verdad) |
 | [06-licencias-terceros.md](06-licencias-terceros.md) | Licencias, atribución y distribución de recursos |
 
-No hay otras especificaciones activas del Design System. Las fichas duplicadas, auditorías fechadas, matrices de gaps/fidelidad y decisiones visuales supersedidas se retiraron del árbol activo. Su historia, cuando sea necesaria, queda en Git.
+No hay otras especificaciones activas del Design System. Las fichas duplicadas, auditorías fechadas, matrices de gaps y decisiones visuales supersedidas se retiraron del árbol activo; la matriz de fidelidad vigente es la de `auditoria-fidelidad-moon.md`, exigida por el contrato de fidelidad y cerrada con 0 desviaciones (ADR-0047). Su historia, cuando sea necesaria, queda en Git.
 
 ## Fuente y port
 

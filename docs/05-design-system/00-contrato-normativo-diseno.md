@@ -184,12 +184,15 @@ en el archivo señalado con valores tomados de tokens semánticos.
 | ID | API permitida | Archivo | Motivo |
 |---|---|---|---|
 | E-01 | `border` | `AqButtons.kt` | Borde de foco y variante contorneada |
-| E-04 | `border` | `AqInputs.kt` | Foco y estado de error de campos |
 | E-08 | `border` | `AqPinEntry.kt` | Borde de tecla del teclado PIN (contraste en tema oscuro) |
 | E-12 | `border` | `AqTextInput.kt` | Borde de reposo, foco y error de campo de texto (MoonTextInput) |
 | E-13 | `border` | `AqTextArea.kt` | Borde de reposo, foco y error de área de texto (MoonTextArea) |
-| E-14 | `border` | `AqRadio.kt` | Borde de anillo de selección de botón de radio (MoonRadio) |
 | E-15 | `border` | `AqAuthCode.kt` | Borde de reposo y error de campos del código de auth (MoonAuthCode) |
+| E-16 | `border` | `AqAccordion.kt` | Borde de la tarjeta del acordeón (MoonAccordion) |
+| E-17 | `border` | `AqChip.kt` | Borde de chips seleccionados/filtro (MoonChip) |
+| E-18 | `border` | `AqTextInputGroup.kt` | Borde del contenedor de grupo de campos (MoonTextInputGroup) |
+| E-19 | `border` | `AqProgressPin.kt` | Borde del clavo de progreso (MoonProgressPin) |
+| E-20 | `shadow` | `AqProgressPin.kt` | Sombra `popo` del clavo de progreso (MoonProgressPin) |
 
 E-06 (elevación de botones) está retirada: los botones son planos y un
 registro sin uso se detecta como excepción zombie.

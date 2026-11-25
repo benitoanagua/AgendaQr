@@ -30,6 +30,8 @@
 | [`05-design-system/00-contrato-normativo-diseno.md`](05-design-system/00-contrato-normativo-diseno.md) | Contrato normativo: autoridad Moon, adaptaciones móviles y excepciones del gate |
 | [`05-design-system/09-tokens-moon.md`](05-design-system/09-tokens-moon.md) | Valores de color, roles semánticos, tipografía e iconos |
 | [`05-design-system/13-catalogo-moon.md`](05-design-system/13-catalogo-moon.md) | Catálogo único de componentes, equivalencias, tamaños y composiciones |
+| [`05-design-system/moon-catalogo-referencia.md`](05-design-system/moon-catalogo-referencia.md) | Referencia Moon por widget: API pública, variantes, tamaños y estados (consulta, no norma) |
+| [`05-design-system/auditoria-fidelidad-moon.md`](05-design-system/auditoria-fidelidad-moon.md) | Matriz de fidelidad cerrada: 0 desviaciones (registro del ciclo ADR-0047) |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias y avisos de recursos redistribuidos |
 
 ## Decisiones
@@ -57,6 +59,7 @@
 | [`07-decisiones/ADR-0044-moon-unico-sistema-de-diseno.md`](07-decisiones/ADR-0044-moon-unico-sistema-de-diseno.md) | ADR: Moon como único sistema de diseño |
 | [`07-decisiones/ADR-0045-bandeja-sin-asociar-vacio-y-seleccion.md`](07-decisiones/ADR-0045-bandeja-sin-asociar-vacio-y-seleccion.md) | ADR: bandeja sin asociar — copy de vacío y pulsación larga |
 | [`07-decisiones/ADR-0046-puerto-moon-base-control-y-area-tactil.md`](07-decisiones/ADR-0046-puerto-moon-base-control-y-area-tactil.md) | ADR: puerto de MoonBaseControl y área táctil de 48 dp (AqBaseControl / AqTouchTarget) |
+| [`07-decisiones/ADR-0047-cierre-fidelidad-moon.md`](07-decisiones/ADR-0047-cierre-fidelidad-moon.md) | ADR: cierre de fidelidad Moon — catálogo de referencia, auditoría y gate `verifyMoonFidelity` |
 
 ## Cómo se mantiene
 

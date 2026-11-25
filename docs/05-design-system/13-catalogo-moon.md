@@ -107,5 +107,5 @@ Moon no define algunos patrones de producto como componentes independientes. Se 
 - Los tamaños visuales Moon se conservan. El objetivo táctil se amplía a 48 dp mediante `AqTouchTarget`, sin deformar el control.
 - Los estados, efectos de foco/pulsación y movimiento se centralizan en `AqBaseControl` y `AqMotion`.
 - El catálogo enumera cada símbolo `Aq*` exportado y debe mantenerse sincronizado con `AqDesignSystemGallery`, pruebas y gate de completitud.
-- La duración de toast de Agenda QR es 4 000 ms (decisión de producto); no debe confundirse con la animación Moon de 200 ms y separación/recorrido de toasts.
+- La duración de toast es `AqMotion.ToastDurationMs` = 3 000 ms, el `displayDuration` por defecto de Moon (`toast.dart`); la animación es `defaultTransitionDuration` (200 ms) y la separación/recorrido de toasts sigue el tema Moon.
 - No se mantienen fichas de componente separadas: este catálogo, los tokens y el código/test de `core/ui` son la fuente activa.

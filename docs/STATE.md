@@ -30,7 +30,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Sistema visual Moon (`moon_tokens` 0.0.6, `moon-icons` 10.7.4) en `core/ui`: tokens semánticos claro/oscuro, Inter 4.0 empaquetado, pares AA, iconografía convertida a vectores Compose, movimiento, previews a 200 % y avisos de licencia | `verifyAgendaQrArchitecture` + `:core:ui:testDebugUnitTest` + `:androidApp:assembleDebug` con `-PallowDebugSigningForRc=true` |
 | **Moon Design como único sistema visual (ADR-0044): Moon rige todo el UI/UX (anatomía, tamaños, radios squircle, bordes, sombras, opacidades, movimiento, efecto de foco, color, iconos y escala tipográfica; ADR-0044). Cero símbolos legacy en producción, cero wrappers `AqMoon*`, cero Material en feature/apps/shared.** | `:core:ui:testDebugUnitTest` verde; `verifyDesignSystemCompliance` VERDE; `verifyDesignSystemFixtures` VERDE; `verifyControlMinSize` VERDE; `verifyLayoutGeometry` VERDE; `verifyNoScripts` VERDE; `verifyDocs` VERDE |
 | Componente `AqCircularProgress` portado (widgets/progress), catálogo y galería claro/oscuro | `:core:ui:testDebugUnitTest` + gate |
-| Duración de `AqToast` de Agenda QR: 4 000 ms (decisión de producto; animación y separación siguen a Moon) | prueba que falla con el valor anterior |
+| Duración de `AqToast`: 3 000 ms (`AqMotion.ToastDurationMs` = `displayDuration` por defecto de Moon; animación y separación siguen a Moon) | `AqToastTest` |
 | Reimplementación de `AqModal` sobre `androidx.compose.ui.window.Dialog` (focus trap, back/predictive back, `paneTitle`, scrim clicable) | `:core:ui:testDebugUnitTest` |
 | Migración pantalla por pantalla a componentes Moon reales (sin wrappers `AqMoon*`): UnassociatedScreen (piloto), DestinationsScreen, DestinationDetailScreen, ContextScreen, ImportBatchScreen, OperationDetailScreen, OperationEditorScreen, OperationListContent/Grouped/Screen, ContextPickerDialog, GlobalSearchScreen, DestinationEditorScreen, AddDestinationScreen, ImportReviewScreen, AuthScreen, AccountScreen, LocalOnboardingScreen, LocalLockScreen, ComprobanteViewer, AppStatusHost, AgendaQrPatterns, AgendaQrApp + AuthenticatedAppRoot | `:feature:destinations:presentation:testDebugUnitTest` + `verifyDesignSystemCompliance` + commits por pantalla |
 | Pantallas de plataforma (CameraQrCapture, QrImportControls, ImportBatchControls, IosCameraQrCapture, etc.) sin Material ni legacy | compilación de los módulos de plataforma |
@@ -103,6 +103,6 @@ No se declaran PASS. Requieren Xcode, dispositivo físico, red o backend reales.
 - `AqTextInput` md conserva 40 dp de caja visual; el wrapper de toque alcanza 48 dp sin expandir el borde visible.
 - `AqDropdown` es un menú anclado, no un campo select. Para selección cerrada se usa `AqTextInput(readOnly = true)` como ancla; no se declara una API `AqSelect` inexistente.
 - No se crean wrappers `AqMoon*` ni se reintroducen símbolos visuales legacy.
-- `AqToast` dura 4 000 ms por decisión de producto; Moon aporta el comportamiento de animación y separación.
+- `AqToast` dura 3 000 ms (`displayDuration` por defecto de Moon, ADR-0047); Moon aporta el comportamiento de animación y separación.
 - Las composiciones Moon-only usan nombres propios de Agenda QR y componentes de `core/ui`.
 - La fuente normativa actual es `docs/05-design-system/README.md`; el historial de decisiones anteriores se conserva en Git.

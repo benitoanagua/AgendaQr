@@ -50,7 +50,6 @@ fun isUiLiteralAllowed(text: String): Boolean =
  */
 val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-01" to listOf("border:AqButtons.kt"),
-    "E-04" to listOf("border:AqInputs.kt"),
     // Bordes de teclas del teclado PIN (contraste en tema oscuro).
     "E-08" to listOf("border:AqPinEntry.kt"),
     // Borde de los campos de entrada Moon (AqTextInput / AqTextArea).
@@ -58,8 +57,15 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-13" to listOf("border:AqTextArea.kt"),
     // Borde de los campos del código de autenticación (AqAuthCode).
     "E-15" to listOf("border:AqAuthCode.kt"),
-    // Borde del anillo de selección de MoonRadio (AqRadio.kt es su propio archivo).
-    "E-14" to listOf("border:AqRadio.kt"),
+    // Borde de la tarjeta del acordeón (MoonAccordion).
+    "E-16" to listOf("border:AqAccordion.kt"),
+    // Borde de chips seleccionados/filtro (MoonChip).
+    "E-17" to listOf("border:AqChip.kt"),
+    // Borde del contenedor de grupo de campos (MoonTextInputGroup).
+    "E-18" to listOf("border:AqTextInputGroup.kt"),
+    // Borde del clavo de progreso y su sombra (MoonProgressPin).
+    "E-19" to listOf("border:AqProgressPin.kt"),
+    "E-20" to listOf("shadow:AqProgressPin.kt"),
     // `Modifier.shadow` se centraliza en la capa de tokens; solo los
     // archivos registrados pueden invocarlo (o elevarse vía `aqShadow`).
     // E-06 (elevación de botones) se retiró: los botones son planos y
@@ -484,6 +490,152 @@ fun prohibitedSymbolsAnywhere(): List<String> {
         }
     }
     return violations
+}
+
+/** Nombres `Aq*` declarados como destino en las filas de componentes del
+ * catálogo Moon (columna «Aq* destino» de las tablas con estado
+ * disponible/adoptado). Los tokens de la §1 no aparecen ahí. */
+fun catalogComponentNames(catalogContent: String): Set<String> {
+    val names = mutableSetOf<String>()
+    catalogContent.lines().forEach { line ->
+        if (!line.startsWith("|")) return@forEach
+        val cells = line.split("|").map { it.trim() }
+        if (cells.size < 6) return@forEach
+        val estado = cells[cells.size - 2].removeSurrounding("`").trim()
+        if (estado != "disponible" && estado != "adoptado") return@forEach
+        val destino = cells[cells.size - 3]
+        Regex("Aq[A-Za-z0-9_]+").findAll(destino).forEach { names += it.value }
+    }
+    return names
+}
+
+/** Cobertura de galería: cada componente `Aq*` del catálogo debe invocarse
+ * (directa o vía alias de import) en la galería del design system o en sus
+ * previews. [gallerySources] son pares (ruta, contenido) de los archivos de
+ * `core/ui/.../theme/` que componen la galería. */
+fun moonFidelityCoverageViolations(
+    catalogContent: String,
+    gallerySources: List<Pair<String, String>>,
+): List<String> {
+    val names = catalogComponentNames(catalogContent)
+    val missing = names.filter { name ->
+        gallerySources.none { (_, content) ->
+            val usageName = Regex("import\\s+[\\w.]*\\.$name\\b\\s+as\\s+(\\w+)")
+                .find(content)?.groupValues?.get(1) ?: name
+            content.lineSequence()
+                .filterNot { it.trimStart().startsWith("import ") }
+                .any { Regex("\\b$usageName\\s*\\(").containsMatchIn(it) }
+        }
+    }
+    return missing.map {
+        "moon-fidelidad: '$it' está en el catálogo pero no tiene cobertura en la galería (AqDesignSystemGallery/AqPreviews)"
+    }
+}
+
+/**
+ * Gate de fidelidad Moon (ADR-0047): además de las invariantes de
+ * `verifyDesignSystemCompliance` (literales fuera de tokens, imports y
+ * símbolos legacy, duplicados `Aq*`, completitud del catálogo, excepciones
+ * usadas), exige los documentos de referencia/auditoría y que todo
+ * componente del catálogo tenga cobertura en la galería.
+ */
+tasks.register("verifyMoonFidelity") {
+    group = "verification"
+    description = "Moon fidelity gate: token literals, legacy symbols, catalog completeness, exceptions and gallery coverage."
+    doLast {
+        val violations = checkViolations().toMutableList()
+        violations += exceptionUsageViolations(exceptionRegistry, productionKotlinPairs())
+        listOf(
+            "docs/05-design-system/moon-catalogo-referencia.md",
+            "docs/05-design-system/auditoria-fidelidad-moon.md",
+        ).forEach { doc ->
+            if (!file(doc).isFile) {
+                violations += "moon-fidelidad: falta el documento de referencia $doc"
+            }
+        }
+        val catalog = file("docs/05-design-system/13-catalogo-moon.md")
+        if (catalog.isFile) {
+            val gallerySources = listOf(
+                "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/AqDesignSystemGallery.kt",
+                "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/AqPreviews.kt",
+            ).mapNotNull { path ->
+                file(path).takeIf { it.isFile }?.let { path to it.readText() }
+            }
+            violations += moonFidelityCoverageViolations(catalog.readText(), gallerySources)
+        }
+        require(violations.isEmpty()) {
+            "Moon fidelity violations (${violations.size}):\n" +
+                violations.take(40).joinToString("\n") { "  $it" } +
+                if (violations.size > 40) "\n  ... and ${violations.size - 40} more" else ""
+        }
+        logger.lifecycle("verifyMoonFidelity: PASS")
+    }
+}
+
+/** Self-test de `verifyMoonFidelity`: el extractor del catálogo y la
+ * cobertura de galería deben fallar ante cada divergencia. */
+tasks.register("verifyMoonFidelityFixtures") {
+    group = "verification"
+    description = "Self-test: the Moon fidelity gate must fail on missing docs/components and pass on valid input."
+    doLast {
+        val catalogFixture = listOf(
+            "| Widget Moon | Fuente | Variantes | Aq* destino | Estado |",
+            "|---|---|---|---|---|",
+            "| `MoonButton` | `widgets/buttons` | xs…xl | `AqButton` | disponible |",
+            "| `MoonTabBar` | `widgets/tab_bar` | sm, md | `AqTabBar`, `AqPillTab` | adoptado |",
+            "| `MoonTable` | `widgets/table` | xs…x2l | `AqTable` | pendiente |",
+            "| Token Moon (`sizes`) | `theme/tokens` | — | `AqSize` | — |",
+        ).joinToString("\n")
+        val names = catalogComponentNames(catalogFixture)
+        require(names == setOf("AqButton", "AqTabBar", "AqPillTab")) {
+            "catalogComponentNames debe extraer solo destinos disponible/adoptado: $names"
+        }
+        val galleryWithAll = listOf(
+            "core/ui/theme/Gallery.kt" to """
+                import com.agendaqr.core.ui.components.AqButton
+                import com.agendaqr.core.ui.components.AqTabBar
+                import com.agendaqr.core.ui.components.AqPillTab
+                fun Preview() {
+                    AqButton(label = "x", onClick = {})
+                    AqTabBar(tabs = emptyList())
+                    AqPillTab(label = "x")
+                }
+            """.trimIndent(),
+        )
+        require(moonFidelityCoverageViolations(catalogFixture, galleryWithAll).isEmpty()) {
+            "una galería completa no debe generar violaciones"
+        }
+        val galleryMissing = listOf(
+            "core/ui/theme/Gallery.kt" to "fun Preview() { AqButton(label = \"x\", onClick = {}) }",
+        )
+        val missingViolations = moonFidelityCoverageViolations(catalogFixture, galleryMissing)
+        require(missingViolations.size == 2 &&
+            missingViolations.any { it.contains("'AqTabBar'") } &&
+            missingViolations.any { it.contains("'AqPillTab'") }) {
+            "los componentes sin cobertura deben fallar: $missingViolations"
+        }
+        // Alias de import: AqBreadcrumb as AqBreadcrumbComp cuenta como cobertura.
+        val aliasCatalog = "| `MoonBreadcrumb` | `widgets/breadcrumb` | — | `AqBreadcrumb` | disponible |"
+        val aliasGallery = listOf(
+            "core/ui/theme/Gallery.kt" to """
+                import com.agendaqr.core.ui.components.AqBreadcrumb as AqBreadcrumbComp
+                fun Preview() { AqBreadcrumbComp(items = emptyList()) }
+            """.trimIndent(),
+        )
+        require(moonFidelityCoverageViolations(aliasCatalog, aliasGallery).isEmpty()) {
+            "un alias de import debe resolver la cobertura"
+        }
+        // Un import sin uso NO cuenta como cobertura.
+        val unusedImportGallery = listOf(
+            "core/ui/theme/Gallery.kt" to """
+                import com.agendaqr.core.ui.components.AqBreadcrumb
+                fun Preview() { }
+            """.trimIndent(),
+        )
+        require(moonFidelityCoverageViolations(aliasCatalog, unusedImportGallery).isNotEmpty()) {
+            "un import sin invocación no debe contar como cobertura"
+        }
+    }
 }
 
 /**
@@ -1573,6 +1725,8 @@ tasks.register("verifyAgendaQrArchitecture") {
         "verifyUxTransitionContracts",
         "verifyNoLegacyAnywhere",
         "verifyNoPreviousDesignSystem",
+        "verifyMoonFidelity",
+        "verifyMoonFidelityFixtures",
     )
     description = "Runs the complete Agenda QR architecture and design-system gates."
 }
