@@ -11,6 +11,7 @@ Agenda QR adopta Moon Design como **única autoridad visual**. Moon define token
 | [00-contrato-normativo-diseno.md](00-contrato-normativo-diseno.md) | Reglas obligatorias, adaptaciones móviles, gobernanza y excepciones del gate |
 | [09-tokens-moon.md](09-tokens-moon.md) | Valores exactos de color, roles semánticos, tipografía e iconos |
 | [13-catalogo-moon.md](13-catalogo-moon.md) | Componentes Moon, equivalencias `Aq*`, variantes y medidas |
+| [14-mapa-iconos-phosphor.md](14-mapa-iconos-phosphor.md) | Mapa semántico único de los 39 conceptos `AqIcons` hacia Phosphor |
 | [moon-catalogo-referencia.md](moon-catalogo-referencia.md) | Referencia Moon por widget (API, variantes, tamaños, estados); consulta, no norma |
 | [auditoria-fidelidad-moon.md](auditoria-fidelidad-moon.md) | Matriz de cumplimiento del ciclo de fidelidad (registro fechado, no fuente de verdad) |
 | [15-component-lab.md](15-component-lab.md) | Component Lab web (wasmJs): ejecución y registro de componentes |
