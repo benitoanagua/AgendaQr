@@ -209,8 +209,12 @@ class AqSwitchRenderTest {
                 c.expectedTrack,
                 "pista (dark=${c.dark}, checked=${c.checked})",
             )
+            // El pulgar lleva el glifo Phosphor Check/X (12 dp) centrado
+            // (ADR-0051/0052): la muestra del fondo del pulgar se toma en
+            // el anillo a 9 px del centro — fuera de la caja del icono
+            // (±6 px) y dentro del pulgar de 24 px.
             assertColorNear(
-                bmp.getPixel(thumbCenterX.toInt(), midY.toInt()),
+                bmp.getPixel((thumbCenterX + 9f).toInt(), midY.toInt()),
                 c.expectedThumb,
                 "pulgar (dark=${c.dark}, checked=${c.checked})",
             )
