@@ -1924,7 +1924,7 @@ tasks.register("verifySharedComponentConfiguration") {
         if (!lab.contains("AqComponentRegistry.filter") ||
             !lab.contains("entry.states[stateIndex].content(log)")) violations += "Lab must render shared AqComponentRegistry states"
         if (!gallery.contains("AqTheme(darkTheme = darkTheme)") ||
-            !lab.contains("AqTheme(darkTheme = darkTheme)") || !productionRoot.contains("AqTheme")) {
+            !lab.contains("AqTheme(darkTheme = darkTheme)") || !productionRoot.contains("AqTheme {")) {
             violations += "Lab, gallery and production must use AqTheme"
         }
         val switchEntry = registry.substringAfter("\"AqSwitch\",").substringBefore("\"AqRadio\",")
@@ -1991,8 +1991,10 @@ tasks.register("verifySharedComponentConfigurationFixtures") {
         require(goodGallery.contains("AqComponentRegistry.filter") && goodLab.contains("AqComponentRegistry.filter")) {
             "shared registry fixture must pass"
         }
-        require(!goodGallery.contains("private fun AqButtonPreview")) {
-            "duplicate preview fixture must fail"
+        val previewPattern = Regex("""private\s+fun\s+Aq[A-Za-z0-9_]*Preview\s*\(""")
+        val badGallery = goodGallery + "\nprivate fun AqButtonPreview()"
+        require(!previewPattern.containsMatchIn(goodGallery) && previewPattern.containsMatchIn(badGallery)) {
+            "gallery preview duplication fixture must be detected"
         }
     }
 }
