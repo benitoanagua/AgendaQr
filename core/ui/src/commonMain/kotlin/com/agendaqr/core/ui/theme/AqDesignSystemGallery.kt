@@ -59,6 +59,8 @@ import com.agendaqr.core.ui.components.AqHairline
 import com.agendaqr.core.ui.components.AqHelperMessage
 import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
+import com.agendaqr.core.ui.icons.AqPhosphorIcon
+import com.agendaqr.core.ui.icons.vectorForSize
 import com.agendaqr.core.ui.components.AqLinearLoader
 import com.agendaqr.core.ui.components.AqLinearProgress
 import com.agendaqr.core.ui.components.AqLeaderboard
@@ -539,6 +541,24 @@ private fun AqFormsPreview() {
                     state = AqFieldState(enabled = false),
                 )
                 AqSwitch(label = "Interruptor", checked = false, onCheckedChange = {})
+                // Slots de Moon con glifos Phosphor (ADR-0051): check al
+                // activar, X al desactivar — ejemplo «Custom MoonSwitch».
+                AqSwitch(
+                    label = "Con check",
+                    checked = true,
+                    onCheckedChange = {},
+                    activeThumbWidget = {
+                        AqIcon(imageVector = AqPhosphorIcon.Check.vectorForSize(AqSize.X3s), contentDescription = null, size = AqSize.X3s, tint = AqColor.Popo)
+                    },
+                )
+                AqSwitch(
+                    label = "Con X",
+                    checked = false,
+                    onCheckedChange = {},
+                    inactiveThumbWidget = {
+                        AqIcon(imageVector = AqPhosphorIcon.X.vectorForSize(AqSize.X3s), contentDescription = null, size = AqSize.X3s, tint = AqColor.Popo)
+                    },
+                )
                 AqSwitch(
                     label = "Deshabilitado",
                     checked = true,

@@ -30,7 +30,7 @@ fun visualSources(): List<File> = productionKotlinSources().toList()
 /** Capa de tokens: el único archivo con literales visuales. */
 private val TokenLayerFile = "AqTokens.kt"
 private val ThemeLayerFile = "AqTheme.kt"
-private val IconVectorFile = "MoonIconVectors.kt"
+private val IconVectorFileSuffix = "IconVectors.kt"
 
 /**
  * Allowlist de literales de UI permitidos en feature/: solo identificadores
@@ -224,9 +224,10 @@ fun kotlinDesignViolations(path: String, lines: List<String>): List<String> = bu
     )
     val isFeatureSource = path.contains("/feature/")
     val isTokenLayer = path.endsWith(TokenLayerFile)
-    // Los vectores declaran dimensiones intrínsecas y un color monocromo
-    // que se reemplaza por el tinte semántico en AqIcon.
-    val isIconVectorSource = path.endsWith(IconVectorFile)
+    // Los archivos de vectores (MoonIconVectors, PhosphorIconVectors…)
+    // declaran dimensiones intrínsecas y un color monocromo que se
+    // reemplaza por el tinte semántico en AqIcon (ADR-0051).
+    val isIconVectorSource = path.endsWith(IconVectorFileSuffix)
     lines.forEachIndexed { index, line ->
         val location = "$path:${index + 1}"
         if (bannedImports.any(line::contains)) add("$location: forbidden Material icon API: $line")
