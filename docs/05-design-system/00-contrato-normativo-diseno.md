@@ -3,7 +3,7 @@
 **Estado:** Normativo — vigente.
 **Autoridad:** ADR-0044 y este contrato. UX/UI V1 conserva el contrato funcional; su dirección visual se rige exclusivamente por Moon.
 
-Moon Design es el único sistema visual de Agenda QR. Color, anatomía, geometría, espaciado, elevación, opacidades, tipografía (salvo la sustitución de licencia), iconos, estados, movimiento y accesibilidad visual corresponden a Moon. Las composiciones específicas de Agenda QR se construyen con componentes Moon; los mecanismos de plataforma no crean una apariencia alternativa.
+Moon Design es la autoridad visual de Agenda QR para color, anatomía, geometría, espaciado, elevación, opacidades, tipografía (salvo la sustitución de licencia), estados, movimiento y accesibilidad visual. **La iconografía de producto corresponde exclusivamente a Phosphor Icons** (ADR-0052). Las composiciones específicas de Agenda QR se construyen con componentes compartidos `Aq*`; los mecanismos de plataforma no crean una apariencia alternativa.
 
 ## 1. Fuente de valores y versión
 
@@ -12,7 +12,7 @@ Moon Design es el único sistema visual de Agenda QR. Color, anatomía, geometr�
 | Sistema | Moon Design (reimplementación en Kotlin/Compose, sin runtime Flutter ni web) |
 | Colores | `moon_tokens` 0.0.6 (`MoonColors.light` / `MoonColors.dark`) |
 | Geometría, sombras, opacidades, transiciones | `moon_design` 1.1.0 (commit `177adb7`) |
-| Iconos | `@heathmont/moon-icons` 10.7.4 (`raw/imported`, 32 × 32, trazo 1) |
+| Iconos de producto | `@phosphor-icons/core` v2.0.8, SVG oficiales, vectores Compose locales (ADR-0052) |
 | Licencia | MIT © Yolo Group (ver [licencias](06-licencias-terceros.md)) |
 | Valores | [`09-tokens-moon.md`](09-tokens-moon.md) |
 | Tipografía | Inter (SIL OFL 1.1) con la escala de texto de Moon |
@@ -145,7 +145,7 @@ Construidas solo con tokens y componentes de Moon; no son valores propios.
 | X-04 | Roles de movimiento derivados | Derivados de la duración de 200 ms y la curva `easeInOutCubic` de Moon (PV-01). |
 | X-05 | Tema oscuro | Usa `MoonColors.dark`; los roles que Moon no define se derivan según PV-02. |
 | X-06 | Acentos de contexto | La asignación determinista por dominio se conserva (hash FNV-1a); los 11 pares se eligen entre colores Moon (más `roshi` y `raditz` oscurecidos) y se validan a AA. |
-| X-07 | Iconografía de producto sobre Moon Icons | El conjunto se fija en `@heathmont/moon-icons@10.7.4`; 35 SVG de `raw/imported` (32 × 32, trazo 1) se conservan como constantes Kotlin. Moon no trae glifos para cada concepto: `Register`→`TravelBill`, `QrCode`→`SecurityQrCode`, `Inbox`→`MailBox`, `ScanLine`→`FilesScan`, `Store`→`ShopBasket`, `Camera`→`MediaPhoto`, `Gallery`→`GenericPicture`, `Share`→`GenericShareIos`, `Trash`→`GenericDelete`, `Maximize`→`ControlsFullScreen`, `Income`/`Expense`→`ArrowsDown`/`ArrowsUp`. `Warning` y `AlertCircle` comparten `NotificationsAlert`. **Gap documentado:** Moon 10.7.4 no trae glifo de «búsqueda sin resultados» (solo `GenericSearch`); no existe `AqIcons.SearchX` y los estados sin resultados usan `AqIcons.Search` + copy, sin inventar paths; `Edit` y `NoteEdit` comparten `GenericEdit`. `Close`→`ControlsClose` (cierre, acción) es distinto de `Cancel`→`NotificationsError` (estado); `Check`→`GenericCheckAlternative` es el indicador de selección de chips; `Erase`→`ControlsClear` borra texto, nunca el glifo de papelera. |
+| X-07 | Iconografía de producto | Supersedido por ADR-0052: `AqIcons` usa exclusivamente Phosphor v2.0.8; 37 conceptos semánticos en vectores KMP locales. Moon Icons no se permite como fuente ni fallback. |
 
 ## 4. Desviaciones móviles
 
