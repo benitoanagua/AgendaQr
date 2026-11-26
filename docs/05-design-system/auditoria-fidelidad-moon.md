@@ -4,6 +4,7 @@
 **Autoridad:** `moon_design` 1.1.0 (ver [moon-catalogo-referencia.md](moon-catalogo-referencia.md)).
 **Implementación:** `core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/` (componentes `Aq*`, tokens en `theme/`).
 **Fecha de cierre:** ciclo ADR-0044/ADR-0047.
+**Evidencia pixel:** [`evidencia/informe.md`](evidencia/informe.md) — 218 pares Moon↔Aq, 0 desviaciones (ADR-0048).
 
 Columnas: **Moon esperado** resume la especificación de Moon; **AgendaQr** el estado verificado en código; **Archivo** apunta a la implementación `Aq*`; **Desviación** y **Severidad** registran el resultado de la auditoría (todas las filas quedan «conforme» tras las correcciones del ciclo).
 

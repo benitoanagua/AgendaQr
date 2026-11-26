@@ -42,4 +42,4 @@ Cualquier cambio visual se realiza únicamente en los cuatro archivos normativos
 
 ## Validación
 
-Ejecutar las tareas reales de `docs/QUALITY.md` y los gates `verifyDesignSystemCompliance`, `verifyDesignSystemFixtures`, `verifyControlMinSize`, `verifyLayoutGeometry`, `verifyDocs` y `verifyScreenContract`. La fidelidad visual no se declara por compilación solamente: requiere pruebas de geometría/estados y revisión de la galería claro/oscuro.
+Ejecutar las tareas reales de `docs/QUALITY.md` y los gates `verifyDesignSystemCompliance`, `verifyDesignSystemFixtures`, `verifyControlMinSize`, `verifyLayoutGeometry`, `verifyDocs` y `verifyScreenContract`. La fidelidad visual no se declara por compilación solamente: requiere pruebas de geometría/estados, revisión de la galería claro/oscuro y la evidencia pixel de [`evidencia/informe.md`](evidencia/informe.md) (218 pares Moon↔Aq, 0 desviaciones; comparador en `tools/moon-compare`, ADR-0048).

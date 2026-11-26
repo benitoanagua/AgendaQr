@@ -50,6 +50,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | «Crear contexto» siempre disponible en S08 (G7 / ADR-0033) | pruebas de presentación (ContextPickerDialogTest) |
 | Movimiento reducido en swipe/pull (política Moon del contrato normativo) | `:core:ui:testDebugUnitTest` |
 | Retiro de componentes sin respaldo AqBox/AqTriState/AqLightButton (N07) | `:core:ui:testDebugUnitTest` + gate |
+| Evidencia pixel de fidelidad Moon: 218 pares Moon↔Aq comparados por caja/tinta/pixdiff, 0 desviaciones (`docs/05-design-system/evidencia/`) | `tools/moon-compare/compare.py` + `AqComponentReferenceTest` (`:core:ui:testDebugUnitTest`) (ADR-0048) |
 
 ## 2. Implementado pero NO VERIFICADO
 

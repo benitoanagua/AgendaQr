@@ -1,0 +1,6769 @@
+{
+  "generado": "tools/moon-compare/compare.py",
+  "moon_png": 218,
+  "aq_png": 218,
+  "pares": 218,
+  "solo_moon": [],
+  "solo_aq": [],
+  "desviaciones": [],
+  "filas": [
+    {
+      "id": "accordion--lg--collapsed--dark",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        48.0
+      ],
+      "aq_size": [
+        328.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        48
+      ],
+      "ink_aq_wh": [
+        328,
+        48
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.01,
+      "ink_moon": 0.996,
+      "ink_aq": 0.9943,
+      "ink_diff": 0.0017,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "accordion--lg--collapsed--light",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        48.0
+      ],
+      "aq_size": [
+        328.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        48
+      ],
+      "ink_aq_wh": [
+        328,
+        48
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.08,
+      "ink_moon": 0.0302,
+      "ink_aq": 0.0264,
+      "ink_diff": 0.0038,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "accordion--lg--expanded--dark",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        67.0
+      ],
+      "aq_size": [
+        328.0,
+        66.0
+      ],
+      "d_width": 0.0,
+      "d_height": 1.0,
+      "ink_moon_wh": [
+        328,
+        67
+      ],
+      "ink_aq_wh": [
+        328,
+        66
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 3.59,
+      "ink_moon": 0.9813,
+      "ink_aq": 0.9639,
+      "ink_diff": 0.0174,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "accordion--lg--expanded--light",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        67.0
+      ],
+      "aq_size": [
+        328.0,
+        66.0
+      ],
+      "d_width": 0.0,
+      "d_height": 1.0,
+      "ink_moon_wh": [
+        328,
+        67
+      ],
+      "ink_aq_wh": [
+        328,
+        66
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 3.55,
+      "ink_moon": 0.0502,
+      "ink_aq": 0.0488,
+      "ink_diff": 0.0014,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "accordion--md--collapsed--dark",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        40
+      ],
+      "ink_aq_wh": [
+        328,
+        40
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.61,
+      "ink_moon": 0.9952,
+      "ink_aq": 0.9931,
+      "ink_diff": 0.0021,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "accordion--md--collapsed--light",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        40
+      ],
+      "ink_aq_wh": [
+        328,
+        40
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.7,
+      "ink_moon": 0.0362,
+      "ink_aq": 0.0316,
+      "ink_diff": 0.0046,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "accordion--md--expanded--dark",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        59.0
+      ],
+      "aq_size": [
+        328.0,
+        58.0
+      ],
+      "d_width": 0.0,
+      "d_height": 1.0,
+      "ink_moon_wh": [
+        328,
+        59
+      ],
+      "ink_aq_wh": [
+        328,
+        58
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 4.07,
+      "ink_moon": 0.9788,
+      "ink_aq": 0.959,
+      "ink_diff": 0.0198,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "accordion--md--expanded--light",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        59.0
+      ],
+      "aq_size": [
+        328.0,
+        58.0
+      ],
+      "d_width": 0.0,
+      "d_height": 1.0,
+      "ink_moon_wh": [
+        328,
+        59
+      ],
+      "ink_aq_wh": [
+        328,
+        58
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 4.04,
+      "ink_moon": 0.057,
+      "ink_aq": 0.0554,
+      "ink_diff": 0.0016,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "accordion--sm--collapsed--dark",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        32.0
+      ],
+      "aq_size": [
+        328.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        32
+      ],
+      "ink_aq_wh": [
+        328,
+        32
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.14,
+      "ink_moon": 0.9943,
+      "ink_aq": 0.9918,
+      "ink_diff": 0.0025,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "accordion--sm--collapsed--light",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        32.0
+      ],
+      "aq_size": [
+        328.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        32
+      ],
+      "ink_aq_wh": [
+        328,
+        32
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.4,
+      "ink_moon": 0.0297,
+      "ink_aq": 0.0332,
+      "ink_diff": 0.0034,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "accordion--sm--expanded--dark",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        49.0
+      ],
+      "aq_size": [
+        328.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 1.0,
+      "ink_moon_wh": [
+        328,
+        49
+      ],
+      "ink_aq_wh": [
+        328,
+        48
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 3.18,
+      "ink_moon": 0.9753,
+      "ink_aq": 0.9507,
+      "ink_diff": 0.0246,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "accordion--sm--expanded--light",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        49.0
+      ],
+      "aq_size": [
+        328.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 1.0,
+      "ink_moon_wh": [
+        328,
+        49
+      ],
+      "ink_aq_wh": [
+        328,
+        48
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 3.29,
+      "ink_moon": 0.0556,
+      "ink_aq": 0.0571,
+      "ink_diff": 0.0014,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "accordion--xl--collapsed--dark",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        56.0
+      ],
+      "aq_size": [
+        328.0,
+        56.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        56
+      ],
+      "ink_aq_wh": [
+        328,
+        56
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.22,
+      "ink_moon": 0.9959,
+      "ink_aq": 0.9957,
+      "ink_diff": 0.0002,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "accordion--xl--collapsed--light",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        56.0
+      ],
+      "aq_size": [
+        328.0,
+        56.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        56
+      ],
+      "ink_aq_wh": [
+        328,
+        56
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.27,
+      "ink_moon": 0.0291,
+      "ink_aq": 0.0255,
+      "ink_diff": 0.0036,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "accordion--xl--expanded--dark",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        75.0
+      ],
+      "aq_size": [
+        328.0,
+        74.0
+      ],
+      "d_width": 0.0,
+      "d_height": 1.0,
+      "ink_moon_wh": [
+        328,
+        75
+      ],
+      "ink_aq_wh": [
+        328,
+        74
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 3.68,
+      "ink_moon": 0.9828,
+      "ink_aq": 0.9682,
+      "ink_diff": 0.0146,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "accordion--xl--expanded--light",
+      "familia": "accordion",
+      "moon_size": [
+        328.0,
+        75.0
+      ],
+      "aq_size": [
+        328.0,
+        74.0
+      ],
+      "d_width": 0.0,
+      "d_height": 1.0,
+      "ink_moon_wh": [
+        328,
+        75
+      ],
+      "ink_aq_wh": [
+        328,
+        74
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 3.64,
+      "ink_moon": 0.0473,
+      "ink_aq": 0.0458,
+      "ink_diff": 0.0015,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "alert--dark",
+      "familia": "alert",
+      "moon_size": [
+        328.0,
+        708.0
+      ],
+      "aq_size": [
+        328.0,
+        708.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        708
+      ],
+      "ink_aq_wh": [
+        328,
+        708
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.43,
+      "ink_moon": 0.9996,
+      "ink_aq": 0.9991,
+      "ink_diff": 0.0004,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "alert--filled--dark",
+      "familia": "alert",
+      "moon_size": [
+        328.0,
+        708.0
+      ],
+      "aq_size": [
+        328.0,
+        708.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        708
+      ],
+      "ink_aq_wh": [
+        328,
+        708
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 99.87,
+      "ink_moon": 0.9998,
+      "ink_aq": 0.9996,
+      "ink_diff": 0.0002,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "alert--filled--light",
+      "familia": "alert",
+      "moon_size": [
+        328.0,
+        708.0
+      ],
+      "aq_size": [
+        328.0,
+        708.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        129,
+        14
+      ],
+      "ink_aq_wh": [
+        128,
+        14
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.26,
+      "ink_moon": 0.0025,
+      "ink_aq": 0.0026,
+      "ink_diff": 0.0001,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "alert--light",
+      "familia": "alert",
+      "moon_size": [
+        328.0,
+        708.0
+      ],
+      "aq_size": [
+        328.0,
+        708.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        257,
+        15
+      ],
+      "ink_aq_wh": [
+        256,
+        14
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 0.43,
+      "ink_moon": 0.0046,
+      "ink_aq": 0.0049,
+      "ink_diff": 0.0004,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "auth-code--dark",
+      "familia": "auth-code",
+      "moon_size": [
+        328.0,
+        708.0
+      ],
+      "aq_size": [
+        328.0,
+        56.0
+      ],
+      "d_width": 0.0,
+      "d_height": 652.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 0.1,
+      "ink_moon": 0.0,
+      "ink_aq": 0.0634,
+      "ink_diff": 0.0634,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "auth-code--light",
+      "familia": "auth-code",
+      "moon_size": [
+        328.0,
+        708.0
+      ],
+      "aq_size": [
+        328.0,
+        56.0
+      ],
+      "d_width": 0.0,
+      "d_height": 652.0,
+      "ink_moon_wh": [
+        328,
+        56
+      ],
+      "ink_aq_wh": [
+        328,
+        56
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.11,
+      "ink_moon": 0.004,
+      "ink_aq": 0.0053,
+      "ink_diff": 0.0014,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "avatar--lg--dark",
+      "familia": "avatar",
+      "moon_size": [
+        48.0,
+        48.0
+      ],
+      "aq_size": [
+        48.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        48,
+        48
+      ],
+      "ink_aq_wh": [
+        48,
+        48
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 4.04,
+      "ink_moon": 0.9501,
+      "ink_aq": 0.9683,
+      "ink_diff": 0.0182,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "avatar--lg--light",
+      "familia": "avatar",
+      "moon_size": [
+        48.0,
+        48.0
+      ],
+      "aq_size": [
+        48.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        29,
+        30
+      ],
+      "ink_aq_wh": [
+        30,
+        31
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 3.78,
+      "ink_moon": 0.0577,
+      "ink_aq": 0.0577,
+      "ink_diff": 0.0,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "avatar--md--dark",
+      "familia": "avatar",
+      "moon_size": [
+        40.0,
+        40.0
+      ],
+      "aq_size": [
+        40.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        40,
+        40
+      ],
+      "ink_aq_wh": [
+        40,
+        40
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.88,
+      "ink_moon": 0.9406,
+      "ink_aq": 0.9525,
+      "ink_diff": 0.0119,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "avatar--md--light",
+      "familia": "avatar",
+      "moon_size": [
+        40.0,
+        40.0
+      ],
+      "aq_size": [
+        40.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        25,
+        25
+      ],
+      "ink_aq_wh": [
+        25,
+        26
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 4.44,
+      "ink_moon": 0.0631,
+      "ink_aq": 0.0706,
+      "ink_diff": 0.0075,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "avatar--sm--dark",
+      "familia": "avatar",
+      "moon_size": [
+        32.0,
+        32.0
+      ],
+      "aq_size": [
+        32.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        32,
+        32
+      ],
+      "ink_aq_wh": [
+        32,
+        32
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 4.2,
+      "ink_moon": 0.9189,
+      "ink_aq": 0.9297,
+      "ink_diff": 0.0107,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "avatar--sm--light",
+      "familia": "avatar",
+      "moon_size": [
+        32.0,
+        32.0
+      ],
+      "aq_size": [
+        32.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        20,
+        21
+      ],
+      "ink_aq_wh": [
+        19,
+        20
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 4.79,
+      "ink_moon": 0.0654,
+      "ink_aq": 0.0654,
+      "ink_diff": 0.0,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "avatar--x2l--dark",
+      "familia": "avatar",
+      "moon_size": [
+        64.0,
+        64.0
+      ],
+      "aq_size": [
+        64.0,
+        64.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        64,
+        64
+      ],
+      "ink_aq_wh": [
+        64,
+        64
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 2.2,
+      "ink_moon": 0.9453,
+      "ink_aq": 0.9604,
+      "ink_diff": 0.0151,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "avatar--x2l--light",
+      "familia": "avatar",
+      "moon_size": [
+        64.0,
+        64.0
+      ],
+      "aq_size": [
+        64.0,
+        64.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        38,
+        39
+      ],
+      "ink_aq_wh": [
+        38,
+        38
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 2.22,
+      "ink_moon": 0.0503,
+      "ink_aq": 0.0474,
+      "ink_diff": 0.0029,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "avatar--xl--dark",
+      "familia": "avatar",
+      "moon_size": [
+        56.0,
+        56.0
+      ],
+      "aq_size": [
+        56.0,
+        56.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        56,
+        56
+      ],
+      "ink_aq_wh": [
+        56,
+        56
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.64,
+      "ink_moon": 0.9365,
+      "ink_aq": 0.9499,
+      "ink_diff": 0.0134,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "avatar--xl--light",
+      "familia": "avatar",
+      "moon_size": [
+        56.0,
+        56.0
+      ],
+      "aq_size": [
+        56.0,
+        56.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        33,
+        34
+      ],
+      "ink_aq_wh": [
+        33,
+        34
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.6,
+      "ink_moon": 0.0507,
+      "ink_aq": 0.0478,
+      "ink_diff": 0.0029,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "avatar--xs--dark",
+      "familia": "avatar",
+      "moon_size": [
+        24.0,
+        24.0
+      ],
+      "aq_size": [
+        24.0,
+        24.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        24,
+        24
+      ],
+      "ink_aq_wh": [
+        24,
+        24
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 8.33,
+      "ink_moon": 0.9497,
+      "ink_aq": 0.9583,
+      "ink_diff": 0.0087,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "avatar--xs--light",
+      "familia": "avatar",
+      "moon_size": [
+        24.0,
+        24.0
+      ],
+      "aq_size": [
+        24.0,
+        24.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        15,
+        16
+      ],
+      "ink_aq_wh": [
+        15,
+        16
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 8.51,
+      "ink_moon": 0.0833,
+      "ink_aq": 0.099,
+      "ink_diff": 0.0156,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "bottom-sheet--dark",
+      "familia": "bottom-sheet",
+      "moon_size": [
+        360.0,
+        740.0
+      ],
+      "aq_size": [
+        360.0,
+        740.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        99,
+        495
+      ],
+      "ink_aq_wh": [
+        116,
+        498
+      ],
+      "d_ink_w": 17,
+      "d_ink_h": 3,
+      "pixel_diff_pct": 0.55,
+      "ink_moon": 0.004,
+      "ink_aq": 0.0051,
+      "ink_diff": 0.0011,
+      "umbral_ink": 0.45,
+      "umbral_tinta": 80.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "bottom-sheet--light",
+      "familia": "bottom-sheet",
+      "moon_size": [
+        360.0,
+        740.0
+      ],
+      "aq_size": [
+        360.0,
+        740.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        360,
+        724
+      ],
+      "ink_aq_wh": [
+        360,
+        724
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.51,
+      "ink_moon": 0.4076,
+      "ink_aq": 0.4077,
+      "ink_diff": 0.0001,
+      "umbral_ink": 0.45,
+      "umbral_tinta": 80.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "breadcrumb--dark",
+      "familia": "breadcrumb",
+      "moon_size": [
+        226.55142211914062,
+        24.0
+      ],
+      "aq_size": [
+        227.0,
+        24.0
+      ],
+      "d_width": 0.45,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        226,
+        18
+      ],
+      "ink_aq_wh": [
+        225,
+        15
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 3,
+      "pixel_diff_pct": 17.79,
+      "ink_moon": 0.2045,
+      "ink_aq": 0.1507,
+      "ink_diff": 0.0538,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "breadcrumb--light",
+      "familia": "breadcrumb",
+      "moon_size": [
+        226.55142211914062,
+        24.0
+      ],
+      "aq_size": [
+        227.0,
+        24.0
+      ],
+      "d_width": 0.45,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        225,
+        18
+      ],
+      "ink_aq_wh": [
+        225,
+        15
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 3,
+      "pixel_diff_pct": 17.79,
+      "ink_moon": 0.1968,
+      "ink_aq": 0.1478,
+      "ink_diff": 0.049,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "carousel--dark",
+      "familia": "carousel",
+      "moon_size": [
+        328.0,
+        120.0
+      ],
+      "aq_size": [
+        328.0,
+        120.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        234,
+        120
+      ],
+      "ink_aq_wh": [
+        234,
+        120
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.0,
+      "ink_moon": 0.6854,
+      "ink_aq": 0.6854,
+      "ink_diff": 0.0,
+      "umbral_ink": 0.5,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "carousel--light",
+      "familia": "carousel",
+      "moon_size": [
+        328.0,
+        120.0
+      ],
+      "aq_size": [
+        328.0,
+        120.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        184,
+        10
+      ],
+      "ink_aq_wh": [
+        184,
+        11
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 0.7,
+      "ink_moon": 0.0095,
+      "ink_aq": 0.0102,
+      "ink_diff": 0.0008,
+      "umbral_ink": 0.5,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "checkbox--checked--dark",
+      "familia": "checkbox",
+      "moon_size": [
+        40.0,
+        40.0
+      ],
+      "aq_size": [
+        40.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        16,
+        16
+      ],
+      "ink_aq_wh": [
+        16,
+        16
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.0,
+      "ink_moon": 0.1525,
+      "ink_aq": 0.1525,
+      "ink_diff": 0.0,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "checkbox--checked--light",
+      "familia": "checkbox",
+      "moon_size": [
+        40.0,
+        40.0
+      ],
+      "aq_size": [
+        40.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        16,
+        16
+      ],
+      "ink_aq_wh": [
+        16,
+        16
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.0,
+      "ink_moon": 0.1525,
+      "ink_aq": 0.1575,
+      "ink_diff": 0.005,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "checkbox--unchecked--dark",
+      "familia": "checkbox",
+      "moon_size": [
+        40.0,
+        40.0
+      ],
+      "aq_size": [
+        40.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        16,
+        16
+      ],
+      "ink_aq_wh": [
+        18,
+        18
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 2,
+      "pixel_diff_pct": 5.5,
+      "ink_moon": 0.0381,
+      "ink_aq": 0.0675,
+      "ink_diff": 0.0294,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "checkbox--unchecked--light",
+      "familia": "checkbox",
+      "moon_size": [
+        40.0,
+        40.0
+      ],
+      "aq_size": [
+        40.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        16,
+        16
+      ],
+      "ink_aq_wh": [
+        18,
+        18
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 2,
+      "pixel_diff_pct": 5.5,
+      "ink_moon": 0.0413,
+      "ink_aq": 0.0675,
+      "ink_diff": 0.0263,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "chip--md--active--dark",
+      "familia": "chip",
+      "moon_size": [
+        62.1558837890625,
+        40.0
+      ],
+      "aq_size": [
+        62.0,
+        40.0
+      ],
+      "d_width": 0.16,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        30,
+        14
+      ],
+      "ink_aq_wh": [
+        29,
+        14
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 2.38,
+      "ink_moon": 0.0595,
+      "ink_aq": 0.0627,
+      "ink_diff": 0.0032,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "chip--md--active--light",
+      "familia": "chip",
+      "moon_size": [
+        62.1558837890625,
+        40.0
+      ],
+      "aq_size": [
+        62.0,
+        40.0
+      ],
+      "d_width": 0.16,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        62,
+        40
+      ],
+      "ink_aq_wh": [
+        62,
+        40
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 2.62,
+      "ink_moon": 0.946,
+      "ink_aq": 0.9476,
+      "ink_diff": 0.0016,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "chip--md--inactive--dark",
+      "familia": "chip",
+      "moon_size": [
+        62.1558837890625,
+        40.0
+      ],
+      "aq_size": [
+        62.0,
+        40.0
+      ],
+      "d_width": 0.16,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        62,
+        40
+      ],
+      "ink_aq_wh": [
+        62,
+        40
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.97,
+      "ink_moon": 0.9591,
+      "ink_aq": 0.956,
+      "ink_diff": 0.0032,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "chip--md--inactive--light",
+      "familia": "chip",
+      "moon_size": [
+        62.1558837890625,
+        40.0
+      ],
+      "aq_size": [
+        62.0,
+        40.0
+      ],
+      "d_width": 0.16,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        30,
+        14
+      ],
+      "ink_aq_wh": [
+        29,
+        14
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.49,
+      "ink_moon": 0.0587,
+      "ink_aq": 0.0619,
+      "ink_diff": 0.0032,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "chip--sm--active--dark",
+      "familia": "chip",
+      "moon_size": [
+        54.1558837890625,
+        32.0
+      ],
+      "aq_size": [
+        54.0,
+        32.0
+      ],
+      "d_width": 0.16,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        30,
+        14
+      ],
+      "ink_aq_wh": [
+        29,
+        14
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.41,
+      "ink_moon": 0.0852,
+      "ink_aq": 0.0898,
+      "ink_diff": 0.0045,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "chip--sm--active--light",
+      "familia": "chip",
+      "moon_size": [
+        54.1558837890625,
+        32.0
+      ],
+      "aq_size": [
+        54.0,
+        32.0
+      ],
+      "d_width": 0.16,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        54,
+        32
+      ],
+      "ink_aq_wh": [
+        54,
+        32
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.75,
+      "ink_moon": 0.9619,
+      "ink_aq": 0.9636,
+      "ink_diff": 0.0017,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "chip--sm--inactive--dark",
+      "familia": "chip",
+      "moon_size": [
+        54.1558837890625,
+        32.0
+      ],
+      "aq_size": [
+        54.0,
+        32.0
+      ],
+      "d_width": 0.16,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        54,
+        32
+      ],
+      "ink_aq_wh": [
+        54,
+        32
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 5.68,
+      "ink_moon": 0.971,
+      "ink_aq": 0.9665,
+      "ink_diff": 0.0045,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "chip--sm--inactive--light",
+      "familia": "chip",
+      "moon_size": [
+        54.1558837890625,
+        32.0
+      ],
+      "aq_size": [
+        54.0,
+        32.0
+      ],
+      "d_width": 0.16,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        30,
+        14
+      ],
+      "ink_aq_wh": [
+        29,
+        14
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 5.0,
+      "ink_moon": 0.0841,
+      "ink_aq": 0.0886,
+      "ink_diff": 0.0045,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-loader--lg--dark",
+      "familia": "loader",
+      "moon_size": [
+        48.0,
+        48.0
+      ],
+      "aq_size": [
+        48.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 0.56,
+      "ink_moon": 0.0056,
+      "ink_aq": 0.0,
+      "ink_diff": 0.0056,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-loader--lg--light",
+      "familia": "loader",
+      "moon_size": [
+        48.0,
+        48.0
+      ],
+      "aq_size": [
+        48.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 0.56,
+      "ink_moon": 0.0061,
+      "ink_aq": 0.0,
+      "ink_diff": 0.0061,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-loader--md--dark",
+      "familia": "loader",
+      "moon_size": [
+        40.0,
+        40.0
+      ],
+      "aq_size": [
+        40.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 0.81,
+      "ink_moon": 0.0081,
+      "ink_aq": 0.0,
+      "ink_diff": 0.0081,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-loader--md--light",
+      "familia": "loader",
+      "moon_size": [
+        40.0,
+        40.0
+      ],
+      "aq_size": [
+        40.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 0.81,
+      "ink_moon": 0.0081,
+      "ink_aq": 0.0,
+      "ink_diff": 0.0081,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-loader--sm--dark",
+      "familia": "loader",
+      "moon_size": [
+        32.0,
+        32.0
+      ],
+      "aq_size": [
+        32.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 0.39,
+      "ink_moon": 0.0039,
+      "ink_aq": 0.0,
+      "ink_diff": 0.0039,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-loader--sm--light",
+      "familia": "loader",
+      "moon_size": [
+        32.0,
+        32.0
+      ],
+      "aq_size": [
+        32.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 0.39,
+      "ink_moon": 0.0049,
+      "ink_aq": 0.0,
+      "ink_diff": 0.0049,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-loader--x2s--dark",
+      "familia": "loader",
+      "moon_size": [
+        16.0,
+        16.0
+      ],
+      "aq_size": [
+        16.0,
+        16.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 1.17,
+      "ink_moon": 0.0117,
+      "ink_aq": 0.0,
+      "ink_diff": 0.0117,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-loader--x2s--light",
+      "familia": "loader",
+      "moon_size": [
+        16.0,
+        16.0
+      ],
+      "aq_size": [
+        16.0,
+        16.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 1.17,
+      "ink_moon": 0.0117,
+      "ink_aq": 0.0,
+      "ink_diff": 0.0117,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-loader--xs--dark",
+      "familia": "loader",
+      "moon_size": [
+        24.0,
+        24.0
+      ],
+      "aq_size": [
+        24.0,
+        24.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 0.52,
+      "ink_moon": 0.0052,
+      "ink_aq": 0.0,
+      "ink_diff": 0.0052,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-loader--xs--light",
+      "familia": "loader",
+      "moon_size": [
+        24.0,
+        24.0
+      ],
+      "aq_size": [
+        24.0,
+        24.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 0.52,
+      "ink_moon": 0.0052,
+      "ink_aq": 0.0,
+      "ink_diff": 0.0052,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-progress--lg--dark",
+      "familia": "progress",
+      "moon_size": [
+        48.0,
+        48.0
+      ],
+      "aq_size": [
+        48.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        41,
+        48
+      ],
+      "ink_aq_wh": [
+        39,
+        48
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 16.8,
+      "ink_moon": 0.1549,
+      "ink_aq": 0.1723,
+      "ink_diff": 0.0174,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-progress--lg--light",
+      "familia": "progress",
+      "moon_size": [
+        48.0,
+        48.0
+      ],
+      "aq_size": [
+        48.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        48,
+        48
+      ],
+      "ink_aq_wh": [
+        48,
+        48
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 17.14,
+      "ink_moon": 0.237,
+      "ink_aq": 0.2587,
+      "ink_diff": 0.0217,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-progress--md--dark",
+      "familia": "progress",
+      "moon_size": [
+        40.0,
+        40.0
+      ],
+      "aq_size": [
+        40.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        34,
+        40
+      ],
+      "ink_aq_wh": [
+        33,
+        40
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 19.5,
+      "ink_moon": 0.1775,
+      "ink_aq": 0.2069,
+      "ink_diff": 0.0294,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-progress--md--light",
+      "familia": "progress",
+      "moon_size": [
+        40.0,
+        40.0
+      ],
+      "aq_size": [
+        40.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        40,
+        40
+      ],
+      "ink_aq_wh": [
+        40,
+        40
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 19.75,
+      "ink_moon": 0.2731,
+      "ink_aq": 0.3063,
+      "ink_diff": 0.0331,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-progress--sm--dark",
+      "familia": "progress",
+      "moon_size": [
+        32.0,
+        32.0
+      ],
+      "aq_size": [
+        32.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        27,
+        32
+      ],
+      "ink_aq_wh": [
+        26,
+        32
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 16.02,
+      "ink_moon": 0.1318,
+      "ink_aq": 0.1465,
+      "ink_diff": 0.0146,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-progress--sm--light",
+      "familia": "progress",
+      "moon_size": [
+        32.0,
+        32.0
+      ],
+      "aq_size": [
+        32.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        32,
+        32
+      ],
+      "ink_aq_wh": [
+        32,
+        32
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 16.31,
+      "ink_moon": 0.1963,
+      "ink_aq": 0.2148,
+      "ink_diff": 0.0186,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-progress--x2s--dark",
+      "familia": "progress",
+      "moon_size": [
+        16.0,
+        16.0
+      ],
+      "aq_size": [
+        16.0,
+        16.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        14,
+        16
+      ],
+      "ink_aq_wh": [
+        13,
+        16
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 30.08,
+      "ink_moon": 0.2422,
+      "ink_aq": 0.293,
+      "ink_diff": 0.0508,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-progress--x2s--light",
+      "familia": "progress",
+      "moon_size": [
+        16.0,
+        16.0
+      ],
+      "aq_size": [
+        16.0,
+        16.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        16,
+        16
+      ],
+      "ink_aq_wh": [
+        16,
+        16
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 30.86,
+      "ink_moon": 0.3672,
+      "ink_aq": 0.3984,
+      "ink_diff": 0.0312,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-progress--xs--dark",
+      "familia": "progress",
+      "moon_size": [
+        24.0,
+        24.0
+      ],
+      "aq_size": [
+        24.0,
+        24.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        20,
+        24
+      ],
+      "ink_aq_wh": [
+        20,
+        24
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 20.66,
+      "ink_moon": 0.1649,
+      "ink_aq": 0.1997,
+      "ink_diff": 0.0347,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "circular-progress--xs--light",
+      "familia": "progress",
+      "moon_size": [
+        24.0,
+        24.0
+      ],
+      "aq_size": [
+        24.0,
+        24.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        24,
+        24
+      ],
+      "ink_aq_wh": [
+        24,
+        24
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 21.35,
+      "ink_moon": 0.25,
+      "ink_aq": 0.2934,
+      "ink_diff": 0.0434,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "dot-indicator--dark",
+      "familia": "dot-indicator",
+      "moon_size": [
+        328.0,
+        8.0
+      ],
+      "aq_size": [
+        328.0,
+        8.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        8,
+        8
+      ],
+      "ink_aq_wh": [
+        8,
+        8
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 4.57,
+      "ink_moon": 0.0229,
+      "ink_aq": 0.0229,
+      "ink_diff": 0.0,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "dot-indicator--light",
+      "familia": "dot-indicator",
+      "moon_size": [
+        328.0,
+        8.0
+      ],
+      "aq_size": [
+        328.0,
+        8.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        56,
+        8
+      ],
+      "ink_aq_wh": [
+        56,
+        8
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 4.57,
+      "ink_moon": 0.0823,
+      "ink_aq": 0.0823,
+      "ink_diff": 0.0,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "drawer--dark",
+      "familia": "drawer",
+      "moon_size": [
+        280.0,
+        400.0
+      ],
+      "aq_size": [
+        280.0,
+        400.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        60,
+        141
+      ],
+      "ink_aq_wh": [
+        59,
+        146
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 5,
+      "pixel_diff_pct": 1.54,
+      "ink_moon": 0.0109,
+      "ink_aq": 0.011,
+      "ink_diff": 0.0001,
+      "umbral_ink": 0.45,
+      "umbral_tinta": 20.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "drawer--light",
+      "familia": "drawer",
+      "moon_size": [
+        280.0,
+        400.0
+      ],
+      "aq_size": [
+        280.0,
+        400.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        60,
+        141
+      ],
+      "ink_aq_wh": [
+        59,
+        146
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 5,
+      "pixel_diff_pct": 1.36,
+      "ink_moon": 0.0098,
+      "ink_aq": 0.0098,
+      "ink_diff": 0.0,
+      "umbral_ink": 0.45,
+      "umbral_tinta": 20.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "dropdown--dark",
+      "familia": "dropdown",
+      "moon_size": [
+        81.19387817382812,
+        128.0
+      ],
+      "aq_size": [
+        92.0,
+        96.0
+      ],
+      "d_width": 10.81,
+      "d_height": 32.0,
+      "ink_moon_wh": [
+        81,
+        128
+      ],
+      "ink_aq_wh": [
+        92,
+        96
+      ],
+      "d_ink_w": 11,
+      "d_ink_h": 32,
+      "pixel_diff_pct": 7.57,
+      "ink_moon": 0.8683,
+      "ink_aq": 0.736,
+      "ink_diff": 0.1323,
+      "umbral_ink": 0.45,
+      "umbral_tinta": 60.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "dropdown--light",
+      "familia": "dropdown",
+      "moon_size": [
+        81.19387817382812,
+        128.0
+      ],
+      "aq_size": [
+        92.0,
+        96.0
+      ],
+      "d_width": 10.81,
+      "d_height": 32.0,
+      "ink_moon_wh": [
+        81,
+        128
+      ],
+      "ink_aq_wh": [
+        92,
+        96
+      ],
+      "d_ink_w": 11,
+      "d_ink_h": 32,
+      "pixel_diff_pct": 6.97,
+      "ink_moon": 0.0469,
+      "ink_aq": 0.0546,
+      "ink_diff": 0.0077,
+      "umbral_ink": 0.45,
+      "umbral_tinta": 60.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "filled-button--disabled--dark",
+      "familia": "button",
+      "moon_size": [
+        77.24781799316406,
+        40.0
+      ],
+      "aq_size": [
+        79.0,
+        40.0
+      ],
+      "d_width": 1.75,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        77,
+        40
+      ],
+      "ink_aq_wh": [
+        79,
+        40
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 14.49,
+      "ink_moon": 0.9595,
+      "ink_aq": 0.9848,
+      "ink_diff": 0.0253,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "filled-button--disabled--light",
+      "familia": "button",
+      "moon_size": [
+        77.24781799316406,
+        40.0
+      ],
+      "aq_size": [
+        79.0,
+        40.0
+      ],
+      "d_width": 1.75,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        78,
+        40
+      ],
+      "ink_aq_wh": [
+        79,
+        40
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 11.74,
+      "ink_moon": 0.9225,
+      "ink_aq": 0.9237,
+      "ink_diff": 0.0013,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "filled-button--full--dark",
+      "familia": "button",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        40
+      ],
+      "ink_aq_wh": [
+        328,
+        40
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 4.29,
+      "ink_moon": 0.9963,
+      "ink_aq": 0.9963,
+      "ink_diff": 0.0,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "filled-button--full--light",
+      "familia": "button",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        40
+      ],
+      "ink_aq_wh": [
+        328,
+        40
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 4.29,
+      "ink_moon": 0.9872,
+      "ink_aq": 0.9832,
+      "ink_diff": 0.004,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "filled-button--lg--dark",
+      "familia": "button",
+      "moon_size": [
+        83.71211242675781,
+        48.0
+      ],
+      "aq_size": [
+        79.0,
+        48.0
+      ],
+      "d_width": 4.71,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        84,
+        48
+      ],
+      "ink_aq_wh": [
+        79,
+        48
+      ],
+      "d_ink_w": 5,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 13.02,
+      "ink_moon": 0.9874,
+      "ink_aq": 0.9286,
+      "ink_diff": 0.0588,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "filled-button--lg--light",
+      "familia": "button",
+      "moon_size": [
+        83.71211242675781,
+        48.0
+      ],
+      "aq_size": [
+        79.0,
+        48.0
+      ],
+      "d_width": 4.71,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        84,
+        48
+      ],
+      "ink_aq_wh": [
+        79,
+        48
+      ],
+      "d_ink_w": 5,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 13.05,
+      "ink_moon": 0.9452,
+      "ink_aq": 0.8872,
+      "ink_diff": 0.058,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "filled-button--md--dark",
+      "familia": "button",
+      "moon_size": [
+        77.24781799316406,
+        40.0
+      ],
+      "aq_size": [
+        79.0,
+        40.0
+      ],
+      "d_width": 1.75,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        78,
+        40
+      ],
+      "ink_aq_wh": [
+        79,
+        40
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 13.45,
+      "ink_moon": 0.9652,
+      "ink_aq": 0.9848,
+      "ink_diff": 0.0196,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "filled-button--md--light",
+      "familia": "button",
+      "moon_size": [
+        77.24781799316406,
+        40.0
+      ],
+      "aq_size": [
+        79.0,
+        40.0
+      ],
+      "d_width": 1.75,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        78,
+        40
+      ],
+      "ink_aq_wh": [
+        79,
+        40
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 13.48,
+      "ink_moon": 0.9297,
+      "ink_aq": 0.932,
+      "ink_diff": 0.0022,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "filled-button--sm--dark",
+      "familia": "button",
+      "moon_size": [
+        69.24781799316406,
+        32.0
+      ],
+      "aq_size": [
+        67.0,
+        32.0
+      ],
+      "d_width": 2.25,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        70,
+        32
+      ],
+      "ink_aq_wh": [
+        67,
+        32
+      ],
+      "d_ink_w": 3,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 14.2,
+      "ink_moon": 0.9688,
+      "ink_aq": 0.9357,
+      "ink_diff": 0.033,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "filled-button--sm--light",
+      "familia": "button",
+      "moon_size": [
+        69.24781799316406,
+        32.0
+      ],
+      "aq_size": [
+        67.0,
+        32.0
+      ],
+      "d_width": 2.25,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        70,
+        32
+      ],
+      "ink_aq_wh": [
+        67,
+        32
+      ],
+      "d_ink_w": 3,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 14.33,
+      "ink_moon": 0.9187,
+      "ink_aq": 0.8866,
+      "ink_diff": 0.0321,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "filled-button--xl--dark",
+      "familia": "button",
+      "moon_size": [
+        99.71211242675781,
+        56.0
+      ],
+      "aq_size": [
+        95.0,
+        56.0
+      ],
+      "d_width": 4.71,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        100,
+        56
+      ],
+      "ink_aq_wh": [
+        95,
+        56
+      ],
+      "d_ink_w": 5,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 10.55,
+      "ink_moon": 0.9779,
+      "ink_aq": 0.9414,
+      "ink_diff": 0.0364,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "filled-button--xl--light",
+      "familia": "button",
+      "moon_size": [
+        99.71211242675781,
+        56.0
+      ],
+      "aq_size": [
+        95.0,
+        56.0
+      ],
+      "d_width": 4.71,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        100,
+        56
+      ],
+      "ink_aq_wh": [
+        95,
+        56
+      ],
+      "d_ink_w": 5,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 10.59,
+      "ink_moon": 0.948,
+      "ink_aq": 0.9116,
+      "ink_diff": 0.0364,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "filled-button--xs--dark",
+      "familia": "button",
+      "moon_size": [
+        54.784271240234375,
+        24.0
+      ],
+      "aq_size": [
+        59.0,
+        24.0
+      ],
+      "d_width": 4.22,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        55,
+        24
+      ],
+      "ink_aq_wh": [
+        59,
+        24
+      ],
+      "d_ink_w": 4,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 30.79,
+      "ink_moon": 0.9237,
+      "ink_aq": 0.971,
+      "ink_diff": 0.0473,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "filled-button--xs--light",
+      "familia": "button",
+      "moon_size": [
+        54.784271240234375,
+        24.0
+      ],
+      "aq_size": [
+        59.0,
+        24.0
+      ],
+      "d_width": 4.22,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        55,
+        24
+      ],
+      "ink_aq_wh": [
+        59,
+        24
+      ],
+      "d_ink_w": 4,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 30.79,
+      "ink_moon": 0.8559,
+      "ink_aq": 0.8884,
+      "ink_diff": 0.0325,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-loader--x2s--dark",
+      "familia": "loader",
+      "moon_size": [
+        328.0,
+        16.0
+      ],
+      "aq_size": [
+        328.0,
+        16.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 47.07,
+      "ink_moon": 0.4705,
+      "ink_aq": 0.0,
+      "ink_diff": 0.4705,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-loader--x2s--light",
+      "familia": "loader",
+      "moon_size": [
+        328.0,
+        16.0
+      ],
+      "aq_size": [
+        328.0,
+        16.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 47.07,
+      "ink_moon": 0.4708,
+      "ink_aq": 0.0,
+      "ink_diff": 0.4708,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-loader--x3s--dark",
+      "familia": "loader",
+      "moon_size": [
+        328.0,
+        12.0
+      ],
+      "aq_size": [
+        328.0,
+        12.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 47.21,
+      "ink_moon": 0.4721,
+      "ink_aq": 0.0,
+      "ink_diff": 0.4721,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-loader--x3s--light",
+      "familia": "loader",
+      "moon_size": [
+        328.0,
+        12.0
+      ],
+      "aq_size": [
+        328.0,
+        12.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 47.21,
+      "ink_moon": 0.4733,
+      "ink_aq": 0.0,
+      "ink_diff": 0.4733,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-loader--x4s--dark",
+      "familia": "loader",
+      "moon_size": [
+        328.0,
+        8.0
+      ],
+      "aq_size": [
+        328.0,
+        8.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 47.64,
+      "ink_moon": 0.4756,
+      "ink_aq": 0.0,
+      "ink_diff": 0.4756,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-loader--x4s--light",
+      "familia": "loader",
+      "moon_size": [
+        328.0,
+        8.0
+      ],
+      "aq_size": [
+        328.0,
+        8.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 47.64,
+      "ink_moon": 0.4764,
+      "ink_aq": 0.0,
+      "ink_diff": 0.4764,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-loader--x5s--dark",
+      "familia": "loader",
+      "moon_size": [
+        328.0,
+        4.0
+      ],
+      "aq_size": [
+        328.0,
+        4.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 47.71,
+      "ink_moon": 0.4771,
+      "ink_aq": 0.0,
+      "ink_diff": 0.4771,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-loader--x5s--light",
+      "familia": "loader",
+      "moon_size": [
+        328.0,
+        4.0
+      ],
+      "aq_size": [
+        328.0,
+        4.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 47.71,
+      "ink_moon": 0.4771,
+      "ink_aq": 0.0,
+      "ink_diff": 0.4771,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-loader--x6s--dark",
+      "familia": "loader",
+      "moon_size": [
+        328.0,
+        2.0
+      ],
+      "aq_size": [
+        328.0,
+        2.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 47.87,
+      "ink_moon": 0.4787,
+      "ink_aq": 0.0,
+      "ink_diff": 0.4787,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-loader--x6s--light",
+      "familia": "loader",
+      "moon_size": [
+        328.0,
+        2.0
+      ],
+      "aq_size": [
+        328.0,
+        2.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        null,
+        null
+      ],
+      "ink_aq_wh": [
+        null,
+        null
+      ],
+      "d_ink_w": 0.0,
+      "d_ink_h": 0.0,
+      "pixel_diff_pct": 47.87,
+      "ink_moon": 0.4787,
+      "ink_aq": 0.0,
+      "ink_diff": 0.4787,
+      "umbral_ink": 0.6,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x2s--dark",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        16.0
+      ],
+      "aq_size": [
+        328.0,
+        16.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        197,
+        16
+      ],
+      "ink_aq_wh": [
+        197,
+        16
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.19,
+      "ink_moon": 0.592,
+      "ink_aq": 0.5928,
+      "ink_diff": 0.0008,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x2s--light",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        16.0
+      ],
+      "aq_size": [
+        328.0,
+        16.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        16
+      ],
+      "ink_aq_wh": [
+        328,
+        16
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.23,
+      "ink_moon": 0.9893,
+      "ink_aq": 0.9903,
+      "ink_diff": 0.001,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x2s--pin--dark",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        62.0
+      ],
+      "aq_size": [
+        328.0,
+        62.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        228,
+        62
+      ],
+      "ink_aq_wh": [
+        228,
+        62
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.49,
+      "ink_moon": 0.2896,
+      "ink_aq": 0.3113,
+      "ink_diff": 0.0216,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x2s--pin--light",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        62.0
+      ],
+      "aq_size": [
+        328.0,
+        62.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        62
+      ],
+      "ink_aq_wh": [
+        328,
+        62
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 1.46,
+      "ink_moon": 0.2297,
+      "ink_aq": 0.2164,
+      "ink_diff": 0.0134,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x3s--dark",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        12.0
+      ],
+      "aq_size": [
+        328.0,
+        12.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        197,
+        12
+      ],
+      "ink_aq_wh": [
+        197,
+        12
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.25,
+      "ink_moon": 0.5935,
+      "ink_aq": 0.5945,
+      "ink_diff": 0.001,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x3s--light",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        12.0
+      ],
+      "aq_size": [
+        328.0,
+        12.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        12
+      ],
+      "ink_aq_wh": [
+        328,
+        12
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.25,
+      "ink_moon": 0.9929,
+      "ink_aq": 0.9934,
+      "ink_diff": 0.0005,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x3s--pin--dark",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        62.0
+      ],
+      "aq_size": [
+        328.0,
+        62.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        228,
+        62
+      ],
+      "ink_aq_wh": [
+        228,
+        62
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.52,
+      "ink_moon": 0.2549,
+      "ink_aq": 0.278,
+      "ink_diff": 0.0231,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x3s--pin--light",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        62.0
+      ],
+      "aq_size": [
+        328.0,
+        62.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        60
+      ],
+      "ink_aq_wh": [
+        328,
+        60
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 1.12,
+      "ink_moon": 0.1724,
+      "ink_aq": 0.1626,
+      "ink_diff": 0.0098,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x4s--dark",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        8.0
+      ],
+      "aq_size": [
+        328.0,
+        8.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        197,
+        8
+      ],
+      "ink_aq_wh": [
+        197,
+        8
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.15,
+      "ink_moon": 0.5976,
+      "ink_aq": 0.5991,
+      "ink_diff": 0.0015,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x4s--light",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        8.0
+      ],
+      "aq_size": [
+        328.0,
+        8.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        8
+      ],
+      "ink_aq_wh": [
+        328,
+        8
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.15,
+      "ink_moon": 0.997,
+      "ink_aq": 0.997,
+      "ink_diff": 0.0,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x4s--pin--dark",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        58.0
+      ],
+      "aq_size": [
+        328.0,
+        58.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        226,
+        58
+      ],
+      "ink_aq_wh": [
+        226,
+        58
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.16,
+      "ink_moon": 0.2167,
+      "ink_aq": 0.2382,
+      "ink_diff": 0.0214,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x4s--pin--light",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        58.0
+      ],
+      "aq_size": [
+        328.0,
+        58.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        58
+      ],
+      "ink_aq_wh": [
+        328,
+        56
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 2,
+      "pixel_diff_pct": 0.82,
+      "ink_moon": 0.1285,
+      "ink_aq": 0.1272,
+      "ink_diff": 0.0014,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x5s--dark",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        4.0
+      ],
+      "aq_size": [
+        328.0,
+        4.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        4
+      ],
+      "ink_aq_wh": [
+        328,
+        4
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.15,
+      "ink_moon": 0.9954,
+      "ink_aq": 0.997,
+      "ink_diff": 0.0015,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x5s--light",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        4.0
+      ],
+      "aq_size": [
+        328.0,
+        4.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        4
+      ],
+      "ink_aq_wh": [
+        328,
+        4
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.15,
+      "ink_moon": 0.9954,
+      "ink_aq": 0.997,
+      "ink_diff": 0.0015,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x5s--pin--dark",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        58.0
+      ],
+      "aq_size": [
+        328.0,
+        58.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        226,
+        58
+      ],
+      "ink_aq_wh": [
+        226,
+        58
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.15,
+      "ink_moon": 0.1792,
+      "ink_aq": 0.202,
+      "ink_diff": 0.0228,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x5s--pin--light",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        58.0
+      ],
+      "aq_size": [
+        328.0,
+        58.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        58
+      ],
+      "ink_aq_wh": [
+        328,
+        54
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 4,
+      "pixel_diff_pct": 0.45,
+      "ink_moon": 0.0677,
+      "ink_aq": 0.0689,
+      "ink_diff": 0.0012,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x6s--dark",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        2.0
+      ],
+      "aq_size": [
+        328.0,
+        2.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        327,
+        2
+      ],
+      "ink_aq_wh": [
+        327,
+        2
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.3,
+      "ink_moon": 0.9939,
+      "ink_aq": 0.9939,
+      "ink_diff": 0.0,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x6s--light",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        2.0
+      ],
+      "aq_size": [
+        328.0,
+        2.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        327,
+        2
+      ],
+      "ink_aq_wh": [
+        327,
+        2
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.3,
+      "ink_moon": 0.997,
+      "ink_aq": 0.997,
+      "ink_diff": 0.0,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x6s--pin--dark",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        58.0
+      ],
+      "aq_size": [
+        328.0,
+        58.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        226,
+        58
+      ],
+      "ink_aq_wh": [
+        226,
+        58
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.14,
+      "ink_moon": 0.1605,
+      "ink_aq": 0.184,
+      "ink_diff": 0.0235,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "linear-progress--x6s--pin--light",
+      "familia": "progress",
+      "moon_size": [
+        328.0,
+        58.0
+      ],
+      "aq_size": [
+        328.0,
+        58.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        58
+      ],
+      "ink_aq_wh": [
+        328,
+        53
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 5,
+      "pixel_diff_pct": 0.25,
+      "ink_moon": 0.0375,
+      "ink_aq": 0.0398,
+      "ink_diff": 0.0023,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "menu-item--dark",
+      "familia": "menu-item",
+      "moon_size": [
+        328.0,
+        62.0
+      ],
+      "aq_size": [
+        328.0,
+        64.0
+      ],
+      "d_width": 0.0,
+      "d_height": 2.0,
+      "ink_moon_wh": [
+        299,
+        32
+      ],
+      "ink_aq_wh": [
+        294,
+        32
+      ],
+      "d_ink_w": 5,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.73,
+      "ink_moon": 0.0326,
+      "ink_aq": 0.0234,
+      "ink_diff": 0.0092,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 14.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "menu-item--light",
+      "familia": "menu-item",
+      "moon_size": [
+        328.0,
+        62.0
+      ],
+      "aq_size": [
+        328.0,
+        64.0
+      ],
+      "d_width": 0.0,
+      "d_height": 2.0,
+      "ink_moon_wh": [
+        299,
+        32
+      ],
+      "ink_aq_wh": [
+        294,
+        32
+      ],
+      "d_ink_w": 5,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.67,
+      "ink_moon": 0.0314,
+      "ink_aq": 0.0229,
+      "ink_diff": 0.0086,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 14.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "modal--dark",
+      "familia": "modal",
+      "moon_size": [
+        328.0,
+        708.0
+      ],
+      "aq_size": [
+        324.0,
+        92.0
+      ],
+      "d_width": 4.0,
+      "d_height": 616.0,
+      "ink_moon_wh": [
+        146,
+        49
+      ],
+      "ink_aq_wh": [
+        146,
+        52
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 3,
+      "pixel_diff_pct": 1.32,
+      "ink_moon": 0.0069,
+      "ink_aq": 0.0067,
+      "ink_diff": 0.0002,
+      "umbral_ink": 0.45,
+      "umbral_tinta": 60.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "modal--light",
+      "familia": "modal",
+      "moon_size": [
+        328.0,
+        708.0
+      ],
+      "aq_size": [
+        324.0,
+        92.0
+      ],
+      "d_width": 4.0,
+      "d_height": 616.0,
+      "ink_moon_wh": [
+        300,
+        94
+      ],
+      "ink_aq_wh": [
+        324,
+        92
+      ],
+      "d_ink_w": 24,
+      "d_ink_h": 2,
+      "pixel_diff_pct": 24.69,
+      "ink_moon": 0.1204,
+      "ink_aq": 0.1274,
+      "ink_diff": 0.007,
+      "umbral_ink": 0.45,
+      "umbral_tinta": 60.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "outlined-button--lg--dark",
+      "familia": "button",
+      "moon_size": [
+        83.71211242675781,
+        48.0
+      ],
+      "aq_size": [
+        79.0,
+        48.0
+      ],
+      "d_width": 4.71,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        84,
+        48
+      ],
+      "ink_aq_wh": [
+        79,
+        48
+      ],
+      "d_ink_w": 5,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 11.66,
+      "ink_moon": 0.1523,
+      "ink_aq": 0.1577,
+      "ink_diff": 0.0055,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "outlined-button--lg--light",
+      "familia": "button",
+      "moon_size": [
+        83.71211242675781,
+        48.0
+      ],
+      "aq_size": [
+        79.0,
+        48.0
+      ],
+      "d_width": 4.71,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        84,
+        48
+      ],
+      "ink_aq_wh": [
+        79,
+        48
+      ],
+      "d_ink_w": 5,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 13.24,
+      "ink_moon": 0.1471,
+      "ink_aq": 0.1543,
+      "ink_diff": 0.0072,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "outlined-button--md--dark",
+      "familia": "button",
+      "moon_size": [
+        77.24781799316406,
+        40.0
+      ],
+      "aq_size": [
+        79.0,
+        40.0
+      ],
+      "d_width": 1.75,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        78,
+        40
+      ],
+      "ink_aq_wh": [
+        79,
+        40
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 15.32,
+      "ink_moon": 0.1718,
+      "ink_aq": 0.1962,
+      "ink_diff": 0.0244,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "outlined-button--md--light",
+      "familia": "button",
+      "moon_size": [
+        77.24781799316406,
+        40.0
+      ],
+      "aq_size": [
+        79.0,
+        40.0
+      ],
+      "d_width": 1.75,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        78,
+        40
+      ],
+      "ink_aq_wh": [
+        79,
+        40
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 15.73,
+      "ink_moon": 0.1623,
+      "ink_aq": 0.1918,
+      "ink_diff": 0.0294,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "outlined-button--sm--dark",
+      "familia": "button",
+      "moon_size": [
+        69.24781799316406,
+        32.0
+      ],
+      "aq_size": [
+        67.0,
+        32.0
+      ],
+      "d_width": 2.25,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        70,
+        32
+      ],
+      "ink_aq_wh": [
+        67,
+        32
+      ],
+      "d_ink_w": 3,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 15.67,
+      "ink_moon": 0.2246,
+      "ink_aq": 0.2272,
+      "ink_diff": 0.0027,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "outlined-button--sm--light",
+      "familia": "button",
+      "moon_size": [
+        69.24781799316406,
+        32.0
+      ],
+      "aq_size": [
+        67.0,
+        32.0
+      ],
+      "d_width": 2.25,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        70,
+        32
+      ],
+      "ink_aq_wh": [
+        67,
+        32
+      ],
+      "d_ink_w": 3,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 16.92,
+      "ink_moon": 0.2112,
+      "ink_aq": 0.2272,
+      "ink_diff": 0.0161,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "outlined-button--xl--dark",
+      "familia": "button",
+      "moon_size": [
+        99.71211242675781,
+        56.0
+      ],
+      "aq_size": [
+        95.0,
+        56.0
+      ],
+      "d_width": 4.71,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        100,
+        56
+      ],
+      "ink_aq_wh": [
+        95,
+        56
+      ],
+      "d_ink_w": 5,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 9.52,
+      "ink_moon": 0.1198,
+      "ink_aq": 0.122,
+      "ink_diff": 0.0021,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "outlined-button--xl--light",
+      "familia": "button",
+      "moon_size": [
+        99.71211242675781,
+        56.0
+      ],
+      "aq_size": [
+        95.0,
+        56.0
+      ],
+      "d_width": 4.71,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        100,
+        56
+      ],
+      "ink_aq_wh": [
+        95,
+        56
+      ],
+      "d_ink_w": 5,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 10.46,
+      "ink_moon": 0.1166,
+      "ink_aq": 0.1195,
+      "ink_diff": 0.0029,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "outlined-button--xs--dark",
+      "familia": "button",
+      "moon_size": [
+        54.784271240234375,
+        24.0
+      ],
+      "aq_size": [
+        59.0,
+        24.0
+      ],
+      "d_width": 4.22,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        55,
+        24
+      ],
+      "ink_aq_wh": [
+        59,
+        24
+      ],
+      "d_ink_w": 4,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 28.32,
+      "ink_moon": 0.2733,
+      "ink_aq": 0.3256,
+      "ink_diff": 0.0523,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "outlined-button--xs--light",
+      "familia": "button",
+      "moon_size": [
+        54.784271240234375,
+        24.0
+      ],
+      "aq_size": [
+        59.0,
+        24.0
+      ],
+      "d_width": 4.22,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        55,
+        24
+      ],
+      "ink_aq_wh": [
+        59,
+        24
+      ],
+      "d_ink_w": 4,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 27.75,
+      "ink_moon": 0.2521,
+      "ink_aq": 0.3157,
+      "ink_diff": 0.0636,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "pill-tab--md--dark",
+      "familia": "pill",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        290,
+        40
+      ],
+      "ink_aq_wh": [
+        291,
+        40
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 2.31,
+      "ink_moon": 0.347,
+      "ink_aq": 0.3453,
+      "ink_diff": 0.0018,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "pill-tab--md--light",
+      "familia": "pill",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        246,
+        13
+      ],
+      "ink_aq_wh": [
+        248,
+        14
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 2.61,
+      "ink_moon": 0.0323,
+      "ink_aq": 0.035,
+      "ink_diff": 0.0027,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "pill-tab--sm--dark",
+      "familia": "pill",
+      "moon_size": [
+        328.0,
+        32.0
+      ],
+      "aq_size": [
+        328.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        290,
+        32
+      ],
+      "ink_aq_wh": [
+        291,
+        32
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 2.89,
+      "ink_moon": 0.3571,
+      "ink_aq": 0.356,
+      "ink_diff": 0.001,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "pill-tab--sm--light",
+      "familia": "pill",
+      "moon_size": [
+        328.0,
+        32.0
+      ],
+      "aq_size": [
+        328.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        246,
+        13
+      ],
+      "ink_aq_wh": [
+        248,
+        14
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 3.26,
+      "ink_moon": 0.0404,
+      "ink_aq": 0.0437,
+      "ink_diff": 0.0033,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "popover--dark",
+      "familia": "popover",
+      "moon_size": [
+        81.19387817382812,
+        138.0
+      ],
+      "aq_size": [
+        95.0,
+        128.0
+      ],
+      "d_width": 13.81,
+      "d_height": 10.0,
+      "ink_moon_wh": [
+        81,
+        138
+      ],
+      "ink_aq_wh": [
+        95,
+        128
+      ],
+      "d_ink_w": 14,
+      "d_ink_h": 10,
+      "pixel_diff_pct": 9.12,
+      "ink_moon": 0.8414,
+      "ink_aq": 0.9133,
+      "ink_diff": 0.0719,
+      "umbral_ink": 0.45,
+      "umbral_tinta": 60.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "popover--light",
+      "familia": "popover",
+      "moon_size": [
+        81.19387817382812,
+        138.0
+      ],
+      "aq_size": [
+        95.0,
+        128.0
+      ],
+      "d_width": 13.81,
+      "d_height": 10.0,
+      "ink_moon_wh": [
+        81,
+        138
+      ],
+      "ink_aq_wh": [
+        95,
+        128
+      ],
+      "d_ink_w": 14,
+      "d_ink_h": 10,
+      "pixel_diff_pct": 8.34,
+      "ink_moon": 0.0535,
+      "ink_aq": 0.0638,
+      "ink_diff": 0.0104,
+      "umbral_ink": 0.45,
+      "umbral_tinta": 60.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "radio--selected--dark",
+      "familia": "radio",
+      "moon_size": [
+        40.0,
+        40.0
+      ],
+      "aq_size": [
+        40.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        18,
+        18
+      ],
+      "ink_aq_wh": [
+        16,
+        16
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 2,
+      "pixel_diff_pct": 5.38,
+      "ink_moon": 0.0813,
+      "ink_aq": 0.08,
+      "ink_diff": 0.0013,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "radio--selected--light",
+      "familia": "radio",
+      "moon_size": [
+        40.0,
+        40.0
+      ],
+      "aq_size": [
+        40.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        18,
+        18
+      ],
+      "ink_aq_wh": [
+        16,
+        16
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 2,
+      "pixel_diff_pct": 5.75,
+      "ink_moon": 0.085,
+      "ink_aq": 0.08,
+      "ink_diff": 0.005,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "radio--unselected--dark",
+      "familia": "radio",
+      "moon_size": [
+        40.0,
+        40.0
+      ],
+      "aq_size": [
+        40.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        18,
+        18
+      ],
+      "ink_aq_wh": [
+        16,
+        16
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 2,
+      "pixel_diff_pct": 4.75,
+      "ink_moon": 0.0475,
+      "ink_aq": 0.0425,
+      "ink_diff": 0.005,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "radio--unselected--light",
+      "familia": "radio",
+      "moon_size": [
+        40.0,
+        40.0
+      ],
+      "aq_size": [
+        40.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        18,
+        18
+      ],
+      "ink_aq_wh": [
+        16,
+        16
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 2,
+      "pixel_diff_pct": 4.75,
+      "ink_moon": 0.0475,
+      "ink_aq": 0.0425,
+      "ink_diff": 0.005,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "segmented-control--md--dark",
+      "familia": "segmented",
+      "moon_size": [
+        328.0,
+        48.0
+      ],
+      "aq_size": [
+        328.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        280,
+        40
+      ],
+      "ink_aq_wh": [
+        280,
+        40
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.06,
+      "ink_moon": 0.2815,
+      "ink_aq": 0.2779,
+      "ink_diff": 0.0036,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "segmented-control--md--light",
+      "familia": "segmented",
+      "moon_size": [
+        328.0,
+        48.0
+      ],
+      "aq_size": [
+        328.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        248,
+        11
+      ],
+      "ink_aq_wh": [
+        247,
+        12
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 2.85,
+      "ink_moon": 0.0314,
+      "ink_aq": 0.0325,
+      "ink_diff": 0.001,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "segmented-control--sm--dark",
+      "familia": "segmented",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        280,
+        32
+      ],
+      "ink_aq_wh": [
+        280,
+        32
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.67,
+      "ink_moon": 0.2746,
+      "ink_aq": 0.27,
+      "ink_diff": 0.0046,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "segmented-control--sm--light",
+      "familia": "segmented",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        248,
+        11
+      ],
+      "ink_aq_wh": [
+        247,
+        12
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 3.42,
+      "ink_moon": 0.0377,
+      "ink_aq": 0.0389,
+      "ink_diff": 0.0012,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "switch--sm--off--dark",
+      "familia": "switch",
+      "moon_size": [
+        60.0,
+        32.0
+      ],
+      "aq_size": [
+        60.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        24,
+        24
+      ],
+      "ink_aq_wh": [
+        24,
+        27
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 3,
+      "pixel_diff_pct": 0.31,
+      "ink_moon": 0.2521,
+      "ink_aq": 0.2625,
+      "ink_diff": 0.0104,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "switch--sm--off--light",
+      "familia": "switch",
+      "moon_size": [
+        60.0,
+        32.0
+      ],
+      "aq_size": [
+        60.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        60,
+        32
+      ],
+      "ink_aq_wh": [
+        60,
+        32
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 2.29,
+      "ink_moon": 0.6521,
+      "ink_aq": 0.5729,
+      "ink_diff": 0.0792,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "switch--sm--on--dark",
+      "familia": "switch",
+      "moon_size": [
+        60.0,
+        32.0
+      ],
+      "aq_size": [
+        60.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        60,
+        32
+      ],
+      "ink_aq_wh": [
+        60,
+        32
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 19.58,
+      "ink_moon": 0.8938,
+      "ink_aq": 0.7974,
+      "ink_diff": 0.0964,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "switch--sm--on--light",
+      "familia": "switch",
+      "moon_size": [
+        60.0,
+        32.0
+      ],
+      "aq_size": [
+        60.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        60,
+        32
+      ],
+      "ink_aq_wh": [
+        60,
+        32
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 15.05,
+      "ink_moon": 0.6734,
+      "ink_aq": 0.6057,
+      "ink_diff": 0.0677,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "switch--x2s--off--dark",
+      "familia": "switch",
+      "moon_size": [
+        32.0,
+        16.0
+      ],
+      "aq_size": [
+        32.0,
+        16.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        12,
+        12
+      ],
+      "ink_aq_wh": [
+        12,
+        14
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 2,
+      "pixel_diff_pct": 0.59,
+      "ink_moon": 0.2422,
+      "ink_aq": 0.2539,
+      "ink_diff": 0.0117,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "switch--x2s--off--light",
+      "familia": "switch",
+      "moon_size": [
+        32.0,
+        16.0
+      ],
+      "aq_size": [
+        32.0,
+        16.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        32,
+        16
+      ],
+      "ink_aq_wh": [
+        32,
+        16
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 2.34,
+      "ink_moon": 0.6797,
+      "ink_aq": 0.6016,
+      "ink_diff": 0.0781,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "switch--x2s--on--dark",
+      "familia": "switch",
+      "moon_size": [
+        32.0,
+        16.0
+      ],
+      "aq_size": [
+        32.0,
+        16.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        32,
+        16
+      ],
+      "ink_aq_wh": [
+        32,
+        16
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 25.2,
+      "ink_moon": 0.916,
+      "ink_aq": 0.8203,
+      "ink_diff": 0.0957,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "switch--x2s--on--light",
+      "familia": "switch",
+      "moon_size": [
+        32.0,
+        16.0
+      ],
+      "aq_size": [
+        32.0,
+        16.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        32,
+        16
+      ],
+      "ink_aq_wh": [
+        32,
+        16
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 20.12,
+      "ink_moon": 0.7344,
+      "ink_aq": 0.668,
+      "ink_diff": 0.0664,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "switch--xs--off--dark",
+      "familia": "switch",
+      "moon_size": [
+        44.0,
+        24.0
+      ],
+      "aq_size": [
+        44.0,
+        24.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        16,
+        16
+      ],
+      "ink_aq_wh": [
+        16,
+        19
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 3,
+      "pixel_diff_pct": 0.38,
+      "ink_moon": 0.2064,
+      "ink_aq": 0.2112,
+      "ink_diff": 0.0047,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "switch--xs--off--light",
+      "familia": "switch",
+      "moon_size": [
+        44.0,
+        24.0
+      ],
+      "aq_size": [
+        44.0,
+        24.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        44,
+        24
+      ],
+      "ink_aq_wh": [
+        44,
+        24
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 2.65,
+      "ink_moon": 0.6998,
+      "ink_aq": 0.6203,
+      "ink_diff": 0.0795,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "switch--xs--on--dark",
+      "familia": "switch",
+      "moon_size": [
+        44.0,
+        24.0
+      ],
+      "aq_size": [
+        44.0,
+        24.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        44,
+        24
+      ],
+      "ink_aq_wh": [
+        44,
+        24
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 22.63,
+      "ink_moon": 0.9015,
+      "ink_aq": 0.804,
+      "ink_diff": 0.0975,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "switch--xs--on--light",
+      "familia": "switch",
+      "moon_size": [
+        44.0,
+        24.0
+      ],
+      "aq_size": [
+        44.0,
+        24.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        44,
+        24
+      ],
+      "ink_aq_wh": [
+        44,
+        24
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 16.57,
+      "ink_moon": 0.7339,
+      "ink_aq": 0.661,
+      "ink_diff": 0.0729,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "tab-bar--md--dark",
+      "familia": "tab",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        290,
+        25
+      ],
+      "ink_aq_wh": [
+        288,
+        26
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 4.17,
+      "ink_moon": 0.0506,
+      "ink_aq": 0.0543,
+      "ink_diff": 0.0037,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "tab-bar--md--light",
+      "familia": "tab",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        290,
+        25
+      ],
+      "ink_aq_wh": [
+        288,
+        26
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 2.75,
+      "ink_moon": 0.0485,
+      "ink_aq": 0.0498,
+      "ink_diff": 0.0014,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "tab-bar--sm--dark",
+      "familia": "tab",
+      "moon_size": [
+        328.0,
+        32.0
+      ],
+      "aq_size": [
+        328.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        290,
+        21
+      ],
+      "ink_aq_wh": [
+        291,
+        22
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 5.21,
+      "ink_moon": 0.0633,
+      "ink_aq": 0.0689,
+      "ink_diff": 0.0056,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "tab-bar--sm--light",
+      "familia": "tab",
+      "moon_size": [
+        328.0,
+        32.0
+      ],
+      "aq_size": [
+        328.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        290,
+        21
+      ],
+      "ink_aq_wh": [
+        290,
+        22
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 3.28,
+      "ink_moon": 0.0606,
+      "ink_aq": 0.0633,
+      "ink_diff": 0.0027,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "table--dark",
+      "familia": "table",
+      "moon_size": [
+        328.0,
+        200.0
+      ],
+      "aq_size": [
+        328.0,
+        200.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        126
+      ],
+      "ink_aq_wh": [
+        328,
+        126
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 4.14,
+      "ink_moon": 0.4863,
+      "ink_aq": 0.4856,
+      "ink_diff": 0.0007,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "table--light",
+      "familia": "table",
+      "moon_size": [
+        328.0,
+        200.0
+      ],
+      "aq_size": [
+        328.0,
+        200.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        258,
+        115
+      ],
+      "ink_aq_wh": [
+        259,
+        115
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.78,
+      "ink_moon": 0.0286,
+      "ink_aq": 0.0327,
+      "ink_diff": 0.0042,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 10.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "tag--sm--dark",
+      "familia": "tag",
+      "moon_size": [
+        51.39215087890625,
+        32.0
+      ],
+      "aq_size": [
+        54.0,
+        32.0
+      ],
+      "d_width": 2.61,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        51,
+        32
+      ],
+      "ink_aq_wh": [
+        54,
+        32
+      ],
+      "d_ink_w": 3,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 7.7,
+      "ink_moon": 0.9068,
+      "ink_aq": 0.9606,
+      "ink_diff": 0.0538,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "tag--sm--light",
+      "familia": "tag",
+      "moon_size": [
+        51.39215087890625,
+        32.0
+      ],
+      "aq_size": [
+        54.0,
+        32.0
+      ],
+      "d_width": 2.61,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        19,
+        12
+      ],
+      "ink_aq_wh": [
+        21,
+        12
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 6.71,
+      "ink_moon": 0.0486,
+      "ink_aq": 0.0567,
+      "ink_diff": 0.0081,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "tag--x2s--dark",
+      "familia": "tag",
+      "moon_size": [
+        30.544097900390625,
+        16.0
+      ],
+      "aq_size": [
+        33.0,
+        16.0
+      ],
+      "d_width": 2.46,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        31,
+        16
+      ],
+      "ink_aq_wh": [
+        33,
+        16
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 10.98,
+      "ink_moon": 0.892,
+      "ink_aq": 0.9659,
+      "ink_diff": 0.0739,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "tag--x2s--light",
+      "familia": "tag",
+      "moon_size": [
+        30.544097900390625,
+        16.0
+      ],
+      "aq_size": [
+        33.0,
+        16.0
+      ],
+      "d_width": 2.46,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        14,
+        9
+      ],
+      "ink_aq_wh": [
+        15,
+        9
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 11.17,
+      "ink_moon": 0.0947,
+      "ink_aq": 0.1193,
+      "ink_diff": 0.0246,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "tag--xs--dark",
+      "familia": "tag",
+      "moon_size": [
+        35.39215087890625,
+        24.0
+      ],
+      "aq_size": [
+        38.0,
+        24.0
+      ],
+      "d_width": 2.61,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        35,
+        24
+      ],
+      "ink_aq_wh": [
+        38,
+        24
+      ],
+      "d_ink_w": 3,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 14.58,
+      "ink_moon": 0.8969,
+      "ink_aq": 0.9737,
+      "ink_diff": 0.0768,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "tag--xs--light",
+      "familia": "tag",
+      "moon_size": [
+        35.39215087890625,
+        24.0
+      ],
+      "aq_size": [
+        38.0,
+        24.0
+      ],
+      "d_width": 2.61,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        19,
+        12
+      ],
+      "ink_aq_wh": [
+        21,
+        12
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 12.72,
+      "ink_moon": 0.0921,
+      "ink_aq": 0.1075,
+      "ink_diff": 0.0154,
+      "umbral_ink": 0.4,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-area--dark",
+      "familia": "text-area",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        326,
+        38
+      ],
+      "ink_aq_wh": [
+        326,
+        38
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.42,
+      "ink_moon": 0.94,
+      "ink_aq": 0.938,
+      "ink_diff": 0.002,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-area--light",
+      "familia": "text-area",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        40
+      ],
+      "ink_aq_wh": [
+        328,
+        40
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 0.34,
+      "ink_moon": 0.0545,
+      "ink_aq": 0.0604,
+      "ink_diff": 0.0059,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-button--lg--dark",
+      "familia": "button",
+      "moon_size": [
+        83.71211242675781,
+        48.0
+      ],
+      "aq_size": [
+        79.0,
+        48.0
+      ],
+      "d_width": 4.71,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        50,
+        12
+      ],
+      "ink_aq_wh": [
+        45,
+        13
+      ],
+      "d_ink_w": 5,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 8.95,
+      "ink_moon": 0.0702,
+      "ink_aq": 0.0747,
+      "ink_diff": 0.0045,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-button--lg--light",
+      "familia": "button",
+      "moon_size": [
+        83.71211242675781,
+        48.0
+      ],
+      "aq_size": [
+        79.0,
+        48.0
+      ],
+      "d_width": 4.71,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        50,
+        12
+      ],
+      "ink_aq_wh": [
+        45,
+        12
+      ],
+      "d_ink_w": 5,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 9.0,
+      "ink_moon": 0.0702,
+      "ink_aq": 0.0714,
+      "ink_diff": 0.0012,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-button--md--dark",
+      "familia": "button",
+      "moon_size": [
+        77.24781799316406,
+        40.0
+      ],
+      "aq_size": [
+        79.0,
+        40.0
+      ],
+      "d_width": 1.75,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        44,
+        10
+      ],
+      "ink_aq_wh": [
+        45,
+        13
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 3,
+      "pixel_diff_pct": 11.14,
+      "ink_moon": 0.0747,
+      "ink_aq": 0.0953,
+      "ink_diff": 0.0206,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-button--md--light",
+      "familia": "button",
+      "moon_size": [
+        77.24781799316406,
+        40.0
+      ],
+      "aq_size": [
+        79.0,
+        40.0
+      ],
+      "d_width": 1.75,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        44,
+        10
+      ],
+      "ink_aq_wh": [
+        45,
+        12
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 2,
+      "pixel_diff_pct": 11.01,
+      "ink_moon": 0.0747,
+      "ink_aq": 0.0911,
+      "ink_diff": 0.0165,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-button--sm--dark",
+      "familia": "button",
+      "moon_size": [
+        69.24781799316406,
+        32.0
+      ],
+      "aq_size": [
+        67.0,
+        32.0
+      ],
+      "d_width": 2.25,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        44,
+        10
+      ],
+      "ink_aq_wh": [
+        41,
+        11
+      ],
+      "d_ink_w": 3,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 12.14,
+      "ink_moon": 0.1054,
+      "ink_aq": 0.108,
+      "ink_diff": 0.0027,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-button--sm--light",
+      "familia": "button",
+      "moon_size": [
+        69.24781799316406,
+        32.0
+      ],
+      "aq_size": [
+        67.0,
+        32.0
+      ],
+      "d_width": 2.25,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        44,
+        10
+      ],
+      "ink_aq_wh": [
+        41,
+        10
+      ],
+      "d_ink_w": 3,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 11.92,
+      "ink_moon": 0.1054,
+      "ink_aq": 0.1054,
+      "ink_diff": 0.0,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-button--xl--dark",
+      "familia": "button",
+      "moon_size": [
+        99.71211242675781,
+        56.0
+      ],
+      "aq_size": [
+        95.0,
+        56.0
+      ],
+      "d_width": 4.71,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        50,
+        12
+      ],
+      "ink_aq_wh": [
+        45,
+        13
+      ],
+      "d_ink_w": 5,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 6.45,
+      "ink_moon": 0.0505,
+      "ink_aq": 0.0537,
+      "ink_diff": 0.0032,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-button--xl--light",
+      "familia": "button",
+      "moon_size": [
+        99.71211242675781,
+        56.0
+      ],
+      "aq_size": [
+        95.0,
+        56.0
+      ],
+      "d_width": 4.71,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        50,
+        12
+      ],
+      "ink_aq_wh": [
+        45,
+        12
+      ],
+      "d_ink_w": 5,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 6.48,
+      "ink_moon": 0.0505,
+      "ink_aq": 0.0514,
+      "ink_diff": 0.0009,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-button--xs--dark",
+      "familia": "button",
+      "moon_size": [
+        54.784271240234375,
+        24.0
+      ],
+      "aq_size": [
+        59.0,
+        24.0
+      ],
+      "d_width": 4.22,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        37,
+        9
+      ],
+      "ink_aq_wh": [
+        41,
+        11
+      ],
+      "d_ink_w": 4,
+      "d_ink_h": 2,
+      "pixel_diff_pct": 21.33,
+      "ink_moon": 0.1236,
+      "ink_aq": 0.1709,
+      "ink_diff": 0.0473,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-button--xs--light",
+      "familia": "button",
+      "moon_size": [
+        54.784271240234375,
+        24.0
+      ],
+      "aq_size": [
+        59.0,
+        24.0
+      ],
+      "d_width": 4.22,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        37,
+        9
+      ],
+      "ink_aq_wh": [
+        41,
+        10
+      ],
+      "d_ink_w": 4,
+      "d_ink_h": 1,
+      "pixel_diff_pct": 20.2,
+      "ink_moon": 0.1222,
+      "ink_aq": 0.1667,
+      "ink_diff": 0.0445,
+      "umbral_ink": 0.35,
+      "umbral_tinta": 6.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--lg--dark",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        48.0
+      ],
+      "aq_size": [
+        328.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        326,
+        46
+      ],
+      "ink_aq_wh": [
+        326,
+        46
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.47,
+      "ink_moon": 0.9439,
+      "ink_aq": 0.9466,
+      "ink_diff": 0.0027,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--lg--error--dark",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        72.0
+      ],
+      "aq_size": [
+        328.0,
+        72.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        71
+      ],
+      "ink_aq_wh": [
+        328,
+        71
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 11.04,
+      "ink_moon": 0.6822,
+      "ink_aq": 0.6812,
+      "ink_diff": 0.001,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--lg--error--light",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        72.0
+      ],
+      "aq_size": [
+        328.0,
+        72.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        71
+      ],
+      "ink_aq_wh": [
+        328,
+        71
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 11.01,
+      "ink_moon": 0.1025,
+      "ink_aq": 0.0751,
+      "ink_diff": 0.0274,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--lg--hint--dark",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        48.0
+      ],
+      "aq_size": [
+        328.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        326,
+        46
+      ],
+      "ink_aq_wh": [
+        326,
+        46
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.45,
+      "ink_moon": 0.9439,
+      "ink_aq": 0.9426,
+      "ink_diff": 0.0013,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--lg--hint--light",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        48.0
+      ],
+      "aq_size": [
+        328.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        48
+      ],
+      "ink_aq_wh": [
+        328,
+        48
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.39,
+      "ink_moon": 0.0719,
+      "ink_aq": 0.077,
+      "ink_diff": 0.0051,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--lg--light",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        48.0
+      ],
+      "aq_size": [
+        328.0,
+        48.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        48
+      ],
+      "ink_aq_wh": [
+        328,
+        48
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.3,
+      "ink_moon": 0.0719,
+      "ink_aq": 0.0596,
+      "ink_diff": 0.0123,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--md--dark",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        326,
+        38
+      ],
+      "ink_aq_wh": [
+        326,
+        38
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.33,
+      "ink_moon": 0.933,
+      "ink_aq": 0.9373,
+      "ink_diff": 0.0043,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--md--error--dark",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        64.0
+      ],
+      "aq_size": [
+        328.0,
+        64.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        63
+      ],
+      "ink_aq_wh": [
+        328,
+        63
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 11.66,
+      "ink_moon": 0.642,
+      "ink_aq": 0.6414,
+      "ink_diff": 0.0005,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--md--error--light",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        64.0
+      ],
+      "aq_size": [
+        328.0,
+        64.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        63
+      ],
+      "ink_aq_wh": [
+        328,
+        63
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 11.59,
+      "ink_moon": 0.1092,
+      "ink_aq": 0.0787,
+      "ink_diff": 0.0305,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--md--hint--dark",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        326,
+        38
+      ],
+      "ink_aq_wh": [
+        326,
+        38
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.16,
+      "ink_moon": 0.933,
+      "ink_aq": 0.9325,
+      "ink_diff": 0.0005,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--md--hint--light",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        40
+      ],
+      "ink_aq_wh": [
+        328,
+        40
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.04,
+      "ink_moon": 0.0777,
+      "ink_aq": 0.0832,
+      "ink_diff": 0.0055,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--md--light",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        40.0
+      ],
+      "aq_size": [
+        328.0,
+        40.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        40
+      ],
+      "ink_aq_wh": [
+        328,
+        40
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.05,
+      "ink_moon": 0.0777,
+      "ink_aq": 0.0676,
+      "ink_diff": 0.0101,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--sm--dark",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        32.0
+      ],
+      "aq_size": [
+        328.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        326,
+        30
+      ],
+      "ink_aq_wh": [
+        326,
+        30
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 4.16,
+      "ink_moon": 0.9225,
+      "ink_aq": 0.9288,
+      "ink_diff": 0.0063,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--sm--error--dark",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        56.0
+      ],
+      "aq_size": [
+        328.0,
+        56.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        55
+      ],
+      "ink_aq_wh": [
+        328,
+        55
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 13.19,
+      "ink_moon": 0.5935,
+      "ink_aq": 0.5891,
+      "ink_diff": 0.0044,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--sm--error--light",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        56.0
+      ],
+      "aq_size": [
+        328.0,
+        56.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        55
+      ],
+      "ink_aq_wh": [
+        328,
+        55
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 13.08,
+      "ink_moon": 0.5919,
+      "ink_aq": 0.5884,
+      "ink_diff": 0.0035,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--sm--hint--dark",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        32.0
+      ],
+      "aq_size": [
+        328.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        326,
+        30
+      ],
+      "ink_aq_wh": [
+        326,
+        30
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.95,
+      "ink_moon": 0.9225,
+      "ink_aq": 0.9227,
+      "ink_diff": 0.0002,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--sm--hint--light",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        32.0
+      ],
+      "aq_size": [
+        328.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        32
+      ],
+      "ink_aq_wh": [
+        328,
+        32
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.8,
+      "ink_moon": 0.0976,
+      "ink_aq": 0.1021,
+      "ink_diff": 0.0046,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--sm--light",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        32.0
+      ],
+      "aq_size": [
+        328.0,
+        32.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        32
+      ],
+      "ink_aq_wh": [
+        328,
+        32
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 3.81,
+      "ink_moon": 0.0976,
+      "ink_aq": 0.0828,
+      "ink_diff": 0.0148,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--xl--dark",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        56.0
+      ],
+      "aq_size": [
+        328.0,
+        56.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        326,
+        54
+      ],
+      "ink_aq_wh": [
+        326,
+        54
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 2.98,
+      "ink_moon": 0.9511,
+      "ink_aq": 0.9533,
+      "ink_diff": 0.0023,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--xl--error--dark",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        80.0
+      ],
+      "aq_size": [
+        328.0,
+        80.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        79
+      ],
+      "ink_aq_wh": [
+        328,
+        79
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 10.06,
+      "ink_moon": 0.714,
+      "ink_aq": 0.7131,
+      "ink_diff": 0.0009,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--xl--error--light",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        80.0
+      ],
+      "aq_size": [
+        328.0,
+        80.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        79
+      ],
+      "ink_aq_wh": [
+        328,
+        79
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 10.03,
+      "ink_moon": 0.0935,
+      "ink_aq": 0.0682,
+      "ink_diff": 0.0253,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--xl--hint--dark",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        56.0
+      ],
+      "aq_size": [
+        328.0,
+        56.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        326,
+        54
+      ],
+      "ink_aq_wh": [
+        326,
+        54
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 2.96,
+      "ink_moon": 0.9511,
+      "ink_aq": 0.95,
+      "ink_diff": 0.0011,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--xl--hint--light",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        56.0
+      ],
+      "aq_size": [
+        328.0,
+        56.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        56
+      ],
+      "ink_aq_wh": [
+        328,
+        56
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 2.91,
+      "ink_moon": 0.0625,
+      "ink_aq": 0.0669,
+      "ink_diff": 0.0044,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input--xl--light",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        56.0
+      ],
+      "aq_size": [
+        328.0,
+        56.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        56
+      ],
+      "ink_aq_wh": [
+        328,
+        56
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 2.83,
+      "ink_moon": 0.0625,
+      "ink_aq": 0.0519,
+      "ink_diff": 0.0106,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input-group--dark",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        81.0
+      ],
+      "aq_size": [
+        328.0,
+        81.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        326,
+        79
+      ],
+      "ink_aq_wh": [
+        326,
+        79
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 2.01,
+      "ink_moon": 0.9503,
+      "ink_aq": 0.9488,
+      "ink_diff": 0.0015,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "text-input-group--light",
+      "familia": "text-input",
+      "moon_size": [
+        328.0,
+        81.0
+      ],
+      "aq_size": [
+        328.0,
+        81.0
+      ],
+      "d_width": 0.0,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        328,
+        81
+      ],
+      "ink_aq_wh": [
+        328,
+        81
+      ],
+      "d_ink_w": 0,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 1.94,
+      "ink_moon": 0.061,
+      "ink_aq": 0.063,
+      "ink_diff": 0.002,
+      "umbral_ink": 0.3,
+      "umbral_tinta": 8.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "toast--inverted--dark",
+      "familia": "toast",
+      "moon_size": [
+        197.76950073242188,
+        82.0
+      ],
+      "aq_size": [
+        200.0,
+        84.0
+      ],
+      "d_width": 2.23,
+      "d_height": 2.0,
+      "ink_moon_wh": [
+        166,
+        66
+      ],
+      "ink_aq_wh": [
+        168,
+        68
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 2,
+      "pixel_diff_pct": 47.73,
+      "ink_moon": 0.6445,
+      "ink_aq": 0.6532,
+      "ink_diff": 0.0087,
+      "umbral_ink": 0.5,
+      "umbral_tinta": 20.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "toast--inverted--light",
+      "familia": "toast",
+      "moon_size": [
+        197.76950073242188,
+        82.0
+      ],
+      "aq_size": [
+        200.0,
+        84.0
+      ],
+      "d_width": 2.23,
+      "d_height": 2.0,
+      "ink_moon_wh": [
+        166,
+        58
+      ],
+      "ink_aq_wh": [
+        172,
+        63
+      ],
+      "d_ink_w": 6,
+      "d_ink_h": 5,
+      "pixel_diff_pct": 9.45,
+      "ink_moon": 0.556,
+      "ink_aq": 0.6183,
+      "ink_diff": 0.0623,
+      "umbral_ink": 0.5,
+      "umbral_tinta": 20.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "toast--original--dark",
+      "familia": "toast",
+      "moon_size": [
+        197.76950073242188,
+        82.0
+      ],
+      "aq_size": [
+        200.0,
+        84.0
+      ],
+      "d_width": 2.23,
+      "d_height": 2.0,
+      "ink_moon_wh": [
+        166,
+        50
+      ],
+      "ink_aq_wh": [
+        168,
+        68
+      ],
+      "d_ink_w": 2,
+      "d_ink_h": 18,
+      "pixel_diff_pct": 47.74,
+      "ink_moon": 0.4864,
+      "ink_aq": 0.6532,
+      "ink_diff": 0.1667,
+      "umbral_ink": 0.5,
+      "umbral_tinta": 20.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "toast--original--light",
+      "familia": "toast",
+      "moon_size": [
+        197.76950073242188,
+        82.0
+      ],
+      "aq_size": [
+        200.0,
+        84.0
+      ],
+      "d_width": 2.23,
+      "d_height": 2.0,
+      "ink_moon_wh": [
+        166,
+        58
+      ],
+      "ink_aq_wh": [
+        172,
+        63
+      ],
+      "d_ink_w": 6,
+      "d_ink_h": 5,
+      "pixel_diff_pct": 8.3,
+      "ink_moon": 0.1196,
+      "ink_aq": 0.1551,
+      "ink_diff": 0.0355,
+      "umbral_ink": 0.5,
+      "umbral_tinta": 20.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "tooltip--dark",
+      "familia": "tooltip",
+      "moon_size": [
+        61.956268310546875,
+        40.0
+      ],
+      "aq_size": [
+        63.0,
+        40.0
+      ],
+      "d_width": 1.04,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        62,
+        40
+      ],
+      "ink_aq_wh": [
+        63,
+        40
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 8.37,
+      "ink_moon": 0.9762,
+      "ink_aq": 0.9794,
+      "ink_diff": 0.0032,
+      "umbral_ink": 0.45,
+      "umbral_tinta": 60.0,
+      "estado": "conforme"
+    },
+    {
+      "id": "tooltip--light",
+      "familia": "tooltip",
+      "moon_size": [
+        61.956268310546875,
+        40.0
+      ],
+      "aq_size": [
+        63.0,
+        40.0
+      ],
+      "d_width": 1.04,
+      "d_height": 0.0,
+      "ink_moon_wh": [
+        62,
+        40
+      ],
+      "ink_aq_wh": [
+        63,
+        40
+      ],
+      "d_ink_w": 1,
+      "d_ink_h": 0,
+      "pixel_diff_pct": 7.82,
+      "ink_moon": 0.9571,
+      "ink_aq": 0.9726,
+      "ink_diff": 0.0155,
+      "umbral_ink": 0.45,
+      "umbral_tinta": 60.0,
+      "estado": "conforme"
+    }
+  ]
+}

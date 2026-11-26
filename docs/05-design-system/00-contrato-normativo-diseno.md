@@ -192,7 +192,7 @@ en el archivo señalado con valores tomados de tokens semánticos.
 | E-17 | `border` | `AqChip.kt` | Borde de chips seleccionados/filtro (MoonChip) |
 | E-18 | `border` | `AqTextInputGroup.kt` | Borde del contenedor de grupo de campos (MoonTextInputGroup) |
 | E-19 | `border` | `AqProgressPin.kt` | Borde del clavo de progreso (MoonProgressPin) |
-| E-20 | `shadow` | `AqProgressPin.kt` | Sombra `popo` del clavo de progreso (MoonProgressPin) |
+| E-21 | `shadow` | `AqShadowPlatform.ios.kt` | Fallback iOS de `aqShadowPlatform` (sombra por elevación; la geometría BoxShadow exacta solo existe en Android) |
 
 E-06 (elevación de botones) está retirada: los botones son planos y un
 registro sin uso se detecta como excepción zombie.

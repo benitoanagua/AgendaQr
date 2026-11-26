@@ -1,7 +1,7 @@
 # ADR-0047 — Cierre de fidelidad Moon: catálogo de referencia, auditoría y guardarraíl `verifyMoonFidelity`
 
 **Estado:** ACEPTADO — 2026-11-24  
-**Relacionado:** ADR-0044, ADR-0046, contrato Moon §E.
+**Relacionado:** ADR-0044, ADR-0046, ADR-0048, contrato Moon §E.
 
 ## 1. Contexto
 
