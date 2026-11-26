@@ -132,90 +132,53 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
  */
 @Composable
 fun AqDesignSystemGallery(darkTheme: Boolean) {
+    // La galería y el Component Lab consumen el mismo registro de ejemplos.
+    // Así no existe una segunda definición visual que pueda divergir de
+    // los componentes compartidos que usa producción.
     AqTheme(darkTheme = darkTheme) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(AqSpacing.Lg),
             verticalArrangement = Arrangement.spacedBy(AqSpacing.Lg),
         ) {
             AqText(
-                text = "Design System — Galería de componentes",
+                text = "Design System — Componentes compartidos",
                 size = AqType.HeadingLg,
                 fontWeight = AqWeight.SemiBold,
                 color = AqColor.TextPrimary,
             )
             AqText(
-                text = "Tema ${if (darkTheme) "oscuro" else "claro"} · Moon Design",
+                text = "Lab y producción · configuración común · tema ${if (darkTheme) "oscuro" else "claro"}",
                 color = AqColor.TextSecondary,
                 size = AqType.BodySm,
             )
-
-            // ------------------------------------------------------------------
-            // Foundations
-            // ------------------------------------------------------------------
-            AqSectionTitle(text = "Foundations")
-            AqTokenFoundationsPreview()
-
-            // ------------------------------------------------------------------
-            // Actions
-            // ------------------------------------------------------------------
-            AqSectionTitle(text = "Actions")
-            AqActionsPreview()
-
-            // ------------------------------------------------------------------
-            // Forms
-            // ------------------------------------------------------------------
-            AqSectionTitle(text = "Forms")
-            AqFormsPreview()
-            // ------------------------------------------------------------------
-            // Navigation
-            // ------------------------------------------------------------------
-            AqSectionTitle(text = "Navigation")
-            AqNavigationPreview()
-
-            // ------------------------------------------------------------------
-            // Surfaces
-            // ------------------------------------------------------------------
-            AqSectionTitle(text = "Surfaces")
-            AqSurfacesPreview()
-
-            // ------------------------------------------------------------------
-            // Data Display
-            // ------------------------------------------------------------------
-            AqSectionTitle(text = "Data Display")
-            AqDataDisplayPreview()
-
-            // ------------------------------------------------------------------
-            // Feedback
-            // ------------------------------------------------------------------
-            AqSectionTitle(text = "Feedback")
-            AqFeedbackPreview()
-
-            // ------------------------------------------------------------------
-            // Selection
-            // ------------------------------------------------------------------
-            AqSectionTitle(text = "Selection")
-            AqSelectionPreview()
-
-            // ------------------------------------------------------------------
-            // Media
-            // ------------------------------------------------------------------
-            AqSectionTitle(text = "Media")
-            AqMediaPreview()
-
-            // ------------------------------------------------------------------
-            // Mobile Interactions
-            // ------------------------------------------------------------------
-            AqSectionTitle(text = "Mobile Interactions")
-            AqMobileInteractionsPreview()
-
-            // ------------------------------------------------------------------
-            AqSectionTitle(text = "Moon v1 (Figma)")
-            AqFigmaV1Preview()
+            AqComponentCategory.entries.forEach { category ->
+                val entries = AqComponentRegistry.filter { it.category == category }
+                if (entries.isNotEmpty()) {
+                    AqSectionTitle(text = category.label)
+                    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Md)) {
+                        entries.forEach { entry ->
+                            AqText(
+                                text = entry.name,
+                                size = AqType.BodyLg,
+                                fontWeight = AqWeight.SemiBold,
+                                color = AqColor.TextPrimary,
+                            )
+                            entry.states.forEach { state ->
+                                AqText(
+                                    text = state.label,
+                                    size = AqType.BodySm,
+                                    color = AqColor.TextSecondary,
+                                )
+                                state.content { /* gallery is read-only; Lab supplies event logging */ }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
 
-/** Previews de tokens y valores base. */
 @Composable
 private fun AqTokenFoundationsPreview() {
     Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
