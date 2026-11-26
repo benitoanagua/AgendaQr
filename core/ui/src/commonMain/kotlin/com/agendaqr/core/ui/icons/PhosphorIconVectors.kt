@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
  * del origen se sustituye por el tinte semántico de `AqIcon`, igual que en
  * the shared semantic icon entry point.
  *
- * Regla de peso por tamaño (ADR-0051): ≤ 20 dp Bold, 21–32 dp Regular,
+ * Regla de peso por tamaño (ADR-0051): ≤ 20 dp Bold, 21–39 dp Regular,
  * ≥ 40 dp Light. Dentro del switch los iconos miden 12–14 dp → Bold.
  */
 internal object PhosphorIconVectors {
@@ -78,7 +78,7 @@ enum class AqPhosphorIcon { Check, X }
 
 /**
  * Peso del glifo Phosphor según el tamaño pedido (ADR-0051):
- * ≤ 20 dp Bold, 21–32 dp Regular, ≥ 40 dp Light. Vive en la capa de
+ * ≤ 20 dp Bold, 21–39 dp Regular, ≥ 40 dp Light. Vive en la capa de
  * vectores porque los umbrales son medidas intrínsecas del glifo, no
  * valores del sistema de espaciado.
  */
