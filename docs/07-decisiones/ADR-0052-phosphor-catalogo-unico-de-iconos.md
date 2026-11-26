@@ -26,7 +26,7 @@ La intención del producto es inequívoca: Phosphor sustituye por completo a Moo
 - **Fase 2 — catálogo: COMPLETADA EN CÓDIGO.** 37 SVG oficiales se importaron como vectores KMP locales en `core/ui`; sin dependencia runtime.
 - **Fase 3 — producción: COMPLETADA EN CÓDIGO.** Los 39 conceptos de `AqIcons` apuntan a Phosphor; `MoonIconVectors.kt` se eliminó.
 - **Fase 4 — enforcement: IMPLEMENTADO, PENDIENTE DE EJECUCIÓN.** `AqIconMappingTest`, `verifyProductIconCatalog` y los gates de configuración compartida están añadidos; CI aún debe confirmar compilación y tests.
-- **Fase 5 — distribución: PARCIAL.** Android third-party notice y documentación actualizados; revisar aviso iOS y ejecutar Android/iOS/wasmJs en CI.
+- **Fase 5 — distribución: PARCIAL.** Android notice y copia `iosApp/ThirdPartyNotices.txt` están versionados; falta añadir el recurso al target Xcode (proyecto no versionado) y enlazarlo desde la superficie legal/about. CI Android/iOS/wasmJs aún debe confirmar los targets.
 
 ## Criterios de aceptación
 
