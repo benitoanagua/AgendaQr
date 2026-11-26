@@ -290,7 +290,12 @@ private fun AqButtonImpl(
                     .then(if (isLoading) Modifier.alpha(AqAlpha.Hidden) else Modifier)
                     .testTag("aq-button-visual"),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(size.iconTextGap),
+                // Contenido centrado: con fullWidth/ancho fijo la fila se
+                // estira y sin esto la etiqueta quedaba pegada al inicio.
+                horizontalArrangement = Arrangement.spacedBy(
+                    size.iconTextGap,
+                    Alignment.CenterHorizontally,
+                ),
             ) {
                 icon?.let {
                     AqIcon(

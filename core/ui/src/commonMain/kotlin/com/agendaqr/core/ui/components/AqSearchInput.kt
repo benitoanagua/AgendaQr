@@ -37,6 +37,9 @@ fun AqSearchInput(
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
         placeholder = placeholder,
+        // Búsqueda = placeholder clásico: se muestra solo con el campo vacío
+        // y desaparece al escribir. Sin etiqueta flotante persistente.
+        hasFloatingLabel = false,
         leadingIcon = AqIcons.Search,
         focusRequester = focusRequester,
         trailing = {
