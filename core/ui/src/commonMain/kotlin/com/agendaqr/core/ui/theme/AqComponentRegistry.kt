@@ -187,14 +187,14 @@ private fun entry(
 )
 
 /**
- * Registro de componentes del design system para el Component Lab web
- * (`:core:ui-lab`, wasmJs). Cada componente público de
- * `core/ui/components` debe tener una entrada; lo verifica el gate
- * `verifyComponentRegistry` de `verifyAgendaQrArchitecture`.
+ * Registro único de estados/variantes para Component Lab y galería. Cada
+ * componente público de `core/ui/components` debe tener una entrada; lo
+ * verifica `verifyComponentRegistry`.
  *
- * Las previews viven aquí (y no en la galería) para que el lab pueda
- * exhibir un componente aislado por estado sin depender de las secciones
- * monolíticas de [AqDesignSystemGallery].
+ * Lab y galería renderizan estos mismos estados mediante los componentes
+ * `Aq*` reales. La galería es una vista read-only del registro; no mantiene
+ * composables alternativos. Producción consume los mismos componentes y
+ * `AqTheme` (ADR-0053).
  */
 @OptIn(ExperimentalLayoutApi::class)
 val AqComponentRegistry: List<AqComponentEntry> = listOf(
