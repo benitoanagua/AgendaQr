@@ -174,7 +174,7 @@ familia es Inter (D-05 del contrato).
 Phosphor Icons `@phosphor-icons/core` v2.0.8 es la única familia de iconos de
 producto (ADR-0052). Los 37 conceptos semánticos de `AqIcons` se mapean a
 SVG oficiales convertidos a `ImageVector` KMP en
-`core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/icons/PhosphorProductVectors*.kt`.
+`core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/icons/PhosphorProduct*IconVectors.kt`.
 El catálogo conserva la API de producto; las pantallas no importan vectores
 directamente.
 
