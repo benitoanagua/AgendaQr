@@ -21,8 +21,6 @@ import com.agendaqr.core.ui.components.AqTextArea
 import com.agendaqr.core.ui.components.AqTextInput
 import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.components.AqTone
-import com.agendaqr.core.ui.icons.AqPhosphorIcon
-import com.agendaqr.core.ui.icons.vectorForSize
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
@@ -158,23 +156,6 @@ fun DestinationEditorScreen(
             label = AppStrings.MarcarComoFavorito,
             checked = favorite,
             onCheckedChange = { favorite = it },
-            // El estado se comunica con los mismos glifos Phosphor del Component Lab.
-            activeThumbWidget = {
-                AqIcon(
-                    imageVector = AqPhosphorIcon.Check.vectorForSize(com.agendaqr.core.ui.theme.AqSize.X3s),
-                    contentDescription = null,
-                    size = com.agendaqr.core.ui.theme.AqSize.X3s,
-                    tint = AqColor.Popo,
-                )
-            },
-            inactiveThumbWidget = {
-                AqIcon(
-                    imageVector = AqPhosphorIcon.X.vectorForSize(com.agendaqr.core.ui.theme.AqSize.X3s),
-                    contentDescription = null,
-                    size = com.agendaqr.core.ui.theme.AqSize.X3s,
-                    tint = AqColor.Popo,
-                )
-            },
             // Fila de ajuste: etiqueta a la izquierda, control a la derecha.
             labelFirst = true,
         )
