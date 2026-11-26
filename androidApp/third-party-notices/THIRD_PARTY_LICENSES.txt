@@ -1,11 +1,11 @@
 THIRD-PARTY LICENSES
 ====================
 
-This application includes Moon Design icons and design tokens, adapted from
-@heathmont/moon-icons 10.7.4, moon_tokens 0.0.6 and moon_design 1.1.0.
+This application includes Moon Design components and design tokens adapted from
+moon_tokens 0.0.6 and moon_design 1.1.0, plus product icons from Phosphor Icons.
 
 --------------------------------------------------------------------------------
-Moon Design (icons, color tokens, sizes, borders, shadows, motion)
+Moon Design (components, color tokens, sizes, borders, shadows, motion)
 --------------------------------------------------------------------------------
 
 MIT License
@@ -31,12 +31,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 --------------------------------------------------------------------------------
-Phosphor Icons (Check and X glyphs, bold/regular/light weights)
+Phosphor Icons (37 product glyphs plus Check/X, MIT)
 --------------------------------------------------------------------------------
 
-This application includes the Check and X icons from phosphor-icons/core
-2.0.8 (https://github.com/phosphor-icons/core), adapted as Compose
-ImageVector paths.
+This application includes 37 product icons and the Check/X state glyphs from
+phosphor-icons/core 2.0.8 (https://github.com/phosphor-icons/core), adapted as
+Compose ImageVector paths from official SVG assets.
 
 MIT License
 
