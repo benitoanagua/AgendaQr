@@ -227,6 +227,8 @@ object AqSquircles {
      *  `bottom_sheet_theme.dart` `borderRadius.surfaceLg` aplicado con
      *  `MoonSquircleBorderRadius.only(topLeft, topRight)`). */
     val SurfaceTopLg: Shape = AqSquircleShape(AqCorner.SurfaceLg, topCornersOnly = true)
+    /** Bottom sheet Moon v1: radio superior 12 (`surfaceMd`, antes 16). */
+    val SurfaceTopMd: Shape = AqSquircleShape(AqCorner.SurfaceMd, topCornersOnly = true)
     /** Círculo/ovalo completo: radio `AqRadius.ExtraLarge` (16dp) se clampa
      *  al máximo del componente, produciendo una forma redonda en controles
      *  pequeños (botón de radio, insignia, punto) sin degenerar la

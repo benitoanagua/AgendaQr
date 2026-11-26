@@ -175,6 +175,7 @@ enum class AqChipSize(
     val horizontalPadding: Dp,
     val shape: Shape,
 ) {
-    Sm(AqSize.Sm, AqSize.X3s, AqSquircles.InteractiveXs),
-    Md(AqSize.Md, AqSize.X2s, AqSquircles.InteractiveSm),
+    // Moon v1: padding horizontal sm 8 / md 12 (antes x3s/x2s = 12/16).
+    Sm(AqSize.Sm, AqSize.X4s, AqSquircles.InteractiveXs),
+    Md(AqSize.Md, AqSize.X3s, AqSquircles.InteractiveSm),
 }

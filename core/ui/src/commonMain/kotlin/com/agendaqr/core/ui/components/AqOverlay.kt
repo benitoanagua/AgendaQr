@@ -3,6 +3,7 @@ package com.agendaqr.core.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
@@ -33,6 +35,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqCorner
 import com.agendaqr.core.ui.theme.AqShadow
 import com.agendaqr.core.ui.theme.aqShadow
 import com.agendaqr.core.ui.theme.AqLayout
@@ -122,8 +125,9 @@ fun AqModal(
                     // Primero el fondo y después el relleno interno: antes el
                     // padding iba delante y actuaba como margen externo, así el
                     // contenido quedaba pegado al borde del panel.
-                    .background(LocalAqColorScheme.current.background, AqSquircles.SurfaceSm)
-                    .padding(AqSize.X2s)
+                    // Moon v1 «Modal»: radio 12 y padding interno 8.
+                    .background(LocalAqColorScheme.current.background, AqSquircles.SurfaceMd)
+                    .padding(AqSize.X4s)
                     .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
                 verticalArrangement = Arrangement.spacedBy(AqSize.X3s),
             ) {
@@ -191,6 +195,11 @@ fun AqDrawer(
     content: @Composable () -> Unit,
 ) {
     if (!show) return
+    // Esquinas interiores redondeadas (Moon v1 Drawer r12).
+    val drawerShape = RoundedCornerShape(
+        topEnd = AqCorner.SurfaceMd,
+        bottomEnd = AqCorner.SurfaceMd,
+    )
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -209,8 +218,10 @@ fun AqDrawer(
                 .fillMaxWidth()
                 .widthIn(max = AqLayout.DrawerWidth)
                 .fillMaxHeight()
-                // Moon `drawer_theme.dart`: `borderRadius.zero` + sombra `lg`.
-                .aqShadow(AqShadow.Lg)
+                // Moon v1 «Drawer»: radio 12 en las esquinas interiores
+                // (las que miran al contenido; `end` se invierte en RTL).
+                .clip(drawerShape)
+                .aqShadow(AqShadow.Lg, drawerShape)
                 .background(LocalAqColorScheme.current.background)
                 .testTag("aq-drawer-pane")
                 .then(

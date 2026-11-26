@@ -11,6 +11,7 @@ import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -143,7 +144,17 @@ fun AqMenuItem(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(AqLayout.CellPadding),
+                        // Moon v1 «Menu item»: padding vertical 8; el borde
+                        // inicial reserva 12 (canal de selección/checkbox) y
+                        // el final 8 (`pad=[8,8,8,12]` del JSON).
+                        .padding(
+                            PaddingValues(
+                                start = AqSize.X3s,
+                                top = AqSize.X4s,
+                                end = AqSize.X4s,
+                                bottom = AqSize.X4s,
+                            ),
+                        ),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     leading?.let {

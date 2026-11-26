@@ -48,7 +48,9 @@ fun AqEmptyPlaceholder(
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(AqSize.Sm),
+            // Moon v1 «Empty state»: gap 8 dp entre icono, título,
+            // subtítulo y acción (antes `AqSize.Sm` = 32 dp).
+            verticalArrangement = Arrangement.spacedBy(AqSize.X4s),
         ) {
         icon?.let {
             AqIcon(

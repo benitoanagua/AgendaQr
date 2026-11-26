@@ -98,7 +98,8 @@ fun AqRadio(
         Canvas(
             modifier = Modifier
                 .size(AqLayout.CheckboxGlyphSize)
-                .alpha(if (enabled) 1f else AqStateAlpha.Disabled),
+                .alpha(if (enabled) 1f else AqStateAlpha.Disabled)
+                .testTag("aq-radio-glyph"),
         ) {
             val center = Offset(size.width / 2f, size.height / 2f)
             // Círculo exterior: trazo de 1 dp, color interpolado por `position`.

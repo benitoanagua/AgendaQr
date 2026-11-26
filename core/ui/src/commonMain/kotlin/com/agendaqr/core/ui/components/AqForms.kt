@@ -480,7 +480,8 @@ private fun AqCheckboxGlyph(
     Canvas(
         modifier = modifier
             .size(AqLayout.CheckboxGlyphSize)
-            .alpha(if (enabled) 1f else AqStateAlpha.Disabled),
+            .alpha(if (enabled) 1f else AqStateAlpha.Disabled)
+            .testTag("aq-checkbox-glyph"),
     ) {
         val outline = AqSquircles.InteractiveXs.createOutline(size, layoutDirection, this)
         val boxPath = (outline as? Outline.Generic)?.path

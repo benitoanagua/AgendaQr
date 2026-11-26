@@ -32,6 +32,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqTextStyles
@@ -72,8 +73,8 @@ fun AqTextArea(
     isError: Boolean = false,
     errorMessage: String? = null,
     helperMessage: String? = null,
-    /** Alto de la caja (Moon `height`); por defecto `sizes.md` = 40 dp. */
-    height: Dp = AqSize.Md,
+    /** Alto de la caja (Moon v1 «Textarea»: base 132 dp). */
+    height: Dp = AqLayout.TextAreaHeight,
     minLines: Int = 1,
     maxLines: Int = Int.MAX_VALUE,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,

@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -150,6 +151,9 @@ fun AqSwitch(
             Box(
                 modifier = Modifier
                     .size(size.trackWidth, size.height)
+                    // El tag va antes del padding interno para que sus
+                    // bounds midan la pista completa (Moon `switch_sizes`).
+                    .testTag("aq-switch-track")
                     .background(trackColor, AqSquircles.Circle)
                     .padding(size.trackPadding),
             ) {

@@ -58,6 +58,7 @@ import com.agendaqr.core.ui.theme.AqControlParams
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
+import com.agendaqr.core.ui.theme.AqSquircleShape
 import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
@@ -73,36 +74,43 @@ enum class AqButtonSize(
     val iconSize: Dp,
     /** Hueco entre ícono y etiqueta (Moon § Botón: xs/sm 4, md 8, lg 12, xl 16). */
     val iconTextGap: Dp,
+    /** Radio de esquina por tamaño (Moon v1: xs 4, sm/md/lg 8, xl 12). */
+    val cornerRadius: Dp,
 ) {
     ExtraSmall(
         visualHeight = AqLayout.ButtonHeightXs,
         horizontalPadding = AqLayout.ButtonPaddingHorizontalXs,
         iconSize = AqMetrics.IconSizeCompact,
         iconTextGap = AqLayout.ButtonGapXs,
+        cornerRadius = AqCorner.InteractiveXs,
     ),
     Small(
         visualHeight = AqLayout.ButtonHeightSm,
         horizontalPadding = AqLayout.ButtonPaddingHorizontalSm,
         iconSize = AqMetrics.ButtonMediumIconSize,
         iconTextGap = AqLayout.ButtonGapSm,
+        cornerRadius = AqCorner.InteractiveSm,
     ),
     Medium(
         visualHeight = AqLayout.ButtonHeightMd,
         horizontalPadding = AqLayout.ButtonPaddingHorizontalMd,
         iconSize = AqMetrics.ButtonMediumIconSize,
         iconTextGap = AqLayout.ButtonGapMd,
+        cornerRadius = AqCorner.InteractiveSm,
     ),
     Large(
         visualHeight = AqLayout.ButtonHeightLg,
         horizontalPadding = AqLayout.ButtonPaddingHorizontalLg,
         iconSize = AqMetrics.IconSize,
         iconTextGap = AqLayout.ButtonGapLg,
+        cornerRadius = AqCorner.InteractiveSm,
     ),
     ExtraLarge(
         visualHeight = AqLayout.ButtonHeightXl,
         horizontalPadding = AqLayout.ButtonPaddingHorizontalXl,
         iconSize = AqMetrics.IconSize,
         iconTextGap = AqLayout.ButtonGapXl,
+        cornerRadius = AqCorner.InteractiveMd,
     ),
 }
 
@@ -232,7 +240,8 @@ private fun AqButtonImpl(
     } else {
         AqTextStyles.ButtonLabel
     }
-    val shape = AqSquircles.InteractiveSm
+    // Moon v1: el radio del botón varía por tamaño (xs 4, xl 12).
+    val shape = AqSquircleShape(size.cornerRadius)
     val haptics = LocalHapticFeedback.current
     val buttonModifier = modifier
         .then(if (fullWidth) Modifier.fillMaxWidth() else Modifier)
@@ -275,7 +284,10 @@ private fun AqButtonImpl(
                             Modifier
                         },
                     )
-                    .heightIn(min = size.visualHeight)
+                    // Moon fija el alto del botón por tamaño (24/32/40/48/56);
+                    // el contenido nunca lo estira (antes `heightIn` dejaba
+                    // crecer xs/sm por encima del spec).
+                    .height(size.visualHeight)
                     .background(resolved.container, shape)
                     .then(
                         resolved.border?.let { Modifier.border(AqMetrics.Border, it, shape) } ?: Modifier,
