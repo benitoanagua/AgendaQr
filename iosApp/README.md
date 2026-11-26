@@ -46,3 +46,13 @@ se genera localmente y se agrega desde Xcode.
 | Azul principal    | `#0067B8` |
 | Azul oscuro       | `#004A87` |
 | Blanco            | `#FFFFFF` |
+
+
+## Third-party notices
+
+The app's bundled third-party license notice source is
+`iosApp/ThirdPartyNotices.txt` (Moon Design components/tokens and Phosphor
+product icons). The Xcode project is intentionally not versioned in this repo;
+when preparing a release, add this file to the `AgendaQrIOS` target's **Copy
+Bundle Resources** and link it from the app's legal/about surface. Until that
+Xcode target wiring is confirmed, iOS notice bundling remains a release check.
