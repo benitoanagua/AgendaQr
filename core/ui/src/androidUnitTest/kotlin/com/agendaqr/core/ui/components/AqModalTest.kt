@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.onNodeWithTag
@@ -23,6 +24,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 /** Pruebas de [AqModal]: semántica de diálogo y cierre por scrim. */
 @RunWith(RobolectricTestRunner::class)
@@ -100,7 +102,8 @@ class AqModalTest {
     }
 
     @Test
-    fun modal_with_tall_content_keeps_actions_visible_at_48dp() {
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun modal_with_tall_content_keeps_actions_visible() {
         compose.setContent {
             AqTheme {
                 AqModal(
@@ -118,6 +121,8 @@ class AqModalTest {
             }
         }
         compose.onNodeWithText("Fila 0").assertExists()
-        compose.onNodeWithText("Cancelar").assertHeightIsAtLeast(48.dp)
+        // Moon: el botón de texto sm mide 32 dp y el contenido hace scroll
+        // dejando las acciones siempre visibles (ADR-0044).
+        compose.onNodeWithText("Cancelar").assertHeightIsEqualTo(32.dp)
     }
 }

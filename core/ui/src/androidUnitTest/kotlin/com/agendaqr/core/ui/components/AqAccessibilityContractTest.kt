@@ -1,6 +1,8 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -9,6 +11,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsSelected
@@ -26,6 +29,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 /** Contratos de accesibilidad de los controles reutilizables del sistema. */
 @RunWith(RobolectricTestRunner::class)
@@ -35,7 +39,7 @@ class AqAccessibilityContractTest {
     val compose = createComposeRule()
 
     @Test
-    fun icon_button_has_accessible_name_button_role_and_48dp_target() {
+    fun icon_button_has_accessible_name_button_role_and_moon_height() {
         var clicks = 0
         compose.setContent {
             AqTheme {
@@ -52,30 +56,38 @@ class AqAccessibilityContractTest {
 
         val node = compose.onNodeWithText("Actualizar lista")
         node.assertExists()
-        node.assertHeightIsAtLeast(48.dp)
+        // Moon fija la altura del botón (sm = 32 dp); el botón entero es el
+        // objetivo táctil, sin expansión extra (ADR-0044).
+        node.assertHeightIsEqualTo(32.dp)
         node.assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
         node.performClick()
         assert(clicks == 1) { "El botón debe ejecutar la acción una vez" }
     }
 
     @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
     fun quick_action_is_one_named_button_with_a_touch_target() {
         var clicks = 0
         compose.setContent {
             AqTheme {
-                AqButton(
-                    label = "Traer un QR",
-                    icon = AqIcons.QrCode,
-                    onClick = { clicks++ },
-                    variant = AqButtonVariant.Primary,
-                    size = AqButtonSize.Small,
-                )
+                // wrapContentSize: Surface(fillMaxSize) propaga constraints
+                // mínimos a hijos directos; sin el Box el botón llena la
+                // pantalla en los tests.
+                Box(Modifier.wrapContentSize()) {
+                    AqButton(
+                        label = "Traer un QR",
+                        icon = AqIcons.QrCode,
+                        onClick = { clicks++ },
+                        variant = AqButtonVariant.Primary,
+                        size = AqButtonSize.Small,
+                    )
+                }
             }
         }
 
         compose.onNodeWithText("Traer un QR")
             .assertExists()
-            .assertHeightIsAtLeast(48.dp)
+            .assertHeightIsEqualTo(32.dp)
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
             .performClick()
         assert(clicks == 1) { "La acción rápida debe ejecutarse una vez" }
@@ -93,7 +105,8 @@ class AqAccessibilityContractTest {
             }
         }
 
-        compose.onNodeWithText("Activos").assertIsSelected().assertHeightIsAtLeast(48.dp)
+        // Moon `chip.dart`: el chip md mide `sizes.md` (40 dp) de alto.
+        compose.onNodeWithText("Activos").assertIsSelected().assertHeightIsEqualTo(40.dp)
     }
 
     @Test
@@ -165,9 +178,9 @@ class AqAccessibilityContractTest {
         }
 
         compose.onNodeWithText("Buscar destinos").assertExists()
-        // D-02: el objetivo táctil del campo es ≥ 48 dp (wrapper de toque,
-        // no la caja visual que mide size.height).
-        compose.onNodeWithTag("aq-field-touch-target").assertHeightIsAtLeast(48.dp)
+        // Moon `text_input`: la caja visual es el campo completo (md = 40 dp);
+        // no hay target táctil extra por encima de la geometría Moon.
+        compose.onNodeWithTag("aq-text-input-visual").assertHeightIsEqualTo(40.dp)
     }
 
     @Test

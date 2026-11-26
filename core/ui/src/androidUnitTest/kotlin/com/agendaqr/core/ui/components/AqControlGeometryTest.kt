@@ -3,7 +3,6 @@ package com.agendaqr.core.ui.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -30,15 +29,16 @@ class AqControlGeometryTest {
                 }
             }
         }
-        // La altura visual Moon md es 40 dp; el área táctil nunca baja de 48 dp (D-02).
+        // Moon fija la altura del botón (md = 40 dp) y el botón entero es el
+        // objetivo táctil: no hay expansión extra (ADR-0044).
         compose.onNodeWithTag("aq-button-visual", useUnmergedTree = true)
             .assertHeightIsEqualTo(40.dp)
         compose.onNodeWithTag("aq-button-touch-target", useUnmergedTree = true)
-            .assertHeightIsAtLeast(48.dp)
+            .assertHeightIsEqualTo(40.dp)
     }
 
     @Test
-    fun text_input_md_visual_is_40dp_and_hit_target_is_48dp() {
+    fun text_input_md_is_exactly_40dp_with_no_extra_hit_target() {
         compose.setContent {
             AqTheme {
                 Box(Modifier.width(280.dp)) {
@@ -46,9 +46,8 @@ class AqControlGeometryTest {
                 }
             }
         }
+        // Moon `text_input`: la caja visual ES el campo (md = 40 dp).
         compose.onNodeWithTag("aq-text-input-visual", useUnmergedTree = true)
             .assertHeightIsEqualTo(40.dp)
-        compose.onNodeWithTag("aq-field-touch-target", useUnmergedTree = true)
-            .assertHeightIsAtLeast(48.dp)
     }
 }

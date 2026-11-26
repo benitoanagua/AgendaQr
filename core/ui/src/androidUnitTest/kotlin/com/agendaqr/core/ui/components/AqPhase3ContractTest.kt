@@ -6,7 +6,9 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.runtime.mutableStateOf
@@ -26,14 +28,15 @@ class AqPhase3ContractTest {
     val compose = createComposeRule()
 
     @Test
-    fun link_is_named_action_with_48dp_target() {
+    fun link_is_named_action_with_moon_button_height() {
         var clicks = 0
         compose.setContent {
             AqTheme { AqNavLink(label = "Ver detalle", onClick = { clicks++ }) }
         }
         compose.onNodeWithText("Ver detalle")
             .assertHasClickAction()
-            .assertHeightIsAtLeast(48.dp)
+            // Moon: botón de texto md = 40 dp, sin target extra.
+            .assertHeightIsEqualTo(40.dp)
             .performClick()
         assert(clicks == 1)
     }
@@ -84,7 +87,9 @@ class AqPhase3ContractTest {
                 AqEvidenceTag(text = "Comprobante recibido", icon = AqIcons.Attachment)
             }
         }
-        compose.onNodeWithText("Comprobante recibido").assertExists()
+        // AqTag expone el copy como contentDescription (el texto interno
+        // limpia su semántica para no duplicar la etiqueta para TalkBack).
+        compose.onNodeWithContentDescription("Comprobante recibido").assertExists()
     }
 
     @Test
@@ -100,10 +105,10 @@ class AqPhase3ContractTest {
                 )
             }
         }
-        compose.onNodeWithText("Sincronizado").assertDoesNotExist()
+        compose.onNodeWithContentDescription("Sincronizado").assertDoesNotExist()
         compose.runOnIdle { showSynced.value = true }
         compose.waitForIdle()
-        compose.onNodeWithText("Sincronizado").assertExists()
+        compose.onNodeWithContentDescription("Sincronizado").assertExists()
     }
 
     @Test

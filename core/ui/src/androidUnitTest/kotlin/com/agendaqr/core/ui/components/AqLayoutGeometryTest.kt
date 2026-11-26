@@ -2,17 +2,21 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertWidthIsAtLeast
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
@@ -23,6 +27,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 /**
  * Pruebas de geometría de layout (Fase 0): deben FALLAR en la línea base
@@ -241,40 +246,51 @@ class AqLayoutGeometryTest {
         compose.onRoot().getBoundsInRoot()
     }
 
-    // ------------------------------------------------------------ 0.2.i Botón xs: alto visual 24 dp, área táctil ≥ 48 dp
+    // ------------------------------------------------------------ 0.2.i Botón xs: alto visual 24 dp, sin target extra
     @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
     @Config(sdk = [34], qualifiers = "w360dp-h800dp")
-    fun button_extra_small_visual_height_preserves_48dp_touch_target() {
+    fun button_extra_small_visual_height_is_24dp() {
         compose.setContent {
             AqTheme {
-                com.agendaqr.core.ui.components.AqButton(
-                    label = "Acción",
-                    onClick = { },
-                    size = com.agendaqr.core.ui.components.AqButtonSize.ExtraSmall,
-                )
+                // wrapContentSize: Surface(fillMaxSize) propaga constraints
+                // mínimos; sin el Box el botón se ve forzado a pantalla
+                // completa en los tests.
+                Box(Modifier.wrapContentSize()) {
+                    com.agendaqr.core.ui.components.AqButton(
+                        label = "Acción",
+                        onClick = { },
+                        size = com.agendaqr.core.ui.components.AqButtonSize.ExtraSmall,
+                    )
+                }
             }
         }
         compose.waitForIdle()
-        // El nodo accesible del botón (texto + rol) mide al menos 48 dp aunque
-        // el relleno visual sea solo 24 dp (ADR-0039 §4.4).
+        // Moon fija la altura del botón (xs = 24 dp) y el botón entero es el
+        // objetivo táctil, sin expansión extra (ADR-0044). NATIVE: en modo
+        // LEGACY las métricas de fuente inflan la línea de texto.
         compose.onNodeWithText("Acción")
-            .assertHeightIsAtLeast(48.dp)
+            .assertHeightIsEqualTo(24.dp)
     }
 
-    // ------------------------------------------------------------ 0.2.j Tag x2s: alto visual 16 dp, área táctil ≥ 48 dp
+    // ------------------------------------------------------------ 0.2.j Tag x2s: alto visual 16 dp, sin target extra
     @Test
     @Config(sdk = [34], qualifiers = "w360dp-h800dp")
-    fun tag_x2s_visual_height_preserves_48dp_touch_target() {
+    fun tag_x2s_visual_height_is_16dp() {
         compose.setContent {
             AqTheme {
-                com.agendaqr.core.ui.components.AqTag(
-                    text = "Activo",
-                    size = com.agendaqr.core.ui.components.AqTagSize.X2s,
-                )
+                Box(Modifier.wrapContentSize()) {
+                    com.agendaqr.core.ui.components.AqTag(
+                        text = "Activo",
+                        size = com.agendaqr.core.ui.components.AqTagSize.X2s,
+                    )
+                }
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("Activo").assertHeightIsAtLeast(48.dp)
+        // La etiqueta expone su copy como contentDescription en la fila;
+        // Moon `tag.dart`: alto x2s = 16 dp.
+        compose.onNodeWithContentDescription("Activo").assertHeightIsEqualTo(16.dp)
     }
 
     // ------------------------------------------------------------ 0.2.k Switch x2s: alto visual 16 dp, área táctil ≥ 48 dp

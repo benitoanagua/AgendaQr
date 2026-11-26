@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.agendaqr.core.ui.theme.AqTheme
@@ -22,7 +23,7 @@ import org.robolectric.annotation.Config
  *
  * - El contenido está oculto cuando expanded = false y visible cuando true.
  * - El título siempre está presente.
- * - La fila de título tiene el objetivo táctil de 48 dp.
+ * - La fila de título mide la altura Moon del tamaño (md = 40 dp).
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], qualifiers = "w360dp-h760dp")
@@ -72,13 +73,16 @@ class AqExpansionPanelTest {
     }
 
     @Test
-    fun title_row_has_min_touch_target() {
+    fun title_row_has_moon_header_height() {
         composeContent(isExpanded = false)
-        val bounds = compose.onNodeWithText("Más detalles").getBoundsInRoot()
+        // La cabecera del acordeón expone `contentDescription` con el título;
+        // Moon `accordion.dart`: `SizedBox(height: headerHeight)` = 40 dp (md).
+        val bounds = compose.onNodeWithContentDescription("Más detalles")
+            .getBoundsInRoot()
         val height = bounds.bottom - bounds.top
         assertTrue(
-            height.value >= 48f,
-            "fila de título menor a 48 dp: $height",
+            height.value >= 40f,
+            "fila de título menor a 40 dp: $height",
         )
     }
 }

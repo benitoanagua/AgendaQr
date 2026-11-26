@@ -1,6 +1,6 @@
 package com.agendaqr.core.ui.components
 
-import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
@@ -11,7 +11,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/** Pruebas de [AqAlert]: etiqueta/contenido separados y target ≥ 48 dp (D-02). */
+/** Pruebas de [AqAlert]: etiqueta/contenido separados y geometría Moon (ADR-0044). */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class AqAlertTest {
@@ -47,7 +47,7 @@ class AqAlertTest {
     }
 
     @Test
-    fun alert_with_dismiss_action_keeps_48dp_target() {
+    fun alert_with_dismiss_action_keeps_moon_button_height() {
         compose.setContent {
             AqTheme {
                 AqAlert(
@@ -58,6 +58,8 @@ class AqAlertTest {
                 )
             }
         }
-        compose.onNodeWithText("Cerrar").assertHeightIsAtLeast(48.dp)
+        // Moon: la acción de descarte es un botón sm (32 dp); el botón
+        // entero es el objetivo táctil, sin expansión extra.
+        compose.onNodeWithText("Cerrar").assertHeightIsEqualTo(32.dp)
     }
 }

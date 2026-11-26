@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -53,7 +53,8 @@ class AqChipRowTest {
         compose.onNodeWithText("Todos")
             .assertIsSelected()
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
-            .assertHeightIsAtLeast(48.dp)
+            // Moon `chip.dart`: chip md = `sizes.md` (40 dp), sin target extra.
+            .assertHeightIsEqualTo(40.dp)
     }
 
     @Test

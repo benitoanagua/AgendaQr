@@ -5,7 +5,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -51,10 +51,11 @@ class AqTooltipTest {
             }
         }
 
-        // El botón icono conserva nombre accesible, rol y target de 48 dp.
+        // El botón icono conserva nombre accesible, rol y la altura Moon
+        // del botón de texto sm (32 dp; el botón entero es el target).
         val node = compose.onNodeWithText("Actualizar lista")
         node.assertExists()
-        node.assertHeightIsAtLeast(48.dp)
+        node.assertHeightIsEqualTo(32.dp)
         node.assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
 
         // El tooltip no está visible inicialmente.
@@ -99,7 +100,7 @@ class AqTooltipTest {
             }
         }
         val node = compose.onNodeWithText("Acción")
-        node.assertHeightIsAtLeast(48.dp)
+        node.assertHeightIsEqualTo(32.dp)
         node.performClick()
         assertEquals(1, clicks)
     }
