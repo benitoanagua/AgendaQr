@@ -14,7 +14,7 @@ Registro de licencias de recursos y dependencias que Agenda QR distribuye.
 - Fuente: `phosphor-icons/core` v2.0.8, SVG oficiales. Provenance por icono y versión se registran en el catálogo/generador de `core/ui` (ADR-0052).
 - Uso: 37 glifos Phosphor distintos en `PhosphorProduct01IconVectors.kt`–`04.kt`, mapeados a 39 conceptos API de `AqIcons`, más Check/X Bold, Regular y Light en `PhosphorIconVectors.kt`.
 - Fuente única de iconos de producto; sin fallback Moon ni otra familia.
-- Aviso MIT incluido en `androidApp/third-party-notices/`; comprobar su distribución para iOS durante la fase de distribución de ADR-0052.
+- Avisos MIT en `androidApp/third-party-notices/THIRD_PARTY_LICENSES.txt` y copia iOS `iosApp/ThirdPartyNotices.txt`. El proyecto Xcode no está versionado: añadir el archivo al target Copy Bundle Resources y enlazarlo desde la superficie legal/about antes de publicar.
 
 ```text
 MIT License
