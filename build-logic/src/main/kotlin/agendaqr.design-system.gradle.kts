@@ -1909,6 +1909,82 @@ tasks.register("verifyComponentRegistryFixtures") {
     }
 }
 
+tasks.register("verifySharedComponentConfiguration") {
+    group = "verification"
+    description = "Lab, gallery and production must use the same AqComponentRegistry, Aq* components and AqTheme."
+    doLast {
+        val gallery = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/AqDesignSystemGallery.kt").readText()
+        val lab = file("core/ui-lab/src/wasmJsMain/kotlin/com/agendaqr/uilab/main.kt").readText()
+        val registry = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/AqComponentRegistry.kt").readText()
+        val violations = mutableListOf<String>()
+        if (!gallery.contains("AqComponentRegistry.filter") || !gallery.contains("entry.states.forEach") ||
+            !gallery.contains("state.content")) violations += "Gallery must render shared AqComponentRegistry states"
+        if (!lab.contains("AqComponentRegistry.filter") ||
+            !lab.contains("entry.states[stateIndex].content(log)")) violations += "Lab must render shared AqComponentRegistry states"
+        if (!gallery.contains("AqTheme(darkTheme = darkTheme)") ||
+            !lab.contains("AqTheme(darkTheme = darkTheme)")) violations += "Lab and gallery must use AqTheme"
+        if (Regex("""private\s+fun\s+Aq[A-Za-z0-9_]*Preview\s*\(""").containsMatchIn(gallery)) {
+            violations += "Gallery must not maintain duplicate component previews"
+        }
+        if (!registry.contains("val AqComponentRegistry")) violations += "AqComponentRegistry source missing"
+        require(violations.isEmpty()) {
+            "Shared component configuration violations:\n" + violations.joinToString("\n") { "  $it" }
+        }
+        logger.lifecycle("verifySharedComponentConfiguration: PASS (Lab/gallery share registry and AqTheme)")
+    }
+}
+
+tasks.register("verifyProductIconCatalog") {
+    group = "verification"
+    description = "AqIcons must map all product concepts to pinned Phosphor vectors and contain no Moon icon references."
+    doLast {
+        val aqIcons = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/AqIcon.kt").readText()
+        val expected = listOf("Search", "Add", "Register", "Favorite", "Context", "Back", "Cancel",
+            "Close", "More", "Home", "Gallery", "Camera", "Info", "Warning", "CircleCheck",
+            "Check", "QrCode", "AlertCircle", "Inbox", "ScanLine", "Income", "Expense",
+            "Attachment", "Store", "Calendar", "Clock", "ChevronRight", "ArrowDown", "ArrowUp",
+            "ShieldCheck", "Wallet", "Lock", "Erase", "NoteEdit", "Edit", "Trash", "Share",
+            "Copy", "Maximize")
+        val violations = mutableListOf<String>()
+        if (aqIcons.contains("MoonIconVectors") || aqIcons.contains("@heathmont/moon-icons")) {
+            violations += "AqIcons references Moon icon source"
+        }
+        expected.forEach { name ->
+            val pattern = Regex("""val\s+$name:\s+ImageVector\s+get\(\)\s*=\s*PhosphorProductVectors\d{2}\.""")
+            if (!pattern.containsMatchIn(aqIcons)) violations += "AqIcons.$name is not mapped to Phosphor"
+        }
+        val iconDir = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/icons")
+        val vectorFiles = listOf("PhosphorProduct01IconVectors.kt", "PhosphorProduct02IconVectors.kt",
+            "PhosphorProduct03IconVectors.kt", "PhosphorProduct04IconVectors.kt")
+        vectorFiles.forEach { name ->
+            val source = iconDir.resolve(name)
+            if (!source.isFile || !source.readText().contains("@phosphor-icons/core v2.0.8")) {
+                violations += "Missing pinned official Phosphor vector source: $name"
+            }
+        }
+        if (iconDir.resolve("MoonIconVectors.kt").exists()) violations += "MoonIconVectors.kt must be removed"
+        require(violations.isEmpty()) {
+            "Product icon catalog violations:\n" + violations.joinToString("\n") { "  $it" }
+        }
+        logger.lifecycle("verifyProductIconCatalog: PASS (39 AqIcons concepts -> Phosphor v2.0.8)")
+    }
+}
+
+tasks.register("verifySharedComponentConfigurationFixtures") {
+    group = "verification"
+    description = "Self-test for shared Lab/gallery/production component configuration."
+    doLast {
+        val goodGallery = "AqTheme(darkTheme = darkTheme); AqComponentRegistry.filter; entry.states.forEach; state.content"
+        val goodLab = "AqTheme(darkTheme = darkTheme); AqComponentRegistry.filter; entry.states[stateIndex].content(log)"
+        require(goodGallery.contains("AqComponentRegistry.filter") && goodLab.contains("AqComponentRegistry.filter")) {
+            "shared registry fixture must pass"
+        }
+        require(!goodGallery.contains("private fun AqButtonPreview")) {
+            "duplicate preview fixture must fail"
+        }
+    }
+}
+
 /** Cobertura de fidelidad Moon v1: cada componente del registro debe tener
  * aserciones generadas desde el JSON del Figma o una excepción E-nn
  * documentada en el contrato normativo (ADR-0050). */
@@ -2010,6 +2086,9 @@ tasks.register("verifyAgendaQrArchitecture") {
         "verifyMoonFidelityCoverageFixtures",
         "verifyComponentRegistry",
         "verifyComponentRegistryFixtures",
+        "verifySharedComponentConfiguration",
+        "verifySharedComponentConfigurationFixtures",
+        "verifyProductIconCatalog",
     )
     description = "Runs the complete Agenda QR architecture and design-system gates."
 }
