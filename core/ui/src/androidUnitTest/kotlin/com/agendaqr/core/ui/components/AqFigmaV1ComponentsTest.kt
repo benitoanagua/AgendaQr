@@ -65,6 +65,45 @@ class AqFigmaV1ComponentsTest {
     }
 
     @Test
+    fun combobox_field_matches_text_input_height() {
+        compose.setContent {
+            AqTheme {
+                Box(Modifier.width(280.dp)) {
+                    AqCombobox(
+                        query = "",
+                        onQueryChange = {},
+                        options = listOf("A", "B"),
+                        selectedIndices = emptySet(),
+                        onToggle = {},
+                        expanded = false,
+                    )
+                }
+            }
+        }
+        // Moon v1 Combobox: el campo es `Text input` (md = 40 dp).
+        compose.onNodeWithTag("aq-text-input-visual", useUnmergedTree = true)
+            .assertHeightIsEqualTo(40.dp)
+    }
+
+    @Test
+    fun leaderboard_rank_badge_is_24dp() {
+        compose.setContent {
+            AqTheme {
+                Box(Modifier.width(320.dp)) {
+                    AqLeaderboard(
+                        entries = listOf(
+                            AqLeaderboardEntry("Primero", rank = 1, value = "100"),
+                        ),
+                    )
+                }
+            }
+        }
+        // Moon v1 Leaderboard: insignia de puesto de 24 dp (`sizes.xs`).
+        compose.onNodeWithContentDescription("Puesto 1. Primero. 100")
+            .assertHeightIsEqualTo(40.dp) // fila: minHeight sizes.md
+    }
+
+    @Test
     fun sidebar_expanded_and_rail_widths() {
         compose.setContent {
             AqTheme {

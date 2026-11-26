@@ -1851,6 +1851,20 @@ tasks.register("verifyComponentRegistryFixtures") {
     }
 }
 
+/**
+ * Genera el fixture Kotlin de fidelidad Moon v1 que consume
+ * `MoonSpecFidelityTest` (androidUnitTest de `:core:ui`). La fuente de verdad
+ * es el JSON extraído del Figma (`moon-v1-tokens-y-componentes.json`);
+ * `generateMoonSpecFixtures` emite una fila canónica por familia/tamaño con
+ * altura, radio, paddings, gap y borde en estado de reposo (ADR-0050).
+ */
+tasks.register<MoonSpecFixtureGenerator>("generateMoonSpecFixtures") {
+    group = "verification"
+    description = "Genera MoonSpecFixtures.kt (androidUnitTest) desde el JSON de Moon v1."
+    specJson.set(file("docs/05-design-system/evidencia/figma/moon-v1-tokens-y-componentes.json"))
+    outputDir.set(project(":core:ui").layout.buildDirectory.dir("generated/moonSpec/kotlin"))
+}
+
 tasks.register("verifyAgendaQrArchitecture") {
     group = "verification"
     dependsOn(
