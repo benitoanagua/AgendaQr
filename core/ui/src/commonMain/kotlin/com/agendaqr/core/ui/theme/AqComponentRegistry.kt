@@ -76,8 +76,6 @@ import com.agendaqr.core.ui.components.AqNavDestination
 import com.agendaqr.core.ui.components.AqNavLink
 import com.agendaqr.core.ui.components.AqPagination
 import com.agendaqr.core.ui.components.AqPillTab
-import com.agendaqr.core.ui.icons.AqPhosphorIcon
-import com.agendaqr.core.ui.icons.vectorForSize
 import com.agendaqr.core.ui.components.AqPinDots
 import com.agendaqr.core.ui.components.AqPopover
 import com.agendaqr.core.ui.components.AqProgress
@@ -516,28 +514,6 @@ val AqComponentRegistry: List<AqComponentEntry> = listOf(
                 AqSwitch(label = "Activado", checked = true, onCheckedChange = { log("switch") })
                 AqSwitch(label = "Desactivado", checked = false, onCheckedChange = { log("switch") })
                 AqSwitch(label = "Deshabilitado", checked = true, onCheckedChange = {}, state = AqFieldState(enabled = false))
-            }
-        },
-        state("iconos", "Con iconos Phosphor") { log ->
-            // Slots de Moon con glifos Phosphor Check/X (ADR-0051), como la
-            // sección «Custom MoonSwitch» del catálogo.
-            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-                AqSwitch(
-                    label = "Activado con check",
-                    checked = true,
-                    onCheckedChange = { log("switch") },
-                    activeThumbWidget = {
-                        AqIcon(imageVector = AqPhosphorIcon.Check.vectorForSize(AqSize.X3s), contentDescription = null, size = AqSize.X3s, tint = AqColor.Popo)
-                    },
-                )
-                AqSwitch(
-                    label = "Desactivado con X",
-                    checked = false,
-                    onCheckedChange = { log("switch") },
-                    inactiveThumbWidget = {
-                        AqIcon(imageVector = AqPhosphorIcon.X.vectorForSize(AqSize.X3s), contentDescription = null, size = AqSize.X3s, tint = AqColor.Popo)
-                    },
-                )
             }
         },
     ),
