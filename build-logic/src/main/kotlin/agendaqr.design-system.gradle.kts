@@ -75,6 +75,8 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-21" to listOf("shadow:AqShadowPlatform.ios.kt"),
     // Mismo fallback por elevación en wasmJs (Component Lab, ADR-0049).
     "E-22" to listOf("shadow:AqShadowPlatform.wasmJs.kt"),
+    // Borde del campo de AqSelect (misma anatomía de foco que AqTextInput).
+    "E-23" to listOf("border:AqSelect.kt"),
     // `Modifier.shadow` se centraliza en la capa de tokens; solo los
     // archivos registrados pueden invocarlo (o elevarse vía `aqShadow`).
     // E-06 (elevación de botones) se retiró: los botones son planos y
