@@ -57,7 +57,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Evidencia pixel de fidelidad Moon: 218 pares Moon↔Aq comparados por caja/tinta/pixdiff, 0 desviaciones (`docs/05-design-system/evidencia/`) | `tools/moon-compare/compare.py` + `AqComponentReferenceTest` (`:core:ui:testDebugUnitTest`) (ADR-0048) |
 | Fidelidad Moon v1 generada desde el JSON del Figma: fixture `generateMoonSpecFixtures` (84 filas), pruebas `MoonSpecFidelityTest`+`MoonSpecRenderedTest` (tolerancia 0 dp) y gate `verifyMoonFidelityCoverage` (37 familias cubiertas + 46 excepciones E-24…E-30) | `generateMoonSpecFixtures` + `:core:ui:testDebugUnitTest` + `verifyMoonFidelityCoverage` + `verifyMoonFidelityCoverageFixtures` (ADR-0050) |
 | Regla `Input Label` Moon v1: etiqueta flotante solo en xl; etiqueta superior en sm/md/lg (`AqTextInput`/`AqSelect`/`AqCombobox`); `AqTextArea` a 132 dp; variantes `iconAtEnd`/`trailingIcon`/`height`/multi-botón/ilustración; flecha atrás del app bar 24 dp tinte primario; `AqSwitch(labelFirst)` | `AqFigmaV1ComponentsTest` + `MoonSpecRenderedTest` + capturas `captureGallery` (68) |
-| Iconografía Phosphor como catálogo único (ADR-0052): migración de los 37 conceptos de AqIcons; fuente SVG versionada, vectores KMP locales, sin dependencia runtime incompatible; retirar MoonIconVectors y activar gate family-only | ADR-0052 fases 1–5; mapping tests + render tests + Android/iOS/wasmJs CI |
+| Iconografía Phosphor-only implementada en código (ADR-0052): 39 conceptos `AqIcons`, 37 glifos SVG oficiales v2.0.8, vectores KMP locales; `MoonIconVectors.kt` eliminado. CI/targets aún por verificar. | `AqIconMappingTest` + `verifyProductIconCatalog` + Android/iOS/wasmJs CI |
 
 ## 2. Implementado pero NO VERIFICADO
 
