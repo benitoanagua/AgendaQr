@@ -54,6 +54,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Evidencia pixel de fidelidad Moon: 218 pares Moon↔Aq comparados por caja/tinta/pixdiff, 0 desviaciones (`docs/05-design-system/evidencia/`) | `tools/moon-compare/compare.py` + `AqComponentReferenceTest` (`:core:ui:testDebugUnitTest`) (ADR-0048) |
 | Fidelidad Moon v1 generada desde el JSON del Figma: fixture `generateMoonSpecFixtures` (84 filas), pruebas `MoonSpecFidelityTest`+`MoonSpecRenderedTest` (tolerancia 0 dp) y gate `verifyMoonFidelityCoverage` (37 familias cubiertas + 46 excepciones E-24…E-30) | `generateMoonSpecFixtures` + `:core:ui:testDebugUnitTest` + `verifyMoonFidelityCoverage` + `verifyMoonFidelityCoverageFixtures` (ADR-0050) |
 | Regla `Input Label` Moon v1: etiqueta flotante solo en xl; etiqueta superior en sm/md/lg (`AqTextInput`/`AqSelect`/`AqCombobox`); `AqTextArea` a 132 dp; variantes `iconAtEnd`/`trailingIcon`/`height`/multi-botón/ilustración; flecha atrás del app bar 24 dp tinte primario; `AqSwitch(labelFirst)` | `AqFigmaV1ComponentsTest` + `MoonSpecRenderedTest` + capturas `captureGallery` (68) |
+| Switch sin halo: sombra del pulgar recortada al estadio interior (`.clip` en commonMain, las tres plataformas); pista inactiva `FunctionalBorder` (≥ 3:1) en lugar de `beerus`; iconos Phosphor Check/X en slots del switch (`AqPhosphorIcon`, peso por tamaño ≤20 Bold / 21–32 Regular / ≥40 Light) | `AqSwitchRenderTest` (píxeles light/dark × on/off + contraste) + `captureGallery` (ADR-0051) |
 
 ## 2. Implementado pero NO VERIFICADO
 

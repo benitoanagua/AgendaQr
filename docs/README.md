@@ -68,6 +68,7 @@
 | [`07-decisiones/ADR-0048-evidencia-pixel-fidelidad-moon.md`](07-decisiones/ADR-0048-evidencia-pixel-fidelidad-moon.md) | ADR: evidencia pixel de fidelidad Moon — comparador, goldens y sombras nativas |
 | [`07-decisiones/ADR-0049-component-lab-web-wasm.md`](07-decisiones/ADR-0049-component-lab-web-wasm.md) | ADR: Component Lab web (wasmJs) como módulo `:core:ui-lab` con registro de componentes |
 | [`07-decisiones/ADR-0050-fidelidad-moon-v1-total.md`](07-decisiones/ADR-0050-fidelidad-moon-v1-total.md) | ADR: fidelidad Moon v1 generada desde el JSON (`generateMoonSpecFixtures`, pruebas y gate de cobertura) + cierre de gaps del lab |
+| [`07-decisiones/ADR-0051-switch-sin-halo-e-iconos-phosphor.md`](07-decisiones/ADR-0051-switch-sin-halo-e-iconos-phosphor.md) | ADR: recorte de la sombra del pulgar del switch, pista inactiva funcional y iconografía Phosphor en slots |
 
 ## Cómo se mantiene
 
