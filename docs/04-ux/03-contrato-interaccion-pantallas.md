@@ -183,7 +183,7 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - tipo: `Root`
 - ruta: `AppRoute.Operations`
 - representa: `AppRoute.Operations`, `OperationRoute.List`
-- fuente: `feature/destinations/presentation/src/commonMain/kotlin/com/agendaqr/destinations/presentation/OperationListScreen.kt`
+- fuente: `feature/destinations/presentation/src/commonMain/kotlin/com/agendaqr/destinations/presentation/OperationListContent.kt`
 - entradas: `root-nav`, `home-quick-action`, `share-intent`
 - salidas: `system-exit`
 - destinos válidos: `OperationRoute.Detail`, `OperationRoute.New`, `OperationRoute.Unassociated`

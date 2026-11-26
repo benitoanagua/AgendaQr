@@ -63,9 +63,11 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-17" to listOf("border:AqChip.kt"),
     // Borde del contenedor de grupo de campos (MoonTextInputGroup).
     "E-18" to listOf("border:AqTextInputGroup.kt"),
-    // Borde del clavo de progreso y su sombra (MoonProgressPin).
+    // Borde del clavo de progreso (MoonProgressPin); su sombra se dibuja
+    // vía `aqPinShadowPlatform` (drawBehind), sin API `shadow(`.
     "E-19" to listOf("border:AqProgressPin.kt"),
-    "E-20" to listOf("shadow:AqProgressPin.kt"),
+    // Fallback iOS de la sombra por plataforma (approx. por elevación).
+    "E-21" to listOf("shadow:AqShadowPlatform.ios.kt"),
     // `Modifier.shadow` se centraliza en la capa de tokens; solo los
     // archivos registrados pueden invocarlo (o elevarse vía `aqShadow`).
     // E-06 (elevación de botones) se retiró: los botones son planos y
@@ -668,7 +670,13 @@ tasks.register("verifyNoScripts") {
         val root = project.rootDir
         val violations = mutableListOf<String>()
         root.walkTopDown().forEach { file ->
-            if (file.isFile && !file.path.contains("/build/") && !file.path.contains("/.git/")) {
+            // tools/ es andamiaje local no versionado (gitignored): SDK
+            // Flutter de referencia, harness moon_design y venv del
+            // comparador de evidencia. La regla Kotlin-way protege el
+            // código del repo, no el tooling de verificación local.
+            if (file.isFile && !file.path.contains("/build/") &&
+                !file.path.contains("/.git/") && !file.path.contains("/tools/")
+            ) {
                 val name = file.name
                 val isScript = scriptExtensions.any { name.endsWith(it) }
                 if (isScript && name !in exceptions) {

@@ -32,3 +32,7 @@ supabase/.branches/
 # Los encargos/prompts no se versionan: son entrada local, no documentación
 # normativa. La documentación viva vive en docs/ y se indexa en docs/README.md.
 docs/prompts/
+
+# Andamiaje local de verificación visual (SDK Flutter de referencia,
+# harness moon_design, venv del comparador): no es código del repo.
+tools/

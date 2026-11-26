@@ -297,7 +297,7 @@ object ScreenContracts {
             kind = SurfaceKind.Root,
             route = "AppRoute.Operations",
             covers = listOf("AppRoute.Operations", "OperationRoute.List"),
-            source = "$PRESENTATION/commonMain/kotlin/com/agendaqr/destinations/presentation/OperationListScreen.kt",
+            source = "$PRESENTATION/commonMain/kotlin/com/agendaqr/destinations/presentation/OperationListContent.kt",
             entryPoints = listOf("root-nav", "home-quick-action", "share-intent"),
             exits = listOf("system-exit"),
             destinations = listOf(
