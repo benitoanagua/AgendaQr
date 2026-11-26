@@ -33,6 +33,7 @@
 | [`05-design-system/moon-catalogo-referencia.md`](05-design-system/moon-catalogo-referencia.md) | Referencia Moon por widget: API pública, variantes, tamaños y estados (consulta, no norma) |
 | [`05-design-system/auditoria-fidelidad-moon.md`](05-design-system/auditoria-fidelidad-moon.md) | Matriz de fidelidad cerrada: 0 desviaciones (registro del ciclo ADR-0047) |
 | [`05-design-system/evidencia/informe.md`](05-design-system/evidencia/informe.md) | Informe del comparador pixel/métricas Moon↔Aq (`tools/moon-compare`): 218 pares, 0 desviaciones |
+| [`05-design-system/14-verificacion-pixel-moon.md`](05-design-system/14-verificacion-pixel-moon.md) | Proceso de verificación pixel para agentes: harness, comparador, triage y trampas conocidas |
 | [`05-design-system/06-licencias-terceros.md`](05-design-system/06-licencias-terceros.md) | Licencias y avisos de recursos redistribuidos |
 
 ## Decisiones
