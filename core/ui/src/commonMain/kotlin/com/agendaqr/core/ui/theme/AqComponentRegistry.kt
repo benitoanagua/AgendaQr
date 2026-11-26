@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +37,7 @@ import com.agendaqr.core.ui.components.AqCarousel
 import com.agendaqr.core.ui.components.AqCarouselItem
 import com.agendaqr.core.ui.components.AqCheckbox
 import com.agendaqr.core.ui.components.AqCheckboxSet
+import com.agendaqr.core.ui.components.AqCombobox
 import com.agendaqr.core.ui.components.AqChip
 import com.agendaqr.core.ui.components.AqChipSize
 import com.agendaqr.core.ui.components.AqChipOption
@@ -63,6 +65,8 @@ import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqKeypad
 import com.agendaqr.core.ui.components.AqLinearLoader
 import com.agendaqr.core.ui.components.AqLinearProgress
+import com.agendaqr.core.ui.components.AqLeaderboard
+import com.agendaqr.core.ui.components.AqLeaderboardEntry
 import com.agendaqr.core.ui.components.AqListSection
 import com.agendaqr.core.ui.components.AqLoadMore
 import com.agendaqr.core.ui.components.AqMediaFrame
@@ -70,6 +74,7 @@ import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqModal
 import com.agendaqr.core.ui.components.AqNavDestination
 import com.agendaqr.core.ui.components.AqNavLink
+import com.agendaqr.core.ui.components.AqPagination
 import com.agendaqr.core.ui.components.AqPillTab
 import com.agendaqr.core.ui.components.AqPinDots
 import com.agendaqr.core.ui.components.AqPopover
@@ -77,6 +82,7 @@ import com.agendaqr.core.ui.components.AqProgress
 import com.agendaqr.core.ui.components.AqProgressBar
 import com.agendaqr.core.ui.components.AqProgressBlock
 import com.agendaqr.core.ui.components.AqProgressPin
+import com.agendaqr.core.ui.components.AqSelect
 import com.agendaqr.core.ui.components.AqPullToRefresh
 import com.agendaqr.core.ui.components.AqQrPreview
 import com.agendaqr.core.ui.components.AqQuickAction
@@ -93,6 +99,8 @@ import com.agendaqr.core.ui.components.AqSelectionToolbar
 import com.agendaqr.core.ui.components.AqSkeletonBlock
 import com.agendaqr.core.ui.components.AqSkeletonLine
 import com.agendaqr.core.ui.components.AqSuccessCheck
+import com.agendaqr.core.ui.components.AqSidebar
+import com.agendaqr.core.ui.components.AqSidebarItem
 import com.agendaqr.core.ui.components.AqSwipeAction
 import com.agendaqr.core.ui.components.AqSwipeActions
 import com.agendaqr.core.ui.components.AqSwitch
@@ -112,6 +120,7 @@ import com.agendaqr.core.ui.components.AqTextArea
 import com.agendaqr.core.ui.components.AqTextInput
 import com.agendaqr.core.ui.components.AqTextInputGroup
 import com.agendaqr.core.ui.components.AqTextInputGroupOrientation
+import com.agendaqr.core.ui.components.AqTextInputSize
 import com.agendaqr.core.ui.components.AqThumbnail
 import com.agendaqr.core.ui.components.AqThumbnailFallback
 import com.agendaqr.core.ui.components.AqThumbnailFrame
@@ -1276,6 +1285,119 @@ val AqComponentRegistry: List<AqComponentEntry> = listOf(
             AqPullToRefresh(isRefreshing = true, onRefresh = {}, refreshingLabel = "Actualizando") {
                 AqText(text = "Actualizando…", color = AqColor.TextSecondary)
             }
+        },
+    ),
+
+    // ------------------------------------------------------------------
+    // Moon Design v1 (Figma): componentes del catálogo sin equivalente en
+    // `moon_design` 1.1.0. Geometría según
+    // `docs/05-design-system/evidencia/figma/moon-v1-tokens-y-componentes.json`.
+    // ------------------------------------------------------------------
+    entry(
+        "AqSelect", AqComponentCategory.Forms,
+        state("select", "Selector") { log ->
+            val selected = remember { mutableStateOf(1) }
+            AqSelect(
+                options = listOf("Todos", "QR", "Actividades", "Contextos"),
+                selectedIndex = selected.value,
+                onSelected = { selected.value = it; log("select: $it") },
+                label = "Tipo",
+                placeholder = "Elegir tipo",
+            )
+        },
+        state("error", "Con error") { _ ->
+            AqSelect(
+                options = listOf("Opción A", "Opción B"),
+                selectedIndex = -1,
+                onSelected = {},
+                isError = true,
+                errorMessage = "Selecciona una opción",
+            )
+        },
+    ),
+    entry(
+        "AqCombobox", AqComponentCategory.Forms,
+        state("combobox", "Multiselección") { log ->
+            val query = remember { mutableStateOf("") }
+            val selected = remember { mutableStateOf(setOf(0, 2)) }
+            AqCombobox(
+                query = query.value,
+                onQueryChange = { query.value = it },
+                options = listOf("Comercio A", "Comercio B", "Comercio C", "Otro"),
+                selectedIndices = selected.value,
+                onToggle = { index ->
+                    selected.value = if (index in selected.value) {
+                        selected.value - index
+                    } else {
+                        selected.value + index
+                    }
+                    log("combo: $index")
+                },
+                label = "Comercios",
+                multiple = true,
+                counterText = { n -> "$n seleccionados" },
+                expanded = true,
+            )
+        },
+    ),
+    entry(
+        "AqPagination", AqComponentCategory.Navigation,
+        state("paginas", "Páginas") { log ->
+            val page = remember { mutableStateOf(1) }
+            AqPagination(
+                pageCount = 5,
+                currentPage = page.value,
+                onPageSelected = { page.value = it; log("page: ${it + 1}") },
+                previousContentDescription = "Página anterior",
+                nextContentDescription = "Página siguiente",
+                pageContentDescription = { "Página $it" },
+            )
+        },
+    ),
+    entry(
+        "AqSidebar", AqComponentCategory.Navigation,
+        state("expandida", "Expandida") { log ->
+            val selected = remember { mutableStateOf(0) }
+            AqSidebar(
+                items = listOf(
+                    AqSidebarItem("Inicio", icon = AqIcons.Home),
+                    AqSidebarItem("Contextos", icon = AqIcons.Context),
+                    AqSidebarItem("Actividad", icon = AqIcons.Clock),
+                    AqSidebarItem("Ajustes", icon = AqIcons.Lock),
+                ),
+                selectedIndex = selected.value,
+                onItemSelected = { selected.value = it; log("nav: $it") },
+                expanded = true,
+                header = {
+                    AqText(text = "AgendaQr", size = AqType.HeadingSm, modifier = Modifier.padding(AqSize.X3s))
+                },
+            )
+        },
+        state("rail", "Rail") { log ->
+            val selected = remember { mutableStateOf(1) }
+            AqSidebar(
+                items = listOf(
+                    AqSidebarItem("Inicio", icon = AqIcons.Home),
+                    AqSidebarItem("Contextos", icon = AqIcons.Context),
+                    AqSidebarItem("Actividad", icon = AqIcons.Clock),
+                ),
+                selectedIndex = selected.value,
+                onItemSelected = { selected.value = it; log("nav: $it") },
+                expanded = false,
+            )
+        },
+    ),
+    entry(
+        "AqLeaderboard", AqComponentCategory.DataDisplay,
+        state("ranking", "Ranking") { _ ->
+            AqLeaderboard(
+                entries = listOf(
+                    AqLeaderboardEntry("María", rank = 1, subtitle = "12 contextos", value = "9.840"),
+                    AqLeaderboardEntry("Luis", rank = 2, subtitle = "9 contextos", value = "8.120"),
+                    AqLeaderboardEntry("Ana", rank = 3, subtitle = "7 contextos", value = "6.540"),
+                    AqLeaderboardEntry("Pedro", rank = 4, subtitle = "5 contextos", value = "4.010"),
+                ),
+            )
         },
     ),
 )
