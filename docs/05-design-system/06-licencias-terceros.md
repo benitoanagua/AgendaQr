@@ -2,58 +2,19 @@
 
 Registro de licencias de recursos y dependencias que Agenda QR distribuye.
 
-## Moon Design — licencia MIT
+## Moon Design — licencia MIT (componentes/tokens; iconos en retirada)
 
-- Fuentes: `@heathmont/moon-icons@10.7.4` (iconos SVG, directorio
-  `raw/imported`), `moon_tokens` 0.0.6 (colores `MoonColors.light` y
-  `MoonColors.dark`) y `moon_design` 1.1.0 (tamaños, bordes, sombras,
-  opacidades, transiciones y medidas de componentes). Titular: Yolo Group.
-- Licencia: MIT, sin condiciones de uso adicionales.
-- Uso: 35 glifos SVG se convierten en `ImageVector` en
-  `core/ui/.../MoonIconVectors.kt`; cada atributo `d`, el ancho de trazo y los
-  remates se conservan como constantes Kotlin. Los colores y medidas se
-  transcriben en `AqTokens.kt`. Ningún paquete de Moon es dependencia de
-  ejecución.
-- Aviso de licencia incluido en `androidApp/third-party-notices/` y
-  empaquetado como asset Android. La distribución de avisos en iOS no está
-  verificada.
+- Fuentes: `moon_tokens` 0.0.6 y `moon_design` 1.1.0 (Yolo Group).
+- Licencia: MIT.
+- Uso vigente: tokens, geometría, componentes, sombras, movimiento y medidas. Los 35 vectores de `@heathmont/moon-icons` aún presentes en `MoonIconVectors.kt` son **legacy de la migración ADR-0052**, no una fuente autorizada para nuevos iconos.
+- Conservar el aviso Moon Icons hasta eliminar `MoonIconVectors.kt` y todas sus referencias; entonces retirar esta licencia de iconos, no la licencia de componentes/tokens.
 
-```text
-MIT License
+## Phosphor Icons — licencia MIT (catálogo objetivo)
 
-Copyright (c) 2024 Yolo Group
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
-## Phosphor Icons — licencia MIT
-
-- Fuente: paquete `phosphor-icons/core` **v2.0.8**
-  (<https://github.com/phosphor-icons/core>), archivos SVG
-  `assets/{bold,regular,light}/{check,x}*.svg`.
-- Licencia: MIT, © Phosphor Icons.
-- Uso: solo los glifos **Check** y **X** en los tres pesos (Bold, Regular,
-  Light), transcritos como constantes de ruta en
-  `core/ui/.../icons/PhosphorIconVectors.kt` y expuestos vía
-  `AqPhosphorIcon`/`vectorForSize` + `AqIcon` (ADR-0051). No es dependencia
-  de ejecución.
-- Aviso de licencia incluido en `androidApp/third-party-notices/`.
+- Fuente: `phosphor-icons/core` v2.0.8, SVG oficiales. Provenance por icono y versión se registran en el catálogo/generador de `core/ui` (ADR-0052).
+- Uso actual: Check/X Bold, Regular y Light en `PhosphorIconVectors.kt`.
+- Uso objetivo: todos los iconos de producto, sin fallback Moon ni otra familia.
+- Aviso MIT incluido en `androidApp/third-party-notices/`; comprobar su distribución para iOS durante la fase de distribución de ADR-0052.
 
 ```text
 MIT License
