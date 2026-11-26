@@ -13,22 +13,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AqAlert
 import com.agendaqr.core.ui.components.AqButton
 import com.agendaqr.core.ui.components.AqButtonVariant
 import com.agendaqr.core.ui.components.AqSectionTitle
-import com.agendaqr.core.ui.components.AqCheckbox
-import com.agendaqr.core.ui.components.AqEmptyPlaceholder
 import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqModal
-import com.agendaqr.core.ui.components.AqScreen
-import com.agendaqr.core.ui.components.AqTag
-import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqTextInput
-import com.agendaqr.core.ui.components.AqTextInputSize
-import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.destinations.domain.Context
@@ -96,7 +88,12 @@ internal fun ContextPickerDialog(
                             selected = selection.contextId == ctx.id,
                             onClick = { onSelect(ctx.id) },
                             leading = {
-                                AqTag(text = ctx.id.take(1).uppercase())
+                                AqIcon(
+                                    imageVector = AqIcons.Context,
+                                    contentDescription = null,
+                                    size = com.agendaqr.core.ui.theme.AqMetrics.IconSizeCompact,
+                                    tint = AqColor.TextSecondary,
+                                )
                             },
                         )
                     }

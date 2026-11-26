@@ -1769,17 +1769,8 @@ open class LayoutReferenceTest {
             "$label: «Detalles de la actividad» debe ir tras «Fecha y hora»",
             detalles.top.value > fechaYHora.bottom.value,
         )
-        // El contentDescription pertenece al BasicTextField interior y
-        // mide solo el área semántica del texto, no el hit target completo.
-        // Comprueba por separado el wrapper táctil (≥48 dp) y la caja visual
-        // Moon md (40 dp), evitando confundir sus geometrías.
-        val amountTouchTarget = compose
-            .onNodeWithTag("aq-amount-input-touch-target", useUnmergedTree = true)
-            .getUnclippedBoundsInRoot()
-        assertTrue(
-            "$label: campo de importe con objetivo táctil ≥ 48 dp",
-            (amountTouchTarget.bottom.value - amountTouchTarget.top.value) >= 47f,
-        )
+        // La caja visual Moon md (40 dp) es el campo completo: ya no hay
+        // wrapper táctil separado (ADR-0048).
         val amountVisual = compose
             .onNodeWithTag("aq-amount-input-visual", useUnmergedTree = true)
             .getUnclippedBoundsInRoot()
@@ -2054,7 +2045,7 @@ open class LayoutReferenceTest {
             0,
             compose.onAllNodesWithTag("aq-card").fetchSemanticsNodes().size,
         )
-        compose.onNodeWithText(AppStrings.PosibleDuplicado).assertExists()
+        compose.onNodeWithContentDescription(AppStrings.PosibleDuplicado).assertExists()
     }
 
 }

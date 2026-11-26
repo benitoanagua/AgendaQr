@@ -108,6 +108,8 @@ internal fun UnassociatedScreen(
                 icon = AqIcons.Inbox,
                 title = AppStrings.noUnassociatedReceipts,
                 subtitle = AppStrings.shareFromAnotherAppHint,
+                modifier = Modifier.weight(1f),
+                fillViewport = true,
             )
         } else {
             // Un único Cell-group (spec §12: las tarjetas no envuelven cada

@@ -2,6 +2,7 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
@@ -24,7 +25,7 @@ class AqExtensionAdoptionTest {
                 ElementSyncBadge(ElementSyncStatus.ErrorRecoverable)
             }
         }
-        compose.onNodeWithText(ElementSyncStatus.ErrorRecoverable.label).assertExists()
+        compose.onNodeWithContentDescription(ElementSyncStatus.ErrorRecoverable.label).assertExists()
         compose.onNodeWithText("Sincronizado").assertDoesNotExist()
     }
 
@@ -34,9 +35,9 @@ class AqExtensionAdoptionTest {
         compose.setContent {
             AqTheme { ElementSyncBadge(status.value) }
         }
-        compose.onNodeWithText(ElementSyncStatus.Synced.label).assertDoesNotExist()
+        compose.onNodeWithContentDescription(ElementSyncStatus.Synced.label).assertDoesNotExist()
         compose.runOnIdle { status.value = ElementSyncStatus.Pending }
         compose.waitForIdle()
-        compose.onNodeWithText(ElementSyncStatus.Pending.label).assertExists()
+        compose.onNodeWithContentDescription(ElementSyncStatus.Pending.label).assertExists()
     }
 }

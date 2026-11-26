@@ -3,6 +3,7 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,24 +23,22 @@ import com.agendaqr.core.ui.components.AqButtonSize
 import com.agendaqr.core.ui.components.AqButtonVariant
 import com.agendaqr.core.ui.components.AqCheckbox
 import com.agendaqr.core.ui.components.AqEmptyPlaceholder
-import com.agendaqr.core.ui.components.AqHairline
 import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqModal
 import com.agendaqr.core.ui.components.AqNavChromeState
 import com.agendaqr.core.ui.components.AqNavDestination
-import com.agendaqr.core.ui.components.AqSectionTitle
 import com.agendaqr.core.ui.components.AqScreen
 import com.agendaqr.core.ui.components.AqSelectionToolbar
 import com.agendaqr.core.ui.components.AqSegmentedControl
 import com.agendaqr.core.ui.components.AqSegmentedOption
 import com.agendaqr.core.ui.components.AqSkeletonBlock
-import com.agendaqr.core.ui.components.AqTag
+import com.agendaqr.core.ui.components.AqSearchInput
 import com.agendaqr.core.ui.components.AqText
-import com.agendaqr.core.ui.components.AqTextInput
 import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.components.AqTone
+import com.agendaqr.core.ui.components.content
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqShadow
@@ -119,11 +118,17 @@ internal fun OperationListScreen(
         },
         toastHost = toastHost?.let { host -> { AqToastHost(host) } },
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
-            AqTextInput(
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+        ) {
+            AqSearchInput(
                 label = AppStrings.Buscar,
                 value = state.query,
                 onValueChange = { viewModel.onAction(OperationAction.Search(it)) },
+                placeholder = AppStrings.BuscarOperaciones,
+                clearLabel = AppStrings.Limpiar,
+                onClear = { viewModel.onAction(OperationAction.Search("")) },
             )
             AqSegmentedControl(
                 options = listOf(
@@ -148,51 +153,99 @@ internal fun OperationListScreen(
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
-            AqSectionTitle(text = AppStrings.Operaciones)
             if (state.isLoadingOperations) {
                 AqSkeletonBlock(lines = 4)
             } else if (filtered.isEmpty()) {
                 AqEmptyPlaceholder(
                     icon = AqIcons.Register,
                     title = AppStrings.AunNoHayOperaciones,
+                    subtitle = AppStrings.registerFirstPaymentHint,
+                    actionLabel = AppStrings.RegistrarOperacion,
+                    onAction = { viewModel.onAction(OperationAction.New) },
+                    modifier = Modifier.weight(1f),
+                    fillViewport = true,
                 )
             } else {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     paged.forEachIndexed { index, operation ->
+                        val amountText = operationAmountText(operation)
+                        val amountColor = if (operation.type == OperationType.COBRO) {
+                            AqColor.Success
+                        } else {
+                            AqColor.Danger
+                        }
+                        val isLast = index == paged.lastIndex
                         AqMenuItem(
-                            title = listOfNotNull(
-                                when (operation.type) {
-                                    OperationType.PAGO -> AppStrings.Pago
-                                    OperationType.COBRO -> AppStrings.Cobro
-                                },
-                                operation.amount,
-                                operation.currency,
-                                operation.personOrEntity,
-                            ).joinToString(" · "),
-                            subtitle = formatDate(operation.occurredAt),
-                            onClick = { viewModel.onAction(OperationAction.Open(operation.id)) },
+                            title = operationTitle(operation),
+                            subtitle = operation.concept?.takeIf { it.isNotBlank() },
+                            onClick = {
+                                if (selectionMode) {
+                                    selectedIds = if (selectedIds.contains(operation.id)) {
+                                        selectedIds - operation.id
+                                    } else {
+                                        selectedIds + operation.id
+                                    }
+                                } else {
+                                    viewModel.onAction(OperationAction.Open(operation.id))
+                                }
+                            },
+                            onLongClick = if (selectionMode) null else {
+                                { selectedIds = setOf(operation.id) }
+                            },
+                            onLongClickLabel = AppStrings.SeleccionarOperacion,
                             leading = {
-                                AqIcon(
-                                    imageVector = AqIcons.Attachment,
-                                    contentDescription = null,
-                                )
+                                if (selectionMode) {
+                                    AqCheckbox(
+                                        label = "",
+                                        checked = selectedIds.contains(operation.id),
+                                        onCheckedChange = { checked ->
+                                            selectedIds = if (checked) {
+                                                selectedIds + operation.id
+                                            } else {
+                                                selectedIds - operation.id
+                                            }
+                                        },
+                                    )
+                                } else {
+                                    AqIcon(
+                                        imageVector = operationTypeIcon(operation.type),
+                                        contentDescription = null,
+                                        size = AqMetrics.IconSizeCompact,
+                                        tint = operationTypeTone(operation.type).content(),
+                                    )
+                                }
                             },
                             trailing = {
-                                AqCheckbox(
-                                    label = "",
-                                    checked = selectedIds.contains(operation.id),
-                                    onCheckedChange = { checked ->
-                                        selectedIds = if (checked) {
-                                            selectedIds + operation.id
-                                        } else {
-                                            selectedIds - operation.id
-                                        }
-                                    },
-                                )
+                                amountText?.let {
+                                    AqText(
+                                        it,
+                                        size = AqType.SectionHeader,
+                                        fontWeight = AqWeight.SemiBold,
+                                        color = amountColor,
+                                    )
+                                }
                             },
-                            showDivider = index < paged.lastIndex,
+                            meta = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
+                                ) {
+                                    AqIcon(
+                                        imageVector = AqIcons.Calendar,
+                                        contentDescription = null,
+                                        size = AqMetrics.IconSizeCompact,
+                                        tint = AqColor.TextTertiary,
+                                    )
+                                    AqText(
+                                        formatDate(operation.occurredAt),
+                                        color = AqColor.TextTertiary,
+                                        size = AqType.Caption,
+                                    )
+                                }
+                            },
+                            selected = selectedIds.contains(operation.id),
+                            showDivider = !isLast,
                         )
-                        if (index < paged.lastIndex) AqHairline()
                     }
                 }
                 if (paged.size < filtered.size) {

@@ -69,7 +69,7 @@ class DestinationEditorContractTest {
     fun guardar_is_the_only_primary_action() {
         render()
         // Guardar es primaria (rol de botón).
-        compose.onNodeWithText(AppStrings.Guardar)
+        compose.onNodeWithText(AppStrings.GuardarCambios)
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
     }
 
@@ -100,7 +100,7 @@ class DestinationEditorContractTest {
     @Test
     fun save_increments_call_count_once_per_click() {
         render()
-        compose.onNodeWithText(AppStrings.Guardar).performClick()
+        compose.onNodeWithText(AppStrings.GuardarCambios).performClick()
         compose.waitForIdle()
         assertEquals(1, saveCalls)
     }

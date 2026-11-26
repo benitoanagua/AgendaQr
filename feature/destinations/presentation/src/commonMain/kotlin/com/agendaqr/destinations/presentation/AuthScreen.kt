@@ -4,6 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.agendaqr.core.ui.components.AqAlert
 import com.agendaqr.core.ui.components.AqButton
@@ -43,8 +47,17 @@ internal fun AuthScreen(
     // sobrevivan a la recreación. Se muestran en cada campo mediante
     // AqTextInput(isError, errorMessage); las AqAlert apiladas se
     // eliminan (D5).
+    // Errores de validación de campo: solo tras el primer intento de envío
+    // o tras editar un campo ya marcado (nunca en el estado inicial — el
+    // formulario abre limpio; el estado --error de la galería es el que
+    // los muestra).
+    var submitAttempted by rememberSaveable { mutableStateOf(false) }
+    var emailTouched by rememberSaveable { mutableStateOf(false) }
+    var passwordTouched by rememberSaveable { mutableStateOf(false) }
     val emailInvalid = state.email.isBlank()
     val passwordInvalid = state.password.length < 6
+    val emailError = emailInvalid && (submitAttempted || emailTouched)
+    val passwordError = passwordInvalid && (submitAttempted || passwordTouched)
     AqScreen(
         title = "",
         onBack = { },
@@ -63,16 +76,22 @@ internal fun AuthScreen(
         AqTextInput(
             label = AppStrings.Correo,
             value = state.email,
-            onValueChange = onEmailChanged,
-            isError = emailInvalid,
-            errorMessage = if (emailInvalid) AppStrings.IngresaUnCorreoValido else null,
+            onValueChange = {
+                emailTouched = true
+                onEmailChanged(it)
+            },
+            isError = emailError,
+            errorMessage = if (emailError) AppStrings.IngresaUnCorreoValido else null,
         )
         AqTextInput(
             label = AppStrings.Contrasena,
             value = state.password,
-            onValueChange = onPasswordChanged,
-            isError = passwordInvalid,
-            errorMessage = if (passwordInvalid) AppStrings.Minimo6Caracteres else null,
+            onValueChange = {
+                passwordTouched = true
+                onPasswordChanged(it)
+            },
+            isError = passwordError,
+            errorMessage = if (passwordError) AppStrings.Minimo6Caracteres else null,
         )
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -84,8 +103,12 @@ internal fun AuthScreen(
             AqButton(
                 label = AppStrings.IniciarSesion,
                 onClick = {
-                    if (!state.isSubmitting && !emailInvalid && !passwordInvalid) {
-                        onSignIn()
+                    if (!state.isSubmitting) {
+                        if (emailInvalid || passwordInvalid) {
+                            submitAttempted = true
+                        } else {
+                            onSignIn()
+                        }
                     }
                 },
                 variant = AqButtonVariant.Primary,

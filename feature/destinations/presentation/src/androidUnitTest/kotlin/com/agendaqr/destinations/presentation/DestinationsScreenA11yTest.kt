@@ -129,7 +129,7 @@ class DestinationsScreenA11yTest {
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("Pendiente").assertExists()
+        compose.onNodeWithContentDescription("Pendiente").assertExists()
     }
 
     @Test

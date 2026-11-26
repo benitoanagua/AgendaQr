@@ -89,8 +89,11 @@ internal fun HomeSurface(
                 } else {
                     DestinationEditorScreen(
                         existing = target,
+                        contexts = contextState.contexts,
                         appHosts = appHosts,
-                        onSave = { graph.destinationsViewModel.onAction(DestinationAction.Save(target)) },
+                        onSave = { updated ->
+                            graph.destinationsViewModel.onAction(DestinationAction.Save(updated))
+                        },
                         onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
                     )
                 }

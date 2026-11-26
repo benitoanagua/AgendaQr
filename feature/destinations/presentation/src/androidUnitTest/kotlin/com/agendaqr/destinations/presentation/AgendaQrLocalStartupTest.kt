@@ -81,9 +81,11 @@ class AgendaQrLocalStartupTest {
         compose.onNodeWithText(AppStrings.GuardarPin, useUnmergedTree = true).performClick()
         compose.waitForIdle()
 
-        // Entró a la app local: la configuración desaparece y aparece Inicio.
+        // Entró a la app local: la configuración desaparece y aparece Inicio
+        // (estado vacío de destinos; «Traer un QR» aparece dos veces: acción
+        // rápida y CTA del placeholder).
         compose.onNodeWithText(AppStrings.ConfiguraTuPin, useUnmergedTree = true).assertDoesNotExist()
-        compose.onNodeWithText(AppStrings.TraerQr, useUnmergedTree = true).assertExists()
+        compose.onNodeWithText(AppStrings.AunNoHayDestinos).assertExists()
     }
 
     @Test

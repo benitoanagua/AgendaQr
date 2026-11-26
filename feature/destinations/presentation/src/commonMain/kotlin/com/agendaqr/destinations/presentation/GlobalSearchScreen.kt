@@ -23,9 +23,9 @@ import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqNavChromeState
 import com.agendaqr.core.ui.components.AqNavDestination
 import com.agendaqr.core.ui.components.AqScreen
+import com.agendaqr.core.ui.components.AqSearchInput
 import com.agendaqr.core.ui.components.AqSectionTitle
 import com.agendaqr.core.ui.components.AqText
-import com.agendaqr.core.ui.components.AqTextInput
 import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqColor
@@ -58,12 +58,15 @@ fun GlobalSearchScreen(
         statusContent = appHosts?.status,
         toastHost = toastHost?.let { host -> { AqToastHost(host) } },
     ) {
-        AqTextInput(
+        AqSearchInput(
             label = AppStrings.BuscarEnAgendaQr,
             value = state.query,
             onValueChange = { onAction(GlobalSearchAction.QueryChanged(it)) },
             placeholder = AppStrings.Buscar,
+            clearLabel = AppStrings.Limpiar,
+            onClear = { onAction(GlobalSearchAction.QueryChanged("")) },
             focusRequester = focusRequester,
+            modifier = Modifier.fillMaxWidth(),
         )
         val results = state.results
         if (state.query.isBlank()) {
@@ -77,6 +80,11 @@ fun GlobalSearchScreen(
             AqEmptyPlaceholder(
                 icon = AqIcons.Search,
                 title = AppStrings.NoSeEncontraronResultados,
+                subtitle = AppStrings.tryAnotherSearchHint,
+                actionLabel = AppStrings.LimpiarBusqueda,
+                onAction = { onAction(GlobalSearchAction.QueryChanged("")) },
+                modifier = Modifier.weight(1f),
+                fillViewport = true,
             )
         } else {
             val types = results.map { it.type }.distinct()

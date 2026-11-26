@@ -258,6 +258,8 @@ fun DestinationsScreen(
                         icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
                         title = AppStrings.AunNoHayDestinos,
                         subtitle = AppStrings.emptyDestinationsHint,
+                        actionLabel = AppStrings.TraerQr,
+                        onAction = onScanQr,
                     )
                     state.favoriteOnly && state.visibleDestinations.isEmpty() && state.query.isBlank() -> AqEmptyPlaceholder(
                         icon = com.agendaqr.core.ui.components.AqIcons.Favorite,

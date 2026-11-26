@@ -2,6 +2,7 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
@@ -82,8 +83,8 @@ class AppStatusHostTest {
         }
         compose.waitForIdle()
         // Chips compactos con texto (§11: nunca solo color).
-        compose.onNodeWithText(AppStrings.SinConexion).assertExists()
-        compose.onNodeWithText("Sincronización pendiente: 1").assertExists()
+        compose.onNodeWithContentDescription(AppStrings.SinConexion).assertExists()
+        compose.onNodeWithContentDescription("Sincronización pendiente: 1").assertExists()
         // Sin banner completo de reintento cuando no hay FAILED.
         val retry = compose.onAllNodesWithText(AppStrings.ReintentarAhora).fetchSemanticsNodes()
         assert(retry.isEmpty()) { "'Reintentar ahora' solo con mutaciones FAILED" }

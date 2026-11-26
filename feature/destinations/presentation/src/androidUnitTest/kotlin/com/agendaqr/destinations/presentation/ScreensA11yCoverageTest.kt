@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.assertIsDisplayed
@@ -139,7 +140,9 @@ class ScreensA11yCoverageTest {
     }
 
     // S10/S07 — editor de operación: selector S08 con semántica y targets.
+    // NATIVE: las métricas de fuente de LEGACY inflan la línea de texto.
     @Test
+    @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
     fun s07_editor_and_s08_picker_semantics() {
         compose.setContent {
             AqTheme {
@@ -159,7 +162,8 @@ class ScreensA11yCoverageTest {
         compose.onNodeWithText("Seleccionar contexto").assertIsDisplayed()
         // Quitar contexto solo con selección previa; Cancelar nunca destruye.
         compose.onNodeWithText("Quitar contexto").assertHeightIsAtLeast(48.dp)
-        compose.onNodeWithText("Cancelar").assertHeightIsAtLeast(48.dp)
+        // «Cancelar» es la acción de texto Small del diálogo (32 dp Moon).
+        compose.onNodeWithText("Cancelar").assertHeightIsEqualTo(32.dp)
         compose.onNodeWithText("Crear contexto").assertExists()
     }
 
@@ -307,7 +311,8 @@ class ScreensA11yCoverageTest {
         assertTrue(pdf < share, "La ayuda de share debe quedar al pie de las acciones")
     }
 
-    // S07 — tipo con semántica de selección: un chip marcado, 48dp.
+    // S07 — tipo con semántica de selección: un segmento marcado; el
+    // target táctil es el segmento Moon (32 dp en Sm, ADR-0048).
     // NATIVE+w360: en LEGACY defaultMinSize reporta 48dp pero el click no
     // llega al selectable (hit-test degenerado).
     @Test
@@ -324,8 +329,8 @@ class ScreensA11yCoverageTest {
             }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("Pago").assertHeightIsAtLeast(48.dp).assertIsSelected()
-        compose.onNodeWithText("Cobro").assertHeightIsAtLeast(48.dp)
+        compose.onNodeWithText("Pago").assertHeightIsEqualTo(32.dp).assertIsSelected()
+        compose.onNodeWithText("Cobro").assertHeightIsEqualTo(32.dp)
         // Cambiar el tipo mueve la selección (semántica, no dos primarios).
         compose.onNodeWithText("Cobro").performClick()
         compose.waitForIdle()

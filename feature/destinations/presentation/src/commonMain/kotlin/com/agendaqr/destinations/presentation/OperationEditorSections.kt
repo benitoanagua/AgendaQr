@@ -2,6 +2,8 @@ package com.agendaqr.destinations.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -176,14 +178,19 @@ internal fun OperationDetailsSection(
         )
         val counterparts = remember(operations) { recentCounterparts(operations) }
         if (counterparts.isNotEmpty()) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
+            // Chips de contraparte reciente: scroll horizontal para que
+            // ninguna etiqueta quede elidida a 360 dp (contrato de
+            // controles truncables).
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
             ) {
-                counterparts.forEachIndexed { index, c ->
+                counterparts.forEach { c ->
                     AqChip(
                         text = c,
-                        selected = index == counterparts.indexOf(person.trim()).takeIf { it >= 0 } ?: -1,
+                        selected = person.trim() == c,
                         onClick = { onPersonChange(c) },
                     )
                 }

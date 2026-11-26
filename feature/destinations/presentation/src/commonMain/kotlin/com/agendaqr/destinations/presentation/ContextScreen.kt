@@ -26,6 +26,7 @@ import com.agendaqr.core.ui.components.AqScreen
 import com.agendaqr.core.ui.components.AqSectionTitle
 import com.agendaqr.core.ui.components.AqSkeletonBlock
 import com.agendaqr.core.ui.components.AqTab
+import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqTag
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.components.AqToastHost
@@ -132,6 +133,8 @@ private fun ContextList(
                 subtitle = AppStrings.LosContextosAgrupanTusQr,
                 actionLabel = AppStrings.CrearContexto,
                 onAction = onCreateContext,
+                modifier = Modifier.weight(1f),
+                fillViewport = true,
             )
             else -> {
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -141,13 +144,15 @@ private fun ContextList(
                             subtitle = context.note?.takeIf { it.isNotBlank() },
                             onClick = { onAction(ContextAction.Open(context.id)) },
                             leading = {
-                                AqTag(text = context.id)
+                                AqIcon(
+                                    imageVector = com.agendaqr.core.ui.components.AqIcons.Context,
+                                    contentDescription = null,
+                                    size = com.agendaqr.core.ui.theme.AqMetrics.IconSizeCompact,
+                                    tint = AqColor.TextSecondary,
+                                )
                             },
                             showDivider = index < state.contexts.lastIndex,
                         )
-                        if (index < state.contexts.lastIndex) {
-                            com.agendaqr.core.ui.components.AqHairline()
-                        }
                     }
                 }
             }
@@ -208,6 +213,7 @@ private fun ContextDetail(
                             AqEmptyPlaceholder(
                                 icon = com.agendaqr.core.ui.components.AqIcons.QrCode,
                                 title = AppStrings.AunNoHayDestinos,
+                                subtitle = AppStrings.emptyDestinationsHint,
                             )
                         } else {
                             Column(modifier = Modifier.fillMaxWidth()) {
@@ -226,6 +232,7 @@ private fun ContextDetail(
                             AqEmptyPlaceholder(
                                 icon = com.agendaqr.core.ui.components.AqIcons.Register,
                                 title = AppStrings.AunNoHayOperaciones,
+                                subtitle = AppStrings.registerFirstPaymentHint,
                             )
                         } else {
                             val shownOperations = data.operations.take(RECENT_ACTIVITIES_SHOWN)
@@ -267,6 +274,7 @@ private fun ContextDetail(
                             AqEmptyPlaceholder(
                                 icon = com.agendaqr.core.ui.components.AqIcons.Attachment,
                                 title = AppStrings.AunNoHayComprobantes,
+                                subtitle = AppStrings.comprobantesEnContextoHint,
                             )
                         } else {
                             Column(modifier = Modifier.fillMaxWidth()) {
