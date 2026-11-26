@@ -225,11 +225,12 @@ fun AqTextInput(
                         decorationBox = { innerTextField ->
                             Box(
                                 modifier = Modifier.fillMaxSize(),
-                                // Moon alinea el texto abajo cuando la
-                                // etiqueta flota (`bottomCenter`), para no
-                                // solapar la etiqueta superior.
+                                // Con la etiqueta flotando el texto va abajo
+                                // para no solapar la etiqueta superior, pero
+                                // SIEMPRE alineado al inicio (BottomCenter lo
+                                // centraba horizontalmente).
                                 contentAlignment = if (floatingActive) {
-                                    Alignment.BottomCenter
+                                    Alignment.BottomStart
                                 } else {
                                     Alignment.CenterStart
                                 },

@@ -41,6 +41,7 @@ actual fun QrImportControls(
             label = AppStrings.ElegirDeLaGaleria,
             icon = com.agendaqr.core.ui.components.AqIcons.Gallery,
             onClick = { IosQrImportController.openMultiple(onResult = onResult) },
+            variant = com.agendaqr.core.ui.components.AqButtonVariant.Outline,
         )
         QrCameraEntryControl(onResult = onResult, showDivider = false)
     }

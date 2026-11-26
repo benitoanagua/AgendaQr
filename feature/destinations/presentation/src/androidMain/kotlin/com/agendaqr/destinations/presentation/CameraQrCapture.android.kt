@@ -364,6 +364,7 @@ internal fun CameraQrEntry(
                 label = AppStrings.Camara,
                 icon = com.agendaqr.core.ui.components.AqIcons.Camera,
                 onClick = requestCamera,
+                variant = com.agendaqr.core.ui.components.AqButtonVariant.Outline,
             )
         }
     }
