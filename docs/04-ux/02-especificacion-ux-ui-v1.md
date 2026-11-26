@@ -294,7 +294,7 @@ Reglas vigentes:
 
 > La intención, los flujos, el orden de navegación, el copy funcional y la recuperación permanecen congelados en esta especificación. Esta sección no define tokens ni anatomía visual.
 
-La dirección visual completa se rige por [Moon Design System](../05-design-system/README.md). Sus fuentes normativas son el contrato, la instantánea de tokens y el catálogo de componentes. `core/ui` es la implementación canónica; las pantallas componen sus componentes y tokens semánticos. No se permiten estilos locales, componentes Material ni valores visuales inventados. Los campos que eligen una opción usan `AqTextInput` en modo `readOnly` como ancla de `AqDropdown`; no se presupone un componente `AqSelect` independiente
+La dirección visual completa se rige por [Moon Design System](../05-design-system/README.md). Sus fuentes normativas son el contrato, la instantánea de tokens y el catálogo de componentes. `core/ui` es la implementación canónica; las pantallas componen sus componentes y tokens semánticos. No se permiten estilos locales, componentes Material ni valores visuales inventados. Los campos que eligen una opción usan `AqSelect` (campo cerrado con menú `AqDropdown` anclado); `AqCombobox` cubre selección con búsqueda
 
 La navegación, el back stack, las acciones y la intención por pantalla permanecen invariantes. Los cambios funcionales requieren una decisión UX explícita y actualización coordinada del contrato, el código y las pruebas.
 

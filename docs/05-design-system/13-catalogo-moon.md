@@ -37,6 +37,7 @@ Color, tipografía, iconografía, geometría y movimiento se portan desde Moon; 
 | `MoonDotIndicator` | `widgets/dot_indicator` | — | `AqDotIndicator` | disponible |
 | `MoonDrawer` | `widgets/drawer` | — | `AqDrawer` | disponible |
 | `MoonDropdown` | `widgets/dropdown` | menú de opciones anclado; no es un campo select cerrado | `AqDropdown` | disponible |
+| Select / Combobox / Pagination / Sidebar / Leaderboard (solo Figma v1, sin widget en `moon_design` 1.1.0) | archivo Figma «Moon Design System v1» | geometría en `evidencia/figma/moon-v1-tokens-y-componentes.json` | `AqSelect`, `AqCombobox`, `AqPagination`, `AqSidebar`, `AqLeaderboard` | disponible |
 | `MoonErrorMessage(s)` | `widgets/common/error_message_widgets.dart` | — | `AqErrorMessage` | disponible |
 | `MoonFormTextInput`, `MoonTextInput` | `widgets/text_input` | sm, md, lg, xl | `AqTextInput` | disponible |
 | `MoonMenuItem` | `widgets/menu_item` | — | `AqMenuItem` | disponible |
@@ -77,7 +78,7 @@ Valores transcritos de la versión indicada; `px` = padding horizontal. No son u
 Estas reglas son normativas para `Aq*` y para la galería de componentes; preservan la geometría de Moon y no son estilos alternativos:
 
 - **Botón `fullWidth`:** `AqButton(fullWidth = true)` implementa `MoonButton.isFullWidth`: llena el ancho disponible del contenedor padre; sin la opción conserva el ancho intrínseco determinado por contenido y padding Moon. El alto visual sigue siendo el tamaño Moon seleccionado.
-- **Campo de selección:** no existe una API `AqSelect` independiente. `AqDropdown` es el menú de opciones Moon; cuando UX requiere un campo de selección cerrado, se ancla a un `AqTextInput(readOnly = true)` con trailing affordance. El campo conserva el ancho disponible y la altura visual Moon del tamaño elegido (md = 40 dp); las opciones del menú mantienen su target táctil de 48 dp. No se debe describir `AqDropdown` como un campo select ni inventar una altura de campo separada.
+- **Campo de selección:** `AqSelect` es el campo cerrado del catálogo Moon v1 (Figma «Select»): misma anatomía que `AqTextInput` (32/40/48/56 según tamaño, etiqueta flotante solo en xl) con chevron y menú `AqDropdown` anclado. `AqDropdown` sigue siendo solo el menú de opciones; no se debe describir como un campo select ni inventar una altura de campo separada.
 - **Área táctil separada:** el contenedor interactivo amplía el hit target a 48 dp sin modificar el tamaño, borde, radio, padding o posición del componente visible.
 - **States / Variants en la galería:** los ejemplos se organizan en contenedores flexibles que se ajustan al contenido y al ancho disponible (wrap cuando corresponda). No se fijan anchos de panel ni se recortan labels, estados, variantes o controles; no se usa un ancho fijo para hacer coincidir columnas.
 - **Sin restricciones artificiales:** no introducir `width`/`height` fijos, `fillMaxHeight` o `weight` que deformen controles o recorten contenido, salvo que la anatomía Moon de ese componente lo requiera y esté documentado en esta tabla.

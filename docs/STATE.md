@@ -103,7 +103,7 @@ No se declaran PASS. Requieren Xcode, dispositivo físico, red o backend reales.
 
 - `AqButton(fullWidth = true)` llena el ancho disponible del padre; el alto visual sigue el tamaño Moon y el target táctil se mantiene separado.
 - `AqTextInput` md conserva 40 dp de caja visual; el wrapper de toque alcanza 48 dp sin expandir el borde visible.
-- `AqDropdown` es un menú anclado, no un campo select. Para selección cerrada se usa `AqTextInput(readOnly = true)` como ancla; no se declara una API `AqSelect` inexistente.
+- `AqDropdown` es un menú anclado; el campo select cerrado es `AqSelect` (Moon v1 Figma), con `AqCombobox` para selección con búsqueda. `AqPagination`, `AqSidebar` y `AqLeaderboard` cubren el resto del catálogo Figma v1.
 - No se crean wrappers `AqMoon*` ni se reintroducen símbolos visuales legacy.
 - `AqToast` dura 3 000 ms (`displayDuration` por defecto de Moon, ADR-0047); Moon aporta el comportamiento de animación y separación.
 - Las composiciones Moon-only usan nombres propios de Agenda QR y componentes de `core/ui`.
