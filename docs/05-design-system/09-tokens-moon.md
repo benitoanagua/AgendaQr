@@ -1,9 +1,9 @@
 # Tokens Moon (valores)
 
 **Estado:** Normativo — fuente única de tokens (ADR-0044).
-**Fuentes:** `moon_tokens` 0.0.6 (`MoonColors.light` / `MoonColors.dark`),
+**Fuentes:** `moon_tokens` 0.0.6 (`MoonColors.light` / `MoonColors.dark`) y
 `moon_design` 1.1.0 (tamaños, bordes, opacidades, transiciones, sombras).
-La iconografía de producto es Phosphor `@phosphor-icons/core` v2.0.8 (MIT;
+Iconografía de producto: Phosphor `@phosphor-icons/core` v2.0.8 (MIT;
 ADR-0052), no forma parte del catálogo de iconos Moon.
 
 Este documento lista los valores que `core/ui/.../theme/AqTokens.kt` transcribe. Los tokens de estado derivados se identifican como adaptaciones semánticas de Agenda QR: no sustituyen efectos ni estados visuales que Moon ya define para un componente (en particular, hover/pressed de botones).
