@@ -84,7 +84,7 @@ enum class AqPhosphorIcon { Check, X }
  */
 fun AqPhosphorIcon.vectorForSize(size: Dp): ImageVector {
     val bold = size <= 20.dp
-    val regular = size in 21.dp..32.dp
+    val regular = size > 20.dp && size < 40.dp
     return when (this) {
         AqPhosphorIcon.Check -> when {
             bold -> PhosphorIconVectors.CheckBold
