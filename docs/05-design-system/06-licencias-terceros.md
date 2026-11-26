@@ -19,7 +19,7 @@ Registro de licencias de recursos y dependencias que Agenda QR distribuye.
 ```text
 MIT License
 
-Copyright (c) Phosphor Icons
+Copyright (c) 2023 Phosphor Icons
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
