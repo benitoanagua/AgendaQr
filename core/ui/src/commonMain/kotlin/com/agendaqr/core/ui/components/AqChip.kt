@@ -7,7 +7,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
@@ -27,7 +26,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqLayout
-import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqMotion
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
@@ -99,23 +97,20 @@ fun AqChip(
         ),
         label = "aqChipContent",
     )
-    // PV-01: el estado pressed no cambia el relleno del chip; el efecto es el
-    // scale de Moon aplicado por el contenidor táctil. El alto visual se
-    // conserva (32/40 dp); el área táctil se amplía a 48 dp sin deformar el
-    // chip (ADR-0039 §4.4).
+    // PV-01: el estado pressed no cambia el relleno del chip; el efecto es
+    // el scale de Moon aplicado por el contenedor.
     //
-    // El nodo táctil (Box) es el único nodo semántico del chip:
-    // mergeDescendants = true fusiona el texto del label y del count como
-    // elementos de una misma lista, de modo que "Todos" y "12" se leen por
-    // separado (nunca "Todos12") y onNodeWithText resuelve cada uno al nodo
-    // táctil de 48 dp. El clickable vive en el Box para que performClick /
-    // assertIsSelected resuelvan sobre el nodo accesible.
-    Box(
+    // El Row es el único nodo semántico del chip: mergeDescendants = true
+    // fusiona el texto del label y del count como elementos de una misma
+    // lista, de modo que "Todos" y "12" se leen por separado (nunca
+    // "Todos12") y onNodeWithText resuelve cada uno al nodo táctil.
+    // Moon fija el alto del chip (32/40 dp) y ese contenedor es el objetivo
+    // táctil; no hay expansión extra (Moon `chip.dart` usa el Container como
+    // nodo interactivo).
+    Row(
         modifier = modifier
-            .defaultMinSize(
-                minWidth = AqMetrics.ControlMinSize,
-                minHeight = AqMetrics.ControlMinSize,
-            )
+            .height(size.height)
+            .defaultMinSize(minWidth = size.height)
             .semantics(mergeDescendants = true) {
                 this.selected = isSelected
                 this[SemanticsProperties.Role] = Role.Button
@@ -128,51 +123,44 @@ fun AqChip(
                 enabled = enabled && onClick != null,
                 onClick = { onClick?.invoke() },
             )
-            .alpha(if (enabled) 1f else AqStateAlpha.Disabled),
-        contentAlignment = Alignment.Center,
+            .alpha(if (enabled) 1f else AqStateAlpha.Disabled)
+            .background(container, size.shape)
+            .then(
+                if (showBorder) {
+                    Modifier.border(AqStroke.Default, accent, size.shape)
+                } else {
+                    Modifier
+                },
+            )
+            // Moon `correctedPadding`: el padding horizontal solo aplica
+            // en el borde externo cuando no hay slot leading/trailing.
+            .padding(
+                start = if (icon == null) size.horizontalPadding else AqSpacing.None,
+                end = if (count == null) size.horizontalPadding else AqSpacing.None,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(AqLayout.ChipGap),
     ) {
-        Row(
-            modifier = Modifier
-                .height(size.height)
-                .defaultMinSize(minWidth = size.height)
-                .background(container, size.shape)
-                .then(
-                    if (showBorder) {
-                        Modifier.border(AqStroke.Default, accent, size.shape)
-                    } else {
-                        Modifier
-                    },
-                )
-                // Moon `correctedPadding`: el padding horizontal solo aplica
-                // en el borde externo cuando no hay slot leading/trailing.
-                .padding(
-                    start = if (icon == null) size.horizontalPadding else AqSpacing.None,
-                    end = if (count == null) size.horizontalPadding else AqSpacing.None,
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AqLayout.ChipGap),
-        ) {
-            icon?.let {
-                AqIcon(
-                    imageVector = it,
-                    contentDescription = null,
-                    size = AqLayout.ChipIconSize,
-                    tint = content,
-                )
-            }
+        icon?.let {
+            AqIcon(
+                imageVector = it,
+                contentDescription = null,
+                size = AqLayout.ChipIconSize,
+                tint = content,
+            )
+        }
+        AqText(
+            text = text,
+            size = AqType.BodySm,
+            color = content,
+            modifier = Modifier.weight(1f, fill = false),
+        )
+        count?.let { count ->
             AqText(
-                text = text,
+                text = count.toString(),
                 size = AqType.BodySm,
                 color = content,
-                modifier = Modifier.weight(1f, fill = false),
             )
-            count?.let { count ->
-                AqText(
-                    text = count.toString(),
-                    size = AqType.BodySm,
-                    color = content,
-                )
-            }
         }
     }
 }

@@ -35,7 +35,6 @@ import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqMotion
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqStateAlpha
-import com.agendaqr.core.ui.theme.AqTouchTarget
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqSquircles
 
@@ -54,8 +53,8 @@ import com.agendaqr.core.ui.theme.AqSquircles
  * - [leading]/[trailing]: slots de Moon (avatar, glifo, chevron…).
  * - [selected] (contrato de producto): superficie de selección del tema.
  * - [showDivider]: divisor `beerus` de 1 dp con inset de lista.
- * - Deshabilitado = opacidad 0.6; objetivo táctil ≥ 48 dp
- *   ([AqTouchTarget], ADR-0039 §4.4).
+ * - Deshabilitado = opacidad 0.6. Moon no impone target mínimo en la
+ *   celda; el alto mínimo es `sizes.md` (40 dp) más el padding `x3s`.
  * - Todo el copy llega del llamador.
  */
 @Composable
@@ -72,8 +71,9 @@ fun AqMenuItem(
     selected: Boolean = false,
     enabled: Boolean = true,
     showDivider: Boolean = false,
-    /** Líneas máximas del título (por defecto 1). */
-    titleMaxLines: Int = 1,
+    /** Líneas máximas del título; Moon deja envolver el `label` (`Text` con
+     *  `softWrap`), así que por defecto no hay límite. */
+    titleMaxLines: Int = Int.MAX_VALUE,
     /** Etiqueta/metadato secundario opcional (p. ej. estado de una fila). */
     meta: (@Composable () -> Unit)? = null,
     modifier: Modifier = Modifier,
@@ -89,16 +89,13 @@ fun AqMenuItem(
         label = "aqMenuItemHover",
     )
     val shape = AqSquircles.InteractiveSm
-    AqTouchTarget(
-        minTouchSize = AqMetrics.ControlMinSize,
-        modifier = modifier.fillMaxWidth(),
-        selected = selected,
-        role = Role.Button,
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape)
+    // Moon `menu_item.dart` no impone target mínimo: la fila mide
+    // `max(minHeight md=40, contenido + padding x3s)`. La superficie
+    // interactiva es la propia fila.
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
                 .then(
                     if (selected) {
                         Modifier.background(AqColor.SelectionSurface, shape)
@@ -136,11 +133,16 @@ fun AqMenuItem(
                 )
                 .alpha(if (enabled) 1f else AqStateAlpha.Disabled),
         ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    // Moon `menu_item.dart`: `BoxConstraints(minHeight: md)`
+                    // aplica al Container completo (padding incluido).
+                    .defaultMinSize(minHeight = AqSize.Md),
+            ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .defaultMinSize(minHeight = AqSize.Md)
                         .padding(AqLayout.CellPadding),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -197,7 +199,6 @@ fun AqMenuItem(
                 }
             }
         }
-    }
 }
 
 /** Semántica de una celda de menú: nombre accesible + estado seleccionado. */

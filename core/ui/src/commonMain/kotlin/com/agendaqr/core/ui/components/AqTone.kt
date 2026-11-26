@@ -32,7 +32,9 @@ data class ToneColors(
 
 /** Mapeo tono -> colores del esquema. Puro y testeable. */
 fun AqColorScheme.toneColors(tone: AqTone): ToneColors = when (tone) {
-    AqTone.Neutral -> ToneColors(textSecondary, surfaceSecondary)
+    // Moon `tag`/`alert` neutros: fondo `goku` (superficie base) y texto
+    // `textPrimary`; el gris secundario queda para el resto de tonos.
+    AqTone.Neutral -> ToneColors(textPrimary, background)
     AqTone.Success -> ToneColors(success, successContainer)
     AqTone.Danger -> ToneColors(danger, dangerContainer)
     AqTone.Warning -> ToneColors(warning, warningContainer)

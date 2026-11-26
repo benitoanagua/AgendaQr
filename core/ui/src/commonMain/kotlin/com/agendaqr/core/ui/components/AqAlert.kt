@@ -6,10 +6,13 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -72,6 +75,9 @@ fun AqAlert(
     /** Relleno horizontal del banner (16 dp por defecto; None cuando el
      *  host ya aplica el margen de pantalla, p. ej. [AppStatusHost]). */
     horizontalPadding: Dp = AqSize.X2s,
+    /** Color de fondo del banner (Moon `MoonAlert.backgroundColor`, p. ej.
+     *  la variante `filled`). Por defecto el `container` del tono. */
+    containerColor: Color? = null,
     modifier: Modifier = Modifier,
 ) {
     val scheme = LocalAqColorScheme.current
@@ -80,18 +86,37 @@ fun AqAlert(
     val pressed = interactionSource.collectIsPressedAsState().value
     val hasMultipleActions = (confirmLabel != null && onConfirm != null) &&
         (dismissLabel != null && onDismiss != null)
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .defaultMinSize(minHeight = AqSize.Xl)
-            .background(colors.container, AqSquircles.InteractiveSm)
-            .padding(horizontal = horizontalPadding, vertical = AqSize.X2s)
-            .semantics {
-                liveRegion = LiveRegionMode.Polite
-                contentDescription?.let { this.contentDescription = it }
-            },
-        verticalArrangement = Arrangement.spacedBy(AqSize.X4s),
-    ) {
+    // Moon `alert.dart`: el `Column` interno usa `mainAxisSize.max`, así que
+    // la alerta ocupa todo el alto disponible cuando el padre lo acota y se
+    // ajusta al contenido cuando el alto es ilimitado (scroll).
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+        val boundedHeight = maxHeight != Dp.Infinity
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(
+                    if (boundedHeight) {
+                        Modifier.height(maxHeight)
+                    } else {
+                        Modifier.defaultMinSize(minHeight = AqSize.Xl)
+                    },
+                )
+                .background(containerColor ?: colors.container, AqSquircles.InteractiveSm)
+                .padding(horizontal = horizontalPadding, vertical = AqSize.X2s)
+                .semantics {
+                    liveRegion = LiveRegionMode.Polite
+                    contentDescription?.let { this.contentDescription = it }
+                },
+        ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(if (boundedHeight) Modifier.fillMaxHeight() else Modifier),
+            verticalArrangement = Arrangement.spacedBy(
+                AqSize.X4s,
+                Alignment.CenterVertically,
+            ),
+        ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -175,5 +200,7 @@ fun AqAlert(
                 }
             }
         }
+        }
     }
+}
 }

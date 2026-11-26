@@ -2,82 +2,73 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.error
-import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqColor
-import com.agendaqr.core.ui.theme.AqCorner
 import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqTextStyles
 import com.agendaqr.core.ui.theme.AqType
-import com.agendaqr.core.ui.theme.AqWeight
-import com.agendaqr.core.ui.theme.LocalAqColorScheme
 import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
  * Entrada de texto sobre [MoonTextInput] / [MoonFormTextInput]
  * (`moon_design` 1.1.0, `widgets/text_input`).
  *
- * Etiqueta persistente junto al borde superior de la caja, estado de foco,
- * error y deshabilitado resueltos con borde y color (nunca solo color),
- * ícono de apoyo a la izquierda y slot [trailing] a la derecha (p. ej.
- * mostrar/ocultar contraseña). El error se informa debajo con ícono +
- * texto ([AqErrorMessage]) y se asocia a la semántica del campo.
+ * Anatomía Moon: NO hay etiqueta externa persistente. El campo es una caja
+ * de altura fija por tamaño con [hintText] dentro; con
+ * [hasFloatingLabel] la etiqueta flota a la esquina superior al enfocar o
+ * escribir (la animación de escala/alineación de Moon se resuelve de forma
+ * estática: estado activo = etiqueta pequeña arriba, inactivo = hint
+ * centrado).
  *
- * Geometría Moon (§ TextInput):
- * - Altura visual por tamaño: sm 32 / md 40 / lg 48 / xl 56 dp
- *   ([AqSize]); el área táctil es ≥ 48 dp ([AqMetrics.ControlMinSize])
- *   mediante un wrapper de toque invisible centrado alrededor de la caja.
- * - Relleno vertical de la caja: sm 2 / md 4 / lg 6 / xl 9 dp
- *   ([AqLayout.InputPaddingVertical*]); relleno horizontal: sm 8 / md 12 /
- *   lg 12 / xl 16 dp ([AqLayout.InputPaddingHorizontal*]).
- * - Hueco etiqueta-caja: 8 dp ([AqLayout.LabelToField]); hueco
- *   etiqueta-optionalLabel: 8 dp ([AqSize.X4s]); hueco interno
- *   icono-texto: 8 dp (xl 16 dp).
- * - Helper/error y contador: padding start/end 12 dp y arriba 8 dp.
+ * - Geometría por tamaño: sm 32 / md 40 / lg 48 / xl 56 dp
+ *   ([AqTextInputSize]); relleno vertical 2/4/6/9 y horizontal 8/12/12/16
+ *   ([AqLayout.InputPaddingVertical*]/[AqLayout.InputPaddingHorizontal*]).
+ * - Texto: `body.textDefault` (14) en sm/md y `body.text16` (16) en lg/xl.
+ * - Hint/flotante: color `helperTextColor`→[AqColor.TextTertiary]; el error
+ *   tiñe borde (`chichi`→[AqColor.Danger]) y texto.
+ * - Helper/error debajo con `helperPadding` de Moon (`top: x4s` = 8 dp, sin
+ *   padding lateral): [AqErrorMessage] (icono + texto) o [AqHelperMessage].
+ * - [borderless]: dentro de [AqTextInputGroup] la caja no dibuja fondo ni
+ *   borde (Moon `MoonFormTextInput` transparente; el borde lo pinta el
+ *   grupo).
  * - Todo el copy llega del llamador; [AqText] en lugar de Material Text.
  */
 @Composable
 fun AqTextInput(
-    label: String,
+    label: String? = null,
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -99,11 +90,13 @@ fun AqTextInput(
     focusRequester: FocusRequester? = null,
     placeholder: String? = null,
     size: AqTextInputSize = AqTextInputSize.Md,
+    /** Etiqueta flotante dentro de la caja (Moon `hasFloatingLabel`).
+     *  Activa por defecto cuando [label] no es nulo. */
+    hasFloatingLabel: Boolean = true,
     /** `true` dentro de [AqTextInputGroup]: la caja no dibuja fondo ni borde
      *  (Moon `MoonFormTextInput` recibe `inactiveBorderColor` transparente y
      *  `backgroundColor` transparente; el borde lo pinta el grupo). */
     borderless: Boolean = false,
-    touchTargetTestTag: String = "aq-field-touch-target",
     visualTestTag: String = "aq-text-input-visual",
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -141,48 +134,45 @@ fun AqTextInput(
     }
     // Hueco interno entre el ícono de apoyo y el texto (Moon §3: 8 dp, xl 16).
     val innerGap = if (size == AqTextInputSize.Xl) AqSize.X2s else AqSize.X4s
+    val floatingActive = hasFloatingLabel && !label.isNullOrBlank() &&
+        (focused || value.isNotEmpty())
+    val idleHint = placeholder ?: label
+    val accessibleName = label ?: placeholder.orEmpty()
+    val fieldTextStyle = (if (size == AqTextInputSize.Lg || size == AqTextInputSize.Xl) {
+        AqTextStyles.BodyMd
+    } else {
+        AqTextStyles.Body
+    })
 
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(AqLayout.LabelToField),
-    ) {
-        AqTextInputLabel(
-            label = label,
-            optionalLabel = optionalLabel,
-            enabled = enabled,
-            errorMessage = effectiveErrorMessage,
-        )
-        // El hit target mide al menos 48 dp; la caja visual conserva la
-        // altura Moon seleccionada y se centra dentro del área táctil.
+    Column(modifier = modifier.fillMaxWidth()) {
+        // La caja visual es el campo completo de Moon: altura fija del
+        // tamaño, sin target táctil extra.
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = AqMetrics.ControlMinSize)
-                .testTag(touchTargetTestTag),
-            contentAlignment = Alignment.Center,
+                .height(size.height)
+                .then(
+                    if (borderless) {
+                        Modifier
+                    } else {
+                        Modifier
+                            .background(AqColor.Background, shape)
+                            .border(AqMetrics.Border, borderColor, shape)
+                    },
+                )
+                .semantics {
+                    contentDescription = accessibleName
+                    if (!enabled) disabled()
+                }
+                .testTag(visualTestTag),
         ) {
-            Box(
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(size.height)
-                    .then(
-                        if (borderless) {
-                            Modifier
-                        } else {
-                            Modifier
-                                .background(AqColor.Background, shape)
-                                .border(AqMetrics.Border, borderColor, shape)
-                        },
-                    )
-                    .testTag(visualTestTag),
+                    .fillMaxSize()
+                    .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(innerGap),
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = horizontalPadding, vertical = verticalPadding),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(innerGap),
-                ) {
                 leadingIcon?.let { glyph ->
                     AqIcon(
                         imageVector = glyph,
@@ -196,76 +186,113 @@ fun AqTextInput(
                         },
                     )
                 }
-                BasicTextField(
-                    value = value,
-                    onValueChange = onValueChange,
-                    modifier = Modifier
-                        .weight(1f)
-                        .then(
-                            if (focusRequester != null) {
-                                Modifier.focusRequester(focusRequester)
-                            } else {
-                                Modifier
+                Box(modifier = Modifier.weight(1f).fillMaxSize()) {
+                    BasicTextField(
+                        value = value,
+                        onValueChange = onValueChange,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .then(
+                                if (focusRequester != null) {
+                                    Modifier.focusRequester(focusRequester)
+                                } else {
+                                    Modifier
+                                },
+                            )
+                            .semantics {
+                                text = AnnotatedString(accessibleName)
+                                if (effectiveIsError && effectiveErrorMessage != null) {
+                                    error(effectiveErrorMessage)
+                                }
                             },
-                        )
-                        .semantics {
-                            contentDescription = label
-                            text = AnnotatedString(label)
-                            if (effectiveIsError && effectiveErrorMessage != null) error(effectiveErrorMessage)
-                        },
-                    enabled = enabled,
-                    readOnly = readOnly,
-                    singleLine = singleLine,
-                    minLines = minLines,
-                    maxLines = maxLines,
-                    textStyle = (if (size == AqTextInputSize.Lg || size == AqTextInputSize.Xl) {
-                        AqTextStyles.BodyMd
-                    } else {
-                        AqTextStyles.Body
-                    }).copy(
-                        color = when {
-                            !enabled -> AqColor.OnDisabled
-                            effectiveIsError -> AqColor.Danger
-                            else -> AqColor.TextPrimary
-                        },
-                    ),
-                    keyboardOptions = keyboardOptions,
-                    keyboardActions = keyboardActions,
-                    visualTransformation = visualTransformation,
-                    interactionSource = interactionSource,
-                    cursorBrush = SolidColor(if (effectiveIsError) AqColor.Danger else AqColor.Focus),
-                    decorationBox = { innerTextField ->
-                        // La fila padre ya aplica el relleno Moon: aquí solo se
-                        // centra el texto en el alto disponible (sin relleno doble).
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.CenterStart,
-                        ) {
-                            innerTextField()
-                            if (value.isBlank() && placeholder != null) {
-                                AqText(
-                                    text = placeholder,
-                                    size = if (size == AqTextInputSize.Lg || size == AqTextInputSize.Xl) {
-                                        AqType.BodyMd
-                                    } else {
-                                        AqType.BodySm
-                                    },
-                                    color = AqColor.TextTertiary,
-                                    maxLines = 1,
-                                )
+                        enabled = enabled,
+                        readOnly = readOnly,
+                        singleLine = singleLine,
+                        minLines = minLines,
+                        maxLines = maxLines,
+                        textStyle = fieldTextStyle.copy(
+                            color = when {
+                                !enabled -> AqColor.OnDisabled
+                                effectiveIsError -> AqColor.Danger
+                                else -> AqColor.TextPrimary
+                            },
+                        ),
+                        keyboardOptions = keyboardOptions,
+                        keyboardActions = keyboardActions,
+                        visualTransformation = visualTransformation,
+                        interactionSource = interactionSource,
+                        cursorBrush = SolidColor(if (effectiveIsError) AqColor.Danger else AqColor.Focus),
+                        decorationBox = { innerTextField ->
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                // Moon alinea el texto abajo cuando la
+                                // etiqueta flota (`bottomCenter`), para no
+                                // solapar la etiqueta superior.
+                                contentAlignment = if (floatingActive) {
+                                    Alignment.BottomCenter
+                                } else {
+                                    Alignment.CenterStart
+                                },
+                            ) {
+                                innerTextField()
+                                if (value.isEmpty() && idleHint != null && !floatingActive) {
+                                    AqText(
+                                        text = idleHint,
+                                        size = if (size == AqTextInputSize.Lg || size == AqTextInputSize.Xl) {
+                                            AqType.BodyMd
+                                        } else {
+                                            AqType.BodySm
+                                        },
+                                        color = AqColor.TextTertiary,
+                                        maxLines = 1,
+                                    )
+                                }
                             }
-                        }
-                    },
-                )
+                        },
+                    )
+                    if (floatingActive) {
+                        // Etiqueta flotante de Moon (`hasFloatingLabel`):
+                        // flota arriba dentro de la caja cuando el campo
+                        // tiene contenido o foco.
+                        AqText(
+                            text = label.orEmpty(),
+                            size = AqType.BodyXs,
+                            color = if (effectiveIsError) AqColor.Danger else AqColor.TextTertiary,
+                            maxLines = 1,
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(top = AqSize.X6s)
+                                .clearAndSetSemantics { },
+                        )
+                    }
+                }
                 trailing?.invoke()
             }
         }
+        // `helperPadding` de Moon: solo `top: x4s` (8 dp), sin laterales.
+        when {
+            effectiveIsError && effectiveErrorMessage != null -> {
+                AqErrorMessage(
+                    message = effectiveErrorMessage,
+                    modifier = Modifier
+                        .padding(top = AqSize.X4s)
+                        .testTag("aq-field-support"),
+                )
+            }
+            helperMessage != null -> {
+                AqHelperMessage(
+                    message = helperMessage,
+                    modifier = Modifier
+                        .padding(top = AqSize.X4s)
+                        .testTag("aq-field-support"),
+                )
+            }
         }
         maxLength?.let { limit ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = AqSize.X3s, vertical = AqSize.X5s),
+                    .padding(top = AqSize.X4s),
                 horizontalArrangement = Arrangement.End,
             ) {
                 AqText(
@@ -275,24 +302,6 @@ fun AqTextInput(
                     },
                     size = AqType.BodySmall,
                     color = if (lengthExceeded) AqColor.Danger else AqColor.TextTertiary,
-                )
-            }
-        }
-        when {
-            effectiveIsError && effectiveErrorMessage != null -> {
-                AqErrorMessage(
-                    message = effectiveErrorMessage,
-                    modifier = Modifier
-                        .padding(horizontal = AqSize.X3s)
-                        .testTag("aq-field-support"),
-                )
-            }
-            helperMessage != null -> {
-                AqHelperMessage(
-                    message = helperMessage,
-                    modifier = Modifier
-                        .padding(horizontal = AqSize.X3s)
-                        .testTag("aq-field-support"),
                 )
             }
         }
@@ -308,42 +317,3 @@ enum class AqTextInputSize(
     Lg(height = AqSize.Lg),
     Xl(height = AqSize.Xl),
 }
-
-/** Etiqueta persistente del campo con el marcador de opcionalidad. */
-@Composable
-private fun AqTextInputLabel(
-    label: String,
-    optionalLabel: String?,
-    enabled: Boolean,
-    errorMessage: String? = null,
-) {
-    val fieldEnabled = enabled
-    Row(
-        modifier = Modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AqSize.X4s),
-    ) {
-        AqText(
-            text = label,
-            size = AqType.Label,
-            fontWeight = AqWeight.SemiBold,
-            color = if (!fieldEnabled) AqColor.OnDisabled else AqColor.TextPrimary,
-            modifier = Modifier
-                .clearAndSetSemantics { }   // el label es visual; su nombre accesible vive en el campo (contentDescription)
-                .fieldLabelSemantics(errorMessage),
-        )
-        optionalLabel?.let {
-            AqText(
-                text = it,
-                size = AqType.CaptionSmall,
-                color = AqColor.TextTertiary,
-            )
-        }
-    }
-}
-
-/** Semántica de la etiqueta persistente de un campo: mensaje de error. */
-private fun Modifier.fieldLabelSemantics(errorMessage: String?): Modifier =
-    semantics {
-        if (errorMessage != null) error(errorMessage)
-    }

@@ -38,6 +38,7 @@ import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqMotion
 import com.agendaqr.core.ui.theme.AqSquircles
+import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqStateAlpha
 import com.agendaqr.core.ui.theme.AqType
@@ -95,7 +96,11 @@ fun AqCheckbox(
     Row(
         modifier = modifier
             .then(if (hasText) Modifier.fillMaxWidth() else Modifier)
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+            // Moon `checkbox.dart`: `tapAreaSizeValue` = 40 para la casilla
+            // suelta; con etiqueta la fila conserva el mínimo de 48 dp.
+            .defaultMinSize(
+                minHeight = if (hasText) AqMetrics.ControlMinSize else AqSize.Md,
+            )
             .fieldSemantics(state)
             .selectable(
                 selected = checked,
@@ -108,7 +113,7 @@ fun AqCheckbox(
         Box(
             modifier = Modifier
                 .clearAndSetSemantics { }
-                .size(AqMetrics.ControlMinSize),
+                .size(AqSize.Md),
             contentAlignment = Alignment.Center,
         ) {
             AqCheckboxGlyph(checked = checked, enabled = state.enabled)

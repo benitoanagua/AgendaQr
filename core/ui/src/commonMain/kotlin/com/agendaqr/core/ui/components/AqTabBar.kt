@@ -64,9 +64,34 @@ fun AqTabBar(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     size: AqTabSize = AqTabSize.Md,
+    /** `isExpanded` de Moon: las pestañas reparten el ancho a partes
+     *  iguales (`Expanded` por pestaña); sin él cada una abraza su
+     *  contenido y la fila puede desplazar. */
+    isExpanded: Boolean = false,
 ) {
     require(tabs.isNotEmpty()) { "AqTabBar necesita al menos una pestaña" }
     require(selectedIndex in tabs.indices) { "AqTabBar: índice fuera de rango" }
+    if (isExpanded) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .selectableGroup(),
+            horizontalArrangement = Arrangement.spacedBy(AqLayout.TabBarGap),
+        ) {
+            tabs.forEachIndexed { index, tab ->
+                AqTabContent(
+                    tab = tab,
+                    selected = index == selectedIndex,
+                    enabled = enabled && !tab.disabled,
+                    onClick = { if (enabled && !tab.disabled) onSelect(index) },
+                    size = size,
+                    showIndicator = true,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        }
+        return
+    }
     // `weight` no es válido dentro de `horizontalScroll` (ancho infinito):
     // cada pestaña recibe como mínimo su parte equitativa del ancho
     // disponible y crece según su contenido; si no caben, la fila desplaza.
@@ -170,7 +195,9 @@ private fun AqTabContent(
     val shape = if (size == AqTabSize.Sm) AqSquircles.InteractiveXs else AqSquircles.InteractiveSm
     Box(
         modifier = modifier
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+            // Moon `tab_bar.dart`: el alto de la barra es el del tamaño
+            // (32/40) y la pestaña entera es el objetivo táctil.
+            .height(size.height)
             .clip(shape)
             .semantics(mergeDescendants = true) {
                 this.selected = selected

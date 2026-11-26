@@ -116,11 +116,7 @@ fun AqTextInputGroup(
         }
         if (errors.isNotEmpty()) {
             Column(
-                modifier = Modifier.padding(
-                    start = AqSize.X3s,
-                    end = AqSize.X3s,
-                    top = AqSize.X4s,
-                ),
+                modifier = Modifier.padding(top = AqSize.X4s),
                 verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
             ) {
                 errors.forEach { AqErrorMessage(message = it) }
@@ -129,11 +125,7 @@ fun AqTextInputGroup(
             com.agendaqr.core.ui.components.AqText(
                 text = helper,
                 modifier = Modifier
-                    .padding(
-                        start = AqSize.X3s,
-                        end = AqSize.X3s,
-                        top = AqSize.X4s,
-                    )
+                    .padding(top = AqSize.X4s)
                     .semantics { contentDescription = helper },
                 size = AqType.BodyXs,
                 color = AqColor.TextSecondary,

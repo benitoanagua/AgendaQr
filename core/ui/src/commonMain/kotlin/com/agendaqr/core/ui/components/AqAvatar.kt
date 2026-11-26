@@ -2,9 +2,7 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.draw.clip
 import androidx.compose.runtime.Composable
@@ -52,6 +50,9 @@ fun AqAvatar(
     imageVector: ImageVector? = null,
     initials: String? = null,
     badge: (@Composable () -> Unit)? = null,
+    /** Muestra la insignia de punto de Moon (`showBadge`) cuando no hay
+     *  slot [badge] personalizado. */
+    showBadge: Boolean = false,
     badgeColor: androidx.compose.ui.graphics.Color = AqColor.Roshi,
     contentDescription: String,
     modifier: Modifier = Modifier,
@@ -59,7 +60,6 @@ fun AqAvatar(
     Box(
         modifier = modifier
             .size(size.dpValue)
-            .defaultMinSize(minWidth = AqMetrics.ControlMinSize, minHeight = AqMetrics.ControlMinSize)
             .clip(size.shape)
             .background(AqColor.Background, size.shape)
             .semantics { this.contentDescription = contentDescription }
@@ -82,27 +82,21 @@ fun AqAvatar(
                 color = AqColor.TextPrimary,
             )
         }
-        badge?.let {
+        if (badge != null || showBadge) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomEnd,
             ) {
-                // `badgeMarginValue` de Moon: margen proporcional al avatar.
+                // Moon `Align(bottomRight)` + `Container(badgeSize)`: la
+                // insignia queda flush en la esquina (`badgeMarginValue`
+                // solo alimenta el recorte del squircle, no el margen).
                 Box(
-                    modifier = Modifier.padding(
-                        size.dpValue * AqComposition.AvatarBadgeMarginFraction,
-                    ),
+                    modifier = Modifier
+                        .size(size.dpValue * AqComposition.AvatarBadgeSizeFraction)
+                        .background(badgeColor, AqSquircles.Circle),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    // Insignia circular `badgeColor` (roshi) con el contenido
-                    // del llamador dentro; el diámetro lo fija el slot.
-                    Box(
-                        modifier = Modifier
-                            .size(size.dpValue * AqComposition.AvatarBadgeSizeFraction)
-                            .background(badgeColor, AqSquircles.Circle),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        it()
-                    }
+                    badge?.invoke()
                 }
             }
         }

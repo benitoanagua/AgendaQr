@@ -103,13 +103,21 @@ fun AqSwitch(
         label = "aqSwitchThumb",
     )
 
-    // Nodo táctil de 48 dp (mínimo en ambos ejes) que centra el interruptor
-    // visual y expone la semántica de switch (ADR-0039 §4.4).
+    // Sin etiqueta el control es la pista sola con la geometría exacta de
+    // Moon (`switch_sizes.dart`: 32×16 / 44×24 / 60×32). Con etiqueta, el
+    // objetivo táctil crece a 48 dp sin deformar la pista (ADR-0039 §4.4).
+    val hasLabel = label.isNotBlank() || description != null
     Box(
         modifier = modifier
-            .defaultMinSize(
-                minWidth = AqMetrics.ControlMinSize,
-                minHeight = AqMetrics.ControlMinSize,
+            .then(
+                if (hasLabel) {
+                    Modifier.defaultMinSize(
+                        minWidth = AqMetrics.ControlMinSize,
+                        minHeight = AqMetrics.ControlMinSize,
+                    )
+                } else {
+                    Modifier.size(size.trackWidth, size.height)
+                },
             )
             .clickable(
                 enabled = state.enabled,
@@ -128,7 +136,9 @@ fun AqSwitch(
         Row(
             modifier = Modifier.size(size.trackWidth, size.height),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AqSize.X4s),
+            horizontalArrangement = Arrangement.spacedBy(
+                if (hasLabel) AqSize.X4s else AqSize.X6s,
+            ),
         ) {
             Box(
                 modifier = Modifier
@@ -180,19 +190,21 @@ fun AqSwitch(
                     }
                 }
             }
-            Column(modifier = Modifier) {
-                AqText(
-                    text = label,
-                    size = AqType.Body,
-                    fontWeight = AqWeight.Medium,
-                    color = AqColor.TextPrimary,
-                )
-                if (description != null) {
+            if (hasLabel) {
+                Column(modifier = Modifier) {
                     AqText(
-                        text = description,
-                        size = AqType.Caption,
-                        color = AqColor.TextSecondary,
+                        text = label,
+                        size = AqType.Body,
+                        fontWeight = AqWeight.Medium,
+                        color = AqColor.TextPrimary,
                     )
+                    if (description != null) {
+                        AqText(
+                            text = description,
+                            size = AqType.Caption,
+                            color = AqColor.TextSecondary,
+                        )
+                    }
                 }
             }
         }

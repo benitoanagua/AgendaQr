@@ -6,7 +6,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -47,7 +46,8 @@ import androidx.compose.animation.core.tween
  *   (`showMoreWidget` de Moon; el copy «…» es de Moon).
  * - [onItemClick]: opcional; se invoca al pulsar un migas (excepto la
  *   actual y el «…»).
- * - Área táctil ≥ 48 dp por ítem sin cambiar el aspecto (D-02).
+ * - El ítem es el propio texto (`MoonBaseControl` de Moon no impone
+ *   target mínimo en breadcrumbs: `ensureMinimalTouchTargetSize` off).
  * - Todo el copy llega del llamador.
  */
 @Composable
@@ -73,9 +73,9 @@ fun AqBreadcrumb(
     }
 
     Row(
+        // Moon `breadcrumb.dart`: `SingleChildScrollView` + `Row(min)` → la
+        // barra abraza su contenido y solo ocupa todo el ancho al desbordar.
         modifier = modifier
-            .fillMaxWidth()
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
             .horizontalScroll(rememberScrollState()),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -129,10 +129,6 @@ private fun BreadcrumbItem(
     )
     Box(
         modifier = Modifier
-            .defaultMinSize(
-                minWidth = AqMetrics.ControlMinSize,
-                minHeight = AqMetrics.ControlMinSize,
-            )
             .then(
                 if (onClick != null) {
                     Modifier.clickable(

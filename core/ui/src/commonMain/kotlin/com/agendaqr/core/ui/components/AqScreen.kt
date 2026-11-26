@@ -16,6 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqLayout
@@ -85,7 +87,21 @@ fun AqScreen(
                     overflowLabel = overflowLabel,
                 )
             }
-            statusContent?.invoke()
+            statusContent?.let { slot ->
+                // En Flutter los hijos no-flex de una Column reciben alto no
+                // acotado; Compose acota el maxHeight. Medir el slot con alto
+                // infinito reproduce ese contrato: los banners (`AqAlert`,
+                // `mainAxisSize.max` de Moon) se ajustan a su contenido en
+                // lugar de llenar la pantalla.
+                Layout(content = slot) { measurables, constraints ->
+                    val placeable = measurables.first().measure(
+                        constraints.copy(minHeight = 0, maxHeight = Constraints.Infinity),
+                    )
+                    layout(placeable.width, placeable.height) {
+                        placeable.placeRelative(0, 0)
+                    }
+                }
+            }
             Column(
                 modifier = Modifier
                     .weight(1f)

@@ -1,8 +1,10 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -27,6 +29,9 @@ import com.agendaqr.core.ui.theme.AqWeight
  * - [subtitle]: subtítulo opcional.
  * - [icon]: glifo decorativo opcional (p. ej. [AqIcons.QrCode], [AqIcons.Attachment]).
  * - [actionLabel] / [onAction]: acción opcional del estado vacío.
+ * - [fillViewport]: el placeholder ocupa todo el alto disponible (p. ej.
+ *   `Modifier.weight(1f)` dentro del contenido de [AqScreen]) y centra su
+ *   contenido verticalmente — patrón de estado vacío de pantalla.
  * - Todo el copy llega del llamador.
  */
 @Composable
@@ -37,12 +42,14 @@ fun AqEmptyPlaceholder(
     icon: ImageVector? = null,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
+    fillViewport: Boolean = false,
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(AqSize.Sm),
-    ) {
+    val body: @Composable () -> Unit = {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(AqSize.Sm),
+        ) {
         icon?.let {
             AqIcon(
                 imageVector = it,
@@ -72,5 +79,16 @@ fun AqEmptyPlaceholder(
                     .widthIn(max = AqMetrics.ButtonLargeHeight + AqSpacing.Xxl),
             )
         }
+        }
+    }
+    if (fillViewport) {
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            body()
+        }
+    } else {
+        Column(modifier = modifier.fillMaxWidth()) { body() }
     }
 }

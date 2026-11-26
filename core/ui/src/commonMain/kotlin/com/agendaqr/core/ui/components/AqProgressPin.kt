@@ -15,13 +15,15 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -32,6 +34,7 @@ import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.aqPinShadowPlatform
 import kotlin.math.roundToInt
 
 /**
@@ -63,19 +66,36 @@ fun AqProgressPin(
     pinText: String,
     modifier: Modifier = Modifier,
     barHeight: Dp = AqSize.X4s,
-    thumbSize: Dp = AqSize.X3s,
+    thumbSize: Dp? = null,
     affectsHeight: Boolean = true,
     content: @Composable BoxScope.() -> Unit,
 ) {
     require(progress in 0f..1f) { "AqProgressPin.progress debe estar entre 0 y 1" }
     val clamped = progress.coerceIn(0f, 1f)
 
-    // Geometría vertical (Dp) derivada del painter de Moon:
-    // thumbTop = barZoneH/2 - thumbR; arrowTip = thumbTop - distance;
-    // circleBottom = arrowTip - arrowHeight; circleTop = circleBottom - pinWidth.
-    val barZoneHeight = maxOf(barHeight, thumbSize)
-    val thumbRadius = thumbSize / 2
-    val thumbTop = barZoneHeight / 2 - thumbRadius
+    // Geometría del painter de Moon (`progress_pin_painter.dart`): el pin,
+    // la flecha y el pulgar son paint puro sobre el contenido — el pulgar
+    // nunca engorda el layout. Con [thumbSize] explícito el radio es
+    // `thumbSizeValue/2`; sin él Moon usa `size.height/2` (la mitad del
+    // alto real del contenido), lo que produce el "pulgar gigante" cuando
+    // `MoonProgressPin` envuelve un hijo alto sin `pinStyle`.
+    var contentHeightPx by remember { mutableStateOf(0) }
+    val density = LocalDensity.current
+    val measuredHeight = if (contentHeightPx > 0) {
+        with(density) { contentHeightPx.toDp() }
+    } else {
+        barHeight
+    }
+    val barZoneHeight = thumbSize?.let { maxOf(barHeight, it) } ?: barHeight
+    // Referencia vertical: la zona de la barra. Con thumb explícito es la
+    // altura forzada; sin él, el alto natural del contenido medido.
+    val contentHeight = thumbSize?.let { barZoneHeight } ?: measuredHeight
+    val thumbRadius = thumbSize?.let { it / 2 } ?: (contentHeight / 2)
+    val thumbSizeDp = thumbRadius * 2
+
+    // thumbTop = contentH/2 - thumbR; arrowTip = thumbTop - distance;
+    // circleTop = arrowTip - arrowHeight - pinWidth.
+    val thumbTop = contentHeight / 2 - thumbRadius
     val arrowTipY = thumbTop - AqLayout.ProgressPinDistance
     val arrowTopY = arrowTipY - AqLayout.ProgressPinArrowHeight
     val circleTopY = arrowTopY - AqLayout.ProgressPinWidth
@@ -92,12 +112,14 @@ fun AqProgressPin(
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(barZoneHeight),
+                .then(
+                    if (thumbSize != null) Modifier.height(barZoneHeight) else Modifier,
+                )
+                .onSizeChanged { contentHeightPx = it.height },
         ) {
-            val density = LocalDensity.current
             val widthPx = with(density) { maxWidth.toPx() }
             val pinWidthPx = with(density) { AqLayout.ProgressPinWidth.toPx() }
-            val thumbSizePx = with(density) { thumbSize.toPx() }
+            val thumbSizePx = with(density) { thumbSizeDp.toPx() }
             val arrowWidthPx = with(density) { AqLayout.ProgressPinArrowWidth.toPx() }
 
             val pinX = (clamped * widthPx - pinWidthPx / 2f)
@@ -105,12 +127,42 @@ fun AqProgressPin(
             val thumbX = (clamped * widthPx - thumbSizePx / 2f)
                 .coerceIn(0f, (widthPx - thumbSizePx).coerceAtLeast(0f))
 
+            // Sombra `drawShadow` de la silueta pin+flecha. Se dibuja desde
+            // la zona visible: si el pin queda fuera de pantalla (pin
+            // externo de `MoonProgressPin`) su propio nodo se descartaría
+            // por visibilidad y la sombra no sangraría, a diferencia del
+            // painter único de Moon.
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .aqPinShadowPlatform(
+                        pinCenterX = pinX + pinWidthPx / 2f,
+                        pinCenterY = with(density) { circleTopY.toPx() } +
+                            pinWidthPx / 2f,
+                        pinRadius = pinWidthPx / 2f,
+                        arrowHalfWidth = arrowWidthPx / 2f,
+                        arrowBaseY = with(density) { arrowTopY.toPx() },
+                        arrowHeight = with(density) {
+                            AqLayout.ProgressPinArrowHeight.toPx()
+                        },
+                        blur = with(density) {
+                            AqLayout.ProgressPinShadowBlur.toPx()
+                        },
+                        offsetY = with(density) {
+                            AqLayout.ProgressPinShadowOffset.toPx()
+                        },
+                        alpha = AqLayout.ProgressPinShadowAlpha,
+                    ),
+            )
+
             // Barra (contenido del llamador), centrada verticalmente.
             Box(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .fillMaxWidth()
-                    .height(barHeight),
+                    .then(
+                        if (thumbSize != null) Modifier.height(barHeight) else Modifier,
+                    ),
             ) {
                 content()
             }
@@ -135,12 +187,6 @@ fun AqProgressPin(
                         )
                     }
                     .size(AqLayout.ProgressPinWidth)
-                    .shadow(
-                        elevation = AqLayout.ProgressPinShadowElevation,
-                        shape = AqSquircles.Circle,
-                        ambientColor = AqColor.Popo,
-                        spotColor = AqColor.Popo,
-                    )
                     .border(
                         width = AqLayout.ProgressPinBorderWidth,
                         color = AqColor.OnBrandFill,
@@ -167,7 +213,7 @@ fun AqProgressPin(
                             with(density) { thumbTop.toPx().roundToInt() },
                         )
                     }
-                    .size(thumbSize)
+                    .size(thumbSizeDp)
                     .clip(AqSquircles.Circle)
                     .background(AqColor.OnBrandFill),
             )

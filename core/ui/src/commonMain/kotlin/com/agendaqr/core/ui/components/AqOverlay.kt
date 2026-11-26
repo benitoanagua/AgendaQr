@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.focusable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,9 +57,9 @@ import com.agendaqr.core.ui.theme.LocalAqColorScheme
 @Composable
 fun AqModal(
     show: Boolean = true,
-    title: String,
+    title: String? = null,
     /** copy del llamador. */
-    dismissLabel: String,
+    dismissLabel: String? = null,
     onDismissRequest: () -> Unit,
     /** Etiqueta opcional del botón de confirmación (primaria). */
     confirmLabel: String? = null,
@@ -96,6 +97,17 @@ fun AqModal(
                 .fillMaxSize()
                 .background(LocalAqColorScheme.current.scrim)
                 .clickable(onClick = dismissRequest)
+                // `paneTitle` va en la raíz del diálogo (nodo que ya fusiona
+                // descendientes por `clickable`): dentro del panel quedaría
+                // absorbido por el merge y `PaneTitle` es una propiedad no
+                // fusionable → crash de semántica.
+                .then(
+                    if (title != null) {
+                        Modifier.semantics { paneTitle = title }
+                    } else {
+                        Modifier
+                    },
+                )
                 .testTag("aq-modal-scrim"),
             contentAlignment = Alignment.Center,
         ) {
@@ -115,13 +127,15 @@ fun AqModal(
                     .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
                 verticalArrangement = Arrangement.spacedBy(AqSize.X3s),
             ) {
-                AqText(
-                    text = title,
-                    size = AqType.Title,
-                    color = LocalAqColorScheme.current.textPrimary,
-                    modifier = Modifier,
-                    semanticHeading = true,
-                )
+                title?.let {
+                    AqText(
+                        text = it,
+                        size = AqType.Title,
+                        color = LocalAqColorScheme.current.textPrimary,
+                        modifier = Modifier,
+                        semanticHeading = true,
+                    )
+                }
                 Column(
                     modifier = Modifier
                         .weight(1f, fill = false)
@@ -129,27 +143,31 @@ fun AqModal(
                 ) {
                     content()
                 }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    confirmLabel?.let { label ->
-                        AqButton(
-                            label = label,
-                            onClick = { onConfirm?.invoke() },
-                            variant = if (confirmAsText) AqButtonVariant.Text else if (destructive) AqButtonVariant.Danger else AqButtonVariant.Text,
-                            size = AqButtonSize.Small,
-                        )
+                if (confirmLabel != null || dismissLabel != null) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                    ) {
+                        confirmLabel?.let { label ->
+                            AqButton(
+                                label = label,
+                                onClick = { onConfirm?.invoke() },
+                                variant = if (confirmAsText) AqButtonVariant.Text else if (destructive) AqButtonVariant.Danger else AqButtonVariant.Text,
+                                size = AqButtonSize.Small,
+                            )
+                        }
+                        dismissLabel?.let { label ->
+                            AqButton(
+                                label = label,
+                                onClick = dismissRequest,
+                                variant = AqButtonVariant.Text,
+                                size = AqButtonSize.Small,
+                                modifier = Modifier
+                                    .testTag("aq-modal-dismiss")
+                                    .focusable(),
+                            )
+                        }
                     }
-                    AqButton(
-                        label = dismissLabel,
-                        onClick = onDismissRequest,
-                        variant = AqButtonVariant.Text,
-                        size = AqButtonSize.Small,
-                        modifier = Modifier
-                            .testTag("aq-modal-dismiss")
-                            .focusable(),
-                    )
                 }
             }
         }
@@ -165,9 +183,9 @@ fun AqModal(
 @Composable
 fun AqDrawer(
     show: Boolean = true,
-    title: String,
+    title: String? = null,
     /** copy del llamador. */
-    dismissLabel: String,
+    dismissLabel: String? = null,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
@@ -187,35 +205,44 @@ fun AqDrawer(
         )
         Column(
             modifier = Modifier
-                .width(AqLayout.DrawerWidth)
+                // Moon `drawer.dart`: `min(theme.width=448, ancho de pantalla)`.
+                .fillMaxWidth()
+                .widthIn(max = AqLayout.DrawerWidth)
                 .fillMaxHeight()
                 // Moon `drawer_theme.dart`: `borderRadius.zero` + sombra `lg`.
                 .aqShadow(AqShadow.Lg)
                 .background(LocalAqColorScheme.current.background)
-                .semantics { paneTitle = title },
+                .testTag("aq-drawer-pane")
+                .then(
+                    if (title != null) {
+                        Modifier.semantics { paneTitle = title }
+                    } else {
+                        Modifier
+                    },
+                ),
         ) {
-            AqText(
-                text = title,
-                size = AqType.Title,
-                color = LocalAqColorScheme.current.textPrimary,
-                semanticHeading = true,
-            )
-            content()
-            Row(
-                modifier = Modifier
-                    .padding(vertical = AqSize.Lg)
-                    .semantics { paneTitle = title },
-                horizontalArrangement = Arrangement.End,
-            ) {
-                AqButton(
-                    label = dismissLabel,
-                    onClick = onDismissRequest,
-                    variant = AqButtonVariant.Text,
-                    size = AqButtonSize.Small,
-                    modifier = Modifier
-                        .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                        .testTag("aq-modal-dismiss"),
+            title?.let {
+                AqText(
+                    text = it,
+                    size = AqType.Title,
+                    color = LocalAqColorScheme.current.textPrimary,
+                    semanticHeading = true,
                 )
+            }
+            content()
+            if (dismissLabel != null) {
+                Row(
+                    modifier = Modifier.padding(vertical = AqSize.Lg),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    AqButton(
+                        label = dismissLabel,
+                        onClick = onDismissRequest,
+                        variant = AqButtonVariant.Text,
+                        size = AqButtonSize.Small,
+                        modifier = Modifier.testTag("aq-modal-dismiss"),
+                    )
+                }
             }
         }
     }

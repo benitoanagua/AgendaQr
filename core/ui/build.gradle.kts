@@ -37,6 +37,33 @@ kotlin {
             implementation("androidx.compose.ui:ui-test-junit4:${libs.versions.androidx.compose.get()}")
             implementation("androidx.compose.ui:ui-test-manifest:${libs.versions.androidx.compose.get()}")
             implementation("org.robolectric:robolectric:${libs.versions.robolectric.get()}")
+            // Capturas de componentes del sistema de diseño bajo demanda
+            // (evidencia de fidelidad Moon; mismo mecanismo que la galería
+            // de pantallas, ADR-0007). No-op sin -Pagendaqr.capture=true.
+            implementation(libs.roborazzi)
+            implementation(libs.roborazzi.compose)
+        }
+    }
+}
+
+tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {
+    val capture = providers.gradleProperty("agendaqr.capture").orNull == "true"
+    systemProperty("agendaqr.capture", capture.toString())
+    if (capture) {
+        systemProperty("roborazzi.test.record", "true")
+        outputs.upToDateWhen { false }
+    }
+}
+
+tasks.register("captureComponents") {
+    group = "verification"
+    description = "Regenera las capturas de componentes Aq (requiere -Pagendaqr.capture=true)."
+    dependsOn("testDebugUnitTest")
+    doLast {
+        if (providers.gradleProperty("agendaqr.capture").orNull != "true") {
+            throw GradleException(
+                "Ejecuta: ./gradlew :core:ui:captureComponents -Pagendaqr.capture=true",
+            )
         }
     }
 }

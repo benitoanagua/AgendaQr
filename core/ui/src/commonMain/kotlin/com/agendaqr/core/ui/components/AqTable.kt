@@ -1,9 +1,9 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -73,12 +73,24 @@ fun AqTable(
     }
     val columnSize = if (rowSize == AqTableRowSize.Xs) AqType.BodyXs else AqType.BodySm
     val rowTextSize = columnSize
+    val rowGap = AqLayout.TableRowGap
 
-    Column(
+    // Moon `MoonTable`: `Container(height)` + `Column` con `Expanded` → la
+    // tabla llena la altura disponible cuando el padre la acota y envuelve
+    // el contenido cuando no (mismo comportamiento que el harness).
+    androidx.compose.foundation.layout.BoxWithConstraints(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(AqLayout.TableRowGap),
     ) {
-        // Cabecera (`MoonTableHeader`): mismo alto y métricas que la fila.
+        val fillHeight = maxHeight != androidx.compose.ui.unit.Dp.Infinity
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(if (fillHeight) Modifier.fillMaxHeight() else Modifier),
+        ) {
+        // Cabecera (`MoonTableHeader`): mismo alto y métricas que la fila,
+        // sin fondo propio y pegada a la primera fila (Moon no deja gap
+        // entre header y primera fila: el `rowGap` se reparte como margen
+        // `gap/2` arriba/abajo de cada fila salvo primera y última).
         AqTableRowContent(
             height = rowHeight,
             rowShape = rowShape,
@@ -88,8 +100,9 @@ fun AqTable(
             textSize = columnSize,
             fontWeight = FontWeight.SemiBold,
             align = { it.align },
+            containerColor = null,
         )
-        rows.forEach { row ->
+        rows.forEachIndexed { index, row ->
             AqTableRowContent(
                 height = rowHeight,
                 rowShape = rowShape,
@@ -99,7 +112,17 @@ fun AqTable(
                 textSize = rowTextSize,
                 fontWeight = FontWeight.Normal,
                 align = { it.align },
+                containerColor = AqColor.SurfaceContainerLow,
+                gapPadding = androidx.compose.foundation.layout.PaddingValues(
+                    top = if (index == 0) AqLayout.Zero else rowGap / 2,
+                    bottom = if (index == rows.lastIndex) {
+                        AqLayout.Zero
+                    } else {
+                        rowGap / 2
+                    },
+                ),
             )
+        }
         }
     }
 }
@@ -114,18 +137,32 @@ private fun AqTableRowContent(
     textSize: androidx.compose.ui.unit.TextUnit,
     fontWeight: FontWeight,
     align: (AqTableColumn) -> TextAlign,
+    containerColor: androidx.compose.ui.graphics.Color?,
+    gapPadding: androidx.compose.foundation.layout.PaddingValues =
+        androidx.compose.foundation.layout.PaddingValues(),
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(gapPadding)
             .height(height)
-            .background(AqColor.SurfaceContainerLow, rowShape)
-            .padding(horizontal = cellPadding),
+            .then(
+                if (containerColor != null) {
+                    Modifier.background(containerColor, rowShape)
+                } else {
+                    Modifier
+                },
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         columns.forEach { column ->
-            val cellModifier = column.width?.let { Modifier.width(it) }
-                ?: Modifier.weight(column.weight.coerceAtLeast(0f), fill = true)
+            // Moon aplica `cellPadding` DENTRO de cada celda
+            // (`SizedBox(width: columnWidth, child: Padding(...))`): las
+            // columnas reparten todo el ancho de la tabla. Si el padding va
+            // en la fila, las columnas pierden 2×cellPadding de ancho.
+            val cellModifier = (column.width?.let { Modifier.width(it) }
+                ?: Modifier.weight(column.weight.coerceAtLeast(0f), fill = true))
+                .padding(horizontal = cellPadding)
             AqText(
                 text = cells[column.id] ?: "",
                 size = textSize,

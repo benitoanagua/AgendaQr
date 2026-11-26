@@ -16,9 +16,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import com.agendaqr.core.ui.theme.AqLayout
-import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqType
-import com.agendaqr.core.ui.theme.AqTouchTarget
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
 import com.agendaqr.core.ui.theme.AqSquircles
 
@@ -36,8 +34,6 @@ import com.agendaqr.core.ui.theme.AqSquircles
  * - Colores Moon: fondo `goku`→[AqColor.Background], texto `textPrimary`,
  *   icono `iconPrimary`. [tone] es la extensión semántica de AgendaQr
  *   (estado del dato); `Neutral` reproduce la paleta Moon.
- * - Área táctil ≥ 48 dp sin cambiar el aspecto visual ([AqTouchTarget],
- *   ADR-0039 §4.4).
  * - Todo el copy llega del llamador.
  */
 @Composable
@@ -50,39 +46,33 @@ fun AqTag(
 ) {
     val scheme = LocalAqColorScheme.current
     val colors = scheme.toneColors(tone)
-    // El alto visual se conserva (16/24/32 dp); el área táctil se amplía a 48
-    // dp sin deformar la etiqueta ([AqTouchTarget], ADR-0039 §4.4).
-    AqTouchTarget(
-        minTouchSize = AqMetrics.ControlMinSize,
-        text = text,
-        modifier = modifier,
+    // Moon fija el alto de la etiqueta (16/24/32 dp); el Row es el nodo
+    // visual completo, sin expansión táctil (Moon `tag.dart`).
+    Row(
+        modifier = modifier
+            .height(size.height)
+            .background(colors.container, size.shape)
+            .padding(horizontal = size.horizontalPadding)
+            .semantics {
+                this.contentDescription = text
+            },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(size.gap),
     ) {
-        Row(
-            modifier = Modifier
-                .height(size.height)
-                .background(colors.container, size.shape)
-                .padding(horizontal = size.horizontalPadding)
-                .semantics {
-                    this.contentDescription = text
-                },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(size.gap),
-        ) {
-            icon?.let {
-                AqIcon(
-                    imageVector = it,
-                    contentDescription = null,
-                    size = size.iconSize,
-                    tint = colors.content,
-                )
-            }
-            AqText(
-                text = text,
-                size = size.textSize,
-                color = colors.content,
-                modifier = Modifier.clearAndSetSemantics { },
+        icon?.let {
+            AqIcon(
+                imageVector = it,
+                contentDescription = null,
+                size = size.iconSize,
+                tint = colors.content,
             )
         }
+        AqText(
+            text = text,
+            size = size.textSize,
+            color = colors.content,
+            modifier = Modifier.clearAndSetSemantics { },
+        )
     }
 }
 

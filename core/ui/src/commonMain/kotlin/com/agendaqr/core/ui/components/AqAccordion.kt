@@ -15,10 +15,8 @@ import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,6 +39,7 @@ import com.agendaqr.core.ui.theme.AqMotion
 import com.agendaqr.core.ui.theme.AqShadow
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqStateAlpha
+import com.agendaqr.core.ui.theme.AqTextRoles
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqSquircles
@@ -65,8 +64,8 @@ import com.agendaqr.core.ui.theme.aqShadow
  *   animación de altura con recorte ([AnimatedVisibility]).
  * - Slots [leading]/[trailing] de Moon; por defecto el trailing es el
  *   chevron. Hueco interno = padding horizontal de la cabecera.
- * - Área táctil: la cabecera mide la altura del tamaño; el objetivo de 48 dp
- *   se garantiza en tamaños menores (D-02).
+ * - La cabecera mide la altura fija del tamaño y es el objetivo táctil
+ *   (Moon `accordion.dart`: `SizedBox(height: headerHeight)`).
  * - Todo el copy llega del llamador.
  */
 @Composable
@@ -118,12 +117,12 @@ fun AqAccordion(
             .alpha(if (enabled) 1f else AqStateAlpha.Disabled),
     ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        // Cabecera: altura fija del tamaño, tappable en toda su área.
+        // Cabecera: altura fija del tamaño (Moon `SizedBox(height:
+        // headerHeight)`), tappable en toda su área.
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                .heightIn(min = size.headerHeight)
+                .height(size.headerHeight)
                 .clickable(
                     role = Role.Button,
                     onClickLabel = title,
@@ -144,7 +143,11 @@ fun AqAccordion(
                 size = size.headerTextSize,
                 fontWeight = AqWeight.SemiBold,
                 color = AqColor.TextPrimary,
-                modifier = Modifier.weight(1f, fill = false),
+                // `weight(fill = true)`: la etiqueta ocupa el espacio
+                // restante y el trailing queda anclado al borde final
+                // (Moon `Expanded(label)`); con `fill = false` el icono
+                // queda pegado al texto.
+                modifier = Modifier.weight(1f),
             )
             Box(modifier = Modifier.padding(start = size.headerPadding)) {
                 if (trailing != null) {
@@ -188,8 +191,30 @@ fun AqAccordion(
                 }
                 // `childrenPadding` de Moon por defecto es cero: el contenido
                 // llega pegado al divisor y el llamador aporta su relleno.
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    content()
+                // Moon envuelve los hijos en `DefaultTextStyle(
+                // contentTextStyle)` y `CrossAxisAlignment.center`.
+                val contentRole = if (size == AqAccordionSize.Sm) {
+                    AqTextRoles.BodyXs
+                } else {
+                    AqTextRoles.BodySm
+                }
+                androidx.compose.runtime.CompositionLocalProvider(
+                    androidx.compose.material3.LocalTextStyle provides
+                        androidx.compose.ui.text.TextStyle(
+                            fontSize = contentRole.size,
+                            lineHeight = contentRole.lineHeight,
+                            fontWeight = contentRole.weight,
+                            letterSpacing = contentRole.tracking,
+                            fontFamily = AqType.FamilyUi,
+                            color = AqColor.TextPrimary,
+                        ),
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        content()
+                    }
                 }
             }
         }

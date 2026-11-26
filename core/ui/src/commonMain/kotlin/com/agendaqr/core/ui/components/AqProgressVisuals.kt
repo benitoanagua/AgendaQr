@@ -1,5 +1,7 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -36,8 +38,31 @@ import kotlin.math.min
 
 private const val TwoPi = 360f
 private const val SweepEpsilon = 0.001f
-private const val IndeterminateCircularMs = 1333
 private const val IndeterminateLinearMs = 1800
+
+// `MoonCircularProgressIndicator` (`circular_progress_indicator.dart`):
+// `_kIndeterminateCircularDuration = 1333 * 2222` ms; `_pathCount` = 2222,
+// `_rotationCount` = 1333. Los tweens head/tail usan `Interval` +
+// `SawTooth`; offset/rotation solo `SawTooth`.
+private const val IndeterminateCircularMs = 1333 * 2222
+private const val CircularPathCount = 2222
+private const val CircularRotationCount = 1333
+
+/** `CurveSawTooth` de Flutter: `(t * count) % 1` en `[0, 1)`. */
+private fun sawTooth(value: Float, count: Int): Float = (value * count) % 1f
+
+/** `Interval(begin, end, curve)` de Flutter: la curva solo aplica dentro
+ *  del tramo; fuera devuelve 0/1 según el extremo. */
+private fun moonInterval(
+    t: Float,
+    begin: Float,
+    end: Float,
+    easing: Easing,
+): Float {
+    if (t <= begin) return 0f
+    if (t >= end) return 1f
+    return easing.transform((t - begin) / (end - begin))
+}
 
 /** Arco circular: determinado si [progress] no es nulo, giro si lo es. */
 @Composable
@@ -51,9 +76,11 @@ internal fun AqCircularArc(
 ) {
     if (progress == null) {
         val transition = rememberInfiniteTransition(label = "aqCircularArc")
-        val rotation by transition.animateFloat(
+        // Fracción 0..1 del ciclo indeterminado de Moon; head/tail/offset/
+        // rotation se derivan con los mismos tweens (`Interval`+`SawTooth`).
+        val t by transition.animateFloat(
             initialValue = 0f,
-            targetValue = 360f,
+            targetValue = 1f,
             animationSpec = infiniteRepeatable(
                 animation = tween(IndeterminateCircularMs, easing = LinearEasing),
                 repeatMode = RepeatMode.Restart,
@@ -74,11 +101,32 @@ internal fun AqCircularArc(
                 size = arcSize,
                 style = Stroke(width = stroke, cap = StrokeCap.Round),
             )
-            // Arco indeterminado de 270° que rota (par head/tail de Moon).
+            // `MoonCircularProgressIndicatorPainter` en grados:
+            //   arcStart = -90° + tail·270° + rotation·360° + offset·90°
+            //   arcSweep = max(head·270° - tail·270°, ε)
+            // (Moon calcula en radianes con factores 3/2·π, 2·π y 0.5·π).
+            val head = sawTooth(
+                moonInterval(t, 0f, 0.5f, FastOutSlowInEasing),
+                CircularPathCount,
+            )
+            val tail = sawTooth(
+                moonInterval(t, 0.5f, 1f, FastOutSlowInEasing),
+                CircularPathCount,
+            )
+            val offset = sawTooth(t, CircularPathCount)
+            val rotation = sawTooth(t, CircularRotationCount)
+            val arcStart = -90f +
+                (tail * 270f +
+                    rotation * TwoPi +
+                    offset * 90f)
+            val arcSweep = kotlin.math.max(
+                (head - tail) * 270f,
+                SweepEpsilon,
+            )
             drawArc(
                 color = color,
-                startAngle = -90f + (rotation % 360f),
-                sweepAngle = 270f,
+                startAngle = arcStart,
+                sweepAngle = arcSweep,
                 useCenter = false,
                 topLeft = topLeft,
                 size = arcSize,

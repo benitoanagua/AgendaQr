@@ -236,9 +236,6 @@ private fun AqButtonImpl(
     val haptics = LocalHapticFeedback.current
     val buttonModifier = modifier
         .then(if (fullWidth) Modifier.fillMaxWidth() else Modifier)
-        // El nodo del botón es el objetivo táctil (48 dp); el relleno visual
-        // conserva la altura del tamaño (24/32/40/48/56 dp) centrada.
-        .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
         .then(
             if (isLoading && busyDescription != null) {
                 Modifier.semantics { stateDescription = busyDescription }
@@ -268,7 +265,16 @@ private fun AqButtonImpl(
         content = {
             Row(
                 modifier = Modifier
-                    .graphicsLayer { scaleX = pressScale; scaleY = pressScale }
+                    // Capa solo durante la presión: una graphicsLayer
+                    // permanente crea un RenderNode que las capturas
+                    // Robolectric no invalidan entre escenarios.
+                    .then(
+                        if (pressScale != 1f) {
+                            Modifier.graphicsLayer { scaleX = pressScale; scaleY = pressScale }
+                        } else {
+                            Modifier
+                        },
+                    )
                     .heightIn(min = size.visualHeight)
                     .background(resolved.container, shape)
                     .then(
@@ -327,9 +333,9 @@ private fun AqButtonImpl(
             )
             val row = measurables.first().measure(rowConstraints)
             val width = row.width.coerceIn(constraints.minWidth, constraints.maxWidth)
-            // D-02: el objetivo táctil nunca baja de ControlMinSize (48 dp).
-            val height = maxOf(row.height, AqMetrics.ControlMinSize.roundToPx())
-                .coerceIn(0, constraints.maxHeight)
+            // Moon fija la altura visual del botón (24/32/40/48/56 dp); el
+            // botón entero es el objetivo táctil, sin expansión extra.
+            val height = row.height.coerceIn(0, constraints.maxHeight)
             val spinner = if (isLoading) {
                 val spinnerSize = size.iconSize.roundToPx()
                 measurables[1].measure(Constraints.fixed(spinnerSize, spinnerSize))
@@ -386,14 +392,17 @@ fun AqSegmentedControl(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-            .heightIn(min = size.height)
+            // Moon `segmented_control.dart`: el contenedor fija
+            // `height = size.height` y el padding `x5s` va dentro; los
+            // segmentos ocupan `height - 2×padding` y son el objetivo táctil.
+            .height(size.height)
             .background(AqColor.Surface, AqSquircles.InteractiveMd)
             .selectableGroup()
             .padding(AqLayout.SegmentedControlPadding)
             .alpha(if (enabled) 1f else AqStateAlpha.Disabled),
         horizontalArrangement = Arrangement.spacedBy(AqLayout.SegmentedControlOuterGap),
     ) {
+        val segmentHeight = size.height - AqLayout.SegmentedControlPadding * 2
         options.forEachIndexed { index, option ->
             val selected = index == selectedIndex
             val optionEnabled = enabled
@@ -411,7 +420,7 @@ fun AqSegmentedControl(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                    .height(segmentHeight)
                     .semantics(mergeDescendants = true) {
                         this.selected = selected
                     }
@@ -422,12 +431,12 @@ fun AqSegmentedControl(
                     ),
                 contentAlignment = Alignment.Center,
             ) {
-                // Alto visual Moon (`sizes.md`/`sizes.lg`); el objetivo táctil
-                // de 48 dp lo da el Box exterior sin deformar el segmento.
+                // Alto visual Moon (`sizes.md`/`sizes.lg` menos el padding del
+                // contenedor); el segmento es el objetivo táctil.
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(size.height)
+                        .height(segmentHeight)
                         .clip(AqSquircles.InteractiveSm)
                         .background(segmentColor, AqSquircles.InteractiveSm),
                     contentAlignment = Alignment.Center,

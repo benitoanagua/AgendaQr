@@ -10,18 +10,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
@@ -30,6 +31,7 @@ import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqMotion
 import com.agendaqr.core.ui.theme.AqShadow
+import com.agendaqr.core.ui.theme.DarkAqColorScheme
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
 import com.agendaqr.core.ui.theme.AqCorner
 import com.agendaqr.core.ui.theme.AqSquircles
@@ -48,7 +50,7 @@ import kotlinx.coroutines.delay
  * - [durationMs]: tiempo de vida en ms; 0 lo mantiene visible hasta que el
  *   llamador cambie [show] a falso.
  * - [onDismissRequest]: se invoca al expirar [durationMs] o al descartar.
- * - Superficie `goku`→[AqColor.Background], radio `surfaceSm`, sombra
+ * - Superficie `goku`→`goku`/`darkGoku`, radio `surfaceSm`, sombra
  *   `shadows.lg`, padding `x2s`, gaps `x2s`/`x3s` (Moon `toast_theme`).
  * - Objetivo táctil ≥ 48 dp en la acción (D-02).
  * - Todo el copy llega del llamador.
@@ -61,9 +63,17 @@ fun AqToast(
     onAction: (() -> Unit)? = null,
     onDismissRequest: (() -> Unit)? = null,
     icon: ImageVector? = null,
+    /** Variante de color de Moon (`MoonToastVariant`): `Inverted` usa la
+     *  paleta oscura aunque el tema sea claro. */
+    variant: AqToastVariant = AqToastVariant.Original,
     durationMs: Long = AqMotion.ToastDurationMs.toLong(),
     modifier: Modifier = Modifier,
 ) {
+    val scheme = LocalAqColorScheme.current
+    val inverted = variant == AqToastVariant.Inverted
+    val toastBackground = if (inverted) DarkAqColorScheme.background else scheme.background
+    val toastText = if (inverted) DarkAqColorScheme.textPrimary else scheme.textPrimary
+    val toastAccent = if (inverted) DarkAqColorScheme.link else scheme.link
     if (!show) return
     val onDismissState = rememberUpdatedState(onDismissRequest)
     LaunchedEffect(show, durationMs) {
@@ -72,22 +82,31 @@ fun AqToast(
             onDismissState.value?.invoke()
         }
     }
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = AqSpacing.Lg, vertical = AqSpacing.Lg),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    // Moon `MoonToast`: el elemento medido es `margin(contentPadding) +
+    // tarjeta(padding contentPadding + contenido)`. El margen queda fuera
+    // del fondo pero dentro de la caja etiquetada para que las métricas
+    // del comparador cubran la misma superficie que el golden Moon.
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center,
     ) {
-        Box(
-            modifier = Modifier
-                .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
-                .aqShadow(AqShadow.Lg, AqSquircles.SurfaceSm)
-                .background(AqColor.Background, AqSquircles.SurfaceSm)
-                .padding(AqSize.X2s),
-            contentAlignment = Alignment.Center,
-        ) {
+        // El tag envuelve margen + tarjeta: las bounds semánticas cubren la
+        // misma superficie que el `Container(margin+padding)` de MoonToast.
+        Box(modifier = Modifier.testTag("aq-toast-card")) {
+            Box(modifier = Modifier.padding(AqSpacing.Lg)) {
+                Box(
+                    modifier = Modifier
+                        .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                        .aqShadow(AqShadow.Lg, AqSquircles.SurfaceSm)
+                        .background(toastBackground, AqSquircles.SurfaceSm)
+                        .padding(AqSize.X2s),
+                    contentAlignment = Alignment.Center,
+                ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                // Moon `MoonToast`: la tarjeta abraza su contenido
+                // (`Row(mainAxisSize.min)`); el ancho solo se fija si el
+                // llamador pasa `width`. La etiqueta se acota para no
+                // desbordar en mensajes largos.
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(AqSize.X2s),
             ) {
@@ -96,15 +115,15 @@ fun AqToast(
                         imageVector = it,
                         contentDescription = null,
                         size = AqMetrics.IconSizeCompact,
-                        tint = AqColor.TextPrimary,
+                        tint = toastText,
                     )
                 }
                 AqText(
                     text = message,
                     size = AqType.Body,
-                    color = AqColor.TextPrimary,
+                    color = toastText,
                     modifier = Modifier
-                        .weight(1f, fill = false)
+                        .widthIn(max = AqMetrics.DialogMinWidth)
                         .semantics {
                             contentDescription = message
                             liveRegion = LiveRegionMode.Polite
@@ -115,7 +134,7 @@ fun AqToast(
                         text = label,
                         size = AqType.Label,
                         fontWeight = AqWeight.SemiBold,
-                        color = AqColor.Link,
+                        color = toastAccent,
                         modifier = Modifier
                             .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
                             .clickable(
@@ -126,7 +145,12 @@ fun AqToast(
                             ),
                     )
                 }
+                }
+                }
             }
         }
     }
 }
+
+/** Variante de color del toast (`MoonToastVariant` de Moon). */
+enum class AqToastVariant { Original, Inverted }

@@ -7,7 +7,6 @@ import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -644,7 +643,13 @@ object AqLayout {
     val ProgressPinArrowWidth: Dp = AqSize.X4s
     val ProgressPinDistance: Dp = AqSize.X5s
     val ProgressPinBorderWidth: Dp = AqSize.X6s
+    /** `drawShadow(path, popo, 6)` de Flutter: el engine convierte la
+     *  elevación en una silueta difuminada desplazada hacia abajo; estos
+     *  valores reproducen esa capa única en `aqShadowPlatform`. */
     val ProgressPinShadowElevation: Dp = 6.dp
+    val ProgressPinShadowBlur: Dp = 14.dp
+    val ProgressPinShadowOffset: Dp = 5.dp
+    val ProgressPinShadowAlpha: Float = 0.4f
 
     /** Hueco vertical entre las etiquetas y la barra de
      *  [AqLinearProgress] (`linear_progress_sizes.dart` `verticalGap`:
@@ -1202,23 +1207,17 @@ enum class AqShadow(val light: List<AqShadowLayer>, val dark: List<AqShadowLayer
     ),
 }
 
-/** Aplica las capas de [level] según el tema activo (claro/oscuro). */
+/**
+ * Aplica las capas de [level] según el tema activo (claro/oscuro). El pintado
+ * es por plataforma: Android reproduce los `BoxShadow` de Moon con
+ * `BlurMaskFilter` (blur/offset/spread reales); el resto usa la aproximación
+ * por elevación de `Modifier.shadow`.
+ */
 @Composable
 fun Modifier.aqShadow(level: AqShadow, shape: Shape = RectangleShape): Modifier {
     val dark = LocalAqColorScheme.current == DarkAqColorScheme
     val layers = if (dark) level.dark else level.light
-    var result: Modifier = this
-    layers.forEach { layer ->
-        val color = AqPalette.popo.copy(alpha = layer.alpha)
-        result = result.shadow(
-            elevation = layer.blur,
-            shape = shape,
-            clip = false,
-            ambientColor = color,
-            spotColor = color,
-        )
-    }
-    return result
+    return aqShadowPlatform(layers, shape)
 }
 
 /** Identidad de contexto X-06: pares fijos de colores Moon, validados a AA. */

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.theme.AqMetrics
 
@@ -27,6 +28,7 @@ fun AqSearchInput(
     clearLabel: String? = null,
     onClear: (() -> Unit)? = null,
     enabled: Boolean = true,
+    focusRequester: FocusRequester? = null,
 ) {
     AqTextInput(
         label = label,
@@ -36,6 +38,7 @@ fun AqSearchInput(
         enabled = enabled,
         placeholder = placeholder,
         leadingIcon = AqIcons.Search,
+        focusRequester = focusRequester,
         trailing = {
             if (value.isNotBlank() && onClear != null && clearLabel != null) {
                 AqButton(

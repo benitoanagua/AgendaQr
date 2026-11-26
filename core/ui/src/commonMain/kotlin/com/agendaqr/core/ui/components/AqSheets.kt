@@ -6,7 +6,6 @@ import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,11 +28,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqLayout
-import com.agendaqr.core.ui.theme.AqShadow
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSquircles
 import com.agendaqr.core.ui.theme.AqSpacing
-import com.agendaqr.core.ui.theme.aqShadow
 
 /**
  * Hoja inferior modal equivalente a un bottom sheet nativo (D-04).
@@ -51,15 +48,20 @@ import com.agendaqr.core.ui.theme.aqShadow
  */
 @Composable
 fun AqBottomSheet(
-    title: String,
+    title: String? = null,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     /** Etiqueta de la acción de descarte (p. ej. "Cerrar", "Descartar"). */
-    dismissDescription: String,
+    dismissDescription: String? = null,
     /** Cuando falso, se desactiva el gesto de arrastre hacia abajo. */
     dismissOnSwipeDown: Boolean = true,
     /** Estado de expansión controlado por el llamador. */
     expanded: Boolean = true,
+    /** Muestra la píldora de arrastre superior (affordance móvil). */
+    showHandle: Boolean = true,
+    /** Alto fijo de la hoja (Moon `MoonBottomSheet.height`); nulo = abraza
+     *  el contenido. */
+    height: androidx.compose.ui.unit.Dp? = null,
     content: @Composable () -> Unit,
 ) {
     val density = LocalDensity.current
@@ -82,9 +84,17 @@ fun AqBottomSheet(
             Column(
                 modifier = modifier
                     .fillMaxWidth()
-                    .aqShadow(AqShadow.Lg, AqSquircles.SurfaceTopLg)
+                    .then(
+                        if (height != null) {
+                            Modifier.height(height)
+                        } else {
+                            Modifier
+                        },
+                    )
+                    // Moon `MoonBottomSheet`: `ShapeDecoration` con
+                    // `surfaceLg` superior — sin sombra ni elevación.
                     .background(AqColor.Background, AqSquircles.SurfaceTopLg)
-                    .semantics { paneTitle = title }
+                    .semantics { title?.let { paneTitle = it } }
                     .testTag("aq-bottom-sheet-pane")
                     .verticalScroll(rememberScrollState())
                     .clickable(
@@ -95,6 +105,7 @@ fun AqBottomSheet(
                 ) {
                 // Handle visual de arrastre: píldora angosta centrada
                 // (Moon no define handle; es affordance móvil convencional).
+                if (showHandle) {
                 Box(
                     modifier = Modifier
                         .padding(vertical = AqSpacing.Md)
@@ -139,26 +150,31 @@ fun AqBottomSheet(
                         )
                     }
                 }
-                AqText(
-                    text = title,
-                    size = com.agendaqr.core.ui.theme.AqType.Title,
-                    modifier = Modifier.padding(horizontal = AqSpacing.Lg),
-                )
-                if (isExpandedState.value) {
-                    Spacer(Modifier.height(AqSpacing.Md))
-                    Box(modifier = Modifier.padding(horizontal = AqSpacing.Lg)) { content() }
-                    Spacer(Modifier.height(AqSpacing.Lg))
                 }
-                AqButton(
-                    label = dismissDescription,
-                    onClick = onDismissRequest,
-                    variant = AqButtonVariant.Text,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = AqSpacing.Lg)
-                        .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
-                )
-                Spacer(Modifier.height(AqSpacing.Lg))
+                title?.let {
+                    AqText(
+                        text = it,
+                        size = com.agendaqr.core.ui.theme.AqType.Title,
+                        modifier = Modifier.padding(horizontal = AqSpacing.Lg),
+                    )
+                }
+                if (isExpandedState.value) {
+                    // Moon `MoonBottomSheet`: el `child` se compone pegado a
+                    // los bordes de la hoja; el espaciado lo decide el
+                    // llamador dentro de [content].
+                    content()
+                }
+                dismissDescription?.let { label ->
+                    AqButton(
+                        label = label,
+                        onClick = onDismissRequest,
+                        variant = AqButtonVariant.Text,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = AqSpacing.Lg)
+                            .defaultMinSize(minHeight = AqMetrics.ControlMinSize),
+                    )
+                }
             }
         }
     }

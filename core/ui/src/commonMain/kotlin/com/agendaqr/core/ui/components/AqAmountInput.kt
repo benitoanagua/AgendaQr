@@ -40,7 +40,6 @@ fun AqAmountInput(
             size = AqTextInputSize.Md,
             isError = isError,
             errorMessage = errorMessage,
-            touchTargetTestTag = "aq-amount-input-touch-target",
             visualTestTag = "aq-amount-input-visual",
             trailing = currencySymbol?.let {
                 {

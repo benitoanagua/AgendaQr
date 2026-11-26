@@ -108,8 +108,7 @@ fun AqTooltip(
                 icon = icon,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .padding(top = AqSpacing.Xs)
-                    .testTag("aq-tooltip"),
+                    .padding(top = AqSpacing.Xs),
                 maxWidth = tooltipMaxWidth,
             )
         }
@@ -127,14 +126,17 @@ private fun TooltipBubble(
     maxWidth: Dp,
 ) {
     Column(modifier = modifier) {
-        Box(
-            modifier = Modifier
-                .aqShadow(AqShadow.Sm, AqSquircles.InteractiveXs)
-                .background(AqColor.Background, AqSquircles.InteractiveXs)
-                .padding(AqSize.X3s)
-                .widthIn(max = maxWidth),
-            contentAlignment = Alignment.Center,
-        ) {
+        // El tag envuelve la burbuja completa (sombra + fondo + padding);
+        // la flecha queda fuera, como en las bounds del golden Moon.
+        Box(modifier = Modifier.testTag("aq-tooltip")) {
+            Box(
+                modifier = Modifier
+                    .aqShadow(AqShadow.Sm, AqSquircles.InteractiveXs)
+                    .background(AqColor.Background, AqSquircles.InteractiveXs)
+                    .padding(AqSize.X3s)
+                    .widthIn(max = maxWidth),
+                contentAlignment = Alignment.Center,
+            ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AqSize.X5s),
@@ -154,6 +156,7 @@ private fun TooltipBubble(
                 maxLines = 2,
             )
         }
+            }
         }
         // Flecha de Moon (`arrowBaseWidth` x2s, `arrowLength` x4s):
         // triángulo bajo la burbuja apuntando al objetivo.

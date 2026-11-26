@@ -25,8 +25,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqLayout
-import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqMotion
+import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqStateAlpha
 import com.agendaqr.core.ui.theme.AqStroke
 
@@ -45,7 +45,7 @@ import com.agendaqr.core.ui.theme.AqStroke
  * - [onClick]: `null` cuando la fila contenedora ya es la superficie
  *   seleccionable (el indicador queda inerte).
  * - Deshabilitado: opacidad 0.6 sobre el glifo (MoonOpacities.disabled).
- * - Área táctil ≥ 48 dp (D-02; Moon usa 40, la regla de producto exige 48).
+ * - Área táctil de 40×40 dp (`tapAreaSizeValue` de Moon `radio.dart`).
  * - [contentDescription]: nombre accesible del control.
  */
 @Composable
@@ -78,8 +78,8 @@ fun AqRadio(
     Box(
         modifier = modifier
             .defaultMinSize(
-                minWidth = AqMetrics.ControlMinSize,
-                minHeight = AqMetrics.ControlMinSize,
+                minWidth = AqSize.Md,
+                minHeight = AqSize.Md,
             )
             .clickable(
                 role = Role.RadioButton,
