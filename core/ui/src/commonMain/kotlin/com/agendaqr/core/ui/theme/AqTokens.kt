@@ -634,6 +634,18 @@ object AqLayout {
     /** Hueco entre puntos de [AqDotIndicator] (Moon: `sizes.x4s`). */
     val DotIndicatorGap: Dp = AqSize.X4s
 
+    /** Geometría de [AqPagination] (Moon v1 Figma «Pagination»: fila de
+     *  32 dp con `gap` 4 dp; ítems compactos de 24 dp con radio `xs`). */
+    val PaginationItemSize: Dp = AqSize.Xs
+
+    /** Anchos de [AqSidebar] (Moon v1 Figma «Sidebar»: 280 dp expandida,
+     *  64 dp rail colapsada). */
+    val SidebarWidthExpanded: Dp = 280.dp
+    val SidebarWidthCollapsed: Dp = 64.dp
+
+    /** Insignia de puesto de [AqLeaderboard] (24 dp, `sizes.xs`). */
+    val LeaderboardRankSize: Dp = AqSize.Xs
+
     /** Geometría del clavo de [AqProgressPin] (Moon
      *  `progress_pin_theme.dart`: pinWidth 36, arrowHeight 6,
      *  arrowWidth `sizes.x4s`, pinDistance `sizes.x5s`,
