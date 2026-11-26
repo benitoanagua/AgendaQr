@@ -33,8 +33,8 @@ interacciones, al estilo storybook/playbook.
    registro declarativo de los 78 composables públicos de `components/`
    con categoría, estados y composable de preview. El lab lo consume para
    lista, búsqueda, filtro, selector de estado y enlace profundo
-   `#Componente[/estado]` (con `hashchange`). Las previews registradas no
-   son la galería: son composables aislados por estado.
+   `#Componente[/estado]` (con `hashchange`). El Lab y la galería consumen el mismo registro; la galería es la vista
+   read-only del catálogo, no una segunda implementación.
 4. **Gate `verifyComponentRegistry`** (+ fixtures): todo `fun Aq*`
    público de `core/ui/components` debe tener entrada en el registro, y
    toda entrada debe corresponder a un componente con ≥1 estado.
@@ -65,9 +65,8 @@ ya extraída del archivo de comunidad y versionada en el repo:
 `docs/05-design-system/evidencia/figma/figma-moon-v1.md` (legible) y
 `moon-v1-tokens-y-componentes.json` (datos crudos; prevalece sobre el .md
 si discrepan). No se usó la API de Figma ni `moon_flutter`/`moon_tokens`
-salvo para componentes ausentes de la especificación. Colores,
-tipografía e iconos siguen la regla de ADR-0044 (residual de la
-identidad); geometría, densidad, radios, padding/gap, alturas, estados
+salvo para componentes ausentes de la especificación. Colores y tipografía siguen ADR-0044; los iconos de producto siguen ADR-0052
+(Phosphor). Geometría, densidad, radios, padding/gap, alturas, estados
 (hover = overlay "heles", pressed = escala 0,2 s, foco = anillo doble) y
 variantes xs…xl vienen del JSON.
 
