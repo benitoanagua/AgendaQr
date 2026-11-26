@@ -2,7 +2,7 @@
 
 **Estado:** Normativo. **Decisión vigente:** ADR-0044. **Implementación:** Kotlin Multiplatform / Compose en `core/ui`.
 
-Agenda QR adopta Moon Design como **única autoridad visual**. Moon define los tokens, la anatomía de los componentes, tamaños, variantes, estados, tipografía, iconografía, radios, squircle, bordes, sombras, opacidades, movimiento y accesibilidad visual. La aplicación no mantiene una identidad visual paralela.
+Agenda QR adopta Moon Design como **única autoridad visual**. Moon define tokens, anatomía de componentes, tamaños, variantes, estados, tipografía, radios, squircle, bordes, sombras, opacidades, movimiento y accesibilidad visual. Phosphor Icons es la única fuente de iconos de producto (ADR-0052). La aplicación no mantiene una identidad visual paralela.
 
 ## Fuentes normativas únicas
 
@@ -22,14 +22,14 @@ No hay otras especificaciones activas del Design System. Las fichas duplicadas, 
 
 - `moon_tokens` 0.0.6: `MoonColors.light/dark`.
 - `moon_design` 1.1.0, commit `177adb7`: componentes, geometría, estados, sombras, opacidades y transiciones.
-- `@heathmont/moon-icons` 10.7.4: iconos portados a vectores Compose.
+- `@phosphor-icons/core` v2.0.8: iconos de producto portados a vectores Compose (ADR-0052).
 - Inter 4.0 / SIL OFL 1.1: sustitución de Averta Std exclusivamente por redistribución/licencia.
 - No se incorpora runtime Flutter, Web ni dependencia Moon de ejecución. El port mantiene la fuente y atribución MIT.
 
 ## Reglas de fidelidad
 
 1. Reutilizar el componente Moon equivalente antes de crear una composición nueva.
-2. Reproducir anatomía, variantes, tamaños, estados, padding, radios, iconos, tipografía, sombras y movimiento de la fuente versionada.
+2. Reproducir anatomía, variantes, tamaños, estados, padding, radios, iconos Phosphor, tipografía, sombras y movimiento de la fuente versionada.
 3. Consumir tokens semánticos desde `AqTokens.kt`; no añadir literales visuales en componentes o pantallas.
 4. No inventar medidas. Toda adaptación de producto debe registrarse en el contrato y centralizarse en tokens.
 5. `core/ui` implementa; `feature/*/presentation` compone. No crear wrappers `AqMoon*`, componentes duplicados ni estilos locales.
