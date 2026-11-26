@@ -93,9 +93,9 @@ Moon no define algunos patrones de producto como componentes independientes. Se 
 |---|---|
 | Navegación inferior / riel | `AqTabBar` / `AqPillTab` + navegación Compose |
 | Acción fija / FAB | `AqButton` (tamaño Moon) + token `AqShadow` cuando la referencia Moon lo requiere |
-| Search bar | `AqTextInput` + iconos Moon |
+| Search bar | `AqTextInput` + `AqIcons` (Phosphor) |
 | Celda de lista | `AqMenuItem` + `AqAvatar` / `AqTag` |
-| Empty state | icono Moon + texto Moon + `AqButton` |
+| Empty state | icono Phosphor + texto Moon + `AqButton` |
 | Skeleton | `AqLinearLoader` y formas Moon |
 | Date/time picker | `AqModal` + controles Moon; selector nativo solo cuando el contrato de plataforma lo exige |
 | Swipe actions | `AqButton` revelado por gesto Compose |
