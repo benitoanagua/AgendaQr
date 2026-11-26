@@ -1916,13 +1916,25 @@ tasks.register("verifySharedComponentConfiguration") {
         val gallery = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/AqDesignSystemGallery.kt").readText()
         val lab = file("core/ui-lab/src/wasmJsMain/kotlin/com/agendaqr/uilab/main.kt").readText()
         val registry = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/AqComponentRegistry.kt").readText()
+        val productionRoot = file("feature/destinations/presentation/src/commonMain/kotlin/com/agendaqr/destinations/presentation/AgendaQrApp.kt").readText()
+        val switchSource = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components/AqSwitch.kt").readText()
         val violations = mutableListOf<String>()
         if (!gallery.contains("AqComponentRegistry.filter") || !gallery.contains("entry.states.forEach") ||
             !gallery.contains("state.content")) violations += "Gallery must render shared AqComponentRegistry states"
         if (!lab.contains("AqComponentRegistry.filter") ||
             !lab.contains("entry.states[stateIndex].content(log)")) violations += "Lab must render shared AqComponentRegistry states"
         if (!gallery.contains("AqTheme(darkTheme = darkTheme)") ||
-            !lab.contains("AqTheme(darkTheme = darkTheme)")) violations += "Lab and gallery must use AqTheme"
+            !lab.contains("AqTheme(darkTheme = darkTheme)") || !productionRoot.contains("AqTheme")) {
+            violations += "Lab, gallery and production must use AqTheme"
+        }
+        val switchEntry = registry.substringAfter("\\\"AqSwitch\\\",").substringBefore("\\\"AqRadio\\\",")
+        if (switchEntry.contains("activeThumbWidget") || switchEntry.contains("inactiveThumbWidget")) {
+            violations += "AqSwitch registry must use component-default Phosphor glyphs, not local overrides"
+        }
+        if (!switchSource.contains("AqPhosphorIcon.Check.vectorForSize") ||
+            !switchSource.contains("AqPhosphorIcon.X.vectorForSize")) {
+            violations += "AqSwitch defaults must include Check/X Phosphor glyphs"
+        }
         if (Regex("""private\s+fun\s+Aq[A-Za-z0-9_]*Preview\s*\(""").containsMatchIn(gallery)) {
             violations += "Gallery must not maintain duplicate component previews"
         }
