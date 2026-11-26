@@ -181,6 +181,9 @@ fun AqButton(
     /** Cuando es verdadero y hay [icon], solo se pinta el glifo (centrado)
      *  y se oculta el texto. */
     iconOnly: Boolean = false,
+    /** `true` pinta el ícono a la derecha de la etiqueta (Moon v1
+     *  `Icon=Right`); el defecto es ícono a la izquierda (`Icon=Left`). */
+    iconAtEnd: Boolean = false,
     /** Ocupa el ancho disponible del contenedor padre, sin fijar ancho de pantalla. */
     fullWidth: Boolean = false,
 ) {
@@ -199,6 +202,7 @@ fun AqButton(
         contentPadding = contentPadding,
         hapticFeedback = false,
         iconOnly = iconOnly,
+        iconAtEnd = iconAtEnd,
         fullWidth = fullWidth,
     )
 }
@@ -219,6 +223,7 @@ private fun AqButtonImpl(
     contentPadding: PaddingValues?,
     hapticFeedback: Boolean,
     iconOnly: Boolean = false,
+    iconAtEnd: Boolean = false,
     fullWidth: Boolean = false,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -309,9 +314,9 @@ private fun AqButtonImpl(
                     Alignment.CenterHorizontally,
                 ),
             ) {
-                icon?.let {
+                if (icon != null && !iconAtEnd) {
                     AqIcon(
-                        imageVector = it,
+                        imageVector = icon,
                         contentDescription = null,
                         size = size.iconSize,
                         tint = foreground,
@@ -333,6 +338,14 @@ private fun AqButtonImpl(
                             // declara [text] y [role]. (T-02)
                             text = AnnotatedString("")
                         },
+                    )
+                }
+                if (icon != null && iconAtEnd) {
+                    AqIcon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        size = size.iconSize,
+                        tint = foreground,
                     )
                 }
             }

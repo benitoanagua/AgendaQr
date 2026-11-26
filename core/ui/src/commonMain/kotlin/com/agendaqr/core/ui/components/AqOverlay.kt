@@ -3,7 +3,6 @@ package com.agendaqr.core.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,7 +34,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.agendaqr.core.ui.theme.AqColor
-import com.agendaqr.core.ui.theme.AqCorner
 import com.agendaqr.core.ui.theme.AqShadow
 import com.agendaqr.core.ui.theme.aqShadow
 import com.agendaqr.core.ui.theme.AqLayout
@@ -195,11 +193,8 @@ fun AqDrawer(
     content: @Composable () -> Unit,
 ) {
     if (!show) return
-    // Esquinas interiores redondeadas (Moon v1 Drawer r12).
-    val drawerShape = RoundedCornerShape(
-        topEnd = AqCorner.SurfaceMd,
-        bottomEnd = AqCorner.SurfaceMd,
-    )
+    // Esquinas interiores redondeadas (Moon v1 Drawer r12, squircle).
+    val drawerShape = AqSquircles.SurfaceEndMd
     Box(
         modifier = modifier
             .fillMaxSize()

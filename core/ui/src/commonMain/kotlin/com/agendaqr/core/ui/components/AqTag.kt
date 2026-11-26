@@ -42,7 +42,12 @@ fun AqTag(
     tone: AqTone = AqTone.Neutral,
     size: AqTagSize = AqTagSize.Xs,
     modifier: Modifier = Modifier,
+    /** Ícono a la izquierda del texto (Moon v1 `Icon=Left`; con
+     *  [trailingIcon] también cubre `Icon=Both`). */
     icon: ImageVector? = null,
+    /** Ícono a la derecha del texto (Moon v1 `Icon=Right`; junto a [icon]
+     *  cubre `Icon=Both`). */
+    trailingIcon: ImageVector? = null,
 ) {
     val scheme = LocalAqColorScheme.current
     val colors = scheme.toneColors(tone)
@@ -73,6 +78,14 @@ fun AqTag(
             color = colors.content,
             modifier = Modifier.clearAndSetSemantics { },
         )
+        trailingIcon?.let {
+            AqIcon(
+                imageVector = it,
+                contentDescription = null,
+                size = size.iconSize,
+                tint = colors.content,
+            )
+        }
     }
 }
 

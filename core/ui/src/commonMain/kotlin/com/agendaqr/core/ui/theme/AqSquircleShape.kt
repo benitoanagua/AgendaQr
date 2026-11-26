@@ -148,6 +148,9 @@ class AqSquircleShape(
     /** `true` redondea solo las dos esquinas superiores (bottom sheet de
      *  Moon: `MoonSquircleBorderRadius.only(topLeft, topRight)`). */
     private val topCornersOnly: Boolean = false,
+    /** `true` redondea solo las dos esquinas derechas (drawer lateral de
+     *  Moon v1: `borderRadius` en `topEnd`/`bottomEnd`, inicio escuadro). */
+    private val endCornersOnly: Boolean = false,
 ) : Shape {
 
     override fun createOutline(
@@ -162,22 +165,44 @@ class AqSquircleShape(
         // Cuando el radio cubre la mitad del tamaño o más, la forma es un
         // círculo/ovalo completo (evita que la geometría squircle degeneré
         // y anule el área táctil al recortar).
-        if (!topCornersOnly && radiusPx >= min(width, height) / 2f) {
+        if (!topCornersOnly && !endCornersOnly && radiusPx >= min(width, height) / 2f) {
             return Outline.Generic(Path().apply { addArc(size.toRect(), 0f, 360f) })
         }
         val g = aqSquircleGeometry(radiusPx, smoothing, width, height)
-        val path = Path().apply {
-            // TR (superior derecha) y TL (superior izquierda) siempre
-            // squircle; BR/BL squircle o escuadra según [topCornersOnly].
-            addSquircleCorner(Offset(width, 0f), Offset(-1f, 0f), Offset(0f, 1f), g, width, height, first = true)
-            if (topCornersOnly) {
-                addSharpCorner(Offset(width, height), Offset(0f, -1f), Offset(-1f, 0f), g, height, width, first = false)
-                addSharpCorner(Offset(0f, height), Offset(1f, 0f), Offset(0f, -1f), g, width, height, first = false)
-            } else {
-                addSquircleCorner(Offset(width, height), Offset(0f, -1f), Offset(-1f, 0f), g, height, width, first = false)
-                addSquircleCorner(Offset(0f, height), Offset(1f, 0f), Offset(0f, -1f), g, width, height, first = false)
+        // Esquinas redondeadas por modo: `endCornersOnly` sigue al
+        // `layoutDirection` (en RTL el «end» es el lado izquierdo).
+        val roundTR: Boolean
+        val roundBR: Boolean
+        val roundBL: Boolean
+        val roundTL: Boolean
+        when {
+            topCornersOnly -> {
+                roundTR = true; roundBR = false; roundBL = false; roundTL = true
             }
-            addSquircleCorner(Offset(0f, 0f), Offset(0f, 1f), Offset(1f, 0f), g, height, width, first = false)
+            endCornersOnly && layoutDirection == LayoutDirection.Rtl -> {
+                roundTR = false; roundBR = false; roundBL = true; roundTL = true
+            }
+            endCornersOnly -> {
+                roundTR = true; roundBR = true; roundBL = false; roundTL = false
+            }
+            else -> {
+                roundTR = true; roundBR = true; roundBL = true; roundTL = true
+            }
+        }
+        val path = Path().apply {
+            var first = true
+            fun corner(round: Boolean, vertex: Offset, e1: Offset, e2: Offset, l1: Float, l2: Float) {
+                if (round) {
+                    addSquircleCorner(vertex, e1, e2, g, l1, l2, first)
+                } else {
+                    addSharpCorner(vertex, e1, e2, g, l1, l2, first)
+                }
+                first = false
+            }
+            corner(roundTR, Offset(width, 0f), Offset(-1f, 0f), Offset(0f, 1f), width, height)
+            corner(roundBR, Offset(width, height), Offset(0f, -1f), Offset(-1f, 0f), height, width)
+            corner(roundBL, Offset(0f, height), Offset(1f, 0f), Offset(0f, -1f), width, height)
+            corner(roundTL, Offset(0f, 0f), Offset(0f, 1f), Offset(1f, 0f), height, width)
             close()
         }
         return Outline.Generic(path)
@@ -185,10 +210,12 @@ class AqSquircleShape(
 
     override fun equals(other: Any?): Boolean =
         other is AqSquircleShape && other.cornerRadius == cornerRadius &&
-            other.smoothing == smoothing && other.topCornersOnly == topCornersOnly
+            other.smoothing == smoothing && other.topCornersOnly == topCornersOnly &&
+            other.endCornersOnly == endCornersOnly
 
     override fun hashCode(): Int =
-        31 * (31 * cornerRadius.hashCode() + smoothing.hashCode()) + topCornersOnly.hashCode()
+        31 * (31 * (31 * cornerRadius.hashCode() + smoothing.hashCode()) + topCornersOnly.hashCode()) +
+            endCornersOnly.hashCode()
 }
 
 /** Esquina recta (radio 0) que mantiene el encaje de aristas de la forma:
@@ -229,6 +256,9 @@ object AqSquircles {
     val SurfaceTopLg: Shape = AqSquircleShape(AqCorner.SurfaceLg, topCornersOnly = true)
     /** Bottom sheet Moon v1: radio superior 12 (`surfaceMd`, antes 16). */
     val SurfaceTopMd: Shape = AqSquircleShape(AqCorner.SurfaceMd, topCornersOnly = true)
+    /** Drawer lateral Moon v1: esquinas derechas `surfaceMd` (12),
+     *  inicio escuadro contra el borde de pantalla. */
+    val SurfaceEndMd: Shape = AqSquircleShape(AqCorner.SurfaceMd, endCornersOnly = true)
     /** Círculo/ovalo completo: radio `AqRadius.ExtraLarge` (16dp) se clampa
      *  al máximo del componente, produciendo una forma redonda en controles
      *  pequeños (botón de radio, insignia, punto) sin degenerar la

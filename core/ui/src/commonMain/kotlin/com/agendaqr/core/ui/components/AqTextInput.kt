@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -25,6 +26,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.disabled
@@ -39,19 +41,21 @@ import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqTextStyles
+import com.agendaqr.core.ui.theme.AqTracking
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.AqSquircles
 
 /**
  * Entrada de texto sobre [MoonTextInput] / [MoonFormTextInput]
  * (`moon_design` 1.1.0, `widgets/text_input`).
  *
- * Anatomía Moon: NO hay etiqueta externa persistente. El campo es una caja
- * de altura fija por tamaño con [hintText] dentro; con
- * [hasFloatingLabel] la etiqueta flota a la esquina superior al enfocar o
- * escribir (la animación de escala/alineación de Moon se resuelve de forma
- * estática: estado activo = etiqueta pequeña arriba, inactivo = hint
- * centrado).
+ * Anatomía Moon v1: la etiqueta flotante dentro de la caja solo existe en
+ * tamaño [AqTextInputSize.Xl] (alto 56). En sm/md/lg la etiqueta es un
+ * texto separado encima del campo (variante `Input Label` del spec:
+ * 14/24 en sm, 16/24 en md/lg, separación 4/8). Con [hasFloatingLabel]
+ * en xl la etiqueta flota a la esquina superior al enfocar o escribir
+ * (estado activo = etiqueta pequeña arriba, inactivo = hint centrado).
  *
  * - Geometría por tamaño: sm 32 / md 40 / lg 48 / xl 56 dp
  *   ([AqTextInputSize]); relleno vertical 2/4/6/9 y horizontal 8/12/12/16
@@ -91,7 +95,8 @@ fun AqTextInput(
     placeholder: String? = null,
     size: AqTextInputSize = AqTextInputSize.Md,
     /** Etiqueta flotante dentro de la caja (Moon `hasFloatingLabel`).
-     *  Activa por defecto cuando [label] no es nulo. */
+     *  Solo es efectiva en [AqTextInputSize.Xl]; en los demás tamaños la
+     *  etiqueta se renderiza como texto separado encima del campo. */
     hasFloatingLabel: Boolean = true,
     /** `true` dentro de [AqTextInputGroup]: la caja no dibuja fondo ni borde
      *  (Moon `MoonFormTextInput` recibe `inactiveBorderColor` transparente y
@@ -134,9 +139,13 @@ fun AqTextInput(
     }
     // Hueco interno entre el ícono de apoyo y el texto (Moon §3: 8 dp, xl 16).
     val innerGap = if (size == AqTextInputSize.Xl) AqSize.X2s else AqSize.X4s
-    val floatingActive = hasFloatingLabel && !label.isNullOrBlank() &&
-        (focused || value.isNotEmpty())
-    val idleHint = placeholder ?: label
+    // Moon v1: la etiqueta flotante solo existe en xl; en sm/md/lg la
+    // etiqueta es un texto separado encima del campo (`Input Label`).
+    val floatingCapable = size == AqTextInputSize.Xl
+    val floatingActive = hasFloatingLabel && floatingCapable &&
+        !label.isNullOrBlank() && (focused || value.isNotEmpty())
+    val topLabel = !label.isNullOrBlank() && !(hasFloatingLabel && floatingCapable)
+    val idleHint = if (topLabel) placeholder else placeholder ?: label
     val accessibleName = label ?: placeholder.orEmpty()
     val fieldTextStyle = (if (size == AqTextInputSize.Lg || size == AqTextInputSize.Xl) {
         AqTextStyles.BodyMd
@@ -145,6 +154,35 @@ fun AqTextInput(
     })
 
     Column(modifier = modifier.fillMaxWidth()) {
+        if (topLabel) {
+            // Etiqueta superior de Moon v1 (`Input Label` en sm/md/lg):
+            // texto separado, 14/24 en sm y 16/24 en md/lg, separación 8
+            // (4 en sm). Es visual: el nombre accesible del campo ya lo
+            // porta `contentDescription` (misma regla que la flotante).
+            Box(
+                modifier = Modifier
+                    .padding(
+                        bottom = if (size == AqTextInputSize.Sm) {
+                            AqSize.X5s
+                        } else {
+                            AqLayout.LabelToField
+                        },
+                    )
+                    .testTag("aq-field-label"),
+            ) {
+                Text(
+                    text = label.orEmpty(),
+                    fontSize = if (size == AqTextInputSize.Sm) AqType.BodySm else AqType.BodyMd,
+                    lineHeight = AqType.LineHeightBodyMd,
+                    fontFamily = AqType.FamilyUi,
+                    fontWeight = AqWeight.Regular,
+                    letterSpacing = AqTracking.Normal,
+                    color = AqColor.TextPrimary,
+                    maxLines = 1,
+                    modifier = Modifier.clearAndSetSemantics { },
+                )
+            }
+        }
         // La caja visual es el campo completo de Moon: altura fija del
         // tamaño, sin target táctil extra.
         Box(
@@ -293,7 +331,7 @@ fun AqTextInput(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = AqSize.X4s),
+                    .padding(top = AqSize.X5s),
                 horizontalArrangement = Arrangement.End,
             ) {
                 AqText(

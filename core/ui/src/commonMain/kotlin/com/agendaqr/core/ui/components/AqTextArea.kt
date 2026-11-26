@@ -46,7 +46,8 @@ import com.agendaqr.core.ui.theme.AqStateAlpha
  * `widgets/text_area` → `MoonFormTextInput`).
  *
  * Moon define una única configuración (sin tamaños ni etiqueta externa):
- * - Caja de altura fija ([height], por defecto `sizes.md` = 40 dp): fondo
+ * - Caja de altura fija ([height], por defecto 132 dp = base del spec
+ *   Moon v1 «Textarea»): fondo
  *   `goku`→[AqColor.Background], borde `beerus`→[AqColor.Border] inactivo /
  *   `piccolo`→[AqColor.Focus] activo / `chichi`→[AqColor.Danger] en error,
  *   radio `interactiveSm`, relleno `x2s` (16 dp) en los cuatro lados
@@ -213,7 +214,7 @@ fun AqTextArea(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = AqSize.X4s),
+                    .padding(top = AqSize.X5s),
                 horizontalArrangement = Arrangement.End,
             ) {
                 AqText(

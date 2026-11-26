@@ -28,7 +28,12 @@ import com.agendaqr.core.ui.theme.AqWeight
  * - [title]: título del estado vacío (copy del llamador).
  * - [subtitle]: subtítulo opcional.
  * - [icon]: glifo decorativo opcional (p. ej. [AqIcons.QrCode], [AqIcons.Attachment]).
- * - [actionLabel] / [onAction]: acción opcional del estado vacío.
+ * - [actionLabel] / [onAction]: acción principal opcional del estado vacío.
+ * - [secondaryActionLabel] / [onSecondaryAction]: segunda acción (Moon v1
+ *   `Type=Multi button`); se pinta como [AqButtonVariant.Outline] debajo
+ *   de la principal.
+ * - [illustration]: slot de ilustración (Moon v1 `Type=Simple+ Illu`); si se
+ *   proporciona sustituye al glifo [icon].
  * - [fillViewport]: el placeholder ocupa todo el alto disponible (p. ej.
  *   `Modifier.weight(1f)` dentro del contenido de [AqScreen]) y centra su
  *   contenido verticalmente — patrón de estado vacío de pantalla.
@@ -40,8 +45,13 @@ fun AqEmptyPlaceholder(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     icon: ImageVector? = null,
+    /** Ilustración del estado (Moon v1 `Simple+ Illu`); tiene prioridad
+     *  sobre [icon]. */
+    illustration: (@Composable () -> Unit)? = null,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
+    secondaryActionLabel: String? = null,
+    onSecondaryAction: (() -> Unit)? = null,
     fillViewport: Boolean = false,
 ) {
     val body: @Composable () -> Unit = {
@@ -52,12 +62,16 @@ fun AqEmptyPlaceholder(
             // subtítulo y acción (antes `AqSize.Sm` = 32 dp).
             verticalArrangement = Arrangement.spacedBy(AqSize.X4s),
         ) {
-        icon?.let {
-            AqIcon(
-                imageVector = it,
-                contentDescription = null,
-                size = AqSize.Lg,
-            )
+        if (illustration != null) {
+            illustration()
+        } else {
+            icon?.let {
+                AqIcon(
+                    imageVector = it,
+                    contentDescription = null,
+                    size = AqSize.Lg,
+                )
+            }
         }
         AqText(
             text = title,
@@ -76,6 +90,16 @@ fun AqEmptyPlaceholder(
             AqButton(
                 label = label,
                 onClick = { onAction?.invoke() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .widthIn(max = AqMetrics.ButtonLargeHeight + AqSpacing.Xxl),
+            )
+        }
+        secondaryActionLabel?.let { label ->
+            AqButton(
+                label = label,
+                onClick = { onSecondaryAction?.invoke() },
+                variant = AqButtonVariant.Outline,
                 modifier = Modifier
                     .fillMaxWidth()
                     .widthIn(max = AqMetrics.ButtonLargeHeight + AqSpacing.Xxl),

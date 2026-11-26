@@ -22,7 +22,6 @@ import com.agendaqr.core.ui.components.AqTextInput
 import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.theme.AqColor
-import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.destinations.domain.Context
@@ -151,14 +150,14 @@ fun DestinationEditorScreen(
             value = note,
             onValueChange = { note = it },
             maxLength = FieldLimits.Nota,
-            // Moon: el área de texto toma `height` explícita; con el default
-            // de 40 dp el relleno de 16 dp deja ~7 dp para el texto.
-            height = AqSize.X2l,
+            // Moon v1 «Textarea»: altura base 132 dp (default del componente).
         )
         AqSwitch(
             label = AppStrings.MarcarComoFavorito,
             checked = favorite,
             onCheckedChange = { favorite = it },
+            // Fila de ajuste: etiqueta a la izquierda, control a la derecha.
+            labelFirst = true,
         )
         AqMenuItem(
             title = selection.contextId?.let { id ->

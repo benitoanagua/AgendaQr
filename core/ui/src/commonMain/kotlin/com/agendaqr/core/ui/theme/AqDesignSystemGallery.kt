@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,11 +61,14 @@ import com.agendaqr.core.ui.components.AqIcon
 import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqLinearLoader
 import com.agendaqr.core.ui.components.AqLinearProgress
+import com.agendaqr.core.ui.components.AqLeaderboard
+import com.agendaqr.core.ui.components.AqLeaderboardEntry
 import com.agendaqr.core.ui.components.AqListSection
 import com.agendaqr.core.ui.components.AqLoadMore
 import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqModal
 import com.agendaqr.core.ui.components.AqPillTab
+import com.agendaqr.core.ui.components.AqPagination
 import com.agendaqr.core.ui.components.AqPopover
 import com.agendaqr.core.ui.components.AqProgress
 import com.agendaqr.core.ui.components.AqProgressBar
@@ -77,6 +82,10 @@ import com.agendaqr.core.ui.components.AqSectionTitle
 import com.agendaqr.core.ui.components.AqSearchInput
 import com.agendaqr.core.ui.components.AqSegmentedControl
 import com.agendaqr.core.ui.components.AqSegmentedOption
+import com.agendaqr.core.ui.components.AqSelect
+import com.agendaqr.core.ui.components.AqCombobox
+import com.agendaqr.core.ui.components.AqSidebar
+import com.agendaqr.core.ui.components.AqSidebarItem
 import com.agendaqr.core.ui.components.AqSkeletonBlock
 import com.agendaqr.core.ui.components.AqSwipeAction
 import com.agendaqr.core.ui.components.AqSwipeActions
@@ -196,6 +205,10 @@ fun AqDesignSystemGallery(darkTheme: Boolean) {
             // ------------------------------------------------------------------
             AqSectionTitle(text = "Mobile Interactions")
             AqMobileInteractionsPreview()
+
+            // ------------------------------------------------------------------
+            AqSectionTitle(text = "Moon v1 (Figma)")
+            AqFigmaV1Preview()
         }
     }
 }
@@ -1222,6 +1235,90 @@ private fun AqMobileInteractionsPreview() {
             label = "Etiqueta",
             value = "",
             onValueChange = {},
+        )
+    }
+}
+
+/** Componentes exclusivos del catálogo Moon v1 (Figma), sin widget en moon_design 1.1.0. */
+@Composable
+private fun AqFigmaV1Preview() {
+    var selectIndex by remember { mutableStateOf(0) }
+    var comboQuery by remember { mutableStateOf("") }
+    val comboSelected = remember { mutableStateOf(setOf(0)) }
+    var page by remember { mutableStateOf(1) }
+    var sidebarIndex by remember { mutableStateOf(0) }
+    Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Md)) {
+        AqText(
+            text = "Select — campo cerrado con menú anclado",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqSelect(
+            options = listOf("Opción A", "Opción B", "Opción C"),
+            selectedIndex = selectIndex,
+            onSelected = { selectIndex = it },
+            label = "Tipo",
+            placeholder = "Selecciona…",
+        )
+        AqText(
+            text = "Combobox — campo con búsqueda y selección múltiple",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqCombobox(
+            query = comboQuery,
+            onQueryChange = { comboQuery = it },
+            options = listOf("Almuerzo", "Cena", "Merienda", "Postre"),
+            selectedIndices = comboSelected.value,
+            onToggle = { i ->
+                comboSelected.value = if (i in comboSelected.value) {
+                    comboSelected.value - i
+                } else {
+                    comboSelected.value + i
+                }
+            },
+            label = "Comidas",
+            multiple = true,
+        )
+        AqText(
+            text = "Pagination — páginas numeradas con anterior/siguiente",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqPagination(
+            pageCount = 7,
+            currentPage = page,
+            onPageSelected = { page = it },
+            previousContentDescription = "Anterior",
+            nextContentDescription = "Siguiente",
+            pageContentDescription = { "Página ${it + 1}" },
+        )
+        AqText(
+            text = "Sidebar — navegación lateral expandida/colapsada",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqSidebar(
+            items = listOf(
+                AqSidebarItem("Inicio", icon = AqIcons.Home),
+                AqSidebarItem("Destinos", icon = AqIcons.Context, badge = "3"),
+                AqSidebarItem("Cuenta", icon = AqIcons.Favorite),
+            ),
+            selectedIndex = sidebarIndex,
+            onItemSelected = { sidebarIndex = it },
+            expanded = true,
+        )
+        AqText(
+            text = "Leaderboard — clasificación con puesto, subtítulo y valor",
+            color = AqColor.TextPrimary,
+            size = AqType.BodyMd,
+        )
+        AqLeaderboard(
+            entries = listOf(
+                AqLeaderboardEntry("Ana", rank = 1, subtitle = "42 visitas", value = "980"),
+                AqLeaderboardEntry("Luis", rank = 2, subtitle = "38 visitas", value = "910"),
+                AqLeaderboardEntry("Marta", rank = 3, subtitle = "31 visitas", value = "845"),
+            ),
         )
     }
 }

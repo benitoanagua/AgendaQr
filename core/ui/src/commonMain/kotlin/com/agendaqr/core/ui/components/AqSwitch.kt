@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -71,6 +72,10 @@ fun AqSwitch(
     state: AqFieldState = AqFieldState(),
     description: String? = null,
     size: AqSwitchSize = AqSwitchSize.Sm,
+    /** `true` pone la etiqueta a la izquierda de la pista (fila de ajuste
+     *  convencional: texto + control al final). `false` (defecto) mantiene
+     *  la anatomía pista + etiqueta a la derecha. */
+    labelFirst: Boolean = false,
     activeTrackWidget: (@Composable () -> Unit)? = null,
     inactiveTrackWidget: (@Composable () -> Unit)? = null,
     activeThumbWidget: (@Composable () -> Unit)? = null,
@@ -104,21 +109,16 @@ fun AqSwitch(
         label = "aqSwitchThumb",
     )
 
-    // Sin etiqueta el control es la pista sola con la geometría exacta de
-    // Moon (`switch_sizes.dart`: 32×16 / 44×24 / 60×32). Con etiqueta, el
-    // objetivo táctil crece a 48 dp sin deformar la pista (ADR-0039 §4.4).
+    // Sin etiqueta la pista conserva la geometría exacta de Moon
+    // (`switch_sizes.dart`: 32×16 / 44×24 / 60×32) centrada en el área
+    // táctil; con o sin etiqueta el objetivo crece a 48 dp sin deformar
+    // la pista (ADR-0039 §4.4).
     val hasLabel = label.isNotBlank() || description != null
     Box(
         modifier = modifier
-            .then(
-                if (hasLabel) {
-                    Modifier.defaultMinSize(
-                        minWidth = AqMetrics.ControlMinSize,
-                        minHeight = AqMetrics.ControlMinSize,
-                    )
-                } else {
-                    Modifier.size(size.trackWidth, size.height)
-                },
+            .defaultMinSize(
+                minWidth = AqMetrics.ControlMinSize,
+                minHeight = AqMetrics.ControlMinSize,
             )
             .clickable(
                 enabled = state.enabled,
@@ -138,16 +138,45 @@ fun AqSwitch(
             // Sin etiqueta la fila es exactamente la pista de Moon; con
             // etiqueta la fila abraza pista + texto (si no, la etiqueta se
             // medía con el ancho restante de la pista y quedaba invisible).
-            modifier = if (hasLabel) {
-                Modifier
-            } else {
-                Modifier.size(size.trackWidth, size.height)
+            // Con [labelFirst] la fila llena el ancho: texto al inicio y
+            // control al final (fila de ajuste convencional).
+            modifier = when {
+                hasLabel && labelFirst -> Modifier.fillMaxWidth()
+                hasLabel -> Modifier
+                else -> Modifier.size(size.trackWidth, size.height)
             },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(
                 if (hasLabel) AqSize.X4s else AqSize.X6s,
             ),
         ) {
+            val labelContent: @Composable () -> Unit = {
+                Column(
+                    modifier = if (labelFirst) Modifier.weight(1f) else Modifier,
+                ) {
+                    // Moon v1: etiqueta 14/24 Regular (gap 8 con la pista).
+                    androidx.compose.foundation.text.BasicText(
+                        text = label,
+                        style = androidx.compose.ui.text.TextStyle(
+                            fontSize = AqType.BodySm,
+                            lineHeight = AqType.LineHeightBodyMd,
+                            fontFamily = AqType.FamilyUi,
+                            fontWeight = AqWeight.Regular,
+                            color = AqColor.TextPrimary,
+                        ),
+                    )
+                    if (description != null) {
+                        AqText(
+                            text = description,
+                            size = AqType.Caption,
+                            color = AqColor.TextSecondary,
+                        )
+                    }
+                }
+            }
+            if (labelFirst && hasLabel) {
+                labelContent()
+            }
             Box(
                 modifier = Modifier
                     .size(size.trackWidth, size.height)
@@ -201,22 +230,8 @@ fun AqSwitch(
                     }
                 }
             }
-            if (hasLabel) {
-                Column(modifier = Modifier) {
-                    AqText(
-                        text = label,
-                        size = AqType.Body,
-                        fontWeight = AqWeight.Medium,
-                        color = AqColor.TextPrimary,
-                    )
-                    if (description != null) {
-                        AqText(
-                            text = description,
-                            size = AqType.Caption,
-                            color = AqColor.TextSecondary,
-                        )
-                    }
-                }
+            if (hasLabel && !labelFirst) {
+                labelContent()
             }
         }
     }

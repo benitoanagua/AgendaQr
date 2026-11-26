@@ -122,7 +122,7 @@ object MoonSpecActuals {
                 else -> AqCorner.InteractiveSm
             }
             // El padding vertical efectivo depende del interlineado del
-            // texto (tipografía Polaris por ADR-0044): no es invariante.
+            // texto (tipografía del sistema por ADR-0044): no es invariante.
             Actual(
                 height = i(height),
                 radius = i(radius),

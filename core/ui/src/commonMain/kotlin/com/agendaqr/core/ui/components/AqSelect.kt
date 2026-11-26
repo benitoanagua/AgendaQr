@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +26,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -39,7 +41,9 @@ import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqShadow
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSquircles
+import com.agendaqr.core.ui.theme.AqTracking
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.aqShadow
 
 /**
@@ -100,14 +104,47 @@ fun AqSelect(
         AqTextInputSize.Xl -> AqLayout.InputPaddingHorizontalXl
     }
     val innerGap = if (size == AqTextInputSize.Xl) AqSize.X2s else AqSize.X4s
-    val floatingActive = hasFloatingLabel && !label.isNullOrBlank() &&
-        (expanded || selectedIndex >= 0)
-    val idleHint = placeholder ?: label
+    // Moon v1: la etiqueta flotante solo existe en xl; en sm/md/lg es un
+    // texto separado encima del campo (`Input Label`, igual que en
+    // [AqTextInput]).
+    val floatingCapable = size == AqTextInputSize.Xl
+    val floatingActive = hasFloatingLabel && floatingCapable &&
+        !label.isNullOrBlank() && (expanded || selectedIndex >= 0)
+    val topLabel = !label.isNullOrBlank() && !(hasFloatingLabel && floatingCapable)
+    val idleHint = if (topLabel) placeholder else placeholder ?: label
     val accessibleName = label ?: placeholder.orEmpty()
     val selectedLabel = options.getOrNull(selectedIndex)
     val effectiveErrorMessage = if (isError) errorMessage else null
 
     Column(modifier = modifier.fillMaxWidth()) {
+        if (topLabel) {
+            // Etiqueta superior de Moon v1 (`Input Label` en sm/md/lg).
+            // Es visual: el nombre accesible del campo ya lo porta
+            // `contentDescription` (misma regla que la flotante).
+            Box(
+                modifier = Modifier
+                    .padding(
+                        bottom = if (size == AqTextInputSize.Sm) {
+                            AqSize.X5s
+                        } else {
+                            AqLayout.LabelToField
+                        },
+                    )
+                    .testTag("aq-field-label"),
+            ) {
+                Text(
+                    text = label.orEmpty(),
+                    fontSize = if (size == AqTextInputSize.Sm) AqType.BodySm else AqType.BodyMd,
+                    lineHeight = AqType.LineHeightBodyMd,
+                    fontFamily = AqType.FamilyUi,
+                    fontWeight = AqWeight.Regular,
+                    letterSpacing = AqTracking.Normal,
+                    color = AqColor.TextPrimary,
+                    maxLines = 1,
+                    modifier = Modifier.clearAndSetSemantics { },
+                )
+            }
+        }
         AqDropdown(
             open = expanded && enabled,
             options = options,
