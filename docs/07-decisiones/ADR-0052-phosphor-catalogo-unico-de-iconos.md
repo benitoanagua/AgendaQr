@@ -18,7 +18,7 @@ La intención del producto es inequívoca: Phosphor sustituye por completo a Moo
 4. **El switch es una composición común.** `AqSwitch` usa Check/X Phosphor por defecto; Lab, galería y producción no definen overrides visuales locales.
 5. **No se adopta todavía un wrapper Compose de terceros como dependencia de ejecución.** El candidato `io.github.dev778g-me:phosphoricons-*:1.0.5` se publica con Kotlin 2.3.20 y Compose Multiplatform 1.10.3, mientras Agenda QR está fijado en Kotlin 2.2.20/CMP 1.8.2. La incompatibilidad potencial de metadata y resolución de Compose debe evitarse. Se importa el SVG oficial desde una fuente versionada y se convierte a vectores locales durante el proceso de actualización de iconos; la app no hace llamadas de red ni carga SVG en runtime.
 6. **La importación es reproducible.** Cada glifo mantiene nombre Phosphor, nombre de archivo original, peso, versión/commit de origen y licencia. El generador no redibuja ni modifica el path; el tinte se aplica desde `AqIcon`.
-7. **La retirada de Moon es verificable.** Tras migrar los call sites, se elimina `MoonIconVectors.kt`, se actualizan licencias/avisos y se añade un gate que falla si aparece cualquier referencia a Moon Icons en código, tests o documentación normativa activa.
+7. **La retirada de Moon es verificable y aplicada.** `MoonIconVectors.kt` y todos sus call sites fueron eliminados; licencias/avisos actualizados y `verifyProductIconCatalog` falla si reaparece la fuente legacy.
 
 ## Plan de migración
 
