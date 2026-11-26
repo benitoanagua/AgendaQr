@@ -63,5 +63,7 @@ class AqIconMappingTest {
     fun switch_state_glyphs_use_phosphor_bold_at_thumb_size() {
         assertEquals("PhosphorCheckBold", AqPhosphorIcon.Check.vectorForSize(12.dp).name)
         assertEquals("PhosphorXBold", AqPhosphorIcon.X.vectorForSize(12.dp).name)
+        assertEquals("PhosphorCheckRegular", AqPhosphorIcon.Check.vectorForSize(36.dp).name)
+        assertEquals("PhosphorXLight", AqPhosphorIcon.X.vectorForSize(40.dp).name)
     }
 }
