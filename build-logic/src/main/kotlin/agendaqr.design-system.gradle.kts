@@ -14,6 +14,11 @@ fun Project.productionKotlinSources(): Sequence<File> = sequence {
                     !it.path.contains("/build/") &&
                     !it.path.contains("/src/test/") &&
                     !it.path.contains("/src/androidTest/") &&
+                    // core/ui-lab es el harness wasmJs del Component Lab
+                    // (ADR-0049): herramienta de desarrollo, no UI de
+                    // producto; sus literales (anchos de viewport de
+                    // laboratorio) no son tokens del design system.
+                    !it.path.contains("/ui-lab/") &&
                     !Regex("/src/[a-zA-Z]*[Tt]est/").containsMatchIn(it.path)
             })
         }
@@ -68,6 +73,10 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-19" to listOf("border:AqProgressPin.kt"),
     // Fallback iOS de la sombra por plataforma (approx. por elevación).
     "E-21" to listOf("shadow:AqShadowPlatform.ios.kt"),
+    // Mismo fallback por elevación en wasmJs (Component Lab, ADR-0049).
+    "E-22" to listOf("shadow:AqShadowPlatform.wasmJs.kt"),
+    // Borde del campo de AqSelect (misma anatomía de foco que AqTextInput).
+    "E-23" to listOf("border:AqSelect.kt"),
     // `Modifier.shadow` se centraliza en la capa de tokens; solo los
     // archivos registrados pueden invocarlo (o elevarse vía `aqShadow`).
     // E-06 (elevación de botones) se retiró: los botones son planos y
@@ -1718,6 +1727,130 @@ tasks.register("verifyNoPreviousDesignSystem") {
     }
 }
 
+/** Nombres de composables públicos `fun Aq*(...)` declarados en las líneas
+ * de un fuente de `core/ui/components` (sin extensiones ni internos). */
+fun publicComponentNames(lines: List<String>): List<String> =
+    lines.mapNotNull {
+        Regex("""^fun (Aq[A-Za-z0-9_]+)\s*\(""").find(it.trimStart())?.groupValues?.get(1)
+    }
+
+/** Ids registrados en `AqComponentRegistry.kt` (`entry("AqX", ...)`). */
+fun registryEntryIds(content: String): Set<String> =
+    Regex("""entry\(\s*"(Aq[A-Za-z0-9_]+)"""").findAll(content)
+        .map { it.groupValues[1] }.toSet()
+
+/**
+ * Cobertura del Component Lab: todo composable público de
+ * `core/ui/components` debe tener entrada en `AqComponentRegistry`, y toda
+ * entrada debe corresponder a un componente real con al menos un estado.
+ */
+fun componentRegistryViolations(
+    components: Map<String, String>,
+    registryContent: String,
+): List<String> {
+    val registered = registryEntryIds(registryContent)
+    val violations = mutableListOf<String>()
+    components.forEach { (name, location) ->
+        if (name !in registered) {
+            violations += "component-lab: '$name' ($location) no tiene entrada en AqComponentRegistry"
+        }
+    }
+    registered.forEach { id ->
+        if (id !in components) {
+            violations += "component-lab: entrada '$id' en AqComponentRegistry sin componente público en components/"
+        }
+    }
+    val entryPattern = Regex("""entry\(\s*"(Aq[A-Za-z0-9_]+)"""")
+    val matches = entryPattern.findAll(registryContent).toList()
+    matches.forEachIndexed { index, match ->
+        val end = matches.getOrNull(index + 1)?.range?.first ?: registryContent.length
+        val chunk = registryContent.substring(match.range.first, end)
+        if (!chunk.contains("state(")) {
+            violations += "component-lab: la entrada '${match.groupValues[1]}' no declara estados"
+        }
+    }
+    return violations
+}
+
+/**
+ * Guardias del Component Lab web (ADR-0049): el registro debe cubrir todos
+ * los componentes públicos de `core/ui/components`.
+ */
+tasks.register("verifyComponentRegistry") {
+    group = "verification"
+    description = "Every public Aq* composable in core/ui/components must have an AqComponentRegistry entry."
+    doLast {
+        val componentsDir = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/components")
+        require(componentsDir.isDirectory) { "component-lab: no existe $componentsDir" }
+        val components = linkedMapOf<String, String>()
+        componentsDir.walkTopDown()
+            .filter { it.isFile && it.extension == "kt" }
+            .forEach { source ->
+                publicComponentNames(source.readLines()).forEach { name ->
+                    components.putIfAbsent(name, "${source.name}")
+                }
+            }
+        val registryFile = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/AqComponentRegistry.kt")
+        require(registryFile.isFile) { "component-lab: no existe $registryFile" }
+        val violations = componentRegistryViolations(components, registryFile.readText())
+        require(violations.isEmpty()) {
+            "Component Lab registry violations (${violations.size}):\n" +
+                violations.take(60).joinToString("\n") { "  $it" }
+        }
+        logger.lifecycle("verifyComponentRegistry: PASS (${components.size} componentes, ${registryEntryIds(registryFile.readText()).size} entradas)")
+    }
+}
+
+/** Self-test de `verifyComponentRegistry`: la extracción y la cobertura
+ * deben fallar ante cada divergencia. */
+tasks.register("verifyComponentRegistryFixtures") {
+    group = "verification"
+    description = "Self-test: the component registry gate must fail on missing/stale entries."
+    doLast {
+        val componentLines = listOf(
+            "@Composable",
+            "fun AqButton(label: String) {}",
+            "internal fun AqInternal() {}",
+            "private fun AqPrivate() {}",
+            "fun AqTone.content() {}",
+            "fun helper() {}",
+        )
+        require(publicComponentNames(componentLines) == listOf("AqButton")) {
+            "publicComponentNames debe capturar solo fun Aq* públicos: ${publicComponentNames(componentLines)}"
+        }
+        val registryFixture = """
+            val X = listOf(
+                entry("AqButton", Cat, state("a", "A") { }),
+                entry("AqChip", Cat, state("b", "B") { }),
+            )
+        """.trimIndent()
+        require(registryEntryIds(registryFixture) == setOf("AqButton", "AqChip")) {
+            "registryEntryIds debe extraer los ids de entry(): ${registryEntryIds(registryFixture)}"
+        }
+        val components = mapOf("AqButton" to "A.kt", "AqChip" to "B.kt")
+        require(componentRegistryViolations(components, registryFixture).isEmpty()) {
+            "registro completo no debe generar violaciones"
+        }
+        val missing = componentRegistryViolations(
+            mapOf("AqButton" to "A.kt", "AqChip" to "B.kt", "AqTable" to "C.kt"),
+            registryFixture,
+        )
+        require(missing.size == 1 && missing.single().contains("'AqTable'")) {
+            "un componente sin entrada debe fallar: $missing"
+        }
+        val stale = componentRegistryViolations(components, registryFixture + "\nentry(\"AqGhost\", Cat, state(\"x\", \"X\") { })")
+        require(stale.size == 1 && stale.single().contains("'AqGhost'")) {
+            "una entrada sin componente debe fallar: $stale"
+        }
+        val noStates = componentRegistryViolations(components, """
+            val X = listOf(entry("AqButton", Cat), entry("AqChip", Cat, state("b", "B") { }))
+        """.trimIndent())
+        require(noStates.any { it.contains("no declara estados") }) {
+            "una entrada sin state() debe fallar: $noStates"
+        }
+    }
+}
+
 tasks.register("verifyAgendaQrArchitecture") {
     group = "verification"
     dependsOn(
@@ -1735,6 +1868,8 @@ tasks.register("verifyAgendaQrArchitecture") {
         "verifyNoPreviousDesignSystem",
         "verifyMoonFidelity",
         "verifyMoonFidelityFixtures",
+        "verifyComponentRegistry",
+        "verifyComponentRegistryFixtures",
     )
     description = "Runs the complete Agenda QR architecture and design-system gates."
 }

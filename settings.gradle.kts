@@ -20,6 +20,7 @@ dependencyResolutionManagement {
 rootProject.name = "AgendaQr"
 include(":androidApp")
 include(":core:ui")
+include(":core:ui-lab")
 include(":feature:destinations:domain")
 include(":feature:destinations:data")
 include(":feature:destinations:presentation")

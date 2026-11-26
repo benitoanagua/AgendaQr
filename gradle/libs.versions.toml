@@ -65,3 +65,5 @@ material3-window-size = { group = "org.jetbrains.compose.material3", name = "mat
 # la captura se activa desde el propio harness de tests.
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
 roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
+# DOM de Kotlin/Wasm para ComposeViewport en :core:ui-lab.
+kotlinx-browser = { group = "org.jetbrains.kotlinx", name = "kotlinx-browser", version = "0.5.0" }

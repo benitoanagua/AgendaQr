@@ -13,6 +13,17 @@ android {
 }
 
 kotlin {
+    // wasmJs solo en este módulo (no en el convention plugin compartido):
+    // alimenta el Component Lab web (:core:ui-lab). El resto de módulos
+    // KMP no publica variante web.
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs {
+        // `browser()` en una librería no genera distribución: solo declara
+        // el entorno JS que el consumidor (:core:ui-lab) necesita para
+        // resolver el toolchain npm de Kotlin/Wasm.
+        browser()
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.datetime)

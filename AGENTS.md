@@ -21,3 +21,6 @@ Kotlin/Compose en `core/ui`; no hay runtime Flutter.
 - Gates: `./gradlew verifyAgendaQrArchitecture` (ver `docs/QUALITY.md`).
 - Galería: `./gradlew captureGallery -Pagendaqr.capture=true
   -PallowDebugSigningForRc=true`.
+- Component Lab (wasmJs): `./gradlew :core:ui-lab:wasmJsBrowserDevelopmentRun`
+  o `wasmJsBrowserDistribution`; registro en
+  `docs/05-design-system/15-component-lab.md` (ADR-0049).
