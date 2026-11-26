@@ -1,6 +1,6 @@
 # Agenda QR — mapa semántico de iconos Phosphor
 
-**Estado:** destino de migración ADR-0052; no significa que todos los mappings estén implementados.  
+**Estado:** implementado en código (ADR-0052); tests/CI multiplataforma pendientes de confirmación.  
 **Fuente:** Phosphor Icons `@phosphor-icons/core` v2.0.8, MIT.  
 **API pública:** `AqIcons` en `core/ui`; los features no importan vectores del paquete ni crean iconos.
 
@@ -43,6 +43,8 @@
 | Share | ShareNetwork | Regular | Compartir |
 | Copy | Copy | Regular | Copiar |
 | Maximize | ArrowsOut | Regular | Expandir; verificar frente a CornersOut en captura |
+
+`AqIcons.ArrowDown` y `AqIcons.ArrowUp` son aliases semánticos de `Income` y `Expense` respectivamente. El catálogo expone 39 conceptos API y usa 37 glifos Phosphor distintos.
 
 ## Reglas de peso y estado
 
