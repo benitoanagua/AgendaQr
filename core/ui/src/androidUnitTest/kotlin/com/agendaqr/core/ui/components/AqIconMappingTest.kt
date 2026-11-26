@@ -1,5 +1,8 @@
 package com.agendaqr.core.ui.components
 
+import androidx.compose.ui.unit.dp
+import com.agendaqr.core.ui.icons.AqPhosphorIcon
+import com.agendaqr.core.ui.icons.vectorForSize
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
