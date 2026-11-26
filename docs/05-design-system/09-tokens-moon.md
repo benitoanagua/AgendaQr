@@ -171,5 +171,18 @@ familia es Inter (D-05 del contrato).
 
 ## 4. Iconos
 
-35 glifos de `@heathmont/moon-icons` en `MoonIconVectors.kt`; correspondencia
-con los nombres de producto en X-07 del contrato.
+Phosphor Icons `@phosphor-icons/core` v2.0.8 es la única familia de iconos de
+producto (ADR-0052). Los 37 conceptos semánticos de `AqIcons` se mapean a
+SVG oficiales convertidos a `ImageVector` KMP en
+`core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/icons/PhosphorProductVectors*.kt`.
+El catálogo conserva la API de producto; las pantallas no importan vectores
+directamente.
+
+- Peso base: Regular para iconos de navegación, contenido y acciones.
+- Check/X de `AqSwitch`: Phosphor Bold en 12–14 dp.
+- Tinte y tamaño proceden de `AqIcon`/tokens semánticos Moon.
+- La licencia MIT y la atribución Phosphor se mantienen en
+  [06-licencias-terceros.md](06-licencias-terceros.md) y en el aviso Android.
+
+La antigua sección X-07 del contrato se conserva como historial de decisiones,
+pero no es fuente vigente de iconos; ADR-0052 y este catálogo la sustituyen.
