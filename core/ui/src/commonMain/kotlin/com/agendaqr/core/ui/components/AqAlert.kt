@@ -6,13 +6,10 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,6 +34,9 @@ import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.LocalAqColorScheme
 import com.agendaqr.core.ui.theme.AqSquircles
 
+/** Relleno interno del banner en los cuatro lados (Moon § Alert: 16 dp). */
+private val AqAlertPadding: Dp = AqSize.X2s
+
 /**
  * Alerta persistente sobre [MoonAlert] (`moon_design` 1.1.0,
  * `widgets/alert`). Superficie de ancho completo que comunica un estado
@@ -50,7 +50,8 @@ import com.agendaqr.core.ui.theme.AqSquircles
  * - [icon]: glifo decorativo del tono (aportado por el llamador).
  * - Borde de 1 dp y relleno tonal del contenedor; radio SurfaceSm.
  * - Geometría Moon (§ Alert): padding 16 en los cuatro lados, hueco
- *   horizontal 12, hueco vertical 8, alto mínimo 56; con más de una acción,
+ *   horizontal 12, hueco vertical 8, alto mínimo 56; siempre abraza su
+ *   contenido (nunca llena el alto del padre); con más de una acción,
  *   los botones van en una [Row] debajo del mensaje alineados al final; con
  *   una sola, puede ir a la derecha.
  * - Objetivo táctil ≥ 48 dp en el descarte (D-02).
@@ -72,9 +73,6 @@ fun AqAlert(
     /** Descripción accesible del banner (para anuncios de estado como "Guardado"). */
     contentDescription: String? = null,
     icon: ImageVector? = null,
-    /** Relleno horizontal del banner (16 dp por defecto; None cuando el
-     *  host ya aplica el margen de pantalla, p. ej. [AppStatusHost]). */
-    horizontalPadding: Dp = AqSize.X2s,
     /** Color de fondo del banner (Moon `MoonAlert.backgroundColor`, p. ej.
      *  la variante `filled`). Por defecto el `container` del tono. */
     containerColor: Color? = null,
@@ -86,36 +84,27 @@ fun AqAlert(
     val pressed = interactionSource.collectIsPressedAsState().value
     val hasMultipleActions = (confirmLabel != null && onConfirm != null) &&
         (dismissLabel != null && onDismiss != null)
-    // Moon `alert.dart`: el `Column` interno usa `mainAxisSize.max`, así que
-    // la alerta ocupa todo el alto disponible cuando el padre lo acota y se
-    // ajusta al contenido cuando el alto es ilimitado (scroll).
-    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
-        val boundedHeight = maxHeight != Dp.Infinity
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .then(
-                    if (boundedHeight) {
-                        Modifier.height(maxHeight)
-                    } else {
-                        Modifier.defaultMinSize(minHeight = AqSize.Xl)
-                    },
-                )
-                .background(containerColor ?: colors.container, AqSquircles.InteractiveSm)
-                .padding(horizontal = horizontalPadding, vertical = AqSize.X2s)
-                .semantics {
-                    liveRegion = LiveRegionMode.Polite
-                    contentDescription?.let { this.contentDescription = it }
-                },
-        ) {
+    // La alerta SIEMPRE abraza su contenido. Moon (Flutter) usa
+    // `mainAxisSize.max`, pero en Compose un padre con alto acotado
+    // (Column con weight, Box de tamaño fijo, marco de galería) haría que el
+    // banner llenara toda la pantalla.
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = AqSize.Xl)
+            .background(containerColor ?: colors.container, AqSquircles.InteractiveSm)
+            // La semántica va antes del padding para que el nodo liveRegion
+            // (y sus bounds) cubra el banner completo, no solo el contenido.
+            .semantics {
+                liveRegion = LiveRegionMode.Polite
+                contentDescription?.let { this.contentDescription = it }
+            }
+            .padding(horizontal = AqAlertPadding, vertical = AqAlertPadding),
+        contentAlignment = Alignment.CenterStart,
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .then(if (boundedHeight) Modifier.fillMaxHeight() else Modifier),
-            verticalArrangement = Arrangement.spacedBy(
-                AqSize.X4s,
-                Alignment.CenterVertically,
-            ),
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(AqSize.X4s),
         ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -178,7 +167,7 @@ fun AqAlert(
             // alineadas al final.
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
+                horizontalArrangement = Arrangement.spacedBy(AqSize.X4s, Alignment.End),
             ) {
                 confirmLabel?.let { label ->
                     AqButton(
@@ -202,5 +191,4 @@ fun AqAlert(
         }
         }
     }
-}
 }

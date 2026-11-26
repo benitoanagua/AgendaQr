@@ -134,7 +134,14 @@ fun AqSwitch(
         contentAlignment = Alignment.Center,
     ) {
         Row(
-            modifier = Modifier.size(size.trackWidth, size.height),
+            // Sin etiqueta la fila es exactamente la pista de Moon; con
+            // etiqueta la fila abraza pista + texto (si no, la etiqueta se
+            // medía con el ancho restante de la pista y quedaba invisible).
+            modifier = if (hasLabel) {
+                Modifier
+            } else {
+                Modifier.size(size.trackWidth, size.height)
+            },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(
                 if (hasLabel) AqSize.X4s else AqSize.X6s,

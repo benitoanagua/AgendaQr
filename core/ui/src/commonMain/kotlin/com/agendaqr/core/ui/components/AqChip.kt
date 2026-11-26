@@ -153,7 +153,10 @@ fun AqChip(
             text = text,
             size = AqType.BodySm,
             color = content,
-            modifier = Modifier.weight(1f, fill = false),
+            // Sin `weight`: dentro de un Row con scroll horizontal (ancho
+            // infinito) el peso reparte el ancho MÍNIMO y colapsaba la
+            // etiqueta a "Q…". El chip abraza su contenido.
+            maxLines = 1,
         )
         count?.let { count ->
             AqText(

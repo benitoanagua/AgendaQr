@@ -43,8 +43,9 @@ data class AqAppBarAction(
  *
  * - [title]: título centrado (18 sp, semibold, semántica `heading` vía el
  *   rol de [AqText]).
- * - [onBack] / [backLabel]: flecha atrás; cuando [backLabel] está en blanco
- *   se renderiza solo-icono.
+ * - [onBack] / [backLabel]: flecha atrás solo-icono; [backLabel] es el copy
+ *   accesible del botón (nunca se pinta como texto, para no comprimir el
+ *   título).
  * - [actions]: máx. 2 acciones visibles (icono + etiqueta o solo texto).
  * - [overflowActions] / [overflowLabel]: máx. 4 acciones adicionales. Se
  *   muestran en un menú desplegable ([AqDropdown]) anclado al botón "…".
@@ -96,8 +97,11 @@ fun AqAppBar(
                 variant = AqButtonVariant.Text,
                 size = AqButtonSize.Small,
                 icon = AqIcons.Back,
-                iconOnly = backLabel.isBlank(),
-                modifier = Modifier.defaultMinSize(minHeight = AqMetrics.ControlMinSize),
+                iconOnly = true,
+                modifier = Modifier.defaultMinSize(
+                    minWidth = AqMetrics.ControlMinSize,
+                    minHeight = AqMetrics.ControlMinSize,
+                ),
             )
         }
         AqText(

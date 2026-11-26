@@ -307,6 +307,9 @@ private fun AqButtonImpl(
                             fontWeight = fontWeight ?: AqWeight.SemiBold,
                             color = foreground,
                         ),
+                        maxLines = 1,
+                        softWrap = false,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                         modifier = Modifier.clearAndSetSemantics {
                             // El texto visible no expone texto accesible propio:
                             // el nodo accesible del botón (target de 48 dp)

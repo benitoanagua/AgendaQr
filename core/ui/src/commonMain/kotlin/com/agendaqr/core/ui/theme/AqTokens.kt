@@ -711,6 +711,9 @@ object AqMetrics {
     val NavBarHeight = 64.dp
     val NavItemWidth = 88.dp
     val NavIndicatorWidth = 24.dp
+    /** Cápsula de selección tras el icono de la navegación inferior. */
+    val NavPillWidth = 56.dp
+    val NavPillHeight = 32.dp
     val NavRailWidth = 80.dp
     val ContentMaxWidth = 720.dp
     val QrPreviewSize = 240.dp

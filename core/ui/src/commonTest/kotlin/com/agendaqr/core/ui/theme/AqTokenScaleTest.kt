@@ -61,6 +61,8 @@ class AqTokenScaleTest {
         assertEquals(80.dp, AqMetrics.NavRailWidth)
         assertEquals(88.dp, AqMetrics.NavItemWidth)
         assertEquals(24.dp, AqMetrics.NavIndicatorWidth)
+        assertEquals(56.dp, AqMetrics.NavPillWidth)
+        assertEquals(32.dp, AqMetrics.NavPillHeight)
         assertEquals(48.dp, AqMetrics.ButtonLargeHeight)
         assertEquals(40.dp, AqMetrics.ButtonCompactHeight)
         assertEquals(32.dp, AqMetrics.ButtonSmallHeight)

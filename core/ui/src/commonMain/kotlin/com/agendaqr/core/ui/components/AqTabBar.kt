@@ -135,9 +135,14 @@ fun AqPillTab(
 ) {
     require(tabs.isNotEmpty()) { "AqPillTab necesita al menos una pestaña" }
     require(selectedIndex in tabs.indices) { "AqPillTab: índice fuera de rango" }
+    // Pista (`gohan`→Surface) tras las píldoras: sin ella la píldora
+    // seleccionada (Background) es idéntica al fondo de la pantalla y el
+    // estado activo era invisible.
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .background(AqColor.Surface, AqSquircles.InteractiveMd)
+            .padding(AqLayout.SegmentedControlPadding)
             .selectableGroup(),
         horizontalArrangement = Arrangement.spacedBy(AqLayout.TabBarGap),
     ) {
@@ -174,7 +179,10 @@ private fun AqTabContent(
     // transparente→goku y texto siempre textPrimary.
     val textColor by animateColorAsState(
         targetValue = when {
-            pill -> AqColor.TextPrimary
+            // Señal redundante: la pestaña activa es TextPrimary y las
+            // demás TextSecondary (no depende solo del fondo de la píldora).
+            pill && selected && enabled -> AqColor.TextPrimary
+            pill -> AqColor.TextSecondary
             selected && enabled -> AqColor.Focus
             else -> AqColor.TextPrimary
         },
@@ -219,7 +227,9 @@ private fun AqTabContent(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = size.padding),
+                    // Píldoras repartidas a partes iguales: padding compacto
+                    // para que "Actividades"/"Comprobantes" no se trunquen.
+                    .padding(horizontal = if (pill) AqSize.X4s else size.padding),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(
                     size.gap,
@@ -246,7 +256,11 @@ private fun AqTabContent(
                         modifier = Modifier
                             .defaultMinSize(minWidth = AqSize.X2s, minHeight = AqSize.X2s)
                             .background(
-                                if (selected && enabled) AqColor.Focus else AqColor.SurfaceContainerHighest,
+                                // Par emphasisFill/emphasisOnFill: piccolo con
+                                // texto blanco en ambos temas. `Focus` aclara
+                                // a darkPiccoloText en oscuro y dejaba el
+                                // contador blanco sobre lavanda (bajo contraste).
+                                if (selected && enabled) AqColor.EmphasisFill else AqColor.SurfaceContainerHighest,
                                 AqSquircles.SurfaceSm,
                             )
                             .padding(horizontal = AqSize.X5s),
@@ -255,7 +269,7 @@ private fun AqTabContent(
                         AqText(
                             text = it.toString(),
                             size = AqType.CaptionSmall,
-                            color = if (selected && enabled) AqColor.OnBrandFill else AqColor.TextSecondary,
+                            color = if (selected && enabled) AqColor.OnEmphasisFill else AqColor.TextSecondary,
                             maxLines = 1,
                         )
                     }
@@ -339,19 +353,24 @@ fun AqBottomNavigation(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(AqSize.X5s),
                 ) {
+                    // Cápsula de selección DETRÁS del icono (patrón
+                    // convencional Android/iOS): sin elemento suelto sobre
+                    // el icono y sin alto reservado cuando no está activo.
                     Box(
                         modifier = Modifier
-                            .width(AqMetrics.NavIndicatorWidth)
-                            .height(AqSize.X5s)
-                            .clip(AqSquircles.InteractiveXs)
-                            .background(if (selected) AqColor.BrandFill else AqColor.Transparent),
-                    )
-                    AqIcon(
-                        imageVector = destination.icon,
-                        contentDescription = null,
-                        size = AqMetrics.IconSize,
-                        tint = if (selected) AqColor.EmphasisIcon else AqColor.TextSecondary,
-                    )
+                            .width(AqMetrics.NavPillWidth)
+                            .height(AqMetrics.NavPillHeight)
+                            .clip(AqSquircles.InteractiveMd)
+                            .background(if (selected) AqColor.Jiren else AqColor.Transparent),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        AqIcon(
+                            imageVector = destination.icon,
+                            contentDescription = null,
+                            size = AqMetrics.IconSize,
+                            tint = if (selected) AqColor.EmphasisIcon else AqColor.TextSecondary,
+                        )
+                    }
                     AqText(
                         text = destination.label,
                         size = AqType.BodyXs,
