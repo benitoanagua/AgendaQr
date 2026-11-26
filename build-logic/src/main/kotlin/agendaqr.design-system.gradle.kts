@@ -1927,7 +1927,7 @@ tasks.register("verifySharedComponentConfiguration") {
             !lab.contains("AqTheme(darkTheme = darkTheme)") || !productionRoot.contains("AqTheme")) {
             violations += "Lab, gallery and production must use AqTheme"
         }
-        val switchEntry = registry.substringAfter("\\\"AqSwitch\\\",").substringBefore("\\\"AqRadio\\\",")
+        val switchEntry = registry.substringAfter("\"AqSwitch\",").substringBefore("\"AqRadio\",")
         if (switchEntry.contains("activeThumbWidget") || switchEntry.contains("inactiveThumbWidget")) {
             violations += "AqSwitch registry must use component-default Phosphor glyphs, not local overrides"
         }
