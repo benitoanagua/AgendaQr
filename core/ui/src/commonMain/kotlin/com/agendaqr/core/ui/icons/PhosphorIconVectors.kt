@@ -70,9 +70,9 @@ internal object PhosphorIconVectors {
 }
 
 /**
- * Glifos Phosphor disponibles para slots de producto (ADR-0051): enmienda
- * acotada de ADR-0044 solo en iconografía — Moon sigue siendo la autoridad
- * en componentes, tokens y tipografía.
+ * Variantes de peso Check/X reservadas para los estados de AqSwitch.
+ * Todo el catálogo de producto es Phosphor (ADR-0052); Moon Design conserva
+ * autoridad sobre componentes, tokens, geometría y tipografía (ADR-0044).
  */
 enum class AqPhosphorIcon { Check, X }
 
