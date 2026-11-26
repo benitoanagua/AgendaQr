@@ -39,7 +39,8 @@ considera validado hasta ejecutarlo con Xcode/simulador/dispositivo.
     ├── androidApp/                 # host Android
     ├── iosApp/                     # host iOS
     ├── shared/                     # KMP compartido
-    ├── core/                       # capacidades transversales (incl. core/ui, tema)
+    ├── core/                       # capacidades transversales (incl. core/ui, tema,
+    │                               #   core/ui-lab: Component Lab wasmJs, ADR-0049)
     ├── feature/
     │   └── destinations/           # dominio, data y presentación
     ├── build-logic/                # convention plugins y gates
@@ -70,6 +71,7 @@ release se evalúa en configuración):
 ./gradlew verifyAgendaQrArchitecture -PallowDebugSigningForRc=true
 ./gradlew :androidApp:assembleDebug -PallowDebugSigningForRc=true
 ./gradlew :androidApp:testDebugUnitTest -PallowDebugSigningForRc=true
+./gradlew :core:ui-lab:wasmJsBrowserDevelopmentRun -PallowDebugSigningForRc=true
 ```
 
 La lista completa de puertas, pruebas y validación por plataforma está en

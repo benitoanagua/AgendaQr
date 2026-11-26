@@ -37,6 +37,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Eliminación del legacy en la capa de producción de `feature/`, `shared/` y las apps (cero símbolos legacy, cero `AqMoon*`, cero Material) | `verifyDesignSystemCompliance` |
 | Gate: prohíbe `AqMoon*` y símbolos legacy en `feature/`, `shared/` y las apps, exige componente Moon real por archivo de feature con UI, prohíbe `AqShapes` repo-wide, fixtures negativos y positivos | `verifyDesignSystemCompliance` + `verifyDesignSystemFixtures` |
 | Contrato de interacción por pantalla (19 superficies) y galería estricta de capturas por superficie (360 dp, claro/oscuro) | `verifyScreenContract` + `verifyScreenContractFixtures` + `captureGallery` |
+| Component Lab web wasmJs (`:core:ui-lab`) con `AqComponentRegistry` de 78 componentes, tema/escala/viewport/estados, log de eventos y enlace `#Componente[/estado]` | `:core:ui-lab:wasmJsBrowserDistribution` + `verifyComponentRegistry` + `verifyComponentRegistryFixtures` + comprobación headless (sin errores de consola) |
 | Documentación: enlaces vivos, alcanzabilidad desde el índice, ausencia de marcadores transitorios | `verifyDocs` |
 | Selección múltiple por lote (G3 / ADR-0034) | pruebas de presentación + gate |
 | Estado `loading` de Actividades y esqueleto en frío (N02) | `:feature:destinations:presentation:testDebugUnitTest` + gate |
