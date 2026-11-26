@@ -1975,6 +1975,15 @@ tasks.register("verifyProductIconCatalog") {
             }
         }
         if (iconDir.resolve("MoonIconVectors.kt").exists()) violations += "MoonIconVectors.kt must be removed"
+        val sourceRoots = listOf(file("core/ui/src"), file("feature"), file("androidApp/src"), file("iosApp"))
+        sourceRoots.filter { it.exists() }.forEach { root ->
+            root.walkTopDown().filter { it.isFile && it.extension in setOf("kt", "kts", "swift") }.forEach { source ->
+                val text = source.readText()
+                if (text.contains("MoonIconVectors") || text.contains("@heathmont/moon-icons")) {
+                    violations += "Legacy Moon icon source referenced: ${source.relativeTo(projectDir)}"
+                }
+            }
+        }
         require(violations.isEmpty()) {
             "Product icon catalog violations:\n" + violations.joinToString("\n") { "  $it" }
         }
