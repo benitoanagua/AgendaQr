@@ -193,11 +193,32 @@ en el archivo señalado con valores tomados de tokens semánticos.
 | E-18 | `border` | `AqTextInputGroup.kt` | Borde del contenedor de grupo de campos (MoonTextInputGroup) |
 | E-19 | `border` | `AqProgressPin.kt` | Borde del clavo de progreso (MoonProgressPin) |
 | E-23 | `border` | `AqSelect.kt` | Borde de reposo, foco y error del selector (Moon v1 Select) |
+| E-31 | `border` | `AqTooltip.kt` | Borde `beerus` de 1 px de la burbuja de tooltip (Moon v1 Tooltip) |
 | E-21 | `shadow` | `AqShadowPlatform.ios.kt` | Fallback iOS de `aqShadowPlatform` (sombra por elevación; la geometría BoxShadow exacta solo existe en Android) |
 | E-22 | `shadow` | `AqShadowPlatform.wasmJs.kt` | Mismo fallback por elevación en wasmJs (Component Lab, ADR-0049) |
 
 E-06 (elevación de botones) está retirada: los botones son planos y un
 registro sin uso se detecta como excepción zombie.
+
+### Excepciones de cobertura de fidelidad Moon v1
+
+`verifyMoonFidelityCoverage` exige que todo componente del
+`AqComponentRegistry` tenga filas en el fixture generado desde
+`moon-v1-tokens-y-componentes.json` (pruebas `MoonSpecFidelityTest` /
+`MoonSpecRenderedTest`) o figure en esta tabla. Los componentes listados
+no tienen familia propia en el catálogo JSON del Figma v1: son primitivas,
+composiciones de producto o variantes de familias ya cubiertas. La tabla
+y el gate deben coincidir; un id sin uso se detecta como excepción zombie.
+
+| ID | Componentes | Motivo |
+|---|---|---|
+| E-24 | `AqText`, `AqIcon`, `AqHairline` | Primitivas: Moon las define como estilos de texto/iconos y divisores, sin frame con geometría propia en el JSON v1 |
+| E-25 | `AqFormSection`, `AqSectionTitle`, `AqFormEntry`, `AqHelperMessage`, `AqErrorMessage` | Composición de formularios (texto + espaciado): sin frame equivalente en el catálogo JSON v1 |
+| E-26 | `AqAppBar`, `AqBottomNavigation`, `AqDockAction`, `AqQuickAction`, `AqNavLink`, `AqActionGroup`, `AqScreen` | Chrome de producto (navegación/app bar): Moon v1 no los define en el JSON |
+| E-27 | `AqQrPreview`, `AqScannerFrame`, `AqKeypad`, `AqPinDots`, `AqProgressPin`, `AqProgressBlock`, `AqSuccessCheck` | Componentes de dominio QR/PIN: fuera del catálogo Moon v1 |
+| E-28 | `AqThumbnail`, `AqThumbnailFallback`, `AqThumbnailFrame`, `AqThumbnailSkeleton`, `AqMediaFrame` | Marcos de media del producto: sin familia en el JSON v1 |
+| E-29 | `AqSkeletonBlock`, `AqSkeletonLine`, `AqSyncIndicator`, `AqLoadMore`, `AqPullToRefresh`, `AqSwipeActions`, `AqSelectionToolbar`, `AqSelectAll`, `AqCarousel`, `AqDotIndicator`, `AqFavoriteToggle`, `AqToastHost`, `AqListSection` | Patrones de producto no presentes en el catálogo Moon v1 |
+| E-30 | `AqCheckboxSet`, `AqChoiceSet`, `AqChipRow`, `AqEvidenceTag`, `AqAmountInput`, `AqLinearLoader` | Variantes/sets de familias ya cubiertas por el fixture (Checkbox, Radio, Chip, Tag, TextInput, Loader circular) |
 
 
 ## 6. Autoridad normativa única

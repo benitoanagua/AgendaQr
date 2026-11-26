@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.window.Popup
 import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqShadow
 import com.agendaqr.core.ui.theme.AqSquircles
@@ -87,7 +88,8 @@ internal fun AqPopoverSurface(
             .testTag("aq-popover-popup")
             .aqShadow(AqShadow.Sm, AqSquircles.InteractiveMd)
             .background(AqColor.Background, AqSquircles.InteractiveMd)
-            .padding(AqSize.X3s),
+            // Moon v1 «Popover»: padding de contenido 4 dp.
+            .padding(AqLayout.PopoverContentPadding),
     ) {
         content()
     }

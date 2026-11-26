@@ -32,6 +32,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
+import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqTextStyles
@@ -45,7 +46,8 @@ import com.agendaqr.core.ui.theme.AqStateAlpha
  * `widgets/text_area` → `MoonFormTextInput`).
  *
  * Moon define una única configuración (sin tamaños ni etiqueta externa):
- * - Caja de altura fija ([height], por defecto `sizes.md` = 40 dp): fondo
+ * - Caja de altura fija ([height], por defecto 132 dp = base del spec
+ *   Moon v1 «Textarea»): fondo
  *   `goku`→[AqColor.Background], borde `beerus`→[AqColor.Border] inactivo /
  *   `piccolo`→[AqColor.Focus] activo / `chichi`→[AqColor.Danger] en error,
  *   radio `interactiveSm`, relleno `x2s` (16 dp) en los cuatro lados
@@ -72,8 +74,8 @@ fun AqTextArea(
     isError: Boolean = false,
     errorMessage: String? = null,
     helperMessage: String? = null,
-    /** Alto de la caja (Moon `height`); por defecto `sizes.md` = 40 dp. */
-    height: Dp = AqSize.Md,
+    /** Alto de la caja (Moon v1 «Textarea»: base 132 dp). */
+    height: Dp = AqLayout.TextAreaHeight,
     minLines: Int = 1,
     maxLines: Int = Int.MAX_VALUE,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -212,7 +214,7 @@ fun AqTextArea(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = AqSize.X4s),
+                    .padding(top = AqSize.X5s),
                 horizontalArrangement = Arrangement.End,
             ) {
                 AqText(

@@ -37,7 +37,7 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Eliminación del legacy en la capa de producción de `feature/`, `shared/` y las apps (cero símbolos legacy, cero `AqMoon*`, cero Material) | `verifyDesignSystemCompliance` |
 | Gate: prohíbe `AqMoon*` y símbolos legacy en `feature/`, `shared/` y las apps, exige componente Moon real por archivo de feature con UI, prohíbe `AqShapes` repo-wide, fixtures negativos y positivos | `verifyDesignSystemCompliance` + `verifyDesignSystemFixtures` |
 | Contrato de interacción por pantalla (19 superficies) y galería estricta de capturas por superficie (360 dp, claro/oscuro) | `verifyScreenContract` + `verifyScreenContractFixtures` + `captureGallery` |
-| Component Lab web wasmJs (`:core:ui-lab`) con `AqComponentRegistry` de 78 componentes, tema/escala/viewport/estados, log de eventos y enlace `#Componente[/estado]` | `:core:ui-lab:wasmJsBrowserDistribution` + `verifyComponentRegistry` + `verifyComponentRegistryFixtures` + comprobación headless (sin errores de consola) |
+| Component Lab web wasmJs (`:core:ui-lab`) con `AqComponentRegistry` de 83 componentes, tema/escala/viewport/estados, log de eventos y enlace `#Componente[/estado]`; toolchain portable (`agendaqr.wasm.*` en `~/.gradle/gradle.properties`) y compilación wasmJs en CI | `:core:ui-lab:wasmJsBrowserDistribution` + `verifyComponentRegistry` + `verifyComponentRegistryFixtures` + `:core:ui:compileKotlinWasmJs` en `android-validation.yml` + comprobación headless (sin errores de consola) |
 | Documentación: enlaces vivos, alcanzabilidad desde el índice, ausencia de marcadores transitorios | `verifyDocs` |
 | Selección múltiple por lote (G3 / ADR-0034) | pruebas de presentación + gate |
 | Estado `loading` de Actividades y esqueleto en frío (N02) | `:feature:destinations:presentation:testDebugUnitTest` + gate |
@@ -52,6 +52,8 @@ Las puertas, sus comandos y la validación por plataforma están en
 | Movimiento reducido en swipe/pull (política Moon del contrato normativo) | `:core:ui:testDebugUnitTest` |
 | Retiro de componentes sin respaldo AqBox/AqTriState/AqLightButton (N07) | `:core:ui:testDebugUnitTest` + gate |
 | Evidencia pixel de fidelidad Moon: 218 pares Moon↔Aq comparados por caja/tinta/pixdiff, 0 desviaciones (`docs/05-design-system/evidencia/`) | `tools/moon-compare/compare.py` + `AqComponentReferenceTest` (`:core:ui:testDebugUnitTest`) (ADR-0048) |
+| Fidelidad Moon v1 generada desde el JSON del Figma: fixture `generateMoonSpecFixtures` (84 filas), pruebas `MoonSpecFidelityTest`+`MoonSpecRenderedTest` (tolerancia 0 dp) y gate `verifyMoonFidelityCoverage` (37 familias cubiertas + 46 excepciones E-24…E-30) | `generateMoonSpecFixtures` + `:core:ui:testDebugUnitTest` + `verifyMoonFidelityCoverage` + `verifyMoonFidelityCoverageFixtures` (ADR-0050) |
+| Regla `Input Label` Moon v1: etiqueta flotante solo en xl; etiqueta superior en sm/md/lg (`AqTextInput`/`AqSelect`/`AqCombobox`); `AqTextArea` a 132 dp; variantes `iconAtEnd`/`trailingIcon`/`height`/multi-botón/ilustración; flecha atrás del app bar 24 dp tinte primario; `AqSwitch(labelFirst)` | `AqFigmaV1ComponentsTest` + `MoonSpecRenderedTest` + capturas `captureGallery` (68) |
 
 ## 2. Implementado pero NO VERIFICADO
 
@@ -103,7 +105,9 @@ No se declaran PASS. Requieren Xcode, dispositivo físico, red o backend reales.
 
 - `AqButton(fullWidth = true)` llena el ancho disponible del padre; el alto visual sigue el tamaño Moon y el target táctil se mantiene separado.
 - `AqTextInput` md conserva 40 dp de caja visual; el wrapper de toque alcanza 48 dp sin expandir el borde visible.
-- `AqDropdown` es un menú anclado, no un campo select. Para selección cerrada se usa `AqTextInput(readOnly = true)` como ancla; no se declara una API `AqSelect` inexistente.
+- `AqDropdown` es un menú anclado; el campo select cerrado es `AqSelect` (Moon v1 Figma), con `AqCombobox` para selección con búsqueda. `AqPagination`, `AqSidebar` y `AqLeaderboard` cubren el resto del catálogo Figma v1.
+- Etiqueta de campo (Moon v1): flotante dentro de la caja solo en `AqTextInputSize.Xl`; en sm/md/lg la etiqueta es texto separado encima del campo (`Input Label`, gap 8 — 4 en sm). La etiqueta es visual; el nombre accesible lo porta el `contentDescription` del campo.
+- `AqSwitch(labelFirst = true)` pone la etiqueta a la izquierda y el control a la derecha (fila de ajuste); el defecto mantiene pista + etiqueta.
 - No se crean wrappers `AqMoon*` ni se reintroducen símbolos visuales legacy.
 - `AqToast` dura 3 000 ms (`displayDuration` por defecto de Moon, ADR-0047); Moon aporta el comportamiento de animación y separación.
 - Las composiciones Moon-only usan nombres propios de Agenda QR y componentes de `core/ui`.

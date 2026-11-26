@@ -16,10 +16,30 @@ python3 -m http.server -d core/ui-lab/build/dist/wasmJs/productionExecutable 800
 # → http://localhost:8000
 ```
 
-Requisito de toolchain: Node.js y Yarn del sistema (el plugin los detecta;
-la descarga oficial está desactivada en `agendaqr.wasm-app` porque el
-entorno no alcanza `nodejs.org`). Binaryen se resuelve desde el paquete
-npm `binaryen@123` (`~/.local/share/kotlin-binaryen`).
+Requisito de toolchain: Node.js y Yarn del sistema. La convención
+`agendaqr.wasm-app` (build-logic) aplica overrides **portables**: las
+rutas se fijan solo si la propiedad de Gradle o la variable de entorno
+está definida **y el archivo existe**; si no, queda el comportamiento por
+defecto del plugin (descarga oficial de Node/Yarn/Binaryen).
+
+Entorno normal (con acceso a las descargas oficiales): no hay que
+configurar nada — el plugin usa sus defaults.
+
+Entorno con firewall o toolchain propio (p. ej. Node de sistema + Yarn +
+Binaryen npm), en `~/.gradle/gradle.properties` (**nunca en el repo**):
+
+```properties
+agendaqr.wasm.nodeDownload=false
+agendaqr.wasm.yarn=/home/usuario/.local/bin/yarn
+agendaqr.wasm.binaryen=/home/usuario/.local/share/kotlin-binaryen/wasm-opt
+```
+
+Equivalentes por variable de entorno: `AGENDQR_WASM_NODE_DOWNLOAD`
+(`false`), `AGENDQR_WASM_YARN`, `AGENDQR_WASM_BINARYEN` (prefijo literal
+del código). Si la ruta indicada no existe, el override se ignora y se usa
+el default del plugin. La reflexión sobre el DSL de Binaryen está aislada
+en `agendaqr.wasm-app.gradle.kts` con comentario (Kotlin 2.2 no expone API
+pública equivalente).
 
 ## Qué ofrece
 

@@ -495,6 +495,9 @@ object AqLayout {
     val InputPaddingHorizontalLg: Dp = 12.dp
     val InputPaddingHorizontalXl: Dp = 16.dp
 
+    /** Alto base de [AqTextArea] (Moon v1 «Textarea»: 132 dp). */
+    val TextAreaHeight: Dp = 132.dp
+
     // -------------------------------------------------------------------------
     // Geometría de componentes transcrita de moon_design 1.1.0 (§ tabla de
     // medidas). Estos valores son la autoridad numérica; ningún componente
@@ -577,17 +580,18 @@ object AqLayout {
     val SwitchTrackPaddingXs: Dp = AqSize.X5s
     val SwitchTrackPaddingSm: Dp = AqSize.X5s
 
-    /** Lado del glifo de [AqCheckbox] y [AqRadio] (Moon
-     *  `checkbox.dart`/`radio.dart`: `Size(16, 16)` = `sizes.x2s`). */
-    val CheckboxGlyphSize: Dp = AqSize.X2s
+    /** Lado del glifo de [AqCheckbox] y [AqRadio] (Moon v1 Figma:
+     *  casilla/botón de 24×24 = `sizes.xs`; `moon_design` 1.1.0 usaba 16). */
+    val CheckboxGlyphSize: Dp = AqSize.Xs
     /** Ancho del trazo del check/dash y del borde de la casilla (Moon
      *  `checkbox_painter.dart` `_kStrokeWidth` = 1, `BorderSide` por defecto). */
     val CheckboxStrokeWidth: Dp = AqStroke.Default
-    /** Radio exterior del glifo de radio (Moon `radio_painter.dart`
-     *  `_kOuterRadius` = 8 sobre caja de 16 → círculo completo). */
-    val RadioOuterRadius: Dp = 8.dp
-    /** Radio del punto interior del radio (Moon `_kInnerRadius` = 4). */
-    val RadioInnerRadius: Dp = 4.dp
+    /** Radio exterior del glifo de radio (Moon v1: caja 24 → radio 12,
+     *  círculo completo). */
+    val RadioOuterRadius: Dp = 12.dp
+    /** Diámetro del punto interior del radio (Moon v1: caja 24 → punto 12,
+     *  misma proporción 1:2 que el `radio.dart` de 16 con punto 8). */
+    val RadioInnerRadius: Dp = 6.dp
 
     /** Hueco entre opciones de [AqSegmentedControl] (Moon
      *  `segmented_control_sizes.dart`: sm `sizes.x5s`, md `sizes.x4s`). */
@@ -682,7 +686,7 @@ object AqLayout {
      *  flecha del tooltip base `sizes.x2s`, largo y distancia
      *  `sizes.x4s`; padding del tooltip `sizes.x3s`. */
     val OverlayDistanceToTarget: Dp = AqSize.X4s
-    val PopoverContentPadding: Dp = AqSize.X3s
+    val PopoverContentPadding: Dp = AqSize.X5s
     val DropdownContentPadding: Dp = AqSize.X5s
     val DropdownMargin: Dp = AqSize.X4s
     val TooltipArrowBaseWidth: Dp = AqSize.X2s

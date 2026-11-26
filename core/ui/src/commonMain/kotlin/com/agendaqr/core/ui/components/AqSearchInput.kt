@@ -29,6 +29,8 @@ fun AqSearchInput(
     onClear: (() -> Unit)? = null,
     enabled: Boolean = true,
     focusRequester: FocusRequester? = null,
+    /** Alto del campo (Moon v1 «Text input»: sm 32 / md 40 / lg 48 / xl 56). */
+    size: AqTextInputSize = AqTextInputSize.Md,
 ) {
     AqTextInput(
         label = label,
@@ -36,6 +38,7 @@ fun AqSearchInput(
         onValueChange = onValueChange,
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
+        size = size,
         placeholder = placeholder,
         // Búsqueda = placeholder clásico: se muestra solo con el campo vacío
         // y desaparece al escribir. Sin etiqueta flotante persistente.

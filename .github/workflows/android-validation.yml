@@ -80,6 +80,14 @@ jobs:
       - name: Core UI unit tests
         run: ./gradlew :core:ui:testDebugUnitTest --stacktrace
 
+      - name: Set up Node.js (Component Lab wasmJs)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Component Lab wasmJs build
+        run: ./gradlew :core:ui:compileKotlinWasmJs :core:ui-lab:wasmJsBrowserDistribution --stacktrace
+
       - name: Android debug assembly
         run: ./gradlew :androidApp:assembleDebug --stacktrace
 

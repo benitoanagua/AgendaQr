@@ -1,7 +1,9 @@
 package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +15,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
@@ -91,18 +95,26 @@ fun AqAppBar(
         horizontalArrangement = Arrangement.spacedBy(AqSize.X4s),
     ) {
         if (onBack != null) {
-            AqButton(
-                label = backLabel,
-                onClick = onBack,
-                variant = AqButtonVariant.Text,
-                size = AqButtonSize.Small,
-                icon = AqIcons.Back,
-                iconOnly = true,
-                modifier = Modifier.defaultMinSize(
-                    minWidth = AqMetrics.ControlMinSize,
-                    minHeight = AqMetrics.ControlMinSize,
-                ),
-            )
+            // Moon v1: flecha atrás de 24 dp sobre zona táctil de 48 dp,
+            // tinte `textPrimary` (contenido), no el `link` de la variante
+            // Text de AqButton.
+            Box(
+                modifier = Modifier
+                    .defaultMinSize(
+                        minWidth = AqMetrics.ControlMinSize,
+                        minHeight = AqMetrics.ControlMinSize,
+                    )
+                    .clickable(role = Role.Button, onClick = onBack)
+                    .semantics { contentDescription = backLabel },
+                contentAlignment = Alignment.Center,
+            ) {
+                AqIcon(
+                    imageVector = AqIcons.Back,
+                    contentDescription = null,
+                    size = AqMetrics.IconSize,
+                    tint = AqColor.TextPrimary,
+                )
+            }
         }
         AqText(
             text = title,

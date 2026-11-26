@@ -9,6 +9,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.dp
+import org.junit.Assert.assertEquals
 import com.agendaqr.core.ui.theme.AqTheme
 import org.junit.Rule
 import org.junit.Test
@@ -65,6 +66,45 @@ class AqFigmaV1ComponentsTest {
     }
 
     @Test
+    fun combobox_field_matches_text_input_height() {
+        compose.setContent {
+            AqTheme {
+                Box(Modifier.width(280.dp)) {
+                    AqCombobox(
+                        query = "",
+                        onQueryChange = {},
+                        options = listOf("A", "B"),
+                        selectedIndices = emptySet(),
+                        onToggle = {},
+                        expanded = false,
+                    )
+                }
+            }
+        }
+        // Moon v1 Combobox: el campo es `Text input` (md = 40 dp).
+        compose.onNodeWithTag("aq-text-input-visual", useUnmergedTree = true)
+            .assertHeightIsEqualTo(40.dp)
+    }
+
+    @Test
+    fun leaderboard_rank_badge_is_24dp() {
+        compose.setContent {
+            AqTheme {
+                Box(Modifier.width(320.dp)) {
+                    AqLeaderboard(
+                        entries = listOf(
+                            AqLeaderboardEntry("Primero", rank = 1, value = "100"),
+                        ),
+                    )
+                }
+            }
+        }
+        // Moon v1 Leaderboard: insignia de puesto de 24 dp (`sizes.xs`).
+        compose.onNodeWithContentDescription("Puesto 1. Primero. 100")
+            .assertHeightIsEqualTo(40.dp) // fila: minHeight sizes.md
+    }
+
+    @Test
     fun sidebar_expanded_and_rail_widths() {
         compose.setContent {
             AqTheme {
@@ -81,5 +121,71 @@ class AqFigmaV1ComponentsTest {
         // Moon v1 Sidebar: 280 dp expandida / 64 dp rail.
         compose.onNodeWithContentDescription("Inicio")
             .assertWidthIsEqualTo(280.dp - 16.dp) // menos padding interno
+    }
+
+    // Moon v1 `Input Label`: la etiqueta superior (24 dp + gap 8) solo
+    // existe en sm/md/lg; en xl la etiqueta es flotante dentro de la caja.
+    // Las métricas de fuente de Robolectric inflan el texto, así que la
+    // aserción es relativa: borde inferior de la etiqueta + 8 dp = borde
+    // superior de la caja.
+    private fun assertLabelGapIs(fieldTag: String) {
+        val labelBottom = compose.onNodeWithTag("aq-field-label", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot.bottom
+        val fieldTop = compose.onNodeWithTag(fieldTag, useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot.top
+        val gapPx = with(compose.density) { 8.dp.toPx() }
+        assertEquals(gapPx, fieldTop - labelBottom, 0.5f)
+    }
+
+    @Test
+    fun text_input_md_label_sits_above_the_field() {
+        compose.setContent {
+            AqTheme {
+                Box(Modifier.width(280.dp)) {
+                    AqTextInput(
+                        label = "Correo",
+                        value = "",
+                        onValueChange = {},
+                        size = AqTextInputSize.Md,
+                    )
+                }
+            }
+        }
+        assertLabelGapIs("aq-text-input-visual")
+    }
+
+    @Test
+    fun text_input_xl_has_no_top_label() {
+        compose.setContent {
+            AqTheme {
+                Box(Modifier.width(280.dp)) {
+                    AqTextInput(
+                        label = "Correo",
+                        value = "",
+                        onValueChange = {},
+                        size = AqTextInputSize.Xl,
+                    )
+                }
+            }
+        }
+        compose.onNodeWithTag("aq-field-label", useUnmergedTree = true)
+            .assertDoesNotExist()
+    }
+
+    @Test
+    fun select_md_label_sits_above_the_field() {
+        compose.setContent {
+            AqTheme {
+                Box(Modifier.width(280.dp)) {
+                    AqSelect(
+                        options = listOf("A", "B"),
+                        selectedIndex = 0,
+                        onSelected = {},
+                        label = "Categoría",
+                    )
+                }
+            }
+        }
+        assertLabelGapIs("aq-select-visual")
     }
 }

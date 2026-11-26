@@ -93,7 +93,8 @@ fun AqBottomSheet(
                     )
                     // Moon `MoonBottomSheet`: `ShapeDecoration` con
                     // `surfaceLg` superior — sin sombra ni elevación.
-                    .background(AqColor.Background, AqSquircles.SurfaceTopLg)
+                    // Moon v1 «Bottom sheet»: `surfaceMd` superior (r12).
+                    .background(AqColor.Background, AqSquircles.SurfaceTopMd)
                     .semantics { title?.let { paneTitle = it } }
                     .testTag("aq-bottom-sheet-pane")
                     .verticalScroll(rememberScrollState())

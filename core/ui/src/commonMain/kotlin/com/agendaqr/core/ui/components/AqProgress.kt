@@ -9,6 +9,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqCorner
 import com.agendaqr.core.ui.theme.AqSize
@@ -25,20 +26,29 @@ data class AqProgress(val fraction: Float) {
 
 /**
  * Barra de progreso determinada equivalente a `s-progress-bar`, pintada con
- * el painter de Moon ([AqLinearTrack]): altura `x4s` (8 dp), radio
- * `surfaceSm`, color `piccolo`→[AqColor.EmphasisFill] sobre pista
- * `beerus`→[AqColor.Border].
+ * el painter de Moon ([AqLinearTrack]): altura `x4s` (8 dp) por defecto —
+ * el spec Moon v1 «Progress bar» cubre las alturas lineales 2/4/8/12/16 dp
+ * (6xs…2xs) y las pasa el llamador con [height] —, radio según la escala de
+ * [AqLinearLoader], color `piccolo`→[AqColor.EmphasisFill] sobre pista
+ * `beerus`→[AqColor.Border]. La variante `pin` del spec es [AqProgressPin].
  */
 @Composable
 fun AqProgressBar(
     progress: AqProgress,
     contentDescription: String,
     modifier: Modifier = Modifier,
+    /** Alto de la barra (Moon v1 «Progress bar» lineal: 2/4/8/12/16 dp). */
+    height: Dp = AqSize.X4s,
 ) {
     AqLinearTrack(
         progress = progress.fraction,
-        height = AqSize.X4s,
-        cornerRadius = AqCorner.SurfaceSm,
+        height = height,
+        cornerRadius = when {
+            height <= AqSize.X5s -> AqCorner.SurfaceXs
+            height <= AqSize.X4s -> AqCorner.SurfaceSm
+            height <= AqSize.X3s -> AqCorner.SurfaceMd
+            else -> AqCorner.SurfaceLg
+        },
         color = AqColor.EmphasisFill,
         trackColor = AqColor.Border,
         modifier = modifier

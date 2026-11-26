@@ -54,7 +54,17 @@ kotlin {
             implementation(libs.roborazzi)
             implementation(libs.roborazzi.compose)
         }
+        // Fixture de fidelidad Moon v1 generado desde el JSON del Figma
+        // (`generateMoonSpecFixtures`, ADR-0050); nunca se versiona.
+        androidUnitTest {
+            kotlin.srcDir(layout.buildDirectory.dir("generated/moonSpec/kotlin"))
+        }
     }
+}
+
+// La prueba de fidelidad consume el fixture generado en la raíz del proyecto.
+tasks.matching { it.name == "compileDebugUnitTestKotlinAndroid" }.configureEach {
+    dependsOn(":generateMoonSpecFixtures")
 }
 
 tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {

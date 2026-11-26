@@ -2,6 +2,7 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Arrangement
@@ -133,6 +134,8 @@ private fun TooltipBubble(
                 modifier = Modifier
                     .aqShadow(AqShadow.Sm, AqSquircles.InteractiveXs)
                     .background(AqColor.Background, AqSquircles.InteractiveXs)
+                    // Moon v1 «Tooltip»: borde `beerus` de 1 px.
+                    .border(AqMetrics.Border, AqColor.Border, AqSquircles.InteractiveXs)
                     .padding(AqSize.X3s)
                     .widthIn(max = maxWidth),
                 contentAlignment = Alignment.Center,

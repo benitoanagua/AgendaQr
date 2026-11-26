@@ -68,8 +68,10 @@ class AqVisualRegressionTest {
                 }
             }
         }
+        // Con el padding Moon v1 (12 dp) el chip «Actividades» mide ~55 dp;
+        // el umbral sigue detectando el colapso a icono+ellipsis (~32 dp).
         val label = compose.onNodeWithText("Actividades").getBoundsInRoot()
-        assertTrue("etiqueta colapsada: ${label.right - label.left}", (label.right - label.left) > 56.dp)
+        assertTrue("etiqueta colapsada: ${label.right - label.left}", (label.right - label.left) > 48.dp)
     }
 
     @Test

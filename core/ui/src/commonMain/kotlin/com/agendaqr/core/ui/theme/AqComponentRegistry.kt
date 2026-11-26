@@ -300,6 +300,20 @@ val AqComponentRegistry: List<AqComponentEntry> = listOf(
                 AqButton(label = "Borrar", icon = AqIcons.Trash, onClick = { log("click") }, iconOnly = true)
             }
         },
+        state("icono-final", "Icono a la derecha") { log ->
+            // Moon v1 Button `Icon=Right`.
+            Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                AqButtonVariant.entries.forEach { variant ->
+                    AqButton(
+                        label = variant.name,
+                        onClick = { log("click: ${variant.name}") },
+                        variant = variant,
+                        icon = AqIcons.ChevronRight,
+                        iconAtEnd = true,
+                    )
+                }
+            }
+        },
         state("ancho", "Ancho completo") { log ->
             AqButton(label = "Guardar cambios", onClick = { log("click") }, fullWidth = true)
         },
@@ -839,8 +853,17 @@ val AqComponentRegistry: List<AqComponentEntry> = listOf(
             }
         },
         state("icono", "Con icono") { _ ->
+            // Moon v1 Tag `Icon`: Left / Right / Both.
             Row(horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
                 AqTag(text = "Nuevo", tone = AqTone.Info, size = AqTagSize.Xs, icon = AqIcons.Add)
+                AqTag(text = "Nuevo", tone = AqTone.Info, size = AqTagSize.Xs, trailingIcon = AqIcons.Check)
+                AqTag(
+                    text = "Nuevo",
+                    tone = AqTone.Info,
+                    size = AqTagSize.Xs,
+                    icon = AqIcons.Add,
+                    trailingIcon = AqIcons.Check,
+                )
             }
         },
     ),
@@ -1064,6 +1087,18 @@ val AqComponentRegistry: List<AqComponentEntry> = listOf(
         state("barra", "Barra") { _ ->
             AqProgressBar(progress = AqProgress(0.6f), contentDescription = "Progreso")
         },
+        state("tamanos", "Tamaños") { _ ->
+            // Moon v1 «Progress bar» lineal: alturas 2/4/8/12/16 dp (6xs…2xs).
+            Column(verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm)) {
+                listOf(AqSize.X6s, AqSize.X5s, AqSize.X4s, AqSize.X3s, AqSize.X2s).forEach { h ->
+                    AqProgressBar(
+                        progress = AqProgress(0.6f),
+                        contentDescription = "Progreso ${h.value} dp",
+                        height = h,
+                    )
+                }
+            }
+        },
     ),
     entry(
         "AqProgressBlock", AqComponentCategory.Feedback,
@@ -1124,6 +1159,28 @@ val AqComponentRegistry: List<AqComponentEntry> = listOf(
         },
         state("sin-accion", "Sin acción") { _ ->
             AqEmptyPlaceholder(title = "Sin resultados", subtitle = "Ajusta los filtros.", icon = AqIcons.Search)
+        },
+        state("multi-boton", "Multi botón") { log ->
+            // Moon v1 Empty state `Type=Multi button`.
+            AqEmptyPlaceholder(
+                title = "Sin destinos",
+                subtitle = "Trae tu primer QR o crea uno nuevo.",
+                icon = AqIcons.QrCode,
+                actionLabel = "Traer QR",
+                onAction = { log("action") },
+                secondaryActionLabel = "Crear manual",
+                onSecondaryAction = { log("secondary") },
+            )
+        },
+        state("ilustracion", "Con ilustración") { _ ->
+            // Moon v1 Empty state `Type=Simple+ Illu`.
+            AqEmptyPlaceholder(
+                title = "Todo al día",
+                subtitle = "No hay comprobantes pendientes.",
+                illustration = {
+                    AqIcon(imageVector = AqIcons.Check, contentDescription = null, size = AqSize.Xl)
+                },
+            )
         },
     ),
     entry(

@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
@@ -207,6 +208,7 @@ private fun AqTabContent(
             // (32/40) y la pestaña entera es el objetivo táctil.
             .height(size.height)
             .clip(shape)
+            .testTag("aq-tab-item")
             .semantics(mergeDescendants = true) {
                 this.selected = selected
                 contentDescription = tab.label
@@ -229,7 +231,15 @@ private fun AqTabContent(
                     .fillMaxSize()
                     // Píldoras repartidas a partes iguales: padding compacto
                     // para que "Actividades"/"Comprobantes" no se trunquen.
-                    .padding(horizontal = if (pill) AqSize.X4s else size.padding),
+                    .padding(
+                        // Moon v1: pill usa el padding del tamaño (12/16);
+                        // la barra (underline/default) usa 8 en sm y 16 en md.
+                        horizontal = when {
+                            pill -> size.padding
+                            size == AqTabSize.Sm -> AqSize.X4s
+                            else -> size.padding
+                        },
+                    ),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(
                     size.gap,

@@ -77,6 +77,8 @@ val exceptionRegistry: Map<String, List<String>> = mapOf(
     "E-22" to listOf("shadow:AqShadowPlatform.wasmJs.kt"),
     // Borde del campo de AqSelect (misma anatomía de foco que AqTextInput).
     "E-23" to listOf("border:AqSelect.kt"),
+    // Borde beerus de 1 px de la burbuja de tooltip (Moon v1 Tooltip).
+    "E-31" to listOf("border:AqTooltip.kt"),
     // `Modifier.shadow` se centraliza en la capa de tokens; solo los
     // archivos registrados pueden invocarlo (o elevarse vía `aqShadow`).
     // E-06 (elevación de botones) se retiró: los botones son planos y
@@ -139,7 +141,11 @@ val legacySymbols = listOf(
     "AqSecondaryButton",
     "AqSection",
     "AqSectionHeader",
-    "AqSelect",
+    // `AqSelect` NO está prohibido: el nombre quedó reasignado al campo de
+    // selección del catálogo Moon v1 (Figma «Select», ADR-0050). El
+    // componente legacy del sistema anterior se retiró en 5ef8693 y no puede volver:
+    // cualquier `AqSelect` debe cumplir la anatomía Moon (fixture de
+    // fidelidad + registro).
     "AqSelectAllCheckbox",
     "AqSelectionBar",
     "AqShapes",
@@ -829,7 +835,14 @@ tasks.register("verifyDesignSystemCompliance") {
         // contrato: sin entrada en AMBAS partes, no existe excepción válida.
         val contractFile = file("docs/05-design-system/00-contrato-normativo-diseno.md")
         if (contractFile.exists()) {
-            val tableIds = contractFile.readLines()
+            // Solo la sección «Registro de excepciones del gate»: otras
+            // tablas del contrato (p. ej. cobertura de fidelidad E-24…)
+            // usan el mismo prefijo E-nn con otro significado.
+            val contractText = contractFile.readText()
+            val gateSection = contractText
+                .split("### Registro de excepciones del gate").getOrNull(1)
+                ?.split("### ", "## ").orEmpty().firstOrNull() ?: ""
+            val tableIds = gateSection.lines()
                 .mapNotNull { row -> Regex("^\\| (E-\\d+) \\|").find(row)?.groupValues?.get(1) }
                 .toSet()
             val gateIds = exceptionRegistry.keys.toSet()
@@ -1772,6 +1785,50 @@ fun componentRegistryViolations(
     return violations
 }
 
+/** Filas de la tabla «Excepciones de cobertura de fidelidad Moon v1» del
+ * contrato normativo: componente `Aq*` → id E-nn. */
+fun fidelityCoverageExceptions(contractSection: String): Map<String, String> {
+    val out = linkedMapOf<String, String>()
+    contractSection.lines().forEach { line ->
+        val cells = line.split("|").map { it.trim() }
+        if (cells.size < 4) return@forEach
+        val id = Regex("""E-\d+""").find(cells.getOrNull(1) ?: "")?.value
+            ?: return@forEach
+        cells[2].let { compCell ->
+            Regex("""`(Aq[A-Za-z0-9_]+)`""").findAll(compCell).forEach { m ->
+                out[m.groupValues[1]] = id
+            }
+        }
+    }
+    return out
+}
+
+/** Cobertura de fidelidad Moon v1: todo componente del registro debe tener
+ * filas en el fixture generado o una excepción E-nn del contrato. */
+fun moonFidelityCoverageViolations(
+    registryIds: Set<String>,
+    coveredIds: Set<String>,
+    exceptions: Map<String, String>,
+): List<String> {
+    val violations = mutableListOf<String>()
+    registryIds.forEach { id ->
+        if (id !in coveredIds && id !in exceptions) {
+            violations += "moon-fidelidad: '$id' del registro no tiene filas en el fixture ni excepción E-nn en el contrato"
+        }
+    }
+    exceptions.forEach { (component, eid) ->
+        if (component !in registryIds) {
+            violations += "moon-fidelidad: excepción $eid lista '$component' que no está en AqComponentRegistry (zombie)"
+        }
+    }
+    coveredIds.forEach { id ->
+        if (id !in registryIds) {
+            violations += "moon-fidelidad: el fixture cubre '$id' que no está en AqComponentRegistry"
+        }
+    }
+    return violations
+}
+
 /**
  * Guardias del Component Lab web (ADR-0049): el registro debe cubrir todos
  * los componentes públicos de `core/ui/components`.
@@ -1851,6 +1908,86 @@ tasks.register("verifyComponentRegistryFixtures") {
     }
 }
 
+/** Cobertura de fidelidad Moon v1: cada componente del registro debe tener
+ * aserciones generadas desde el JSON del Figma o una excepción E-nn
+ * documentada en el contrato normativo (ADR-0050). */
+tasks.register("verifyMoonFidelityCoverage") {
+    group = "verification"
+    description = "Moon v1 fidelity coverage: every registry component has fixture assertions or a documented E-nn exception."
+    dependsOn("generateMoonSpecFixtures")
+    doLast {
+        val registryFile = file("core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/AqComponentRegistry.kt")
+        require(registryFile.isFile) { "moon-fidelidad: no existe $registryFile" }
+        val registryIds = registryEntryIds(registryFile.readText())
+        val fixtureFile = file("core/ui/build/generated/moonSpec/kotlin/MoonSpecFixtures.kt")
+        require(fixtureFile.isFile) { "moon-fidelidad: falta el fixture generado $fixtureFile" }
+        val coveredIds = Regex("""aq = "(Aq[A-Za-z0-9_]+)"""")
+            .findAll(fixtureFile.readText()).map { it.groupValues[1] }.toSet()
+        val contract = file("docs/05-design-system/00-contrato-normativo-diseno.md")
+        require(contract.isFile) { "moon-fidelidad: falta el contrato normativo" }
+        val section = contract.readText()
+            .split("### Excepciones de cobertura de fidelidad").getOrNull(1)
+            ?.split("## ").orEmpty().firstOrNull() ?: ""
+        val exceptions = fidelityCoverageExceptions(section)
+        val violations = moonFidelityCoverageViolations(registryIds, coveredIds, exceptions)
+        require(violations.isEmpty()) {
+            "Moon v1 fidelity coverage violations (${violations.size}):\n" +
+                violations.take(60).joinToString("\n") { "  $it" }
+        }
+        logger.lifecycle(
+            "verifyMoonFidelityCoverage: PASS (${registryIds.size} componentes, " +
+                "${coveredIds.size} con fixture, ${exceptions.size} excepciones)",
+        )
+    }
+}
+
+/** Self-test de `verifyMoonFidelityCoverage`: la extracción de excepciones
+ * y la cobertura deben fallar ante cada divergencia. */
+tasks.register("verifyMoonFidelityCoverageFixtures") {
+    group = "verification"
+    description = "Self-test: the Moon fidelity coverage gate must fail on uncovered/zombie entries."
+    doLast {
+        val section = listOf(
+            "| ID | Componentes | Motivo |",
+            "|---|---|---|",
+            "| E-24 | `AqText`, `AqIcon` | Primitivas |",
+        ).joinToString("\n")
+        val exc = fidelityCoverageExceptions(section)
+        require(exc == mapOf("AqText" to "E-24", "AqIcon" to "E-24")) {
+            "fidelityCoverageExceptions debe extraer componente→id: $exc"
+        }
+        val registry = setOf("AqText", "AqIcon", "AqButton")
+        val covered = setOf("AqButton")
+        require(moonFidelityCoverageViolations(registry, covered, exc).isEmpty()) {
+            "cobertura completa no debe generar violaciones"
+        }
+        val missing = moonFidelityCoverageViolations(registry, covered, emptyMap())
+        require(missing.size == 2 && missing.all { it.contains("sin filas") || it.contains("excepción") }) {
+            "componentes sin fixture ni excepción deben fallar: $missing"
+        }
+        val zombie = moonFidelityCoverageViolations(
+            registry, covered, exc + ("AqGhost" to "E-99"),
+        )
+        require(zombie.any { it.contains("zombie") }) {
+            "una excepción sin componente debe fallar: $zombie"
+        }
+    }
+}
+
+/**
+ * Genera el fixture Kotlin de fidelidad Moon v1 que consume
+ * `MoonSpecFidelityTest` (androidUnitTest de `:core:ui`). La fuente de verdad
+ * es el JSON extraído del Figma (`moon-v1-tokens-y-componentes.json`);
+ * `generateMoonSpecFixtures` emite una fila canónica por familia/tamaño con
+ * altura, radio, paddings, gap y borde en estado de reposo (ADR-0050).
+ */
+tasks.register<MoonSpecFixtureGenerator>("generateMoonSpecFixtures") {
+    group = "verification"
+    description = "Genera MoonSpecFixtures.kt (androidUnitTest) desde el JSON de Moon v1."
+    specJson.set(file("docs/05-design-system/evidencia/figma/moon-v1-tokens-y-componentes.json"))
+    outputDir.set(project(":core:ui").layout.buildDirectory.dir("generated/moonSpec/kotlin"))
+}
+
 tasks.register("verifyAgendaQrArchitecture") {
     group = "verification"
     dependsOn(
@@ -1868,6 +2005,8 @@ tasks.register("verifyAgendaQrArchitecture") {
         "verifyNoPreviousDesignSystem",
         "verifyMoonFidelity",
         "verifyMoonFidelityFixtures",
+        "verifyMoonFidelityCoverage",
+        "verifyMoonFidelityCoverageFixtures",
         "verifyComponentRegistry",
         "verifyComponentRegistryFixtures",
     )
