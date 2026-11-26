@@ -30,6 +30,7 @@
 | [`05-design-system/00-contrato-normativo-diseno.md`](05-design-system/00-contrato-normativo-diseno.md) | Contrato normativo: autoridad Moon, adaptaciones móviles y excepciones del gate |
 | [`05-design-system/09-tokens-moon.md`](05-design-system/09-tokens-moon.md) | Valores de color, roles semánticos, tipografía e iconos |
 | [`05-design-system/13-catalogo-moon.md`](05-design-system/13-catalogo-moon.md) | Catálogo único de componentes, equivalencias, tamaños y composiciones |
+| [`05-design-system/14-mapa-iconos-phosphor.md`](05-design-system/14-mapa-iconos-phosphor.md) | Mapa de los 39 conceptos `AqIcons` hacia Phosphor (ADR-0052) |
 | [`05-design-system/moon-catalogo-referencia.md`](05-design-system/moon-catalogo-referencia.md) | Referencia Moon por widget: API pública, variantes, tamaños y estados (consulta, no norma) |
 | [`05-design-system/auditoria-fidelidad-moon.md`](05-design-system/auditoria-fidelidad-moon.md) | Matriz de fidelidad cerrada: 0 desviaciones (registro del ciclo ADR-0047) |
 | [`05-design-system/evidencia/informe.md`](05-design-system/evidencia/informe.md) | Informe del comparador pixel/métricas Moon↔Aq (`tools/moon-compare`): 218 pares, 0 desviaciones |
@@ -69,6 +70,8 @@
 | [`07-decisiones/ADR-0049-component-lab-web-wasm.md`](07-decisiones/ADR-0049-component-lab-web-wasm.md) | ADR: Component Lab web (wasmJs) como módulo `:core:ui-lab` con registro de componentes |
 | [`07-decisiones/ADR-0050-fidelidad-moon-v1-total.md`](07-decisiones/ADR-0050-fidelidad-moon-v1-total.md) | ADR: fidelidad Moon v1 generada desde el JSON (`generateMoonSpecFixtures`, pruebas y gate de cobertura) + cierre de gaps del lab |
 | [`07-decisiones/ADR-0051-switch-sin-halo-e-iconos-phosphor.md`](07-decisiones/ADR-0051-switch-sin-halo-e-iconos-phosphor.md) | ADR: recorte de la sombra del pulgar del switch, pista inactiva funcional y iconografía Phosphor en slots |
+| [`07-decisiones/ADR-0052-phosphor-catalogo-unico-de-iconos.md`](07-decisiones/ADR-0052-phosphor-catalogo-unico-de-iconos.md) | ADR: Phosphor como catálogo único de iconos de producto; retiro de Moon Icons |
+| [`07-decisiones/ADR-0053-configuracion-unica-componentes-lab-produccion.md`](07-decisiones/ADR-0053-configuracion-unica-componentes-lab-produccion.md) | ADR: una configuración de componentes compartida por Lab, galería y producción |
 
 ## Cómo se mantiene
 
