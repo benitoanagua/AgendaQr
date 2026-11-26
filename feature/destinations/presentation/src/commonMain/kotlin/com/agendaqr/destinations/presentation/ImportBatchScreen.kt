@@ -158,7 +158,6 @@ fun ImportBatchScreen(
                         dismissLabel = AppStrings.Cerrar,
                         onDismiss = {},
                         contentDescription = AppStrings.GuardadoOk,
-                        horizontalPadding = AqSpacing.None,
                     )
                     AqText(
                         text = AppStrings.batchSavedKeepReviewNotice,

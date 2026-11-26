@@ -31,6 +31,7 @@ import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.components.AqTone
 import com.agendaqr.core.ui.components.rememberAqFormFocus
 import com.agendaqr.core.ui.theme.AqLayout
+import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.destinations.domain.*
 import kotlin.time.Instant
@@ -236,6 +237,10 @@ internal fun OperationEditorScreen(
                         onValueChange = { note = it },
                         maxLength = FieldLimits.Nota,
                         optionalLabel = AppStrings.Opcional,
+                        // Moon: el área de texto toma `height` explícita;
+                        // con el default de 40 dp el relleno de 16 dp deja
+                        // ~7 dp para el texto.
+                        height = AqSize.X2l,
                     )
                 }
             },

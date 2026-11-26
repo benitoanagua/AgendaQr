@@ -142,7 +142,6 @@ fun AgendaQrApp() {
                             message = AppStrings.DemostracionAislada,
                             dismissLabel = AppStrings.SalirDeDemostracion,
                             onDismiss = ::exitDemo,
-                            horizontalPadding = AqSpacing.None,
                             modifier = Modifier.testTag("am-status-banner"),
                         )
                     }

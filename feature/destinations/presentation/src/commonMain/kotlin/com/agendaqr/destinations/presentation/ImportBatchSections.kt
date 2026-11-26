@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -170,6 +169,7 @@ internal fun BatchReviewContent(
     }
 }
 
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 internal fun PendingItemCell(
     candidate: ImportCandidate,
@@ -226,19 +226,13 @@ internal fun PendingItemCell(
                     modifier = Modifier.heightIn(min = AqMetrics.ControlMinSize),
                 )
             }
-            Row(
+            // FlowRow: si las acciones no caben en una línea saltan a la
+            // siguiente en vez de comprimirse y partir su etiqueta.
+            androidx.compose.foundation.layout.FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(AqSpacing.Sm, alignment = Alignment.End),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalArrangement = Arrangement.spacedBy(AqSpacing.Xs),
             ) {
-                // Forza que la fila mida al menos un objetivo táctil (48 dp) para
-                // que los botones de texto de las acciones puedan medir 48 dp
-                // (D-02) aunque el Row envuelva su contenido.
-                Spacer(
-                    modifier = Modifier
-                        .height(AqMetrics.ControlMinSize)
-                        .width(AqSpacing.None),
-                )
                 if (isDuplicate) {
                     AqButton(
                         label = AppStrings.GuardarDeTodosModos,

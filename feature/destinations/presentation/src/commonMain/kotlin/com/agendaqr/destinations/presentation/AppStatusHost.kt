@@ -55,7 +55,6 @@ internal fun AppStatusHost(
                 onConfirm = confirmAction?.onClick,
                 dismissLabel = dismissAction?.label,
                 onDismiss = dismissAction?.onClick,
-                horizontalPadding = AqSpacing.None,
             )
         } else if (hasFailed && pendingCount > 0) {
             // Mutación fallida con pendientes: banner completo con "Reintentar
@@ -67,7 +66,6 @@ internal fun AppStatusHost(
                 onConfirm = onRetryNow,
                 dismissLabel = AppStrings.Cerrar,
                 onDismiss = { },
-                horizontalPadding = AqSpacing.None,
             )
         } else if (isOffline || pendingCount > 0) {
             Row(
