@@ -2,7 +2,7 @@
 
 Registro de licencias de recursos y dependencias que Agenda QR distribuye.
 
-## Moon Design — licencia MIT (componentes/tokens; iconos en retirada)
+## Moon Design — licencia MIT (componentes y tokens; no iconos de producto)
 
 - Fuentes: `moon_tokens` 0.0.6 y `moon_design` 1.1.0 (Yolo Group).
 - Licencia: MIT.
