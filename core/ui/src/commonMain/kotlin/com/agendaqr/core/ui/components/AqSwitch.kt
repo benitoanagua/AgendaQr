@@ -62,7 +62,9 @@ import com.agendaqr.core.ui.theme.AqSquircles
  * - Slots de contenido: [activeTrackWidget]/[inactiveTrackWidget] (mitades de
  *   la pista, estilo `body.text6/8/10` según tamaño) y
  *   [activeThumbWidget]/[inactiveThumbWidget] (dentro del pulgar, color
- *   `popo`). Por defecto vacíos, como en Moon.
+ *   `popo`). Para controles interactivos se muestran Check/X Phosphor Bold
+ *   en el pulgar (ADR-0051); las pantallas deben usar este componente común
+ *   y conservar ambos indicadores de estado, sin implementar switches locales.
  * - Deshabilitado: opacidad 0.6 sobre todo el control (MoonOpacities.disabled).
  * - Área táctil ≥ 48 dp sin cambiar el aspecto ([AqTouchTarget],
  *   ADR-0039 §4.4). El nodo accesible expone `Role.Switch` y `selected`.
