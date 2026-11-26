@@ -56,6 +56,21 @@ pública equivalente).
   (id de estado). Reacciona a `hashchange`, así que se puede pegar la URL
   en otra pestaña o recargar sin perder el contexto.
 
+## Fuente única de configuración (ADR-0053)
+
+El Component Lab, la galería y producción **no son tres implementaciones**.
+Los tres consumen los componentes públicos `Aq*` de `core/ui`, sus tokens
+`AqTheme`/`AqTokens` y los estados/variantes declarados en
+`AqComponentRegistry`. La galería ya no contiene composables de preview
+propios: renderiza el mismo registro en modo lectura; el Lab agrega selección,
+viewport, escala y log de eventos. Producción usa exactamente el mismo
+componente y no debe introducir overrides visuales específicos.
+
+Cualquier ajuste de estilo se realiza una vez en `core/ui` y se valida en
+Lab, galería y capturas de producción. El gate
+`verifySharedComponentConfiguration` falla si se separan las fuentes,
+si la galería vuelve a declarar previews o si se deja de usar `AqTheme`.
+
 ## Añadir un componente al registro
 
 Todo componente público `fun Aq*(...)` de
