@@ -26,8 +26,8 @@ misma anatomía con otra API.
 
 | Moon (Figma) | `Aq*` | Geometría clave (spec → implementación) | Estado |
 |---|---|---|---|
-| Button | `AqButton` | xs 24 r4 pad 4/8 gap4 · sm 32 r8 pad 4/12 gap4 · md 40 r8 pad 8/16 gap8 · lg 48 r8 pad 12/16 gap12 · xl 56 r12 pad 16/24 gap16; texto 12/16→16/24 semibold | fiel (`AqLayout.ButtonHeight*`, `ButtonPaddingHorizontal*`, `ButtonGap*`) |
-| Text input | `AqTextInput` | sm 32 / md 40 r8 / lg 48 / xl 56 r8; con `Input Label` el marco crece a 60/72/80; etiqueta flotante dentro; hint `textTertiary`; error `Danger` | fiel (`AqTextInputSize`, `AqLayout.InputPadding*`) |
+| Button | `AqButton` | xs 24 r4 pad 4/8 gap4 · sm 32 r8 pad 4/12 gap4 · md 40 r8 pad 8/16 gap8 · lg 48 r8 pad 12/16 gap12 · xl 56 r12 pad 16/24 gap16; texto 12/16→16/24 semibold; `Icon=Left/Right/Center` (`iconAtEnd`/`iconOnly`) | fiel + corregida (`iconAtEnd` para `Icon=Right`) |
+| Text input | `AqTextInput` | sm 32 / md 40 r8 / lg 48 / xl 56 r8; `Input Label` (etiqueta superior 14/24 sm, 16/24 md-lg, gap 4/8) solo en sm/md/lg; etiqueta flotante dentro solo en xl; hint `textTertiary`; error `Danger`; contador `n / máx` a la derecha con gap 4 | corregida (regla `Input Label`/flotante xl + contador) |
 | Text input group | `AqTextInputGroup` | horizontal 56 / vertical 112–160, r8, gap 0–8 | fiel (orientación `AqTextInputGroupOrientation`) |
 | Textarea | `AqTextArea` | caja r8 borde `beerus`, alto por llamador (spec 132) | fiel |
 | Search | `AqSearchInput` | campo de búsqueda sin etiqueta flotante; placeholder solo en vacío; la lista de resultados es patrón de pantalla | cubierta (input) |
@@ -37,11 +37,11 @@ misma anatomía con otra API.
 | Menu item | `AqMenuItem` | h40 (multilínea 56), r8, pad 8–12, gap 8, hover `heles`, seleccionado `SelectionSurface` | fiel |
 | Checkbox | `AqCheckbox`/`AqCheckboxSet` | caja 24×24 | fiel |
 | Radio button | `AqRadio`/`AqChoiceSet` | botón 24×24, gap 8 con etiqueta | fiel |
-| Switch | `AqSwitch` | 2xs 16 (pista 32) · xs 24 (pista 44) · sm 32 (pista 60), pill 999, padding de pista 2/4/4, target táctil 48 | fiel (`AqLayout.Switch*`) |
+| Switch | `AqSwitch` | 2xs 16 (pista 32) · xs 24 (pista 44) · sm 32 (pista 60), pill 999, padding de pista 2/4/4, pulgar 12/16/24 con sombra `sm`, etiqueta 14/24 gap 8, target táctil 48 sin deformar la pista; `labelFirst` para fila de ajuste | fiel (`AqLayout.Switch*`) |
 | Segmented control | `AqSegmentedControl` | sm 40 / md 48, r12, pad exterior 4, gap entre segmentos 4 | fiel (`AqLayout.SegmentedControl*`) |
 | Tabs | `AqTabBar`/`AqPillTab`/`AqTabs` | pill sm 32 r4 pad 4/12 · md 40 r8 pad 8/16; underline y default misma altura; gap icono-texto 4/8 | fiel (`AqTabSize`) |
 | Chip | `AqChip`/`AqChipRow` | sm 32 r4 pad 4/8 · md 40 r8 pad 8/8–12, gap 8, icono 24 | fiel (`AqChipSize`, `AqLayout.ChipGap`) |
-| Tag | `AqTag`/`AqEvidenceTag` | 2xs 16 pad 0/8 texto 9–10 · xs 24 pad 4/8 · sm 32; radio 4; variantes con icono left/right/both | fiel (`AqLayout.Tag*`) |
+| Tag | `AqTag`/`AqEvidenceTag` | 2xs 16 pad 0/8 texto 9–10 · xs 24 pad 4/8 · sm 32; radio 4; variantes con icono `Icon=None/Left/Right/Both` (`icon`/`trailingIcon`) | fiel + corregida (`trailingIcon`) |
 | Avatar | `AqAvatar` | xs 24 r4 · sm 32 r8 · md 40 r8 · lg 48 r12 · xl 56 · 2xl 64; iniciales siempre circulares; insignia `badgeSize = tamaño×12/64`, margen `×4/64` | fiel (`AqAvatarSize`, `AqComposition.AvatarBadge*`) |
 | Accordion | `AqAccordion` | cabecera sm 32 / md 40 / lg 48 / xl 56, r8, pad horizontal 8/12/12/16, expand con divisor | fiel (`AqAccordionSize`) |
 | Alert | `AqAlert` | r8, pad 16, gap 8–16, min 56 (una línea) / 88 (con título), sin `height(maxHeight)` | corregida (ronda `fix/ui-visual-defects`) |
@@ -51,15 +51,56 @@ misma anatomía con otra API.
 | Modal | `AqModal` | r12, pad 8, contenido ≤ 90 % del alto | fiel (`AqOverlay`) |
 | Drawer | `AqDrawer` | ancho 448, r12, pad 4 | fiel (`AqLayout.DrawerWidth`) |
 | Bottom sheet | `AqBottomSheet` | r12, pad 8 (8 arriba sin handle / 0+8 con handle), handle opcional | fiel |
-| Progress bar | `AqLinearProgress`/`AqProgressBar`/`AqProgressPin` | linear 2/4/8/12; circular 16/24/32/40/48; pin suma 60/64 con etiqueta gap 4 | fiel |
+| Progress bar | `AqLinearProgress`/`AqProgressBar`/`AqProgressPin`/`AqCircularProgress` | linear 2/4/8/12/16 (6xs…2xs, parámetro `height`); circular 16/24/32/40/48; pin suma 60/64 con etiqueta gap 4 | fiel + corregida (`height` en `AqProgressBar`) |
 | Loader | `AqCircularLoader`/`AqLinearLoader` | 16/24/32/40/48 | fiel |
 | Pagination | `AqPagination` | **nuevo**: fila h32, gap 4, ítems 24 r4, página activa `EmphasisFill`/`OnEmphasisFill` | corregida (implementado) |
 | Breadcrumb | `AqBreadcrumb` | h24, gap 8, separador `ChevronRight` | fiel (`AqLayout.Breadcrumb*`) |
 | Table | `AqTable`/`AqDataTable` | fila por tamaño (56 = `Xl`), pad horizontal por densidad | fiel (`AqTableRowSize`) |
 | Auth code | `AqAuthCode` | campos 48×56, gap 8, r8 | fiel |
 | Sidebar | `AqSidebar` | **nuevo**: expandida 280 / rail 64, r12, pad 8/4, gap sección 16, ítem h40 icono 24 + texto 14/24 | corregida (implementado) |
-| Empty state | `AqEmptyPlaceholder` | pad horizontal 16, gap 8, título 24/32 semibold | fiel |
+| Empty state | `AqEmptyPlaceholder` | pad horizontal 16, gap 8, título 24/32 semibold; `Type=Simple`/`Single button`/`Multi button` (`secondaryActionLabel`)/`Simple+ Illu` (`illustration`) | fiel + corregida (variantes multi-botón e ilustración) |
 | Leaderboard | `AqLeaderboard` | **nuevo**: columna gap 12, texto 14/24, insignia de puesto 24, podio 1–3 destacado | corregida (implementado) |
+
+## Barrido de fidelidad total (`fix/moon-fidelity-total`)
+
+Prueba generada desde el JSON (`generateMoonSpecFixtures` →
+`MoonSpecFidelityTest`/`MoonSpecRenderedTest`, gate
+`verifyMoonFidelityCoverage`): 84 filas canónicas (una por familia+tamaño,
+variante menos compleja) con alto, radio, padding, gap, borde y texto en
+reposo; tolerancia 0 dp en geometría. Cobertura: 37 componentes con fixture
+y 46 excepciones justificadas E-24…E-30 en
+`00-contrato-normativo-diseno.md`.
+
+Desviaciones encontradas y corregidas en esta pasada:
+
+| Componente | Desviación | Corrección |
+|---|---|---|
+| `AqButton` | Radio único para todos los tamaños | `cornerRadius` por tamaño (xs 4, sm/md/lg 8, xl 12) |
+| `AqChip` | Padding sm/md | 8/12 dp (`X4s`/`X3s`) |
+| `AqEmptyPlaceholder` | Gap entre bloques | 8 dp (`X4s`) |
+| `AqTabBar`/`AqPillTab` | Padding de píldora/underline | `size.padding`; underline sm 8 |
+| `AqPopover`/`AqDropdown` | Padding de contenido | 4 dp (`PopoverContentPadding`) |
+| `AqModal` | Radio/padding | `SurfaceMd` r12 + padding 8 |
+| `AqDrawer` | Radio de borde final | `AqCorner.SurfaceMd` en topEnd/bottomEnd |
+| `AqBottomSheet` | Radio solo superior | nuevo `AqSquircles.SurfaceTopMd` r12 |
+| `AqTooltip` | Sin borde | borde 1 dp `AqColor.Border` |
+| `AqSearchInput` | Sin parámetro de tamaño | nuevo `size: AqTextInputSize` |
+| `AqTextArea` | Alto por defecto | `AqLayout.TextAreaHeight` = 132 dp |
+| `AqMenuItem` | Padding vertical | 8/8/8/12 (spec canónico) |
+| `AqTextInput`/`AqSelect` | Etiqueta flotante en todos los tamaños | flotante solo xl; `Input Label` superior en sm/md/lg (14/24 sm, 16/24 md-lg, gap 4/8); contador `n / máx` a 4 dp |
+| `AqSwitch` | Etiqueta Medium y target = pista | etiqueta 14/24 Regular gap 8; target ≥ 48 dp con pista centrada; `labelFirst` (fila de ajuste) |
+| `AqAppBar` | Flecha atrás como `AqButton` Text (icono 20, tinte `link`) | icono 24 `AqMetrics.IconSize`, tinte `TextPrimary`, táctil 48 |
+| `AqButton`/`AqTag`/`AqProgressBar`/`AqEmptyPlaceholder` | Variantes del spec sin soporte | `iconAtEnd` (`Icon=Right`), `trailingIcon` (`Icon=Right/Both`), `height` (lineal 2–16 dp), `secondaryActionLabel` (`Multi button`) e `illustration` (`Simple+ Illu`) |
+
+Pantallas ajustadas: «Editar destino» usa `AqTextArea` a 132 dp (antes
+64), `AqSwitch(labelFirst = true)` (etiqueta izquierda, control derecha) y
+los campos md muestran ahora la etiqueta superior del spec.
+
+Incongruencias del archivo documentadas (regla aplicada): anchos 28/32 del
+Switch 2xs → 32×16 de `moon_flutter`; posición del pulgar inconsistente →
+apagado a la izquierda con relleno del tamaño; «DM Sans Bold» en estados
+hover/focus → estado en reposo; radios/bordes ausentes en algunas filas del
+JSON → relleno desde hermanos de la misma firma de variante.
 
 ## Notas
 

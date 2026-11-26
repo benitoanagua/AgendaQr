@@ -67,6 +67,7 @@
 | [`07-decisiones/ADR-0047-cierre-fidelidad-moon.md`](07-decisiones/ADR-0047-cierre-fidelidad-moon.md) | ADR: cierre de fidelidad Moon — catálogo de referencia, auditoría y gate `verifyMoonFidelity` |
 | [`07-decisiones/ADR-0048-evidencia-pixel-fidelidad-moon.md`](07-decisiones/ADR-0048-evidencia-pixel-fidelidad-moon.md) | ADR: evidencia pixel de fidelidad Moon — comparador, goldens y sombras nativas |
 | [`07-decisiones/ADR-0049-component-lab-web-wasm.md`](07-decisiones/ADR-0049-component-lab-web-wasm.md) | ADR: Component Lab web (wasmJs) como módulo `:core:ui-lab` con registro de componentes |
+| [`07-decisiones/ADR-0050-fidelidad-moon-v1-total.md`](07-decisiones/ADR-0050-fidelidad-moon-v1-total.md) | ADR: fidelidad Moon v1 generada desde el JSON (`generateMoonSpecFixtures`, pruebas y gate de cobertura) + cierre de gaps del lab |
 
 ## Cómo se mantiene
 
