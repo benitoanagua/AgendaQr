@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
  * X); el atributo `d` se conserva literal — el parser de rutas de Compose
  * entiende los comandos relativos y arcos del SVG. El `fill="currentColor"`
  * del origen se sustituye por el tinte semántico de `AqIcon`, igual que en
- * [MoonIconVectors].
+ * the shared semantic icon entry point.
  *
  * Regla de peso por tamaño (ADR-0051): ≤ 20 dp Bold, 21–32 dp Regular,
  * ≥ 40 dp Light. Dentro del switch los iconos miden 12–14 dp → Bold.
