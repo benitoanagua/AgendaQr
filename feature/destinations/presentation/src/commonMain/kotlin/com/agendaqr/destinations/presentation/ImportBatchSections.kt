@@ -216,13 +216,15 @@ internal fun PendingItemCell(
                 isDuplicate -> AqButton(
                     label = AppStrings.VerExistente,
                     onClick = { onAction(ImportBatchAction.ViewExisting(candidate.id)) },
-                    variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
+                    // Secundaria: la acción segura y recomendada.
+                    variant = com.agendaqr.core.ui.components.AqButtonVariant.Outline,
                     modifier = Modifier.heightIn(min = AqMetrics.ControlMinSize),
                 )
                 else -> AqButton(
                     label = AppStrings.ReintentarClasificacion,
                     onClick = { onAction(ImportBatchAction.RetryCandidate(candidate.id)) },
-                    variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
+                    // Secundaria: la acción principal de la tarjeta.
+                    variant = com.agendaqr.core.ui.components.AqButtonVariant.Outline,
                     modifier = Modifier.heightIn(min = AqMetrics.ControlMinSize),
                 )
             }
@@ -250,7 +252,10 @@ internal fun PendingItemCell(
                             showDiscardConfirm = true
                         }
                     },
-                    variant = com.agendaqr.core.ui.components.AqButtonVariant.Danger,
+                    // Terciaria destructiva: texto en color de peligro, sin
+                    // relleno. El rojo sólido es para confirmar en el modal.
+                    variant = com.agendaqr.core.ui.components.AqButtonVariant.Text,
+                    contentColor = AqColor.Danger,
                     modifier = Modifier.heightIn(min = AqMetrics.ControlMinSize),
                 )
             }

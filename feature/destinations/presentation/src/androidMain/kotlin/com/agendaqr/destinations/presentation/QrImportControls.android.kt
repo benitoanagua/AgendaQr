@@ -35,6 +35,7 @@ actual fun QrImportControls(
         AqButton(
             label = AppStrings.ElegirDeLaGaleria,
             onClick = AgendaQrAndroidImportLauncher::gallery,
+            variant = com.agendaqr.core.ui.components.AqButtonVariant.Outline,
             icon = com.agendaqr.core.ui.components.AqIcons.Gallery,
         )
         CameraCaptureHost(onQr = { asset -> onResult(QrImportResult(listOf(asset))) })
