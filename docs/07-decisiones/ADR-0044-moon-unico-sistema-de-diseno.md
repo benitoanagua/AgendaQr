@@ -13,7 +13,7 @@ Moon Design es el único sistema visual y de componentes de Agenda QR.
 
 - Colores: `moon_tokens` 0.0.6 (`MoonColors.light/dark`).
 - Componentes, anatomía, tamaños, estados, geometría, opacidades, sombras y movimiento: `moon_design` 1.1.0, commit `177adb7`.
-- Iconografía: `@heathmont/moon-icons` 10.7.4, portados a `MoonIconVectors.kt`.
+- **Iconografía de producto: Phosphor Icons, exclusivamente** (ADR-0052). Los vectores Moon existentes son legado de migración y deben retirarse.
 - Tipografía: escala y pesos Moon; Inter 4.0 es la única sustitución de familia por licencia de Averta Std.
 - Implementación: port Kotlin/Compose en `core/ui`; no hay runtime Flutter/Web ni dependencia Moon de ejecución.
 - Adaptaciones de plataforma: mecanismos nativos únicamente cuando Moon no ofrece el patrón, compuestos con piezas Moon y tokens semánticos.
