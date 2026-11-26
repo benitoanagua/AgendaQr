@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.semantics.Role
@@ -51,7 +52,11 @@ import com.agendaqr.core.ui.theme.AqSquircles
  * - Colores (`switch_theme.dart`): pista activa `piccolo`→[AqColor.BrandFill],
  *   inactiva `beerus`→[AqColor.Border], pulgar `goten`→[AqColor.OnBrandFill],
  *   icono del pulgar `popo`→[AqColor.Popo], texto activo `goten`, inactivo
- *   `bulma`→[AqColor.TextPrimary].
+ *   `bulma`→[AqColor.TextPrimary]. Excepción documentada (ADR-0051): la pista
+ *   inactiva usa [AqColor.FunctionalBorder] porque `beerus` queda a ~1,3:1 de
+ *   la superficie (bajo el mínimo de 3:1 para componentes, D-02); la sombra
+ *   del pulgar se recorta al contorno interior de la pista para que no
+ *   desborde como halo ovalado.
  * - Transición 200 ms `easeInOutCubic` (tokens.transitions por defecto de
  *   Moon); el pulgar se desliza y las etiquetas de pista hacen cross-fade.
  * - Slots de contenido: [activeTrackWidget]/[inactiveTrackWidget] (mitades de
@@ -91,7 +96,11 @@ fun AqSwitch(
         label = "aqSwitch",
     )
     val trackColor by animateColorAsState(
-        targetValue = if (checked) AqColor.BrandFill else AqColor.Border,
+        // ADR-0051: la pista inactiva usa el límite funcional (trunks,
+        // ≥ 3:1 sobre superficie, D-02) en lugar del `beerus` decorativo
+        // del spec (~1,3:1). Moon resuelve el apagado con una pista casi
+        // invisible; aquí el estado debe identificarse sin ambigüedad.
+        targetValue = if (checked) AqColor.BrandFill else AqColor.FunctionalBorder,
         animationSpec = tween(
             durationMillis = AqMotion.DurationMediumMs,
             easing = AqMotion.Easings.InOutCubic,
@@ -184,7 +193,12 @@ fun AqSwitch(
                     // bounds midan la pista completa (Moon `switch_sizes`).
                     .testTag("aq-switch-track")
                     .background(trackColor, AqSquircles.Circle)
-                    .padding(size.trackPadding),
+                    .padding(size.trackPadding)
+                    // La sombra del pulgar (`shadows.sm`) se dibuja con blur
+                    // que desbordaría la pista como un halo ovalado: se
+                    // recorta al contorno interior (estadio) en las tres
+                    // plataformas. El pulgar nunca excede esa zona.
+                    .clip(AqSquircles.Circle),
             ) {
                 // Mitades de pista con los slots de Moon: activa a la
                 // izquierda (aparece al final de la transición), inactiva a
