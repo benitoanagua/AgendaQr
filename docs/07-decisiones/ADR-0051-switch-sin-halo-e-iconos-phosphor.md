@@ -48,33 +48,20 @@ Todos los colores siguen saliendo de `LocalAqColorScheme` vía los
 getters composables de `AqColor`, por lo que la recomposición por cambio
 de tema actualiza pista, pulgar y sombra.
 
-### 2.3 Iconografía Phosphor (enmienda acotada de ADR-0044)
+### 2.3 Iconografía Phosphor
 
-ADR-0044 nombra a Moon como autoridad visual. Esta ADR la enmienda
-**solo en iconografía de producto**: Moon sigue siendo la autoridad en
-componentes, tokens y tipografía; los glifos de producto pueden venir de
-Phosphor Icons (MIT).
+La ampliación puntual original de ADR-0051 queda **supersedida por ADR-0052**:
+Phosphor sustituye completamente a Moon Icons en el catálogo de producto.
 
-- Fuente: paquete `phosphor-icons/core` **v2.0.8**, solo los glifos
-  **Check** y **X** en pesos **Bold**, **Regular** y **Light**,
-  vendorizados como constantes de ruta en
-  `core/ui/.../icons/PhosphorIconVectors.kt`. No se añade dependencia de
-  ejecución.
-- API: enum `AqPhosphorIcon` + `vectorForSize(size)` que devuelve el
-  `ImageVector` del peso correcto — **≤ 20 dp Bold, 21–32 dp Regular,
-  ≥ 40 dp Light** — y se consume con el `AqIcon(imageVector = …)`
-  existente (el gate de declaraciones únicas prohíbe un segundo overload
-  de `AqIcon`). `vectorForSize` vive en `icons/PhosphorIconVectors.kt`
-  porque los umbrales son medidas intrínsecas del glifo, no tokens de
-  espaciado. Dentro del switch los iconos miden 12 dp (`AqSize.X3s`) →
-  Bold.
-- Uso inicial: slots `activeThumbWidget`/`inactiveThumbWidget` del
-  switch en la galería y el Component Lab (Check al activar, X al
-  desactivar, tinte `AqColor.Popo`), equivalente a la sección «Custom
-  MoonSwitch» de Moon.
-- Licencia MIT registrada en
-  `docs/05-design-system/06-licencias-terceros.md` y
-  `androidApp/third-party-notices/THIRD_PARTY_LICENSES.txt`.
+- `AqIcons` conserva la API semántica del producto y todos sus 39 conceptos
+  apuntan a 37 glifos oficiales Phosphor `@phosphor-icons/core` v2.0.8,
+  convertidos a vectores Compose KMP locales.
+- `AqSwitch` mantiene Check/X Phosphor Bold como valores predeterminados
+  de `activeThumbWidget` y `inactiveThumbWidget`; ninguna pantalla,
+  galería ni Lab debe configurar overrides visuales para el estado estándar.
+- No se permite Moon Icons, Material Icons ni otra familia como fallback.
+- La distribución y atribución MIT se registran en la documentación de
+  licencias y `androidApp/third-party-notices/THIRD_PARTY_LICENSES.txt`.
 
 ### 2.4 Prueba de píxeles bajo Robolectric
 
