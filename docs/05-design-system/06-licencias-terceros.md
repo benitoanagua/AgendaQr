@@ -6,14 +6,14 @@ Registro de licencias de recursos y dependencias que Agenda QR distribuye.
 
 - Fuentes: `moon_tokens` 0.0.6 y `moon_design` 1.1.0 (Yolo Group).
 - Licencia: MIT.
-- Uso vigente: tokens, geometría, componentes, sombras, movimiento y medidas. Los 35 vectores de `@heathmont/moon-icons` aún presentes en `MoonIconVectors.kt` son **legacy de la migración ADR-0052**, no una fuente autorizada para nuevos iconos.
-- Conservar el aviso Moon Icons hasta eliminar `MoonIconVectors.kt` y todas sus referencias; entonces retirar esta licencia de iconos, no la licencia de componentes/tokens.
+- Uso vigente: tokens, geometría, componentes, sombras, movimiento y medidas. **Los iconos Moon fueron retirados del catálogo de producto**; no se permiten nuevas importaciones ni fallbacks.
+- El aviso MIT de Moon se conserva por los componentes y tokens adaptados, no por iconografía de producto.
 
-## Phosphor Icons — licencia MIT (catálogo objetivo)
+## Phosphor Icons — licencia MIT (catálogo único de producto)
 
 - Fuente: `phosphor-icons/core` v2.0.8, SVG oficiales. Provenance por icono y versión se registran en el catálogo/generador de `core/ui` (ADR-0052).
-- Uso actual: Check/X Bold, Regular y Light en `PhosphorIconVectors.kt`.
-- Uso objetivo: todos los iconos de producto, sin fallback Moon ni otra familia.
+- Uso: los 37 conceptos de `AqIcons` en `PhosphorProductVectors01.kt`–`04.kt`, más Check/X Bold, Regular y Light en `PhosphorIconVectors.kt`.
+- Fuente única de iconos de producto; sin fallback Moon ni otra familia.
 - Aviso MIT incluido en `androidApp/third-party-notices/`; comprobar su distribución para iOS durante la fase de distribución de ADR-0052.
 
 ```text
