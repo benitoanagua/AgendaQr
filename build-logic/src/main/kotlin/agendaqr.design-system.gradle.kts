@@ -546,7 +546,7 @@ fun moonFidelityCoverageViolations(
         }
     }
     return missing.map {
-        "moon-fidelidad: '$it' está en el catálogo pero no tiene cobertura en la galería (AqDesignSystemGallery/AqPreviews)"
+        "moon-fidelidad: '$it' está en el catálogo pero no tiene cobertura en la galería (AqDesignSystemGallery/AqPreviews/AqComponentRegistry)"
     }
 }
 
@@ -573,9 +573,12 @@ tasks.register("verifyMoonFidelity") {
         }
         val catalog = file("docs/05-design-system/13-catalogo-moon.md")
         if (catalog.isFile) {
+            // ADR-0053: la galería y el Lab renderizan AqComponentRegistry;
+            // las invocaciones Aq* de los estados viven en el registro.
             val gallerySources = listOf(
                 "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/AqDesignSystemGallery.kt",
                 "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/AqPreviews.kt",
+                "core/ui/src/commonMain/kotlin/com/agendaqr/core/ui/theme/AqComponentRegistry.kt",
             ).mapNotNull { path ->
                 file(path).takeIf { it.isFile }?.let { path to it.readText() }
             }
