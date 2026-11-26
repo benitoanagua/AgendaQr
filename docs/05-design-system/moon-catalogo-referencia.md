@@ -1,7 +1,7 @@
 # Catálogo de referencia Moon Design
 
 **Estado:** Referencia normativa — especificación de cada widget de `moon_design` 1.1.0 (Yolo Group, MIT).
-**Fuente canónica:** paquete `moon_design` (`lib/src/widgets/**` y `lib/src/theme/**`), `moon_tokens` 0.0.6, `@heathmont/moon-icons` 10.7.4. Copia de trabajo: `/tmp/moonref/design`.
+**Fuente canónica:** paquete `moon_design` (`lib/src/widgets/**` y `lib/src/theme/**`) y `moon_tokens` 0.0.6. Los iconos de producto se rigen por Phosphor v2.0.8 (ADR-0052). Copia de trabajo: `/tmp/moonref/design`.
 **Uso:** este documento describe lo que Moon define (anatomía, API pública, variantes, tamaños, estados). La correspondencia con `Aq*` está en [13-catalogo-moon.md](13-catalogo-moon.md); la matriz de cumplimiento en [auditoria-fidelidad-moon.md](auditoria-fidelidad-moon.md); los valores de tokens en [09-tokens-moon.md](09-tokens-moon.md).
 
 Convención: los parámetros listados son los del constructor público de Flutter; «tema» indica que el valor efectivo viene de `Moon*Theme`/`theme/tokens` cuando el parámetro es `null`. En Compose el llamador no pasa estos overrides salvo que el `Aq*` los exponga.
