@@ -9,7 +9,7 @@
 | Search | MagnifyingGlass | Regular | Búsqueda general |
 | Add | Plus | Regular | Acción de agregar |
 | Register | Receipt | Regular | Registro/recibo; validar contexto comercial |
-| Favorite | Star | Regular | Estado favorito; Filled solo cuando esté seleccionado |
+| Favorite | Star | Regular | Estado favorito; Filled queda pendiente de una variante global de AqFavoriteToggle |
 | Context | Folder | Regular | Contexto/colección |
 | Back | ArrowLeft | Regular | Navegación |
 | Cancel | XCircle | Regular | Acción cancelar; diferenciar de Close |
