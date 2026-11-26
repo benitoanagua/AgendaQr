@@ -1,7 +1,7 @@
 # Catálogo Moon Design — componentes y geometría
 
 **Estado:** Normativo — catálogo único de componentes (ADR-0044).
-**Fuente:** `moon_design` 1.1.0 (Yolo Group, MIT), `moon_tokens` 0.0.6 y `@heathmont/moon-icons` 10.7.4. Fuente Kotlin: `core/ui`.
+**Fuente:** `moon_design` 1.1.0 (Yolo Group, MIT) y `moon_tokens` 0.0.6; iconografía de producto Phosphor v2.0.8 (ADR-0052). Fuente Kotlin: `core/ui`.
 **Regla:** las equivalencias `Aq*` implementan la anatomía, variantes, tamaños, estados y comportamiento de Moon. Los valores exactos de color, roles, tipografía e iconos están en [09-tokens-moon.md](09-tokens-moon.md). Esta tabla es el inventario único consumido por el gate de completitud.
 
 ## 1. Tokens Moon portados a Aq
