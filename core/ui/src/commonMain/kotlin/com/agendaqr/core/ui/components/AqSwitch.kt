@@ -40,6 +40,8 @@ import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.aqShadow
 import com.agendaqr.core.ui.theme.AqSquircles
+import com.agendaqr.core.ui.icons.AqPhosphorIcon
+import com.agendaqr.core.ui.icons.vectorForSize
 
 /**
  * Interruptor sobre [MoonSwitch] (`moon_design` 1.1.0, `widgets/switch`).
@@ -85,8 +87,22 @@ fun AqSwitch(
     labelFirst: Boolean = false,
     activeTrackWidget: (@Composable () -> Unit)? = null,
     inactiveTrackWidget: (@Composable () -> Unit)? = null,
-    activeThumbWidget: (@Composable () -> Unit)? = null,
-    inactiveThumbWidget: (@Composable () -> Unit)? = null,
+    activeThumbWidget: (@Composable () -> Unit)? = {
+        AqIcon(
+            imageVector = AqPhosphorIcon.Check.vectorForSize(AqSize.X3s),
+            contentDescription = null,
+            size = AqSize.X3s,
+            tint = AqColor.Popo,
+        )
+    },
+    inactiveThumbWidget: (@Composable () -> Unit)? = {
+        AqIcon(
+            imageVector = AqPhosphorIcon.X.vectorForSize(AqSize.X3s),
+            contentDescription = null,
+            size = AqSize.X3s,
+            tint = AqColor.Popo,
+        )
+    },
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val fraction by animateFloatAsState(
