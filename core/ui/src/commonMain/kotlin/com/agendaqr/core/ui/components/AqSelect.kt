@@ -34,6 +34,9 @@ import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.window.Popup
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqLayout
@@ -169,6 +172,7 @@ fun AqSelect(
                             onClick = { expanded = !expanded },
                         )
                         .semantics {
+                            text = AnnotatedString(accessibleName)
                             contentDescription = accessibleName
                             selected = selectedIndex >= 0
                             if (!enabled) disabled()
@@ -308,6 +312,8 @@ fun AqCombobox(
     expanded: Boolean = true,
     onExpandedChange: (Boolean) -> Unit = {},
     counterText: ((Int) -> String)? = null,
+    /** Nombre accesible del botón que limpia el filtro del desplegable. */
+    clearLabel: String? = null,
 ) {
     val (anchorPosition, anchorModifier) = rememberAqAnchor()
     val maxWidth = aqAnchorMaxWidthDp(anchorPosition.centerXPx)
@@ -339,7 +345,16 @@ fun AqCombobox(
                                 contentDescription = null,
                                 size = AqSize.Xs,
                                 tint = AqColor.TextTertiary,
-                                modifier = Modifier.clickable { onQueryChange("") },
+                                modifier = Modifier
+                                    .semantics {
+                                        if (clearLabel != null) {
+                                            text = AnnotatedString(clearLabel)
+                                            contentDescription = clearLabel
+                                        } else {
+                                            hideFromAccessibility()
+                                        }
+                                    }
+                                    .clickable { onQueryChange("") },
                             )
                         }
                     },

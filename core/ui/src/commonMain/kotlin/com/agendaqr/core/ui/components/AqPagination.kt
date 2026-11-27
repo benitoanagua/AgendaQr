@@ -15,6 +15,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqLayout
@@ -101,6 +103,7 @@ private fun PaginationPageButton(
                 onClick = onClick,
             )
             .semantics {
+                text = AnnotatedString(contentDescription)
                 this.contentDescription = contentDescription
                 this.selected = selected
             },
@@ -139,6 +142,7 @@ private fun PaginationNavButton(
                 onClick = onClick,
             )
             .semantics {
+                text = AnnotatedString(contentDescription)
                 this.contentDescription = contentDescription
             },
         contentAlignment = Alignment.Center,

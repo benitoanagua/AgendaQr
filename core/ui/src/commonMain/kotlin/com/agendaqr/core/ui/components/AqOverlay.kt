@@ -2,6 +2,7 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
@@ -97,7 +99,12 @@ fun AqModal(
             modifier = modifier
                 .fillMaxSize()
                 .background(LocalAqColorScheme.current.scrim)
-                .clickable(onClick = dismissRequest)
+                // Scrim táctil sin nodo de accesibilidad: el diálogo ya
+                // expone su propio cierre; un "clicable" a pantalla
+                // completa sin nombre rompe el contrato del árbol.
+                .pointerInput(dismissRequest) {
+                    detectTapGestures { dismissRequest() }
+                }
                 // `paneTitle` va en la raíz del diálogo (nodo que ya fusiona
                 // descendientes por `clickable`): dentro del panel quedaría
                 // absorbido por el merge y `PaneTitle` es una propiedad no
@@ -205,7 +212,9 @@ fun AqDrawer(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .clickable(onClick = onDismissRequest),
+                .pointerInput(onDismissRequest) {
+                    detectTapGestures { onDismissRequest() }
+                },
         )
         Column(
             modifier = Modifier

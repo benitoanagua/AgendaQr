@@ -31,6 +31,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
@@ -211,6 +213,7 @@ private fun AqTabContent(
             .testTag("aq-tab-item")
             .semantics(mergeDescendants = true) {
                 this.selected = selected
+                text = AnnotatedString(tab.label)
                 contentDescription = tab.label
             }
             .clickable(
@@ -356,6 +359,7 @@ fun AqBottomNavigation(
                         .clip(AqSquircles.InteractiveSm)
                         .semantics(mergeDescendants = true) {
                             this.selected = selected
+                            text = AnnotatedString(destination.label)
                             contentDescription = destination.label
                         }
                         .clickable(role = Role.Tab) { onSelect(destination.id) }

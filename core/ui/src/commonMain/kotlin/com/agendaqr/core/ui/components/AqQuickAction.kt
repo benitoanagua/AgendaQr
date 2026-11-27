@@ -12,6 +12,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
@@ -50,6 +52,10 @@ fun AqQuickAction(
             // el nombre accesible (mismo patrón que AqPillTab/AqMenuItem;
             // el glifo va sin descripción).
             .semantics(mergeDescendants = true) {
+                // En Android el nombre accesible del objetivo clicable viaja
+                // en `text`; `contentDescription` cae en un nodo hijo no
+                // interactivo (verificado con árbol de accesibilidad real).
+                text = AnnotatedString(label)
                 contentDescription = label
             }
             .defaultMinSize(minHeight = AqMetrics.ControlMinSize)

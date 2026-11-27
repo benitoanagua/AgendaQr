@@ -134,11 +134,15 @@ fun DestinationRow(
                     )
                     AqFavoriteToggle(
                         favorite = destination.favorite,
-                        contentDescription = if (destination.favorite) {
-                            AppStrings.QuitarFavorito
-                        } else {
-                            AppStrings.MarcarFavorito
-                        },
+                        // Nombre único por fila: el contrato del árbol de
+                        // accesibilidad prohíbe destinos repetidos.
+                        contentDescription = (
+                            if (destination.favorite) {
+                                AppStrings.QuitarFavorito
+                            } else {
+                                AppStrings.MarcarFavorito
+                            }
+                            ) + ": " + destination.name.ifBlank { AppStrings.SinNombre },
                         onCheckedChange = { onAction(DestinationAction.ToggleFavorite(destination)) },
                     )
                 }

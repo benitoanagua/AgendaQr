@@ -270,7 +270,9 @@ private fun AqButtonImpl(
             },
         )
         .semantics {
-            contentDescription = label
+            // Solo `text`: con `contentDescription` además, Android genera un
+            // nodo hijo fantasma con la descripción y el objetivo aparece
+            // duplicado en el árbol de accesibilidad.
             text = AnnotatedString(label)
         }
         .testTag("aq-button-touch-target")
@@ -456,11 +458,13 @@ fun AqSegmentedControl(
                     .height(segmentHeight)
                     .semantics(mergeDescendants = true) {
                         this.selected = selected
-                        // El texto del segmento vive en hijos BasicText; el
-                        // nombre accesible debe estar en el propio nodo
-                        // clicable (contrato del árbol de Android).
-                        contentDescription = option.label +
+                        // En Android el nombre del objetivo clicable viaja en
+                        // `text`; `contentDescription` cae en un nodo hijo no
+                        // interactivo (árbol de accesibilidad real).
+                        val segmentName = option.label +
                             (option.count?.let { " $it" } ?: "")
+                        text = AnnotatedString(segmentName)
+                        contentDescription = segmentName
                     }
                     .clickable(
                         enabled = optionEnabled,
@@ -545,6 +549,7 @@ fun AqFavoriteToggle(
             )
             .semantics {
                 this.contentDescription = contentDescription
+                text = AnnotatedString(contentDescription)
                 toggleableState = if (favorite) ToggleableState.On else ToggleableState.Off
             },
         contentAlignment = Alignment.Center,

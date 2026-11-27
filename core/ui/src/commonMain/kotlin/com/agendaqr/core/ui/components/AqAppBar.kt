@@ -19,6 +19,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSize
@@ -105,7 +107,10 @@ fun AqAppBar(
                         minHeight = AqMetrics.ControlMinSize,
                     )
                     .clickable(role = Role.Button, onClick = onBack)
-                    .semantics { contentDescription = backLabel },
+                    .semantics {
+                        text = AnnotatedString(backLabel)
+                        contentDescription = backLabel
+                    },
                 contentAlignment = Alignment.Center,
             ) {
                 AqIcon(

@@ -2,8 +2,8 @@ package com.agendaqr.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
@@ -78,7 +78,9 @@ fun AqBottomSheet(
             modifier = Modifier
                 .fillMaxSize()
                 .background(AqColor.Scrim)
-                .clickable(onClick = onDismissRequest),
+                .pointerInput(onDismissRequest) {
+                    detectTapGestures { onDismissRequest() }
+                },
             contentAlignment = Alignment.BottomCenter,
         ) {
             Column(
@@ -98,11 +100,9 @@ fun AqBottomSheet(
                     .semantics { title?.let { paneTitle = it } }
                     .testTag("aq-bottom-sheet-pane")
                     .verticalScroll(rememberScrollState())
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = {},
-                    ),
+                    // Consume toques dentro del panel sin exponer un
+                    // "clicable" sin nombre al árbol de accesibilidad.
+                    .pointerInput(Unit) { detectTapGestures { } },
                 ) {
                 // Handle visual de arrastre: píldora angosta centrada
                 // (Moon no define handle; es affordance móvil convencional).

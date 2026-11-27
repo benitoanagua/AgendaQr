@@ -30,6 +30,8 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import com.agendaqr.core.ui.theme.AqColor
@@ -131,7 +133,10 @@ fun AqAccordion(
                     enabled = enabled,
                     onClick = onToggle,
                 )
-                .semantics { this.contentDescription = title }
+                .semantics {
+                    text = AnnotatedString(title)
+                    this.contentDescription = title
+                }
                 .padding(horizontal = size.headerPadding),
             verticalAlignment = Alignment.CenterVertically,
         ) {

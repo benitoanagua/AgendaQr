@@ -29,9 +29,13 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.state.ToggleableState
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqLayout
@@ -102,6 +106,19 @@ fun AqCheckbox(
                 minHeight = if (hasText) AqMetrics.ControlMinSize else AqSize.Md,
             )
             .fieldSemantics(state)
+            // En Android el nombre del objetivo selectable viaja en `text`;
+            // `contentDescription` cae en un nodo hijo no interactivo. Sin
+            // etiqueta (casilla dentro de una celda) el control queda oculto
+            // a lectores de pantalla: la celda ya es el objetivo.
+            .semantics {
+                val checkboxName = label.ifBlank { description.orEmpty() }
+                if (checkboxName.isNotBlank()) {
+                    text = AnnotatedString(checkboxName)
+                    contentDescription = checkboxName
+                } else {
+                    hideFromAccessibility()
+                }
+            }
             .selectable(
                 selected = checked,
                 enabled = state.enabled,
@@ -163,6 +180,10 @@ fun AqChoiceSet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
+                    .semantics {
+                        text = AnnotatedString(option.label)
+                        contentDescription = option.label
+                    }
                     .selectable(
                         selected = option.id == selectedId,
                         enabled = state.enabled,
@@ -255,6 +276,14 @@ fun AqSelectAll(
             .fillMaxWidth()
             .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
             .fieldSemantics(state)
+            .semantics {
+                if (label.isNotBlank()) {
+                    text = AnnotatedString(label)
+                    contentDescription = label
+                } else {
+                    hideFromAccessibility()
+                }
+            }
             .triStateToggleable(
                 state = checkedState,
                 enabled = state.enabled,

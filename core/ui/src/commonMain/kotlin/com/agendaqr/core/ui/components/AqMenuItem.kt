@@ -30,6 +30,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
@@ -215,6 +217,9 @@ fun AqMenuItem(
 /** Semántica de una celda de menú: nombre accesible + estado seleccionado. */
 private fun Modifier.menuItemSemantics(desc: String, isSelected: Boolean): Modifier =
     semantics {
+        // En Android el nombre del objetivo clicable viaja en `text`;
+        // `contentDescription` cae en un nodo hijo no interactivo.
+        text = AnnotatedString(desc)
         contentDescription = desc
         selected = isSelected
     }

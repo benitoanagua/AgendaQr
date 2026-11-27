@@ -28,6 +28,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.Dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqLayout
@@ -156,7 +158,9 @@ fun AqSwitch(
                 onClick = { onCheckedChange(!checked) },
             )
             .semantics {
-                contentDescription = description ?: label
+                val switchName = description ?: label
+                text = AnnotatedString(switchName)
+                contentDescription = switchName
                 selected = checked
             }
             .alpha(if (state.enabled) 1f else AqStateAlpha.Disabled),

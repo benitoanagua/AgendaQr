@@ -238,7 +238,13 @@ fun AqTextInput(
                                 },
                             )
                             .semantics {
+                                // Campo editable: Android muestra el valor
+                                // (vacío) en `text`; el nombre accesible debe
+                                // viajar en `contentDescription` del propio
+                                // campo para que el objetivo no quede sin
+                                // nombre (contrato del árbol de accesibilidad).
                                 text = AnnotatedString(accessibleName)
+                                contentDescription = accessibleName
                                 if (effectiveIsError && effectiveErrorMessage != null) {
                                     error(effectiveErrorMessage)
                                 }

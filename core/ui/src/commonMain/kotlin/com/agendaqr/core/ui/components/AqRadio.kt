@@ -22,6 +22,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqLayout
@@ -91,7 +93,9 @@ fun AqRadio(
             )
             .testTag("aq-radio")
             .semantics {
-                this.contentDescription = contentDescription ?: "radio"
+                val radioName = contentDescription ?: "radio"
+                text = AnnotatedString(radioName)
+                this.contentDescription = radioName
             },
         contentAlignment = Alignment.Center,
     ) {

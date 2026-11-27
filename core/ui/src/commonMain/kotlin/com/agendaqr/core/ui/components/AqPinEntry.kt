@@ -20,6 +20,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqSpacing
@@ -184,7 +186,12 @@ private fun KeypadKey(
                 indication = null,
                 onClick = onClick,
             )
-            .semantics { contentDescription?.let { this.contentDescription = it } },
+            .semantics {
+                contentDescription?.let {
+                    this.contentDescription = it
+                    text = AnnotatedString(it)
+                }
+            },
         contentAlignment = Alignment.Center,
     ) {
         content()

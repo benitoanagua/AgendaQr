@@ -20,6 +20,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqLayout
 import com.agendaqr.core.ui.theme.AqMetrics
@@ -143,6 +145,7 @@ private fun BreadcrumbItem(
                 },
             )
             .semantics {
+                text = AnnotatedString(label)
                 this.contentDescription = label
                 if (onClick != null) this.role = Role.Button
             },

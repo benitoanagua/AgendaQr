@@ -22,6 +22,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqMetrics
 import com.agendaqr.core.ui.theme.AqLayout
@@ -119,6 +121,7 @@ private fun SidebarItemRow(
                 onClick = onClick,
             )
             .semantics {
+                text = AnnotatedString(item.label)
                 contentDescription = item.label
                 this.selected = selected
             }
