@@ -86,7 +86,10 @@ jobs:
           node-version: "22"
 
       - name: Component Lab wasmJs build
-        run: ./gradlew :core:ui:compileKotlinWasmJs :core:ui-lab:wasmJsBrowserDistribution --stacktrace
+        # nodeDownload=false: el runner ya tiene Node 22 (setup-node) y el
+        # downloader de KGP resuelve org.nodejs:node contra repos Maven,
+        # donde no existe (nodejs.org/dist no sirve layout Maven).
+        run: ./gradlew :core:ui:compileKotlinWasmJs :core:ui-lab:wasmJsBrowserDistribution -Pagendaqr.wasm.nodeDownload=false --stacktrace
 
       - name: Android debug assembly
         run: ./gradlew :androidApp:assembleDebug --stacktrace
