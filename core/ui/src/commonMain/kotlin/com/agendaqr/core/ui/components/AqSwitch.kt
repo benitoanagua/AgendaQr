@@ -41,7 +41,7 @@ import com.agendaqr.core.ui.theme.AqStateAlpha
 import com.agendaqr.core.ui.theme.AqType
 import com.agendaqr.core.ui.theme.AqWeight
 import com.agendaqr.core.ui.theme.aqShadow
-import com.agendaqr.core.ui.theme.AqSquircles
+import com.agendaqr.core.ui.theme.AqSquircleShape
 import com.agendaqr.core.ui.icons.AqPhosphorIcon
 import com.agendaqr.core.ui.icons.vectorForSize
 
@@ -52,7 +52,11 @@ import com.agendaqr.core.ui.icons.vectorForSize
  *
  * - Tamaños: x2s 16 / xs 24 / sm 32 dp de alto (`switch_sizes.dart`).
  * - Pista: 32 / 44 / 60 dp de ancho; relleno 2 / 4 / 4 dp.
- * - Pulgar: 12 / 16 / 24 dp de diámetro con sombra `shadows.sm`.
+ * - Geometría (ADR-0054): pista y pulgar son rectángulos redondeados con
+ *   radio `AqLayout.SwitchCornerRadius*` (un cuarto del alto: 4 / 6 / 8 dp),
+ *   no la cápsula `radius=999` del spec Moon. El pulgar es un cuadrado de
+ *   12 / 16 / 24 dp con el mismo radio, así la esquina del pulgar casa con
+ *   la del contorno de la pista.
  * - Colores (`switch_theme.dart`): pista activa `piccolo`→[AqColor.BrandFill],
  *   inactiva `beerus`→[AqColor.Border], pulgar `goten`→[AqColor.OnBrandFill],
  *   icono del pulgar `popo`→[AqColor.Popo], texto activo `goten`, inactivo
@@ -60,7 +64,7 @@ import com.agendaqr.core.ui.icons.vectorForSize
  *   inactiva usa [AqColor.FunctionalBorder] porque `beerus` queda a ~1,3:1 de
  *   la superficie (bajo el mínimo de 3:1 para componentes, D-02); la sombra
  *   del pulgar se recorta al contorno interior de la pista para que no
- *   desborde como halo ovalado.
+ *   desborde como halo (ADR-0051).
  * - Transición 200 ms `easeInOutCubic` (tokens.transitions por defecto de
  *   Moon); el pulgar se desliza y las etiquetas de pista hacen cross-fade.
  * - Slots de contenido: [activeTrackWidget]/[inactiveTrackWidget] (mitades de
@@ -139,6 +143,10 @@ fun AqSwitch(
         label = "aqSwitchThumb",
     )
 
+    // Geometría rectangular redondeada (ADR-0054): squircle con el radio
+    // del tamaño, compartida por pista, recorte de sombra y pulgar para
+    // que todas las esquinas coincidan.
+    val shape = AqSquircleShape(size.cornerRadius)
     // Sin etiqueta la pista conserva la geometría exacta de Moon
     // (`switch_sizes.dart`: 32×16 / 44×24 / 60×32) centrada en el área
     // táctil; con o sin etiqueta el objetivo crece a 48 dp sin deformar
@@ -215,13 +223,13 @@ fun AqSwitch(
                     // El tag va antes del padding interno para que sus
                     // bounds midan la pista completa (Moon `switch_sizes`).
                     .testTag("aq-switch-track")
-                    .background(trackColor, AqSquircles.Circle)
+                    .background(trackColor, shape)
                     .padding(size.trackPadding)
                     // La sombra del pulgar (`shadows.sm`) se dibuja con blur
-                    // que desbordaría la pista como un halo ovalado: se
-                    // recorta al contorno interior (estadio) en las tres
+                    // que desbordaría la pista: se recorta al contorno
+                    // interior (mismo radio de esquina) en las tres
                     // plataformas. El pulgar nunca excede esa zona.
-                    .clip(AqSquircles.Circle),
+                    .clip(shape),
             ) {
                 // Mitades de pista con los slots de Moon: activa a la
                 // izquierda (aparece al final de la transición), inactiva a
@@ -251,14 +259,17 @@ fun AqSwitch(
                         Box { inactiveTrackWidget?.invoke() }
                     }
                 }
-                // Pulgar deslizante con sombra `shadows.sm` de Moon.
+                // Pulgar deslizante con sombra `shadows.sm` de Moon:
+                // cuadrado redondeado con el mismo radio que la pista
+                // (ADR-0054), no un disco.
                 Box(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .padding(start = thumbOffset)
                         .size(size.thumb)
-                        .aqShadow(AqShadow.Sm, AqSquircles.Circle)
-                        .background(AqColor.OnBrandFill, AqSquircles.Circle),
+                        .testTag("aq-switch-thumb")
+                        .aqShadow(AqShadow.Sm, shape)
+                        .background(AqColor.OnBrandFill, shape),
                     contentAlignment = Alignment.Center,
                 ) {
                     Box {
@@ -274,29 +285,33 @@ fun AqSwitch(
     }
 }
 
-/** Tamaños de [AqSwitch] (Moon `switch_sizes.dart`). */
+/** Tamaños de [AqSwitch] (Moon `switch_sizes.dart` + radio ADR-0054). */
 enum class AqSwitchSize(
     val height: Dp,
     val trackWidth: Dp,
     val thumb: Dp,
     val trackPadding: Dp,
+    val cornerRadius: Dp,
 ) {
     X2s(
         AqLayout.SwitchHeightX2s,
         AqLayout.SwitchTrackWidthX2s,
         AqLayout.SwitchThumbX2s,
         AqLayout.SwitchTrackPaddingX2s,
+        AqLayout.SwitchCornerRadiusX2s,
     ),
     Xs(
         AqLayout.SwitchHeightXs,
         AqLayout.SwitchTrackWidthXs,
         AqLayout.SwitchThumbXs,
         AqLayout.SwitchTrackPaddingXs,
+        AqLayout.SwitchCornerRadiusXs,
     ),
     Sm(
         AqLayout.SwitchHeightSm,
         AqLayout.SwitchTrackWidthSm,
         AqLayout.SwitchThumbSm,
         AqLayout.SwitchTrackPaddingSm,
+        AqLayout.SwitchCornerRadiusSm,
     ),
 }

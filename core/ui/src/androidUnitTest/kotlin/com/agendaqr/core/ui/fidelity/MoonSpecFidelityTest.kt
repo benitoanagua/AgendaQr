@@ -18,6 +18,19 @@ import org.robolectric.annotation.Config
 @Config(sdk = [34])
 class MoonSpecFidelityTest {
 
+    /**
+     * Desviaciones deliberadas y documentadas de la spec Moon v1: el
+     * componente `Aq*` no reproduce la métrica indicada porque una ADR
+     * posterior fija otra geometría. La prueba sigue verificando todas
+     * las demás métricas de la fila; la desviación no se "corrige" hacia
+     * el spec ni se oculta: queda registrada aquí y en la ADR citada.
+     */
+    private val documentedDeviations: Map<String, Set<String>> = mapOf(
+        // ADR-0054 / D-13: el switch es un rectángulo redondeado (radio =
+        // un cuarto del alto), no la cápsula `radius=999` del spec Moon.
+        "AqSwitch" to setOf("radius"),
+    )
+
     @Test
     fun every_fixture_row_matches_component_geometry() {
         val violations = mutableListOf<String>()
@@ -27,8 +40,9 @@ class MoonSpecFidelityTest {
                 violations += "${row.aq} (${row.family}, size='${row.size}'): sin probe de fidelidad"
                 return@forEach
             }
+            val deviations = documentedDeviations[row.aq].orEmpty()
             fun check(metric: String, expected: Int, actualValue: Int?) {
-                if (expected == -1 || actualValue == null) return
+                if (expected == -1 || actualValue == null || metric in deviations) return
                 val ok = if (metric == "radius" && (expected >= 900 || actualValue >= 900)) {
                     expected >= 900 && actualValue >= 900
                 } else {

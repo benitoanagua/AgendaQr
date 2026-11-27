@@ -8,7 +8,9 @@ import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.runtime.mutableStateOf
@@ -70,6 +72,55 @@ class AqPhase3ContractTest {
         compose.onNodeWithText("Sincronización")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Switch))
             .assertHeightIsAtLeast(48.dp)
+    }
+
+    @Test
+    fun disabled_switch_keeps_its_name_and_disabled_state() {
+        compose.setContent {
+            AqTheme {
+                AqSwitch(
+                    label = "Sincronización",
+                    checked = true,
+                    onCheckedChange = {},
+                    state = AqFieldState(enabled = false),
+                )
+            }
+        }
+        // `clickable(enabled = false)` siempre registra la acción OnClick en
+        // semántica; lo que marca el control como no interactivo para los
+        // servicios de accesibilidad es la propiedad Disabled (TalkBack no
+        // la activa). El nombre y el estado deben conservarse.
+        compose.onNodeWithText("Sincronización")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Disabled, Unit))
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Switch))
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Selected, true))
+    }
+
+    @Test
+    fun switch_label_first_places_label_left_of_the_track() {
+        compose.setContent {
+            AqTheme {
+                AqSwitch(
+                    label = "Marcar como favorito",
+                    checked = false,
+                    onCheckedChange = {},
+                    labelFirst = true,
+                )
+            }
+        }
+        val trackBounds = compose
+            .onNodeWithTag("aq-switch-track", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        // El texto de la etiqueta (nodo interno, no el merge del control)
+        // debe quedar completamente a la izquierda de la pista.
+        val labelIsLeft = compose
+            .onAllNodesWithText("Marcar como favorito", useUnmergedTree = true)
+            .fetchSemanticsNodes()
+            .map { it.boundsInRoot }
+            .any { it.right <= trackBounds.left + 1f }
+        assert(labelIsLeft) {
+            "Con labelFirst la etiqueta debe quedar a la izquierda de la pista"
+        }
     }
 
     @Test

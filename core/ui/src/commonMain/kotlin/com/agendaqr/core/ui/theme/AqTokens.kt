@@ -580,6 +580,15 @@ object AqLayout {
     val SwitchTrackPaddingXs: Dp = AqSize.X5s
     val SwitchTrackPaddingSm: Dp = AqSize.X5s
 
+    /** Radio de esquina de la pista y del pulgar de [AqSwitch] por tamaño
+     *  (ADR-0054): geometría rectangular redondeada, no cápsula — un
+     *  cuarto del alto visual (16/24/32 → 4/6/8 dp). La mitad del alto
+     *  sería el estadio de Moon; el cuarto mantiene el control claramente
+     *  rectangular en los tres tamaños. */
+    val SwitchCornerRadiusX2s: Dp = 4.dp
+    val SwitchCornerRadiusXs: Dp = 6.dp
+    val SwitchCornerRadiusSm: Dp = AqCorner.InteractiveSm
+
     /** Lado del glifo de [AqCheckbox] y [AqRadio] (Moon v1 Figma:
      *  casilla/botón de 24×24 = `sizes.xs`; `moon_design` 1.1.0 usaba 16). */
     val CheckboxGlyphSize: Dp = AqSize.Xs

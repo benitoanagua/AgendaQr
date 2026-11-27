@@ -278,13 +278,16 @@ object MoonSpecActuals {
         )
 
         "AqSwitch" -> {
-            // 2xs 32x16, xs 44x24, sm 60x32; pista y pulgar redondos.
-            val (w, h) = when (size) {
-                "2xs" -> 32 to 16
-                "xs" -> 44 to 24
-                else -> 60 to 32 // sm
+            // 2xs 32x16, xs 44x24, sm 60x32; radio rectangular redondeado
+            // (ADR-0054: un cuarto del alto, no la cápsula radius=999 del
+            // spec — la métrica `radius` está registrada como desviación
+            // documentada en MoonSpecFidelityTest).
+            val (w, h, r) = when (size) {
+                "2xs" -> Triple(32, 16, AqLayout.SwitchCornerRadiusX2s)
+                "xs" -> Triple(44, 24, AqLayout.SwitchCornerRadiusXs)
+                else -> Triple(60, 32, AqLayout.SwitchCornerRadiusSm) // sm
             }
-            Actual(width = w, height = h, radius = 9999)
+            Actual(width = w, height = h, radius = i(r))
         }
 
         "AqTable" -> Actual(

@@ -72,6 +72,7 @@
 | [`07-decisiones/ADR-0051-switch-sin-halo-e-iconos-phosphor.md`](07-decisiones/ADR-0051-switch-sin-halo-e-iconos-phosphor.md) | ADR: recorte de la sombra del pulgar del switch, pista inactiva funcional y iconografía Phosphor en slots |
 | [`07-decisiones/ADR-0052-phosphor-catalogo-unico-de-iconos.md`](07-decisiones/ADR-0052-phosphor-catalogo-unico-de-iconos.md) | ADR: Phosphor como catálogo único de iconos de producto; retiro de Moon Icons |
 | [`07-decisiones/ADR-0053-configuracion-unica-componentes-lab-produccion.md`](07-decisiones/ADR-0053-configuracion-unica-componentes-lab-produccion.md) | ADR: una configuración de componentes compartida por Lab, galería y producción |
+| [`07-decisiones/ADR-0054-switch-rectangulo-redondeado.md`](07-decisiones/ADR-0054-switch-rectangulo-redondeado.md) | ADR: `AqSwitch` pasa de cápsula a rectángulo redondeado (radio = alto/4); supersede la geometría de ADR-0051 |
 
 ## Cómo se mantiene
 

@@ -1,7 +1,11 @@
 # ADR-0051 — Switch sin halo + iconografía Phosphor en slots
 
 **Estado:** ACEPTADO — 2026-11-26  
-**Relacionado:** ADR-0007, ADR-0044, ADR-0048, ADR-0050.
+**Relacionado:** ADR-0007, ADR-0044, ADR-0048, ADR-0050, ADR-0054.
+**Nota:** la geometría de pista y pulgar (cápsula/stadio) queda
+**supersedida por ADR-0054**: el switch es ahora un rectángulo
+redondeado. El recorte de la sombra aquí descrito se mantiene, aplicado
+sobre la nueva forma.
 
 ## 1. Contexto
 

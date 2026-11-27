@@ -162,6 +162,7 @@ Construidas solo con tokens y componentes de Moon; no son valores propios.
 | D-10 | Modelo de sombras de Compose | `Modifier.shadow` no expone `offsetY` ni `spread`; `AqShadow` conserva las capas de `MoonShadows` (blur, offset, spread, alfa) y `Modifier.aqShadow` apila una sombra por capa. |
 | D-11 | Contenedores tonales del tema oscuro | Se derivan mezclando el color Moon de cada estado al 16-20 % sobre `gohan` oscuro, de modo que el bloque tonal se distinga de `surface` y conserve el par de contenido en AA. |
 | D-12 | Composición de página | `AqLayout.BetweenOrganisms` (16 dp) y `DockVertical` (12 dp) son tokens de composición de Agenda QR, no medidas de anatomía Moon. Solo se aplican en el nivel de pantalla; no alteran el padding, gap, tamaño, radio o altura interna de componentes Moon. Si Moon define un patrón equivalente en la versión adoptada, prevalece la medida de Moon. |
+| D-13 | Geometría del switch | `AqSwitch` usa rectángulo redondeado (radio = un cuarto del alto: 4/6/8 dp, `AqLayout.SwitchCornerRadius*`) en lugar de la cápsula `radius=999` del spec Moon v1 (ADR-0054). La métrica `radius` del fixture queda como desviación documentada en `MoonSpecFidelityTest`; el resto de la fila se sigue verificando. |
 
 ## 5. Gobernanza
 

@@ -121,14 +121,21 @@ class AqSwitchRenderTest {
         bmp: Bitmap,
         canvas: Rect,
         track: Rect,
+    ): Rect = nodeRectInBitmap(bmp, canvas, track)
+
+    /** Cualquier bounds de semántica mapeado a píxeles del bitmap. */
+    private fun nodeRectInBitmap(
+        bmp: Bitmap,
+        canvas: Rect,
+        node: Rect,
     ): Rect {
         val sx = bmp.width / canvas.width
         val sy = bmp.height / canvas.height
         return Rect(
-            (track.left - canvas.left) * sx,
-            (track.top - canvas.top) * sy,
-            (track.right - canvas.left) * sx,
-            (track.bottom - canvas.top) * sy,
+            (node.left - canvas.left) * sx,
+            (node.top - canvas.top) * sy,
+            (node.right - canvas.left) * sx,
+            (node.bottom - canvas.top) * sy,
         )
     }
 
@@ -218,6 +225,130 @@ class AqSwitchRenderTest {
                 c.expectedThumb,
                 "pulgar (dark=${c.dark}, checked=${c.checked})",
             )
+        }
+    }
+
+    /**
+     * ADR-0054: la pista y el pulgar son rectángulos redondeados (radio =
+     * un cuarto del alto), no la cápsula `radius=999` del spec Moon ni un
+     * disco. Se verifica por píxeles en la esquina y en el borde superior:
+     *
+     * - una cápsula/elipse no pintaría la esquina (3,3) de la pista ni la
+     *   corrida larga del borde superior;
+     * - un rectángulo vivo pintaría la esquina (1,1);
+     * - un disco en el pulgar no cubriría las muestras (3,2)/(2,3) de su
+     *   esquina, y un cuadrado vivo sí pintaría (1,1).
+     */
+    @Test
+    fun switch_track_and_thumb_are_rounded_rectangles_not_capsules() {
+        setContentOnce()
+        for (dark in listOf(false, true)) {
+            for (checked in listOf(false, true)) {
+                showSwitch(dark, checked)
+                val scheme = if (dark) DarkAqColorScheme else LightAqColorScheme
+                val canvas = nodeBounds(CanvasTag)
+                val track = nodeBounds("aq-switch-track")
+                val thumb = nodeBounds("aq-switch-thumb")
+                val (bmp, _) = captureCanvas()
+                val surface = bmp.getPixel(2, 2)
+                val t = trackRectInBitmap(bmp, canvas, track)
+                val h = nodeRectInBitmap(bmp, canvas, thumb)
+                val thumbArgb = scheme.onBrandFill.toArgb()
+                val expectedTrack = if (checked) {
+                    scheme.brandFill.toArgb()
+                } else {
+                    scheme.functionalBorder.toArgb()
+                }
+                fun nearest(px: Int, vararg candidates: Int): Int =
+                    candidates.minByOrNull { channelDistancePx(px, it) } ?: px
+                // Las muestras de esquina pueden llevar sombra del pulgar o
+                // antialiasing: se clasifican por el color más cercano en
+                // vez de exigir igualdad exacta.
+                fun closerTo(px: Int, a: Int, b: Int): Boolean =
+                    channelDistancePx(px, a) <= channelDistancePx(px, b)
+
+                // --- Pista: esquina (3,3) pintada = no cápsula ---
+                val corner = bmp.getPixel(
+                    (t.left + 3).toInt(), (t.top + 3).toInt(),
+                )
+                assertTrue(
+                    "pista oscura=$dark on=$checked: la esquina (3,3) debe " +
+                        "pertenecer a la pista (rectángulo redondeado), " +
+                        "no a la superficie (cápsula): $corner",
+                    !closerTo(corner, surface, expectedTrack),
+                )
+                // --- Pista: esquina (1,1) vacía = esquinas redondeadas ---
+                val tip = bmp.getPixel(
+                    (t.left + 1).toInt(), (t.top + 1).toInt(),
+                )
+                assertTrue(
+                    "pista oscura=$dark on=$checked: la esquina (1,1) debe " +
+                        "quedar más cerca de la superficie (esquinas " +
+                        "redondeadas), no de la pista: $tip",
+                    closerTo(tip, surface, expectedTrack),
+                )
+                // --- Pista: borde superior con corrida larga = rectangular ---
+                // En la fila y=top+1 la elipse solo pinta ~20 px alrededor
+                // del centro; el rectángulo redondeado deja ~50 px rectos.
+                val y = (t.top + 1).toInt()
+                val midX = ((t.left + t.right) / 2).toInt()
+                var run = 0
+                var x = midX
+                while (x < t.right.toInt() &&
+                    nearest(bmp.getPixel(x, y), surface, expectedTrack) == expectedTrack
+                ) {
+                    run++
+                    x++
+                }
+                x = midX - 1
+                while (x >= t.left.toInt() &&
+                    nearest(bmp.getPixel(x, y), surface, expectedTrack) == expectedTrack
+                ) {
+                    run++
+                    x--
+                }
+                assertTrue(
+                    "borde superior oscuro=$dark on=$checked: corrida " +
+                        "recta=$run px (una cápsula daría ~20)",
+                    run >= 40,
+                )
+
+                // --- Pulgar: esquinas redondeadas, no disco ni cuadrado ---
+                for ((dx, dy) in listOf(3 to 2, 2 to 3)) {
+                    val inside = bmp.getPixel(
+                        (h.left + dx).toInt(), (h.top + dy).toInt(),
+                    )
+                    assertEquals(
+                        "pulgar oscuro=$dark on=$checked: la muestra " +
+                            "($dx,$dy) debe pertenecer al pulgar (no disco)",
+                        thumbArgb,
+                        nearest(inside, surface, expectedTrack, thumbArgb),
+                    )
+                }
+                val thumbTip = bmp.getPixel(
+                    (h.left + 1).toInt(), (h.top + 1).toInt(),
+                )
+                assertTrue(
+                    "pulgar oscuro=$dark on=$checked: la esquina (1,1) debe " +
+                        "mostrar la pista, no el pulgar (esquinas " +
+                        "redondeadas): $thumbTip",
+                    closerTo(thumbTip, expectedTrack, thumbArgb),
+                )
+
+                // --- Desplazamiento: el pulgar no está en la posición opuesta ---
+                val midY = ((t.top + t.bottom) / 2).toInt()
+                val offCenterX = (t.left + 16f).toInt()
+                val onCenterX = (t.right - 16f).toInt()
+                val vacated = bmp.getPixel(
+                    (if (checked) offCenterX else onCenterX), midY,
+                )
+                assertEquals(
+                    "pulgar oscuro=$dark on=$checked: la posición opuesta " +
+                        "debe mostrar la pista, no el pulgar",
+                    expectedTrack,
+                    nearest(vacated, surface, expectedTrack, thumbArgb),
+                )
+            }
         }
     }
 

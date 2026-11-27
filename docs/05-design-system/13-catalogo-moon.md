@@ -71,7 +71,7 @@ Valores transcritos de la versión indicada; `px` = padding horizontal. No son u
 | Control segmentado | sm / md | 40 / 48 | InteractiveSm | 12 / 16 | 4 / 8 |
 | Tab bar | sm / md | 32 / 40 (indicador 2) | Xs / Sm | 12 / 16 | 4 / 8 |
 | Acordeón (cabecera) | sm / md | 32 / 40 | InteractiveSm | 8 / 12 | — |
-| Switch | x2s / xs / sm | 16 / 24 / 32 (ancho 32 / 44 / 60; pulgar 12 / 16 / 20) | píldora | — | — |
+| Switch | x2s / xs / sm | 16 / 24 / 32 (ancho 32 / 44 / 60; pulgar 12 / 16 / 20) | píldora (Moon); `AqSwitch` implementa rectángulo redondeado r=alto/4 (ADR-0054, D-13) | — | — |
 
 ### 3.1 Contrato de ancho, altura y adaptación al contenido
 
