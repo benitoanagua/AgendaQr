@@ -57,14 +57,18 @@ import com.agendaqr.core.ui.icons.vectorForSize
  *   no la cápsula `radius=999` del spec Moon. El pulgar es un cuadrado de
  *   12 / 16 / 24 dp con el mismo radio, así la esquina del pulgar casa con
  *   la del contorno de la pista.
- * - Colores (`switch_theme.dart`): pista activa `piccolo`→[AqColor.BrandFill],
- *   inactiva `beerus`→[AqColor.Border], pulgar `goten`→[AqColor.OnBrandFill],
- *   icono del pulgar `popo`→[AqColor.Popo], texto activo `goten`, inactivo
- *   `bulma`→[AqColor.TextPrimary]. Excepción documentada (ADR-0051): la pista
- *   inactiva usa [AqColor.FunctionalBorder] porque `beerus` queda a ~1,3:1 de
- *   la superficie (bajo el mínimo de 3:1 para componentes, D-02); la sombra
- *   del pulgar se recorta al contorno interior de la pista para que no
- *   desborde como halo (ADR-0051).
+ * - Colores (`switch_theme.dart`, ADR-0055): pista activa
+ *   `piccolo`→[AqColor.BrandFill], inactiva `beerus`→[AqColor.Border],
+ *   pulgar `goten`→[AqColor.OnBrandFill], icono del pulgar
+ *   `popo`→[AqColor.Popo], texto activo `goten`, inactivo
+ *   `bulma`→[AqColor.TextPrimary]. La pista inactiva `beerus` queda a
+ *   ~1,3:1 de la superficie (bajo el 3:1 de D-02): es la asignación
+ *   visual de Moon y el estado OFF se distingue por la posición del
+ *   pulgar, su sombra y la semántica `Role.Switch`/`selected`
+ *   (desviación documentada en ADR-0055, que supersede la excepción
+ *   `FunctionalBorder` de ADR-0051). La sombra del pulgar se recorta al
+ *   contorno interior de la pista para que no desborde como halo
+ *   (ADR-0051).
  * - Transición 200 ms `easeInOutCubic` (tokens.transitions por defecto de
  *   Moon); el pulgar se desliza y las etiquetas de pista hacen cross-fade.
  * - Slots de contenido: [activeTrackWidget]/[inactiveTrackWidget] (mitades de
@@ -121,11 +125,13 @@ fun AqSwitch(
         label = "aqSwitch",
     )
     val trackColor by animateColorAsState(
-        // ADR-0051: la pista inactiva usa el límite funcional (trunks,
-        // ≥ 3:1 sobre superficie, D-02) en lugar del `beerus` decorativo
-        // del spec (~1,3:1). Moon resuelve el apagado con una pista casi
-        // invisible; aquí el estado debe identificarse sin ambigüedad.
-        targetValue = if (checked) AqColor.BrandFill else AqColor.FunctionalBorder,
+        // ADR-0055: la pista inactiva usa `beerus` (`AqColor.Border`), la
+        // asignación visual de Moon (`switch_theme.dart`). Queda a ~1,3:1
+        // de la superficie —por debajo del 3:1 de D-02— y la decisión está
+        // documentada: el estado OFF lo codifican la posición del pulgar,
+        // su sombra y la semántica del switch. La pista activa conserva
+        // `piccolo` (`AqColor.BrandFill`).
+        targetValue = if (checked) AqColor.BrandFill else AqColor.Border,
         animationSpec = tween(
             durationMillis = AqMotion.DurationMediumMs,
             easing = AqMotion.Easings.InOutCubic,

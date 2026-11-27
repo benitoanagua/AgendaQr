@@ -69,10 +69,11 @@
 | [`07-decisiones/ADR-0048-evidencia-pixel-fidelidad-moon.md`](07-decisiones/ADR-0048-evidencia-pixel-fidelidad-moon.md) | ADR: evidencia pixel de fidelidad Moon — comparador, goldens y sombras nativas |
 | [`07-decisiones/ADR-0049-component-lab-web-wasm.md`](07-decisiones/ADR-0049-component-lab-web-wasm.md) | ADR: Component Lab web (wasmJs) como módulo `:core:ui-lab` con registro de componentes |
 | [`07-decisiones/ADR-0050-fidelidad-moon-v1-total.md`](07-decisiones/ADR-0050-fidelidad-moon-v1-total.md) | ADR: fidelidad Moon v1 generada desde el JSON (`generateMoonSpecFixtures`, pruebas y gate de cobertura) + cierre de gaps del lab |
-| [`07-decisiones/ADR-0051-switch-sin-halo-e-iconos-phosphor.md`](07-decisiones/ADR-0051-switch-sin-halo-e-iconos-phosphor.md) | ADR: recorte de la sombra del pulgar del switch, pista inactiva funcional y iconografía Phosphor en slots |
+| [`07-decisiones/ADR-0051-switch-sin-halo-e-iconos-phosphor.md`](07-decisiones/ADR-0051-switch-sin-halo-e-iconos-phosphor.md) | ADR: recorte de la sombra del pulgar del switch e iconografía Phosphor en slots (geometría → ADR-0054, color → ADR-0055) |
 | [`07-decisiones/ADR-0052-phosphor-catalogo-unico-de-iconos.md`](07-decisiones/ADR-0052-phosphor-catalogo-unico-de-iconos.md) | ADR: Phosphor como catálogo único de iconos de producto; retiro de Moon Icons |
 | [`07-decisiones/ADR-0053-configuracion-unica-componentes-lab-produccion.md`](07-decisiones/ADR-0053-configuracion-unica-componentes-lab-produccion.md) | ADR: una configuración de componentes compartida por Lab, galería y producción |
 | [`07-decisiones/ADR-0054-switch-rectangulo-redondeado.md`](07-decisiones/ADR-0054-switch-rectangulo-redondeado.md) | ADR: `AqSwitch` pasa de cápsula a rectángulo redondeado (radio = alto/4); supersede la geometría de ADR-0051 |
+| [`07-decisiones/ADR-0055-switch-colores-segun-moon.md`](07-decisiones/ADR-0055-switch-colores-segun-moon.md) | ADR: colores de `AqSwitch` según `switch_theme.dart` (pista OFF beerus, ON piccolo); supersede la excepción de color de ADR-0051 |
 
 ## Cómo se mantiene
 

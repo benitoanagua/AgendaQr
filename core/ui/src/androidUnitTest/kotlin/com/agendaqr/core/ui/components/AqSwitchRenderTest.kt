@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.dp
+import com.agendaqr.core.ui.theme.AqPalette
 import com.agendaqr.core.ui.theme.AqTheme
 import com.agendaqr.core.ui.theme.DarkAqColorScheme
 import com.agendaqr.core.ui.theme.LightAqColorScheme
@@ -37,8 +38,11 @@ import org.robolectric.annotation.GraphicsMode
 /**
  * Fidelidad del switch contra la spec Moon v1 (ADR-0051):
  * - la sombra del pulgar no pinta nada fuera de la pista (`aq-switch-track`),
- * - pista y pulgar usan los tokens del tema activo en light y dark,
- * - la pista inactiva cumple el contraste funcional ≥ 3:1.
+ * - pista y pulgar usan los tokens del tema activo en light y dark
+ *   (pista OFF `border`/beerus, ON `brandFill`/piccolo — ADR-0055),
+ * - el glifo del pulgar (`popo`/`goten`) mantiene contraste AA en ambos
+ *   temas; los colores de pista son la asignación Moon documentada en
+ *   ADR-0055 (desviación de contraste frente a D-02, acotada al switch).
  *
  * Los píxeles se capturan con Roborazzi (`captureRoboImage`), que bajo
  * Robolectric solo escribe el PNG cuando `roborazzi.test.record=true`
@@ -189,9 +193,9 @@ class AqSwitchRenderTest {
             val expectedThumb: Color,
         )
         val cases = listOf(
-            Probe(false, false, LightAqColorScheme.functionalBorder, LightAqColorScheme.onBrandFill),
+            Probe(false, false, LightAqColorScheme.border, LightAqColorScheme.onBrandFill),
             Probe(false, true, LightAqColorScheme.brandFill, LightAqColorScheme.onBrandFill),
-            Probe(true, false, DarkAqColorScheme.functionalBorder, DarkAqColorScheme.onBrandFill),
+            Probe(true, false, DarkAqColorScheme.border, DarkAqColorScheme.onBrandFill),
             Probe(true, true, DarkAqColorScheme.brandFill, DarkAqColorScheme.onBrandFill),
         )
         // Geometría Sm: pista 60×32, padding 4, pulgar 24 → centro del pulgar
@@ -257,7 +261,7 @@ class AqSwitchRenderTest {
                 val expectedTrack = if (checked) {
                     scheme.brandFill.toArgb()
                 } else {
-                    scheme.functionalBorder.toArgb()
+                    scheme.border.toArgb()
                 }
                 fun nearest(px: Int, vararg candidates: Int): Int =
                     candidates.minByOrNull { channelDistancePx(px, it) } ?: px
@@ -353,20 +357,21 @@ class AqSwitchRenderTest {
     }
 
     @Test
-    fun switch_inactive_track_meets_functional_contrast_in_both_themes() {
-        // La pista inactiva es la que debe identificarse sin ambigüedad
-        // (ADR-0051): `functionalBorder` ≥ 3:1 sobre toda superficie.
-        // La pista activa conserva `brandFill` (piccolo de Moon): el estado
-        // on/off ya lo codifica la posición del pulgar y el color de marca
-        // es autoridad de ADR-0044.
+    fun switch_thumb_icon_keeps_readable_contrast_in_both_themes() {
+        // ADR-0055: los colores de pista son los de `switch_theme.dart`
+        // (OFF `border`/beerus ~1,3:1, ON `brandFill`/piccolo ~2,2:1 sobre
+        // `background` oscuro) — ambos por debajo del 3:1 de componentes,
+        // desviación documentada: el estado lo codifican la posición del
+        // pulgar, su sombra y la semántica `Role.Switch`/`selected`.
+        // Lo que sí debe ser legible siempre es el glifo del pulgar:
+        // `popo` (negro, constante de tema) sobre `goten` (blanco) cumple
+        // AA holgado.
         for (scheme in listOf(LightAqColorScheme, DarkAqColorScheme)) {
-            for (surface in listOf(scheme.surface, scheme.surfaceSecondary, scheme.background)) {
-                assertTrue(
-                    "pista inactiva/superficie = " +
-                        "${contrastRatio(scheme.functionalBorder, surface)}",
-                    contrastRatio(scheme.functionalBorder, surface) >= 3.0,
-                )
-            }
+            assertTrue(
+                "icono pulgar/pulgar = " +
+                    "${contrastRatio(AqPalette.popo, scheme.onBrandFill)}",
+                contrastRatio(AqPalette.popo, scheme.onBrandFill) >= 4.5,
+            )
         }
     }
 

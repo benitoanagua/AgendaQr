@@ -1,7 +1,7 @@
 # ADR-0054 — Switch con geometría rectangular redondeada
 
 **Estado:** ACEPTADO — 2026-11-27  
-**Relacionado:** ADR-0044, ADR-0046, ADR-0050, ADR-0051, ADR-0053.
+**Relacionado:** ADR-0044, ADR-0046, ADR-0050, ADR-0051, ADR-0053, ADR-0055.
 **Supersede:** la geometría de pista y pulgar de `AqSwitch` documentada en
 ADR-0051 (que partía de la cápsula `radius=999` del spec Moon v1).
 
@@ -44,11 +44,11 @@ la escala de controles interactivos genérica; el valor `Sm` coincide con
 
 ### 2.3 Colores y estados
 
-Sin cambios: pista activa `AqColor.BrandFill`, inactiva
-`AqColor.FunctionalBorder` (excepción D-02 de ADR-0051), pulgar
-`AqColor.OnBrandFill`, glifos Phosphor Check/X en `AqColor.Popo`, disabled
-con `AqStateAlpha.Disabled`. Todo sigue saliendo de `LocalAqColorScheme`,
-por lo que light/dark se recomponen solos.
+Sin cambios con respecto a ADR-0055: pista activa `AqColor.BrandFill`
+(piccolo), inactiva `AqColor.Border` (beerus), pulgar
+`AqColor.OnBrandFill` (goten), glifos Phosphor Check/X en `AqColor.Popo`
+(popo), disabled con `AqStateAlpha.Disabled`. Todo sigue saliendo de
+`LocalAqColorScheme`, por lo que light/dark se recomponen solos.
 
 ### 2.4 Recorte de sombra y área táctil
 

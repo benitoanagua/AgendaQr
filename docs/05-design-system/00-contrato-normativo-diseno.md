@@ -163,6 +163,7 @@ Construidas solo con tokens y componentes de Moon; no son valores propios.
 | D-11 | Contenedores tonales del tema oscuro | Se derivan mezclando el color Moon de cada estado al 16-20 % sobre `gohan` oscuro, de modo que el bloque tonal se distinga de `surface` y conserve el par de contenido en AA. |
 | D-12 | Composición de página | `AqLayout.BetweenOrganisms` (16 dp) y `DockVertical` (12 dp) son tokens de composición de Agenda QR, no medidas de anatomía Moon. Solo se aplican en el nivel de pantalla; no alteran el padding, gap, tamaño, radio o altura interna de componentes Moon. Si Moon define un patrón equivalente en la versión adoptada, prevalece la medida de Moon. |
 | D-13 | Geometría del switch | `AqSwitch` usa rectángulo redondeado (radio = un cuarto del alto: 4/6/8 dp, `AqLayout.SwitchCornerRadius*`) en lugar de la cápsula `radius=999` del spec Moon v1 (ADR-0054). La métrica `radius` del fixture queda como desviación documentada en `MoonSpecFidelityTest`; el resto de la fila se sigue verificando. |
+| D-14 | Colores de pista del switch | `AqSwitch` usa la asignación de `switch_theme.dart` de Moon: pista OFF `AqColor.Border` (`beerus`, ~1,3:1) y ON `AqColor.BrandFill` (`piccolo`, ~2,2:1 sobre `background` oscuro), ambas por debajo del 3:1 de componentes (ADR-0055). El estado lo codifican la posición del pulgar, su sombra y la semántica `Role.Switch`/`selected`; el glifo `popo`/`goten` mantiene AA. |
 
 ## 5. Gobernanza
 

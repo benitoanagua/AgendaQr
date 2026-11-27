@@ -1,7 +1,7 @@
 # ADR-0051 — Switch sin halo + iconografía Phosphor en slots
 
 **Estado:** ACEPTADO — 2026-11-26  
-**Relacionado:** ADR-0007, ADR-0044, ADR-0048, ADR-0050, ADR-0054.
+**Relacionado:** ADR-0007, ADR-0044, ADR-0048, ADR-0050, ADR-0054, ADR-0055.
 **Nota:** la geometría de pista y pulgar (cápsula/stadio) queda
 **supersedida por ADR-0054**: el switch es ahora un rectángulo
 redondeado. El recorte de la sombra aquí descrito se mantiene, aplicado
@@ -39,9 +39,14 @@ pista. Se eligió el recorte frente a «sombra de una capa contenida»
 porque reproduce fielmente `shadows.sm` de Moon sin tocar los tokens de
 sombra ni las tres implementaciones de plataforma.
 
-### 2.2 Pista inactiva: `FunctionalBorder` en lugar de `Border`
+### 2.2 Pista inactiva: ~~`FunctionalBorder` en lugar de `Border`~~ → supersedida por ADR-0055
 
-`AqSwitch` usa `AqColor.FunctionalBorder` (`trunks`, ≥ 3:1 sobre
+> **SUPERSEDIDA (ADR-0055, 2026-11-28):** la asignación de color del spec
+> Moon prevalece — la pista inactiva vuelve a `AqColor.Border` (`beerus`)
+> y la excepción `trunks` se retira. Se conserva el razonamiento original
+> abajo como histórico de la decisión.
+
+`AqSwitch` usaba `AqColor.FunctionalBorder` (`trunks`, ≥ 3:1 sobre
 superficie) para la pista apagada en lugar del `beerus` decorativo del
 spec. Es un ajuste **a nivel de componente**, no del token global
 `Border`, para no afectar al resto de componentes que usan `beerus`
