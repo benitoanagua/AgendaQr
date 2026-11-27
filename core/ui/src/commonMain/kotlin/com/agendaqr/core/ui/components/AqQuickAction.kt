@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import com.agendaqr.core.ui.theme.AqColor
@@ -45,9 +46,12 @@ fun AqQuickAction(
 ) {
     Column(
         modifier = modifier
-            // El clicable es la celda entera: fusiona la etiqueta para que
-            // el nodo accesible tenga nombre (el glifo va sin descripción).
-            .semantics(mergeDescendants = true) {}
+            // El clicable es la celda entera: fusiona la etiqueta y declara
+            // el nombre accesible (mismo patrón que AqPillTab/AqMenuItem;
+            // el glifo va sin descripción).
+            .semantics(mergeDescendants = true) {
+                contentDescription = label
+            }
             .defaultMinSize(minHeight = AqMetrics.ControlMinSize)
             .padding(vertical = AqSize.X3s, horizontal = AqSize.X4s)
             .then(

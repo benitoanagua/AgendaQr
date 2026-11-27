@@ -20,6 +20,7 @@ import com.agendaqr.core.ui.components.AqMenuItem
 import com.agendaqr.core.ui.components.AqModal
 import com.agendaqr.core.ui.components.AqQrPreview
 import com.agendaqr.core.ui.components.AqScreen
+import com.agendaqr.core.ui.components.AqToastHost
 import com.agendaqr.core.ui.components.AqToastHostState
 import com.agendaqr.core.ui.theme.AqSize
 import com.agendaqr.destinations.domain.Destination
@@ -63,8 +64,8 @@ fun DestinationDetailScreen(
             AqAppBarAction(AppStrings.Eliminar, AqIcons.Trash, { showDeleteConfirm = true }),
         ),
         overflowLabel = AppStrings.Mas,
-        statusContent = null,
-        toastHost = null,
+        statusContent = appHosts?.status,
+        toastHost = appHosts?.toastHost?.let { host -> { AqToastHost(host) } },
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),

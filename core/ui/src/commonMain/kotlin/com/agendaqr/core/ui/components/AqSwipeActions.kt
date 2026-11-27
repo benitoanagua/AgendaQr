@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.invisibleToUser
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
 import com.agendaqr.core.ui.motion.LocalReducedMotion
@@ -122,6 +123,11 @@ fun AqSwipeActions(
                             .fillMaxHeight()
                             .width(AqMetrics.ControlMinSize)
                             .background(resolvedBg)
+                            // Botón visual del gesto swipe: la acción ya es
+                            // accesible como CustomAccessibilityAction de la
+                            // fila; un "Eliminar" oculto no debe ser
+                            // activable por lectores de pantalla.
+                            .semantics { invisibleToUser() }
                             .clickable {
                                 coroutineScope.launch {
                                     swipeTo(0f)

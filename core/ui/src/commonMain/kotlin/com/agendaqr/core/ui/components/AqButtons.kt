@@ -456,6 +456,11 @@ fun AqSegmentedControl(
                     .height(segmentHeight)
                     .semantics(mergeDescendants = true) {
                         this.selected = selected
+                        // El texto del segmento vive en hijos BasicText; el
+                        // nombre accesible debe estar en el propio nodo
+                        // clicable (contrato del árbol de Android).
+                        contentDescription = option.label +
+                            (option.count?.let { " $it" } ?: "")
                     }
                     .clickable(
                         enabled = optionEnabled,
