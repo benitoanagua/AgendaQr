@@ -198,10 +198,6 @@ fun AqTextInput(
                             .border(AqMetrics.Border, borderColor, shape)
                     },
                 )
-                .semantics {
-                    contentDescription = accessibleName
-                    if (!enabled) disabled()
-                }
                 .testTag(visualTestTag),
         ) {
             Row(
@@ -237,14 +233,15 @@ fun AqTextInput(
                                     Modifier
                                 },
                             )
+                            // Android divide el campo editable en un nodo
+                            // clicable (EditText) y nodos hijos; sin merge el
+                            // nombre caería en un hijo no interactivo. Con
+                            // mergeDescendants queda UN solo nodo accesible
+                            // que porta nombre, valor editable y acciones.
                             .semantics {
-                                // Campo editable: Android muestra el valor
-                                // (vacío) en `text`; el nombre accesible debe
-                                // viajar en `contentDescription` del propio
-                                // campo para que el objetivo no quede sin
-                                // nombre (contrato del árbol de accesibilidad).
-                                text = AnnotatedString(accessibleName)
                                 contentDescription = accessibleName
+                                text = AnnotatedString(accessibleName)
+                                if (!enabled) disabled()
                                 if (effectiveIsError && effectiveErrorMessage != null) {
                                     error(effectiveErrorMessage)
                                 }
@@ -279,22 +276,38 @@ fun AqTextInput(
                                     Alignment.CenterStart
                                 },
                             ) {
-                                innerTextField()
-                                if (value.isEmpty() && idleHint != null && !floatingActive) {
-                                    AqText(
-                                        text = idleHint,
-                                        size = if (size == AqTextInputSize.Lg || size == AqTextInputSize.Xl) {
-                                            AqType.BodyMd
-                                        } else {
-                                            AqType.BodySm
-                                        },
-                                        color = AqColor.TextTertiary,
-                                        maxLines = 1,
-                                    )
+                                // El contenido interno del campo emite un
+                                // nodo de semántica hijo; mientras exista,
+                                // Android desvía el contentDescription del
+                                // editable a un nodo falso no interactivo.
+                                // Se limpia para que el nombre quede en el
+                                // propio campo (las acciones editable,
+                                // SetText, selección y cursor viven en el
+                                // nodo padre y no se ven afectadas).
+                                Box(modifier = Modifier.clearAndSetSemantics { }) {
+                                    innerTextField()
                                 }
                             }
                         },
                     )
+                    if (value.isEmpty() && idleHint != null && !floatingActive) {
+                        // Placeholder como hermano del campo, no como hijo de
+                        // su semántica: dentro del decorationBox se convierte
+                        // en hijo del nodo editable y Android desvía el
+                        // contentDescription a un nodo falso no interactivo,
+                        // dejando el campo vacío sin nombre accesible.
+                        AqText(
+                            text = idleHint,
+                            size = if (size == AqTextInputSize.Lg || size == AqTextInputSize.Xl) {
+                                AqType.BodyMd
+                            } else {
+                                AqType.BodySm
+                            },
+                            color = AqColor.TextTertiary,
+                            maxLines = 1,
+                            modifier = Modifier.align(Alignment.CenterStart),
+                        )
+                    }
                     if (floatingActive) {
                         // Etiqueta flotante de Moon (`hasFloatingLabel`):
                         // flota arriba dentro de la caja cuando el campo

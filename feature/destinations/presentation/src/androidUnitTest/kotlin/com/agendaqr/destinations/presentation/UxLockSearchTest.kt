@@ -93,7 +93,7 @@ class UxLockSearchTest {
             }
         }
         compose.waitForIdle()
-        compose.onAllNodes(hasSetTextAction() and hasText(AppStrings.Buscar))[0]
+        compose.onAllNodes(hasSetTextAction() and hasText(AppStrings.BuscarEnAgendaQr))[0]
             .assertIsFocused()
     }
 
@@ -110,7 +110,7 @@ class UxLockSearchTest {
             }
         }
         compose.waitForIdle()
-        compose.onAllNodes(hasSetTextAction() and hasText(AppStrings.Buscar))[0]
+        compose.onAllNodes(hasSetTextAction() and hasText(AppStrings.BuscarEnAgendaQr))[0]
             .assertIsNotFocused()
     }
 }
