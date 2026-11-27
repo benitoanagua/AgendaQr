@@ -210,10 +210,17 @@ class S02UiPolishTest {
             AppStrings.ElegirArchivoPdf,
             AppStrings.Camara,
         ).forEach { label ->
-            compose.onNodeWithText(label)
+            // La fila interactiva es el AqMenuItem (contentDescription =
+            // título [+ " - subtítulo"]); su target mínimo es AqSize.Md
+            // (40 dp), el minHeight de menu_item de Moon.
+            compose.onNode(
+                hasClickAction() and SemanticsMatcher("contentDescription «$label»") { node ->
+                    node.config.getOrNull(SemanticsProperties.ContentDescription)
+                        ?.any { it.startsWith(label) } == true
+                },
+            )
                 .assertIsDisplayed()
-                .assertHeightIsAtLeast(48.dp)
-                .assert(hasClickAction())
+                .assertHeightIsAtLeast(40.dp)
         }
         compose.onNodeWithText(AppStrings.PermisoCamaraContexto).assertIsDisplayed()
         compose.onAllNodesWithText("Galería (varios)", useUnmergedTree = true).assertCountEquals(0)

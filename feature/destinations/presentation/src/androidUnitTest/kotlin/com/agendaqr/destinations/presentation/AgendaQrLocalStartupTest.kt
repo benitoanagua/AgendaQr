@@ -85,6 +85,13 @@ class AgendaQrLocalStartupTest {
         // (estado vacío de destinos; «Traer un QR» aparece dos veces: acción
         // rápida y CTA del placeholder).
         compose.onNodeWithText(AppStrings.ConfiguraTuPin, useUnmergedTree = true).assertDoesNotExist()
+        // La lista vacía llega cuando el ViewModel termina de observar el
+        // repositorio (dispatcher de fondo): esperar el nodo, no el frame.
+        compose.waitUntil(timeoutMillis = 10_000) {
+            compose.onAllNodes(
+                androidx.compose.ui.test.hasText(AppStrings.AunNoHayDestinos),
+            ).fetchSemanticsNodes().isNotEmpty()
+        }
         compose.onNodeWithText(AppStrings.AunNoHayDestinos).assertExists()
     }
 

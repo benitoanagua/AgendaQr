@@ -15,6 +15,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -52,7 +53,19 @@ class ScreensA11yCoverageTest {
     private fun headingMatcher() =
         SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading)
 
-    // S02 — Añadir: título con heading, Galería primaria ≥48dp y entradas.
+    /**
+     * Fila interactiva de S02 (AqMenuItem): su contentDescription es el
+     * título [+ " - subtítulo"]; el target mínimo es AqSize.Md (40 dp).
+     */
+    private fun s02ImportRow(label: String) =
+        compose.onNode(
+            hasClickAction() and SemanticsMatcher("contentDescription «$label»") { node ->
+                node.config.getOrNull(SemanticsProperties.ContentDescription)
+                    ?.any { it.startsWith(label) } == true
+            },
+        )
+
+    // S02 — Añadir: título con heading, Galería primaria ≥40dp (AqMenuItem)
     // NATIVE+w360: la geometria necesita fuentes reales (LEGACY degenera)
     // y NATIVE necesita qualifiers explicitos (sin ellos mide ceros).
     @Test
@@ -74,8 +87,10 @@ class ScreensA11yCoverageTest {
         // se exige GetTextLayoutResult en otras aserciones de la pantalla).
         // V1.2: una única acción de galería con selección múltiple (sin
         // "Galería (varios)") y la cámara después de la ayuda de share.
-        compose.onNodeWithText("Elegir de la galería").assertHeightIsAtLeast(48.dp)
-        compose.onNodeWithText("Cámara").assertHeightIsAtLeast(48.dp)
+        // Las filas son AqMenuItem: el target interactivo mide AqSize.Md
+        // (40 dp, minHeight de menu_item de Moon), no el texto suelto.
+        s02ImportRow(AppStrings.ElegirDeLaGaleria).assertHeightIsAtLeast(40.dp)
+        s02ImportRow(AppStrings.Camara).assertHeightIsAtLeast(40.dp)
         // V1.2: la flecha atrás de la barra superior es un IconButton con
         // descripción accesible (M3 garantiza el target táctil de 48 dp).
         compose.onNodeWithContentDescription("Volver").assertExists()

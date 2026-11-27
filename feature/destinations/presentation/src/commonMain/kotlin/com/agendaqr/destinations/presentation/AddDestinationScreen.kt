@@ -5,23 +5,26 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.agendaqr.core.ui.components.AqButton
-import com.agendaqr.core.ui.components.AqButtonVariant
-import com.agendaqr.core.ui.components.AqIcon
-import com.agendaqr.core.ui.components.AqIcons
 import com.agendaqr.core.ui.components.AqScreen
 import com.agendaqr.core.ui.components.AqText
 import com.agendaqr.core.ui.theme.AqColor
 import com.agendaqr.core.ui.theme.AqSpacing
 import com.agendaqr.core.ui.theme.AqType
+import com.agendaqr.destinations.domain.QrAsset
 
-/** S02 — Añadir destino: título con heading y acciones de importación
- *  (galería, cámara, PDF). La ayuda de compartir desde otra app queda al
- *  pie, tras las acciones (jerarquía declarada en el contrato S02).
+/**
+ * S02 — Añadir destino: título con heading y acciones de importación
+ * reales (galería, cámara, PDF). La ayuda de compartir desde otra app
+ * queda al pie, tras las acciones (jerarquía declarada en el contrato S02).
+ *
+ * Los controles son los expect/actual del DS de importación
+ * ([QrGalleryControls], [QrCameraEntryControl], [QrPdfPickerControl]):
+ * la misma implementación que usa el editor y que resuelve el permiso de
+ * cámara con su flujo "Abrir ajustes".
  */
 @Composable
 fun AddDestinationScreen(
-    onImport: () -> Unit,
+    onImport: (List<QrAsset>) -> Unit,
     onBack: () -> Unit,
 ) {
     AqScreen(
@@ -33,33 +36,14 @@ fun AddDestinationScreen(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(AqSpacing.Sm),
         ) {
-            AqButton(
-                label = AppStrings.ElegirDeLaGaleria,
-                onClick = onImport,
-                variant = AqButtonVariant.Primary,
-                icon = AqIcons.Gallery,
-                modifier = Modifier.fillMaxWidth(),
+            QrGalleryControls(
+                onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
             )
-            // D1: la segunda acción primaria del documento pasa a Outlined
-            // para no competir con la primera (Elegir de la galería).
-            AqButton(
-                label = AppStrings.Camara,
-                onClick = onImport,
-                variant = AqButtonVariant.Outline,
-                icon = AqIcons.Camera,
-                modifier = Modifier.fillMaxWidth(),
+            QrCameraEntryControl(
+                onResult = { result -> if (result.assets.isNotEmpty()) onImport(result.assets) },
+                showDivider = true,
             )
-            AqText(
-                text = AppStrings.PermisoCamaraContexto,
-                size = AqType.BodyXs,
-                color = AqColor.TextSecondary,
-            )
-            AqButton(
-                label = AppStrings.ElegirArchivoPdf,
-                onClick = onImport,
-                variant = AqButtonVariant.Text,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            QrPdfPickerControl(showDivider = false)
             if (sharedImportsSupported()) {
                 AqText(
                     text = AppStrings.shareFromAnotherAppHint,

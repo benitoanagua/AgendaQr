@@ -118,6 +118,20 @@ fun DestinationsScreen(
         navDestinations = navDestinations,
         navSelectedId = navSelectedId,
         onNavSelect = { name -> navChrome?.onSelect?.invoke(name); Unit },
+        // Spec §S01: el menú "…" de Inicio ofrece "Cuenta y respaldo"
+        // (nube opcional, ADR-0016) y "Bloquear".
+        overflowActions = listOf(
+            com.agendaqr.core.ui.components.AqAppBarAction(
+                AppStrings.CuentaYRespaldo,
+                onClick = onOpenAccount,
+            ),
+            com.agendaqr.core.ui.components.AqAppBarAction(
+                AppStrings.Bloquear,
+                com.agendaqr.core.ui.components.AqIcons.Lock,
+                onLock,
+            ),
+        ),
+        overflowLabel = AppStrings.Mas,
         statusContent = appHosts?.status,
         bottomAction = if (selectionMode && navDestinations.isEmpty()) {
             {

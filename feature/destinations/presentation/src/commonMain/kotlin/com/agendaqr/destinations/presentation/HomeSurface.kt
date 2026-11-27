@@ -3,9 +3,6 @@ package com.agendaqr.destinations.presentation
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import com.agendaqr.core.ui.components.AqNavChromeState
 import com.agendaqr.core.ui.components.aqReducedSurfaceEnter
 import com.agendaqr.core.ui.components.aqReducedSurfaceExit
@@ -34,9 +31,6 @@ internal fun HomeSurface(
     /** Back desde el detalle del QR (S05: puede restaurar la Búsqueda). */
     onDetailBack: () -> Unit = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
 ) {
-    val importBatchHolder = remember(graph) { ImportBatchStateHolder(graph) }
-    val importBatchState by importBatchHolder.state.collectAsState()
-    val operationsState by graph.operationsViewModel.state.collectAsState()
     val reducedMotion = LocalReducedMotion.current
     AnimatedContent(
         targetState = state.route,
@@ -61,9 +55,9 @@ internal fun HomeSurface(
                 onOpenSearch = { onSearchOpened(); nav.push(AppRoute.Search) },
                 onOpenContexts = { nav.push(AppRoute.Contexts) },
                 onLock = onLock,
-                // Cuenta y respaldo no es una superficie navegable en V1
-                // (flujo local-first); se mantiene el gancho como no-op.
-                onOpenAccount = { },
+                // Cuenta y respaldo (ADR-0016): superficie remota
+                // opcional, alcanzada por push sobre el stack raíz.
+                onOpenAccount = { nav.push(AppRoute.Account) },
                 syncLookup = syncLookup,
                 // Acción rápida / FAB: traer un QR → S02,
                 // con cámara y galería dentro del flujo real.
@@ -79,7 +73,9 @@ internal fun HomeSurface(
                 },
             )
             DestinationRoute.Add -> AddDestinationScreen(
-                onImport = { },
+                onImport = { assets ->
+                    graph.destinationsViewModel.onAction(DestinationAction.ImportAssets(assets))
+                },
                 onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
             )
             is DestinationRoute.Edit -> {
@@ -103,13 +99,18 @@ internal fun HomeSurface(
                 if (destination == null) {
                     DestinationNotFound(onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) })
                 } else {
-                    OperationDetailScreen(
-                        state = operationsState,
-                        viewModel = graph.operationsViewModel,
+                    DestinationDetailScreen(
+                        destination = destination,
                         appHosts = appHosts,
-                        syncLookup = syncLookup,
-                        onRetrySync = onRetrySync,
-                        destinationsViewModel = graph.destinationsViewModel,
+                        onShowQr = { graph.destinationsViewModel.onAction(DestinationAction.ShowQr(destination.id)) },
+                        onEdit = { graph.destinationsViewModel.onAction(DestinationAction.Edit(destination.id)) },
+                        onDelete = { graph.destinationsViewModel.onAction(DestinationAction.Delete(destination.id)) },
+                        onShare = { shareQr(destination.qr) },
+                        onBack = onDetailBack,
+                        onRegisterOperation = {
+                            graph.operationsViewModel.onAction(OperationAction.New)
+                            nav.push(AppRoute.Operations)
+                        },
                     )
                 }
             }
@@ -128,14 +129,12 @@ internal fun HomeSurface(
                 }
             }
             DestinationRoute.ImportReview -> {
-                val assets = when (val s = importBatchState) {
-                    is ImportBatchUiState.Review -> s.batch.candidates.mapNotNull { it.qrAsset }
-                    is ImportBatchUiState.Result -> s.batch.candidates.mapNotNull { it.qrAsset }
-                    else -> emptyList()
-                }
+                // S09: los assets importados viven en el ViewModel de
+                // destinos (DestinationAction.ImportAssets); S12 (lote
+                // masivo) es la superficie AppRoute.ImportBatch del host.
                 ImportReviewScreen(
-                    assets = assets,
-                    onSaveAll = { graph.operationsViewModel.onAction(OperationAction.SaveIncoming(allowDuplicate = true)) },
+                    assets = graph.destinationsViewModel.importedAssets(),
+                    onSaveAll = { graph.destinationsViewModel.saveImportedAssets() },
                     onBack = { graph.destinationsViewModel.onAction(DestinationAction.Back) },
                 )
             }

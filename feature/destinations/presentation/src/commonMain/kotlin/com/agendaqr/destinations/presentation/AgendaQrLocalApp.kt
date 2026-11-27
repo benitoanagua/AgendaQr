@@ -1,10 +1,8 @@
 package com.agendaqr.destinations.presentation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.saveable.rememberSaveable
 import com.agendaqr.core.ui.components.AqToastHostState
 
 /**
@@ -27,22 +25,15 @@ fun AgendaQrLocalApp(
     onLock: () -> Unit,
 ) {
     val graph = rememberAuthenticatedSessionGraph(profileId)
-    val state by graph.destinationsViewModel.state.collectAsStateWithLifecycle()
-    val contextState by graph.contextsViewModel.state.collectAsStateWithLifecycle()
-    val nav by remember { mutableStateOf(AppBackStack()) }
+    // ADR-0006: el stack se restaura tras rotación/recreación; sin Saver la
+    // superficie abierta volaría a Inicio.
+    val nav = rememberSaveable(saver = AppBackStackSaver) { AppBackStack() }
     val toastHost = remember { AqToastHostState() }
     val appHosts = AppHosts(toastHost = toastHost)
-    HomeSurface(
-        state = state,
-        contextState = contextState,
+    AuthenticatedAppRoot(
         graph = graph,
+        appHosts = appHosts,
         onLock = onLock,
         nav = nav,
-        navChrome = null,
-        appHosts = appHosts,
-        syncLookup = ElementSyncLookup.Empty,
-        onRetrySync = { },
-        onSearchOpened = { nav.push(AppRoute.Search) },
-        onDetailBack = { nav.pop() },
     )
 }

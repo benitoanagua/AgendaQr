@@ -284,20 +284,21 @@ Las capturas se generan bajo demanda y no se versionan (ADR-0007). El esquema de
 - pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ScreensA11yCoverageTest.kt`
 - pruebas: `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchReducerTest.kt`, `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchCoordinatorTest.kt`, `feature/destinations/presentation/src/commonTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchPendingItemsTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ActionHierarchyTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/ImportBatchBannerLayoutTest.kt`
 
-### auth — Cuenta: autenticación
+### auth — Cuenta y respaldo
 
 - superficie: `authform`
-- tipo: `Overlay`
-- ruta: —
+- tipo: `Root`
+- ruta: `AppRoute.Account`
+- representa: `AppRoute.Account`
 - fuente: `feature/destinations/presentation/src/commonMain/kotlin/com/agendaqr/destinations/presentation/AuthScreen.kt`
-- entradas: `account`
+- entradas: `home-overflow`
 - salidas: `AppRoute.Home`
 - destinos válidos: `AppRoute.Home`
 - acción primaria: Iniciar sesión (`AppStrings.IniciarSesion`)
 - estados: `content`, `loading`, `error`, `saving`
-- gestos: —
+- gestos: `predictive-back`
 - capturas: `content`, `error`
-- componentes: `AqTextInput`, `AqButton`, `AqAlert`
+- componentes: `AqScreen`, `AqTextInput`, `AqButton`, `AqAlert`
 - pruebas a11y: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/AccessibilityStatesFormsTest.kt`
 - pruebas: `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/AccessibilityStatesFormsTest.kt`, `feature/destinations/presentation/src/androidUnitTest/kotlin/com/agendaqr/destinations/presentation/StateRestorationTest.kt`
 

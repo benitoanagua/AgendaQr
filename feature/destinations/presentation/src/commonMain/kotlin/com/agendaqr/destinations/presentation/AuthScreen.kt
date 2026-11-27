@@ -41,6 +41,10 @@ internal fun AuthScreen(
     onPasswordChanged: (String) -> Unit,
     onSignIn: () -> Unit,
     onSignUp: () -> Unit,
+    /** Título de la barra superior cuando el formulario ES la superficie
+     *  (AppRoute.Account); vacío en usos embebidos. */
+    title: String = "",
+    onBack: () -> Unit = {},
 ) {
     val toastHost: com.agendaqr.core.ui.components.AqToastHostState? = null
     // Errores de validación de campo, derivados del state para que
@@ -59,8 +63,9 @@ internal fun AuthScreen(
     val emailError = emailInvalid && (submitAttempted || emailTouched)
     val passwordError = passwordInvalid && (submitAttempted || passwordTouched)
     AqScreen(
-        title = "",
-        onBack = { },
+        title = title,
+        onBack = onBack,
+        backLabel = AppStrings.Volver,
         statusContent = null,
         toastHost = null,
     ) {
