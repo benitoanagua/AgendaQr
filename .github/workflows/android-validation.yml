@@ -171,6 +171,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up JDK
+        # ubuntu-latest trae JDK 25 por defecto y el kotlin-dsl de Gradle
+        # 8.13 no parsea «25.0.5» (IllegalArgumentException en
+        # JavaVersion.parse). Fijar 17 como en el resto de jobs.
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
       - name: Run 006 FK acceptance harness
         env:
           DATABASE_URL: jdbc:postgresql://localhost:5432/postgres?user=postgres&password=postgres
