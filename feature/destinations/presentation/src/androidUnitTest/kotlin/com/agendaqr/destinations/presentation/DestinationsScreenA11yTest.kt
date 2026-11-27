@@ -94,7 +94,9 @@ class DestinationsScreenA11yTest {
         var opened = false
         setContent(onOpenSearch = { opened = true })
         // Un solo nodo con el rol del control, cero nodos editables bajo él.
-        compose.onNodeWithContentDescription("Buscar en Agenda QR")
+        // El nombre accesible viaja en `text` (Android real no propaga
+        // contentDescription al nodo clicable; ver contrato instrumentado).
+        compose.onNodeWithText(AppStrings.BuscarEnAgendaQr)
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
             .performClick()
         assert(opened) { "El toque en la barra debe abrir la búsqueda global (S04)" }
